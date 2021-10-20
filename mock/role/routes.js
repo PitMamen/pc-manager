@@ -309,6 +309,12 @@ const asyncRoutes = [
         name: 'Menu2',
         component: 'views/nested/menu2/index',
         meta: { title: 'Menu2' }
+      },
+      {
+        path: 'menu3',
+        name: 'Menu3',
+        component: 'views/nested/menu3/index',
+        meta: { title: 'Menu3' }
       }
     ]
   },

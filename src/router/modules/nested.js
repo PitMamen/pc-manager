@@ -60,6 +60,12 @@ const nestedRouter = {
       name: 'Menu2',
       component: () => import('@/views/nested/menu2/index'),
       meta: { title: '排班设置' }
+    },
+    {
+      path: 'menu3',
+      name: 'Menu3',
+      component: () => import('@/views/nested/menu3/index'),
+      meta: { title: '排班设置' }
     }
   ]
 }

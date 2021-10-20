@@ -44,7 +44,10 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
+      <div>
+        <input type="checkbox"><span style="color: white">记住密码</span>
+      </div>
+      <br>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
       <!--      <div style="position:relative">-->
