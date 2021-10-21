@@ -1,26 +1,26 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="handleAddRole">新增</el-button>
+    <el-button type="primary" @click="handleAddEntity">新增</el-button>
 
-    <el-table :data="rolesList" style="width: 100%;margin-top:30px;" border>
+    <el-table :data="schedulePeriodsList" style="width: 100%;margin-top:30px;" border>
       <el-table-column align="center" label="班次名称" width="220">
         <template slot-scope="scope">
-          {{ scope.row.key }}
+          {{ scope.row.scheName }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="班次时长(小时)" width="220">
         <template slot-scope="scope">
-          {{ scope.row.name }}
+          {{ scope.row.scheTimes }}
         </template>
       </el-table-column>
       <el-table-column align="header-center" label="起止时间">
         <template slot-scope="scope">
-          {{ scope.row.description }}
+          {{ scope.row.schePreriod }}
         </template>
       </el-table-column>
       <el-table-column align="header-center" label="班次描述">
         <template slot-scope="scope">
-          {{ scope.row.description }}
+          {{ scope.row.scheDesc }}
         </template>
       </el-table-column>
       <el-table-column align="center" label="操作">
@@ -32,71 +32,63 @@
     </el-table>
     <div class="block" style="text-align: right">
       <el-pagination
-        :current-page="currentPage4"
-        :page-sizes="[100, 200, 300, 400]"
-        :page-size="100"
+        :current-page="pagination.currentPage"
+        :page-size="pagination.pageSize"
+        :total="pagination.total"
+        :page-sizes="[10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400"
-        @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
+        @size-change="handleSizeChange"
       />
     </div>
 
     <el-dialog :visible.sync="dialogVisible" :title="dialogType==='edit'?'编辑':'新增'">
-      <el-form :model="role" label-width="80px" label-position="left">
+      <el-form :model="schedulePeriods" label-width="80px" label-position="left">
         <el-form-item label="创建人">
           <span>admin</span>
+          <el-input v-model="schedulePeriods.createUser" style="display: none" />
         </el-form-item>
-        <el-form-item label="班级名称" :required="true">
-          <el-input v-model="role.name" placeholder="" />
+        <el-form-item label="班次名称" :required="true">
+          <el-input v-model="schedulePeriods.scheName" placeholder="" />
         </el-form-item>
         <el-form-item label="起止时间" :required="true">
           <el-time-select
-            v-model="startTime"
+            v-model="schedulePeriods.startTime"
             placeholder="起始时间"
             :picker-options="{
-              start: '08:30',
-              step: '00:15',
-              end: '18:30'
+              start: '07:00',
+              step: '00:01',
+              end: '21:00'
             }"
+            @change="timeChange"
           />&nbsp;&nbsp;
           <el-time-select
-            v-model="endTime"
+            v-model="schedulePeriods.endTime"
             placeholder="结束时间"
             :picker-options="{
-              start: '08:30',
-              step: '00:15',
-              end: '18:30',
-              minTime: startTime
+              start: '07:00',
+              step: '00:01',
+              end: '21:00',
+              minTime: schedulePeriods.startTime
             }"
+            @change="timeChange"
           />
         </el-form-item>
         <el-form-item label="班次时长" :required="true">
-          <el-input v-model="role.name" placeholder="" />
+          <el-input v-model="schedulePeriods.scheTimes" placeholder="" readonly />
         </el-form-item>
         <el-form-item label="班次描述">
           <el-input
-            v-model="role.description"
+            v-model="schedulePeriods.scheDesc"
             :autosize="{ minRows: 2, maxRows: 4}"
             type="textarea"
             placeholder="请输入至少5个字符"
           />
         </el-form-item>
-        <!--        <el-form-item label="Menus">-->
-        <!--          <el-tree-->
-        <!--            ref="tree"-->
-        <!--            :check-strictly="checkStrictly"-->
-        <!--            :data="routesData"-->
-        <!--            :props="defaultProps"-->
-        <!--            show-checkbox-->
-        <!--            node-key="path"-->
-        <!--            class="permission-tree"-->
-        <!--          />-->
-        <!--        </el-form-item>-->
       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">退出</el-button>
-        <el-button type="primary" @click="confirmRole">保存</el-button>
+        <el-button type="primary" @click="confirmEntity">保存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -105,23 +97,24 @@
 <script>
 import path from 'path'
 import { deepClone } from '@/utils'
-import { getRoutes, getRoles, addRole, deleteRole, updateRole } from '@/api/role'
+import { getRoutes, addRole, updateRole } from '@/api/role'
+import { getSchedulePeriods, confirmEntity, deleteEntity } from '@/api/schedulePeriods'
 
-const defaultRole = {
-  key: '',
-  name: '',
-  description: '',
-  routes: []
+const defaultSchedulePeriods = {
+  createUser: '',
+  scheName: '',
+  startTime: '',
+  endTime: '',
+  scheTimes: '',
+  scheDesc: ''
 }
 
 export default {
   data() {
     return {
-      startTime: '',
-      endTime: '',
-      role: Object.assign({}, defaultRole),
+      schedulePeriods: Object.assign({}, defaultSchedulePeriods),
       routes: [],
-      rolesList: [],
+      schedulePeriodsList: [],
       dialogVisible: false,
       dialogType: 'new',
       checkStrictly: false,
@@ -134,8 +127,7 @@ export default {
         pageSize: 10,
         total: 0,
         queryString: null
-      },
-      dataList: []
+      }
     }
   },
   computed: {
@@ -144,22 +136,112 @@ export default {
     }
   },
   created() {
-    // Mock: get all routes and roles list from server
     this.getRoutes()
-    this.getRoles()
+    this.getSchedulePeriods()
   },
   methods: {
+    async getSchedulePeriods() {
+      var data = {}
+      const res = await getSchedulePeriods(data, this.pagination.currentPage, this.pagination.pageSize)
+      this.schedulePeriodsList = res.data.records
+      this.pagination.total = res.data.total
+    },
     handleCurrentChange(page) {
-      alert(page)
+      this.pagination.currentPage = page
+      this.getSchedulePeriods()
+    },
+    handleSizeChange(size) {
+      this.pagination.pageSize = size
+      this.getSchedulePeriods()
+    },
+    timeChange() {
+      // 起止时间
+      var startTime = this.schedulePeriods.startTime
+      var endTime = this.schedulePeriods.endTime
+      if (startTime.trim().length !== 0 && endTime.trim().length !== 0) {
+        this.schedulePeriods.schePreriod = startTime + '-' + endTime
+        this.schedulePeriods.scheTimes = ((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
+          (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2) + '小时'
+      }
+    },
+    handleAddEntity() {
+      this.schedulePeriods = Object.assign({}, defaultSchedulePeriods)
+      this.dialogType = 'new'
+      this.dialogVisible = true
+    },
+    async confirmEntity() {
+      // 用户
+      this.schedulePeriods.createUser = 'admin'
+      if (this.schedulePeriods.scheName.trim().length === 0) {
+        this.$message.error('班次名称不为空！')
+        return
+      }
+      if (this.schedulePeriods.scheName.trim().length > 20) {
+        this.$message.error('班次名称不超过20个字！')
+        return
+      }
+      if (this.schedulePeriods.startTime.trim().length === 0) {
+        this.$message.error('起始时间不为空！')
+        return
+      }
+      if (this.schedulePeriods.endTime.trim().length === 0) {
+        this.$message.error('结束时间不为空！')
+        return
+      }
+      if (this.schedulePeriods.scheTimes.trim().length === 0) {
+        this.$message.error('班次时长不为空！')
+        return
+      }
+      if (this.schedulePeriods.scheDesc.trim().length > 100) {
+        this.$message.error('班次描述不超过100个字！')
+        return
+      }
+      delete this.schedulePeriods['startTime']
+      delete this.schedulePeriods['endTime']
+      const res = await confirmEntity(this.schedulePeriods)
+      if (res.success) {
+        this.$message({
+          message: '保存成功！',
+          type: 'success'
+        })
+        this.dialogVisible = false
+        this.getSchedulePeriods()
+      } else {
+        this.$message.error('保存失败！')
+      }
+    },
+    handleEdit(scope) {
+      this.dialogType = 'edit'
+      this.dialogVisible = true
+      this.checkStrictly = true
+      this.schedulePeriods = deepClone(scope.row)
+      this.$nextTick(() => {
+        const routes = this.generateRoutes(this.schedulePeriods.routes)
+        this.$refs.tree.setCheckedNodes(this.generateArr(routes))
+        // set checked state of a node not affects its father and child nodes
+        this.checkStrictly = false
+      })
+    },
+    handleDelete({ $index, row }) {
+      this.$confirm('确认删除?', 'Warning', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async() => {
+          await deleteEntity(row.id)
+          this.schedulePeriodsList.splice($index, 1)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(err => { console.error(err) })
     },
     async getRoutes() {
       const res = await getRoutes()
       this.serviceRoutes = res.data
       this.routes = this.generateRoutes(res.data)
-    },
-    async getRoles() {
-      const res = await getRoles()
-      this.rolesList = res.data
     },
 
     // Reshape the routes structure so that it looks the same as the sidebar
@@ -203,42 +285,6 @@ export default {
       })
       return data
     },
-    handleAddRole() {
-      this.role = Object.assign({}, defaultRole)
-      if (this.$refs.tree) {
-        this.$refs.tree.setCheckedNodes([])
-      }
-      this.dialogType = 'new'
-      this.dialogVisible = true
-    },
-    handleEdit(scope) {
-      this.dialogType = 'edit'
-      this.dialogVisible = true
-      this.checkStrictly = true
-      this.role = deepClone(scope.row)
-      this.$nextTick(() => {
-        const routes = this.generateRoutes(this.role.routes)
-        this.$refs.tree.setCheckedNodes(this.generateArr(routes))
-        // set checked state of a node not affects its father and child nodes
-        this.checkStrictly = false
-      })
-    },
-    handleDelete({ $index, row }) {
-      this.$confirm('Confirm to remove the role?', 'Warning', {
-        confirmButtonText: 'Confirm',
-        cancelButtonText: 'Cancel',
-        type: 'warning'
-      })
-        .then(async() => {
-          await deleteRole(row.key)
-          this.rolesList.splice($index, 1)
-          this.$message({
-            type: 'success',
-            message: 'Delete succed!'
-          })
-        })
-        .catch(err => { console.error(err) })
-    },
     generateTree(routes, basePath = '/', checkedKeys) {
       const res = []
 
@@ -260,23 +306,23 @@ export default {
       const isEdit = this.dialogType === 'edit'
 
       const checkedKeys = this.$refs.tree.getCheckedKeys()
-      this.role.routes = this.generateTree(deepClone(this.serviceRoutes), '/', checkedKeys)
+      this.schedulePeriods.routes = this.generateTree(deepClone(this.serviceRoutes), '/', checkedKeys)
 
       if (isEdit) {
-        await updateRole(this.role.key, this.role)
-        for (let index = 0; index < this.rolesList.length; index++) {
-          if (this.rolesList[index].key === this.role.key) {
-            this.rolesList.splice(index, 1, Object.assign({}, this.role))
+        await updateRole(this.schedulePeriods.key, this.schedulePeriods)
+        for (let index = 0; index < this.schedulePeriodsList.length; index++) {
+          if (this.schedulePeriodsList[index].key === this.schedulePeriods.key) {
+            this.schedulePeriodsList.splice(index, 1, Object.assign({}, this.schedulePeriods))
             break
           }
         }
       } else {
-        const { data } = await addRole(this.role)
-        this.role.key = data.key
-        this.rolesList.push(this.role)
+        const { data } = await addRole(this.schedulePeriods)
+        this.schedulePeriods.key = data.key
+        this.schedulePeriodsList.push(this.schedulePeriods)
       }
 
-      const { description, key, name } = this.role
+      const { description, key, name } = this.schedulePeriods
       this.dialogVisible = false
       this.$notify({
         title: 'Success',
@@ -315,9 +361,6 @@ export default {
 
 <style lang="scss" scoped>
   .app-container {
-    .roles-table {
-      margin-top: 30px;
-    }
     .permission-tree {
       margin-bottom: 30px;
     }
