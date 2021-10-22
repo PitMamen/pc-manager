@@ -17,43 +17,6 @@ const nestedRouter = {
       component: () => import('@/views/nested/menu1/index'), // Parent router-view
       name: 'Menu1',
       meta: { title: '班次设置' }
-      // meta: { title: 'Menu 1' },
-      // redirect: '/nested/menu1/menu1-1',
-      // children: [
-      //   {
-      //     path: 'menu1-1',
-      //     component: () => import('@/views/nested/menu1/menu1-1'),
-      //     name: 'Menu1-1',
-      //     meta: { title: 'Menu 1-1' }
-      //   },
-      //   {
-      //     path: 'menu1-2',
-      //     component: () => import('@/views/nested/menu1/menu1-2'),
-      //     name: 'Menu1-2',
-      //     redirect: '/nested/menu1/menu1-2/menu1-2-1',
-      //     meta: { title: 'Menu 1-2' },
-      //     children: [
-      //       {
-      //         path: 'menu1-2-1',
-      //         component: () => import('@/views/nested/menu1/menu1-2/menu1-2-1'),
-      //         name: 'Menu1-2-1',
-      //         meta: { title: 'Menu 1-2-1' }
-      //       },
-      //       {
-      //         path: 'menu1-2-2',
-      //         component: () => import('@/views/nested/menu1/menu1-2/menu1-2-2'),
-      //         name: 'Menu1-2-2',
-      //         meta: { title: 'Menu 1-2-2' }
-      //       }
-      //     ]
-      //   },
-      //   {
-      //     path: 'menu1-3',
-      //     component: () => import('@/views/nested/menu1/menu1-3'),
-      //     name: 'Menu1-3',
-      //     meta: { title: 'Menu 1-3' }
-      //   }
-      // ]
     },
     {
       path: 'menu2',
@@ -65,7 +28,7 @@ const nestedRouter = {
       path: 'menu3',
       name: 'Menu3',
       component: () => import('@/views/nested/menu3/index'),
-      meta: { title: '排班设置' }
+      meta: { title: '医生管理' }
     }
   ]
 }
