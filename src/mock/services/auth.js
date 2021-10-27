@@ -51,7 +51,7 @@ const login2 = (options) => {
   return builder('eyJhbGciOiJIUzUxMiJ9.eyJ1c2VySWQiOjEyNjU0NzY4OTA2NzI2NzI4MDgsImFjY291bnQiOiJzdXBlckFkbWluIiwidXVpZCI6ImRiMjlmOGMyLWY5NjEtNGVhOC1iNDI2LWNjYTliYjMxNjBiZiIsInN1YiI6IjEyNjU0NzY4OTA2NzI2NzI4MDgiLCJpYXQiOjE2MzUyOTc3MjcsImV4cCI6MTYzNTM4NDEyN30.0zIGI3JV8dIbvTdvdtnOgjYbT5SG-fnTzHT_oggNxkihLnxGgm7qlrMD9uUoIxfhX8i6MCPnELCdcqS3nhXMIg', '', 200, { 'Custom-Header': Mock.mock('@guid') })
 
 }
- 
+
 const getLoginUser = (options) => {
   const loginUser ={
     "id": "1265476890672672808",
@@ -448,8 +448,8 @@ const getLoginUser = (options) => {
         {
             "id": "1265474261896806403",
             "pid": "1265474261896806402",
-            "name": "sys_user_mgr",
-            "component": "system/user/index",
+            "name": "scheduler",
+            "component": "system/scheduler/index",
             "redirect": "",
             "meta": {
                 "title": "班次管理",
@@ -458,7 +458,7 @@ const getLoginUser = (options) => {
                 "target": null,
                 "link": null
             },
-            "path": "/mgr_user",
+            "path": "/scheduler",
             "hidden": false
         },
         {
