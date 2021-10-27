@@ -20,7 +20,7 @@
               type="text"
               placeholder="账号"
               v-decorator="[
-                'account',
+                'username',
                 {rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
               ]"
             >
@@ -186,14 +186,15 @@ export default {
 
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['account', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
-          delete loginParams.account
-          loginParams[!state.loginType ? 'email' : 'account'] = values.account
+          delete loginParams.username
+          loginParams[!state.loginType ? 'email' : 'username'] = values.username
           loginParams.password = values.password//md5(values.password)
+          console.log(loginParams)
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
