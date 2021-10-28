@@ -13,6 +13,7 @@ export function getSchedulerPeriodPage (parameter) {
   return axios({
     url: preUrl + '/schedule/qrySchedulePeriods?start=' + start + '&pageSize=' + pageSize,
     method: 'post',
+    // headers:{'token':token},
     data: {}
   })
 }

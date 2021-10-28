@@ -87,6 +87,14 @@ const vueConfig = {
   devServer: {
     port: 8080,
     proxy: {
+      '/api/bdcApi': {
+        target: 'http://36.158.225.176:8124',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/bdcApi': '' // 需要rewrite的,
+        }
+      },
       '/api': {
         target: 'http://192.168.1.122:8072',
         ws: false,
