@@ -50,7 +50,7 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   if (token) {
-    config.headers['Authorization'] =   token
+    config.headers['token'] =   token
   }
   return config
 }, err)
