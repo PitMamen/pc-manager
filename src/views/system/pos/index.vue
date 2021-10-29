@@ -17,8 +17,8 @@
           <a-col :md="5" :sm="24">
             <a-form-item label="科室">
               <a-select v-model="queryParam.ssks" allow-clear placeholder="请选择科室">
-                <a-select-option v-for="(item, index) in opTypeDict" :key="index" :value="item.code">{{
-                  item.value
+                <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
+                  item.yyksmc
                 }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -144,7 +144,7 @@ export default {
           dataIndex: 'zhic',
         },
       ],
-      keshiData:{},
+      keshiData: {},
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
@@ -194,7 +194,13 @@ export default {
       getKeShiData({ hospitalCode: '444885559' })
         .then((res) => {
           if (res.success) {
-            this.keshiData = res.data
+            let newData = []
+            for (let i = 0; i < res.data.length; i++) {
+              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
+                newData = newData.concat(res.data[i].departmentList)
+              }
+            }
+            this.keshiData = newData
           } else {
             // this.$message.error('切换失败：' + res.message)
           }

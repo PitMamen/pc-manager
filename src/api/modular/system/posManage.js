@@ -9,7 +9,7 @@ import { axios } from '@/utils/request'
  */
 export function getDoctors(parameter) {
   parameter.start = parameter.pageNo
-  var newPara = JSON.parse(JSON.stringify(parameter)) 
+  var newPara = JSON.parse(JSON.stringify(parameter))
   delete newPara.pageSize
   delete newPara.start
   delete newPara.pageNo
