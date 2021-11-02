@@ -461,6 +461,22 @@ const getLoginUser = (options) => {
             "path": "/scheduler",
             "hidden": false
         },
+      {
+        "id": "126547426189680640123",
+        "pid": "1265474261896806402",
+        "name": "banner",
+        "component": "system/banner/index",
+        "redirect": "",
+        "meta": {
+          "title": "banner管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/banner",
+        "hidden": false
+      },
         {
             "id": "1265474261896806408",
             "pid": "1283308304890847233",
