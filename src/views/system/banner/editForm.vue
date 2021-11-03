@@ -49,6 +49,12 @@
           :wrapperCol="wrapperCol"
         >
           <a-textarea :rows="4" placeholder="不能超过200个字"  v-decorator="['brief']"></a-textarea>
+
+          <a-input  v-decorator="['fileId']"  style="display: none"/>
+          <a-input  v-decorator="['fileName']" style="display: none"/>
+          <a-input  v-decorator="['linkUrl']" style="display: none"/>
+          <a-input  v-decorator="['previewFileId']" style="display: none"/>
+          <a-input  v-decorator="['previewFileName']" style="display: none"/>
         </a-form-item>
 
         <a-form-item
@@ -56,7 +62,16 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <!--          <a-input placeholder="输入正确的连接URL，请以https或http开头" v-decorator="['fileName']" />-->
+          <a-upload
+            name="file"
+            :multiple="false"
+            action="http://192.168.1.122:8071/fileUpload/uploadImgFile"
+            :headers="headers"
+            @change="handleChange"
+          >
+            <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+          </a-upload>
+
         </a-form-item>
 
       </a-form>
@@ -81,12 +96,37 @@
         },
         visible: false,
         confirmLoading: false,
-        form: this.$form.createForm(this)
+        form: this.$form.createForm(this),
+        headers: {
+          authorization: 'authorization-text',
+        }
       }
 
 
     },
     methods: {
+      handleChange(info) {
+        if(info.file.response!=null)  {
+          var ret=info.file.response
+          if(ret.success){
+            this.form.setFieldsValue({
+              fileId: ret.data.id
+            })
+            this.form.setFieldsValue({
+              fileName: ret.data.id
+            })
+            this.form.setFieldsValue({
+              linkUrl: ret.data.fileLinkUrl
+            })
+            this.form.setFieldsValue({
+              previewFileId: ret.data.previewFileId
+            })
+            this.form.setFieldsValue({
+              previewFileName: ret.data.previewFileId
+            })
+          }
+        }
+      },
       //初始化方法
       edit (record) {
         this.visible = true

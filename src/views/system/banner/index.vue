@@ -26,6 +26,15 @@
                   </a-popconfirm>
           </span>
 
+          <span slot="photoFlag" slot-scope="text, record">
+            <img :src="record.linkUrl" width="100" height="100" />
+          </span>
+
+          <span slot="visibleFlag" slot-scope="text, record">
+            <span v-if="record.isVisible">是</span>
+            <span v-if="!record.isVisible">否</span>
+          </span>
+
         </s-table>
 
     <add-form ref="addForm" @ok="handleOk" />
@@ -55,7 +64,8 @@
         columns: [
           {
             title: '图片',
-            dataIndex: 'name'
+            dataIndex: 'name',
+            scopedSlots: { customRender: 'photoFlag' }
           },
           {
             title: '名称',
@@ -68,6 +78,7 @@
           {
             title: '是否可见',
             dataIndex: 'isVisible',
+            scopedSlots: { customRender: 'visibleFlag' }
           }
         ],
         // 加载数据方法 必须为 Promise 对象
