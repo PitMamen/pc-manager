@@ -80,7 +80,7 @@ const getLoginUser = (options) => {
     "apps": [
         {
             "code": "system",
-            "name": "排版管理",
+            "name": "排班管理",
             "active": true
         }
         ,
@@ -500,7 +500,7 @@ const getLoginUser = (options) => {
             "component": "system/org/index",
             "redirect": "",
             "meta": {
-                "title": "排版管理",
+                "title": "排班管理",
                 "icon": "",
                 "show": true,
                 "target": null,

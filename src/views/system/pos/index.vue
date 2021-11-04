@@ -137,7 +137,7 @@ export default {
         // },
         {
           title: '科室',
-          dataIndex: 'ssks',
+          dataIndex: 'ssksName',
         },
         {
           title: '职称',

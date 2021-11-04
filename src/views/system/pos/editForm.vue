@@ -46,6 +46,7 @@
         <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-select
             allow-clear
+            @select="onSelected"
             placeholder="请选择科室"
             v-decorator="['ssks', { rules: [{ required: true, message: '请选择科室' }] }]"
           >
@@ -130,6 +131,13 @@ export default {
         })
       }, 100)
     },
+    onSelected(ssks) {
+      for (let i = 0; i < this.keshiData.length; i++) {
+        if (this.keshiData[i].yyksdm == ssks) {
+          this.seletSsksName = this.keshiData[i].yyksmc
+        }
+      }
+    },
 
     getKeShi() {
       getKeShiData({ hospitalCode: '444885559' })
@@ -163,6 +171,7 @@ export default {
           } else {
             values.xb = '女'
           }
+          values.ssksName = this.seletSsksName
           delete values.jg
           changeStatus(values)
             .then((res) => {

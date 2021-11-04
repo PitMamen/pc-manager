@@ -24,6 +24,43 @@ export function getDoctors(parameter) {
   })
 }
 
+/**
+ * 写死的获取医生列表，传入科室数据
+ */
+export function getDoctorsNew(parameter) {
+  parameter.start = parameter.pageNo
+  // var newPara = JSON.parse(JSON.stringify(parameter))
+  // delete newPara.pageSize
+  // delete newPara.start
+  // delete newPara.pageNo
+  return axios({
+    url: '/schedule/qryDeptDoctors',
+    method: 'post',
+    params: {
+      start: 0,
+      pageSize: 100,
+    },
+    data: parameter
+  })
+}
+
+export function uploadPaiban(parameter) {
+  return axios({
+    url: '/schedule/saveDoctorSchedule',
+    method: 'post',
+    data: parameter
+  })
+}
+
+export function deletePaiban(id) {
+  return axios({
+    url: '/schedule/delDoctorSchedule',
+    method: 'get',
+    params: {
+      id: id
+    },
+  })
+}
 
 export function changeStatus(parameter) {
   return axios({
@@ -38,6 +75,21 @@ export function getKeShiData(parameter) {
     url: '/bdcApi/health/patient/queryDepartment',
     method: 'get',
     params: parameter
+  })
+}
+
+export function getBanci(thisWeekData) {
+  let newPara = {
+
+  }
+  return axios({
+    url: '/schedule/qrySchedulePeriods',
+    method: 'post',
+    params: {
+      start: 0,
+      pageSize: 100,
+    },
+    data: newPara
   })
 }
 
