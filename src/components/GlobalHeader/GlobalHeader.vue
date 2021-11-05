@@ -6,6 +6,7 @@
         :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"
         :style="{ padding: '0' }">
         <div v-if="mode === 'sidemenu'" class="header">
+          <!-- fixedPart 隐藏tab菜单 -->
           <a-menu
             mode="horizontal"
             :default-selected-keys=this.defApp
@@ -13,7 +14,7 @@
           >
             <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
             <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
-            <a-menu-item v-for='(item) in userInfo.apps' :key="item.code" style="top:0px;" @click="switchApp(item.code)">
+            <a-menu-item v-for='(item) in userInfo.apps' :key="item.code" style="top:0px;" @click="switchApp(item.code)" v-show="false">
               {{item.name}}
             </a-menu-item>
             <user-menu></user-menu>

@@ -1,7 +1,10 @@
 <template>
   <div class="logo">
+    <!-- fixedPart 改名字，换图片 <router-link :to="{name:'Console'}"> -->
     <router-link :to="{name:'Console'}">
-      <LogoSvg alt="logo" />
+      <LogoSvg alt="logo"  v-if="false"/>
+      <img src="~@/assets/logo.png"/>
+      <!-- <img src="~@/assets/logo.png" class="logo" alt="logo">-->
       <h1 v-if="showTitle">{{ title }}</h1>
     </router-link>
   </div>
@@ -18,7 +21,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '互联网医院后台',
+      default: '后台管理系统',
       required: false
     },
     showTitle: {

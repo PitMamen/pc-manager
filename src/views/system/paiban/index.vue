@@ -7,7 +7,12 @@
             <a-row :gutter="48">
               <a-col :md="8" :sm="24">
                 <a-form-item label="科室">
-                  <a-select v-model="paibanData.departmentCode" allow-clear placeholder="请选择科室">
+                  <a-select
+                    v-model="paibanData.departmentCode"
+                    allow-clear
+                    placeholder="请选择科室"
+                    @select="onSelected"
+                  >
                     <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
                       item.yyksmc
                     }}</a-select-option>
@@ -19,12 +24,7 @@
         </div>
 
         <div class="table-operator" v-if="hasPerm('sysOrg:add')" style="padding-right: 10px">
-          <a-button
-            style="float: right"
-            type="primary"
-            v-if="hasPerm('sysOrg:add')"
-            icon="plus"
-            @click="$refs.addForm.add()"
+          <a-button style="float: right" type="primary" v-if="hasPerm('sysOrg:add')" icon="plus" @click="copyThisWeek"
             >复制本周排班</a-button
           >
         </div>
@@ -49,9 +49,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[0], record, index)" />
+              </div>
             </div>
             <!-- 添加医生，传入日期和班次id() -->
             <a
@@ -82,9 +83,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[1], record, index)" />
+              </div>
             </div>
             <a
               class="a-add"
@@ -114,9 +116,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[2], record, index)" />
+              </div>
             </div>
             <a
               class="a-add"
@@ -146,9 +149,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[3], record, index)" />
+              </div>
             </div>
             <a
               class="a-add"
@@ -178,9 +182,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[4], record, index)" />
+              </div>
             </div>
             <a
               class="a-add"
@@ -210,9 +215,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[5], record, index)" />
+              </div>
             </div>
             <a
               class="a-add"
@@ -242,9 +248,10 @@
               :key="index"
               :value="item.doctorInfo.xm"
             >
-              <a-tag class="tag-paiban" closable @close="onDeleteDoctor(thisWeekData[4], record, index)">
+              <div class="tag-paiban">
                 {{ item.doctorInfo.xm }}
-              </a-tag>
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[6], record, index)" />
+              </div>
             </div>
             <a
               class="a-add"
@@ -279,15 +286,17 @@
         </a-table>
 
         <div class="table-operator" style="margin-top: 30px">
-          <a-button type="primary" icon="plus" @click="$refs.chooseBanci.add(thisWeekData)">添加班次</a-button>
+          <a-button type="primary" icon="plus" @click="$refs.chooseBanci.add(thisWeekData, paibanData.departmentCode)"
+            >添加班次</a-button
+          >
         </div>
 
         <choose-doctor ref="chooseDoctor" @ok="afterDocChose" />
         <choose-banci ref="chooseBanci" @ok="afterBanciChose" />
 
         <div class="table-operator" style="margin-top: 30px; float: right">
-          <a-button type="primary" @click="$refs.chooseDoctor.add()">上一周</a-button>
-          <a-button type="primary" @click="$refs.chooseDoctor.add()">下一周</a-button>
+          <a-button type="primary" @click="getDiffrentWeeks(--weekNum)">上一周</a-button>
+          <a-button type="primary" @click="getDiffrentWeeks(++weekNum)">下一周</a-button>
         </div>
       </a-card>
     </a-col>
@@ -297,7 +306,7 @@
 <script>
 // import { STable } from '@/components'
 // import { Empty } from 'ant-design-vue'
-import { getKeShiData, uploadPaiban, deletePaiban } from '@/api/modular/system/posManage'
+import { getKeShiData, uploadPaiban, deletePaiban, getPaibans } from '@/api/modular/system/posManage'
 import chooseDoctor from './chooseDoctor'
 import chooseBanci from './chooseBanci'
 
@@ -313,6 +322,7 @@ export default {
       advanced: false,
       // 查询参数
       paibanData: { yljgdm: '444885559' },
+      weekNum: 0, //周次：0 本周 -1上周 1下周
       keshiData: {},
       // 表头
       columns: [
@@ -380,21 +390,174 @@ export default {
     }
   },
 
+  /**
+   * 页面流程梳理
+   * 1 进入排班管理，先获取本周的所有日期
+   * 2 根据日期查询本周是否有排班数据
+   * 3 有的话组装数据并展示，可以添加修改
+   * 4 没有的话，直接初始化页面，用户可以新增
+   */
   created() {
     this.getKeShi()
-    this.thisWeekData = this.getWeekDay()
+    this.thisWeekData = this.getWeekDay(this.weekNum)
   },
 
   methods: {
     //获取本周所有日期
-    getWeekDay() {
+    getWeekDay(weekNum) {
       let dateString = this.formatDate(new Date()) //当天的日期，例如2020-2-28
+      if (weekNum !== 0) {
+        //本周的话是0，就是当前的new Date，否则就需要根据new Date计算
+        dateString = this.formatDate(new Date(new Date().getTime() + weekNum * 7 * 24 * 60 * 60 * 1000))
+      }
       let presentDate = new Date(dateString)
       let today = presentDate.getDay() !== 0 ? presentDate.getDay() : 7
       let _this = this
       return Array.from(new Array(7), function (val, index) {
         return _this.formatDate(new Date(presentDate.getTime() - (today - index - 1) * 24 * 60 * 60 * 1000))
       })
+    },
+
+    getDiffrentWeeks(weekNum) {
+      this.thisWeekData = this.getWeekDay(weekNum)
+      this.tableData = []
+      this.getThisWeekPaibanData(this.paibanData.departmentCode)
+    },
+
+    getThisWeekPaibanData(departmentCode) {
+      getPaibans({ departmentCode: departmentCode, startDate: this.thisWeekData[0], endDate: this.thisWeekData[6] })
+        .then((res) => {
+          if (res.success) {
+            //获取排班数据后组装数据，填充到页面
+            this.savedDatas = res.data
+            //先获取所有的班次数据，班次数据再获取所有的日期数据，赋值出来到表格
+            if (!this.savedDatas || this.savedDatas.length == 0) {
+              return
+            }
+            this.processData(this.savedDatas)
+          } else {
+            this.$message.error('获取排班信息失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          // this.$message.error('获取排班信息错误：' + err.message)
+        })
+    },
+
+    copyThisWeek() {
+      // this.thisWeekData = this.getWeekDay(++weekNum)
+      let newWeekData = this.getWeekDay(++this.weekNum)
+      //组装数据，循环上传
+      for (let i = 0; i < this.savedDatas.length; i++) {
+        if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[0]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[0]).getTime()
+        } else if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[1]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[1]).getTime()
+        } else if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[2]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[2]).getTime()
+        } else if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[3]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[3]).getTime()
+        } else if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[4]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[4]).getTime()
+        } else if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[5]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[5]).getTime()
+        } else if (this.formatDate(new Date(this.savedDatas[i].schedulingDate)) == this.thisWeekData[6]) {
+          this.savedDatas[i].schedulingDate = new Date(newWeekData[6]).getTime()
+        }
+        let params = {
+          clinicType: '0',
+          departmentCode: this.paibanData.departmentCode,
+          doctorId: this.savedDatas[i].doctorInfo.gh,
+          doctorRank: this.savedDatas[i].zhic,
+          yljgdm: '444885559',
+          numberEncounters: this.savedDatas[i].numberEncounters,
+          periodTime: this.savedDatas[i].periodTime,
+          schedulingDate: this.formatDate(this.savedDatas[i].schedulingDate),
+        }
+        this.copyThisWeekUpload(params)
+      }
+
+      this.thisWeekData = newWeekData
+      this.tableData = []
+      this.processData(this.savedDatas)
+    },
+
+    //先获取所有的班次数据，班次数据再获取所有的日期数据，赋值出来到表格
+    processData(datas) {
+      //获取所有的班次种类个数
+      let banciIds = []
+      for (let i = 0; i < datas.length; i++) {
+        if (banciIds.indexOf(datas[i].schedulePeriodsInfo.id) === -1) {
+          banciIds.push(datas[i].schedulePeriodsInfo.id)
+        }
+      }
+
+      //banciDatasOut，例如所有种类id的集合  banciDatasIn，例如所有id为12的班次
+      let banciDatasOut = []
+      for (let x = 0; x < banciIds.length; x++) {
+        let banciDatasIn = []
+        for (let y = 0; y < datas.length; y++) {
+          if (datas[y].schedulePeriodsInfo.id == banciIds[x]) {
+            banciDatasIn.push(datas[y])
+          }
+        }
+        this.tableData.push({ myId: x })
+        this.tableData[x].name =
+          banciDatasIn[0].schedulePeriodsInfo.scheName + '  (' + banciDatasIn[0].schedulePeriodsInfo.schePreriod + ')'
+
+        //正常添加的periodTime是schePreriod字段，所以需要赋值
+        //periodTime: this.tableData[resultData.rowIndex].schePreriod
+        this.tableData[x].schePreriod = banciDatasIn[0].schedulePeriodsInfo.schePreriod
+        console.log('name', this.tableData[x].name + '***' + this.tableData[x].schePreriod)
+        for (let z = 0; z < banciDatasIn.length; z++) {
+          if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[0]) {
+            if (!this.tableData[x].doctorMonday) {
+              this.$set(this.tableData[x], 'doctorMonday', [])
+            }
+            this.tableData[x].doctorMonday.push(banciDatasIn[z])
+          } else if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[1]) {
+            if (!this.tableData[x].doctorTuesday) {
+              this.$set(this.tableData[x], 'doctorTuesday', [])
+            }
+            this.tableData[x].doctorTuesday.push(banciDatasIn[z])
+          } else if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[2]) {
+            if (!this.tableData[x].doctorWednesday) {
+              this.$set(this.tableData[x], 'doctorWednesday', [])
+            }
+            this.tableData[x].doctorWednesday.push(banciDatasIn[z])
+          } else if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[3]) {
+            if (!this.tableData[x].doctorThursday) {
+              this.$set(this.tableData[x], 'doctorThursday', [])
+            }
+            this.tableData[x].doctorThursday.push(banciDatasIn[z])
+          } else if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[4]) {
+            if (!this.tableData[x].doctorFriday) {
+              this.$set(this.tableData[x], 'doctorFriday', [])
+            }
+            this.tableData[x].doctorFriday.push(banciDatasIn[z])
+            console.log('banciDatasIndoctorFriday', banciDatasIn[z])
+          } else if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[5]) {
+            if (!this.tableData[x].doctorSaturday) {
+              this.$set(this.tableData[x], 'doctorSaturday', [])
+            }
+            this.tableData[x].doctorSaturday.push(banciDatasIn[z])
+          } else if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[6]) {
+            if (!this.tableData[x].doctorSunday) {
+              this.$set(this.tableData[x], 'doctorSunday', [])
+            }
+            this.tableData[x].doctorSunday.push(banciDatasIn[z])
+          }
+        }
+
+        banciDatasOut.push(banciDatasIn)
+      }
+      console.log('banciDatasOut', banciDatasOut)
+
+      console.log('222', banciIds)
+    },
+
+    onSelected(departmentCode) {
+      this.getThisWeekPaibanData(departmentCode)
     },
 
     isToday(date) {
@@ -430,8 +593,6 @@ export default {
      *
      */
     onDeleteDoctor(date, record, index) {
-      console.log('onDeleteDoctor', 'date--' + date + '***record--' + record + '***index--' + index)
-
       let id
       if (date == this.thisWeekData[0]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorMonday[index].id
@@ -462,7 +623,6 @@ export default {
             this.$message.success('删除成功')
           } else {
             this.$message.error('删除失败：' + res.message)
-            console.log('删除失败：', res.message)
           }
         })
         .catch((err) => {
@@ -495,13 +655,31 @@ export default {
               doctorName: resultData.chooseDocName,
             }
             this.addViewData(viewData, res.data)
+            this.savedDatas.push(res.data)
           } else {
             this.$message.error('添加失败：' + res.message)
-            console.log('添加失败：', res.message)
           }
         })
         .catch((err) => {
           this.$message.error('添加错误：' + err.message)
+        })
+
+      //调接口新增数据到后台，成功后添加到页面
+    },
+
+    copyThisWeekUpload(params) {
+      //获取 periodTime,根据rowIndex去获取
+
+      uploadPaiban(params)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('复制成功')
+          } else {
+            // this.$message.error('添加失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          // this.$message.error('添加错误：' + err.message)
         })
 
       //调接口新增数据到后台，成功后添加到页面
@@ -515,17 +693,17 @@ export default {
         this.tableData[viewData.rowIndex].doctorMonday.push(data)
       } else if (viewData.schedulingDate == this.thisWeekData[1]) {
         if (!this.tableData[viewData.rowIndex].doctorTuesday) {
-          this.tableData[viewData.rowIndex].$set(this.tableData[viewData.rowIndex], 'doctorTuesday', [])
+          this.$set(this.tableData[viewData.rowIndex], 'doctorTuesday', [])
         }
         this.tableData[viewData.rowIndex].doctorTuesday.push(data)
       } else if (viewData.schedulingDate == this.thisWeekData[2]) {
         if (!this.tableData[viewData.rowIndex].doctorWednesday) {
-          this.tableData[viewData.rowIndex].$set(this.tableData[viewData.rowIndex], 'doctorWednesday', [])
+          this.$set(this.tableData[viewData.rowIndex], 'doctorWednesday', [])
         }
         this.tableData[viewData.rowIndex].doctorWednesday.push(data)
       } else if (viewData.schedulingDate == this.thisWeekData[3]) {
         if (!this.tableData[viewData.rowIndex].doctorThursday) {
-          this.tableData[viewData.rowIndex].$set(this.tableData[viewData.rowIndex], 'doctorThursday', [])
+          this.$set(this.tableData[viewData.rowIndex], 'doctorThursday', [])
         }
         this.tableData[viewData.rowIndex].doctorThursday.push(data)
       } else if (viewData.schedulingDate == this.thisWeekData[4]) {
@@ -535,12 +713,12 @@ export default {
         this.tableData[viewData.rowIndex].doctorFriday.push(data)
       } else if (viewData.schedulingDate == this.thisWeekData[5]) {
         if (!this.tableData[viewData.rowIndex].doctorSaturday) {
-          this.tableData[viewData.rowIndex].$set(this.tableData[viewData.rowIndex], 'doctorSaturday', [])
+          this.$set(this.tableData[viewData.rowIndex], 'doctorSaturday', [])
         }
         this.tableData[viewData.rowIndex].doctorSaturday.push(data)
       } else if (viewData.schedulingDate == this.thisWeekData[6]) {
         if (!this.tableData[viewData.rowIndex].doctorSunday) {
-          this.tableData[viewData.rowIndex].$set(this.tableData[viewData.rowIndex], 'doctorSunday', [])
+          this.$set(this.tableData[viewData.rowIndex], 'doctorSunday', [])
         }
         this.tableData[viewData.rowIndex].doctorSunday.push(data)
       }
@@ -586,8 +764,10 @@ export default {
               }
             }
             this.keshiData = newData
+            this.paibanData.departmentCode = this.keshiData[0].yyksdm
+            this.getThisWeekPaibanData(this.paibanData.departmentCode)
           } else {
-            // this.$message.error('切换失败：' + res.message)
+            this.$message.error('获取科室信息失败' + res.message)
           }
         })
         .catch((err) => {
@@ -618,6 +798,7 @@ button {
 }
 
 .div-pb-in {
+  width: 92px;
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -641,6 +822,8 @@ button {
 }
 
 .tag-paiban {
+  color: #333;
+  border: 1px solid #d9d9d9;
   margin-bottom: 8px;
 
   &:hover {

@@ -1,44 +1,49 @@
 <template>
   <div class="user-wrapper">
     <div class="content-box">
-      <a href="https://www.stylefeng.cn" target="_blank">
+      <!-- fixedPart <a href="https://www.stylefeng.cn" target="_blank"> -->
+      <a href="https://www.baidu.com/" target="_blank" v-if="false">
         <span class="action">
           <a-icon type="question-circle-o"></a-icon>
         </span>
       </a>
-      <notice-icon class="action"/>
+      <!-- fixedPart -->
+      <notice-icon class="action" v-if="false"/>
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
           <a-avatar class="avatar" size="small" :src="avatar"/>
           <span>{{ nickname }}</span>
         </span>
+        <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
-          <a-menu-item key="4" v-if="mode === 'sidemenu'">
+          <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
+          <a-menu-item key="4" v-if="false">
             <a @click="appToggled()" >
               <a-icon type="swap"/>
               <span>切换应用</span>
             </a>
           </a-menu-item>
-          <a-menu-item key="5" v-if="hasPerm('sysUser:updatePwd')" >
+          <!-- <a-menu-item key="5" v-if="hasPerm('sysUser:updatePwd')"  > -->
+          <a-menu-item key="5" v-if="false">
             <a  @click="updatePwd()" >
               <a-icon type="tool"/>
               <span>修改密码</span>
             </a>
           </a-menu-item>
 
-          <a-menu-item key="0">
+          <a-menu-item key="0"  v-if="false">
             <router-link :to="{ name: 'center' }">
               <a-icon type="user"/>
               <span>个人中心</span>
             </router-link>
           </a-menu-item>
-          <a-menu-item key="1">
+          <a-menu-item key="1"  v-if="false">
             <router-link :to="{ name: 'settings' }">
               <a-icon type="setting"/>
               <span>账户设置</span>
             </router-link>
           </a-menu-item>
-          <a-menu-divider/>
+          <a-menu-divider  v-if="false"/>
           <a-menu-item key="3">
             <a href="javascript:;" @click="handleLogout">
               <a-icon type="logout"/>

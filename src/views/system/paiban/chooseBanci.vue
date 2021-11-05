@@ -53,7 +53,11 @@ export default {
   },
   methods: {
     //初始化方法
-    add(thisWeekData) {
+    add(thisWeekData, departmentCode) {
+      if (!departmentCode) {
+        this.$message.error('请先选择科室')
+        return
+      }
       this.visible = true
       this.getBanciData(thisWeekData)
     },

@@ -74,6 +74,7 @@ export default {
   methods: {
     //初始化方法 传入日期，行数，医疗机构代码，所属科室
     add(date, rowIndex, yljgdm, ssks) {
+      console.log('add rowIndex',rowIndex)
       if (!ssks) {
         this.$message.error('请先选择科室')
         return

@@ -193,7 +193,7 @@ const getLoginUser = (options) => {
         "id": "12654742618968064082",
         "pid": "1283308304890847233",
         "name": "sys_app_mgr",
-        "component": "system/app/index",
+        "component": "system/questionary/index",
         "redirect": "",
         "meta": {
           "title": "问卷管理",
@@ -202,7 +202,7 @@ const getLoginUser = (options) => {
           "target": null,
           "link": null
         },
-        "path": "/app",
+        "path": "/questionary",
         "hidden": false
       },
       {
@@ -515,7 +515,7 @@ const getLoginUser = (options) => {
         "id": "1265474261896806413",
         "pid": "1265474261896806402",
         "name": "sys_org_mgr",
-        "component": "system/org/index",
+        "component": "system/paiban/index",
         "redirect": "",
         "meta": {
           "title": "排班管理",
@@ -524,7 +524,7 @@ const getLoginUser = (options) => {
           "target": null,
           "link": null
         },
-        "path": "/org",
+        "path": "/paiban",
         "hidden": false
       },
       {

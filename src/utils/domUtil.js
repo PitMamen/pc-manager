@@ -16,4 +16,5 @@ export const setDocumentTitle = function (title) {
   }
 }
 
-export const domTitle = 'Guns'
+// fixedPart 隐藏标题后缀
+export const domTitle = '网数'

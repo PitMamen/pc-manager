@@ -52,6 +52,14 @@ export function uploadPaiban(parameter) {
   })
 }
 
+export function getPaibans(parameter) {
+  return axios({
+    url: '/schedule/qryDoctorSchedule',
+    method: 'get',
+    params: parameter
+  })
+}
+
 export function deletePaiban(id) {
   return axios({
     url: '/schedule/delDoctorSchedule',
