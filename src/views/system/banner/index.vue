@@ -1,7 +1,8 @@
 <template>
   <a-card :bordered="false">
     <div class="table-operator"  >
-      <a-button type="primary" icon="plus" @click="$refs.addForm.add()">新增</a-button>
+      <a-button type="primary" icon="" @click="$refs.addForm.add()">新增</a-button>
+      <a-button type="primary" icon="" @click="batchDelete()">删除</a-button>
     </div>
         <s-table
           ref="table"
@@ -10,6 +11,7 @@
           :data="loadData"
           :alert="true"
           :rowKey="(record) => record.id"
+          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         >
 
           <span slot="action" slot-scope="text, record">
@@ -45,7 +47,7 @@
 
 <script>
   import { STable } from '@/components'
-  import { getBannerPage,bannerDelete,moveDown,moveUp,setHidden   } from '@/api/modular/system/banner'
+  import { getBannerPage,bannerDelete,moveDown,moveUp,setHidden,batchDelete   } from '@/api/modular/system/banner'
   import addForm from './addForm'
   import editForm from './editForm'
 
@@ -101,6 +103,19 @@
         })
     },
     methods: {
+      batchDelete(){
+        var ids=this.selectedRowKeys
+        batchDelete(ids).then((res)=>{
+          if(res.success) {
+            this.$message.success('删除成功')
+            this.$refs.table.refresh()
+          }else{
+            this.$message.error('删除失败：'+res.message)
+          }
+        }).catch((err)=>{
+          this.$message.error('删除错误：'+err.message)
+        })
+      },
       bannerDelete(record){
         bannerDelete(record).then((res)=>{
           if(res.success) {

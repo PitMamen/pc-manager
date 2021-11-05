@@ -78,12 +78,6 @@ export function moveDown (parameter) {
   })
 }
 
-/**
- * 删除角色
- *
- * @author yubaoshan
- * @date 2020/5/6 17:51
- */
 export function bannerDelete (parameter) {
   return axios({
     url: preUrl + '/banner/delBanner?id=' + parameter.id,
@@ -91,3 +85,14 @@ export function bannerDelete (parameter) {
     data: parameter
   })
 }
+
+export function batchDelete (parameter) {
+  return axios({
+    url: preUrl + '/banner/delBanners',
+    method: 'post',
+    data: parameter
+  })
+}
+
+
+

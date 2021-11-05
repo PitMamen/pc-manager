@@ -71,399 +71,143 @@ const getLoginUser = (options) => {
     "lastLoginBrowser": "Chrome",
     "lastLoginOs": "Windows 10 or Windows Server 2016",
     "loginEmpInfo": {
-        "jobNum": null,
-        "orgId": null,
-        "orgName": null,
-        "extOrgPos": [],
-        "positions": []
+      "jobNum": null,
+      "orgId": null,
+      "orgName": null,
+      "extOrgPos": [],
+      "positions": []
     },
     "apps": [
-        {
-            "code": "system",
-            "name": "排班管理",
-            "active": true
-        }
-        ,
-        {
-            "code": "business",
-            "name": "内容管理",
-            "active": false
-        }
+      {
+          "code": "system",
+          "name": "排班管理",
+          "active": true
+      }
+      ,
+      {
+          "code": "business",
+          "name": "内容管理",
+          "active": false
+      }
     ],
     "roles": [],
     "permissions": [],
     "menus": [
-        {
-            "id": "1264622039642255361",
-            "pid": "0",
-            "name": "system_index",
-            "component": "RouteView",
-            "redirect": "/analysis",
-            "meta": {
-                "title": "主控面板",
-                "icon": "home",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/",
-            "hidden": false
-        },
-        {
-            "id": "1264622671778394114",
-            "pid": "1264622039642255361",
-            "name": "system_index_dashboard",
-            "component": "system/dashboard/Analysis",
-            "redirect": "",
-            "meta": {
-                "title": "分析页",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "analysis",
-            "hidden": false
-        },
-        {
-            "id": "1264620409496645634",
-            "pid": "1264619904766685186",
-            "name": "system_tools_config",
-            "component": "system/config/index",
-            "redirect": "",
-            "meta": {
-                "title": "系统配置",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/config",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806402",
-            "pid": "0",
-            "name": "sys_mgr",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "排版管理",
-                "icon": "team",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/sys",
-            "hidden": false
-        },
-        {
-            "id": "1283308304890847233",
-            "pid": "0",
-            "name": "auth_manager",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "权限管理",
-                "icon": "safety-certificate",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/auth",
-            "hidden": false
-        },
-        {
-            "id": "1264619904766685186",
-            "pid": "0",
-            "name": "system_tools",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "开发管理",
-                "icon": "euro",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/tools",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806439",
-            "pid": "0",
-            "name": "sys_log_mgr",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "日志管理",
-                "icon": "read",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/log",
-            "hidden": false
-        },
-        {
-            "id": "1268815024873418753",
-            "pid": "0",
-            "name": "sys_monitor_mgr",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "系统监控",
-                "icon": "deployment-unit",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/monitor",
-            "hidden": false
-        },
-        {
-            "id": "1277507562966740993",
-            "pid": "0",
-            "name": "sys_notice",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "通知公告",
-                "icon": "sound",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/notice",
-            "hidden": false
-        },
-        {
-            "id": "1275723127652982786",
-            "pid": "0",
-            "name": "sys_file_mgr",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "文件管理",
-                "icon": "file",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/file",
-            "hidden": false
-        },
-        {
-            "id": "1278256363012624386",
-            "pid": "0",
-            "name": "sys_timers",
-            "component": "PageView",
-            "redirect": "",
-            "meta": {
-                "title": "定时任务",
-                "icon": "dashboard",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/timers",
-            "hidden": false
-        },
-        {
-            "id": "1278534949191852033",
-            "pid": "1264619904766685186",
-            "name": "sys_email_mgr",
-            "component": "system/email/index",
-            "redirect": "",
-            "meta": {
-                "title": "邮件发送",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/email",
-            "hidden": false
-        },
-        {
-            "id": "1275723575222968321",
-            "pid": "1275723127652982786",
-            "name": "sys_file_mgr_sys_file",
-            "component": "system/file/index",
-            "redirect": "",
-            "meta": {
-                "title": "系统文件",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/file",
-            "hidden": false
-        },
-        {
-            "id": "1264623145550196737",
-            "pid": "1264622039642255361",
-            "name": "system_index_workplace",
-            "component": "system/dashboard/Workplace",
-            "redirect": "",
-            "meta": {
-                "title": "工作台",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "workplace",
-            "hidden": false
-        },
-        {
-            "id": "1277508198718369793",
-            "pid": "1277507562966740993",
-            "name": "sys_notice_mgr",
-            "component": "system/notice/index",
-            "redirect": "",
-            "meta": {
-                "title": "公告管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/notice",
-            "hidden": false
-        },
-        {
-            "id": "1278543148905136130",
-            "pid": "1264619904766685186",
-            "name": "sys_swagger_mgr",
-            "component": "Iframe",
-            "redirect": "",
-            "meta": {
-                "title": "接口文档",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": "http://localhost:82/doc.html"
-            },
-            "path": "/swagger",
-            "hidden": false
-        },
-        {
-            "id": "1278256750994132994",
-            "pid": "1278256363012624386",
-            "name": "sys_timers_mgr",
-            "component": "system/timers/index",
-            "redirect": "",
-            "meta": {
-                "title": "任务管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/timers",
-            "hidden": false
-        },
-        {
-            "id": "1268815479720521730",
-            "pid": "1268815024873418753",
-            "name": "sys_monitor_mgr_machine_monitor",
-            "component": "system/machine/index",
-            "redirect": "",
-            "meta": {
-                "title": "服务监控",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/machine",
-            "hidden": false
-        },
-        {
-            "id": "1268815296198750210",
-            "pid": "1268815024873418753",
-            "name": "sys_monitor_mgr_online_user",
-            "component": "system/onlineUser/index",
-            "redirect": "",
-            "meta": {
-                "title": "在线用户",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/onlineUser",
-            "hidden": false
-        },
-        {
-            "id": "1277153538518061058",
-            "pid": "1268815024873418753",
-            "name": "sys_monitor_mgr_druid",
-            "component": "Iframe",
-            "redirect": "",
-            "meta": {
-                "title": "数据监控",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": "http://localhost:82/druid/login.html"
-            },
-            "path": "/druid",
-            "hidden": false
-        },
-        {
-            "id": "1278538938717347842",
-            "pid": "1264619904766685186",
-            "name": "sys_sms_mgr",
-            "component": "system/sms/index",
-            "redirect": "",
-            "meta": {
-                "title": "短信管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/sms",
-            "hidden": false
-        },
-        {
-            "id": "1277520397092302850",
-            "pid": "1277507562966740993",
-            "name": "sys_notice_mgr_received",
-            "component": "system/noticeReceived/index",
-            "redirect": "",
-            "meta": {
-                "title": "已收公告",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/noticeReceived",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806403",
-            "pid": "1265474261896806402",
-            "name": "scheduler",
-            "component": "system/scheduler/index",
-            "redirect": "",
-            "meta": {
-                "title": "班次管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/scheduler",
-            "hidden": false
-        },
+      // {
+      //     "id": "1264622039642255361",
+      //     "pid": "0",
+      //     "name": "system_index",
+      //     "component": "RouteView",
+      //     "redirect": "/analysis",
+      //     "meta": {
+      //         "title": "主控面板",
+      //         "icon": "home",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1264622671778394114",
+      //     "pid": "1264622039642255361",
+      //     "name": "system_index_dashboard",
+      //     "component": "system/dashboard/Analysis",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "分析页",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "analysis",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1264620409496645634",
+      //     "pid": "1264619904766685186",
+      //     "name": "system_tools_config",
+      //     "component": "system/config/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "系统配置",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/config",
+      //     "hidden": false
+      // },
       {
-        "id": "126547426189680640123",
-        "pid": "1265474261896806402",
+        "id": "1265474261896806402",
+        "pid": "0",
+        "name": "sys_mgr",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "排版管理",
+          "icon": "team",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/sys",
+        "hidden": false
+      },
+      {
+        "id": "1283308304890847233",
+        "pid": "0",
+        "name": "auth_manager",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "内容管理",
+          "icon": "safety-certificate",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/auth",
+        "hidden": false
+      },
+      // {
+      //   "id": "1265474261896806408",
+      //   "pid": "1283308304890847233",
+      //   "name": "sys_app_mgr",
+      //   "component": "system/app/index",
+      //   "redirect": "",
+      //   "meta": {
+      //     "title": "应用管理",
+      //     "icon": "",
+      //     "show": true,
+      //     "target": null,
+      //     "link": null
+      //   },
+      //   "path": "/app",
+      //   "hidden": false
+      // },
+      {
+        "id": "12654742618968064082",
+        "pid": "1283308304890847233",
+        "name": "sys_app_mgr",
+        "component": "system/app/index",
+        "redirect": "",
+        "meta": {
+          "title": "问卷管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/app",
+        "hidden": false
+      },
+      {
+        "id": "1265474261896806401235",
+        "pid": "1283308304890847233",
         "name": "banner",
         "component": "system/banner/index",
         "redirect": "",
@@ -477,134 +221,409 @@ const getLoginUser = (options) => {
         "path": "/banner",
         "hidden": false
       },
-        {
-            "id": "1265474261896806408",
-            "pid": "1283308304890847233",
-            "name": "sys_app_mgr",
-            "component": "system/app/index",
-            "redirect": "",
-            "meta": {
-                "title": "应用管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/app",
-            "hidden": false
+      // {
+      //     "id": "1264619904766685186",
+      //     "pid": "0",
+      //     "name": "system_tools",
+      //     "component": "PageView",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "开发管理",
+      //         "icon": "euro",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/tools",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1265474261896806439",
+      //     "pid": "0",
+      //     "name": "sys_log_mgr",
+      //     "component": "PageView",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "日志管理",
+      //         "icon": "read",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/log",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1268815024873418753",
+      //     "pid": "0",
+      //     "name": "sys_monitor_mgr",
+      //     "component": "PageView",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "系统监控",
+      //         "icon": "deployment-unit",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/monitor",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1277507562966740993",
+      //     "pid": "0",
+      //     "name": "sys_notice",
+      //     "component": "PageView",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "通知公告",
+      //         "icon": "sound",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/notice",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1275723127652982786",
+      //     "pid": "0",
+      //     "name": "sys_file_mgr",
+      //     "component": "PageView",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "文件管理",
+      //         "icon": "file",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/file",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1278256363012624386",
+      //     "pid": "0",
+      //     "name": "sys_timers",
+      //     "component": "PageView",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "定时任务",
+      //         "icon": "dashboard",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/timers",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1278534949191852033",
+      //     "pid": "1264619904766685186",
+      //     "name": "sys_email_mgr",
+      //     "component": "system/email/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "邮件发送",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/email",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1275723575222968321",
+      //     "pid": "1275723127652982786",
+      //     "name": "sys_file_mgr_sys_file",
+      //     "component": "system/file/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "系统文件",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/file",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1264623145550196737",
+      //     "pid": "1264622039642255361",
+      //     "name": "system_index_workplace",
+      //     "component": "system/dashboard/Workplace",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "工作台",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "workplace",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1277508198718369793",
+      //     "pid": "1277507562966740993",
+      //     "name": "sys_notice_mgr",
+      //     "component": "system/notice/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "公告管理",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/notice",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1278543148905136130",
+      //     "pid": "1264619904766685186",
+      //     "name": "sys_swagger_mgr",
+      //     "component": "Iframe",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "接口文档",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": "http://localhost:82/doc.html"
+      //     },
+      //     "path": "/swagger",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1278256750994132994",
+      //     "pid": "1278256363012624386",
+      //     "name": "sys_timers_mgr",
+      //     "component": "system/timers/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "任务管理",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/timers",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1268815479720521730",
+      //     "pid": "1268815024873418753",
+      //     "name": "sys_monitor_mgr_machine_monitor",
+      //     "component": "system/machine/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "服务监控",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/machine",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1268815296198750210",
+      //     "pid": "1268815024873418753",
+      //     "name": "sys_monitor_mgr_online_user",
+      //     "component": "system/onlineUser/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "在线用户",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/onlineUser",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1277153538518061058",
+      //     "pid": "1268815024873418753",
+      //     "name": "sys_monitor_mgr_druid",
+      //     "component": "Iframe",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "数据监控",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": "http://localhost:82/druid/login.html"
+      //     },
+      //     "path": "/druid",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1278538938717347842",
+      //     "pid": "1264619904766685186",
+      //     "name": "sys_sms_mgr",
+      //     "component": "system/sms/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "短信管理",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/sms",
+      //     "hidden": false
+      // },
+      // {
+      //     "id": "1277520397092302850",
+      //     "pid": "1277507562966740993",
+      //     "name": "sys_notice_mgr_received",
+      //     "component": "system/noticeReceived/index",
+      //     "redirect": "",
+      //     "meta": {
+      //         "title": "已收公告",
+      //         "icon": "",
+      //         "show": true,
+      //         "target": null,
+      //         "link": null
+      //     },
+      //     "path": "/noticeReceived",
+      //     "hidden": false
+      // },
+      {
+        "id": "1265474261896806403",
+        "pid": "1265474261896806402",
+        "name": "scheduler",
+        "component": "system/scheduler/index",
+        "redirect": "",
+        "meta": {
+          "title": "班次管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
         },
-        {
-            "id": "1265474261896806413",
-            "pid": "1265474261896806402",
-            "name": "sys_org_mgr",
-            "component": "system/org/index",
-            "redirect": "",
-            "meta": {
-                "title": "排班管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/org",
-            "hidden": false
+        "path": "/scheduler",
+        "hidden": false
+      },
+
+
+      {
+        "id": "1265474261896806413",
+        "pid": "1265474261896806402",
+        "name": "sys_org_mgr",
+        "component": "system/org/index",
+        "redirect": "",
+        "meta": {
+          "title": "排班管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
         },
-        {
-            "id": "1265474261896806419",
-            "pid": "1265474261896806402",
-            "name": "sys_pos_mgr",
-            "component": "system/pos/index",
-            "redirect": "",
-            "meta": {
-                "title": "医生管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/pos",
-            "hidden": false
+        "path": "/org",
+        "hidden": false
+      },
+      {
+        "id": "1265474261896806419",
+        "pid": "1265474261896806402",
+        "name": "sys_pos_mgr",
+        "component": "system/pos/index",
+        "redirect": "",
+        "meta": {
+          "title": "医生管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
         },
-        {
-            "id": "1265474261896806424",
-            "pid": "1283308304890847233",
-            "name": "sys_menu_mgr",
-            "component": "system/menu/index",
-            "redirect": "",
-            "meta": {
-                "title": "菜单管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/menu",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806430",
-            "pid": "1283308304890847233",
-            "name": "sys_role_mgr",
-            "component": "system/role/index",
-            "redirect": "",
-            "meta": {
-                "title": "角色管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/role",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806440",
-            "pid": "1265474261896806439",
-            "name": "sys_log_mgr_vis_log",
-            "component": "system/log/vislog/index",
-            "redirect": "",
-            "meta": {
-                "title": "访问日志",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/vislog",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806441",
-            "pid": "1265474261896806439",
-            "name": "sys_log_mgr_op_log",
-            "component": "system/log/oplog/index",
-            "redirect": "",
-            "meta": {
-                "title": "操作日志",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/oplog",
-            "hidden": false
-        },
-        {
-            "id": "1265474261896806442",
-            "pid": "1264619904766685186",
-            "name": "sys_dict_mgr",
-            "component": "system/dict/index",
-            "redirect": "",
-            "meta": {
-                "title": "字典管理",
-                "icon": "",
-                "show": true,
-                "target": null,
-                "link": null
-            },
-            "path": "/dict",
-            "hidden": false
-        }
+        "path": "/pos",
+        "hidden": false
+      },
+
+      //   {
+      //       "id": "1265474261896806424",
+      //       "pid": "1283308304890847233",
+      //       "name": "sys_menu_mgr",
+      //       "component": "system/menu/index",
+      //       "redirect": "",
+      //       "meta": {
+      //           "title": "菜单管理",
+      //           "icon": "",
+      //           "show": true,
+      //           "target": null,
+      //           "link": null
+      //       },
+      //       "path": "/menu",
+      //       "hidden": false
+      //   },
+      //   {
+      //       "id": "1265474261896806430",
+      //       "pid": "1283308304890847233",
+      //       "name": "sys_role_mgr",
+      //       "component": "system/role/index",
+      //       "redirect": "",
+      //       "meta": {
+      //           "title": "角色管理",
+      //           "icon": "",
+      //           "show": true,
+      //           "target": null,
+      //           "link": null
+      //       },
+      //       "path": "/role",
+      //       "hidden": false
+      //   },
+      //   {
+      //       "id": "1265474261896806440",
+      //       "pid": "1265474261896806439",
+      //       "name": "sys_log_mgr_vis_log",
+      //       "component": "system/log/vislog/index",
+      //       "redirect": "",
+      //       "meta": {
+      //           "title": "访问日志",
+      //           "icon": "",
+      //           "show": true,
+      //           "target": null,
+      //           "link": null
+      //       },
+      //       "path": "/vislog",
+      //       "hidden": false
+      //   },
+      //   {
+      //       "id": "1265474261896806441",
+      //       "pid": "1265474261896806439",
+      //       "name": "sys_log_mgr_op_log",
+      //       "component": "system/log/oplog/index",
+      //       "redirect": "",
+      //       "meta": {
+      //           "title": "操作日志",
+      //           "icon": "",
+      //           "show": true,
+      //           "target": null,
+      //           "link": null
+      //       },
+      //       "path": "/oplog",
+      //       "hidden": false
+      //   },
+      //   {
+      //       "id": "1265474261896806442",
+      //       "pid": "1264619904766685186",
+      //       "name": "sys_dict_mgr",
+      //       "component": "system/dict/index",
+      //       "redirect": "",
+      //       "meta": {
+      //           "title": "字典管理",
+      //           "icon": "",
+      //           "show": true,
+      //           "target": null,
+      //           "link": null
+      //       },
+      //       "path": "/dict",
+      //       "hidden": false
+      //   }
     ],
     "dataScopes": [],
     "tenants": null,
@@ -616,8 +635,8 @@ const getLoginUser = (options) => {
     "credentialsNonExpired": true,
     "accountNonLocked": true
   }
-console.log('mock: body getLoginUser')
-return builder(loginUser,"",200)
+  console.log('mock: body getLoginUser')
+  return builder(loginUser,"",200)
 }
 
 Mock.mock('/api/login', 'post', login2)

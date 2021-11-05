@@ -4,25 +4,27 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.png" class="logo" alt="logo">
-            <span class="title">Guns快速开发平台</span>
+<!--            <img src="~@/assets/logo.png" class="logo" alt="logo">-->
+            <span class="title">互联网医院后台</span>
           </a>
         </div>
         <div class="desc">
-          Guns 是华夏最具影响力的 Web 快速开发平台
+<!--          Guns 是华夏最具影响力的 Web 快速开发平台-->
         </div>
       </div>
 
       <route-view></route-view>
 
       <div class="footer">
-        <div class="links">
-          <a href="_self">帮助</a>
-          <a href="_self">隐私</a>
-          <a href="_self">条款</a>
-        </div>
+<!--        <div class="links">-->
+<!--          <a href="_self">帮助</a>-->
+<!--          <a href="_self">隐私</a>-->
+<!--          <a href="_self">条款</a>-->
+<!--        </div>-->
         <div class="copyright">
-          Copyright © 2020 <a target="_blank" href="https://www.stylefeng.cn/">stylefeng</a> All rights reserved. Guns-Seperation v1.1.1
+<!--          Copyright © 2020 <a target="_blank" href="https://www.stylefeng.cn/">stylefeng</a> All rights reserved. Guns-Seperation v1.1.1-->
+
+          湖南网数科技
         </div>
       </div>
     </div>
