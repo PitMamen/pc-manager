@@ -18,7 +18,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Guns快速开发平台',
+      default: '互联网医院后台',
       required: false
     },
     showTitle: {

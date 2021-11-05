@@ -15,7 +15,7 @@
           <span slot="action" slot-scope="text, record">
             <a  @click="$refs.editForm.edit(record)">编辑</a>
             <a-divider type="vertical" />
-             <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => schedulerDelete(record)">
+             <a-popconfirm placement="topRight" title="您是否确认删除本班次？" @confirm="() => schedulerDelete(record)">
                   <a>删除</a>
                   </a-popconfirm>
           </span>
