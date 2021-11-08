@@ -50,7 +50,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[0], record, index)" />
               </div>
             </div>
@@ -84,7 +84,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[1], record, index)" />
               </div>
             </div>
@@ -117,7 +117,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[2], record, index)" />
               </div>
             </div>
@@ -150,7 +150,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[3], record, index)" />
               </div>
             </div>
@@ -183,7 +183,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[4], record, index)" />
               </div>
             </div>
@@ -216,7 +216,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[5], record, index)" />
               </div>
             </div>
@@ -249,7 +249,7 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}
+                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
                 <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[6], record, index)" />
               </div>
             </div>
@@ -798,7 +798,7 @@ button {
 }
 
 .div-pb-in {
-  width: 92px;
+  width: 98px;
   display: flex;
   flex-direction: column;
   text-align: center;
@@ -808,7 +808,7 @@ button {
   text-align: center;
   font-size: 10px;
   margin-top: 2px;
-  width: 92px;
+  width: 98px;
   color: #333;
   border: 1px dashed #d9d9d9;
 }
