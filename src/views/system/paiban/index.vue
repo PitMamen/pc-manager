@@ -50,20 +50,15 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
-                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[0], record, index)" />
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[0], record, index)" />
               </div>
             </div>
             <!-- 添加医生，传入日期和班次id() -->
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[0],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[0], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -84,19 +79,14 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
-                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[1], record, index)" />
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[1], record, index)" />
               </div>
             </div>
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[1],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[1], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -117,19 +107,14 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
-                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[2], record, index)" />
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[2], record, index)" />
               </div>
             </div>
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[2],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[2], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -150,19 +135,14 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
-                <a-icon style="margin-left:8px" type="close" @click="onDeleteDoctor(thisWeekData[3], record, index)" />
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
+                <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[3], record, index)" />
               </div>
             </div>
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[3],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[3], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -183,19 +163,14 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
                 <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[4], record, index)" />
               </div>
             </div>
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[4],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[4], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -216,19 +191,14 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
                 <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[5], record, index)" />
               </div>
             </div>
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[5],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[5], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -249,19 +219,14 @@
               :value="item.doctorInfo.xm"
             >
               <div class="tag-paiban">
-                {{ item.doctorInfo.xm }}( {{item.numberEncounters}})
+                {{ item.doctorInfo.xm }}( {{ item.numberEncounters }})
                 <a-icon style="margin-left: 8px" type="close" @click="onDeleteDoctor(thisWeekData[6], record, index)" />
               </div>
             </div>
             <a
               class="a-add"
               @click="
-                $refs.chooseDoctor.add(
-                  thisWeekData[6],
-                  tableData.indexOf(record),
-                  paibanData.yljgdm,
-                  paibanData.departmentCode
-                )
+                onAddDocClick(thisWeekData[6], tableData.indexOf(record), paibanData.yljgdm, paibanData.departmentCode)
               "
               >+ 添加医生</a
             >
@@ -480,6 +445,24 @@ export default {
       this.thisWeekData = newWeekData
       this.tableData = []
       this.processData(this.savedDatas)
+    },
+
+    /**
+ *                 $refs.chooseDoctor.add(
+                  thisWeekData[6],
+                  tableData.indexOf(record),
+                  paibanData.yljgdm,
+                  paibanData.departmentCode
+                )
+ */
+    onAddDocClick(date, index, yljgdm, departmentCode) {
+      console.log("date",(new Date(date)).getTime() +"")
+      console.log("today",new Date().getTime() +"")
+      if ((new Date(date)).getTime() <= new Date().getTime()) {
+        this.$message.error('只可添加今日之后的排班')
+        return
+      }
+      this.$refs.chooseDoctor.add(date, index, yljgdm, departmentCode)
     },
 
     //先获取所有的班次数据，班次数据再获取所有的日期数据，赋值出来到表格

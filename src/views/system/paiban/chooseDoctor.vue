@@ -15,6 +15,7 @@
               class="global-search"
               size="large"
               style="width: 100%"
+              v-model="mySelect"
               placeholder="请输入并选择医生"
               option-label-prop="title"
               @select="onSelect"
@@ -56,7 +57,7 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-
+      mySelect: '',
       visible: false,
       doctorDatas: [],
       confirmLoading: false,
@@ -74,7 +75,13 @@ export default {
   methods: {
     //初始化方法 传入日期，行数，医疗机构代码，所属科室
     add(date, rowIndex, yljgdm, ssks) {
-      console.log('add rowIndex',rowIndex)
+      this.chooseDocId = ''
+      this.chooseDocRank = ''
+      this.chooseDocName = ''
+      this.consultNo = ''
+      this.mySelect = ''
+
+      console.log('add rowIndex', rowIndex)
       if (!ssks) {
         this.$message.error('请先选择科室')
         return
@@ -84,7 +91,7 @@ export default {
       this.rowIndex = rowIndex
       this.visible = true
       this.formLoading = true
-      this.parameter = { yljgdm: yljgdm, ssks: ssks }
+      this.parameter = { yljgdm: yljgdm, ssks: ssks, activeFlag: 1 }
 
       this.getDoctorData(this.parameter)
       console.log('date', date + '***' + rowIndex + '***' + yljgdm + '***' + ssks)
@@ -96,6 +103,7 @@ export default {
 
     //autocomplete回调，选中的医生id，需要找出来插入到
     onSelect(s1) {
+      console.log('this.mySelect', this.mySelect)
       for (let i = 0; i < this.doctorDatas.length; i++) {
         if (this.doctorDatas[i].id == s1) {
           this.chooseDocId = this.doctorDatas[i].gh

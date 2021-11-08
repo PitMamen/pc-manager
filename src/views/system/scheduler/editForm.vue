@@ -52,7 +52,7 @@
         >
 
           <a-input style="display: none" placeholder="请输入班次时长" v-decorator="['schePreriod']" />
-          <span id="sp"></span>
+          <span id="sp">{{periodStr}}</span>
         </a-form-item>
 
         <a-form-item
@@ -80,6 +80,7 @@
           xs: { span: 24 },
           sm: { span: 5 }
         },
+        periodStr:'',
         wrapperCol: {
           xs: { span: 24 },
           sm: { span: 15 }
@@ -95,6 +96,7 @@
       moment,
       //初始化方法
       edit (record) {
+        this.periodStr = ""
         this.visible = true
         setTimeout(()=>{
           var str=record.schePreriod
@@ -103,6 +105,8 @@
           this.form.getFieldDecorator('startTime',{initialValue: moment(startTime,'HH:mm') })
           this.form.getFieldDecorator('endTime',{initialValue:moment(endTime,'HH:mm')  })
           document.getElementById("sp").innerHTML=record.scheTimes
+          this.periodStr = record.scheTimes
+          console.log('scheTimes',record.scheTimes)
           this.form.setFieldsValue(
             {
               id:record.id,
@@ -131,7 +135,8 @@
             this.form.setFieldsValue({
               scheTimes: b
             })
-            document.getElementById("sp").innerHTML=b
+            this.periodStr = b
+            // document.getElementById("sp").innerHTML=b
           }
         }
       },
@@ -154,7 +159,9 @@
             this.form.setFieldsValue({
               scheTimes: b
             })
-            document.getElementById("sp").innerHTML=b
+            this.periodStr = b
+            // document.getElementById("sp").innerHTML=b
+            
           }
         }
       },

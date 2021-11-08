@@ -85,7 +85,7 @@ const vueConfig = {
   },
 
   devServer: {
-    port: 8080,
+    port: 8089,
     proxy: {
       '/api/bdcApi': {
         target: 'http://36.158.225.176:8124',

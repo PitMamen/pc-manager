@@ -43,7 +43,7 @@
       >
 
         <a-input style="display: none" placeholder="请输入班次时长" v-decorator="['schePreriod']" />
-      <span id="sp"></span>
+      <span id="sp">{{periodStr}}</span>
       </a-form-item>
 
       <a-form-item
@@ -51,7 +51,7 @@
         :labelCol="labelCol"
         :wrapperCol="wrapperCol"
       >
-        <a-textarea :rows="4" placeholder="请输入至少五个字符"  v-decorator="['scheDesc']"></a-textarea>
+        <a-textarea :rows="4" minlength="10" placeholder="请输入至少五个字符"  v-decorator="['scheDesc', {rules: [{required: true,min:5, message: '请输入至少五个字符'}]}]"></a-textarea>
       </a-form-item>
 
       </a-form>
@@ -71,6 +71,8 @@
           xs: { span: 24 },
           sm: { span: 5 }
         },
+        periodStr:'',
+        periodNum:0,
         wrapperCol: {
           xs: { span: 24 },
           sm: { span: 15 }
@@ -86,6 +88,7 @@
       moment,
       //初始化方法
       add (record) {
+        this.periodStr = ""
         this.visible = true
       },
       timeChangeStart(value,dateString) {
@@ -95,35 +98,51 @@
         if (startTime !== undefined && startTime !== null && endTime !== undefined && endTime !== null) {
           if (startTime.length !== 0 && endTime.length !== 0) {
             var a=startTime + '-' + endTime
-            var b=((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
-              (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2) + '小时'
+            // var b=((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
+            //   (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2) + '小时'
+
+            this.periodNum = ((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
+              (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2)
+            var b=this.periodNum + '小时'
+
             this.form.getFieldDecorator('schePreriod',{initialValue:a })
             this.form.getFieldDecorator('scheTimes',{initialValue:b })
-            document.getElementById("sp").innerHTML=b
+            // document.getElementById("sp").innerHTML=b
+                        this.periodStr = b
           }
         }
       },
       timeChangeEnd(value,dateString) {
+        console.log('timeChangeEnd',value)
+        console.log('timeChangeEnddateString',dateString)
         var startTime =moment(this.form.getFieldValue('startTime')).format("HH:mm")
         var endTime =dateString
         if (startTime !== undefined && startTime !== null && endTime !== undefined && endTime !== null) {
           if (startTime.length !== 0 && endTime.length !== 0) {
             var a=startTime + '-' + endTime
-            var b=((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
-              (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2) + '小时'
+            // var b=((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
+            //   (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2) + '小时'
+            this.periodNum = ((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
+              (parseInt(endTime.substr(3, 2)) - parseInt(startTime.substr(3, 2))) / 60).toFixed(2)
+            var b=this.periodNum + '小时'
             this.form.getFieldDecorator('schePreriod',{initialValue:a })
             this.form.getFieldDecorator('scheTimes',{initialValue:b })
             // this.form.setFieldsValue({
-            //   schePreriod: a
+            //   schePrerio
             // })
             // this.form.setFieldsValue({
             //   scheTimes: b
             // })
-           document.getElementById("sp").innerHTML=b
+          //  document.getElementById("sp").innerHTML=b
+            this.periodStr = b
           }
         }
       },
       handleSubmit () {
+        if (this.periodNum <= 0) {
+          this.$message.error('结束时间需要大于起始时间')
+          return
+        }
         const { form: { validateFields } } = this
         this.confirmLoading = true
         validateFields((errors, values) => {
