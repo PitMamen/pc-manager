@@ -32,8 +32,6 @@
 
         <a-form-item label="摘要" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-textarea :rows="4" placeholder="不能超过200个字" v-decorator="['brief']"></a-textarea>
-
-          <a-input v-decorator="['fileId']" style="display: none" />
           <!--        <a-input  v-decorator="['fileName']" style="display: none"/>-->
           <a-input v-decorator="['linkUrl']" style="display: none" />
           <a-input v-decorator="['previewFileId']" style="display: none" />
@@ -48,6 +46,10 @@
             :headers="headers"
             @change="handleChange"
           >
+            <a-input
+              v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
+              style="display: none"
+            />
             <a-button> <a-icon type="upload" /> 选择文件 </a-button>
           </a-upload>
         </a-form-item>
@@ -81,6 +83,7 @@ export default {
   methods: {
     handleChange(info) {
       if (info.file.response != null) {
+        console.log('info',info)
         var ret = info.file.response
         if (ret.success) {
           this.form.setFieldsValue({
