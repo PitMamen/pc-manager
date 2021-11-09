@@ -39,19 +39,21 @@
         </a-form-item>
 
         <a-form-item label="上传图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-upload
-            name="file"
-            :multiple="false"
-            action="http://192.168.1.122:8071/fileUpload/uploadImgFile"
-            :headers="headers"
-            @change="handleChange"
-          >
-            <a-input
-              v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-              style="display: none"
-            />
-            <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-          </a-upload>
+          <div :key="ImgKey">
+            <a-upload
+              name="file"
+              :multiple="false"
+              action="http://192.168.1.122:8071/fileUpload/uploadImgFile"
+              :headers="headers"
+              @change="handleChange"
+            >
+              <a-input
+                v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
+                style="display: none"
+              />
+              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+            </a-upload>
+          </div>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -73,6 +75,7 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
+      ImgKey:"",
       confirmLoading: false,
       form: this.$form.createForm(this),
       headers: {
@@ -80,10 +83,20 @@ export default {
       },
     }
   },
+  watch: {
+    visible() {
+      if (this.visible) {
+        this.ImgKey = ''
+      } else {
+        this.ImgKey = Math.random()
+      }
+      console.log('this.ImgKey :>> ', this.ImgKey)
+    },
+  },
   methods: {
     handleChange(info) {
       if (info.file.response != null) {
-        console.log('info',info)
+        console.log('info', info)
         var ret = info.file.response
         if (ret.success) {
           this.form.setFieldsValue({

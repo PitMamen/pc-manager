@@ -135,6 +135,10 @@ export default {
 
     handleSubmit() {
       let resultData
+      if (!this.consultNo || this.consultNo <= 0) {
+        this.$message.error("请输入号源！")
+        return
+      }
       if (this.chooseDocId) {
         resultData = {
           date: this.date,
@@ -147,7 +151,7 @@ export default {
         this.visible = false
         this.$emit('ok', resultData)
       } else {
-        this.$message.success('您未选择班次')
+        this.$message.error('请选择医生！')
       }
     },
     handleCancel() {

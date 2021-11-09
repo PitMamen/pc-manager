@@ -251,9 +251,7 @@
         </a-table>
 
         <div class="table-operator" style="margin-top: 30px">
-          <a-button type="primary" icon="plus" @click="$refs.chooseBanci.add(thisWeekData, paibanData.departmentCode)"
-            >添加班次</a-button
-          >
+          <a-button type="primary" icon="plus" @click="onAddBanci">添加班次</a-button>
         </div>
 
         <choose-doctor ref="chooseDoctor" @ok="afterDocChose" />
@@ -389,6 +387,14 @@ export default {
       this.getThisWeekPaibanData(this.paibanData.departmentCode)
     },
 
+    onAddBanci() {
+      if (new Date(this.thisWeekData[6]).getTime() < new Date().getTime()) {
+        this.$message.error('只能添加本周及以后的排班班次！')
+        return
+      }
+      this.$refs.chooseBanci.add(this.thisWeekData, this.paibanData.departmentCode)
+    },
+
     getThisWeekPaibanData(departmentCode) {
       getPaibans({ departmentCode: departmentCode, startDate: this.thisWeekData[0], endDate: this.thisWeekData[6] })
         .then((res) => {
@@ -456,9 +462,9 @@ export default {
                 )
  */
     onAddDocClick(date, index, yljgdm, departmentCode) {
-      console.log("date",(new Date(date)).getTime() +"")
-      console.log("today",new Date().getTime() +"")
-      if ((new Date(date)).getTime() <= new Date().getTime()) {
+      console.log('date', new Date(date).getTime() + '')
+      console.log('today', new Date().getTime() + '')
+      if (new Date(date).getTime() <= new Date().getTime()) {
         this.$message.error('只可添加今日之后的排班')
         return
       }
@@ -540,6 +546,7 @@ export default {
     },
 
     onSelected(departmentCode) {
+      this.tableData = []
       this.getThisWeekPaibanData(departmentCode)
     },
 
@@ -579,31 +586,41 @@ export default {
       let id
       if (date == this.thisWeekData[0]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorMonday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorMonday.splice(index, 1)
       } else if (date == this.thisWeekData[1]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorTuesday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorTuesday.splice(index, 1)
       } else if (date == this.thisWeekData[2]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorWednesday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorWednesday.splice(index, 1)
       } else if (date == this.thisWeekData[3]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorThursday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorThursday.splice(index, 1)
       } else if (date == this.thisWeekData[4]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorFriday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorFriday.splice(index, 1)
       } else if (date == this.thisWeekData[5]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorSaturday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorSaturday.splice(index, 1)
       } else if (date == this.thisWeekData[6]) {
         id = this.tableData[this.tableData.indexOf(record)].doctorSunday[index].id
-        this.tableData[this.tableData.indexOf(record)].doctorSunday.splice(index, 1)
       }
 
+      let _this = this
       deletePaiban(id)
         .then((res) => {
           if (res.success) {
             this.$message.success('删除成功')
+
+            if (date == this.thisWeekData[0]) {
+              this.tableData[this.tableData.indexOf(record)].doctorMonday.splice(index, 1)
+            } else if (date == this.thisWeekData[1]) {
+              this.tableData[this.tableData.indexOf(record)].doctorTuesday.splice(index, 1)
+            } else if (date == this.thisWeekData[2]) {
+              this.tableData[this.tableData.indexOf(record)].doctorWednesday.splice(index, 1)
+            } else if (date == this.thisWeekData[3]) {
+              this.tableData[this.tableData.indexOf(record)].doctorThursday.splice(index, 1)
+            } else if (date == this.thisWeekData[4]) {
+              this.tableData[this.tableData.indexOf(record)].doctorFriday.splice(index, 1)
+            } else if (date == this.thisWeekData[5]) {
+              this.tableData[this.tableData.indexOf(record)].doctorSaturday.splice(index, 1)
+            } else if (date == this.thisWeekData[6]) {
+              this.tableData[this.tableData.indexOf(record)].doctorSunday.splice(index, 1)
+            }
           } else {
             this.$message.error('删除失败：' + res.message)
           }

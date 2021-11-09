@@ -40,8 +40,8 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
         >
-          <a-time-picker @change="timeChangeStart"    format="HH:mm" v-decorator="['startTime', {rules: [{required: true, message: '请输入开始时间！'}]}]"/>
-          <a-time-picker @change="timeChangeEnd"   format="HH:mm"  v-decorator="['endTime', {rules: [{required: true, message: '请输入结束时间！'}]}]"/>
+          <a-time-picker disabled @change="timeChangeStart"    format="HH:mm" v-decorator="['startTime', {rules: [{required: true, message: '请输入开始时间！'}]}]"/>
+          <a-time-picker disabled @change="timeChangeEnd"   format="HH:mm"  v-decorator="['endTime', {rules: [{required: true, message: '请输入结束时间！'}]}]"/>
           <a-input style="display: none" placeholder="请输入班次时长" v-decorator="['scheTimes']"  />
         </a-form-item>
 

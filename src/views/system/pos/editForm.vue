@@ -114,21 +114,25 @@ export default {
     //初始化方法
     edit(record) {
       this.visible = true
-      if (record.xb == '男' || !record.xb) {
-        record.xb = 1
-      } else {
-        record.xb = 2
-      }
+      console.log('record', record)
       setTimeout(() => {
         this.form.setFieldsValue({
           id: record.id,
           xm: record.xm,
           jg: '湘雅附二医院',
-          xb: record.xb,
-          code: record.code,
-          sort: record.sort,
-          remark: record.remark,
+          ssks: record.ssks,
+          zhic: record.zhic,
+          tel: record.tel,
         })
+        if (record.xb == '男' || !record.xb) {
+          this.form.setFieldsValue({
+            xb: 1,
+          })
+        } else {
+          this.form.setFieldsValue({
+            xb: 2,
+          })
+        }
       }, 100)
     },
     onSelected(ssks) {
