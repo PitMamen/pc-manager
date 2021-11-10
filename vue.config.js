@@ -35,7 +35,7 @@ const vueConfig = {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     // if prod, add externals
-    externals: isProd ? assetsCDN.externals : {}
+    externals: {}
   },
 
   chainWebpack: (config) => {
@@ -60,12 +60,12 @@ const vueConfig = {
 
     // if prod is on
     // assets require on cdn
-    if (isProd) {
-      config.plugin('html').tap(args => {
-        args[0].cdn = assetsCDN
-        return args
-      })
-    }
+    // if (isProd) {
+    //   config.plugin('html').tap(args => {
+    //     args[0].cdn = assetsCDN
+    //     return args
+    //   })
+    // }
   },
 
   css: {
@@ -88,7 +88,7 @@ const vueConfig = {
     port: 8089,
     proxy: {
       '/api/bdcApi': {
-        target: 'http://36.158.225.176:8124',
+        target: 'http://36.158.225.176/health-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -96,7 +96,7 @@ const vueConfig = {
         }
       },
       '/api': {
-        target: 'http://192.168.1.122:8072',
+        target: 'http://192.168.1.122/manager-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
