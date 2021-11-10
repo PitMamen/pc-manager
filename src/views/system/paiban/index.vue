@@ -442,7 +442,8 @@ export default {
           doctorRank: this.savedDatas[i].doctorInfo.zhic,
           yljgdm: '444885559',
           numberEncounters: this.savedDatas[i].numberEncounters,
-          periodTime: this.savedDatas[i].periodTime,
+          // periodTime: this.savedDatas[i].periodTime,
+          periodTime: this.savedDatas[i].schedulePeriodsInfo.scheName,
           schedulingDate: this.formatDate(this.savedDatas[i].schedulingDate),
         }
         this.copyThisWeekUpload(params)
@@ -497,6 +498,7 @@ export default {
         //正常添加的periodTime是schePreriod字段，所以需要赋值
         //periodTime: this.tableData[resultData.rowIndex].schePreriod
         this.tableData[x].schePreriod = banciDatasIn[0].schedulePeriodsInfo.schePreriod
+        this.tableData[x].scheName = banciDatasIn[0].schedulePeriodsInfo.scheName
         console.log('name', this.tableData[x].name + '***' + this.tableData[x].schePreriod)
         for (let z = 0; z < banciDatasIn.length; z++) {
           if (this.formatDate(new Date(banciDatasIn[z].schedulingDate)) == this.thisWeekData[0]) {
@@ -632,6 +634,7 @@ export default {
 
     afterDocChose(resultData) {
       this.resultData = resultData
+      console.log('this.tableData',this.tableData)
       //获取 periodTime,根据rowIndex去获取
       let params = {
         clinicType: '0',
@@ -640,7 +643,8 @@ export default {
         doctorRank: resultData.chooseDocRank,
         yljgdm: '444885559',
         numberEncounters: resultData.consultNo,
-        periodTime: this.tableData[resultData.rowIndex].schePreriod,
+        // periodTime: this.tableData[resultData.rowIndex].schePreriod,
+        periodTime: this.tableData[resultData.rowIndex].scheName,
         schedulingDate: resultData.date,
       }
       uploadPaiban(params)
@@ -740,6 +744,7 @@ export default {
     addName() {
       for (let j = 0; j < this.tableData.length; j++) {
         this.tableData[j].name = this.tableData[j].scheName + '  (' + this.tableData[j].schePreriod + ')'
+        this.tableData[j].scheName = this.tableData[j].scheName
       }
     },
 
