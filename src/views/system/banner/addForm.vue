@@ -40,13 +40,7 @@
 
         <a-form-item label="上传图片" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <div :key="ImgKey">
-            <a-upload
-              name="file"
-              :multiple="false"
-              action="http://192.168.1.122:8071/fileUpload/uploadImgFile"
-              :headers="headers"
-              @change="handleChange"
-            >
+            <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
               <a-input
                 v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
                 style="display: none"
@@ -62,7 +56,7 @@
 
 
 <script>
-import { bannerAdd } from '@/api/modular/system/banner'
+import { bannerAdd, host } from '@/api/modular/system/banner'
 export default {
   data() {
     return {
@@ -75,7 +69,8 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
-      ImgKey:"",
+      ImgKey: '',
+      actionUrl: host + '/fileUpload/uploadImgFile',
       confirmLoading: false,
       form: this.$form.createForm(this),
       headers: {

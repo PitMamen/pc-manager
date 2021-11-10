@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-var preUrl = 'http://192.168.1.122:8072'
 
 /**
  * 获取角色列表
@@ -11,11 +10,13 @@ export function getBannerPage (parameter) {
   var start=parameter.pageNo
   var pageSize=parameter.pageSize
   return axios({
-    url: preUrl + '/banner/qryBanner?start=' + start + '&pageSize=' + pageSize,
+    url: '/banner/qryBanner?start=' + start + '&pageSize=' + pageSize,
     method: 'get',
     data: {}
   })
 }
+
+export const host = 'http://192.168.1.122:8071'
 
 /**
  * 增加角色
@@ -25,7 +26,7 @@ export function getBannerPage (parameter) {
  */
 export function bannerAdd (parameter) {
   return axios({
-    url: preUrl + '/banner/saveBanner',
+    url: '/banner/saveBanner',
     method: 'post',
     data:parameter
   })
@@ -39,7 +40,7 @@ export function bannerAdd (parameter) {
  */
 export function bannerEdit (parameter) {
   return axios({
-    url: preUrl + '/banner/saveBanner',
+    url: '/banner/saveBanner',
     method: 'post',
     data: parameter
   })
@@ -50,7 +51,7 @@ export function setHidden (parameter) {
   obj.isVisible=!parameter.isVisible
 
   return axios({
-    url: preUrl + '/banner/saveBanner',
+    url: '/banner/saveBanner',
     method: 'post',
     data: obj
   })
@@ -61,7 +62,7 @@ export function moveUp (parameter) {
   obj.sortIndex=parameter.sortIndex+1
 
   return axios({
-    url: preUrl + '/banner/saveBanner',
+    url: '/banner/saveBanner',
     method: 'post',
     data: obj
   })
@@ -72,7 +73,7 @@ export function moveDown (parameter) {
   obj.sortIndex=parameter.sortIndex-1
 
   return axios({
-    url: preUrl + '/banner/saveBanner',
+    url: '/banner/saveBanner',
     method: 'post',
     data: obj
   })
@@ -80,7 +81,7 @@ export function moveDown (parameter) {
 
 export function bannerDelete (parameter) {
   return axios({
-    url: preUrl + '/banner/delBanner?id=' + parameter.id,
+    url: '/banner/delBanner?id=' + parameter.id,
     method: 'get',
     data: parameter
   })
@@ -88,7 +89,7 @@ export function bannerDelete (parameter) {
 
 export function batchDelete (parameter) {
   return axios({
-    url: preUrl + '/banner/delBanners',
+    url: '/banner/delBanners',
     method: 'post',
     data: parameter
   })
