@@ -439,7 +439,7 @@ export default {
           clinicType: '0',
           departmentCode: this.paibanData.departmentCode,
           doctorId: this.savedDatas[i].doctorInfo.gh,
-          doctorRank: this.savedDatas[i].zhic,
+          doctorRank: this.savedDatas[i].doctorInfo.zhic,
           yljgdm: '444885559',
           numberEncounters: this.savedDatas[i].numberEncounters,
           periodTime: this.savedDatas[i].periodTime,

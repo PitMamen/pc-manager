@@ -1,5 +1,4 @@
 import { axios } from '@/utils/request'
-var preUrl = 'http://192.168.1.122:8072'
 
 /**
  * 获取角色列表
@@ -11,7 +10,7 @@ export function getSchedulerPeriodPage (parameter) {
   var start=parameter.pageNo
   var pageSize=parameter.pageSize
   return axios({
-    url: preUrl + '/schedule/qrySchedulePeriods?start=' + start + '&pageSize=' + pageSize,
+    url: '/schedule/qrySchedulePeriods?start=' + start + '&pageSize=' + pageSize,
     method: 'post',
     // headers:{'token':token},
     data: {}
@@ -28,7 +27,7 @@ export function schedulerAdd (parameter) {
   delete parameter['startTime']
   delete parameter['endTime']
   return axios({
-    url: preUrl + '/schedule/saveSchedulePeriods',
+    url: '/schedule/saveSchedulePeriods',
     method: 'post',
     data:parameter
   })
@@ -44,7 +43,7 @@ export function schedulerEdit (parameter) {
   delete parameter['startTime']
   delete parameter['endTime']
   return axios({
-    url: preUrl + '/schedule/saveSchedulePeriods',
+    url: '/schedule/saveSchedulePeriods',
     method: 'post',
     data: parameter
   })
@@ -58,7 +57,7 @@ export function schedulerEdit (parameter) {
  */
 export function schedulerDelete (parameter) {
   return axios({
-    url: preUrl + '/schedule/delSchedulePeriods?id=' + parameter.id,
+    url: '/schedule/delSchedulePeriods?id=' + parameter.id,
     method: 'get',
     data: parameter
   })
