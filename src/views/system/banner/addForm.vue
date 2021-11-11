@@ -12,7 +12,7 @@
         <a-form-item label="图片名称" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
             placeholder="输入图片名称，最多80个字"
-            v-decorator="['fileName', { rules: [{ required: true, max: 80, message: '请输入图片名称！' }] }]"
+            v-decorator="['name', { rules: [{ required: true, max: 80, message: '请输入图片名称！' }] }]"
           />
         </a-form-item>
 
@@ -95,13 +95,8 @@ export default {
         var ret = info.file.response
         if (ret.success) {
           this.form.setFieldsValue({
-            fileId: ret.data.id,
-          })
-          this.form.setFieldsValue({
-            fileName: ret.data.id,
-          })
-          this.form.setFieldsValue({
-            linkUrl: ret.data.fileLinkUrl,
+            // 保存的时候fileLinkUrl赋值给fileId上传到后台，列表读取的时候用fileId直接展示图片
+            fileId: ret.data.fileLinkUrl,
           })
           this.form.setFieldsValue({
             previewFileId: ret.data.previewFileId,

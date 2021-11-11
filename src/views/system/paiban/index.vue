@@ -343,6 +343,7 @@ export default {
           scopedSlots: { customRender: 'doctorSunday' },
         },
       ],
+      copyNo: 0,
       tableData: [],
       // tableData: [{ doctorMonday: [], doctorTuesday: [], doctorWednesday: [] , doctorThursday: [] , doctorFriday: [] , doctorSaturday: [] , doctorSunday: []  }],
       resultData: {},
@@ -568,6 +569,8 @@ export default {
       if (this.tableData.length == 0) {
         this.tableData = this.tableData.concat(this.choseBanci)
         this.addName()
+        console.log('tableData', this.tableData)
+        console.log('choseBanci', this.choseBanci)
       } else {
         for (let i = 0; i < this.choseBanci.length; i++) {
           let banciId = this.choseBanci[i].id
@@ -634,7 +637,7 @@ export default {
 
     afterDocChose(resultData) {
       this.resultData = resultData
-      console.log('this.tableData',this.tableData)
+      console.log('this.tableData', this.tableData)
       //获取 periodTime,根据rowIndex去获取
       let params = {
         clinicType: '0',
@@ -678,6 +681,12 @@ export default {
         .then((res) => {
           if (res.success) {
             this.$message.success('复制成功')
+            ++this.copyNo
+            if (this.copyNo == this.savedDatas.length) {
+              this.tableData = []
+              this.getThisWeekPaibanData(this.paibanData.departmentCode)
+              this.copyNo = 0
+            }
           } else {
             // this.$message.error('添加失败：' + res.message)
           }

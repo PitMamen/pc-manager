@@ -15,6 +15,7 @@
 
         <a-form-item label="姓名" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
+            disabled
             placeholder="请输入姓名"
             v-decorator="['xm', { rules: [{ required: true, message: '请输入姓名！' }] }]"
           />

@@ -29,7 +29,7 @@
           </span>
 
           <span slot="photoFlag" slot-scope="text, record">
-            <img :src="record.linkUrl" width="100" height="100" />
+            <img :src="record.fileId" width="100" height="100" />
           </span>
 
           <span slot="visibleFlag" slot-scope="text, record">
@@ -83,9 +83,11 @@
             scopedSlots: { customRender: 'visibleFlag' }
           }
         ],
+        tableDatas:{},
         // 加载数据方法 必须为 Promise 对象
         loadData: parameter => {
           return getBannerPage(Object.assign(parameter, this.queryParam)).then((res) => {
+            this.tableDatas= res.data
             return res.data
           })
         },
@@ -141,6 +143,10 @@
         })
       },
       moveUp(record){
+        if (this.tableDatas.rows.indexOf(record)  == 0) {
+           this.$message.error('第一条不能上移')
+           return
+        }
         moveUp(record).then((res)=>{
           if(res.success) {
             this.$message.success('上移成功')
@@ -153,6 +159,10 @@
         })
       },
       moveDown(record){
+        if (this.tableDatas.rows.indexOf(record) == (this.tableDatas.rows.length-1)) {
+           this.$message.error('最后一条不能下移')
+           return
+        }
         moveDown(record).then((res)=>{
           if(res.success) {
             this.$message.success('下移成功')

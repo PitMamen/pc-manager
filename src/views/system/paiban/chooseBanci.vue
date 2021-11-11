@@ -10,18 +10,20 @@
     <a-spin :spinning="formLoading">
       <a-form :form="form">
         <a-form-item label="班次名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-select
-            mode="multiple"
-            :size="size"
-            placeholder="请选择班次"
-            style="width: 200px"
-            @select="onSelect"
-            @deselect="onDeSelect"
-          >
-            <a-select-option v-for="(item, index) in banciDatas" :key="index" :value="item.id">
-              {{ item.scheName }}
-            </a-select-option>
-          </a-select>
+          <div :key="ImgKey">
+            <a-select
+              mode="multiple"
+              :size="size"
+              placeholder="请选择班次"
+              style="width: 200px"
+              @select="onSelect"
+              @deselect="onDeSelect"
+            >
+              <a-select-option v-for="(item, index) in banciDatas" :key="index" :value="item.id">
+                {{ item.scheName }}
+              </a-select-option>
+            </a-select>
+          </div>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -44,12 +46,23 @@ export default {
       },
       banciDatas: [],
       visible: false,
+      ImgKey: '',
       choseBanci: [],
       confirmLoading: false,
       size: 'default',
       formLoading: true,
       form: this.$form.createForm(this),
     }
+  },
+  watch: {
+    visible() {
+      if (this.visible) {
+        this.ImgKey = ''
+      } else {
+        this.ImgKey = Math.random()
+      }
+      // console.log('this.ImgKey :>> ', this.ImgKey)
+    },
   },
   methods: {
     //初始化方法

@@ -64,6 +64,10 @@ service.interceptors.response.use((response) => {
   return response
   }
   const code = response.data.code
+  // if (code == 302) {
+  //   this.$message.error('登录信息已失效，请重新登录')
+  //   this.$router.push({ name: 'login' })
+  // }
   if (code === 1011006 || code === 1011007 || code === 1011008 || code === 1011009) {
     Modal.error({
       title: '提示：',

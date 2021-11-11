@@ -95,7 +95,7 @@
         // 起止时间
         var startTime =dateString
         var endTime =moment(this.form.getFieldValue('endTime')).format("HH:mm")
-        if (startTime !== undefined && startTime !== null && endTime !== undefined && endTime !== null) {
+        if (startTime !== undefined && startTime !== null && endTime !== undefined && endTime !== null && this.form.getFieldValue('endTime')) {
           if (startTime.length !== 0 && endTime.length !== 0) {
             var a=startTime + '-' + endTime
             // var b=((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
@@ -113,11 +113,9 @@
         }
       },
       timeChangeEnd(value,dateString) {
-        console.log('timeChangeEnd',value)
-        console.log('timeChangeEnddateString',dateString)
         var startTime =moment(this.form.getFieldValue('startTime')).format("HH:mm")
         var endTime =dateString
-        if (startTime !== undefined && startTime !== null && endTime !== undefined && endTime !== null) {
+        if (startTime !== undefined && startTime !== null && endTime !== undefined && endTime !== null && this.form.getFieldValue('startTime')) {
           if (startTime.length !== 0 && endTime.length !== 0) {
             var a=startTime + '-' + endTime
             // var b=((parseInt(endTime.substr(0, 2)) - parseInt(startTime.substr(0, 2))) +
