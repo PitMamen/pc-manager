@@ -64,10 +64,23 @@ service.interceptors.response.use((response) => {
   return response
   }
   const code = response.data.code
-  // if (code == 302) {
-  //   this.$message.error('登录信息已失效，请重新登录')
-  //   this.$router.push({ name: 'login' })
-  // }
+  console.log("response code",code)
+  if (code == 401) {
+    console.log("response code in",code)
+    // this.$message.error('登录信息已失效，请重新登录')
+    // alert('登录信息已失效，请重新登录')
+    // this.$router.push({ name: 'login' })
+
+    Modal.error({
+      title: '提示：',
+      content: response.data.message,
+      okText: '重新登录',
+      onOk: () => {
+      Vue.ls.remove(ACCESS_TOKEN)
+      window.location.reload()
+    }
+  })
+  }
   if (code === 1011006 || code === 1011007 || code === 1011008 || code === 1011009) {
     Modal.error({
       title: '提示：',
