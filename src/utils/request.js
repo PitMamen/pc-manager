@@ -72,7 +72,7 @@ service.interceptors.response.use((response) => {
     // this.$router.push({ name: 'login' })
 
     Modal.error({
-      title: '提示：',
+      title: '提示：登录信息已过期，请重新登录',
       content: response.data.message,
       okText: '重新登录',
       onOk: () => {

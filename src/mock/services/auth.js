@@ -173,6 +173,70 @@ const getLoginUser = (options) => {
         "path": "/auth",
         "hidden": false
       },
+      {
+        "id": "1283308304890847234",
+        "pid": "0",
+        "name": "check_in_manager",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "入院管理",
+          "icon": "safety-certificate",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/auth",
+        "hidden": false
+      },
+      {
+        "id": "12654742618968064055",
+        "pid": "1283308304890847234",
+        "name": "sys_check_in",
+        "component": "system/checkin/index",
+        "redirect": "",
+        "meta": {
+          "title": "入院申请",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/checkin",
+        "hidden": false
+      },
+      {
+        "id": "12654742618968064056",
+        "pid": "1283308304890847234",
+        "name": "sys_checked_list",
+        "component": "system/checked/index",
+        "redirect": "",
+        "meta": {
+          "title": "我处理的申请",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/checked",
+        "hidden": false
+      },
+      {
+        "id": "12654742618968064057",
+        "pid": "1283308304890847234",
+        "name": "sys_check",
+        "component": "system/checkin/check",
+        "redirect": "",
+        "meta": {
+          "title": "处理申请",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/checkin",
+        "hidden": false
+      },
       // {
       //   "id": "1265474261896806408",
       //   "pid": "1283308304890847233",
