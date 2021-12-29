@@ -1,70 +1,346 @@
 <template>
-  <a-card :bordered="false">
-    <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
-      <p class="title">医生列表</p>
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="5" :sm="24">
-            <a-form-item label="医院">
-              <a-select v-model="queryParam.yljgdm" allow-clear placeholder="请选择医院">
-                <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
+  <div class="div-check">
+    <div class="div-part">
+      <p class="p-part-title">患者基本信息</p>
 
-          <a-col :md="5" :sm="24">
-            <a-form-item label="科室">
-              <a-select v-model="queryParam.ssks" allow-clear placeholder="请选择科室">
-                <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
-                  item.yyksmc
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">病历号 :</span>
+          <span class="span-item-value">0229901</span>
+        </div>
 
-          <a-col :md="5" :sm="24">
-            <a-form-item label="姓名">
-              <a-input v-model="queryParam.xm" allow-clear placeholder="请输入姓名 " />
-            </a-form-item>
-          </a-col>
+        <div class="div-right">
+          <span class="span-item-name">流水号 :</span>
+          <span class="span-item-value"> 12122121281882921891</span>
+        </div>
+      </div>
 
-          <a-col :md="(!advanced && 8) || 24" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button style="margin-left: 8px" @click="() => (queryParam = { yljgdm: '444885559' })">重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">患者姓名 :</span>
+          <span class="span-item-value"> 张三</span>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">性别 :</span>
+          <span class="span-item-value"> 男</span>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">身份证号码 :</span>
+          <a-input
+            v-model="checkData.idN"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入身份证号 "
+          />
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">出生日期 :</span>
+          <span class="span-item-value"> 1993-01-01</span>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">年龄 :</span>
+          <span class="span-item-value"> 25</span>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name"><span style="color: red">*</span> 手机号码 :</span>
+          <a-input
+            v-model="checkData.phone"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入手机号码 "
+          />
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name"><span style="color: red">*</span> 紧急联系人 :</span>
+          <a-input
+            v-model="checkData.contact"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入紧急联系人 "
+          />
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name"><span style="color: red">*</span> 联系人电话 :</span>
+          <a-input
+            v-model="checkData.contactNo"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入联系人电话 "
+          />
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-total-one">
+          <span class="span-item-name">现住址 :</span>
+          <a-input
+            v-model="checkData.address"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入现住址 "
+          />
+        </div>
+      </div>
     </div>
 
-    <!-- 去掉勾选框 -->
-    <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-    <s-table
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="action" slot-scope="text, record">
-        <a @click="handleStatus(record)" :style="(record.activeFlag == 0 && { color: '#333' }) || {}">{{
-          record.activeFlag == 1 || record.activeFlag == null ? '启用' : '停用'
-        }}</a>
-        <a-divider type="vertical" />
-        <a v-if="hasPerm('sysPos:edit')" @click="$refs.editForm.edit(record)">编辑</a>
-      </span>
-    </s-table>
+    <!-- 分割线 -->
+    <div class="div-divider"></div>
 
-    <add-form ref="addForm" @ok="handleOk" />
-    <edit-form ref="editForm" @ok="handleOk" />
-  </a-card>
+    <div class="div-part">
+      <p class="p-part-title">入院信息</p>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">门诊科室 :</span>
+          <span class="span-item-value">骨科</span>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">门诊医生 :</span>
+          <span class="span-item-value"> 李凯</span>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-total-one">
+          <span class="span-item-name">入院诊断 :</span>
+          <span class="span-item-value"> 宫颈上皮肉肿瘤1级</span>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">病人来源 :</span>
+          <a-select v-model="checkData.patientSource" allow-clear placeholder="请选择来源">
+            <a-select-option v-for="(item, index) in patientSourceData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">入院情况 :</span>
+          <a-select v-model="checkData.insideStatus" allow-clear placeholder="请选择入院情况">
+            <a-select-option v-for="(item, index) in insideStatusData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">入院途径 :</span>
+          <a-select v-model="checkData.insideMethod" allow-clear placeholder="请选择入院途径">
+            <a-select-option v-for="(item, index) in insideMethodData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">入院方式 :</span>
+          <a-select v-model="checkData.insideType" allow-clear placeholder="请选择入院方式">
+            <a-select-option v-for="(item, index) in insideTypeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分割线 -->
+    <div class="div-divider"></div>
+
+    <div class="div-part">
+      <p class="p-part-title">床位诉求</p>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">病房类型 :</span>
+          <a-select v-model="checkData.roomType" allow-clear placeholder="请选择病房类型">
+            <a-select-option v-for="(item, index) in roomTypeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">病床类型 :</span>
+          <a-select v-model="checkData.bedType" allow-clear placeholder="请选择病床类型">
+            <a-select-option v-for="(item, index) in bedTypeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">是否靠窗 :</span>
+          <a-select v-model="checkData.windowType" allow-clear placeholder="请选择是否靠窗">
+            <a-select-option v-for="(item, index) in windowTypeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">期望日期 :</span>
+          <a-input
+            v-model="checkData.insideDate"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入期望日期 "
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- 分割线 -->
+    <div class="div-divider"></div>
+
+    <div class="div-part">
+      <p class="p-part-title">床位调配信息</p>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">申请病区 :</span>
+          <a-select v-model="checkData.area" allow-clear placeholder="请选择申请病区">
+            <a-select-option v-for="(item, index) in areaData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">床号 :</span>
+          <a-input
+            v-model="checkData.bedNo"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入床号 "
+          />
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">入院治疗组 :</span>
+          <a-input
+            v-model="checkData.group"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入入院治疗组 "
+          />
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">是否急诊候床 :</span>
+          <a-select v-model="checkData.isFast" allow-clear placeholder="请选择是否急诊候床">
+            <a-select-option v-for="(item, index) in isFastData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-total-one">
+          <span class="span-item-name">专科评估 :</span>
+          <a-select v-model="checkData.discuss" allow-clear placeholder="请选择入院方式">
+            <a-select-option v-for="(item, index) in discussData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-total-one">
+          <span class="span-item-name">原因 :</span>
+          <a-input
+            v-model="checkData.reason"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入原因 "
+          />
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">是否同意跨科收治 :</span>
+          <a-select v-model="checkData.agree" allow-clear placeholder="请选择入院方式">
+            <a-select-option v-for="(item, index) in agreeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">是否监护床 :</span>
+          <a-select v-model="checkData.watch" allow-clear placeholder="请选择入院方式">
+            <a-select-option v-for="(item, index) in watchData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">预约需求 :</span>
+          <a-input
+            v-model="checkData.need"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入现住址 "
+          />
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name"><span style="color: red">*</span> 预约入院时间 :</span>
+          <a-input
+            v-model="checkData.bookDate"
+            class="span-item-value"
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入预约入院时间 "
+          />
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 30px">
+      <a-button type="primary" @click="goApply" style="margin-left: 47%">确认申请</a-button>
+      <a-button @click="goBack" style="margin-left: 2%">返回</a-button>
+    </div>
+    <div style="height: 50px; backgroud-color: white" />
+  </div>
 </template>
 
 <script>
@@ -74,16 +350,92 @@ import addForm from './addForm'
 import editForm from './editForm'
 
 export default {
-  components: {
-    STable,
-    addForm,
-    editForm,
-  },
+  components: {},
 
   data() {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
+      checkData: {
+        idN: '440681199301019876',
+        contact: '张朝阳',
+        contactNo: '13812812839',
+        address: '广东省广州市保利世贸G座3楼303',
+        phone: '13612612367',
+        insideStatus: '已申请',
+        insideMethod: '急诊',
+        patientSource: '长沙',
+        roomType: '双人间',
+        bedType: '席梦思',
+        windowType: '靠窗',
+        insideType: '行走',
+        area: '病区一',
+        insideDate: '2021-12-30',
+        bedNo: '05-02',
+        group: '专家组',
+        reason: '需要继续诊断病因',
+        need: '有需求',
+        isFast: '是',
+        discuss: '同意',
+        agree: '是',
+        watch: '否',
+        bookDate: '2021-12-30',
+      },
+      roomTypeData: [
+        { code: 1, value: '单人间' },
+        { code: 2, value: '双人间' },
+        { code: 3, value: '四人间' },
+      ],
+      discussData: [
+        { code: 1, value: '同意' },
+        { code: 2, value: '不同意' },
+      ],
+      isFastData: [
+        { code: 1, value: '是' },
+        { code: 2, value: '否' },
+      ],
+      agreeData: [
+        { code: 1, value: '是' },
+        { code: 2, value: '否' },
+      ],
+      watchData: [
+        { code: 1, value: '是' },
+        { code: 2, value: '否' },
+      ],
+      areaData: [
+        { code: 1, value: '病区一' },
+        { code: 2, value: '病区二' },
+        { code: 3, value: '病区三' },
+      ],
+      windowTypeData: [
+        { code: 1, value: '靠窗' },
+        { code: 2, value: '不靠窗' },
+      ],
+      bedTypeData: [
+        { code: 1, value: '普通车' },
+        { code: 2, value: '席梦思' },
+        { code: 3, value: '橡胶床' },
+      ],
+      insideTypeData: [
+        { code: 1, value: '车送' },
+        { code: 2, value: '行走' },
+        { code: 3, value: '抬入' },
+      ],
+      patientSourceData: [
+        { code: 1, value: '长沙' },
+        { code: 2, value: '宁乡' },
+        { code: 3, value: '浏阳' },
+      ],
+      insideMethodData: [
+        { code: 1, value: '门诊' },
+        { code: 2, value: '急诊' },
+        { code: 3, value: '转院' },
+      ],
+      insideStatusData: [
+        { code: 1, value: '已申请' },
+        { code: 2, value: '已入院' },
+        { code: 3, value: '已取消' },
+      ],
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       opTypeDict: [
         {
@@ -174,6 +526,15 @@ export default {
       this.advanced = !this.advanced
     },
 
+    goApply() {
+      this.$message.info('申请成功')
+      this.$router.push({ name: 'sys_check_in' })
+    },
+
+    goBack() {
+      window.history.back()
+    },
+
     handleStatus(record) {
       record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
       changeStatus(record)
@@ -222,17 +583,125 @@ export default {
 </script>
 
 <style lang="less">
-.table-operator {
-  margin-bottom: 18px;
-}
-button {
-  margin-right: 8px;
-}
+.div-check {
+  background-color: white;
+  padding: 0 15% 0 5%;
+  // padding: 0 15%;
 
-.title {
-  background: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  color: #000;
+  .div-divider {
+    margin-top: 3%;
+    margin-left: 10%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
+  .div-part {
+    width: 100%;
+    height: 100%;
+
+    // border-bottom: 1px solid #e6e6e6;
+    background-color: white;
+    overflow: hidden;
+    padding: 1.5%;
+
+    .p-part-title {
+      margin-top: 20px;
+      height: 18px;
+      font-size: 18px;
+      text-align: center;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .ant-select {
+      width: 42% !important;
+      margin-left: 4% !important;
+    }
+
+    .ant-input {
+      margin-left: 2% !important;
+    }
+
+    .div-line-wrap {
+      width: 100%;
+      overflow: hidden;
+
+      .div-left {
+        float: left;
+        width: 50%;
+        margin-top: 3%;
+        overflow: hidden;
+
+        .span-item-name {
+          display: inline-block;
+          color: #000;
+          font-size: 14px;
+          text-align: right;
+          width: 50%;
+        }
+        .span-item-value {
+          width: 45%;
+          color: #333;
+          text-align: left;
+          padding-left: 20px;
+          font-size: 14px;
+          display: inline-block;
+        }
+      }
+
+      .div-right {
+        margin-top: 3%;
+        width: 50%;
+        float: right;
+        overflow: hidden;
+        .span-item-name {
+          display: inline-block;
+          color: #000;
+          text-align: right;
+          font-size: 14px;
+          width: 50%;
+        }
+        .span-item-value {
+          width: 45%;
+          color: #333;
+          font-size: 14px;
+          padding-left: 20px;
+          text-align: left;
+          display: inline-block;
+        }
+      }
+
+      .div-total-one {
+        margin-top: 3%;
+        overflow: hidden;
+        width: 100%;
+
+        .span-item-name {
+          display: inline-block;
+          color: #000;
+          text-align: right;
+          font-size: 14px;
+          width: 25%;
+        }
+        .span-item-value {
+          width: 45%;
+          color: #333;
+          font-size: 14px;
+          padding-left: 20px;
+          text-align: left;
+          display: inline-block;
+        }
+
+        .ant-input {
+          margin-left: 0.5% !important;
+        }
+
+        .ant-select {
+          width: 35% !important;
+          margin-left: 2% !important;
+        }
+      }
+    }
+  }
 }
 </style>

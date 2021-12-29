@@ -62,7 +62,8 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.editForm.edit(record)">确认入院</a>
+        <!-- <a @click="$refs.editForm.edit(record)">确认入院</a> -->
+        <a @click="goCheck(record)">确认入院</a>
       </span>
     </s-table>
 
@@ -269,6 +270,10 @@ export default {
         .catch((err) => {
           this.$message.error('切换错误：' + err.message)
         })
+    },
+
+    goCheck(record) {
+      this.$router.push({ name: 'sys_check', data: record })
     },
 
     getKeShi() {
