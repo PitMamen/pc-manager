@@ -1,8 +1,8 @@
 <template>
   <div class="div-check">
+    <a-button type="primary" @click="goHistoryDetail" class="top-btn">查看病历信息</a-button>
     <div class="div-part">
       <p class="p-part-title">患者基本信息</p>
-
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name">病历号 :</span>
@@ -571,6 +571,13 @@ export default {
         })
     },
 
+    goHistoryDetail() {
+      window.open(
+        'http://www.mclouds.org.cn:30000/patient-view.html?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMTk4IiwiZXhwIjoxNjQwODA4MTcxfQ.JLMPdWRjzunm117lNAJFnffKqZvIG10r-Gl0v-Uzn-NQXPkOtBIKMFbpVLiHy4Ba3EyDFlPRCvEuqDfulYf7c7702VDET7vmG51wMiHUo6SL-Onjm6xA7jglGJML4IDDccL3MvMfgJ6xCm_CXVgCTGriCOFrdGZMIIaxiePTf7sTZw1gDa7NvsxvOuKiMvGKXRGJgSw-wkTMvONbmpPrp8ZM6NiGfWwc3kxjLXNBIB30G7ndG19y_wTDk2Vf6NaYYtIlu--H5ekWo6e68n8CdwjLgl9OBJ289UNL8Qhs86FqbC97HA3Vu7U3vQh7C1MFDArc3bz4Pd676Gs2d5V-Cw&no=000006392145&type=9',
+        '_blank'
+      )
+    },
+
     handleOk() {
       this.$refs.table.refresh()
     },
@@ -587,6 +594,12 @@ export default {
   background-color: white;
   padding: 0 15% 0 5%;
   // padding: 0 15%;
+
+  .top-btn {
+    margin-left: 47%;
+    float: right;
+    margin-top: 20px;
+  }
 
   .div-divider {
     margin-top: 3%;
