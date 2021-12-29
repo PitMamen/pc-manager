@@ -323,7 +323,7 @@
         </div>
 
         <div class="div-right">
-          <span class="span-item-name"><span style="color: red">*</span> 预约入院时间 :</span>
+          <span class="span-item-name">预约入院时间 :</span>
           <a-input
             v-model="checkData.bookDate"
             class="span-item-value"

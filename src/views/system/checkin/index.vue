@@ -158,6 +158,14 @@ export default {
           dataIndex: 'bedId',
         },
         {
+          title: '是否手术',
+          dataIndex: 'isSurgery',
+        },
+        {
+          title: '是否全病程',
+          dataIndex: 'isWhole',
+        },
+        {
           title: '操作',
           width: '150px',
           dataIndex: 'action',
@@ -187,6 +195,17 @@ export default {
               this.$set(res.data.rows[i], 'bedId', '否')
             }
 
+            if (Math.round(Math.random()) % 3 == 1) {
+              this.$set(res.data.rows[i], 'isSurgery', '是')
+            } else {
+              this.$set(res.data.rows[i], 'isSurgery', '否')
+            }
+            if (Math.round(Math.random()) % 3 == 1) {
+              this.$set(res.data.rows[i], 'isWhole', '是')
+            } else {
+              this.$set(res.data.rows[i], 'isWhole', '否')
+            }
+
             if (!res.data.rows[i].xb) {
               this.$set(res.data.rows[i], 'xb', '男')
             }
@@ -197,42 +216,6 @@ export default {
           return res.data
         })
       },
-      // loadData: {
-      //   pageNo: 1,
-      //   pageSize: 10,
-      //   totalPage: 255,
-      //   totalRows: 2550,
-      //   rows: [
-      //     {
-      //       id: 1007,
-      //       age:23,
-      //       idNo:433120197605127523,
-      //       status:"已入院",
-      //       time:'20210514',
-      //       bedId:'05-12',
-      //       userId: null,
-      //       gh: '0004',
-      //       yljgdm: '444885559',
-      //       zcm: '专家号',
-      //       xm: '专家号',
-      //       xb: null,
-      //       tel: null,
-      //       sfzh: null,
-      //       ssks: null,
-      //       ssksName: null,
-      //       zwdm: null,
-      //       zhiw: '医生',
-      //       zcdm: null,
-      //       zhic: '副教授',
-      //       csrq: '-',
-      //       lb: '01',
-      //       zhuany: null,
-      //       activeFlag: '1',
-      //       updateTime: 1635414075000,
-      //     }
-      //   ],
-      //   rainbow: [1, 2, 3, 4, 5],
-      // },
 
       selectedRowKeys: [],
       selectedRows: [],
