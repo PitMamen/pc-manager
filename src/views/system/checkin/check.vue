@@ -386,7 +386,7 @@ export default {
         insideMethod: '急诊',
         patientSource: '长沙',
         roomType: '双人间',
-        bedType: '席梦思',
+        bedType: '普通床',
         windowType: '靠窗',
         insideType: '行走',
         area: '病区一',
@@ -443,9 +443,7 @@ export default {
         { code: 2, value: '不靠窗' },
       ],
       bedTypeData: [
-        { code: 1, value: '普通车' },
-        { code: 2, value: '席梦思' },
-        { code: 3, value: '橡胶床' },
+        { code: 1, value: '普通床' },
       ],
       insideTypeData: [
         { code: 1, value: '车送' },
