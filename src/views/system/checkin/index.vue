@@ -209,6 +209,12 @@ export default {
             if (!res.data.rows[i].xb) {
               this.$set(res.data.rows[i], 'xb', '男')
             }
+            if (i == 0) {
+              this.$set(res.data.rows[i], 'xm', '杨晚花')
+              this.$set(res.data.rows[i], 'xb', '女')
+              this.$set(res.data.rows[i], 'age', 28)
+              this.$set(res.data.rows[i], 'idNo', '430260199205235220')
+            }
             if (!res.data.rows[i].ssksName) {
               this.$set(res.data.rows[i], 'ssksName', '骨科')
             }

@@ -18,12 +18,12 @@
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name">患者姓名 :</span>
-          <span class="span-item-value"> 张三</span>
+          <span class="span-item-value"> 杨晚花</span>
         </div>
 
         <div class="div-right">
           <span class="span-item-name">性别 :</span>
-          <span class="span-item-value"> 男</span>
+          <span class="span-item-value"> 女</span>
         </div>
       </div>
 
@@ -41,14 +41,14 @@
 
         <div class="div-right">
           <span class="span-item-name">出生日期 :</span>
-          <span class="span-item-value"> 1993-01-01</span>
+          <span class="span-item-value"> 1967-07-07</span>
         </div>
       </div>
 
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name">年龄 :</span>
-          <span class="span-item-value"> 25</span>
+          <span class="span-item-value"> 54</span>
         </div>
 
         <div class="div-right">
@@ -602,7 +602,7 @@ export default {
 
     goHistoryDetail() {
       window.open(
-        'http://www.mclouds.org.cn:30000/patient-view.html?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMTk4IiwiZXhwIjoxNjQwODA4MTcxfQ.JLMPdWRjzunm117lNAJFnffKqZvIG10r-Gl0v-Uzn-NQXPkOtBIKMFbpVLiHy4Ba3EyDFlPRCvEuqDfulYf7c7702VDET7vmG51wMiHUo6SL-Onjm6xA7jglGJML4IDDccL3MvMfgJ6xCm_CXVgCTGriCOFrdGZMIIaxiePTf7sTZw1gDa7NvsxvOuKiMvGKXRGJgSw-wkTMvONbmpPrp8ZM6NiGfWwc3kxjLXNBIB30G7ndG19y_wTDk2Vf6NaYYtIlu--H5ekWo6e68n8CdwjLgl9OBJ289UNL8Qhs86FqbC97HA3Vu7U3vQh7C1MFDArc3bz4Pd676Gs2d5V-Cw&no=000006392145&type=9',
+        'http://www.mclouds.org.cn:30000/patient-view.html?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMTk4IiwiZXhwIjoxNjQwODY2NjQxfQ.p8rozkAXsPzdBDeAkck3NjUI7iBYWM_4UA4A22rlbElPNYiZMthDnLQ0jhJIk8CpnRJEPfoi11Fybs2bajSb2hnGpVegVqTae_fxc30qL4sXPVPpvG_88ehhylBDtetVXpvJkkETQXq5ZWSfaItrBGZqr0r2NwPJIon6gy-NKditLhu8T7RPYj65qVsh7mX6gr-rhfnC9Ol4gRHjAyxiKm33M_sCn3ELMhDchjHrjE8WfllrT1mfaiP7kB4eDas9FB2D3zpAEb3EWHHdweQIsY8DTidslqjN-OkpjJsnXfahRoHEeiWiagkNzAhNM3-zcsQykvmrVzab2u_PhG-u3g&no=000006392145&type=9',
         '_blank'
       )
     },
