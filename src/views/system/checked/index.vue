@@ -208,8 +208,8 @@ export default {
             if (i == 0) {
               this.$set(res.data.rows[i], 'xm', '杨晚花')
               this.$set(res.data.rows[i], 'xb', '女')
-              this.$set(res.data.rows[i], 'age', 28)
-                            this.$set(res.data.rows[i], 'idNo', '430260199205235220')
+              this.$set(res.data.rows[i], 'age', 54)
+              this.$set(res.data.rows[i], 'idNo', '430260196707075220')
             }
           }
           return res.data
