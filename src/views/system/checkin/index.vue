@@ -154,7 +154,7 @@ export default {
           dataIndex: 'time',
         },
         {
-          title: '急诊候床',
+          title: '是否急诊候床',
           dataIndex: 'bedId',
         },
         {

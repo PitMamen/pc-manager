@@ -267,6 +267,26 @@
       </div>
 
       <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">是否手术 :</span>
+          <a-select v-model="checkData.isNeedSurgery" allow-clear placeholder="请选择是否手术">
+            <a-select-option v-for="(item, index) in isNeedSurgeryData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
+        <div class="div-right">
+          <span class="span-item-name">是否全病程 :</span>
+          <a-select v-model="checkData.isNeedWhole" allow-clear placeholder="请选择是否全病程">
+            <a-select-option v-for="(item, index) in isNeedWholeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
         <div class="div-total-one">
           <span class="span-item-name">专科评估 :</span>
           <a-select v-model="checkData.discuss" allow-clear placeholder="请选择入院方式">
@@ -380,7 +400,18 @@ export default {
         agree: '是',
         watch: '否',
         bookDate: '2021-12-30',
+        isNeedSurgery: '是',
+        isNeedWhole: '否',
       },
+
+      isNeedSurgeryData: [
+        { code: 1, value: '是' },
+        { code: 2, value: '否' },
+      ],
+      isNeedWholeData: [
+        { code: 1, value: '是' },
+        { code: 2, value: '否' },
+      ],
       roomTypeData: [
         { code: 1, value: '单人间' },
         { code: 2, value: '双人间' },
