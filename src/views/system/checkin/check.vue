@@ -205,13 +205,14 @@
 
         <div class="div-right">
           <span class="span-item-name">期望日期 :</span>
-          <a-input
+          <!-- <a-input
             v-model="checkData.insideDate"
             class="span-item-value"
             style="display: inline-block"
             allow-clear
             placeholder="请输入期望日期 "
-          />
+          /> -->
+          <a-date-picker v-model="checkData.insideDate" placeholder="2021-12-31 " @change="onChange" />
         </div>
       </div>
     </div>
@@ -344,13 +345,14 @@
 
         <div class="div-right">
           <span class="span-item-name">预约入院时间 :</span>
-          <a-input
+          <!-- <a-input
             v-model="checkData.bookDate"
             class="span-item-value"
             style="display: inline-block"
             allow-clear
             placeholder="请输入预约入院时间 "
-          />
+          /> -->
+          <a-date-picker v-model="checkData.bookDate" placeholder="2021-12-31 " @change="onChange" />
         </div>
       </div>
     </div>
@@ -442,9 +444,7 @@ export default {
         { code: 1, value: '靠窗' },
         { code: 2, value: '不靠窗' },
       ],
-      bedTypeData: [
-        { code: 1, value: '普通床' },
-      ],
+      bedTypeData: [{ code: 1, value: '普通床' }],
       insideTypeData: [
         { code: 1, value: '车送' },
         { code: 2, value: '行走' },
@@ -607,6 +607,8 @@ export default {
       )
     },
 
+    onChange() {},
+
     handleOk() {
       this.$refs.table.refresh()
     },
@@ -662,6 +664,10 @@ export default {
 
     .ant-input {
       margin-left: 2% !important;
+    }
+
+    .ant-calendar-picker {
+      margin-left: 3.5%;
     }
 
     .div-line-wrap {
