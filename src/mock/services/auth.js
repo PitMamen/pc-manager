@@ -53,7 +53,7 @@ const login2 = (options) => {
 }
 
 const getLoginUser = (options) => {
-  const loginUser ={
+  const loginUser = {
     "id": "1265476890672672808",
     "account": "superAdmin",
     "nickName": "超级管理员",
@@ -79,15 +79,20 @@ const getLoginUser = (options) => {
     },
     "apps": [
       {
-          "code": "system",
-          "name": "排班管理",
-          "active": true
+        "code": "system",
+        "name": "排班管理",
+        "active": true
       }
       ,
       {
-          "code": "business",
-          "name": "内容管理",
-          "active": false
+        "code": "business",
+        "name": "内容管理",
+        "active": false
+      }
+      , {
+        "code": "chenckin",
+        "name": "入院管理",
+        "active": false
       }
     ],
     "roles": [],
@@ -141,22 +146,24 @@ const getLoginUser = (options) => {
       //     "path": "/config",
       //     "hidden": false
       // },
-      {
-        "id": "1265474261896806402",
-        "pid": "0",
-        "name": "sys_mgr",
-        "component": "PageView",
-        "redirect": "",
-        "meta": {
-          "title": "排版管理",
-          "icon": "team",
-          "show": true,
-          "target": null,
-          "link": null
-        },
-        "path": "/sys",
-        "hidden": false
-      },
+
+      //TODO 暂时隐藏的功能
+      // {
+      //   "id": "1265474261896806402",
+      //   "pid": "0",
+      //   "name": "sys_mgr",
+      //   "component": "PageView",
+      //   "redirect": "",
+      //   "meta": {
+      //     "title": "排班管理",
+      //     "icon": "team",
+      //     "show": true,
+      //     "target": null,
+      //     "link": null
+      //   },
+      //   "path": "/sys",
+      //   "hidden": false
+      // },
       {
         "id": "1283308304890847233",
         "pid": "0",
@@ -170,7 +177,7 @@ const getLoginUser = (options) => {
           "target": null,
           "link": null
         },
-        "path": "/auth",
+        "path": "/content",
         "hidden": false
       },
       {
@@ -181,7 +188,8 @@ const getLoginUser = (options) => {
         "redirect": "",
         "meta": {
           "title": "入院管理",
-          "icon": "safety-certificate",
+          // "icon": "safety-certificate",
+          "icon": "team",
           "show": true,
           "target": null,
           "link": null
@@ -283,6 +291,92 @@ const getLoginUser = (options) => {
           "link": null
         },
         "path": "/banner",
+        "hidden": false
+      },
+
+      {
+        "id": "1283308304890847235",
+        "pid": "0",
+        "name": "service_config",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "服务配置",
+          // "icon": "safety-certificate",
+          "icon": "team",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/config",
+        "hidden": false
+      },
+
+      {
+        "id": "12654742618968064101",
+        "pid": "1283308304890847235",
+        "name": "config_plan",
+        "component": "system/serviceconfig/index",
+        "redirect": "",
+        "meta": {
+          "title": "计划配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/serviceconfig",
+        "hidden": false
+      },
+
+      {
+        "id": "12654742618968064102",
+        "pid": "1283308304890847235",
+        "name": "config_question",
+        "component": "system/question/index",
+        "redirect": "",
+        "meta": {
+          "title": "问卷配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/question",
+        "hidden": false
+      },
+
+      {
+        "id": "1283308304890847236",
+        "pid": "0",
+        "name": "service_manage",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "服务管理",
+          // "icon": "safety-certificate",
+          "icon": "team",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/service",
+        "hidden": false
+      },
+      {
+        "id": "12654742618968064103",
+        "pid": "1283308304890847236",
+        "name": "sys_service_manage",
+        "component": "system/service/index",
+        "redirect": "",
+        "meta": {
+          "title": "新出院患者",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/service",
         "hidden": false
       },
       // {
@@ -700,7 +794,7 @@ const getLoginUser = (options) => {
     "accountNonLocked": true
   }
   console.log('mock: body getLoginUser')
-  return builder(loginUser,"",200)
+  return builder(loginUser, "", 200)
 }
 
 Mock.mock('/api/login', 'post', login2)
