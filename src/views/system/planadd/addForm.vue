@@ -40,15 +40,23 @@ export default {
       typeData: [
         {
           code: '1',
-          value: '检查',
+          value: '健康宣教',
         },
         {
           code: '2',
-          value: '检验',
+          value: '健康问卷',
         },
         {
           code: '3',
-          value: '问卷',
+          value: '文字提醒',
+        },
+        {
+          code: '4',
+          value: '检查',
+        },
+        {
+          code: '5',
+          value: '检验',
         },
       ],
       form: this.$form.createForm(this),

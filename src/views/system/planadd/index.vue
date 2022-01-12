@@ -91,16 +91,32 @@
 
     <a-button class="btn-add-plan" @click="addPlanItem" type="primary">添加具体计划</a-button>
     <add-form ref="addForm" @ok="handleOk" />
+    <add-teach ref="addTeach" @ok="handleTeach" />
+    <add-question ref="addQuestion" @ok="handleQuestion" />
+    <add-remind ref="addRemind" @ok="handleRemind" />
+    <add-cha ref="addJianCha" @ok="handleJianCha" />
+    <add-yan ref="addJianYan" @ok="handleJianYan" />
   </div>
 </template>
 
 <script>
 import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
 import addForm from './addForm'
-import editForm from './editForm'
+import addTeach from './addTeach'
+import addCha from './addJianCha'
+import addYan from './addJianYan'
+import addQuestion from './addQuestion'
+import addRemind from './addRemind'
 
 export default {
-  components: { addForm },
+  components: {
+    addForm,
+    addTeach,
+    addCha,
+    addYan,
+    addQuestion,
+    addRemind,
+  },
 
   data() {
     return {
@@ -200,6 +216,7 @@ export default {
     deletePlanItem(index) {
       this.planData.missions.splice(index, 1)
     },
+
     addElement(index) {
       this.$refs.addForm.add(index)
     },
@@ -209,8 +226,35 @@ export default {
     },
 
     handleOk(index, value) {
-      console.log('ddd', index + '---' + value)
+      // console.log('ddd', index + '---' + value)
+      //选择类型后，添加条目
+      switch (value) {
+        case '1':
+          this.$refs.addTeach.add(index)
+          break
+        case '2':
+          this.$refs.addQuestion.add(index)
+          break
+        case '3':
+          this.$refs.addRemind.add(index)
+          break
+        case '4':
+          this.$refs.addJianCha.add(index)
+          break
+        case '5':
+          this.$refs.addJianYan.add(index)
+          break
+      }
     },
+
+    handleTeach(record) {
+      debugger
+    },
+
+    handleQuestion(record) {},
+    handleRemind(record) {},
+    handleJianCha(record) {},
+    handleJianYan(record) {},
 
     goApply() {
       this.$message.info('申请成功')

@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增职位"
+    title="选择计划类型"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -9,101 +9,76 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-      <a-form-item
-        label="职位名称"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        has-feedback
-      >
-        <a-input placeholder="请输入职位名称" v-decorator="['name', {rules: [{required: true, message: '请输入职位名称！'}]}]" />
-      </a-form-item>
-
-      <a-form-item
-        label="唯一编码"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        has-feedback
-      >
-        <a-input placeholder="请输入唯一编码" v-decorator="['code', {rules: [{required: true,  message: '请输入唯一编码！'}]}]" />
-      </a-form-item>
-
-      <a-form-item
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        label="排序"
-      >
-        <a-input-number placeholder="请输入排序" style="width: 100%" v-decorator="['sort', { initialValue: 100 }]" :min="1" :max="1000" />
-      </a-form-item>
-
-      <a-form-item
-        label="备注"
-        :labelCol="labelCol"
-        :wrapperCol="wrapperCol"
-        has-feedback
-      >
-        <a-textarea :rows="4" placeholder="请输入备注"  v-decorator="['remark']"></a-textarea>
-      </a-form-item>
-
+        <a-form-item label="计划类型" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-select v-model="type" allow-clear placeholder="请选择计划类型">
+            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </a-form-item>
       </a-form>
-
     </a-spin>
   </a-modal>
 </template>
 
 
 <script>
-  import { sysPosAdd } from '@/api/modular/system/posManage'
-  export default {
-    data () {
-      return {
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 5 }
-        },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 15 }
-        },
-        visible: false,
-        confirmLoading: false,
-        form: this.$form.createForm(this)
-      }
-
-
-    },
-    methods: {
-      //初始化方法
-      add (record) {
-        this.visible = true
+import { sysPosAdd } from '@/api/modular/system/posManage'
+export default {
+  data() {
+    return {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
       },
-
-      handleSubmit () {
-        const { form: { validateFields } } = this
-        this.confirmLoading = true
-        validateFields((errors, values) => {
-          if (!errors) {
-            sysPosAdd(values).then((res) => {
-              if(res.success){
-                this.$message.success('新增成功')
-                this.visible = false
-                this.confirmLoading = false
-                this.$emit('ok', values)
-                this.form.resetFields();
-              }else{
-                this.$message.error('新增失败：'+res.message)
-              }
-            }).finally((res) =>{
-              this.confirmLoading = false
-            })
-          } else {
-            this.confirmLoading = false
-          }
-        })
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 15 },
       },
-      handleCancel () {
-        this.form.resetFields();
-        this.visible = false
-      }
+      type: '',
+      index: -1,
+      typeData: [
+        {
+          code: '1',
+          value: '健康宣教',
+        },
+        {
+          code: '2',
+          value: '健康问卷',
+        },
+        {
+          code: '3',
+          value: '文字提醒',
+        },
+        {
+          code: '4',
+          value: '检查',
+        },
+        {
+          code: '5',
+          value: '检验',
+        },
+      ],
+      form: this.$form.createForm(this),
+      confirmLoading: false,
+      visible: false,
     }
-  }
+  },
+  methods: {
+    //初始化方法
+    add(index) {
+      this.visible = true
+      this.index = index
+    },
+
+    handleSubmit() {
+      this.$emit('ok', this.index, this.type)
+      this.visible = false
+    },
+    handleCancel() {
+      this.form.resetFields()
+      this.visible = false
+    },
+  },
+}
 </script>

@@ -114,15 +114,6 @@ export default {
   },
 
   created() {
-    // if (this.hasPerm('sysPos:edit') || this.hasPerm('sysPos:delete')) {
-    //   this.columns.push({
-    //     title: '操作',
-    //     width: '150px',
-    //     dataIndex: 'action',
-    //     scopedSlots: { customRender: 'action' },
-    //   })
-    // }
-    // this.getKeShi()
   },
 
   methods: {

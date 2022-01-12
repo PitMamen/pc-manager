@@ -3,49 +3,10 @@
     <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
       <a-form layout="inline">
         <a-row :gutter="48">
-          <a-col :md="4" :sm="10">
-            <a-form-item label="入院单条码">
-              <a-input v-model="queryParamMock.tm" allow-clear placeholder="请输入条码 " />
+          <a-col :md="8" :sm="24">
+            <a-form-item label="问卷管理">
+              <a href="http://hmg.mclouds.org.cn/login" target="_blank">跳转问卷管理</a>
             </a-form-item>
-          </a-col>
-          <a-col :md="4" :sm="24">
-            <a-form-item label="姓名">
-              <a-input v-model="queryParamMock.xm" allow-clear placeholder="请输入姓名 " />
-            </a-form-item>
-          </a-col>
-          <a-col :md="5" :sm="24">
-            <a-form-item label="身份证号">
-              <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入身份证号 " />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="4" :sm="24">
-            <a-form-item label="入院病区">
-              <a-select v-model="queryParamMock.yljgdm" allow-clear placeholder="请选择入院病区">
-                <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="4" :sm="24">
-            <a-form-item label="状态">
-              <a-select v-model="queryParamMock.ddd" allow-clear placeholder="请选择状态">
-                <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
-                  item.yyksmc
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="3" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            </span>
           </a-col>
         </a-row>
       </a-form>
@@ -62,11 +23,18 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="handleStatus(record)" :style="(record.activeFlag == 0 && { color: '#333' }) || {}">{{
-          record.activeFlag == 1 || record.activeFlag == null ? '启用' : '停用'
-        }}</a>
+        <a @click="lookPlan">查看</a>
         <a-divider type="vertical" />
-        <a v-if="hasPerm('sysPos:edit')" @click="$refs.editForm.edit(record)">编辑</a>
+        <a @click="editPlan">修改</a>
+        <a-divider type="vertical" />
+        <a-popconfirm
+          title="确定删除问卷吗？"
+          ok-text="确定"
+          cancel-text="取消"
+          @confirm="deletePlan(record)"
+        >
+          <a>删除</a>
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -93,80 +61,40 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
-      opTypeDict: [
-        {
-          code: '1',
-          value: '儿科',
-        },
-        {
-          code: '2',
-          value: '脑科',
-        },
-        {
-          code: '3',
-          value: '耳鼻喉科',
-        },
-        {
-          code: '4',
-          value: '内科',
-        },
-        {
-          code: '5',
-          value: '外科',
-        },
-        {
-          code: '6',
-          value: '精神科',
-        },
-      ],
       // 查询参数
       queryParam: { yljgdm: '444885559' },
       queryParamMock: { yljgdm: '444885559' },
       // 表头
       columns: [
         {
-          title: '入院单条码',
+          title: '序号',
           dataIndex: 'id',
         },
         {
-          title: '姓名',
+          title: '问卷名称',
           dataIndex: 'xm',
         },
         {
-          title: '性别',
+          title: '科室',
           dataIndex: 'xb',
         },
         {
-          title: '年龄',
+          title: '专病',
           dataIndex: 'age',
         },
         {
-          title: '身份证',
+          title: '摘要说明',
           dataIndex: 'idNo',
         },
         {
-          title: '入院病区',
+          title: '创建时间',
           dataIndex: 'ssksName',
         },
         {
-          title: '状态',
-          dataIndex: 'status',
-        },
-        {
-          title: '操作时间',
-          dataIndex: 'time',
-        },
-        {
-          title: '床号',
-          dataIndex: 'bedId',
-        },
-        {
-          title: '是否手术',
-          dataIndex: 'isSurgery',
-        },
-        {
-          title: '是否全病程',
-          dataIndex: 'isWhole',
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
         },
       ],
       keshiData: [

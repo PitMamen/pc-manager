@@ -1,99 +1,155 @@
 <template>
-  <a-card :bordered="false">
-    <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="4" :sm="10">
-            <a-form-item label="入院单条码">
-              <a-input v-model="queryParamMock.tm" allow-clear placeholder="请输入条码 " />
-            </a-form-item>
-          </a-col>
-          <a-col :md="4" :sm="24">
-            <a-form-item label="姓名">
-              <a-input v-model="queryParamMock.xm" allow-clear placeholder="请输入姓名 " />
-            </a-form-item>
-          </a-col>
-          <a-col :md="5" :sm="24">
-            <a-form-item label="身份证号">
-              <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入身份证号 " />
-            </a-form-item>
-          </a-col>
+  <div class="div-new-plan">
+    <p class="p-title">计划详情</p>
+    <!-- 分割线 -->
+    <div class="div-divider"></div>
 
-          <a-col :md="4" :sm="24">
-            <a-form-item label="入院病区">
-              <a-select v-model="queryParamMock.yljgdm" allow-clear placeholder="请选择入院病区">
-                <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="4" :sm="24">
-            <a-form-item label="状态">
-              <a-select v-model="queryParamMock.ddd" allow-clear placeholder="请选择状态">
-                <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
-                  item.yyksmc
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="3" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
+    <div class="div-line-wrap">
+      <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
+      <a-input
+        disabled
+        v-model="planData.name"
+        class="span-item-value"
+        style="display: inline-block"
+        allow-clear
+        placeholder=" "
+      />
     </div>
 
-    <!-- 去掉勾选框 -->
-    <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-    <s-table
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="action" slot-scope="text, record">
-        <a @click="handleStatus(record)" :style="(record.activeFlag == 0 && { color: '#333' }) || {}">{{
-          record.activeFlag == 1 || record.activeFlag == null ? '启用' : '停用'
-        }}</a>
-        <a-divider type="vertical" />
-        <a v-if="hasPerm('sysPos:edit')" @click="$refs.editForm.edit(record)">编辑</a>
-      </span>
-    </s-table>
+    <div class="div-line-wrap">
+      <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
+      <a-select v-model="planData.keshi" allow-clear placeholder="" disabled>
+        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.code">{{
+          item.value
+        }}</a-select-option>
+      </a-select>
 
-    <add-form ref="addForm" @ok="handleOk" />
-    <edit-form ref="editForm" @ok="handleOk" />
-  </a-card>
+      <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
+      <a-select v-model="planData.disease" allow-clear placeholder="" disabled>
+        <a-select-option v-for="(item, index) in diseaseData" :key="index" :value="item.code">{{
+          item.value
+        }}</a-select-option>
+      </a-select>
+    </div>
+
+    <div class="div-line-wrap">
+      <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
+    </div>
+
+    <!-- 计划内容 -->
+    <div class="div-health-plan">
+      <div class="div-plan-item" v-for="(item, index) in planData.missions" :key="index">
+        <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
+        <a-select v-model="planData.timeCount" allow-clear placeholder="请选择计划时间" disabled>
+          <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
+            itemCount.value
+          }}</a-select-option>
+        </a-select>
+
+        <a-select v-model="planData.timeUnit" allow-clear placeholder="" disabled>
+          <a-select-option
+            v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
+            :key="timeUnitIndex"
+            :value="itemTimeUnit.code"
+            >{{ itemTimeUnit.value }}</a-select-option
+          >
+        </a-select>
+        <span class="span-des">后</span>
+
+        <div class="div-top-right" v-if="false">
+          <a-button class="span-add-item" type="primary" @click="deletePlanItem(index)">删除任务</a-button>
+          <!-- <div class="div-vertical"></div> -->
+          <a-button class="span-add-item" @click="$refs.addForm.add(index)" type="primary">添加子计划</a-button>
+        </div>
+
+        <!-- 分割线 -->
+        <div class="div-divider"></div>
+
+        <div
+          class="div-plan-item-elements"
+          v-for="(itemChild, indexChild) in planData.missions[index].items"
+          :key="indexChild"
+        >
+          <div class="div-element">
+            <div class="div-content">
+              <span class="span-item-name"> 计划类型 :</span>
+              <span class="span-item-name" style="margin-left: 3%"> {{ itemChild.type }}</span>
+            </div>
+
+            <div class="div-content">
+              <!-- //style="margin-left: 3%" -->
+              <span class="span-item-name"> 具体内容 :</span>
+              <span class="span-item-name" style="margin-left: 3%"> {{ itemChild.name }}</span>
+            </div>
+
+            <a-icon
+              class="icon-delete"
+              @click="deleteElement(index, indexChild)"
+              title="删除任务项目"
+              type="close"
+              v-if="false"
+            />
+
+            <div class="div-divider-elements"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
-import { STable } from '@/components'
 import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
-import addForm from './addForm'
-import editForm from './editForm'
 
 export default {
-  components: {
-    STable,
-    addForm,
-    editForm,
-  },
+  components: {},
 
   data() {
     return {
-      // 高级搜索 展开/关闭
-      advanced: false,
-      hosData: [{ code: '444885559', value: '湘雅附二医院' }],
-      opTypeDict: [
+      planData: {
+        name: '',
+        timeCount: '1',
+        timeUnit: '天',
+        missions: [
+          {
+            name: '第一个任务',
+            items: [
+              { name: '心电图', type: '检查' },
+              { name: '血常规', type: '检验' },
+            ],
+          },
+        ],
+      },
+      loading: false,
+      timeCountData: [
+        {
+          code: '1',
+          value: '1',
+        },
+        {
+          code: '2',
+          value: '2',
+        },
+        {
+          code: '3',
+          value: '3',
+        },
+      ],
+      timeUnitData: [
+        {
+          code: '1',
+          value: '天',
+        },
+        {
+          code: '2',
+          value: '周',
+        },
+        {
+          code: '3',
+          value: '月',
+        },
+      ],
+      keshiData: [
         {
           code: '1',
           value: '儿科',
@@ -119,184 +175,235 @@ export default {
           value: '精神科',
         },
       ],
-      // 查询参数
-      queryParam: { yljgdm: '444885559' },
-      queryParamMock: { yljgdm: '444885559' },
-      // 表头
-      columns: [
-        {
-          title: '入院单条码',
-          dataIndex: 'id',
-        },
-        {
-          title: '姓名',
-          dataIndex: 'xm',
-        },
-        {
-          title: '性别',
-          dataIndex: 'xb',
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-        },
-        {
-          title: '身份证',
-          dataIndex: 'idNo',
-        },
-        {
-          title: '入院病区',
-          dataIndex: 'ssksName',
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-        },
-        {
-          title: '操作时间',
-          dataIndex: 'time',
-        },
-        {
-          title: '床号',
-          dataIndex: 'bedId',
-        },
-        {
-          title: '是否手术',
-          dataIndex: 'isSurgery',
-        },
-        {
-          title: '是否全病程',
-          dataIndex: 'isWhole',
-        },
+      diseaseData: [
+        { code: 1, value: '心脏病' },
+        { code: 2, value: '糖尿病' },
+        { code: 3, value: '高血压' },
       ],
-      keshiData: [
-        { yyksdm: '01', yyksmc: '未办理' },
-        { yyksdm: '02', yyksmc: '调度中' },
-        { yyksdm: '03', yyksmc: '已获得床位' },
-        { yyksdm: '03', yyksmc: '通知候床' },
-        { yyksdm: '03', yyksmc: '住院转区' },
-        { yyksdm: '03', yyksmc: '已入院' },
-        { yyksdm: '03', yyksmc: '已取消' },
-      ],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'age', 23 + Math.round(Math.random() * 10))
-            this.$set(res.data.rows[i], 'idNo', '430260199205235220' + Math.round(Math.random()))
-            this.$set(res.data.rows[i], 'status', '已入院')
-            this.$set(res.data.rows[i], 'time', '20210510' + Math.round(Math.random() * 10))
-            this.$set(res.data.rows[i], 'bedId', '02-01' + i)
-
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isSurgery', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isSurgery', '否')
-            }
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
-
-            if (!res.data.rows[i].xb) {
-              this.$set(res.data.rows[i], 'xb', '男')
-            }
-            if (!res.data.rows[i].ssksName) {
-              this.$set(res.data.rows[i], 'ssksName', '骨科')
-            }
-            if (i == 0) {
-              this.$set(res.data.rows[i], 'xm', '杨晚花')
-              this.$set(res.data.rows[i], 'xb', '女')
-              this.$set(res.data.rows[i], 'age', 54)
-              this.$set(res.data.rows[i], 'idNo', '430260196707075220')
-            }
-          }
-          return res.data
-        })
-      },
-
-      selectedRowKeys: [],
-      selectedRows: [],
     }
   },
 
-  created() {
-    // if (this.hasPerm('sysPos:edit') || this.hasPerm('sysPos:delete')) {
-    //   this.columns.push({
-    //     title: '操作',
-    //     width: '150px',
-    //     dataIndex: 'action',
-    //     scopedSlots: { customRender: 'action' },
-    //   })
-    // }
-    // this.getKeShi()
-  },
+  created() {},
 
   methods: {
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
 
-    handleStatus(record) {
-      record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
-      changeStatus(record)
-        .then((res) => {
-          if (res.success) {
-            this.$message.success('切换成功')
-            this.$refs.table.refresh()
-          } else {
-            this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          this.$message.error('切换错误：' + err.message)
-        })
+    addPlanItem() {
+      this.planData.missions.push({
+        name: '第二个任务',
+        items: [
+          { name: 'B超', type: '检查' },
+          { name: '尿常规', type: '检验' },
+        ],
+      })
+    },
+    deletePlanItem(index) {
+      this.planData.missions.splice(index, 1)
     },
 
-    getKeShi() {
-      getKeShiData({ hospitalCode: '444885559' })
-        .then((res) => {
-          if (res.success) {
-            let newData = []
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
-                newData = newData.concat(res.data[i].departmentList)
-              }
-            }
-            this.keshiData = newData
-          } else {
-            // this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          // this.$message.error('切换错误：' + err.message)
-        })
+    addElement(index) {
+      this.$refs.addForm.add(index)
     },
 
-    handleOk() {
-      this.$refs.table.refresh()
+    deleteElement(index, indexChild) {
+      this.planData.missions[index].items.splice(indexChild, 1)
     },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+
+    handleOk(index, value) {
+      // console.log('ddd', index + '---' + value)
+      //选择类型后，添加条目
+      switch (value) {
+        case '1':
+          this.$refs.addTeach.add(index)
+          break
+        case '2':
+          this.$refs.addQuestion.add(index)
+          break
+        case '3':
+          this.$refs.addRemind.add(index)
+          break
+        case '4':
+          this.$refs.addJianCha.add(index)
+          break
+        case '5':
+          this.$refs.addJianYan.add(index)
+          break
+      }
+    },
+
+    handleTeach(record) {
+      debugger
+    },
+
+    handleQuestion(record) {},
+    handleRemind(record) {},
+    handleJianCha(record) {},
+    handleJianYan(record) {},
+
+    goApply() {
+      this.$message.info('申请成功')
+      this.$router.push({ name: 'sys_check_in' })
     },
   },
 }
 </script>
 
 <style lang="less">
-.table-operator {
-  margin-bottom: 18px;
-}
-button {
-  margin-right: 8px;
-}
+.div-new-plan {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0 5% 0 5%;
+  // padding: 0 15%;
+  .p-title {
+    margin-top: 20px;
+    height: 20px;
+    font-size: 20px;
+    text-align: left;
+    color: #000;
+    font-weight: bold;
+    // border-bottom: 1px solid #e6e6e6;
+  }
+  .div-divider {
+    margin-top: 2%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
 
-.title {
-  background: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  color: #000;
+  .div-line-wrap {
+    width: 100%;
+    margin-top: 3%;
+    overflow: hidden;
+
+    .span-item-name {
+      display: inline-block;
+      color: #000;
+      font-size: 14px;
+      text-align: left;
+    }
+    .span-item-value {
+      width: 20%;
+      color: #333;
+      text-align: left;
+      padding-left: 20px;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    .ant-select {
+      width: 18.5% !important;
+      margin-left: 1.5% !important;
+    }
+  }
+
+  .div-health-plan {
+    width: 100%;
+    height: 100%;
+
+    .div-plan-item {
+      margin-left: 2%;
+      border-radius: 6px;
+      border: 1px solid #e6e6e6;
+      background-color: white;
+      padding: 2% 2%;
+      margin-top: 1%;
+      width: 80%;
+      height: 100%;
+      overflow: hidden;
+
+      .span-item-name {
+        display: inline-block;
+        color: #000;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .span-des {
+        margin-left: 1%;
+        display: inline-block;
+        color: #000;
+        font-size: 14px;
+        text-align: left;
+      }
+
+      .div-top-right {
+        padding: 3px 10px;
+        display: inline-block;
+        float: right;
+        :hover {
+          cursor: pointer;
+        }
+
+        .span-add-item {
+          float: right;
+          margin-left: 3px;
+          padding-right: 10px;
+          border-right: solid #dce4eb 1px;
+        }
+
+        .div-vertical {
+          margin: 0 1%;
+          width: 1px;
+          color: #dce4eb;
+          height: 2%;
+        }
+      }
+
+      .ant-select {
+        width: 7% !important;
+        margin-left: 1.5% !important;
+      }
+
+      .div-plan-item-elements {
+        width: 100%;
+        margin-top: 1%;
+        overflow: hidden;
+
+        .div-element {
+          overflow: hidden;
+          margin: 0 6%;
+
+          .div-content {
+            display: inline-block;
+            width: 16%;
+            overflow: hidden;
+
+            .span-item-name {
+              display: inline-block;
+              width: 8;
+              color: #000;
+              font-size: 14px;
+              text-align: left;
+            }
+          }
+
+          .icon-delete {
+            float: right;
+            // title:"";
+            :hover {
+              cursor: pointer;
+            }
+          }
+
+          .div-divider-elements {
+            margin-top: 1%;
+            width: 100%;
+            background-color: #e6e6e6;
+            height: 1px;
+          }
+        }
+      }
+    }
+  }
+
+  .btn-add-plan {
+    margin-top: 3%;
+    margin-left: 35%;
+    margin-bottom: 10%;
+  }
 }
 </style>

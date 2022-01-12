@@ -1,78 +1,87 @@
 <template>
-  <a-card :bordered="false">
-    <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="4" :sm="10">
-            <a-form-item label="入院单条码">
-              <a-input v-model="queryParamMock.tm" allow-clear placeholder="请输入条码 " />
-            </a-form-item>
-          </a-col>
-          <a-col :md="4" :sm="24">
-            <a-form-item label="姓名">
-              <a-input v-model="queryParamMock.xm" allow-clear placeholder="请输入姓名 " />
-            </a-form-item>
-          </a-col>
-          <a-col :md="5" :sm="24">
-            <a-form-item label="身份证号">
-              <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入身份证号 " />
-            </a-form-item>
-          </a-col>
+  <div class="div-service">
+    <div class="div-service-left">
+      <p class="p-part-title">病区选择</p>
+      <!-- 分割线 -->
+      <div class="div-divider"></div>
 
-          <a-col :md="4" :sm="24">
-            <a-form-item label="入院病区">
-              <a-select v-model="queryParamMock.yljgdm" allow-clear placeholder="请选择入院病区">
-                <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="4" :sm="24">
-            <a-form-item label="状态">
-              <a-select v-model="queryParamMock.ddd" allow-clear placeholder="请选择状态">
-                <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
-                  item.yyksmc
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="3" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
+      <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index">
+        <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.value }}</p>
+        <!-- 分割线 -->
+        <div class="div-divider"></div>
+      </div>
     </div>
 
-    <!-- 去掉勾选框 -->
-    <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-    <s-table
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="action" slot-scope="text, record">
-        <a @click="handleStatus(record)" :style="(record.activeFlag == 0 && { color: '#333' }) || {}">{{
-          record.activeFlag == 1 || record.activeFlag == null ? '启用' : '停用'
-        }}</a>
-        <a-divider type="vertical" />
-        <a v-if="hasPerm('sysPos:edit')" @click="$refs.editForm.edit(record)">编辑</a>
-      </span>
-    </s-table>
+    <a-card :bordered="false" class="card-right">
+      <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="3" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary">分配计划</a-button>
+              </span>
+            </a-col>
 
-    <add-form ref="addForm" @ok="handleOk" />
-    <edit-form ref="editForm" @ok="handleOk" />
-  </a-card>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="专病">
+                <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入专病 " />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="6" :sm="24">
+              <a-form-item label="患者名称">
+                <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入患者名称" />
+              </a-form-item>
+            </a-col>
+
+            <!-- <a-col :md="4" :sm="24">
+              <a-form-item label="入院病区">
+                <a-select v-model="queryParamMock.yljgdm" allow-clear placeholder="请选择入院病区">
+                  <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
+                    item.value
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col> -->
+
+            <a-col :md="3" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+
+      <!-- 去掉勾选框 -->
+      <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
+      <s-table
+        ref="table"
+        size="default"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+        <span slot="action" slot-scope="text, record">
+          <a @click="handleStatus(record)" :style="(record.activeFlag == 0 && { color: '#333' }) || {}">{{
+            record.activeFlag == 1 || record.activeFlag == null ? '启用' : '停用'
+          }}</a>
+          <a-divider type="vertical" />
+          <a v-if="hasPerm('sysPos:edit')" @click="$refs.editForm.edit(record)">编辑</a>
+        </span>
+      </s-table>
+
+      <add-form ref="addForm" @ok="handleOk" />
+      <edit-form ref="editForm" @ok="handleOk" />
+    </a-card>
+  </div>
 </template>
 
 <script>
@@ -90,35 +99,14 @@ export default {
 
   data() {
     return {
+      partData: [
+        { code: 1, value: '病区一', isChecked: true },
+        { code: 2, value: '病区二', isChecked: false },
+        { code: 3, value: '病区三', isChecked: false },
+      ],
       // 高级搜索 展开/关闭
       advanced: false,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
-      opTypeDict: [
-        {
-          code: '1',
-          value: '儿科',
-        },
-        {
-          code: '2',
-          value: '脑科',
-        },
-        {
-          code: '3',
-          value: '耳鼻喉科',
-        },
-        {
-          code: '4',
-          value: '内科',
-        },
-        {
-          code: '5',
-          value: '外科',
-        },
-        {
-          code: '6',
-          value: '精神科',
-        },
-      ],
       // 查询参数
       queryParam: { yljgdm: '444885559' },
       queryParamMock: { yljgdm: '444885559' },
@@ -238,6 +226,17 @@ export default {
       this.advanced = !this.advanced
     },
 
+    onPartChoose(index) {
+      for (let i = 0; i < this.partData.length; i++) {
+        this.partData[i].isChecked = false
+        if (i == index) {
+          this.partData[i].isChecked = true
+        }
+      }
+
+      //TODO 刷新数据
+    },
+
     handleStatus(record) {
       record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
       changeStatus(record)
@@ -286,17 +285,77 @@ export default {
 </script>
 
 <style lang="less">
-.table-operator {
-  margin-bottom: 18px;
-}
-button {
-  margin-right: 8px;
-}
+.div-service {
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
 
-.title {
-  background: #fff;
-  font-size: 18px;
-  font-weight: bold;
-  color: #000;
+  .div-service-left {
+    background-color: white;
+    padding: 2% 3%;
+    float: left;
+    height: 100%;
+    min-height: 300px;
+    border-right: 1px dashed #e6e6e6;
+    width: 28%;
+    overflow: hidden;
+
+    .div-divider {
+      width: 100%;
+      background-color: #e6e6e6;
+      height: 1px;
+    }
+
+    .p-part-title {
+      height: 18px;
+      font-size: 18px;
+      text-align: left;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .div-part {
+      overflow: hidden;
+      width: 100%;
+      padding-left: 5%;
+      height: 10%;
+
+      .checked {
+        color: #1890ff !important;
+      }
+
+      .p-name {
+        margin-top: 3.5%;
+        display: block;
+        height: 100%;
+        padding-left: 1%;
+        color: #000;
+        font-size: 14px;
+        text-align: left|center;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .card-right {
+    overflow: hidden;
+    width: 70%;
+
+    .table-operator {
+      margin-bottom: 18px;
+    }
+    button {
+      margin-right: 8px;
+    }
+
+    .title {
+      background: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+  }
 }
 </style>
