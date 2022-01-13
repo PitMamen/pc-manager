@@ -460,6 +460,23 @@ const getLoginUser = (options) => {
         "path": "/service",
         "hidden": false
       },
+
+      {
+        "id": "12654742718968864105",
+        "pid": "1283308304890847236",
+        "name": "dispatch_plan",
+        "component": "system/plandispatch/index",
+        "redirect": "",
+        "meta": {
+          "title": "分配计划",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/serviceconfig",
+        "hidden": false
+      },
       // {
       //     "id": "1264619904766685186",
       //     "pid": "0",

@@ -21,7 +21,7 @@
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
-                <a-button type="primary">分配计划</a-button>
+                <a-button type="primary" @click="dispatchPlan">分配计划</a-button>
               </span>
             </a-col>
 
@@ -66,6 +66,7 @@
         size="default"
         :columns="columns"
         :data="loadData"
+        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         :alert="true"
         :rowKey="(record) => record.code"
       >
@@ -99,6 +100,7 @@ export default {
 
   data() {
     return {
+      selectedRowKeys: [], // Check here to configure the default column
       partData: [
         { code: 1, value: '病区一', isChecked: true },
         { code: 2, value: '病区二', isChecked: false },
@@ -113,47 +115,47 @@ export default {
       // 表头
       columns: [
         {
-          title: '入院单条码',
+          title: '姓名',
           dataIndex: 'id',
         },
         {
-          title: '姓名',
+          title: '身份证号',
           dataIndex: 'xm',
         },
         {
-          title: '性别',
+          title: '电话号码',
           dataIndex: 'xb',
         },
         {
-          title: '年龄',
+          title: '所在病区',
           dataIndex: 'age',
         },
         {
-          title: '身份证',
+          title: '性别',
           dataIndex: 'idNo',
         },
         {
-          title: '入院病区',
+          title: '年龄',
           dataIndex: 'ssksName',
         },
         {
-          title: '状态',
+          title: '科室',
           dataIndex: 'status',
         },
         {
-          title: '操作时间',
+          title: '专病',
           dataIndex: 'time',
         },
         {
-          title: '床号',
+          title: '出院时间',
           dataIndex: 'bedId',
         },
         {
-          title: '是否手术',
+          title: '是否购买套餐',
           dataIndex: 'isSurgery',
         },
         {
-          title: '是否全病程',
+          title: '分配状态',
           dataIndex: 'isWhole',
         },
       ],
@@ -203,10 +205,14 @@ export default {
           return res.data
         })
       },
-
-      selectedRowKeys: [],
       selectedRows: [],
     }
+  },
+
+  computed: {
+    hasSelected() {
+      return this.selectedRowKeys.length > 0
+    },
   },
 
   created() {
@@ -222,6 +228,11 @@ export default {
   },
 
   methods: {
+    onSelectChange(selectedRowKeys) {
+      console.log('selectedRowKeys changed: ', selectedRowKeys)
+      this.selectedRowKeys = selectedRowKeys
+    },
+
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
@@ -235,6 +246,10 @@ export default {
       }
 
       //TODO 刷新数据
+    },
+
+    dispatchPlan() {
+      this.$router.push({ name: 'dispatch_plan', data: null })
     },
 
     handleStatus(record) {

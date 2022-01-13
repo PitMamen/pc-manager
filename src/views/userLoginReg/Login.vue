@@ -189,7 +189,6 @@ export default {
       state.loginBtn = true
 
       const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
-
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
@@ -253,7 +252,7 @@ export default {
         this.stepCaptchaVisible = false
       })
     },
-    loginSuccess (res) {
+    loginSuccess (resSuccess) {
           // this.$router.push({ path: '/' })
           //  this.isLoginError = false
       //获取用户信息
