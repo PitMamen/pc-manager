@@ -69,6 +69,7 @@ actions: {
   GetInfo ({ commit }) {
     return new Promise((resolve, reject) => {
       getLoginUser().then(response => {
+        // console.log("GetInfo",response)
         if(response.success){
       const data = response.data
       commit('SET_ADMINTYPE',data.adminType)

@@ -3,88 +3,45 @@
     <div class="div-part">
       <div class="div-line-wrap">
         <div class="div-total-one">
-          <span class="span-item-name"><span style="color: red">*</span> 文章标题 :</span>
-          <a-input
-            v-model="checkData.title"
-            class="span-item-value"
-            style="display: inline-block"
-            allow-clear
-            placeholder="请输入文章名称 "
-          />
+          <span class="span-item-name">{{checkData.title}}</span>
         </div>
       </div>
 
-      <div class="div-line-wrap">
-        <div class="div-total-one">
-          <span class="span-item-name"><span style="color: red">*</span>摘要说明 :</span>
-          <a-input
-            v-model="checkData.brief"
-            class="span-item-value"
-            style="display: inline-block"
-            allow-clear
-            placeholder="请输入摘要说明 "
-          />
-        </div>
-      </div>
       <div class="div-line-wrap">
         <div class="div-left">
-          <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
-          <a-select v-model="checkData.categoryName" allow-clear placeholder="请选择科室">
-            <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.deptName">{{
-              item.deptName
-            }}</a-select-option>
-          </a-select>
+          <span class="span-item-name">所属科室 :{{checkData.categoryName}}</span>
         </div>
-
-        <div class="div-right">
-          <span class="span-item-name"><span style="color: red">*</span>所属病种 :</span>
-          <a-select v-model="checkData.articleType" allow-clear placeholder="请选择病种">
-            <a-select-option v-for="(item, index) in zbTypeData" :key="index" :value="item.value">{{
-              item.value
-            }}</a-select-option>
-          </a-select>
+<div class="div-left">
+          <span class="span-item-name">所属病种 :{{checkData.articleType}}</span>
+        </div>
+        
+        <div class="div-left">
+          <span class="span-item-name">创建作者 :{{checkData.author}}</span>
+          
+        </div>
+        <div class="div-left">
+          <span class="span-item-name">创建时间 :{{checkData.createTime}}</span>
+          
         </div>
       </div>
 
+     
 
-
-  <!-- <div class="div-line-wrap">
-        <div class="div-total-one">
-          <span class="span-item-name" style="width: 100%;"><span style="color: red">*</span>上传文章头像 :  </span>
-        </div>
-        <div :key="ImgKey">
-            <a-upload name="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"   :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-              <a-input
-                v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-                style="display: none"
-              />
-              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-            </a-upload>
-          </div>
-      </div> -->
-
-      <div class="div-line-wrap">
-        <div class="div-total-one">
-          <span class="span-item-name"><span style="color: red">*</span>文章内容 :</span>
-        </div>
-      </div>
-
-      <div id="div1" style="margin-top: 3%"></div>
+  
     </div>
 
-    <div style="margin-top: 30px">
-      <a-button size="large" type="primary" @click="goConfirm" style="margin-left: 47%"> 保存 </a-button>
-    </div>
+  <div id="myHtml"></div>
+ 
     <div style="height: 50px; backgroud-color: white" />
   </div>
 </template>
 
 
 <script type="text/javascript">
-import { STable } from '@/components'
-import { saveArticle, getArticleById ,queryDepartment} from '@/api/modular/system/posManage'
 
-import E from 'wangeditor'
+import { STable } from '@/components'
+import { saveArticle, getArticleById } from '@/api/modular/system/posManage'
+
 
 export default {
   components: {},
@@ -102,7 +59,7 @@ export default {
         content: '', //内容
       },
 
-      ksTypeData: [],
+      ksTypeData: [{ code: 36, value: '骨科' }],
       zbTypeData: [
         { code: 1, value: '专病1' },
         { code: 2, value: '专病2' },
@@ -122,15 +79,22 @@ export default {
   },
 
   created() {
-    //获取科室列表
-    queryDepartment('444885559').then((res)=>{
+    var articleId = this.$route.params.articleId
+    console.log(articleId)
+    if (articleId) {
+      getArticleById(articleId).then((res) => {
         if (res.code == 0) {
-          this.ksTypeData = res.data
-          
+          this.checkData = res.data
+
+        //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+document.getElementById("myHtml").innerHTML =res.data.content
+
+
         } else {
-          this.$message.error('获取科室列表失败：' + res.message)
+          this.$message.error('获取失败：' + res.message)
         }
-    })
+      })
+    }
   },
 
   methods: {
@@ -138,48 +102,7 @@ export default {
       this.advanced = !this.advanced
     },
 
-    goConfirm() {
-      console.log(this.checkData)
-
-      if (!this.checkData.title) {
-        this.$message.error('请填写标题')
-        return
-      }
-      if (!this.checkData.brief) {
-        this.$message.error('请填写描述')
-        return
-      }
-      if (!this.checkData.categoryId) {
-        this.$message.error('请选择科室')
-        return
-      }
-      if (!this.checkData.articleType) {
-        this.$message.error('请选择专病')
-        return
-      }
-      if (!this.checkData.content) {
-        this.$message.error('请编辑内容')
-        return
-      }
-
-      this.ksTypeData.forEach((item) => {
-        if (this.checkData.categoryName == item.deptName) this.checkData.categoryId = item.deptCode
-      })
-
-      //todo 写死的
-      this.checkData.publisherName = '吴汉江'
-      this.checkData.publisherUserId = 109
-
-      saveArticle(this.checkData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('保存成功')
-          this.$router.go(-1)
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-
+    
     goBack() {
       window.history.back()
     },
@@ -201,7 +124,7 @@ export default {
     },
 
     getKeShi() {
-      getKeShiData({})
+      getKeShiData({ hospitalCode: '444885559' })
         .then((res) => {
           if (res.success) {
             let newData = []
@@ -238,30 +161,9 @@ export default {
     },
   },
   mounted() {
-    var editor = new E('#div1')
 
-    editor.config.height = 600
-    editor.config.pasteFilterStyle = false
-    editor.config.onchange = (html) => {
-      this.checkData.content = html
-    }
-// 配置 server 接口地址
-editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
 
-    editor.create()
-
-    var articleId = this.$route.params.articleId
-    console.log(articleId)
-    if (articleId) {
-      getArticleById(articleId).then((res) => {
-        if (res.code == 0) {
-          this.checkData = res.data
-          editor.txt.html(res.data.content)
-        } else {
-          this.$message.error('获取失败：' + res.message)
-        }
-      })
-    }
+    
   },
 }
 </script>
@@ -322,7 +224,7 @@ editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
 
       .div-left {
         float: left;
-        width: 50%;
+        width: 25%;
         margin-top: 3%;
         overflow: hidden;
 
@@ -330,22 +232,15 @@ editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
           display: inline-block;
           color: #000;
           font-size: 14px;
-          text-align: left;
-          width: 20%;
+          text-align: center;
+          width: 100%;
         }
-        .span-item-value {
-          width: 45%;
-          color: #333;
-          text-align: left;
-          padding-left: 0px;
-          font-size: 14px;
-          display: inline-block;
-        }
+       
       }
 
       .div-right {
         margin-top: 3%;
-        width: 50%;
+        width: 25%;
         float: right;
         overflow: hidden;
         .span-item-name {
@@ -353,16 +248,9 @@ editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
           color: #000;
           text-align: left;
           font-size: 14px;
-          width: 20%;
+           width: 100%;
         }
-        .span-item-value {
-          width: 45%;
-          color: #333;
-          font-size: 14px;
-          padding-left: 20px;
-          text-align: left;
-          display: inline-block;
-        }
+       
       }
 
       .div-total-one {
@@ -373,9 +261,9 @@ editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
         .span-item-name {
           display: inline-block;
           color: #000;
-          text-align: left;
-          font-size: 14px;
-          width: 10%;
+          text-align: center;
+          font-size: 24px;
+          width: 100%;
         }
         .span-item-value {
           width: 45%;

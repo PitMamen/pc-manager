@@ -16,9 +16,18 @@
     >
        <span slot="action" slot-scope="text, record">
         
-        <a class="action_form_class" @click="goCheck(record)">查看</a>
-        <a class="action_form_class" @click="goChange(record)">修改</a>
-        <a class="action_form_class" @click="goDelete(record)">删除</a>
+        <a  @click="goCheck(record)">查看</a>
+         <a-divider type="vertical" />
+        <a @click="goChange(record)">修改</a>
+          <a-divider type="vertical" />
+        <a-popconfirm
+          title="确定删除文章吗？"
+          ok-text="确定"
+          cancel-text="取消"
+          @confirm="goDelete(record)"
+        >
+          <a>删除</a>
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -29,15 +38,12 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getAllArticles, changeStatus } from '@/api/modular/system/posManage'
-import addForm from './addForm'
-import editForm from './editForm'
+import { getKeShiData, getAllArticles, delArticle } from '@/api/modular/system/posManage'
+
 
 export default {
   components: {
     STable,
-    addForm,
-    editForm,
   },
 
   data() {
@@ -123,16 +129,25 @@ export default {
       this.$router.push({ name: 'sys_article_add', data: null })
     },
  //查看文章
-    goCheck() {
-      this.$router.push({ name: 'sys_article_add', data: null })
+    goCheck(record) {     
+     this.$router.push({ name: 'sys_article_check', params: record })
     },
      //修改文章
-    goChange() {
-      this.$router.push({ name: 'sys_article_add', data: null })
+    goChange(record) {
+      console.log(record)
+      this.$router.push({ name: 'sys_article_add', params: record })
     },
   //删除文章
-    goDelete() {
-      this.$router.push({ name: 'sys_article_add', data: null })
+    goDelete(record) {
+      delArticle(record.articleId).then((res)=>{
+        if(res.code==0){
+          this.$message.error('删除成功')
+          this.handleOk()
+          
+        }else{
+         this.$message.error('删除失败：' + res.message) 
+        }
+      })
     },
 
     handleOk() {
@@ -151,9 +166,6 @@ export default {
   margin-bottom: 18px;
 }
 button {
-  margin-right: 8px;
-}
-.action_form_class{
   margin-right: 8px;
 }
 

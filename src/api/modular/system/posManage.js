@@ -3,9 +3,9 @@ import { axios } from '@/utils/request'
 /**
  * 获取登录用户信息
  */
- export function getUserInfo () {
+ export function getUserInfo2 () {
   return axios({
-    url: '/user/info',
+    url: '/api/user/info',
     method: 'get',
     
   })
@@ -56,13 +56,54 @@ export function getDoctors(parameter) {
  */
  export function saveArticle(parameter) {
   return axios({
-    url: '/bdcApi//patient/saveArticle',
+    url: '/bdcApi/patient/saveArticle',
     method: 'post',
    
     data: parameter
   })
 }
-
+/**
+ * 获取文章信息
+ *
+ */
+ export function getArticleById(id) {
+  return axios({
+    url: '/bdcApi/health/patient/articleById',
+    method: 'get',
+    params: {
+      id: id
+    },
+    
+  })
+}
+/**
+ * 获取科室信息
+ *
+ */
+ export function queryDepartment(hospitalCode) {
+  return axios({
+    url: '/bdcApi/patient/qryDepartment',
+    method: 'get',
+    params: {
+      hospitalCode: hospitalCode
+    },
+    
+  })
+}
+/**
+ * 删除文章
+ *
+ */
+ export function delArticle(id) {
+  return axios({
+    url: '/bdcApi/patient/delArticle',
+    method: 'get',
+    params: {
+      id: id
+    },
+    
+  })
+}
 /**
  * 写死的获取医生列表，传入科室数据
  */
