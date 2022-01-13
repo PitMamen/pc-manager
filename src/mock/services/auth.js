@@ -344,6 +344,56 @@ const getLoginUser = (options) => {
         "path": "/serviceconfig",
         "hidden": false
       },
+      {
+        "id": "12654742618968064105",
+        "pid": "1283308304890847235",
+        "name": "add_plan",
+        "component": "system/planadd/index",
+        "redirect": "",
+        "meta": {
+          "title": "新增计划",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/serviceconfig",
+        "hidden": false
+      },
+
+      {
+        "id": "12654742618968864105",
+        "pid": "1283308304890847235",
+        "name": "edit_plan",
+        "component": "system/planedit/index",
+        "redirect": "",
+        "meta": {
+          "title": "修改计划",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/serviceconfig",
+        "hidden": false
+      },
+
+      {
+        "id": "12654742618968664105",
+        "pid": "1283308304890847235",
+        "name": "look_plan",
+        "component": "system/planlook/index",
+        "redirect": "",
+        "meta": {
+          "title": "查看计划",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/serviceconfig",
+        "hidden": false
+      },
 
       {
         "id": "12654742618968064102",
