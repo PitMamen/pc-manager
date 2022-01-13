@@ -117,11 +117,13 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, twoStepCode } from '@/api/modular/system/loginManage'
+import { getUserInfo} from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -252,8 +254,25 @@ export default {
       })
     },
     loginSuccess (res) {
-      this.$router.push({ path: '/' })
-      this.isLoginError = false
+          // this.$router.push({ path: '/' })
+          //  this.isLoginError = false
+      //获取用户信息
+      getUserInfo().then((res) => {
+         console.log(res)
+        if(res.code==0){
+          console.log(res.data)
+          Vue.ls.set("UserInfo", res.data)
+           this.$router.push({ path: '/' })
+           this.isLoginError = false
+            
+        }else{
+          
+            this.requestFailed(res.message)
+        }
+     
+      })
+
+     
     },
     requestFailed (err) {
       this.accountLoginErrMsg = err

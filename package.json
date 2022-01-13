@@ -12,7 +12,7 @@
   "dependencies": {
     "@antv/data-set": "^0.10.2",
     "ant-design-vue": "1.5.0-rc.6",
-    "axios": "^0.19.0",
+    "axios": "^0.24.0",
     "core-js": "^3.1.2",
     "enquire.js": "^2.1.6",
     "font-awesome": "^4.7.0",
@@ -34,12 +34,11 @@
     "vue-router": "^3.1.2",
     "vue-svg-component-runtime": "^1.0.1",
     "vuex": "^3.1.1",
-    "wangeditor": "^3.1.1"
+    "wangeditor": "^4.7.11"
   },
   "devDependencies": {
     "@ant-design/colors": "^3.2.1",
     "@vue/cli-plugin-babel": "^4.0.4",
-    "@vue/cli-plugin-eslint": "^4.0.4",
     "@vue/cli-plugin-router": "^4.0.4",
     "@vue/cli-plugin-unit-jest": "^4.0.4",
     "@vue/cli-plugin-vuex": "^4.0.4",
@@ -49,7 +48,7 @@
     "babel-eslint": "^10.0.1",
     "babel-plugin-import": "^1.12.2",
     "babel-plugin-transform-remove-console": "^6.9.4",
-    "eslint": "^5.16.0",
+    "eslint": "^8.6.0",
     "eslint-plugin-html": "^5.0.0",
     "eslint-plugin-vue": "^5.2.3",
     "less": "^3.0.4",

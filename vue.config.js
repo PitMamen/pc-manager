@@ -23,6 +23,7 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
     '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
     '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
+    
   ]
 }
 
@@ -35,7 +36,9 @@ const vueConfig = {
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/)
     ],
     // if prod, add externals
-    externals: {}
+    externals: {
+      
+    }
   },
 
   chainWebpack: (config) => {
@@ -88,13 +91,14 @@ const vueConfig = {
     port: 8089,
     proxy: {
       '/api/bdcApi': {
-        target: 'http://36.158.225.176/health-api',
+        target: 'http://192.168.1.122/health-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
           '^/api/bdcApi': '' // 需要rewrite的,
         }
       },
+      
       '/api': {
         target: 'http://192.168.1.122/manager-api',
         ws: false,

@@ -245,6 +245,22 @@ const getLoginUser = (options) => {
         "path": "/checkin",
         "hidden": false
       },
+      {
+        "id": "12654742618968064058",
+        "pid": "1283308304890847236",
+        "name": "sys_article_add",
+        "component": "system/article/addArticle",
+        "redirect": "",
+        "meta": {
+          "title": "新增文章",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/article/addArticle",
+        "hidden": false
+      },
       // {
       //   "id": "1265474261896806408",
       //   "pid": "1283308304890847233",
@@ -345,7 +361,22 @@ const getLoginUser = (options) => {
         "path": "/question",
         "hidden": false
       },
-
+      {
+        "id": "12654742618968064104",
+        "pid": "1283308304890847235",
+        "name": "config_article",
+        "component": "system/article/index",
+        "redirect": "",
+        "meta": {
+          "title": "文章配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/article",
+        "hidden": false
+      },
       {
         "id": "1283308304890847236",
         "pid": "0",

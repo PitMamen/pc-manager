@@ -1,6 +1,15 @@
 import { axios } from '@/utils/request'
 
-
+/**
+ * 获取登录用户信息
+ */
+ export function getUserInfo () {
+  return axios({
+    url: '/user/info',
+    method: 'get',
+    
+  })
+}
 /**
  * 获取医生列表url和body都要传参数
  *
@@ -21,6 +30,36 @@ export function getDoctors(parameter) {
       pageSize: parameter.pageSize,
     },
     data: newPara
+  })
+}
+/**
+ * 获取文章列表url和body都要传参数
+ *
+ */
+ export function getAllArticles(parameter) {
+  parameter.start = parameter.pageNo
+  var newPara = JSON.parse(JSON.stringify(parameter))
+  delete newPara.pageSize
+  delete newPara.start
+  delete newPara.pageNo
+  return axios({
+    url: '/bdcApi/health/patient/allArticlesPage?start='+parameter.start+'&pageSize='+parameter.pageSize,
+    method: 'get',
+   
+    data: newPara
+  })
+}
+
+/**
+ * 新增/修改文章信息
+ *
+ */
+ export function saveArticle(parameter) {
+  return axios({
+    url: '/bdcApi//patient/saveArticle',
+    method: 'post',
+   
+    data: parameter
   })
 }
 

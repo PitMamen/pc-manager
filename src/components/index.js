@@ -28,8 +28,8 @@ import TagSelect from '@/components/TagSelect'
 import ExceptionPage from '@/components/Exception'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
-import AntdEditor from '@/components/Editor/WangEditor'
 import Dialog from '@/components/Dialog'
+
 
 export {
   AvatarList,
@@ -61,6 +61,6 @@ export {
   TagSelect,
   StandardFormRow,
   ArticleListContent,
-  AntdEditor,
-  Dialog
+  Dialog,
+
 }

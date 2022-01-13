@@ -184,6 +184,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
+           console.log(parameter)
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'age', 23 + Math.round(Math.random() * 10))
             this.$set(res.data.rows[i], 'idNo', '430260199205235220' + Math.round(Math.random()))
