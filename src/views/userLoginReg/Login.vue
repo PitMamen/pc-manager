@@ -193,7 +193,6 @@ export default {
       state.loginBtn = true
 
       const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
-
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
@@ -262,8 +261,24 @@ export default {
         this.stepCaptchaVisible = false
       })
     },
-    loginSuccess(res) {
-      console.log('loginSuccess')
+    loginSuccess (resSuccess) {
+          
+      // //获取用户信息
+      // getUserInfo().then((res) => {
+      //    console.log(res)
+      //   if(res.code==0){
+      //     console.log(res.data)
+      //     Vue.ls.set("UserInfo", res.data)
+      //      this.$router.push({ path: '/' })
+      //      this.isLoginError = false
+            
+      //   }else{
+          
+      //       this.requestFailed(res.message)
+      //   }
+     
+      // })
+
 
       this.$router.push({ path: '/' })
       this.isLoginError = false
