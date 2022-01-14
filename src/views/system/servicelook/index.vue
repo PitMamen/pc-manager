@@ -21,7 +21,7 @@
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
-                <a-button type="primary" @click="dispatchPlan">分配计划</a-button>
+                <a-button type="primary" @click="dispatchPlan" v-show="false">分配计划</a-button>
               </span>
             </a-col>
 
@@ -66,7 +66,6 @@
         size="default"
         :columns="columns"
         :data="loadData"
-        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         :alert="true"
         :rowKey="(record) => record.code"
       >
@@ -155,7 +154,7 @@ export default {
           dataIndex: 'isSurgery',
         },
         {
-          title: '分配状态',
+          title: '分配计划',
           dataIndex: 'isWhole',
         },
       ],

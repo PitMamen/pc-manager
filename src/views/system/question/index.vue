@@ -90,12 +90,12 @@ export default {
           title: '创建时间',
           dataIndex: 'ssksName',
         },
-        {
-          title: '操作',
-          width: '150px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
-        },
+        // {
+        //   title: '操作',
+        //   width: '150px',
+        //   dataIndex: 'action',
+        //   scopedSlots: { customRender: 'action' },
+        // },
       ],
       keshiData: [
         { yyksdm: '01', yyksmc: '未办理' },

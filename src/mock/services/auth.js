@@ -412,6 +412,40 @@ const getLoginUser = (options) => {
         "hidden": false
       },
       {
+        "id": "12654742618968068939",
+        "pid": "1283308304890847235",
+        "name": "config_jiancha",
+        "component": "system/jiancha/index",
+        "redirect": "",
+        "meta": {
+          "title": "检查配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/jiancha",
+        "hidden": false
+      },
+
+      {
+        "id": "12654742618968068023",
+        "pid": "1283308304890847235",
+        "name": "config_jianyan",
+        "component": "system/jianyan/index",
+        "redirect": "",
+        "meta": {
+          "title": "检验配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/jianyan",
+        "hidden": false
+      },
+
+      {
         "id": "12654742618968064104",
         "pid": "1283308304890847235",
         "name": "config_article",
@@ -458,6 +492,23 @@ const getLoginUser = (options) => {
           "link": null
         },
         "path": "/service",
+        "hidden": false
+      },
+
+      {
+        "id": "12655662618868066603",
+        "pid": "1283308304890847236",
+        "name": "sys_service_look",
+        "component": "system/servicelook/index",
+        "redirect": "",
+        "meta": {
+          "title": "服务查看",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/serviced",
         "hidden": false
       },
 

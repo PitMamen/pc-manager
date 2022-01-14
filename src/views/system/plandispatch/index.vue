@@ -253,9 +253,9 @@ export default {
       }
     },
 
-    handleTeach(record) {
-      debugger
-    },
+    handleTeach(record) {},
+
+    handleChoose() {},
 
     handleQuestion(record) {},
     handleRemind(record) {},
