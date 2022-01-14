@@ -261,6 +261,22 @@ const getLoginUser = (options) => {
         "path": "/article/addArticle",
         "hidden": false
       },
+      {
+        "id": "12654742618968064059",
+        "pid": "1283308304890847236",
+        "name": "sys_article_check",
+        "component": "system/article/checkArticle",
+        "redirect": "",
+        "meta": {
+          "title": "文章详情",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/article/checkArticle",
+        "hidden": false
+      },
       // {
       //   "id": "1265474261896806408",
       //   "pid": "1283308304890847233",
