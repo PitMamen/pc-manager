@@ -19,16 +19,16 @@
       ref="table"
       size="default"
       :columns="columns"
-      style="width:50%"
+      style="width: 50%"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
         <a-divider type="vertical" />
-        <a @click="$refs.editForm.add(record)">修改</a>
+        <a @click="$refs.editForm.edit(record)">修改</a>
         <a-divider type="vertical" />
-        <a-popconfirm title="确定删除检查吗？" ok-text="确定" cancel-text="取消" @confirm="deleteJianCha(record)">
+        <a-popconfirm title="确定删除检查吗？" ok-text="确定" cancel-text="取消" @confirm="deletePlan(record)">
           <a>删除</a>
         </a-popconfirm>
       </span>
@@ -41,7 +41,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
+import { getCheckDataList, delCheckData } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -58,16 +58,16 @@ export default {
       advanced: false,
 
       // 查询参数
-      queryParam: { yljgdm: '444885559' },
+      queryParam: { type: 'Check' },
       // 表头
       columns: [
         {
           title: '序号',
-          dataIndex: 'id',
+          dataIndex: 'xh',
         },
         {
           title: '检查名称',
-          dataIndex: 'xm',
+          dataIndex: 'name',
         },
         {
           title: '操作',
@@ -79,13 +79,10 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
+        debugger
+        return getCheckDataList(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
+            this.$set(res.data.rows[i], 'xh', i + 1)
           }
           return res.data
         })
@@ -99,12 +96,16 @@ export default {
   created() {},
 
   methods: {
-    editJianCha() {
-      this.$router.push({ name: 'edit_plan' })
-    },
-
-    deleteJianCha(record) {
-      this.$message.info('删除成功！')
+    deletePlan(record) {
+      debugger
+      delCheckData(record).then((res) => {
+        if (res.code == 0) {
+          this.$message.info('删除成功')
+          this.handleOk()
+        } else {
+          this.$message.error('删除失败：' + res.message)
+        }
+      })
     },
 
     handleOk() {

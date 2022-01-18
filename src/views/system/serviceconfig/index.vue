@@ -28,12 +28,7 @@
         <a-divider type="vertical" />
         <a @click="editPlan">修改</a>
         <a-divider type="vertical" />
-        <a-popconfirm
-          title="确定删除计划吗？"
-          ok-text="确定"
-          cancel-text="取消"
-          @confirm="deletePlan(record)"
-        >
+        <a-popconfirm title="确定删除计划吗？" ok-text="确定" cancel-text="取消" @confirm="deletePlan(record)">
           <a>删除</a>
         </a-popconfirm>
       </span>
@@ -46,7 +41,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
+import { getDocPlans, delPlan } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -68,23 +63,23 @@ export default {
       columns: [
         {
           title: '序号',
-          dataIndex: 'id',
+          dataIndex: 'xh',
         },
         {
           title: '计划名称',
-          dataIndex: 'xm',
+          dataIndex: 'templateName',
         },
         {
           title: '科室',
-          dataIndex: 'xb',
+          dataIndex: 'deptName',
         },
         {
           title: '专病',
-          dataIndex: 'age',
+          dataIndex: 'diseaseName',
         },
         {
           title: '创建时间',
-          dataIndex: 'idNo',
+          dataIndex: 'timeDay',
         },
         {
           title: '操作',
@@ -96,14 +91,12 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getDocPlans(Object.assign(parameter)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
+            this.$set(res.data.rows[i], 'timeDay', this.formatDate(res.data.rows[i].createTime))
+            this.$set(res.data.rows[i], 'xh', i + 1)
           }
+
           return res.data
         })
       },
@@ -113,10 +106,19 @@ export default {
     }
   },
 
-  created() {
-  },
+  created() {},
 
   methods: {
+    formatDate(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
     addPlan() {
       this.$router.push({ name: 'add_plan' })
     },
@@ -128,7 +130,15 @@ export default {
     },
 
     deletePlan(record) {
-      this.$message.info("删除成功！")
+      debugger
+      delPlan(record.templateId).then((res) => {
+        if (res.code == 0) {
+          this.$message.error('删除成功')
+          this.handleOk()
+        } else {
+          this.$message.error('删除失败：' + res.message)
+        }
+      })
     },
 
     handleOk() {

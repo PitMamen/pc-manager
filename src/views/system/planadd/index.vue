@@ -7,7 +7,7 @@
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
       <a-input
-        v-model="planData.name"
+        v-model="planData.templateName"
         class="span-item-value"
         style="display: inline-block"
         allow-clear
@@ -17,18 +17,20 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.keshi" allow-clear placeholder="请选择入所属科室">
-        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.code">{{
-          item.value
+      <a-select v-model="planData.goodsInfo.belongName" allow-clear placeholder="请选择入所属科室">
+        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
+          item.deptName
         }}</a-select-option>
       </a-select>
 
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
-      <a-select v-model="planData.disease" allow-clear placeholder="请选择所属专病">
-        <a-select-option v-for="(item, index) in diseaseData" :key="index" :value="item.code">{{
-          item.value
-        }}</a-select-option>
-      </a-select>
+      <a-input
+        v-model="planData.disease.diseaseName"
+        class="span-item-value"
+        style="display: inline-block"
+        allow-clear
+        placeholder="请输入所属专病 "
+      />
     </div>
 
     <div class="div-line-wrap">
@@ -37,15 +39,15 @@
 
     <!-- 计划内容 -->
     <div class="div-health-plan">
-      <div class="div-plan-item" v-for="(item, index) in planData.missions" :key="index">
+      <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select v-model="planData.timeCount" allow-clear placeholder="请选择计划时间">
+        <a-select v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
           <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
             itemCount.value
           }}</a-select-option>
         </a-select>
 
-        <a-select v-model="planData.timeUnit" allow-clear placeholder="">
+        <a-select v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
           <a-select-option
             v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
             :key="timeUnitIndex"
@@ -66,19 +68,19 @@
 
         <div
           class="div-plan-item-elements"
-          v-for="(itemChild, indexChild) in planData.missions[index].items"
+          v-for="(itemChild, indexChild) in planData.templateTask[index].templateTaskContent"
           :key="indexChild"
         >
           <div class="div-element">
             <div class="div-content">
               <span class="span-item-name"> 计划类型 :</span>
-              <span class="span-item-name" style="margin-left: 3%"> {{ itemChild.type }}</span>
+              <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
             </div>
 
-            <div class="div-content">
+            <div class="div-content-value">
               <!-- //style="margin-left: 3%" -->
               <span class="span-item-name"> 具体内容 :</span>
-              <span class="span-item-name" style="margin-left: 3%"> {{ itemChild.name }}</span>
+              <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
             </div>
 
             <a-icon class="icon-delete" @click="deleteElement(index, indexChild)" title="删除任务项目" type="close" />
@@ -90,6 +92,7 @@
     </div>
 
     <a-button class="btn-add-plan" @click="addPlanItem" type="primary">添加具体计划</a-button>
+    <a-button class="btn-save-plan" @click="savePlan" type="primary">保存计划</a-button>
     <add-form ref="addForm" @ok="handleOk" />
     <add-teach ref="addTeach" @ok="handleTeach" />
     <add-question ref="addQuestion" @ok="handleQuestion" />
@@ -100,7 +103,7 @@
 </template>
 
 <script>
-import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
+import { queryDepartment } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import addTeach from './addTeach'
 import addCha from './addJianCha'
@@ -121,34 +124,30 @@ export default {
   data() {
     return {
       planData: {
-        name: '',
-        timeCount: '1',
-        timeUnit: '天',
-        missions: [
+        templateName: '', //计划名称
+        goodsInfo: {
+          belong: '', //所属科室code
+          belongName: '', //所属科室
+        },
+        disease: {
+          diseaseName: '',
+        },
+
+        templateTask: [
           {
-            name: '第一个任务',
-            items: [
-              { name: '心电图', type: '检查' },
-              { name: '血常规', type: '检验' },
+            timeCount: '1',
+            timeUnit: '天',
+            templateTaskContent: [
+              // { name: '心电图', type: '检查' },
+              // { name: '血常规', type: '检验' },
             ],
           },
         ],
       },
+
+      hosCode: '444885559',
       loading: false,
-      timeCountData: [
-        {
-          code: '1',
-          value: '1',
-        },
-        {
-          code: '2',
-          value: '2',
-        },
-        {
-          code: '3',
-          value: '3',
-        },
-      ],
+      timeCountData: [],
       timeUnitData: [
         {
           code: '1',
@@ -163,41 +162,26 @@ export default {
           value: '月',
         },
       ],
-      keshiData: [
-        {
-          code: '1',
-          value: '儿科',
-        },
-        {
-          code: '2',
-          value: '脑科',
-        },
-        {
-          code: '3',
-          value: '耳鼻喉科',
-        },
-        {
-          code: '4',
-          value: '内科',
-        },
-        {
-          code: '5',
-          value: '外科',
-        },
-        {
-          code: '6',
-          value: '精神科',
-        },
-      ],
-      diseaseData: [
-        { code: 1, value: '心脏病' },
-        { code: 2, value: '糖尿病' },
-        { code: 3, value: '高血压' },
-      ],
+      keshiData: [],
     }
   },
 
-  created() {},
+  created() {
+    queryDepartment('444885559').then((res) => {
+      if (res.code == 0) {
+        this.keshiData = res.data
+      } else {
+        this.$message.error('获取科室列表失败：' + res.message)
+      }
+    })
+
+    for (let i = 0; i < 30; i++) {
+      this.timeCountData.push({
+        code: i + 1,
+        value: i + 1,
+      })
+    }
+  },
 
   methods: {
     toggleAdvanced() {
@@ -205,16 +189,17 @@ export default {
     },
 
     addPlanItem() {
-      this.planData.missions.push({
+      this.planData.templateTask.push({
         name: '第二个任务',
-        items: [
+        templateTaskContent: [
           { name: 'B超', type: '检查' },
           { name: '尿常规', type: '检验' },
         ],
       })
     },
+
     deletePlanItem(index) {
-      this.planData.missions.splice(index, 1)
+      this.planData.templateTask.splice(index, 1)
     },
 
     addElement(index) {
@@ -222,43 +207,154 @@ export default {
     },
 
     deleteElement(index, indexChild) {
-      this.planData.missions[index].items.splice(indexChild, 1)
+      this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
     },
 
+    //Knowledge 健康宣教;Quest 健康问卷;Remind 文字提醒;Check 检查;Exam 检验
+    //index为计划任务的位置
     handleOk(index, value) {
-      // console.log('ddd', index + '---' + value)
       //选择类型后，添加条目
-      switch (value) {
-        case '1':
+      debugger
+      switch (value.taskType) {
+        case 'Knowledge':
           this.$refs.addTeach.add(index)
           break
-        case '2':
+        case 'Quest':
           this.$refs.addQuestion.add(index)
           break
-        case '3':
+        case 'Remind':
           this.$refs.addRemind.add(index)
           break
-        case '4':
+        case 'Check':
           this.$refs.addJianCha.add(index)
           break
-        case '5':
+        case 'Exam':
           this.$refs.addJianYan.add(index)
           break
       }
     },
 
-    handleTeach(record) {
+    /**
+     * taskTypeName是构造的项目名称字段
+     *
+     * detailName是构造的列表展示的字段
+     *
+     * 两个字段不需要传到后台，仅前端使用
+     */
+    handleTeach(index, record) {
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Knowledge', //类型
+        taskTypeName: '健康宣教',
+        contentDetail: {
+          //健康宣教，也就是文章，构造文章的数据
+          knowUrl: record.previewUrl,
+          knowContent: record.title,
+          detailName: record.title,
+          articleId: record.articleId,
+        },
+      })
       debugger
+      console.log('ddd', this.planData)
     },
 
-    handleQuestion(record) {},
-    handleRemind(record) {},
-    handleJianCha(record) {},
-    handleJianYan(record) {},
+    handleQuestion(index, record) {
+      debugger
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Quest', //类型
+        taskTypeName: '健康问卷',
+        contentDetail: {
+          //健康宣教，也就是文章，构造文章的数据
+          questId: record.id,
+          questName: record.name,
+          detailName: record.name,
+        },
+      })
+    },
 
-    goApply() {
-      this.$message.info('申请成功')
-      this.$router.push({ name: 'sys_check_in' })
+    handleRemind(index, remindContent) {
+      debugger
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Remind', //类型
+        taskTypeName: '文字提醒',
+        contentDetail: {
+          //健康宣教，也就是文章，构造文章的数据
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    handleJianCha(index, record) {
+      debugger
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Check', //类型
+        taskTypeName: '检查',
+        contentDetail: {
+          //健康宣教，也就是文章，构造文章的数据
+          knowUrl: record.previewUrl,
+          knowContent: record.knowContent,
+          detailName: record.knowContent,
+        },
+      })
+    },
+
+    handleJianYan(index, record) {
+      debugger
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Exam', //类型
+        taskTypeName: '检验',
+        contentDetail: {
+          //健康宣教，也就是文章，构造文章的数据
+          knowUrl: record.previewUrl,
+          knowContent: record.knowContent,
+          detailName: record.knowContent,
+        },
+      })
+    },
+
+    savePlan() {
+      if (!this.planData.templateName) {
+        this.$message.error('请填写计划名称')
+        return
+      }
+      if (!this.planData.goodsInfo.belongName) {
+        this.$message.error('请选择所属科室')
+        return
+      } else {
+        this.keshiData.forEach((item) => {
+          if (this.planData.goodsInfo.belongName == item.deptName) this.planData.goodsInfo.belong = item.deptCode
+        })
+      }
+
+      if (!this.planData.disease.diseaseName) {
+        this.$message.error('请输入所属专病')
+        return
+      }
+
+      if (this.planData.templateTask.length == 0) {
+        this.$message.error('请添加至少一个计划任务')
+        return
+      }
+
+      //组装每次任务天数
+      for (let i = 0; i < this.planData.templateTask.length; i++) {
+        let num = 1
+        if (this.planData.templateTask[i].timeUnit == '周') {
+          num = 7
+        } else if (this.planData.templateTask[i].timeUnit == '月') {
+          num = 30
+        }
+        this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
+      }
+
+      saveArticle(this.checkData).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('保存成功')
+          this.$router.go(-1)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
     },
   },
 }
@@ -378,17 +474,52 @@ export default {
         overflow: hidden;
 
         .div-element {
+          width: 100%;
           overflow: hidden;
           margin: 0 6%;
 
           .div-content {
             display: inline-block;
-            width: 16%;
+            width: 30%;
             overflow: hidden;
 
             .span-item-name {
               display: inline-block;
-              width: 8;
+              width: 25%;
+              color: #000;
+                            overflow: hidden;
+              font-size: 14px;
+              text-align: left;
+            }
+            .span-item-content {
+              display: inline-block;
+              width: 50%;
+                            overflow: hidden;
+              color: #000;
+              font-size: 14px;
+              text-align: left;
+            }
+          }
+
+          .div-content-value {
+            display: inline-block;
+            width: 66%;
+            overflow: hidden;
+
+            .span-item-name {
+              display: inline-block;
+                            overflow: hidden;
+              width: 11%;
+              color: #000;
+              font-size: 14px;
+              text-align: left;
+            }
+            .span-item-content {
+              display: inline-block;
+              overflow: hidden;
+              text-overflow: ellipsis; //文本溢出显示省略号
+              white-space: nowrap; //文本不会换行
+              width: 75%;
               color: #000;
               font-size: 14px;
               text-align: left;
@@ -404,7 +535,6 @@ export default {
           }
 
           .div-divider-elements {
-            margin-top: 1%;
             width: 100%;
             background-color: #e6e6e6;
             height: 1px;
@@ -417,6 +547,10 @@ export default {
   .btn-add-plan {
     margin-top: 3%;
     margin-left: 35%;
+  }
+  .btn-save-plan {
+    margin-top: 5%;
+    display: block;
     margin-bottom: 10%;
   }
 }
