@@ -190,19 +190,11 @@ export function getDocPlans(parameter) {
  * 获取出院患者列表
  */
 export function getOutPatients(parameter) {
-  parameter.start = parameter.pageNo
-  var newPara = JSON.parse(JSON.stringify(parameter))
-  delete newPara.pageSize
-  delete newPara.start
-  delete newPara.pageNo
+  debugger
   return axios({
-    url: '/bdcApi/health/patient/qryPatientList',
+    url: '/bdcApi/patient/qryPatientList',
     method: 'post',
-    params: {
-      start: parameter.start,
-      pageSize: parameter.pageSize,
-    },
-    data: newPara
+    data: parameter
   })
 }
 
@@ -232,8 +224,8 @@ export function editCheckData(record) {
     url: '/bdcApi/health/manage/editDict',
     method: 'post',
     data: {
-      name:record.name,
-      type:record.type,
+      name: record.name,
+      type: record.type,
       id: record.id
     }
   })

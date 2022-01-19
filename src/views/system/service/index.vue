@@ -27,25 +27,15 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="专病">
-                <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入专病 " />
+                <a-input v-model="queryParam.cyzd" allow-clear placeholder="请输入专病 " />
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="24">
               <a-form-item label="患者名称">
-                <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入患者名称" />
+                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入患者名称" />
               </a-form-item>
             </a-col>
-
-            <!-- <a-col :md="4" :sm="24">
-              <a-form-item label="入院病区">
-                <a-select v-model="queryParamMock.yljgdm" allow-clear placeholder="请选择入院病区">
-                  <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col> -->
 
             <a-col :md="3" :sm="24">
               <span
@@ -70,13 +60,6 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
-        <span slot="action" slot-scope="text, record">
-          <a @click="handleStatus(record)" :style="(record.activeFlag == 0 && { color: '#333' }) || {}">{{
-            record.activeFlag == 1 || record.activeFlag == null ? '启用' : '停用'
-          }}</a>
-          <a-divider type="vertical" />
-          <a v-if="hasPerm('sysPos:edit')" @click="$refs.editForm.edit(record)">编辑</a>
-        </span>
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
@@ -87,7 +70,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
+import { getOutPatients } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -108,98 +91,84 @@ export default {
       ],
       // 高级搜索 展开/关闭
       advanced: false,
-      hosData: [{ code: '444885559', value: '湘雅附二医院' }],
-      // 查询参数
-      queryParam: { yljgdm: '444885559' },
-      queryParamMock: { yljgdm: '444885559' },
+      partChoose: '',
+      // 查询参数 existsPlanFlag 1已分配 2未分配套餐
+      queryParam: { existsPlanFlag: 2, bqmc: '' },
       // 表头
       columns: [
         {
           title: '姓名',
-          dataIndex: 'id',
+          dataIndex: 'userName',
         },
         {
           title: '身份证号',
-          dataIndex: 'xm',
+          dataIndex: 'idNumber',
         },
         {
           title: '电话号码',
-          dataIndex: 'xb',
+          dataIndex: 'phoneNo',
         },
         {
           title: '所在病区',
-          dataIndex: 'age',
+          dataIndex: 'bqmc',
         },
         {
           title: '性别',
-          dataIndex: 'idNo',
+          dataIndex: 'sex',
         },
         {
           title: '年龄',
-          dataIndex: 'ssksName',
+          dataIndex: 'ageCount',
         },
         {
           title: '科室',
-          dataIndex: 'status',
+          dataIndex: 'ksmc',
         },
         {
           title: '专病',
-          dataIndex: 'time',
+          dataIndex: 'cyzd',
         },
         {
           title: '出院时间',
-          dataIndex: 'bedId',
+          dataIndex: 'outTime',
         },
         {
           title: '是否购买套餐',
-          dataIndex: 'isSurgery',
+          dataIndex: 'hasPlan',
         },
         {
           title: '分配状态',
-          dataIndex: 'isWhole',
+          dataIndex: 'hasGive',
         },
-      ],
-      keshiData: [
-        { yyksdm: '01', yyksmc: '未办理' },
-        { yyksdm: '02', yyksmc: '调度中' },
-        { yyksdm: '03', yyksmc: '已获得床位' },
-        { yyksdm: '03', yyksmc: '通知候床' },
-        { yyksdm: '03', yyksmc: '住院转区' },
-        { yyksdm: '03', yyksmc: '已入院' },
-        { yyksdm: '03', yyksmc: '已取消' },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'age', 23 + Math.round(Math.random() * 10))
-            this.$set(res.data.rows[i], 'idNo', '430260199205235220' + Math.round(Math.random()))
-            this.$set(res.data.rows[i], 'status', '已入院')
-            this.$set(res.data.rows[i], 'time', '20210510' + Math.round(Math.random() * 10))
-            this.$set(res.data.rows[i], 'bedId', '02-01' + i)
-
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isSurgery', '是')
+            this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
+            this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
+            this.$set(
+              res.data.rows[i],
+              'outTime',
+              res.data.rows[i].cysj.substring(0, 4) +
+                '-' +
+                res.data.rows[i].cysj.substring(4, 6) +
+                '-' +
+                res.data.rows[i].cysj.substring(6, 8)
+            ) //计算设置出院时间
+            //计算是否购买套餐
+            if (!res.data.rows[i].planInfo || res.data.rows[i].planInfo.length == 0) {
+              this.$set(res.data.rows[i], 'hasPlan', '否')
             } else {
-              this.$set(res.data.rows[i], 'isSurgery', '否')
+              this.$set(res.data.rows[i], 'hasPlan', '是')
             }
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
+            //分配状态：  未注册 注册未分配 已分配
+            if (!res.data.rows[i].userId) {
+              this.$set(res.data.rows[i], 'hasGive', '未注册')
+            } else if (res.data.rows[i].planInfo && res.data.rows[i].planInfo.length > 0) {
+              this.$set(res.data.rows[i], 'hasGive', '已分配')
             } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
-
-            if (!res.data.rows[i].xb) {
-              this.$set(res.data.rows[i], 'xb', '男')
-            }
-            if (!res.data.rows[i].ssksName) {
-              this.$set(res.data.rows[i], 'ssksName', '骨科')
-            }
-            if (i == 0) {
-              this.$set(res.data.rows[i], 'xm', '杨晚花')
-              this.$set(res.data.rows[i], 'xb', '女')
-              this.$set(res.data.rows[i], 'age', 54)
-              this.$set(res.data.rows[i], 'idNo', '430260196707075220')
+              this.$set(res.data.rows[i], 'hasGive', '注册未分配')
             }
           }
           return res.data
@@ -215,17 +184,7 @@ export default {
     },
   },
 
-  created() {
-    // if (this.hasPerm('sysPos:edit') || this.hasPerm('sysPos:delete')) {
-    //   this.columns.push({
-    //     title: '操作',
-    //     width: '150px',
-    //     dataIndex: 'action',
-    //     scopedSlots: { customRender: 'action' },
-    //   })
-    // }
-    // this.getKeShi()
-  },
+  created() {},
 
   methods: {
     onSelectChange(selectedRowKeys) {
@@ -233,8 +192,17 @@ export default {
       this.selectedRowKeys = selectedRowKeys
     },
 
-    toggleAdvanced() {
-      this.advanced = !this.advanced
+    countAge(age) {
+      let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
+      var birthday = new Date(str)
+      var d = new Date()
+      var age =
+        d.getFullYear() -
+        birthday.getFullYear() -
+        (d.getMonth() < birthday.getMonth() || (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
+          ? 1
+          : 0)
+      return age
     },
 
     onPartChoose(index) {
@@ -242,50 +210,15 @@ export default {
         this.partData[i].isChecked = false
         if (i == index) {
           this.partData[i].isChecked = true
+          // this.partChoose = this.partData[i].value
+          // this.queryParam.bqmc = this.partChoose
+          this.$refs.table.refresh()
         }
       }
-
-      //TODO 刷新数据
     },
 
     dispatchPlan() {
       this.$router.push({ name: 'dispatch_plan', data: null })
-    },
-
-    handleStatus(record) {
-      record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
-      changeStatus(record)
-        .then((res) => {
-          if (res.success) {
-            this.$message.success('切换成功')
-            this.$refs.table.refresh()
-          } else {
-            this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          this.$message.error('切换错误：' + err.message)
-        })
-    },
-
-    getKeShi() {
-      getKeShiData({ hospitalCode: '444885559' })
-        .then((res) => {
-          if (res.success) {
-            let newData = []
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
-                newData = newData.concat(res.data[i].departmentList)
-              }
-            }
-            this.keshiData = newData
-          } else {
-            // this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          // this.$message.error('切换错误：' + err.message)
-        })
     },
 
     handleOk() {

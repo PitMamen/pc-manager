@@ -25,7 +25,6 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a-divider type="vertical" />
         <a @click="$refs.editForm.edit(record)">修改</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定删除检查吗？" ok-text="确定" cancel-text="取消" @confirm="deletePlan(record)">
@@ -82,7 +81,7 @@ export default {
         debugger
         return getCheckDataList(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1)
+            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
           }
           return res.data
         })

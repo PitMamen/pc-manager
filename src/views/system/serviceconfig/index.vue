@@ -94,7 +94,7 @@ export default {
         return getDocPlans(Object.assign(parameter)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'timeDay', this.formatDate(res.data.rows[i].createTime))
-            this.$set(res.data.rows[i], 'xh', i + 1)
+            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
           }
 
           return res.data
