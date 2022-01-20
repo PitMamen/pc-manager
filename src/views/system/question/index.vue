@@ -12,8 +12,6 @@
       </a-form>
     </div>
 
-    <!-- 去掉勾选框 -->
-    <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
       ref="table"
       size="default"
@@ -45,7 +43,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
+import { getAllQuestions  } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -63,32 +61,31 @@ export default {
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       // 查询参数
       queryParam: { yljgdm: '444885559' },
-      queryParamMock: { yljgdm: '444885559' },
       // 表头
       columns: [
         {
           title: '序号',
-          dataIndex: 'id',
+          dataIndex: 'xh',
         },
         {
           title: '问卷名称',
-          dataIndex: 'xm',
+          dataIndex: 'name',
         },
-        {
-          title: '科室',
-          dataIndex: 'xb',
-        },
-        {
-          title: '专病',
-          dataIndex: 'age',
-        },
+        // {//暂时注销此两个字段，目前没有
+        //   title: '科室',
+        //   dataIndex: 'xb',
+        // },
+        // {
+        //   title: '专病',
+        //   dataIndex: 'age',
+        // },
         {
           title: '摘要说明',
-          dataIndex: 'idNo',
+          dataIndex: 'nameDes',
         },
         {
           title: '创建时间',
-          dataIndex: 'ssksName',
+          dataIndex: 'createTimeDes',
         },
         // {
         //   title: '操作',
@@ -106,41 +103,30 @@ export default {
         { yyksdm: '03', yyksmc: '已入院' },
         { yyksdm: '03', yyksmc: '已取消' },
       ],
+
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'age', 23 + Math.round(Math.random() * 10))
-            this.$set(res.data.rows[i], 'idNo', '430260199205235220' + Math.round(Math.random()))
-            this.$set(res.data.rows[i], 'status', '已入院')
-            this.$set(res.data.rows[i], 'time', '20210510' + Math.round(Math.random() * 10))
-            this.$set(res.data.rows[i], 'bedId', '02-01' + i)
+        return getAllQuestions(Object.assign(parameter, this.queryParam)).then((res) => {
+          console.log(parameter)
+          console.log(res.data.total / parameter.pageSize)
 
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isSurgery', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isSurgery', '否')
-            }
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
-
-            if (!res.data.rows[i].xb) {
-              this.$set(res.data.rows[i], 'xb', '男')
-            }
-            if (!res.data.rows[i].ssksName) {
-              this.$set(res.data.rows[i], 'ssksName', '骨科')
-            }
-            if (i == 0) {
-              this.$set(res.data.rows[i], 'xm', '杨晚花')
-              this.$set(res.data.rows[i], 'xb', '女')
-              this.$set(res.data.rows[i], 'age', 54)
-              this.$set(res.data.rows[i], 'idNo', '430260196707075220')
-            }
+          //组装控件需要的数据结构
+          var data = {
+            pageNo: parameter.pageNo,
+            pageSize: parameter.pageSize,
+            totalRows: res.data.total,
+            totalPage: res.data.total / parameter.pageSize,
+            rows: res.data.list,
           }
-          return res.data
+
+          //设置序号
+          data.rows.forEach((item, index) => {
+            item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+            item.nameDes = item.name
+            item.createTimeDes = item.createTime.substring(0,11)
+          })
+
+          return data
         })
       },
 

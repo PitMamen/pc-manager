@@ -4,9 +4,9 @@ import { start } from 'nprogress'
 /**
  * 获取登录用户信息
  */
-export function getUserInfo2() {
+export function getTrueUser() {
   return axios({
-    url: '/api/user/info',
+    url: '/user/userInfo',
     method: 'get',
 
   })
@@ -38,6 +38,7 @@ export function getDoctors(parameter) {
  *
  */
 export function getAllArticles(parameter) {
+  debugger
   parameter.start = parameter.pageNo
   var newPara = JSON.parse(JSON.stringify(parameter))
   delete newPara.pageSize
@@ -48,6 +49,28 @@ export function getAllArticles(parameter) {
     method: 'get',
 
     data: newPara
+  })
+}
+
+/**
+ * h获取文章
+ *
+ */
+export function getAllArticlesNew(parameter) {
+  debugger
+  // parameter.start = parameter.pageNo
+  // var newPara = JSON.parse(JSON.stringify(parameter))
+  // delete newPara.pageSize
+  // delete newPara.start
+  // delete newPara.pageNo
+  return axios({
+    url: '/bdcApi/health/patient/allArticlesPage',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      deptCode: parameter.deptCode,
+    }
   })
 }
 
@@ -164,8 +187,29 @@ export function getDepPlans(parameter) {
 /**
  * 删除计划
  */
+export function savePlan(parameter) {
+  return axios({
+    url: '/patient/savePlanTemplate',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 查询计划详情
+ */
+export function getPlanDetail(planId) {
+  return axios({
+    url: '/patient/qryPlanTemplateDetail',
+    method: 'post',
+    data: { templateId: planId }
+  })
+}
+
+/**
+ * 删除计划
+ */
 export function delPlan(parameter) {
-  debugger
   return axios({
     url: '/patient/delPlanTemplate',
     method: 'post',
@@ -190,7 +234,6 @@ export function getDocPlans(parameter) {
  * 获取出院患者列表
  */
 export function getOutPatients(parameter) {
-  debugger
   return axios({
     url: '/bdcApi/patient/qryPatientList',
     method: 'post',
@@ -204,7 +247,6 @@ export function getOutPatients(parameter) {
  * 检查：Check，检验： Exam
  */
 export function addCheckData(content, type) {
-  debugger
   return axios({
     url: '/bdcApi/health/manage/addDict',
     method: 'post',
@@ -219,7 +261,6 @@ export function addCheckData(content, type) {
  * 修改检查检验
  */
 export function editCheckData(record) {
-  debugger
   return axios({
     url: '/bdcApi/health/manage/editDict',
     method: 'post',
@@ -235,7 +276,6 @@ export function editCheckData(record) {
  * 删除检查检验
  */
 export function delCheckData(parameter) {
-  debugger
   return axios({
     url: '/bdcApi/health/manage/deleteDict',
     method: 'post',
@@ -248,7 +288,6 @@ export function delCheckData(parameter) {
  * 
  */
 export function getCheckDataList(parameter) {
-  debugger
   return axios({
     url: '/bdcApi/health/manage/getDictList',
     method: 'post',

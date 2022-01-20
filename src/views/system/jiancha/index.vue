@@ -8,7 +8,7 @@
               class="table-page-search-submitButtons"
               :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
             >
-              <a-button type="primary" @click="$refs.addForm.add()">新增检查</a-button>
+              <a-button type="primary" @click="$refs.addForm.add()">新增检查项</a-button>
             </span>
           </a-col>
         </a-row>
@@ -78,7 +78,6 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        debugger
         return getCheckDataList(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
@@ -96,7 +95,6 @@ export default {
 
   methods: {
     deletePlan(record) {
-      debugger
       delCheckData(record).then((res) => {
         if (res.code == 0) {
           this.$message.info('删除成功')

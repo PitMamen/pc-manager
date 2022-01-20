@@ -24,9 +24,9 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="lookPlan">查看</a>
+        <a @click="lookPlan(record)">查看</a>
         <a-divider type="vertical" />
-        <a @click="editPlan">修改</a>
+        <a @click="editPlan(record)">修改</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定删除计划吗？" ok-text="确定" cancel-text="取消" @confirm="deletePlan(record)">
           <a>删除</a>
@@ -125,12 +125,17 @@ export default {
     editPlan() {
       this.$router.push({ name: 'edit_plan' })
     },
-    lookPlan() {
-      this.$router.push({ name: 'look_plan' })
+    lookPlan(record) {
+      debugger
+      this.$router.push({
+        name: 'look_plan',
+        params: {
+          planId: record.templateId,
+        },
+      })
     },
 
     deletePlan(record) {
-      debugger
       delPlan(record.templateId).then((res) => {
         if (res.code == 0) {
           this.$message.error('删除成功')

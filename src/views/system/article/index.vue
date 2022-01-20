@@ -30,9 +30,9 @@
         </a-popconfirm>
       </span>
     </s-table>
-
+<!-- 
     <add-form ref="addForm" @ok="handleOk" />
-    <edit-form ref="editForm" @ok="handleOk" />
+    <edit-form ref="editForm" @ok="handleOk" /> -->
   </a-card>
 </template>
 
@@ -44,6 +44,8 @@ import { getKeShiData, getAllArticles, delArticle } from '@/api/modular/system/p
 export default {
   components: {
     STable,
+    // addForm,
+    // editForm,
   },
 
   data() {

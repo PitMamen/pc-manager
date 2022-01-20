@@ -3,9 +3,9 @@
     title="选择检验"
     :width="900"
     :visible="visible"
-    :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
+    :confirmLoading="confirmLoading"
     footer=""
   >
     <a-spin :spinning="confirmLoading">
@@ -27,7 +27,7 @@
 
 
 <script>
-import { getDoctors } from '@/api/modular/system/posManage'
+import { getCheckDataList } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -36,25 +36,21 @@ export default {
 
   data() {
     return {
-      queryParam: { yljgdm: '444885559' },
+      queryParam: { type: 'Exam' },
       // 表头
       columns: [
         {
-          title: '入院单条码',
-          dataIndex: 'id',
+          title: '序号',
+          dataIndex: 'xh',
         },
         {
-          title: '姓名',
-          dataIndex: 'xm',
+          title: '名称',
+          dataIndex: 'name',
         },
-        {
-          title: '性别',
-          dataIndex: 'xb',
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-        },
+        // {
+        //   title: '说明',
+        //   dataIndex: 'nameDes',
+        // },
         {
           title: '操作',
           width: '150px',
@@ -63,13 +59,10 @@ export default {
         },
       ],
       loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getCheckDataList(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
+            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            this.$set(res.data.rows[i], 'nameDes', res.data.rows[i].name)
           }
           return res.data
         })
@@ -82,22 +75,7 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-      type: '',
       index: -1,
-      typeData: [
-        {
-          code: '1',
-          value: '检查',
-        },
-        {
-          code: '2',
-          value: '检验',
-        },
-        {
-          code: '3',
-          value: '问卷',
-        },
-      ],
       form: this.$form.createForm(this),
       confirmLoading: false,
       visible: false,
@@ -111,7 +89,7 @@ export default {
     },
 
     pick(record) {
-      this.$emit('ok', record)
+      this.$emit('ok', this.index, record)
       this.visible = false
     },
     handleSubmit() {

@@ -1,35 +1,36 @@
 <template>
   <div class="div-new-plan">
-    <p class="p-title">计划详情</p>
+    <p class="p-title">新增计划</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
       <a-input
-        disabled
-        v-model="planData.name"
+        v-model="planData.templateName"
         class="span-item-value"
         style="display: inline-block"
         allow-clear
-        placeholder=" "
+        placeholder="请输入计划名称 "
       />
     </div>
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.keshi" allow-clear placeholder="" disabled>
-        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.code">{{
-          item.value
+      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室">
+        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
+          item.deptName
         }}</a-select-option>
       </a-select>
 
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
-      <a-select v-model="planData.disease" allow-clear placeholder="" disabled>
-        <a-select-option v-for="(item, index) in diseaseData" :key="index" :value="item.code">{{
-          item.value
-        }}</a-select-option>
-      </a-select>
+      <a-input
+        v-model="planData.disease[0].diseaseName"
+        class="span-item-value"
+        style="display: inline-block"
+        allow-clear
+        placeholder="请输入所属专病 "
+      />
     </div>
 
     <div class="div-line-wrap">
@@ -38,28 +39,27 @@
 
     <!-- 计划内容 -->
     <div class="div-health-plan">
-      <div class="div-plan-item" v-for="(item, index) in planData.missions" :key="index">
+      <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select v-model="planData.timeCount" allow-clear placeholder="请选择计划时间" disabled>
+        <a-select v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
           <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
             itemCount.value
           }}</a-select-option>
         </a-select>
 
-        <a-select v-model="planData.timeUnit" allow-clear placeholder="" disabled>
-          <a-select-option
-            v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
-            :key="timeUnitIndex"
-            :value="itemTimeUnit.code"
-            >{{ itemTimeUnit.value }}</a-select-option
-          >
-        </a-select>
+        <a-input
+          style="width: 11%; margin-left: 5%"
+          type="number"
+          v-model="planData.templateTask[index].inputDay"
+          allow-clear
+          placeholder="或输入天数 "
+        />
         <span class="span-des">后</span>
 
-        <div class="div-top-right" v-if="false">
-          <a-button class="span-add-item" type="primary" @click="deletePlanItem(index)">删除任务</a-button>
+        <div class="div-top-right">
+          <!-- <a-button class="span-add-item" type="primary" @click="deletePlanItem(index)">删除任务</a-button> -->
           <!-- <div class="div-vertical"></div> -->
-          <a-button class="span-add-item" @click="$refs.addForm.add(index)" type="primary">添加子计划</a-button>
+          <!-- <a-button class="span-add-item" @click="$refs.addForm.add(index)" type="primary">添加子计划</a-button> -->
         </div>
 
         <!-- 分割线 -->
@@ -67,74 +67,76 @@
 
         <div
           class="div-plan-item-elements"
-          v-for="(itemChild, indexChild) in planData.missions[index].items"
+          v-for="(itemChild, indexChild) in planData.templateTask[index].templateTaskContent"
           :key="indexChild"
         >
           <div class="div-element">
             <div class="div-content">
               <span class="span-item-name"> 计划类型 :</span>
-              <span class="span-item-name" style="margin-left: 3%"> {{ itemChild.type }}</span>
+              <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
             </div>
 
-            <div class="div-content">
+            <div class="div-content-value">
               <!-- //style="margin-left: 3%" -->
               <span class="span-item-name"> 具体内容 :</span>
-              <span class="span-item-name" style="margin-left: 3%"> {{ itemChild.name }}</span>
+              <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
             </div>
 
-            <a-icon
-              class="icon-delete"
-              @click="deleteElement(index, indexChild)"
-              title="删除任务项目"
-              type="close"
-              v-if="false"
-            />
+            <a-icon class="icon-delete" @click="deleteElement(index, indexChild)" title="删除任务项目" type="close" />
 
             <div class="div-divider-elements"></div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
 <script>
-import { getKeShiData, getDoctors, changeStatus } from '@/api/modular/system/posManage'
+import { getPlanDetail, queryDepartment } from '@/api/modular/system/posManage'
+
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
-  components: {},
+  components: {
+
+  },
 
   data() {
     return {
       planData: {
-        name: '',
-        timeCount: '1',
-        timeUnit: '天',
-        missions: [
+        basetimeType: '0', //必传
+        templateName: '', //计划名称
+        goodsInfo: {
+          belong: '', //所属科室code
+          goodsName: '',
+          goodsType: 'servicePackage', //必传
+        },
+        disease: [
           {
-            name: '第一个任务',
-            items: [
-              { name: '心电图', type: '检查' },
-              { name: '血常规', type: '检验' },
+            diseaseName: '',
+          },
+        ],
+
+        templateTask: [
+          {
+            timeCount: '1',
+            timeUnit: '天',
+            inputDay: 0,
+            templateTaskContent: [
+              // { name: '心电图', type: '检查' },
+              // { name: '血常规', type: '检验' },
             ],
           },
         ],
       },
+
+      hosCode: '444885559',
       loading: false,
-      timeCountData: [
-        {
-          code: '1',
-          value: '1',
-        },
-        {
-          code: '2',
-          value: '2',
-        },
-        {
-          code: '3',
-          value: '3',
-        },
-      ],
+      planId: '',
+      timeCountData: [],
       timeUnitData: [
         {
           code: '1',
@@ -149,103 +151,61 @@ export default {
           value: '月',
         },
       ],
-      keshiData: [
-        {
-          code: '1',
-          value: '儿科',
-        },
-        {
-          code: '2',
-          value: '脑科',
-        },
-        {
-          code: '3',
-          value: '耳鼻喉科',
-        },
-        {
-          code: '4',
-          value: '内科',
-        },
-        {
-          code: '5',
-          value: '外科',
-        },
-        {
-          code: '6',
-          value: '精神科',
-        },
-      ],
-      diseaseData: [
-        { code: 1, value: '心脏病' },
-        { code: 2, value: '糖尿病' },
-        { code: 3, value: '高血压' },
-      ],
+      keshiData: [],
     }
   },
 
-  created() {},
+  created() {
+    this.planId = this.$route.params.planId
+    this.getPlanDetailOut()
+    queryDepartment('444885559').then((res) => {
+      if (res.code == 0) {
+        this.keshiData = res.data
+      } else {
+        this.$message.error('获取科室列表失败：' + res.message)
+      }
+    })
+
+    for (let i = 0; i < 30; i++) {
+      this.timeCountData.push({
+        code: i + 1,
+        value: i + 1,
+      })
+    }
+  },
 
   methods: {
-    toggleAdvanced() {
-      this.advanced = !this.advanced
+    getPlanDetailOut() {
+      getPlanDetail(this.planId).then((res) => {
+        if (res.code == 0) {
+          this.planData = res.data
+          //处理数据为可展示的
+
+        } else {
+          this.$message.error(res.message)
+        }
+      })
     },
 
     addPlanItem() {
-      this.planData.missions.push({
-        name: '第二个任务',
-        items: [
-          { name: 'B超', type: '检查' },
-          { name: '尿常规', type: '检验' },
-        ],
+      this.planData.templateTask.push({
+        timeCount: '1',
+        timeUnit: '天',
+        inputDay: 0,
+        templateTaskContent: [],
       })
     },
-    deletePlanItem(index) {
-      this.planData.missions.splice(index, 1)
-    },
 
-    addElement(index) {
-      this.$refs.addForm.add(index)
+    deletePlanItem(index) {
+      this.planData.templateTask.splice(index, 1)
     },
 
     deleteElement(index, indexChild) {
-      this.planData.missions[index].items.splice(indexChild, 1)
+      this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
     },
 
-    handleOk(index, value) {
-      // console.log('ddd', index + '---' + value)
-      //选择类型后，添加条目
-      switch (value) {
-        case '1':
-          this.$refs.addTeach.add(index)
-          break
-        case '2':
-          this.$refs.addQuestion.add(index)
-          break
-        case '3':
-          this.$refs.addRemind.add(index)
-          break
-        case '4':
-          this.$refs.addJianCha.add(index)
-          break
-        case '5':
-          this.$refs.addJianYan.add(index)
-          break
-      }
-    },
 
-    handleTeach(record) {
-      debugger
-    },
 
-    handleQuestion(record) {},
-    handleRemind(record) {},
-    handleJianCha(record) {},
-    handleJianYan(record) {},
-
-    goApply() {
-      this.$message.info('申请成功')
-      this.$router.push({ name: 'sys_check_in' })
-    },
   },
 }
 </script>
@@ -364,17 +324,52 @@ export default {
         overflow: hidden;
 
         .div-element {
+          width: 100%;
           overflow: hidden;
           margin: 0 6%;
 
           .div-content {
             display: inline-block;
-            width: 16%;
+            width: 30%;
             overflow: hidden;
 
             .span-item-name {
               display: inline-block;
-              width: 8;
+              width: 25%;
+              color: #000;
+              overflow: hidden;
+              font-size: 14px;
+              text-align: left;
+            }
+            .span-item-content {
+              display: inline-block;
+              width: 50%;
+              overflow: hidden;
+              color: #000;
+              font-size: 14px;
+              text-align: left;
+            }
+          }
+
+          .div-content-value {
+            display: inline-block;
+            width: 66%;
+            overflow: hidden;
+
+            .span-item-name {
+              display: inline-block;
+              overflow: hidden;
+              width: 11%;
+              color: #000;
+              font-size: 14px;
+              text-align: left;
+            }
+            .span-item-content {
+              display: inline-block;
+              overflow: hidden;
+              text-overflow: ellipsis; //文本溢出显示省略号
+              white-space: nowrap; //文本不会换行
+              width: 75%;
               color: #000;
               font-size: 14px;
               text-align: left;
@@ -390,7 +385,6 @@ export default {
           }
 
           .div-divider-elements {
-            margin-top: 1%;
             width: 100%;
             background-color: #e6e6e6;
             height: 1px;
@@ -403,6 +397,10 @@ export default {
   .btn-add-plan {
     margin-top: 3%;
     margin-left: 35%;
+  }
+  .btn-save-plan {
+    margin-top: 5%;
+    display: block;
     margin-bottom: 10%;
   }
 }

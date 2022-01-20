@@ -27,7 +27,7 @@
 
 
 <script>
-import { getAllArticles } from '@/api/modular/system/posManage'
+import { getAllArticlesNew } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -36,7 +36,7 @@ export default {
 
   data() {
     return {
-      queryParam: { yljgdm: '444885559' },
+      queryParam: { deptCode: ''},
       // 表头
       columns: [
         {
@@ -60,7 +60,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getAllArticlesNew(Object.assign(parameter, this.queryParam)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
 
@@ -98,13 +98,14 @@ export default {
   },
   methods: {
     //初始化方法
-    add(index) {
+    add(index,deptCode) {
+      debugger
       this.visible = true
+      this.queryParam.deptCode = deptCode
       this.index = index
     },
 
     pick(record) {
-      debugger
       this.$emit('ok', this.index, record)
       this.visible = false
     },

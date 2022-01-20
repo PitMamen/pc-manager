@@ -29,8 +29,8 @@
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
-          <a-select v-model="checkData.categoryName" allow-clear placeholder="请选择科室">
-            <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.deptName">{{
+          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室">
+            <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.deptCode">{{
               item.deptName
             }}</a-select-option>
           </a-select>
@@ -46,9 +46,7 @@
         </div>
       </div>
 
-
-
-  <!-- <div class="div-line-wrap">
+      <!-- <div class="div-line-wrap">
         <div class="div-total-one">
           <span class="span-item-name" style="width: 100%;"><span style="color: red">*</span>上传文章头像 :  </span>
         </div>
@@ -82,7 +80,7 @@
 
 <script type="text/javascript">
 import { STable } from '@/components'
-import { saveArticle, getArticleById ,queryDepartment} from '@/api/modular/system/posManage'
+import { saveArticle, getArticleById, queryDepartment } from '@/api/modular/system/posManage'
 
 import E from 'wangeditor'
 
@@ -123,13 +121,12 @@ export default {
 
   created() {
     //获取科室列表
-    queryDepartment('444885559').then((res)=>{
-        if (res.code == 0) {
-          this.ksTypeData = res.data
-          
-        } else {
-          this.$message.error('获取科室列表失败：' + res.message)
-        }
+    queryDepartment('444885559').then((res) => {
+      if (res.code == 0) {
+        this.ksTypeData = res.data
+      } else {
+        this.$message.error('获取科室列表失败：' + res.message)
+      }
     })
   },
 
@@ -140,6 +137,7 @@ export default {
 
     goConfirm() {
       console.log(this.checkData)
+      debugger
 
       if (!this.checkData.title) {
         this.$message.error('请填写标题')
@@ -163,7 +161,7 @@ export default {
       }
 
       this.ksTypeData.forEach((item) => {
-        if (this.checkData.categoryName == item.deptName) this.checkData.categoryId = item.deptCode
+        if (this.checkData.categoryId == item.deptCode) this.checkData.categoryName = item.deptName
       })
 
       //todo 写死的
@@ -245,8 +243,9 @@ export default {
     editor.config.onchange = (html) => {
       this.checkData.content = html
     }
-// 配置 server 接口地址
-editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
+    // 配置 server 接口地址
+    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFile'
+    // editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
 
     editor.create()
 

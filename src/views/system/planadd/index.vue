@@ -17,7 +17,7 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.goodsInfo.belongName" allow-clear placeholder="请选择入所属科室">
+      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室">
         <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
           item.deptName
         }}</a-select-option>
@@ -25,7 +25,7 @@
 
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
       <a-input
-        v-model="planData.disease.diseaseName"
+        v-model="planData.disease[0].diseaseName"
         class="span-item-value"
         style="display: inline-block"
         allow-clear
@@ -55,6 +55,15 @@
             >{{ itemTimeUnit.value }}</a-select-option
           >
         </a-select>
+        <span class="span-des">后</span>
+
+        <a-input
+          style="width: 11%; margin-left: 5%"
+          type="number"
+          v-model="planData.templateTask[index].inputDay"
+          allow-clear
+          placeholder="或输入天数 "
+        />
         <span class="span-des">后</span>
 
         <div class="div-top-right">
@@ -103,13 +112,15 @@
 </template>
 
 <script>
-import { queryDepartment } from '@/api/modular/system/posManage'
+import { queryDepartment, savePlan } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import addTeach from './addTeach'
 import addCha from './addJianCha'
 import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -124,19 +135,24 @@ export default {
   data() {
     return {
       planData: {
+        basetimeType: '0', //必传
         templateName: '', //计划名称
         goodsInfo: {
           belong: '', //所属科室code
-          belongName: '', //所属科室
+          goodsName: '',
+          goodsType: 'servicePackage', //必传
         },
-        disease: {
-          diseaseName: '',
-        },
+        disease: [
+          {
+            diseaseName: '',
+          },
+        ],
 
         templateTask: [
           {
             timeCount: '1',
             timeUnit: '天',
+            inputDay: 0,
             templateTaskContent: [
               // { name: '心电图', type: '检查' },
               // { name: '血常规', type: '检验' },
@@ -190,20 +206,15 @@ export default {
 
     addPlanItem() {
       this.planData.templateTask.push({
-        name: '第二个任务',
-        templateTaskContent: [
-          { name: 'B超', type: '检查' },
-          { name: '尿常规', type: '检验' },
-        ],
+        timeCount: '1',
+        timeUnit: '天',
+        inputDay: 0,
+        templateTaskContent: [],
       })
     },
 
     deletePlanItem(index) {
       this.planData.templateTask.splice(index, 1)
-    },
-
-    addElement(index) {
-      this.$refs.addForm.add(index)
     },
 
     deleteElement(index, indexChild) {
@@ -214,10 +225,9 @@ export default {
     //index为计划任务的位置
     handleOk(index, value) {
       //选择类型后，添加条目
-      debugger
       switch (value.taskType) {
         case 'Knowledge':
-          this.$refs.addTeach.add(index)
+          this.$refs.addTeach.add(index, this.planData.goodsInfo.belong)
           break
         case 'Quest':
           this.$refs.addQuestion.add(index)
@@ -253,17 +263,14 @@ export default {
           articleId: record.articleId,
         },
       })
-      debugger
-      console.log('ddd', this.planData)
     },
 
     handleQuestion(index, record) {
-      debugger
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Quest', //类型
         taskTypeName: '健康问卷',
         contentDetail: {
-          //健康宣教，也就是文章，构造文章的数据
+          //问卷
           questId: record.id,
           questName: record.name,
           detailName: record.name,
@@ -272,12 +279,11 @@ export default {
     },
 
     handleRemind(index, remindContent) {
-      debugger
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Remind', //类型
         taskTypeName: '文字提醒',
         contentDetail: {
-          //健康宣教，也就是文章，构造文章的数据
+          //文字提醒
           remindContent: remindContent,
           detailName: remindContent,
         },
@@ -285,29 +291,25 @@ export default {
     },
 
     handleJianCha(index, record) {
-      debugger
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Check', //类型
         taskTypeName: '检查',
         contentDetail: {
-          //健康宣教，也就是文章，构造文章的数据
-          knowUrl: record.previewUrl,
-          knowContent: record.knowContent,
-          detailName: record.knowContent,
+          //检查
+          checkType: record.name,
+          detailName: record.name,
         },
       })
     },
 
     handleJianYan(index, record) {
-      debugger
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Exam', //类型
         taskTypeName: '检验',
         contentDetail: {
-          //健康宣教，也就是文章，构造文章的数据
-          knowUrl: record.previewUrl,
-          knowContent: record.knowContent,
-          detailName: record.knowContent,
+          //检验
+          examType: record.name,
+          detailName: record.name,
         },
       })
     },
@@ -317,16 +319,12 @@ export default {
         this.$message.error('请填写计划名称')
         return
       }
-      if (!this.planData.goodsInfo.belongName) {
+      if (!this.planData.goodsInfo.belong) {
         this.$message.error('请选择所属科室')
         return
-      } else {
-        this.keshiData.forEach((item) => {
-          if (this.planData.goodsInfo.belongName == item.deptName) this.planData.goodsInfo.belong = item.deptCode
-        })
       }
 
-      if (!this.planData.disease.diseaseName) {
+      if (!this.planData.disease[0].diseaseName) {
         this.$message.error('请输入所属专病')
         return
       }
@@ -336,18 +334,44 @@ export default {
         return
       }
 
+      this.planData.goodsInfo.goodsName = this.planData.templateName
+
       //组装每次任务天数
       for (let i = 0; i < this.planData.templateTask.length; i++) {
-        let num = 1
-        if (this.planData.templateTask[i].timeUnit == '周') {
-          num = 7
-        } else if (this.planData.templateTask[i].timeUnit == '月') {
-          num = 30
+        if (this.planData.templateTask[i].inputDay == 0) {
+          let num = 1
+          if (this.planData.templateTask[i].timeUnit == '2') {
+            num = 7
+          } else if (this.planData.templateTask[i].timeUnit == '3') {
+            num = 30
+          }
+          this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
+        } else {
+          this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
         }
-        this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
       }
 
-      saveArticle(this.checkData).then((res) => {
+      //组装每次任务的项目
+      let templateTaskContentNo = 0
+      for (let i = 0; i < this.planData.templateTask.length; i++) {
+        templateTaskContentNo = templateTaskContentNo + this.planData.templateTask[i].templateTaskContent.length
+      }
+      if (templateTaskContentNo == 0) {
+        this.$message.error('请添加至少一个任务项目')
+        return
+      }
+
+      //删除没有任务项目的任务
+      // let templateTask = JSON.parse(JSON.stringify(this.planData.templateTask))
+      let templateTask = []
+      for (let i = 0; i < this.planData.templateTask.length; i++) {
+        if (this.planData.templateTask[i].templateTaskContent.length != 0) {
+          templateTask.push(this.planData.templateTask[i])
+        }
+      }
+      this.planData.templateTask = templateTask
+
+      savePlan(this.planData).then((res) => {
         if (res.code == 0) {
           this.$message.success('保存成功')
           this.$router.go(-1)
@@ -487,14 +511,14 @@ export default {
               display: inline-block;
               width: 25%;
               color: #000;
-                            overflow: hidden;
+              overflow: hidden;
               font-size: 14px;
               text-align: left;
             }
             .span-item-content {
               display: inline-block;
               width: 50%;
-                            overflow: hidden;
+              overflow: hidden;
               color: #000;
               font-size: 14px;
               text-align: left;
@@ -508,7 +532,7 @@ export default {
 
             .span-item-name {
               display: inline-block;
-                            overflow: hidden;
+              overflow: hidden;
               width: 11%;
               color: #000;
               font-size: 14px;

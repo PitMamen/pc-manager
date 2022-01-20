@@ -49,7 +49,7 @@ export default {
         },
         {
           title: '说明',
-          dataIndex: 'name',
+          dataIndex: 'nameDes',
         },
         {
           title: '操作',
@@ -76,6 +76,7 @@ export default {
           //设置序号
           data.rows.forEach((item, index) => {
             item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+            item.nameDes = item.name
           })
 
           return data
@@ -104,7 +105,6 @@ export default {
     },
 
     pick(record) {
-      debugger
       this.$emit('ok', this.index, record)
       this.visible = false
     },

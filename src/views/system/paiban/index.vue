@@ -544,8 +544,6 @@ export default {
         banciDatasOut.push(banciDatasIn)
       }
       console.log('banciDatasOut', banciDatasOut)
-
-      console.log('222', banciIds)
     },
 
     onSelected(departmentCode) {

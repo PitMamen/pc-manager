@@ -125,9 +125,10 @@ import Vue from 'vue'
 import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
+import { TRUE_USER } from '@/store/mutation-types'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, twoStepCode } from '@/api/modular/system/loginManage'
-
+import { getTrueUser } from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -261,27 +262,20 @@ export default {
         this.stepCaptchaVisible = false
       })
     },
-    loginSuccess (resSuccess) {
-          
-      // //获取用户信息
-      // getUserInfo().then((res) => {
-      //    console.log(res)
-      //   if(res.code==0){
-      //     console.log(res.data)
-      //     Vue.ls.set("UserInfo", res.data)
-      //      this.$router.push({ path: '/' })
-      //      this.isLoginError = false
-            
-      //   }else{
-          
-      //       this.requestFailed(res.message)
-      //   }
-     
-      // })
-
-
-      this.$router.push({ path: '/' })
-      this.isLoginError = false
+    loginSuccess(resSuccess) {
+      //获取用户信息
+      getTrueUser().then((res) => {
+        console.log(res)
+        if (res.code == 0) {
+          console.log(res.data)
+          // this.$store.commit("trueUser", res.data);
+          Vue.ls.set(TRUE_USER, res.data)
+          this.$router.push({ path: '/' })
+          this.isLoginError = false
+        } else {
+          this.requestFailed(res.message)
+        }
+      })
     },
     requestFailed(err) {
       this.accountLoginErrMsg = err
