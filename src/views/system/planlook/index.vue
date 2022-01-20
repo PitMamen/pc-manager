@@ -1,36 +1,21 @@
 <template>
   <div class="div-new-plan">
-    <p class="p-title">新增计划</p>
+    <p class="p-title">查看计划</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
-      <a-input
-        v-model="planData.templateName"
-        class="span-item-value"
-        style="display: inline-block"
-        allow-clear
-        placeholder="请输入计划名称 "
-      />
+      <span class="span-item-value">{{ planData.templateName }} </span>
     </div>
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室">
-        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-          item.deptName
-        }}</a-select-option>
-      </a-select>
+      <span class="span-item-value">{{ planData.goodsInfo.belongName }} </span>
 
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
-      <a-input
-        v-model="planData.disease[0].diseaseName"
-        class="span-item-value"
-        style="display: inline-block"
-        allow-clear
-        placeholder="请输入所属专病 "
-      />
+
+      <span class="span-item-value">{{ planData.disease[0].diseaseName }} </span>
     </div>
 
     <div class="div-line-wrap">
@@ -41,19 +26,15 @@
     <div class="div-health-plan">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
-          <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
-            itemCount.value
-          }}</a-select-option>
-        </a-select>
 
-        <a-input
+        <!-- <a-input
           style="width: 11%; margin-left: 5%"
           type="number"
-          v-model="planData.templateTask[index].inputDay"
+          v-model="planData.templateTask[index].execTime"
           allow-clear
           placeholder="或输入天数 "
-        />
+        /> -->
+        <span style="margin-left: 2%">{{ planData.templateTask[index].execTime }} </span>
         <span class="span-des">后</span>
 
         <div class="div-top-right">
@@ -82,14 +63,13 @@
               <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
             </div>
 
-            <a-icon class="icon-delete" @click="deleteElement(index, indexChild)" title="删除任务项目" type="close" />
-
             <div class="div-divider-elements"></div>
           </div>
         </div>
       </div>
     </div>
 
+    <div class="btn-add-plan" @click="addPlanItem" type="primary"></div>
   </div>
 </template>
 
@@ -100,9 +80,7 @@ import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
 export default {
-  components: {
-
-  },
+  components: {},
 
   data() {
     return {
@@ -179,8 +157,58 @@ export default {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
           this.planData = res.data
-          //处理数据为可展示的
 
+          //处理数据为可展示的
+          //展示科室
+          this.keshiData.forEach((item) => {
+            if (this.planData.goodsInfo.belong == item.deptCode) {
+              this.planData.goodsInfo.belongName = item.deptName
+            }
+          })
+
+          //展示名称
+          for (let i = 0; i < this.planData.templateTask.length; i++) {
+            for (let j = 0; j < this.planData.templateTask[i].templateTaskContent.length; j++) {
+              let taskType = this.planData.templateTask[i].templateTaskContent[j].taskType
+              if (taskType == 'Knowledge') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '健康宣教')
+
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.title
+                )
+              } else if (taskType == 'Quest') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '健康问卷')
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.questName
+                )
+              } else if (taskType == 'Remind') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '文字提醒')
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
+                )
+              } else if (taskType == 'Check') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '检查')
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.checkType
+                )
+              } else if (taskType == 'Exam') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '检验')
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.examType
+                )
+              }
+            }
+          }
         } else {
           this.$message.error(res.message)
         }
@@ -203,9 +231,6 @@ export default {
     deleteElement(index, indexChild) {
       this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
     },
-
-
-
   },
 }
 </script>

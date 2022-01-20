@@ -498,7 +498,7 @@ export default {
         overflow: hidden;
 
         .div-element {
-          width: 100%;
+          width: 80%;
           overflow: hidden;
           margin: 0 6%;
 

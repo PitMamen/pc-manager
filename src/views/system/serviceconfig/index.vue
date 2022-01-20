@@ -126,7 +126,6 @@ export default {
       this.$router.push({ name: 'edit_plan' })
     },
     lookPlan(record) {
-      debugger
       this.$router.push({
         name: 'look_plan',
         params: {
