@@ -141,6 +141,7 @@ export default {
           dataIndex: 'hasGive',
         },
       ],
+      loadDataOut:[],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
@@ -171,6 +172,7 @@ export default {
               this.$set(res.data.rows[i], 'hasGive', '注册未分配')
             }
           }
+          this.loadDataOut = res.data
           return res.data
         })
       },
@@ -218,7 +220,15 @@ export default {
     },
 
     dispatchPlan() {
-      this.$router.push({ name: 'dispatch_plan', data: null })
+      if (this.selectedRowKeys.length == 0) {
+        this.$message.info('请勾选分配计划的患者')
+        return
+      }
+      let myData = []
+      for (let i = 0; i < this.selectedRowKeys.length; i++) {
+        myData.push(this.loadDataOut.rows[i])
+      }
+      this.$router.push({ name: 'dispatch_plan', query: myData })
     },
 
     handleOk() {

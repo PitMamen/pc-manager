@@ -1,40 +1,32 @@
 <template>
   <div class="div-new-plan">
-    <p class="p-title">修改计划</p>
+    <p class="p-title">分配计划</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
     <div class="div-line-wrap">
-      <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
-      <a-input
-        v-model="planData.templateName"
-        class="span-item-value"
-        style="display: inline-block"
-        allow-clear
-        placeholder="请输入计划名称 "
-      />
+      <span class="span-item-name"><span style="color: red">*</span> {{ getNameString() }}</span>
     </div>
 
     <div class="div-line-wrap">
-      <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室">
-        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-          item.deptName
-        }}</a-select-option>
-      </a-select>
+      <span class="span-item-name"><span style="color: red">*</span> 所属科室 ：&nbsp;&nbsp;&nbsp;{{ keshiName }}</span>
 
-      <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
-      <a-input
-        v-model="planData.disease[0].diseaseName"
-        class="span-item-value"
-        style="display: inline-block"
-        allow-clear
-        placeholder="请输入所属专病 "
-      />
+      <span class="span-item-name" style="margin-left: 20%"
+        ><span style="color: red">*</span> 所属专病 :&nbsp;&nbsp;&nbsp;&nbsp;{{ diseaseName }}</span
+      >
+    </div>
+
+    <div class="div-line-wrap">
+      <span class="span-item-name"><span style="color: red">*</span> 请选择计划 :</span>
+      <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="choosePlan">点击选择</a-button>
+      <span class="span-item-name" style="margin-left: 1%; color: black; font-weight: bold">
+        {{ planData.templateName ? planData.templateName : '未选择计划' }}</span
+      >
     </div>
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
+      <a-button class="span-add-item" type="primary" style="margin-left: 2%" @click="choosePlan">编辑专属计划</a-button>
     </div>
 
     <!-- 计划内容 -->
@@ -112,6 +104,7 @@
 
     <a-button class="btn-add-plan" @click="addPlanItem" type="primary">添加具体计划</a-button>
     <a-button class="btn-save-plan" @click="savePlan" type="primary">保存计划</a-button>
+    <choose-plan ref="choosePlan" @ok="handleChoose" />
     <add-form ref="addForm" @ok="handleOk" />
     <add-teach ref="addTeach" @ok="handleTeach" />
     <add-question ref="addQuestion" @ok="handleQuestion" />
@@ -135,6 +128,7 @@ import addCha from './addJianCha'
 import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
+import choosePlan from './choosePlan'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -146,6 +140,7 @@ export default {
     addYan,
     addQuestion,
     addRemind,
+    choosePlan,
   },
 
   data() {
@@ -153,6 +148,9 @@ export default {
       planData: {
         basetimeType: '0', //必传
         templateName: '', //计划名称
+        keshiName: '',
+        keshiCode: '',
+        diseaseName: '',
         goodsInfo: {
           belong: '', //所属科室code
           goodsName: '',
@@ -195,13 +193,18 @@ export default {
         },
       ],
       keshiData: [],
+      userDatas: [],
       planId: '',
     }
   },
 
   created() {
-    // this.planId = this.$route.params.planId
+    // this.userDatas = this.$route.params
+    this.userDatas = this.$route.query
     // this.getPlanDetailOut()
+    this.keshiName = this.userDatas[0].ksmc
+    this.diseaseName = this.userDatas[0].cyzd
+    this.keshiCode = this.userDatas[0].ks
 
     queryDepartment('444885559').then((res) => {
       if (res.code == 0) {
@@ -220,6 +223,24 @@ export default {
   },
 
   methods: {
+    getNameString() {
+      let nameString = ''
+      this.userDatas.forEach((item) => {
+        nameString = nameString + item.userName + '，'
+      })
+      return '患者 ：   ' + nameString.slice(0, nameString.length - 1)
+    },
+
+    choosePlan() {
+      // this.$refs.choosePlan.add(this.keshiCode)
+      this.$refs.choosePlan.add('4134')
+    },
+
+    handleChoose(record) {
+      this.planId = record.templateId
+      this.getPlanDetailOut()
+    },
+
     getPlanDetailOut() {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {

@@ -171,16 +171,16 @@ export function getDoctorsNew(parameter) {
  *
  */
 export function getDepPlans(parameter) {
-  parameter.start = parameter.pageNo
-  var newPara = JSON.parse(JSON.stringify(parameter))
-  delete newPara.pageSize
-  delete newPara.start
-  delete newPara.pageNo
+  debugger
   return axios({
-    url: '/bdcApi/health/patient/queryGoodsList?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+    url: '/bdcApi/health/patient/queryGoodsList',
     method: 'get',
 
-    data: newPara
+    params: {
+      departmentId: parameter.departmentId,
+      // pageNo: parameter.pageNo,
+      // pageSize: 100
+    }
   })
 }
 
