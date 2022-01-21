@@ -27,20 +27,12 @@
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
 
-        <!-- <a-input
-          style="width: 11%; margin-left: 5%"
-          type="number"
-          v-model="planData.templateTask[index].execTime"
-          allow-clear
-          placeholder="或输入天数 "
-        /> -->
+
         <span style="margin-left: 2%">{{ planData.templateTask[index].execTime }} </span>
-        <span class="span-des">后</span>
+        <span class="span-des">天后</span>
 
         <div class="div-top-right">
-          <!-- <a-button class="span-add-item" type="primary" @click="deletePlanItem(index)">删除任务</a-button> -->
-          <!-- <div class="div-vertical"></div> -->
-          <!-- <a-button class="span-add-item" @click="$refs.addForm.add(index)" type="primary">添加子计划</a-button> -->
+
         </div>
 
         <!-- 分割线 -->

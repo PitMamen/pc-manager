@@ -27,7 +27,7 @@
 
 
 <script>
-import { getDoctors } from '@/api/modular/system/posManage'
+import { getAllArticlesNew } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -36,24 +36,20 @@ export default {
 
   data() {
     return {
-      queryParam: { yljgdm: '444885559' },
+      queryParam: { deptCode: ''},
       // 表头
       columns: [
         {
-          title: '入院单条码',
-          dataIndex: 'id',
+          title: '序号',
+          dataIndex: 'xh',
         },
         {
-          title: '姓名',
-          dataIndex: 'xm',
+          title: '名称',
+          dataIndex: 'title',
         },
         {
-          title: '性别',
-          dataIndex: 'xb',
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
+          title: '说明',
+          dataIndex: 'brief',
         },
         {
           title: '操作',
@@ -62,16 +58,27 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
+      // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDoctors(Object.assign(parameter, this.queryParam)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            if (Math.round(Math.random()) % 3 == 1) {
-              this.$set(res.data.rows[i], 'isWhole', '是')
-            } else {
-              this.$set(res.data.rows[i], 'isWhole', '否')
-            }
+        return getAllArticlesNew(Object.assign(parameter, this.queryParam)).then((res) => {
+          console.log(parameter)
+          console.log(res.data.total / parameter.pageSize)
+
+          //组装控件需要的数据结构
+          var data = {
+            pageNo: parameter.pageNo,
+            pageSize: parameter.pageSize,
+            totalRows: res.data.total,
+            totalPage: res.data.total / parameter.pageSize,
+            rows: res.data.list,
           }
-          return res.data
+
+          //设置序号
+          data.rows.forEach((item, index) => {
+            item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+          })
+
+          return data
         })
       },
       labelCol: {
@@ -84,20 +91,6 @@ export default {
       },
       type: '',
       index: -1,
-      typeData: [
-        {
-          code: '1',
-          value: '检查',
-        },
-        {
-          code: '2',
-          value: '检验',
-        },
-        {
-          code: '3',
-          value: '问卷',
-        },
-      ],
       form: this.$form.createForm(this),
       confirmLoading: false,
       visible: false,
@@ -105,13 +98,14 @@ export default {
   },
   methods: {
     //初始化方法
-    add(index) {
+    add(index,deptCode) {
       this.visible = true
+      this.queryParam.deptCode = deptCode
       this.index = index
     },
 
     pick(record) {
-      this.$emit('ok', record)
+      this.$emit('ok', this.index, record)
       this.visible = false
     },
 

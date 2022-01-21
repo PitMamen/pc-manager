@@ -64,7 +64,7 @@
           allow-clear
           placeholder="或输入天数 "
         />
-        <span class="span-des">后</span>
+        <span class="span-des">天后</span>
 
         <div class="div-top-right">
           <a-button class="span-add-item" type="primary" @click="deletePlanItem(index)">删除任务</a-button>

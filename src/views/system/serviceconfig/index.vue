@@ -122,9 +122,17 @@ export default {
     addPlan() {
       this.$router.push({ name: 'add_plan' })
     },
-    editPlan() {
+    
+    editPlan(record) {
+      this.$router.push({
+        name: 'edit_plan',
+        params: {
+          planId: record.templateId,
+        },
+      })
       this.$router.push({ name: 'edit_plan' })
     },
+
     lookPlan(record) {
       this.$router.push({
         name: 'look_plan',

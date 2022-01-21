@@ -218,6 +218,35 @@ export function delPlan(parameter) {
 }
 
 /**
+ * 删除计划任务
+ */
+export function delPlanTask(parameter) {
+  return axios({
+    url: '/patient/delPlanTemplateTask',
+    method: 'post',
+    data: {
+      templateId: parameter.templateId,
+      taskId: parameter.taskId
+    }
+  })
+}
+
+/**
+ * 删除计划任务项目
+ */
+export function delPlanTaskContent(parameter) {
+  return axios({
+    url: '/patient/delPlanTemplateTaskContent',
+    method: 'post',
+    data: {
+      templateId: parameter.templateId,
+      taskId: parameter.taskId,
+      id: parameter.id
+    }
+  })
+}
+
+/**
  * 获取医生创建的套餐列表
  *
  */

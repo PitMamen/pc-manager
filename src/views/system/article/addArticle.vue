@@ -244,8 +244,8 @@ export default {
       this.checkData.content = html
     }
     // 配置 server 接口地址
-    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFile'
-    // editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
+    // editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFile'
+    editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
 
     editor.create()
 

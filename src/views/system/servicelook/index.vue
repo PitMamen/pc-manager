@@ -206,7 +206,7 @@ export default {
         this.partData[i].isChecked = false
         if (i == index) {
           this.partData[i].isChecked = true
-                    // this.partChoose = this.partData[i].value
+          // this.partChoose = this.partData[i].value
           // this.queryParam.bqmc = this.partChoose
           this.$refs.table.refresh()
         }
@@ -215,7 +215,14 @@ export default {
 
     lookPlan(record) {
       debugger
-      this.$router.push({ name: 'look_plan' })
+      this.$router.push({
+        name: 'look_plan',
+        params: {
+          //TODO 用户自己的健康计划 应该穿 planId，但是目前还没有
+          // planId: record.planInfo[0].planId,
+          planId: record.planInfo[0].templateId,
+        },
+      })
     },
 
     dispatchPlan() {
