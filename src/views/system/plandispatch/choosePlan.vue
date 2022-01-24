@@ -10,6 +10,7 @@
   >
     <!-- :data="loadData" -->
     <a-spin :spinning="confirmLoading">
+      <!-- 此处没用项目封装的table，用ant原生table -->
       <a-table
         ref="table"
         :pagination="false"
@@ -80,7 +81,6 @@ export default {
   methods: {
     //初始化方法
     add(keshiCode) {
-      debugger
       this.queryParam.departmentId = keshiCode
       this.visible = true
 

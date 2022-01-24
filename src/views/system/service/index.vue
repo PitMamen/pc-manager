@@ -92,8 +92,13 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
-      // 查询参数 existsPlanFlag 1已分配 2未分配套餐
-      queryParam: { existsPlanFlag: 2, bqmc: '' },
+      // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
+      queryParam: {
+        // existsPlanFlag: '',
+        existsPlanFlag: '2',
+        bqmc: '',
+        // isRegister: '1',
+      },
       // 表头
       columns: [
         {
@@ -141,7 +146,7 @@ export default {
           dataIndex: 'hasGive',
         },
       ],
-      loadDataOut:[],
+      loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
@@ -226,8 +231,22 @@ export default {
       }
       let myData = []
       for (let i = 0; i < this.selectedRowKeys.length; i++) {
-        myData.push(this.loadDataOut.rows[i])
+        myData.push(this.loadDataOut.rows[this.selectedRowKeys[i]])
       }
+
+      //区别科室，一次只能给一个科室分配计划
+      let deps = []
+      for (let i = 0; i < myData.length; i++) {
+        deps.push(myData[i].ks)
+      }
+      deps.sort()
+      for (let i = 0; i < deps.length - 1; i++) {
+        if (deps[i] == deps[i + 1]) {
+          this.$message.info('请选择同一个科室的患者')
+          return
+        }
+      }
+
       this.$router.push({ name: 'dispatch_plan', query: myData })
     },
 

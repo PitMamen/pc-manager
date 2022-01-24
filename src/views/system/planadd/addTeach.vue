@@ -99,7 +99,6 @@ export default {
   methods: {
     //初始化方法
     add(index,deptCode) {
-      debugger
       this.visible = true
       this.queryParam.deptCode = deptCode
       this.index = index

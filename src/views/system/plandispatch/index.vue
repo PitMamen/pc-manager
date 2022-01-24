@@ -5,7 +5,7 @@
     <div class="div-divider"></div>
 
     <div class="div-line-wrap">
-      <span class="span-item-name"><span style="color: red">*</span> {{ getNameString() }}</span>
+      <span class="span-item-name"><span style="color: red">*</span> {{ nameString }}</span>
     </div>
 
     <div class="div-line-wrap">
@@ -18,7 +18,9 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 请选择计划 :</span>
-      <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="choosePlan">点击选择</a-button>
+      <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="choosePlan">{{
+        chooseText
+      }}</a-button>
       <span class="span-item-name" style="margin-left: 1%; color: black; font-weight: bold">
         {{ planData.templateName ? planData.templateName : '未选择计划' }}</span
       >
@@ -26,11 +28,13 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
-      <a-button class="span-add-item" type="primary" style="margin-left: 2%" @click="choosePlan">编辑专属计划</a-button>
+      <a-button class="span-add-item" type="primary" style="margin-left: 2%" @click="editChoosePlan">{{
+        editBtnText
+      }}</a-button>
     </div>
 
     <!-- 计划内容 -->
-    <div class="div-health-plan">
+    <div class="div-health-plan" v-show="isPlanChose">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
         <a-select v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
@@ -52,6 +56,7 @@
         <a-input
           style="width: 12.5%; margin-left: 5%"
           type="number"
+          :disabled="!isEdit"
           v-model="planData.templateTask[index].inputDay"
           allow-clear
           placeholder="或输入天数 "
@@ -60,11 +65,13 @@
 
         <div class="div-top-right">
           <a-popconfirm title="确定删除任务吗？" ok-text="确定" cancel-text="取消" @confirm="deletePlanItem(index)">
-            <a-button class="span-add-item" type="primary">删除任务</a-button>
+            <a-button class="span-add-item" type="primary" v-show="isEdit">删除任务</a-button>
           </a-popconfirm>
 
           <!-- <div class="div-vertical"></div> -->
-          <a-button class="span-add-item" @click="$refs.addForm.add(index)" type="primary">添加子计划</a-button>
+          <a-button class="span-add-item" @click="$refs.addForm.add(index)" v-show="isEdit" type="primary"
+            >添加子计划</a-button
+          >
         </div>
 
         <!-- 分割线 -->
@@ -93,7 +100,7 @@
               cancel-text="取消"
               @confirm="deleteElement(index, indexChild)"
             >
-              <a-icon class="icon-delete" title="删除任务项目" type="close" />
+              <a-icon class="icon-delete" title="删除任务项目" v-show="isEdit" type="close" />
             </a-popconfirm>
 
             <div class="div-divider-elements"></div>
@@ -102,8 +109,11 @@
       </div>
     </div>
 
-    <a-button class="btn-add-plan" @click="addPlanItem" type="primary">添加具体计划</a-button>
-    <a-button class="btn-save-plan" @click="savePlan" type="primary">保存计划</a-button>
+    <a-button class="btn-add-plan" @click="addPlanItem" v-show="isPlanChose && isEdit" type="primary"
+      >添加具体计划</a-button
+    >
+    <!-- <a-button class="btn-add-plan" @click="addPlanItem" type="primary">添加具体计划</a-button> -->
+    <a-button class="btn-save-plan" @click="savePlan" type="primary">确认分配</a-button>
     <choose-plan ref="choosePlan" @ok="handleChoose" />
     <add-form ref="addForm" @ok="handleOk" />
     <add-teach ref="addTeach" @ok="handleTeach" />
@@ -121,6 +131,7 @@ import {
   getPlanDetail,
   delPlanTask,
   delPlanTaskContent,
+  dispatchPlan,
 } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import addTeach from './addTeach'
@@ -130,6 +141,7 @@ import addQuestion from './addQuestion'
 import addRemind from './addRemind'
 import choosePlan from './choosePlan'
 import { TRUE_USER } from '@/store/mutation-types'
+import moment from 'moment'
 import Vue from 'vue'
 
 export default {
@@ -154,7 +166,7 @@ export default {
         goodsInfo: {
           belong: '', //所属科室code
           goodsName: '',
-          goodsType: 'servicePackage', //必传
+          goodsType: 'service_package', //必传
         },
         disease: [
           {
@@ -194,6 +206,12 @@ export default {
       ],
       keshiData: [],
       userDatas: [],
+      isPlanChose: false,
+      isEdit: false,
+      editBtnText: '编辑专属计划',
+      chooseText: '点击选择',
+      nameString: '',
+      userIds: [],
       planId: '',
     }
   },
@@ -205,6 +223,13 @@ export default {
     this.keshiName = this.userDatas[0].ksmc
     this.diseaseName = this.userDatas[0].cyzd
     this.keshiCode = this.userDatas[0].ks
+
+    let nameStringTemp = ''
+    this.userDatas.forEach((item) => {
+      nameStringTemp = nameStringTemp + item.userName + '，'
+      this.userIds.push(item.userId)
+    })
+    this.nameString = '患者 ：   ' + nameStringTemp.slice(0, nameStringTemp.length - 1)
 
     queryDepartment('444885559').then((res) => {
       if (res.code == 0) {
@@ -223,21 +248,33 @@ export default {
   },
 
   methods: {
-    getNameString() {
-      let nameString = ''
-      this.userDatas.forEach((item) => {
-        nameString = nameString + item.userName + '，'
-      })
-      return '患者 ：   ' + nameString.slice(0, nameString.length - 1)
+    choosePlan() {
+      this.$refs.choosePlan.add(this.keshiCode)
+      this.isPlanChose = true
     },
 
-    choosePlan() {
-      // this.$refs.choosePlan.add(this.keshiCode)
-      this.$refs.choosePlan.add('4134')
+    /**
+     *编辑计划展示编辑按钮
+     *
+     *完成编辑保存编辑后的计划
+     */
+    editChoosePlan() {
+      if (!this.isPlanChose) {
+        this.$message.error("请先选择计划")
+        return
+      }
+      this.isEdit = !this.isEdit
+      if (this.isEdit) {
+        this.editBtnText = '完成编辑'
+        // this.savePlan()
+      } else {
+        this.editBtnText = '编辑专属计划'
+      }
     },
 
     handleChoose(record) {
       this.planId = record.templateId
+      this.chooseText = '重新选择'
       this.getPlanDetailOut()
     },
 
@@ -507,7 +544,24 @@ export default {
 
       savePlan(this.planData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('保存成功')
+          this.dispatchPlanOut()
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    dispatchPlanOut() {
+      let param = {
+        beginTime: moment(new Date()).format('YYYY-MM-DD') + ' 05:00:00',
+        patientId: this.userIds,
+        doctorId: this.planData.userId,
+        templateId: this.planData.templateId,
+      }
+
+      dispatchPlan(param).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('分配成功')
           this.$router.go(-1)
         } else {
           this.$message.error(res.message)

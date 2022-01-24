@@ -38,7 +38,6 @@ export function getDoctors(parameter) {
  *
  */
 export function getAllArticles(parameter) {
-  debugger
   parameter.start = parameter.pageNo
   var newPara = JSON.parse(JSON.stringify(parameter))
   delete newPara.pageSize
@@ -57,12 +56,6 @@ export function getAllArticles(parameter) {
  *
  */
 export function getAllArticlesNew(parameter) {
-  debugger
-  // parameter.start = parameter.pageNo
-  // var newPara = JSON.parse(JSON.stringify(parameter))
-  // delete newPara.pageSize
-  // delete newPara.start
-  // delete newPara.pageNo
   return axios({
     url: '/bdcApi/health/patient/allArticlesPage',
     method: 'get',
@@ -171,18 +164,16 @@ export function getDoctorsNew(parameter) {
  *
  */
 export function getDepPlans(parameter) {
-  debugger
   return axios({
     url: '/bdcApi/health/patient/queryGoodsList',
     method: 'get',
 
     params: {
       departmentId: parameter.departmentId,
-      // pageNo: parameter.pageNo,
-      // pageSize: 100
     }
   })
 }
+
 
 /**
  * 删除计划
@@ -190,6 +181,17 @@ export function getDepPlans(parameter) {
 export function savePlan(parameter) {
   return axios({
     url: '/patient/savePlanTemplate',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 分配计划
+ */
+export function dispatchPlan(parameter) {
+  return axios({
+    url: '/patient/distributePlan',
     method: 'post',
     data: parameter
   })

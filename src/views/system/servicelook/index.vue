@@ -207,14 +207,13 @@ export default {
         if (i == index) {
           this.partData[i].isChecked = true
           // this.partChoose = this.partData[i].value
-          // this.queryParam.bqmc = this.partChoose
+          // this.queryParam.bqmc = this.partChoose//病区名称暂时不传
           this.$refs.table.refresh()
         }
       }
     },
 
     lookPlan(record) {
-      debugger
       this.$router.push({
         name: 'look_plan',
         params: {

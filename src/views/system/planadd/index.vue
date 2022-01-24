@@ -140,7 +140,7 @@ export default {
         goodsInfo: {
           belong: '', //所属科室code
           goodsName: '',
-          goodsType: 'servicePackage', //必传
+          goodsType: 'service_package', //必传
         },
         disease: [
           {

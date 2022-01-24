@@ -137,8 +137,6 @@ export default {
 
     goConfirm() {
       console.log(this.checkData)
-      debugger
-
       if (!this.checkData.title) {
         this.$message.error('请填写标题')
         return
