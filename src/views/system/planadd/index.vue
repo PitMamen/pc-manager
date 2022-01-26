@@ -280,6 +280,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Knowledge', //类型
         taskTypeName: '健康宣教',
+        taskDescribe: record.title,
         contentDetail: {
           //健康宣教，也就是文章，构造文章的数据
           knowUrl: record.previewUrl,
@@ -294,6 +295,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Quest', //类型
         taskTypeName: '健康问卷',
+        taskDescribe: record.name,
         contentDetail: {
           //问卷
           questId: record.id,
@@ -307,6 +309,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Remind', //类型
         taskTypeName: '文字提醒',
+        taskDescribe: remindContent,
         contentDetail: {
           //文字提醒
           remindContent: remindContent,
@@ -319,6 +322,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Check', //类型
         taskTypeName: '检查',
+        taskDescribe: record.name,
         contentDetail: {
           //检查
           checkType: record.name,
@@ -331,6 +335,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.push({
         taskType: 'Exam', //类型
         taskTypeName: '检验',
+        taskDescribe: record.name,
         contentDetail: {
           //检验
           examType: record.name,
@@ -363,17 +368,18 @@ export default {
 
       //组装每次任务天数
       for (let i = 0; i < this.planData.templateTask.length; i++) {
-        if (this.planData.templateTask[i].inputDay == 0) {
-          let num = 1
-          if (this.planData.templateTask[i].timeUnit == '2') {
-            num = 7
-          } else if (this.planData.templateTask[i].timeUnit == '3') {
-            num = 30
-          }
-          this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
-        } else {
-          this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
-        }
+        // if (this.planData.templateTask[i].inputDay == 0) {
+        //   let num = 1
+        //   if (this.planData.templateTask[i].timeUnit == '2') {
+        //     num = 7
+        //   } else if (this.planData.templateTask[i].timeUnit == '3') {
+        //     num = 30
+        //   }
+        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
+        // } else {
+        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
+        // }
+        this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
       }
 
       //组装每次任务的项目

@@ -37,7 +37,12 @@
     <div class="div-health-plan" v-show="isPlanChose">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select v-show="false" v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
+        <a-select
+          v-show="false"
+          v-model="planData.templateTask[index].timeCount"
+          allow-clear
+          placeholder="请选择计划时间"
+        >
           <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
             itemCount.value
           }}</a-select-option>
@@ -258,7 +263,7 @@ export default {
      */
     editChoosePlan() {
       if (!this.isPlanChose) {
-        this.$message.error("请先选择计划")
+        this.$message.error('请先选择计划')
         return
       }
       this.isEdit = !this.isEdit
@@ -507,17 +512,18 @@ export default {
 
       //组装每次任务天数
       for (let i = 0; i < this.planData.templateTask.length; i++) {
-        if (this.planData.templateTask[i].inputDay == 0) {
-          let num = 1
-          if (this.planData.templateTask[i].timeUnit == '2') {
-            num = 7
-          } else if (this.planData.templateTask[i].timeUnit == '3') {
-            num = 30
-          }
-          this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
-        } else {
-          this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
-        }
+        // if (this.planData.templateTask[i].inputDay == 0) {
+        //   let num = 1
+        //   if (this.planData.templateTask[i].timeUnit == '2') {
+        //     num = 7
+        //   } else if (this.planData.templateTask[i].timeUnit == '3') {
+        //     num = 30
+        //   }
+        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
+        // } else {
+        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
+        // }
+        this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
       }
 
       //组装每次任务的项目

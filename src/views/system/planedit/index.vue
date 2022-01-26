@@ -483,17 +483,18 @@ export default {
 
       //组装每次任务天数
       for (let i = 0; i < this.planData.templateTask.length; i++) {
-        if (this.planData.templateTask[i].inputDay == 0) {
-          let num = 1
-          if (this.planData.templateTask[i].timeUnit == '2') {
-            num = 7
-          } else if (this.planData.templateTask[i].timeUnit == '3') {
-            num = 30
-          }
-          this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
-        } else {
-          this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
-        }
+        // if (this.planData.templateTask[i].inputDay == 0) {
+        //   let num = 1
+        //   if (this.planData.templateTask[i].timeUnit == '2') {
+        //     num = 7
+        //   } else if (this.planData.templateTask[i].timeUnit == '3') {
+        //     num = 30
+        //   }
+        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
+        // } else {
+        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
+        // }
+        this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
       }
 
       //组装每次任务的项目
