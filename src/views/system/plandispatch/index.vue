@@ -140,9 +140,7 @@ import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
 import choosePlan from './choosePlan'
-import { TRUE_USER } from '@/store/mutation-types'
 import moment from 'moment'
-import Vue from 'vue'
 
 export default {
   components: {

@@ -247,7 +247,7 @@ const getLoginUser = (options) => {
       },
       {
         "id": "12654742618968064058",
-        "pid": "1283308304890847236",
+        "pid": "1283308304890847235",
         "name": "sys_article_add",
         "component": "system/article/addArticle",
         "redirect": "",

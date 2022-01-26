@@ -29,7 +29,7 @@
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
-          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室">
+          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChange">
             <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.deptCode">{{
               item.deptName
             }}</a-select-option>
@@ -39,8 +39,8 @@
         <div class="div-right">
           <span class="span-item-name"><span style="color: red">*</span>所属病种 :</span>
           <a-select v-model="checkData.articleType" allow-clear placeholder="请选择病种">
-            <a-select-option v-for="(item, index) in zbTypeData" :key="index" :value="item.value">{{
-              item.value
+            <a-select-option v-for="(item, index) in diseaseData" :key="index" :value="item.diseaseName">{{
+              item.diseaseName
             }}</a-select-option>
           </a-select>
         </div>
@@ -80,7 +80,9 @@
 
 <script type="text/javascript">
 import { STable } from '@/components'
-import { saveArticle, getArticleById, queryDepartment } from '@/api/modular/system/posManage'
+import { saveArticle, getArticleById, queryDepartment, getDiseases } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 import E from 'wangeditor'
 
@@ -101,11 +103,6 @@ export default {
       },
 
       ksTypeData: [],
-      zbTypeData: [
-        { code: 1, value: '专病1' },
-        { code: 2, value: '专病2' },
-        { code: 3, value: '专病3' },
-      ],
 
       keshiData: {},
       // 加载数据方法 必须为 Promise 对象
@@ -114,6 +111,7 @@ export default {
           return res.data
         })
       },
+      diseaseData: [],
       selectedRowKeys: [],
       selectedRows: [],
     }
@@ -131,8 +129,18 @@ export default {
   },
 
   methods: {
-    toggleAdvanced() {
-      this.advanced = !this.advanced
+    handleChange(code) {
+      this.getDiseasesOut(code)
+    },
+
+    getDiseasesOut(departmentId) {
+      getDiseases({ departmentId: departmentId }).then((res) => {
+        if (res.code == 0) {
+          this.diseaseData = res.data
+        } else {
+          this.$message.error('获取专病列表失败：' + res.message)
+        }
+      })
     },
 
     goConfirm() {
@@ -163,8 +171,10 @@ export default {
       })
 
       //todo 写死的
-      this.checkData.publisherName = '吴汉江'
-      this.checkData.publisherUserId = 109
+      debugger
+      let user = Vue.ls.get(TRUE_USER)
+      this.checkData.publisherName = user.userName
+      this.checkData.publisherUserId = user.userId
 
       saveArticle(this.checkData).then((res) => {
         if (res.code == 0) {
@@ -196,26 +206,6 @@ export default {
         })
     },
 
-    getKeShi() {
-      getKeShiData({})
-        .then((res) => {
-          if (res.success) {
-            let newData = []
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
-                newData = newData.concat(res.data[i].departmentList)
-              }
-            }
-            this.keshiData = newData
-          } else {
-            // this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          // this.$message.error('切换错误：' + err.message)
-        })
-    },
-
     goHistoryDetail() {
       window.open(
         'http://www.mclouds.org.cn:30000/patient-view.html?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMTk4IiwiZXhwIjoxNjQwODY2NjQxfQ.p8rozkAXsPzdBDeAkck3NjUI7iBYWM_4UA4A22rlbElPNYiZMthDnLQ0jhJIk8CpnRJEPfoi11Fybs2bajSb2hnGpVegVqTae_fxc30qL4sXPVPpvG_88ehhylBDtetVXpvJkkETQXq5ZWSfaItrBGZqr0r2NwPJIon6gy-NKditLhu8T7RPYj65qVsh7mX6gr-rhfnC9Ol4gRHjAyxiKm33M_sCn3ELMhDchjHrjE8WfllrT1mfaiP7kB4eDas9FB2D3zpAEb3EWHHdweQIsY8DTidslqjN-OkpjJsnXfahRoHEeiWiagkNzAhNM3-zcsQykvmrVzab2u_PhG-u3g&no=000006392145&type=9',
@@ -242,8 +232,11 @@ export default {
       this.checkData.content = html
     }
     // 配置 server 接口地址
-    // editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFile'
-    editor.config.uploadImgServer = '/fileUpload/uploadImgFile'
+    editor.config.uploadFileName = 'file'
+    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+
+    editor.config.uploadVideoName = 'file'
+    editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
 
     editor.create()
 
@@ -254,6 +247,7 @@ export default {
         if (res.code == 0) {
           this.checkData = res.data
           editor.txt.html(res.data.content)
+          this.getDiseasesOut(this.checkData.categoryId)
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -264,6 +258,9 @@ export default {
 </script>
 
 <style lang="less">
+.ant-select-dropdown {
+  z-index: 20000;
+}
 .div-check {
   background-color: white;
   padding: 0 15% 0 5%;

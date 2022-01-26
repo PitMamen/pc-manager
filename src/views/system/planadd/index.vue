@@ -9,7 +9,7 @@
       <a-input
         v-model="planData.templateName"
         class="span-item-value"
-        maxLength="30"
+        :maxLength="30"
         style="display: inline-block"
         allow-clear
         placeholder="请输入计划名称 "
@@ -18,7 +18,7 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室">
+      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室" @change="handleChange">
         <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
           item.deptName
         }}</a-select-option>
@@ -130,8 +130,6 @@ import addCha from './addJianCha'
 import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -204,14 +202,6 @@ export default {
       }
     })
 
-    getDiseases({ departmentId: '1040300' }).then((res) => {
-      if (res.code == 0) {
-        this.diseaseData = res.data
-      } else {
-        this.$message.error('获取专病列表失败：' + res.message)
-      }
-    })
-
     for (let i = 0; i < 30; i++) {
       this.timeCountData.push({
         code: i + 1,
@@ -221,8 +211,18 @@ export default {
   },
 
   methods: {
-    toggleAdvanced() {
-      this.advanced = !this.advanced
+    handleChange(code) {
+      this.getDiseasesOut(code)
+    },
+
+    getDiseasesOut(departmentId) {
+      getDiseases({ departmentId: departmentId }).then((res) => {
+        if (res.code == 0) {
+          this.diseaseData = res.data
+        } else {
+          this.$message.error('获取专病列表失败：' + res.message)
+        }
+      })
     },
 
     addPlanItem() {

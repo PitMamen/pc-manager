@@ -196,6 +196,17 @@ export function savePlan(parameter) {
 }
 
 /**
+ * 删除计划
+ */
+ export function uploadImg(parameter) {
+  return axios({
+    url: '/api/contentapi/fileUpload/uploadImgFile',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 分配计划
  */
 export function dispatchPlan(parameter) {

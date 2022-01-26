@@ -68,9 +68,6 @@
 <script>
 import { getPlanDetail, queryDepartment } from '@/api/modular/system/posManage'
 
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
-
 export default {
   components: {},
 

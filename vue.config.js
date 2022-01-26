@@ -110,6 +110,15 @@ const vueConfig = {
         }
       },
 
+      '/api/contentapi': {
+        target: 'http://192.168.1.122/content-api',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/contentapi': ''   //需要rewrite的,
+        }
+      },
+
       '/api': {
         target: 'http://192.168.1.122/manager-api',
         ws: false,
@@ -119,15 +128,6 @@ const vueConfig = {
           '^/api': ''   //需要rewrite的,
         }
       },
-
-      // '/api/contentapi': {
-      //   target: 'http://192.168.1.122/content-api',
-      //   ws: false,
-      //   changeOrigin: true,
-      //   pathRewrite: {
-      //     '^/api/contentapi': ''   //需要rewrite的,
-      //   }
-      // }
     }
   },
 

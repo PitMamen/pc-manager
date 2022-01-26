@@ -9,7 +9,7 @@
       <a-input
         v-model="planData.templateName"
         class="span-item-value"
-        maxLength="30"
+        :maxLength="30"
         style="display: inline-block"
         allow-clear
         placeholder="请输入计划名称 "
@@ -18,7 +18,7 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室">
+      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室" @change="handleChange">
         <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
           item.deptName
         }}</a-select-option>
@@ -138,6 +138,7 @@ import {
   savePlan,
   getPlanDetail,
   delPlanTask,
+  getDiseases,
   delPlanTaskContent,
 } from '@/api/modular/system/posManage'
 import addForm from './addForm'
@@ -146,8 +147,6 @@ import addCha from './addJianCha'
 import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
 
 export default {
   components: {
@@ -206,6 +205,7 @@ export default {
         },
       ],
       keshiData: [],
+      diseaseData: [],
       planId: '',
     }
   },
@@ -231,6 +231,20 @@ export default {
   },
 
   methods: {
+    handleChange(code) {
+      this.getDiseasesOut(code)
+    },
+
+    getDiseasesOut(departmentId) {
+      getDiseases({ departmentId: departmentId }).then((res) => {
+        if (res.code == 0) {
+          this.diseaseData = res.data
+        } else {
+          this.$message.error('获取专病列表失败：' + res.message)
+        }
+      })
+    },
+
     getPlanDetailOut() {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
@@ -243,6 +257,8 @@ export default {
               this.planData.goodsInfo.belongName = item.deptName
             }
           })
+
+          this.getDiseasesOut(this.planData.goodsInfo.belong)
 
           //展示名称
           for (let i = 0; i < this.planData.templateTask.length; i++) {

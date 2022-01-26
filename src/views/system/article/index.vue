@@ -143,7 +143,7 @@ export default {
     goDelete(record) {
       delArticle(record.articleId).then((res)=>{
         if(res.code==0){
-          this.$message.error('删除成功')
+          this.$message.success('删除成功')
           this.handleOk()
           
         }else{
