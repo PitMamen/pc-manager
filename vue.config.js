@@ -23,7 +23,7 @@ const assetsCDN = {
     '//cdn.jsdelivr.net/npm/vue-router@3.1.3/dist/vue-router.min.js',
     '//cdn.jsdelivr.net/npm/vuex@3.1.1/dist/vuex.min.js',
     '//cdn.jsdelivr.net/npm/axios@0.19.0/dist/axios.min.js'
-    
+
   ]
 }
 
@@ -37,7 +37,7 @@ const vueConfig = {
     ],
     // if prod, add externals
     externals: {
-      
+
     }
   },
 
@@ -92,22 +92,34 @@ const vueConfig = {
     proxy: {
       '/api/bdcApi': {
         target: 'http://192.168.1.122/health-api',
+        logLevel: 'debug',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
           '^/api/bdcApi': '' // 需要rewrite的,
         }
       },
-      
+
+      '/api/accountapi': {
+        target: 'http://192.168.1.122/account-api',
+        ws: false,
+        logLevel: 'debug',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/accountapi': ''   //需要rewrite的,
+        }
+      },
+
       '/api': {
         target: 'http://192.168.1.122/manager-api',
         ws: false,
         changeOrigin: true,
+        logLevel: 'debug',
         pathRewrite: {
           '^/api': ''   //需要rewrite的,
         }
       },
-            
+
       // '/api/contentapi': {
       //   target: 'http://192.168.1.122/content-api',
       //   ws: false,
@@ -129,8 +141,8 @@ const vueConfig = {
 // preview.pro.loacg.com only do not use in your production;
 if (process.env.VUE_APP_PREVIEW === 'true') {
   runtimeCompiler: true,
-  // add `ThemeColorReplacer` plugin to webpack plugins
-  vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
+    // add `ThemeColorReplacer` plugin to webpack plugins
+    vueConfig.configureWebpack.plugins.push(createThemeColorReplacerPlugin())
 }
 
 module.exports = vueConfig

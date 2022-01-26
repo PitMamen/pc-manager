@@ -37,13 +37,13 @@
     <div class="div-health-plan" v-show="isPlanChose">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
+        <a-select v-show="false" v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
           <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
             itemCount.value
           }}</a-select-option>
         </a-select>
 
-        <a-select v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
+        <a-select v-show="false" v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
           <a-select-option
             v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
             :key="timeUnitIndex"
@@ -51,7 +51,7 @@
             >{{ itemTimeUnit.value }}</a-select-option
           >
         </a-select>
-        <span class="span-des">后</span>
+        <span v-show="false" class="span-des">后</span>
 
         <a-input
           style="width: 12.5%; margin-left: 5%"
@@ -59,7 +59,7 @@
           :disabled="!isEdit"
           v-model="planData.templateTask[index].inputDay"
           allow-clear
-          placeholder="或输入天数 "
+          placeholder="请输入天数 "
         />
         <span class="span-des">天后</span>
 
@@ -166,7 +166,7 @@ export default {
         goodsInfo: {
           belong: '', //所属科室code
           goodsName: '',
-          goodsType: 'service_package', //必传
+          goodsType: 'plan_package', //必传
         },
         disease: [
           {
@@ -381,7 +381,7 @@ export default {
         }
         delPlanTaskContent(param).then((res) => {
           if (res.code == 0) {
-            this.$message.info('删除成功')
+            this.$message.success('删除成功')
             this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
           } else {
             this.$message.error('删除失败：' + res.message)

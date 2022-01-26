@@ -167,10 +167,19 @@ export function getDepPlans(parameter) {
   return axios({
     url: '/bdcApi/health/patient/queryGoodsList',
     method: 'get',
+    params: parameter
+  })
+}
 
-    params: {
-      departmentId: parameter.departmentId,
-    }
+/**
+ * 获取科室套餐列表
+ *
+ */
+export function getDiseases(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/getDiseaseList',
+    method: 'get',
+    params: parameter
   })
 }
 

@@ -9,6 +9,7 @@
       <a-input
         v-model="planData.templateName"
         class="span-item-value"
+        maxLength="30"
         style="display: inline-block"
         allow-clear
         placeholder="请输入计划名称 "
@@ -24,13 +25,18 @@
       </a-select>
 
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
-      <a-input
+      <a-select v-model="planData.disease[0].diseaseName" allow-clear placeholder="请选择入所属科室">
+        <a-select-option v-for="(item, index) in diseaseData" :key="index" :value="item.diseaseName">{{
+          item.diseaseName
+        }}</a-select-option>
+      </a-select>
+      <!-- <a-input
         v-model="planData.disease[0].diseaseName"
         class="span-item-value"
         style="display: inline-block"
         allow-clear
         placeholder="请输入所属专病 "
-      />
+      /> -->
     </div>
 
     <div class="div-line-wrap">
@@ -41,13 +47,18 @@
     <div class="div-health-plan">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select v-model="planData.templateTask[index].timeCount" allow-clear placeholder="请选择计划时间">
+        <a-select
+          v-show="false"
+          v-model="planData.templateTask[index].timeCount"
+          allow-clear
+          placeholder="请选择计划时间"
+        >
           <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
             itemCount.value
           }}</a-select-option>
         </a-select>
 
-        <a-select v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
+        <a-select v-show="false" v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
           <a-select-option
             v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
             :key="timeUnitIndex"
@@ -55,14 +66,14 @@
             >{{ itemTimeUnit.value }}</a-select-option
           >
         </a-select>
-        <span class="span-des">后</span>
+        <span v-show="false" class="span-des">后</span>
 
         <a-input
           style="width: 12.5%; margin-left: 5%"
           type="number"
           v-model="planData.templateTask[index].inputDay"
           allow-clear
-          placeholder="或输入天数 "
+          placeholder="请输入天数 "
         />
         <span class="span-des">天后</span>
 
@@ -156,7 +167,7 @@ export default {
         goodsInfo: {
           belong: '', //所属科室code
           goodsName: '',
-          goodsType: 'service_package', //必传
+          goodsType: 'plan_package', //必传
         },
         disease: [
           {
@@ -323,7 +334,7 @@ export default {
         }
         delPlanTaskContent(param).then((res) => {
           if (res.code == 0) {
-            this.$message.info('删除成功')
+            this.$message.success('删除成功')
             this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
           } else {
             this.$message.error('删除失败：' + res.message)
@@ -444,6 +455,11 @@ export default {
 
       if (this.planData.templateTask.length == 0) {
         this.$message.error('请添加至少一个计划任务')
+        return
+      }
+
+      if (this.planData.templateTask.length > 30) {
+        this.$message.error('最多只能添加30个任务！')
         return
       }
 

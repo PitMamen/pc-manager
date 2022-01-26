@@ -39,7 +39,7 @@ export default {
 
   data() {
     return {
-      queryParam: { departmentId: '' },
+      queryParam: { departmentId: '', goodsType: 'plan_package' },
       // 表头
       columns: [
         {

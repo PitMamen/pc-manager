@@ -45,10 +45,10 @@ export default {
           taskType: 'Quest',
           value: '健康问卷',
         },
-        {
-          taskType: 'Remind',
-          value: '文字提醒',
-        },
+        // {
+        //   taskType: 'Remind',
+        //   value: '文字提醒',
+        // },
         {
           taskType: 'Check',
           value: '检查',

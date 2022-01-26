@@ -42,7 +42,7 @@ export default {
     },
 
     handleCancel() {
-      this.form.resetFields()
+      this.remindContent = ''
       this.visible = false
     },
   },

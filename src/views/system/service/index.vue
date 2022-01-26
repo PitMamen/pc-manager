@@ -56,7 +56,7 @@
         size="default"
         :columns="columns"
         :data="loadData"
-        :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+        :row-selection="rowSelection"
         :alert="true"
         :rowKey="(record) => record.code"
       >
@@ -79,6 +79,24 @@ export default {
     STable,
     addForm,
     editForm,
+  },
+
+  computed: {
+    rowSelection() {
+      return {
+        onChange: this.onSelectChange,
+        getCheckboxProps: (record) => ({
+          props: {
+            disabled: !record.userId, // Column configuration not to be checked
+            name: record.userId,
+          },
+        }),
+      }
+    },
+
+    hasSelected() {
+      return this.selectedRowKeys.length > 0
+    },
   },
 
   data() {
@@ -185,12 +203,6 @@ export default {
     }
   },
 
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0
-    },
-  },
-
   created() {},
 
   methods: {
@@ -226,7 +238,7 @@ export default {
 
     dispatchPlan() {
       if (this.selectedRowKeys.length == 0) {
-        this.$message.info('请勾选分配计划的患者')
+        this.$message.error('请勾选分配计划的患者')
         return
       }
       let myData = []
@@ -242,7 +254,7 @@ export default {
       deps.sort()
       for (let i = 0; i < deps.length - 1; i++) {
         if (deps[i] == deps[i + 1]) {
-          this.$message.info('请选择同一个科室的患者')
+          this.$message.error('请选择同一个科室的患者')
           return
         }
       }

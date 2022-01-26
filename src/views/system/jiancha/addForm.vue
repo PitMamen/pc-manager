@@ -33,6 +33,11 @@ export default {
     },
 
     handleSubmit() {
+      if (!this.jianchaName) {
+        this.$message.error('请输入检查名称！')
+        return
+      }
+
       addCheckData(this.jianchaName, 'Check').then((res) => {
         if (res.code == 0) {
           this.$message.info('新增成功')
