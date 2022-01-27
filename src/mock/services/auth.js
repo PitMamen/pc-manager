@@ -88,8 +88,8 @@ const getLoginUser = (options) => {
         "code": "business",
         "name": "内容管理",
         "active": false
-      }
-      , {
+      },
+      {
         "code": "chenckin",
         "name": "入院管理",
         "active": false
@@ -164,39 +164,39 @@ const getLoginUser = (options) => {
       //   "path": "/sys",
       //   "hidden": false
       // },
-      {
-        "id": "1283308304890847233",
-        "pid": "0",
-        "name": "auth_manager",
-        "component": "PageView",
-        "redirect": "",
-        "meta": {
-          "title": "内容管理",
-          "icon": "safety-certificate",
-          "show": true,
-          "target": null,
-          "link": null
-        },
-        "path": "/content",
-        "hidden": false
-      },
-      {
-        "id": "1283308304890847234",
-        "pid": "0",
-        "name": "check_in_manager",
-        "component": "PageView",
-        "redirect": "",
-        "meta": {
-          "title": "入院管理",
-          // "icon": "safety-certificate",
-          "icon": "team",
-          "show": true,
-          "target": null,
-          "link": null
-        },
-        "path": "/auth",
-        "hidden": false
-      },
+      // {
+      //   "id": "1283308304890847233",
+      //   "pid": "0",
+      //   "name": "auth_manager",
+      //   "component": "PageView",
+      //   "redirect": "",
+      //   "meta": {
+      //     "title": "内容管理",
+      //     "icon": "safety-certificate",
+      //     "show": true,
+      //     "target": null,
+      //     "link": null
+      //   },
+      //   "path": "/content",
+      //   "hidden": false
+      // },
+      // {
+      //   "id": "1283308304890847234",
+      //   "pid": "0",
+      //   "name": "check_in_manager",
+      //   "component": "PageView",
+      //   "redirect": "",
+      //   "meta": {
+      //     "title": "入院管理",
+      //     // "icon": "safety-certificate",
+      //     "icon": "team",
+      //     "show": true,
+      //     "target": null,
+      //     "link": null
+      //   },
+      //   "path": "/auth",
+      //   "hidden": false
+      // },
       {
         "id": "12654742618968064055",
         "pid": "1283308304890847234",
