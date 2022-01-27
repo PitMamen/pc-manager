@@ -212,6 +212,7 @@ export default {
 
   methods: {
     handleChange(code) {
+      this.planData.disease[0].diseaseName = ''
       this.getDiseasesOut(code)
     },
 
