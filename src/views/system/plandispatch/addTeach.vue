@@ -36,7 +36,7 @@ export default {
 
   data() {
     return {
-      queryParam: { deptCode: ''},
+      queryParam: { deptCode: '' },
       // 表头
       columns: [
         {
@@ -98,10 +98,11 @@ export default {
   },
   methods: {
     //初始化方法
-    add(index,deptCode) {
+    add(index, deptCode) {
       this.visible = true
       this.queryParam.deptCode = deptCode
       this.index = index
+      this.$refs.table.refresh()
     },
 
     pick(record) {

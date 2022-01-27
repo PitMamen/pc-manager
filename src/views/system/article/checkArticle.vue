@@ -1,47 +1,39 @@
 <template>
-  <div class="div-check">
+  <div class="div-check-article">
     <div class="div-part">
       <div class="div-line-wrap">
         <div class="div-total-one">
-          <span class="span-item-name">{{checkData.title}}</span>
+          <span class="span-item-name">{{ checkData.title }}</span>
         </div>
       </div>
 
       <div class="div-line-wrap">
         <div class="div-left">
-          <span class="span-item-name">所属科室 :{{checkData.categoryName}}</span>
-        </div>
-<div class="div-left">
-          <span class="span-item-name">所属病种 :{{checkData.articleType}}</span>
-        </div>
-        
-        <div class="div-left">
-          <span class="span-item-name">创建作者 :{{checkData.author}}</span>
-          
+          <span class="span-item-name">所属科室 :{{ checkData.categoryName }}</span>
         </div>
         <div class="div-left">
-          <span class="span-item-name">创建时间 :{{checkData.createTime}}</span>
-          
+          <span class="span-item-name">所属病种 :{{ checkData.articleType }}</span>
+        </div>
+
+        <div class="div-left">
+          <span class="span-item-name">创建作者 :{{ checkData.author }}</span>
+        </div>
+        <div class="div-left">
+          <span class="span-item-name">创建时间 :{{ checkData.createTime }}</span>
         </div>
       </div>
-
-     
-
-  
     </div>
 
-  <div id="myHtml"></div>
- 
+    <div id="myHtml"></div>
+
     <div style="height: 50px; backgroud-color: white" />
   </div>
 </template>
 
 
 <script type="text/javascript">
-
 import { STable } from '@/components'
 import { saveArticle, getArticleById } from '@/api/modular/system/posManage'
-
 
 export default {
   components: {},
@@ -86,10 +78,8 @@ export default {
         if (res.code == 0) {
           this.checkData = res.data
 
-        //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
-document.getElementById("myHtml").innerHTML =res.data.content
-
-
+          //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+          document.getElementById('myHtml').innerHTML = res.data.content
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -102,7 +92,6 @@ document.getElementById("myHtml").innerHTML =res.data.content
       this.advanced = !this.advanced
     },
 
-    
     goBack() {
       window.history.back()
     },
@@ -160,16 +149,12 @@ document.getElementById("myHtml").innerHTML =res.data.content
       this.selectedRows = selectedRows
     },
   },
-  mounted() {
-
-
-    
-  },
+  mounted() {},
 }
 </script>
 
 <style lang="less">
-.div-check {
+.div-check-article {
   background-color: white;
   padding: 0 15% 0 5%;
   // padding: 0 15%;
@@ -235,7 +220,6 @@ document.getElementById("myHtml").innerHTML =res.data.content
           text-align: center;
           width: 100%;
         }
-       
       }
 
       .div-right {
@@ -248,9 +232,8 @@ document.getElementById("myHtml").innerHTML =res.data.content
           color: #000;
           text-align: left;
           font-size: 14px;
-           width: 100%;
+          width: 100%;
         }
-       
       }
 
       .div-total-one {
