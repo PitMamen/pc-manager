@@ -544,6 +544,93 @@ const getLoginUser = (options) => {
         "path": "/serviceconfig",
         "hidden": false
       },
+
+      {
+        "id": "1283308304890687238",
+        "pid": "0",
+        "name": "package_config",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "套餐配置",
+          // "icon": "safety-certificate",
+          "icon": "team",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/package",
+        "hidden": false
+      },
+
+      {
+        "id": "12655662618868066793",
+        "pid": "1283308304890687238",
+        "name": "package_list",
+        "component": "system/package/index",
+        "redirect": "",
+        "meta": {
+          "title": "套餐配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/package",
+        "hidden": false
+      },
+
+      {
+        "id": "12655662618868066795",
+        "pid": "1283308304890687238",
+        "name": "package_new",
+        "component": "system/package/newPackage",
+        "redirect": "",
+        "meta": {
+          "title": "新增套餐",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/packageNew",
+        "hidden": false
+      },
+
+      {
+        "id": "12655662618868066796",
+        "pid": "1283308304890687238",
+        "name": "package_edit",
+        "component": "system/package/editPackage",
+        "redirect": "",
+        "meta": {
+          "title": "修改套餐",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/packageEdit",
+        "hidden": false
+      },
+
+      {
+        "id": "12655662618868066797",
+        "pid": "1283308304890687238",
+        "name": "package_look",
+        "component": "system/package/lookPackage",
+        "redirect": "",
+        "meta": {
+          "title": "查看套餐",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/packageLook",
+        "hidden": false
+      },
+
       // {
       //     "id": "1264619904766685186",
       //     "pid": "0",
@@ -867,22 +954,22 @@ const getLoginUser = (options) => {
         "hidden": false
       },
 
-      //   {
-      //       "id": "1265474261896806424",
-      //       "pid": "1283308304890847233",
-      //       "name": "sys_menu_mgr",
-      //       "component": "system/menu/index",
-      //       "redirect": "",
-      //       "meta": {
-      //           "title": "菜单管理",
-      //           "icon": "",
-      //           "show": true,
-      //           "target": null,
-      //           "link": null
-      //       },
-      //       "path": "/menu",
-      //       "hidden": false
-      //   },
+      {
+        "id": "1265474261896806424",
+        "pid": "1265474261896806402",
+        "name": "sys_menu_mgr",
+        "component": "system/menu/index",
+        "redirect": "",
+        "meta": {
+          "title": "菜单管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/menu",
+        "hidden": false
+      }
       //   {
       //       "id": "1265474261896806430",
       //       "pid": "1283308304890847233",
