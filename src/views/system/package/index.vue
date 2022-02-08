@@ -99,13 +99,13 @@
 
         <span slot="ifSuggest" slot-scope="text, record">
           <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
-            <a-switch default-checked @change="onChangeSuggest(record)" />
+            <a-switch @change="onChangeSuggest(record)" />
           </a-popconfirm>
         </span>
 
         <span slot="ifOnline" slot-scope="text, record">
-          <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
-            <a-switch default-checked @change="onChangeOnline(record)" />
+          <a-popconfirm title="确定上架吗？" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
+            <a-switch :checked="record.checked" @change="onChangeOnline(record)" />
           </a-popconfirm>
         </span>
       </s-table>
@@ -209,6 +209,8 @@ export default {
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            this.$set(res.data.rows[i], 'checked', true)
+
             this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
             this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
             this.$set(
@@ -252,6 +254,13 @@ export default {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
+
+    goOnline(record) {
+      debugger
+      record.checked = !record.checked
+    },
+
+    onChangeOnline() {},
 
     getKeShi() {
       getKeShiData({ hospitalCode: '444885559' })

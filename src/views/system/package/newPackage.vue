@@ -1,130 +1,198 @@
 <template>
-  <div class="div-new-plan">
-    <p class="p-title">查看计划</p>
+  <div class="div-new-package">
+    <p class="p-title">新增套餐</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
-    <div class="div-line-wrap">
-      <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
-      <span class="span-item-value">{{ planData.templateName }} </span>
-    </div>
+    <a-form ref="form" :form="form" class="my-form">
+      <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-input v-decorator="['name', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" />
+      </a-form-item>
 
-    <div class="div-line-wrap">
-      <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <span class="span-item-value">{{ planData.goodsInfo.belongName }} </span>
+      <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-select allow-clear v-decorator="['ks', { rules: [{ required: true, message: '请选择所属科室' }] }]">
+          <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
+            item.value
+          }}</a-select-option>
+        </a-select>
+      </a-form-item>
 
-      <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
+      <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-input v-decorator="['serveName', { rules: [{ required: true, message: '请输入服务名称！' }] }]" />
+      </a-form-item>
 
-      <span class="span-item-value">{{ planData.disease[0].diseaseName }} </span>
-    </div>
+      <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-switch v-decorator="['isOnline', { rules: [{ required: true, message: '请选择是否上架！' }] }]" />
+      </a-form-item>
 
-    <div class="div-line-wrap">
-      <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
-    </div>
+      <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-switch v-decorator="['isSuggest', { rules: [{ required: true, message: '请选择是否推荐！' }] }]" />
+      </a-form-item>
 
-    <!-- 计划内容 -->
-    <div class="div-health-plan">
-      <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
-        <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
+      <a-form-item label="价格(￥)" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <!-- <a-input v-decorator="['price', { rules: [{ required: true, message: '请输入商品价格！' }] }]" /> -->
+        <a-input-number
+          v-decorator="['price', { initialValue: 0, rules: [{ required: true, message: '请输入商品价格！' }] }]"
+          :min="0"
+          :max="1000000"
+        />
+      </a-form-item>
 
+      <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-select allow-clear v-decorator="['period', { rules: [{ required: true, message: '请选择有效期' }] }]">
+          <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.value">{{
+            item.value
+          }}</a-select-option>
+        </a-select>
+      </a-form-item>
 
-        <span style="margin-left: 2%">{{ planData.templateTask[index].execTime }} </span>
-        <span class="span-des">天后</span>
+      <!-- <a-form-item label="服务类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <span
+          v-decorator="['dd', { initialValue: 0, rules: [{ required: true, message: '请输入商品价格！' }] }]"
+        ></span>
+      </a-form-item> -->
+    </a-form>
 
-        <div class="div-top-right">
+    <div class="div-service-type">
+      <span class="title-des"><span style="color: red">*</span> 服务类别 :</span>
 
+      <div class="div-item" v-for="(item, index) in typeDatasChoose" :key="index">
+        <div class="div-bg">
+          <span class="span-item-name"><span style="color: red">*</span> 类别{{ index + 1 }} :</span>
+
+          <a-select
+            v-model="item.name"
+            style="display: inline-block"
+            class="span-item-value"
+            allow-clear
+            placeholder="请选择服务类别"
+            @change="handleChange"
+          >
+            <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
+              item.deptName
+            }}</a-select-option>
+          </a-select>
+
+          <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 次数 :</span>
+
+          <a-input-number
+            v-model="item.count"
+            v-decorator="['count', { initialValue: 0, rules: [{ required: true, message: '请输入商品次数！' }] }]"
+            :min="0"
+            :max="1000000"
+          />
+
+          <!-- <a-input
+            v-model="item.count"
+            class="span-item-value"
+            :maxLength="30"
+            type
+            style="display: inline-block"
+            allow-clear
+            placeholder="请输入计划名称 "
+          /> -->
         </div>
 
-        <!-- 分割线 -->
-        <div class="div-divider"></div>
+        <a-button class="btn-delete" type="primary" @click="validate">刪除</a-button>
+      </div>
 
-        <div
-          class="div-plan-item-elements"
-          v-for="(itemChild, indexChild) in planData.templateTask[index].templateTaskContent"
-          :key="indexChild"
-        >
-          <div class="div-element">
-            <div class="div-content">
-              <span class="span-item-name"> 计划类型 :</span>
-              <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
-            </div>
+      <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="validate">添加</a-button>
+    </div>
 
-            <div class="div-content-value">
-              <!-- //style="margin-left: 3%" -->
-              <span class="span-item-name"> 具体内容 :</span>
-              <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
-            </div>
+    <div class="div-service-pic">
+      <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span>
+      <div :key="ImgKey" style="margin-top: 1%">
+        <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
+          <a-input
+            v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
+            style="display: none"
+          />
+          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+        </a-upload>
+      </div>
 
-            <div class="div-divider-elements"></div>
-          </div>
-        </div>
+      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片</span>
+      <div :key="ImgKey" style="margin-top: 1%">
+        <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
+          <a-input
+            v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
+            style="display: none"
+          />
+          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+        </a-upload>
+      </div>
+
+      <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
+      <div :key="ImgKey" style="margin-top: 1%">
+        <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
+          <a-input
+            v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
+            style="display: none"
+          />
+          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+        </a-upload>
       </div>
     </div>
-
-    <div class="btn-add-plan" @click="addPlanItem" type="primary"></div>
+    <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
   </div>
 </template>
 
 <script>
-import { getPlanDetail, queryDepartment } from '@/api/modular/system/posManage'
+import { getPlanDetail, queryDepartment, getKeShiData } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
 
   data() {
     return {
-      planData: {
-        basetimeType: '0', //必传
-        templateName: '', //计划名称
-        goodsInfo: {
-          belong: '', //所属科室code
-          goodsName: '',
-          goodsType: 'servicePackage', //必传
-        },
-        disease: [
-          {
-            diseaseName: '',
-          },
-        ],
-
-        templateTask: [
-          {
-            timeCount: '1',
-            timeUnit: '天',
-            inputDay: 0,
-            templateTaskContent: [
-              // { name: '心电图', type: '检查' },
-              // { name: '血常规', type: '检验' },
-            ],
-          },
-        ],
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperColN: {
+        xs: { span: 24 },
+        sm: { span: 12 },
       },
 
       hosCode: '444885559',
       loading: false,
-      planId: '',
-      timeCountData: [],
-      timeUnitData: [
-        {
-          code: '1',
-          value: '天',
-        },
-        {
-          code: '2',
-          value: '周',
-        },
-        {
-          code: '3',
-          value: '月',
-        },
+      ImgKey: '',
+      hosData: [],
+      periodData: [
+        { code: 0, value: '一个月' },
+        { code: 1, value: '一季度' },
+        { code: 2, value: '一年' },
       ],
       keshiData: [],
+      form: this.$form.createForm(this),
+      typeDatas: [
+        { code: 0, value: '视频问诊' },
+        { code: 1, value: '健康咨询' },
+      ],
+
+      typeDatasChoose: [
+        { name: '视频问诊', count: '3' },
+        { name: '健康咨询', count: '8' },
+      ],
     }
   },
 
+  watch: {
+    visible() {
+      if (this.visible) {
+        this.ImgKey = ''
+      } else {
+        this.ImgKey = Math.random()
+      }
+      console.log('this.ImgKey :>> ', this.ImgKey)
+    },
+  },
+
   created() {
-    this.planId = this.$route.params.planId
-    this.getPlanDetailOut()
     queryDepartment('444885559').then((res) => {
       if (res.code == 0) {
         this.keshiData = res.data
@@ -142,90 +210,45 @@ export default {
   },
 
   methods: {
-    getPlanDetailOut() {
-      getPlanDetail(this.planId).then((res) => {
-        if (res.code == 0) {
-          this.planData = res.data
+    validate() {
+      const {
+        form: { validateFields },
+      } = this
 
-          //处理数据为可展示的
-          //展示科室
-          this.keshiData.forEach((item) => {
-            if (this.planData.goodsInfo.belong == item.deptCode) {
-              this.planData.goodsInfo.belongName = item.deptName
-            }
-          })
-
-          //展示名称
-          for (let i = 0; i < this.planData.templateTask.length; i++) {
-            for (let j = 0; j < this.planData.templateTask[i].templateTaskContent.length; j++) {
-              let taskType = this.planData.templateTask[i].templateTaskContent[j].taskType
-              if (taskType == 'Knowledge') {
-                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '健康宣教')
-
-                this.$set(
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
-                  'detailName',
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.title
-                )
-              } else if (taskType == 'Quest') {
-                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '健康问卷')
-                this.$set(
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
-                  'detailName',
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.questName
-                )
-              } else if (taskType == 'Remind') {
-                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '文字提醒')
-                this.$set(
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
-                  'detailName',
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
-                )
-              } else if (taskType == 'Check') {
-                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '检查')
-                this.$set(
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
-                  'detailName',
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.checkType
-                )
-              } else if (taskType == 'Exam') {
-                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '检验')
-                this.$set(
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
-                  'detailName',
-                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.examType
-                )
-              }
-            }
-          }
+      validateFields((errors, values) => {
+        if (!errors) {
+          console.log('11', 'feferwf')
         } else {
-          this.$message.error(res.message)
+          console.log('22', errors)
         }
       })
     },
 
-    addPlanItem() {
-      this.planData.templateTask.push({
-        timeCount: '1',
-        timeUnit: '天',
-        inputDay: 0,
-        templateTaskContent: [],
-      })
-    },
-
-    deletePlanItem(index) {
-      this.planData.templateTask.splice(index, 1)
-    },
-
-    deleteElement(index, indexChild) {
-      this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
+    getKeShi() {
+      getKeShiData({ hospitalCode: '444885559' })
+        .then((res) => {
+          if (res.success) {
+            let newData = []
+            for (let i = 0; i < res.data.length; i++) {
+              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
+                newData = newData.concat(res.data[i].departmentList)
+              }
+            }
+            this.keshiData = newData
+          } else {
+            // this.$message.error('切换失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          // this.$message.error('切换错误：' + err.message)
+        })
     },
   },
 }
 </script>
 
 <style lang="less">
-.div-new-plan {
+.div-new-package {
   background-color: white;
   width: 100%;
   height: 100%;
@@ -248,174 +271,81 @@ export default {
     height: 1px;
   }
 
-  .div-line-wrap {
+  .my-form {
+    margin-top: 2%;
+  }
+
+  .div-service-type {
     width: 100%;
-    margin-top: 3%;
+    padding: 0 15.2%;
     overflow: hidden;
 
-    .span-item-name {
-      display: inline-block;
-      color: #000;
-      font-size: 14px;
-      text-align: left;
-    }
-    .span-item-value {
-      width: 20%;
-      color: #333;
-      text-align: left;
-      padding-left: 20px;
-      font-size: 14px;
-      display: inline-block;
+    .title-des {
+      color: rgba(0, 0, 0, 0.85);
     }
 
-    .ant-select {
-      width: 18.5% !important;
-      margin-left: 1.5% !important;
-    }
-  }
-
-  .div-health-plan {
-    width: 100%;
-    height: 100%;
-
-    .div-plan-item {
-      margin-left: 2%;
-      border-radius: 6px;
-      border: 1px solid #e6e6e6;
-      background-color: white;
-      padding: 2% 2%;
-      margin-top: 1%;
-      width: 80%;
-      height: 100%;
+    .div-item {
+      margin-top: 2%;
       overflow: hidden;
 
-      .span-item-name {
-        display: inline-block;
-        color: #000;
-        font-size: 14px;
-        text-align: left;
-      }
-
-      .span-des {
-        margin-left: 1%;
-        display: inline-block;
-        color: #000;
-        font-size: 14px;
-        text-align: left;
-      }
-
-      .div-top-right {
-        padding: 3px 10px;
-        display: inline-block;
-        float: right;
-        :hover {
-          cursor: pointer;
-        }
-
-        .span-add-item {
-          float: right;
-          margin-left: 3px;
-          padding-right: 10px;
-          border-right: solid #dce4eb 1px;
-        }
-
-        .div-vertical {
-          margin: 0 1%;
-          width: 1px;
-          color: #dce4eb;
-          height: 2%;
-        }
-      }
-
-      .ant-select {
-        width: 7% !important;
-        margin-left: 1.5% !important;
-      }
-
-      .div-plan-item-elements {
-        width: 100%;
-        margin-top: 1%;
+      .div-bg {
+        margin-left: 2%;
+        padding: 1% 5%;
+        border-radius: 6px;
+        border: 1px solid #e6e6e6;
+        // background-color: #e6e6e6;
+        background-color: rgb(240, 240, 242);
+        float: left;
         overflow: hidden;
+        width: 70%;
 
-        .div-element {
-          width: 100%;
-          overflow: hidden;
-          margin: 0 6%;
-
-          .div-content {
-            display: inline-block;
-            width: 30%;
-            overflow: hidden;
-
-            .span-item-name {
-              display: inline-block;
-              width: 25%;
-              color: #000;
-              overflow: hidden;
-              font-size: 14px;
-              text-align: left;
-            }
-            .span-item-content {
-              display: inline-block;
-              width: 50%;
-              overflow: hidden;
-              color: #000;
-              font-size: 14px;
-              text-align: left;
-            }
-          }
-
-          .div-content-value {
-            display: inline-block;
-            width: 66%;
-            overflow: hidden;
-
-            .span-item-name {
-              display: inline-block;
-              overflow: hidden;
-              width: 11%;
-              color: #000;
-              font-size: 14px;
-              text-align: left;
-            }
-            .span-item-content {
-              display: inline-block;
-              overflow: hidden;
-              text-overflow: ellipsis; //文本溢出显示省略号
-              white-space: nowrap; //文本不会换行
-              width: 75%;
-              color: #000;
-              font-size: 14px;
-              text-align: left;
-            }
-          }
-
-          .icon-delete {
-            float: right;
-            // title:"";
-            :hover {
-              cursor: pointer;
-            }
-          }
-
-          .div-divider-elements {
-            width: 100%;
-            background-color: #e6e6e6;
-            height: 1px;
-          }
+        .ant-select {
+          // width: 7% !important;
+          // margin-left: 1.5% !important;
         }
+
+        .span-item-name {
+          display: inline-block;
+          color: #000;
+          font-size: 14px;
+          text-align: left;
+        }
+
+        .span-item-value {
+          width: 20%;
+          color: #333;
+          text-align: left;
+          padding-left: 20px;
+          font-size: 14px;
+          display: inline-block;
+        }
+      }
+
+      .btn-delete {
+        margin-top: 1%;
+        width: 12%;
+        margin-left: 3%;
+        overflow: hidden;
       }
     }
   }
 
-  .btn-add-plan {
-    margin-top: 3%;
-    margin-left: 35%;
+  .div-service-pic {
+    width: 100%;
+    padding: 0 15.2%;
+    margin-top: 2%;
+    overflow: hidden;
+
+    .title-des-pic {
+      margin-top: 2%;
+      display: block;
+      color: rgba(0, 0, 0, 0.85);
+    }
   }
-  .btn-save-plan {
-    margin-top: 5%;
-    display: block;
-    margin-bottom: 10%;
+
+  .btn-submit {
+    margin-top: 3%;
+    margin-left: 20%;
   }
 }
 </style>
