@@ -306,8 +306,14 @@ export default {
         },
       })
     },
+    
     goChange(record) {
-      this.$router.push({ name: 'package_edit' })
+      this.$router.push({
+        name: 'package_edit',
+        params: {
+          planId: record.templateId,
+        },
+      })
     },
 
     handleOk() {

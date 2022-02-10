@@ -379,8 +379,6 @@ export default {
               this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
             }
           }
-          debugger
-          console.log('www', this.uploadData)
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
             if (res.code == 0) {

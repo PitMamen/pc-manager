@@ -253,13 +253,13 @@ export default {
   created() {
     this.planId = this.$route.params.planId
     this.getPlanDetailOut()
-    queryDepartment('444885559').then((res) => {
-      if (res.code == 0) {
-        this.keshiData = res.data
-      } else {
-        this.$message.error('获取科室列表失败：' + res.message)
-      }
-    })
+    // queryDepartment('444885559').then((res) => {
+    //   if (res.code == 0) {
+    //     this.keshiData = res.data
+    //   } else {
+    //     this.$message.error('获取科室列表失败：' + res.message)
+    //   }
+    // })
   },
 
   methods: {
@@ -485,8 +485,6 @@ export default {
               this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
             }
           }
-          debugger
-          console.log('www', this.uploadData)
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
             if (res.code == 0) {

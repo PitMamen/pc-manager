@@ -1,6 +1,6 @@
 <template>
   <div class="div-new-package">
-    <p class="p-title">新增套餐</p>
+    <p class="p-title">修改套餐</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import { queryDepartment, savePlan } from '@/api/modular/system/posManage'
+import { queryDepartment, savePlan, getPlanDetail } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -191,7 +191,7 @@ export default {
       ],
 
       goodsAttr: [
-        { name: '视频问诊', attrName: 'videoNum', attrValue: '1' },
+        // { name: '视频问诊', attrName: 'videoNum', attrValue: '1' },
         // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
       ],
 
@@ -238,6 +238,8 @@ export default {
   },
 
   created() {
+    this.planId = this.$route.params.planId
+    this.getPlanDetailOut()
     queryDepartment('444885559').then((res) => {
       if (res.code == 0) {
         this.keshiData = res.data
@@ -248,6 +250,115 @@ export default {
   },
 
   methods: {
+    getPlanDetailOut() {
+      getPlanDetail(this.planId).then((res) => {
+        if (res.code == 0) {
+          this.uploadData = res.data
+          // if (this.uploadData.goodsInfo.status == 1) {
+          //   this.$set(this.uploadData, 'isSuggest', true)
+          // } else {
+          //   this.$set(this.uploadData, 'isSuggest', false)
+          // }
+
+          // if (this.uploadData.goodsInfo.topFlag == 1) {
+          //   this.$set(this.uploadData, 'isOnline', true)
+          // } else {
+          //   this.$set(this.uploadData, 'isOnline', false)
+          // }
+
+          this.form.setFieldsValue({
+            goodsName: this.uploadData.goodsInfo.goodsName,
+            belong: this.uploadData.goodsInfo.belong,
+            goodsSpec: this.uploadData.goodsInfo.goodsSpec,
+            price: this.uploadData.goodsInfo.price,
+            theLastTime: this.uploadData.goodsInfo.theLastTime,
+          })
+
+          if (this.uploadData.goodsInfo.status == 1) {
+            this.form.setFieldsValue({
+              statusIf: true,
+            })
+          } else {
+            this.form.setFieldsValue({
+              statusIf: false,
+            })
+          }
+
+          if (this.uploadData.goodsInfo.topFlag == 1) {
+            this.form.setFieldsValue({
+              topFlagIf: true,
+            })
+          } else {
+            this.form.setFieldsValue({
+              topFlagIf: false,
+            })
+          }
+
+          //组装服务类型
+          for (let index = 0; index < this.uploadData.goodsInfo.goodsAttr.length; index++) {
+            if (
+              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'videoNum' ||
+              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'textNum'
+            ) {
+              this.goodsAttr.push(this.uploadData.goodsInfo.goodsAttr[index])
+            }
+          }
+
+          //组装图片
+          /**
+           *    {
+          uid: '-2',
+          name: 'image.png',
+          status: 'done',
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        },
+           */
+          let url = this.uploadData.goodsInfo.previewList.substring(1)
+          let trueUrl = url.substring(0, url.length - 1)
+          this.fileList.push({
+            uid: '-1',
+            name: '封面' + 1,
+            status: 'done',
+            url: trueUrl,
+          })
+
+          //banner图
+          let bannerPics = this.uploadData.goodsInfo.bannerList.split(', ')
+          bannerPics[0] = bannerPics[0].substring(1)
+          bannerPics[bannerPics.length - 1] = bannerPics[bannerPics.length - 1].substring(
+            0,
+            bannerPics[bannerPics.length - 1].length - 1
+          )
+          for (let index = 0; index < bannerPics.length; index++) {
+            this.fileListBanner.push({
+              uid: 0 - index + '',
+              name: 'Banner' + index,
+              status: 'done',
+              url: bannerPics[index],
+            })
+          }
+
+          //详情图
+          let detailPics = this.uploadData.goodsInfo.imgList.split(', ')
+          detailPics[0] = detailPics[0].substring(1)
+          detailPics[detailPics.length - 1] = detailPics[detailPics.length - 1].substring(
+            0,
+            detailPics[detailPics.length - 1].length - 1
+          )
+          for (let index = 0; index < detailPics.length; index++) {
+            this.fileListDetail.push({
+              uid: 0 - index + '',
+              name: '详情' + index,
+              status: 'done',
+              url: detailPics[index],
+            })
+          }
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
     getBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader()
@@ -358,7 +469,14 @@ export default {
             return
           } else {
             for (let index = 0; index < this.fileList.length; index++) {
-              this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
+              // this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
+            delete this.uploadData.goodsInfo.previewList
+            this.$set(this.uploadData.goodsInfo, 'previewList', [])
+              if (this.fileList[index].response) {
+                this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
+              } else {
+                this.uploadData.goodsInfo.previewList.push(this.fileList[index].url)
+              }
             }
           }
 
@@ -366,8 +484,15 @@ export default {
             this.$message.error('请上传详情banner图片！')
             return
           } else {
+            //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
+            delete this.uploadData.goodsInfo.bannerList
+            this.$set(this.uploadData.goodsInfo, 'bannerList', [])
             for (let index = 0; index < this.fileListBanner.length; index++) {
-              this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              if (this.fileListBanner[index].response) {
+                this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              } else {
+                this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].url)
+              }
             }
           }
 
@@ -375,8 +500,19 @@ export default {
             this.$message.error('请上传商品详情图片！')
             return
           } else {
+            // for (let index = 0; index < this.fileListDetail.length; index++) {
+            //   this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
+            // }
+
+            //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
+            delete this.uploadData.goodsInfo.imgList
+            this.$set(this.uploadData.goodsInfo, 'imgList', [])
             for (let index = 0; index < this.fileListDetail.length; index++) {
-              this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
+              if (this.fileListDetail[index].response) {
+                this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
+              } else {
+                this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].url)
+              }
             }
           }
           debugger
