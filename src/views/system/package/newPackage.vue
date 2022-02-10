@@ -24,14 +24,14 @@
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch
           defaultChecked
-          v-decorator="['status', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
+          v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
         />
       </a-form-item>
 
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch
           defaultChecked
-          v-decorator="['topFlag', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
+          v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
         />
       </a-form-item>
 
@@ -86,30 +86,16 @@
     <div class="div-service-pic">
       <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span>
       <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
-      <div style="margin-top: 1%">
-        <a-upload
-          name="file"
-          list-type="picture-card"
-          :multiple="false"
-          :action="actionUrl"
-          :headers="headers"
-          class="upload-list-inline"
-          @change="handleChange"
-        >
-          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-        </a-upload>
-      </div>
-
-      <!-- <div class="clearfix">
+      <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
-          :multiple="false"
+          :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
           @preview="handlePreview"
           @change="handleChange"
         >
-          <div v-if="fileList.length < 8">
+          <div v-if="fileList.length < 1">
             <a-icon type="plus" />
             <div class="ant-upload-text">Upload</div>
           </div>
@@ -117,42 +103,46 @@
         <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
           <img alt="example" style="width: 100%" :src="previewImage" />
         </a-modal>
-      </div> -->
+      </div>
 
       <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片</span>
-      <!-- <div :key="ImgKey2" style="margin-top: 1%"> -->
-      <div style="margin-top: 1%">
+      <div class="clearfix" style="margin-top: 20px">
         <a-upload
-          name="file"
-          list-type="picture-card"
-          :multiple="true"
-          class="upload-list-inline"
           :action="actionUrl"
-          :headers="headers"
-          @change="handleChange2"
+          :multiple="true"
+          list-type="picture-card"
+          :file-list="fileListBanner"
+          @preview="handlePreviewBanner"
+          @change="handleChangeBanner"
         >
-          <!-- <a-input
-            v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-            style="display: none"
-          /> -->
-          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+          <div v-if="fileListBanner.length < 5">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">Upload</div>
+          </div>
         </a-upload>
+        <a-modal :visible="previewVisibleBanner" :footer="null" @cancel="handleCancelBanner">
+          <img alt="example" style="width: 100%" :src="previewImageBanner" />
+        </a-modal>
       </div>
 
       <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
-      <!-- <div :key="ImgKey3" style="margin-top: 1%"> -->
-      <div style="margin-top: 1%">
+      <div class="clearfix" style="margin-top: 20px">
         <a-upload
-          name="file"
-          list-type="picture-card"
-          :multiple="true"
           :action="actionUrl"
-          class="upload-list-inline"
-          :headers="headers"
-          @change="handleChange3"
+          :multiple="true"
+          list-type="picture-card"
+          :file-list="fileListDetail"
+          @preview="handlePreviewDetail"
+          @change="handleChangeDetail"
         >
-          <a-button> <a-icon type="upload" /> 选择文件 </a-button>
+          <div v-if="fileListDetail.length < 50">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">Upload</div>
+          </div>
         </a-upload>
+        <a-modal :visible="previewVisibleDetail" :footer="null" @cancel="handleCancelDetail">
+          <img alt="example" style="width: 100%" :src="previewImageDetail" />
+        </a-modal>
       </div>
     </div>
     <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
@@ -161,7 +151,7 @@
 </template>
 
 <script>
-import { queryDepartment } from '@/api/modular/system/posManage'
+import { queryDepartment, savePlan } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -183,9 +173,6 @@ export default {
 
       hosCode: '444885559',
       loading: false,
-      ImgKey: '1',
-      ImgKey2: '1',
-      ImgKey3: '1',
       hosData: [],
       periodData: [
         { code: 1, valueName: '半年', value: 6 },
@@ -207,22 +194,47 @@ export default {
         { name: '视频问诊', attrName: 'videoNum', attrValue: '1' },
         // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
       ],
+
+      uploadData: {
+        goodsInfo: {
+          goodsName: '',
+          belong: '',
+          goodsType: 'service_package',
+          goodsSpec: '',
+          imgList: [],
+          previewList: [],
+          bannerList: [],
+          status: '',
+          price: '',
+          theLastTime: '120',
+          goodsAttr: [],
+        },
+        templateTask: [
+          // {
+          //   execTime: '0',
+          //   taskName: '套餐购买',
+          // },
+        ],
+        templateName: '',
+        basetimeType: '1',
+      },
+
+      previewVisible: false,
+      previewVisibleBanner: false,
+      previewVisibleDetail: false,
+
+      previewImage: '',
+      previewImageBanner: '',
+      previewImageDetail: '',
+
+      fileList: [],
+      fileListBanner: [],
+      fileListDetail: [],
     }
   },
 
   watch: {
-    visible() {
-      if (this.visible) {
-        this.ImgKey = ''
-        this.ImgKey2 = ''
-        this.ImgKey3 = ''
-      } else {
-        this.ImgKey = Math.random()
-        this.ImgKey2 = Math.random()
-        this.ImgKey3 = Math.random()
-      }
-      console.log('this.ImgKey :>> ', this.ImgKey)
-    },
+    visible() {},
   },
 
   created() {
@@ -236,23 +248,65 @@ export default {
   },
 
   methods: {
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
+    handleCancel() {
+      this.previewVisible = false
+    },
+
+    handleCancelBanner() {
+      this.previewVisibleBanner = false
+    },
+
+    handleCancelDetail() {
+      this.previewVisibleDetail = false
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    async handlePreviewBanner(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImageBanner = file.url || file.preview
+      this.previewVisibleBanner = true
+    },
+
+    async handlePreviewDetail(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImageDetail = file.url || file.preview
+      this.previewVisibleDetail = true
+    },
+
+    handleChange({ fileList }) {
+      this.fileList = fileList
+    },
+
+    handleChangeBanner({ fileList }) {
+      this.fileListBanner = fileList
+    },
+
+    handleChangeDetail({ fileList }) {
+      this.fileListDetail = fileList
+    },
+
     deleteItem(index) {
       this.goodsAttr.splice(index, 1)
-    },
-
-    handleChange(s1, s2) {
-      debugger
-      console.log('handleChange', s1)
-    },
-
-    handleChange2(s1, s2) {
-      debugger
-      console.log('handleChange2', s1)
-    },
-
-    handleChange3(s1, s2) {
-      debugger
-      console.log('handleChange3', s1)
     },
 
     /**
@@ -285,6 +339,57 @@ export default {
       validateFields((errors, values) => {
         if (!errors) {
           console.log('11', values)
+          //校验表格数据无误，则组装数据
+
+          this.uploadData.goodsInfo.goodsName = values.goodsName
+          this.uploadData.goodsInfo.belong = values.belong
+          this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
+          this.uploadData.goodsInfo.price = values.price
+          this.uploadData.goodsInfo.theLastTime = values.theLastTime
+          this.uploadData.goodsInfo.status = values.statusIf ? '1' : '3'
+          this.uploadData.goodsInfo.topFlag = values.topFlagIf ? '1' : '0'
+          this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
+
+          this.uploadData.templateName = values.goodsName
+
+          //组装图片
+          if (this.fileList.length == 0) {
+            this.$message.error('请上传套餐图片！')
+            return
+          } else {
+            for (let index = 0; index < this.fileList.length; index++) {
+              this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
+            }
+          }
+
+          if (this.fileListBanner.length == 0) {
+            this.$message.error('请上传详情banner图片！')
+            return
+          } else {
+            for (let index = 0; index < this.fileListBanner.length; index++) {
+              this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+            }
+          }
+
+          if (this.fileListDetail.length == 0) {
+            this.$message.error('请上传商品详情图片！')
+            return
+          } else {
+            for (let index = 0; index < this.fileListDetail.length; index++) {
+              this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
+            }
+          }
+          debugger
+          console.log('www', this.uploadData)
+          //完成所有数据组装，上传后台
+          savePlan(this.uploadData).then((res) => {
+            if (res.code == 0) {
+              this.$message.success('保存成功')
+              this.$router.go(-1)
+            } else {
+              this.$message.error(res.message)
+            }
+          })
         } else {
           console.log('22', errors)
         }
@@ -389,10 +494,20 @@ export default {
       color: rgba(0, 0, 0, 0.85);
     }
 
-    .upload-list-inline .ant-upload-list-item {
-      float: left;
-      width: 200px;
-      margin-right: 8px;
+    // .upload-list-inline .ant-upload-list-item {
+    //   float: left;
+    //   width: 200px;
+    //   margin-right: 8px;
+    // }
+
+    .ant-upload-select-picture-card i {
+      font-size: 32px;
+      color: #999;
+    }
+
+    .ant-upload-select-picture-card .ant-upload-text {
+      margin-top: 8px;
+      color: #666;
     }
   }
 
