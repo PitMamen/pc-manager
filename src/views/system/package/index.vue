@@ -15,14 +15,9 @@
 
             <a-col :md="4" :sm="24">
               <a-form-item label="科室">
-                <a-select
-                  allow-clear
-                  @select="onSelected"
-                  placeholder="请选择科室"
-                  v-decorator="['ssks', { rules: [{ required: true, message: '请选择科室' }] }]"
-                >
-                  <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
-                    item.yyksmc
+                <a-select allow-clear v-model="queryParams.belong" placeholder="请选择科室">
+                  <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
+                    item.deptName
                   }}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -30,13 +25,8 @@
 
             <a-col :md="4" :sm="24">
               <a-form-item label="上架状态">
-                <a-select
-                  allow-clear
-                  @select="onSelected"
-                  placeholder="请选择状态"
-                  v-decorator="['ssks', { rules: [{ required: true, message: '请选择状态' }] }]"
-                >
-                  <a-select-option v-for="(item, index) in onlineData" :key="index" :value="item.value">{{
+                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in onlineData" :key="index" :value="item.code">{{
                     item.value
                   }}</a-select-option>
                 </a-select>
@@ -45,13 +35,8 @@
 
             <a-col :md="4" :sm="24">
               <a-form-item label="推荐状态">
-                <a-select
-                  allow-clear
-                  @select="onSelected"
-                  placeholder="请选择状态"
-                  v-decorator="['ssks', { rules: [{ required: true, message: '请选择状态' }] }]"
-                >
-                  <a-select-option v-for="(item, index) in suggestData" :key="index" :value="item.value">{{
+                <a-select allow-clear v-model="queryParams.topFlag" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in suggestData" :key="index" :value="item.code">{{
                     item.value
                   }}</a-select-option>
                 </a-select>
@@ -60,7 +45,7 @@
 
             <a-col :md="4" :sm="24">
               <a-form-item label="关键字">
-                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入套餐关键字" />
+                <a-input v-model="queryParams.keyWords" allow-clear placeholder="请输入套餐关键字" />
               </a-form-item>
             </a-col>
 
@@ -91,21 +76,27 @@
           <a @click="goCheck(record)">查看</a>
           <a-divider type="vertical" />
           <a @click="goChange(record)">修改</a>
-          <a-divider type="vertical" />
-          <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
+          <a-divider type="vertical" v-show="false" />
+          <a-popconfirm
+            v-show="false"
+            title="确定删除套餐吗？"
+            ok-text="确定"
+            cancel-text="取消"
+            @confirm="goDelete(record)"
+          >
             <a>删除</a>
           </a-popconfirm>
         </span>
 
-        <span slot="ifSuggest" slot-scope="text, record">
-          <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
-            <a-switch @change="onChangeSuggest(record)" />
+        <span slot="ifOnline" slot-scope="text, record">
+          <a-popconfirm :title="record.isOnlineText" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
+            <a-switch :checked="record.isOnline" />
           </a-popconfirm>
         </span>
 
-        <span slot="ifOnline" slot-scope="text, record">
-          <a-popconfirm title="确定上架吗？" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
-            <a-switch :checked="record.checked" @change="onChangeOnline(record)" />
+        <span slot="ifSuggest" slot-scope="text, record">
+          <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
+            <a-switch :checked="record.isSuggest" />
           </a-popconfirm>
         </span>
       </s-table>
@@ -118,7 +109,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getOutPatients, getKeShiData } from '@/api/modular/system/posManage'
+import { queryDepartment, getServicePackages, savePlan } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -152,20 +143,28 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
+      isSuggestText: '确定推荐吗',
+      isOnlineText: '',
+      keshiData: [],
+      //（1：正常 2：待上架 3 ：下架）
       onlineData: [
-        { code: 1, value: '是' },
-        { code: 0, value: '否' },
+        { code: 1, value: '正常' },
+        { code: 2, value: '待上架' },
+        { code: 3, value: '下架' },
       ],
+      //推荐标识(0:不推荐1:推荐)
       suggestData: [
-        { code: 1, value: '是' },
-        { code: 0, value: '否' },
+        { code: 1, value: '推荐' },
+        { code: 0, value: '不推荐' },
       ],
       partChoose: '',
       // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
-      queryParam: {
+      queryParams: {
         // existsPlanFlag: '',
-        existsPlanFlag: '2',
-        bqmc: '',
+        belong: undefined,
+        status: undefined,
+        topFlag: undefined,
+        keyWords: undefined,
         // isRegister: '1',
       },
       // 表头
@@ -176,15 +175,15 @@ export default {
         },
         {
           title: '套餐名称',
-          dataIndex: 'idNumber',
+          dataIndex: 'goodsName',
         },
         {
           title: '所属科室',
-          dataIndex: 'phoneNo',
+          dataIndex: 'deptName',
         },
         {
           title: '服务类别',
-          dataIndex: 'bqmc',
+          dataIndex: 'goodsSpec',
         },
         {
           title: '是否上架',
@@ -206,35 +205,24 @@ export default {
       loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            this.$set(res.data.rows[i], 'checked', true)
-
-            this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
-            this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
-            this.$set(
-              res.data.rows[i],
-              'outTime',
-              res.data.rows[i].cysj.substring(0, 4) +
-                '-' +
-                res.data.rows[i].cysj.substring(4, 6) +
-                '-' +
-                res.data.rows[i].cysj.substring(6, 8)
-            ) //计算设置出院时间
-            //计算是否购买套餐
-            if (!res.data.rows[i].planInfo || res.data.rows[i].planInfo.length == 0) {
-              this.$set(res.data.rows[i], 'hasPlan', '否')
+            debugger
+            if (res.data.rows[i].topFlag == 1) {
+              this.$set(res.data.rows[i], 'isSuggest', true)
+              this.$set(res.data.rows[i], 'isSuggestText', '确定不推荐吗？')
             } else {
-              this.$set(res.data.rows[i], 'hasPlan', '是')
+              this.$set(res.data.rows[i], 'isSuggest', false)
+              this.$set(res.data.rows[i], 'isSuggestText', '确定推荐吗？')
             }
-            //分配状态：  未注册 注册未分配 已分配
-            if (!res.data.rows[i].userId) {
-              this.$set(res.data.rows[i], 'hasGive', '未注册')
-            } else if (res.data.rows[i].planInfo && res.data.rows[i].planInfo.length > 0) {
-              this.$set(res.data.rows[i], 'hasGive', '已分配')
+
+            if (res.data.rows[i].status == 1) {
+              this.$set(res.data.rows[i], 'isOnline', true)
+              this.$set(res.data.rows[i], 'isOnlineText', '确定下架吗？')
             } else {
-              this.$set(res.data.rows[i], 'hasGive', '注册未分配')
+              this.$set(res.data.rows[i], 'isOnline', false)
+              this.$set(res.data.rows[i], 'isOnlineText', '确定上架吗？')
             }
           }
           this.loadDataOut = res.data
@@ -256,43 +244,55 @@ export default {
     },
 
     goOnline(record) {
-      debugger
-      record.checked = !record.checked
+      if (record.status == 1) {
+        record.status = 3
+      } else {
+        record.status = 1
+      }
+      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, status: record.status } }
+      savePlan(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isOnline = !record.isOnline
+
+          setTimeout(() => {
+            record.isOnlineText = record.isOnline ? '确定下架吗？' : '确定上架吗？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
     },
 
-    onChangeOnline() {},
+    goSuggest(record) {
+      if (record.topFlag == 1) {
+        record.topFlag = 0
+      } else {
+        record.topFlag = 1
+      }
+      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
+      savePlan(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isSuggest = !record.isSuggest
+
+          setTimeout(() => {
+            record.isSuggestText = record.isSuggest ? '确定不推荐吗？' : '确定推荐吗？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
 
     getKeShi() {
-      getKeShiData({ hospitalCode: '444885559' })
-        .then((res) => {
-          if (res.success) {
-            let newData = []
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
-                newData = newData.concat(res.data[i].departmentList)
-              }
-            }
-            this.keshiData = newData
-          } else {
-            // this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          // this.$message.error('切换错误：' + err.message)
-        })
-    },
-
-    countAge(age) {
-      let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
-      var birthday = new Date(str)
-      var d = new Date()
-      var age =
-        d.getFullYear() -
-        birthday.getFullYear() -
-        (d.getMonth() < birthday.getMonth() || (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
-          ? 1
-          : 0)
-      return age
+      queryDepartment('444885559').then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+        } else {
+          this.$message.error('获取科室列表失败：' + res.message)
+        }
+      })
     },
 
     newPackage() {

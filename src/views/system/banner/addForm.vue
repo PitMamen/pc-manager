@@ -26,7 +26,7 @@
         <a-form-item label="链接url" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
             placeholder="输入正确的连接URL，请以https或http开头"
-            v-decorator="['linkUrl', { rules: [{ required: true, message: '请输入链接！' }] }]"
+            v-decorator="['linkUrl', { rules: [{ required: true, message: '请输入链接！' }] }]" 
           />
         </a-form-item>
 

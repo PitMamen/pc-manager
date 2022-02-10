@@ -6,27 +6,33 @@
 
     <a-form ref="form" :form="form" class="my-form">
       <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-input v-decorator="['name', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" />
+        <a-input v-decorator="['goodsName', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" />
       </a-form-item>
 
       <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-select allow-clear v-decorator="['ks', { rules: [{ required: true, message: '请选择所属科室' }] }]">
-          <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-            item.value
+        <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
+          <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
+            item.deptName
           }}</a-select-option>
         </a-select>
       </a-form-item>
 
       <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-input v-decorator="['serveName', { rules: [{ required: true, message: '请输入服务名称！' }] }]" />
+        <a-input v-decorator="['goodsSpec', { rules: [{ required: true, message: '请输入服务名称！' }] }]" />
       </a-form-item>
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch v-decorator="['isOnline', { rules: [{ required: true, message: '请选择是否上架！' }] }]" />
+        <a-switch
+          defaultChecked
+          v-decorator="['status', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
+        />
       </a-form-item>
 
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch v-decorator="['isSuggest', { rules: [{ required: true, message: '请选择是否推荐！' }] }]" />
+        <a-switch
+          defaultChecked
+          v-decorator="['topFlag', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
+        />
       </a-form-item>
 
       <a-form-item label="价格(￥)" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -39,9 +45,9 @@
       </a-form-item>
 
       <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-select allow-clear v-decorator="['period', { rules: [{ required: true, message: '请选择有效期' }] }]">
+        <a-select allow-clear v-decorator="['theLastTime', { rules: [{ required: true, message: '请选择有效期' }] }]">
           <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.value">{{
-            item.value
+            item.valueName
           }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -56,89 +62,106 @@
     <div class="div-service-type">
       <span class="title-des"><span style="color: red">*</span> 服务类别 :</span>
 
-      <div class="div-item" v-for="(item, index) in typeDatasChoose" :key="index">
+      <div class="div-item" v-for="(item, index) in goodsAttr" :key="index">
         <div class="div-bg">
           <span class="span-item-name"><span style="color: red">*</span> 类别{{ index + 1 }} :</span>
 
-          <a-select
-            v-model="item.name"
-            style="display: inline-block"
-            class="span-item-value"
-            allow-clear
-            placeholder="请选择服务类别"
-            @change="handleChange"
-          >
-            <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-              item.deptName
+          <a-select v-model="item.attrName" class="span-item-value" allow-clear placeholder="请选择服务类别">
+            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.type">{{
+              itemType.value
             }}</a-select-option>
           </a-select>
 
           <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 次数 :</span>
 
-          <a-input-number
-            v-model="item.count"
-            v-decorator="['count', { initialValue: 0, rules: [{ required: true, message: '请输入商品次数！' }] }]"
-            :min="0"
-            :max="1000000"
-          />
-
-          <!-- <a-input
-            v-model="item.count"
-            class="span-item-value"
-            :maxLength="30"
-            type
-            style="display: inline-block"
-            allow-clear
-            placeholder="请输入计划名称 "
-          /> -->
+          <a-input-number v-model="item.attrValue" :min="0" :max="1000000" />
         </div>
 
-        <a-button class="btn-delete" type="primary" @click="validate">刪除</a-button>
+        <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
       </div>
 
-      <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="validate">添加</a-button>
+      <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="addItem">添加</a-button>
     </div>
 
     <div class="div-service-pic">
       <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span>
-      <div :key="ImgKey" style="margin-top: 1%">
-        <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-          <a-input
-            v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-            style="display: none"
-          />
+      <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
+      <div style="margin-top: 1%">
+        <a-upload
+          name="file"
+          list-type="picture-card"
+          :multiple="false"
+          :action="actionUrl"
+          :headers="headers"
+          class="upload-list-inline"
+          @change="handleChange"
+        >
           <a-button> <a-icon type="upload" /> 选择文件 </a-button>
         </a-upload>
       </div>
 
+      <!-- <div class="clearfix">
+        <a-upload
+          :action="actionUrl"
+          :multiple="false"
+          list-type="picture-card"
+          :file-list="fileList"
+          @preview="handlePreview"
+          @change="handleChange"
+        >
+          <div v-if="fileList.length < 8">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">Upload</div>
+          </div>
+        </a-upload>
+        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+          <img alt="example" style="width: 100%" :src="previewImage" />
+        </a-modal>
+      </div> -->
+
       <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片</span>
-      <div :key="ImgKey" style="margin-top: 1%">
-        <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-          <a-input
+      <!-- <div :key="ImgKey2" style="margin-top: 1%"> -->
+      <div style="margin-top: 1%">
+        <a-upload
+          name="file"
+          list-type="picture-card"
+          :multiple="true"
+          class="upload-list-inline"
+          :action="actionUrl"
+          :headers="headers"
+          @change="handleChange2"
+        >
+          <!-- <a-input
             v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
             style="display: none"
-          />
+          /> -->
           <a-button> <a-icon type="upload" /> 选择文件 </a-button>
         </a-upload>
       </div>
 
       <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
-      <div :key="ImgKey" style="margin-top: 1%">
-        <a-upload name="file" :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-          <a-input
-            v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-            style="display: none"
-          />
+      <!-- <div :key="ImgKey3" style="margin-top: 1%"> -->
+      <div style="margin-top: 1%">
+        <a-upload
+          name="file"
+          list-type="picture-card"
+          :multiple="true"
+          :action="actionUrl"
+          class="upload-list-inline"
+          :headers="headers"
+          @change="handleChange3"
+        >
           <a-button> <a-icon type="upload" /> 选择文件 </a-button>
         </a-upload>
       </div>
     </div>
     <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
+    <div style="height: 25px; color: white"></div>
   </div>
 </template>
 
 <script>
-import { getPlanDetail, queryDepartment, getKeShiData } from '@/api/modular/system/posManage'
+import { queryDepartment } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -160,23 +183,29 @@ export default {
 
       hosCode: '444885559',
       loading: false,
-      ImgKey: '',
+      ImgKey: '1',
+      ImgKey2: '1',
+      ImgKey3: '1',
       hosData: [],
       periodData: [
-        { code: 0, value: '一个月' },
-        { code: 1, value: '一季度' },
-        { code: 2, value: '一年' },
+        { code: 1, valueName: '半年', value: 6 },
+        { code: 2, valueName: '一年', value: 12 },
+        { code: 3, valueName: '永久', value: 1200 },
       ],
       keshiData: [],
+      actionUrl: 'http://192.168.1.122:8071/fileUpload/uploadImgFile',
+      headers: {
+        authorization: 'authorization-text',
+      },
       form: this.$form.createForm(this),
       typeDatas: [
-        { code: 0, value: '视频问诊' },
-        { code: 1, value: '健康咨询' },
+        { type: 'textNum', value: '视频问诊' },
+        { type: 'videoNum', value: '健康咨询' },
       ],
 
-      typeDatasChoose: [
-        { name: '视频问诊', count: '3' },
-        { name: '健康咨询', count: '8' },
+      goodsAttr: [
+        { name: '视频问诊', attrName: 'videoNum', attrValue: '1' },
+        // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
       ],
     }
   },
@@ -185,8 +214,12 @@ export default {
     visible() {
       if (this.visible) {
         this.ImgKey = ''
+        this.ImgKey2 = ''
+        this.ImgKey3 = ''
       } else {
         this.ImgKey = Math.random()
+        this.ImgKey2 = Math.random()
+        this.ImgKey3 = Math.random()
       }
       console.log('this.ImgKey :>> ', this.ImgKey)
     },
@@ -200,16 +233,50 @@ export default {
         this.$message.error('获取科室列表失败：' + res.message)
       }
     })
-
-    for (let i = 0; i < 30; i++) {
-      this.timeCountData.push({
-        code: i + 1,
-        value: i + 1,
-      })
-    }
   },
 
   methods: {
+    deleteItem(index) {
+      this.goodsAttr.splice(index, 1)
+    },
+
+    handleChange(s1, s2) {
+      debugger
+      console.log('handleChange', s1)
+    },
+
+    handleChange2(s1, s2) {
+      debugger
+      console.log('handleChange2', s1)
+    },
+
+    handleChange3(s1, s2) {
+      debugger
+      console.log('handleChange3', s1)
+    },
+
+    /**
+     * 添加条目时不能重复，需要处理
+     */
+    addItem() {
+      if (this.goodsAttr.length >= 2) {
+        this.$message.error('目前仅支持两种服务类型！')
+        return
+      }
+
+      if (this.goodsAttr.length == 0) {
+        this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
+        return
+      }
+
+      if (this.goodsAttr.length == 1) {
+        if (this.goodsAttr[0].attrName == 'textNum') {
+          this.goodsAttr.push({ name: '视频问诊', attrName: 'videoNum', attrValue: '1' })
+        } else {
+          this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
+        }
+      }
+    },
     validate() {
       const {
         form: { validateFields },
@@ -217,31 +284,11 @@ export default {
 
       validateFields((errors, values) => {
         if (!errors) {
-          console.log('11', 'feferwf')
+          console.log('11', values)
         } else {
           console.log('22', errors)
         }
       })
-    },
-
-    getKeShi() {
-      getKeShiData({ hospitalCode: '444885559' })
-        .then((res) => {
-          if (res.success) {
-            let newData = []
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
-                newData = newData.concat(res.data[i].departmentList)
-              }
-            }
-            this.keshiData = newData
-          } else {
-            // this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          // this.$message.error('切换错误：' + err.message)
-        })
     },
   },
 }
@@ -341,11 +388,17 @@ export default {
       display: block;
       color: rgba(0, 0, 0, 0.85);
     }
+
+    .upload-list-inline .ant-upload-list-item {
+      float: left;
+      width: 200px;
+      margin-right: 8px;
+    }
   }
 
   .btn-submit {
     margin-top: 3%;
-    margin-left: 20%;
+    margin-left: 38%;
   }
 }
 </style>

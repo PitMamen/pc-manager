@@ -185,7 +185,7 @@ export function getDiseases(parameter) {
 
 
 /**
- * 删除计划
+ * 修改计划
  */
 export function savePlan(parameter) {
   return axios({
@@ -196,7 +196,7 @@ export function savePlan(parameter) {
 }
 
 /**
- * 删除计划
+ * 上传图片
  */
  export function uploadImg(parameter) {
   return axios({
@@ -287,6 +287,17 @@ export function getDocPlans(parameter) {
 export function getOutPatients(parameter) {
   return axios({
     url: '/bdcApi/patient/qryPatientList',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 获取健康套餐列表
+ */
+ export function getServicePackages(parameter) {
+  return axios({
+    url: '/bdcApi/patient/qryServiceGoodsList',
     method: 'post',
     data: parameter
   })
