@@ -149,8 +149,8 @@ export default {
         goodsInfo: {
           belong: '', //所属科室code
           goodsName: '',
-          goodsType: 'plan_package', //必传
-          // goodsType: 'service_package', //必传
+          goodsType: 'plan_package', //计划
+          // goodsType: 'service_package', //套餐
         },
         disease: [
           {

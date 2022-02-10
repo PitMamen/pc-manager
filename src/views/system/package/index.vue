@@ -208,7 +208,6 @@ export default {
         return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            debugger
             if (res.data.rows[i].topFlag == 1) {
               this.$set(res.data.rows[i], 'isSuggest', true)
               this.$set(res.data.rows[i], 'isSuggestText', '确定不推荐吗？')
@@ -300,7 +299,12 @@ export default {
     },
 
     goCheck(record) {
-      this.$router.push({ name: 'package_look' })
+      this.$router.push({
+        name: 'package_look',
+        params: {
+          planId: record.templateId,
+        },
+      })
     },
     goChange(record) {
       this.$router.push({ name: 'package_edit' })
