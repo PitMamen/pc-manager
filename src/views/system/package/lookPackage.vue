@@ -253,13 +253,6 @@ export default {
   created() {
     this.planId = this.$route.params.planId
     this.getPlanDetailOut()
-    // queryDepartment('444885559').then((res) => {
-    //   if (res.code == 0) {
-    //     this.keshiData = res.data
-    //   } else {
-    //     this.$message.error('获取科室列表失败：' + res.message)
-    //   }
-    // })
   },
 
   methods: {
@@ -298,22 +291,15 @@ export default {
           url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         },
            */
-          let url = this.planData.goodsInfo.previewList.substring(1)
-          let trueUrl = url.substring(0, url.length - 1)
           this.fileList.push({
             uid: '-1',
             name: '封面' + 1,
             status: 'done',
-            url: trueUrl,
+            url: this.planData.goodsInfo.previewList,
           })
 
           //banner图
-          let bannerPics = this.planData.goodsInfo.bannerList.split(', ')
-          bannerPics[0] = bannerPics[0].substring(1)
-          bannerPics[bannerPics.length - 1] = bannerPics[bannerPics.length - 1].substring(
-            0,
-            bannerPics[bannerPics.length - 1].length - 1
-          )
+          let bannerPics = this.planData.goodsInfo.bannerList.split(',')
           for (let index = 0; index < bannerPics.length; index++) {
             this.fileListBanner.push({
               uid: 0 - index + '',
@@ -324,12 +310,7 @@ export default {
           }
 
           //详情图
-          let detailPics = this.planData.goodsInfo.imgList.split(', ')
-          detailPics[0] = detailPics[0].substring(1)
-          detailPics[detailPics.length - 1] = detailPics[detailPics.length - 1].substring(
-            0,
-            detailPics[detailPics.length - 1].length - 1
-          )
+          let detailPics = this.planData.goodsInfo.imgList.split(',')
           for (let index = 0; index < detailPics.length; index++) {
             this.fileListDetail.push({
               uid: 0 - index + '',

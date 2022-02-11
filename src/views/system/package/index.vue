@@ -143,7 +143,7 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
-      isSuggestText: '确定推荐吗',
+      isSuggestText: '确定推荐？',
       isOnlineText: '',
       keshiData: [],
       //（1：正常 2：待上架 3 ：下架）
@@ -210,18 +210,18 @@ export default {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
             if (res.data.rows[i].topFlag == 1) {
               this.$set(res.data.rows[i], 'isSuggest', true)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定不推荐吗？')
+              this.$set(res.data.rows[i], 'isSuggestText', '确定取消推荐？')
             } else {
               this.$set(res.data.rows[i], 'isSuggest', false)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定推荐吗？')
+              this.$set(res.data.rows[i], 'isSuggestText', '确定推荐？')
             }
 
             if (res.data.rows[i].status == 1) {
               this.$set(res.data.rows[i], 'isOnline', true)
-              this.$set(res.data.rows[i], 'isOnlineText', '确定下架吗？')
+              this.$set(res.data.rows[i], 'isOnlineText', '确定下架？')
             } else {
               this.$set(res.data.rows[i], 'isOnline', false)
-              this.$set(res.data.rows[i], 'isOnlineText', '确定上架吗？')
+              this.$set(res.data.rows[i], 'isOnlineText', '确定上架？')
             }
           }
           this.loadDataOut = res.data
@@ -255,7 +255,7 @@ export default {
           record.isOnline = !record.isOnline
 
           setTimeout(() => {
-            record.isOnlineText = record.isOnline ? '确定下架吗？' : '确定上架吗？'
+            record.isOnlineText = record.isOnline ? '确定下架？' : '确定上架？'
           }, 200)
         } else {
           this.$message.error(res.message)
@@ -276,7 +276,7 @@ export default {
           record.isSuggest = !record.isSuggest
 
           setTimeout(() => {
-            record.isSuggestText = record.isSuggest ? '确定不推荐吗？' : '确定推荐吗？'
+            record.isSuggestText = record.isSuggest ? '确定取消推荐？' : '确定推荐？'
           }, 200)
         } else {
           this.$message.error(res.message)

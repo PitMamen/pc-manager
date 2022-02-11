@@ -105,7 +105,7 @@
         </a-modal>
       </div>
 
-      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片</span>
+      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
@@ -357,27 +357,42 @@ export default {
             this.$message.error('请上传套餐图片！')
             return
           } else {
-            for (let index = 0; index < this.fileList.length; index++) {
-              this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
-            }
+            this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
+
           }
 
           if (this.fileListBanner.length == 0) {
             this.$message.error('请上传详情banner图片！')
             return
           } else {
+            let str = ''
             for (let index = 0; index < this.fileListBanner.length; index++) {
-              this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              if (index != this.fileListBanner.length - 1) {
+                str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
+              } else {
+                str = str + this.fileListBanner[index].response.data.fileLinkUrl
+              }
             }
+
+            this.uploadData.goodsInfo.bannerList = str
           }
 
           if (this.fileListDetail.length == 0) {
             this.$message.error('请上传商品详情图片！')
             return
           } else {
+            let str = ''
             for (let index = 0; index < this.fileListDetail.length; index++) {
-              this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
+              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              if (index != this.fileListDetail.length - 1) {
+                str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
+              } else {
+                str = str + this.fileListDetail[index].response.data.fileLinkUrl
+              }
             }
+
+            this.uploadData.goodsInfo.imgList = str
           }
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {

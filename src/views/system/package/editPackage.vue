@@ -105,7 +105,7 @@
         </a-modal>
       </div>
 
-      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片</span>
+      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
@@ -313,22 +313,15 @@ export default {
           url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         },
            */
-          let url = this.uploadData.goodsInfo.previewList.substring(1)
-          let trueUrl = url.substring(0, url.length - 1)
           this.fileList.push({
             uid: '-1',
             name: '封面' + 1,
             status: 'done',
-            url: trueUrl,
+            url: this.uploadData.goodsInfo.previewList,
           })
 
           //banner图
-          let bannerPics = this.uploadData.goodsInfo.bannerList.split(', ')
-          bannerPics[0] = bannerPics[0].substring(1)
-          bannerPics[bannerPics.length - 1] = bannerPics[bannerPics.length - 1].substring(
-            0,
-            bannerPics[bannerPics.length - 1].length - 1
-          )
+          let bannerPics = this.uploadData.goodsInfo.bannerList.split(',')
           for (let index = 0; index < bannerPics.length; index++) {
             this.fileListBanner.push({
               uid: 0 - index + '',
@@ -339,12 +332,7 @@ export default {
           }
 
           //详情图
-          let detailPics = this.uploadData.goodsInfo.imgList.split(', ')
-          detailPics[0] = detailPics[0].substring(1)
-          detailPics[detailPics.length - 1] = detailPics[detailPics.length - 1].substring(
-            0,
-            detailPics[detailPics.length - 1].length - 1
-          )
+          let detailPics = this.uploadData.goodsInfo.imgList.split(',')
           for (let index = 0; index < detailPics.length; index++) {
             this.fileListDetail.push({
               uid: 0 - index + '',
@@ -468,15 +456,12 @@ export default {
             this.$message.error('请上传套餐图片！')
             return
           } else {
-            for (let index = 0; index < this.fileList.length; index++) {
-              // this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
             delete this.uploadData.goodsInfo.previewList
-            this.$set(this.uploadData.goodsInfo, 'previewList', [])
-              if (this.fileList[index].response) {
-                this.uploadData.goodsInfo.previewList.push(this.fileList[index].response.data.fileLinkUrl)
-              } else {
-                this.uploadData.goodsInfo.previewList.push(this.fileList[index].url)
-              }
+            this.$set(this.uploadData.goodsInfo, 'previewList', '')
+            if (this.fileList[0].response) {
+              this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
+            } else {
+              this.uploadData.goodsInfo.previewList = this.fileList[0].url
             }
           }
 
@@ -486,34 +471,55 @@ export default {
           } else {
             //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
             delete this.uploadData.goodsInfo.bannerList
-            this.$set(this.uploadData.goodsInfo, 'bannerList', [])
+            this.$set(this.uploadData.goodsInfo, 'bannerList', '')
+            let str = ''
             for (let index = 0; index < this.fileListBanner.length; index++) {
-              if (this.fileListBanner[index].response) {
-                this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              if (index != this.fileListBanner.length - 1) {
+                if (this.fileListBanner[index].response) {
+                  str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
+                } else {
+                  str = str + this.fileListBanner[index].url + ','
+                }
               } else {
-                this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].url)
+                if (this.fileListBanner[index].response) {
+                  str = str + this.fileListBanner[index].response.data.fileLinkUrl
+                } else {
+                  str = str + this.fileListBanner[index].url
+                }
               }
             }
+
+            this.uploadData.goodsInfo.bannerList = str
           }
 
           if (this.fileListDetail.length == 0) {
             this.$message.error('请上传商品详情图片！')
             return
           } else {
-            // for (let index = 0; index < this.fileListDetail.length; index++) {
-            //   this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
-            // }
-
             //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
             delete this.uploadData.goodsInfo.imgList
-            this.$set(this.uploadData.goodsInfo, 'imgList', [])
+            this.$set(this.uploadData.goodsInfo, 'imgList', '')
+
+            let str = ''
             for (let index = 0; index < this.fileListDetail.length; index++) {
-              if (this.fileListDetail[index].response) {
-                this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].response.data.fileLinkUrl)
+              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
+              if (index != this.fileListDetail.length - 1) {
+                if (this.fileListDetail[index].response) {
+                  str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
+                } else {
+                  str = str + this.fileListDetail[index].url + ','
+                }
               } else {
-                this.uploadData.goodsInfo.imgList.push(this.fileListDetail[index].url)
+                if (this.fileListDetail[index].response) {
+                  str = str + this.fileListDetail[index].response.data.fileLinkUrl
+                } else {
+                  str = str + this.fileListDetail[index].url
+                }
               }
             }
+
+            this.uploadData.goodsInfo.imgList = str
           }
           debugger
           console.log('www', this.uploadData)
