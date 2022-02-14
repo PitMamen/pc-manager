@@ -183,6 +183,21 @@ export function getDiseases(parameter) {
   })
 }
 
+/**
+ * 删除商品属性
+ *
+ */
+export function delGoodsAttr(id) {
+  return axios({
+    url: '/bdcApi/patient/delGoodsAttr',
+    method: 'get',
+    params: {
+      id: id
+    },
+
+  })
+}
+
 
 /**
  * 修改计划
