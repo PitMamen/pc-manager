@@ -24,6 +24,7 @@
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch
           :checked="statusIf"
+          @change="statusChange"
           v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
         />
       </a-form-item>
@@ -31,6 +32,7 @@
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch
           :checked="topFlagIf"
+          @change="topFlagChange"
           v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
         />
       </a-form-item>
@@ -251,6 +253,12 @@ export default {
   },
 
   methods: {
+    statusChange() {
+      this.statusIf = this.statusIf ? false : true
+    },
+    topFlagChange() {
+      this.topFlagIf = this.topFlagIf ? false : true
+    },
     getPlanDetailOut() {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
