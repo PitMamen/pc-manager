@@ -409,7 +409,6 @@ export default {
           if (res.code == 0) {
             this.goodsAttr.splice(index, 1)
             this.$message.success('删除成功')
-            this.$router.go(-1)
           } else {
             this.$message.error(res.message)
           }
