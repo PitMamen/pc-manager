@@ -1,0 +1,388 @@
+<template>
+  <div class="div-service">
+    <a-card :bordered="false" class="card-right">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <!-- <a-col :md="3" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary" @click="newPackage">新增套餐</a-button>
+              </span>
+            </a-col> -->
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="订单编号">
+                <!-- <a-select allow-clear v-model="queryParams.belong" placeholder="请选择科室">
+                  <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
+                    item.deptName
+                  }}</a-select-option>
+                </a-select> -->
+
+                <a-input v-model="queryParams.belong" allow-clear placeholder="请输入订单编号" />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="下单时间">
+                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in onlineData" :key="index" :value="item.code">{{
+                    item.value
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="订单状态">
+                <a-select allow-clear v-model="queryParams.topFlag" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in suggestData" :key="index" :value="item.code">{{
+                    item.value
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="就诊人">
+                <a-input v-model="queryParams.keyWords" allow-clear placeholder="请输入就诊人" />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="3" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="exportExcel">导出</a-button>
+              </span>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+
+      <!-- 去掉勾选框 -->
+      <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
+      <!-- :row-selection="rowSelection" -->
+      <s-table
+        ref="table"
+        size="default"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+        <span slot="action" slot-scope="text, record">
+          <a @click="$refs.addForm.add(record)">查看详情</a>
+        </span>
+
+        <span slot="ifOnline" slot-scope="text, record">
+          <a-popconfirm :title="record.isOnlineText" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
+            <a-switch :checked="record.isOnline" />
+          </a-popconfirm>
+        </span>
+
+        <span slot="ifSuggest" slot-scope="text, record">
+          <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
+            <a-switch :checked="record.isSuggest" />
+          </a-popconfirm>
+        </span>
+      </s-table>
+
+      <add-form ref="addForm" @ok="handleOk" />
+      <!-- <edit-form ref="editForm" @ok="handleOk" /> -->
+    </a-card>
+  </div>
+</template>
+
+<script>
+import { STable } from '@/components'
+import { queryDepartment, getServicePackages, savePlan, exportPatients } from '@/api/modular/system/posManage'
+import addForm from './addForm'
+// import editForm from './editForm'
+
+export default {
+  components: {
+    STable,
+    addForm,
+    // editForm,
+  },
+
+  computed: {
+    rowSelection() {
+      return {
+        onChange: this.onSelectChange,
+        getCheckboxProps: (record) => ({
+          props: {
+            disabled: !record.userId, // Column configuration not to be checked
+            name: record.userId,
+          },
+        }),
+      }
+    },
+
+    hasSelected() {
+      return this.selectedRowKeys.length > 0
+    },
+  },
+
+  data() {
+    return {
+      selectedRowKeys: [], // Check here to configure the default column
+      // 高级搜索 展开/关闭
+      advanced: false,
+      isSuggestText: '确定推荐？',
+      isOnlineText: '',
+      keshiData: [],
+      //（1：正常 2：待上架 3 ：下架）
+      onlineData: [
+        { code: 1, value: '正常' },
+        { code: 2, value: '待上架' },
+        { code: 3, value: '下架' },
+      ],
+      //推荐标识(0:不推荐1:推荐)
+      suggestData: [
+        { code: 1, value: '推荐' },
+        { code: 0, value: '不推荐' },
+      ],
+      partChoose: '',
+      // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
+      queryParams: {
+        // existsPlanFlag: '',
+        belong: undefined,
+        status: undefined,
+        topFlag: undefined,
+        keyWords: undefined,
+        // isRegister: '1',
+      },
+      // 表头
+      columns: [
+        {
+          title: '订单编号',
+          dataIndex: 'xh',
+        },
+        {
+          title: '下单时间',
+          dataIndex: 'goodsName',
+        },
+        {
+          title: '就诊人',
+          dataIndex: 'deptName',
+        },
+        {
+          title: '用户ID',
+          dataIndex: 'goodsSpec',
+        },
+        {
+          title: '订单状态',
+          dataIndex: 'goodsSpec',
+          // scopedSlots: { customRender: 'ifOnline' },
+        },
+        {
+          title: '金额',
+          dataIndex: 'goodsSec',
+          // scopedSlots: { customRender: 'ifSuggest' },
+        },
+        {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+      loadDataOut: [],
+      // 加载数据方法 必须为 Promise 对象
+      loadData: (parameter) => {
+        return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
+          for (let i = 0; i < res.data.rows.length; i++) {
+            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            if (res.data.rows[i].topFlag == 1) {
+              this.$set(res.data.rows[i], 'isSuggest', true)
+              this.$set(res.data.rows[i], 'isSuggestText', '确定取消推荐？')
+            } else {
+              this.$set(res.data.rows[i], 'isSuggest', false)
+              this.$set(res.data.rows[i], 'isSuggestText', '确定推荐？')
+            }
+
+            if (res.data.rows[i].status == 1) {
+              this.$set(res.data.rows[i], 'isOnline', true)
+              this.$set(res.data.rows[i], 'isOnlineText', '确定下架？')
+            } else {
+              this.$set(res.data.rows[i], 'isOnline', false)
+              this.$set(res.data.rows[i], 'isOnlineText', '确定上架？')
+            }
+          }
+          this.loadDataOut = res.data
+          return res.data
+        })
+      },
+      selectedRows: [],
+    }
+  },
+
+  created() {
+    this.getKeShi()
+  },
+
+  methods: {
+    exportExcel() {
+      let para = {}
+      if (this.isSearchKeyword) {
+        para = {
+          keyWord: this.queryParam.keyWord,
+          exportType: '1',
+        }
+      } else {
+        para = {
+          keyWord: this.queryParam,
+          exportType: '2',
+        }
+      }
+
+      exportPatients(para)
+        .then((res) => {
+          this.downloadfile(res)
+          // eslint-disable-next-line handle-callback-err
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
+    },
+
+    onSelectChange(selectedRowKeys) {
+      console.log('selectedRowKeys changed: ', selectedRowKeys)
+      this.selectedRowKeys = selectedRowKeys
+    },
+
+    goOnline(record) {
+      if (record.status == 1) {
+        record.status = 3
+      } else {
+        record.status = 1
+      }
+      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, status: record.status } }
+      savePlan(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isOnline = !record.isOnline
+
+          setTimeout(() => {
+            record.isOnlineText = record.isOnline ? '确定下架？' : '确定上架？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    goSuggest(record) {
+      if (record.topFlag == 1) {
+        record.topFlag = 0
+      } else {
+        record.topFlag = 1
+      }
+      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
+      savePlan(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isSuggest = !record.isSuggest
+
+          setTimeout(() => {
+            record.isSuggestText = record.isSuggest ? '确定取消推荐？' : '确定推荐？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    getKeShi() {
+      queryDepartment('444885559').then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+        } else {
+          this.$message.error('获取科室列表失败：' + res.message)
+        }
+      })
+    },
+
+    newPackage() {
+      this.$router.push({ name: 'package_new' })
+    },
+
+    goCheck(record) {
+      this.$router.push({
+        name: 'package_look',
+        params: {
+          planId: record.templateId,
+        },
+      })
+    },
+
+    goChange(record) {
+      this.$router.push({
+        name: 'package_edit',
+        params: {
+          planId: record.templateId,
+        },
+      })
+    },
+
+    handleOk() {
+      this.$refs.table.refresh()
+    },
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
+  },
+}
+</script>
+
+<style lang="less">
+.div-service {
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
+
+  .card-right {
+    overflow: hidden;
+    width: 100%;
+
+    .table-operator {
+      margin-bottom: 18px;
+    }
+    button {
+      margin-right: 8px;
+    }
+
+    .title {
+      background: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+  }
+}
+</style>

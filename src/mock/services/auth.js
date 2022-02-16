@@ -716,6 +716,40 @@ const getLoginUser = (options) => {
         "hidden": false
       },
 
+      {
+        "id": "1283308398890687266",
+        "pid": "0",
+        "name": "order_manager",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "支付订单",
+          "icon": "team",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/orderManage",
+        "hidden": false
+      },
+
+      {
+        "id": "12688662618868066888",
+        "pid": "1283308398890687266",
+        "name": "order_manage",
+        "component": "system/order/index",
+        "redirect": "",
+        "meta": {
+          "title": "订单管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/orderManage",
+        "hidden": false
+      },
+
       // {
       //     "id": "1264619904766685186",
       //     "pid": "0",
