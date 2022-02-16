@@ -272,7 +272,6 @@ export default {
             theLastTime: this.uploadData.goodsInfo.theLastTime,
           })
 
-          debugger
           console.log('555', this.uploadData.goodsInfo.status == 1)
           if (this.uploadData.goodsInfo.status == 1) {
             this.statusIf = true

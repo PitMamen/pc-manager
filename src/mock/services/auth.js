@@ -631,6 +631,91 @@ const getLoginUser = (options) => {
         "hidden": false
       },
 
+      {
+        "id": "1283308384890687266",
+        "pid": "0",
+        "name": "sys_manage",
+        "component": "PageView",
+        "redirect": "",
+        "meta": {
+          "title": "系统管理",
+          "icon": "team",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/sysManage",
+        "hidden": false
+      },
+
+      {
+        "id": "12688662618868066797",
+        "pid": "1283308384890687266",
+        "name": "user_manage",
+        "component": "system/sysmanage/userManage",
+        "redirect": "",
+        "meta": {
+          "title": "用户管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/userManage",
+        "hidden": false
+      },
+
+      {
+        "id": "12688662618868066720",
+        "pid": "1283308384890687266",
+        "name": "role_manage",
+        "component": "system/sysmanage/roleManage",
+        "redirect": "",
+        "meta": {
+          "title": "角色管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/roleManage",
+        "hidden": false
+      },
+
+      {
+        "id": "12688662618868066720",
+        "pid": "1283308384890687266",
+        "name": "dept_manage",
+        "component": "system/sysmanage/deptManage",
+        "redirect": "",
+        "meta": {
+          "title": "科室管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/deptManage",
+        "hidden": false
+      },
+
+      {
+        "id": "12688662618868066720",
+        "pid": "1283308384890687266",
+        "name": "right_manage",
+        "component": "system/sysmanage/rightManage",
+        "redirect": "",
+        "meta": {
+          "title": "权限管理",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/rightManage",
+        "hidden": false
+      },
+
       // {
       //     "id": "1264619904766685186",
       //     "pid": "0",
