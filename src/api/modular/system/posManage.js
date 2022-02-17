@@ -398,8 +398,8 @@ export function changeStatus(parameter) {
 export function getKeShiData(parameter) {
   return axios({
     url: '/bdcApi/health/patient/queryDepartment',
-    method: 'get',
-    params: parameter
+    method: 'post',
+    data: parameter
   })
 }
 

@@ -6,7 +6,7 @@
         :tabBarStyle="{ textAlign: 'center', borderBottom: 'unset' }"
         @change="handleTabClick"
       >
-        <a-tab-pane key="tab1" tab="账号密码登录">
+        <a-tab-pane key="tab1" tab="管理员登录">
           <a-alert
             v-if="isLoginError"
             type="error"
@@ -46,33 +46,44 @@
             </a-input>
           </a-form-item>
         </a-tab-pane>
-        <!--        <a-tab-pane key="tab2" tab="手机号登录">-->
-        <!--          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" :message="this.accountLoginErrMsg" />-->
-        <!--          <a-form-item>-->
-        <!--            <a-input size="large" type="text" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">-->
-        <!--              <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
-        <!--            </a-input>-->
-        <!--          </a-form-item>-->
+               <a-tab-pane key="tab2" tab="用户登录">
+                 <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" :message="this.accountLoginErrMsg" />
+                 <a-form-item>
+                   <a-input
+                    size="large"
+                    type="text"
+                    placeholder="账号"
+                    v-decorator="[
+                      'username',
+                      {
+                        rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }],
+                        validateTrigger: 'change',
+                      },
+                    ]"
+                  >
+                  <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
+                  </a-input>
+                 </a-form-item>
 
-        <!--          <a-row :gutter="16">-->
-        <!--            <a-col class="gutter-row" :span="16">-->
-        <!--              <a-form-item>-->
-        <!--                <a-input size="large" type="text" placeholder="验证码" v-decorator="['captcha', {rules: [{ required: true, message: '请输入验证码' }], validateTrigger: 'blur'}]">-->
-        <!--                  <a-icon slot="prefix" type="mail" :style="{ color: 'rgba(0,0,0,.25)' }"/>-->
-        <!--                </a-input>-->
-        <!--              </a-form-item>-->
-        <!--            </a-col>-->
-        <!--            <a-col class="gutter-row" :span="8">-->
-        <!--              <a-button-->
-        <!--                class="getCaptcha"-->
-        <!--                tabindex="-1"-->
-        <!--                :disabled="state.smsSendBtn"-->
-        <!--                @click.stop.prevent="getCaptcha"-->
-        <!--                v-text="!state.smsSendBtn && '获取验证码' || (state.time+' s')"-->
-        <!--              ></a-button>-->
-        <!--            </a-col>-->
-        <!--          </a-row>-->
-        <!--        </a-tab-pane>-->
+                 <a-row  >
+                   <a-col class="gutter-row"  >
+                     <a-form-item>
+                       <a-input
+                        size="large"
+                        type="password"
+                        autocomplete="false"
+                        placeholder="密码"
+                        v-decorator="[
+                          'password',
+                          { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' },
+                        ]"
+                      >
+                      <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
+                    </a-input>
+                     </a-form-item>
+                   </a-col>
+                 </a-row>
+               </a-tab-pane>
       </a-tabs>
 
       <a-form-item>
@@ -193,13 +204,15 @@ export default {
 
       state.loginBtn = true
 
-      const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      // const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
+      const validateFieldsKey =  ['username', 'password'] 
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
           loginParams.password = values.password //md5(values.password)
+          loginParams.loginType = customActiveKey ==='tab1'? 1: 2
           console.log(loginParams)
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
@@ -263,19 +276,21 @@ export default {
       })
     },
     loginSuccess(resSuccess) {
+      this.$router.push({ path: '/' })
+      this.isLoginError = false
       //获取用户信息
-      getTrueUser().then((res) => {
-        console.log(res)
-        if (res.code == 0) {
-          console.log(res.data)
-          // this.$store.commit("trueUser", res.data);
-          Vue.ls.set(TRUE_USER, res.data)
-          this.$router.push({ path: '/' })
-          this.isLoginError = false
-        } else {
-          this.requestFailed(res.message)
-        }
-      })
+      // getTrueUser().then((res) => {
+      //   console.log(res)
+      //   if (res.code == 0) {
+      //     console.log(res.data)
+      //     // this.$store.commit("trueUser", res.data);
+      //     Vue.ls.set(TRUE_USER, res.data)
+      //     this.$router.push({ path: '/' })
+      //     this.isLoginError = false
+      //   } else {
+      //     this.requestFailed(res.message)
+      //   }
+      // })
     },
     requestFailed(err) {
       this.accountLoginErrMsg = err

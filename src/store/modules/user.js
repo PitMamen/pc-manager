@@ -56,7 +56,7 @@ const user = {
             return
           }
           const result = response.data
-          Vue.ls.set(ACCESS_TOKEN, result, 7 * 24 * 60 * 60 * 1000)
+          Vue.ls.set(ACCESS_TOKEN, result.jwt, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result)
           resolve()
         }).catch(error => {
@@ -69,7 +69,7 @@ const user = {
     GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
         getLoginUser().then(response => {
-          // console.log("GetInfo",response)
+          console.log("GetInfo",response)
           if (response.success) {
             const data = response.data
             commit('SET_ADMINTYPE', data.adminType)

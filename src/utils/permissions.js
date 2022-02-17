@@ -22,5 +22,6 @@ export function hasBtnPermission(permission) {
   if(admintype == '1'){
      return true
   }
-  return myBtns.indexOf(permission) > -1
+  // return myBtns.indexOf(permission) > -1
+  return true
 }

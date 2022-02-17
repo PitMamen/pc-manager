@@ -43,23 +43,22 @@ router.beforeEach((to, from, next) => {
             const all_app_menu=Vue.ls.get(ALL_APPS_MENU)
             let antDesignmenus
             if(all_app_menu==null){
-              const applocation = []
-              res.apps.forEach(item=>{
-                const apps={"code": "","name": "","active":"","menu":""}
-                if(item.active){
-                  apps.code=item.code
-                  apps.name=item.name
-                  apps.active =item.active
+              const applocation = [] 
+                const apps={
+                  "code": "system",
+                  "name": "系统应用",
+                  "active": true
+                }
+                // if(item.active){ 
                   apps.menu=res.menus
                   antDesignmenus=res.menus
-                }else{
-                  apps.code=item.code
-                  apps.name=item.name
-                  apps.active =item.active
-                  apps.menu=""
-                }
-                applocation.push(apps)
-              })
+                // }else{
+                //   apps.code=item.code
+                //   apps.name=item.name
+                //   apps.active =item.active
+                //   apps.menu=""
+                // }
+                applocation.push(apps) 
               Vue.ls.set(ALL_APPS_MENU, applocation, 7 * 24 * 60 * 60 * 1000)
               // 延迟 1 秒显示欢迎信息
               setTimeout(() => {

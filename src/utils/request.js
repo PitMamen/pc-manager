@@ -35,6 +35,7 @@ const err = (error) => {
         description: 'Authorization verification failed'
       })
       if (token) {
+        console.log("准备退出")
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
           window.location.reload()
@@ -49,8 +50,14 @@ const err = (error) => {
 // request interceptor
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
+  console.log("请求预处理")
+  var manangeApiFlag = config.url.lastIndexOf('bdcApi')> -1 || config.url.lastIndexOf('accountapi')> -1 || config.url.lastIndexOf('contentapi')> -1
   if (token) {
-    config.headers['token'] =   token
+    if(manangeApiFlag){ 
+      config.headers['Authorization'] =   token
+    }else{
+      config.headers['token'] =   token
+    }
   }
   return config
 }, err)

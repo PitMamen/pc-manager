@@ -15,9 +15,12 @@ import { axios } from '@/utils/request'
  */
 export function login (parameter) {
   return axios({
-    url: '/user/doLogin',
-    method: 'get',
-    params: parameter
+    header:{
+      'Content-Type':'application/json' 
+    },
+    url: '/accountapi/user/loginForPC',
+    method: 'post',
+    data: parameter
   })
 }
 
@@ -44,7 +47,7 @@ export function logout (parameter) {
  */
 export function getLoginUser (parameter) {
   return axios({
-    url: '/getLoginUser',
+    url: '/accountapi/getLoginUser',
     method: 'get',
     params: parameter
   })

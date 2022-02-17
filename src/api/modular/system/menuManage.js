@@ -10,7 +10,7 @@ import { axios } from '@/utils/request'
  */
 export function getMenuList (parameter) {
   return axios({
-    url: '/sysMenu/list',
+    url: '/accountapi/sysMenu/list',
     method: 'get',
     params: parameter
   })
@@ -24,7 +24,7 @@ export function getMenuList (parameter) {
  */
 export function getMenuTree (parameter) {
   return axios({
-    url: '/sysMenu/tree',
+    url: '/accountapi/sysMenu/tree',
     method: 'get',
     params: parameter
   })
@@ -38,7 +38,7 @@ export function getMenuTree (parameter) {
  */
 export function sysMenuAdd (parameter) {
   return axios({
-    url: '/sysMenu/add',
+    url: '/accountapi/sysMenu/add',
     method: 'post',
     data: parameter
   })
@@ -52,7 +52,7 @@ export function sysMenuAdd (parameter) {
  */
 export function sysMenuDelete (parameter) {
   return axios({
-    url: '/sysMenu/delete',
+    url: '/accountapi/sysMenu/delete',
     method: 'post',
     data: parameter
   })
@@ -66,7 +66,7 @@ export function sysMenuDelete (parameter) {
  */
 export function sysMenuDetail (parameter) {
   return axios({
-    url: '/sysMenu/detail',
+    url: '/accountapi/sysMenu/detail',
     method: 'post',
     data: parameter
   })
@@ -80,7 +80,7 @@ export function sysMenuDetail (parameter) {
  */
 export function sysMenuEdit (parameter) {
   return axios({
-    url: '/sysMenu/edit',
+    url: '/accountapi/sysMenu/edit',
     method: 'post',
     data: parameter
   })
@@ -94,7 +94,7 @@ export function sysMenuEdit (parameter) {
  */
 export function SysMenuTreeForGrant (parameter) {
   return axios({
-    url: '/sysMenu/treeForGrant',
+    url: '/accountapi/sysMenu/treeForGrant',
     method: 'get',
     params: parameter
   })
@@ -108,7 +108,7 @@ export function SysMenuTreeForGrant (parameter) {
  */
 export function sysMenuChange (parameter) {
   return axios({
-    url: '/sysMenu/change',
+    url: '/accountapi/sysMenu/change',
     method: 'post',
     data: parameter
   })
