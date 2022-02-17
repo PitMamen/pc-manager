@@ -4,27 +4,29 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="3" :sm="24">
+            <!-- <a-col :md="3" :sm="24">
               <span
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
                 <a-button type="primary" @click="newPackage">新增套餐</a-button>
               </span>
-            </a-col>
+            </a-col> -->
 
             <a-col :md="4" :sm="24">
-              <a-form-item label="科室">
-                <a-select allow-clear v-model="queryParams.belong" placeholder="请选择科室">
+              <a-form-item label="订单编号">
+                <!-- <a-select allow-clear v-model="queryParams.belong" placeholder="请选择科室">
                   <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
                     item.deptName
                   }}</a-select-option>
-                </a-select>
+                </a-select> -->
+
+                <a-input v-model="queryParams.belong" allow-clear placeholder="请输入订单编号" />
               </a-form-item>
             </a-col>
 
             <a-col :md="4" :sm="24">
-              <a-form-item label="上架状态">
+              <a-form-item label="下单时间">
                 <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in onlineData" :key="index" :value="item.code">{{
                     item.value
@@ -34,7 +36,7 @@
             </a-col>
 
             <a-col :md="4" :sm="24">
-              <a-form-item label="推荐状态">
+              <a-form-item label="订单状态">
                 <a-select allow-clear v-model="queryParams.topFlag" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in suggestData" :key="index" :value="item.code">{{
                     item.value
@@ -44,8 +46,8 @@
             </a-col>
 
             <a-col :md="4" :sm="24">
-              <a-form-item label="关键字">
-                <a-input v-model="queryParams.keyWords" allow-clear placeholder="请输入套餐关键字" />
+              <a-form-item label="就诊人">
+                <a-input v-model="queryParams.keyWords" allow-clear placeholder="请输入就诊人" />
               </a-form-item>
             </a-col>
 
@@ -55,6 +57,7 @@
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button type="primary" @click="exportExcel">导出</a-button>
               </span>
             </a-col>
           </a-row>
@@ -73,19 +76,7 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="goCheck(record)">查看</a>
-          <a-divider type="vertical" />
-          <a @click="goChange(record)">修改</a>
-          <a-divider type="vertical" v-show="false" />
-          <a-popconfirm
-            v-show="false"
-            title="确定删除套餐吗？"
-            ok-text="确定"
-            cancel-text="取消"
-            @confirm="goDelete(record)"
-          >
-            <a>删除</a>
-          </a-popconfirm>
+          <a @click="$refs.addForm.add(record)">查看详情</a>
         </span>
 
         <span slot="ifOnline" slot-scope="text, record">
@@ -101,22 +92,22 @@
         </span>
       </s-table>
 
-      <!-- <add-form ref="addForm" @ok="handleOk" />
-      <edit-form ref="editForm" @ok="handleOk" /> -->
+      <add-form ref="addForm" @ok="handleOk" />
+      <!-- <edit-form ref="editForm" @ok="handleOk" /> -->
     </a-card>
   </div>
 </template>
 
 <script>
 import { STable } from '@/components'
-import { queryDepartment, getServicePackages, savePlan } from '@/api/modular/system/posManage'
-// import addForm from './addForm'
+import { queryDepartment, getServicePackages, savePlan, exportPatients } from '@/api/modular/system/posManage'
+import addForm from './addForm'
 // import editForm from './editForm'
 
 export default {
   components: {
     STable,
-    // addForm,
+    addForm,
     // editForm,
   },
 
@@ -170,30 +161,30 @@ export default {
       // 表头
       columns: [
         {
-          title: '序号',
+          title: '订单编号',
           dataIndex: 'xh',
         },
         {
-          title: '套餐名称',
+          title: '下单时间',
           dataIndex: 'goodsName',
         },
         {
-          title: '所属科室',
+          title: '就诊人',
           dataIndex: 'deptName',
         },
         {
-          title: '服务类别',
+          title: '用户ID',
           dataIndex: 'goodsSpec',
         },
         {
-          title: '是否上架',
-          dataIndex: 'ifOnline',
-          scopedSlots: { customRender: 'ifOnline' },
+          title: '订单状态',
+          dataIndex: 'goodsSpec',
+          // scopedSlots: { customRender: 'ifOnline' },
         },
         {
-          title: '是否推荐',
-          dataIndex: 'ifSuggest',
-          scopedSlots: { customRender: 'ifSuggest' },
+          title: '金额',
+          dataIndex: 'goodsSec',
+          // scopedSlots: { customRender: 'ifSuggest' },
         },
         {
           title: '操作',
@@ -237,6 +228,48 @@ export default {
   },
 
   methods: {
+    exportExcel() {
+      let para = {}
+      if (this.isSearchKeyword) {
+        para = {
+          keyWord: this.queryParam.keyWord,
+          exportType: '1',
+        }
+      } else {
+        para = {
+          keyWord: this.queryParam,
+          exportType: '2',
+        }
+      }
+
+      exportPatients(para)
+        .then((res) => {
+          this.downloadfile(res)
+          // eslint-disable-next-line handle-callback-err
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
+    },
+
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys

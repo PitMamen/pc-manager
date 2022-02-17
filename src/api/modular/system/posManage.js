@@ -183,6 +183,21 @@ export function getDiseases(parameter) {
   })
 }
 
+/**
+ * 删除商品属性
+ *
+ */
+export function delGoodsAttr(id) {
+  return axios({
+    url: '/bdcApi/patient/delGoodsAttr',
+    method: 'get',
+    params: {
+      id: id
+    },
+
+  })
+}
+
 
 /**
  * 修改计划
@@ -198,7 +213,7 @@ export function savePlan(parameter) {
 /**
  * 上传图片
  */
- export function uploadImg(parameter) {
+export function uploadImg(parameter) {
   return axios({
     url: '/api/contentapi/fileUpload/uploadImgFile',
     method: 'post',
@@ -295,7 +310,7 @@ export function getOutPatients(parameter) {
 /**
  * 获取健康套餐列表
  */
- export function getServicePackages(parameter) {
+export function getServicePackages(parameter) {
   return axios({
     url: '/bdcApi/patient/qryServiceGoodsList',
     method: 'post',
@@ -358,6 +373,16 @@ export function getCheckDataList(parameter) {
       start: parameter.pageNo,
       type: parameter.type
     }
+  })
+}
+
+export function exportPatients(parameter) {
+  return axios({
+    url: '/patient/exportResult',
+    method: 'post',
+    data: parameter,
+    // params: parameter,
+    responseType: 'blob'
   })
 }
 

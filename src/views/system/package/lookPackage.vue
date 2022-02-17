@@ -113,7 +113,7 @@
         </a-modal>
       </div>
 
-      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片</span>
+      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           disabled
@@ -198,8 +198,8 @@ export default {
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '视频问诊' },
-        { type: 'videoNum', value: '健康咨询' },
+        { type: 'textNum', value: '健康咨询' },
+        { type: 'videoNum', value: '视频问诊' },
       ],
 
       goodsAttr: [
@@ -261,15 +261,15 @@ export default {
         if (res.code == 0) {
           this.planData = res.data
           if (this.planData.goodsInfo.status == 1) {
-            this.$set(this.planData, 'isSuggest', true)
-          } else {
-            this.$set(this.planData, 'isSuggest', false)
-          }
-
-          if (this.planData.goodsInfo.topFlag == 1) {
             this.$set(this.planData, 'isOnline', true)
           } else {
             this.$set(this.planData, 'isOnline', false)
+          }
+
+          if (this.planData.goodsInfo.topFlag == 1) {
+            this.$set(this.planData, 'isSuggest', true)
+          } else {
+            this.$set(this.planData, 'isSuggest', false)
           }
 
           //组装服务类型

@@ -21,18 +21,14 @@
         <a-input v-decorator="['goodsSpec', { rules: [{ required: true, message: '请输入服务名称！' }] }]" />
       </a-form-item>
 
+      <!-- v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]" -->
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch
-          defaultChecked
-          v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
-        />
+        <a-switch :checked="uploadData.goodsInfo.isOnline" />
       </a-form-item>
 
+      <!-- v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]" -->
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch
-          defaultChecked
-          v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
-        />
+        <a-switch :checked="uploadData.goodsInfo.isSuggest" />
       </a-form-item>
 
       <a-form-item label="价格(￥)" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -208,6 +204,8 @@ export default {
           price: '',
           theLastTime: '120',
           goodsAttr: [],
+          isOnline: true,
+          isSuggest: true,
         },
         templateTask: [
           // {
@@ -244,6 +242,11 @@ export default {
       } else {
         this.$message.error('获取科室列表失败：' + res.message)
       }
+    })
+
+    this.form.setFieldsValue({
+      topFlagIf: true,
+      statusIf: true,
     })
   },
 
@@ -295,6 +298,10 @@ export default {
 
     handleChange({ fileList }) {
       this.fileList = fileList
+      if (this.fileList.length > 1) {
+        let newData = this.fileList[0]
+        this.fileList = [newData]
+      }
     },
 
     handleChangeBanner({ fileList }) {
@@ -346,19 +353,20 @@ export default {
           this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
           this.uploadData.goodsInfo.price = values.price
           this.uploadData.goodsInfo.theLastTime = values.theLastTime
-          this.uploadData.goodsInfo.status = values.statusIf ? '1' : '3'
-          this.uploadData.goodsInfo.topFlag = values.topFlagIf ? '1' : '0'
+          // this.uploadData.goodsInfo.status = values.statusIf ? '1' : '3'
+          // this.uploadData.goodsInfo.topFlag = values.topFlagIf ? '1' : '0'
           this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
 
           this.uploadData.templateName = values.goodsName
 
+          this.uploadData.goodsInfo.status = this.uploadData.goodsInfo.isOnline ? '1' : '3'
+          this.uploadData.goodsInfo.topFlag = this.uploadData.goodsInfo.isSuggest ? '1' : '0'
           //组装图片
           if (this.fileList.length == 0) {
             this.$message.error('请上传套餐图片！')
             return
           } else {
             this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
-
           }
 
           if (this.fileListBanner.length == 0) {

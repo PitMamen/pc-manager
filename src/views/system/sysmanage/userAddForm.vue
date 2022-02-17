@@ -9,34 +9,64 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-        <a-form-item style="display: none" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-input v-decorator="['id']" />
-        </a-form-item>
-
-        <a-form-item label="姓名" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item label="用户名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
-            disabled
+            
             placeholder="请输入姓名"
-            v-decorator="['xm', { rules: [{ required: true, message: '请输入姓名！' }] }]"
+            v-decorator="['xm', { rules: [{ required: true, message: '请输入用户名称！' }] }]"
           />
         </a-form-item>
 
-        <a-form-item label="性别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item label="归属部门" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-select
+            allow-clear
+            placeholder="请选择归属部门"
+            v-decorator="['dept', { rules: [{ required: true, message: '请选择归属部门' }] }]"
+          >
+            <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+        </a-form-item>
+
+        <a-form-item label="登录账号" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-input
+            
+            placeholder="请输入登录账号"
+            v-decorator="['account', { rules: [{ required: true, message: '请输入登录账号！' }] }]"
+          />
+        </a-form-item>
+
+        <a-form-item label="登录密码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-input
+            
+            placeholder="请输入登录密码"
+            v-decorator="['psd', { rules: [{ required: true, message: '请输入登录密码！' }] }]"
+          />
+        </a-form-item>
+
+        <a-form-item label="用户状态" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <!-- <a-switch :checked="record.isOnline" v-decorator="['isOpen', { rules: [{ message: '请选择性别！' }] }]" /> -->
+          <a-switch  v-decorator="['isOpen', { rules: [{ message: '请选择用户状态！' }] }]" />
+        </a-form-item>
+
+        <a-form-item label="用户角色" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-radio-group
             name="radioGroup"
             :default-value="1"
-            v-decorator="['xb', { rules: [{ required: true, message: '请选择性别！' }] }]"
+            v-decorator="['role', { rules: [{ required: true, message: '请选择用户角色！' }] }]"
           >
-            <a-radio :value="1"> 男 </a-radio>
-            <a-radio :value="2" style="width: 100px"> 女 </a-radio>
+            <a-radio :value="1"> 医生 </a-radio>
+            <a-radio :value="2" style="width: 100px"> 个案管理师 </a-radio>
+            <a-radio :value="3" style="width: 100px"> 管理员 </a-radio>
           </a-radio-group>
         </a-form-item>
 
-        <a-form-item label="所属机构科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item label="管理科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-select
             allow-clear
             placeholder="湘雅附二医院"
-            v-decorator="['jg', { rules: [{ required: true, message: '请选择机构' }] }]"
+            v-decorator="['jg', { rules: [{ required: true, message: '请选择管理科室' }] }]"
           >
             <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
               item.value
@@ -44,41 +74,6 @@
           </a-select>
         </a-form-item>
 
-        <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-select
-            allow-clear
-            @select="onSelected"
-            placeholder="请选择科室"
-            v-decorator="['ssks', { rules: [{ required: true, message: '请选择科室' }] }]"
-          >
-            <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.yyksdm">{{
-              item.yyksmc
-            }}</a-select-option>
-          </a-select>
-        </a-form-item>
-
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="职称" has-feedback>
-          <a-input
-            placeholder="请输入职称"
-            v-decorator="['zhic', { rules: [{ required: true, message: '请输入职称！' }] }]"
-          />
-          <!-- <a-select
-            allow-clear
-            placeholder="请选择职称"
-            v-decorator="['zhic', { rules: [{ required: true, message: '请选择职称' }] }]"
-          >
-            <a-select-option v-for="(item, index) in hosData" :key="index" :value="item.code">{{
-              item.value
-            }}</a-select-option>
-          </a-select> -->
-        </a-form-item>
-
-        <a-form-item label="手机号码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-input
-            placeholder="请输入手机号码"
-            v-decorator="['tel', { rules: [{ required: true, message: '请输入手机号码！' }] }]"
-          />
-        </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
@@ -103,6 +98,7 @@ export default {
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
+      
       form: this.$form.createForm(this),
     }
   },
@@ -113,7 +109,7 @@ export default {
 
   methods: {
     //初始化方法
-    edit(record) {
+    add(record) {
       this.visible = true
       console.log('record', record)
       setTimeout(() => {

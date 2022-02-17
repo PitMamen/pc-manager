@@ -23,14 +23,16 @@
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch
-          defaultChecked
+          :checked="statusIf"
+          @change="statusChange"
           v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
         />
       </a-form-item>
 
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch
-          defaultChecked
+          :checked="topFlagIf"
+          @change="topFlagChange"
           v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
         />
       </a-form-item>
@@ -44,6 +46,8 @@
         />
       </a-form-item>
 
+      <!-- v-decorator="['theLastTime', { rules: [{ required: true, message: '请选择有效期' }] }]" -->
+      <!-- v-model="theLastTime" -->
       <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-select allow-clear v-decorator="['theLastTime', { rules: [{ required: true, message: '请选择有效期' }] }]">
           <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.value">{{
@@ -51,12 +55,6 @@
           }}</a-select-option>
         </a-select>
       </a-form-item>
-
-      <!-- <a-form-item label="服务类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span
-          v-decorator="['dd', { initialValue: 0, rules: [{ required: true, message: '请输入商品价格！' }] }]"
-        ></span>
-      </a-form-item> -->
     </a-form>
 
     <div class="div-service-type">
@@ -77,7 +75,10 @@
           <a-input-number v-model="item.attrValue" :min="0" :max="1000000" />
         </div>
 
-        <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
+        <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteItem(index)">
+          <a-button class="btn-delete" type="primary">刪除</a-button>
+        </a-popconfirm>
+        <!-- <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button> -->
       </div>
 
       <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="addItem">添加</a-button>
@@ -151,7 +152,7 @@
 </template>
 
 <script>
-import { queryDepartment, savePlan, getPlanDetail } from '@/api/modular/system/posManage'
+import { queryDepartment, savePlan, getPlanDetail, delGoodsAttr } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -175,19 +176,21 @@ export default {
       loading: false,
       hosData: [],
       periodData: [
-        { code: 1, valueName: '半年', value: 6 },
-        { code: 2, valueName: '一年', value: 12 },
-        { code: 3, valueName: '永久', value: 1200 },
+        { code: 1, valueName: '半年', value: '6' },
+        { code: 2, valueName: '一年', value: '12' },
+        { code: 3, valueName: '永久', value: '1200' },
       ],
       keshiData: [],
+      statusIf: false,
+      topFlagIf: false,
       actionUrl: 'http://192.168.1.122:8071/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '视频问诊' },
-        { type: 'videoNum', value: '健康咨询' },
+        { type: 'textNum', value: '健康咨询' },
+        { type: 'videoNum', value: '视频问诊' },
       ],
 
       goodsAttr: [
@@ -250,21 +253,16 @@ export default {
   },
 
   methods: {
+    statusChange() {
+      this.statusIf = this.statusIf ? false : true
+    },
+    topFlagChange() {
+      this.topFlagIf = this.topFlagIf ? false : true
+    },
     getPlanDetailOut() {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
           this.uploadData = res.data
-          // if (this.uploadData.goodsInfo.status == 1) {
-          //   this.$set(this.uploadData, 'isSuggest', true)
-          // } else {
-          //   this.$set(this.uploadData, 'isSuggest', false)
-          // }
-
-          // if (this.uploadData.goodsInfo.topFlag == 1) {
-          //   this.$set(this.uploadData, 'isOnline', true)
-          // } else {
-          //   this.$set(this.uploadData, 'isOnline', false)
-          // }
 
           this.form.setFieldsValue({
             goodsName: this.uploadData.goodsInfo.goodsName,
@@ -274,7 +272,9 @@ export default {
             theLastTime: this.uploadData.goodsInfo.theLastTime,
           })
 
+          console.log('555', this.uploadData.goodsInfo.status == 1)
           if (this.uploadData.goodsInfo.status == 1) {
+            this.statusIf = true
             this.form.setFieldsValue({
               statusIf: true,
             })
@@ -284,7 +284,9 @@ export default {
             })
           }
 
+          console.log('666', this.uploadData.goodsInfo.topFlag == 1)
           if (this.uploadData.goodsInfo.topFlag == 1) {
+            this.topFlagIf = true
             this.form.setFieldsValue({
               topFlagIf: true,
             })
@@ -394,6 +396,10 @@ export default {
 
     handleChange({ fileList }) {
       this.fileList = fileList
+      if (this.fileList.length > 1) {
+        let newData = this.fileList[0]
+        this.fileList = [newData]
+      }
     },
 
     handleChangeBanner({ fileList }) {
@@ -405,7 +411,18 @@ export default {
     },
 
     deleteItem(index) {
-      this.goodsAttr.splice(index, 1)
+      if (this.goodsAttr[index].id) {
+        delGoodsAttr(this.goodsAttr[index].id).then((res) => {
+          if (res.code == 0) {
+            this.goodsAttr.splice(index, 1)
+            this.$message.success('删除成功')
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+      } else {
+        this.goodsAttr.splice(index, 1)
+      }
     },
 
     /**
@@ -521,7 +538,6 @@ export default {
 
             this.uploadData.goodsInfo.imgList = str
           }
-          debugger
           console.log('www', this.uploadData)
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
