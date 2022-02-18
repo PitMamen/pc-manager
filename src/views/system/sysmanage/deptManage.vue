@@ -1,5 +1,6 @@
 <template>
   <div>
+    <!-- <a-tabs default-active-key="1" @change="callback" style="width: 60%"> -->
     <a-tabs default-active-key="1" @change="callback">
       <a-tab-pane key="1" tab="科室配置">
         <div class="div-service">
@@ -12,43 +13,39 @@
                       class="table-page-search-submitButtons"
                       :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                     >
-                      <a-button type="primary" @click="$refs.addForm.add(record)">新增科室</a-button>
+                      <a-button type="primary" @click="$refs.deptAddForm.add(record)">新增科室</a-button>
                     </span>
                   </a-col>
                 </a-row>
               </a-form>
             </div>
 
-            <s-table
-              ref="table"
+            <a-table
+              ref="tableDept"
+              :pagination="false"
               size="default"
-              :columns="columns"
-              :data="loadData"
+              style="width: 60%"
+              :columns="columnsDept"
+              :data-source="loadDataDept"
               :alert="true"
               :rowKey="(record) => record.code"
             >
               <span slot="action" slot-scope="text, record">
-                <a @click="$refs.editForm.edit(record)">编辑</a>
-                <a-divider type="vertical" />
-                <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => bannerDelete(record)">
+                <a @click="$refs.deptEditForm.edit(record)">编辑</a>
+                <a-divider type="vertical" v-show="false" />
+                <a-popconfirm
+                  v-show="false"
+                  placement="topRight"
+                  title="确认删除？"
+                  @confirm="() => delDeptOut(record)"
+                >
                   <a>删除</a>
                 </a-popconfirm>
               </span>
+            </a-table>
 
-              <span slot="ifSuggest" slot-scope="text, record">
-                <a-popconfirm
-                  :title="record.isSuggestText"
-                  ok-text="确定"
-                  cancel-text="取消"
-                  @confirm="goSuggest(record)"
-                >
-                  <a-switch :checked="record.isSuggest" />
-                </a-popconfirm>
-              </span>
-            </s-table>
-
-            <add-form ref="addForm" @ok="handleOk" />
-            <edit-form ref="editForm" @ok="handleOk" />
+            <dept-add-form ref="deptAddForm" @ok="handleOkDept" />
+            <dept-edit-form ref="deptEditForm" @ok="handleOkDept" />
           </a-card></div
       ></a-tab-pane>
 
@@ -63,42 +60,34 @@
                       class="table-page-search-submitButtons"
                       :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                     >
-                      <a-button type="primary" @click="$refs.addForm.add(record)">新增专病</a-button>
+                      <a-button type="primary" @click="$refs.diseaseAddForm.add(record)">新增专病</a-button>
                     </span>
                   </a-col>
                 </a-row>
               </a-form>
             </div>
-            <s-table
-              ref="table"
+
+            <a-table
+              ref="tableDept"
+              :pagination="false"
+              style="width: 60%"
               size="default"
               :columns="columnsDisease"
-              :data="loadData"
+              :data-source="loadDataDisease"
               :alert="true"
               :rowKey="(record) => record.code"
             >
               <span slot="action" slot-scope="text, record">
-                <a @click="$refs.editForm.edit(record)">编辑</a>
+                <a @click="$refs.diseaseEditForm.edit(record)">编辑</a>
                 <a-divider type="vertical" />
-                <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => bannerDelete(record)">
+                <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delDiseaseOut(record)">
                   <a>删除</a>
                 </a-popconfirm>
               </span>
+            </a-table>
 
-              <span slot="ifSuggest" slot-scope="text, record">
-                <a-popconfirm
-                  :title="record.isSuggestText"
-                  ok-text="确定"
-                  cancel-text="取消"
-                  @confirm="goSuggest(record)"
-                >
-                  <a-switch :checked="record.isSuggest" />
-                </a-popconfirm>
-              </span>
-            </s-table>
-
-            <add-form ref="addForm" @ok="handleOk" />
-            <edit-form ref="editForm" @ok="handleOk" />
+            <disease-add-form ref="diseaseAddForm" @ok="handleOkDisease" />
+            <disease-edit-form ref="diseaseEditForm" @ok="handleOkDisease" />
           </a-card>
         </div>
       </a-tab-pane>
@@ -113,7 +102,7 @@
                       class="table-page-search-submitButtons"
                       :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                     >
-                      <a-button type="primary" @click="$refs.addForm.add(record)">新增病区</a-button>
+                      <a-button type="primary" @click="$refs.areaAddForm.add(record)">新增病区</a-button>
                     </span>
                   </a-col>
                 </a-row>
@@ -123,42 +112,28 @@
             <!-- 去掉勾选框 -->
             <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
             <!-- :row-selection="rowSelection" -->
-            <s-table
-              ref="table"
+
+            <a-table
+              ref="tableArea"
+              :pagination="false"
+              style="width: 60%"
               size="default"
               :columns="columnsArea"
-              :data="loadData"
+              :data-source="loadDataArea"
               :alert="true"
               :rowKey="(record) => record.code"
             >
               <span slot="action" slot-scope="text, record">
-                <a @click="$refs.editForm.edit(record)">编辑</a>
+                <a @click="$refs.areaEditForm.edit(record)">编辑</a>
                 <a-divider type="vertical" />
-                <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => bannerDelete(record)">
+                <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delAreaOut(record)">
                   <a>删除</a>
                 </a-popconfirm>
               </span>
+            </a-table>
 
-              <!-- <span slot="ifOnline" slot-scope="text, record">
-          <a-popconfirm :title="record.isOnlineText" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
-            <a-switch :checked="record.isOnline" />
-          </a-popconfirm>
-        </span> -->
-
-              <span slot="ifSuggest" slot-scope="text, record">
-                <a-popconfirm
-                  :title="record.isSuggestText"
-                  ok-text="确定"
-                  cancel-text="取消"
-                  @confirm="goSuggest(record)"
-                >
-                  <a-switch :checked="record.isSuggest" />
-                </a-popconfirm>
-              </span>
-            </s-table>
-
-            <add-form ref="addForm" @ok="handleOk" />
-            <edit-form ref="editForm" @ok="handleOk" />
+            <area-add-form ref="areaAddForm" @ok="handleOkArea" />
+            <area-edit-form ref="areaEditForm" @ok="handleOkArea" />
           </a-card>
         </div>
       </a-tab-pane>
@@ -168,73 +143,50 @@
 
 <script>
 import { STable } from '@/components'
-import { queryDepartment, getServicePackages, savePlan } from '@/api/modular/system/posManage'
-import addForm from './roleAddForm'
-import editForm from './roleEditForm'
+import {
+  getDepts,
+  delDept,
+  getDiseasesNew,
+  delDisease,
+  getDiseaseAreas,
+  delDiseaseArea,
+} from '@/api/modular/system/posManage'
+import deptAddForm from './deptAddForm'
+import deptEditForm from './deptEditForm'
+
+import diseaseAddForm from './diseaseAddForm'
+import diseaseEditForm from './diseaseEditForm'
+
+import areaAddForm from './areaAddForm'
+import areaEditForm from './areaEditForm'
 
 export default {
   components: {
     STable,
-    addForm,
-    editForm,
-  },
-
-  computed: {
-    rowSelection() {
-      return {
-        onChange: this.onSelectChange,
-        getCheckboxProps: (record) => ({
-          props: {
-            disabled: !record.userId, // Column configuration not to be checked
-            name: record.userId,
-          },
-        }),
-      }
-    },
-
-    hasSelected() {
-      return this.selectedRowKeys.length > 0
-    },
+    deptAddForm,
+    deptEditForm,
+    diseaseAddForm,
+    diseaseEditForm,
+    areaAddForm,
+    areaEditForm,
   },
 
   data() {
     return {
-      selectedRowKeys: [], // Check here to configure the default column
-      // 高级搜索 展开/关闭
-      advanced: false,
-      isSuggestText: '确定推荐？',
-      isOnlineText: '',
-      keshiData: [],
-      //（1：正常 2：待上架 3 ：下架）
-      onlineData: [
-        { code: 1, value: '正常' },
-        { code: 2, value: '待上架' },
-        { code: 3, value: '下架' },
-      ],
-      //推荐标识(0:不推荐1:推荐)
-      suggestData: [
-        { code: 1, value: '推荐' },
-        { code: 0, value: '不推荐' },
-      ],
       partChoose: '',
-      // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
-      queryParams: {
-        // existsPlanFlag: '',
-        belong: undefined,
-        status: undefined,
-        topFlag: undefined,
-        keyWords: undefined,
-        // isRegister: '1',
-      },
+
+      queryParamDept: {},
+      queryParamDisease: { departmentId: 0 },
+      queryParamArea: { departmentId: 0 },
       // 表头
-      columns: [
+      columnsDept: [
         {
           title: '序号',
           dataIndex: 'xh',
         },
         {
           title: '科室名称',
-          dataIndex: 'goodsName',
+          dataIndex: 'departmentName',
         },
         {
           title: '操作',
@@ -250,11 +202,11 @@ export default {
         },
         {
           title: '专病名称',
-          dataIndex: 'goodsName',
+          dataIndex: 'diseaseName',
         },
         {
           title: '所属科室',
-          dataIndex: 'deptName',
+          dataIndex: 'departmentName',
         },
         {
           title: '操作',
@@ -270,11 +222,11 @@ export default {
         },
         {
           title: '病区名称',
-          dataIndex: 'goodsName',
+          dataIndex: 'inpatientAreaName',
         },
         {
           title: '所属科室',
-          dataIndex: 'deptName',
+          dataIndex: 'departmentName',
         },
         {
           title: '操作',
@@ -284,125 +236,127 @@ export default {
         },
       ],
       loadDataOut: [],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            if (res.data.rows[i].topFlag == 1) {
-              this.$set(res.data.rows[i], 'isSuggest', true)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定取消推荐？')
-            } else {
-              this.$set(res.data.rows[i], 'isSuggest', false)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定推荐？')
-            }
 
-            if (res.data.rows[i].status == 1) {
-              this.$set(res.data.rows[i], 'isOnline', true)
-              this.$set(res.data.rows[i], 'isOnlineText', '确定下架？')
-            } else {
-              this.$set(res.data.rows[i], 'isOnline', false)
-              this.$set(res.data.rows[i], 'isOnlineText', '确定上架？')
-            }
-          }
-          this.loadDataOut = res.data
-          return res.data
-        })
-      },
-      selectedRows: [],
+      loadDataDept: [],
+      loadDataDisease: [],
+      loadDataArea: [],
     }
   },
 
   created() {
-    this.getKeShi()
+    this.getDeptsOut()
+    this.getDiseasesNewOut()
+    this.getAreasOut()
   },
 
   methods: {
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
+    handleOkDept() {
+      this.getDeptsOut()
     },
 
-    goOnline(record) {
-      if (record.status == 1) {
-        record.status = 3
-      } else {
-        record.status = 1
+    handleOkDisease() {
+      this.getDiseasesNewOut()
+    },
+
+    handleOkArea() {
+      this.getAreasOut()
+    },
+
+    delDeptOut(record) {
+      let param = {
+        departmentId: record.departmentId,
       }
-      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, status: record.status } }
-      savePlan(data).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('操作成功')
-          record.isOnline = !record.isOnline
-
-          setTimeout(() => {
-            record.isOnlineText = record.isOnline ? '确定下架？' : '确定上架？'
-          }, 200)
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+      delDept(param)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('删除成功')
+            this.handleOkDept()
+          } else {
+            this.$message.error('删除失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error('删除错误：' + err.message)
+        })
     },
 
-    goSuggest(record) {
-      if (record.topFlag == 1) {
-        record.topFlag = 0
-      } else {
-        record.topFlag = 1
+    delDiseaseOut(record) {
+      let param = {
+        id: record.id,
       }
-      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
-      savePlan(data).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('操作成功')
-          record.isSuggest = !record.isSuggest
+      delDisease(param)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('删除成功')
+            this.handleOkDisease()
+          } else {
+            this.$message.error('删除失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error('删除错误：' + err.message)
+        })
+    },
 
-          setTimeout(() => {
-            record.isSuggestText = record.isSuggest ? '确定取消推荐？' : '确定推荐？'
-          }, 200)
+    delAreaOut(record) {
+      let param = {
+        id: record.id,
+      }
+      delDiseaseArea(param)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('删除成功')
+            this.handleOkArea()
+          } else {
+            this.$message.error('删除失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error('删除错误：' + err.message)
+        })
+    },
+
+    getDeptsOut() {
+      getDepts(this.queryParam).then((res) => {
+        if (res.code == 0) {
+          for (let i = 0; i < res.data.length; i++) {
+            this.$set(res.data[i], 'xh', i + 1)
+          }
+          this.loadDataDept = res.data
         } else {
-          this.$message.error(res.message)
+          // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
     },
 
-    getKeShi() {
-      queryDepartment('444885559').then((res) => {
+    getDiseasesNewOut() {
+      getDiseasesNew(this.queryParamDisease).then((res) => {
         if (res.code == 0) {
-          this.keshiData = res.data
+          for (let i = 0; i < res.data.length; i++) {
+            this.$set(res.data[i], 'xh', i + 1)
+          }
+          this.loadDataDisease = res.data
         } else {
-          this.$message.error('获取科室列表失败：' + res.message)
+          // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
     },
 
-    newPackage() {
-      this.$router.push({ name: 'package_new' })
-    },
-
-    goCheck(record) {
-      this.$router.push({
-        name: 'package_look',
-        params: {
-          planId: record.templateId,
-        },
+    getAreasOut() {
+      getDiseaseAreas(this.queryParamArea).then((res) => {
+        if (res.code == 0) {
+          for (let i = 0; i < res.data.length; i++) {
+            this.$set(res.data[i], 'xh', i + 1)
+          }
+          this.loadDataArea = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
       })
     },
 
-    goChange(record) {
-      this.$router.push({
-        name: 'package_edit',
-        params: {
-          planId: record.templateId,
-        },
-      })
-    },
-
-    handleOk() {
-      this.$refs.table.refresh()
-    },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+    callback(s1) {
+      console.log('s1', s1)
     },
   },
 }
