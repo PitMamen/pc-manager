@@ -308,6 +308,101 @@ export function getOutPatients(parameter) {
 }
 
 /**
+ * 新增科室接口
+ */
+export function newDept(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/addDepartment',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 新增专病接口
+ */
+export function newDisease(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/addDiseaseList',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 新增病区接口
+ */
+export function newDiseaseArea(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/addInpatientArea',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 删除科室接口
+ */
+export function delDept(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/deleteDepartment',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 删除专病接口
+ */
+export function delDisease(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/deleteDisease',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 删除病区接口
+ */
+export function delDiseaseArea(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/deleteInpatientArea',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 科室接口列表
+ * @param {} parameter 
+ * @returns 
+ */
+export function getDepts(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/getDepartmentList',
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getDiseasesNew(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/getDiseaseList',
+    method: 'get',
+    params: parameter
+  })
+}
+
+export function getDiseaseAreas(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/getInpatientAreaList',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
  * 获取健康套餐列表
  */
 export function getServicePackages(parameter) {
