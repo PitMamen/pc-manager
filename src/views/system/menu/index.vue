@@ -121,6 +121,7 @@
       loadData() {
         this.loading = true
         getMenuList(this.queryParam).then((res) => {
+          console.log("菜单列表")
           if (res.success) {
             this.data=res.data
           }

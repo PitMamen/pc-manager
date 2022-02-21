@@ -1169,7 +1169,7 @@ const getLoginUser = (options) => {
 }
 
 Mock.mock('/api/login', 'post', login2)
-Mock.mock('/api/getLoginUser', 'get', getLoginUser)
+// Mock.mock('/api/getLoginUser', 'get', getLoginUser)
 Mock.mock(/\/auth\/login/, 'post', login)
 Mock.mock(/\/auth\/logout/, 'post', logout)
 Mock.mock(/\/account\/sms/, 'post', smsCaptcha)

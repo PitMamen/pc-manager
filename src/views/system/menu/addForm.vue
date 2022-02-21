@@ -363,13 +363,14 @@
       },
 
       getSysApplist() {
-        return getAppList().then((res) => {
-          if (res.success) {
-            this.appData=res.data
-          } else {
-            this.$message.warning(res.message)
-          }
-        })
+        // return getAppList().then((res) => {
+        //   if (res.success) {
+        //     this.appData=res.data
+        //   } else {
+        //     this.$message.warning(res.message)
+        //   }
+        // })
+        return this.appData=[{"createTime":"2020-03-25 19:07:00.000","createUser":"1265476890672672808","updateTime":"2020-07-12 00:17:28.000","updateUser":"1265476890672672808","id":"1","name":"系统应用","code":"system","active":"Y","status":0}]
       },
       changeApplication(value){
         getMenuTree({'application':value}).then((res) => {
