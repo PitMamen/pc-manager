@@ -403,6 +403,72 @@ export function getDiseaseAreas(parameter) {
 }
 
 /**
+ * 获取角色列表
+ */
+export function getRoleList(parameter) {
+  return axios({
+    url: '/accountapi/getRoleList',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 删除或修改角色接口
+ */
+ export function delOrEditRole(parameter) {
+  return axios({
+    url: '/accountapi/updateRole',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 新增角色接口
+ */
+ export function addRole(parameter) {
+  return axios({
+    url: '/accountapi/addRole',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 获取系统菜单树，用于新增，编辑时选择上级节点
+ */
+ export function getMenuTree(parameter) {
+  return axios({
+    url: '/accountapi/sysMenu/tree',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 获取系统菜单树，用于给角色授权时选择
+ */
+ export function getMenuTreeGrant(parameter) {
+  return axios({
+    url: '/accountapi/sysMenu/treeForGrant',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 根据条件查询订单
+ */
+export function getOrders(parameter) {
+  return axios({
+    url: '/orderapi/order/tbOrder/getOrderList',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
  * 获取健康套餐列表
  */
 export function getServicePackages(parameter) {

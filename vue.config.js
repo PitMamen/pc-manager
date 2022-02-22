@@ -119,6 +119,15 @@ const vueConfig = {
         }
       },
 
+      '/api/orderapi': {
+        target: 'http://192.168.1.122/order-api',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/orderapi': ''   //需要rewrite的,
+        }
+      },
+
       '/api': {
         target: 'http://192.168.1.122/manager-api',
         ws: false,

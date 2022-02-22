@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="修改医生用户"
+    title="新增角色"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -11,35 +11,40 @@
       <a-form :form="form">
         <a-form-item label="角色名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
-            placeholder="请输入姓名"
-            v-decorator="['xm', { rules: [{ required: true, message: '请输入用户名称！' }] }]"
+            placeholder="请输入角色名称"
+            v-decorator="['roleRealName', { rules: [{ required: true, message: '请输入角色名称！' }] }]"
           />
         </a-form-item>
 
         <a-form-item label="显示顺序" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
             placeholder="请输入显示顺序"
-            v-decorator="['account', { rules: [{ required: true, message: '请输入显示顺序！' }] }]"
+            type="number"
+            v-decorator="['orderId', { rules: [{ required: true, message: '请输入显示顺序！' }] }]"
           />
         </a-form-item>
 
         <a-form-item label="状态" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <!-- <a-switch :checked="record.isOnline" v-decorator="['isOpen', { rules: [{ message: '请选择性别！' }] }]" /> -->
-          <a-switch v-decorator="['isOpen', { rules: [{ message: '请选择用户状态！' }] }]" />
+          <!-- v-decorator="['isOpen', { rules: [{ message: '请选择用户状态！' }] }]" -->
+          <a-switch @change="isOpenChange" :checked="isOpen" />
         </a-form-item>
 
         <a-form-item label="菜单权限" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-radio-group
-            name="radioGroup"
-            :default-value="1"
-            v-decorator="['role', { rules: [{ required: true, message: '请选择用户角色！' }] }]"
-          >
-            <a-radio :value="1"> 折叠/展开 </a-radio>
-            <a-radio :value="2" style="width: 100px"> 全选/全不选 </a-radio>
-            <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio>
+          <!-- v-decorator="['treeState', { rules: [{ required: true, message: '请选择菜单权限！' }] }]" -->
+          <a-radio-group name="radioGroup" @change="radioChange" :default-value="2">
+            <a-radio :value="1"> 全选 </a-radio>
+            <a-radio :value="2" style="width: 100px"> 全不选 </a-radio>
+            <!-- <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio> -->
           </a-radio-group>
         </a-form-item>
 
+        <a-form-item style="margin-left: 28%" label="" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <!-- :default-expanded-keys="['0-0-0', '0-0-1']"
+            :default-selected-keys="['0-0-0', '0-0-1']"
+            :default-checked-keys="['0-0-0', '0-0-1']" -->
+          <!-- :checked-keys="checkedKeys" -->
+          <a-tree checkable :tree-data="treeData" :replace-fields="replaceFields" @select="onSelect" @check="onCheck" />
+        </a-form-item>
       </a-form>
     </a-spin>
   </a-modal>
@@ -47,7 +52,7 @@
 
 
 <script>
-import { changeStatus, getKeShiData } from '@/api/modular/system/posManage'
+import { getMenuTreeGrant, addRole } from '@/api/modular/system/posManage'
 
 export default {
   data() {
@@ -60,69 +65,91 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-      keshiData: [],
+      grantMenuIdList: [],
+      replaceFields: {
+        children: 'child',
+        title: 'name',
+      },
+      checkedKeys: [],
+      allKeys: [],
+
+      isOpen: true,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
+      treeData: [],
+
       form: this.$form.createForm(this),
     }
   },
 
-  created() {
-    this.getKeShi()
-  },
+  created() {},
 
   methods: {
+    onSelect(selectedKeys, info) {
+      console.log('selected', selectedKeys, info)
+    },
+    onCheck(checkedKeys, info) {
+      console.log('onCheck', checkedKeys, info)
+      this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
+      console.log('onCheck2', this.checkedKeys, info)
+    },
+    isOpenChange() {
+      this.isOpen = this.isOpen ? false : true
+    },
+
+    radioChange(event) {
+      debugger
+      if (event.target.value == 1) {
+        //全选
+        // this.checkedKeys = JSON.parse(JSON.stringify(this.allKeys))
+        this.checkedKeys = this.allKeys
+        console.log('radioChange', this.checkedKeys, info)
+      } else if (event.target.value == 2) {
+        //全不选
+        this.checkedKeys = []
+      }
+    },
     //初始化方法
     edit(record) {
       this.visible = true
-      console.log('record', record)
+      this.checkedKeys = []
+      debugger
+      getMenuTreeGrant({}).then((res) => {
+        if (res.code == 0) {
+          this.treeData = this.transfromData(res.data)
+          console.log('this.treeData', this.treeData)
+          debugger
+          this.checkedKeys = record.grantMenuIdList
+          console.log('checkedKeys', this.checkedKeys)
+          this.isOpen = record.state == 1 ? true : false
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+
       setTimeout(() => {
         this.form.setFieldsValue({
-          id: record.id,
-          xm: record.xm,
-          jg: '湘雅附二医院',
-          ssks: record.ssks,
-          zhic: record.zhic,
-          tel: record.tel,
+          roleRealName: record.roleRealName,
+          orderId: record.orderId,
         })
-        if (record.xb == '男' || !record.xb) {
-          this.form.setFieldsValue({
-            xb: 1,
-          })
-        } else {
-          this.form.setFieldsValue({
-            xb: 2,
-          })
-        }
       }, 100)
     },
-    onSelected(ssks) {
-      for (let i = 0; i < this.keshiData.length; i++) {
-        if (this.keshiData[i].yyksdm == ssks) {
-          this.seletSsksName = this.keshiData[i].yyksmc
+
+    transfromData(data) {
+      for (let index = 0; index < data.length; index++) {
+        data[index].name = data[index].title
+        data[index].key = data[index].id
+        // this.$set(data[index], 'name', data[index].title)
+        // this.$set(data[index], 'key', data[index].id)
+        // this.$set(data[index], 'checked', true)
+        this.allKeys.push(data[index].key)
+
+        if (data[index].children && data[index].children.length > 0) {
+          this.transfromData(data[index].children)
         }
       }
-    },
-
-    getKeShi() {
-      getKeShiData({ hospitalCode: '444885559' })
-        .then((res) => {
-          if (res.success) {
-            let newData = []
-            for (let i = 0; i < res.data.length; i++) {
-              if (res.data[i].departmentList && res.data[i].departmentList.length > 0) {
-                newData = newData.concat(res.data[i].departmentList)
-              }
-            }
-            this.keshiData = newData
-          } else {
-            // this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          // this.$message.error('切换错误：' + err.message)
-        })
+      return data
     },
 
     handleSubmit() {
@@ -132,23 +159,31 @@ export default {
       this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
-          if (values.xb == 1) {
-            values.xb = '男'
-          } else {
-            values.xb = '女'
+          if (this.checkedKeys.length == 0) {
+            this.$message.error('请选择菜单权限')
+            return
           }
-          values.ssksName = this.seletSsksName
-          delete values.jg
-          changeStatus(values)
+          debugger
+          let state = this.isOpen ? 1 : 0
+          // let sdd = this.randomString(8)
+          let param = {
+            roleRealName: values.roleRealName,
+            orderId: parseInt(values.orderId),
+            // roleName: sdd,
+            roleName: this.randomString(8),
+            state: state,
+            grantMenuIdList: this.checkedKeys,
+          }
+          addRole(param)
             .then((res) => {
               if (res.success) {
-                this.$message.success('编辑成功')
+                this.$message.success('新增成功')
                 this.visible = false
                 this.confirmLoading = false
                 this.$emit('ok', values)
                 this.form.resetFields()
               } else {
-                this.$message.error('编辑失败：' + res.message)
+                this.$message.error('新增失败：' + res.message)
               }
             })
             .finally((res) => {
@@ -162,6 +197,15 @@ export default {
     handleCancel() {
       this.form.resetFields()
       this.visible = false
+    },
+
+    randomString(e) {
+      e = e || 11
+      var t = 'ABCDEFGHJKMNPQRdergfrehjikuykiawSTWXYZabcdefhijkmnprstwxyzdewfgwerg',
+        a = t.length,
+        n = ''
+      for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a))
+      return n
     },
   },
 }

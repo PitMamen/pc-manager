@@ -5,48 +5,35 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="3" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.addForm.add(record)">新增角色</a-button>
-              </span>
+              <a-button type="primary" @click="$refs.addForm.add()">新增角色</a-button>
             </a-col>
           </a-row>
         </a-form>
       </div>
 
-      <!-- 去掉勾选框 -->
-      <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-      <!-- :row-selection="rowSelection" -->
-      <s-table
-        ref="table"
+      <a-table
+        ref="tableDept"
+        :pagination="false"
         size="default"
+        style="width: 60%; margin-top: 2%"
         :columns="columns"
-        :data="loadData"
+        :data-source="loadData"
         :alert="true"
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.editForm.edit(record)">编辑</a>
-          <a-divider type="vertical" />
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => bannerDelete(record)">
+          <a-divider type="vertical" v-show="false" />
+          <a-popconfirm v-show="false" placement="topRight" title="确认删除？" @confirm="() => delDeptOut(record)">
             <a>删除</a>
           </a-popconfirm>
         </span>
-
-        <!-- <span slot="ifOnline" slot-scope="text, record">
-          <a-popconfirm :title="record.isOnlineText" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
-            <a-switch :checked="record.isOnline" />
-          </a-popconfirm>
-        </span> -->
-
         <span slot="ifSuggest" slot-scope="text, record">
           <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
             <a-switch :checked="record.isSuggest" />
           </a-popconfirm>
         </span>
-      </s-table>
+      </a-table>
 
       <add-form ref="addForm" @ok="handleOk" />
       <edit-form ref="editForm" @ok="handleOk" />
@@ -56,7 +43,7 @@
 
 <script>
 import { STable } from '@/components'
-import { queryDepartment, getServicePackages, savePlan } from '@/api/modular/system/posManage'
+import { getRoleList, delOrEditRole } from '@/api/modular/system/posManage'
 import addForm from './roleAddForm'
 import editForm from './roleEditForm'
 
@@ -90,7 +77,7 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
-      isSuggestText: '确定推荐？',
+      isSuggestText: '确定开启？',
       isOnlineText: '',
       keshiData: [],
       //（1：正常 2：待上架 3 ：下架）
@@ -122,15 +109,16 @@ export default {
         },
         {
           title: '角色名',
-          dataIndex: 'goodsName',
+          dataIndex: 'roleRealName',
         },
         {
           title: '显示顺序',
-          dataIndex: 'deptName',
+          dataIndex: 'orderId',
         },
         {
           title: '角色状态',
-          dataIndex: 'goodsSpec',
+          dataIndex: 'ifSuggest',
+          scopedSlots: { customRender: 'ifSuggest' },
         },
 
         {
@@ -140,81 +128,49 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
-      loadDataOut: [],
-      // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            if (res.data.rows[i].topFlag == 1) {
-              this.$set(res.data.rows[i], 'isSuggest', true)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定取消推荐？')
-            } else {
-              this.$set(res.data.rows[i], 'isSuggest', false)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定推荐？')
-            }
-
-            if (res.data.rows[i].status == 1) {
-              this.$set(res.data.rows[i], 'isOnline', true)
-              this.$set(res.data.rows[i], 'isOnlineText', '确定下架？')
-            } else {
-              this.$set(res.data.rows[i], 'isOnline', false)
-              this.$set(res.data.rows[i], 'isOnlineText', '确定上架？')
-            }
-          }
-          this.loadDataOut = res.data
-          return res.data
-        })
-      },
-      selectedRows: [],
+      loadData: [],
     }
   },
 
   created() {
-    this.getKeShi()
+    this.getRolesOut()
   },
 
   methods: {
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
-    },
-
-    goOnline(record) {
-      if (record.status == 1) {
-        record.status = 3
-      } else {
-        record.status = 1
-      }
-      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, status: record.status } }
-      savePlan(data).then((res) => {
+    getRolesOut() {
+      getRoleList(this.queryParam).then((res) => {
         if (res.code == 0) {
-          this.$message.success('操作成功')
-          record.isOnline = !record.isOnline
-
-          setTimeout(() => {
-            record.isOnlineText = record.isOnline ? '确定下架？' : '确定上架？'
-          }, 200)
+          for (let i = 0; i < res.data.length; i++) {
+            this.$set(res.data[i], 'xh', i + 1)
+            if (res.data[i].state == 1) {
+              this.$set(res.data[i], 'isSuggest', true)
+              this.$set(res.data[i], 'isSuggestText', '确定取消推荐？')
+            } else {
+              this.$set(res.data[i], 'isSuggest', false)
+              this.$set(res.data[i], 'isSuggestText', '确定推荐？')
+            }
+          }
+          this.loadData = res.data
         } else {
-          this.$message.error(res.message)
+          // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
     },
 
     goSuggest(record) {
-      if (record.topFlag == 1) {
-        record.topFlag = 0
+      if (record.state == 1) {
+        record.state = 0
       } else {
-        record.topFlag = 1
+        record.state = 1
       }
-      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
-      savePlan(data).then((res) => {
+      // let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
+      delOrEditRole(record).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
           record.isSuggest = !record.isSuggest
 
           setTimeout(() => {
-            record.isSuggestText = record.isSuggest ? '确定取消推荐？' : '确定推荐？'
+            record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
           }, 200)
         } else {
           this.$message.error(res.message)
@@ -222,15 +178,15 @@ export default {
       })
     },
 
-    getKeShi() {
-      queryDepartment('444885559').then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-        } else {
-          this.$message.error('获取科室列表失败：' + res.message)
-        }
-      })
-    },
+    // getKeShi() {
+    //   queryDepartment('444885559').then((res) => {
+    //     if (res.code == 0) {
+    //       this.keshiData = res.data
+    //     } else {
+    //       this.$message.error('获取科室列表失败：' + res.message)
+    //     }
+    //   })
+    // },
 
     newPackage() {
       this.$router.push({ name: 'package_new' })
@@ -255,11 +211,7 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
-    },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+    this.getRolesOut()
     },
   },
 }
