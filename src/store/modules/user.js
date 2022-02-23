@@ -76,7 +76,7 @@ const user = {
             commit('SET_ROLES', 1)
             commit('SET_BUTTONS', data.permissions)
             commit('SET_INFO', data)
-            commit('SET_NAME', { name: data.name, welcome: welcome() })
+            commit('SET_NAME', { name: data.userName, welcome: welcome() })
             commit('SET_AVATAR', data.avatar)
             resolve(data)
           } else {
