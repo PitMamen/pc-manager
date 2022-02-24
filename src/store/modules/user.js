@@ -4,6 +4,7 @@ import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { sysUserUpdatePwd } from '@/api/modular/system/userManage'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { ALL_APPS_MENU } from '@/store/mutation-types'
+import { TRUE_USER } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 import store from '../index'
 import router from '../../router'
@@ -69,7 +70,7 @@ const user = {
     GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
         getLoginUser().then(response => {
-          console.log("GetInfo",response)
+          console.log("GetInfo", response)
           if (response.success) {
             const data = response.data
             commit('SET_ADMINTYPE', data.adminType)
@@ -78,6 +79,7 @@ const user = {
             commit('SET_INFO', data)
             commit('SET_NAME', { name: data.userName, welcome: welcome() })
             commit('SET_AVATAR', data.avatar)
+            Vue.ls.set(TRUE_USER, data)
             resolve(data)
           } else {
             reject(new Error(data.message))

@@ -100,7 +100,6 @@
                   <a-col :md="3" :sm="24">
                     <span
                       class="table-page-search-submitButtons"
-                      :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                     >
                       <a-button type="primary" @click="$refs.areaAddForm.add(record)">新增病区</a-button>
                     </span>

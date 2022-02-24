@@ -144,10 +144,10 @@ export default {
             this.$set(res.data[i], 'xh', i + 1)
             if (res.data[i].state == 1) {
               this.$set(res.data[i], 'isSuggest', true)
-              this.$set(res.data[i], 'isSuggestText', '确定取消推荐？')
+              this.$set(res.data[i], 'isSuggestText', '确定关闭？')
             } else {
               this.$set(res.data[i], 'isSuggest', false)
-              this.$set(res.data[i], 'isSuggestText', '确定推荐？')
+              this.$set(res.data[i], 'isSuggestText', '确定开启？')
             }
           }
           this.loadData = res.data

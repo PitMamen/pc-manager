@@ -469,6 +469,39 @@ export function getOrders(parameter) {
 }
 
 /**
+ * 用户管理列表接口（不包括患者,医生和个案管理师）
+ */
+ export function getUserList(parameter) {
+  return axios({
+    url: '/accountapi/accountInfo/getUsers',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 创建医生,个案师账号
+ */
+ export function createDoctorUser(parameter) {
+  return axios({
+    url: '/accountapi/accountInfo/createDoctorUser',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 用户管理修改接口（角色不允许修改）
+ */
+ export function updateUser(parameter) {
+  return axios({
+    url: '/accountapi/accountInfo/updateUser',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 获取健康套餐列表
  */
 export function getServicePackages(parameter) {

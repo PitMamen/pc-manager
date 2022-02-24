@@ -11,9 +11,10 @@
       <notice-icon class="action" v-if="false" />
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
+          <!-- icon="user" -->
           <a-avatar class="avatar" size="small" :src="avatar" />
           <span style="margin-right: 6%; color: #1890ff; font-size: 9px">{{ keshiName }}</span>
-          <span>{{ nickname }}</span>
+          <span>{{ userName }}</span>
         </span>
         <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
@@ -170,6 +171,7 @@ export default {
 
   created() {
     this.keshiName = Vue.ls.get(TRUE_USER).departmentName
+    this.userName = Vue.ls.get(TRUE_USER).userName
   },
 
   methods: {

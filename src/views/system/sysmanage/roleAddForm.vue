@@ -44,7 +44,7 @@
             :default-checked-keys="['0-0-0', '0-0-1']" -->
           <!-- :replace-fields="replaceFields" -->
           <!-- :checked-keys="checkedKeys" -->
-          <a-tree checkable :tree-data="treeData" @select="onSelect" @check="onCheck" />
+          <a-tree checkable :checked-keys="checkedKeys" :tree-data="treeData" @select="onSelect" @check="onCheck" />
         </a-form-item>
       </a-form>
     </a-spin>

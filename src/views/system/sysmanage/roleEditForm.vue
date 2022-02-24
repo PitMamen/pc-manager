@@ -43,7 +43,14 @@
             :default-selected-keys="['0-0-0', '0-0-1']"
             :default-checked-keys="['0-0-0', '0-0-1']" -->
           <!-- :checked-keys="checkedKeys" -->
-          <a-tree checkable :tree-data="treeData" :replace-fields="replaceFields" @select="onSelect" @check="onCheck" />
+          <a-tree
+            :checked-keys="checkedKeys"
+            checkable
+            :tree-data="treeData"
+            :replace-fields="replaceFields"
+            @select="onSelect"
+            @check="onCheck"
+          />
         </a-form-item>
       </a-form>
     </a-spin>
@@ -99,7 +106,6 @@ export default {
     },
 
     radioChange(event) {
-      debugger
       if (event.target.value == 1) {
         //全选
         // this.checkedKeys = JSON.parse(JSON.stringify(this.allKeys))

@@ -5,8 +5,10 @@
       <!-- 分割线 -->
       <div class="div-divider"></div>
 
-      <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index">
-        <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.value }}</p>
+      <div class="div-part" v-for="(item, index) in deptData" :value="item.departmentId" :key="index">
+        <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
+          {{ item.departmentName }}
+        </p>
         <!-- 分割线 -->
         <div class="div-divider"></div>
       </div>
@@ -21,7 +23,7 @@
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
-                <a-button type="primary" @click="$refs.addForm.add(record)">新增用户</a-button>
+                <a-button type="primary" @click="$refs.addForm.add()">新增用户</a-button>
               </span>
             </a-col>
 
@@ -29,9 +31,9 @@
               <a-form-item label="用户状态">
                 <!-- <a-input v-model="queryParam.cyzd" allow-clear placeholder="请选择状态 " /> -->
 
-                <a-select allow-clear v-model="queryParam.belong" placeholder="请选择状态">
-                  <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-                    item.deptName
+                <a-select allow-clear v-model="queryParam.status" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                    item.value
                   }}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -68,8 +70,14 @@
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.editForm.edit(record)">编辑</a>
           <a-divider type="vertical" />
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => bannerDelete(record)">
+          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delUser(record)">
             <a>删除</a>
+          </a-popconfirm>
+        </span>
+
+        <span slot="ifSuggest" slot-scope="text, record">
+          <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
+            <a-switch :checked="record.isSuggest" />
           </a-popconfirm>
         </span>
       </s-table>
@@ -82,7 +90,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getOutPatients } from '@/api/modular/system/posManage'
+import { getDepts, getUserList, updateUser } from '@/api/modular/system/posManage'
 import addForm from './userAddForm'
 import editForm from './userEditForm'
 
@@ -96,16 +104,17 @@ export default {
   data() {
     return {
       selectedRowKeys: [], // Check here to configure the default column
-      partData: [
-        { code: 1, value: '病区一', isChecked: true },
-        { code: 2, value: '病区二', isChecked: false },
-        { code: 3, value: '病区三', isChecked: false },
+      deptData: [],
+      statusData: [
+        { code: 2, value: '全部' },
+        { code: 0, value: '启用' },
+        { code: 1, value: '停用' },
       ],
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
       // 查询参数 existsPlanFlag 1已分配 2未分配套餐
-      queryParam: { existsPlanFlag: 1, bqmc: '' },
+      queryParam: { departmentId: 0, status: 2, userName: '' },
       // 表头
       columns: [
         {
@@ -114,19 +123,20 @@ export default {
         },
         {
           title: '登录账号',
-          dataIndex: 'idNumber',
+          dataIndex: 'accountId',
         },
         {
           title: '用户名称',
-          dataIndex: 'phoneNo',
+          dataIndex: 'userName',
         },
         {
           title: '所属部门',
-          dataIndex: 'bqmc',
+          dataIndex: 'departmentName',
         },
         {
           title: '用户状态',
-          dataIndex: 'sex',
+          dataIndex: 'ifSuggest',
+          scopedSlots: { customRender: 'ifSuggest' },
         },
         {
           title: '操作',
@@ -137,26 +147,15 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getUserList(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-
-            this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
-            this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
-            this.$set(
-              res.data.rows[i],
-              'outTime',
-              res.data.rows[i].cysj.substring(0, 4) +
-                '-' +
-                res.data.rows[i].cysj.substring(4, 6) +
-                '-' +
-                res.data.rows[i].cysj.substring(6, 8)
-            ) //计算设置出院时间
-            //计算是否购买套餐
-            if (!res.data.rows[i].planInfo || res.data.rows[i].planInfo.length == 0) {
-              this.$set(res.data.rows[i], 'hasPlan', '否')
+            if (res.data.rows[i].status == 0) {
+              this.$set(res.data.rows[i], 'isSuggest', true)
+              this.$set(res.data.rows[i], 'isSuggestText', '确定关闭？')
             } else {
-              this.$set(res.data.rows[i], 'hasPlan', '是')
+              this.$set(res.data.rows[i], 'isSuggest', false)
+              this.$set(res.data.rows[i], 'isSuggestText', '确定开启？')
             }
           }
           return res.data
@@ -172,12 +171,67 @@ export default {
     },
   },
 
-  created() {},
+  created() {
+    this.getDeptsOut()
+  },
 
   methods: {
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
+    getDeptsOut() {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          res.data.unshift({
+            departmentId: '',
+            departmentName: '全部',
+            hospitalId: 1,
+            parentId: 0,
+            children: null,
+          })
+          for (let i = 0; i < res.data.length; i++) {
+            // this.$set(res.data[i], 'xh', i + 1)
+            if (i == 0) {
+              this.$set(res.data[i], 'isChecked', true)
+            } else {
+              this.$set(res.data[i], 'isChecked', false)
+            }
+          }
+          this.deptData = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+
+    delUser(record) {
+      record.status = 2
+      updateUser(record).then((res) => {
+        if (res.success) {
+          this.$message.success('删除成功')
+          this.$refs.table.refresh()
+        } else {
+          this.$message.error('删除失败：' + res.message)
+        }
+      })
+    },
+
+    goSuggest(record) {
+      if (record.status == 1) {
+        record.status = 0
+      } else {
+        record.status = 1
+      }
+      // let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
+      updateUser(record).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isSuggest = !record.isSuggest
+
+          setTimeout(() => {
+            record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
     },
 
     countAge(age) {
@@ -193,39 +247,19 @@ export default {
       return age
     },
 
-    onPartChoose(index) {
-      for (let i = 0; i < this.partData.length; i++) {
-        this.partData[i].isChecked = false
+    onDeptChoose(index) {
+      for (let i = 0; i < this.deptData.length; i++) {
+        this.deptData[i].isChecked = false
         if (i == index) {
-          this.partData[i].isChecked = true
-          // this.partChoose = this.partData[i].value
-          // this.queryParam.bqmc = this.partChoose//病区名称暂时不传
+          this.deptData[i].isChecked = true
+          this.queryParam.departmentId = this.deptData[i].departmentId //病区名称暂时不传
           this.$refs.table.refresh()
         }
       }
     },
 
-    lookPlan(record) {
-      this.$router.push({
-        name: 'look_plan',
-        params: {
-          //TODO 用户自己的健康计划 应该穿 planId，但是目前还没有
-          // planId: record.planInfo[0].planId,
-          planId: record.planInfo[0].templateId,
-        },
-      })
-    },
-
-    dispatchPlan() {
-      this.$router.push({ name: 'dispatch_plan', data: null })
-    },
-
     handleOk() {
       this.$refs.table.refresh()
-    },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
     },
   },
 }
