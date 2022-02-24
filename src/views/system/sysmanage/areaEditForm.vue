@@ -57,7 +57,7 @@ export default {
   },
 
   created() {
-    this.getKeShi()
+
   },
 
   methods: {

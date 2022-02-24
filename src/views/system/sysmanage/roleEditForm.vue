@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增角色"
+    title="编辑角色"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"

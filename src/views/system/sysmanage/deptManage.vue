@@ -11,7 +11,6 @@
                   <a-col :md="3" :sm="24">
                     <span
                       class="table-page-search-submitButtons"
-                      :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                     >
                       <a-button type="primary" @click="$refs.deptAddForm.add(record)">新增科室</a-button>
                     </span>
@@ -58,7 +57,6 @@
                   <a-col :md="3" :sm="24">
                     <span
                       class="table-page-search-submitButtons"
-                      :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                     >
                       <a-button type="primary" @click="$refs.diseaseAddForm.add(record)">新增专病</a-button>
                     </span>
