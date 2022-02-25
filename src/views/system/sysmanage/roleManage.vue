@@ -43,7 +43,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getRoleList, delOrEditRole } from '@/api/modular/system/posManage'
+import { getRoleList, delOrEditRole, getMenuTree } from '@/api/modular/system/posManage'
 import addForm from './roleAddForm'
 import editForm from './roleEditForm'
 
@@ -92,6 +92,7 @@ export default {
         { code: 0, value: '不推荐' },
       ],
       partChoose: '',
+      roleTree: [],
       // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
       queryParams: {
         // existsPlanFlag: '',
@@ -134,6 +135,14 @@ export default {
 
   created() {
     this.getRolesOut()
+
+    getMenuTree({}).then((res) => {
+      if (res.code == 0) {
+        this.roleTree = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
   },
 
   methods: {
@@ -211,7 +220,7 @@ export default {
     },
 
     handleOk() {
-    this.getRolesOut()
+      this.getRolesOut()
     },
   },
 }

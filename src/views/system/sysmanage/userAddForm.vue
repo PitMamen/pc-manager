@@ -160,7 +160,6 @@ export default {
     },
 
     hasCaseManageIds(rule, value, callback) {
-      debugger
       if (this.radioValue == 4 && (!value || value == 0)) {
         callback('请选择管理科室')
       }

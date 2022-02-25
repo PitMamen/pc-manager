@@ -27,7 +27,6 @@ export default {
   methods: {
     //初始化方法
     edit(record) {
-      debugger
       this.visible = true
       this.deptName = record.departmentName
       this.record = record

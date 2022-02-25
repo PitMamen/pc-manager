@@ -44,9 +44,10 @@
             :default-checked-keys="['0-0-0', '0-0-1']" -->
           <!-- :checked-keys="checkedKeys" -->
           <a-tree
-            :checked-keys="checkedKeys"
             checkable
             :tree-data="treeData"
+            v-model="checkedKeys"
+            :checkedKeys="checkedKeys"
             :replace-fields="replaceFields"
             @select="onSelect"
             @check="onCheck"
@@ -59,7 +60,7 @@
 
 
 <script>
-import { getMenuTreeGrant, addRole } from '@/api/modular/system/posManage'
+import { getMenuTree, delOrEditRole } from '@/api/modular/system/posManage'
 
 export default {
   data() {
@@ -72,14 +73,13 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-      grantMenuIdList: [],
       replaceFields: {
         children: 'child',
         title: 'name',
       },
       checkedKeys: [],
       allKeys: [],
-
+      record: {},
       isOpen: true,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
@@ -88,6 +88,12 @@ export default {
 
       form: this.$form.createForm(this),
     }
+  },
+
+  watch: {
+    checkedKeys(val) {
+      console.log('watchCheck', val)
+    },
   },
 
   created() {},
@@ -110,23 +116,26 @@ export default {
         //全选
         // this.checkedKeys = JSON.parse(JSON.stringify(this.allKeys))
         this.checkedKeys = this.allKeys
-        console.log('radioChange', this.checkedKeys, info)
+        console.log('radioChange', this.checkedKeys)
       } else if (event.target.value == 2) {
         //全不选
         this.checkedKeys = []
+        console.log('radioChange2', this.checkedKeys)
       }
     },
     //初始化方法
     edit(record) {
       this.visible = true
+      this.record = record
+      this.treeData = []
+      console.log('record', this.record)
       this.checkedKeys = []
-      debugger
-      getMenuTreeGrant({}).then((res) => {
+      getMenuTree({}).then((res) => {
         if (res.code == 0) {
           this.treeData = this.transfromData(res.data)
           console.log('this.treeData', this.treeData)
-          debugger
           this.checkedKeys = record.grantMenuIdList
+
           console.log('checkedKeys', this.checkedKeys)
           this.isOpen = record.state == 1 ? true : false
         } else {
@@ -144,12 +153,24 @@ export default {
 
     transfromData(data) {
       for (let index = 0; index < data.length; index++) {
-        data[index].name = data[index].title
-        data[index].key = data[index].id
-        // this.$set(data[index], 'name', data[index].title)
-        // this.$set(data[index], 'key', data[index].id)
-        // this.$set(data[index], 'checked', true)
+        // data[index].name = data[index].title
+        // data[index].key = data[index].id
+        this.$set(data[index], 'name', data[index].title)
+        this.$set(data[index], 'key', data[index].id)
+
         this.allKeys.push(data[index].key)
+
+        for (let i = 0; i < this.record.grantMenuIdList.length; i++) {
+          if (data[index].key == this.record.grantMenuIdList[i]) {
+            // data[index].checked = true
+            console.log('checked transfromData', true + '' + data[index].key)
+            this.$set(data[index], 'checked', true)
+          } else {
+            // data[index].checked = false
+            console.log('checked transfromData', false + '' + data[index].key)
+            this.$set(data[index], 'checked', false)
+          }
+        }
 
         if (data[index].children && data[index].children.length > 0) {
           this.transfromData(data[index].children)
@@ -169,27 +190,27 @@ export default {
             this.$message.error('请选择菜单权限')
             return
           }
-          debugger
           let state = this.isOpen ? 1 : 0
           // let sdd = this.randomString(8)
           let param = {
             roleRealName: values.roleRealName,
             orderId: parseInt(values.orderId),
             // roleName: sdd,
-            roleName: this.randomString(8),
+            roleName: this.record.roleName,
+            roleId: this.record.roleId,
             state: state,
             grantMenuIdList: this.checkedKeys,
           }
-          addRole(param)
+          delOrEditRole(param)
             .then((res) => {
               if (res.success) {
-                this.$message.success('新增成功')
+                this.$message.success('编辑成功')
                 this.visible = false
                 this.confirmLoading = false
                 this.$emit('ok', values)
                 this.form.resetFields()
               } else {
-                this.$message.error('新增失败：' + res.message)
+                this.$message.error('编辑失败：' + res.message)
               }
             })
             .finally((res) => {

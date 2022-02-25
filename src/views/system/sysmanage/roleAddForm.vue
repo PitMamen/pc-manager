@@ -53,7 +53,7 @@
 
 
 <script>
-import { getMenuTreeGrant, addRole } from '@/api/modular/system/posManage'
+import { getMenuTree, addRole } from '@/api/modular/system/posManage'
 
 export default {
   data() {
@@ -100,7 +100,6 @@ export default {
     },
 
     radioChange(event) {
-      debugger
       if (event.target.value == 1) {
         //全选
         // this.checkedKeys = JSON.parse(JSON.stringify(this.allKeys))
@@ -112,8 +111,10 @@ export default {
     },
     //初始化方法
     add() {
+      this.treeData = []
       this.visible = true
-      getMenuTreeGrant({}).then((res) => {
+      this.checkedKeys = []
+      getMenuTree({}).then((res) => {
         if (res.code == 0) {
           this.treeData = this.transfromData(res.data)
         } else {
@@ -149,7 +150,6 @@ export default {
             this.$message.error('请选择菜单权限')
             return
           }
-          debugger
           let state = this.isOpen ? 1 : 0
           // let sdd = this.randomString(8)
           let param = {

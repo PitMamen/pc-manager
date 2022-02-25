@@ -171,7 +171,6 @@ export default {
       })
 
       //todo 写死的
-      debugger
       let user = Vue.ls.get(TRUE_USER)
       this.checkData.publisherName = user.userName
       this.checkData.publisherUserId = user.userId
