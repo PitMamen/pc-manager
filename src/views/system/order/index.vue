@@ -126,11 +126,11 @@ export default {
         },
         {
           title: '就诊人',
-          dataIndex: 'userName',
+          dataIndex: 'userNameIn',
         },
         {
           title: '用户ID',
-          dataIndex: 'payUser',
+          dataIndex: 'userIdIn',
         },
         {
           title: '订单状态',
@@ -180,6 +180,9 @@ export default {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
             // this.$set(res.data.rows[i], 'userName', res.data.rows[i].userInfo.userName)
+
+              this.$set(res.data.rows[i], 'userNameIn', res.data.rows[i].userInfo.userName)
+              this.$set(res.data.rows[i], 'userIdIn', res.data.rows[i].userInfo.userId)
 
             //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
             if (res.data.rows[i].status == 1) {

@@ -34,11 +34,11 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 用户ID :</span>
-          <span class="span-item-value">{{ record.payUser }} </span>
+          <span class="span-item-value">{{ record.userIdIn }} </span>
 
           <span class="span-item-name" style="margin-left: 3%"> 就诊人 :</span>
 
-          <span class="span-item-value">{{ record.userName }} </span>
+          <span class="span-item-value">{{ record.userNameIn }} </span>
         </div>
 
         <div class="div-line-wrap">
