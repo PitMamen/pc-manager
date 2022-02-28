@@ -219,7 +219,7 @@ export default {
           // },
         ],
         templateName: '',
-        basetimeType: '1',
+        basetimeType: '0',
       },
 
       previewVisible: false,

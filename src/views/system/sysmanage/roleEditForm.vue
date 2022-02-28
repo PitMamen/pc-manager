@@ -43,12 +43,11 @@
             :default-selected-keys="['0-0-0', '0-0-1']"
             :default-checked-keys="['0-0-0', '0-0-1']" -->
           <!-- :checked-keys="checkedKeys" -->
+          <!-- :replace-fields="replaceFields" -->
           <a-tree
             checkable
             :tree-data="treeData"
             v-model="checkedKeys"
-            :checkedKeys="checkedKeys"
-            :replace-fields="replaceFields"
             @select="onSelect"
             @check="onCheck"
           />
@@ -73,10 +72,10 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-      replaceFields: {
-        children: 'child',
-        title: 'name',
-      },
+      // replaceFields: {
+      //   children: 'child',
+      //   title: 'name',
+      // },
       checkedKeys: [],
       allKeys: [],
       record: {},
@@ -104,7 +103,8 @@ export default {
     },
     onCheck(checkedKeys, info) {
       console.log('onCheck', checkedKeys, info)
-      this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
+      // 单选选不中的问题在这里
+      // this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
       console.log('onCheck2', this.checkedKeys, info)
     },
     isOpenChange() {
@@ -134,7 +134,8 @@ export default {
         if (res.code == 0) {
           this.treeData = this.transfromData(res.data)
           console.log('this.treeData', this.treeData)
-          this.checkedKeys = record.grantMenuIdList
+          // this.checkedKeys = record.grantMenuIdList
+          this.checkedKeys = [5,4]
 
           console.log('checkedKeys', this.checkedKeys)
           this.isOpen = record.state == 1 ? true : false
@@ -153,22 +154,22 @@ export default {
 
     transfromData(data) {
       for (let index = 0; index < data.length; index++) {
-        // data[index].name = data[index].title
-        // data[index].key = data[index].id
-        this.$set(data[index], 'name', data[index].title)
-        this.$set(data[index], 'key', data[index].id)
+        data[index].name = data[index].title
+        data[index].key = data[index].id
+        // this.$set(data[index], 'name', data[index].title)
+        // this.$set(data[index], 'key', data[index].id)
 
         this.allKeys.push(data[index].key)
 
         for (let i = 0; i < this.record.grantMenuIdList.length; i++) {
           if (data[index].key == this.record.grantMenuIdList[i]) {
-            // data[index].checked = true
+            data[index].checked = true
             console.log('checked transfromData', true + '' + data[index].key)
-            this.$set(data[index], 'checked', true)
+            // this.$set(data[index], 'checked', true)
           } else {
-            // data[index].checked = false
+            data[index].checked = false
             console.log('checked transfromData', false + '' + data[index].key)
-            this.$set(data[index], 'checked', false)
+            // this.$set(data[index], 'checked', false)
           }
         }
 
@@ -191,7 +192,6 @@ export default {
             return
           }
           let state = this.isOpen ? 1 : 0
-          // let sdd = this.randomString(8)
           let param = {
             roleRealName: values.roleRealName,
             orderId: parseInt(values.orderId),
@@ -226,14 +226,6 @@ export default {
       this.visible = false
     },
 
-    randomString(e) {
-      e = e || 11
-      var t = 'ABCDEFGHJKMNPQRdergfrehjikuykiawSTWXYZabcdefhijkmnprstwxyzdewfgwerg',
-        a = t.length,
-        n = ''
-      for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a))
-      return n
-    },
   },
 }
 </script>

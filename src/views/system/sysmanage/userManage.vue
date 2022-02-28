@@ -322,7 +322,7 @@ export default {
 
   .card-right {
     overflow: hidden;
-    width: 85%;
+    width: 85%!important;
 
     .table-operator {
       margin-bottom: 18px;

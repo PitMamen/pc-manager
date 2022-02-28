@@ -173,7 +173,12 @@ export default {
     radioChange(event) {
       if (event.target.value == 3) {
         //添加
+        // debugger
+        console.log('radioChange', JSON.parse(JSON.stringify(this.keshiData)))
         this.keshiData.shift()
+        this.keshiData.shift()
+        // this.keshiData = JSON.parse(JSON.stringify(this.keshiData))
+        console.log('radioChange2', this.keshiData)
         setTimeout(() => {
           this.form.setFieldsValue({
             departmentId: this.keshiData[0].departmentId,
@@ -185,6 +190,7 @@ export default {
         this.radioValue = 3
       } else if (event.target.value == 4) {
         //个案管理师的时候写死 病友服务中心
+        console.log('radioChange4', this.keshiData)
         this.keshiData.unshift({
           departmentId: 1,
           departmentName: '病友服务中心',
@@ -210,6 +216,7 @@ export default {
         if (res.code == 0) {
           this.keshiData = res.data
           this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
+          this.keshiDataPerson.shift()
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
