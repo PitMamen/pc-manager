@@ -44,7 +44,7 @@
             :default-checked-keys="['0-0-0', '0-0-1']" -->
           <!-- :replace-fields="replaceFields" -->
           <!-- :checked-keys="checkedKeys" -->
-          <a-tree checkable :checked-keys="checkedKeys" :tree-data="treeData" @select="onSelect" @check="onCheck" />
+          <a-tree checkable v-model="checkedKeys" :tree-data="treeData" @select="onSelect" @check="onCheck" />
         </a-form-item>
       </a-form>
     </a-spin>
@@ -92,7 +92,7 @@ export default {
     },
     onCheck(checkedKeys, info) {
       console.log('onCheck', checkedKeys, info)
-      this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
+      // this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
       console.log('onCheck2', this.checkedKeys, info)
     },
     isOpenChange() {

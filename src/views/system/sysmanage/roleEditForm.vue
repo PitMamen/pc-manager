@@ -44,13 +44,7 @@
             :default-checked-keys="['0-0-0', '0-0-1']" -->
           <!-- :checked-keys="checkedKeys" -->
           <!-- :replace-fields="replaceFields" -->
-          <a-tree
-            checkable
-            :tree-data="treeData"
-            v-model="checkedKeys"
-            @select="onSelect"
-            @check="onCheck"
-          />
+          <a-tree checkable :tree-data="treeData" v-model="checkedKeys" @select="onSelect" @check="onCheck" />
         </a-form-item>
       </a-form>
     </a-spin>
@@ -134,10 +128,10 @@ export default {
         if (res.code == 0) {
           this.treeData = this.transfromData(res.data)
           console.log('this.treeData', this.treeData)
-          // this.checkedKeys = record.grantMenuIdList
-          this.checkedKeys = [5,4]
+          this.checkedKeys = record.grantMenuIdList
+          // this.checkedKeys = [5, 4]
 
-          console.log('checkedKeys', this.checkedKeys)
+          console.log('checkedKeysInit', this.checkedKeys)
           this.isOpen = record.state == 1 ? true : false
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
@@ -184,13 +178,13 @@ export default {
       const {
         form: { validateFields },
       } = this
+      if (this.checkedKeys.length == 0) {
+        this.$message.error('请选择菜单权限')
+        return
+      }
       this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
-          if (this.checkedKeys.length == 0) {
-            this.$message.error('请选择菜单权限')
-            return
-          }
           let state = this.isOpen ? 1 : 0
           let param = {
             roleRealName: values.roleRealName,
@@ -225,7 +219,6 @@ export default {
       this.form.resetFields()
       this.visible = false
     },
-
   },
 }
 </script>
