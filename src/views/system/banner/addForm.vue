@@ -71,7 +71,7 @@ export default {
       visible: false,
       ImgKey: '',
       // actionUrl: 'http://192.168.1.122:8071/fileUpload/uploadImgFile',
-      actionUrl: '/api/fileApi/fileUpload/uploadImgFile',
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
       confirmLoading: false,
       form: this.$form.createForm(this),
       headers: {
