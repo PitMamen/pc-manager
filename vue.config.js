@@ -99,6 +99,15 @@ const vueConfig = {
           '^/api/bdcApi': '' // 需要rewrite的,
         }
       },
+      '/api/fileApi': {
+        target: 'http://192.168.1.122:8071',
+        logLevel: 'debug',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/fileApi': '' // 需要rewrite的,
+        }
+      },
 
       '/api/accountapi': {
         target: 'http://192.168.1.122/account-api',

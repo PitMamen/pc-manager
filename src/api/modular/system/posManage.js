@@ -416,7 +416,7 @@ export function getRoleList(parameter) {
 /**
  * 删除或修改角色接口
  */
- export function delOrEditRole(parameter) {
+export function delOrEditRole(parameter) {
   return axios({
     url: '/accountapi/updateRole',
     method: 'post',
@@ -427,7 +427,7 @@ export function getRoleList(parameter) {
 /**
  * 新增角色接口
  */
- export function addRole(parameter) {
+export function addRole(parameter) {
   return axios({
     url: '/accountapi/addRole',
     method: 'post',
@@ -438,7 +438,7 @@ export function getRoleList(parameter) {
 /**
  * 获取系统菜单树，用于新增，编辑时选择上级节点
  */
- export function getMenuTree(parameter) {
+export function getMenuTree(parameter) {
   return axios({
     url: '/accountapi/sysMenu/tree',
     method: 'get',
@@ -449,7 +449,7 @@ export function getRoleList(parameter) {
 /**
  * 获取系统菜单树，用于给角色授权时选择
  */
- export function getMenuTreeGrant(parameter) {
+export function getMenuTreeGrant(parameter) {
   return axios({
     url: '/accountapi/sysMenu/treeForGrant',
     method: 'get',
@@ -471,7 +471,7 @@ export function getOrders(parameter) {
 /**
  * 用户管理列表接口（不包括患者,医生和个案管理师）
  */
- export function getUserList(parameter) {
+export function getUserList(parameter) {
   return axios({
     url: '/accountapi/accountInfo/getUsers',
     method: 'post',
@@ -482,7 +482,7 @@ export function getOrders(parameter) {
 /**
  * 创建医生,个案师账号
  */
- export function createDoctorUser(parameter) {
+export function createDoctorUser(parameter) {
   return axios({
     url: '/accountapi/accountInfo/createDoctorUser',
     method: 'post',
@@ -493,7 +493,7 @@ export function getOrders(parameter) {
 /**
  * 用户管理修改接口（角色不允许修改）
  */
- export function updateUser(parameter) {
+export function updateUser(parameter) {
   return axios({
     url: '/accountapi/accountInfo/updateUser',
     method: 'post',
@@ -617,8 +617,8 @@ export function changeStatus(parameter) {
 export function getKeShiData(parameter) {
   return axios({
     url: '/bdcApi/health/patient/queryDepartment',
-    method: 'post',
-    data: parameter
+    method: 'get',
+    params: { hospitalCode: '444885559' }
   })
 }
 
