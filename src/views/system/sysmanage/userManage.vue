@@ -123,7 +123,7 @@ export default {
         },
         {
           title: '登录账号',
-          dataIndex: 'accountId',
+          dataIndex: 'loginName',
         },
         {
           title: '用户名称',
