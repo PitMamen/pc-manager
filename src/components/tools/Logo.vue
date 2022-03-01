@@ -21,7 +21,8 @@ export default {
   props: {
     title: {
       type: String,
-      default: '后台管理系统',
+      // default: '后台管理系统',
+      default: '患者服务管理系统',
       required: false
     },
     showTitle: {

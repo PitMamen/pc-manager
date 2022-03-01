@@ -5,7 +5,8 @@
         <div class="header">
           <a href="/">
 <!--            <img src="~@/assets/logo.png" class="logo" alt="logo">-->
-            <span class="title">互联网医院后台</span>
+            <!-- <span class="title">互联网医院后台</span> -->
+            <span class="title">湘雅二医院患者服务管理系统</span>
           </a>
         </div>
         <div class="desc">
