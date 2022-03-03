@@ -121,6 +121,10 @@ export default {
         )
       }
 
+      //去掉重复的表头  filter保留满足条件的item
+      let after = this.record.goodsInfo.filter((item) => item.goodsName != '套餐名称')
+      this.record.goodsInfo = after
+
       this.record.goodsInfo.unshift({
         goodsName: '套餐名称',
         goodsSpec: '服务类别',

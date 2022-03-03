@@ -71,6 +71,8 @@
 <script>
 import { STable } from '@/components'
 import { getOutPatients } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -115,6 +117,7 @@ export default {
         // existsPlanFlag: '',
         existsPlanFlag: '2',
         bqmc: '',
+        deptCode: Vue.ls.get(TRUE_USER).departmentCode,
         // isRegister: '1',
       },
       // 表头
@@ -167,6 +170,7 @@ export default {
       loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        console.log('loadData', Object.assign(parameter, this.queryParam))
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码

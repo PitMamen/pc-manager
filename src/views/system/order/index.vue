@@ -109,7 +109,7 @@ export default {
         endOrderTime: '',
         startOrderTime: '',
         orderId: '',
-        status: '', //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
+        status: -1, //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
         keyWord: '',
         // keyWord: "",
         // userId: '',
@@ -204,7 +204,6 @@ export default {
   },
 
   created() {
-    this.getKeShi()
   },
 
   methods: {

@@ -60,7 +60,7 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="lookPlan(record)">{{ record.planInfo[0].planName }}</a>
+          <a @click="lookPlan(record)">{{ getName(record) }}</a>
         </span>
       </s-table>
 
@@ -73,6 +73,8 @@
 <script>
 import { STable } from '@/components'
 import { getOutPatients } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -95,7 +97,7 @@ export default {
       advanced: false,
       partChoose: '',
       // 查询参数 existsPlanFlag 1已分配 2未分配套餐
-      queryParam: { existsPlanFlag: 1, bqmc: '' },
+      queryParam: { existsPlanFlag: 1, bqmc: '', deptCode: Vue.ls.get(TRUE_USER).departmentCode },
       // 表头
       columns: [
         {
@@ -186,6 +188,14 @@ export default {
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
+    },
+
+    getName(record) {
+      if (record.planInfo.length > 0) {
+        return record.planInfo[0].planName
+      } else {
+        return ''
+      }
     },
 
     countAge(age) {
