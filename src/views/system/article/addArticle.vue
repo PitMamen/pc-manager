@@ -174,7 +174,6 @@ export default {
       let user = Vue.ls.get(TRUE_USER)
       this.checkData.publisherName = user.userName
       this.checkData.publisherUserId = user.userId
-
       saveArticle(this.checkData).then((res) => {
         if (res.code == 0) {
           this.$message.success('保存成功')
@@ -225,7 +224,7 @@ export default {
   mounted() {
     var editor = new E('#div1')
 
-    editor.config.height = 600
+    // editor.config.height = 600
     editor.config.pasteFilterStyle = false
     editor.config.onchange = (html) => {
       this.checkData.content = html
