@@ -225,7 +225,7 @@ export default {
     var editor = new E('#div1')
 
     // editor.config.height = 600
-    editor.config.pasteFilterStyle = false
+    // editor.config.pasteFilterStyle = false
     editor.config.onchange = (html) => {
       this.checkData.content = html
     }
