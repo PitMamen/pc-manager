@@ -13,13 +13,13 @@
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="文件仓库">
-              <a-input v-model="queryParam.fileBucket" placeholder="请输入文件仓库"/>
+              <a-input v-model="queryParam.fileBucket" placeholder="请输入文件仓库" @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
           <template v-if="advanced">
             <a-col :md="8" :sm="24">
               <a-form-item label="文件名称">
-                <a-input v-model="queryParam.fileOriginName" placeholder="请输入文件名称（上传时候的文件名）"/>
+                <a-input v-model="queryParam.fileOriginName" placeholder="请输入文件名称（上传时候的文件名）" @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
           </template>

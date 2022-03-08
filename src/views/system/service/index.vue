@@ -1,18 +1,19 @@
 <template>
-  <div class="div-service">
-    <div class="div-service-left">
+  <div class="div-service-service">
+    <div class="div-service-left-service">
       <p class="p-part-title">病区选择</p>
       <!-- 分割线 -->
       <div class="div-divider"></div>
 
-      <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index">
-        <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.value }}</p>
+      <!-- <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index"> -->
+      <div class="div-part" v-for="(item, index) in keshiData" :value="item.deptName" :key="index">
+        <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.deptName }}</p>
         <!-- 分割线 -->
         <div class="div-divider"></div>
       </div>
     </div>
 
-    <a-card :bordered="false" class="card-right">
+    <a-card :bordered="false" class="card-right-service">
       <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -27,13 +28,13 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="专病">
-                <a-input v-model="queryParam.cyzd" allow-clear placeholder="请输入专病 " />
+                <a-input v-model="queryParam.cyzd" allow-clear placeholder="请输入专病 " @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="24">
               <a-form-item label="患者名称">
-                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入患者名称" />
+                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入患者名称" @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
 
@@ -70,7 +71,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getOutPatients } from '@/api/modular/system/posManage'
+import { getOutPatients, queryDepartment } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addForm from './addForm'
@@ -104,20 +105,16 @@ export default {
   data() {
     return {
       selectedRowKeys: [], // Check here to configure the default column
-      partData: [
-        { code: 1, value: '病区一', isChecked: true },
-        { code: 2, value: '病区二', isChecked: false },
-        { code: 3, value: '病区三', isChecked: false },
-      ],
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
+      keshiData: [],
       // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
       queryParam: {
         // existsPlanFlag: '',
         existsPlanFlag: '2',
         bqmc: '',
-        deptCode: Vue.ls.get(TRUE_USER).departmentCode,
+        // deptCode: Vue.ls.get(TRUE_USER).departmentCode,
         // isRegister: '1',
       },
       // 表头
@@ -207,7 +204,30 @@ export default {
     }
   },
 
-  created() {},
+  created() {
+    queryDepartment('444885559').then((res) => {
+      if (res.code == 0) {
+        this.keshiData = res.data
+        this.keshiData.unshift({ deptName: '全部', deptCode: '0' })
+        for (let index = 0; index < this.keshiData.length; index++) {
+          // this.keshiData[index].isChecked = false
+          this.$set(this.keshiData[index], 'isChecked', false)
+          if (this.keshiData[index].deptCode == '0') {
+            this.$set(this.keshiData[index], 'isChecked', true)
+          }
+        }
+
+        // this.keshiData.forEach((item, index) => {
+        //   item.isChecked = false
+        //   if (item.deptCode == '0') {
+        //     item.isChecked = true
+        //   }
+        // })
+      } else {
+        // this.$message.error('获取科室列表失败：' + res.message)
+      }
+    })
+  },
 
   methods: {
     onSelectChange(selectedRowKeys) {
@@ -229,12 +249,15 @@ export default {
     },
 
     onPartChoose(index) {
-      for (let i = 0; i < this.partData.length; i++) {
-        this.partData[i].isChecked = false
+      for (let i = 0; i < this.keshiData.length; i++) {
+        this.$set(this.keshiData[i], 'isChecked', false)
         if (i == index) {
-          this.partData[i].isChecked = true
-          // this.partChoose = this.partData[i].value
-          // this.queryParam.bqmc = this.partChoose
+          this.$set(this.keshiData[i], 'isChecked', true)
+          if (this.keshiData[i].deptCode == '0') {
+            this.queryParam.bqmc = ''
+          } else {
+            this.queryParam.bqmc = this.keshiData[i].deptName
+          }
           this.$refs.table.refresh()
         }
       }
@@ -278,12 +301,12 @@ export default {
 </script>
 
 <style lang="less">
-.div-service {
+.div-service-service {
   width: 100%;
   overflow: hidden;
   height: 100%;
 
-  .div-service-left {
+  .div-service-left-service {
     background-color: white;
     padding: 2% 3%;
     float: left;
@@ -332,7 +355,7 @@ export default {
     }
   }
 
-  .card-right {
+  .card-right-service {
     overflow: hidden;
     width: 85%;
 

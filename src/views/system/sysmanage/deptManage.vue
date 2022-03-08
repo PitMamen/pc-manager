@@ -9,9 +9,7 @@
               <a-form layout="inline">
                 <a-row :gutter="48">
                   <a-col :md="3" :sm="24">
-                    <span
-                      class="table-page-search-submitButtons"
-                    >
+                    <span class="table-page-search-submitButtons">
                       <a-button type="primary" @click="$refs.deptAddForm.add(record)">新增科室</a-button>
                     </span>
                   </a-col>
@@ -23,7 +21,6 @@
               ref="tableDept"
               :pagination="false"
               size="default"
-              style="width: 60%"
               :columns="columnsDept"
               :data-source="loadDataDept"
               :alert="true"
@@ -55,9 +52,7 @@
               <a-form layout="inline">
                 <a-row :gutter="48">
                   <a-col :md="3" :sm="24">
-                    <span
-                      class="table-page-search-submitButtons"
-                    >
+                    <span class="table-page-search-submitButtons">
                       <a-button type="primary" @click="$refs.diseaseAddForm.add(record)">新增专病</a-button>
                     </span>
                   </a-col>
@@ -68,7 +63,6 @@
             <a-table
               ref="tableDept"
               :pagination="false"
-              style="width: 60%"
               size="default"
               :columns="columnsDisease"
               :data-source="loadDataDisease"
@@ -96,9 +90,7 @@
               <a-form layout="inline">
                 <a-row :gutter="48">
                   <a-col :md="3" :sm="24">
-                    <span
-                      class="table-page-search-submitButtons"
-                    >
+                    <span class="table-page-search-submitButtons">
                       <a-button type="primary" @click="$refs.areaAddForm.add(record)">新增病区</a-button>
                     </span>
                   </a-col>
@@ -109,11 +101,10 @@
             <!-- 去掉勾选框 -->
             <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
             <!-- :row-selection="rowSelection" -->
-
+            <!-- style="width: 60%" -->
             <a-table
               ref="tableArea"
               :pagination="false"
-              style="width: 60%"
               size="default"
               :columns="columnsArea"
               :data-source="loadDataArea"
@@ -367,7 +358,7 @@ export default {
 
   .card-right {
     overflow: hidden;
-    width: 100%;
+    width: 100% !important;
 
     .table-operator {
       margin-bottom: 18px;

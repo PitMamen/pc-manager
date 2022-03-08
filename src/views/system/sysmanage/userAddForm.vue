@@ -173,7 +173,6 @@ export default {
     radioChange(event) {
       if (event.target.value == 3) {
         //添加
-        // debugger
         console.log('radioChange', JSON.parse(JSON.stringify(this.keshiData)))
         this.keshiData.shift()
         this.keshiData.shift()

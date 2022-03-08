@@ -72,6 +72,7 @@ export default {
         title: 'name',
       },
       checkedKeys: [],
+      halfKeys: [],
       allKeys: [],
 
       isOpen: true,
@@ -92,6 +93,7 @@ export default {
     },
     onCheck(checkedKeys, info) {
       console.log('onCheck', checkedKeys, info)
+      this.halfKeys = info.halfCheckedKeys
       // this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
       console.log('onCheck2', this.checkedKeys, info)
     },
@@ -152,13 +154,19 @@ export default {
           }
           let state = this.isOpen ? 1 : 0
           // let sdd = this.randomString(8)
+
+          let uploadKeys = JSON.parse(JSON.stringify(this.checkedKeys))
+          if (this.halfKeys.length > 0) {
+            uploadKeys = uploadKeys.concat(this.halfKeys)
+          }
+
           let param = {
             roleRealName: values.roleRealName,
             orderId: parseInt(values.orderId),
             // roleName: sdd,
             roleName: this.randomString(8),
             state: state,
-            grantMenuIdList: this.checkedKeys,
+            grantMenuIdList: uploadKeys,
           }
           addRole(param)
             .then((res) => {

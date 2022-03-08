@@ -5,17 +5,17 @@
         <a-row :gutter="48">
           <a-col :md="4" :sm="10">
             <a-form-item label="入院单条码">
-              <a-input v-model="queryParamMock.tm" allow-clear placeholder="请输入条码 " />
+              <a-input v-model="queryParamMock.tm" allow-clear placeholder="请输入条码 " @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
           <a-col :md="4" :sm="24">
             <a-form-item label="姓名">
-              <a-input v-model="queryParamMock.xm" allow-clear placeholder="请输入姓名 " />
+              <a-input v-model="queryParamMock.xm" allow-clear placeholder="请输入姓名 " @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
           <a-col :md="5" :sm="24">
             <a-form-item label="身份证号">
-              <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入身份证号 " />
+              <a-input v-model="queryParamMock.idN" allow-clear placeholder="请输入身份证号 " @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
 

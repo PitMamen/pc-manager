@@ -41,7 +41,7 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="">
-                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入用户关键字" />
+                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入用户关键字" @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
 
@@ -69,8 +69,8 @@
       >
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.editForm.edit(record)">编辑</a>
-          <a-divider type="vertical" />
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delUser(record)">
+          <a-divider type="vertical" v-show="false" />
+          <a-popconfirm v-show="false" placement="topRight" title="确认删除？" @confirm="() => delUser(record)">
             <a>删除</a>
           </a-popconfirm>
         </span>
@@ -322,7 +322,7 @@ export default {
 
   .card-right {
     overflow: hidden;
-    width: 85%!important;
+    width: 85% !important;
 
     .table-operator {
       margin-bottom: 18px;

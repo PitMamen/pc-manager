@@ -6,7 +6,7 @@
             <a-row :gutter="48">
               <a-col :md="8" :sm="24">
                 <a-form-item label="关键词" >
-                  <a-input v-model="queryParam.searchValue" allow-clear placeholder="请输入标题、内容"/>
+                  <a-input v-model="queryParam.searchValue" allow-clear placeholder="请输入标题、内容" @keyup.enter="$refs.table.refresh(true)"/>
                 </a-form-item>
               </a-col>
               <a-col :md="8" :sm="24">

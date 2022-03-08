@@ -1,6 +1,6 @@
 <template>
-  <div class="div-service">
-    <a-card :bordered="false" class="card-right">
+  <div class="div-service-pac">
+    <a-card :bordered="false" class="card-right-pac">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -45,7 +45,12 @@
 
             <a-col :md="4" :sm="24">
               <a-form-item label="关键字">
-                <a-input v-model="queryParams.keyWords" allow-clear placeholder="请输入套餐关键字" />
+                <a-input
+                  v-model="queryParams.keyWords"
+                  allow-clear
+                  placeholder="请输入套餐关键字"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
@@ -328,12 +333,12 @@ export default {
 </script>
 
 <style lang="less">
-.div-service {
+.div-service-pac {
   width: 100%;
   overflow: hidden;
   height: 100%;
 
-  .card-right {
+  .card-right-pac {
     overflow: hidden;
     width: 100%;
 

@@ -15,11 +15,11 @@
       </a-form>
     </div>
 
+    <!-- style="width: 50%" -->
     <s-table
       ref="table"
       size="default"
       :columns="columns"
-      style="width: 50%"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"

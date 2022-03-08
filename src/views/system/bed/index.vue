@@ -6,25 +6,45 @@
           <a-row :gutter="48">
             <a-col :md="4" :sm="24">
               <a-form-item label="姓名">
-                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入姓名" />
+                <a-input
+                  v-model="queryParams.orderId"
+                  allow-clear
+                  placeholder="请输入姓名"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
             <a-col :md="5" :sm="24">
               <a-form-item label="身份证号">
-                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入身份证号" />
+                <a-input
+                  v-model="queryParams.orderId"
+                  allow-clear
+                  placeholder="请输入身份证号"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
             <a-col :md="5" :sm="24">
               <a-form-item label="预约科室">
-                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入预约科室" />
+                <a-input
+                  v-model="queryParams.orderId"
+                  allow-clear
+                  placeholder="请输入预约科室"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
             <a-col :md="5" :sm="24">
               <a-form-item label="开单科室">
-                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入开单科室" />
+                <a-input
+                  v-model="queryParams.orderId"
+                  allow-clear
+                  placeholder="请输入开单科室"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
@@ -38,7 +58,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24" style="float:right">
+            <a-col :md="4" :sm="24" style="float: right">
               <span
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"

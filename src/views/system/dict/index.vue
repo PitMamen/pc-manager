@@ -6,12 +6,12 @@
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
             <a-form-item label="类型名称" >
-              <a-input v-model="queryParam.name" allow-clear placeholder="请输入类型名称"/>
+              <a-input v-model="queryParam.name" allow-clear placeholder="请输入类型名称" @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="唯一编码" v-if="hasPerm('sysDictType:page')">
-              <a-input v-model="queryParam.code" allow-clear placeholder="请输入唯一编码"/>
+              <a-input v-model="queryParam.code" allow-clear placeholder="请输入唯一编码" @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
           <a-col :md="!advanced && 8 || 24" :sm="24">

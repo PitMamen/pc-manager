@@ -11,8 +11,8 @@
 
       <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
-          <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-            item.deptName
+          <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
+            item.departmentName
           }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { queryDepartment, savePlan } from '@/api/modular/system/posManage'
+import { queryDepartment, savePlan, getDepts } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -238,13 +238,14 @@ export default {
   },
 
   created() {
-    queryDepartment('444885559').then((res) => {
-      if (res.code == 0) {
-        this.keshiData = res.data
-      } else {
-        this.$message.error('获取科室列表失败：' + res.message)
-      }
-    })
+    // queryDepartment('444885559').then((res) => {
+    //   if (res.code == 0) {
+    //     this.keshiData = res.data
+    //   } else {
+    //     this.$message.error('获取科室列表失败：' + res.message)
+    //   }
+    // })
+    this.getDeptsOut()
 
     this.form.setFieldsValue({
       topFlagIf: true,
@@ -259,6 +260,16 @@ export default {
         reader.readAsDataURL(file)
         reader.onload = () => resolve(reader.result)
         reader.onerror = (error) => reject(error)
+      })
+    },
+
+    getDeptsOut() {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
       })
     },
 

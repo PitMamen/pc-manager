@@ -30,8 +30,8 @@
         <div class="div-left">
           <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
           <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChange">
-            <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.deptCode">{{
-              item.deptName
+            <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.departmentId">{{
+              item.departmentName
             }}</a-select-option>
           </a-select>
         </div>
@@ -80,7 +80,7 @@
 
 <script type="text/javascript">
 import { STable } from '@/components'
-import { saveArticle, getArticleById, queryDepartment, getDiseases } from '@/api/modular/system/posManage'
+import { saveArticle, getArticleById, getDepts, getDiseases } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -119,11 +119,19 @@ export default {
 
   created() {
     //获取科室列表
-    queryDepartment('444885559').then((res) => {
+    // queryDepartment('444885559').then((res) => {
+    //   if (res.code == 0) {
+    //     this.ksTypeData = res.data
+    //   } else {
+    //     this.$message.error('获取科室列表失败：' + res.message)
+    //   }
+    // })
+
+    getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
       } else {
-        this.$message.error('获取科室列表失败：' + res.message)
+        // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
   },
@@ -167,7 +175,7 @@ export default {
       }
 
       this.ksTypeData.forEach((item) => {
-        if (this.checkData.categoryId == item.deptCode) this.checkData.categoryName = item.deptName
+        if (this.checkData.categoryId == item.departmentId) this.checkData.categoryName = item.departmentName
       })
 
       //todo 写死的
@@ -224,8 +232,10 @@ export default {
   mounted() {
     var editor = new E('#div1')
 
-    // editor.config.height = 600
-    // editor.config.pasteFilterStyle = false
+    editor.config.height = 600
+    editor.config.pasteFilterStyle = false
+    console.log('editor', editor)
+    console.log('editorconfig', editor.config)
     editor.config.onchange = (html) => {
       this.checkData.content = html
     }

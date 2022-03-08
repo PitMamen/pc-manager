@@ -26,7 +26,7 @@
 
           <a-col :md="5" :sm="24">
             <a-form-item label="姓名">
-              <a-input v-model="queryParam.xm" allow-clear placeholder="请输入姓名 " />
+              <a-input v-model="queryParam.xm" allow-clear placeholder="请输入姓名 " @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
 

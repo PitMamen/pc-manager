@@ -5,7 +5,7 @@
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
             <a-form-item label="任务名称">
-              <a-input v-model="queryParam.timerName" allow-clear placeholder="请输入任务名称"/>
+              <a-input v-model="queryParam.timerName" allow-clear placeholder="请输入任务名称" @keyup.enter="$refs.table.refresh(true)"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">

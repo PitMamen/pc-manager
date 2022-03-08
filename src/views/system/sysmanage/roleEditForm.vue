@@ -31,7 +31,8 @@
 
         <a-form-item label="菜单权限" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <!-- v-decorator="['treeState', { rules: [{ required: true, message: '请选择菜单权限！' }] }]" -->
-          <a-radio-group name="radioGroup" @change="radioChange" :default-value="2">
+          <!-- <a-radio-group name="radioGroup" @change="radioChange" :default-value="2"> -->
+          <a-radio-group name="radioGroup" @change="radioChange">
             <a-radio :value="1"> 全选 </a-radio>
             <a-radio :value="2" style="width: 100px"> 全不选 </a-radio>
             <!-- <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio> -->
@@ -71,6 +72,7 @@ export default {
       //   title: 'name',
       // },
       checkedKeys: [],
+      halfKeys: [],
       allKeys: [],
       record: {},
       isOpen: true,
@@ -99,7 +101,10 @@ export default {
       console.log('onCheck', checkedKeys, info)
       // 单选选不中的问题在这里
       // this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
-      console.log('onCheck2', this.checkedKeys, info)
+      this.halfKeys = info.halfCheckedKeys
+      console.log('onCheck', checkedKeys)
+      console.log('onCheck2', info.halfCheckedKeys)
+      console.log('onCheck3', checkedKeys, info)
     },
     isOpenChange() {
       this.isOpen = this.isOpen ? false : true
@@ -182,6 +187,15 @@ export default {
         this.$message.error('请选择菜单权限')
         return
       }
+
+      let uploadKeys = JSON.parse(JSON.stringify(this.checkedKeys))
+      console.log('uploadKeys', uploadKeys)
+      console.log('halfKeys', this.halfKeys)
+      if (this.halfKeys.length > 0) {
+        uploadKeys = uploadKeys.concat(this.halfKeys)
+        console.log('uploadKeys222', uploadKeys)
+      }
+
       this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
@@ -193,7 +207,7 @@ export default {
             roleName: this.record.roleName,
             roleId: this.record.roleId,
             state: state,
-            grantMenuIdList: this.checkedKeys,
+            grantMenuIdList: uploadKeys,
           }
           delOrEditRole(param)
             .then((res) => {

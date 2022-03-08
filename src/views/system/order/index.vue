@@ -6,7 +6,7 @@
           <a-row :gutter="48">
             <a-col :md="4" :sm="24">
               <a-form-item label="订单编号">
-                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入订单编号" />
+                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入订单编号" @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
 
@@ -34,7 +34,7 @@
 
             <a-col :md="4" :sm="24" v-if="false">
               <a-form-item label="就诊人">
-                <a-input v-model="queryParams.keyWord" allow-clear placeholder="请输入就诊人" />
+                <a-input v-model="queryParams.keyWord" allow-clear placeholder="请输入就诊人" @keyup.enter="$refs.table.refresh(true)" />
               </a-form-item>
             </a-col>
 

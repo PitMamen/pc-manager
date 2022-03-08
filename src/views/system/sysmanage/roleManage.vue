@@ -11,11 +11,12 @@
         </a-form>
       </div>
 
+      <!-- style="width: 60%; -->
       <a-table
         ref="tableDept"
         :pagination="false"
         size="default"
-        style="width: 60%; margin-top: 2%"
+        style="margin-top: 2%"
         :columns="columns"
         :data-source="loadData"
         :alert="true"
@@ -234,7 +235,7 @@ export default {
 
   .card-right {
     overflow: hidden;
-    width: 100%;
+    width: 100%!important;
 
     .table-operator {
       margin-bottom: 18px;

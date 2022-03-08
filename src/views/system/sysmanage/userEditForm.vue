@@ -26,13 +26,9 @@
         </a-form-item>
 
         <a-form-item label="登录密码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <!-- <a-input
-            placeholder="请输入登录密码"
-            type="password"
-            v-decorator="['password', { rules: [{ required: true, message: '请输入登录密码！' }] }]"
-          /> -->
+          <!-- v-decorator="['password', { rules: [{ required: true, message: '请输入登录密码！' }] }]" -->
           <a-input-password
-            v-decorator="['password', { rules: [{ required: true, message: '请输入登录密码！' }] }]"
+            v-decorator="['password', { rules: [{ required: false, message: '请输入登录密码！' }] }]"
             placeholder="请输入登录密码"
           />
         </a-form-item>
@@ -86,10 +82,7 @@
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
           </a-radio-group>
         </a-form-item>
-        <!-- <a-input
-          v-decorator="['password', { rules: [{ required: true, message: '请输入密码' }, { validator: handlePass }] }]"
-          name="password"
-        /> -->
+
         <a-form-item
           label="管理科室"
           v-show="radioValue == 4"
@@ -225,7 +218,8 @@ export default {
             console.log('record', this.record)
             this.form.setFieldsValue({
               loginName: this.record.loginName,
-              password: this.record.password,
+              // password: this.record.password,
+              password: '',
               userName: this.record.userName,
               roleId: this.record.roleId,
               identificationNo: this.record.identificationNo,
@@ -258,9 +252,9 @@ export default {
             this.$set(values, 'status', 1)
           }
           //没修改密码的话，传空字符串后台认为没修改
-          if (values.password.length > 20) {
-            values.password = ''
-          }
+          // if (values.password.length > 20) {
+          //   values.password = ''
+          // }
           values.accountId = this.record.accountId
           values.userId = this.record.userId
           values.roleId = this.record.roleId
