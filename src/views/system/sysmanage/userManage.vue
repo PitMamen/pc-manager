@@ -1,6 +1,6 @@
 <template>
-  <div class="div-service">
-    <div class="div-service-left">
+  <div class="div-service-user">
+    <div class="div-service-left-user">
       <p class="p-part-title">组织架构</p>
       <!-- 分割线 -->
       <div class="div-divider"></div>
@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <a-card :bordered="false" class="card-right">
+    <a-card :bordered="false" class="card-right-user">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -266,12 +266,12 @@ export default {
 </script>
 
 <style lang="less">
-.div-service {
+.div-service-user {
   width: 100%;
   overflow: hidden;
   height: 100%;
 
-  .div-service-left {
+  .div-service-left-user {
     background-color: white;
     padding: 2% 3%;
     float: left;
@@ -320,7 +320,7 @@ export default {
     }
   }
 
-  .card-right {
+  .card-right-user {
     overflow: hidden;
     width: 85% !important;
 

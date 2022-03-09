@@ -147,7 +147,7 @@ export default {
   },
   data() {
     return {
-      customActiveKey: 'tab1',
+      customActiveKey: 'tab2',
       loginBtn: false,
       // login type: 0 email, 1 username, 2 telephone
       loginType: 0,
