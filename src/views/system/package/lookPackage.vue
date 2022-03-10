@@ -200,11 +200,12 @@ export default {
       form: this.$form.createForm(this),
       typeDatas: [
         { type: 'textNum', value: '健康咨询' },
-        { type: 'videoNum', value: '视频问诊' },
+        { type: 'videoNum', value: '视频咨询' },
+        { type: 'appointBedNum', value: '床位预约' },
       ],
 
       goodsAttr: [
-        // { name: '视频问诊', attrName: 'videoNum', attrValue: '1' },
+        // { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
         // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
       ],
 
@@ -277,7 +278,8 @@ export default {
           for (let index = 0; index < this.planData.goodsInfo.goodsAttr.length; index++) {
             if (
               this.planData.goodsInfo.goodsAttr[index].attrName == 'videoNum' ||
-              this.planData.goodsInfo.goodsAttr[index].attrName == 'textNum'
+              this.planData.goodsInfo.goodsAttr[index].attrName == 'textNum' ||
+              this.planData.goodsInfo.goodsAttr[index].attrName == 'appointBedNum'
             ) {
               this.goodsAttr.push(this.planData.goodsInfo.goodsAttr[index])
             }
@@ -413,7 +415,7 @@ export default {
 
       if (this.goodsAttr.length == 1) {
         if (this.goodsAttr[0].attrName == 'textNum') {
-          this.goodsAttr.push({ name: '视频问诊', attrName: 'videoNum', attrValue: '1' })
+          this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
         } else {
           this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
         }

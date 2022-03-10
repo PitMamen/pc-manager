@@ -184,12 +184,13 @@ export default {
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '视频问诊' },
+        { type: 'textNum', value: '视频咨询' },
         { type: 'videoNum', value: '健康咨询' },
+        { type: 'appointBedNum', value: '床位预约' },
       ],
 
       goodsAttr: [
-        { name: '视频问诊', attrName: 'videoNum', attrValue: '1' },
+        { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
         // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
       ],
 
@@ -333,24 +334,37 @@ export default {
      * 添加条目时不能重复，需要处理
      */
     addItem() {
-      if (this.goodsAttr.length >= 2) {
-        this.$message.error('目前仅支持两种服务类型！')
+      if (this.goodsAttr.length >= 3) {
+        this.$message.error('目前仅支持三种服务类型！')
         return
       }
 
-      if (this.goodsAttr.length == 0) {
+      let newName = this.getNewOne()
+      console.log('newName', newName)
+      if (newName == '健康咨询') {
         this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
-        return
+      } else if (newName == '视频咨询') {
+        this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
+      } else {
+        this.goodsAttr.push({ name: '床位预约', attrName: 'appointBedNum', attrValue: '1' })
       }
+    },
 
-      if (this.goodsAttr.length == 1) {
-        if (this.goodsAttr[0].attrName == 'textNum') {
-          this.goodsAttr.push({ name: '视频问诊', attrName: 'videoNum', attrValue: '1' })
-        } else {
-          this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
+    getNewOne() {
+      //添加typeDatas没有包含在this.goodsAttr里面的数据
+      for (let index = 0; index < this.typeDatas.length; index++) {
+        let value = this.typeDatas[index].value
+
+        let has = this.goodsAttr.some((item) => {
+          return item.name == value
+        })
+
+        if (!has) {
+          return value
         }
       }
     },
+
     validate() {
       const {
         form: { validateFields },
