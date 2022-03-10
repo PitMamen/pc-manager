@@ -513,6 +513,17 @@ export function getServicePackages(parameter) {
 }
 
 /**
+ * 预约工单查询
+ */
+ export function getAppointList(parameter) {
+  return axios({
+    url: '/bdcApi/appoint/qryTradeAppointList',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 新增检查检验
  * 
  * 检查：Check，检验： Exam

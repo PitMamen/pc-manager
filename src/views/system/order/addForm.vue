@@ -9,7 +9,7 @@
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-new-plan">
+      <div class="div-order-detail">
         <!-- <p class="p-title">查看计划</p> -->
         <!-- 分割线 -->
         <!-- <div class="div-divider"></div> -->
@@ -183,7 +183,7 @@ export default {
 }
 </script>
 <style lang="less">
-.div-new-plan {
+.div-order-detail {
   background-color: white;
   width: 100%;
   height: 100%;

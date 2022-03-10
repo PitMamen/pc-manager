@@ -7,7 +7,7 @@
             <a-col :md="4" :sm="24">
               <a-form-item label="姓名">
                 <a-input
-                  v-model="queryParams.orderId"
+                  v-model="queryParams.userName"
                   allow-clear
                   placeholder="请输入姓名"
                   @keyup.enter="$refs.table.refresh(true)"
@@ -15,21 +15,21 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="5" :sm="24">
-              <a-form-item label="身份证号">
+            <a-col :md="4" :sm="24">
+              <a-form-item label="工单号">
                 <a-input
-                  v-model="queryParams.orderId"
+                  v-model="queryParams.tradeId"
                   allow-clear
-                  placeholder="请输入身份证号"
+                  placeholder="请输入工单号"
                   @keyup.enter="$refs.table.refresh(true)"
                 />
               </a-form-item>
             </a-col>
 
-            <a-col :md="5" :sm="24">
+            <a-col :md="4" :sm="24">
               <a-form-item label="预约科室">
                 <a-input
-                  v-model="queryParams.orderId"
+                  v-model="queryParams.appointDept"
                   allow-clear
                   placeholder="请输入预约科室"
                   @keyup.enter="$refs.table.refresh(true)"
@@ -37,10 +37,10 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="5" :sm="24">
+            <a-col :md="4" :sm="24">
               <a-form-item label="开单科室">
                 <a-input
-                  v-model="queryParams.orderId"
+                  v-model="queryParams.reqDept"
                   allow-clear
                   placeholder="请输入开单科室"
                   @keyup.enter="$refs.table.refresh(true)"
@@ -98,7 +98,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getOrders } from '@/api/modular/system/posManage'
+import { getAppointList } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 
 export default {
@@ -113,52 +113,78 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
-      //（1：正常 2：待上架 3 ：下架）
+      //工单状态（0：申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
       statusData: [
         { code: -1, value: '全部' },
-        { code: 1, value: '待支付' },
-        { code: 2, value: '已完成' },
-        { code: 3, value: '部分支付' },
-        { code: 4, value: '待收货' },
-        { code: 5, value: '订单取消' },
+        { code: 0, value: '已申请' },
+        { code: 1, value: '审核通过' },
+        { code: 2, value: '审核失败' },
+        { code: 3, value: '审核失败' },
+        { code: 4, value: '预约失败' },
+        { code: 5, value: '取消预约申请' },
+        { code: 6, value: '取消预约成功' },
+        { code: 7, value: '取消预约失败' },
       ],
       partChoose: '',
 
       queryParams: {
-        functionType: 0, //业务类型：0代表套餐，1代表云门诊
-        endOrderTime: '',
-        startOrderTime: '',
-        orderId: '',
-        status: -1, //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
-        keyWord: '',
-        // keyWord: "",
-        // userId: '',
+        userName: '',
+        tradeId: '',
+        appointDept: '',
+        reqDept: '',
+        status: -1, //工单状态（0：申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
       },
       // 表头
       columns: [
         {
-          title: '订单编号',
-          dataIndex: 'orderId',
+          title: '姓名',
+          dataIndex: 'userNameOut',
         },
         {
-          title: '下单时间',
-          dataIndex: 'orderTime',
+          title: '性别',
+          dataIndex: 'userSex',
         },
         {
-          title: '就诊人',
-          dataIndex: 'userNameIn',
+          title: '年龄',
+          dataIndex: 'userAge',
         },
         {
-          title: '用户ID',
-          dataIndex: 'userIdIn',
+          title: '身份证号',
+          dataIndex: 'identificationNo',
         },
         {
-          title: '订单状态',
+          title: '预约科室',
+          dataIndex: 'appointDeptName',
+        },
+        {
+          title: '预约日期',
+          dataIndex: 'appointDate',
+        },
+        {
+          title: '开单科室',
+          dataIndex: 'reqDeptName',
+        },
+        {
+          title: '开单医生',
+          dataIndex: 'reqDocName',
+        },
+
+        {
+          title: '诊断名称',
+          dataIndex: 'diagnosis',
+        },
+        {
+          title: '开单日期',
+          dataIndex: 'reqTimeOut',
+        },
+
+        {
+          title: '审核状态',
           dataIndex: 'status',
           scopedSlots: { customRender: 'status' },
         },
         {
-          title: '金额（元）',
+          title: '入院时间',
           dataIndex: 'accountSum',
         },
         {
@@ -174,47 +200,33 @@ export default {
           delete this.queryParams.status
         }
 
-        if (this.queryParams.startOrderTime && this.queryParams.endOrderTime) {
-          if (this.queryParams.startOrderTime > this.queryParams.endOrderTime) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.startOrderTime
-            delete this.queryParams.endOrderTime
-            this.$refs.table.refresh()
-            return
-          }
-          if (this.queryParams.startOrderTime) {
-            let start = this.formatDate(this.queryParams.startOrderTime)
-            this.queryParams.startOrderTime = start + ' 00:00:00'
-          }
-
-          if (this.queryParams.endOrderTime) {
-            let end = this.formatDate(this.queryParams.endOrderTime)
-            this.queryParams.endOrderTime = end + ' 23:59:59'
-          }
-        } else {
-          delete this.queryParams.startOrderTime
-          delete this.queryParams.endOrderTime
-        }
-
-        return getOrders(Object.assign(parameter, this.queryParams)).then((res) => {
+        return getAppointList(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            // this.$set(res.data.rows[i], 'userName', res.data.rows[i].userInfo.userName)
+            //   this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            this.$set(res.data.rows[i], 'userNameOut', res.data.rows[i].userInfo.userName)
+            this.$set(res.data.rows[i], 'userSex', res.data.rows[i].userInfo.userSex)
+            this.$set(res.data.rows[i], 'userAge', res.data.rows[i].userInfo.userAge)
+            this.$set(res.data.rows[i], 'identificationNo', res.data.rows[i].userInfo.identificationNo)
+            let date = this.formatDate(res.data.rows[i].reqTime)
+            this.$set(res.data.rows[i], 'reqTimeOut', date)
 
-            this.$set(res.data.rows[i], 'userNameIn', res.data.rows[i].userInfo.userName)
-            this.$set(res.data.rows[i], 'userIdIn', res.data.rows[i].userInfo.userId)
-
-            //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
-            if (res.data.rows[i].status == 1) {
-              this.$set(res.data.rows[i], 'statusText', '待支付')
+            //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
+            if (res.data.rows[i].status == 0) {
+              this.$set(res.data.rows[i], 'statusText', '已申请')
+            } else if (res.data.rows[i].status == 1) {
+              this.$set(res.data.rows[i], 'statusText', '审核通过')
             } else if (res.data.rows[i].status == 2) {
-              this.$set(res.data.rows[i], 'statusText', '已完成')
+              this.$set(res.data.rows[i], 'statusText', '审核失败')
             } else if (res.data.rows[i].status == 3) {
-              this.$set(res.data.rows[i], 'statusText', '部分支付')
+              this.$set(res.data.rows[i], 'statusText', '预约成功')
             } else if (res.data.rows[i].status == 4) {
-              this.$set(res.data.rows[i], 'statusText', '待收货')
+              this.$set(res.data.rows[i], 'statusText', '预约失败')
             } else if (res.data.rows[i].status == 5) {
-              this.$set(res.data.rows[i], 'statusText', '订单取消')
+              this.$set(res.data.rows[i], 'statusText', '取消预约申请')
+            } else if (res.data.rows[i].status == 6) {
+              this.$set(res.data.rows[i], 'statusText', '取消预约成功')
+            } else if (res.data.rows[i].status == 7) {
+              this.$set(res.data.rows[i], 'statusText', '取消预约失败')
             }
           }
           return res.data
@@ -236,17 +248,23 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
+    //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
     getClass(status) {
-      if (status == 1) {
+      if (status == 0) {
         return 'span-red'
+      } else if (status == 1) {
+        return 'span-blue'
       } else if (status == 2) {
-        return 'span-blue'
-      } else if (status == 3) {
         return 'span-red'
+      } else if (status == 3) {
+        return 'span-green'
       } else if (status == 4) {
-        return 'span-blue'
+        return 'span-gray'
       } else if (status == 5) {
+        return 'span-gray'
+      } else if (status == 6) {
+        return 'span-gray'
+      } else if (status == 7) {
         return 'span-gray'
       }
     },
@@ -321,6 +339,13 @@ export default {
       font-size: 12px;
       color: white;
       background-color: #f26161;
+    }
+
+    .span-green {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: white;
+      background-color: greenyellow;
     }
 
     .span-gray {
