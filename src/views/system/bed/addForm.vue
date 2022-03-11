@@ -83,8 +83,8 @@
                 <span class="span-dot"> {{ index + 1 }}</span>
               </div>
               <div class="div-content-item">
-                <div class="div-time">{{ item.dealType }}</div>
-                <div class="div-content">{{ item.dealResult }}</div>
+                <div class="div-time">{{ item.timeStr }}</div>
+                <div class="div-content">{{ item.dealType }}</div>
                 <div class="clearfix" style="margin-top: 20px">
                   <!-- :file-list="fileListDetail" -->
                   <!-- @preview="handlePreviewDetail" -->
@@ -148,6 +148,16 @@ export default {
     }
   },
   methods: {
+    formatDate(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
     //初始化方法
     add(record) {
       this.record = {}
@@ -157,6 +167,8 @@ export default {
       //处理每条数据是否有图片
       if (this.record.tradeAppointLog && this.record.tradeAppointLog.length > 0) {
         for (let index = 0; index < this.record.tradeAppointLog.length; index++) {
+          let date = this.formatDate(this.record.tradeAppointLog[index].createTime)
+          this.$set(this.record.tradeAppointLog[index], 'timeStr', date)
           if (
             this.record.tradeAppointLog[index].dealImages &&
             this.record.tradeAppointLog[index].dealImages.length > 0
