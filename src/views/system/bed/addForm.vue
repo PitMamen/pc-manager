@@ -95,6 +95,7 @@
                     list-type="picture-card"
                     :file-list="record.tradeAppointLog[index].dealImgList"
                     @change="handleChangeDetail"
+                    @preview="handlePreviewDetail"
                   >
                     <div v-if="false">
                       <a-icon type="plus" />
@@ -176,7 +177,6 @@ export default {
     },
 
     handleCancelDetail() {
-      console.log('handleCancelDetail', handleCancelDetail)
       this.previewVisibleDetail = false
     },
 
