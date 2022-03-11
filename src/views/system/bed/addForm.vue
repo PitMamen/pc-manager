@@ -63,7 +63,7 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 预约日期 :</span>
-          <span class="span-item-value">{{ record.appointDate }} </span>
+          <span class="span-item-value">{{ record.appointDate || '暂无' }} </span>
         </div>
 
         <div class="div-divider"></div>
@@ -85,6 +85,26 @@
               <div class="div-content-item">
                 <div class="div-time">{{ item.dealType }}</div>
                 <div class="div-content">{{ item.dealResult }}</div>
+                <div class="clearfix" style="margin-top: 20px">
+                  <!-- :file-list="fileListDetail" -->
+                  <!-- @preview="handlePreviewDetail" -->
+                  <a-upload
+                    disabled
+                    :action="actionUrl"
+                    :multiple="true"
+                    list-type="picture-card"
+                    :file-list="record.tradeAppointLog[index].dealImgList"
+                    @change="handleChangeDetail"
+                  >
+                    <div v-if="false">
+                      <a-icon type="plus" />
+                      <div class="ant-upload-text">Upload</div>
+                    </div>
+                  </a-upload>
+                  <a-modal :visible="previewVisibleDetail" :footer="null" @cancel="handleCancelDetail">
+                    <img alt="example" style="width: 100%" :src="previewImageDetail" />
+                  </a-modal>
+                </div>
               </div>
             </a-timeline-item>
           </a-timeline>
@@ -120,8 +140,10 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-
       record: {},
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      previewImageDetail: '',
+      previewVisibleDetail: false,
     }
   },
   methods: {
@@ -130,6 +152,45 @@ export default {
       this.record = {}
       this.record = record
       this.visible = true
+
+      //处理每条数据是否有图片
+      if (this.record.tradeAppointLog && this.record.tradeAppointLog.length > 0) {
+        for (let index = 0; index < this.record.tradeAppointLog.length; index++) {
+          if (
+            this.record.tradeAppointLog[index].dealImages &&
+            this.record.tradeAppointLog[index].dealImages.length > 0
+          ) {
+            let detailPics = this.record.tradeAppointLog[index].dealImages.split(',')
+            this.$set(this.record.tradeAppointLog[index], 'dealImgList', [])
+            for (let i = 0; i < detailPics.length; i++) {
+              this.record.tradeAppointLog[index].dealImgList.push({
+                uid: 0 - i + '',
+                name: '详情' + i,
+                status: 'done',
+                url: detailPics[i],
+              })
+            }
+          }
+        }
+      }
+    },
+
+    handleCancelDetail() {
+      console.log('handleCancelDetail', handleCancelDetail)
+      this.previewVisibleDetail = false
+    },
+
+    async handlePreviewDetail(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImageDetail = file.url || file.preview
+      this.previewVisibleDetail = true
+    },
+
+    handleChangeDetail({ fileList }) {
+      //this.record.tradeAppointLog[index].dealImgList
+      // this.fileListDetail = fileList
     },
 
     handleSubmit() {
@@ -270,12 +331,13 @@ export default {
       .div-time {
         color: #333;
         text-align: left;
+        font-weight: bold;
         font-size: 14px;
       }
       .div-content {
         color: #333;
         text-align: left;
-        font-size: 14px;
+        font-size: 12px;
       }
     }
   }
