@@ -181,6 +181,7 @@ export default {
       //todo 写死的
       let user = Vue.ls.get(TRUE_USER)
       this.checkData.publisherName = user.userName
+      this.checkData.source = 'weixin'
       this.checkData.publisherUserId = user.userId
       saveArticle(this.checkData).then((res) => {
         if (res.code == 0) {
