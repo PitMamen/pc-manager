@@ -250,9 +250,9 @@ export default {
 
     var articleId = this.$route.params.articleId
     if (this.$route.params.articleId) {
-      document.title = '修改文章'
+      document.title = '修改教育文章'
     } else {
-      document.title = '新增文章'
+      document.title = '新增教育文章'
     }
     console.log(articleId)
     if (articleId) {

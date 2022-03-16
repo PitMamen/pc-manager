@@ -246,6 +246,22 @@ const getLoginUser = (options) => {
         "hidden": false
       },
       {
+        "id": "12654742618968064104",
+        "pid": "1283308304890847235",
+        "name": "config_article",
+        "component": "system/article/index",
+        "redirect": "",
+        "meta": {
+          "title": "文章配置",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/article",
+        "hidden": false
+      },
+      {
         "id": "12654742618968064058",
         "pid": "1283308304890847235",
         "name": "sys_article_add",
@@ -293,6 +309,72 @@ const getLoginUser = (options) => {
       //   "path": "/app",
       //   "hidden": false
       // },
+
+      {
+        "id": "12654742618968068986",
+        "pid": "0",
+        "name": "article_teach_list",
+        "component": "system/teach/index",
+        "redirect": "",
+        "meta": {
+          "title": "健康教育",
+          "icon": "",
+          "show": true,
+          "target": null,
+          "link": null
+        },
+        "path": "/teach",
+        "hidden": false
+      },
+      {
+        "id": "12654742618968333058",
+        "pid": "0",
+        "name": "article_teach_add",
+        "component": "system/teach/addArticle",
+        "redirect": "",
+        "meta": {
+          "title": "新增文章",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/teach/addArticle",
+        "hidden": false
+      },
+      {
+        "id": "12654882618968333058",
+        "pid": "0",
+        "name": "article_teach_edit",
+        "component": "system/teach/editArticle",
+        "redirect": "",
+        "meta": {
+          "title": "修改文章",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/teach/editArticle",
+        "hidden": false
+      },
+      {
+        "id": "12654742618968666059",
+        "pid": "0",
+        "name": "article_teach_check",
+        "component": "system/teach/checkArticle",
+        "redirect": "",
+        "meta": {
+          "title": "文章详情",
+          "icon": "",
+          "show": false,
+          "target": null,
+          "link": null
+        },
+        "path": "/teach/checkArticle",
+        "hidden": false
+      },
+
       {
         "id": "12654742618968064082",
         "pid": "1283308304890847233",
@@ -461,22 +543,6 @@ const getLoginUser = (options) => {
         "hidden": false
       },
 
-      {
-        "id": "12654742618968064104",
-        "pid": "1283308304890847235",
-        "name": "config_article",
-        "component": "system/article/index",
-        "redirect": "",
-        "meta": {
-          "title": "文章配置",
-          "icon": "",
-          "show": true,
-          "target": null,
-          "link": null
-        },
-        "path": "/article",
-        "hidden": false
-      },
       {
         "id": "1283308304890847236",
         "pid": "0",

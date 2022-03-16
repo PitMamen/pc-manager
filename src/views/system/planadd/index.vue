@@ -299,7 +299,7 @@ export default {
         taskDescribe: record.name,
         contentDetail: {
           //问卷
-          questId: record.id,
+          questId: record.key,
           questName: record.name,
           detailName: record.name,
         },

@@ -128,16 +128,16 @@ export default {
    
    //新建文章
     goAdd() {
-      this.$router.push({ name: 'sys_article_add', data: null })
+      this.$router.push({ name: 'article_teach_add', params: null })
     },
  //查看文章
     goCheck(record) {     
-     this.$router.push({ name: 'sys_article_check', params: record })
+     this.$router.push({ name: 'article_teach_check', params: record })
     },
      //修改文章
     goChange(record) {
       console.log(record)
-      this.$router.push({ name: 'sys_article_edit', params: record })
+      this.$router.push({ name: 'article_teach_edit', params: record })
     },
   //删除文章
     goDelete(record) {

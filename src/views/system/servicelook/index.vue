@@ -27,13 +27,23 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="专病">
-                <a-input v-model="queryParam.cyzd" allow-clear placeholder="请输入专病 " @keyup.enter="$refs.table.refresh(true)"/>
+                <a-input
+                  v-model="queryParam.cyzd"
+                  allow-clear
+                  placeholder="请输入专病 "
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="24">
               <a-form-item label="患者名称">
-                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入患者名称" @keyup.enter="$refs.table.refresh(true)"/>
+                <a-input
+                  v-model="queryParam.userName"
+                  allow-clear
+                  placeholder="请输入患者名称"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
@@ -72,7 +82,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getOutPatients,queryDepartment } from '@/api/modular/system/posManage'
+import { getOutPatients, queryDepartment } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addForm from './addForm'
@@ -96,9 +106,9 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
-            keshiData: [],
+      keshiData: [],
       // 查询参数 existsPlanFlag 1已分配 2未分配套餐
-      queryParam: { existsPlanFlag: 1, bqmc: '', deptCode: Vue.ls.get(TRUE_USER).departmentCode },
+      queryParam: { existsPlanFlag: 1, bqmc: '' },
       // 表头
       columns: [
         {
@@ -184,7 +194,7 @@ export default {
   },
 
   created() {
-        queryDepartment('444885559').then((res) => {
+    queryDepartment('444885559').then((res) => {
       if (res.code == 0) {
         this.keshiData = res.data
         this.keshiData.unshift({ deptName: '全部', deptCode: '0' })

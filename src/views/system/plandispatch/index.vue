@@ -445,7 +445,7 @@ export default {
         taskTypeName: '健康问卷',
         contentDetail: {
           //问卷
-          questId: record.id,
+          questId: record.key,
           questName: record.name,
           detailName: record.name,
         },
