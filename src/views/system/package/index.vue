@@ -163,9 +163,7 @@ export default {
         { code: 0, value: '不推荐' },
       ],
       partChoose: '',
-      // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
       queryParams: {
-        // existsPlanFlag: '',
         belong: undefined,
         status: undefined,
         topFlag: undefined,

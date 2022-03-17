@@ -4,11 +4,12 @@
       <p class="p-part-title">病区选择</p>
       <!-- 分割线 -->
       <div class="div-divider"></div>
-
-      <div class="div-part" v-for="(item, index) in keshiData" :value="item.deptName" :key="index">
-        <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.deptName }}</p>
-        <!-- 分割线 -->
-        <div class="div-divider"></div>
+      <div class="div-wrap-look">
+        <div class="div-part" v-for="(item, index) in keshiData" :value="item.deptName" :key="index">
+          <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.deptName }}</p>
+          <!-- 分割线 -->
+          <div class="div-divider"></div>
+        </div>
       </div>
     </div>
 
@@ -121,7 +122,7 @@ export default {
         },
         {
           title: '电话号码',
-          dataIndex: 'phoneNo',
+          dataIndex: 'tel',
         },
         {
           title: '所在病区',
@@ -162,7 +163,7 @@ export default {
       loadData: (parameter) => {
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
+            // this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
             this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
             this.$set(
               res.data.rows[i],
@@ -309,26 +310,31 @@ export default {
       font-weight: bold;
     }
 
-    .div-part {
-      overflow: hidden;
-      width: 100%;
-      padding-left: 5%;
-      height: 10%;
+    .div-wrap-look {
+      max-height: 703px;
+      overflow-y: auto !important;
 
-      .checked {
-        color: #1890ff !important;
-      }
+      .div-part {
+        overflow: hidden;
+        width: 100%;
+        padding-left: 5%;
+        height: 10%;
 
-      .p-name {
-        margin-top: 3.5%;
-        display: block;
-        height: 100%;
-        padding-left: 1%;
-        color: #000;
-        font-size: 14px;
-        text-align: left|center;
-        &:hover {
-          cursor: pointer;
+        .checked {
+          color: #1890ff !important;
+        }
+
+        .p-name {
+          margin-top: 3.5%;
+          display: block;
+          height: 100%;
+          padding-left: 1%;
+          color: #000;
+          font-size: 14px;
+          text-align: left|center;
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }

@@ -318,7 +318,8 @@ export function getDocPlans(parameter) {
  */
 export function getOutPatients(parameter) {
   return axios({
-    url: '/bdcApi/patient/qryPatientList',
+    // url: '/bdcApi/patient/qryPatientList',
+    url: '/bdcApi/patient/qryPatientListByReg',
     method: 'post',
     data: parameter
   })

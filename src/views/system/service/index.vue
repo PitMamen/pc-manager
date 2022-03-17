@@ -6,10 +6,12 @@
       <div class="div-divider"></div>
 
       <!-- <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index"> -->
-      <div class="div-part" v-for="(item, index) in keshiData" :value="item.deptName" :key="index">
-        <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.deptName }}</p>
-        <!-- 分割线 -->
-        <div class="div-divider"></div>
+      <div class="div-wrap-service">
+        <div class="div-part" v-for="(item, index) in keshiData" :value="item.deptName" :key="index">
+          <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.deptName }}</p>
+          <!-- 分割线 -->
+          <div class="div-divider"></div>
+        </div>
       </div>
     </div>
 
@@ -28,13 +30,23 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="专病">
-                <a-input v-model="queryParam.cyzd" allow-clear placeholder="请输入专病 " @keyup.enter="$refs.table.refresh(true)"/>
+                <a-input
+                  v-model="queryParam.cyzd"
+                  allow-clear
+                  placeholder="请输入专病 "
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="24">
               <a-form-item label="患者名称">
-                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入患者名称" @keyup.enter="$refs.table.refresh(true)"/>
+                <a-input
+                  v-model="queryParam.userName"
+                  allow-clear
+                  placeholder="请输入患者名称"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
@@ -109,10 +121,10 @@ export default {
       advanced: false,
       partChoose: '',
       keshiData: [],
-      // 查询参数 existsPlanFlag 1已分配 2未分配套餐 ;isRegister传 1：已注册；2：未注册；不传和其他：全部患者
+      // 查询参数 existsPlanFlag传 1：已订购套餐患者；2：未订购套餐患者；不传和其他：全部患者
       queryParam: {
-        // existsPlanFlag: '',
-        existsPlanFlag: '2',
+        // existsPlanFlag: '2',
+        existsPlanFlag: '',
         bqmc: '',
         // deptCode: Vue.ls.get(TRUE_USER).departmentCode,
         // isRegister: '1',
@@ -129,7 +141,7 @@ export default {
         },
         {
           title: '电话号码',
-          dataIndex: 'phoneNo',
+          dataIndex: 'tel',
         },
         {
           title: '所在病区',
@@ -170,7 +182,7 @@ export default {
         console.log('loadData', Object.assign(parameter, this.queryParam))
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
+            // this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
             this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
             this.$set(
               res.data.rows[i],
@@ -330,26 +342,31 @@ export default {
       font-weight: bold;
     }
 
-    .div-part {
-      overflow: hidden;
-      width: 100%;
-      padding-left: 5%;
-      height: 10%;
+    .div-wrap-service {
+      max-height: 662px;
+      overflow-y: auto !important;
 
-      .checked {
-        color: #1890ff !important;
-      }
+      .div-part {
+        overflow: hidden;
+        width: 100%;
+        padding-left: 5%;
+        height: 10%;
 
-      .p-name {
-        margin-top: 3.5%;
-        display: block;
-        height: 100%;
-        padding-left: 1%;
-        color: #000;
-        font-size: 14px;
-        text-align: left|center;
-        &:hover {
-          cursor: pointer;
+        .checked {
+          color: #1890ff !important;
+        }
+
+        .p-name {
+          margin-top: 3.5%;
+          display: block;
+          height: 100%;
+          padding-left: 1%;
+          color: #000;
+          font-size: 14px;
+          text-align: left|center;
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
     }

@@ -113,7 +113,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
-      // 查询参数 existsPlanFlag 1已分配 2未分配套餐
+
       queryParam: { departmentId: 0, status: 2, userName: '' },
       // 表头
       columns: [
