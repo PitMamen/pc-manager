@@ -44,7 +44,7 @@ export function getAllArticles(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&source=' + parameter.source ,
     method: 'get',
 
     data: newPara
@@ -52,7 +52,7 @@ export function getAllArticles(parameter) {
 }
 
 /**
- * h获取文章
+ * 获取文章  新增计划
  *
  */
 export function getAllArticlesNew(parameter) {
@@ -63,6 +63,23 @@ export function getAllArticlesNew(parameter) {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
       deptCode: parameter.deptCode,
+    }
+  })
+}
+
+/**
+ * 获取文章  教育文章
+ *
+ */
+ export function getAllArticlesTeach(parameter) {
+  return axios({
+    url: '/bdcApi/health/patient/allArticlesPage',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      // deptCode: parameter.deptCode,
+      source: parameter.source,
     }
   })
 }

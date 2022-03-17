@@ -38,7 +38,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getAllArticles, delArticle } from '@/api/modular/system/posManage'
+import { getKeShiData, getAllArticlesTeach, delArticle } from '@/api/modular/system/posManage'
 
 
 export default {
@@ -52,7 +52,7 @@ export default {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
-
+      queryParam: { source: 'weixin' },
       // 表头
       columns: [
         {
@@ -96,7 +96,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getAllArticlesTeach(Object.assign(parameter, this.queryParam)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
          

@@ -14,23 +14,17 @@
       :alert="true"
       :rowKey="(record) => record.code"
     >
-       <span slot="action" slot-scope="text, record">
-        
-        <a  @click="goCheck(record)">查看</a>
-         <a-divider type="vertical" />
+      <span slot="action" slot-scope="text, record">
+        <a @click="goCheck(record)">查看</a>
+        <a-divider type="vertical" />
         <a @click="goChange(record)">修改</a>
-          <a-divider type="vertical" />
-        <a-popconfirm
-          title="确定删除文章吗？"
-          ok-text="确定"
-          cancel-text="取消"
-          @confirm="goDelete(record)"
-        >
+        <a-divider type="vertical" />
+        <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
           <a>删除</a>
         </a-popconfirm>
       </span>
     </s-table>
-<!-- 
+    <!-- 
     <add-form ref="addForm" @ok="handleOk" />
     <edit-form ref="editForm" @ok="handleOk" /> -->
   </a-card>
@@ -39,7 +33,6 @@
 <script>
 import { STable } from '@/components'
 import { getKeShiData, getAllArticles, delArticle } from '@/api/modular/system/posManage'
-
 
 export default {
   components: {
@@ -52,7 +45,7 @@ export default {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
-
+      queryParam: { source: 'manager' },
       // 表头
       columns: [
         {
@@ -97,10 +90,11 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
-          console.log(parameter)
+          console.log('parameter',parameter)
+          console.log('queryParam',this.queryParam)
           console.log(res.data.total / parameter.pageSize)
-         
-         //组装控件需要的数据结构
+
+          //组装控件需要的数据结构
           var data = {
             pageNo: parameter.pageNo,
             pageSize: parameter.pageSize,
@@ -123,31 +117,28 @@ export default {
     }
   },
 
-
   methods: {
-   
-   //新建文章
+    //新建文章
     goAdd() {
       this.$router.push({ name: 'sys_article_add', data: null })
     },
- //查看文章
-    goCheck(record) {     
-     this.$router.push({ name: 'sys_article_check', params: record })
+    //查看文章
+    goCheck(record) {
+      this.$router.push({ name: 'sys_article_check', params: record })
     },
-     //修改文章
+    //修改文章
     goChange(record) {
       console.log(record)
       this.$router.push({ name: 'sys_article_edit', params: record })
     },
-  //删除文章
+    //删除文章
     goDelete(record) {
-      delArticle(record.articleId).then((res)=>{
-        if(res.code==0){
+      delArticle(record.articleId).then((res) => {
+        if (res.code == 0) {
           this.$message.success('删除成功')
           this.handleOk()
-          
-        }else{
-         this.$message.error('删除失败：' + res.message) 
+        } else {
+          this.$message.error('删除失败：' + res.message)
         }
       })
     },
