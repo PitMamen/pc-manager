@@ -21,12 +21,10 @@
         <a-input v-decorator="['goodsSpec', { rules: [{ required: true, message: '请输入服务名称！' }] }]" />
       </a-form-item>
 
-      <!-- v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]" -->
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch :checked="uploadData.goodsInfo.isOnline" />
       </a-form-item>
 
-      <!-- v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]" -->
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch :checked="uploadData.goodsInfo.isSuggest" />
       </a-form-item>
@@ -47,12 +45,6 @@
           }}</a-select-option>
         </a-select>
       </a-form-item>
-
-      <!-- <a-form-item label="服务类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span
-          v-decorator="['dd', { initialValue: 0, rules: [{ required: true, message: '请输入商品价格！' }] }]"
-        ></span>
-      </a-form-item> -->
     </a-form>
 
     <div class="div-service-type">
@@ -176,8 +168,6 @@ export default {
         { code: 3, valueName: '永久', value: 1200 },
       ],
       keshiData: [],
-      // actionUrl: 'http://192.168.1.122:8071/fileUpload/uploadImgFile',
-      //fileApi
       actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
@@ -191,7 +181,6 @@ export default {
 
       goodsAttr: [
         { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-        // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
       ],
 
       uploadData: {
@@ -210,12 +199,7 @@ export default {
           isOnline: true,
           isSuggest: true,
         },
-        templateTask: [
-          // {
-          //   execTime: '0',
-          //   taskName: '套餐购买',
-          // },
-        ],
+        templateTask: [],
         templateName: '',
         basetimeType: '0',
       },
@@ -239,13 +223,6 @@ export default {
   },
 
   created() {
-    // queryDepartment('444885559').then((res) => {
-    //   if (res.code == 0) {
-    //     this.keshiData = res.data
-    //   } else {
-    //     this.$message.error('获取科室列表失败：' + res.message)
-    //   }
-    // })
     this.getDeptsOut()
 
     this.form.setFieldsValue({
@@ -380,8 +357,6 @@ export default {
           this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
           this.uploadData.goodsInfo.price = values.price
           this.uploadData.goodsInfo.theLastTime = values.theLastTime
-          // this.uploadData.goodsInfo.status = values.statusIf ? '1' : '3'
-          // this.uploadData.goodsInfo.topFlag = values.topFlagIf ? '1' : '0'
           this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
 
           this.uploadData.templateName = values.goodsName
@@ -402,7 +377,6 @@ export default {
           } else {
             let str = ''
             for (let index = 0; index < this.fileListBanner.length; index++) {
-              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
               if (index != this.fileListBanner.length - 1) {
                 str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
               } else {
@@ -419,7 +393,6 @@ export default {
           } else {
             let str = ''
             for (let index = 0; index < this.fileListDetail.length; index++) {
-              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
               if (index != this.fileListDetail.length - 1) {
                 str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
               } else {

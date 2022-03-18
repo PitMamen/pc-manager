@@ -30,13 +30,6 @@
           item.diseaseName
         }}</a-select-option>
       </a-select>
-      <!-- <a-input
-        v-model="planData.disease[0].diseaseName"
-        class="span-item-value"
-        style="display: inline-block"
-        allow-clear
-        placeholder="请输入所属专病 "
-      /> -->
     </div>
 
     <div class="div-line-wrap">
@@ -369,17 +362,6 @@ export default {
 
       //组装每次任务天数
       for (let i = 0; i < this.planData.templateTask.length; i++) {
-        // if (this.planData.templateTask[i].inputDay == 0) {
-        //   let num = 1
-        //   if (this.planData.templateTask[i].timeUnit == '2') {
-        //     num = 7
-        //   } else if (this.planData.templateTask[i].timeUnit == '3') {
-        //     num = 30
-        //   }
-        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].timeCount * num
-        // } else {
-        //   this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
-        // }
         this.planData.templateTask[i].execTime = this.planData.templateTask[i].inputDay
       }
 
@@ -394,7 +376,6 @@ export default {
       }
 
       //删除没有任务项目的任务
-      // let templateTask = JSON.parse(JSON.stringify(this.planData.templateTask))
       let templateTask = []
       for (let i = 0; i < this.planData.templateTask.length; i++) {
         if (this.planData.templateTask[i].templateTaskContent.length != 0) {
