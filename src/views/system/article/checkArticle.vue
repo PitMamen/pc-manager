@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div id="myHtml"></div>
+    <div id="myHtml" style="margin-left: 8%"></div>
 
     <div style="height: 50px; backgroud-color: white" />
   </div>

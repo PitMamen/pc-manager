@@ -29,7 +29,7 @@
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
-          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChange">
+          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChangeDept">
             <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.departmentId">{{
               item.departmentName
             }}</a-select-option>
@@ -60,6 +60,27 @@
             </a-upload>
           </div>
       </div> -->
+
+      <span class="title-article-pic"><span style="color: red">*</span> 图片 :（限定一张，建议尺寸比例4：3）</span>
+      <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
+      <div class="clearfix" style="margin-top: 20px">
+        <a-upload
+          :action="actionUrl"
+          :multiple="true"
+          list-type="picture-card"
+          :file-list="fileList"
+          @preview="handlePreview"
+          @change="handleChange"
+        >
+          <div v-if="fileList.length < 1">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">Upload</div>
+          </div>
+        </a-upload>
+        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+          <img alt="example" style="width: 100%" :src="previewImage" />
+        </a-modal>
+      </div>
 
       <div class="div-line-wrap">
         <div class="div-total-one">
@@ -103,6 +124,10 @@ export default {
       },
 
       ksTypeData: [],
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      fileList: [],
+      previewVisible: false,
+      previewImage: '',
 
       keshiData: {},
       // 加载数据方法 必须为 Promise 对象
@@ -137,8 +162,28 @@ export default {
   },
 
   methods: {
-    handleChange(code) {
+    handleChangeDept(code) {
       this.getDiseasesOut(code)
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    handleChange({ fileList }) {
+      this.fileList = fileList
+      if (this.fileList.length > 1) {
+        let newData = this.fileList[0]
+        this.fileList = [newData]
+      }
+    },
+
+    handleCancel() {
+      this.previewVisible = false
     },
 
     getDiseasesOut(departmentId) {
@@ -169,6 +214,21 @@ export default {
         this.$message.error('请选择专病')
         return
       }
+
+      //组装图片
+      if (this.fileList.length == 0) {
+        this.$message.error('请上传套餐图片！')
+        return
+      } else {
+        delete this.checkData.previewUrl
+        this.$set(this.checkData, 'previewUrl', '')
+        if (this.fileList[0].response) {
+          this.checkData.previewUrl = this.fileList[0].response.data.fileLinkUrl
+        } else {
+          this.checkData.previewUrl = this.fileList[0].url
+        }
+      }
+
       if (!this.checkData.content) {
         this.$message.error('请编辑内容')
         return
@@ -263,6 +323,12 @@ export default {
           this.checkData.categoryId = parseInt(this.checkData.categoryId)
           editor.txt.html(res.data.content)
           this.getDiseasesOut(this.checkData.categoryId)
+          this.fileList.push({
+            uid: '-1',
+            name: '封面' + 1,
+            status: 'done',
+            url: this.checkData.previewUrl,
+          })
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -323,6 +389,14 @@ export default {
 
     .ant-calendar-picker {
       margin-left: 3.5%;
+    }
+
+    .title-article-pic {
+      display: inline-block;
+      color: #000;
+      text-align: left;
+      margin-top: 3%;
+      font-size: 14px;
     }
 
     .div-line-wrap {

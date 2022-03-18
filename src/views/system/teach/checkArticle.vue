@@ -22,9 +22,46 @@
           <span class="span-item-name">创建时间 :{{ checkData.createTime }}</span>
         </div>
       </div>
+      <!-- <div class="div-line-wrap">
+        <div class="div-left">
+          <span class="span-item-name">图片 :</span>
+        </div>
+        <div class="div-left" v-show="false">
+          <span class="span-item-name">所属病种 :{{ checkData.articleType }}</span>
+        </div>
+
+        <div class="div-left" v-show="false">
+          <span class="span-item-name">创建作者 :{{ checkData.author }}</span>
+        </div>
+        <div class="div-left" v-show="false">
+          <span class="span-item-name">创建时间 :{{ checkData.createTime }}</span>
+        </div>
+      </div> -->
+
+      <span class="title-article-pic">图片 :</span>
+
+      <div class="clearfix" style="margin-top: 20px; margin-left: 7%">
+        <a-upload
+          disabled
+          :action="actionUrl"
+          :multiple="true"
+          list-type="picture-card"
+          :file-list="fileList"
+          @preview="handlePreview"
+          @change="handleChange"
+        >
+          <div v-if="fileList.length < 1">
+            <a-icon type="plus" />
+            <div class="ant-upload-text">Upload</div>
+          </div>
+        </a-upload>
+        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+          <img alt="example" style="width: 100%" :src="previewImage" />
+        </a-modal>
+      </div>
     </div>
 
-    <div id="myHtml"></div>
+    <div id="myHtml" style="margin-left:8%"></div>
 
     <div style="height: 50px; backgroud-color: white" />
   </div>
@@ -65,6 +102,10 @@ export default {
           return res.data
         })
       },
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      fileList: [],
+      previewVisible: false,
+      previewImage: '',
       selectedRowKeys: [],
       selectedRows: [],
     }
@@ -80,6 +121,12 @@ export default {
 
           //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
           document.getElementById('myHtml').innerHTML = res.data.content
+          this.fileList.push({
+            uid: '-1',
+            name: '封面' + 1,
+            status: 'done',
+            url: this.checkData.previewUrl,
+          })
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -90,6 +137,26 @@ export default {
   methods: {
     toggleAdvanced() {
       this.advanced = !this.advanced
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    handleChange({ fileList }) {
+      this.fileList = fileList
+      if (this.fileList.length > 1) {
+        let newData = this.fileList[0]
+        this.fileList = [newData]
+      }
+    },
+
+    handleCancel() {
+      this.previewVisible = false
     },
 
     goBack() {
@@ -201,6 +268,15 @@ export default {
 
     .ant-calendar-picker {
       margin-left: 3.5%;
+    }
+
+    .title-article-pic {
+      display: inline-block;
+      color: #000;
+      text-align: left;
+      margin-top: 3%;
+      margin-left: 7%;
+      font-size: 14px;
     }
 
     .div-line-wrap {

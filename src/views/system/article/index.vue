@@ -7,6 +7,7 @@
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
+      style="margin-top: 2%"
       ref="table"
       size="default"
       :columns="columns"
@@ -90,8 +91,8 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
-          console.log('parameter',parameter)
-          console.log('queryParam',this.queryParam)
+          console.log('parameter', parameter)
+          console.log('queryParam', this.queryParam)
           console.log(res.data.total / parameter.pageSize)
 
           //组装控件需要的数据结构

@@ -44,7 +44,7 @@ export function getAllArticles(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&source=' + parameter.source ,
+    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source ,
     method: 'get',
 
     data: newPara
@@ -79,7 +79,7 @@ export function getAllArticlesNew(parameter) {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
       // deptCode: parameter.deptCode,
-      source: parameter.source,
+      type: parameter.source,
     }
   })
 }
