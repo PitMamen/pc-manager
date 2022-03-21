@@ -166,6 +166,8 @@ export default {
             // this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
             if (res.data.rows[i].age) {
               this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
+            } else {
+              this.$set(res.data.rows[i], 'ageCount', '暂无') //计算设置年龄
             }
             this.$set(
               res.data.rows[i],
