@@ -11,13 +11,13 @@
     <!-- <div class="canvas_box" id="mycanvas" ref="mycanvas">
       <img style="overflow: hidden; width: 60%; margin-left: 20%" :src="extraImage" />
     </div> -->
-
+    <div class="div-notice-rea">右键点击下方二维码选择【图片另存为】并添加.png或者.jpg的后缀进行保存！</div>
     <!-- onClick="imageClick" -->
-    <div>
-      <img :src="extraImage" alt="testload" />
+    <div :key="imgKeyArea">
+      <img :src="record.url" alt="testload" />
     </div>
 
-    <a-button style="margin-top: 2%" type="primary" @click="downLoadPic">下载二维码</a-button>
+    <a-button v-show="false" style="margin-top: 2%" type="primary" @click="downLoadPic">下载二维码</a-button>
     <!-- <a style="display: block; margin-top: 2%; margin-left: 45%" :href="extraImage" target="blank" download
       >下载二维码</a -->
   </a-modal>
@@ -36,19 +36,32 @@ export default {
 
       confirmLoading: false,
       visible: false,
-      data: {},
+      record: {},
+      imgKeyArea: '',
     }
   },
+
+  watch: {
+    visible() {
+      if (this.visible) {
+        this.imgKeyArea = ''
+      } else {
+        this.imgKeyArea = Math.random()
+      }
+      console.log('this.imgKeyArea :>> ', this.imgKeyArea)
+    },
+  },
+
   methods: {
     //初始化方法
     add(record) {
-      // this.extraImage = ''
+      this.record = {}
+      this.record = record
       this.visible = true
 
-      getQrUrl({ ks: 0, bq:record.id }).then((res) => {
+      getQrUrl({ ks: 0, bq: record.id }).then((res) => {
         if (res.code == 0) {
-          this.data = res.data 
-          this.$emit('ok', this.index, this.type)
+          this.$set(this.record, 'url', res.data)
         } else {
           // this.$message.error('新增失败：' + res.message)
         }
@@ -136,3 +149,15 @@ export default {
   },
 }
 </script>
+<style lang="less">
+.div-notice-area {
+  width: 100% !important;
+  overflow: hidden;
+
+  text-align: left;
+  font-size: 15px;
+  margin-top: 2px;
+  width: 98px;
+  color: #333;
+}
+</style>
