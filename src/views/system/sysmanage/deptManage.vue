@@ -27,6 +27,8 @@
               :rowKey="(record) => record.code"
             >
               <span slot="action" slot-scope="text, record">
+                <a @click="$refs.depatCode.add(record)">二维码</a>
+                <a-divider type="vertical" />
                 <a @click="$refs.deptEditForm.edit(record)">编辑</a>
                 <a-divider type="vertical" v-show="false" />
                 <a-popconfirm
@@ -40,6 +42,7 @@
               </span>
             </a-table>
 
+            <dept-code ref="depatCode" @ok="handleOkCode" />
             <dept-add-form ref="deptAddForm" @ok="handleOkDept" />
             <dept-edit-form ref="deptEditForm" @ok="handleOkDept" />
           </a-card></div
@@ -112,6 +115,8 @@
               :rowKey="(record) => record.code"
             >
               <span slot="action" slot-scope="text, record">
+                <a @click="$refs.areaCode.add(record)">二维码</a>
+                <a-divider type="vertical" />
                 <a @click="$refs.areaEditForm.edit(record)">编辑</a>
                 <a-divider type="vertical" />
                 <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delAreaOut(record)">
@@ -120,6 +125,8 @@
               </span>
             </a-table>
 
+            <!-- <area-add-form ref="areaCode" @ok="handleOkArea" /> -->
+            <area-code ref="areaCode" />
             <area-add-form ref="areaAddForm" @ok="handleOkArea" />
             <area-edit-form ref="areaEditForm" @ok="handleOkArea" />
           </a-card>
@@ -140,6 +147,8 @@ import {
   delDiseaseArea,
 } from '@/api/modular/system/posManage'
 import deptAddForm from './deptAddForm'
+import deptCode from './deptCode'
+import areaCode from './areaCode'
 import deptEditForm from './deptEditForm'
 
 import diseaseAddForm from './diseaseAddForm'
@@ -152,6 +161,8 @@ export default {
   components: {
     STable,
     deptAddForm,
+    deptCode,
+    areaCode,
     deptEditForm,
     diseaseAddForm,
     diseaseEditForm,
@@ -221,6 +232,13 @@ export default {
           width: '150px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
+          customCell: () => {
+            return {
+              style: {
+                'min-width': '200px',
+              },
+            }
+          },
         },
       ],
       loadDataOut: [],
@@ -241,6 +259,7 @@ export default {
     handleOkDept() {
       this.getDeptsOut()
     },
+    handleOkCode() {},
 
     handleOkDisease() {
       this.getDiseasesNewOut()

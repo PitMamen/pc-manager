@@ -128,6 +128,20 @@ export function getArticleById(id) {
 
   })
 }
+
+/**
+ * 获取二维码链接
+ *
+ */
+ export function getQrUrl(param) {
+  return axios({
+    url: '/pushapi/wx/qrcode/getQrCode',
+    method: 'get',
+    params: param,
+
+  })
+}
+
 /**
  * 获取科室信息
  *

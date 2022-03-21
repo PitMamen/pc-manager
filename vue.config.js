@@ -87,6 +87,16 @@ const vueConfig = {
     }
   },
 
+  // '/api/fileApi': {
+  //   target: 'http://192.168.1.122:8071',
+  //   logLevel: 'debug',
+  //   ws: false,
+  //   changeOrigin: true,
+  //   pathRewrite: {
+  //     '^/api/fileApi': '' // 需要rewrite的,
+  //   }
+  // },
+
   devServer: {
     port: 8089,
     proxy: {
@@ -97,15 +107,6 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           '^/api/bdcApi': '' // 需要rewrite的,
-        }
-      },
-      '/api/fileApi': {
-        target: 'http://192.168.1.122:8071',
-        logLevel: 'debug',
-        ws: false,
-        changeOrigin: true,
-        pathRewrite: {
-          '^/api/fileApi': '' // 需要rewrite的,
         }
       },
 
@@ -125,6 +126,15 @@ const vueConfig = {
         changeOrigin: true,
         pathRewrite: {
           '^/api/contentapi': ''   //需要rewrite的,
+        }
+      },
+
+      '/api/pushapi': {
+        target: 'http://192.168.1.122/push-api',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/pushapi': ''   //需要rewrite的,
         }
       },
 

@@ -163,16 +163,16 @@ export default {
           title: '专病',
           dataIndex: 'cyzd',
         },
-        {
-          title: '出院时间',
-          dataIndex: 'outTime',
-        },
+        // {
+        //   title: '出院时间',
+        //   dataIndex: 'outTime',
+        // },
         {
           title: '是否购买套餐',
           dataIndex: 'hasPlan',
         },
         {
-          title: '分配状态',
+          title: '状态',
           dataIndex: 'hasGive',
         },
       ],
@@ -199,13 +199,20 @@ export default {
             } else {
               this.$set(res.data.rows[i], 'hasPlan', '是')
             }
-            //分配状态：  未注册 注册未分配 已分配
-            if (!res.data.rows[i].userId) {
-              this.$set(res.data.rows[i], 'hasGive', '未注册')
-            } else if (res.data.rows[i].planInfo && res.data.rows[i].planInfo.length > 0) {
-              this.$set(res.data.rows[i], 'hasGive', '已分配')
+            // //分配状态：  未注册 注册未分配 已分配
+            // if (!res.data.rows[i].userId) {
+            //   this.$set(res.data.rows[i], 'hasGive', '未注册')
+            // } else if (res.data.rows[i].planInfo && res.data.rows[i].planInfo.length > 0) {
+            //   this.$set(res.data.rows[i], 'hasGive', '已分配')
+            // } else {
+            //   this.$set(res.data.rows[i], 'hasGive', '注册未分配')
+            // }
+
+            //状态：  未注册 注册未分配 已分配
+            if (!res.data.rows[i].bqmc) {
+              this.$set(res.data.rows[i], 'hasGive', '住院')
             } else {
-              this.$set(res.data.rows[i], 'hasGive', '注册未分配')
+              this.$set(res.data.rows[i], 'hasGive', '门诊')
             }
           }
           this.loadDataOut = res.data
