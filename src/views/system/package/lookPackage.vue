@@ -199,14 +199,14 @@ export default {
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '健康咨询' },
+        { type: 'textNum', value: '图文咨询' },
         { type: 'videoNum', value: '视频咨询' },
         { type: 'appointBedNum', value: '床位预约' },
       ],
 
       goodsAttr: [
         // { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-        // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
+        // { name: '图文咨询', attrName: 'textNum', attrValue: '1' },
       ],
 
       uploadData: {
@@ -409,7 +409,7 @@ export default {
       }
 
       if (this.goodsAttr.length == 0) {
-        this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
+        this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
         return
       }
 
@@ -417,7 +417,7 @@ export default {
         if (this.goodsAttr[0].attrName == 'textNum') {
           this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
         } else {
-          this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
+          this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
         }
       }
     },

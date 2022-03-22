@@ -185,7 +185,7 @@ export default {
           dataIndex: 'deptName',
         },
         {
-          title: '服务类别',
+          title: '服务名称',
           dataIndex: 'goodsSpec',
         },
         {

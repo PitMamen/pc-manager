@@ -190,14 +190,14 @@ export default {
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '健康咨询' },
+        { type: 'textNum', value: '图文咨询' },
         { type: 'videoNum', value: '视频咨询' },
         { type: 'appointBedNum', value: '床位预约' },
       ],
 
       goodsAttr: [
         // { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-        // { name: '健康咨询', attrName: 'textNum', attrValue: '1' },
+        // { name: '图文咨询', attrName: 'textNum', attrValue: '1' },
       ],
 
       uploadData: {
@@ -439,8 +439,8 @@ export default {
 
       let newName = this.getNewOne()
       console.log('newName', newName)
-      if (newName == '健康咨询') {
-        this.goodsAttr.push({ name: '健康咨询', attrName: 'textNum', attrValue: '1' })
+      if (newName == '图文咨询') {
+        this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
       } else if (newName == '视频咨询') {
         this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
       } else {

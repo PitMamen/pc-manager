@@ -61,7 +61,7 @@
           </div>
       </div> -->
 
-      <span class="title-article-pic"><span style="color: red">*</span> 图片 :（限定一张，建议尺寸比例4：3）</span>
+      <span class="title-article-pic"><span style="color: red">*</span> 图片 :（限定一张，文件大小64kb以下，建议尺寸比例4：3）</span>
       <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
       <div class="clearfix" style="margin-top: 20px">
         <a-upload

@@ -130,6 +130,19 @@ export function getArticleById(id) {
 }
 
 /**
+ * 新增/修改文章信息，微信公众号推送文章
+ *
+ */
+ export function saveArticleWeixin(parameter) {
+  return axios({
+    url: '/pushapi/health/wx/uploadNews',
+    method: 'post',
+
+    data: parameter
+  })
+}
+
+/**
  * 获取二维码链接
  *
  */

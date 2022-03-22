@@ -61,11 +61,13 @@
           </div>
       </div> -->
 
-      <span class="title-article-pic"><span style="color: red">*</span> 图片 :（限定一张，建议尺寸比例4：3）</span>
+      <span class="title-article-pic"
+        ><span style="color: red">*</span> 图片 :（限定一张，文件大小64kb以下，建议尺寸比例4：3）</span
+      >
       <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
-          :action="actionUrl"
+          :action="actionUrlCover"
           :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
@@ -100,8 +102,7 @@
 
 
 <script type="text/javascript">
-import { STable } from '@/components'
-import { saveArticle, getArticleById, getDepts, getDiseases } from '@/api/modular/system/posManage'
+import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -132,7 +133,11 @@ export default {
           return res.data
         })
       },
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      //文章内上传图片url
+      actionUrl: '/api/pushapi/health/wx/uploadInnerImg',
+      //健康消息封面上传图片
+      actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
       fileList: [],
       previewVisible: false,
       previewImage: '',
@@ -143,15 +148,6 @@ export default {
   },
 
   created() {
-    //获取科室列表
-    // queryDepartment('444885559').then((res) => {
-    //   if (res.code == 0) {
-    //     this.ksTypeData = res.data
-    //   } else {
-    //     this.$message.error('获取科室列表失败：' + res.message)
-    //   }
-    // })
-
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
@@ -197,7 +193,7 @@ export default {
     },
 
     goConfirm() {
-      console.log(this.checkData)
+      console.log('goConfirmCheckData', this.checkData)
       if (!this.checkData.title) {
         this.$message.error('请填写标题')
         return
@@ -216,11 +212,12 @@ export default {
       }
 
       //组装图片
+      debugger
       if (this.fileList.length == 0) {
         this.$message.error('请上传图片！')
         return
       } else {
-        this.checkData.previewUrl = this.fileList[0].response.data.fileLinkUrl
+        this.checkData.extraData = this.fileList[0].response.data.media_id
       }
 
       if (!this.checkData.content) {
@@ -237,10 +234,33 @@ export default {
       this.checkData.publisherName = user.userName
       this.checkData.source = 'weixin'
       this.checkData.publisherUserId = user.userId
-      saveArticle(this.checkData).then((res) => {
+
+      //contentSourceUrl、digest、url不管
+      let articleList = [
+        {
+          thumb_media_id: this.checkData.extraData,
+          author: this.checkData.publisherName,
+          title: this.checkData.title,
+          content: this.checkData.content,
+          show_cover_pic: true,
+          need_open_comment: 0,
+          only_fans_can_comment: 0,
+        },
+      ]
+      debugger
+      saveArticleWeixin(articleList).then((res) => {
         if (res.code == 0) {
-          this.$message.success('保存成功')
-          this.$router.go(-1)
+          // this.$message.success('保存成功')
+          // this.$router.go(-1)
+          this.checkData.templateId = res.data.media_id
+          saveArticle(this.checkData).then((res) => {
+            if (res.code == 0) {
+              this.$message.success('保存成功')
+              this.$router.go(-1)
+            } else {
+              this.$message.error(res.message)
+            }
+          })
         } else {
           this.$message.error(res.message)
         }
@@ -294,12 +314,41 @@ export default {
     editor.config.onchange = (html) => {
       this.checkData.content = html
     }
+    // 默认情况下，显示所有菜单
+    editor.config.menus = [
+      'head',
+      'bold',
+      'fontSize',
+      'fontName',
+      'italic',
+      'underline',
+      'strikeThrough',
+      'indent',
+      'lineHeight',
+      'foreColor',
+      'backColor',
+      'link',
+      'list',
+      'todo',
+      'justify',
+      'quote',
+      'emoticon',
+      'image',
+      // 'video',
+      'table',
+      'code',
+      'splitLine',
+      'undo',
+      'redo',
+    ]
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
-    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+    // editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+    editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
 
-    editor.config.uploadVideoName = 'file'
-    editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
+    //教育文章先不支持视频，所以注释
+    // editor.config.uploadVideoName = 'file'
+    // editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
 
     editor.create()
 
@@ -309,7 +358,7 @@ export default {
     } else {
       document.title = '新增教育文章'
     }
-    console.log(articleId)
+    console.log('articleId', articleId)
     if (articleId) {
       getArticleById(articleId).then((res) => {
         if (res.code == 0) {
