@@ -124,7 +124,7 @@ export default {
       // 查询参数 existsPlanFlag传 1：已订购套餐患者；2：未订购套餐患者；不传和其他：全部患者
       queryParam: {
         // existsPlanFlag: '2',
-        existsPlanFlag: '',
+        existsPlanFlag: 2,
         bqmc: '',
         // deptCode: Vue.ls.get(TRUE_USER).departmentCode,
         // isRegister: '1',
@@ -214,9 +214,9 @@ export default {
 
             //状态：  未注册 注册未分配 已分配
             if (!res.data.rows[i].bqmc) {
-              this.$set(res.data.rows[i], 'hasGive', '住院')
-            } else {
               this.$set(res.data.rows[i], 'hasGive', '门诊')
+            } else {
+              this.$set(res.data.rows[i], 'hasGive', '住院')
             }
           }
           this.loadDataOut = res.data
@@ -303,7 +303,7 @@ export default {
       }
       deps.sort()
       for (let i = 0; i < deps.length - 1; i++) {
-        if (deps[i] == deps[i + 1]) {
+        if (deps[i] != deps[i + 1]) {
           this.$message.error('请选择同一个科室的患者')
           return
         }

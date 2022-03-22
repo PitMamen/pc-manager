@@ -59,7 +59,7 @@ export default {
       this.record = record
       this.visible = true
 
-      getQrUrl({ ks: 0, bq: record.id }).then((res) => {
+      getQrUrl({ ks: record.departmentId, bq: record.id }).then((res) => {
         if (res.code == 0) {
           this.$set(this.record, 'url', res.data)
         } else {
