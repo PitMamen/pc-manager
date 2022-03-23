@@ -46,26 +46,13 @@
         </div>
       </div>
 
-      <!-- <div class="div-line-wrap">
-        <div class="div-total-one">
-          <span class="span-item-name" style="width: 100%;"><span style="color: red">*</span>上传文章头像 :  </span>
-        </div>
-        <div :key="ImgKey">
-            <a-upload name="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"   :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-              <a-input
-                v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-                style="display: none"
-              />
-              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-            </a-upload>
-          </div>
-      </div> -->
-
-      <span class="title-article-pic"><span style="color: red">*</span> 图片 :（限定一张，文件大小64kb以下，建议尺寸比例4：3）</span>
+      <span class="title-article-pic"
+        ><span style="color: red">*</span> 图片 :（限定一张，文件大小64kb以下，建议尺寸比例4：3）</span
+      >
       <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
-          :action="actionUrl"
+          :action="actionUrlCover"
           :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
@@ -101,7 +88,7 @@
 
 <script type="text/javascript">
 import { STable } from '@/components'
-import { saveArticle, getArticleById, getDepts, getDiseases } from '@/api/modular/system/posManage'
+import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -124,7 +111,11 @@ export default {
       },
 
       ksTypeData: [],
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      //文章内上传图片url
+      actionUrl: '/api/pushapi/health/wx/uploadInnerImg',
+      //健康消息封面上传图片
+      actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
       fileList: [],
       previewVisible: false,
       previewImage: '',
@@ -143,15 +134,6 @@ export default {
   },
 
   created() {
-    //获取科室列表
-    // queryDepartment('444885559').then((res) => {
-    //   if (res.code == 0) {
-    //     this.ksTypeData = res.data
-    //   } else {
-    //     this.$message.error('获取科室列表失败：' + res.message)
-    //   }
-    // })
-
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
@@ -221,11 +203,13 @@ export default {
         return
       } else {
         delete this.checkData.previewUrl
-        this.$set(this.checkData, 'previewUrl', '')
+        this.$set(this.checkData, 'extraData', '')
         if (this.fileList[0].response) {
-          this.checkData.previewUrl = this.fileList[0].response.data.fileLinkUrl
+          // this.checkData.previewUrl = this.fileList[0].response.data.fileLinkUrl
+          this.checkData.extraData = this.fileList[0].response.data.media_id
         } else {
-          this.checkData.previewUrl = this.fileList[0].url
+          // this.checkData.previewUrl = this.fileList[0].url
+          this.checkData.extraData = this.fileList[0].url
         }
       }
 
@@ -243,10 +227,33 @@ export default {
       this.checkData.publisherName = user.userName
       this.checkData.source = 'weixin'
       this.checkData.publisherUserId = user.userId
-      saveArticle(this.checkData).then((res) => {
+
+      //contentSourceUrl、digest、url不管
+      let articleList = [
+        {
+          thumb_media_id: this.checkData.extraData,
+          author: this.checkData.publisherName,
+          title: this.checkData.title,
+          content: this.checkData.content,
+          show_cover_pic: true,
+          need_open_comment: 0,
+          only_fans_can_comment: 0,
+        },
+      ]
+      // debugger
+      saveArticleWeixin(articleList).then((res) => {
         if (res.code == 0) {
-          this.$message.success('保存成功')
-          this.$router.go(-1)
+          // this.$message.success('保存成功')
+          // this.$router.go(-1)
+          this.checkData.templateId = res.data.media_id
+          saveArticle(this.checkData).then((res) => {
+            if (res.code == 0) {
+              this.$message.success('保存成功')
+              this.$router.go(-1)
+            } else {
+              this.$message.error(res.message)
+            }
+          })
         } else {
           this.$message.error(res.message)
         }
@@ -301,11 +308,40 @@ export default {
       this.checkData.content = html
     }
     // 配置 server 接口地址
+    // 默认情况下，显示所有菜单
+    editor.config.menus = [
+      'head',
+      'bold',
+      'fontSize',
+      'fontName',
+      'italic',
+      'underline',
+      'strikeThrough',
+      'indent',
+      'lineHeight',
+      'foreColor',
+      'backColor',
+      'link',
+      'list',
+      'todo',
+      'justify',
+      'quote',
+      'emoticon',
+      'image',
+      // 'video',
+      'table',
+      'code',
+      'splitLine',
+      'undo',
+      'redo',
+    ]
+    // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
-    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+    // editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+    editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
 
-    editor.config.uploadVideoName = 'file'
-    editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
+    // editor.config.uploadVideoName = 'file'
+    // editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
 
     editor.create()
 
@@ -327,7 +363,7 @@ export default {
             uid: '-1',
             name: '封面' + 1,
             status: 'done',
-            url: this.checkData.previewUrl,
+            url: this.checkData.extraData,
           })
         } else {
           this.$message.error('获取失败：' + res.message)
