@@ -170,6 +170,15 @@ export default {
       this.previewVisible = true
     },
 
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
     handleChange({ fileList }) {
       this.fileList = fileList
       if (this.fileList.length > 1) {

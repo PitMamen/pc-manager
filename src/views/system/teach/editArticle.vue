@@ -164,6 +164,15 @@ export default {
       }
     },
 
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
     handleCancel() {
       this.previewVisible = false
     },
@@ -361,7 +370,7 @@ export default {
           this.getDiseasesOut(this.checkData.categoryId)
           this.fileList.push({
             uid: '-1',
-            name: '封面' + 1,
+            name: '封面',
             status: 'done',
             url: this.checkData.extraData,
           })

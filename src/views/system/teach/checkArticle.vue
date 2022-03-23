@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <div id="myHtml" style="margin-left:8%"></div>
+    <div id="myHtml" style="margin-left: 8%"></div>
 
     <div style="height: 50px; backgroud-color: white" />
   </div>
@@ -123,7 +123,7 @@ export default {
           document.getElementById('myHtml').innerHTML = res.data.content
           this.fileList.push({
             uid: '-1',
-            name: '封面' + 1,
+            name: '封面',
             status: 'done',
             url: this.checkData.extraData,
           })
@@ -145,6 +145,15 @@ export default {
       }
       this.previewImage = file.url || file.preview
       this.previewVisible = true
+    },
+
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
     },
 
     handleChange({ fileList }) {

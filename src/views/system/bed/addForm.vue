@@ -200,6 +200,15 @@ export default {
       this.previewVisibleDetail = true
     },
 
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
     handleChangeDetail({ fileList }) {
       //this.record.tradeAppointLog[index].dealImgList
       // this.fileListDetail = fileList
