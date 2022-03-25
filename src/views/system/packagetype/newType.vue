@@ -1,6 +1,6 @@
 <template>
   <div class="div-new-package">
-    <p class="p-title">修改套餐</p>
+    <p class="p-title">新增类别</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
@@ -11,8 +11,8 @@
 
       <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
-          <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-            item.deptName
+          <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
+            item.departmentName
           }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -22,19 +22,11 @@
       </a-form-item>
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch
-          :checked="statusIf"
-          @change="statusChange"
-          v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
-        />
+        <a-switch :checked="uploadData.goodsInfo.isOnline" />
       </a-form-item>
 
       <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch
-          :checked="topFlagIf"
-          @change="topFlagChange"
-          v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
-        />
+        <a-switch :checked="uploadData.goodsInfo.isSuggest" />
       </a-form-item>
 
       <a-form-item label="价格(￥)" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -73,9 +65,7 @@
           <a-input-number v-model="item.attrValue" :min="0" :max="1000000" />
         </div>
 
-        <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteItem(index)">
-          <a-button class="btn-delete" type="primary">刪除</a-button>
-        </a-popconfirm>
+        <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
       </div>
 
       <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="addItem">添加</a-button>
@@ -149,7 +139,7 @@
 </template>
 
 <script>
-import { queryDepartment, savePlan, getPlanDetail, delGoodsAttr } from '@/api/modular/system/posManage'
+import { queryDepartment, savePlan, getDepts } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -173,28 +163,24 @@ export default {
       loading: false,
       hosData: [],
       periodData: [
-        { code: 1, valueName: '半年', value: '6' },
-        { code: 2, valueName: '一年', value: '12' },
-        { code: 3, valueName: '永久', value: '1200' },
+        { code: 1, valueName: '半年', value: 6 },
+        { code: 2, valueName: '一年', value: 12 },
+        { code: 3, valueName: '永久', value: 1200 },
       ],
       keshiData: [],
-      statusIf: false,
-      topFlagIf: false,
-      // actionUrl: 'http://192.168.1.122:8071/fileUpload/uploadImgFile',
       actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '图文咨询' },
-        { type: 'videoNum', value: '视频咨询' },
+        { type: 'textNum', value: '视频咨询' },
+        { type: 'videoNum', value: '图文咨询' },
         { type: 'appointBedNum', value: '床位预约' },
       ],
 
       goodsAttr: [
-        // { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-        // { name: '图文咨询', attrName: 'textNum', attrValue: '1' },
+        { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
       ],
 
       uploadData: {
@@ -210,13 +196,10 @@ export default {
           price: '',
           theLastTime: '120',
           goodsAttr: [],
+          isOnline: true,
+          isSuggest: true,
         },
-        templateTask: [
-          // {
-          //   execTime: '0',
-          //   taskName: '套餐购买',
-          // },
-        ],
+        templateTask: [],
         templateName: '',
         basetimeType: '0',
       },
@@ -240,121 +223,31 @@ export default {
   },
 
   created() {
-    this.planId = this.$route.params.planId
-    this.getPlanDetailOut()
-    queryDepartment('444885559').then((res) => {
-      if (res.code == 0) {
-        this.keshiData = res.data
-      } else {
-        this.$message.error('获取科室列表失败：' + res.message)
-      }
+    this.getDeptsOut()
+
+    this.form.setFieldsValue({
+      topFlagIf: true,
+      statusIf: true,
     })
   },
 
   methods: {
-    statusChange() {
-      this.statusIf = this.statusIf ? false : true
-    },
-    topFlagChange() {
-      this.topFlagIf = this.topFlagIf ? false : true
-    },
-    getPlanDetailOut() {
-      getPlanDetail(this.planId).then((res) => {
-        if (res.code == 0) {
-          this.uploadData = res.data
-
-          this.form.setFieldsValue({
-            goodsName: this.uploadData.goodsInfo.goodsName,
-            belong: this.uploadData.goodsInfo.belong,
-            goodsSpec: this.uploadData.goodsInfo.goodsSpec,
-            price: this.uploadData.goodsInfo.price,
-            theLastTime: this.uploadData.goodsInfo.theLastTime,
-          })
-
-          console.log('555', this.uploadData.goodsInfo.status == 1)
-          if (this.uploadData.goodsInfo.status == 1) {
-            this.statusIf = true
-            this.form.setFieldsValue({
-              statusIf: true,
-            })
-          } else {
-            this.form.setFieldsValue({
-              statusIf: false,
-            })
-          }
-
-          console.log('666', this.uploadData.goodsInfo.topFlag == 1)
-          if (this.uploadData.goodsInfo.topFlag == 1) {
-            this.topFlagIf = true
-            this.form.setFieldsValue({
-              topFlagIf: true,
-            })
-          } else {
-            this.form.setFieldsValue({
-              topFlagIf: false,
-            })
-          }
-
-          //组装服务类型
-          for (let index = 0; index < this.uploadData.goodsInfo.goodsAttr.length; index++) {
-            if (
-              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'videoNum' ||
-              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'textNum' ||
-              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'appointBedNum'
-            ) {
-              this.goodsAttr.push(this.uploadData.goodsInfo.goodsAttr[index])
-            }
-          }
-
-          //组装图片
-          /**
-           *    {
-          uid: '-2',
-          name: 'image.png',
-          status: 'done',
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-        },
-           */
-          this.fileList.push({
-            uid: '-1',
-            name: '封面' + 1,
-            status: 'done',
-            url: this.uploadData.goodsInfo.previewList,
-          })
-
-          //banner图
-          let bannerPics = this.uploadData.goodsInfo.bannerList.split(',')
-          for (let index = 0; index < bannerPics.length; index++) {
-            this.fileListBanner.push({
-              uid: 0 - index + '',
-              name: 'Banner' + index,
-              status: 'done',
-              url: bannerPics[index],
-            })
-          }
-
-          //详情图
-          let detailPics = this.uploadData.goodsInfo.imgList.split(',')
-          for (let index = 0; index < detailPics.length; index++) {
-            this.fileListDetail.push({
-              uid: 0 - index + '',
-              name: '详情' + index,
-              status: 'done',
-              url: detailPics[index],
-            })
-          }
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-
     getBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader()
         reader.readAsDataURL(file)
         reader.onload = () => resolve(reader.result)
         reader.onerror = (error) => reject(error)
+      })
+    },
+
+    getDeptsOut() {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
       })
     },
 
@@ -411,18 +304,7 @@ export default {
     },
 
     deleteItem(index) {
-      if (this.goodsAttr[index].id) {
-        delGoodsAttr(this.goodsAttr[index].id).then((res) => {
-          if (res.code == 0) {
-            this.goodsAttr.splice(index, 1)
-            this.$message.success('删除成功')
-          } else {
-            this.$message.error(res.message)
-          }
-        })
-      } else {
-        this.goodsAttr.splice(index, 1)
-      }
+      this.goodsAttr.splice(index, 1)
     },
 
     /**
@@ -475,48 +357,30 @@ export default {
           this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
           this.uploadData.goodsInfo.price = values.price
           this.uploadData.goodsInfo.theLastTime = values.theLastTime
-          this.uploadData.goodsInfo.status = values.statusIf ? '1' : '3'
-          this.uploadData.goodsInfo.topFlag = values.topFlagIf ? '1' : '0'
           this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
 
           this.uploadData.templateName = values.goodsName
 
+          this.uploadData.goodsInfo.status = this.uploadData.goodsInfo.isOnline ? '1' : '3'
+          this.uploadData.goodsInfo.topFlag = this.uploadData.goodsInfo.isSuggest ? '1' : '0'
           //组装图片
           if (this.fileList.length == 0) {
             this.$message.error('请上传套餐图片！')
             return
           } else {
-            delete this.uploadData.goodsInfo.previewList
-            this.$set(this.uploadData.goodsInfo, 'previewList', '')
-            if (this.fileList[0].response) {
-              this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
-            } else {
-              this.uploadData.goodsInfo.previewList = this.fileList[0].url
-            }
+            this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
           }
 
           if (this.fileListBanner.length == 0) {
             this.$message.error('请上传详情banner图片！')
             return
           } else {
-            //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
-            delete this.uploadData.goodsInfo.bannerList
-            this.$set(this.uploadData.goodsInfo, 'bannerList', '')
             let str = ''
             for (let index = 0; index < this.fileListBanner.length; index++) {
-              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
               if (index != this.fileListBanner.length - 1) {
-                if (this.fileListBanner[index].response) {
-                  str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
-                } else {
-                  str = str + this.fileListBanner[index].url + ','
-                }
+                str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
               } else {
-                if (this.fileListBanner[index].response) {
-                  str = str + this.fileListBanner[index].response.data.fileLinkUrl
-                } else {
-                  str = str + this.fileListBanner[index].url
-                }
+                str = str + this.fileListBanner[index].response.data.fileLinkUrl
               }
             }
 
@@ -527,31 +391,17 @@ export default {
             this.$message.error('请上传商品详情图片！')
             return
           } else {
-            //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
-            delete this.uploadData.goodsInfo.imgList
-            this.$set(this.uploadData.goodsInfo, 'imgList', '')
-
             let str = ''
             for (let index = 0; index < this.fileListDetail.length; index++) {
-              // this.uploadData.goodsInfo.bannerList.push(this.fileListBanner[index].response.data.fileLinkUrl)
               if (index != this.fileListDetail.length - 1) {
-                if (this.fileListDetail[index].response) {
-                  str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
-                } else {
-                  str = str + this.fileListDetail[index].url + ','
-                }
+                str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
               } else {
-                if (this.fileListDetail[index].response) {
-                  str = str + this.fileListDetail[index].response.data.fileLinkUrl
-                } else {
-                  str = str + this.fileListDetail[index].url
-                }
+                str = str + this.fileListDetail[index].response.data.fileLinkUrl
               }
             }
 
             this.uploadData.goodsInfo.imgList = str
           }
-          console.log('www', this.uploadData)
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
             if (res.code == 0) {
@@ -635,7 +485,7 @@ export default {
         }
 
         .span-item-value {
-          width: 20%;
+          width: 30%;
           color: #333;
           text-align: left;
           padding-left: 20px;

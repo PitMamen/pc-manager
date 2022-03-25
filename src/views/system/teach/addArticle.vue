@@ -46,21 +46,6 @@
         </div>
       </div>
 
-      <!-- <div class="div-line-wrap">
-        <div class="div-total-one">
-          <span class="span-item-name" style="width: 100%;"><span style="color: red">*</span>上传文章头像 :  </span>
-        </div>
-        <div :key="ImgKey">
-            <a-upload name="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"   :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-              <a-input
-                v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-                style="display: none"
-              />
-              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-            </a-upload>
-          </div>
-      </div> -->
-
       <span class="title-article-pic"
         ><span style="color: red">*</span> 图片 :（限定一张，文件大小64kb以下，建议尺寸比例4：3）</span
       >
@@ -151,8 +136,6 @@ export default {
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
   },

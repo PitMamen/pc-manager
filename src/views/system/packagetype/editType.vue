@@ -1,6 +1,6 @@
 <template>
   <div class="div-new-package">
-    <p class="p-title">修改套餐</p>
+    <p class="p-title">修改类别</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 

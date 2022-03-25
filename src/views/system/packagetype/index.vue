@@ -9,20 +9,20 @@
                 class="table-page-search-submitButtons"
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
-                <a-button type="primary" @click="newPackage">新增套餐</a-button>
+                <a-button type="primary" @click="newPackage">新增类别</a-button>
               </span>
             </a-col>
 
-            <a-col :md="4" :sm="24">
-              <a-form-item label="所属类别">
-                <a-select allow-clear v-model="queryParams.belong" placeholder="请选择所属类别">
+            <!-- <a-col :md="4" :sm="24">
+              <a-form-item label="科室">
+                <a-select allow-clear v-model="queryParams.belong" placeholder="请选择科室">
                   <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
                     item.deptName
                   }}</a-select-option>
                 </a-select>
               </a-form-item>
-            </a-col>
-
+            </a-col> -->
+            <!-- 
             <a-col :md="4" :sm="24">
               <a-form-item label="上架状态">
                 <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
@@ -33,7 +33,7 @@
               </a-form-item>
             </a-col>
 
-            <!-- <a-col :md="4" :sm="24">
+            <a-col :md="4" :sm="24">
               <a-form-item label="推荐状态">
                 <a-select allow-clear v-model="queryParams.topFlag" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in suggestData" :key="index" :value="item.code">{{
@@ -43,7 +43,7 @@
               </a-form-item>
             </a-col> -->
 
-            <a-col :md="4" :sm="24">
+            <!-- <a-col :md="4" :sm="24">
               <a-form-item label="关键字">
                 <a-input
                   v-model="queryParams.keyWords"
@@ -61,7 +61,7 @@
               >
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               </span>
-            </a-col>
+            </a-col> -->
           </a-row>
         </a-form>
       </div>
@@ -177,27 +177,33 @@ export default {
           dataIndex: 'xh',
         },
         {
-          title: '套餐名称',
+          title: '类别名称',
           dataIndex: 'goodsName',
         },
         {
-          title: '所属类别',
+          title: '所属科室',
           dataIndex: 'deptName',
         },
-        // {
-        //   title: '服务名称',
-        //   dataIndex: 'goodsSpec',
-        // },
         {
           title: '是否上架',
           dataIndex: 'ifOnline',
           scopedSlots: { customRender: 'ifOnline' },
         },
-        // {
-        //   title: '是否推荐',
-        //   dataIndex: 'ifSuggest',
-        //   scopedSlots: { customRender: 'ifSuggest' },
-        // },
+        {
+          title: '是否推荐',
+          dataIndex: 'ifSuggest',
+          scopedSlots: { customRender: 'ifSuggest' },
+        },
+
+        {
+          title: '创建人',
+          dataIndex: 'deptName',
+        },
+
+        {
+          title: '创建时间',
+          dataIndex: 'deptName',
+        },
         {
           title: '操作',
           width: '150px',
@@ -298,12 +304,12 @@ export default {
     },
 
     newPackage() {
-      this.$router.push({ name: 'package_new' })
+      this.$router.push({ name: 'package_type_add' })
     },
 
     goCheck(record) {
       this.$router.push({
-        name: 'package_look',
+        name: 'package_type_look',
         params: {
           planId: record.templateId,
         },
@@ -312,7 +318,7 @@ export default {
 
     goChange(record) {
       this.$router.push({
-        name: 'package_edit',
+        name: 'package_type_edit',
         params: {
           planId: record.templateId,
         },
