@@ -16,6 +16,8 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
+        <a @click="goPush(record)" v-show="record.status != '2'">发布</a>
+        <a-divider type="vertical" v-show="record.status != '2'" />
         <a @click="goCheck(record)">查看</a>
         <a-divider type="vertical" />
         <a @click="goChange(record)">修改</a>
@@ -33,7 +35,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getKeShiData, getAllArticlesTeach, delArticle } from '@/api/modular/system/posManage'
+import { pushArticle, getAllArticlesTeach, delArticle } from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -52,11 +54,6 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-        },
-
-        {
-          title: '文章编号',
-          dataIndex: 'articleId',
         },
         {
           title: '文章名称',
@@ -77,12 +74,24 @@ export default {
           width: 300,
         },
         {
+          title: '状态',
+          dataIndex: 'statusName',
+        },
+        {
+          title: '阅读次数',
+          dataIndex: 'clickNum',
+        },
+        {
+          title: '发布时间',
+          dataIndex: 'updateTime',
+        },
+        {
           title: '创建时间',
           dataIndex: 'createTime',
         },
         {
           title: '操作',
-          width: '150px',
+          width: '250px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -106,6 +115,11 @@ export default {
           //设置序号
           data.rows.forEach((item, index) => {
             item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+            if (item.status == '2') {
+              this.$set(item, 'statusName', '已发布')
+            } else {
+              this.$set(item, 'statusName', '暂存')
+            }
           })
 
           return data
@@ -131,6 +145,17 @@ export default {
       console.log(record)
       this.$router.push({ name: 'article_teach_edit', params: record })
     },
+    goPush(record) {
+      pushArticle({ articleId: record.articleId }).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('发布成功')
+          this.handleOk()
+        } else {
+          this.$message.error('发布失败：' + res.message)
+        }
+      })
+    },
+
     //删除文章
     goDelete(record) {
       delArticle(record.articleId).then((res) => {

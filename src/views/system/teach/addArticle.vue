@@ -204,7 +204,6 @@ export default {
       }
 
       //组装图片
-      debugger
       if (this.fileList.length == 0) {
         this.$message.error('请上传图片！')
         return
@@ -239,7 +238,6 @@ export default {
           only_fans_can_comment: 0,
         },
       ]
-      debugger
       saveArticleWeixin(articleList).then((res) => {
         if (res.code == 0) {
           // this.$message.success('保存成功')

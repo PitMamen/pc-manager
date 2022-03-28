@@ -114,7 +114,7 @@
 
 <script>
 import { STable } from '@/components'
-import { queryDepartment, getServicePackages, savePlan } from '@/api/modular/system/posManage'
+import { queryDepartment, qryGoodsClass, saveGoodsClass } from '@/api/modular/system/posManage'
 // import addForm from './addForm'
 // import editForm from './editForm'
 
@@ -178,7 +178,7 @@ export default {
         },
         {
           title: '类别名称',
-          dataIndex: 'goodsName',
+          dataIndex: 'className',
         },
         {
           title: '所属科室',
@@ -197,12 +197,12 @@ export default {
 
         {
           title: '创建人',
-          dataIndex: 'deptName',
+          dataIndex: 'ownerName',
         },
 
         {
           title: '创建时间',
-          dataIndex: 'deptName',
+          dataIndex: 'createTimeName',
         },
         {
           title: '操作',
@@ -214,9 +214,10 @@ export default {
       loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
+        return qryGoodsClass(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            this.$set(res.data.rows[i], 'createTimeName', this.formatDate(res.data.rows[i].createTime))
             if (res.data.rows[i].topFlag == 1) {
               this.$set(res.data.rows[i], 'isSuggest', true)
               this.$set(res.data.rows[i], 'isSuggestText', '确定取消推荐？')
@@ -251,14 +252,24 @@ export default {
       this.selectedRowKeys = selectedRowKeys
     },
 
+    formatDate(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
     goOnline(record) {
       if (record.status == 1) {
         record.status = 3
       } else {
         record.status = 1
       }
-      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, status: record.status } }
-      savePlan(data).then((res) => {
+      let data = { classId: record.classId, status: record.status, className: record.className }
+      saveGoodsClass(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
           record.isOnline = !record.isOnline
@@ -278,8 +289,8 @@ export default {
       } else {
         record.topFlag = 1
       }
-      let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
-      savePlan(data).then((res) => {
+      let data = { classId: record.classId, topFlag: record.topFlag, className: record.className }
+      saveGoodsClass(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
           record.isSuggest = !record.isSuggest
@@ -308,21 +319,11 @@ export default {
     },
 
     goCheck(record) {
-      this.$router.push({
-        name: 'package_type_look',
-        params: {
-          planId: record.templateId,
-        },
-      })
+      this.$router.push({ name: 'package_type_look', params: { record: record } })
     },
 
     goChange(record) {
-      this.$router.push({
-        name: 'package_type_edit',
-        params: {
-          planId: record.templateId,
-        },
-      })
+      this.$router.push({ name: 'package_type_edit', params: { record: record } })
     },
 
     handleOk() {

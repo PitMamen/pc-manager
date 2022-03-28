@@ -44,7 +44,7 @@ export function getAllArticles(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source ,
+    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source,
     method: 'get',
 
     data: newPara
@@ -71,7 +71,7 @@ export function getAllArticlesNew(parameter) {
  * 获取文章  教育文章
  *
  */
- export function getAllArticlesTeach(parameter) {
+export function getAllArticlesTeach(parameter) {
   return axios({
     url: '/bdcApi/health/patient/allArticlesPage',
     method: 'get',
@@ -133,7 +133,7 @@ export function getArticleById(id) {
  * 新增/修改文章信息，微信公众号推送文章
  *
  */
- export function saveArticleWeixin(parameter) {
+export function saveArticleWeixin(parameter) {
   return axios({
     url: '/pushapi/health/wx/uploadNews',
     method: 'post',
@@ -143,10 +143,22 @@ export function getArticleById(id) {
 }
 
 /**
+ * 获取科室信息
+ *
+ */
+export function pushArticle(param) {
+  return axios({
+    url: '/bdcApi/patient/pushWeixinArticle',
+    method: 'get',
+    params: param,
+  })
+}
+
+/**
  * 获取二维码链接
  *
  */
- export function getQrUrl(param) {
+export function getQrUrl(param) {
   return axios({
     url: '/pushapi/wx/qrcode/getQrCode',
     method: 'get',
@@ -560,7 +572,7 @@ export function getServicePackages(parameter) {
 /**
  * 预约工单查询
  */
- export function getAppointList(parameter) {
+export function getAppointList(parameter) {
   return axios({
     url: '/bdcApi/appoint/qryTradeAppointList',
     method: 'post',
@@ -623,6 +635,42 @@ export function getCheckDataList(parameter) {
       start: parameter.pageNo,
       type: parameter.type
     }
+  })
+}
+
+/**
+ * 获取类别列表
+ *
+ */
+export function qryGoodsClass(param) {
+  return axios({
+    url: '/bdcApi/sys/qryGoodsClass',
+    method: 'post',
+    data: param,
+  })
+}
+
+/**
+ * 新增修改类别
+ *
+ */
+export function saveGoodsClass(param) {
+  return axios({
+    url: '/bdcApi/sys/saveGoodsClass',
+    method: 'post',
+    data: param,
+  })
+}
+
+/**
+ * 删除类别
+ *
+ */
+export function delGoodsClass(param) {
+  return axios({
+    url: '/bdcApi/sys/delGoodsClass',
+    method: 'post',
+    data: param,
   })
 }
 

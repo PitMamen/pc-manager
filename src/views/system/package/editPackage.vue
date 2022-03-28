@@ -519,7 +519,6 @@ export default {
                 }
               }
             }
-
             this.uploadData.goodsInfo.bannerList = str
           }
 
@@ -548,7 +547,6 @@ export default {
                 }
               }
             }
-
             this.uploadData.goodsInfo.imgList = str
           }
           console.log('www', this.uploadData)
