@@ -59,11 +59,6 @@
         </a-select> -->
       </a-form-item>
 
-      <!-- <a-form-item label="服务类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span
-          v-decorator="['dd', { initialValue: 0, rules: [{ required: true, message: '请输入商品价格！' }] }]"
-        ></span>
-      </a-form-item> -->
     </a-form>
 
     <div class="div-service-type">
