@@ -5,29 +5,47 @@
     <div class="div-divider"></div>
 
     <a-form ref="form" :form="form" class="my-form">
+      <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
+          <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
+            item.className
+          }}</a-select-option>
+        </a-select> -->
+
+        <div class="global-search-wrapper" style="width: 300px">
+          <a-auto-complete
+            class="global-search"
+            size="large"
+            style="width: 100%; font-size: 14px"
+            placeholder="请输入并选择类别"
+            option-label-prop="title"
+            @select="onSelect"
+            @search="handleSearch"
+          >
+            <template slot="dataSource">
+              <a-select-option v-for="item in goodClassesTemp" :key="item.classId + ''" :title="item.className">
+                {{ item.className }}
+              </a-select-option>
+            </template>
+          </a-auto-complete>
+        </div>
+      </a-form-item>
+
       <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-input v-decorator="['goodsName', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" />
       </a-form-item>
 
-      <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
-          <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
-            item.departmentName
-          }}</a-select-option>
-        </a-select>
-      </a-form-item>
-
-      <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+      <!-- <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-input v-decorator="['goodsSpec', { rules: [{ required: true, message: '请输入服务名称！' }] }]" />
-      </a-form-item>
+      </a-form-item> -->
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch :checked="uploadData.goodsInfo.isOnline" />
+        <a-switch :checked="uploadData.goodsInfo.isOnline" @click="goOnline" />
       </a-form-item>
 
-      <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+      <!-- <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch :checked="uploadData.goodsInfo.isSuggest" />
-      </a-form-item>
+      </a-form-item> -->
 
       <a-form-item label="价格(￥)" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-input v-decorator="['price', { rules: [{ required: true, message: '请输入商品价格！' }] }]" /> -->
@@ -70,11 +88,11 @@
 
       <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="addItem">添加</a-button>
     </div>
-
+    <!-- 
     <div class="div-service-pic">
-      <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span>
-      <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
-      <div class="clearfix" style="margin-top: 20px">
+      <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span> -->
+    <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
+    <!-- <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
           :multiple="true"
@@ -91,9 +109,9 @@
         <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
           <img alt="example" style="width: 100%" :src="previewImage" />
         </a-modal>
-      </div>
+      </div> -->
 
-      <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
+    <!-- <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
@@ -111,9 +129,9 @@
         <a-modal :visible="previewVisibleBanner" :footer="null" @cancel="handleCancelBanner">
           <img alt="example" style="width: 100%" :src="previewImageBanner" />
         </a-modal>
-      </div>
+      </div> -->
 
-      <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
+    <!-- <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
@@ -131,15 +149,15 @@
         <a-modal :visible="previewVisibleDetail" :footer="null" @cancel="handleCancelDetail">
           <img alt="example" style="width: 100%" :src="previewImageDetail" />
         </a-modal>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
     <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
     <div style="height: 25px; color: white"></div>
   </div>
 </template>
 
 <script>
-import { queryDepartment, savePlan, getDepts } from '@/api/modular/system/posManage'
+import { savePlan, getDepts, qryGoodsClass } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -167,21 +185,18 @@ export default {
         { code: 2, valueName: '一年', value: 12 },
         { code: 3, valueName: '永久', value: 1200 },
       ],
-      keshiData: [],
       actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
       typeDatas: [
-        { type: 'textNum', value: '视频咨询' },
-        { type: 'videoNum', value: '图文咨询' },
+        { type: 'textNum', value: '图文咨询' },
+        { type: 'videoNum', value: '视频咨询' },
         { type: 'appointBedNum', value: '床位预约' },
       ],
 
-      goodsAttr: [
-        { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-      ],
+      goodsAttr: [{ name: '视频咨询', attrName: 'videoNum', attrValue: '1' }],
 
       uploadData: {
         goodsInfo: {
@@ -198,23 +213,28 @@ export default {
           goodsAttr: [],
           isOnline: true,
           isSuggest: true,
+          goodsClass: '',
         },
         templateTask: [],
         templateName: '',
         basetimeType: '0',
       },
 
-      previewVisible: false,
-      previewVisibleBanner: false,
-      previewVisibleDetail: false,
+      // previewVisible: false,
+      // previewVisibleBanner: false,
+      // previewVisibleDetail: false,
 
-      previewImage: '',
-      previewImageBanner: '',
-      previewImageDetail: '',
+      // previewImage: '',
+      // previewImageBanner: '',
+      // previewImageDetail: '',
 
-      fileList: [],
-      fileListBanner: [],
-      fileListDetail: [],
+      // fileList: [],
+      // fileListBanner: [],
+      // fileListDetail: [],
+
+      goodClasses: [],
+      goodClassesTemp: [],
+      chooseClassItem: {},
     }
   },
 
@@ -223,11 +243,18 @@ export default {
   },
 
   created() {
-    this.getDeptsOut()
-
     this.form.setFieldsValue({
       topFlagIf: true,
       statusIf: true,
+    })
+
+    qryGoodsClass({ pageNo: 1, pageSize: 99 }).then((res) => {
+      if (res.code == 0) {
+        this.goodClasses = res.data.rows
+        this.goodClassesTemp = JSON.parse(JSON.stringify(this.goodClasses))
+      } else {
+        this.$message.error(res.message)
+      }
     })
   },
 
@@ -241,67 +268,78 @@ export default {
       })
     },
 
-    getDeptsOut() {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-        } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
-        }
-      })
+    goOnline(){
+      this.uploadData.goodsInfo.isOnline = !this.uploadData.goodsInfo.isOnline
     },
 
-    handleCancel() {
-      this.previewVisible = false
-    },
-
-    handleCancelBanner() {
-      this.previewVisibleBanner = false
-    },
-
-    handleCancelDetail() {
-      this.previewVisibleDetail = false
-    },
-
-    async handlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
-      }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
-    },
-
-    async handlePreviewBanner(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
-      }
-      this.previewImageBanner = file.url || file.preview
-      this.previewVisibleBanner = true
-    },
-
-    async handlePreviewDetail(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
-      }
-      this.previewImageDetail = file.url || file.preview
-      this.previewVisibleDetail = true
-    },
-
-    handleChange({ fileList }) {
-      this.fileList = fileList
-      if (this.fileList.length > 1) {
-        let newData = this.fileList[0]
-        this.fileList = [newData]
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.goodClassesTemp = this.goodClasses.filter((item) => item.className.indexOf(inputName) != -1)
+      } else {
+        this.goodClassesTemp = JSON.parse(JSON.stringify(this.goodClasses))
       }
     },
 
-    handleChangeBanner({ fileList }) {
-      this.fileListBanner = fileList
+    onSelect(choseClassId) {
+      //选择类别
+      this.uploadData.goodsInfo.goodsClass = choseClassId
+      this.chooseClassItem = this.goodClasses.find((item) => item.classId == choseClassId)
     },
 
-    handleChangeDetail({ fileList }) {
-      this.fileListDetail = fileList
-    },
+    // handleCancel() {
+    //   this.previewVisible = false
+    // },
+
+    // handleCancelBanner() {
+    //   this.previewVisibleBanner = false
+    // },
+
+    // handleCancelDetail() {
+    //   this.previewVisibleDetail = false
+    // },
+
+    // async handlePreview(file) {
+    //   if (!file.url && !file.preview) {
+    //     file.preview = await this.getBase64(file.originFileObj)
+    //   }
+    //   this.previewImage = file.url || file.preview
+    //   this.previewVisible = true
+    // },
+
+    // async handlePreviewBanner(file) {
+    //   if (!file.url && !file.preview) {
+    //     file.preview = await this.getBase64(file.originFileObj)
+    //   }
+    //   this.previewImageBanner = file.url || file.preview
+    //   this.previewVisibleBanner = true
+    // },
+
+    // async handlePreviewDetail(file) {
+    //   if (!file.url && !file.preview) {
+    //     file.preview = await this.getBase64(file.originFileObj)
+    //   }
+    //   this.previewImageDetail = file.url || file.preview
+    //   this.previewVisibleDetail = true
+    // },
+
+    // handleChange({ fileList }) {
+    //   this.fileList = fileList
+    //   if (this.fileList.length > 1) {
+    //     let newData = this.fileList[0]
+    //     this.fileList = [newData]
+    //   }
+    // },
+
+    // handleChangeBanner({ fileList }) {
+    //   this.fileListBanner = fileList
+    // },
+
+    // handleChangeDetail({ fileList }) {
+    //   this.fileListDetail = fileList
+    // },
 
     deleteItem(index) {
       this.goodsAttr.splice(index, 1)
@@ -353,55 +391,64 @@ export default {
           //校验表格数据无误，则组装数据
 
           this.uploadData.goodsInfo.goodsName = values.goodsName
-          this.uploadData.goodsInfo.belong = values.belong
-          this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
+          // this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
           this.uploadData.goodsInfo.price = values.price
           this.uploadData.goodsInfo.theLastTime = values.theLastTime
-          this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
-
           this.uploadData.templateName = values.goodsName
-
+          this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
           this.uploadData.goodsInfo.status = this.uploadData.goodsInfo.isOnline ? '1' : '3'
-          this.uploadData.goodsInfo.topFlag = this.uploadData.goodsInfo.isSuggest ? '1' : '0'
-          //组装图片
-          if (this.fileList.length == 0) {
-            this.$message.error('请上传套餐图片！')
+
+          //从类别里面拿的属性
+          this.uploadData.goodsInfo.belong = this.chooseClassItem.belong
+          this.uploadData.goodsInfo.topFlag = this.chooseClassItem.topFlag
+          this.uploadData.goodsInfo.previewList = this.chooseClassItem.previewList
+          this.uploadData.goodsInfo.bannerList = this.chooseClassItem.bannerList
+          this.uploadData.goodsInfo.imgList = this.chooseClassItem.imgList
+
+          if (!this.uploadData.goodsInfo.goodsClass) {
+            this.$message.error('请选择类别！')
             return
-          } else {
-            this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
           }
 
-          if (this.fileListBanner.length == 0) {
-            this.$message.error('请上传详情banner图片！')
-            return
-          } else {
-            let str = ''
-            for (let index = 0; index < this.fileListBanner.length; index++) {
-              if (index != this.fileListBanner.length - 1) {
-                str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
-              } else {
-                str = str + this.fileListBanner[index].response.data.fileLinkUrl
-              }
-            }
+          // //组装图片
+          // if (this.fileList.length == 0) {
+          //   this.$message.error('请上传套餐图片！')
+          //   return
+          // } else {
+          //   this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
+          // }
 
-            this.uploadData.goodsInfo.bannerList = str
-          }
+          // if (this.fileListBanner.length == 0) {
+          //   this.$message.error('请上传详情banner图片！')
+          //   return
+          // } else {
+          //   let str = ''
+          //   for (let index = 0; index < this.fileListBanner.length; index++) {
+          //     if (index != this.fileListBanner.length - 1) {
+          //       str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
+          //     } else {
+          //       str = str + this.fileListBanner[index].response.data.fileLinkUrl
+          //     }
+          //   }
 
-          if (this.fileListDetail.length == 0) {
-            this.$message.error('请上传商品详情图片！')
-            return
-          } else {
-            let str = ''
-            for (let index = 0; index < this.fileListDetail.length; index++) {
-              if (index != this.fileListDetail.length - 1) {
-                str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
-              } else {
-                str = str + this.fileListDetail[index].response.data.fileLinkUrl
-              }
-            }
+          //   this.uploadData.goodsInfo.bannerList = str
+          // }
 
-            this.uploadData.goodsInfo.imgList = str
-          }
+          // if (this.fileListDetail.length == 0) {
+          //   this.$message.error('请上传商品详情图片！')
+          //   return
+          // } else {
+          //   let str = ''
+          //   for (let index = 0; index < this.fileListDetail.length; index++) {
+          //     if (index != this.fileListDetail.length - 1) {
+          //       str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
+          //     } else {
+          //       str = str + this.fileListDetail[index].response.data.fileLinkUrl
+          //     }
+          //   }
+
+          //   this.uploadData.goodsInfo.imgList = str
+          // }
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
             if (res.code == 0) {

@@ -322,6 +322,7 @@ export default {
       this.$router.push({ name: 'package_type_look', params: { record: record } })
     },
 
+    //数据传参
     goChange(record) {
       this.$router.push({ name: 'package_type_edit', params: { record: record } })
     },

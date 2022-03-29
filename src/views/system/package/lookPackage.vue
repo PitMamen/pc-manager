@@ -5,13 +5,8 @@
     <div class="div-divider"></div>
 
     <a-form ref="form" :form="form" class="my-form">
-      <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <!-- <a-input v-decorator="['goodsName', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" /> -->
-        <span class="span-item-value">{{ planData.templateName }} </span>
-      </a-form-item>
-
-      <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span class="span-item-value">{{ planData.goodsInfo.deptName }} </span>
+      <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <span class="span-item-value">{{ planData.goodsInfo.goodsClassName }} </span>
         <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
             item.deptName
@@ -19,10 +14,14 @@
         </a-select> -->
       </a-form-item>
 
-      <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span class="span-item-value">{{ planData.goodsInfo.goodsSpec }} </span>
-        <!-- <a-input v-decorator="['goodsSpec', { rules: [{ required: true, message: '请输入服务名称！' }] }]" /> -->
+      <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <!-- <a-input v-decorator="['goodsName', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" /> -->
+        <span class="span-item-value">{{ planData.templateName }} </span>
       </a-form-item>
+
+      <!-- <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <span class="span-item-value">{{ planData.goodsInfo.goodsSpec }} </span>
+      </a-form-item> -->
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-switch
@@ -32,13 +31,9 @@
         <a-switch :checked="planData.isOnline" disabled />
       </a-form-item>
 
-      <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <!-- <a-switch
-          defaultChecked
-          v-decorator="['topFlagIf', { rules: [{ required: true, message: '请选择是否推荐！' }] }]"
-        /> -->
+      <!-- <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-switch :checked="planData.isSuggest" disabled />
-      </a-form-item>
+      </a-form-item> -->
 
       <a-form-item label="价格(￥)" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-input v-decorator="['price', { rules: [{ required: true, message: '请输入商品价格！' }] }]" /> -->
@@ -90,7 +85,7 @@
       <a-button class="btn-add" style="margin-top: 2%" v-show="false" type="primary" @click="addItem">添加</a-button>
     </div>
 
-    <div class="div-service-pic">
+    <div class="div-service-pic" v-show="false">
       <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span>
       <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
       <div class="clearfix" style="margin-top: 20px">

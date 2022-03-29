@@ -16,8 +16,8 @@
             <a-col :md="4" :sm="24">
               <a-form-item label="所属类别">
                 <a-select allow-clear v-model="queryParams.belong" placeholder="请选择所属类别">
-                  <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-                    item.deptName
+                  <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
+                    item.className
                   }}</a-select-option>
                 </a-select>
               </a-form-item>
@@ -114,7 +114,7 @@
 
 <script>
 import { STable } from '@/components'
-import { queryDepartment, getServicePackages, savePlan } from '@/api/modular/system/posManage'
+import { queryDepartment, getServicePackages, savePlan, qryGoodsClass } from '@/api/modular/system/posManage'
 // import addForm from './addForm'
 // import editForm from './editForm'
 
@@ -182,7 +182,7 @@ export default {
         },
         {
           title: '所属类别',
-          dataIndex: 'deptName',
+          dataIndex: 'classNameOut',
         },
         // {
         //   title: '服务名称',
@@ -211,6 +211,9 @@ export default {
         return getServicePackages(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            if (res.data.rows[i].goodsClassInfo) {
+              this.$set(res.data.rows[i], 'classNameOut', res.data.rows[i].goodsClassInfo.className)
+            }
             if (res.data.rows[i].topFlag == 1) {
               this.$set(res.data.rows[i], 'isSuggest', true)
               this.$set(res.data.rows[i], 'isSuggestText', '确定取消推荐？')
@@ -232,11 +235,20 @@ export default {
         })
       },
       selectedRows: [],
+      goodClasses: [],
     }
   },
 
   created() {
     this.getKeShi()
+
+    qryGoodsClass({ pageNo: 1, pageSize: 80 }).then((res) => {
+      if (res.code == 0) {
+        this.goodClasses = res.data.rows
+      } else {
+        this.$message.error(res.message)
+      }
+    })
   },
 
   methods: {
