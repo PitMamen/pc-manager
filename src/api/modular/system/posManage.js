@@ -431,7 +431,7 @@ export function delDiseaseArea(parameter) {
 }
 
 /**
- * 科室接口列表
+ * 科室接口列表  科室后面都用这个接口
  * @param {} parameter 
  * @returns 
  */

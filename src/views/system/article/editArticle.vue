@@ -29,11 +29,34 @@
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
-          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChange">
+          <div class="global-search-wrapper" style="width: 300px; display: inline-block">
+            <a-auto-complete
+              class="global-search"
+              v-model="checkData.categoryName"
+              size="large"
+              style="width: 100%; font-size: 14px"
+              placeholder="请输入并选择"
+              option-label-prop="title"
+              @select="onSelect"
+              @search="handleSearch"
+            >
+              <template slot="dataSource">
+                <a-select-option
+                  v-for="item in ksTypeDataTemp"
+                  :key="item.departmentId + ''"
+                  :title="item.departmentName"
+                >
+                  {{ item.departmentName }}
+                </a-select-option>
+              </template>
+            </a-auto-complete>
+          </div>
+
+          <!-- <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChange">
             <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.departmentId">{{
               item.departmentName
             }}</a-select-option>
-          </a-select>
+          </a-select> -->
         </div>
 
         <div class="div-right">
@@ -45,21 +68,6 @@
           </a-select>
         </div>
       </div>
-
-      <!-- <div class="div-line-wrap">
-        <div class="div-total-one">
-          <span class="span-item-name" style="width: 100%;"><span style="color: red">*</span>上传文章头像 :  </span>
-        </div>
-        <div :key="ImgKey">
-            <a-upload name="file" accept="image/gif,image/jpeg,image/jpg,image/png,image/svg"   :multiple="false" :action="actionUrl" :headers="headers" @change="handleChange">
-              <a-input
-                v-decorator="['fileId', { rules: [{ required: true, message: '请上传图片！' }] }]"
-                style="display: none"
-              />
-              <a-button> <a-icon type="upload" /> 选择文件 </a-button>
-            </a-upload>
-          </div>
-      </div> -->
 
       <div class="div-line-wrap">
         <div class="div-total-one">
@@ -114,6 +122,8 @@ export default {
       diseaseData: [],
       selectedRowKeys: [],
       selectedRows: [],
+      chooseDeptItem: {},
+      ksTypeDataTemp: [],
     }
   },
 
@@ -130,6 +140,7 @@ export default {
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
+        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
@@ -149,6 +160,24 @@ export default {
           this.$message.error('获取专病列表失败：' + res.message)
         }
       })
+    },
+
+        /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.ksTypeDataTemp = this.ksTypeData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.checkData.categoryId = departmentId
+      this.chooseDeptItem = this.ksTypeData.find((item) => item.departmentId == departmentId)
+      this.handleChange(departmentId)
     },
 
     goConfirm() {

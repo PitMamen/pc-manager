@@ -18,7 +18,7 @@
             size="large"
             v-model="uploadData.goodsInfo.goodsClassInfo.className"
             style="width: 100%; font-size: 14px"
-            placeholder="请输入并选择类别"
+            placeholder="请输入并选择"
             option-label-prop="title"
             @select="onSelect"
             @search="handleSearch"
@@ -158,7 +158,7 @@
 </template>
 
 <script>
-import { savePlan, getDepts, qryGoodsClass, getPlanDetail, delGoodsAttr } from '@/api/modular/system/posManage'
+import { savePlan, qryGoodsClass, getPlanDetail, delGoodsAttr } from '@/api/modular/system/posManage'
 
 export default {
   components: {},

@@ -10,11 +10,30 @@
       </a-form-item>
 
       <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
+        <div class="global-search-wrapper" style="width: 300px; display: inline-block">
+          <a-auto-complete
+            class="global-search"
+            v-model="chooseDeptItem.departmentName"
+            size="large"
+            style="width: 100%; font-size: 14px"
+            placeholder="请输入并选择类别"
+            option-label-prop="title"
+            @select="onSelect"
+            @search="handleSearch"
+          >
+            <template slot="dataSource">
+              <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
+                {{ item.departmentName }}
+              </a-select-option>
+            </template>
+          </a-auto-complete>
+        </div>
+
+        <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
             item.departmentName
           }}</a-select-option>
-        </a-select>
+        </a-select> -->
       </a-form-item>
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -97,6 +116,8 @@
 
 <script>
 import { saveGoodsClass, getDepts } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   components: {},
@@ -151,6 +172,9 @@ export default {
       fileListDetail: [],
 
       uploadData: {},
+
+      chooseDeptItem: {},
+      keshiDataTemp: [],
     }
   },
 
@@ -161,6 +185,8 @@ export default {
   created() {
     this.getDeptsOut()
     this.uploadData = this.$route.params.record
+
+    this.chooseDeptItem = { departmentName: this.uploadData.belong, departmentId: this.uploadData.deptName }
     this.uploadData.belong = parseInt(this.uploadData.belong)
     this.initData()
   },
@@ -198,7 +224,7 @@ export default {
           url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         },
            */
-      
+
       this.fileList.push({
         uid: '-1',
         name: '封面' + 1,
@@ -242,10 +268,28 @@ export default {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
+    },
+
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.uploadData.belong = departmentId
+      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
     },
 
     onChangeIsOnline() {
@@ -319,7 +363,7 @@ export default {
           //校验表格数据无误，则组装数据
 
           this.uploadData.className = values.className
-          this.uploadData.belong = values.belong
+          // this.uploadData.belong = values.belong
           this.uploadData.status = this.uploadData.isOnline ? '1' : '3'
           this.uploadData.topFlag = this.uploadData.isSuggest ? '1' : '0'
 
@@ -399,6 +443,9 @@ export default {
           delete this.uploadData.isOnlineText
           delete this.uploadData.xh
           delete this.uploadData.createTimeName
+
+          let user = Vue.ls.get(TRUE_USER)
+          this.uploadData.owner = user.userId
           //完成所有数据组装，上传后台
           saveGoodsClass(this.uploadData).then((res) => {
             if (res.code == 0) {

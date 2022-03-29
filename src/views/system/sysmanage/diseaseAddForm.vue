@@ -17,7 +17,30 @@
         </a-form-item>
 
         <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-select
+          <div class="global-search-wrapper" style="width: 300px; display: inline-block">
+            <a-auto-complete
+              class="global-search"
+              v-model="chooseDeptItem.departmentName"
+              size="large"
+              style="width: 100%; font-size: 14px"
+              placeholder="请输入并选择"
+              option-label-prop="title"
+              @select="onSelect"
+              @search="handleSearch"
+            >
+              <template slot="dataSource">
+                <a-select-option
+                  v-for="item in keshiDataTemp"
+                  :key="item.departmentId + ''"
+                  :title="item.departmentName"
+                >
+                  {{ item.departmentName }}
+                </a-select-option>
+              </template>
+            </a-auto-complete>
+          </div>
+
+          <!-- <a-select
             allow-clear
             placeholder="请选择所属科室"
             v-decorator="['departmentId', { rules: [{ required: true, message: '请选择所属科室' }] }]"
@@ -25,7 +48,7 @@
             <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
               item.departmentName
             }}</a-select-option>
-          </a-select>
+          </a-select> -->
         </a-form-item>
       </a-form>
     </a-spin>
@@ -52,6 +75,8 @@ export default {
       confirmLoading: false,
 
       form: this.$form.createForm(this),
+      chooseDeptItem: {},
+      keshiDataTemp: [],
     }
   },
 
@@ -72,19 +97,43 @@ export default {
             this.$set(res.data[i], 'xh', i + 1)
           }
           this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
     },
 
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      // this.uploadData.belong = departmentId
+      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+    },
+
     handleSubmit() {
       const {
         form: { validateFields },
       } = this
+      if (!this.chooseDeptItem.departmentId) {
+        this.$message.error('请选择科室')
+        return
+      }
       this.confirmLoading = true
+
       validateFields((errors, values) => {
         if (!errors) {
+          this.$set(values, 'departmentId', this.chooseDeptItem.departmentId)
           newDisease(values)
             .then((res) => {
               if (res.success) {

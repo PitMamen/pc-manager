@@ -10,11 +10,30 @@
       </a-form-item>
 
       <a-form-item label="所属科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
+        <div class="global-search-wrapper" style="width: 300px; display: inline-block">
+          <a-auto-complete
+            class="global-search"
+            v-model="chooseDeptItem.departmentName"
+            size="large"
+            style="width: 100%; font-size: 14px"
+            placeholder="请输入并选择"
+            option-label-prop="title"
+            @select="onSelect"
+            @search="handleSearch"
+          >
+            <template slot="dataSource">
+              <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
+                {{ item.departmentName }}
+              </a-select-option>
+            </template>
+          </a-auto-complete>
+        </div>
+
+        <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
             item.departmentName
           }}</a-select-option>
-        </a-select>
+        </a-select> -->
       </a-form-item>
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -97,6 +116,8 @@
 
 <script>
 import { saveGoodsClass, getDepts } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   components: {},
@@ -148,6 +169,9 @@ export default {
       fileList: [],
       fileListBanner: [],
       fileListDetail: [],
+
+      chooseDeptItem: {},
+      keshiDataTemp: [],
     }
   },
 
@@ -178,10 +202,28 @@ export default {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
+    },
+
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.uploadData.belong = departmentId
+      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
     },
 
     onChangeIsOnline() {
@@ -253,9 +295,8 @@ export default {
         if (!errors) {
           console.log('11', values)
           //校验表格数据无误，则组装数据
-
           this.uploadData.className = values.className
-          this.uploadData.belong = values.belong
+          // this.uploadData.belong = values.belong
           this.uploadData.status = this.uploadData.isOnline ? '1' : '3'
           this.uploadData.topFlag = this.uploadData.isSuggest ? '1' : '0'
 
@@ -298,6 +339,9 @@ export default {
 
             this.uploadData.imgList = str
           }
+          let user = Vue.ls.get(TRUE_USER)
+          this.uploadData.owner = user.userId
+
           //删除后台不需要的属性
           delete this.uploadData.isOnline
           delete this.uploadData.isSuggest

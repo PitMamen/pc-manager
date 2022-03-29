@@ -17,7 +17,7 @@
             class="global-search"
             size="large"
             style="width: 100%; font-size: 14px"
-            placeholder="请输入并选择类别"
+            placeholder="请输入并选择"
             option-label-prop="title"
             @select="onSelect"
             @search="handleSearch"
@@ -157,7 +157,7 @@
 </template>
 
 <script>
-import { savePlan, getDepts, qryGoodsClass } from '@/api/modular/system/posManage'
+import { savePlan, qryGoodsClass } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
