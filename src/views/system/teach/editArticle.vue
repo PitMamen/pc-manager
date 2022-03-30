@@ -29,11 +29,34 @@
       <div class="div-line-wrap">
         <div class="div-left">
           <span class="span-item-name"><span style="color: red">*</span>所属科室 :</span>
-          <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChangeDept">
+          <div class="global-search-wrapper" style="width: 300px; display: inline-block">
+            <a-auto-complete
+              class="global-search"
+              v-model="checkData.categoryName"
+              size="large"
+              style="width: 100%; font-size: 14px"
+              placeholder="请输入并选择"
+              option-label-prop="title"
+              @select="onSelect"
+              @search="handleSearch"
+            >
+              <template slot="dataSource">
+                <a-select-option
+                  v-for="item in ksTypeDataTemp"
+                  :key="item.departmentId + ''"
+                  :title="item.departmentName"
+                >
+                  {{ item.departmentName }}
+                </a-select-option>
+              </template>
+            </a-auto-complete>
+          </div>
+
+          <!-- <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择科室" @change="handleChangeDept">
             <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.departmentId">{{
               item.departmentName
             }}</a-select-option>
-          </a-select>
+          </a-select> -->
         </div>
 
         <div class="div-right">
@@ -130,6 +153,9 @@ export default {
       diseaseData: [],
       selectedRowKeys: [],
       selectedRows: [],
+
+      chooseDeptItem: {},
+      ksTypeDataTemp: [],
     }
   },
 
@@ -137,6 +163,7 @@ export default {
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
+        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
@@ -146,6 +173,24 @@ export default {
   methods: {
     handleChangeDept(code) {
       this.getDiseasesOut(code)
+    },
+
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.ksTypeDataTemp = this.ksTypeData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.checkData.categoryId = departmentId
+      this.chooseDeptItem = this.ksTypeData.find((item) => item.departmentId == departmentId)
+      this.getDiseasesOut(departmentId)
     },
 
     async handlePreview(file) {

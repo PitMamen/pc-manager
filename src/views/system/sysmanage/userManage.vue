@@ -3,8 +3,25 @@
     <div class="div-service-left-user">
       <p class="p-part-title">组织架构</p>
       <!-- 分割线 -->
-      <div class="div-divider"></div>
-
+      <!-- <div class="div-divider"></div> -->
+      <!-- v-model="chooseDeptItem.departmentName" -->
+      <div class="global-search-wrapper" style="width: 160px; display: inline-block">
+        <a-auto-complete
+          class="global-search"
+          size="large"
+          style="width: 100%; font-size: 14px"
+          placeholder="请输入并选择科室"
+          option-label-prop="title"
+          @select="onSelect"
+          @search="handleSearch"
+        >
+          <template slot="dataSource">
+            <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
+              {{ item.departmentName }}
+            </a-select-option>
+          </template>
+        </a-auto-complete>
+      </div>
       <div class="div-part" v-for="(item, index) in deptData" :value="item.departmentId" :key="index">
         <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
           {{ item.departmentName }}
@@ -41,7 +58,12 @@
 
             <a-col :md="6" :sm="24">
               <a-form-item label="">
-                <a-input v-model="queryParam.userName" allow-clear placeholder="请输入用户关键字" @keyup.enter="$refs.table.refresh(true)"/>
+                <a-input
+                  v-model="queryParam.userName"
+                  allow-clear
+                  placeholder="请输入用户关键字"
+                  @keyup.enter="$refs.table.refresh(true)"
+                />
               </a-form-item>
             </a-col>
 
@@ -162,6 +184,10 @@ export default {
         })
       },
       selectedRows: [],
+
+      chooseDeptItem: {},
+      originData: [],
+      keshiDataTemp: [],
     }
   },
 
@@ -179,6 +205,7 @@ export default {
     getDeptsOut() {
       getDepts().then((res) => {
         if (res.code == 0) {
+          this.originData = res.data
           res.data.unshift({
             departmentId: '',
             departmentName: '全部',
@@ -195,10 +222,41 @@ export default {
             }
           }
           this.deptData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
+    },
+
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.originData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+      }
+    },
+
+    onSelect(departmentId, s2) {
+      console.log('departmentId', departmentId)
+      console.log('s2', s2)
+      //选择类别
+      let index = this.getIndex(departmentId)
+      this.chooseDeptItem = this.deptData.find((item) => item.departmentId == departmentId)
+      console.log('index', index)
+      this.onDeptChoose(index)
+    },
+
+    getIndex(departmentId) {
+      let myIndex = -1
+      for (let index = 0; index < this.deptData.length; index++) {
+        if (this.deptData[index].departmentId == departmentId) {
+          myIndex = index
+          return myIndex
+        }
+      }
+      return myIndex
     },
 
     delUser(record) {

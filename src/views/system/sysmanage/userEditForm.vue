@@ -51,7 +51,31 @@
         </a-form-item>
 
         <a-form-item label="所属部门" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-select
+          <div class="global-search-wrapper" style="width: 300px; display: inline-block">
+            <a-auto-complete
+              class="global-search"
+              v-model="chooseDeptItem.departmentName"
+              size="large"
+              style="width: 100%; font-size: 14px"
+              placeholder="请输入并选择类别"
+              option-label-prop="title"
+              :disabled="ifCan"
+              @select="onSelect"
+              @search="handleSearch"
+            >
+              <template slot="dataSource">
+                <a-select-option
+                  v-for="item in keshiDataTemp"
+                  :key="item.departmentId + ''"
+                  :title="item.departmentName"
+                >
+                  {{ item.departmentName }}
+                </a-select-option>
+              </template>
+            </a-auto-complete>
+          </div>
+
+          <!-- <a-select
             allow-clear
             :disabled="ifCan"
             placeholder="请选择所属部门"
@@ -60,7 +84,7 @@
             <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
               item.departmentName
             }}</a-select-option>
-          </a-select>
+          </a-select> -->
         </a-form-item>
 
         <a-form-item
@@ -133,6 +157,8 @@ export default {
       confirmLoading: false,
 
       form: this.$form.createForm(this),
+      chooseDeptItem: {},
+      keshiDataTemp: [],
     }
   },
 
@@ -144,6 +170,7 @@ export default {
       this.record = record
       this.visible = true
       this.getDeptsOut()
+      this.chooseDeptItem = { departmentName: record.departmentName, departmentId: record.departmentId }
     },
 
     hasCaseManageIds(rule, value, callback) {
@@ -162,13 +189,14 @@ export default {
       if (event.target.value == 3) {
         //添加
         this.keshiData.shift()
-        setTimeout(() => {
-          this.form.setFieldsValue({
-            departmentId: this.keshiData[0].departmentId,
-          })
+        // setTimeout(() => {
+        //   this.form.setFieldsValue({
+        //     departmentId: this.keshiData[0].departmentId,
+        //   })
 
-          //TODO 状态处理
-        }, 100)
+        //   //TODO 状态处理
+        // }, 100)
+        this.chooseDeptItem = this.keshiData[0]
         this.ifCan = false
         this.radioValue = 3
       } else if (event.target.value == 4) {
@@ -181,16 +209,34 @@ export default {
           children: null,
         })
 
-        setTimeout(() => {
-          this.form.setFieldsValue({
-            departmentId: 1,
-          })
+        // setTimeout(() => {
+        //   this.form.setFieldsValue({
+        //     departmentId: 1,
+        //   })
 
-          //TODO 状态处理
-        }, 100)
+        //   //TODO 状态处理
+        // }, 100)
+        this.chooseDeptItem = this.keshiData[0]
+
         this.ifCan = true
         this.radioValue = 4
       }
+    },
+
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
     },
 
     getDeptsOut() {
@@ -198,6 +244,8 @@ export default {
         if (res.code == 0) {
           this.keshiData = res.data
           this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+          this.keshiData.shift()
 
           if (this.record.departmentId == 1) {
             this.keshiData.unshift({
@@ -239,6 +287,11 @@ export default {
       const {
         form: { validateFields },
       } = this
+
+      if (!this.chooseDeptItem.departmentId) {
+        this.$message.error('请选择科室')
+        return
+      }
       // this.confirmLoading = true
 
       validateFields((errors, values) => {
@@ -246,6 +299,7 @@ export default {
         console.log('errors', errors)
         if (!errors) {
           console.log('createDoctorUser', values)
+          this.$set(values, 'departmentId', this.chooseDeptItem.departmentId)
           if (this.isOpen) {
             this.$set(values, 'status', 0)
           } else {
