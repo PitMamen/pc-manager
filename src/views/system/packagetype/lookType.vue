@@ -34,7 +34,6 @@
         /> -->
         <a-switch :checked="uploadData.isSuggest" disabled />
       </a-form-item>
-
     </a-form>
 
     <div class="div-service-pic">
@@ -108,7 +107,7 @@
 </template>
 
 <script>
-import { queryDepartment, savePlan, getPlanDetail } from '@/api/modular/system/posManage'
+import { savePlan } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -205,8 +204,7 @@ export default {
   },
 
   methods: {
-
-        initData() {
+    initData() {
       this.$nextTick(() => {
         setTimeout(() => {
           this.form.setFieldsValue({
@@ -238,7 +236,7 @@ export default {
           url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         },
            */
-      
+
       this.fileList.push({
         uid: '-1',
         name: '封面' + 1,
@@ -339,7 +337,6 @@ export default {
     deleteItem(index) {
       this.goodsAttr.splice(index, 1)
     },
-
 
     validate() {
       const {

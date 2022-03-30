@@ -138,7 +138,8 @@ export default {
       //文章内上传图片url
       actionUrl: '/api/pushapi/health/wx/uploadInnerImg',
       //健康消息封面上传图片
-      actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
+      // actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
+      actionUrlCover: '/api/contentapi/fileUpload/uploadImgFileForWX',
       fileList: [],
       previewVisible: false,
       previewImage: '',
@@ -233,7 +234,6 @@ export default {
     },
 
     goConfirm() {
-      console.log(this.checkData)
       if (!this.checkData.title) {
         this.$message.error('请填写标题')
         return
@@ -261,9 +261,12 @@ export default {
         if (this.fileList[0].response) {
           // this.checkData.previewUrl = this.fileList[0].response.data.fileLinkUrl
           this.checkData.extraData = this.fileList[0].response.data.media_id
+          this.checkData.previewUrl = this.fileList[0].response.data.url
+          console.log('response media_id', this.checkData.extraData)
         } else {
-          // this.checkData.previewUrl = this.fileList[0].url
-          this.checkData.extraData = this.fileList[0].url
+          this.checkData.extraData = this.fileList[0].media_id
+          this.checkData.previewUrl = this.fileList[0].url
+          console.log('media_id', this.checkData.extraData)
         }
       }
 
@@ -294,6 +297,7 @@ export default {
           only_fans_can_comment: 0,
         },
       ]
+      console.log('articleList', articleList)
       // debugger
       saveArticleWeixin(articleList).then((res) => {
         if (res.code == 0) {
@@ -405,7 +409,6 @@ export default {
     } else {
       document.title = '新增教育文章'
     }
-    console.log(articleId)
     if (articleId) {
       getArticleById(articleId).then((res) => {
         if (res.code == 0) {
@@ -413,11 +416,13 @@ export default {
           this.checkData.categoryId = parseInt(this.checkData.categoryId)
           editor.txt.html(res.data.content)
           this.getDiseasesOut(this.checkData.categoryId)
+          console.log('push media_id',this.checkData.extraData)
           this.fileList.push({
             uid: '-1',
             name: '封面',
             status: 'done',
-            url: this.checkData.extraData,
+            url: this.checkData.previewUrl,
+            media_id: this.checkData.extraData,
           })
         } else {
           this.$message.error('获取失败：' + res.message)

@@ -15,7 +15,7 @@
 
             <a-col :md="4" :sm="24">
               <a-form-item label="所属类别">
-                <a-select allow-clear v-model="queryParams.belong" placeholder="请选择所属类别">
+                <a-select allow-clear v-model="queryParams.goodsClass" placeholder="请选择所属类别">
                   <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
                     item.className
                   }}</a-select-option>

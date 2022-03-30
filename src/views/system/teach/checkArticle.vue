@@ -125,7 +125,7 @@ export default {
             uid: '-1',
             name: '封面',
             status: 'done',
-            url: this.checkData.extraData,
+            url: this.checkData.previewUrl,
           })
         } else {
           this.$message.error('获取失败：' + res.message)

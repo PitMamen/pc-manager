@@ -58,6 +58,7 @@
       </a-form-item>
 
       <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <!-- v-model="uploadData.goodsInfo.theLastTime" -->
         <a-select allow-clear v-decorator="['theLastTime', { rules: [{ required: true, message: '请选择有效期' }] }]">
           <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.value">{{
             item.valueName
@@ -247,10 +248,6 @@ export default {
   created() {
     this.planId = this.$route.params.planId
     this.getPlanDetailOut()
-    this.form.setFieldsValue({
-      topFlagIf: true,
-      statusIf: true,
-    })
 
     qryGoodsClass({ pageNo: 1, pageSize: 99 }).then((res) => {
       if (res.code == 0) {
@@ -273,20 +270,30 @@ export default {
     },
 
     goOnline() {
+      console.log('goOnline1',this.uploadData.goodsInfo.isOnline)
       this.uploadData.goodsInfo.isOnline = !this.uploadData.goodsInfo.isOnline
+      console.log('goOnline2',this.uploadData.goodsInfo.isOnline)
     },
 
     getPlanDetailOut() {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
-          debugger
           this.uploadData = res.data
 
-          this.form.setFieldsValue({
-            goodsName: this.uploadData.goodsInfo.goodsName,
-            price: this.uploadData.goodsInfo.price,
-            theLastTime: this.uploadData.goodsInfo.theLastTime,
+          this.$nextTick(() => {
+            setTimeout(() => {
+              this.form.setFieldsValue({
+                goodsName: this.uploadData.goodsInfo.goodsName,
+                price: this.uploadData.goodsInfo.price,
+                theLastTime: this.uploadData.goodsInfo.theLastTime,
+              })
+            })
           })
+          // this.form.setFieldsValue({
+          //   goodsName: this.uploadData.goodsInfo.goodsName,
+          //   price: this.uploadData.goodsInfo.price,
+          //   theLastTime: this.uploadData.goodsInfo.theLastTime,
+          // })
 
           console.log('555', this.uploadData.goodsInfo.status == 1)
           if (this.uploadData.goodsInfo.status == 1) {
@@ -404,6 +411,10 @@ export default {
     // },
 
     deleteItem(index) {
+      if (this.goodsAttr.length <= 1) {
+        this.$message.error('至少选择一个服务类别')
+        return
+      }
       if (this.goodsAttr[index].id) {
         delGoodsAttr(this.goodsAttr[index].id).then((res) => {
           if (res.code == 0) {

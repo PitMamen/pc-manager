@@ -145,7 +145,8 @@ export default {
       //文章内上传图片url
       actionUrl: '/api/pushapi/health/wx/uploadInnerImg',
       //健康消息封面上传图片
-      actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
+      // actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
+      actionUrlCover: '/api/contentapi/fileUpload/uploadImgFileForWX',
       fileList: [],
       previewVisible: false,
       previewImage: '',
@@ -254,6 +255,7 @@ export default {
         return
       } else {
         this.checkData.extraData = this.fileList[0].response.data.media_id
+        this.checkData.previewUrl = this.fileList[0].response.data.url
       }
 
       if (!this.checkData.content) {

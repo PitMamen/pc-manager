@@ -115,6 +115,9 @@ export default {
           //设置序号
           data.rows.forEach((item, index) => {
             item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+            if (!item.clickNum) {
+              item.clickNum = 0
+            }
             if (item.status == '2') {
               this.$set(item, 'statusName', '已发布')
             } else {

@@ -6,7 +6,7 @@
         <a-row :gutter="48">
           <a-col :md="5" :sm="24">
             <a-form-item label="问卷管理">
-              <a href="http://hmg.mclouds.org.cn/login" target="_blank">跳转问卷管理</a>
+              <a :href="quesUrl" target="_blank">跳转问卷管理</a>
             </a-form-item>
           </a-col>
 
@@ -35,6 +35,8 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
+      quesUrl:'http://192.168.1.122/',
+      // quesUrl:'http://hmg.mclouds.org.cn/login',
       opTypeDict: [
         {
           code: '1',

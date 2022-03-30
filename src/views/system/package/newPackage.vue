@@ -268,7 +268,7 @@ export default {
       })
     },
 
-    goOnline(){
+    goOnline() {
       this.uploadData.goodsInfo.isOnline = !this.uploadData.goodsInfo.isOnline
     },
 
@@ -342,6 +342,10 @@ export default {
     // },
 
     deleteItem(index) {
+      if (this.goodsAttr.length <= 1) {
+        this.$message.error('至少选择一个服务类别')
+        return
+      }
       this.goodsAttr.splice(index, 1)
     },
 
