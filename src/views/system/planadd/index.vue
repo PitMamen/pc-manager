@@ -21,7 +21,6 @@
       <div style="width: 300px; display: inline-block; margin-left: 1%">
         <a-auto-complete
           class="global-search"
-          v-model="chooseDeptItem.departmentName"
           size="large"
           style="width: 100%; font-size: 14px"
           placeholder="请输入并选择"

@@ -58,7 +58,7 @@ export default {
         {
           title: '文章名称',
           dataIndex: 'title',
-          width: 300,
+          width: '200px',
         },
         {
           title: '科室',
@@ -71,7 +71,7 @@ export default {
         {
           title: '摘要说明',
           dataIndex: 'brief',
-          width: 300,
+          width: '200px',
         },
         {
           title: '状态',
@@ -84,6 +84,7 @@ export default {
         {
           title: '发布时间',
           dataIndex: 'updateTime',
+          // width: '110px',
         },
         {
           title: '创建时间',
@@ -91,7 +92,7 @@ export default {
         },
         {
           title: '操作',
-          width: '250px',
+          width: '230px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

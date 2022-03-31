@@ -4,7 +4,6 @@
       <p class="p-part-title">组织架构</p>
       <!-- 分割线 -->
       <!-- <div class="div-divider"></div> -->
-      <!-- v-model="chooseDeptItem.departmentName" -->
       <div class="global-search-wrapper" style="width: 160px; display: inline-block">
         <a-auto-complete
           class="global-search"
