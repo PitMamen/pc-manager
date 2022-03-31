@@ -18,11 +18,31 @@
 
     <div class="div-line-wrap">
       <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-      <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室" @change="handleChange">
+
+      <div style="width: 300px; display: inline-block; margin-left: 1%">
+        <a-auto-complete
+          class="global-search"
+          v-model="chooseDeptItem.departmentName"
+          size="large"
+          style="width: 100%; font-size: 14px"
+          placeholder="请输入并选择"
+          option-label-prop="title"
+          @select="onSelect"
+          @search="handleSearch"
+        >
+          <template slot="dataSource">
+            <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
+              {{ item.departmentName }}
+            </a-select-option>
+          </template>
+        </a-auto-complete>
+      </div>
+
+      <!-- <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室" @change="handleChange">
         <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
           item.deptName
         }}</a-select-option>
-      </a-select>
+      </a-select> -->
 
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
       <a-select v-model="planData.disease[0].diseaseName" allow-clear placeholder="请选择入所属科室">
@@ -134,7 +154,7 @@
 
 <script>
 import {
-  queryDepartment,
+  getDepts,
   savePlan,
   getPlanDetail,
   delPlanTask,
@@ -207,6 +227,9 @@ export default {
       keshiData: [],
       diseaseData: [],
       planId: '',
+
+      chooseDeptItem: {},
+      keshiDataTemp: [],
     }
   },
 
@@ -214,11 +237,12 @@ export default {
     this.planId = this.$route.params.planId
     this.getPlanDetailOut()
 
-    queryDepartment('444885559').then((res) => {
+    getDepts().then((res) => {
       if (res.code == 0) {
         this.keshiData = res.data
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
       } else {
-        this.$message.error('获取科室列表失败：' + res.message)
+        // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
 
@@ -236,6 +260,25 @@ export default {
       this.getDiseasesOut(code)
     },
 
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.planData.goodsInfo.belong = departmentId
+      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      this.planData.disease[0].diseaseName = ''
+      this.getDiseasesOut(departmentId)
+    },
+
     getDiseasesOut(departmentId) {
       getDiseases({ departmentId: departmentId }).then((res) => {
         if (res.code == 0) {
@@ -250,12 +293,18 @@ export default {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
           this.planData = res.data
+          // this.planData.goodsInfo.belong = parseInt(this.planData.goodsInfo.belong)
+          this.chooseDeptItem = {
+            departmentName: this.planData.goodsInfo.belong,
+            departmentId: this.planData.goodsInfo.deptName,
+          }
+          // this.chooseDeptItem = { departmentName: this.uploadData.belong, departmentId: this.uploadData.deptName }
 
           //处理数据为可展示的
           //展示科室
           this.keshiData.forEach((item) => {
-            if (this.planData.goodsInfo.belong == item.deptCode) {
-              this.planData.goodsInfo.belongName = item.deptName
+            if (this.planData.goodsInfo.belong == item.departmentId) {
+              this.planData.goodsInfo.belongName = item.departmentName
             }
           })
 
@@ -583,6 +632,10 @@ export default {
     .ant-select {
       width: 18.5% !important;
       margin-left: 1.5% !important;
+    }
+
+    .global-search.ant-select {
+      width: 90% !important;
     }
   }
 

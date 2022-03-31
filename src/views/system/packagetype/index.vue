@@ -105,9 +105,6 @@
           </a-popconfirm>
         </span>
       </s-table>
-
-      <!-- <add-form ref="addForm" @ok="handleOk" />
-      <edit-form ref="editForm" @ok="handleOk" /> -->
     </a-card>
   </div>
 </template>
@@ -115,8 +112,6 @@
 <script>
 import { STable } from '@/components'
 import { queryDepartment, qryGoodsClass, saveGoodsClass } from '@/api/modular/system/posManage'
-// import addForm from './addForm'
-// import editForm from './editForm'
 
 export default {
   components: {
@@ -268,7 +263,7 @@ export default {
       } else {
         record.status = 1
       }
-      let data = { classId: record.classId, status: record.status, className: record.className }
+      let data = { classId: record.classId, status: record.status, className: record.className, owner: record.owner }
       saveGoodsClass(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
@@ -289,7 +284,7 @@ export default {
       } else {
         record.topFlag = 1
       }
-      let data = { classId: record.classId, topFlag: record.topFlag, className: record.className }
+      let data = { classId: record.classId, topFlag: record.topFlag, className: record.className, owner: record.owner }
       saveGoodsClass(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')

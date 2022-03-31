@@ -116,8 +116,6 @@
 
 <script>
 import { saveGoodsClass, getDepts } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
 
 export default {
   components: {},
@@ -444,8 +442,6 @@ export default {
           delete this.uploadData.xh
           delete this.uploadData.createTimeName
 
-          let user = Vue.ls.get(TRUE_USER)
-          this.uploadData.owner = user.userId
           //完成所有数据组装，上传后台
           saveGoodsClass(this.uploadData).then((res) => {
             if (res.code == 0) {
