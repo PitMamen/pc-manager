@@ -41,7 +41,7 @@
       </a-form-item> -->
 
       <a-form-item label="是否上架" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-switch :checked="uploadData.goodsInfo.isOnline" @click="goOnline" />
+        <a-switch :checked="outIsOnline" @click="goOnline" />
       </a-form-item>
 
       <!-- <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -82,7 +82,7 @@
 
           <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 次数 :</span>
 
-          <a-input-number v-model="item.attrValue" :min="0" :max="1000000" />
+          <a-input-number style="margin-left: 3.5%" v-model="item.attrValue" :min="0" :max="1000000" />
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
@@ -238,6 +238,7 @@ export default {
       goodClasses: [],
       goodClassesTemp: [],
       chooseClassItem: {},
+      outIsOnline: true,
     }
   },
 
@@ -270,9 +271,11 @@ export default {
     },
 
     goOnline() {
-      console.log('goOnline1',this.uploadData.goodsInfo.isOnline)
-      this.uploadData.goodsInfo.isOnline = !this.uploadData.goodsInfo.isOnline
-      console.log('goOnline2',this.uploadData.goodsInfo.isOnline)
+      console.log('goOnline1', this.uploadData.goodsInfo.isOnline)
+      this.outIsOnline = !this.outIsOnline
+      this.uploadData.goodsInfo.isOnline = this.outIsOnline
+
+      console.log('goOnline2', this.uploadData.goodsInfo.isOnline)
     },
 
     getPlanDetailOut() {
@@ -285,7 +288,7 @@ export default {
               this.form.setFieldsValue({
                 goodsName: this.uploadData.goodsInfo.goodsName,
                 price: this.uploadData.goodsInfo.price,
-                theLastTime: this.uploadData.goodsInfo.theLastTime,
+                theLastTime: parseInt(this.uploadData.goodsInfo.theLastTime),
               })
             })
           })
@@ -298,8 +301,10 @@ export default {
           console.log('555', this.uploadData.goodsInfo.status == 1)
           if (this.uploadData.goodsInfo.status == 1) {
             this.uploadData.goodsInfo.isOnline = true
+            this.outIsOnline = true
           } else {
             this.uploadData.goodsInfo.isOnline = false
+            this.outIsOnline = false
           }
 
           // console.log('666', this.uploadData.goodsInfo.topFlag == 1)

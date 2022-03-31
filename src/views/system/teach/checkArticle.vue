@@ -235,6 +235,11 @@ export default {
   padding: 0 15% 0 5%;
   // padding: 0 15%;
 
+  #myHtml {
+    word-wrap: break-word;
+    word-break: break-all;
+  }
+
   .top-btn {
     margin-left: 47%;
     float: right;

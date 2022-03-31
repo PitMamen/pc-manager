@@ -80,7 +80,7 @@
 
           <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 次数 :</span>
 
-          <a-input-number v-model="item.attrValue" :min="0" :max="1000000" />
+          <a-input-number style="margin-left: 3.5%" v-model="item.attrValue" :min="0" :max="1000000" />
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
