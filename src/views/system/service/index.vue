@@ -3,12 +3,32 @@
     <div class="div-service-left-service">
       <p class="p-part-title">病区选择</p>
       <!-- 分割线 -->
-      <div class="div-divider"></div>
+      <!-- <div class="div-divider"></div> -->
 
       <!-- <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index"> -->
-      <div class="div-wrap-service">
-        <div class="div-part" v-for="(item, index) in keshiData" :value="item.deptName" :key="index">
-          <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">{{ item.deptName }}</p>
+      <div class="global-search-wrapper" style="width: 160px; display: inline-block">
+        <a-auto-complete
+          class="global-search"
+          size="large"
+          style="width: 100%; font-size: 14px"
+          placeholder="请输入并选择病区"
+          option-label-prop="title"
+          @select="onSelect"
+          @search="handleSearch"
+        >
+          <template slot="dataSource">
+            <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
+              {{ item.departmentName }}
+            </a-select-option>
+          </template>
+        </a-auto-complete>
+      </div>
+
+      <div class="div-wrap-service" style="margin-top:8%">
+        <div class="div-part" v-for="(item, index) in keshiData" :value="item.departmentName" :key="index">
+          <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">
+            {{ item.departmentName }}
+          </p>
           <!-- 分割线 -->
           <div class="div-divider"></div>
         </div>
@@ -83,7 +103,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getOutPatients, queryDepartment } from '@/api/modular/system/posManage'
+import { getOutPatients, getDepts } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addForm from './addForm'
@@ -224,30 +244,36 @@ export default {
         })
       },
       selectedRows: [],
+
+      chooseDeptItem: {},
+      originData: [],
+      keshiDataTemp: [],
     }
   },
 
   created() {
-    queryDepartment('444885559').then((res) => {
+    getDepts().then((res) => {
       if (res.code == 0) {
-        this.keshiData = res.data
-        this.keshiData.unshift({ deptName: '全部', deptCode: '0' })
-        for (let index = 0; index < this.keshiData.length; index++) {
-          // this.keshiData[index].isChecked = false
-          this.$set(this.keshiData[index], 'isChecked', false)
-          if (this.keshiData[index].deptCode == '0') {
-            this.$set(this.keshiData[index], 'isChecked', true)
+        this.originData = res.data
+        res.data.unshift({
+          departmentId: '-2',
+          departmentName: '全部',
+          hospitalId: 1,
+          parentId: 0,
+          children: null,
+        })
+        for (let i = 0; i < res.data.length; i++) {
+          // this.$set(res.data[i], 'xh', i + 1)
+          if (i == 0) {
+            this.$set(res.data[i], 'isChecked', true)
+          } else {
+            this.$set(res.data[i], 'isChecked', false)
           }
         }
-
-        // this.keshiData.forEach((item, index) => {
-        //   item.isChecked = false
-        //   if (item.deptCode == '0') {
-        //     item.isChecked = true
-        //   }
-        // })
+        this.keshiData = res.data
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
       } else {
-        // this.$message.error('获取科室列表失败：' + res.message)
+        // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
   },
@@ -256,6 +282,36 @@ export default {
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
+    },
+
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.originData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+      }
+    },
+
+    onSelect(departmentId, s2) {
+      console.log('departmentId', departmentId)
+      console.log('s2', s2)
+      //选择类别
+      let index = this.getIndex(departmentId)
+      this.chooseDeptItem = this.originData.find((item) => item.departmentId == departmentId)
+      console.log('index', index)
+      this.onPartChoose(index)
+    },
+
+    getIndex(departmentId) {
+      let myIndex = -1
+      for (let index = 0; index < this.keshiData.length; index++) {
+        if (this.keshiData[index].departmentId == departmentId) {
+          myIndex = index
+          return myIndex
+        }
+      }
+      return myIndex
     },
 
     countAge(age) {
@@ -272,14 +328,15 @@ export default {
     },
 
     onPartChoose(index) {
+      this.chooseDeptItem = this.keshiData[index]
       for (let i = 0; i < this.keshiData.length; i++) {
         this.$set(this.keshiData[i], 'isChecked', false)
         if (i == index) {
           this.$set(this.keshiData[i], 'isChecked', true)
-          if (this.keshiData[i].deptCode == '0') {
+          if (this.keshiData[i].departmentId == '-2') {
             this.queryParam.bqmc = ''
           } else {
-            this.queryParam.bqmc = this.keshiData[i].deptName
+            this.queryParam.bqmc = this.keshiData[i].departmentName
           }
           this.$refs.table.refresh()
         }

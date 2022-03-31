@@ -10,7 +10,7 @@
           class="global-search"
           size="large"
           style="width: 100%; font-size: 14px"
-          placeholder="请输入并选择科室"
+          placeholder="请输入并选择部门"
           option-label-prop="title"
           @select="onSelect"
           @search="handleSearch"
@@ -22,7 +22,7 @@
           </template>
         </a-auto-complete>
       </div>
-      <div class="div-part" v-for="(item, index) in deptData" :value="item.departmentId" :key="index">
+      <div class="div-part" style="margin-top:7%" v-for="(item, index) in deptData" :value="item.departmentId" :key="index">
         <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
           {{ item.departmentName }}
         </p>
