@@ -13,7 +13,7 @@
               </span>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="所属类别">
                 <a-select allow-clear v-model="queryParams.goodsClass" placeholder="请选择所属类别">
                   <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
@@ -23,7 +23,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="上架状态">
                 <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in onlineData" :key="index" :value="item.code">{{
@@ -43,7 +43,7 @@
               </a-form-item>
             </a-col> -->
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="关键字">
                 <a-input
                   v-model="queryParams.keyWords"

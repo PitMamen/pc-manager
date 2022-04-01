@@ -118,6 +118,7 @@
         <a-form-item label="用户角色" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-radio-group
             name="radioGroup"
+            style="width:300px"
             :default-value="3"
             @change="radioChange"
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择用户角色！' }] }]"

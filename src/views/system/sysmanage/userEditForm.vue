@@ -111,7 +111,14 @@
         </a-form-item>
 
         <a-form-item label="用户角色" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-radio-group name="radioGroup" v-model="record.roleId" disabled :default-value="3" @change="radioChange">
+          <a-radio-group
+            style="width: 300px"
+            name="radioGroup"
+            v-model="record.roleId"
+            disabled
+            :default-value="3"
+            @change="radioChange"
+          >
             <a-radio :value="3"> 医生 </a-radio>
             <a-radio :value="4" style="width: 100px"> 个案管理师 </a-radio>
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
