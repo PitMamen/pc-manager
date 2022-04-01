@@ -28,7 +28,10 @@
         <a-form-item label="登录密码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <!-- v-decorator="['password', { rules: [{ required: true, message: '请输入登录密码！' }] }]" -->
           <a-input-password
-            v-decorator="['password', { rules: [{ required: false, message: '请输入登录密码！' }] }]"
+            v-decorator="[
+              'password',
+              { rules: [{ required: false, message: '请输入登录密码！' }, { validator: isPassword }] },
+            ]"
             placeholder="请输入登录密码"
           />
         </a-form-item>
@@ -50,11 +53,20 @@
           />
         </a-form-item>
 
+        <a-form-item label="手机号" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-input
+            placeholder="请输入手机号"
+            type="number"
+            v-decorator="['phone', { rules: [{ required: true, message: '请输入手机号！' }] }]"
+          />
+        </a-form-item>
+
         <a-form-item label="所属部门" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <div class="global-search-wrapper" style="width: 300px; display: inline-block">
             <a-auto-complete
               class="global-search"
               size="large"
+              v-model="chooseDeptItem.departmentName"
               style="width: 100%; font-size: 14px"
               placeholder="请输入并选择类别"
               option-label-prop="title"
@@ -179,6 +191,15 @@ export default {
       callback()
     },
 
+    isPassword(rule, value, callback) {
+      let regexPsd = /(?!^[0-9]+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{8,}$/
+      if (value && !regexPsd.test(value)) {
+        // this.optional(element) || /(?!^[0-9]+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{8,}$/.test(value);
+        callback('提示：密码必须包含字母、数字或符号至少两种组合且密码长度不小于8位')
+      }
+      callback()
+    },
+
     isOpenChange() {
       this.isOpen = this.isOpen ? false : true
     },
@@ -195,9 +216,10 @@ export default {
 
         //   //TODO 状态处理
         // }, 100)
-        this.chooseDeptItem = this.keshiData[0]
+
         this.ifCan = false
         this.radioValue = 3
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
       } else if (event.target.value == 4) {
         //个案管理师的时候写死 病友服务中心
         this.keshiData.unshift({
@@ -215,10 +237,10 @@ export default {
 
         //   //TODO 状态处理
         // }, 100)
-        this.chooseDeptItem = this.keshiData[0]
 
         this.ifCan = true
         this.radioValue = 4
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
       }
     },
 
@@ -235,7 +257,8 @@ export default {
 
     onSelect(departmentId) {
       //选择类别
-      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      console.log('departmentId', departmentId)
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
     },
 
     getDeptsOut() {
@@ -270,6 +293,7 @@ export default {
               userName: this.record.userName,
               roleId: this.record.roleId,
               identificationNo: this.record.identificationNo,
+              phone: this.record.phone,
               departmentId: this.record.departmentId,
               caseManageIds: this.record.caseManageIds,
             })

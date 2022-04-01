@@ -25,16 +25,24 @@
         </a-form-item>
 
         <a-form-item label="登录密码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <!-- <a-input
-            placeholder="请输入登录密码"
-            type="password"
-            v-decorator="['password', { rules: [{ required: true, message: '请输入登录密码！' }] }]"
-          /> -->
           <a-input-password
-            v-decorator="['password', { rules: [{ required: true, message: '请输入登录密码！' }] }]"
+            v-decorator="[
+              'password',
+              { rules: [{ required: false, message: '请输入登录密码！' }, { validator: isPassword }] },
+            ]"
             placeholder="请输入登录密码"
           />
         </a-form-item>
+
+        <!-- <a-form-item label="确认密码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-input-password
+            v-decorator="[
+              'password',
+              { rules: [{ required: false, message: '请输入确认密码！' }, { validator: isComfirmPassword }] },
+            ]"
+            placeholder="请输入确认密码"
+          />
+        </a-form-item> -->
 
         <a-form-item label="用户姓名" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
@@ -48,6 +56,14 @@
             placeholder="请输入身份证号"
             type="number"
             v-decorator="['identificationNo', { rules: [{ required: true, message: '请输入身份证号！' }] }]"
+          />
+        </a-form-item>
+
+        <a-form-item label="手机号" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-input
+            placeholder="请输入手机号"
+            type="number"
+            v-decorator="['phone', { rules: [{ required: true, message: '请输入手机号！' }] }]"
           />
         </a-form-item>
 
@@ -184,6 +200,15 @@ export default {
       }, 100)
     },
 
+    isPassword(rule, value, callback) {
+      let regexPsd = /(?!^[0-9]+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{8,}$/
+      if (!regexPsd.test(value)) {
+        // this.optional(element) || /(?!^[0-9]+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{8,}$/.test(value);
+        callback('提示：密码必须包含字母、数字或符号至少两种组合且密码长度不小于8位')
+      }
+      callback()
+    },
+
     hasCaseManageIds(rule, value, callback) {
       if (this.radioValue == 4 && (!value || value == 0)) {
         callback('请选择管理科室')
@@ -211,7 +236,7 @@ export default {
 
         //   //TODO 状态处理
         // }, 100)
-        this.chooseDeptItem = this.keshiData[0]
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
 
         this.ifCan = false
         this.radioValue = 3
@@ -234,7 +259,7 @@ export default {
         //   //TODO 状态处理
         // }, 100)
 
-        this.chooseDeptItem = this.keshiData[0]
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
         this.ifCan = true
         this.radioValue = 4
       }
