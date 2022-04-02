@@ -280,7 +280,7 @@ export default {
           author: this.checkData.publisherName,
           title: this.checkData.title,
           content: this.checkData.content,
-          show_cover_pic: true,
+          show_cover_pic: 0,
           need_open_comment: 0,
           only_fans_can_comment: 0,
         },
@@ -289,7 +289,7 @@ export default {
         if (res.code == 0) {
           // this.$message.success('保存成功')
           // this.$router.go(-1)
-          this.checkData.templateId = res.data.media_id
+          this.checkData.templateId = res.data.data
           saveArticle(this.checkData).then((res) => {
             if (res.code == 0) {
               this.$message.success('保存成功')

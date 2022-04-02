@@ -22,6 +22,7 @@
       <div style="width: 300px; display: inline-block; margin-left: 1%">
         <a-auto-complete
           class="global-search"
+          v-model="chooseDeptItem.departmentName"
           size="large"
           style="width: 100%; font-size: 14px"
           placeholder="请输入并选择"
@@ -273,7 +274,8 @@ export default {
     onSelect(departmentId) {
       //选择类别
       this.planData.goodsInfo.belong = departmentId
-      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
       this.planData.disease[0].diseaseName = ''
       this.getDiseasesOut(departmentId)
     },

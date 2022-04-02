@@ -16,6 +16,7 @@
             size="large"
             style="width: 100%; font-size: 14px"
             placeholder="请输入并选择类别"
+            v-model="chooseDeptItem.departmentName"
             option-label-prop="title"
             @select="onSelect"
             @search="handleSearch"
@@ -286,7 +287,8 @@ export default {
     onSelect(departmentId) {
       //选择类别
       this.uploadData.belong = departmentId
-      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
     },
 
     onChangeIsOnline() {
