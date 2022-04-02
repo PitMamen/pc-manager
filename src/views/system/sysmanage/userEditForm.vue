@@ -164,7 +164,7 @@ export default {
       radioValue: 3,
       isOpen: true,
       record: {},
-      ifCan: false, //false表示是医生，false个案管理师
+      ifCan: false, //false表示是医生，true个案管理师
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
@@ -182,18 +182,31 @@ export default {
     edit(record) {
       this.record = record
       this.visible = true
-      this.ifCan = false
+
+      // if (this.record.caseManageIds && this.record.caseManageIds.length > 0) {
+      //   this.ifCan = true
+      //   console.log('this.ifCan', this.ifCan)
+      // }.
+      if (this.record.roleId == 4) {
+        console.log('can1', this.ifCan)
+        this.ifCan = true
+      } else {
+        console.log('can2', this.ifCan)
+        this.ifCan = false
+      }
+
       this.getDeptsOut()
       this.chooseDeptItem = { departmentName: record.departmentName, departmentId: record.departmentId }
 
       //处理打开后又关闭的逻辑,默认显示第一个
-      let has = this.keshiData.some((item) => {
-        return item.departmentName == '病友服务中心'
-      })
-      if (this.keshiData.length > 0 && !this.ifCan && has) {
-        this.keshiData.shift()
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-      }
+      // let has = this.keshiData.some((item) => {
+      //   return item.departmentName == '病友服务中心'
+      // })
+      // if (this.keshiData.length > 0 && !this.ifCan && has) {
+      //   this.keshiData.shift()
+      //   this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+      // }
+      console.log('this.record', this.record)
     },
 
     hasCaseManageIds(rule, value, callback) {
@@ -233,6 +246,7 @@ export default {
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
 
         this.ifCan = false
+        console.log('canRa3', this.ifCan)
         this.radioValue = 3
       } else if (event.target.value == 4) {
         //个案管理师的时候写死 病友服务中心
@@ -243,7 +257,7 @@ export default {
           parentId: 0,
           children: null,
         })
-
+        console.log('canRa4', this.ifCan)
         this.ifCan = true
         this.radioValue = 4
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
@@ -287,10 +301,12 @@ export default {
               children: null,
             })
             this.ifCan = true
+            console.log('can4', this.ifCan)
             this.radioValue = 4
           } else {
             this.ifCan = false
             this.radioValue = 3
+            console.log('can5', this.ifCan)
           }
           setTimeout(() => {
             console.log('departmentId', this.record.departmentId)

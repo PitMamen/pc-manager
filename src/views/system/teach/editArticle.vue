@@ -303,7 +303,8 @@ export default {
         if (res.code == 0) {
           // this.$message.success('保存成功')
           // this.$router.go(-1)
-          this.checkData.templateId = res.data.data
+          // this.checkData.templateId = res.data.data
+          this.$set(this.checkData, 'templateId', res.data)
           saveArticle(this.checkData).then((res) => {
             if (res.code == 0) {
               this.$message.success('保存成功')
@@ -416,7 +417,7 @@ export default {
           this.checkData.categoryId = parseInt(this.checkData.categoryId)
           editor.txt.html(res.data.content)
           this.getDiseasesOut(this.checkData.categoryId)
-          console.log('push media_id',this.checkData.extraData)
+          console.log('push media_id', this.checkData.extraData)
           this.fileList.push({
             uid: '-1',
             name: '封面',
