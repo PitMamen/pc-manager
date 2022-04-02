@@ -125,13 +125,8 @@
           </a-radio-group>
         </a-form-item>
 
-        <a-form-item
-          label="管理科室"
-          v-show="radioValue == 4"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          has-feedback
-        >
+        <!-- v-show="radioValue == 4" -->
+        <a-form-item label="管理科室" v-show="ifCan" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-select
             allow-clear
             mode="multiple"
@@ -169,7 +164,7 @@ export default {
       radioValue: 3,
       isOpen: true,
       record: {},
-      ifCan: false,
+      ifCan: false, //false表示是医生，false个案管理师
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
@@ -187,8 +182,18 @@ export default {
     edit(record) {
       this.record = record
       this.visible = true
+      this.ifCan = false
       this.getDeptsOut()
       this.chooseDeptItem = { departmentName: record.departmentName, departmentId: record.departmentId }
+
+      //处理打开后又关闭的逻辑,默认显示第一个
+      let has = this.keshiData.some((item) => {
+        return item.departmentName == '病友服务中心'
+      })
+      if (this.keshiData.length > 0 && !this.ifCan && has) {
+        this.keshiData.shift()
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+      }
     },
 
     hasCaseManageIds(rule, value, callback) {
@@ -224,9 +229,11 @@ export default {
         //   //TODO 状态处理
         // }, 100)
 
+        this.keshiData.shift()
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+
         this.ifCan = false
         this.radioValue = 3
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
       } else if (event.target.value == 4) {
         //个案管理师的时候写死 病友服务中心
         this.keshiData.unshift({
@@ -236,14 +243,6 @@ export default {
           parentId: 0,
           children: null,
         })
-
-        // setTimeout(() => {
-        //   this.form.setFieldsValue({
-        //     departmentId: 1,
-        //   })
-
-        //   //TODO 状态处理
-        // }, 100)
 
         this.ifCan = true
         this.radioValue = 4
@@ -264,7 +263,6 @@ export default {
 
     onSelect(departmentId) {
       //选择类别
-      console.log('departmentId', departmentId)
       this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
     },
 
@@ -272,9 +270,13 @@ export default {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.keshiData = res.data
-          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
+
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
           this.keshiData.shift()
+
+          //用于最下面选择的科室数据
+          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
+          this.keshiDataPerson.shift()
 
           if (this.record.departmentId == 1) {
             this.keshiData.unshift({

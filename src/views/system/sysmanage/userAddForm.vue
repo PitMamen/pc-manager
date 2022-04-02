@@ -75,6 +75,7 @@
               style="width: 100%; font-size: 14px"
               placeholder="请输入并选择类别"
               option-label-prop="title"
+              v-model="chooseDeptItem.departmentName"
               :disabled="ifCan"
               @select="onSelect"
               @search="handleSearch"
@@ -118,7 +119,7 @@
         <a-form-item label="用户角色" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-radio-group
             name="radioGroup"
-            style="width:300px"
+            style="width: 300px"
             :default-value="3"
             @change="radioChange"
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择用户角色！' }] }]"
@@ -132,13 +133,7 @@
           v-decorator="['password', { rules: [{ required: true, message: '请输入密码' }, { validator: handlePass }] }]"
           name="password"
         /> -->
-        <a-form-item
-          label="管理科室"
-          v-show="radioValue == 4"
-          :labelCol="labelCol"
-          :wrapperCol="wrapperCol"
-          has-feedback
-        >
+        <a-form-item label="管理科室" v-show="ifCan" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-select
             allow-clear
             mode="multiple"
@@ -175,7 +170,7 @@ export default {
       keshiDataPerson: [],
       radioValue: 3,
       isOpen: true,
-      ifCan: false,
+      ifCan: false, //false表示是医生，false个案管理师
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
@@ -194,11 +189,21 @@ export default {
     //初始化方法
     add() {
       this.visible = true
+      this.ifCan = false
       setTimeout(() => {
         this.form.setFieldsValue({
           roleId: 3,
         })
       }, 100)
+
+      //处理打开后又关闭的逻辑,默认显示第一个
+      let has = this.keshiData.some((item) => {
+        return item.departmentName == '病友服务中心'
+      })
+      if (this.keshiData.length > 0 && !this.ifCan && has) {
+        this.keshiData.shift()
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+      }
     },
 
     isPassword(rule, value, callback) {
@@ -221,23 +226,29 @@ export default {
       this.isOpen = this.isOpen ? false : true
     },
 
+    getDeptsOut() {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+          this.keshiData.shift()
+
+          //用于最下面选择的科室数据
+          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
+          this.keshiDataPerson.shift()
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+
     radioChange(event) {
       if (event.target.value == 3) {
         //添加
-        console.log('radioChange', JSON.parse(JSON.stringify(this.keshiData)))
-        // this.keshiData.shift()
+
         this.keshiData.shift()
-        // this.keshiData = JSON.parse(JSON.stringify(this.keshiData))
-        console.log('radioChange2', this.keshiData)
-
-        // setTimeout(() => {
-        //   this.form.setFieldsValue({
-        //     departmentId: this.keshiData[0].departmentId,
-        //   })
-
-        //   //TODO 状态处理
-        // }, 100)
-      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
 
         this.ifCan = false
         this.radioValue = 3
@@ -251,33 +262,10 @@ export default {
           parentId: 0,
           children: null,
         })
-
-        // setTimeout(() => {
-        //   this.form.setFieldsValue({
-        //     departmentId: 1,
-        //   })
-
-        //   //TODO 状态处理
-        // }, 100)
-
-      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
         this.ifCan = true
         this.radioValue = 4
       }
-    },
-
-    getDeptsOut() {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
-          this.keshiDataPerson.shift()
-          this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-          this.keshiData.shift()
-        } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
-        }
-      })
     },
 
     /**
@@ -293,7 +281,8 @@ export default {
 
     onSelect(departmentId) {
       //选择类别
-      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
     },
 
     handleSubmit() {
