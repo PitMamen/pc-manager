@@ -229,14 +229,14 @@ export default {
     getDeptsOut() {
       getDepts().then((res) => {
         if (res.code == 0) {
+          //用于最下面选择的科室数据
+          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
+          this.keshiDataPerson.shift()
+
           this.keshiData = res.data
 
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
           this.keshiData.shift()
-
-          //用于最下面选择的科室数据
-          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
-          this.keshiDataPerson.shift()
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
