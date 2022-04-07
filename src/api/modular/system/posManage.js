@@ -796,3 +796,30 @@ export function sysPosDelete(parameter) {
     data: parameter
   })
 }
+
+/**
+ * 查询权益使用列表
+ * {"execDept":"1040300","rightsType":"textNum","userName":"张三",
+ * "execName":"刘医生","execFlag":1,"beginDate":"2022-04-01","endDate":"2022-04-02","pageNo":1,"pageSize":10}
+ *
+ */
+export function qryRightsUserRecordList(param) {
+  return axios({
+    url: '/bdcApi/patient/qryRightsUserRecordList',
+    method: 'post',
+    data: param,
+  })
+}
+
+/**
+ * 提醒通知
+ * {"remindType":"videoRemind","eventType":1,"userId":301}
+ *
+ */
+export function sysRemind(param) {
+  return axios({
+    url: '/bdcApi/sys/sysRemind',
+    method: 'post',
+    data: param,
+  })
+}
