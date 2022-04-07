@@ -305,6 +305,8 @@ export default {
         this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
       } else {
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+        this.chooseDeptItem = {}
+        this.queryParams.execDept = ''
       }
     },
 

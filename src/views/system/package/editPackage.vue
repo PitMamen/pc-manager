@@ -75,7 +75,7 @@
           <span class="span-item-name"><span style="color: red">*</span> 类别{{ index + 1 }} :</span>
 
           <a-select v-model="item.attrName" class="span-item-value" allow-clear placeholder="请选择服务类别">
-            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.type">{{
+            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.code">{{
               itemType.value
             }}</a-select-option>
           </a-select>
@@ -90,76 +90,14 @@
 
       <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="addItem">添加</a-button>
     </div>
-    <!-- 
-    <div class="div-service-pic">
-      <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span> -->
-    <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
-    <!-- <div class="clearfix" style="margin-top: 20px">
-        <a-upload
-          :action="actionUrl"
-          :multiple="true"
-          list-type="picture-card"
-          :file-list="fileList"
-          @preview="handlePreview"
-          @change="handleChange"
-        >
-          <div v-if="fileList.length < 1">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-          <img alt="example" style="width: 100%" :src="previewImage" />
-        </a-modal>
-      </div> -->
 
-    <!-- <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
-      <div class="clearfix" style="margin-top: 20px">
-        <a-upload
-          :action="actionUrl"
-          :multiple="true"
-          list-type="picture-card"
-          :file-list="fileListBanner"
-          @preview="handlePreviewBanner"
-          @change="handleChangeBanner"
-        >
-          <div v-if="fileListBanner.length < 5">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisibleBanner" :footer="null" @cancel="handleCancelBanner">
-          <img alt="example" style="width: 100%" :src="previewImageBanner" />
-        </a-modal>
-      </div> -->
-
-    <!-- <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
-      <div class="clearfix" style="margin-top: 20px">
-        <a-upload
-          :action="actionUrl"
-          :multiple="true"
-          list-type="picture-card"
-          :file-list="fileListDetail"
-          @preview="handlePreviewDetail"
-          @change="handleChangeDetail"
-        >
-          <div v-if="fileListDetail.length < 50">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisibleDetail" :footer="null" @cancel="handleCancelDetail">
-          <img alt="example" style="width: 100%" :src="previewImageDetail" />
-        </a-modal>
-      </div> -->
-    <!-- </div> -->
     <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
     <div style="height: 25px; color: white"></div>
   </div>
 </template>
 
 <script>
-import { savePlan, qryGoodsClass, getPlanDetail, delGoodsAttr } from '@/api/modular/system/posManage'
+import { savePlan, qryGoodsClass, getPlanDetail, delGoodsAttr, qryCodeValue } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -192,12 +130,9 @@ export default {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
-      typeDatas: [
-        { type: 'textNum', value: '图文咨询' },
-        { type: 'videoNum', value: '视频咨询' },
-        { type: 'appointBedNum', value: '床位预约' },
-      ],
+      typeDatas: [],
 
+      goodsAttrFull: [],
       goodsAttr: [],
 
       uploadData: {
@@ -223,18 +158,6 @@ export default {
         basetimeType: '0',
       },
 
-      // previewVisible: false,
-      // previewVisibleBanner: false,
-      // previewVisibleDetail: false,
-
-      // previewImage: '',
-      // previewImageBanner: '',
-      // previewImageDetail: '',
-
-      // fileList: [],
-      // fileListBanner: [],
-      // fileListDetail: [],
-
       goodClasses: [],
       goodClassesTemp: [],
       chooseClassItem: {},
@@ -248,12 +171,38 @@ export default {
 
   created() {
     this.planId = this.$route.params.planId
-    this.getPlanDetailOut()
 
     qryGoodsClass({ pageNo: 1, pageSize: 99 }).then((res) => {
       if (res.code == 0) {
         this.goodClasses = res.data.rows
         this.goodClassesTemp = JSON.parse(JSON.stringify(this.goodClasses))
+      } else {
+        this.$message.error(res.message)
+      }
+    })
+
+    qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
+      if (res.code == 0) {
+        this.typeDatas = res.data
+        // let item = {
+        //   id: 3,
+        //   codeGroup: 'GOODS_SERVICE_TYPE',
+        //   code: 'videoNum',
+        //   value: '视频咨询',
+        //   parentCode: null,
+        //   remark: null,
+        // }
+        for (let index = 0; index < this.typeDatas.length; index++) {
+          // goodsAttr: [{ name: '视频咨询', attrName: 'videoNum', attrValue: '1' }],
+          this.goodsAttrFull.push({
+            name: this.typeDatas[index].value,
+            attrName: this.typeDatas[index].code,
+            attrValue: '1',
+          })
+        }
+
+        this.getPlanDetailOut()
+        // this.goodsAttr = JSON.parse(JSON.stringify(this.goodsAttrFull[0]))
       } else {
         this.$message.error(res.message)
       }
@@ -292,11 +241,6 @@ export default {
               })
             })
           })
-          // this.form.setFieldsValue({
-          //   goodsName: this.uploadData.goodsInfo.goodsName,
-          //   price: this.uploadData.goodsInfo.price,
-          //   theLastTime: this.uploadData.goodsInfo.theLastTime,
-          // })
 
           console.log('555', this.uploadData.goodsInfo.status == 1)
           if (this.uploadData.goodsInfo.status == 1) {
@@ -307,39 +251,17 @@ export default {
             this.outIsOnline = false
           }
 
-          // console.log('666', this.uploadData.goodsInfo.topFlag == 1)
-          // if (this.uploadData.goodsInfo.topFlag == 1) {
-          //   this.topFlagIf = true
-          //   this.form.setFieldsValue({
-          //     topFlagIf: true,
-          //   })
-          // } else {
-          //   this.form.setFieldsValue({
-          //     topFlagIf: false,
-          //   })
-          // }
-
-          //组装服务类型
+          //组装服务类型,加名字
           for (let index = 0; index < this.uploadData.goodsInfo.goodsAttr.length; index++) {
-            if (
-              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'videoNum' ||
-              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'textNum' ||
-              this.uploadData.goodsInfo.goodsAttr[index].attrName == 'appointBedNum'
-            ) {
-              this.goodsAttr.push(this.uploadData.goodsInfo.goodsAttr[index])
+            let fullOne = this.goodsAttrFull.find((itemFull) => {
+              return itemFull.attrName == this.uploadData.goodsInfo.goodsAttr[index].attrName
+            })
+            if (fullOne && fullOne.attrName) {
+              this.$set(this.uploadData.goodsInfo.goodsAttr[index], 'name', fullOne.name)
+              this.goodsAttr.push(JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index])))
             }
           }
 
-          //赋值名字，以比较对比
-          this.goodsAttr.forEach((item) => {
-            if (item.attrName == 'textNum') {
-              item.name = '图文咨询'
-            } else if (item.attrName == 'videoNum') {
-              item.name = '视频咨询'
-            } else if (item.attrName == 'appointBedNum') {
-              item.name = '床位预约'
-            }
-          })
         } else {
           this.$message.error(res.message)
         }
@@ -362,58 +284,6 @@ export default {
       this.uploadData.goodsInfo.goodsClass = choseClassId
       this.chooseClassItem = this.goodClasses.find((item) => item.classId == choseClassId)
     },
-
-    // handleCancel() {
-    //   this.previewVisible = false
-    // },
-
-    // handleCancelBanner() {
-    //   this.previewVisibleBanner = false
-    // },
-
-    // handleCancelDetail() {
-    //   this.previewVisibleDetail = false
-    // },
-
-    // async handlePreview(file) {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await this.getBase64(file.originFileObj)
-    //   }
-    //   this.previewImage = file.url || file.preview
-    //   this.previewVisible = true
-    // },
-
-    // async handlePreviewBanner(file) {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await this.getBase64(file.originFileObj)
-    //   }
-    //   this.previewImageBanner = file.url || file.preview
-    //   this.previewVisibleBanner = true
-    // },
-
-    // async handlePreviewDetail(file) {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await this.getBase64(file.originFileObj)
-    //   }
-    //   this.previewImageDetail = file.url || file.preview
-    //   this.previewVisibleDetail = true
-    // },
-
-    // handleChange({ fileList }) {
-    //   this.fileList = fileList
-    //   if (this.fileList.length > 1) {
-    //     let newData = this.fileList[0]
-    //     this.fileList = [newData]
-    //   }
-    // },
-
-    // handleChangeBanner({ fileList }) {
-    //   this.fileListBanner = fileList
-    // },
-
-    // handleChangeDetail({ fileList }) {
-    //   this.fileListDetail = fileList
-    // },
 
     deleteItem(index) {
       if (this.goodsAttr.length <= 1) {
@@ -445,31 +315,13 @@ export default {
 
       let newName = this.getNewOne()
       console.log('newName', newName)
-      if (newName == '图文咨询') {
-        this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
-      } else if (newName == '视频咨询') {
-        this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
-      } else {
-        this.goodsAttr.push({ name: '床位预约', attrName: 'appointBedNum', attrValue: '1' })
-      }
+
+      this.goodsAttr.push(
+        this.goodsAttrFull.find((item) => {
+          return item.name == newName
+        })
+      )
     },
-
-    // getNewOne() {
-    //   //添加typeDatas没有包含在this.goodsAttr里面的数据
-    //   for (let index = 0; index < this.typeDatas.length; index++) {
-    //     let value = this.typeDatas[index].value
-
-    //     let has = this.goodsAttr.some((item) => {
-    //       return item.name == value
-    //     })
-    //     console.log('this.goodsAttr', this.goodsAttr)
-    //     console.log('value', value)
-
-    //     if (!has) {
-    //       return value
-    //     }
-    //   }
-    // },
 
     getNewOne() {
       //添加typeDatas没有包含在this.goodsAttr里面的数据

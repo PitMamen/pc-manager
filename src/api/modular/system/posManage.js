@@ -823,3 +823,15 @@ export function sysRemind(param) {
     data: param,
   })
 }
+
+/**
+ * 根据类别查询枚举值
+ *
+ */
+export function qryCodeValue(codeType) {
+  return axios({
+    url: '/bdcApi/medical/common/qryCodeValue',
+    method: 'get',
+    params: { codeGroup: codeType }
+  })
+}

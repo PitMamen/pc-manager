@@ -143,16 +143,8 @@ export default {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
-      typeDatas: [
-        { type: 'textNum', value: '图文咨询' },
-        { type: 'videoNum', value: '视频咨询' },
-        { type: 'appointBedNum', value: '床位预约' },
-      ],
 
-      goodsAttr: [
-        // { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-        // { name: '图文咨询', attrName: 'textNum', attrValue: '1' },
-      ],
+      goodsAttr: [],
 
       uploadData: {
         goodsInfo: {

@@ -6,7 +6,7 @@
 
     <a-form ref="form" :form="form" class="my-form">
       <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span class="span-item-value">{{ planData.goodsInfo.goodsClassName }} </span>
+        <span class="span-item-value">{{ uploadData.goodsInfo.goodsClassInfo.className }} </span>
         <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
             item.deptName
@@ -16,7 +16,7 @@
 
       <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-input v-decorator="['goodsName', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" /> -->
-        <span class="span-item-value">{{ planData.templateName }} </span>
+        <span class="span-item-value">{{ uploadData.templateName }} </span>
       </a-form-item>
 
       <!-- <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -28,7 +28,7 @@
           defaultChecked
           v-decorator="['statusIf', { rules: [{ required: true, message: '请选择是否上架！' }] }]"
         /> -->
-        <a-switch :checked="planData.isOnline" disabled />
+        <a-switch :checked="uploadData.isOnline" disabled />
       </a-form-item>
 
       <!-- <a-form-item label="是否推荐" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -42,7 +42,7 @@
           :min="0"
           :max="1000000"
         /> -->
-        <span class="span-item-value">{{ planData.goodsInfo.price }} </span>
+        <span class="span-item-value">{{ uploadData.goodsInfo.price }} </span>
       </a-form-item>
 
       <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -69,7 +69,7 @@
           <span class="span-item-name"><span style="color: red">*</span> 类别{{ index + 1 }} :</span>
 
           <a-select disabled v-model="item.attrName" class="span-item-value" allow-clear placeholder="请选择服务类别">
-            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.type">{{
+            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.code">{{
               itemType.value
             }}</a-select-option>
           </a-select>
@@ -156,7 +156,7 @@
 </template>
 
 <script>
-import { queryDepartment, savePlan, getPlanDetail } from '@/api/modular/system/posManage'
+import { savePlan, getPlanDetail, qryCodeValue } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -185,7 +185,7 @@ export default {
         { code: 3, valueName: '永久', value: 1200 },
       ],
       keshiData: [],
-      planData: {},
+      // planData: {},
       planId: '',
       // actionUrl: 'http://192.168.1.122:8071/fileUpload/uploadImgFile',
       actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
@@ -193,19 +193,14 @@ export default {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
-      typeDatas: [
-        { type: 'textNum', value: '图文咨询' },
-        { type: 'videoNum', value: '视频咨询' },
-        { type: 'appointBedNum', value: '床位预约' },
-      ],
+      typeDatas: [],
 
-      goodsAttr: [
-        // { name: '视频咨询', attrName: 'videoNum', attrValue: '1' },
-        // { name: '图文咨询', attrName: 'textNum', attrValue: '1' },
-      ],
+      goodsAttrFull: [],
+      goodsAttr: [],
 
       uploadData: {
         goodsInfo: {
+          goodsClassInfo: { className: '' },
           goodsName: '',
           belong: '',
           deptName: '',
@@ -249,34 +244,60 @@ export default {
 
   created() {
     this.planId = this.$route.params.planId
-    this.getPlanDetailOut()
+
+    qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
+      if (res.code == 0) {
+        this.typeDatas = res.data
+        // let item = {
+        //   id: 3,
+        //   codeGroup: 'GOODS_SERVICE_TYPE',
+        //   code: 'videoNum',
+        //   value: '视频咨询',
+        //   parentCode: null,
+        //   remark: null,
+        // }
+        for (let index = 0; index < this.typeDatas.length; index++) {
+          // goodsAttr: [{ name: '视频咨询', attrName: 'videoNum', attrValue: '1' }],
+          this.goodsAttrFull.push({
+            name: this.typeDatas[index].value,
+            attrName: this.typeDatas[index].code,
+            attrValue: '1',
+          })
+        }
+
+        this.getPlanDetailOut()
+        // this.goodsAttr = JSON.parse(JSON.stringify(this.goodsAttrFull[0]))
+      } else {
+        this.$message.error(res.message)
+      }
+    })
   },
 
   methods: {
     getPlanDetailOut() {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
-          this.planData = res.data
-          if (this.planData.goodsInfo.status == 1) {
-            this.$set(this.planData, 'isOnline', true)
+          this.uploadData = res.data
+          if (this.uploadData.goodsInfo.status == 1) {
+            this.$set(this.uploadData, 'isOnline', true)
           } else {
-            this.$set(this.planData, 'isOnline', false)
+            this.$set(this.uploadData, 'isOnline', false)
           }
 
-          if (this.planData.goodsInfo.topFlag == 1) {
-            this.$set(this.planData, 'isSuggest', true)
+          if (this.uploadData.goodsInfo.topFlag == 1) {
+            this.$set(this.uploadData, 'isSuggest', true)
           } else {
-            this.$set(this.planData, 'isSuggest', false)
+            this.$set(this.uploadData, 'isSuggest', false)
           }
 
-          //组装服务类型
-          for (let index = 0; index < this.planData.goodsInfo.goodsAttr.length; index++) {
-            if (
-              this.planData.goodsInfo.goodsAttr[index].attrName == 'videoNum' ||
-              this.planData.goodsInfo.goodsAttr[index].attrName == 'textNum' ||
-              this.planData.goodsInfo.goodsAttr[index].attrName == 'appointBedNum'
-            ) {
-              this.goodsAttr.push(this.planData.goodsInfo.goodsAttr[index])
+          //组装服务类型,加名字
+          for (let index = 0; index < this.uploadData.goodsInfo.goodsAttr.length; index++) {
+            let fullOne = this.goodsAttrFull.find((itemFull) => {
+              return itemFull.attrName == this.uploadData.goodsInfo.goodsAttr[index].attrName
+            })
+            if (fullOne && fullOne.attrName) {
+              this.$set(this.uploadData.goodsInfo.goodsAttr[index], 'name', fullOne.name)
+              this.goodsAttr.push(JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index])))
             }
           }
 
@@ -293,11 +314,11 @@ export default {
             uid: '-1',
             name: '封面' + 1,
             status: 'done',
-            url: this.planData.goodsInfo.previewList,
+            url: this.uploadData.goodsInfo.previewList,
           })
 
           //banner图
-          let bannerPics = this.planData.goodsInfo.bannerList.split(',')
+          let bannerPics = this.uploadData.goodsInfo.bannerList.split(',')
           for (let index = 0; index < bannerPics.length; index++) {
             this.fileListBanner.push({
               uid: 0 - index + '',
@@ -308,7 +329,7 @@ export default {
           }
 
           //详情图
-          let detailPics = this.planData.goodsInfo.imgList.split(',')
+          let detailPics = this.uploadData.goodsInfo.imgList.split(',')
           for (let index = 0; index < detailPics.length; index++) {
             this.fileListDetail.push({
               uid: 0 - index + '',
@@ -324,9 +345,9 @@ export default {
     },
 
     countMonth() {
-      if (this.planData.goodsInfo.theLastTime == 6) {
+      if (this.uploadData.goodsInfo.theLastTime == 6) {
         return '半年'
-      } else if (this.planData.goodsInfo.theLastTime == 12) {
+      } else if (this.uploadData.goodsInfo.theLastTime == 12) {
         return '一年'
       } else {
         return '永久'
@@ -397,25 +418,7 @@ export default {
     /**
      * 添加条目时不能重复，需要处理
      */
-    addItem() {
-      if (this.goodsAttr.length >= 2) {
-        this.$message.error('目前仅支持两种服务类型！')
-        return
-      }
-
-      if (this.goodsAttr.length == 0) {
-        this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
-        return
-      }
-
-      if (this.goodsAttr.length == 1) {
-        if (this.goodsAttr[0].attrName == 'textNum') {
-          this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
-        } else {
-          this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
-        }
-      }
-    },
+    addItem() {},
     validate() {
       const {
         form: { validateFields },

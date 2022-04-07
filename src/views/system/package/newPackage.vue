@@ -73,7 +73,7 @@
           <span class="span-item-name"><span style="color: red">*</span> 类别{{ index + 1 }} :</span>
 
           <a-select v-model="item.attrName" class="span-item-value" allow-clear placeholder="请选择服务类别">
-            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.type">{{
+            <a-select-option v-for="(itemType, indexType) in typeDatas" :key="indexType" :value="itemType.code">{{
               itemType.value
             }}</a-select-option>
           </a-select>
@@ -88,76 +88,14 @@
 
       <a-button class="btn-add" style="margin-top: 2%" type="primary" @click="addItem">添加</a-button>
     </div>
-    <!-- 
-    <div class="div-service-pic">
-      <span class="title-des-pic"><span style="color: red">*</span> 套餐图片 :（只允许上传1张，正方形比例）</span> -->
-    <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
-    <!-- <div class="clearfix" style="margin-top: 20px">
-        <a-upload
-          :action="actionUrl"
-          :multiple="true"
-          list-type="picture-card"
-          :file-list="fileList"
-          @preview="handlePreview"
-          @change="handleChange"
-        >
-          <div v-if="fileList.length < 1">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-          <img alt="example" style="width: 100%" :src="previewImage" />
-        </a-modal>
-      </div> -->
 
-    <!-- <span class="title-des-pic"><span style="color: red">*</span> 详情banner图片 :（建议尺寸比例7：4）</span>
-      <div class="clearfix" style="margin-top: 20px">
-        <a-upload
-          :action="actionUrl"
-          :multiple="true"
-          list-type="picture-card"
-          :file-list="fileListBanner"
-          @preview="handlePreviewBanner"
-          @change="handleChangeBanner"
-        >
-          <div v-if="fileListBanner.length < 5">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisibleBanner" :footer="null" @cancel="handleCancelBanner">
-          <img alt="example" style="width: 100%" :src="previewImageBanner" />
-        </a-modal>
-      </div> -->
-
-    <!-- <span class="title-des-pic"><span style="color: red">*</span> 商品详情</span>
-      <div class="clearfix" style="margin-top: 20px">
-        <a-upload
-          :action="actionUrl"
-          :multiple="true"
-          list-type="picture-card"
-          :file-list="fileListDetail"
-          @preview="handlePreviewDetail"
-          @change="handleChangeDetail"
-        >
-          <div v-if="fileListDetail.length < 50">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-        <a-modal :visible="previewVisibleDetail" :footer="null" @cancel="handleCancelDetail">
-          <img alt="example" style="width: 100%" :src="previewImageDetail" />
-        </a-modal>
-      </div> -->
-    <!-- </div> -->
     <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
     <div style="height: 25px; color: white"></div>
   </div>
 </template>
 
 <script>
-import { savePlan, qryGoodsClass } from '@/api/modular/system/posManage'
+import { savePlan, qryGoodsClass, qryCodeValue } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -190,13 +128,10 @@ export default {
         authorization: 'authorization-text',
       },
       form: this.$form.createForm(this),
-      typeDatas: [
-        { type: 'textNum', value: '图文咨询' },
-        { type: 'videoNum', value: '视频咨询' },
-        { type: 'appointBedNum', value: '床位预约' },
-      ],
+      typeDatas: [],
 
-      goodsAttr: [{ name: '视频咨询', attrName: 'videoNum', attrValue: '1' }],
+      goodsAttrFull: [],
+      goodsAttr: [],
 
       uploadData: {
         goodsInfo: {
@@ -220,18 +155,6 @@ export default {
         basetimeType: '0',
       },
 
-      // previewVisible: false,
-      // previewVisibleBanner: false,
-      // previewVisibleDetail: false,
-
-      // previewImage: '',
-      // previewImageBanner: '',
-      // previewImageDetail: '',
-
-      // fileList: [],
-      // fileListBanner: [],
-      // fileListDetail: [],
-
       goodClasses: [],
       goodClassesTemp: [],
       chooseClassItem: {},
@@ -252,6 +175,33 @@ export default {
       if (res.code == 0) {
         this.goodClasses = res.data.rows
         this.goodClassesTemp = JSON.parse(JSON.stringify(this.goodClasses))
+      } else {
+        this.$message.error(res.message)
+      }
+    })
+
+    qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
+      if (res.code == 0) {
+        this.typeDatas = res.data
+        // typeDatas元素的值 let item = {
+        //   id: 3,
+        //   codeGroup: 'GOODS_SERVICE_TYPE',
+        //   code: 'videoNum',
+        //   value: '视频咨询',
+        //   parentCode: null,
+        //   remark: null,
+        // }
+
+        //将typeDatas组装转换成goodsAttrFull
+        for (let index = 0; index < this.typeDatas.length; index++) {
+          // goodsAttrFull元素值: [{ name: '视频咨询', attrName: 'videoNum', attrValue: '1' }],
+          this.goodsAttrFull.push({
+            name: this.typeDatas[index].value,
+            attrName: this.typeDatas[index].code,
+            attrValue: '1',
+          })
+        }
+        this.goodsAttr = JSON.parse(JSON.stringify(this.goodsAttrFull[0]))
       } else {
         this.$message.error(res.message)
       }
@@ -289,58 +239,6 @@ export default {
       this.chooseClassItem = this.goodClasses.find((item) => item.classId == choseClassId)
     },
 
-    // handleCancel() {
-    //   this.previewVisible = false
-    // },
-
-    // handleCancelBanner() {
-    //   this.previewVisibleBanner = false
-    // },
-
-    // handleCancelDetail() {
-    //   this.previewVisibleDetail = false
-    // },
-
-    // async handlePreview(file) {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await this.getBase64(file.originFileObj)
-    //   }
-    //   this.previewImage = file.url || file.preview
-    //   this.previewVisible = true
-    // },
-
-    // async handlePreviewBanner(file) {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await this.getBase64(file.originFileObj)
-    //   }
-    //   this.previewImageBanner = file.url || file.preview
-    //   this.previewVisibleBanner = true
-    // },
-
-    // async handlePreviewDetail(file) {
-    //   if (!file.url && !file.preview) {
-    //     file.preview = await this.getBase64(file.originFileObj)
-    //   }
-    //   this.previewImageDetail = file.url || file.preview
-    //   this.previewVisibleDetail = true
-    // },
-
-    // handleChange({ fileList }) {
-    //   this.fileList = fileList
-    //   if (this.fileList.length > 1) {
-    //     let newData = this.fileList[0]
-    //     this.fileList = [newData]
-    //   }
-    // },
-
-    // handleChangeBanner({ fileList }) {
-    //   this.fileListBanner = fileList
-    // },
-
-    // handleChangeDetail({ fileList }) {
-    //   this.fileListDetail = fileList
-    // },
-
     deleteItem(index) {
       if (this.goodsAttr.length <= 1) {
         this.$message.error('至少选择一个服务类别')
@@ -360,13 +258,12 @@ export default {
 
       let newName = this.getNewOne()
       console.log('newName', newName)
-      if (newName == '图文咨询') {
-        this.goodsAttr.push({ name: '图文咨询', attrName: 'textNum', attrValue: '1' })
-      } else if (newName == '视频咨询') {
-        this.goodsAttr.push({ name: '视频咨询', attrName: 'videoNum', attrValue: '1' })
-      } else {
-        this.goodsAttr.push({ name: '床位预约', attrName: 'appointBedNum', attrValue: '1' })
-      }
+
+      this.goodsAttr.push(
+        this.goodsAttrFull.find((item) => {
+          return item.name == newName
+        })
+      )
     },
 
     getNewOne() {
@@ -414,45 +311,6 @@ export default {
             return
           }
 
-          // //组装图片
-          // if (this.fileList.length == 0) {
-          //   this.$message.error('请上传套餐图片！')
-          //   return
-          // } else {
-          //   this.uploadData.goodsInfo.previewList = this.fileList[0].response.data.fileLinkUrl
-          // }
-
-          // if (this.fileListBanner.length == 0) {
-          //   this.$message.error('请上传详情banner图片！')
-          //   return
-          // } else {
-          //   let str = ''
-          //   for (let index = 0; index < this.fileListBanner.length; index++) {
-          //     if (index != this.fileListBanner.length - 1) {
-          //       str = str + this.fileListBanner[index].response.data.fileLinkUrl + ','
-          //     } else {
-          //       str = str + this.fileListBanner[index].response.data.fileLinkUrl
-          //     }
-          //   }
-
-          //   this.uploadData.goodsInfo.bannerList = str
-          // }
-
-          // if (this.fileListDetail.length == 0) {
-          //   this.$message.error('请上传商品详情图片！')
-          //   return
-          // } else {
-          //   let str = ''
-          //   for (let index = 0; index < this.fileListDetail.length; index++) {
-          //     if (index != this.fileListDetail.length - 1) {
-          //       str = str + this.fileListDetail[index].response.data.fileLinkUrl + ','
-          //     } else {
-          //       str = str + this.fileListDetail[index].response.data.fileLinkUrl
-          //     }
-          //   }
-
-          //   this.uploadData.goodsInfo.imgList = str
-          // }
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
             if (res.code == 0) {
