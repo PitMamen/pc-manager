@@ -251,8 +251,8 @@ export default {
      * 添加条目时不能重复，需要处理
      */
     addItem() {
-      if (this.goodsAttr.length >= 3) {
-        this.$message.error('目前仅支持三种服务类型！')
+      if (this.goodsAttr.length >= this.goodsAttrFull.length) {
+        this.$message.error('目前仅支持' + this.goodsAttrFull.length + '种服务类型！')
         return
       }
 
