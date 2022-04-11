@@ -21,7 +21,13 @@
           </template>
         </a-auto-complete>
       </div>
-      <div class="div-part" style="margin-top:7%" v-for="(item, index) in deptData" :value="item.departmentId" :key="index">
+      <div
+        class="div-part"
+        style="margin-top: 7%"
+        v-for="(item, index) in deptData"
+        :value="item.departmentId"
+        :key="index"
+      >
         <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
           {{ item.departmentName }}
         </p>
@@ -276,6 +282,7 @@ export default {
       } else {
         record.status = 1
       }
+      record.password = ''
       // let data = { templateId: record.templateId, goodsInfo: { goodsId: record.goodsId, topFlag: record.topFlag } }
       updateUser(record).then((res) => {
         if (res.code == 0) {

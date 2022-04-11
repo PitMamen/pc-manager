@@ -201,7 +201,7 @@ export default {
             attrValue: '1',
           })
         }
-        this.goodsAttr = JSON.parse(JSON.stringify(this.goodsAttrFull[0]))
+        this.goodsAttr.push(JSON.parse(JSON.stringify(this.goodsAttrFull[0])))
       } else {
         this.$message.error(res.message)
       }

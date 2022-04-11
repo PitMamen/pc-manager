@@ -16,7 +16,7 @@
         </div>
 
         <div class="div-left">
-          <span class="span-item-name">创建作者 :{{ checkData.author }}</span>
+          <span class="span-item-name">创建作者 :{{ checkData.publisherName }}</span>
         </div>
         <div class="div-left">
           <span class="span-item-name">创建时间 :{{ checkData.createTime }}</span>

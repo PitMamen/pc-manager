@@ -835,3 +835,27 @@ export function qryCodeValue(codeType) {
     params: { codeGroup: codeType }
   })
 }
+
+/**
+ * 新建/修改提醒参数
+ *
+ */
+ export function saveRemindParam(data) {
+  return axios({
+    url: '/bdcApi/sys/saveRemindParam',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 获取提醒参数配置
+ *
+ */
+ export function qryRemindParam(params) {
+  return axios({
+    url: '/bdcApi/sys/qryRemindParam',
+    method: 'get',
+    params: params
+  })
+}
