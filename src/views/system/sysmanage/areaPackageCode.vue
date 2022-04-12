@@ -18,7 +18,7 @@
 
 
 <script>
-import { newDept, getQrUrl } from '@/api/modular/system/posManage'
+import { getQrGoodsCode } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
@@ -49,9 +49,9 @@ export default {
       this.record = {}
       this.record = record
       this.visible = true
-      getQrUrl({ ks: record.departmentId, bq: 0 }).then((res) => {
+      getQrGoodsCode({ ks: record.departmentId}).then((res) => {
         if (res.code == 0) {
-          this.data = res.data
+          // this.data = res.data
           this.extraImage = res.data
         } else {
           // this.$message.error('新增失败：' + res.message)

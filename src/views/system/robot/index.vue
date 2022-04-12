@@ -4,91 +4,33 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="4" :sm="24">
-              <a-form-item label="患者">
-                <a-input
-                  v-model="queryParams.userName"
-                  allow-clear
-                  placeholder="请输入患者"
-                  @keyup.enter="$refs.table.refresh(true)"
-                />
-              </a-form-item>
+            <a-col :md="3" :sm="24">
+              <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
             </a-col>
 
             <a-col :md="4" :sm="24">
-              <a-form-item label="医生">
+              <a-form-item label="内容标题">
                 <a-input
-                  v-model="queryParams.execName"
+                  v-model="queryParams.keyWord"
                   allow-clear
-                  placeholder="请输入医生"
+                  placeholder="请输入内容标题"
                   @keyup.enter="$refs.table.refresh(true)"
                 />
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="24">
-              <a-form-item label="问诊状态">
-                <a-select allow-clear v-model="queryParams.execFlag" placeholder="请选择状态">
+              <a-form-item label="类别">
+                <a-select allow-clear v-model="queryParams.knowledgeType" placeholder="请选择类别">
                   <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
                     item.value
                   }}</a-select-option>
                 </a-select>
               </a-form-item>
             </a-col>
-
-            <a-col :md="6" :sm="24">
-              <a-form-item label="科室">
-                <div style="width: 300px; display: inline-block; margin-left: 1%">
-                  <a-auto-complete
-                    class="global-search"
-                    v-model="chooseDeptItem.departmentName"
-                    size="large"
-                    style="width: 100%; font-size: 14px"
-                    placeholder="请输入并选择"
-                    option-label-prop="title"
-                    @select="onSelect"
-                    @search="handleSearch"
-                  >
-                    <template slot="dataSource">
-                      <a-select-option
-                        v-for="item in keshiDataTemp"
-                        :key="item.departmentId + ''"
-                        :title="item.departmentName"
-                      >
-                        {{ item.departmentName }}
-                      </a-select-option>
-                    </template>
-                  </a-auto-complete>
-                </div>
-
-                <!-- <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
-                  <a-select-option v-for="(item, index) in execFlag" :key="index" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select> -->
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="5" :sm="24">
-              <a-form-item label="下单时间">
-                <a-date-picker format="YYYY-MM-DD" v-model="queryParams.beginDate" />
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="4" :sm="24">
-              <a-form-item label="">
-                <a-date-picker format="YYYY-MM-DD" v-model="queryParams.endDate" />
-              </a-form-item>
-            </a-col>
-
             <a-col :md="3" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button>
-              </span>
+              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+              <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button>
             </a-col>
           </a-row>
         </a-form>
@@ -106,7 +48,11 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.addForm.add(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
+          <a @click="$refs.editForm.edit(record)">编辑</a>
+          <a-divider type="vertical" />
+          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delKnowledge(record)">
+            <a>删除</a>
+          </a-popconfirm>
         </span>
 
         <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
@@ -115,45 +61,32 @@
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
+      <edit-form ref="editForm" @ok="handleOk" />
     </a-card>
   </div>
 </template>
 
 <script>
 import { STable } from '@/components'
-import { qryRightsUserRecordList, getDepts } from '@/api/modular/system/posManage'
+import { qryCodeValue, delSysKnowledge, qrySysKnowledge } from '@/api/modular/system/posManage'
 import addForm from './addForm'
+import editForm from './editForm'
 
 export default {
   components: {
     STable,
     addForm,
-    // editForm,
+    editForm,
   },
 
   data() {
     return {
-      selectedRowKeys: [], // Check here to configure the default column
-      // 高级搜索 展开/关闭
-      advanced: false,
-      //（1：已完成 0：申请2：个案师处理完成3：已中止）
-      statusData: [
-        { code: -1, value: '全部' },
-        { code: 0, value: '已申请' },
-        { code: 1, value: '已完成' },
-        { code: 2, value: '未接诊' },
-        { code: 3, value: '已终止' },
-      ],
-      partChoose: '',
+      //就诊导航 JZDH    服务咨询 FWZX
+      statusData: [],
 
       queryParams: {
-        execDept: '', //科室
-        rightsType: 'textNum', //textNum
-        userName: '', //患者
-        execName: '', //医生
-        execFlag: -1, //状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
-        beginDate: '',
-        endDate: '',
+        knowledgeType: undefined, //科室
+        keyWord: undefined, //textNum
       },
       // 表头
       columns: [
@@ -162,33 +95,20 @@ export default {
           dataIndex: 'xh',
         },
         {
-          title: '患者',
-          dataIndex: 'userName',
+          title: '内容标题',
+          dataIndex: 'title',
         },
         {
-          title: '医生团队',
-          dataIndex: 'execName',
+          title: '类别',
+          dataIndex: 'typeName',
         },
         {
-          title: '科室',
-          dataIndex: 'deptName',
+          title: '创建人',
+          dataIndex: 'creator',
         },
         {
-          title: '问诊时间',
-          dataIndex: 'execTime',
-          // scopedSlots: { customRender: 'status' },
-        },
-        {
-          title: '问诊状态',
-          dataIndex: 'statusText',
-        },
-        {
-          title: '接诊时间',
-          dataIndex: 'createDate',
-        },
-        {
-          title: '接诊间隔',
-          dataIndex: 'accountSum',
+          title: '创建时间',
+          dataIndex: 'updateTimeOut',
         },
         {
           title: '操作',
@@ -198,63 +118,36 @@ export default {
         },
       ],
 
-      chooseDeptItem: {},
-      keshiDataTemp: [],
-
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.execFlag == -1) {
-          delete this.queryParams.execFlag
+        if (this.queryParams.knowledgeType == '1') {
+          this.queryParams.knowledgeType = ''
         }
-
-        if (this.queryParams.beginDate && this.queryParams.endDate) {
-          if (this.queryParams.beginDate > this.queryParams.endDate) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.beginDate
-            delete this.queryParams.endDate
-            this.$refs.table.refresh()
-            return
-          }
-          if (this.queryParams.beginDate) {
-            let start = this.formatDate(this.queryParams.beginDate)
-            this.queryParams.beginDate = start + ' 00:00:00'
-          }
-
-          if (this.queryParams.endDate) {
-            let end = this.formatDate(this.queryParams.endDate)
-            this.queryParams.endDate = end + ' 23:59:59'
-          }
-        } else {
-          delete this.queryParams.beginDate
-          delete this.queryParams.endDate
-        }
-
-        return qryRightsUserRecordList(Object.assign(parameter, this.queryParams)).then((res) => {
+        return qrySysKnowledge(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            // this.$set(res.data.rows[i], 'userName', res.data.rows[i].userInfo.userName)
+            this.$set(res.data.rows[i], 'updateTimeOut', this.formatDate(res.data.rows[i].updateTime))
 
             ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
-            this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
-            debugger
-            console.log('ddd', res.data.rows[i].execFlag)
-            if (res.data.rows[i].execFlag == 0) {
-              this.$set(res.data.rows[i], 'statusText', '已申请')
-              this.$set(res.data.rows[i], 'btnText', '聊天记录')
-              this.$set(res.data.rows[i], 'canAsk', false)
-            } else if (res.data.rows[i].execFlag == 1) {
-              this.$set(res.data.rows[i], 'statusText', '已完成')
-              this.$set(res.data.rows[i], 'btnText', '聊天记录')
-              this.$set(res.data.rows[i], 'canAsk', false)
-            } else if (res.data.rows[i].execFlag == 2) {
-              this.$set(res.data.rows[i], 'statusText', '未接诊')
-              this.$set(res.data.rows[i], 'btnText', '提醒医生')
-              this.$set(res.data.rows[i], 'canAsk', true)
-            } else if (res.data.rows[i].execFlag == 3) {
-              this.$set(res.data.rows[i], 'statusText', '已中止')
-              this.$set(res.data.rows[i], 'btnText', '聊天记录')
-              this.$set(res.data.rows[i], 'canAsk', false)
-            }
+            // this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
+            // console.log('ddd', res.data.rows[i].execFlag)
+            // if (res.data.rows[i].execFlag == 0) {
+            //   this.$set(res.data.rows[i], 'statusText', '已申请')
+            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
+            //   this.$set(res.data.rows[i], 'canAsk', false)
+            // } else if (res.data.rows[i].execFlag == 1) {
+            //   this.$set(res.data.rows[i], 'statusText', '已完成')
+            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
+            //   this.$set(res.data.rows[i], 'canAsk', false)
+            // } else if (res.data.rows[i].execFlag == 2) {
+            //   this.$set(res.data.rows[i], 'statusText', '未接诊')
+            //   this.$set(res.data.rows[i], 'btnText', '提醒医生')
+            //   this.$set(res.data.rows[i], 'canAsk', true)
+            // } else if (res.data.rows[i].execFlag == 3) {
+            //   this.$set(res.data.rows[i], 'statusText', '已中止')
+            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
+            //   this.$set(res.data.rows[i], 'canAsk', false)
+            // }
           }
           return res.data
         })
@@ -263,10 +156,12 @@ export default {
   },
 
   created() {
-    getDepts().then((res) => {
+    qryCodeValue('KNOWLEDGE_TYPE').then((res) => {
       if (res.code == 0) {
-        this.keshiData = res.data
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+        if (res.data && res.data.length > 0) {
+          this.statusData = res.data
+          this.statusData.unshift({ code: '1', value: '全部' })
+        }
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
@@ -300,26 +195,19 @@ export default {
       return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
     },
 
-    /**
-     *autoComplete回调，本地模拟的数据处理
-     */
-    handleSearch(inputName) {
-      if (inputName) {
-        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
-      } else {
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-        this.chooseDeptItem = {}
-        this.queryParams.execDept = ''
-      }
-    },
-
-    onSelect(departmentId) {
-      //选择类别
-      this.queryParams.execDept = departmentId
-      // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
-      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
-      // this.planData.disease[0].diseaseName = ''
-      // this.getDiseasesOut(departmentId)
+    delKnowledge(record) {
+      delSysKnowledge({ id: record.id })
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('删除成功')
+            this.$refs.table.refresh()
+          } else {
+            this.$message.error('删除失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error('删除错误：' + err.message)
+        })
     },
 
     //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
@@ -335,47 +223,6 @@ export default {
       } else if (status == 5) {
         return 'span-gray'
       }
-    },
-    exportExcel() {
-      let para = {}
-      if (this.isSearchKeyword) {
-        para = {
-          keyWord: this.queryParam.keyWord,
-          exportType: '1',
-        }
-      } else {
-        para = {
-          keyWord: this.queryParam,
-          exportType: '2',
-        }
-      }
-
-      exportPatients(para)
-        .then((res) => {
-          this.downloadfile(res)
-          // eslint-disable-next-line handle-callback-err
-        })
-        .catch((err) => {
-          this.$message.error('导出错误：' + err.message)
-        })
-    },
-
-    downloadfile(res) {
-      var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
-      var contentDisposition = res.headers['content-disposition']
-      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
-      var result = patt.exec(contentDisposition)
-      var filename = result[1]
-      var downloadElement = document.createElement('a')
-      var href = window.URL.createObjectURL(blob) // 创建下载的链接
-      var reg = /^["](.*)["]$/g
-      downloadElement.style.display = 'none'
-      downloadElement.href = href
-      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
-      document.body.appendChild(downloadElement)
-      downloadElement.click() // 点击下载
-      document.body.removeChild(downloadElement) // 下载完成移除元素
-      window.URL.revokeObjectURL(href)
     },
 
     handleOk() {

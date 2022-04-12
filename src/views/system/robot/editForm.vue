@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增问答"
+    title="编辑问答"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -42,8 +42,7 @@
 
 <script>
 import { qryCodeValue, saveSysKnowledge } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
+
 export default {
   data() {
     return {
@@ -55,12 +54,14 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-      visible: false,
       statusData: [],
+      visible: false,
+      record: {},
       confirmLoading: false,
       form: this.$form.createForm(this),
     }
   },
+
   created() {
     qryCodeValue('KNOWLEDGE_TYPE').then((res) => {
       if (res.code == 0) {
@@ -72,10 +73,20 @@ export default {
       }
     })
   },
+
   methods: {
     //初始化方法
-    add() {
+    edit(record) {
       this.visible = true
+      this.record = {}
+      this.record = record
+      setTimeout(() => {
+        this.form.setFieldsValue({
+          knowledgeType: record.knowledgeType,
+          title: record.title,
+          content: record.content,
+        })
+      }, 100)
     },
 
     handleSubmit() {
@@ -88,20 +99,25 @@ export default {
           let chooseOne = this.statusData.find((item) => {
             return item.code == values.knowledgeType
           })
-          this.$set(values, 'typeName', chooseOne.value)
 
-          let user = Vue.ls.get(TRUE_USER)
-          this.$set(values, 'creator', user.userName)
-          saveSysKnowledge(values)
+          this.record.knowledgeType = values.knowledgeType
+          this.record.title = values.title
+          this.record.content = values.content
+          this.record.typeName = chooseOne.value
+
+          delete this.record.updateTimeOut
+          delete this.record.xh
+
+          saveSysKnowledge(this.record)
             .then((res) => {
               if (res.success) {
-                this.$message.success('新增成功')
+                this.$message.success('编辑成功')
                 this.visible = false
                 this.confirmLoading = false
                 this.$emit('ok', values)
                 this.form.resetFields()
               } else {
-                this.$message.error('新增失败：' + res.message)
+                this.$message.error('编辑失败：' + res.message)
               }
             })
             .finally((res) => {

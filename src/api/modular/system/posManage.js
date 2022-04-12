@@ -155,7 +155,7 @@ export function pushArticle(param) {
 }
 
 /**
- * 获取二维码链接
+ * 获取二维码链接  科室的随访二维码和病区二维码
  *
  */
 export function getQrUrl(param) {
@@ -164,6 +164,18 @@ export function getQrUrl(param) {
     method: 'get',
     params: param,
 
+  })
+}
+
+/**
+ * 获取二维码链接   科室的套餐二维码
+ *
+ */
+export function getQrGoodsCode(param) {
+  return axios({
+    url: '/pushapi/wx/qrcode/getQrGoodsCode',
+    method: 'get',
+    params: param,
   })
 }
 
@@ -840,9 +852,40 @@ export function qryCodeValue(codeType) {
  * 新建/修改提醒参数
  *
  */
- export function saveRemindParam(data) {
+export function saveRemindParam(data) {
   return axios({
     url: '/bdcApi/sys/saveRemindParam',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 查询问答列表
+ */
+export function qrySysKnowledge(data) {
+  return axios({
+    url: '/bdcApi/sys/qrySysKnowledge',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 新建/修改问答
+ */
+export function saveSysKnowledge(data) {
+  return axios({
+    url: '/bdcApi/sys/saveSysKnowledge',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 删除某个问答
+ */
+export function delSysKnowledge(data) {
+  return axios({
+    url: '/bdcApi/sys/delSysKnowledge',
     method: 'post',
     data: data,
   })
@@ -852,7 +895,7 @@ export function qryCodeValue(codeType) {
  * 获取提醒参数配置
  *
  */
- export function qryRemindParam(params) {
+export function qryRemindParam(params) {
   return axios({
     url: '/bdcApi/sys/qryRemindParam',
     method: 'get',

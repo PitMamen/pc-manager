@@ -54,7 +54,7 @@
 
             <a-form-item label="提醒设置" :labelCol="labelCol" :wrapperCol="wrapperColN" has-feedback>
               <div class="div-todo-time" v-for="(value, index) in textNum" :key="index">
-                <span class="span-item-name" style="margin-left: 8%"> 开始前</span>
+                <span class="span-item-name" style="margin-left: 8%"> 未接诊时长</span>
                 <a-input-number style="margin-left: 3.5%" v-model="textNum[index]" :min="0" :max="1000000" />
                 <span class="span-item-name" style="margin-left: 8%">分钟</span>
                 <a-button style="margin-left: 15%" type="primary" @click="deleteTextItem(index)">刪除</a-button>
@@ -83,7 +83,7 @@
 
             <a-form-item label="提醒设置" :labelCol="labelCol" :wrapperCol="wrapperColN" has-feedback>
               <div class="div-todo-time" v-for="(value, index) in videoNum" :key="index">
-                <span class="span-item-name" style="margin-left: 8%"> 未接诊时长</span>
+                <span class="span-item-name" style="margin-left: 8%"> 开始前</span>
                 <a-input-number style="margin-left: 3.5%" v-model="videoNum[index]" :min="0" :max="1000000" />
                 <span class="span-item-name" style="margin-left: 8%">分钟</span>
                 <a-button style="margin-left: 15%" type="primary" @click="deleteVideoItem(index)">刪除</a-button>
@@ -269,10 +269,10 @@ export default {
             this.$set(this.textData, 'isWechat', false)
           }
           //组装提醒时间数组
-          if (this.textData.beforeRemind && this.textData.beforeRemind.length > 0) {
+          if (this.textData.afterRemind && this.textData.afterRemind.length > 0) {
             this.textNum = []
             //逗号分解
-            let processTextData = this.textData.beforeRemind.split(',')
+            let processTextData = this.textData.afterRemind.split(',')
             for (let index = 0; index < processTextData.length; index++) {
               this.textNum.push(processTextData[index])
             }
@@ -312,10 +312,10 @@ export default {
             this.$set(this.videoData, 'isWechat', false)
           }
           //组装提醒时间数组
-          if (this.videoData.afterRemind && this.videoData.afterRemind.length > 0) {
+          if (this.videoData.beforeRemind && this.videoData.beforeRemind.length > 0) {
             this.videoNum = []
             //逗号分解
-            let processVideoData = this.videoData.afterRemind.split(',')
+            let processVideoData = this.videoData.beforeRemind.split(',')
             for (let index = 0; index < processVideoData.length; index++) {
               this.videoNum.push(processVideoData[index])
             }
@@ -422,7 +422,7 @@ export default {
             str = str + this.textNum[index]
           }
         }
-        this.textData.beforeRemind = str
+        this.textData.afterRemind = str
       }
 
       /**后台直接解析json为对象保存，所以删除前端界面需要造的字段 */
@@ -475,7 +475,7 @@ export default {
             str = str + this.videoNum[index]
           }
         }
-        this.videoData.afterRemind = str
+        this.videoData.beforeRemind = str
       }
 
       /**后台直接解析json为对象保存，所以删除前端界面需要造的字段 */
