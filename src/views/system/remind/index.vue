@@ -22,18 +22,14 @@
                 }}</a-select-option>
               </a-select>
 
-              <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 提醒时间</span>
-              <!-- <a-time-picker @change="timeChangeStart" :default-value="moment('00:00', 'HH:mm')" format="HH:mm" /> -->
-              <!-- <a-time-picker format="YYYY-MM-DD" v-model="queryParams.endDate" /> -->
-              <a-time-picker format="HH:mm" v-model="timeStr" />
-              <!-- <a-time-picker
-                v-model="dutyFromTimeSlotValue"
+              <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 提醒时间：</span>
+              <a-time-picker
+                style="margin-left: 2%"
                 @change="timeChangeStart"
+                :value="moment(timeStr, 'HH:mm')"
                 :default-value="moment('00:00', 'HH:mm')"
                 format="HH:mm"
-              /> -->
-
-              <!-- <a-time-picker v-model="dutyFromTimeSlotValue" format="HH:mm:ss" @chang="onTime" /> -->
+              />
             </div>
           </a-form-item>
         </a-form>
@@ -196,9 +192,11 @@ export default {
     }
   },
 
-  created() {
-    // this.dutyFromTimeSlotValue = moment(this.timeStr, 'HH:mm:ss') //moment(变量，'HH:mm:ss')
+  watch: {
+    timeStr() {},
+  },
 
+  created() {
     //videoRemind textRemind taskRemind
     qryRemindParam({ remindType: 'taskRemind' }).then((res) => {
       if (res.code == 0) {
@@ -361,26 +359,11 @@ export default {
       this.taskData.sysnotice = this.taskData.isSysnotice ? 1 : 0
       this.taskData.wechat = this.taskData.isWechat ? 1 : 0
 
-      //逗号拼接
-      // if (this.textNum.length == 0) {
-      //   this.$message.error('请填写提醒时间')
-      //   return
-      // } else {
-      //   let str = ''
-      //   for (let index = 0; index < this.textNum.length; index++) {
-      //     if (index != this.textNum.length - 1) {
-      //       str = str + this.textNum[index] + ','
-      //     } else {
-      //       str = str + this.textNum[index]
-      //     }
-      //   }
-      //   this.textData.beforeRemind = str
-      // }
       if (this.timeCode == 0) {
         this.$message.error('请选择提醒时间')
         return
       } else {
-        this.taskData.cron1 = this.timeCode + ',' + this.formatDateFull(this.timeStr).substring(11, 16)
+        this.taskData.cron1 = this.timeCode + ',' + this.timeStr
       }
 
       /**后台直接解析json为对象保存，所以删除前端界面需要造的字段 */
@@ -399,9 +382,10 @@ export default {
       })
     },
 
-    timeChangeStart(s1, s2) {
-      console.log('s1', s1)
-      console.log('s2', s2)
+    timeChangeStart(moment, time) {
+      this.timeStr = time
+      console.log('s1', moment)
+      console.log('s2', time)
     },
 
     onTextIsOpen() {

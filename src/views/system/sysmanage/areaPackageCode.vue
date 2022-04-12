@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="随访二维码"
+    title="套餐二维码"
     :width="900"
     :visible="visible"
     :footer="null"
@@ -10,8 +10,7 @@
   >
     <div class="div-notice">右键点击下方二维码选择【图片另存为】并添加.png或者.jpg的后缀进行保存！</div>
 
-    <!-- <div id="imgKeyDept"> -->
-    <div :key="imgKeyDept">
+    <div :key="imgKeyDeptPackage">
       <img :src="extraImage" alt="testload" />
     </div>
   </a-modal>
@@ -30,18 +29,17 @@ export default {
       confirmLoading: false,
       visible: false,
       record: {},
-      imgKeyDept: '',
+      imgKeyDeptPackage: '',
     }
   },
 
   watch: {
     visible() {
       if (this.visible) {
-        this.imgKeyDept = ''
+        this.imgKeyDeptPackage = ''
       } else {
-        this.imgKeyDept = Math.random()
+        this.imgKeyDeptPackage = Math.random()
       }
-      console.log('this.imgKeyDept :>> ', this.imgKeyDept)
     },
   },
 
@@ -53,7 +51,7 @@ export default {
       this.visible = true
       getQrUrl({ ks: record.departmentId, bq: 0 }).then((res) => {
         if (res.code == 0) {
-          // this.data = res.data
+          this.data = res.data
           this.extraImage = res.data
         } else {
           // this.$message.error('新增失败：' + res.message)

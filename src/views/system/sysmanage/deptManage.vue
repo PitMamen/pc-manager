@@ -27,7 +27,9 @@
               :rowKey="(record) => record.code"
             >
               <span slot="action" slot-scope="text, record">
-                <a @click="$refs.depatCode.add(record)">二维码</a>
+                <a @click="$refs.depatCode.add(record)">随访二维码</a>
+                <a-divider type="vertical" />
+                <a @click="$refs.areaPackageCode.add(record)">套餐二维码</a>
                 <a-divider type="vertical" />
                 <a @click="$refs.deptEditForm.edit(record)">编辑</a>
                 <a-divider type="vertical" v-show="false" />
@@ -43,6 +45,7 @@
             </a-table>
 
             <dept-code ref="depatCode" @ok="handleOkCode" />
+            <area-package-code ref="areaPackageCode" />
             <dept-add-form ref="deptAddForm" @ok="handleOkDept" />
             <dept-edit-form ref="deptEditForm" @ok="handleOkDept" />
           </a-card></div
@@ -149,6 +152,7 @@ import {
 import deptAddForm from './deptAddForm'
 import deptCode from './deptCode'
 import areaCode from './areaCode'
+import areaPackageCode from './areaPackageCode'
 import deptEditForm from './deptEditForm'
 
 import diseaseAddForm from './diseaseAddForm'
@@ -163,6 +167,7 @@ export default {
     deptAddForm,
     deptCode,
     areaCode,
+    areaPackageCode,
     deptEditForm,
     diseaseAddForm,
     diseaseEditForm,
@@ -189,7 +194,7 @@ export default {
         },
         {
           title: '操作',
-          width: '150px',
+          width: '250px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
