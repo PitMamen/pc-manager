@@ -115,7 +115,7 @@
                     :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
                   >
                     <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                    <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button>
+                    <!-- <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button> -->
                   </span>
                 </a-col>
               </a-row>
@@ -133,7 +133,6 @@
           >
           </s-table>
 
-          <add-form ref="addForm" @ok="handleOk" />
         </a-card>
       </a-tab-pane>
       <a-tab-pane key="2" tab="视频问诊"> </a-tab-pane>
@@ -150,14 +149,12 @@ import {
   statRightsUserRecordDaily,
   statRightsUserRecordByDoc,
 } from '@/api/modular/system/posManage'
-import addForm from './addForm'
 import { defineComponent, ref } from 'vue'
 // import type { Dayjs } from 'dayjs';
 
 export default {
   components: {
     STable,
-    addForm,
     Bars,
     // editForm,
   },
@@ -359,27 +356,6 @@ export default {
     },
     callback(tab) {},
 
-    // changeTab(pagination, filters, sorter) {
-    //   console.log('Various parameters', pagination, filters, sorter)
-    //   filteredInfo.value = filters
-    //   sortedInfo.value = sorter
-    // },
-
-    // changeTab(s1, s2, s3) {
-    //   TableProps['onChange'] = (pagination, filters, sorter) => {
-    //     console.log('Various parameters', pagination, filters, sorter)
-    //     filteredInfo.value = filters
-    //     sortedInfo.value = sorter
-    //   }
-    // },
-
-    // changeTab(pagination, filters, sorter) {
-    //   debugger
-    //   console.log('s1', s1)
-    //   console.log('s2', s2)
-    //   console.log('s3', s3)
-    // },
-
     changeTab(s1, s2, s3) {
       debugger
       console.log('s1', s1)
@@ -433,62 +409,6 @@ export default {
       this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
       // this.planData.disease[0].diseaseName = ''
       // this.getDiseasesOut(departmentId)
-    },
-
-    //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
-    getClass(status) {
-      if (status == 1) {
-        return 'span-red'
-      } else if (status == 2) {
-        return 'span-blue'
-      } else if (status == 3) {
-        return 'span-red'
-      } else if (status == 4) {
-        return 'span-blue'
-      } else if (status == 5) {
-        return 'span-gray'
-      }
-    },
-    exportExcel() {
-      let para = {}
-      if (this.isSearchKeyword) {
-        para = {
-          keyWord: this.queryParam.keyWord,
-          exportType: '1',
-        }
-      } else {
-        para = {
-          keyWord: this.queryParam,
-          exportType: '2',
-        }
-      }
-
-      exportPatients(para)
-        .then((res) => {
-          this.downloadfile(res)
-          // eslint-disable-next-line handle-callback-err
-        })
-        .catch((err) => {
-          this.$message.error('导出错误：' + err.message)
-        })
-    },
-
-    downloadfile(res) {
-      var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
-      var contentDisposition = res.headers['content-disposition']
-      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
-      var result = patt.exec(contentDisposition)
-      var filename = result[1]
-      var downloadElement = document.createElement('a')
-      var href = window.URL.createObjectURL(blob) // 创建下载的链接
-      var reg = /^["](.*)["]$/g
-      downloadElement.style.display = 'none'
-      downloadElement.href = href
-      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
-      document.body.appendChild(downloadElement)
-      downloadElement.click() // 点击下载
-      document.body.removeChild(downloadElement) // 下载完成移除元素
-      window.URL.revokeObjectURL(href)
     },
 
     handleOk() {
