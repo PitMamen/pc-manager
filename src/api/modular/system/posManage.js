@@ -902,3 +902,36 @@ export function qryRemindParam(params) {
     params: params
   })
 }
+
+/**
+ * 统计咨询总量
+ */
+export function statRightsUserRecord(data) {
+  return axios({
+    url: '/bdcApi/stat/statRightsUserRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 根据医生统计咨询总量
+ */
+ export function statRightsUserRecordByDoc(data) {
+  return axios({
+    url: '/bdcApi/stat/statRightsUserRecordByDoc',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 日问诊量统计
+ */
+ export function statRightsUserRecordDaily(data) {
+  return axios({
+    url: '/bdcApi/stat/statRightsUserRecordDaily',
+    method: 'post',
+    data: data,
+  })
+}

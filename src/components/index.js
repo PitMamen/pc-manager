@@ -29,6 +29,7 @@ import ExceptionPage from '@/components/Exception'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
 import Dialog from '@/components/Dialog'
+import Bars from '@/components/Charts/Bars'
 
 
 export {
@@ -62,5 +63,5 @@ export {
   StandardFormRow,
   ArticleListContent,
   Dialog,
-
+  Bars
 }

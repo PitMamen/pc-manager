@@ -233,7 +233,6 @@ export default {
 
             ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
             this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
-            debugger
             console.log('ddd', res.data.rows[i].execFlag)
             if (res.data.rows[i].execFlag == 0) {
               this.$set(res.data.rows[i], 'statusText', '已申请')
