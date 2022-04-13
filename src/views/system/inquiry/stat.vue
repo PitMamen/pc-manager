@@ -132,10 +132,141 @@
             :rowKey="(record) => record.code"
           >
           </s-table>
-
         </a-card>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="视频问诊"> </a-tab-pane>
+      <a-tab-pane key="2" tab="视频问诊">
+        <a-card :bordered="false" class="card-right-stat">
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="4" :sm="24">
+                  <a-form-item label="统计月份">
+                    <a-date-picker format="YYYY-MM" v-model="queryUpParams.month" picker="month" />
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="5" :sm="24">
+                  <a-form-item label="时间">
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" />
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="4" :sm="24" style="margin-left: -5%">
+                  <a-form-item label="">
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="3" :sm="24">
+                  <a-button type="primary" @click="getQueryDataVideo">查询</a-button>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
+
+          <div class="div-total">
+            <div class="div-item">
+              <p style="margin-bottom: 3%; font-size: 15px; color: #333; font-weight: bold">
+                {{ dataTotal[0].total || 0 }}
+              </p>
+              <p style="font-size: 18px">问诊总量</p>
+            </div>
+            <div class="div-item">
+              <p style="margin-bottom: 3%; font-size: 15px; color: #3fb6bc; font-weight: bold">
+                {{ dataTotal[0].finished }}
+              </p>
+              <p style="font-size: 18px">接诊数量</p>
+            </div>
+            <div class="div-item">
+              <p style="margin-bottom: 3%; font-size: 15px; color: red; font-weight: bold">
+                {{ dataTotal[0].unfinished }}
+              </p>
+              <p style="font-size: 18px">未接诊数量</p>
+            </div>
+            <div class="div-item">
+              <p style="margin-bottom: 3%; font-size: 15px; color: orange; font-weight: bold">
+                {{ dataTotal[0].finishedRate }}%
+              </p>
+              <p style="font-size: 18px">接诊率</p>
+            </div>
+            <div class="div-item">
+              <p style="margin-bottom: 3%; font-size: 15px; color: blue; font-weight: bold">
+                {{ dataTotal[0].avgTime }}
+              </p>
+              <p style="font-size: 18px">平均接诊间隔</p>
+            </div>
+          </div>
+
+          <div class="chart" style="width: 60%">
+            <bars ref="barsVideo" ids="barsVideo" name="年龄" widths="100%" heights="350px"></bars>
+          </div>
+
+          <div class="table-page-search-wrapper">
+            <a-form layout="inline">
+              <a-row :gutter="48">
+                <a-col :md="4" :sm="24">
+                  <a-form-item label="医生">
+                    <a-input
+                      v-model="queryParams.execName"
+                      allow-clear
+                      placeholder="请输入医生"
+                      @keyup.enter="$refs.table.refresh(true)"
+                    />
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="6" :sm="24">
+                  <a-form-item label="科室">
+                    <div style="width: 300px; display: inline-block; margin-left: 1%">
+                      <a-auto-complete
+                        class="global-search"
+                        v-model="chooseDeptItem.departmentName"
+                        size="large"
+                        style="width: 100%; font-size: 14px"
+                        placeholder="请输入并选择"
+                        option-label-prop="title"
+                        @select="onSelectVideo"
+                        @search="handleSearchVideo"
+                      >
+                        <template slot="dataSource">
+                          <a-select-option
+                            v-for="item in keshiDataTemp"
+                            :key="item.departmentId + ''"
+                            :title="item.departmentName"
+                          >
+                            {{ item.departmentName }}
+                          </a-select-option>
+                        </template>
+                      </a-auto-complete>
+                    </div>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="3" :sm="24">
+                  <span
+                    class="table-page-search-submitButtons"
+                    :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+                  >
+                    <a-button type="primary" @click="$refs.tableVideo.refresh(true)">查询</a-button>
+                    <!-- <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button> -->
+                  </span>
+                </a-col>
+              </a-row>
+            </a-form>
+          </div>
+
+          <s-table
+            ref="tableVideo"
+            size="default"
+            :columns="columnsVideo"
+            :data="loadDataVideo"
+            @change="changeTab"
+            :alert="true"
+            :rowKey="(record) => record.code"
+          >
+          </s-table>
+        </a-card>
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
@@ -149,26 +280,15 @@ import {
   statRightsUserRecordDaily,
   statRightsUserRecordByDoc,
 } from '@/api/modular/system/posManage'
-import { defineComponent, ref } from 'vue'
-// import type { Dayjs } from 'dayjs';
 
 export default {
   components: {
     STable,
     Bars,
-    // editForm,
-  },
-  setup() {
-    return {
-      // value1: ref<Dayjs>(),
-      // value2: ref<Dayjs>(),
-    }
   },
 
   data() {
     return {
-      selectedRowKeys: [], // Check here to configure the default column
-
       // 表头
       columns: [
         {
@@ -285,6 +405,124 @@ export default {
         },
       ],
       dailyData: [],
+
+      //视频问诊参数
+      // 表头
+      columnsVideo: [
+        {
+          title: '序号',
+          dataIndex: 'xh',
+        },
+        {
+          title: '医生团队',
+          dataIndex: 'execName',
+        },
+        {
+          title: '科室',
+          dataIndex: 'deptName',
+        },
+        {
+          title: '问诊数量',
+          dataIndex: 'total',
+          sorter: true,
+          sortDirections: ['descend', 'ascend'],
+        },
+        {
+          title: '接诊数量',
+          dataIndex: 'finished',
+          sorter: true,
+          sortDirections: ['descend', 'ascend'],
+        },
+        {
+          title: '未接诊数量',
+          dataIndex: 'unfinished',
+          sorter: true,
+          // sortOrder: false,
+          sortDirections: ['descend', 'ascend'],
+        },
+        {
+          title: '接诊率(%)',
+          dataIndex: 'finishedRate',
+          sorter: true,
+          sortDirections: ['descend', 'ascend'],
+        },
+
+        {
+          title: '平均接诊间隔',
+          dataIndex: 'avgTime',
+          sorter: true,
+          sortDirections: ['descend', 'ascend'],
+        },
+      ],
+
+      chooseDeptItemVideo: {},
+      keshiDataTempVideo: [],
+
+      // 加载数据方法 必须为 Promise 对象
+      loadDataVideo: (parameter) => {
+        if (this.queryUpParamsVideo.beginDate && this.queryUpParamsVideo.endDate) {
+          if (this.queryUpParamsVideo.beginDate > this.queryUpParamsVideo.endDate) {
+            this.$message.error('请选择开始时间小于结束时间')
+            delete this.queryUpParamsVideo.beginDate
+            delete this.queryUpParamsVideo.endDate
+            this.$refs.tableVideo.refresh()
+            return
+          }
+          if (this.queryUpParamsVideo.beginDate) {
+            let start = this.formatDate(this.queryUpParamsVideo.beginDate)
+            this.queryUpParamsVideo.beginDate = start + ' 00:00:00'
+          }
+
+          if (this.queryUpParamsVideo.endDate) {
+            let end = this.formatDate(this.queryUpParamsVideo.endDate)
+            this.queryUpParamsVideo.endDate = end + ' 23:59:59'
+          }
+        } else {
+          delete this.queryUpParamsVideo.beginDate
+          delete this.queryUpParamsVideo.endDate
+        }
+
+        let processTableParam = Object.assign(this.queryParamsVideo, this.queryUpParamsVideo)
+
+        return statRightsUserRecordByDoc(Object.assign(parameter, processTableParam)).then((res) => {
+          if (res.code == 0) {
+            for (let i = 0; i < res.data.rows.length; i++) {
+              this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+              // this.$set(res.data.rows[i], 'userName', res.data.rows[i].userInfo.userName)
+            }
+            return res.data
+          }
+        })
+      },
+      queryParamsVideo: {
+        execDept: '',
+        rightsType: 'videoNum',
+        execName: '',
+        month: '2022-03',
+        beginDate: '2022-04-01',
+        endDate: '2022-05-02',
+        sortName: 'finished', //排序
+        sortFlag: -1, //排序
+        pageNo: 1,
+        pageSize: 10,
+      },
+      queryUpParamsVideo: {
+        rightsType: 'videoNum',
+        month: '2022-03',
+        beginDate: '2022-04-01',
+        endDate: '2022-05-02',
+      },
+
+      dataTotalVideo: [
+        {
+          total: 1,
+          avgTime: '1h8m',
+          finishedRate: 5,
+          finished: 3,
+          unfinished: 3,
+        },
+      ],
+      dailyDataVideo: [],
     }
   },
 
@@ -293,12 +531,15 @@ export default {
       if (res.code == 0) {
         this.keshiData = res.data
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+        this.keshiDataVideo = res.data
+        this.keshiDataTempVideo = JSON.parse(JSON.stringify(this.keshiData))
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
 
     this.getQueryData()
+    this.getQueryDataVideo()
 
     //初始化参数
     // queryUpParams
@@ -394,6 +635,76 @@ export default {
      */
     handleSearch(inputName) {
       if (inputName) {
+        this.keshiDataTempVideo = this.keshiDataVideo.filter((item) => item.departmentName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTempVideo = JSON.parse(JSON.stringify(this.keshiDataVideo))
+        this.chooseDeptItemVideo = {}
+        this.queryParamsVideo.execDept = ''
+      }
+    },
+
+    onSelect(departmentId) {
+      //选择类别
+      this.queryParamsVideo.execDept = departmentId
+      // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+      this.chooseDeptItemVideo = JSON.parse(JSON.stringify(this.keshiDataVideo.find((item) => item.departmentId == departmentId)))
+      // this.planData.disease[0].diseaseName = ''
+      // this.getDiseasesOut(departmentId)
+    },
+
+    getQueryDataVideo() {
+      this.queryUpParamsVideo.month = this.formatDate(this.queryUpParamsVideo.month).substring(0, 7)
+      this.queryUpParamsVideo.beginDate = this.formatDate(this.queryUpParamsVideo.beginDate).substring(0, 11)
+      this.queryUpParamsVideo.endDate = this.formatDate(this.queryUpParamsVideo.endDate).substring(0, 11)
+      statRightsUserRecord(this.queryUpParamsVideo).then((res) => {
+        if (res.code == 0) {
+          this.dataTotal = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+
+      statRightsUserRecordDaily(this.queryUpParamsVideo).then((res) => {
+        if (res.code == 0) {
+          this.dailyData = res.data
+
+          this.$refs.barsVideo.showLoading()
+          let option = {
+            xAxis: [
+              {
+                type: 'category',
+                data: [],
+                axisTick: {
+                  alignWithLabel: true,
+                },
+              },
+            ],
+            series: [
+              {
+                name: '问诊总量',
+                type: 'bar',
+                barWidth: '20%',
+                data: [],
+              },
+            ],
+          }
+          this.dailyDataVideo.forEach((item) => {
+            option.xAxis[0].data.push(item.dateTime)
+            option.series[0].data.push(item.total)
+          })
+
+          this.$refs.barsVideo.init(option)
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+
+    /**
+     *autoComplete回调，本地模拟的数据处理
+     */
+    handleSearchVideo(inputName) {
+      if (inputName) {
         this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
       } else {
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
@@ -402,17 +713,13 @@ export default {
       }
     },
 
-    onSelect(departmentId) {
+    onSelectVideo(departmentId) {
       //选择类别
       this.queryParams.execDept = departmentId
       // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
       this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
       // this.planData.disease[0].diseaseName = ''
       // this.getDiseasesOut(departmentId)
-    },
-
-    handleOk() {
-      this.$refs.table.refresh()
     },
   },
 }
