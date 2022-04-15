@@ -83,6 +83,18 @@
           <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 次数 :</span>
 
           <a-input-number style="margin-left: 3.5%" v-model="item.attrValue" :min="0" :max="1000000" />
+
+          <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 上传资料 :</span>
+          <a-select
+            v-model="item.plusInfoVo.uploadDocFlag"
+            class="span-item-value"
+            allow-clear
+            placeholder="请选择上传资料"
+          >
+            <a-select-option v-for="(itemType, indexType) in uploadDatas" :key="indexType" :value="itemType.code"
+              >{{ itemType.value }}
+            </a-select-option>
+          </a-select>
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
@@ -131,6 +143,16 @@ export default {
       },
       form: this.$form.createForm(this),
       typeDatas: [],
+      uploadDatas: [
+        {
+          code: '0',
+          value: '无',
+        },
+        {
+          code: '1',
+          value: '重症医学科资料1',
+        },
+      ],
 
       goodsAttrFull: [],
       goodsAttr: [],
@@ -198,6 +220,9 @@ export default {
             name: this.typeDatas[index].value,
             attrName: this.typeDatas[index].code,
             attrValue: '1',
+            plusInfoVo: {
+              uploadDocFlag: '0',
+            },
           })
         }
 
@@ -258,6 +283,11 @@ export default {
             })
             if (fullOne && fullOne.attrName) {
               this.$set(this.uploadData.goodsInfo.goodsAttr[index], 'name', fullOne.name)
+              this.$set(
+                this.uploadData.goodsInfo.goodsAttr[index],
+                'plusInfoVo',
+                JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index].plusInfo))
+              )
               this.goodsAttr.push(JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index])))
             }
           }
@@ -367,6 +397,10 @@ export default {
             return
           }
 
+          this.uploadData.goodsInfo.goodsAttr.forEach((item, index) => {
+            delete item.plusInfo
+          })
+
           //完成所有数据组装，上传后台
           savePlan(this.uploadData).then((res) => {
             if (res.code == 0) {
@@ -435,7 +469,7 @@ export default {
         background-color: rgb(240, 240, 242);
         float: left;
         overflow: hidden;
-        width: 70%;
+        width: 80%;
 
         .ant-select {
           // width: 7% !important;
@@ -450,7 +484,7 @@ export default {
         }
 
         .span-item-value {
-          width: 30%;
+          width: 23%;
           color: #333;
           text-align: left;
           padding-left: 20px;
