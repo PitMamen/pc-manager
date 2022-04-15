@@ -69,7 +69,7 @@
       <span class="title-des"><span style="color: red">*</span> 服务类别 :</span>
 
       <div class="div-item" v-for="(item, index) in goodsAttr" :key="index">
-        <div class="div-bg">
+        <div class="div-bg-package">
           <span class="span-item-name"><span style="color: red">*</span> 类别{{ index + 1 }} :</span>
 
           <a-select v-model="item.attrName" class="span-item-value" allow-clear placeholder="请选择服务类别">
@@ -397,7 +397,7 @@ export default {
       margin-top: 2%;
       overflow: hidden;
 
-      .div-bg {
+      .div-bg-package {
         margin-left: 2%;
         padding: 1% 5%;
         border-radius: 6px;
