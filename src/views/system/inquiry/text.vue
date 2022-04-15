@@ -70,7 +70,7 @@
             </a-col>
 
             <a-col :md="5" :sm="24">
-              <a-form-item label="下单时间">
+              <a-form-item label="时间">
                 <a-date-picker format="YYYY-MM-DD" v-model="queryParams.beginDate" />
               </a-form-item>
             </a-col>

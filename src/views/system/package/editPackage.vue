@@ -4,7 +4,7 @@
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
-    <a-form ref="form" :form="form" class="my-form">
+    <a-form ref="form" :form="form" class="my-form-package">
       <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
@@ -67,7 +67,7 @@
       </a-form-item>
     </a-form>
 
-    <div class="div-service-type">
+    <div class="div-package-type">
       <span class="title-des"><span style="color: red">*</span> 服务类别 :</span>
 
       <div class="div-item" v-for="(item, index) in goodsAttr" :key="index">
@@ -443,11 +443,12 @@ export default {
     height: 1px;
   }
 
-  .my-form {
+  .my-form-package {
     margin-top: 2%;
+    margin-left: -1%;
   }
 
-  .div-service-type {
+  .div-package-type {
     width: 100%;
     padding: 0 15.2%;
     overflow: hidden;
