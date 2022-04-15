@@ -78,11 +78,11 @@
             }}</a-select-option>
           </a-select>
 
-          <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 次数 :</span>
+          <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 次数 :</span>
 
           <a-input-number style="margin-left: 3.5%" v-model="item.attrValue" :min="0" :max="1000000" />
 
-          <span class="span-item-name" style="margin-left: 8%"><span style="color: red">*</span> 上传资料 :</span>
+          <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 上传资料 :</span>
 
           <a-select
             v-model="item.plusInfoVo.uploadDocFlag"
