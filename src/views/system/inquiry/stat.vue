@@ -12,17 +12,18 @@
                   </a-form-item>
                 </a-col>
 
-                <a-col :md="5" :sm="24">
+                <a-col :md="10" :sm="24">
                   <a-form-item label="时间">
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" />
-                  </a-form-item>
-                </a-col>
-
-                <a-col :md="4" :sm="24" style="margin-left: -5%">
-                  <a-form-item label="">
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" /> 至 
                     <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
                   </a-form-item>
                 </a-col>
+
+                <!-- <a-col :md="4" :sm="24" style="margin-left: -5%">
+                  <a-form-item label="">
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
+                  </a-form-item>
+                </a-col> -->
 
                 <a-col :md="3" :sm="24">
                   <a-button type="primary" @click="getQueryData">查询</a-button>
@@ -110,13 +111,8 @@
                 </a-col>
 
                 <a-col :md="3" :sm="24">
-                  <span
-                    class="table-page-search-submitButtons"
-                    :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-                  >
-                    <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                    <!-- <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button> -->
-                  </span>
+                  <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                  <!-- <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button> -->
                 </a-col>
               </a-row>
             </a-form>
@@ -134,6 +130,7 @@
           </s-table>
         </a-card>
       </a-tab-pane>
+
       <a-tab-pane key="2" tab="视频问诊">
         <a-card :bordered="false" class="card-right-stat">
           <div class="table-page-search-wrapper">
@@ -141,21 +138,22 @@
               <a-row :gutter="48">
                 <a-col :md="4" :sm="24">
                   <a-form-item label="统计月份">
-                    <a-date-picker format="YYYY-MM" v-model="queryUpParams.month" picker="month" />
+                    <a-date-picker format="YYYY-MM" v-model="queryUpParamsVideo.month" picker="month" />
                   </a-form-item>
                 </a-col>
 
-                <a-col :md="5" :sm="24">
+                <a-col :md="10" :sm="24">
                   <a-form-item label="时间">
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" />
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.beginDate" /> 至
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" />
                   </a-form-item>
                 </a-col>
 
-                <a-col :md="4" :sm="24" style="margin-left: -5%">
+                <!-- <a-col :md="4" :sm="24" style="margin-left: -5%">
                   <a-form-item label="">
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" />
                   </a-form-item>
-                </a-col>
+                </a-col> -->
 
                 <a-col :md="3" :sm="24">
                   <a-button type="primary" @click="getQueryDataVideo">查询</a-button>
@@ -167,31 +165,31 @@
           <div class="div-total">
             <div class="div-item">
               <p style="margin-bottom: 3%; font-size: 15px; color: #333; font-weight: bold">
-                {{ dataTotal[0].total || 0 }}
+                {{ dataTotalVideo[0].total || 0 }}
               </p>
               <p style="font-size: 18px">问诊总量</p>
             </div>
             <div class="div-item">
               <p style="margin-bottom: 3%; font-size: 15px; color: #3fb6bc; font-weight: bold">
-                {{ dataTotal[0].finished }}
+                {{ dataTotalVideo[0].finished }}
               </p>
               <p style="font-size: 18px">接诊数量</p>
             </div>
             <div class="div-item">
               <p style="margin-bottom: 3%; font-size: 15px; color: red; font-weight: bold">
-                {{ dataTotal[0].unfinished }}
+                {{ dataTotalVideo[0].unfinished }}
               </p>
               <p style="font-size: 18px">未接诊数量</p>
             </div>
             <div class="div-item">
               <p style="margin-bottom: 3%; font-size: 15px; color: orange; font-weight: bold">
-                {{ dataTotal[0].finishedRate }}%
+                {{ dataTotalVideo[0].finishedRate }}%
               </p>
               <p style="font-size: 18px">接诊率</p>
             </div>
             <div class="div-item">
               <p style="margin-bottom: 3%; font-size: 15px; color: blue; font-weight: bold">
-                {{ dataTotal[0].avgTime }}
+                {{ dataTotalVideo[0].avgTime }}
               </p>
               <p style="font-size: 18px">平均接诊间隔</p>
             </div>
@@ -207,7 +205,7 @@
                 <a-col :md="4" :sm="24">
                   <a-form-item label="医生">
                     <a-input
-                      v-model="queryParams.execName"
+                      v-model="queryParamsVideo.execName"
                       allow-clear
                       placeholder="请输入医生"
                       @keyup.enter="$refs.table.refresh(true)"
@@ -220,7 +218,7 @@
                     <div style="width: 300px; display: inline-block; margin-left: 1%">
                       <a-auto-complete
                         class="global-search"
-                        v-model="chooseDeptItem.departmentName"
+                        v-model="chooseDeptItemVideo.departmentName"
                         size="large"
                         style="width: 100%; font-size: 14px"
                         placeholder="请输入并选择"
@@ -230,7 +228,7 @@
                       >
                         <template slot="dataSource">
                           <a-select-option
-                            v-for="item in keshiDataTemp"
+                            v-for="item in keshiDataTempVideo"
                             :key="item.departmentId + ''"
                             :title="item.departmentName"
                           >
@@ -243,13 +241,8 @@
                 </a-col>
 
                 <a-col :md="3" :sm="24">
-                  <span
-                    class="table-page-search-submitButtons"
-                    :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-                  >
-                    <a-button type="primary" @click="$refs.tableVideo.refresh(true)">查询</a-button>
-                    <!-- <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button> -->
-                  </span>
+                  <a-button type="primary" @click="$refs.tableVideo.refresh(true)">查询</a-button>
+                  <!-- <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button> -->
                 </a-col>
               </a-row>
             </a-form>
@@ -515,11 +508,11 @@ export default {
 
       dataTotalVideo: [
         {
-          total: 1,
+          total: 6,
           avgTime: '1h8m',
-          finishedRate: 5,
-          finished: 3,
-          unfinished: 3,
+          finishedRate: 6,
+          finished: 6,
+          unfinished: 6,
         },
       ],
       dailyDataVideo: [],
@@ -635,19 +628,19 @@ export default {
      */
     handleSearch(inputName) {
       if (inputName) {
-        this.keshiDataTempVideo = this.keshiDataVideo.filter((item) => item.departmentName.indexOf(inputName) != -1)
+        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
       } else {
-        this.keshiDataTempVideo = JSON.parse(JSON.stringify(this.keshiDataVideo))
-        this.chooseDeptItemVideo = {}
-        this.queryParamsVideo.execDept = ''
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+        this.chooseDeptItem = {}
+        this.queryParams.execDept = ''
       }
     },
 
     onSelect(departmentId) {
       //选择类别
-      this.queryParamsVideo.execDept = departmentId
+      this.queryParams.execDept = departmentId
       // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
-      this.chooseDeptItemVideo = JSON.parse(JSON.stringify(this.keshiDataVideo.find((item) => item.departmentId == departmentId)))
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
       // this.planData.disease[0].diseaseName = ''
       // this.getDiseasesOut(departmentId)
     },
@@ -658,7 +651,7 @@ export default {
       this.queryUpParamsVideo.endDate = this.formatDate(this.queryUpParamsVideo.endDate).substring(0, 11)
       statRightsUserRecord(this.queryUpParamsVideo).then((res) => {
         if (res.code == 0) {
-          this.dataTotal = res.data
+          this.dataTotalVideo = res.data
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
@@ -666,7 +659,7 @@ export default {
 
       statRightsUserRecordDaily(this.queryUpParamsVideo).then((res) => {
         if (res.code == 0) {
-          this.dailyData = res.data
+          this.dailyDataVideo = res.data
 
           this.$refs.barsVideo.showLoading()
           let option = {
@@ -705,19 +698,21 @@ export default {
      */
     handleSearchVideo(inputName) {
       if (inputName) {
-        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+        this.keshiDataTempVideo = this.keshiDataVideo.filter((item) => item.departmentName.indexOf(inputName) != -1)
       } else {
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-        this.chooseDeptItem = {}
-        this.queryParams.execDept = ''
+        this.keshiDataTempVideo = JSON.parse(JSON.stringify(this.keshiDataVideo))
+        this.chooseDeptItemVideo = {}
+        this.queryParamsVideo.execDept = ''
       }
     },
 
     onSelectVideo(departmentId) {
       //选择类别
-      this.queryParams.execDept = departmentId
+      this.queryParamsVideo.execDept = departmentId
       // this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
-      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
+      this.chooseDeptItemVideo = JSON.parse(
+        JSON.stringify(this.keshiDataVideo.find((item) => item.departmentId == departmentId))
+      )
       // this.planData.disease[0].diseaseName = ''
       // this.getDiseasesOut(departmentId)
     },
