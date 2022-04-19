@@ -46,7 +46,7 @@
       </a-form-item>
 
       <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <span class="span-item-value">{{ countMonth() }} </span>
+        <span class="span-item-value">{{ uploadData.goodsInfo.theLastTimeName }} </span>
         <!-- <a-select allow-clear v-decorator="['theLastTime', { rules: [{ required: true, message: '请选择有效期' }] }]">
           <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.value">{{
             item.valueName
@@ -163,6 +163,76 @@
         </a-modal>
       </div>
     </div>
+
+    <div v-show="isPlan" class="div-my-plan">
+      <!-- 分割线 -->
+      <div class="div-divider"></div>
+
+      <div class="div-line-wrap">
+        <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
+      </div>
+
+      <!-- 计划内容 -->
+      <div class="div-health-plan">
+        <div class="div-plan-item" v-for="(item, index) in uploadData.templateTask" :key="index">
+          <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
+
+          <!-- <a-input
+            style="width: 12.5%; margin-left: 5%"
+            type="number"
+            disabled
+            v-model="uploadData.templateTask[index].inputDay"
+            allow-clear
+            placeholder="请输入天数 "
+          /> -->
+          <span class="span-des">{{uploadData.templateTask[index].inputDay}}</span>
+          <span class="span-des">天后</span>
+
+          <div class="div-top-right">
+            <!-- <a-button class="span-add-item" type="primary" @click="deletePlanItem(index)">删除任务</a-button> -->
+          </div>
+
+          <!-- 分割线 -->
+          <div class="div-divider"></div>
+
+          <div
+            class="div-plan-item-elements"
+            v-for="(itemChild, indexChild) in uploadData.templateTask[index].templateTaskContent"
+            :key="indexChild"
+          >
+            <div class="div-element">
+              <div class="div-content">
+                <span class="span-item-name" style="width: 36%"> 计划类型 :</span>
+                <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
+              </div>
+
+              <div class="div-content-value">
+                <!-- //style="margin-left: 3%" -->
+                <span class="span-item-name" style="width: 17%"> 具体内容 :</span>
+                <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
+              </div>
+
+              <a-popconfirm
+                v-if="false"
+                title="确定删除任务吗？"
+                ok-text="确定"
+                cancel-text="取消"
+                @confirm="deleteElement(index, indexChild)"
+              >
+                <a-icon class="icon-delete" title="删除任务项目" type="close" />
+              </a-popconfirm>
+
+              <!-- <a-icon class="icon-delete" @click="deleteElement(index, indexChild)" title="删除任务项目" type="close" /> -->
+
+              <div class="div-divider-elements"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <a-button class="btn-add-plan" @click="addPlanItem" type="primary">添加具体计划</a-button> -->
+    </div>
+
     <a-button class="btn-submit" v-if="false" type="primary" @click="validate">提交</a-button>
     <div style="height: 25px; color: white"></div>
   </div>
@@ -258,6 +328,9 @@ export default {
       fileList: [],
       fileListBanner: [],
       fileListDetail: [],
+
+      periodData: [],
+      isPlan: true,
     }
   },
 
@@ -291,7 +364,7 @@ export default {
           })
         }
 
-        this.getPlanDetailOut()
+        this.getTimePeriod()
         // this.goodsAttr = JSON.parse(JSON.stringify(this.goodsAttrFull[0]))
       } else {
         this.$message.error(res.message)
@@ -330,6 +403,58 @@ export default {
               )
               this.goodsAttr.push(JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index])))
             }
+          }
+
+          //组装计划数据
+          if (this.uploadData.templateTask && this.uploadData.templateTask.length > 0) {
+            //展示名称
+            for (let i = 0; i < this.uploadData.templateTask.length; i++) {
+              //处理天数
+              this.$set(this.uploadData.templateTask[i], 'inputDay', this.uploadData.templateTask[i].execTime)
+
+              for (let j = 0; j < this.uploadData.templateTask[i].templateTaskContent.length; j++) {
+                let taskType = this.uploadData.templateTask[i].templateTaskContent[j].taskType
+                if (taskType == 'Knowledge') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '健康宣教')
+
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.title
+                  )
+                } else if (taskType == 'Quest') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '健康问卷')
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.questName
+                  )
+                } else if (taskType == 'Remind') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '文字提醒')
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
+                  )
+                } else if (taskType == 'Check') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '检查')
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.checkType
+                  )
+                } else if (taskType == 'Exam') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '检验')
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.examType
+                  )
+                }
+              }
+            }
+          } else {
+            this.isPlan = false
           }
 
           //组装图片
@@ -372,17 +497,30 @@ export default {
         } else {
           this.$message.error(res.message)
         }
+
+        this.$set(this.uploadData.goodsInfo, 'theLastTimeName', this.countMonth())
+      })
+    },
+
+    getTimePeriod() {
+      qryCodeValue('GOODS_EXPIRATION').then((res) => {
+        if (res.code == 0) {
+          this.periodData = res.data
+          this.getPlanDetailOut()
+        } else {
+          this.$message.error(res.message)
+        }
       })
     },
 
     countMonth() {
-      if (this.uploadData.goodsInfo.theLastTime == 6) {
-        return '半年'
-      } else if (this.uploadData.goodsInfo.theLastTime == 12) {
-        return '一年'
-      } else {
-        return '永久'
-      }
+      let timeName
+      this.periodData.forEach((item) => {
+        if (item.code == this.uploadData.goodsInfo.theLastTime) {
+          timeName = item.value
+        }
+      })
+      return timeName
     },
 
     getBase64(file) {
@@ -634,6 +772,196 @@ export default {
     .ant-upload-select-picture-card .ant-upload-text {
       margin-top: 8px;
       color: #666;
+    }
+  }
+
+  .div-my-plan {
+    padding: 0 15% 0 15%;
+
+    .p-title {
+      margin-top: 20px;
+      height: 20px;
+      font-size: 20px;
+      text-align: left;
+      color: #000;
+      font-weight: bold;
+      // border-bottom: 1px solid #e6e6e6;
+    }
+    .div-divider {
+      margin-top: 2%;
+      width: 100%;
+      background-color: #e6e6e6;
+      height: 1px;
+    }
+
+    .div-line-wrap {
+      width: 100%;
+      margin-top: 3%;
+      overflow: hidden;
+
+      .span-item-name {
+        display: inline-block;
+        color: #000;
+        font-size: 14px;
+        text-align: left;
+      }
+      .span-item-value {
+        width: 20%;
+        color: #333;
+        text-align: left;
+        padding-left: 20px;
+        font-size: 14px;
+        display: inline-block;
+      }
+
+      .ant-select {
+        width: 18.5% !important;
+        margin-left: 1.5% !important;
+      }
+
+      // global-search ant-select ant-select-combobox
+      .global-search.ant-select {
+        width: 90% !important;
+      }
+    }
+
+    .div-health-plan {
+      width: 100%;
+      height: 100%;
+
+      .div-plan-item {
+        margin-left: 2%;
+        border-radius: 6px;
+        border: 1px solid #e6e6e6;
+        background-color: white;
+        padding: 2% 2%;
+        margin-top: 1%;
+        width: 80%;
+        height: 100%;
+        overflow: hidden;
+
+        .span-item-name {
+          display: inline-block;
+          color: #000;
+          font-size: 14px;
+          text-align: left;
+        }
+
+        .span-des {
+          margin-left: 1%;
+          display: inline-block;
+          color: #000;
+          font-size: 14px;
+          text-align: left;
+        }
+
+        .div-top-right {
+          padding: 3px 10px;
+          display: inline-block;
+          float: right;
+          :hover {
+            cursor: pointer;
+          }
+
+          .span-add-item {
+            float: right;
+            margin-left: 3px;
+            padding-right: 10px;
+            border-right: solid #dce4eb 1px;
+          }
+
+          .div-vertical {
+            margin: 0 1%;
+            width: 1px;
+            color: #dce4eb;
+            height: 2%;
+          }
+        }
+
+        .ant-select {
+          width: 7% !important;
+          margin-left: 1.5% !important;
+        }
+
+        .div-plan-item-elements {
+          width: 100%;
+          margin-top: 1%;
+          overflow: hidden;
+
+          .div-element {
+            width: 80%;
+            overflow: hidden;
+            margin: 0 6%;
+
+            .div-content {
+              display: inline-block;
+              width: 30%;
+              overflow: hidden;
+
+              .span-item-name {
+                display: inline-block;
+                width: 25%;
+                color: #000;
+                overflow: hidden;
+                font-size: 14px;
+                text-align: left;
+              }
+              .span-item-content {
+                display: inline-block;
+                width: 50%;
+                overflow: hidden;
+                color: #000;
+                font-size: 14px;
+                text-align: left;
+              }
+            }
+
+            .div-content-value {
+              display: inline-block;
+              width: 66%;
+              overflow: hidden;
+
+              .span-item-name {
+                display: inline-block;
+                overflow: hidden;
+                width: 11%;
+                color: #000;
+                font-size: 14px;
+                text-align: left;
+              }
+              .span-item-content {
+                display: inline-block;
+                overflow: hidden;
+                text-overflow: ellipsis; //文本溢出显示省略号
+                white-space: nowrap; //文本不会换行
+                width: 75%;
+                color: #000;
+                font-size: 14px;
+                text-align: left;
+              }
+            }
+
+            .icon-delete {
+              float: right;
+              // title:"";
+              :hover {
+                cursor: pointer;
+              }
+            }
+
+            .div-divider-elements {
+              width: 100%;
+              background-color: #e6e6e6;
+              height: 1px;
+            }
+          }
+        }
+      }
+    }
+
+    .btn-add-plan {
+      margin-top: 3%;
+      margin-left: 35%;
     }
   }
 

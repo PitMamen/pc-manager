@@ -36,12 +36,6 @@
         </a-auto-complete>
       </div>
 
-      <!-- <a-select v-model="planData.goodsInfo.belong" allow-clear placeholder="请选择入所属科室" @change="handleChange">
-        <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-          item.deptName
-        }}</a-select-option>
-      </a-select> -->
-
       <span class="span-item-name" style="margin-left: 3%"><span style="color: red">*</span> 所属专病 :</span>
       <a-select v-model="planData.disease[0].diseaseName" allow-clear placeholder="请选择入所属科室">
         <a-select-option v-for="(item, index) in diseaseData" :key="index" :value="item.diseaseName">{{
@@ -58,7 +52,7 @@
     <div class="div-health-plan">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <a-select
+        <!-- <a-select
           v-show="false"
           v-model="planData.templateTask[index].timeCount"
           allow-clear
@@ -67,9 +61,9 @@
           <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
             itemCount.value
           }}</a-select-option>
-        </a-select>
+        </a-select> -->
 
-        <a-select v-show="false" v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
+        <!-- <a-select v-show="false" v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
           <a-select-option
             v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
             :key="timeUnitIndex"
@@ -77,7 +71,7 @@
             >{{ itemTimeUnit.value }}</a-select-option
           >
         </a-select>
-        <span v-show="false" class="span-des">后</span>
+        <span v-show="false" class="span-des">后</span> -->
 
         <a-input
           style="width: 12.5%; margin-left: 5%"
@@ -182,8 +176,6 @@ export default {
         ],
       },
 
-      hosCode: '444885559',
-      loading: false,
       timeCountData: [],
       timeUnitData: [
         {
@@ -226,11 +218,6 @@ export default {
   },
 
   methods: {
-    handleChange(code) {
-      this.planData.disease[0].diseaseName = ''
-      this.getDiseasesOut(code)
-    },
-
     getDiseasesOut(departmentId) {
       getDiseases({ departmentId: departmentId }).then((res) => {
         if (res.code == 0) {
