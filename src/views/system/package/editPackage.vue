@@ -60,8 +60,8 @@
       <a-form-item label="有效期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- v-model="uploadData.goodsInfo.theLastTime" -->
         <a-select allow-clear v-decorator="['theLastTime', { rules: [{ required: true, message: '请选择有效期' }] }]">
-          <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.value">{{
-            item.valueName
+          <a-select-option v-for="(item, index) in periodData" :key="index" :value="item.code">{{
+            item.value
           }}</a-select-option>
         </a-select>
       </a-form-item>
@@ -132,11 +132,12 @@ export default {
       hosCode: '444885559',
       loading: false,
       hosData: [],
-      periodData: [
-        { code: 1, valueName: '半年', value: 6 },
-        { code: 2, valueName: '一年', value: 12 },
-        { code: 3, valueName: '永久', value: 1200 },
-      ],
+      periodData: [],
+      // periodData: [
+      //   { code: 1, valueName: '半年', value: 6 },
+      //   { code: 2, valueName: '一年', value: 12 },
+      //   { code: 3, valueName: '永久', value: 1200 },
+      // ],
       actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
@@ -232,6 +233,14 @@ export default {
         this.$message.error(res.message)
       }
     })
+
+    qryCodeValue('GOODS_EXPIRATION').then((res) => {
+      if (res.code == 0) {
+        this.periodData = res.data
+      } else {
+        this.$message.error(res.message)
+      }
+    })
   },
 
   methods: {
@@ -262,7 +271,7 @@ export default {
               this.form.setFieldsValue({
                 goodsName: this.uploadData.goodsInfo.goodsName,
                 price: this.uploadData.goodsInfo.price,
-                theLastTime: parseInt(this.uploadData.goodsInfo.theLastTime),
+                theLastTime: this.uploadData.goodsInfo.theLastTime,
               })
             })
           })
