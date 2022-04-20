@@ -4,7 +4,7 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="4" :sm="24">
+            <a-col :md="5" :sm="24">
               <a-form-item label="患者">
                 <a-input
                   v-model="queryParams.userName"
@@ -15,7 +15,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="5" :sm="24">
               <a-form-item label="医生">
                 <a-input
                   v-model="queryParams.execName"
@@ -35,10 +35,12 @@
                 </a-select>
               </a-form-item>
             </a-col>
+          </a-row>
 
-            <a-col :md="6" :sm="24">
+          <a-row :gutter="48">
+            <a-col :md="5" :sm="24">
               <a-form-item label="科室">
-                <div style="width: 300px; display: inline-block; margin-left: 1%">
+                <div class="div-text-auto">
                   <a-auto-complete
                     class="global-search"
                     v-model="chooseDeptItem.departmentName"
@@ -390,6 +392,15 @@ export default {
   .card-right {
     overflow: hidden;
     width: 100%;
+
+    .div-text-auto {
+      width: 100%;
+      display: inline-block;
+      margin-top: -1.5%;
+      .ant-input {
+        height: 30px;
+      }
+    }
 
     .span-blue {
       padding: 1% 2%;

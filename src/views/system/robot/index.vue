@@ -8,7 +8,7 @@
               <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="7" :sm="24">
               <a-form-item label="内容标题">
                 <a-input
                   v-model="queryParams.keyWord"

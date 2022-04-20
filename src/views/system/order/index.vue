@@ -4,13 +4,13 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="4" :sm="24">
+            <a-col :md="5" :sm="24">
               <a-form-item label="订单编号">
                 <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入订单编号" @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
 
-            <a-col :md="5" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="下单时间">
                 <a-date-picker format="YYYY-MM-DD" v-model="queryParams.startOrderTime" />
               </a-form-item>
@@ -22,7 +22,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="订单状态">
                 <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{

@@ -6,15 +6,15 @@
           <div class="table-page-search-wrapper">
             <a-form layout="inline">
               <a-row :gutter="48">
-                <a-col :md="4" :sm="24">
+                <a-col :md="6" :sm="24">
                   <a-form-item label="统计月份">
                     <a-date-picker format="YYYY-MM" v-model="queryUpParams.month" picker="month" />
                   </a-form-item>
                 </a-col>
 
-                <a-col :md="10" :sm="24">
+                <a-col :md="12" :sm="24">
                   <a-form-item label="时间">
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" /> 至 
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" /> 至
                     <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
                   </a-form-item>
                 </a-col>
@@ -72,7 +72,7 @@
           <div class="table-page-search-wrapper">
             <a-form layout="inline">
               <a-row :gutter="48">
-                <a-col :md="4" :sm="24">
+                <a-col :md="5" :sm="24">
                   <a-form-item label="医生">
                     <a-input
                       v-model="queryParams.execName"
@@ -85,7 +85,7 @@
 
                 <a-col :md="6" :sm="24">
                   <a-form-item label="科室">
-                    <div style="width: 300px; display: inline-block; margin-left: 1%">
+                    <div class="div-stat-auto">
                       <a-auto-complete
                         class="global-search"
                         v-model="chooseDeptItem.departmentName"
@@ -136,13 +136,13 @@
           <div class="table-page-search-wrapper">
             <a-form layout="inline">
               <a-row :gutter="48">
-                <a-col :md="4" :sm="24">
+                <a-col :md="6" :sm="24">
                   <a-form-item label="统计月份">
                     <a-date-picker format="YYYY-MM" v-model="queryUpParamsVideo.month" picker="month" />
                   </a-form-item>
                 </a-col>
 
-                <a-col :md="10" :sm="24">
+                <a-col :md="12" :sm="24">
                   <a-form-item label="时间">
                     <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.beginDate" /> 至
                     <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" />
@@ -202,7 +202,7 @@
           <div class="table-page-search-wrapper">
             <a-form layout="inline">
               <a-row :gutter="48">
-                <a-col :md="4" :sm="24">
+                <a-col :md="5" :sm="24">
                   <a-form-item label="医生">
                     <a-input
                       v-model="queryParamsVideo.execName"
@@ -215,7 +215,7 @@
 
                 <a-col :md="6" :sm="24">
                   <a-form-item label="科室">
-                    <div style="width: 300px; display: inline-block; margin-left: 1%">
+                    <div class="div-stat-auto">
                       <a-auto-complete
                         class="global-search"
                         v-model="chooseDeptItemVideo.departmentName"
@@ -729,6 +729,15 @@ export default {
 
   .ant-select-auto-complete.ant-select-lg .ant-input {
     height: 32px;
+  }
+
+  .div-stat-auto {
+    width: 100%;
+    display: inline-block;
+      margin-top: -1.5%;
+    .ant-input {
+      height: 30px;
+    }
   }
 
   .card-right-stat {
