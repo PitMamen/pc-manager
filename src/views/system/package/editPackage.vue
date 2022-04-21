@@ -401,6 +401,8 @@ export default {
         if (res.code == 0) {
           this.uploadData = res.data
 
+          this.chooseClassItem = this.uploadData.goodsInfo.goodsClassInfo
+
           this.$nextTick(() => {
             setTimeout(() => {
               this.form.setFieldsValue({
@@ -577,24 +579,24 @@ export default {
       })
     },
 
-    /**
-     *autoComplete回调，本地模拟的数据处理
-     */
-    handleSearchDept(inputName) {
-      if (inputName) {
-        this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
-      } else {
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-      }
-    },
+    // /**
+    //  *autoComplete回调，本地模拟的数据处理
+    //  */
+    // handleSearchDept(inputName) {
+    //   if (inputName) {
+    //     this.keshiDataTemp = this.keshiData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+    //   } else {
+    //     this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+    //   }
+    // },
 
-    onSelectDept(departmentId) {
-      //选择类别
-      this.uploadData.goodsInfo.belong = departmentId
-      this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
-      this.uploadData.disease[0].diseaseName = ''
-      this.getDiseasesOut(departmentId)
-    },
+    // onSelectDept(departmentId) {
+    //   //选择类别
+    //   this.uploadData.goodsInfo.belong = departmentId
+    //   this.chooseDeptItem = this.keshiData.find((item) => item.departmentId == departmentId)
+    //   this.uploadData.disease[0].diseaseName = ''
+    //   this.getDiseasesOut(departmentId)
+    // },
 
     addPlanItem() {
       this.uploadData.templateTask.push({
@@ -651,11 +653,17 @@ export default {
       //选择类型后，添加条目
       switch (value.taskType) {
         case 'Knowledge':
-          if (!this.chooseDeptItem || !this.chooseDeptItem.departmentId) {
-            this.$message.error('请先选择科室！')
+          // if (!this.chooseDeptItem || !this.chooseDeptItem.departmentId) {
+          //   this.$message.error('请先选择科室！')
+          //   return
+          // }
+          // this.$refs.addTeach.add(index, this.chooseDeptItem.departmentId)
+
+          if (!this.chooseClassItem || !this.chooseClassItem.belong) {
+            this.$message.error('请先选择类别！')
             return
           }
-          this.$refs.addTeach.add(index, this.chooseDeptItem.departmentId)
+          this.$refs.addTeach.add(index, this.chooseClassItem.belong)
           break
         case 'Quest':
           this.$refs.addQuestion.add(index)
@@ -948,7 +956,7 @@ export default {
     }
   }
 
-    .div-my-plan {
+  .div-my-plan {
     padding: 0 15% 0 15%;
 
     .p-title {
