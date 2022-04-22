@@ -112,6 +112,18 @@
       <div class="div-divider"></div>
 
       <div class="div-line-wrap">
+        <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
+        <a-input
+          v-model="uploadData.templateName"
+          class="span-item-value"
+          :maxLength="30"
+          style="display: inline-block"
+          allow-clear
+          placeholder="请输入计划名称 "
+        />
+      </div>
+
+      <div class="div-line-wrap">
         <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
       </div>
 
@@ -769,7 +781,7 @@ export default {
           // this.uploadData.goodsInfo.goodsSpec = values.goodsSpec
           this.uploadData.goodsInfo.price = values.price
           this.uploadData.goodsInfo.theLastTime = values.theLastTime
-          this.uploadData.templateName = values.goodsName
+          // this.uploadData.templateName = values.goodsName
           this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
           this.uploadData.goodsInfo.status = this.uploadData.goodsInfo.isOnline ? '1' : '3'
 
@@ -794,6 +806,11 @@ export default {
           if (!this.isPlan) {
             delete processUploadData.templateTask
           } else {
+            if (!processUploadData.templateName) {
+              this.$message.error('请填写计划名称')
+              return
+            }
+
             if (processUploadData.templateTask.length == 0) {
               this.$message.error('请添加至少一个计划任务')
               return

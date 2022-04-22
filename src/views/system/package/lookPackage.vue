@@ -169,6 +169,11 @@
       <div class="div-divider"></div>
 
       <div class="div-line-wrap">
+        <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span>
+        <span class="span-item-value">{{ uploadData.templateName }} </span>
+      </div>
+
+      <div class="div-line-wrap">
         <span class="span-item-name"><span style="color: red">*</span> 计划内容 :</span>
       </div>
 
@@ -185,7 +190,7 @@
             allow-clear
             placeholder="请输入天数 "
           /> -->
-          <span class="span-des">{{uploadData.templateTask[index].inputDay}}</span>
+          <span class="span-des">{{ uploadData.templateTask[index].inputDay }}</span>
           <span class="span-des">天后</span>
 
           <div class="div-top-right">
