@@ -385,7 +385,7 @@ export default {
       'todo',
       'justify',
       'quote',
-      'emoticon',
+      // 'emoticon',
       'image',
       // 'video',
       'table',
