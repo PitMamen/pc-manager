@@ -4,7 +4,7 @@
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
-    <a-form ref="form" :form="form" class="my-form-package">
+    <a-form ref="form" :form="form" class="my-form-package-add">
       <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
@@ -65,7 +65,7 @@
       </a-form-item>
     </a-form>
 
-    <div class="div-package-type">
+    <div class="div-package-type-add">
       <span class="title-des"><span style="color: red">*</span> 服务类别 :</span>
 
       <div class="div-item" v-for="(item, index) in goodsAttr" :key="index">
@@ -80,7 +80,7 @@
 
           <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 次数 :</span>
 
-          <a-input-number style="margin-left: 3.5%" v-model="item.attrValue" :min="0" :max="1000000" />
+          <a-input-number style="margin-left: 1%" v-model="item.attrValue" :min="0" :max="1000000" />
 
           <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 上传资料 :</span>
 
@@ -102,11 +102,11 @@
       <a-button class="btn-add" style="margin-top: 2%; margin-left: 38%" type="primary" @click="addItem">添加</a-button>
     </div>
 
-    <div style="padding: 0 15% 0 15%; margin-top: 3%">
+    <div style="padding: 0 8%; margin-top: 3%">
       <span class="span-item-name">添加随访计划：</span>
       <a-switch :checked="isPlan" @click="switchIsPlan" />
     </div>
-    <div v-show="isPlan" class="div-my-plan">
+    <div v-show="isPlan" class="div-my-plan-package-add">
       <!-- 分割线 -->
       <div class="div-divider"></div>
 
@@ -155,13 +155,13 @@
           >
             <div class="div-element">
               <div class="div-content">
-                <span class="span-item-name" style="width: 36%"> 计划类型 :</span>
+                <span class="span-item-name" style="width: 49%"> 计划类型 :</span>
                 <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
               </div>
 
               <div class="div-content-value">
                 <!-- //style="margin-left: 3%" -->
-                <span class="span-item-name" style="width: 17%"> 具体内容 :</span>
+                <span class="span-item-name" style="width: 21%"> 具体内容 :</span>
                 <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
               </div>
 
@@ -685,14 +685,14 @@ export default {
     height: 1px;
   }
 
-  .my-form-package {
+  .my-form-package-add {
     margin-top: 2%;
-    margin-left: -1%;
+    margin-left: -10%;
   }
 
-  .div-package-type {
+  .div-package-type-add {
     width: 100%;
-    padding: 0 15.2%;
+    padding: 0 8%;
     overflow: hidden;
 
     .title-des {
@@ -705,7 +705,7 @@ export default {
 
       .div-bg-package {
         margin-left: 2%;
-        padding: 1% 5%;
+        padding: 1% 3%;
         border-radius: 6px;
         border: 1px solid #e6e6e6;
         // background-color: #e6e6e6;
@@ -727,10 +727,10 @@ export default {
         }
 
         .span-item-value {
-          width: 23%;
+          width: 21%;
           color: #333;
           text-align: left;
-          padding-left: 20px;
+          padding-left: 3px;
           font-size: 14px;
           display: inline-block;
         }
@@ -781,8 +781,8 @@ export default {
     text-align: left;
   }
 
-  .div-my-plan {
-    padding: 0 15% 0 15%;
+  .div-my-plan-package-add {
+    padding: 0 8%;
 
     .p-title {
       margin-top: 20px;

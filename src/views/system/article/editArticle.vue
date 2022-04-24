@@ -269,6 +269,34 @@ export default {
     editor.config.onchange = (html) => {
       this.checkData.content = html
     }
+    // 默认情况下，显示所有菜单
+    editor.config.menus = [
+      'head',
+      'bold',
+      'fontSize',
+      'fontName',
+      'italic',
+      'underline',
+      'strikeThrough',
+      'indent',
+      'lineHeight',
+      'foreColor',
+      'backColor',
+      'link',
+      'list',
+      'todo',
+      'justify',
+      'quote',
+      // 'emoticon',
+      'image',
+      'video',
+      'table',
+      'code',
+      'splitLine',
+      'undo',
+      'redo',
+    ]
+
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'

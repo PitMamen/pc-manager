@@ -2,7 +2,7 @@
   <div class="div-service-look">
     <div class="div-service-left-look">
       <p class="p-part-title">病区选择</p>
-      <div class="global-search-wrapper" style="width: 160px; display: inline-block">
+      <div class="div-text-auto">
         <!-- v-model="chooseDeptItem.departmentName" -->
         <a-auto-complete
           class="global-search"
@@ -357,12 +357,12 @@ export default {
 
   .div-service-left-look {
     background-color: white;
-    padding: 2% 3%;
+    padding: 2% 2%;
     float: left;
     height: 100%;
     min-height: 300px;
     border-right: 1px dashed #e6e6e6;
-    width: 15%;
+    width: 18%;
     overflow: hidden;
 
     .div-divider {
@@ -411,7 +411,7 @@ export default {
 
   .card-right-look {
     overflow: hidden;
-    width: 85%;
+    width: 82%;
 
     .table-operator {
       margin-bottom: 18px;
@@ -425,6 +425,14 @@ export default {
       font-size: 18px;
       font-weight: bold;
       color: #000;
+    }
+  }
+    .div-text-auto {
+    width: 100%;
+    display: inline-block;
+    margin-top: -1.5%;
+    .ant-input {
+      height: 30px;
     }
   }
 }

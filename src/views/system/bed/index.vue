@@ -4,7 +4,7 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="4" :sm="24">
+            <a-col :md="5" :sm="24">
               <a-form-item label="姓名">
                 <a-input
                   v-model="queryParams.userName"
@@ -15,7 +15,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="工单号">
                 <a-input
                   v-model="queryParams.tradeId"
@@ -26,7 +26,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="7" :sm="24">
               <a-form-item label="预约科室">
                 <a-input
                   v-model="queryParams.appointDept"
@@ -36,8 +36,10 @@
                 />
               </a-form-item>
             </a-col>
+          </a-row>
 
-            <a-col :md="4" :sm="24">
+          <a-row :gutter="48">
+            <a-col :md="7" :sm="24">
               <a-form-item label="开单科室">
                 <a-input
                   v-model="queryParams.reqDept"
@@ -48,7 +50,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="4" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="审核状态">
                 <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{

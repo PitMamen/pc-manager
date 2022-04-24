@@ -82,7 +82,7 @@
 
           <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 次数 :</span>
 
-          <a-input-number style="margin-left: 3.5%" v-model="item.attrValue" :min="0" :max="1000000" />
+          <a-input-number style="margin-left: 1%" v-model="item.attrValue" :min="0" :max="1000000" />
 
           <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 上传资料 :</span>
           <a-select
@@ -103,7 +103,7 @@
       <a-button class="btn-add" style="margin-top: 2%; margin-left: 38%" type="primary" @click="addItem">添加</a-button>
     </div>
 
-    <div style="padding: 0 15% 0 15%; margin-top: 3%">
+    <div style="padding: 0 8%; margin-top: 3%">
       <span class="span-item-name">添加随访计划：</span>
       <a-switch :checked="isPlan" @click="switchIsPlan" />
     </div>
@@ -162,13 +162,13 @@
           >
             <div class="div-element">
               <div class="div-content">
-                <span class="span-item-name" style="width: 36%"> 计划类型 :</span>
+                <span class="span-item-name" style="width: 49%"> 计划类型 :</span>
                 <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
               </div>
 
               <div class="div-content-value">
                 <!-- //style="margin-left: 3%" -->
-                <span class="span-item-name" style="width: 17%"> 具体内容 :</span>
+                <span class="span-item-name" style="width: 21%"> 具体内容 :</span>
                 <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
               </div>
 
@@ -886,12 +886,12 @@ export default {
 
   .my-form-package {
     margin-top: 2%;
-    margin-left: -1%;
+    margin-left: -10%;
   }
 
   .div-package-type {
     width: 100%;
-    padding: 0 15.2%;
+    padding: 0 8%;
     overflow: hidden;
 
     .title-des {
@@ -904,7 +904,7 @@ export default {
 
       .div-bg-package {
         margin-left: 2%;
-        padding: 1% 5%;
+        padding: 1% 3%;
         border-radius: 6px;
         border: 1px solid #e6e6e6;
         // background-color: #e6e6e6;
@@ -926,10 +926,10 @@ export default {
         }
 
         .span-item-value {
-          width: 23%;
+          width: 21%;
           color: #333;
           text-align: left;
-          padding-left: 20px;
+          padding-left: 3px;
           font-size: 14px;
           display: inline-block;
         }
@@ -974,7 +974,7 @@ export default {
   }
 
   .div-my-plan {
-    padding: 0 15% 0 15%;
+    padding: 0 8%;
 
     .p-title {
       margin-top: 20px;

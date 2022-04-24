@@ -6,7 +6,7 @@
           <a-row :gutter="48">
             <a-col :md="5" :sm="24">
               <a-form-item label="订单编号">
-                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入订单编号" @keyup.enter="$refs.table.refresh(true)"/>
+                <a-input v-model="queryParams.orderId" allow-clear placeholder="请输入" @keyup.enter="$refs.table.refresh(true)"/>
               </a-form-item>
             </a-col>
 
