@@ -606,7 +606,8 @@ export default {
           let processUploadData = JSON.parse(JSON.stringify(this.uploadData))
           //校验计划
           if (!this.isPlan) {
-            delete processUploadData.templateTask
+            // delete processUploadData.templateTask
+            processUploadData.templateTask = []
           } else {
             if (!processUploadData.templateName) {
               this.$message.error('请填写计划名称')
