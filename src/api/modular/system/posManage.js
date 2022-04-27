@@ -917,7 +917,7 @@ export function statRightsUserRecord(data) {
 /**
  * 根据医生统计咨询总量
  */
- export function statRightsUserRecordByDoc(data) {
+export function statRightsUserRecordByDoc(data) {
   return axios({
     url: '/bdcApi/stat/statRightsUserRecordByDoc',
     method: 'post',
@@ -928,9 +928,21 @@ export function statRightsUserRecord(data) {
 /**
  * 日问诊量统计
  */
- export function statRightsUserRecordDaily(data) {
+export function statRightsUserRecordDaily(data) {
   return axios({
     url: '/bdcApi/stat/statRightsUserRecordDaily',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+预约申请
+ */
+export function saveTradeAppoint(data) {
+  return axios({
+    url: '/bdcApi/appoint/saveTradeAppoint',
     method: 'post',
     data: data,
   })

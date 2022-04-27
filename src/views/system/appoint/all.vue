@@ -4,9 +4,9 @@
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <!-- <a-col :md="3" :sm="24">
-              <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
-            </a-col> -->
+            <a-col :md="3" :sm="24">
+              <!-- <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button> -->
+            </a-col>
 
             <a-col :md="7" :sm="24">
               <a-form-item label="内容标题">
@@ -70,7 +70,7 @@
 import { STable } from '@/components'
 import { qryCodeValue, delSysKnowledge, qrySysKnowledge } from '@/api/modular/system/posManage'
 // import addForm from './addForm'
-import editForm from './editJianCha'
+import editForm from './lookJian'
 
 export default {
   components: {

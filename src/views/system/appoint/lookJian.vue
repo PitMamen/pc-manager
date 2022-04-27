@@ -41,7 +41,7 @@
 
 
 <script>
-import { qryCodeValue, saveSysKnowledge } from '@/api/modular/system/posManage'
+import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
 
 export default {
   data() {

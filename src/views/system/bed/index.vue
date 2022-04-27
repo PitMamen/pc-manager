@@ -135,6 +135,7 @@ export default {
         appointDept: '',
         reqDept: '',
         status: -1, //工单状态（0：申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
+        tradeTypeCode:'bed',
       },
       // 表头
       columns: [
