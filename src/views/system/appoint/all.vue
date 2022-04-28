@@ -1,31 +1,60 @@
 <template>
-  <div class="div-inquiry-text">
+  <div class="div-yiji-todo">
     <a-card :bordered="false" class="card-right">
-      <div class="table-page-search-wrapper">
+      <a-radio-group style="color: white" v-model="tabFlag" @change="onClickChange" button-style="solid">
+        <a-radio-button value="1">全部</a-radio-button>
+        <a-radio-button value="2">预约检查</a-radio-button>
+        <a-radio-button value="3">预约检验</a-radio-button>
+      </a-radio-group>
+      <div class="table-page-search-wrapper" style="margin-top: 1%">
         <a-form layout="inline">
           <a-row :gutter="48">
-            <a-col :md="3" :sm="24">
-              <!-- <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button> -->
+            <!-- <a-col :md="3" :sm="24">
+              <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
+            </a-col> -->
+
+            <a-col :md="6" :sm="24">
+              <a-form-item label="审核状态">
+                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                    item.value
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
             </a-col>
 
             <a-col :md="7" :sm="24">
-              <a-form-item label="内容标题">
-                <a-input
-                  v-model="queryParams.keyWord"
+              <a-form-item label="">
+                <a-input-search
+                  v-model="queryParams.userName"
                   allow-clear
-                  placeholder="请输入内容标题"
+                  placeholder="请输入用户姓名"
                   @keyup.enter="$refs.table.refresh(true)"
+                  @search="$refs.table.refresh(true)"
                 />
               </a-form-item>
             </a-col>
 
             <a-col :md="6" :sm="24">
-              <a-form-item label="类别">
-                <a-select allow-clear v-model="queryParams.knowledgeType" placeholder="请选择类别">
-                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select>
+              <a-form-item label="项目">
+                <div class="div-text-auto">
+                  <a-auto-complete
+                    class="global-search"
+                    v-model="chooseDeptItem.name"
+                    size="large"
+                    style="width: 100%; font-size: 14px"
+                    placeholder="请输入并选择"
+                    option-label-prop="title"
+                    @select="onSelect"
+                    @search="handleSearch"
+                  >
+                    <template slot="dataSource">
+                      <a-select-option v-for="item in keshiDataTemp" :key="item.id + ''" :title="item.name">
+                        {{ item.name }}
+                      </a-select-option>
+                    </template>
+                  </a-auto-complete>
+                </div>
               </a-form-item>
             </a-col>
             <a-col :md="3" :sm="24">
@@ -48,46 +77,48 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.editForm.edit(record)">编辑</a>
+          <a @click="$refs.lookJian.edit(record)">查看</a>
           <a-divider type="vertical" />
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delKnowledge(record)">
-            <a>删除</a>
-          </a-popconfirm>
+          <a v-if="record.status == 0" @click="$refs.editJian.edit(record)">处理</a>
         </span>
-
-        <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
-          {{ record.statusText }}
-        </span> -->
       </s-table>
 
-      <!-- <add-form ref="addForm" @ok="handleOk" /> -->
-      <edit-form ref="editForm" @ok="handleOk" />
+      <look-jian ref="lookJian" @ok="handleOk" />
+      <edit-jian ref="editJian" @ok="handleOk" />
     </a-card>
   </div>
 </template>
 
 <script>
 import { STable } from '@/components'
-import { qryCodeValue, delSysKnowledge, qrySysKnowledge } from '@/api/modular/system/posManage'
-// import addForm from './addForm'
-import editForm from './lookJian'
+import { getAppointList, getCheckDataList } from '@/api/modular/system/posManage'
+import lookJian from './lookJian'
+import editJian from './editJian'
 
 export default {
   components: {
     STable,
-    // addForm,
-    editForm,
+    lookJian,
+    editJian,
   },
 
   data() {
     return {
-      //就诊导航 JZDH    服务咨询 FWZX
-      statusData: [],
+      tabFlag: '1',
 
-      queryParams: {
-        knowledgeType: undefined, //科室
-        keyWord: undefined, //textNum
-      },
+      //工单状态（0：申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
+      statusData: [
+        { code: -1, value: '全部' },
+        { code: 0, value: '待审批' },
+        { code: 1, value: '审核通过' },
+        { code: 2, value: '审核失败' },
+        { code: 3, value: '预约成功' },
+        { code: 4, value: '预约失败' },
+        { code: 5, value: '取消预约申请' },
+        { code: 6, value: '取消预约成功' },
+        { code: 7, value: '取消预约失败' },
+      ],
+
       // 表头
       columns: [
         {
@@ -95,19 +126,40 @@ export default {
           dataIndex: 'xh',
         },
         {
-          title: '内容标题',
-          dataIndex: 'title',
+          title: '预约类型',
+          dataIndex: 'tradeType',
         },
         {
-          title: '类别',
-          dataIndex: 'typeName',
+          title: '就诊人',
+          dataIndex: 'userName',
         },
         {
-          title: '创建人',
-          dataIndex: 'creator',
+          title: '项目',
+          dataIndex: 'appointItemName',
         },
         {
-          title: '创建时间',
+          title: '提交申请日期',
+          dataIndex: 'createTimeOut',
+        },
+
+        {
+          title: '申请预约日期',
+          dataIndex: 'appointDate',
+        },
+        {
+          title: '申请预约时间',
+          dataIndex: 'appointTime',
+        },
+        {
+          title: '状态',
+          dataIndex: 'statusText',
+        },
+        {
+          title: '预约时间',
+          dataIndex: 'reqTimeOut',
+        },
+        {
+          title: '处理时间',
           dataIndex: 'updateTimeOut',
         },
         {
@@ -120,55 +172,145 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.knowledgeType == '1') {
-          this.queryParams.knowledgeType = ''
+        if (this.queryParams.status == -1) {
+          this.queryParams.status = ''
         }
-        return qrySysKnowledge(Object.assign(parameter, this.queryParams)).then((res) => {
+        return getAppointList(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            this.$set(res.data.rows[i], 'updateTimeOut', this.formatDate(res.data.rows[i].updateTime))
+            this.$set(res.data.rows[i], 'createTimeOut', this.formatDateFull(res.data.rows[i].createTime))
+            this.$set(res.data.rows[i], 'updateTimeOut', this.formatDateFull(res.data.rows[i].updateTime))
+            this.$set(res.data.rows[i], 'reqTimeOut', this.formatDateFull(res.data.rows[i].reqTime))
 
-            ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
-            // this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
-            // console.log('ddd', res.data.rows[i].execFlag)
-            // if (res.data.rows[i].execFlag == 0) {
-            //   this.$set(res.data.rows[i], 'statusText', '已申请')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // } else if (res.data.rows[i].execFlag == 1) {
-            //   this.$set(res.data.rows[i], 'statusText', '已完成')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // } else if (res.data.rows[i].execFlag == 2) {
-            //   this.$set(res.data.rows[i], 'statusText', '未接诊')
-            //   this.$set(res.data.rows[i], 'btnText', '提醒医生')
-            //   this.$set(res.data.rows[i], 'canAsk', true)
-            // } else if (res.data.rows[i].execFlag == 3) {
-            //   this.$set(res.data.rows[i], 'statusText', '已中止')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // }
+            //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
+            if (res.data.rows[i].status == 0) {
+              this.$set(res.data.rows[i], 'statusText', '待审批')
+            } else if (res.data.rows[i].status == 1) {
+              this.$set(res.data.rows[i], 'statusText', '审核通过')
+            } else if (res.data.rows[i].status == 2) {
+              this.$set(res.data.rows[i], 'statusText', '审核失败')
+            } else if (res.data.rows[i].status == 3) {
+              this.$set(res.data.rows[i], 'statusText', '预约成功')
+            } else if (res.data.rows[i].status == 4) {
+              this.$set(res.data.rows[i], 'statusText', '预约失败')
+            } else if (res.data.rows[i].status == 5) {
+              this.$set(res.data.rows[i], 'statusText', '取消预约申请')
+            } else if (res.data.rows[i].status == 6) {
+              this.$set(res.data.rows[i], 'statusText', '取消预约成功')
+            } else if (res.data.rows[i].status == 7) {
+              this.$set(res.data.rows[i], 'statusText', '取消预约失败')
+            }
           }
           return res.data
         })
       },
+
+      queryParams: {
+        tradeTypeCode: 'lis', //检查检验  传bed用于床位预约列表
+        appointItem: '', //EXAM 检验   CHECK 检查
+        userName: '',
+        status: '', //全部，不需要传这个字段
+        appointItemName: undefined, //textNum
+      },
+
+      checkData: [],
+      examData: [],
+
+      chooseDeptItem: {},
+      originData: [],
+      keshiData: [],
+      keshiDataTemp: [],
     }
   },
 
   created() {
-    qryCodeValue('KNOWLEDGE_TYPE').then((res) => {
+    getCheckDataList({ pageNo: 1, type: 'Check', pageSize: 200 }).then((res) => {
       if (res.code == 0) {
-        if (res.data && res.data.length > 0) {
-          this.statusData = res.data
-          this.statusData.unshift({ code: '1', value: '全部' })
-        }
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
+        this.checkData = res.data.rows
+        this.getCheckDataListExam()
       }
     })
   },
 
   methods: {
+    //切换tab是重新刷数据
+    onClickChange(event) {
+      if (event.target.value == '1') {
+        //全部
+        this.queryParams.appointItem = ''
+        this.queryParams.appointItemName = ''
+        this.queryParams.userName = ''
+        this.onDataChage(1)
+      } else if (event.target.value == '2') {
+        //预约检查
+        this.queryParams.appointItem = 'CHECK'
+        this.queryParams.appointItemName = ''
+        this.queryParams.userName = ''
+        this.onDataChage(2)
+      } else {
+        //预约检验
+        this.queryParams.appointItem = 'EXAM'
+        this.queryParams.appointItemName = ''
+        this.queryParams.userName = ''
+        this.onDataChage(3)
+      }
+      this.chooseDeptItem = {}
+      this.$refs.table.refresh(true)
+    },
+
+    handleSearch(inputName) {
+      if (inputName) {
+        this.keshiDataTemp = this.originData.filter((item) => item.name.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+      }
+    },
+
+    onSelect(departmentId, s2) {
+      console.log('departmentId', departmentId)
+      console.log('s2', s2)
+
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.id == departmentId)))
+      console.log('chooseDeptItem', this.chooseDeptItem)
+      this.queryParams.appointItemName = this.chooseDeptItem.name
+    },
+
+    getCheckDataListExam() {
+      getCheckDataList({ pageNo: 1, type: 'Exam', pageSize: 200 }).then((res) => {
+        if (res.code == 0) {
+          this.examData = res.data.rows
+          this.onDataChage(1)
+        } else {
+        }
+      })
+    },
+
+    /**
+     * 调整autoComplete数据
+     * flag  1全部 2检查 3检验
+     */
+    onDataChage(flag) {
+      console.log('checkData', this.checkData)
+      console.log('examData', this.examData)
+      if (flag == 1) {
+        this.originData = JSON.parse(JSON.stringify(this.checkData)).concat(JSON.parse(JSON.stringify(this.examData)))
+        this.keshiData = JSON.parse(JSON.stringify(this.checkData)).concat(JSON.parse(JSON.stringify(this.examData)))
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.checkData)).concat(
+          JSON.parse(JSON.stringify(this.examData))
+        )
+      } else if (flag == 2) {
+        this.originData = JSON.parse(JSON.stringify(this.checkData))
+        this.keshiData = JSON.parse(JSON.stringify(this.checkData))
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.checkData))
+      } else if (flag == 3) {
+        this.originData = JSON.parse(JSON.stringify(this.examData))
+        this.keshiData = JSON.parse(JSON.stringify(this.examData))
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.examData))
+      }
+      console.log('originData', this.originData)
+    },
+
     formatDate(date) {
       date = new Date(date)
       let myyear = date.getFullYear()
@@ -195,36 +337,6 @@ export default {
       return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
     },
 
-    delKnowledge(record) {
-      delSysKnowledge({ id: record.id })
-        .then((res) => {
-          if (res.success) {
-            this.$message.success('删除成功')
-            this.$refs.table.refresh()
-          } else {
-            this.$message.error('删除失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          this.$message.error('删除错误：' + err.message)
-        })
-    },
-
-    //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
-    getClass(status) {
-      if (status == 1) {
-        return 'span-red'
-      } else if (status == 2) {
-        return 'span-blue'
-      } else if (status == 3) {
-        return 'span-red'
-      } else if (status == 4) {
-        return 'span-blue'
-      } else if (status == 5) {
-        return 'span-gray'
-      }
-    },
-
     handleOk() {
       this.$refs.table.refresh()
     },
@@ -233,10 +345,19 @@ export default {
 </script>
 
 <style lang="less">
-.div-inquiry-text {
+.div-yiji-todo {
   width: 100%;
   overflow: hidden;
   height: 100%;
+
+  .div-text-auto {
+    width: 100%;
+    display: inline-block;
+    margin-top: -1.5%;
+    .ant-input {
+      height: 35px;
+    }
+  }
 
   .card-right {
     overflow: hidden;

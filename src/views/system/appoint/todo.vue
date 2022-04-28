@@ -158,7 +158,7 @@ export default {
 
             //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
             if (res.data.rows[i].status == 0) {
-              this.$set(res.data.rows[i], 'statusText', '已申请')
+              this.$set(res.data.rows[i], 'statusText', '待审批')
             } else if (res.data.rows[i].status == 1) {
               this.$set(res.data.rows[i], 'statusText', '审核通过')
             } else if (res.data.rows[i].status == 2) {

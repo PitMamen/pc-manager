@@ -67,9 +67,15 @@
         </a-form-item>
 
         <a-form-item v-if="radioValue == 1" label="时间段" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <span v-for="(item, index) in timeData" :key="index" class="span-time" style="margin-left: 0">{{
-            item.value
-          }}</span>
+          <span
+            v-for="(item, index) in timeData"
+            :key="index"
+            class="span-time"
+            :class="{ chose: item.isChecked }"
+            @click="onPartChoose(index)"
+            style="margin-left: 0"
+            >{{ item.value }}</span
+          >
 
           <!-- <span class="span-time" style="margin-left: 0">08:30-09:00</span>
           <span class="span-time">09:30-10:00</span>
@@ -99,7 +105,7 @@
 
 <script>
 import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
-import { formatDateFull } from '@/utils/util'
+import { formatDateFull, formatDate } from '@/utils/util'
 
 export default {
   data() {
@@ -129,7 +135,9 @@ export default {
       hasPic: false,
       radioValue: 1,
       locationDes: '',
+      failReason: '',
       timeData: [],
+      choseTimeItem: {},
     }
   },
 
@@ -137,7 +145,16 @@ export default {
     qryCodeValue('APPOINT_TYPE').then((res) => {
       if (res.code == 0) {
         if (res.data && res.data.length > 0) {
+          for (let i = 0; i < res.data.length; i++) {
+            // this.$set(res.data[i], 'xh', i + 1)
+            if (i == 0) {
+              this.$set(res.data[i], 'isChecked', true)
+            } else {
+              this.$set(res.data[i], 'isChecked', false)
+            }
+          }
           this.timeData = res.data
+          this.choseTimeItem = JSON.parse(JSON.stringify(this.timeData[0]))
         }
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
@@ -177,93 +194,79 @@ export default {
       } else {
         this.hasPic = false
       }
-
-      // setTimeout(() => {
-      //   this.form.setFieldsValue({
-      //     knowledgeType: record.knowledgeType,
-      //     title: record.title,
-      //     content: record.content,
-      //   })
-      // }, 100)
     },
 
-    // radioChang(event) {
-    //   console.log('s2', event)
-    //   if (event.target.value == 1) {
-    //   }
-    // },
-
     handleCancel() {},
+
+    onPartChoose(index) {
+      // this.chooseDeptItem = this.keshiData[index]
+      for (let i = 0; i < this.timeData.length; i++) {
+        this.$set(this.timeData[i], 'isChecked', false)
+        if (i == index) {
+          this.$set(this.timeData[i], 'isChecked', true)
+          this.choseTimeItem = JSON.parse(JSON.stringify(this.timeData[i]))
+        }
+      }
+    },
+
     handleSubmit() {
       const {
         form: { validateFields },
       } = this
 
-      if (!this.chooseDate) {
-        this.$message.error('请选择预约日期！')
-        return
-      } else {
-        this.record.appointDate = this.chooseDate
-      }
+      if (this.radioValue == 1) {
+        //成功
+        if (!this.chooseDate) {
+          this.$message.error('请选择预约日期！')
+          return
+        } else {
+          console.log('date', formatDate(this.chooseDate))
+          this.record.appointDate = formatDate(this.chooseDate)
+        }
 
-      if (!this.remark) {
-        this.$message.error('请输入地点！')
-        return
+        if (!this.choseTimeItem) {
+          this.$message.error('请选择预约时段！')
+          return
+        } else {
+          console.log('choseTimeItem', this.choseTimeItem)
+          this.$set(this.record, 'appointTime', this.choseTimeItem.value)
+          // this.record.appointTime = this.choseTimeItem.value
+        }
+
+        if (!this.remark) {
+          this.$message.error('请输入地点！')
+          return
+        } else {
+          this.$set(this.record, 'remark', this.remark)
+        }
+        this.record.status = 3
       } else {
-        this.$set(this.record, 'remark', this.remark)
-        // this.record.appointDate = this.chooseDate
+        //失败
+        if (!this.failReason) {
+          this.$message.error('请填写失败原因！')
+          return
+        } else {
+          this.record.status = 4
+          this.$set(this.record, 'dealResult', this.failReason)
+        }
       }
 
       this.confirmLoading = true
       saveTradeAppoint(this.record)
         .then((res) => {
           if (res.success) {
-            this.$message.success('编辑成功')
+            this.$message.success('审批成功')
             this.visible = false
             this.confirmLoading = false
-            this.$emit('ok', values)
+            this.$emit('ok')
             this.form.resetFields()
           } else {
-            this.$message.error('编辑失败：' + res.message)
+            this.$message.error('审批失败：' + res.message)
           }
         })
         .finally((res) => {
           this.confirmLoading = false
         })
-
-      validateFields((errors, values) => {
-        if (!errors) {
-          let chooseOne = this.statusData.find((item) => {
-            return item.code == values.knowledgeType
-          })
-
-          this.record.knowledgeType = values.knowledgeType
-          this.record.title = values.title
-          this.record.content = values.content
-          this.record.typeName = chooseOne.value
-
-          delete this.record.updateTimeOut
-          delete this.record.xh
-
-          saveSysKnowledge(this.record)
-            .then((res) => {
-              if (res.success) {
-                this.$message.success('编辑成功')
-                this.visible = false
-                this.confirmLoading = false
-                this.$emit('ok', values)
-                this.form.resetFields()
-              } else {
-                this.$message.error('编辑失败：' + res.message)
-              }
-            })
-            .finally((res) => {
-              this.confirmLoading = false
-            })
-        } else {
-          this.confirmLoading = false
-        }
-      })
     },
     handleCancel() {
       this.form.resetFields()
@@ -316,7 +319,7 @@ export default {
   }
 }
 
-.span-chose {
+.chose {
   display: inline-block;
   height: 40px;
   color: #3894ff;
