@@ -105,6 +105,8 @@
 
 <script>
 import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
+import { Modal } from 'ant-design-vue';
+import { defineComponent, h } from 'vue';
 import { formatDateFull, formatDate } from '@/utils/util'
 
 export default {
@@ -255,11 +257,28 @@ export default {
       saveTradeAppoint(this.record)
         .then((res) => {
           if (res.success) {
-            this.$message.success('审批成功')
+            this.$message.success('审批成功,系统将为患者发送预约结果短信通知')
             this.visible = false
             this.confirmLoading = false
             this.$emit('ok')
             this.form.resetFields()
+            // if (this.radioValue == 1) {
+            //   Modal.success({
+            //     title: '预约处理成功',
+            //     content: h('div', {}, [
+            //       h('p', '系统将为患者发送预约成功处理短信通知'),
+            //       // h('p', 'some messages...some messages...'),
+            //     ]),
+            //   })
+            // } else {
+            //   Modal.success({
+            //     title: '预约处理成功',
+            //     content: h('div', {}, [
+            //       h('p', '系统将为患者发送预约失败处理短信通知'),
+            //       // h('p', 'some messages...some messages...'),
+            //     ]),
+            //   })
+            // }
           } else {
             this.$message.error('审批失败：' + res.message)
           }
