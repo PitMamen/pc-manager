@@ -110,13 +110,13 @@ export default {
       statusData: [
         { code: -1, value: '全部' },
         { code: 0, value: '待审批' },
-        { code: 1, value: '审核通过' },
-        { code: 2, value: '审核失败' },
+        // { code: 1, value: '审核通过' },
+        // { code: 2, value: '审核失败' },
         { code: 3, value: '预约成功' },
         { code: 4, value: '预约失败' },
-        { code: 5, value: '取消预约申请' },
-        { code: 6, value: '取消预约成功' },
-        { code: 7, value: '取消预约失败' },
+        // { code: 5, value: '取消预约申请' },
+        // { code: 6, value: '取消预约成功' },
+        // { code: 7, value: '取消预约失败' },
       ],
 
       // 表头
