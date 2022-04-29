@@ -169,6 +169,7 @@ export default {
     edit(record) {
       this.visible = true
       this.record = {}
+      this.fileListBanner = []
       this.record = record
 
       if (this.record.appointItem == 'CHECK') {

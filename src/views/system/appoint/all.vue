@@ -127,7 +127,7 @@ export default {
         },
         {
           title: '预约类型',
-          dataIndex: 'tradeType',
+          dataIndex: 'tradeTypeDetail',
         },
         {
           title: '就诊人',
@@ -135,6 +135,7 @@ export default {
         },
         {
           title: '项目',
+          width: '300px',
           dataIndex: 'appointItemName',
         },
         {
@@ -178,9 +179,22 @@ export default {
         return getAppointList(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            if (res.data.rows[i].appointItem == 'EXAM') {
+              this.$set(res.data.rows[i], 'tradeTypeDetail', '预约检验')
+            } else if (res.data.rows[i].appointItem == 'CHECK') {
+              this.$set(res.data.rows[i], 'tradeTypeDetail', '预约检查')
+            }
             this.$set(res.data.rows[i], 'createTimeOut', this.formatDateFull(res.data.rows[i].createTime))
-            this.$set(res.data.rows[i], 'updateTimeOut', this.formatDateFull(res.data.rows[i].updateTime))
-            this.$set(res.data.rows[i], 'reqTimeOut', this.formatDateFull(res.data.rows[i].reqTime))
+            this.$set(
+              res.data.rows[i],
+              'updateTimeOut',
+              res.data.rows[i].updateTime ? this.formatDateFull(res.data.rows[i].updateTime) : ''
+            )
+            this.$set(
+              res.data.rows[i],
+              'reqTimeOut',
+              this.formatDateFull(res.data.rows[i].appointDate + ' ' + res.data.rows[i].appointTime)
+            )
 
             //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
             if (res.data.rows[i].status == 0) {
@@ -264,6 +278,7 @@ export default {
       } else {
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
         // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+        this.queryParams.appointItemName = ''
       }
     },
 

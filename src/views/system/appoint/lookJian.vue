@@ -75,7 +75,13 @@
           <span>{{ record.dealResult }}</span>
         </a-form-item>
 
-        <a-form-item label="处理时间" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item
+          v-if="record.status == 3 || record.status == 4"
+          label="处理时间"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
           <span>{{ record.updateTimeOut }}</span>
         </a-form-item>
       </a-form>
@@ -148,6 +154,7 @@ export default {
     edit(record) {
       this.visible = true
       this.record = {}
+      this.fileListBanner = []
       this.record = record
 
       if (this.record.appointItem == 'CHECK') {
