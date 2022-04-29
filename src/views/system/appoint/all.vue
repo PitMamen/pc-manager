@@ -185,16 +185,27 @@ export default {
               this.$set(res.data.rows[i], 'tradeTypeDetail', '预约检查')
             }
             this.$set(res.data.rows[i], 'createTimeOut', this.formatDateFull(res.data.rows[i].createTime))
-            this.$set(
-              res.data.rows[i],
-              'updateTimeOut',
-              res.data.rows[i].updateTime ? this.formatDateFull(res.data.rows[i].updateTime) : ''
-            )
-            this.$set(
-              res.data.rows[i],
-              'reqTimeOut',
-              this.formatDateFull(res.data.rows[i].appointDate + ' ' + res.data.rows[i].appointTime)
-            )
+
+            if (res.data.rows[i].status == 3 || res.data.rows[i].status == 4) {
+              this.$set(
+                res.data.rows[i],
+                'updateTimeOut',
+                res.data.rows[i].updateTime ? this.formatDateFull(res.data.rows[i].updateTime) : ''
+              )
+            } else {
+              this.$set(res.data.rows[i], 'updateTimeOut', '')
+            }
+
+            if (res.data.rows[i].status == 3) {
+              //预约时间
+              this.$set(
+                res.data.rows[i],
+                'reqTimeOut',
+                this.formatDateFull(res.data.rows[i].appointDate + ' ' + res.data.rows[i].appointTime)
+              )
+            } else {
+              this.$set(res.data.rows[i], 'reqTimeOut', '')
+            }
 
             //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
             if (res.data.rows[i].status == 0) {

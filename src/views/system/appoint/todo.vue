@@ -168,7 +168,8 @@ export default {
             this.$set(
               res.data.rows[i],
               'reqTimeOut',
-              this.formatDateFull(res.data.rows[i].appointDate + ' ' + res.data.rows[i].appointTime)
+              // this.formatDateFull(res.data.rows[i].appointDate + ' ' + res.data.rows[i].appointTime)
+              ''
             )
 
             //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
