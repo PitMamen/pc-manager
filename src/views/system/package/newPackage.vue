@@ -94,6 +94,8 @@
               >{{ itemType.value }}
             </a-select-option>
           </a-select>
+
+          <span class="span-item-name config" @click="$refs.configForm.edit(index)"> 属性配置</span>
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
@@ -155,14 +157,14 @@
           >
             <div class="div-element">
               <div class="div-content">
-                <span class="span-item-name" style="width: 49%"> 计划类型 :</span>
+                <span class="span-item-name" style="width: 39%"> 计划类型 :</span>
                 <span class="span-item-content"> {{ itemChild.taskTypeName }}</span>
               </div>
 
               <div class="div-content-value">
                 <!-- //style="margin-left: 3%" -->
-                <span class="span-item-name" style="width: 21%"> 具体内容 :</span>
-                <span class="span-item-content"> {{ itemChild.contentDetail.detailName }}</span>
+                <span class="span-item-name" style="width: 37%"> 具体内容 :</span>
+                <span class="span-item-content" style="width: 35%"> {{ itemChild.contentDetail.detailName }}</span>
               </div>
 
               <a-icon class="icon-delete" @click="deleteElement(index, indexChild)" title="删除任务项目" type="close" />
@@ -185,6 +187,7 @@
     <add-remind ref="addRemind" @ok="handleRemind" />
     <add-cha ref="addJianCha" @ok="handleJianCha" />
     <add-yan ref="addJianYan" @ok="handleJianYan" />
+    <config-form ref="configForm" @ok="handleConfig" />
   </div>
 </template>
 
@@ -196,6 +199,7 @@ import addCha from './addJianCha'
 import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
+import configForm from './configForm'
 
 export default {
   components: {
@@ -205,6 +209,7 @@ export default {
     addYan,
     addQuestion,
     addRemind,
+    configForm,
   },
 
   data() {
@@ -573,6 +578,8 @@ export default {
       })
     },
 
+    handleConfig(index, record){},
+
     validate() {
       const {
         form: { validateFields },
@@ -734,6 +741,16 @@ export default {
           padding-left: 3px;
           font-size: 14px;
           display: inline-block;
+        }
+
+        .config {
+          // width: 20%;
+          margin-left: 2%;
+          color: #1890ff;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
 
@@ -925,13 +942,13 @@ export default {
 
             .div-content-value {
               display: inline-block;
-              width: 66%;
+              width: 30%;
               overflow: hidden;
 
               .span-item-name {
                 display: inline-block;
                 overflow: hidden;
-                width: 11%;
+                width: 25%;
                 color: #000;
                 font-size: 14px;
                 text-align: left;
@@ -941,7 +958,7 @@ export default {
                 overflow: hidden;
                 text-overflow: ellipsis; //文本溢出显示省略号
                 white-space: nowrap; //文本不会换行
-                width: 75%;
+                width: 20%;
                 color: #000;
                 font-size: 14px;
                 text-align: left;
