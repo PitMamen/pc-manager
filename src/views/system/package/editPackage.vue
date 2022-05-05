@@ -85,6 +85,7 @@
           <a-input-number style="margin-left: 1%" v-model="item.attrValue" :min="0" :max="1000000" />
 
           <span class="span-item-name" style="margin-left: 5%"><span style="color: red">*</span> 上传资料 :</span>
+
           <a-select
             v-model="item.plusInfoVo.uploadDocFlag"
             class="span-item-value"
@@ -95,6 +96,10 @@
               >{{ itemType.value }}
             </a-select-option>
           </a-select>
+
+          <span class="span-item-name config" @click="$refs.editConfigForm.edit(index, item.plusInfoVo)">
+            属性配置</span
+          >
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
@@ -201,6 +206,7 @@
     <add-remind ref="addRemind" @ok="handleRemind" />
     <add-cha ref="addJianCha" @ok="handleJianCha" />
     <add-yan ref="addJianYan" @ok="handleJianYan" />
+    <edit-config-form ref="editConfigForm" @ok="handleConfig" />
   </div>
 </template>
 
@@ -220,6 +226,7 @@ import addCha from './addJianCha'
 import addYan from './addJianYan'
 import addQuestion from './addQuestion'
 import addRemind from './addRemind'
+import editConfigForm from './editConfigForm'
 
 export default {
   components: {
@@ -229,6 +236,7 @@ export default {
     addYan,
     addQuestion,
     addRemind,
+    editConfigForm,
   },
 
   data() {
@@ -401,11 +409,8 @@ export default {
     },
 
     goOnline() {
-      console.log('goOnline1', this.uploadData.goodsInfo.isOnline)
       this.outIsOnline = !this.outIsOnline
       this.uploadData.goodsInfo.isOnline = this.outIsOnline
-
-      console.log('goOnline2', this.uploadData.goodsInfo.isOnline)
     },
 
     getPlanDetailOut() {
@@ -425,7 +430,6 @@ export default {
             })
           })
 
-          console.log('555', this.uploadData.goodsInfo.status == 1)
           if (this.uploadData.goodsInfo.status == 1) {
             this.uploadData.goodsInfo.isOnline = true
             this.outIsOnline = true
@@ -553,7 +557,6 @@ export default {
       }
 
       let newName = this.getNewOne()
-      console.log('newName', newName)
 
       this.goodsAttr.push(
         this.goodsAttrFull.find((item) => {
@@ -767,6 +770,13 @@ export default {
       })
     },
 
+    handleConfig(index, values) {
+      console.log('beforeee', this.goodsAttr[index].plusInfoVo)
+      console.log('valuesee', values)
+      this.goodsAttr[index].plusInfoVo = Object.assign(this.goodsAttr[index].plusInfoVo, values)
+      console.log('afteree', this.goodsAttr[index].plusInfoVo)
+    },
+
     validate() {
       const {
         form: { validateFields },
@@ -774,7 +784,6 @@ export default {
 
       validateFields((errors, values) => {
         if (!errors) {
-          console.log('11', values)
           //校验表格数据无误，则组装数据
 
           this.uploadData.goodsInfo.goodsName = values.goodsName
@@ -852,7 +861,6 @@ export default {
             }
           })
         } else {
-          console.log('22', errors)
         }
       })
     },
@@ -932,6 +940,16 @@ export default {
           padding-left: 3px;
           font-size: 14px;
           display: inline-block;
+        }
+
+        .config {
+          // width: 20%;
+          margin-left: 2%;
+          color: #1890ff;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
 

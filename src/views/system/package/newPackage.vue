@@ -578,7 +578,12 @@ export default {
       })
     },
 
-    handleConfig(index, record){},
+    handleConfig(index, values) {
+      console.log('before', this.goodsAttr[index].plusInfoVo)
+      console.log('values', values)
+      this.goodsAttr[index].plusInfoVo = Object.assign(this.goodsAttr[index].plusInfoVo, values)
+      console.log('after', this.goodsAttr[index].plusInfoVo)
+    },
 
     validate() {
       const {
@@ -587,7 +592,6 @@ export default {
 
       validateFields((errors, values) => {
         if (!errors) {
-          console.log('11', values)
           //校验表格数据无误，则组装数据
 
           this.uploadData.goodsInfo.goodsName = values.goodsName

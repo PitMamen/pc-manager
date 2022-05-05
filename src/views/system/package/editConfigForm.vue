@@ -110,26 +110,30 @@ export default {
       }
       this.originData = res.data.rows
       this.keshiData = JSON.parse(JSON.stringify(this.originData))
+      console.log('originDataGot', this.originData)
       this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
     })
   },
   methods: {
     //初始化方法
-    edit(index) {
+    edit(index, plusInfoVo) {
       this.visible = true
 
-      //初始化重置数据
-      this.docId = ''
-      this.isCaseFlag = true
+      this.index = index
       setTimeout(() => {
         this.form.setFieldsValue({
-          serviceExpire: undefined,
-          timeLimit: undefined,
-          textNumLimit: undefined,
+          serviceExpire: plusInfoVo.serviceExpire,
+          timeLimit: plusInfoVo.timeLimit,
+          textNumLimit: plusInfoVo.textNumLimit,
         })
       }, 100)
-
-      this.index = index
+      console.log('plusInfoVo', plusInfoVo)
+      this.docId = plusInfoVo.docId
+      console.log('originData', this.originData)
+      this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == this.docId)))
+      console.log('chooseDeptItem', this.chooseDeptItem)
+      this.caseFlag = plusInfoVo.caseFlag
+      this.isCaseFlag = this.caseFlag == 1 ? true : false
     },
 
     onChangeCase() {
@@ -191,12 +195,15 @@ export default {
         this.keshiDataTemp = this.originData.filter((item) => item.userName.indexOf(inputName) != -1)
       } else {
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+        // this.queryParams.appointItemName = ''
         this.docId = ''
       }
     },
 
     onSelect(departmentId, s2) {
       this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == departmentId)))
+      // this.queryParams.appointItemName = this.chooseDeptItem.name
       this.docId = this.chooseDeptItem.userId
     },
   },
