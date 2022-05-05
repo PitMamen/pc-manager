@@ -4,7 +4,7 @@
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
-    <a-form ref="form" :form="form" class="my-form-package">
+    <a-form ref="form" :form="form" class="my-form-package-edit">
       <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
           <a-select-option v-for="(item, index) in goodClasses" :key="index" :value="item.classId">{{
@@ -892,7 +892,7 @@ export default {
     height: 1px;
   }
 
-  .my-form-package {
+  .my-form-package-edit {
     margin-top: 2%;
     margin-left: -10%;
   }
@@ -945,7 +945,7 @@ export default {
         .config {
           // width: 20%;
           margin-left: 2%;
-          color: #1890ff;
+          color: #1890ff!important;
 
           &:hover {
             cursor: pointer;

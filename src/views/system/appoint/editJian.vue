@@ -63,7 +63,7 @@
         </a-form-item>
         <a-form-item v-if="radioValue == 1" label="日期" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <!-- <a-date-picker v-model="chooseDate" placeholder="2021-12-31 " @change="onChange" /> -->
-          <a-date-picker v-model="chooseDate" placeholder="2021-12-31 " />
+          <a-date-picker :disabled-date="disabledDate" v-model="chooseDate" placeholder="2021-12-31 " />
         </a-form-item>
 
         <a-form-item v-if="radioValue == 1" label="时间段" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -105,8 +105,7 @@
 
 <script>
 import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
-import { Modal } from 'ant-design-vue'
-import { defineComponent, h } from 'vue'
+import moment from 'moment';
 import { formatDateFull, formatDate } from '@/utils/util'
 
 export default {
@@ -197,6 +196,11 @@ export default {
       } else {
         this.hasPic = false
       }
+    },
+
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current < moment().endOf('day');
     },
 
     handleCancel() {},

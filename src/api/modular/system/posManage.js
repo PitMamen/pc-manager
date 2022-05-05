@@ -471,6 +471,14 @@ export function getDiseaseAreas(parameter) {
   })
 }
 
+export function getDoctorList(parameter) {
+  return axios({
+    url: '/accountapi/businessManagement/getDoctorList',
+    method: 'get',
+    params: parameter
+  })
+}
+
 /**
  * 获取角色列表
  */

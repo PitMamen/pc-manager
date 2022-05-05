@@ -70,7 +70,7 @@
 
 
 <script>
-import { getUserList } from '@/api/modular/system/posManage'
+import { getDoctorList } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -95,7 +95,8 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       //status 0  启用
-      queryParam: { pageNo: 1, status: 0, pageSize: 1000 },
+      // queryParam: { pageNo: 1, status: 0, pageSize: 1000 },
+      queryParam: { departmentId: 0 },
 
       index: 0,
       docId: '',
@@ -106,11 +107,11 @@ export default {
     }
   },
   created() {
-    getUserList(this.queryParam).then((res) => {
-      for (let i = 0; i < res.data.rows.length; i++) {
-        this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-      }
-      this.originData = res.data.rows
+    getDoctorList(this.queryParam).then((res) => {
+      // for (let i = 0; i < res.data.rows.length; i++) {
+      //   this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+      // }
+      this.originData = res.data
       this.keshiData = JSON.parse(JSON.stringify(this.originData))
       this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
     })
