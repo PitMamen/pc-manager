@@ -118,6 +118,7 @@ export default {
     //初始化方法
     edit(index, plusInfoVo) {
       this.visible = true
+      this.chooseDeptItem = {}
 
       this.index = index
       setTimeout(() => {
@@ -145,43 +146,21 @@ export default {
       const {
         form: { validateFields },
       } = this
-      this.confirmLoading = true
+      // this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
-          // let chooseOne = this.statusData.find((item) => {
-          //   return item.code == values.knowledgeType
-          // })
-
-          if (!this.docId) {
+          if (!this.docId && !this.isCaseFlag) {
             this.$message.error('请选择服务医生！')
             return
           } else {
             this.$set(values, 'docId', this.docId)
           }
           this.$set(values, 'caseFlag', this.caseFlag)
-          this.confirmLoading = false
+          // this.confirmLoading = false
           this.visible = false
           this.$emit('ok', this.index, values)
-
-          // let user = Vue.ls.get(TRUE_USER)
-          // this.$set(values, 'creator', user.userName)
-          // saveSysKnowledge(values)
-          //   .then((res) => {
-          //     if (res.success) {
-          //       this.$message.success('新增成功')
-          //       this.visible = false
-          //       this.confirmLoading = false
-          //       this.$emit('ok', values)
-          //       this.form.resetFields()
-          //     } else {
-          //       this.$message.error('新增失败：' + res.message)
-          //     }
-          //   })
-          //   .finally((res) => {
-          //     this.confirmLoading = false
-          //   })
         } else {
-          this.confirmLoading = false
+          // this.confirmLoading = false
         }
       })
     },
