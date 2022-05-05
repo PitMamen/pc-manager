@@ -105,8 +105,8 @@
 
 <script>
 import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
-import { Modal } from 'ant-design-vue';
-import { defineComponent, h } from 'vue';
+import { Modal } from 'ant-design-vue'
+import { defineComponent, h } from 'vue'
 import { formatDateFull, formatDate } from '@/utils/util'
 
 export default {
@@ -224,7 +224,7 @@ export default {
           return
         } else {
           console.log('date', formatDate(this.chooseDate))
-          this.record.appointDate = formatDate(this.chooseDate)
+          // this.record.appointDate = formatDate(this.chooseDate)
         }
 
         if (!this.choseTimeItem) {
@@ -232,9 +232,10 @@ export default {
           return
         } else {
           console.log('choseTimeItem', this.choseTimeItem)
-          this.$set(this.record, 'appointTime', this.choseTimeItem.value)
-          // this.record.appointTime = this.choseTimeItem.value
+          // this.$set(this.record, 'appointTime', this.choseTimeItem.value)
         }
+        //不覆盖，成功用dealResult保存成功的时间；失败用dealResult保存失败原因
+        this.$set(this.record, 'dealResult', formatDate(this.chooseDate) + ' ' + this.choseTimeItem.value)
 
         if (!this.remark) {
           this.$message.error('请输入地点！')

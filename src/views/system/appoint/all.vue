@@ -198,11 +198,7 @@ export default {
 
             if (res.data.rows[i].status == 3) {
               //预约时间
-              this.$set(
-                res.data.rows[i],
-                'reqTimeOut',
-                this.formatDateFull(res.data.rows[i].appointDate + ' ' + res.data.rows[i].appointTime)
-              )
+              this.$set(res.data.rows[i], 'reqTimeOut', res.data.rows[i].dealResult)
             } else {
               this.$set(res.data.rows[i], 'reqTimeOut', '')
             }

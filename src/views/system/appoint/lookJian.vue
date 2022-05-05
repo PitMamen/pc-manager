@@ -62,7 +62,7 @@
           :wrapperCol="wrapperCol"
           has-feedback
         >
-          <span>{{ record.appointDate + '  ' + record.appointTime }}</span>
+          <span>{{ record.dealResult }}</span>
         </a-form-item>
 
         <a-form-item

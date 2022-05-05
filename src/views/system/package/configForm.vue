@@ -138,6 +138,7 @@ export default {
       let user = Vue.ls.get(TRUE_USER)
       if (user.roleName == 'doctor') {
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == user.userId)))
+        this.docId = user.userId
         console.log('chooseDeptItem', this.chooseDeptItem)
       }
     },
