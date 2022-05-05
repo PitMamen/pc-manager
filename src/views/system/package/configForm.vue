@@ -71,6 +71,8 @@
 
 <script>
 import { getUserList } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   data() {
@@ -131,6 +133,13 @@ export default {
       }, 100)
 
       this.index = index
+
+      //需求要求，当前账号是医生时，默认选中当前医生为服务医生
+      let user = Vue.ls.get(TRUE_USER)
+      if (user.roleName == 'doctor') {
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == user.userId)))
+        console.log('chooseDeptItem', this.chooseDeptItem)
+      }
     },
 
     onChangeCase() {
