@@ -97,9 +97,7 @@
             </a-select-option>
           </a-select>
 
-          <span class="span-item-name config" @click="$refs.editConfigForm.edit(index, item.plusInfoVo)">
-            属性配置</span
-          >
+          <span class="span-item-name config" @click="$refs.editConfigForm.edit(index, item)"> 属性配置</span>
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
@@ -945,7 +943,7 @@ export default {
         .config {
           // width: 20%;
           margin-left: 2%;
-          color: #1890ff!important;
+          color: #1890ff !important;
 
           &:hover {
             cursor: pointer;

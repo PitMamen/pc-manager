@@ -24,7 +24,7 @@
             :min="1"
             :max="1000000"
             placeholder="请输入"
-            v-decorator="['timeLimit', { rules: [{ required: true, message: '请输入时长限制！' }] }]"
+            v-decorator="['timeLimit', { rules: [{ required: isTimeLimit, message: '请输入时长限制！' }] }]"
           />
         </a-form-item>
 
@@ -33,7 +33,7 @@
             :min="0"
             :max="1000000"
             placeholder="请输入"
-            v-decorator="['textNumLimit', { rules: [{ required: true, message: '请输入条数限制！' }] }]"
+            v-decorator="['textNumLimit', { rules: [{ required: isTextNumLimit, message: '请输入条数限制！' }] }]"
           />
         </a-form-item>
 
@@ -104,6 +104,10 @@ export default {
       originData: [],
       keshiData: [],
       keshiDataTemp: [],
+      item: {},
+
+      isTimeLimit: false,
+      isTextNumLimit: false,
     }
   },
   created() {
@@ -118,13 +122,16 @@ export default {
   },
   methods: {
     //初始化方法
-    edit(index) {
+    edit(index, item) {
       this.visible = true
 
       //初始化重置数据
       this.docId = ''
       this.isCaseFlag = true
       this.chooseDeptItem = {}
+      this.item = {}
+      this.isTextNumLimit = false
+      this.isTimeLimit = false
       setTimeout(() => {
         this.form.setFieldsValue({
           serviceExpire: undefined,
@@ -134,6 +141,14 @@ export default {
       }, 100)
 
       this.index = index
+      this.item = item
+
+      //需求要求,图文咨询服务时，条数限制是必填的，时长限制可以不填；视频咨询服务和电话咨询服务时长限制是必填的，条数限制可以不填
+      if (this.item.attrName == 'textNum') {
+        this.isTextNumLimit = true
+      } else if (this.item.attrName == 'videoNum' || this.item.attrName == 'telNum') {
+        this.isTimeLimit = true
+      }
 
       //需求要求，当前账号是医生时，默认选中当前医生为服务医生
       let user = Vue.ls.get(TRUE_USER)

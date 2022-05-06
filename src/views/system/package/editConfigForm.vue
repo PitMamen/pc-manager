@@ -24,7 +24,7 @@
             :min="1"
             :max="1000000"
             placeholder="请输入"
-            v-decorator="['timeLimit', { rules: [{ required: true, message: '请输入时长限制！' }] }]"
+            v-decorator="['timeLimit', { rules: [{ required: isTimeLimit, message: '请输入时长限制！' }] }]"
           />
         </a-form-item>
 
@@ -33,7 +33,7 @@
             :min="0"
             :max="1000000"
             placeholder="请输入"
-            v-decorator="['textNumLimit', { rules: [{ required: true, message: '请输入条数限制！' }] }]"
+            v-decorator="['textNumLimit', { rules: [{ required: isTextNumLimit, message: '请输入条数限制！' }] }]"
           />
         </a-form-item>
 
@@ -70,7 +70,7 @@
 
 
 <script>
-import { getUserList,getDoctorList } from '@/api/modular/system/posManage'
+import { getUserList, getDoctorList } from '@/api/modular/system/posManage'
 
 export default {
   data() {
@@ -101,6 +101,11 @@ export default {
       originData: [],
       keshiData: [],
       keshiDataTemp: [],
+
+      item: {},
+
+      isTimeLimit: false,
+      isTextNumLimit: false,
     }
   },
   created() {
@@ -116,24 +121,36 @@ export default {
   },
   methods: {
     //初始化方法
-    edit(index, plusInfoVo) {
+    edit(index, item) {
       this.visible = true
       this.chooseDeptItem = {}
+      this.item = {}
+      this.isTextNumLimit = false
+      this.isTimeLimit = false
 
       this.index = index
+      this.item = item
+
+      //需求要求,图文咨询服务时，条数限制是必填的，时长限制可以不填；视频咨询服务和电话咨询服务时长限制是必填的，条数限制可以不填
+      if (this.item.attrName == 'textNum') {
+        this.isTextNumLimit = true
+      } else if (this.item.attrName == 'videoNum' || this.item.attrName == 'telNum') {
+        this.isTimeLimit = true
+      }
+
       setTimeout(() => {
         this.form.setFieldsValue({
-          serviceExpire: plusInfoVo.serviceExpire,
-          timeLimit: plusInfoVo.timeLimit,
-          textNumLimit: plusInfoVo.textNumLimit,
+          serviceExpire: item.plusInfoVo.serviceExpire,
+          timeLimit: item.plusInfoVo.timeLimit,
+          textNumLimit: item.plusInfoVo.textNumLimit,
         })
       }, 100)
-      console.log('plusInfoVo', plusInfoVo)
-      this.docId = plusInfoVo.docId
+      console.log('plusInfoVo', item.plusInfoVo)
+      this.docId = item.plusInfoVo.docId
       console.log('originData', this.originData)
       this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == this.docId)))
       console.log('chooseDeptItem', this.chooseDeptItem)
-      this.caseFlag = plusInfoVo.caseFlag
+      this.caseFlag = item.plusInfoVo.caseFlag
       this.isCaseFlag = this.caseFlag == 1 ? true : false
     },
 

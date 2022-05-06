@@ -95,7 +95,7 @@
             </a-select-option>
           </a-select>
 
-          <span class="span-item-name config" @click="$refs.configForm.edit(index)"> 属性配置</span>
+          <span class="span-item-name config" @click="$refs.configForm.edit(index,item)"> 属性配置</span>
         </div>
 
         <a-button class="btn-delete" type="primary" @click="deleteItem(index)">刪除</a-button>
