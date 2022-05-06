@@ -39,7 +39,7 @@
 
         <a-form-item label="个案介入" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <!-- <a-switch :checked="uploadData.isOnline" @change="onChangeIsOnline" /> -->
-          <a-switch :checked="isCaseFlag" @change="onChangeCase" />
+          <a-switch :checked="isCaseFlag" @change="onChangeCase" :disabled="isDisabled" />
         </a-form-item>
 
         <a-form-item label="服务医生" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -108,6 +108,7 @@ export default {
 
       isTimeLimit: false,
       isTextNumLimit: false,
+      isDisabled: false,
     }
   },
   created() {
@@ -142,6 +143,12 @@ export default {
 
       this.index = index
       this.item = item
+      console.log('item', item)
+
+      //重症的开关一直打开
+      if (this.item.attrName == 'ICUConsultNum' && this.item.plusInfoVo.uploadDocFlag == '1') {
+        this.isDisabled = true
+      }
 
       //需求要求,图文咨询服务时，条数限制是必填的，时长限制可以不填；视频咨询服务和电话咨询服务时长限制是必填的，条数限制可以不填
       if (this.item.attrName == 'textNum') {
