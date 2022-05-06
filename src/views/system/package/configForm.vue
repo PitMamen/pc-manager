@@ -133,6 +133,7 @@ export default {
       this.item = {}
       this.isTextNumLimit = false
       this.isTimeLimit = false
+      this.isDisabled = false
       setTimeout(() => {
         this.form.setFieldsValue({
           serviceExpire: undefined,
@@ -146,7 +147,7 @@ export default {
       console.log('item', item)
 
       //重症的开关一直打开
-      if (this.item.attrName == 'ICUConsultNum' && this.item.plusInfoVo.uploadDocFlag == '1') {
+      if (this.item.plusInfoVo.uploadDocFlag == '1') {
         this.isDisabled = true
       }
 
