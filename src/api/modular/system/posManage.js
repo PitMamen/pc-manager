@@ -857,6 +857,18 @@ export function qryCodeValue(codeType) {
 }
 
 /**
+ * 新建/修改枚举值
+ *
+ */
+ export function saveCodeValue(data) {
+  return axios({
+    url: '/bdcApi/medical/common/saveCodeValue',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
  * 新建/修改提醒参数
  *
  */

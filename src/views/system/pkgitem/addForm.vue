@@ -1,19 +1,19 @@
 <template>
   <a-modal
-    title="新增检查"
+    title="新增服务项"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
   >
-    <a-input v-model="jianchaName" allow-clear placeholder="请输入检查名称 " />
+    <a-input v-model="jianchaName" allow-clear placeholder="请输入服务项名称 " />
   </a-modal>
 </template>
 
 
 <script>
-import { addCheckData } from '@/api/modular/system/posManage'
+import { saveCodeValue } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
@@ -29,21 +29,30 @@ export default {
     add(index) {
       this.jianchaName = ''
       this.visible = true
-      this.index = index
+      // this.index = index
     },
 
     handleSubmit() {
       if (!this.jianchaName) {
-        this.$message.error('请输入检查名称！')
+        this.$message.error('请输入服务项名称！')
         return
       }
 
-      addCheckData(this.jianchaName, 'Check').then((res) => {
+      let data = {
+        codeGroup: 'GOODS_SERVICE_TYPE',
+        value: this.jianchaName,
+      }
+      this.confirmLoading = true
+      saveCodeValue(data).then((res) => {
         if (res.code == 0) {
-          this.$message.info('新增成功')
-          this.visible = false
-          this.$emit('ok', this.index, this.type)
+          setTimeout(() => {
+            this.confirmLoading = false
+            this.$message.success('新增成功')
+            this.visible = false
+            this.$emit('ok')
+          }, 1200)
         } else {
+          this.confirmLoading = false
           this.$message.error('新增失败：' + res.message)
         }
       })

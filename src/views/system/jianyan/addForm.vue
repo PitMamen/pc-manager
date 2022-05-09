@@ -40,7 +40,7 @@ export default {
 
       addCheckData(this.jianchaName, 'Exam').then((res) => {
         if (res.code == 0) {
-          this.$message.info('新增成功')
+          this.$message.success('新增成功')
           this.visible = false
           this.$emit('ok', this.index, this.type)
         } else {

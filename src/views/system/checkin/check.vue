@@ -556,7 +556,7 @@ export default {
     },
 
     goApply() {
-      this.$message.info('申请成功')
+      this.$message.success('申请成功')
       this.$router.push({ name: 'sys_check_in' })
     },
 

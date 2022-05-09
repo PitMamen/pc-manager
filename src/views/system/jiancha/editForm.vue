@@ -40,7 +40,7 @@ export default {
       this.record.name = this.jianchaName
       editCheckData(this.record).then((res) => {
         if (res.code == 0) {
-          this.$message.info('修改成功')
+          this.$message.success('修改成功')
           this.visible = false
           this.$emit('ok')
         } else {

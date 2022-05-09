@@ -16,22 +16,23 @@
     </div>
 
     <!-- style="width: 50%" -->
-    <s-table
+    <a-table
       ref="table"
+      :pagination="false"
       size="default"
       :columns="columns"
-      :data="loadData"
+      :data-source="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.editForm.edit(record)">修改</a>
-        <a-divider type="vertical" />
-        <a-popconfirm title="确定删除检查吗？" ok-text="确定" cancel-text="取消" @confirm="deletePlan(record)">
+        <a-divider v-if="false" type="vertical" />
+        <a-popconfirm v-if="false" placement="topRight" title="确认删除？" @confirm="() => delDeptOut(record)">
           <a>删除</a>
         </a-popconfirm>
       </span>
-    </s-table>
+    </a-table>
 
     <add-form ref="addForm" @ok="handleOk" />
     <edit-form ref="editForm" @ok="handleOk" />
@@ -40,7 +41,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getCheckDataList, delCheckData } from '@/api/modular/system/posManage'
+import { delCheckData, qryCodeValue } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -65,8 +66,8 @@ export default {
           dataIndex: 'xh',
         },
         {
-          title: '检查名称',
-          dataIndex: 'name',
+          title: '服务项名称',
+          dataIndex: 'value',
         },
         {
           title: '操作',
@@ -77,23 +78,36 @@ export default {
       ],
 
       // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getCheckDataList(Object.assign(parameter, this.queryParam)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-          }
-          return res.data
-        })
-      },
+      loadData: [],
 
       selectedRowKeys: [],
       selectedRows: [],
     }
   },
 
-  created() {},
+  created() {
+    this.getListData()
+  },
 
   methods: {
+    getListData() {
+      qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item, index) => {
+            this.$set(item, 'xh', index + 1)
+          })
+          // res.data.forEach((item, index) => {
+          //   if (index < currentIndex) {
+          //     this.remove(item)
+          //   }
+          // })
+          this.loadData = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
     deletePlan(record) {
       delCheckData(record).then((res) => {
         if (res.code == 0) {
@@ -106,7 +120,8 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      // this.$refs.table.refresh()
+      this.getListData()
     },
   },
 }
