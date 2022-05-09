@@ -339,7 +339,8 @@ export default {
   },
 
   created() {
-    this.planId = this.$route.params.planId
+    // this.planId = this.$route.params.planId
+    this.planId = this.$route.query.planId
 
     qryGoodsClass({ pageNo: 1, pageSize: 99 }).then((res) => {
       if (res.code == 0) {

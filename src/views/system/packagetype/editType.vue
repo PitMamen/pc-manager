@@ -1,6 +1,6 @@
 <template>
   <div class="div-new-package">
-    <p class="p-title">新增类别</p>
+    <p class="p-title">修改类别</p>
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
@@ -182,7 +182,8 @@ export default {
 
   created() {
     this.getDeptsOut()
-    this.uploadData = this.$route.params.record
+    // this.uploadData = this.$route.params.record
+    this.uploadData = JSON.parse(this.$route.query.recordStr)
 
     this.chooseDeptItem = { departmentName: this.uploadData.belong, departmentId: this.uploadData.deptName }
     this.uploadData.belong = parseInt(this.uploadData.belong)

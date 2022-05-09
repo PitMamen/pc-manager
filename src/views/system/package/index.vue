@@ -325,7 +325,10 @@ export default {
     goChange(record) {
       this.$router.push({
         name: 'package_edit',
-        params: {
+        // params: {
+        //   planId: record.templateId,
+        // },
+        query: {
           planId: record.templateId,
         },
       })
