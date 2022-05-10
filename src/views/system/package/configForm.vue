@@ -147,7 +147,7 @@ export default {
       console.log('item', item)
 
       //重症的开关一直打开
-      if (this.item.plusInfoVo.uploadDocFlag == '1') {
+      if (this.item.attrName == 'ICUConsultNum' || this.item.plusInfoVo.uploadDocFlag == '1') {
         this.isDisabled = true
       }
 
