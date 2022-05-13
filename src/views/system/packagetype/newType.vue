@@ -45,7 +45,7 @@
     </a-form>
 
     <div class="div-service-pic">
-      <span class="title-des-pic"><span style="color: red">*</span> 封面图片 :（只允许上传1张，正方形比例）</span>
+      <span class="title-des-pic"><span style="color: red">*</span> 封面图片 :（只允许上传1张，建议尺寸比例7：4）</span>
       <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
