@@ -108,11 +108,14 @@ export default {
       previewImage: '',
       selectedRowKeys: [],
       selectedRows: [],
+      articleData: {},
     }
   },
 
   created() {
-    var articleId = this.$route.params.articleId
+    // var articleId = this.$route.params.articleId
+    this.articleData = JSON.parse(this.$route.query.recordStr)
+    let articleId = this.articleData.articleId
     console.log(articleId)
     if (articleId) {
       getArticleById(articleId).then((res) => {

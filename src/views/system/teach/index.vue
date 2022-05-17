@@ -142,12 +142,12 @@ export default {
     },
     //查看文章
     goCheck(record) {
-      this.$router.push({ name: 'article_teach_check', params: record })
+      this.$router.push({ name: 'article_teach_check', query: { recordStr: JSON.stringify(record) } })
     },
     //修改文章
     goChange(record) {
       console.log(record)
-      this.$router.push({ name: 'article_teach_edit', params: record })
+      this.$router.push({ name: 'article_teach_edit', query: { recordStr: JSON.stringify(record) } })
     },
     goPush(record) {
       pushArticle({ articleId: record.articleId }).then((res) => {

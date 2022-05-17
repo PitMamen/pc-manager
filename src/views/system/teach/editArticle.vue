@@ -157,6 +157,7 @@ export default {
 
       chooseDeptItem: {},
       ksTypeDataTemp: [],
+      articleData: {},
     }
   },
 
@@ -404,8 +405,10 @@ export default {
 
     editor.create()
 
-    var articleId = this.$route.params.articleId
-    if (this.$route.params.articleId) {
+    // var articleId = this.$route.params.articleId
+    this.articleData = JSON.parse(this.$route.query.recordStr)
+    let articleId = this.articleData.articleId
+    if (this.articleData.articleId) {
       document.title = '修改教育文章'
     } else {
       document.title = '新增教育文章'

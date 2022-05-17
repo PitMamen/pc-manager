@@ -226,7 +226,7 @@ export default {
   },
 
   created() {
-    this.planId = this.$route.params.planId
+    this.planId = this.$route.query.planId
     this.getPlanDetailOut()
 
     getDepts().then((res) => {

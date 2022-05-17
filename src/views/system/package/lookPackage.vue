@@ -4,7 +4,7 @@
     <!-- 分割线 -->
     <div class="div-divider"></div>
 
-    <a-form ref="form" :form="form" class="my-form-package">
+    <a-form ref="form" :form="form" class="my-form-package-look">
       <a-form-item label="所属类别" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <span class="span-item-value">{{ uploadData.goodsInfo.goodsClassInfo.className }} </span>
         <!-- <a-select allow-clear v-decorator="['belong', { rules: [{ required: true, message: '请选择所属科室' }] }]">
@@ -16,7 +16,7 @@
 
       <a-form-item label="套餐名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <!-- <a-input v-decorator="['goodsName', { rules: [{ required: true, message: '请输入套餐名称！' }] }]" /> -->
-        <span class="span-item-value">{{ uploadData.templateName }} </span>
+        <span class="span-item-value">{{ uploadData.templateName || uploadData.goodsInfo.goodsName }} </span>
       </a-form-item>
 
       <!-- <a-form-item label="服务名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -344,7 +344,7 @@ export default {
   },
 
   created() {
-    this.planId = this.$route.params.planId
+    this.planId = this.$route.query.planId
 
     qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
       if (res.code == 0) {
@@ -382,6 +382,12 @@ export default {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
           this.uploadData = res.data
+          if (!this.uploadData.goodsInfo.goodsClassInfo) {
+            this.$set(this.uploadData.goodsInfo, 'goodsClassInfo', {
+              className: '',
+            })
+          }
+
           if (this.uploadData.goodsInfo.status == 1) {
             this.$set(this.uploadData, 'isOnline', true)
           } else {
@@ -479,25 +485,29 @@ export default {
           })
 
           //banner图
-          let bannerPics = this.uploadData.goodsInfo.bannerList.split(',')
-          for (let index = 0; index < bannerPics.length; index++) {
-            this.fileListBanner.push({
-              uid: 0 - index + '',
-              name: 'Banner' + index,
-              status: 'done',
-              url: bannerPics[index],
-            })
+          if (this.uploadData.goodsInfo.bannerList) {
+            let bannerPics = this.uploadData.goodsInfo.bannerList.split(',')
+            for (let index = 0; index < bannerPics.length; index++) {
+              this.fileListBanner.push({
+                uid: 0 - index + '',
+                name: 'Banner' + index,
+                status: 'done',
+                url: bannerPics[index],
+              })
+            }
           }
 
           //详情图
-          let detailPics = this.uploadData.goodsInfo.imgList.split(',')
-          for (let index = 0; index < detailPics.length; index++) {
-            this.fileListDetail.push({
-              uid: 0 - index + '',
-              name: '详情' + index,
-              status: 'done',
-              url: detailPics[index],
-            })
+          if (this.uploadData.goodsInfo.imgList) {
+            let detailPics = this.uploadData.goodsInfo.imgList.split(',')
+            for (let index = 0; index < detailPics.length; index++) {
+              this.fileListDetail.push({
+                uid: 0 - index + '',
+                name: '详情' + index,
+                status: 'done',
+                url: detailPics[index],
+              })
+            }
           }
         } else {
           this.$message.error(res.message)
@@ -691,9 +701,9 @@ export default {
     height: 1px;
   }
 
-  .my-form-package {
+  .my-form-package-look {
     margin-top: 2%;
-    margin-left: -1%;
+    margin-left: -10%;
   }
 
   .div-package-type {

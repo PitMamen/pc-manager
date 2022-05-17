@@ -416,6 +416,11 @@ export default {
       getPlanDetail(this.planId).then((res) => {
         if (res.code == 0) {
           this.uploadData = res.data
+          if (!this.uploadData.goodsInfo.goodsClassInfo) {
+            this.$set(this.uploadData.goodsInfo, 'goodsClassInfo', {
+              className: '',
+            })
+          }
 
           this.chooseClassItem = this.uploadData.goodsInfo.goodsClassInfo
 

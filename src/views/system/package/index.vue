@@ -316,7 +316,7 @@ export default {
     goCheck(record) {
       this.$router.push({
         name: 'package_look',
-        params: {
+        query: {
           planId: record.templateId,
         },
       })

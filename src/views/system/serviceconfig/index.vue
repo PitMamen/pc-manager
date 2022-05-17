@@ -126,7 +126,7 @@ export default {
     editPlan(record) {
       this.$router.push({
         name: 'edit_plan',
-        params: {
+        query: {
           planId: record.templateId,
         },
       })
@@ -135,7 +135,7 @@ export default {
     lookPlan(record) {
       this.$router.push({
         name: 'look_plan',
-        params: {
+        query: {
           planId: record.templateId,
         },
       })
