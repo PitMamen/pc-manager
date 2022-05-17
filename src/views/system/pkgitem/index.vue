@@ -32,6 +32,12 @@
           <a>删除</a>
         </a-popconfirm>
       </span>
+
+      <span slot="ifOnline" slot-scope="text, record">
+        <a-popconfirm :title="record.isOnlineText" ok-text="确定" cancel-text="取消" @confirm="goOnline(record)">
+          <a-switch :checked="record.isOnline" />
+        </a-popconfirm>
+      </span>
     </a-table>
 
     <add-form ref="addForm" @ok="handleOk" />
@@ -41,7 +47,7 @@
 
 <script>
 import { STable } from '@/components'
-import { delCheckData, qryCodeValue } from '@/api/modular/system/posManage'
+import { delCheckData, qryCodeValue, delCodeValue,saveCodeValue } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -70,6 +76,11 @@ export default {
           dataIndex: 'value',
         },
         {
+          title: '是否开启',
+          dataIndex: 'ifOnline',
+          scopedSlots: { customRender: 'ifOnline' },
+        },
+        {
           title: '操作',
           width: '150px',
           dataIndex: 'action',
@@ -95,6 +106,20 @@ export default {
         if (res.code == 0) {
           res.data.forEach((item, index) => {
             this.$set(item, 'xh', index + 1)
+            if (item.remark && item.remark == 1) {
+              this.$set(item, 'isOnline', false)
+              this.$set(item, 'isOnlineText', '确定开启？')
+            } else {
+              this.$set(item, 'isOnline', true)
+              this.$set(item, 'isOnlineText', '确定关闭？')
+            }
+            // if (res.data.rows[index].remark && res.data.rows[index].remark == 1) {
+            //   this.$set(res.data.rows[index], 'isOnline', false)
+            //   this.$set(res.data.rows[index], 'isOnlineText', '确定开启？')
+            // } else {
+            //   this.$set(res.data.rows[index], 'isOnline', true)
+            //   this.$set(res.data.rows[index], 'isOnlineText', '确定关闭？')
+            // }
           })
           // res.data.forEach((item, index) => {
           //   if (index < currentIndex) {
@@ -115,6 +140,28 @@ export default {
           this.handleOk()
         } else {
           this.$message.error('删除失败：' + res.message)
+        }
+      })
+    },
+
+    goOnline(record) {
+      //remark为1是关闭状态；其他都是开启
+      if (record.remark && record.remark == 1) {
+        record.remark = 0
+      } else {
+        record.remark = 1
+      }
+      // let data = { classId: record.classId, status: record.status, className: record.className, owner: record.owner }
+      saveCodeValue(record).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isOnline = !record.isOnline
+
+          setTimeout(() => {
+            record.isOnlineText = record.isOnline ? '确定关闭？' : '确定开启？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
         }
       })
     },

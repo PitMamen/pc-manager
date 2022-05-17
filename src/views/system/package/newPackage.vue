@@ -192,7 +192,7 @@
 </template>
 
 <script>
-import { savePlan, qryGoodsClass, qryCodeValue } from '@/api/modular/system/posManage'
+import { savePlan, qryGoodsClass, qryCodeValue,getGoodsServiceType } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import addTeach from './addTeach'
 import addCha from './addJianCha'
@@ -336,7 +336,8 @@ export default {
       }
     })
 
-    qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
+    // qryCodeValue('GOODS_SERVICE_TYPE').then((res) => {
+    getGoodsServiceType().then((res) => {
       if (res.code == 0) {
         this.typeDatas = res.data
         // typeDatas元素的值 let item = {

@@ -407,11 +407,18 @@ export default {
             })
             if (fullOne && fullOne.attrName) {
               this.$set(this.uploadData.goodsInfo.goodsAttr[index], 'name', fullOne.name)
-              this.$set(
-                this.uploadData.goodsInfo.goodsAttr[index],
-                'plusInfoVo',
-                JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index].plusInfo))
-              )
+
+              //旧套餐空值做转换，有值的话直接赋值，没值的话构造一个默认值
+              if (this.uploadData.goodsInfo.goodsAttr[index].plusInfo) {
+                this.$set(
+                  this.uploadData.goodsInfo.goodsAttr[index],
+                  'plusInfoVo',
+                  JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index].plusInfo))
+                )
+              } else {
+                this.$set(this.uploadData.goodsInfo.goodsAttr[index], 'plusInfoVo', { uploadDocFlag: '0' })
+              }
+
               this.goodsAttr.push(JSON.parse(JSON.stringify(this.uploadData.goodsInfo.goodsAttr[index])))
             }
           }

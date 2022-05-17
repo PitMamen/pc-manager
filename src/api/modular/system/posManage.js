@@ -857,12 +857,36 @@ export function qryCodeValue(codeType) {
 }
 
 /**
+ * 根据类别查询枚举值
+ *
+ */
+ export function getGoodsServiceType() {
+  return axios({
+    url: '/bdcApi/medical/common/getGoodsServiceType',
+    method: 'get',
+    // params: { codeGroup: codeType }
+  })
+}
+
+/**
  * 新建/修改枚举值
  *
  */
  export function saveCodeValue(data) {
   return axios({
     url: '/bdcApi/medical/common/saveCodeValue',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 开启关闭枚举值，用于套餐服务项配置的状态管理；也可以用于删除套餐服务项，目前没做此功能
+ *
+ */
+ export function delCodeValue(data) {
+  return axios({
+    url: '/bdcApi/medical/common/delCodeValue',
     method: 'post',
     data: data,
   })
