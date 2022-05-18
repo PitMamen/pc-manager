@@ -336,20 +336,43 @@ export default {
       this.previewVisibleDetail = true
     },
 
-    handleChange({ fileList }) {
-      this.fileList = fileList
-      if (this.fileList.length > 1) {
-        let newData = this.fileList[0]
-        this.fileList = [newData]
+    handleChange(changeObj) {
+      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileList = changeObj.fileList
+      } else {
+        this.fileList = changeObj.fileList
+      }
+
+      // this.fileList = fileList
+      // if (this.fileList.length > 1) {
+      //   let newData = this.fileList[0]
+      //   this.fileList = [newData]
+      // }
+    },
+
+    // handleChangeBanner({ fileList }) {
+    // changeObj为一个对象，包含file和fileList两个属性
+    handleChangeBanner(changeObj) {
+      console.log('changeObj', JSON.stringify(changeObj))
+      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileListBanner = changeObj.fileList
+      } else {
+        this.fileListBanner = changeObj.fileList
       }
     },
 
-    handleChangeBanner({ fileList }) {
-      this.fileListBanner = fileList
-    },
-
-    handleChangeDetail({ fileList }) {
-      this.fileListDetail = fileList
+    handleChangeDetail(changeObj) {
+      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileListDetail = changeObj.fileList
+      } else {
+        this.fileListDetail = changeObj.fileList
+      }
     },
 
     validate() {

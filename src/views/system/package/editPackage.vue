@@ -804,6 +804,18 @@ export default {
           this.uploadData.goodsInfo.price = values.price
           this.uploadData.goodsInfo.theLastTime = values.theLastTime
           // this.uploadData.templateName = values.goodsName
+
+          //提示用户服务类别去重
+          for (let index = 0; index < this.goodsAttr.length; index++) {
+            let tempArr = JSON.parse(JSON.stringify(this.goodsAttr))
+            tempArr.splice(index, 1)
+            for (let indexTemp = 0; indexTemp < tempArr.length; indexTemp++) {
+              if (this.goodsAttr[index].attrName == tempArr[indexTemp].attrName) {
+                this.$message.error('服务类型重复，同类型的服务类别只能有一个，请删除多余的！')
+                return
+              }
+            }
+          }
           this.uploadData.goodsInfo.goodsAttr = this.goodsAttr
           this.uploadData.goodsInfo.status = this.uploadData.goodsInfo.isOnline ? '1' : '3'
 
