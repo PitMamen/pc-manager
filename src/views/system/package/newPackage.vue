@@ -432,13 +432,10 @@ export default {
       }
 
       let newName = this.getNewOne()
-      console.log('newName', newName)
-
-      this.goodsAttr.push(
-        this.goodsAttrFull.find((item) => {
-          return item.name == newName
-        })
-      )
+      let item = this.goodsAttrFull.find((item) => {
+        return item.name == newName
+      })
+      this.goodsAttr.push(JSON.parse(JSON.stringify(item)))
     },
 
     getNewOne() {
@@ -607,9 +604,21 @@ export default {
             tempArr.splice(index, 1)
             for (let indexTemp = 0; indexTemp < tempArr.length; indexTemp++) {
               if (this.goodsAttr[index].attrName == tempArr[indexTemp].attrName) {
-                this.$message.error('服务类型重复，同类型的服务类别只能有一个，请删除多余的！')
+                let item = this.goodsAttrFull.find((item) => item.attrName == this.goodsAttr[index].attrName)
+                // console.log('item', item)
+                this.$message.error('服务类别【' + item.name + '】重复，同类型的服务类别只能有一个，请删除多余的！')
                 return
               }
+            }
+          }
+
+          //属性配置时长必选 serviceExpire
+          for (let index = 0; index < this.goodsAttr.length; index++) {
+            if (!this.goodsAttr[index].plusInfoVo.serviceExpire) {
+              let item = this.goodsAttrFull.find((item) => item.attrName == this.goodsAttr[index].attrName)
+              // console.log('item', item)
+              this.$message.error('请点击【' + item.name + '】的属性配置，配置其服务时效！')
+              return
             }
           }
 

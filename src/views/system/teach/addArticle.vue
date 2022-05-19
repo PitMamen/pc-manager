@@ -272,6 +272,8 @@ export default {
       this.checkData.publisherName = user.userName
       this.checkData.source = 'weixin'
       this.checkData.publisherUserId = user.userId
+      //作者，只有新增的时候才传的字段
+      this.checkData.author = user.userName
 
       //contentSourceUrl、digest、url不管
       let articleList = [
