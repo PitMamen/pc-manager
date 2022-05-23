@@ -9,6 +9,7 @@
                 <a-col :md="6" :sm="24">
                   <a-form-item label="统计月份">
                     <a-date-picker format="YYYY-MM" v-model="queryUpParams.month" picker="month" />
+                    <!-- <a-month-picker placeholder="选择月份" v-model="queryUpParams.month"  /> -->
                   </a-form-item>
                 </a-col>
 

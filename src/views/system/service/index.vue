@@ -280,7 +280,7 @@ export default {
   },
 
   methods: {
-    onSelectChange(selectedRowKeys) {
+    onSelectChange(selectedRowKeys) { 
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },

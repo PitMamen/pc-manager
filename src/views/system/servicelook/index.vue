@@ -326,11 +326,14 @@ export default {
     lookPlan(record) {
       this.$router.push({
         name: 'look_plan',
-        params: {
-          //TODO 用户自己的健康计划 应该穿 planId，但是目前还没有
-          // planId: record.planInfo[0].planId,
+        query: {
           planId: record.planInfo[0].templateId,
         },
+        // params: {
+        //   //TODO 用户自己的健康计划 应该穿 planId，但是目前还没有
+        //   // planId: record.planInfo[0].planId,
+        //   planId: record.planInfo[0].templateId,
+        // },
       })
     },
 
@@ -427,7 +430,7 @@ export default {
       color: #000;
     }
   }
-    .div-text-auto {
+  .div-text-auto {
     width: 100%;
     display: inline-block;
     margin-top: -1.5%;
