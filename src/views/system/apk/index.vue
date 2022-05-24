@@ -32,9 +32,6 @@
         </a-form>
       </div>
 
-      <!-- 去掉勾选框 -->
-      <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-      <!-- :row-selection="rowSelection" -->
       <s-table
         ref="table"
         size="default"
@@ -51,9 +48,6 @@
           </a-popconfirm>
         </span>
 
-        <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
-          {{ record.statusText }}
-        </span> -->
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
@@ -127,27 +121,6 @@ export default {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
             this.$set(res.data.rows[i], 'updateTimeOut', this.formatDate(res.data.rows[i].updateTime))
-
-            ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
-            // this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
-            // console.log('ddd', res.data.rows[i].execFlag)
-            // if (res.data.rows[i].execFlag == 0) {
-            //   this.$set(res.data.rows[i], 'statusText', '已申请')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // } else if (res.data.rows[i].execFlag == 1) {
-            //   this.$set(res.data.rows[i], 'statusText', '已完成')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // } else if (res.data.rows[i].execFlag == 2) {
-            //   this.$set(res.data.rows[i], 'statusText', '未接诊')
-            //   this.$set(res.data.rows[i], 'btnText', '提醒医生')
-            //   this.$set(res.data.rows[i], 'canAsk', true)
-            // } else if (res.data.rows[i].execFlag == 3) {
-            //   this.$set(res.data.rows[i], 'statusText', '已中止')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // }
           }
           return res.data
         })

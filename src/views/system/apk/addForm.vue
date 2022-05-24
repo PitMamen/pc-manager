@@ -25,9 +25,7 @@
           />
         </a-form-item>
         <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <div
-            class="clearfix"
-          >
+          <div class="clearfix">
             <!-- @preview="handlePreview" -->
             <!--               list-type="picture-card"  -->
             <a-upload
@@ -37,8 +35,11 @@
               :file-list="fileList"
               @change="handleChange"
             >
-              <div v-if="fileList.length < 1">
+              <div
+                v-if="fileList.length < 1"
+              >
                 <!-- <div> -->
+
                 <!-- <a-icon type="plus" /> -->
                 <div class="upload-btn">选择文件</div>
               </div>
