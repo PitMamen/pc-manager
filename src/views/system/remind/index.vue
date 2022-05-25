@@ -68,7 +68,7 @@
         </div>
       </a-tab-pane>
 
-      <a-tab-pane key="3" tab="视频问诊">
+      <a-tab-pane key="3" tab="视频/电话问诊">
         <div>
           <a-form ref="form" :form="form" class="my-form">
             <a-form-item label="提醒开关" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
