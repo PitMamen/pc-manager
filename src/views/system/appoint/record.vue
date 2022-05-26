@@ -8,16 +8,6 @@
               <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
             </a-col> -->
 
-            <a-col :md="6" :sm="24">
-              <a-form-item label="审核状态">
-                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
-                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-
             <a-col :md="7" :sm="24">
               <a-form-item label="用户姓名">
                 <a-input-search
@@ -52,10 +42,9 @@
                 </div>
               </a-form-item>
             </a-col>
-          </a-row>
-          <a-row :gutter="48">
+
             <a-col :md="6" :sm="24">
-              <a-form-item label="操作类型">
+              <a-form-item label="状态">
                 <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
                   <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
                     item.value
@@ -63,6 +52,17 @@
                 </a-select>
               </a-form-item>
             </a-col>
+          </a-row>
+          <a-row :gutter="48">
+            <!-- <a-col :md="6" :sm="24">
+              <a-form-item label="操作类型">
+                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                    item.value
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col> -->
 
             <a-col :md="5" :sm="24">
               <a-form-item label="操作时间">
@@ -128,6 +128,7 @@ export default {
         // { code: 5, value: '取消预约申请' },
         // { code: 6, value: '取消预约成功' },
         // { code: 7, value: '取消预约失败' },
+        { code: 8, value: '已报到' },
       ],
 
       // 表头
@@ -142,17 +143,17 @@ export default {
         },
         {
           title: '身份证',
-          dataIndex: 'userName',
+          dataIndex: 'identificationNoOut',
         },
 
         {
           title: '操作时间',
-          dataIndex: 'appointTime',
+          dataIndex: 'updateTimeOut',
         },
-        {
-          title: '操作',
-          dataIndex: 'appointItemName',
-        },
+        // {
+        //   title: '操作类型',
+        //   dataIndex: 'appointItemNamed',
+        // },
         {
           title: '项目',
           width: '300px',
@@ -201,6 +202,7 @@ export default {
             } else {
               this.$set(res.data.rows[i], 'updateTimeOut', '')
             }
+            this.$set(res.data.rows[i], 'identificationNoOut', res.data.rows[i].userInfo.identificationNo)
 
             if (res.data.rows[i].status == 3) {
               //预约时间
@@ -238,7 +240,19 @@ export default {
         userName: '',
         status: '', //全部，不需要传这个字段
         appointItemName: undefined, //textNum
+        beginDate: '',
+        endDate: '',
       },
+      // dd: {
+      //   tradeTypeCode: 'lis',
+      //   userName: '朱炳江',
+      //   appointItemName: 'CT',
+      //   status: 3,
+      //   beginDate: '2022-05-12',
+      //   endDate: '2022-05-31',
+      //   pageNo: 1,
+      //   pageSize: 10,
+      // },
 
       checkData: [],
       examData: [],
@@ -270,9 +284,9 @@ export default {
       }
     },
 
-    onChange(s1, s2) {
-      console.log('s1', s1)
-      console.log('s2', s2)
+    onChange(momentArr, dateArr) {
+      this.queryParams.beginDate = dateArr[0]
+      this.queryParams.endDate = dateArr[1]
     },
 
     onSelect(departmentId, s2) {
