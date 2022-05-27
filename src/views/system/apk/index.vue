@@ -102,7 +102,7 @@ export default {
         },
         {
           title: '更新说明',
-          dataIndex: 'updateTimeOut',
+          dataIndex: 'updateTimeOutdd',
         },
         {
           title: '操作',

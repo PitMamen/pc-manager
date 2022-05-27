@@ -601,6 +601,17 @@ export function getAppointList(parameter) {
 }
 
 /**
+ * 预约工单日志
+ */
+ export function qryTradeAppointLog(parameter) {
+  return axios({
+    url: '/bdcApi/appoint/qryTradeAppointLog',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 新增检查检验
  * 
  * 检查：Check，检验： Exam
@@ -991,3 +1002,15 @@ export function saveTradeAppoint(data) {
     data: data,
   })
 }
+
+// /**
+//  * 
+// 上传apk
+//  */
+// export function uploadAppFile(data) {
+//   return axios({
+//     url: '/bdcApi/appManager/uploadAppFile',
+//     method: 'post',
+//     data: data,
+//   })
+// }

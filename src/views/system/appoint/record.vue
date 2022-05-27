@@ -54,15 +54,15 @@
             </a-col>
           </a-row>
           <a-row :gutter="48">
-            <!-- <a-col :md="6" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="操作类型">
-                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
-                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                <a-select allow-clear v-model="queryParams.dealType" placeholder="请选择类型">
+                  <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
                     item.value
                   }}</a-select-option>
                 </a-select>
               </a-form-item>
-            </a-col> -->
+            </a-col>
 
             <a-col :md="5" :sm="24">
               <a-form-item label="操作时间">
@@ -72,7 +72,7 @@
 
             <a-col :md="3" :sm="24">
               <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button>
+              <a-button type="primary" @click="exportExcel" v-if="false">重置</a-button>
             </a-col>
           </a-row>
         </a-form>
@@ -104,7 +104,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getAppointList, getCheckDataList } from '@/api/modular/system/posManage'
+import { qryTradeAppointLog, getCheckDataList } from '@/api/modular/system/posManage'
 import lookJian from './lookJian'
 import editJian from './editJian'
 
@@ -130,6 +130,12 @@ export default {
         // { code: 7, value: '取消预约失败' },
         { code: 8, value: '已报到' },
       ],
+      typeData: [
+        { code: -1, value: '全部' },
+        { code: 0, value: '预约' },
+        { code: 1, value: '报到' },
+        { code: 2, value: '取消' },
+      ],
 
       // 表头
       columns: [
@@ -150,10 +156,10 @@ export default {
           title: '操作时间',
           dataIndex: 'updateTimeOut',
         },
-        // {
-        //   title: '操作类型',
-        //   dataIndex: 'appointItemNamed',
-        // },
+        {
+          title: '操作类型',
+          dataIndex: 'dealType',
+        },
         {
           title: '项目',
           width: '300px',
@@ -183,7 +189,10 @@ export default {
         if (this.queryParams.status == -1) {
           this.queryParams.status = ''
         }
-        return getAppointList(Object.assign(parameter, this.queryParams)).then((res) => {
+        if (this.queryParams.dealType == '全部') {
+          this.queryParams.dealType = ''
+        }
+        return qryTradeAppointLog(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
             if (res.data.rows[i].appointItem == 'EXAM') {
@@ -228,6 +237,8 @@ export default {
               this.$set(res.data.rows[i], 'statusText', '取消预约成功')
             } else if (res.data.rows[i].status == 7) {
               this.$set(res.data.rows[i], 'statusText', '取消预约失败')
+            } else if (res.data.rows[i].status == 8) {
+              this.$set(res.data.rows[i], 'statusText', '已报到')
             }
           }
           return res.data

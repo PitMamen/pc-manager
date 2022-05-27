@@ -30,14 +30,13 @@
             <!--               list-type="picture-card"  -->
             <a-upload
               :action="actionUrl"
-              :multiple="true"
+              :multiple="false"
+              :data="uploadData"
               list-type="text"
               :file-list="fileList"
               @change="handleChange"
             >
-              <div
-                v-if="fileList.length < 1"
-              >
+              <div v-if="fileList.length < 1">
                 <!-- <div> -->
 
                 <!-- <a-icon type="plus" /> -->
@@ -82,8 +81,10 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/bdcApi/appManager/uploadAppFile',
       fileList: [],
+      uploadData: { platform: 1 },
     }
   },
   created() {
