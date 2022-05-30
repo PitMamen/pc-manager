@@ -11,7 +11,7 @@
             <a-col :md="7" :sm="24">
               <a-form-item label="版本号">
                 <a-input
-                  v-model="queryParams.keyWord"
+                  v-model="queryParams.versionNumber"
                   allow-clear
                   placeholder="请输入版本号"
                   @keyup.enter="$refs.table.refresh(true)"
@@ -43,11 +43,10 @@
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.editForm.edit(record)">编辑</a>
           <a-divider type="vertical" />
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delKnowledge(record)">
+          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delVersion(record)">
             <a>删除</a>
           </a-popconfirm>
         </span>
-
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
@@ -58,7 +57,8 @@
 
 <script>
 import { STable } from '@/components'
-import { qryCodeValue, delSysKnowledge, qrySysKnowledge } from '@/api/modular/system/posManage'
+import { deleteAppVersion, listAppVersion } from '@/api/modular/system/posManage'
+import { formatDateFull, formatDate } from '@/utils/util'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -75,34 +75,35 @@ export default {
       statusData: [],
 
       queryParams: {
-        knowledgeType: undefined, //科室
-        keyWord: undefined, //textNum
+        versionNumber: undefined, //
+        startTime: undefined, //
+        endTime: undefined, //
       },
       // 表头
       columns: [
         {
           title: '文件名称',
-          dataIndex: 'xh',
+          dataIndex: 'fileName',
         },
         {
           title: '版本号',
-          dataIndex: 'title',
+          dataIndex: 'versionNumber',
         },
         {
           title: '更新时间',
-          dataIndex: 'typeName',
-        },
-        {
-          title: '上传人员',
-          dataIndex: 'creator',
-        },
-        {
-          title: '发布中',
           dataIndex: 'updateTimeOut',
         },
         {
+          title: '上传人员',
+          dataIndex: 'createrName',
+        },
+        {
+          title: '发布中',
+          dataIndex: 'stateText',
+        },
+        {
           title: '更新说明',
-          dataIndex: 'updateTimeOutdd',
+          dataIndex: 'versionDescription',
         },
         {
           title: '操作',
@@ -114,13 +115,16 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.knowledgeType == '1') {
-          this.queryParams.knowledgeType = ''
-        }
-        return qrySysKnowledge(Object.assign(parameter, this.queryParams)).then((res) => {
+        return listAppVersion(Object.assign(parameter, this.queryParams)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            this.$set(res.data.rows[i], 'updateTimeOut', this.formatDate(res.data.rows[i].updateTime))
+            this.$set(res.data.rows[i], 'updateTimeOut', formatDate(res.data.rows[i].updatedTime))
+            // 状态 0 正常 1 发布 2 删除
+            if (res.data.rows[i].state == 1) {
+              this.$set(res.data.rows[i], 'stateText', '是')
+            } else {
+              this.$set(res.data.rows[i], 'stateText', '否')
+            }
           }
           return res.data
         })
@@ -129,52 +133,26 @@ export default {
   },
 
   created() {
-    qryCodeValue('KNOWLEDGE_TYPE').then((res) => {
-      if (res.code == 0) {
-        if (res.data && res.data.length > 0) {
-          this.statusData = res.data
-          this.statusData.unshift({ code: '1', value: '全部' })
-        }
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
+    // qryCodeValue('KNOWLEDGE_TYPE').then((res) => {
+    //   if (res.code == 0) {
+    //     if (res.data && res.data.length > 0) {
+    //       this.statusData = res.data
+    //       this.statusData.unshift({ code: '1', value: '全部' })
+    //     }
+    //   } else {
+    //     // this.$message.error('获取计划列表失败：' + res.message)
+    //   }
+    // })
   },
 
   methods: {
-    formatDate(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      return `${myyear}-${mymonth}-${myweekday}`
+    onChange(momentArr, dateArr) {
+      this.queryParams.startTime = dateArr[0]
+      this.queryParams.endTime = dateArr[1]
     },
 
-    formatDateFull(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      let oHour = date.getHours()
-      let oMin = date.getMinutes()
-      let oSen = date.getSeconds()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      oHour < 10 ? (oHour = '0' + oHour) : oHour
-      oMin < 10 ? (oMin = '0' + oMin) : oMin
-      oSen < 10 ? (oSen = '0' + oSen) : oSen
-      return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
-    },
-
-    onChange(s1, s2) {
-      console.log('s1', s1)
-      console.log('s2', s2)
-    },
-
-    delKnowledge(record) {
-      delSysKnowledge({ id: record.id })
+    delVersion(record) {
+      deleteAppVersion({ id: record.id, state: 2 })
         .then((res) => {
           if (res.success) {
             this.$message.success('删除成功')

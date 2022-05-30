@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="编辑版本"
+    title="新增版本"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -9,11 +9,11 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
-        <a-form-item label="版本名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item v-if="false" label="版本名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
             placeholder="请上传文件"
             disabled
-            v-decorator="['title', { rules: [{ required: true, message: '请上传文件！' }] }]"
+            v-decorator="['versionCode', { rules: [{ required: true, message: '请上传文件！' }] }]"
           />
         </a-form-item>
 
@@ -21,7 +21,7 @@
           <a-input
             placeholder="请上传文件"
             disabled
-            v-decorator="['title', { rules: [{ required: true, message: '请上传文件！' }] }]"
+            v-decorator="['versionNumber', { rules: [{ required: true, message: '请上传文件！' }] }]"
           />
         </a-form-item>
         <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -30,13 +30,16 @@
             <!--               list-type="picture-card"  -->
             <a-upload
               :action="actionUrl"
-              :multiple="true"
+              :multiple="false"
+              :data="uploadData"
+              disabled
               list-type="text"
               :file-list="fileList"
               @change="handleChange"
             >
               <div v-if="fileList.length < 1">
                 <!-- <div> -->
+
                 <!-- <a-icon type="plus" /> -->
                 <div class="upload-btn">选择文件</div>
               </div>
@@ -50,7 +53,7 @@
         <a-form-item label="更新说明" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-textarea
             placeholder="请输入更新说明"
-            v-decorator="['content', { rules: [{ required: false, message: '请输入更新说明！' }] }]"
+            v-decorator="['versionDescription', { rules: [{ required: false, message: '请输入更新说明！' }] }]"
           />
         </a-form-item>
       </a-form>
@@ -60,8 +63,9 @@
 
 
 <script>
-import { qryCodeValue, saveSysKnowledge } from '@/api/modular/system/posManage'
-
+import { addAppVersion } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -73,51 +77,81 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-      statusData: [],
       visible: false,
-      record: {},
+      statusData: [],
       confirmLoading: false,
       form: this.$form.createForm(this),
 
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/bdcApi/appManager/uploadAppFile',
       fileList: [],
+      uploadData: { platform: 1 },
+      versionData: {
+        fileName: '',
+        fileSize: '',
+        downloadUrl: '',
+        fileHash: '',
+        versionCode: '',
+        versionNumber: '',
+        versionDescription: '',
+        // 平台 1 医生端
+        platform: 1,
+        // 状态 0 正常 1 发布 2 删除
+        state: 0,
+        // fileName: 'HealthManage_v1.2.2_13_debug.apk',
+        // fileSize: '54592595',
+        // downloadUrl:
+        //   'http://develop.mclouds.org.cn:8008/appManager/downloadApp/doctor/HealthManage_v1.2.2_13_debug.apk',
+        // fileHash: '47f93a95671ab6fd8eebaeb387228ee9',
+        // versionCode: 'v1.2.2',
+        // versionNumber: '13',
+      },
     }
   },
-
-  created() {
-    qryCodeValue('KNOWLEDGE_TYPE').then((res) => {
-      if (res.code == 0) {
-        if (res.data && res.data.length > 0) {
-          this.statusData = res.data
-        }
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
-  },
-
+  created() {},
   methods: {
     //初始化方法
     edit(record) {
       this.visible = true
       this.record = {}
+      this.fileList = []
       this.record = record
+      //构造数据，除了name其他都不重要
+      this.fileList.push({
+        uid: 'vc-upload-1653891524699-4',
+        lastModified: 1653637105117,
+        lastModifiedDate: '2022-05-27T07:38:25.117Z',
+        name: record.fileName,
+        size: 54592595,
+        type: 'application/vnd.android.package-archive',
+      })
       setTimeout(() => {
         this.form.setFieldsValue({
-          knowledgeType: record.knowledgeType,
-          title: record.title,
-          content: record.content,
+          versionCode: this.record.versionCode,
+          versionNumber: this.record.versionNumber,
+          versionDescription: this.record.versionDescription,
         })
       }, 100)
     },
 
     handleChange(changeObj) {
+      console.log('fff', changeObj)
       if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
         this.$message.error(changeObj.file.response.message)
         changeObj.fileList.pop()
         this.fileList = changeObj.fileList
       } else {
         this.fileList = changeObj.fileList
+        if (this.fileList[0].response && this.fileList[0].response.data) {
+          this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
+          setTimeout(() => {
+            this.form.setFieldsValue({
+              versionCode: this.versionData.versionCode,
+              versionNumber: this.versionData.versionNumber,
+              // versionDescription: this.versionData.versionDescription,
+            })
+          }, 100)
+        }
       }
     },
 
@@ -128,28 +162,18 @@ export default {
       this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
-          let chooseOne = this.statusData.find((item) => {
-            return item.code == values.knowledgeType
-          })
+          this.$set(this.record, 'versionDescription', values.versionDescription)
 
-          this.record.knowledgeType = values.knowledgeType
-          this.record.title = values.title
-          this.record.content = values.content
-          this.record.typeName = chooseOne.value
-
-          delete this.record.updateTimeOut
-          delete this.record.xh
-
-          saveSysKnowledge(this.record)
+          addAppVersion(this.record)
             .then((res) => {
               if (res.success) {
-                this.$message.success('编辑成功')
+                this.$message.success('新增成功')
                 this.visible = false
                 this.confirmLoading = false
                 this.$emit('ok', values)
                 this.form.resetFields()
               } else {
-                this.$message.error('编辑失败：' + res.message)
+                this.$message.error('新增失败：' + res.message)
               }
             })
             .finally((res) => {
@@ -167,3 +191,11 @@ export default {
   },
 }
 </script>
+<style lang="less">
+.upload-btn {
+  color: white;
+  background-color: #3894ff;
+  padding: 3px 8px;
+  border-radius: 5px;
+}
+</style>
