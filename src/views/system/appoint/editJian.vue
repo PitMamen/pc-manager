@@ -105,8 +105,8 @@
 
 <script>
 import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
-import moment from 'moment';
-import { formatDateFull, formatDate } from '@/utils/util'
+import moment from 'moment'
+import { formatDate } from '@/utils/util'
 
 export default {
   data() {
@@ -200,7 +200,7 @@ export default {
 
     disabledDate(current) {
       // Can not select days before today and today
-      return current && current < moment().endOf('day');
+      return current && current < moment().endOf('day')
     },
 
     handleCancel() {},

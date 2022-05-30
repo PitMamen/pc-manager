@@ -2,7 +2,7 @@
   <div class="div-inquiry-text">
     <a-card :bordered="false" class="card-right">
       <div class="table-page-search-wrapper">
-        <a-form layout="inline">
+        <a-form :form="form" layout="inline">
           <a-row :gutter="48">
             <a-col :md="3" :sm="24">
               <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
@@ -20,13 +20,13 @@
             </a-col>
             <a-col :md="5" :sm="24">
               <a-form-item label="时间">
-                <a-range-picker @change="onChange" />
+                <a-range-picker :value="createValue" @change="onChange" />
               </a-form-item>
             </a-col>
 
             <a-col :md="3" :sm="24">
               <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button type="primary" @click="exportExcel" v-if="false">导出</a-button>
+              <a-button type="primary" @click="reset">重置</a-button>
             </a-col>
           </a-row>
         </a-form>
@@ -112,6 +112,9 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
+      form: this.$form.createForm(this),
+      //此属性用来做重置功能的
+      createValue:[],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
@@ -147,8 +150,19 @@ export default {
 
   methods: {
     onChange(momentArr, dateArr) {
+      this.createValue = momentArr
       this.queryParams.startTime = dateArr[0]
       this.queryParams.endTime = dateArr[1]
+    },
+
+    reset() {
+      // this.form.resetFields()
+      this.queryParams = {
+        versionNumber: undefined, //
+        startTime: undefined, //
+        endTime: undefined, //
+      }
+      this.createValue = []
     },
 
     delVersion(record) {

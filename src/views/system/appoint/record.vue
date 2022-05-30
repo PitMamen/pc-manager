@@ -106,6 +106,7 @@
 import { STable } from '@/components'
 import { qryTradeAppointLog, getCheckDataList } from '@/api/modular/system/posManage'
 import lookJian from './lookJian'
+// import { formatDateFull, formatDate } from '@/utils/util'
 import editJian from './editJian'
 
 export default {
@@ -213,12 +214,17 @@ export default {
             }
             this.$set(res.data.rows[i], 'identificationNoOut', res.data.rows[i].userInfo.identificationNo)
 
-            if (res.data.rows[i].status == 3) {
-              //预约时间
-              this.$set(res.data.rows[i], 'reqTimeOut', res.data.rows[i].dealResult)
-            } else {
-              this.$set(res.data.rows[i], 'reqTimeOut', '')
-            }
+            // if (res.data.rows[i].status == 3) {
+            //   //预约时间
+            //   this.$set(res.data.rows[i], 'reqTimeOut', res.data.rows[i].dealResult)
+            // } else {
+            //   this.$set(res.data.rows[i], 'reqTimeOut', '')
+            // }
+            this.$set(
+              res.data.rows[i],
+              'reqTimeOut',
+              this.formatDate(res.data.rows[i].appointDate) + ' ' + res.data.rows[i].appointTime
+            )
 
             //工单状态（0：已申请；1：审核通过；2：审核失败；3：预约成功；4：预约失败；5：取消预约申请；6：取消预约成功；7：取消预约失败）
             if (res.data.rows[i].status == 0) {
