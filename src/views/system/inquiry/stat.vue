@@ -8,15 +8,26 @@
               <a-row :gutter="48">
                 <a-col :md="6" :sm="24">
                   <a-form-item label="统计月份">
-                    <a-date-picker format="YYYY-MM" v-model="queryUpParams.month" picker="month" />
-                    <!-- <a-month-picker placeholder="选择月份" v-model="queryUpParams.month"  /> -->
+                    <!-- <a-date-picker format="YYYY-MM" v-model="queryUpParams.month" picker="month" /> -->
+                    <!-- :default-value="moment(nowMonth, monthFormat)" -->
+                    <a-month-picker
+                      :default-value="nowMonth"
+                      placeholder="选择月份"
+                      :format="monthFormat"
+                      v-model="queryUpParams.month"
+                    />
                   </a-form-item>
                 </a-col>
 
                 <a-col :md="12" :sm="24">
                   <a-form-item label="时间">
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.beginDate" /> 至
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
+                    <a-date-picker
+                      :default-value="nowDateBegin"
+                      format="YYYY-MM-DD"
+                      v-model="queryUpParams.beginDate"
+                    />
+                    至
+                    <a-date-picker :default-value="nowDateEnd" format="YYYY-MM-DD" v-model="queryUpParams.endDate" />
                   </a-form-item>
                 </a-col>
 
@@ -139,14 +150,31 @@
               <a-row :gutter="48">
                 <a-col :md="6" :sm="24">
                   <a-form-item label="统计月份">
-                    <a-date-picker format="YYYY-MM" v-model="queryUpParamsVideo.month" picker="month" />
+                    <!-- <a-date-picker format="YYYY-MM" v-model="queryUpParamsVideo.month" picker="month" /> -->
+
+                    <a-month-picker
+                      :default-value="nowMonth"
+                      placeholder="选择月份"
+                      :format="monthFormat"
+                      v-model="queryUpParamsVideo.month"
+                    />
                   </a-form-item>
                 </a-col>
 
                 <a-col :md="12" :sm="24">
                   <a-form-item label="时间">
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.beginDate" /> 至
-                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" />
+                    <!-- <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.beginDate" /> 至
+                    <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" /> -->
+
+                    <a-form-item label="时间">
+                      <a-date-picker
+                        :default-value="nowDateBegin"
+                        format="YYYY-MM-DD"
+                        v-model="queryUpParamsVideo.beginDate"
+                      />
+                      至
+                      <a-date-picker :default-value="nowDateEnd" format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" />
+                    </a-form-item>
                   </a-form-item>
                 </a-col>
 
@@ -267,6 +295,8 @@
 
 <script>
 import { STable, Bars } from '@/components'
+import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
+import moment from 'moment'
 import {
   qryRightsUserRecordList,
   getDepts,
@@ -283,6 +313,11 @@ export default {
 
   data() {
     return {
+      monthFormat: 'YYYY-MM',
+      dateFormat: 'YYYY-MM-DD',
+      nowMonth: '',
+      nowDateBegin: '',
+      nowDateEnd: '',
       // 表头
       columns: [
         {
@@ -374,9 +409,9 @@ export default {
         execDept: '',
         rightsType: 'textNum',
         execName: '',
-        month: '2022-03',
-        beginDate: '2022-04-01',
-        endDate: '2022-05-02',
+        month: getMonthNow(),
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
         sortName: 'finished', //排序
         sortFlag: -1, //排序
         pageNo: 1,
@@ -384,9 +419,9 @@ export default {
       },
       queryUpParams: {
         rightsType: 'textNum',
-        month: '2022-03',
-        beginDate: '2022-04-01',
-        endDate: '2022-05-02',
+        month: getMonthNow(),
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
       },
 
       dataTotal: [
@@ -492,9 +527,9 @@ export default {
         execDept: '',
         rightsType: 'videoNum',
         execName: '',
-        month: '2022-03',
-        beginDate: '2022-04-01',
-        endDate: '2022-05-02',
+        month: getMonthNow(),
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
         sortName: 'finished', //排序
         sortFlag: -1, //排序
         pageNo: 1,
@@ -502,9 +537,9 @@ export default {
       },
       queryUpParamsVideo: {
         rightsType: 'videoNum',
-        month: '2022-03',
-        beginDate: '2022-04-01',
-        endDate: '2022-05-02',
+        month: getMonthNow(),
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
       },
 
       dataTotalVideo: [
@@ -537,11 +572,16 @@ export default {
 
     //初始化参数
     // queryUpParams
+
+    this.nowMonth = moment(getMonthNow(), this.monthFormat)
+    this.nowDateBegin = moment(getDateNow(), this.dateFormat)
+    this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
   },
 
   mounted() {},
 
   methods: {
+    moment,
     getQueryData() {
       this.queryUpParams.month = this.formatDate(this.queryUpParams.month).substring(0, 7)
       this.queryUpParams.beginDate = this.formatDate(this.queryUpParams.beginDate).substring(0, 11)
@@ -735,7 +775,7 @@ export default {
   .div-stat-auto {
     width: 100%;
     display: inline-block;
-      margin-top: -1.5%;
+    margin-top: -1.5%;
     .ant-input {
       height: 30px;
     }

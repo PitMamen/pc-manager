@@ -20,7 +20,19 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="6" :sm="24">
+            <a-col :md="7" :sm="24">
+              <a-form-item label="项目">
+                <a-input-search
+                  v-model="queryParams.appointItemName"
+                  allow-clear
+                  placeholder="请输入项目"
+                  @keyup.enter="$refs.table.refresh(true)"
+                  @search="$refs.table.refresh(true)"
+                />
+              </a-form-item>
+            </a-col>
+
+            <!-- <a-col :md="6" :sm="24">
               <a-form-item label="项目">
                 <div class="div-text-auto">
                   <a-auto-complete
@@ -41,7 +53,7 @@
                   </a-auto-complete>
                 </div>
               </a-form-item>
-            </a-col>
+            </a-col> -->
 
             <a-col :md="6" :sm="24">
               <a-form-item label="状态">
@@ -155,7 +167,7 @@ export default {
 
         {
           title: '操作时间',
-          dataIndex: 'updateTimeOut',
+          dataIndex: 'dealTimeOut',
         },
         {
           title: '操作类型',
@@ -169,7 +181,7 @@ export default {
 
         {
           title: '状态',
-          dataIndex: 'statusText',
+          dataIndex: 'dealDetail',
         },
 
         {
@@ -213,6 +225,12 @@ export default {
               this.$set(res.data.rows[i], 'updateTimeOut', '')
             }
             this.$set(res.data.rows[i], 'identificationNoOut', res.data.rows[i].userInfo.identificationNo)
+
+            this.$set(
+              res.data.rows[i],
+              'dealTimeOut',
+              res.data.rows[i].dealTime ? this.formatDateFull(res.data.rows[i].dealTime) : ''
+            )
 
             // if (res.data.rows[i].status == 3) {
             //   //预约时间

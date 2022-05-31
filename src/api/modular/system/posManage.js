@@ -1,4 +1,5 @@
 import { axios } from '@/utils/request'
+import { appId } from '@/utils/util'
 import { start } from 'nprogress'
 
 /**
@@ -135,7 +136,7 @@ export function getArticleById(id) {
  */
 export function saveArticleWeixin(parameter) {
   return axios({
-    url: '/pushapi/health/wx/uploadNews',
+    url: '/pushapi/health/wx/' + appId + '/uploadNews',
     method: 'post',
 
     data: parameter
@@ -160,7 +161,9 @@ export function pushArticle(param) {
  */
 export function getQrUrl(param) {
   return axios({
-    url: '/pushapi/wx/qrcode/getQrCode',
+    // 192.168.1.122:8126/wx/qrcode/{appid}/getQrCode?ks=1&bq=2
+    // url: '/pushapi/wx/qrcode/getQrCode',
+    url: '/pushapi/wx/qrcode/' + appId + '/getQrCode',
     method: 'get',
     params: param,
 
@@ -173,7 +176,8 @@ export function getQrUrl(param) {
  */
 export function getQrGoodsCode(param) {
   return axios({
-    url: '/pushapi/wx/qrcode/getQrGoodsCode',
+    // url: '/pushapi/wx/qrcode/getQrGoodsCode',
+    url: '/pushapi/wx/qrcode/' + appId + '/getQrGoodsCode',
     method: 'get',
     params: param,
   })

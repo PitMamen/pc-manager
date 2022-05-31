@@ -91,7 +91,7 @@ export default {
         downloadUrl: '',
         fileHash: '',
         versionCode: '',
-        versionNumber: '',
+        versionNumber: 0,
         versionDescription: '',
         // 平台 1 医生端
         platform: 1,
@@ -112,6 +112,7 @@ export default {
     //初始化方法
     add() {
       this.visible = true
+      this.fileList = []
     },
 
     handleChange(changeObj) {

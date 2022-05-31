@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增版本"
+    title="编辑版本"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -63,7 +63,7 @@
 
 
 <script>
-import { addAppVersion } from '@/api/modular/system/posManage'
+import { updateAppVersion } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -92,7 +92,7 @@ export default {
         downloadUrl: '',
         fileHash: '',
         versionCode: '',
-        versionNumber: '',
+        versionNumber: 0,
         versionDescription: '',
         // 平台 1 医生端
         platform: 1,
@@ -164,16 +164,16 @@ export default {
         if (!errors) {
           this.$set(this.record, 'versionDescription', values.versionDescription)
 
-          addAppVersion(this.record)
+          updateAppVersion(this.record)
             .then((res) => {
               if (res.success) {
-                this.$message.success('新增成功')
+                this.$message.success('编辑成功')
                 this.visible = false
                 this.confirmLoading = false
                 this.$emit('ok', values)
                 this.form.resetFields()
               } else {
-                this.$message.error('新增失败：' + res.message)
+                this.$message.error('编辑失败：' + res.message)
               }
             })
             .finally((res) => {

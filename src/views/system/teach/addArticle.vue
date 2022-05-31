@@ -113,6 +113,7 @@
 import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import { appId } from '@/utils/util'
 
 import E from 'wangeditor'
 
@@ -141,11 +142,6 @@ export default {
           return res.data
         })
       },
-      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
-      //文章内上传图片url
-      actionUrl: '/api/pushapi/health/wx/uploadInnerImg',
-      //健康消息封面上传图片
-      // actionUrlCover: '/api/pushapi/health/wx/uploadThumb',
       actionUrlCover: '/api/contentapi/fileUpload/uploadImgFileForWX',
       fileList: [],
       previewVisible: false,
@@ -208,11 +204,21 @@ export default {
       })
     },
 
-    handleChange({ fileList }) {
-      this.fileList = fileList
-      if (this.fileList.length > 1) {
-        let newData = this.fileList[0]
-        this.fileList = [newData]
+    // handleChange({ fileList }) {
+    //   this.fileList = fileList
+    //   if (this.fileList.length > 1) {
+    //     let newData = this.fileList[0]
+    //     this.fileList = [newData]
+    //   }
+    // },
+
+    handleChange(changeObj) {
+      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileList = changeObj.fileList
+      } else {
+        this.fileList = changeObj.fileList
       }
     },
 
@@ -254,7 +260,7 @@ export default {
         this.$message.error('请上传图片！')
         return
       } else {
-        this.checkData.extraData = this.fileList[0].response.data.media_id
+        this.checkData.extraData = this.fileList[0].response.data.mediaId
         this.checkData.previewUrl = this.fileList[0].response.data.url
       }
 
@@ -278,13 +284,13 @@ export default {
       //contentSourceUrl、digest、url不管
       let articleList = [
         {
-          thumb_media_id: this.checkData.extraData,
+          thumbMediaId: this.checkData.extraData,
           author: this.checkData.publisherName,
           title: this.checkData.title,
           content: this.checkData.content,
-          show_cover_pic: 0,
-          need_open_comment: 0,
-          only_fans_can_comment: 0,
+          showCoverPic: 0,
+          needOpenComment: 0,
+          onlyFansCanComment: 0,
         },
       ]
       saveArticleWeixin(articleList).then((res) => {
@@ -384,7 +390,8 @@ export default {
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     // editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
-    editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
+    // editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
+    editor.config.uploadImgServer = '/api/pushapi/health/wx/' + appId + '/uploadInnerImg'
 
     //教育文章先不支持视频，所以注释
     // editor.config.uploadVideoName = 'file'
