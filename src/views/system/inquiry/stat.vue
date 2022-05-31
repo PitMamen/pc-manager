@@ -166,15 +166,19 @@
                     <!-- <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.beginDate" /> 至
                     <a-date-picker format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" /> -->
 
-                    <a-form-item label="时间">
-                      <a-date-picker
-                        :default-value="nowDateBegin"
-                        format="YYYY-MM-DD"
-                        v-model="queryUpParamsVideo.beginDate"
-                      />
-                      至
-                      <a-date-picker :default-value="nowDateEnd" format="YYYY-MM-DD" v-model="queryUpParamsVideo.endDate" />
-                    </a-form-item>
+                    <!-- <a-form-item label="时间"> -->
+                    <a-date-picker
+                      :default-value="nowDateBegin"
+                      format="YYYY-MM-DD"
+                      v-model="queryUpParamsVideo.beginDate"
+                    />
+                    至
+                    <a-date-picker
+                      :default-value="nowDateEnd"
+                      format="YYYY-MM-DD"
+                      v-model="queryUpParamsVideo.endDate"
+                    />
+                    <!-- </a-form-item> -->
                   </a-form-item>
                 </a-col>
 
@@ -584,8 +588,23 @@ export default {
     moment,
     getQueryData() {
       this.queryUpParams.month = this.formatDate(this.queryUpParams.month).substring(0, 7)
-      this.queryUpParams.beginDate = this.formatDate(this.queryUpParams.beginDate).substring(0, 11)
-      this.queryUpParams.endDate = this.formatDate(this.queryUpParams.endDate).substring(0, 11)
+      if (this.formatDate(this.queryUpParams.beginDate).substring(0, 11) == '1970-01-01') {
+        this.queryUpParams.beginDate == ''
+      } else {
+        this.queryUpParams.beginDate = this.formatDate(this.queryUpParams.beginDate).substring(0, 11)
+      }
+      
+
+      console.log('fff beginDate', this.formatDate(this.queryUpParams.beginDate).substring(0, 11))
+      console.log('fff endDate', this.formatDate(this.queryUpParams.endDate).substring(0, 11))
+      if (this.formatDate(this.queryUpParams.endDate).substring(0, 11) == '1970-01-01') {
+        this.queryUpParams.endDate == ''
+      } else {
+        this.queryUpParams.endDate = this.formatDate(this.queryUpParams.endDate).substring(0, 11)
+      }
+      console.log('ddd beginDate', this.queryUpParams.beginDate)
+      console.log('ddd endDate', this.queryUpParams.endDate)
+
       statRightsUserRecord(this.queryUpParams).then((res) => {
         if (res.code == 0) {
           this.dataTotal = res.data
@@ -688,8 +707,21 @@ export default {
 
     getQueryDataVideo() {
       this.queryUpParamsVideo.month = this.formatDate(this.queryUpParamsVideo.month).substring(0, 7)
-      this.queryUpParamsVideo.beginDate = this.formatDate(this.queryUpParamsVideo.beginDate).substring(0, 11)
-      this.queryUpParamsVideo.endDate = this.formatDate(this.queryUpParamsVideo.endDate).substring(0, 11)
+
+      if (this.formatDate(this.queryUpParamsVideo.beginDate).substring(0, 11) == '1970-01-01') {
+        this.queryUpParamsVideo.beginDate == ''
+      } else {
+        this.queryUpParamsVideo.beginDate = this.formatDate(this.queryUpParamsVideo.beginDate).substring(0, 11)
+      }
+
+      if (this.formatDate(this.queryUpParamsVideo.endDate).substring(0, 11) == '1970-01-01') {
+        this.queryUpParamsVideo.endDate == ''
+      } else {
+        this.queryUpParamsVideo.endDate = this.formatDate(this.queryUpParamsVideo.endDate).substring(0, 11)
+      }
+
+      // this.queryUpParamsVideo.beginDate = this.formatDate(this.queryUpParamsVideo.beginDate).substring(0, 11)
+      // this.queryUpParamsVideo.endDate = this.formatDate(this.queryUpParamsVideo.endDate).substring(0, 11)
       statRightsUserRecord(this.queryUpParamsVideo).then((res) => {
         if (res.code == 0) {
           this.dataTotalVideo = res.data
