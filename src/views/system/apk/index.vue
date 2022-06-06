@@ -18,13 +18,13 @@
                 />
               </a-form-item>
             </a-col>
-            <a-col :md="5" :sm="24">
+            <a-col :md="6" :sm="24">
               <a-form-item label="时间">
                 <a-range-picker :value="createValue" @change="onChange" />
               </a-form-item>
             </a-col>
 
-            <a-col :md="3" :sm="24">
+            <a-col :md="5" :sm="24">
               <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               <a-button type="primary" @click="reset">重置</a-button>
             </a-col>
@@ -43,7 +43,7 @@
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.editForm.edit(record)">编辑</a>
           <a-divider type="vertical" />
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delVersion(record)">
+          <a-popconfirm placement="topRight" :title="record.deleteTitle" @confirm="() => delVersion(record)">
             <a>删除</a>
           </a-popconfirm>
         </span>
@@ -114,7 +114,7 @@ export default {
       ],
       form: this.$form.createForm(this),
       //此属性用来做重置功能的
-      createValue:[],
+      createValue: [],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
@@ -128,6 +128,7 @@ export default {
             } else {
               this.$set(res.data.rows[i], 'stateText', '否')
             }
+            this.$set(res.data.rows[i], 'deleteTitle', '您确定要删除版本号' + res.data.rows[i].versionNumber + '的记录信息么？删除后将不可恢复！')
           }
           return res.data
         })
