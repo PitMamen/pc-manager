@@ -186,7 +186,7 @@ export default {
 
         {
           title: '预约时间',
-          dataIndex: 'reqTimeOut',
+          dataIndex: 'logDealResult',
         },
 
         // {
