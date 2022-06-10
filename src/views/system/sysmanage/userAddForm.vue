@@ -125,7 +125,8 @@
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择用户角色！' }] }]"
           >
             <a-radio :value="3"> 医生 </a-radio>
-            <a-radio :value="4" style="width: 100px"> 个案管理师 </a-radio>
+            <a-radio :value="4"> 个案管理师 </a-radio>
+            <a-radio :value="5" style="width: 100px"> 护士 </a-radio>
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
           </a-radio-group>
         </a-form-item>
@@ -247,7 +248,9 @@ export default {
       if (event.target.value == 3) {
         //添加
 
-        this.keshiData.shift()
+        if ((this.radioValue == 4)) {
+          this.keshiData.shift()
+        }
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
 
         this.ifCan = false
@@ -265,6 +268,15 @@ export default {
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
         this.ifCan = true
         this.radioValue = 4
+      } else if (event.target.value == 5) {
+        //添加
+        if ((this.radioValue == 4)) {
+          this.keshiData.shift()
+        }
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+
+        this.ifCan = false
+        this.radioValue = 3
       }
     },
 

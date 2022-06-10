@@ -42,7 +42,19 @@
           <a-switch :checked="isCaseFlag" @change="onChangeCase" :disabled="isDisabled" />
         </a-form-item>
 
-        <a-form-item label="服务医生" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item label="服务对象" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-radio-group
+            name="radioGroup"
+            @change="onChange"
+            :default-value="1"
+            v-decorator="['whoDeal', { rules: [{ required: true, message: '请选择服务对象！' }] }]"
+          >
+            <a-radio :value="1"> 医生 </a-radio>
+            <a-radio :value="2" style="width: 100px"> 护士 </a-radio>
+          </a-radio-group>
+        </a-form-item>
+
+        <a-form-item :label="serviceName" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <div class="div-text-auto">
             <a-auto-complete
               class="global-search"
@@ -93,10 +105,12 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       //status 0  启用
-      queryParam: { departmentId: 0 },
+      queryParam: { departmentId: 0, userType: 'doctor' },
 
       index: 0,
       docId: '',
+      serviceName: '服务医生',
+      whoDeal: 'doctor', // doctor nurse casemanager 医生 护士 个案管理师
       chooseDeptItem: {},
       originData: [],
       keshiData: [],
@@ -110,17 +124,20 @@ export default {
     }
   },
   created() {
-    getDoctorList(this.queryParam).then((res) => {
-      // for (let i = 0; i < res.data.rows.length; i++) {
-      //   this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-      // }
-      this.originData = res.data
-      this.keshiData = JSON.parse(JSON.stringify(this.originData))
-      console.log('originDataGot', this.originData)
-      this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-    })
+    this.getDocs()
   },
   methods: {
+    getDocs() {
+      getDoctorList(this.queryParam).then((res) => {
+        // for (let i = 0; i < res.data.rows.length; i++) {
+        //   this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+        // }
+        this.originData = res.data
+        this.keshiData = JSON.parse(JSON.stringify(this.originData))
+        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+      })
+    },
+
     //初始化方法
     edit(index, item) {
       this.visible = true
@@ -147,10 +164,17 @@ export default {
       }
 
       setTimeout(() => {
+        let temp
+        if (item.plusInfoVo.whoDeal == 'nurse') {
+          temp = 2
+        } else if (item.plusInfoVo.whoDeal == 'doctor') {
+          temp = 1
+        }
         this.form.setFieldsValue({
           serviceExpire: item.plusInfoVo.serviceExpire,
           timeLimit: item.plusInfoVo.timeLimit,
           textNumLimit: item.plusInfoVo.textNumLimit,
+          whoDeal: temp,
         })
       }, 100)
       console.log('plusInfoVo', item.plusInfoVo)
@@ -167,6 +191,19 @@ export default {
       this.caseFlag = this.isCaseFlag ? 1 : 0
     },
 
+    onChange(event) {
+      console.log('s1', event)
+      if (event.target.value == 1) {
+        this.serviceName = '服务医生'
+        this.whoDeal = 'doctor'
+      } else {
+        this.serviceName = '服务护士'
+        this.whoDeal = 'nurse'
+      }
+      this.queryParam.userType = this.whoDeal
+      this.getDocs()
+    },
+
     handleSubmit() {
       const {
         form: { validateFields },
@@ -181,6 +218,7 @@ export default {
             this.$set(values, 'docId', this.docId)
           }
           this.$set(values, 'caseFlag', this.caseFlag)
+          this.$set(values, 'whoDeal', this.whoDeal)
           // this.confirmLoading = false
           this.visible = false
           this.$emit('ok', this.index, values)
