@@ -124,10 +124,10 @@ export default {
     }
   },
   created() {
-    this.getDocs()
+    // this.getDocs()
   },
   methods: {
-    getDocs() {
+    getDocs(isFirst) {
       getDoctorList(this.queryParam).then((res) => {
         // for (let i = 0; i < res.data.rows.length; i++) {
         //   this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
@@ -135,6 +135,13 @@ export default {
         this.originData = res.data
         this.keshiData = JSON.parse(JSON.stringify(this.originData))
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        debugger
+        if (isFirst) {
+          this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == this.docId)))
+        } else {
+          this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData[0]))
+        }
+        this.docId = this.chooseDeptItem.userId
       })
     },
 
@@ -164,11 +171,15 @@ export default {
       }
 
       setTimeout(() => {
+        console.log('item', item)
         let temp
         if (item.plusInfoVo.whoDeal == 'nurse') {
           temp = 2
-        } else if (item.plusInfoVo.whoDeal == 'doctor') {
+          this.whoDeal = 'nurse'
+        // } else if (item.plusInfoVo.whoDeal == 'doctor') {
+        } else {
           temp = 1
+          this.whoDeal = 'doctor'
         }
         this.form.setFieldsValue({
           serviceExpire: item.plusInfoVo.serviceExpire,
@@ -176,14 +187,18 @@ export default {
           textNumLimit: item.plusInfoVo.textNumLimit,
           whoDeal: temp,
         })
+
+        console.log('plusInfoVo', item.plusInfoVo)
+        this.docId = item.plusInfoVo.docId
+        console.log('originData', this.originData)
+
+        console.log('chooseDeptItem', this.chooseDeptItem)
+        this.caseFlag = item.plusInfoVo.caseFlag
+        this.isCaseFlag = this.caseFlag == 1 ? true : false
+
+        this.queryParam.userType = this.whoDeal
+        this.getDocs(true)
       }, 100)
-      console.log('plusInfoVo', item.plusInfoVo)
-      this.docId = item.plusInfoVo.docId
-      console.log('originData', this.originData)
-      this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == this.docId)))
-      console.log('chooseDeptItem', this.chooseDeptItem)
-      this.caseFlag = item.plusInfoVo.caseFlag
-      this.isCaseFlag = this.caseFlag == 1 ? true : false
     },
 
     onChangeCase() {

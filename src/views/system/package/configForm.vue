@@ -113,7 +113,7 @@ export default {
       index: 0,
       docId: '',
       serviceName: '服务医生',
-      whoDeal: 'doctor',// doctor nurse casemanager 医生 护士 个案管理师
+      whoDeal: 'doctor', // doctor nurse casemanager 医生 护士 个案管理师
       chooseDeptItem: {},
       originData: [],
       keshiData: [],
@@ -129,7 +129,7 @@ export default {
     this.getDocs()
   },
   methods: {
-    getDocs() {
+    getDocs(isFirst) {
       getDoctorList(this.queryParam).then((res) => {
         // for (let i = 0; i < res.data.rows.length; i++) {
         //   this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
@@ -137,6 +137,14 @@ export default {
         this.originData = res.data
         this.keshiData = JSON.parse(JSON.stringify(this.originData))
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        // this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData[0]))
+
+        if (isFirst) {
+          this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == this.docId)))
+        } else {
+          this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData[0]))
+        }
+        this.docId = this.chooseDeptItem.userId
       })
     },
 
@@ -183,6 +191,37 @@ export default {
         this.docId = user.userId
         console.log('chooseDeptItem', this.chooseDeptItem)
       }
+
+      setTimeout(() => {
+        debugger
+        console.log('item', item)
+        let temp
+        if (item.plusInfoVo.whoDeal == 'nurse') {
+          temp = 2
+          this.whoDeal = 'nurse'
+          // } else if (item.plusInfoVo.whoDeal == 'doctor') {
+        } else {
+          temp = 1
+          this.whoDeal = 'doctor'
+        }
+        this.form.setFieldsValue({
+          serviceExpire: item.plusInfoVo.serviceExpire,
+          timeLimit: item.plusInfoVo.timeLimit,
+          textNumLimit: item.plusInfoVo.textNumLimit,
+          whoDeal: temp,
+        })
+
+        console.log('plusInfoVo', item.plusInfoVo)
+        this.docId = item.plusInfoVo.docId
+        console.log('originData', this.originData)
+
+        console.log('chooseDeptItem', this.chooseDeptItem)
+        this.caseFlag = item.plusInfoVo.caseFlag
+        this.isCaseFlag = this.caseFlag == 1 ? true : false
+
+        this.queryParam.userType = this.whoDeal
+        this.getDocs(true)
+      }, 100)
     },
 
     onChangeCase() {
@@ -209,6 +248,7 @@ export default {
       } = this
       // this.confirmLoading = true
       validateFields((errors, values) => {
+        debugger
         if (!errors) {
           if (!this.docId && !this.isCaseFlag) {
             this.$message.error('请选择服务医生！')
