@@ -1,5 +1,5 @@
-// export const appId = "wxb916ba0a16b64a2f"//测试公众号
-export const appId = "wxdeeb4c8eac73c0b9"//线上公众号
+export const appId = "wxb916ba0a16b64a2f"//测试公众号
+// export const appId = "wxdeeb4c8eac73c0b9"//线上公众号
 export function timeFix() {
   const time = new Date()
   const hour = time.getHours()
