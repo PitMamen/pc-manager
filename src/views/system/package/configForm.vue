@@ -199,10 +199,12 @@ export default {
         if (item.plusInfoVo.whoDeal == 'nurse') {
           temp = 2
           this.whoDeal = 'nurse'
+          this.serviceName = '服务护士'
           // } else if (item.plusInfoVo.whoDeal == 'doctor') {
         } else {
           temp = 1
           this.whoDeal = 'doctor'
+          this.serviceName = '服务医生'
         }
         this.form.setFieldsValue({
           serviceExpire: item.plusInfoVo.serviceExpire,
