@@ -218,7 +218,14 @@ export default {
         console.log('originData', this.originData)
 
         console.log('chooseDeptItem', this.chooseDeptItem)
-        this.caseFlag = item.plusInfoVo.caseFlag
+        /**
+         * 疑难bug  新增的时候，caseFlag属性没有的话，赋值默认值0
+         */
+        if (!item.plusInfoVo.caseFlag) {
+          this.caseFlag = 0
+        } else {
+          this.caseFlag = item.plusInfoVo.caseFlag
+        }
         this.isCaseFlag = this.caseFlag == 1 ? true : false
 
         this.queryParam.userType = this.whoDeal
@@ -261,6 +268,7 @@ export default {
           this.$set(values, 'caseFlag', this.caseFlag)
           this.$set(values, 'whoDeal', this.whoDeal)
           // this.confirmLoading = false
+          console.log('valuesConfig', values)
           this.visible = false
           this.$emit('ok', this.index, values)
         } else {
