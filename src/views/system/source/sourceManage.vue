@@ -9,7 +9,7 @@
           class="global-search"
           size="large"
           style="width: 100%; font-size: 14px"
-          placeholder="请输入并选择部门"
+          placeholder="请输入并选择科室"
           option-label-prop="title"
           @select="onSelect"
           @search="handleSearch"
@@ -48,14 +48,14 @@
           class="global-search"
           size="large"
           style="width: 100%; font-size: 14px"
-          placeholder="请输入并选择部门"
+          placeholder="请输入并选择医生"
           option-label-prop="title"
-          @select="onSelect"
-          @search="handleSearch"
+          @select="onSelectDoc"
+          @search="handleSearchDoc"
         >
           <template slot="dataSource">
-            <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
-              {{ item.departmentName }}
+            <a-select-option v-for="item in keshiDataTempDoc" :key="item.userId + ''" :title="item.userName">
+              {{ item.userName }}
             </a-select-option>
           </template>
         </a-auto-complete>
@@ -64,12 +64,12 @@
         <div
           class="div-part"
           style="margin-top: 7%"
-          v-for="(item, index) in deptData"
-          :value="item.departmentId"
+          v-for="(item, index) in deptDataDoc"
+          :value="item.userId"
           :key="index"
         >
-          <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
-            {{ item.departmentName }}
+          <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChooseDoc(index)">
+            {{ item.userName }}
           </p>
           <!-- 分割线 -->
           <div class="div-divider"></div>
@@ -78,7 +78,8 @@
     </div>
 
     <div class="card-right-source">
-      <a-calendar>
+      <!-- <a-calendar @panelChange="onPanelChange" @select="onSelectDate" @change="changeCalendar"> -->
+      <a-calendar @panelChange="onPanelChange" @select="onSelectDate">
         <ul slot="dateCellRender" slot-scope="value" class="events">
           <li v-for="item in getListData(value)" :key="item.content">
             <a-badge :status="item.type" :text="item.content" />
@@ -92,16 +93,63 @@
         </template>
       </a-calendar>
 
+      <!-- 分割线 -->
+      <div class="div-divider"></div>
+
       <div class="div-wrap-dispatch">
-        
+        <div class="div-item" v-for="(item, index) in itemData" :value="item.id" :key="index">
+          <div class="item-head">
+            <span class="span-time">{{ item.scheName }}</span>
+            <div class="div-switch">
+              <a-switch :checked="item.isChecked" @click="onItemCheck(index)" />
+            </div>
+          </div>
+
+          <div class="span-des">分配号源:</div>
+
+          <div class="wrap-service">
+            <div
+              class="item-service"
+              v-for="(itemService, indexService) in itemServiceData"
+              :value="itemService.id"
+              :key="indexService"
+            >
+              <span class="span-name">{{ itemService.value }}</span>
+              <!-- v-model="uploadData.templateName" -->
+              <a-input-number
+                class="span-item-value"
+                :min="0"
+                :max="10000"
+                :maxLength="30"
+                style="display: inline-block; width: 45%; height: 25px; margin-left: 3%"
+                allow-clear
+                placeholder=""
+              />
+              <!-- <a-input
+                class="span-item-value"
+                :maxLength="30"
+                style="display: inline-block; width: 45%; height: 25px; margin-left: 3%"
+                allow-clear
+                placeholder=""
+              /> -->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getDepts, getUserList, updateUser } from '@/api/modular/system/posManage'
-
+import {
+  getDepts,
+  getSchedulePeriods,
+  qryCodeValue,
+  getDoctorList,
+  getScheduleInfo,
+} from '@/api/modular/system/posManage'
+import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import moment from 'moment'
 // import { Calendar } from 'ant-design-vue'
 export default {
   components: {
@@ -113,7 +161,7 @@ export default {
   data() {
     return {
       selectedRowKeys: [], // Check here to configure the default column
-      deptData: [],
+
       statusData: [
         { code: 2, value: '全部' },
         { code: 0, value: '启用' },
@@ -122,30 +170,65 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
+      itemData: [
+        { code: 1, isChecked: false },
+        { code: 2, isChecked: true },
+        // { code: 3, isChecked: true },
+        // { code: 4, isChecked: true },
+        // { code: 5, isChecked: true },
+        // { code: 6, isChecked: true },
+      ],
+      itemServiceData: [
+        { code: 1, isChecked: false },
+        { code: 2, isChecked: true },
+        { code: 2, isChecked: true },
+        { code: 2, isChecked: true },
+        { code: 2, isChecked: true },
+        // { code: 3, isChecked: true },
+        // { code: 4, isChecked: true },
+        // { code: 5, isChecked: true },
+        // { code: 6, isChecked: true },
+      ],
 
-      queryParam: { departmentId: 0, status: 2, userName: '' },
+      //请求医生
+      queryParam: { departmentId: 0 },
+      //请求所选医生的号源数据
+      queryParamSource: {
+        docId: 0,
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
+      },
       // 表头
       // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getUserList(Object.assign(parameter, this.queryParam)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            if (res.data.rows[i].status == 0) {
-              this.$set(res.data.rows[i], 'isSuggest', true)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定关闭？')
-            } else {
-              this.$set(res.data.rows[i], 'isSuggest', false)
-              this.$set(res.data.rows[i], 'isSuggestText', '确定开启？')
-            }
-          }
-          return res.data
-        })
-      },
+      // loadData: (parameter) => {
+      //   return getUserList(Object.assign(parameter, this.queryParam)).then((res) => {
+      //     for (let i = 0; i < res.data.rows.length; i++) {
+      //       this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+      //       if (res.data.rows[i].status == 0) {
+      //         this.$set(res.data.rows[i], 'isSuggest', true)
+      //         this.$set(res.data.rows[i], 'isSuggestText', '确定关闭？')
+      //       } else {
+      //         this.$set(res.data.rows[i], 'isSuggest', false)
+      //         this.$set(res.data.rows[i], 'isSuggestText', '确定开启？')
+      //       }
+      //     }
+      //     return res.data
+      //   })
+      // },
       selectedRows: [],
 
       chooseDeptItem: {},
+      deptData: [],
       originData: [],
       keshiDataTemp: [],
+
+      chooseDeptItemDoc: {},
+      deptDataDoc: [],
+      originDataDoc: [],
+      keshiDataTempDoc: [],
+
+      soureDatas: [],
+      chooseDay: '',
     }
   },
 
@@ -157,34 +240,111 @@ export default {
 
   created() {
     this.getDeptsOut()
+
+    /**
+     * 获取时段
+     * 
+     * {
+      "id": 1,
+      "scheName": "上午08:30-12:30",
+      "schePreriod": "08:30-12:00",
+      "scheTimes": "3.5小时",
+      "scheDesc": "",
+      "createUser": "admin",
+      "createTime": 1636683738000,
+      "updateTime": null
+    }
+     */
+    getSchedulePeriods().then((res) => {
+      if (res.code == 0) {
+        this.itemData = res.data
+        this.itemData.forEach((item) => {
+          this.$set(item, 'isChecked', false)
+        })
+      }
+    })
+
+    /**
+     * 获取号源服务项目列表
+     * 
+     * {
+      "id": 58,
+      "codeGroup": "REGISTER_TYPE",
+      "code": "telNum",
+      "value": "电话咨询",
+      "indexNum": "0",
+      "parentCode": null,
+      "remark": "0"
+    }
+     */
+    qryCodeValue('REGISTER_TYPE').then((res) => {
+      if (res.code == 0) {
+        this.itemServiceData = res.data
+      }
+    })
   },
 
   methods: {
+    getScheduleInfoOut() {
+      getScheduleInfo(this.queryParamSource).then((res) => {
+        if (res.code == 0) {
+          this.soureDatas = res.data
+        }
+      })
+    },
+    /**
+     *
+     * @param {*} date
+     * @param {*} type //year month
+     */
+    onPanelChange(date, type) {
+      console.log('onPanelChange date', date)
+      console.log('onPanelChange type', type)
+    },
+    /**
+     *  在选择一天的时候，onSelectDate  changeCalendar两个回调方法都会触发，而且参数一样
+     * @param {*} date
+     */
+    onSelectDate(date) {
+      console.log('onSelectDate date', date)
+      this.chooseDay = moment(date).format('YYYY-MM-DD')
+      console.log('onSelectDate chooseDay', this.chooseDay)
+    },
+    // changeCalendar(date) {
+    //   console.log('s1 changeCalendar', s1)
+    //   console.log('s2 changeCalendar', s2)
+    //   console.log('s3 changeCalendar', s3)
+    // },
+
+    onItemCheck(index) {
+      this.itemData[index].isChecked = !this.itemData[index].isChecked
+    },
+
     // 日历方法
     getListData(value) {
       let listData
       switch (value.date()) {
         case 8:
           listData = [
-            { type: 'warning', content: 'This is warning event.' },
-            { type: 'success', content: 'This is usual event.' },
+            { type: 'warning', content: 'more.' },
+            // { type: 'success', content: 'This is usual event.' },
           ]
           break
         case 10:
           listData = [
-            { type: 'warning', content: 'This is warning event.' },
-            { type: 'success', content: 'This is usual event.' },
-            { type: 'error', content: 'This is error event.' },
+            { type: 'warning', content: 'that' },
+            // { type: 'success', content: 'This is usual event.' },
+            // { type: 'error', content: 'This is error event.' },
           ]
           break
         case 15:
           listData = [
-            { type: 'warning', content: 'This is warning event' },
-            { type: 'success', content: 'This is very long usual event。。....' },
-            { type: 'error', content: 'This is error event 1.' },
-            { type: 'error', content: 'This is error event 2.' },
-            { type: 'error', content: 'This is error event 3.' },
-            { type: 'error', content: 'This is error event 4.' },
+            { type: 'warning', content: 'billy' },
+            // { type: 'success', content: 'This is very long usual event。。....' },
+            // { type: 'error', content: 'This is error event 1.' },
+            // { type: 'error', content: 'This is error event 2.' },
+            // { type: 'error', content: 'This is error event 3.' },
+            // { type: 'error', content: 'This is error event 4.' },
           ]
           break
         default:
@@ -220,8 +380,35 @@ export default {
           }
           this.deptData = res.data
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+
+          this.getDocs()
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+
+    getDocs() {
+      getDoctorList(this.queryParam).then((res) => {
+        if (res.code == 0) {
+          this.originDataDoc = res.data
+
+          for (let i = 0; i < res.data.length; i++) {
+            // this.$set(res.data[i], 'xh', i + 1)
+            if (i == 0) {
+              this.$set(res.data[i], 'isChecked', true)
+            } else {
+              this.$set(res.data[i], 'isChecked', false)
+            }
+          }
+          this.deptDataDoc = res.data
+          this.keshiDataTempDoc = JSON.parse(JSON.stringify(this.originDataDoc))
+
+          this.chooseDeptItemDoc = JSON.parse(JSON.stringify(this.originDataDoc[0]))
+          this.queryParamSource.docId = this.chooseDeptItemDoc.userId //病区名称暂时不传
+          this.getScheduleInfoOut()
+          // this.getDocs()
+          //TODO  请求第一个医生的号源
         }
       })
     },
@@ -245,6 +432,36 @@ export default {
       this.onDeptChoose(index)
     },
 
+    handleSearchDoc(inputName) {
+      debugger
+      if (inputName) {
+        this.keshiDataTempDoc = this.originDataDoc.filter((item) => item.userName.indexOf(inputName) != -1)
+      } else {
+        this.keshiDataTempDoc = JSON.parse(JSON.stringify(this.originDataDoc))
+        // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+      }
+    },
+
+    onSelectDoc(userId, s2) {
+      console.log('departmentId', userId)
+      console.log('s2', s2)
+      //选择类别
+      let index = this.getIndex(userId)
+      this.chooseDeptItemDoc = this.deptDataDoc.find((item) => item.userId == userId)
+      console.log('index', index)
+      this.onDeptChooseDoc(index)
+    },
+
+    getIndex(userId) {
+      let myIndex = -1
+      for (let index = 0; index < this.deptDataDoc.length; index++) {
+        if (this.deptDataDoc[index].userId == userId) {
+          myIndex = index
+          return myIndex
+        }
+      }
+      return myIndex
+    },
     getIndex(departmentId) {
       let myIndex = -1
       for (let index = 0; index < this.deptData.length; index++) {
@@ -262,7 +479,21 @@ export default {
         if (i == index) {
           this.deptData[i].isChecked = true
           this.queryParam.departmentId = this.deptData[i].departmentId //病区名称暂时不传
-          this.$refs.table.refresh()
+          // this.$refs.table.refresh()
+          this.getDocs()
+        }
+      }
+    },
+
+    onDeptChooseDoc(index) {
+      for (let i = 0; i < this.deptDataDoc.length; i++) {
+        this.deptDataDoc[i].isChecked = false
+        if (i == index) {
+          this.deptDataDoc[i].isChecked = true
+          this.queryParamSource.docId = this.deptDataDoc[i].userId //病区名称暂时不传
+          // this.$refs.table.refresh()
+          this.getScheduleInfoOut()
+          //TODO 请求医生的号源数据
         }
       }
     },
@@ -388,6 +619,95 @@ export default {
     overflow: hidden;
     background-color: white;
     width: 70% !important;
+
+    .div-wrap-dispatch {
+      margin-top: 3%;
+      // width: 100%;
+      // background-color: red;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-bottom: 3%;
+      flex-direction: row;
+      .div-item {
+        // background-color: peachpuff;
+        display: flex;
+
+        flex-direction: column;
+        margin-right: 5%;
+        margin: 1% 5%;
+        width: 30%;
+
+        .item-head {
+          width: 100%;
+          background-color: #3fad72;
+          // height: 40%;
+          padding: 3% 1%;
+          border-radius: 5px;
+          display: flex;
+          flex-direction: row;
+          // position: relative;
+
+          .span-time {
+            flex: 1;
+            color: white;
+            padding-left: 30%;
+            // position: absolute;
+          }
+
+          .div-switch {
+            // position: absolute;
+          }
+        }
+
+        .span-des {
+          // display: inline-block;
+          // font-style: bold;
+          margin-top: 5%;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .wrap-service {
+          // width: 40%;
+
+          margin-left: 9%;
+          // display: inline-block;
+          display: flex;
+          color: #333;
+          font-size: 12px;
+          flex-wrap: wrap;
+          font-weight: bold;
+          align-items: center;
+          flex-direction: row;
+
+          .item-service {
+            margin-top: 5%;
+            display: flex;
+            width: 40%;
+            margin-right: 2%;
+            flex-wrap: wrap;
+            font-weight: bold;
+            align-items: center;
+            flex-direction: row;
+          }
+          .ant-input {
+            height: 25px;
+          }
+        }
+      }
+    }
+  }
+  .div-divider {
+    margin-top: 3%;
+    // margin-left: 10%;
+    width: 100%;
+    background-color: #999;
+    height: 3px;
+  }
+
+  .ant-fullcalendar-date {
+    height: 80px;
   }
 }
 </style>

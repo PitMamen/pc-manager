@@ -94,6 +94,7 @@ export function formatDateFull(date) {
   return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
 }
 
+/**获取当前月份 */
 export function getMonthNow() {
   var myDate = new Date();
   var year = myDate.getFullYear();
@@ -109,6 +110,7 @@ export function getMonthNow() {
   return firstDay;
 }
 
+/**获取本月第一天 */
 export function getDateNow() {
   var myDate = new Date();
   var year = myDate.getFullYear();
@@ -124,6 +126,7 @@ export function getDateNow() {
   return firstDay;
 }
 
+/**获取本月最后一天 */
 export function getCurrentMonthLast() {
   var date = new Date();
   var currentMonth = date.getMonth();

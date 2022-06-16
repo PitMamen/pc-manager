@@ -1051,3 +1051,53 @@ export function deleteAppVersion(data) {
     data: data,
   })
 }
+
+/**
+ * 获取医生排班预约详情信息
+ *
+ */
+export function getScheduleInfo(params) {
+  return axios({
+    url: '/bdcApi/sys/getScheduleInfo',
+    method: 'get',
+    params: params
+  })
+}
+
+/**
+ * 获取医生排班时段信息
+ * 
+ * 获取号源类别列表用 qryCodeValue 接口，codeGroup传入 REGISTER_TYPE
+ *
+ */
+export function getSchedulePeriods(params) {
+  return axios({
+    url: '/bdcApi/sys/getSchedulePeriods',
+    method: 'get',
+    params: params
+  })
+}
+
+/**
+ * 
+ * 创建/修改医生排班
+ */
+export function saveDoctorSchedule(data) {
+  return axios({
+    url: '/bdcApi/sys/saveDoctorSchedule',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 删除医生排班
+ */
+export function delDoctorSchedule(data) {
+  return axios({
+    url: '/bdcApi/sys/delDoctorSchedule',
+    method: 'post',
+    data: data,
+  })
+}
