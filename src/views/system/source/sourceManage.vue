@@ -81,9 +81,11 @@
       <!-- <a-calendar @panelChange="onPanelChange" @select="onSelectDate" @change="changeCalendar"> -->
       <a-calendar @panelChange="onPanelChange" @select="onSelectDate">
         <ul slot="dateCellRender" slot-scope="value" class="events">
-          <li v-for="item in getListData(value)" :key="item.content">
+          <!-- <li v-for="item in getListData(value)" :key="item.content">
             <a-badge :status="item.type" :text="item.content" />
-          </li>
+          </li> -->
+          <!-- <div v-if="isInside(value)">已分配号源</div> -->
+          <div>已分配号源</div>
         </ul>
         <template slot="monthCellRender" slot-scope="value">
           <div v-if="getMonthData(value)" class="notes-month">
@@ -110,7 +112,7 @@
           <div class="wrap-service">
             <div
               class="item-service"
-              v-for="(itemService, indexService) in itemServiceData"
+              v-for="(itemService, indexService) in item.itemServiceData"
               :value="itemService.id"
               :key="indexService"
             >
@@ -118,6 +120,7 @@
               <!-- v-model="uploadData.templateName" -->
               <a-input-number
                 class="span-item-value"
+                v-model="itemService.num"
                 :min="0"
                 :max="10000"
                 :maxLength="30"
@@ -125,13 +128,6 @@
                 allow-clear
                 placeholder=""
               />
-              <!-- <a-input
-                class="span-item-value"
-                :maxLength="30"
-                style="display: inline-block; width: 45%; height: 25px; margin-left: 3%"
-                allow-clear
-                placeholder=""
-              /> -->
             </div>
           </div>
         </div>
@@ -145,8 +141,11 @@ import {
   getDepts,
   getSchedulePeriods,
   qryCodeValue,
-  getDoctorList,
+  // getDoctorList,
+  getUserList,
   getScheduleInfo,
+  saveDoctorSchedule,
+  delDoctorSchedule,
 } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import moment from 'moment'
@@ -160,6 +159,7 @@ export default {
 
   data() {
     return {
+      adb: 123,
       selectedRowKeys: [], // Check here to configure the default column
 
       statusData: [
@@ -170,51 +170,34 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       partChoose: '',
-      itemData: [
-        { code: 1, isChecked: false },
-        { code: 2, isChecked: true },
-        // { code: 3, isChecked: true },
-        // { code: 4, isChecked: true },
-        // { code: 5, isChecked: true },
-        // { code: 6, isChecked: true },
-      ],
+      days: [],
+      itemData: [{ code: 1, isChecked: false, itemServiceData: [] }],
+
       itemServiceData: [
         { code: 1, isChecked: false },
         { code: 2, isChecked: true },
         { code: 2, isChecked: true },
         { code: 2, isChecked: true },
         { code: 2, isChecked: true },
-        // { code: 3, isChecked: true },
-        // { code: 4, isChecked: true },
-        // { code: 5, isChecked: true },
-        // { code: 6, isChecked: true },
       ],
 
       //请求医生
-      queryParam: { departmentId: 0 },
+      // queryParam: { departmentId: 0 },
+      queryParam: {
+        pageNo: 1,
+        pageSize: 20,
+        roleId: 3,
+        departmentId: 0,
+        status: 0,
+        // userName: '',
+      },
       //请求所选医生的号源数据
       queryParamSource: {
         docId: 0,
         beginDate: getDateNow(),
         endDate: getCurrentMonthLast(),
       },
-      // 表头
-      // 加载数据方法 必须为 Promise 对象
-      // loadData: (parameter) => {
-      //   return getUserList(Object.assign(parameter, this.queryParam)).then((res) => {
-      //     for (let i = 0; i < res.data.rows.length; i++) {
-      //       this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-      //       if (res.data.rows[i].status == 0) {
-      //         this.$set(res.data.rows[i], 'isSuggest', true)
-      //         this.$set(res.data.rows[i], 'isSuggestText', '确定关闭？')
-      //       } else {
-      //         this.$set(res.data.rows[i], 'isSuggest', false)
-      //         this.$set(res.data.rows[i], 'isSuggestText', '确定开启？')
-      //       }
-      //     }
-      //     return res.data
-      //   })
-      // },
+
       selectedRows: [],
 
       chooseDeptItem: {},
@@ -232,14 +215,13 @@ export default {
     }
   },
 
-  computed: {
-    hasSelected() {
-      return this.selectedRowKeys.length > 0
-    },
-  },
-
   created() {
+    this.chooseDay = moment(new Date()).format('YYYY-MM-DD')
     this.getDeptsOut()
+
+    // let aa = { '2022-06-01': 123, '2022-06-02': { code: 1, name: 'bill' } }
+    // console.log('111', aa['2022-06-01'])
+    // console.log('222', aa['2022-06-02'])
 
     /**
      * 获取时段
@@ -261,10 +243,15 @@ export default {
         this.itemData.forEach((item) => {
           this.$set(item, 'isChecked', false)
         })
+
+        this.getServiceData()
       }
     })
+  },
 
-    /**
+  methods: {
+    getServiceData() {
+      /**
      * 获取号源服务项目列表
      * 
      * {
@@ -277,21 +264,34 @@ export default {
       "remark": "0"
     }
      */
-    qryCodeValue('REGISTER_TYPE').then((res) => {
-      if (res.code == 0) {
-        this.itemServiceData = res.data
-      }
-    })
-  },
+      qryCodeValue('REGISTER_TYPE').then((res) => {
+        if (res.code == 0) {
+          this.itemServiceData = res.data
+          this.itemServiceData.forEach((item) => {
+            this.$set(item, 'num', 0)
+          })
 
-  methods: {
+          //将 itemServiceData 绑定到 itemData 防止数据串了
+          this.itemData.forEach((item) => {
+            this.$set(item, 'itemServiceData', JSON.parse(JSON.stringify(this.itemServiceData)))
+          })
+        }
+      })
+    },
     getScheduleInfoOut() {
       getScheduleInfo(this.queryParamSource).then((res) => {
         if (res.code == 0) {
           this.soureDatas = res.data
+          this.soureDatas.forEach((item) => {
+            console.log('schedulingDate', moment(new Date(item.schedulingDate)).format('YYYY-MM-DD'))
+            //组装数据到每个日期的号源
+            this.days.push(new Date(item.schedulingDate).getDate())
+          })
+          console.log('days', this.days)
         }
       })
     },
+
     /**
      *
      * @param {*} date
@@ -301,6 +301,7 @@ export default {
       console.log('onPanelChange date', date)
       console.log('onPanelChange type', type)
     },
+
     /**
      *  在选择一天的时候，onSelectDate  changeCalendar两个回调方法都会触发，而且参数一样
      * @param {*} date
@@ -317,12 +318,73 @@ export default {
     // },
 
     onItemCheck(index) {
-      this.itemData[index].isChecked = !this.itemData[index].isChecked
+      //关闭就是删除，打开就是新增
+      if (!this.itemData[index].isChecked) {
+        //新增
+        this.addRecord(index)
+      } else {
+        this.deleteRecord(index)
+      }
+    },
+
+    addRecord(index) {
+      let addParams = {
+        clinicType: '0',
+        yljgdm: '444885559',
+        departmentCode: this.chooseDeptItemDoc.departmentId,
+        doctorRank: this.chooseDeptItemDoc.professionalTitle,
+        doctorId: this.chooseDeptItemDoc.userId,
+        doctorName: this.chooseDeptItemDoc.userName,
+        schedulingDate: this.chooseDay,
+        periodTime: this.itemData[index].id,
+        // createBy: null,
+        // updateBy: null,
+        /**
+         *   {
+            id: 1,
+            scheduleId: '10',
+            serviceType: 'textNum',
+            serviceName: '图文咨询',
+            num: 100,
+          },
+         */
+        detailInfo: [],
+      }
+
+      for (let i = 0; i < this.itemData[index].itemServiceData.length; i++) {
+        if (this.itemData[index].itemServiceData[i].num == 0) {
+          this.$message.error('请输入' + this.itemData[index].itemServiceData[i].value + '数量大于0')
+          return
+        }
+
+        //如果数字都没有问题，则组装数据上报
+        addParams.detailInfo.push({
+          serviceType: this.itemData[index].itemServiceData[i].code,
+          serviceName: this.itemData[index].itemServiceData[i].value,
+          num: this.itemData[index].itemServiceData[i].num,
+        })
+      }
+
+      saveDoctorSchedule(addParams).then((res) => {
+        if (res.code == 0) {
+          this.itemData[index].isChecked = !this.itemData[index].isChecked
+          this.$message.success('保存成功')
+        }
+      })
+    },
+
+    deleteRecord(index) {
+      let deleteParams = {}
+      delDoctorSchedule(this.queryParamSource).then((res) => {
+        if (res.code == 0) {
+        }
+      })
     },
 
     // 日历方法
     getListData(value) {
       let listData
+      console.log('getListData value', value)
       switch (value.date()) {
         case 8:
           listData = [
@@ -350,6 +412,18 @@ export default {
         default:
       }
       return listData || []
+    },
+
+    isInside(value) {
+      let day = value.date()
+      let canFind = this.days.find(value.date())
+      console.log('value', value)
+      console.log('this.days', this.days)
+      if (canFind) {
+        return true
+      } else {
+        return false
+      }
     },
 
     getMonthData(value) {
@@ -389,23 +463,26 @@ export default {
     },
 
     getDocs() {
-      getDoctorList(this.queryParam).then((res) => {
+      getUserList(this.queryParam).then((res) => {
         if (res.code == 0) {
-          this.originDataDoc = res.data
+          this.originDataDoc = res.data.rows
 
           for (let i = 0; i < res.data.length; i++) {
             // this.$set(res.data[i], 'xh', i + 1)
             if (i == 0) {
-              this.$set(res.data[i], 'isChecked', true)
+              this.$set(res.data.rows[i], 'isChecked', true)
             } else {
-              this.$set(res.data[i], 'isChecked', false)
+              this.$set(res.data.rows[i], 'isChecked', false)
             }
           }
-          this.deptDataDoc = res.data
+          this.deptDataDoc = res.data.rows
           this.keshiDataTempDoc = JSON.parse(JSON.stringify(this.originDataDoc))
 
           this.chooseDeptItemDoc = JSON.parse(JSON.stringify(this.originDataDoc[0]))
           this.queryParamSource.docId = this.chooseDeptItemDoc.userId //病区名称暂时不传
+          // this.onDeptChooseDoc(0)
+          // this.deptDataDoc[0].isChecked = true
+          this.$set(this.deptDataDoc[0], 'isChecked', true)
           this.getScheduleInfoOut()
           // this.getDocs()
           //TODO  请求第一个医生的号源
@@ -433,7 +510,6 @@ export default {
     },
 
     handleSearchDoc(inputName) {
-      debugger
       if (inputName) {
         this.keshiDataTempDoc = this.originDataDoc.filter((item) => item.userName.indexOf(inputName) != -1)
       } else {
@@ -446,13 +522,13 @@ export default {
       console.log('departmentId', userId)
       console.log('s2', s2)
       //选择类别
-      let index = this.getIndex(userId)
+      let index = this.getIndexDoc(userId)
       this.chooseDeptItemDoc = this.deptDataDoc.find((item) => item.userId == userId)
       console.log('index', index)
       this.onDeptChooseDoc(index)
     },
 
-    getIndex(userId) {
+    getIndexDoc(userId) {
       let myIndex = -1
       for (let index = 0; index < this.deptDataDoc.length; index++) {
         if (this.deptDataDoc[index].userId == userId) {
@@ -462,6 +538,7 @@ export default {
       }
       return myIndex
     },
+
     getIndex(departmentId) {
       let myIndex = -1
       for (let index = 0; index < this.deptData.length; index++) {
@@ -487,13 +564,12 @@ export default {
 
     onDeptChooseDoc(index) {
       for (let i = 0; i < this.deptDataDoc.length; i++) {
-        this.deptDataDoc[i].isChecked = false
+        this.$set(this.deptDataDoc[i], 'isChecked', false)
         if (i == index) {
-          this.deptDataDoc[i].isChecked = true
+          this.$set(this.deptDataDoc[i], 'isChecked', true)
           this.queryParamSource.docId = this.deptDataDoc[i].userId //病区名称暂时不传
           // this.$refs.table.refresh()
           this.getScheduleInfoOut()
-          //TODO 请求医生的号源数据
         }
       }
     },
