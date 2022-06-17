@@ -85,14 +85,20 @@
             <a-badge :status="item.type" :text="item.content" />
           </li> -->
           <!-- <div v-if="isInside(value)">已分配号源</div> -->
-          <div>已分配号源</div>
-        </ul>
-        <template slot="monthCellRender" slot-scope="value">
-          <div v-if="getMonthData(value)" class="notes-month">
-            <section>{{ getMonthData(value) }}</section>
-            <span>Backlog number</span>
+          <!-- <div v-show="false">{{ isInsideNew(value) }}</div> -->
+          <div
+            v-for="(item, index) in dutyMap[
+              value.year() + '-' + getMonth(value.month() + 1) + '-' + getMonth(value.date())
+            ]"
+            :key="index + item"
+          >
+            <!-- <div>暂未分配{{ item.data.length }}</div> -->
+            <!-- <div>已分配号源{{ item.data[0].tag }}</div> -->
+            <!-- <div>{{ isInside(value) }}</div> -->
+            <div v-if="item.length > 0" class="div-aready">已分配号源</div>
+            <div v-else class="div-not-aready">暂未分配</div>
           </div>
-        </template>
+        </ul>
       </a-calendar>
 
       <!-- 分割线 -->
@@ -147,7 +153,7 @@ import {
   saveDoctorSchedule,
   delDoctorSchedule,
 } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { getDateNow, getCurrentMonthLast, getStartAndEndDateOfMonth } from '@/utils/util'
 import moment from 'moment'
 // import { Calendar } from 'ant-design-vue'
 export default {
@@ -161,7 +167,12 @@ export default {
     return {
       adb: 123,
       selectedRowKeys: [], // Check here to configure the default column
-
+      // dutyMap: {'2022-0617':'aaa','tag':'tag1'},
+      dutyMap: {
+        '2022-06-17': { data: [] },
+        '2022-06-18': { data: [{ tag: 'tag1' }] },
+        '2022-06-19': { data: [{ tag: 'tag2' }] },
+      },
       statusData: [
         { code: 2, value: '全部' },
         { code: 0, value: '启用' },
@@ -204,6 +215,7 @@ export default {
       deptData: [],
       originData: [],
       keshiDataTemp: [],
+      currentMonth: 0,
 
       chooseDeptItemDoc: {},
       deptDataDoc: [],
@@ -217,11 +229,11 @@ export default {
 
   created() {
     this.chooseDay = moment(new Date()).format('YYYY-MM-DD')
-    this.getDeptsOut()
+    this.currentMonth = moment(new Date()).month() + 1
 
-    // let aa = { '2022-06-01': 123, '2022-06-02': { code: 1, name: 'bill' } }
-    // console.log('111', aa['2022-06-01'])
-    // console.log('222', aa['2022-06-02'])
+    // this.getEmptyDutyMap()
+
+    this.getDeptsOut()
 
     /**
      * 获取时段
@@ -250,6 +262,35 @@ export default {
   },
 
   methods: {
+    getStartAndEndDateOfMonth,
+    getMonth(month) {
+      return month > 9 ? month : '0' + month
+    },
+
+    getEmptyDutyMap() {
+      //初始化 dutyMap
+      /**
+     *       dutyMap: {
+        '2022-06-17': { data: [] },
+        '2022-06-18': { data: [{ tag: 'tag1' }] },
+        '2022-06-19': { data: [{ tag: 'tag2' }] },
+      },
+     */
+      /**根据一个月开始结束时间算天数，组装空的dutyMap用于显示日历，请求接口后将数据填充到单条数据的data数组里面 */
+      this.dutyMap = {}
+      let dayCount =
+        parseInt(this.queryParamSource.endDate.substring(8)) -
+        parseInt(this.queryParamSource.beginDate.substring(8)) +
+        1
+      console.log('dayCount', dayCount)
+      for (let index = 0; index < dayCount; index++) {
+        let dateStr = index + 1
+        let countStr = this.getMonth(dateStr)
+        this.$set(this.dutyMap, this.queryParamSource.beginDate.substring(0, 8) + countStr, { data: [] })
+      }
+      /**根据一个月开始结束时间算天数，组装空的dutyMap用于显示日历，请求接口后将数据填充到单条数据的data数组里面 */
+    },
+
     getServiceData() {
       /**
      * 获取号源服务项目列表
@@ -300,6 +341,9 @@ export default {
     onPanelChange(date, type) {
       console.log('onPanelChange date', date)
       console.log('onPanelChange type', type)
+      if (type == 'month') {
+        this.onSelectDate(date)
+      }
     },
 
     /**
@@ -309,6 +353,24 @@ export default {
     onSelectDate(date) {
       console.log('onSelectDate date', date)
       this.chooseDay = moment(date).format('YYYY-MM-DD')
+      debugger
+      //切换了月份 要重新请求月份的数据
+      let month = date.month() + 1
+      if (this.currentMonth != month) {
+        this.currentMonth = month
+        // let dateCurrent = new Date()
+        // let endDay = new Date(new Date(dateCurrent.getfullYear(), dateCurrent.getMonth() + 1, 1).setDate(0))
+        // let beginDate = new Date(dateCurrent.setDate(1))
+        // console.log('beginDate', beginDate)
+        let result = this.getStartAndEndDateOfMonth(new Date(this.chooseDay))
+
+        this.queryParamSource.beginDate = moment(result.startDate).format('YYYY-MM-DD')
+        this.queryParamSource.endDate = moment(result.endDate).format('YYYY-MM-DD')
+        console.log('queryParamSource', this.queryParamSource)
+        this.getEmptyDutyMap()
+        this.getScheduleInfoOut()
+      }
+      console.log('month onSelectDate', this.currentMonth)
       console.log('onSelectDate chooseDay', this.chooseDay)
     },
     // changeCalendar(date) {
@@ -415,21 +477,10 @@ export default {
     },
 
     isInside(value) {
-      let day = value.date()
-      let canFind = this.days.find(value.date())
       console.log('value', value)
       console.log('this.days', this.days)
-      if (canFind) {
-        return true
-      } else {
-        return false
-      }
-    },
 
-    getMonthData(value) {
-      if (value.month() === 8) {
-        return 1394
-      }
+      return value.year() + '-' + this.getMonth(value.month() + 1) + '-' + this.getMonth(value.date())
     },
     // 日历方法
 
@@ -483,6 +534,7 @@ export default {
           // this.onDeptChooseDoc(0)
           // this.deptDataDoc[0].isChecked = true
           this.$set(this.deptDataDoc[0], 'isChecked', true)
+          this.getEmptyDutyMap()
           this.getScheduleInfoOut()
           // this.getDocs()
           //TODO  请求第一个医生的号源
@@ -569,6 +621,7 @@ export default {
           this.$set(this.deptDataDoc[i], 'isChecked', true)
           this.queryParamSource.docId = this.deptDataDoc[i].userId //病区名称暂时不传
           // this.$refs.table.refresh()
+          this.getEmptyDutyMap()
           this.getScheduleInfoOut()
         }
       }
@@ -695,6 +748,20 @@ export default {
     overflow: hidden;
     background-color: white;
     width: 70% !important;
+
+    .div-aready {
+      padding: 1% 2%;
+      text-align: center;
+      color: white;
+      background-color: #3fad72;
+    }
+
+    .div-not-aready {
+      padding: 1% 2%;
+      color: white;
+      text-align: center;
+      background-color: #5b5c5e;
+    }
 
     .div-wrap-dispatch {
       margin-top: 3%;

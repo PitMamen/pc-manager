@@ -135,3 +135,23 @@ export function getCurrentMonthLast() {
   var oneDay = 1000 * 60 * 60 * 24;
   return formatDate(new Date(nextMonthFirstDay - oneDay));
 }
+
+/**
+ * 根据某一天日期 获取 当前月的第一天和最后一天的日期
+ * @param date {Date}
+ * @return {{endDate: Date, startDate: Date}}
+ */
+export function getStartAndEndDateOfMonth(date) {
+  let year = date.getFullYear() // 2021
+  const month = date.getMonth() + 1 // 0 1 2 3 4 5 6 7 8 9 10 11
+  const startDate = new Date(year + '/' + month + '/' + 1)
+  let nextMonth = month + 1
+  if (nextMonth === 13) {
+    year += 1
+    nextMonth = 1
+  }
+  const dateLong = (new Date(year + '/' + nextMonth + '/' + 1)).getTime() - 24 * 60 * 60 * 1000
+  const endDate = new Date(dateLong)
+
+  return { startDate, endDate }
+}
