@@ -105,7 +105,7 @@
       <div class="div-divider"></div>
 
       <div class="div-wrap-dispatch">
-        <div class="div-item" v-for="(item, index) in itemData" :value="item.id" :key="index">
+        <div class="div-item" v-for="(item, index) in itemData" :value="item.idPeriod" :key="index">
           <div class="item-head">
             <span class="span-time">{{ item.scheName }}</span>
             <div class="div-switch">
@@ -254,6 +254,7 @@ export default {
         this.itemData = res.data
         this.itemData.forEach((item) => {
           this.$set(item, 'isChecked', false)
+          this.$set(item, 'idPeriod', item.id)
         })
 
         this.getServiceData()
@@ -309,13 +310,15 @@ export default {
         if (res.code == 0) {
           this.itemServiceData = res.data
           this.itemServiceData.forEach((item) => {
-            this.$set(item, 'num', 0)
+            this.$set(item, 'num', 8)
           })
 
           //将 itemServiceData 绑定到 itemData 防止数据串了
           this.itemData.forEach((item) => {
             this.$set(item, 'itemServiceData', JSON.parse(JSON.stringify(this.itemServiceData)))
           })
+
+          this.originEmptyItemData = JSON.parse(JSON.stringify(this.itemData))
         }
       })
     },
@@ -324,13 +327,91 @@ export default {
         if (res.code == 0) {
           this.soureDatas = res.data
           this.soureDatas.forEach((item) => {
-            console.log('schedulingDate', moment(new Date(item.schedulingDate)).format('YYYY-MM-DD'))
-            //组装数据到每个日期的号源
-            this.days.push(new Date(item.schedulingDate).getDate())
+            this.$set(item, 'schedulingDateChange', moment(new Date(item.schedulingDate)).format('YYYY-MM-DD'))
           })
-          console.log('days', this.days)
+          console.log('soureDatas', JSON.stringify(this.soureDatas))
+
+          /**两套循环把接口数据组装到 dutyMap */
+          Object.keys(this.dutyMap).forEach((dutyKey) => {
+            // console.log('Object dutyKey', dutyKey) //这里返回单条 "2022-06-06"
+            this.soureDatas.forEach((item) => {
+              if (dutyKey == item.schedulingDateChange) {
+                this.dutyMap[dutyKey].data.push(item)
+              }
+            })
+          })
+
+          this.inputChooseDayData()
         }
       })
+    },
+
+    //填充当天数据
+    inputChooseDayData() {
+      this.itemData = []
+      if (this.dutyMap[this.chooseDay].data.length > 0) {
+        for (let index = 0; index < this.originEmptyItemData.length; index++) {
+          let haveIndex = this.dutyMap[this.chooseDay].data.findIndex((itemTemp, indexTemp) => {
+            debugger
+            console.log('idPeriodOriginEmptyItemData', this.originEmptyItemData[index].idPeriod)
+            console.log('idPeriod', itemTemp.periodsInfo.id)
+            console.log('idPeriod', itemTemp.periodsInfo.id)
+            return itemTemp.periodsInfo.id == this.originEmptyItemData[index].idPeriod
+          })
+          console.log('haveIndex', haveIndex)
+          debugger
+          if (haveIndex != -1) {
+            //有的话，用 this.dutyMap[this.chooseDay].data 里面的数据，没有的话用 originEmptyItemData 的
+            this.itemData.push({
+              code: index + 1,
+              isChecked: true,
+              scheName: this.dutyMap[this.chooseDay].data[haveIndex].periodsInfo.scheName,
+              idPeriod: this.dutyMap[this.chooseDay].data[haveIndex].periodsInfo.id, //班次时段id
+              id: this.dutyMap[this.chooseDay].data[haveIndex].id, //单条数据id
+              itemServiceData: [],
+            })
+
+            this.dutyMap[this.chooseDay].data[haveIndex].detailInfo.forEach((itemService, indexService) => {
+              // debugger
+              this.itemData[this.itemData.length - 1].itemServiceData.push({
+                code: index + 1,
+                isChecked: true,
+                id: itemService.id,
+                num: itemService.num,
+                value: itemService.serviceName,
+                code: itemService.serviceType, //班次时段id
+              })
+            })
+          } else {
+            this.itemData.push(JSON.parse(JSON.stringify(this.originEmptyItemData[index])))
+          }
+        }
+
+        // this.dutyMap[this.chooseDay].data.forEach((item, index) => {
+        //   //没有的先补齐
+        //   this.itemData.push({
+        //     code: index + 1,
+        //     isChecked: true,
+        //     scheName: item.periodsInfo.scheName,
+        //     idPeriod: item.periodsInfo.id, //班次时段id
+        //     id: item.id, //单条数据id
+        //     itemServiceData: [],
+        //   })
+        //   item.detailInfo.forEach((itemService, indexService) => {
+        //     debugger
+        //     this.itemData[index].itemServiceData.push({
+        //       code: index + 1,
+        //       isChecked: true,
+        //       id: itemService.id,
+        //       num: itemService.num,
+        //       value: itemService.serviceName,
+        //       code: itemService.serviceType, //班次时段id
+        //     })
+        //   })
+        // })
+      } else {
+        this.itemData = JSON.parse(JSON.stringify(this.originEmptyItemData))
+      }
     },
 
     /**
@@ -369,6 +450,8 @@ export default {
         console.log('queryParamSource', this.queryParamSource)
         this.getEmptyDutyMap()
         this.getScheduleInfoOut()
+      } else {
+        this.inputChooseDayData()
       }
       console.log('month onSelectDate', this.currentMonth)
       console.log('onSelectDate chooseDay', this.chooseDay)
@@ -431,14 +514,17 @@ export default {
         if (res.code == 0) {
           this.itemData[index].isChecked = !this.itemData[index].isChecked
           this.$message.success('保存成功')
+          this.getScheduleInfoOut()
         }
       })
     },
 
     deleteRecord(index) {
-      let deleteParams = {}
-      delDoctorSchedule(this.queryParamSource).then((res) => {
+      delDoctorSchedule({ id: this.itemData[index].id }).then((res) => {
         if (res.code == 0) {
+          this.$message.success('删除成功')
+          this.dutyMap[this.chooseDay].data = []
+          this.getScheduleInfoOut()
         }
       })
     },
@@ -620,6 +706,7 @@ export default {
         if (i == index) {
           this.$set(this.deptDataDoc[i], 'isChecked', true)
           this.queryParamSource.docId = this.deptDataDoc[i].userId //病区名称暂时不传
+          this.chooseDeptItemDoc = this.deptDataDoc[i]
           // this.$refs.table.refresh()
           this.getEmptyDutyMap()
           this.getScheduleInfoOut()
