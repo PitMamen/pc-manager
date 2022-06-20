@@ -310,7 +310,7 @@ export default {
         if (res.code == 0) {
           this.itemServiceData = res.data
           this.itemServiceData.forEach((item) => {
-            this.$set(item, 'num', 8)
+            this.$set(item, 'num', 0)
           })
 
           //将 itemServiceData 绑定到 itemData 防止数据串了
@@ -497,10 +497,10 @@ export default {
       }
 
       for (let i = 0; i < this.itemData[index].itemServiceData.length; i++) {
-        if (this.itemData[index].itemServiceData[i].num == 0) {
-          this.$message.error('请输入' + this.itemData[index].itemServiceData[i].value + '数量大于0')
-          return
-        }
+        // if (this.itemData[index].itemServiceData[i].num == 0) {
+        //   this.$message.error('请输入' + this.itemData[index].itemServiceData[i].value + '数量大于0')
+        //   return
+        // }
 
         //如果数字都没有问题，则组装数据上报
         addParams.detailInfo.push({
