@@ -127,14 +127,13 @@ export default {
       ],
       functionData: [
         { code: -1, id: '', value: '全部' },
-        { code: 0, id: '0', value: '健康在线' },
+        { code: 0, id: '0', value: '健康管家在线' },
         { code: 1, id: '1', value: '互联网医院' },
       ],
       partChoose: '',
 
       queryParams: {
-        // functionType 0:健康在线 1:互联网医院
-        functionType: -1, //业务类型：健康在线 1:互联网医院
+        functionType: -1, //业务类型：健康管家在线 1:互联网医院
         endOrderTime: '',
         startOrderTime: '',
         orderId: '',
@@ -222,7 +221,7 @@ export default {
             this.$set(
               res.data.rows[i],
               'functionTypeName',
-              res.data.rows[i].functionType == 0 ? '健康在线' : '互联网医院'
+              res.data.rows[i].functionType == 0 ? '健康管家在线' : '互联网医院'
             )
 
             //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
