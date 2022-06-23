@@ -5,7 +5,8 @@
         <a-form layout="inline">
           <a-row :gutter="48">
             <a-col :md="3" :sm="24">
-              <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
+              <!-- <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button> -->
+              <a-button type="primary" @click="goAdd()">新增内容</a-button>
             </a-col>
 
             <a-col :md="7" :sm="24">
@@ -48,7 +49,8 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.editForm.edit(record)">编辑</a>
+          <!-- <a @click="$refs.editForm.edit(record)">编辑</a> -->
+          <a @click="goChange(record)">编辑</a>
           <a-divider type="vertical" />
           <a-popconfirm placement="topRight" title="确认删除？" @confirm="() => delKnowledge(record)">
             <a>删除</a>
@@ -127,27 +129,6 @@ export default {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
             this.$set(res.data.rows[i], 'updateTimeOut', this.formatDate(res.data.rows[i].updateTime))
-
-            ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
-            // this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
-            // console.log('ddd', res.data.rows[i].execFlag)
-            // if (res.data.rows[i].execFlag == 0) {
-            //   this.$set(res.data.rows[i], 'statusText', '已申请')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // } else if (res.data.rows[i].execFlag == 1) {
-            //   this.$set(res.data.rows[i], 'statusText', '已完成')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // } else if (res.data.rows[i].execFlag == 2) {
-            //   this.$set(res.data.rows[i], 'statusText', '未接诊')
-            //   this.$set(res.data.rows[i], 'btnText', '提醒医生')
-            //   this.$set(res.data.rows[i], 'canAsk', true)
-            // } else if (res.data.rows[i].execFlag == 3) {
-            //   this.$set(res.data.rows[i], 'statusText', '已中止')
-            //   this.$set(res.data.rows[i], 'btnText', '聊天记录')
-            //   this.$set(res.data.rows[i], 'canAsk', false)
-            // }
           }
           return res.data
         })
@@ -169,6 +150,15 @@ export default {
   },
 
   methods: {
+    goAdd() {
+      this.$router.push({ name: 'wise_robot_add', params: null })
+    },
+
+    goChange(record) {
+      console.log(record)
+      this.$router.push({ name: 'wise_robot_edit', query: { recordStr: JSON.stringify(record) } })
+    },
+
     formatDate(date) {
       date = new Date(date)
       let myyear = date.getFullYear()
