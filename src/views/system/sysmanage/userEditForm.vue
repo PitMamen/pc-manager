@@ -121,13 +121,20 @@
           >
             <a-radio :value="3"> 医生 </a-radio>
             <a-radio :value="4" style="width: 100px"> 个案管理师 </a-radio>
-            <a-radio :value="5" style="width: 100px"> 护士 </a-radio>
+            <a-radio :value="5"> 护士 </a-radio>
+            <a-radio :value="6" style="width: 100px"> 客服 </a-radio>
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
           </a-radio-group>
         </a-form-item>
 
         <!-- v-show="radioValue == 4" -->
-        <a-form-item label="管理科室" v-show="ifCan" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item
+          label="管理科室"
+          v-show="ifCan && radioValue == 4"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
           <a-select
             allow-clear
             mode="multiple"
@@ -188,7 +195,7 @@ export default {
       //   this.ifCan = true
       //   console.log('this.ifCan', this.ifCan)
       // }.
-      if (this.record.roleId == 4) {
+      if (this.record.roleId == 4 || this.record.roleId == 6) {
         console.log('can1', this.ifCan)
         this.ifCan = true
       } else {
@@ -272,7 +279,21 @@ export default {
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
 
         this.ifCan = false
-        this.radioValue = 3
+        this.radioValue = 5
+      } else if (event.target.value == 6) {
+        //客服也跟个案管理师一样，写死病友服务中心，但是不需要选择科室
+        console.log('radioChange4', this.keshiData)
+        this.keshiData.unshift({
+          departmentId: 1,
+          departmentName: '病友服务中心',
+          hospitalId: 1,
+          parentId: 0,
+          children: null,
+        })
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+        //客服选也不需要
+        this.ifCan = true
+        this.radioValue = 6
       }
     },
 
@@ -304,7 +325,8 @@ export default {
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
           this.keshiData.shift()
 
-          if (this.record.departmentId == 1) {
+          this.radioValue = this.record.roleId
+          if (this.radioValue == 4 || this.radioValue == 6) {
             this.keshiData.unshift({
               departmentId: 1,
               departmentName: '病友服务中心',
@@ -314,15 +336,16 @@ export default {
             })
             this.ifCan = true
             console.log('can4', this.ifCan)
-            this.radioValue = 4
+            // this.radioValue = 4
           } else {
             this.ifCan = false
-            this.radioValue = 3
+            // this.radioValue = 3
             console.log('can5', this.ifCan)
           }
           setTimeout(() => {
             console.log('departmentId', this.record.departmentId)
             console.log('record', this.record)
+
             this.form.setFieldsValue({
               loginName: this.record.loginName,
               // password: this.record.password,

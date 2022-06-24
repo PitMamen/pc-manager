@@ -91,17 +91,6 @@
               </template>
             </a-auto-complete>
           </div>
-
-          <!-- <a-select
-            allow-clear
-            :disabled="ifCan"
-            placeholder="请选择所属部门"
-            v-decorator="['departmentId', { rules: [{ required: true, message: '请选择所属部门' }] }]"
-          >
-            <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
-              item.departmentName
-            }}</a-select-option>
-          </a-select> -->
         </a-form-item>
 
         <a-form-item
@@ -126,7 +115,8 @@
           >
             <a-radio :value="3"> 医生 </a-radio>
             <a-radio :value="4"> 个案管理师 </a-radio>
-            <a-radio :value="5" style="width: 100px"> 护士 </a-radio>
+            <a-radio :value="5"> 护士 </a-radio>
+            <a-radio :value="6" style="width: 100px"> 客服 </a-radio>
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
           </a-radio-group>
         </a-form-item>
@@ -134,7 +124,13 @@
           v-decorator="['password', { rules: [{ required: true, message: '请输入密码' }, { validator: handlePass }] }]"
           name="password"
         /> -->
-        <a-form-item label="管理科室" v-show="ifCan" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-form-item
+          label="管理科室"
+          v-show="ifCan && radioValue == 4"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
           <a-select
             allow-clear
             mode="multiple"
@@ -248,7 +244,7 @@ export default {
       if (event.target.value == 3) {
         //添加
 
-        if ((this.radioValue == 4)) {
+        if (this.radioValue == 4) {
           this.keshiData.shift()
         }
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
@@ -270,13 +266,27 @@ export default {
         this.radioValue = 4
       } else if (event.target.value == 5) {
         //添加
-        if ((this.radioValue == 4)) {
+        if (this.radioValue == 4) {
           this.keshiData.shift()
         }
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
 
         this.ifCan = false
-        this.radioValue = 3
+        this.radioValue = 5
+      } else if (event.target.value == 6) {
+        //客服也跟个案管理师一样，写死病友服务中心，但是不需要选择科室
+        console.log('radioChange4', this.keshiData)
+        this.keshiData.unshift({
+          departmentId: 1,
+          departmentName: '病友服务中心',
+          hospitalId: 1,
+          parentId: 0,
+          children: null,
+        })
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+        //客服选也不需要
+        this.ifCan = true
+        this.radioValue = 6
       }
     },
 
