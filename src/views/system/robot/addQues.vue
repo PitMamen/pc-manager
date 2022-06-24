@@ -5,8 +5,8 @@
         <div class="div-total-one">
           <span class="span-item-name"><span style="color: red">*</span> 所属类别 :</span>
           <a-select v-model="checkData.knowledgeType" allow-clear placeholder="请选择所属类别">
-            <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.diseaseName">{{
-              item.diseaseName
+            <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+              item.value
             }}</a-select-option>
           </a-select>
         </div>
@@ -43,7 +43,7 @@
 
 
 <script type="text/javascript">
-import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
+import { saveSysKnowledge, qryCodeValue } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { appId } from '@/utils/util'
@@ -59,32 +59,9 @@ export default {
       advanced: false,
       checkData: {
         title: '',
-        brief: '', //描述
-        categoryName: '', //科室名称
-        categoryId: '', //科室代码
-        articleType: '', //专病
+        knowledgeType: '',
         content: '', //内容
       },
-
-      ksTypeData: [],
-
-      keshiData: {},
-      // 加载数据方法 必须为 Promise 对象
-      loadData: (parameter) => {
-        return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
-          return res.data
-        })
-      },
-      actionUrlCover: '/api/contentapi/fileUpload/uploadImgFileForWX',
-      fileList: [],
-      previewVisible: false,
-      previewImage: '',
-      diseaseData: [],
-      selectedRowKeys: [],
-      selectedRows: [],
-
-      chooseDeptItem: {},
-      ksTypeDataTemp: [],
 
       statusData: [],
     }
@@ -100,199 +77,47 @@ export default {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
-
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.ksTypeData = res.data
-        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
-      }
-    })
   },
 
   methods: {
-    handleChangeDept(code) {
-      this.getDiseasesOut(code)
-    },
-
-    /**
-     *autoComplete回调，本地模拟的数据处理
-     */
-    handleSearch(inputName) {
-      if (inputName) {
-        this.ksTypeDataTemp = this.ksTypeData.filter((item) => item.departmentName.indexOf(inputName) != -1)
-      } else {
-        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
-      }
-    },
-
-    onSelect(departmentId) {
-      //选择类别
-      this.checkData.categoryId = departmentId
-      this.chooseDeptItem = this.ksTypeData.find((item) => item.departmentId == departmentId)
-      this.getDiseasesOut(departmentId)
-    },
-
-    async handlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
-      }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
-    },
-
-    getBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = (error) => reject(error)
-      })
-    },
-
-    // handleChange({ fileList }) {
-    //   this.fileList = fileList
-    //   if (this.fileList.length > 1) {
-    //     let newData = this.fileList[0]
-    //     this.fileList = [newData]
-    //   }
-    // },
-
-    handleChange(changeObj) {
-      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
-        this.$message.error(changeObj.file.response.message)
-        changeObj.fileList.pop()
-        this.fileList = changeObj.fileList
-      } else {
-        this.fileList = changeObj.fileList
-      }
-    },
-
-    handleCancel() {
-      this.previewVisible = false
-    },
-
-    getDiseasesOut(departmentId) {
-      getDiseases({ departmentId: departmentId }).then((res) => {
-        if (res.code == 0) {
-          this.diseaseData = res.data
-        } else {
-          this.$message.error('获取专病列表失败：' + res.message)
-        }
-      })
-    },
-
     goConfirm() {
       console.log('goConfirmCheckData', this.checkData)
+      if (!this.checkData.knowledgeType) {
+        this.$message.error('请选择所属类别')
+        return
+      }
       if (!this.checkData.title) {
-        this.$message.error('请填写标题')
+        this.$message.error('请输入内容标题')
         return
-      }
-      if (!this.checkData.brief) {
-        this.$message.error('请填写描述')
-        return
-      }
-      if (!this.checkData.categoryId) {
-        this.$message.error('请选择科室')
-        return
-      }
-      if (!this.checkData.articleType) {
-        this.$message.error('请选择专病')
-        return
-      }
-
-      //组装图片
-      if (this.fileList.length == 0) {
-        this.$message.error('请上传图片！')
-        return
-      } else {
-        this.checkData.extraData = this.fileList[0].response.data.mediaId
-        this.checkData.previewUrl = this.fileList[0].response.data.url
       }
 
       if (!this.checkData.content) {
         this.$message.error('请编辑内容')
         return
       }
-
-      this.ksTypeData.forEach((item) => {
-        if (this.checkData.categoryId == item.departmentId) this.checkData.categoryName = item.departmentName
+      let chooseOne = this.statusData.find((item) => {
+        return item.code == this.checkData.knowledgeType
       })
+      this.$set(this.checkData, 'typeName', chooseOne.value)
 
-      //todo 写死的
       let user = Vue.ls.get(TRUE_USER)
-      this.checkData.publisherName = user.userName
-      this.checkData.source = 'weixin'
-      this.checkData.publisherUserId = user.userId
-      //作者，只有新增的时候才传的字段
-      this.checkData.author = user.userName
-
-      //contentSourceUrl、digest、url不管
-      let articleList = [
-        {
-          thumbMediaId: this.checkData.extraData,
-          author: this.checkData.publisherName,
-          title: this.checkData.title,
-          content: this.checkData.content,
-          showCoverPic: 0,
-          needOpenComment: 0,
-          onlyFansCanComment: 0,
-        },
-      ]
-      saveArticleWeixin(articleList).then((res) => {
-        if (res.code == 0) {
-          // this.$message.success('保存成功')
-          // this.$router.go(-1)
-          // this.checkData.templateId = res.data.data
-          this.$set(this.checkData, 'templateId', res.data)
-          saveArticle(this.checkData).then((res) => {
-            if (res.code == 0) {
-              this.$message.success('保存成功')
-              this.$router.go(-1)
-            } else {
-              this.$message.error(res.message)
-            }
-          })
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+      this.$set(this.checkData, 'creator', user.userName)
+      saveSysKnowledge(this.checkData)
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('保存成功')
+            this.$router.go(-1)
+          } else {
+            this.$message.error('保存失败：' + res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     goBack() {
       window.history.back()
-    },
-
-    handleStatus(record) {
-      record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
-      changeStatus(record)
-        .then((res) => {
-          if (res.success) {
-            this.$message.success('切换成功')
-            this.$refs.table.refresh()
-          } else {
-            this.$message.error('切换失败：' + res.message)
-          }
-        })
-        .catch((err) => {
-          this.$message.error('切换错误：' + err.message)
-        })
-    },
-
-    goHistoryDetail() {
-      window.open(
-        'http://www.mclouds.org.cn:30000/patient-view.html?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMTk4IiwiZXhwIjoxNjQwODY2NjQxfQ.p8rozkAXsPzdBDeAkck3NjUI7iBYWM_4UA4A22rlbElPNYiZMthDnLQ0jhJIk8CpnRJEPfoi11Fybs2bajSb2hnGpVegVqTae_fxc30qL4sXPVPpvG_88ehhylBDtetVXpvJkkETQXq5ZWSfaItrBGZqr0r2NwPJIon6gy-NKditLhu8T7RPYj65qVsh7mX6gr-rhfnC9Ol4gRHjAyxiKm33M_sCn3ELMhDchjHrjE8WfllrT1mfaiP7kB4eDas9FB2D3zpAEb3EWHHdweQIsY8DTidslqjN-OkpjJsnXfahRoHEeiWiagkNzAhNM3-zcsQykvmrVzab2u_PhG-u3g&no=000006392145&type=9',
-        '_blank'
-      )
-    },
-
-    onChange() {},
-
-    handleOk() {
-      this.$refs.table.refresh()
-    },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
     },
   },
   mounted() {
@@ -334,35 +159,14 @@ export default {
     ]
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
-    // editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
-    // editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
-    editor.config.uploadImgServer = '/api/pushapi/health/wx/' + appId + '/uploadInnerImg'
+    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
 
     //教育文章先不支持视频，所以注释
     // editor.config.uploadVideoName = 'file'
     // editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
 
     editor.create()
-
-    var articleId = this.$route.params.articleId
-    if (this.$route.params.articleId) {
-      document.title = '修改教育文章'
-    } else {
-      document.title = '新增教育文章'
-    }
-    console.log('articleId', articleId)
-    if (articleId) {
-      getArticleById(articleId).then((res) => {
-        if (res.code == 0) {
-          this.checkData = res.data
-          this.checkData.categoryId = parseInt(this.checkData.categoryId)
-          editor.txt.html(res.data.content)
-          this.getDiseasesOut(this.checkData.categoryId)
-        } else {
-          this.$message.error('获取失败：' + res.message)
-        }
-      })
-    }
+    document.title = '新增问题'
   },
 }
 </script>
