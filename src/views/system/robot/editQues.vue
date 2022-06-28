@@ -27,11 +27,36 @@
 
       <div class="div-line-wrap">
         <div class="div-total-one">
+          <span class="span-item-name"><span style="color: red">*</span> 内容类型 :</span>
+          <a-radio-group
+            name="radioGroup"
+            v-model="checkData.remark"
+            disabled
+            style="width: 300px"
+            :default-value="0"
+            @change="radioChange"
+          >
+            <a-radio :value="0"> 文本普通 </a-radio>
+            <a-radio :value="1"> 富文本 </a-radio>
+          </a-radio-group>
+        </div>
+      </div>
+
+      <div class="div-line-wrap">
+        <div class="div-total-one">
           <span class="span-item-name"><span style="color: red">*</span>内容详情 :</span>
         </div>
       </div>
 
-      <div id="div1" style="margin-top: 3%"></div>
+      <div v-show="checkData.remark == 0" class="div-line-wrap">
+        <a-textarea
+          placeholder="请输入内容详情"
+          style="margin-left: 0 !important; margin-top: 1%"
+          v-model="checkData.content"
+        />
+      </div>
+
+      <div v-show="checkData.remark == 1" id="div1" style="margin-top: 3%"></div>
     </div>
 
     <div style="margin-top: 30px">
@@ -58,6 +83,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       checkData: {
+        remark: 0,
         title: '',
         knowledgeType: '',
         content: '', //内容
@@ -80,6 +106,16 @@ export default {
   },
 
   methods: {
+    radioChange(event) {
+      //普通文本
+      if (event.target.value == 0) {
+        this.checkData.remark = 0
+        this.checkData.content = ''
+      } else if (event.target.value == 1) {
+        this.checkData.remark = 1
+      }
+    },
+
     goConfirm() {
       console.log('goConfirmCheckData', this.checkData)
       if (!this.checkData.knowledgeType) {
@@ -122,6 +158,8 @@ export default {
   },
   mounted() {
     this.checkData = JSON.parse(this.$route.query.recordStr)
+    this.checkData.remark = parseInt(this.checkData.remark)
+    console.log('fff', this.checkData)
     var editor = new E('#div1')
 
     editor.config.height = 600
@@ -129,7 +167,9 @@ export default {
     console.log('editor', editor)
     console.log('editorconfig', editor.config)
     editor.config.onchange = (html) => {
-      this.checkData.content = html
+      if (this.checkData.remark == 1) {
+        this.checkData.content = html
+      }
     }
     // 默认情况下，显示所有菜单
     editor.config.menus = [

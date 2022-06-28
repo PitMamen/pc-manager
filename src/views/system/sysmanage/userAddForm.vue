@@ -9,6 +9,33 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
+        <a-form-item
+          label="头像"
+          v-show="radioValue == 3 || radioValue == 5"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <div class="clearfix" style="margin-top: 20px">
+            <a-upload
+              :action="actionUrl"
+              :multiple="true"
+              list-type="picture-card"
+              :file-list="fileList"
+              @preview="handlePreview"
+              @change="handleChange"
+            >
+              <div v-if="fileList.length < 1">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">Upload</div>
+              </div>
+            </a-upload>
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
+          </div>
+        </a-form-item>
+
         <a-form-item label="登录账号" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <a-input
             placeholder="请输入登录账号"
@@ -120,6 +147,47 @@
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
           </a-radio-group>
         </a-form-item>
+
+        <a-form-item
+          label="职级"
+          v-show="radioValue == 3 || radioValue == 5"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <a-input
+            placeholder="请输入职级"
+            v-decorator="['professionalTitle', { rules: [{ required: false, message: '请输入职级！' }] }]"
+          />
+        </a-form-item>
+
+        <a-form-item
+          v-show="radioValue == 3 || radioValue == 5"
+          label="擅长"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <a-input
+            placeholder="请输入擅长"
+            v-decorator="['expertInDisease', { rules: [{ required: false, message: '请输入擅长！' }] }]"
+          />
+        </a-form-item>
+
+        <!-- style="margin-left: 0 !important; margin-top: 1%" -->
+        <a-form-item
+          label="个人简介"
+          v-show="radioValue == 3 || radioValue == 5"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <a-textarea
+            placeholder="请输入个人简介"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入个人简介！' }] }]"
+          />
+        </a-form-item>
+
         <!-- <a-input
           v-decorator="['password', { rules: [{ required: true, message: '请输入密码' }, { validator: handlePass }] }]"
           name="password"
@@ -175,6 +243,11 @@ export default {
       form: this.$form.createForm(this),
       chooseDeptItem: {},
       keshiDataTemp: [],
+
+      fileList: [],
+      previewVisible: false,
+      previewImage: '',
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
     }
   },
 
@@ -185,6 +258,7 @@ export default {
   methods: {
     //初始化方法
     add() {
+      this.fileList = []
       this.visible = true
       this.ifCan = false
       setTimeout(() => {
@@ -201,6 +275,39 @@ export default {
         this.keshiData.shift()
         this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
       }
+    },
+
+    handleChange(changeObj) {
+      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileList = changeObj.fileList
+      } else {
+        this.fileList = changeObj.fileList
+      }
+
+      // this.fileList = fileList
+      // if (this.fileList.length > 1) {
+      //   let newData = this.fileList[0]
+      //   this.fileList = [newData]
+      // }
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
     },
 
     isPassword(rule, value, callback) {
@@ -242,7 +349,7 @@ export default {
 
     radioChange(event) {
       if (event.target.value == 3) {
-        //添加
+        //添加医生
 
         if (this.radioValue == 4) {
           this.keshiData.shift()
@@ -265,7 +372,7 @@ export default {
         this.ifCan = true
         this.radioValue = 4
       } else if (event.target.value == 5) {
-        //添加
+        //添加护士
         if (this.radioValue == 4) {
           this.keshiData.shift()
         }
@@ -321,6 +428,16 @@ export default {
         console.log('values', values)
         console.log('errors', errors)
         if (!errors) {
+          //组装头像图片  只有医生护士才有头像 职级 擅长 简介
+          if (this.fileList.length > 0) {
+            this.$set(values, 'avatarUrl', '')
+            if (this.fileList[0].response) {
+              values.avatarUrl = this.fileList[0].response.data.fileLinkUrl
+            } else {
+              values.avatarUrl = this.fileList[0].url
+            }
+          }
+
           console.log('createDoctorUser', values)
           this.$set(values, 'departmentId', this.chooseDeptItem.departmentId)
           if (this.isOpen) {

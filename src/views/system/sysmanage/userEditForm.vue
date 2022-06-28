@@ -9,6 +9,33 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
+        <a-form-item
+          label="头像"
+          v-show="radioValue == 3 || radioValue == 5"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <div class="clearfix" style="margin-top: 20px">
+            <a-upload
+              :action="actionUrl"
+              :multiple="true"
+              list-type="picture-card"
+              :file-list="fileList"
+              @preview="handlePreview"
+              @change="handleChange"
+            >
+              <div v-if="fileList.length < 1">
+                <a-icon type="plus" />
+                <div class="ant-upload-text">Upload</div>
+              </div>
+            </a-upload>
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
+          </div>
+        </a-form-item>
+
         <a-form-item label="登录账号" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
           <!-- v-decorator="['loginName', { rules: [{ required: true, message: '请输入登录账号！' }] }]" -->
           <a-input
@@ -127,6 +154,46 @@
           </a-radio-group>
         </a-form-item>
 
+        <a-form-item
+          label="职级"
+          v-show="radioValue == 3 || radioValue == 5"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <a-input
+            placeholder="请输入职级"
+            v-decorator="['professionalTitle', { rules: [{ required: false, message: '请输入职级！' }] }]"
+          />
+        </a-form-item>
+
+        <a-form-item
+          v-show="radioValue == 3 || radioValue == 5"
+          label="擅长"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <a-input
+            placeholder="请输入擅长"
+            v-decorator="['expertInDisease', { rules: [{ required: false, message: '请输入擅长！' }] }]"
+          />
+        </a-form-item>
+
+        <!-- style="margin-left: 0 !important; margin-top: 1%" -->
+        <a-form-item
+          label="个人简介"
+          v-show="radioValue == 3 || radioValue == 5"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+        >
+          <a-textarea
+            placeholder="请输入个人简介"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入个人简介！' }] }]"
+          />
+        </a-form-item>
+
         <!-- v-show="radioValue == 4" -->
         <a-form-item
           label="管理科室"
@@ -180,6 +247,11 @@ export default {
       form: this.$form.createForm(this),
       chooseDeptItem: {},
       keshiDataTemp: [],
+
+      fileList: [],
+      previewVisible: false,
+      previewImage: '',
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
     }
   },
 
@@ -188,6 +260,7 @@ export default {
   methods: {
     //初始化方法
     edit(record) {
+      this.fileList = []
       this.record = record
       this.visible = true
 
@@ -205,6 +278,13 @@ export default {
 
       this.getDeptsOut()
       this.chooseDeptItem = { departmentName: record.departmentName, departmentId: record.departmentId }
+
+      this.fileList.push({
+        uid: '-1',
+        name: '封面' + 1,
+        status: 'done',
+        url: this.record.avatarUrl,
+      })
 
       //处理打开后又关闭的逻辑,默认显示第一个
       // let has = this.keshiData.some((item) => {
@@ -237,18 +317,38 @@ export default {
       this.isOpen = this.isOpen ? false : true
     },
 
+    handleChange(changeObj) {
+      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileList = changeObj.fileList
+      } else {
+        this.fileList = changeObj.fileList
+      }
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
     radioChange(event) {
       console.log('radioChange', event)
       if (event.target.value == 3) {
         //添加
         this.keshiData.shift()
-        // setTimeout(() => {
-        //   this.form.setFieldsValue({
-        //     departmentId: this.keshiData[0].departmentId,
-        //   })
-
-        //   //TODO 状态处理
-        // }, 100)
 
         if (this.radioValue == 4) {
           this.keshiData.shift()
@@ -356,6 +456,9 @@ export default {
               phone: this.record.phone,
               departmentId: this.record.departmentId,
               caseManageIds: this.record.caseManageIds,
+              professionalTitle: this.record.professionalTitle,
+              expertInDisease: this.record.expertInDisease,
+              doctorBrief: this.record.doctorBrief,
             })
           }, 100)
 
@@ -381,6 +484,18 @@ export default {
         console.log('values', values)
         console.log('errors', errors)
         if (!errors) {
+          if (this.fileList.length > 0) {
+            this.$set(values, 'avatarUrl', '')
+            if (this.fileList[0].response) {
+              values.avatarUrl = this.fileList[0].response.data.fileLinkUrl
+            } else {
+              values.avatarUrl = this.fileList[0].url
+            }
+          } else {
+            this.$message.error('请上传头像')
+            return
+          }
+
           console.log('createDoctorUser', values)
           this.$set(values, 'departmentId', this.chooseDeptItem.departmentId)
           if (this.isOpen) {
