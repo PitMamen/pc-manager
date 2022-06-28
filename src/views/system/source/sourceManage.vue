@@ -107,7 +107,7 @@
       <div class="div-wrap-dispatch">
         <div class="div-item" v-for="(item, index) in itemData" :value="item.idPeriod" :key="index">
           <div class="item-head">
-            <span class="span-time">{{ item.scheName }}</span>
+            <span class="span-time" style="border: none">{{ item.scheName }}</span>
             <div class="div-switch">
               <a-switch :checked="item.isChecked" @click="onItemCheck(index)" />
             </div>
