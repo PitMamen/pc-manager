@@ -1101,3 +1101,38 @@ export function delDoctorSchedule(data) {
     data: data,
   })
 }
+
+/**
+ * 
+ * 电子处方列表
+ */
+ export function qryMedicalOrdersListUsePc(data) {
+  return axios({
+    url: '/bdcApi/prescription/qryMedicalOrdersListUsePc',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 电子处方详情
+ */
+ export function getMedicalOrdersDetail(data) {
+  return axios({
+    url: '/bdcApi/prescription/getMedicalOrdersDetail',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 
+ * 处方订单列表
+ */
+ export function qryOrdersList(data) {
+  return axios({
+    url: '/bdcApi/prescription/qryOrdersList',
+    method: 'post',
+    data: data,
+  })
+}
