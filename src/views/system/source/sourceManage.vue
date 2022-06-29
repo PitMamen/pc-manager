@@ -136,6 +136,10 @@
               />
             </div>
           </div>
+
+          <a-button style="width: 60px; margin-left: 65%; margin-top: 5%" type="primary" @click="goSave(index)"
+            >保存</a-button
+          >
         </div>
       </div>
     </div>
@@ -333,9 +337,11 @@ export default {
 
           /**两套循环把接口数据组装到 dutyMap */
           Object.keys(this.dutyMap).forEach((dutyKey) => {
+            this.dutyMap[dutyKey].data =[]//把每天对象的，数组先置空，解决修改不成功的问题
             // console.log('Object dutyKey', dutyKey) //这里返回单条 "2022-06-06"
             this.soureDatas.forEach((item) => {
               if (dutyKey == item.schedulingDateChange) {
+                console.log('item', item)
                 this.dutyMap[dutyKey].data.push(item)
               }
             })
@@ -352,14 +358,13 @@ export default {
       if (this.dutyMap[this.chooseDay].data.length > 0) {
         for (let index = 0; index < this.originEmptyItemData.length; index++) {
           let haveIndex = this.dutyMap[this.chooseDay].data.findIndex((itemTemp, indexTemp) => {
-            debugger
+            // debugger
             console.log('idPeriodOriginEmptyItemData', this.originEmptyItemData[index].idPeriod)
-            console.log('idPeriod', itemTemp.periodsInfo.id)
             console.log('idPeriod', itemTemp.periodsInfo.id)
             return itemTemp.periodsInfo.id == this.originEmptyItemData[index].idPeriod
           })
           console.log('haveIndex', haveIndex)
-          debugger
+          // debugger
           if (haveIndex != -1) {
             //有的话，用 this.dutyMap[this.chooseDay].data 里面的数据，没有的话用 originEmptyItemData 的
             this.itemData.push({
@@ -370,8 +375,8 @@ export default {
               id: this.dutyMap[this.chooseDay].data[haveIndex].id, //单条数据id
               itemServiceData: [],
             })
-
             this.dutyMap[this.chooseDay].data[haveIndex].detailInfo.forEach((itemService, indexService) => {
+              // console.log('itemService', itemService)
               // debugger
               this.itemData[this.itemData.length - 1].itemServiceData.push({
                 code: index + 1,
@@ -381,37 +386,17 @@ export default {
                 value: itemService.serviceName,
                 code: itemService.serviceType, //班次时段id
               })
+              this.$set(this.itemData[this.itemData.length - 1].itemServiceData, 'num', itemService.num)
             })
+            // console.log('ffffff', this.itemData[this.itemData.length - 1].itemServiceData)
           } else {
             this.itemData.push(JSON.parse(JSON.stringify(this.originEmptyItemData[index])))
           }
         }
-
-        // this.dutyMap[this.chooseDay].data.forEach((item, index) => {
-        //   //没有的先补齐
-        //   this.itemData.push({
-        //     code: index + 1,
-        //     isChecked: true,
-        //     scheName: item.periodsInfo.scheName,
-        //     idPeriod: item.periodsInfo.id, //班次时段id
-        //     id: item.id, //单条数据id
-        //     itemServiceData: [],
-        //   })
-        //   item.detailInfo.forEach((itemService, indexService) => {
-        //     debugger
-        //     this.itemData[index].itemServiceData.push({
-        //       code: index + 1,
-        //       isChecked: true,
-        //       id: itemService.id,
-        //       num: itemService.num,
-        //       value: itemService.serviceName,
-        //       code: itemService.serviceType, //班次时段id
-        //     })
-        //   })
-        // })
       } else {
         this.itemData = JSON.parse(JSON.stringify(this.originEmptyItemData))
       }
+      this.$forceUpdate()
     },
 
     /**
@@ -434,7 +419,6 @@ export default {
     onSelectDate(date) {
       console.log('onSelectDate date', date)
       this.chooseDay = moment(date).format('YYYY-MM-DD')
-      debugger
       //切换了月份 要重新请求月份的数据
       let month = date.month() + 1
       if (this.currentMonth != month) {
@@ -466,13 +450,24 @@ export default {
       //关闭就是删除，打开就是新增
       if (!this.itemData[index].isChecked) {
         //新增
-        this.addRecord(index)
+        this.addRecord(index, false)
       } else {
         this.deleteRecord(index)
       }
     },
 
-    addRecord(index) {
+    goSave(index) {
+      if (this.itemData[index].id) {
+        this.addRecord(index, true)
+      } else {
+        this.addRecord(index, false)
+      }
+    },
+
+    /**
+     * isEdit 是否为修改
+     */
+    addRecord(index, isEdit) {
       let addParams = {
         clinicType: '0',
         yljgdm: '444885559',
@@ -481,7 +476,7 @@ export default {
         doctorId: this.chooseDeptItemDoc.userId,
         doctorName: this.chooseDeptItemDoc.userName,
         schedulingDate: this.chooseDay,
-        periodTime: this.itemData[index].id,
+        periodTime: this.itemData[index].idPeriod,
         // createBy: null,
         // updateBy: null,
         /**
@@ -496,18 +491,30 @@ export default {
         detailInfo: [],
       }
 
-      for (let i = 0; i < this.itemData[index].itemServiceData.length; i++) {
-        // if (this.itemData[index].itemServiceData[i].num == 0) {
-        //   this.$message.error('请输入' + this.itemData[index].itemServiceData[i].value + '数量大于0')
-        //   return
-        // }
+      if (isEdit) {
+        for (let i = 0; i < this.itemData[index].itemServiceData.length; i++) {
+          //如果数字都没有问题，则组装数据上报
+          addParams.detailInfo.push({
+            serviceType: this.itemData[index].itemServiceData[i].code,
+            serviceName: this.itemData[index].itemServiceData[i].value,
+            num: this.itemData[index].itemServiceData[i].num,
+            id: this.itemData[index].itemServiceData[i].id,
+          })
+        }
+      } else {
+        for (let i = 0; i < this.itemData[index].itemServiceData.length; i++) {
+          //如果数字都没有问题，则组装数据上报
+          addParams.detailInfo.push({
+            serviceType: this.itemData[index].itemServiceData[i].code,
+            serviceName: this.itemData[index].itemServiceData[i].value,
+            num: this.itemData[index].itemServiceData[i].num,
+          })
+        }
+      }
 
-        //如果数字都没有问题，则组装数据上报
-        addParams.detailInfo.push({
-          serviceType: this.itemData[index].itemServiceData[i].code,
-          serviceName: this.itemData[index].itemServiceData[i].value,
-          num: this.itemData[index].itemServiceData[i].num,
-        })
+      if (isEdit) {
+        this.$set(addParams, 'id', this.itemData[index].id)
+        // addParams = JSON.parse(JSON.stringify(this.itemData[index]))
       }
 
       saveDoctorSchedule(addParams).then((res) => {

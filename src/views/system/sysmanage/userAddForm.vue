@@ -30,7 +30,7 @@
                 <div class="ant-upload-text">Upload</div>
               </div>
             </a-upload>
-            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancelPreview">
               <img alt="example" style="width: 100%" :src="previewImage" />
             </a-modal>
           </div>
@@ -291,6 +291,10 @@ export default {
       //   let newData = this.fileList[0]
       //   this.fileList = [newData]
       // }
+    },
+
+    handleCancelPreview() {
+      this.previewVisible = false
     },
 
     async handlePreview(file) {
