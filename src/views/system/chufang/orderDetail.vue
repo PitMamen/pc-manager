@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="处方详情"
+    title="订单详情"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -16,59 +16,32 @@
 
         <div class="div-line-wrap">
           <!-- <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span> -->
-          <span class="span-item-name">处方编号 :</span>
+          <span class="span-item-name">订单编号 :</span>
           <span class="span-item-value">{{ preNo }} </span>
-          <span class="span-item-name" style="margin-left: 3%"> 开具日期 :</span>
+          <span class="span-item-name" style="margin-left: 3%"> 下单日期 :</span>
 
           <span class="span-item-value">{{ detailData.createTime }} </span>
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 患者姓名 :</span>
+          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
+          <span class="span-item-name" style="margin-left: 1%"> 收货信息 :</span>
+          <!-- <span class="span-item-value">{{ detailData.diagnosis }} </span> -->
+        </div>
+
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 姓名 :</span>
           <span class="span-item-value">{{ detailData.userName }} </span>
-
-          <span class="span-item-name" style="margin-left: 3%"> 患者年龄 :</span>
-
-          <span class="span-item-value">{{ detailData.age }}岁 </span>
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 患者性别 :</span>
-          <span class="span-item-value">{{ detailData.userSex }} </span>
+          <span class="span-item-name"> 电话 :</span>
+          <span class="span-item-value">{{ detailData.tel }} </span>
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 主述/现病史 :</span>
-          <span class="span-item-value">{{ detailData.presentIllness }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 既往史 :</span>
-          <span class="span-item-value">{{ detailData.pastIllness || '暂无' }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 个人史 :</span>
-          <span class="span-item-value">{{ detailData.personIllness || '暂无' }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 过敏史 :</span>
-          <span class="span-item-value">{{ detailData.allergicIllness || '暂无' }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 家族史 :</span>
-          <span class="span-item-value">{{ detailData.familyIllness || '暂无' }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 初步诊断 :</span>
-          <span class="span-item-value">{{ detailData.diagnosis }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 处理意见 :</span>
-          <span class="span-item-value">{{ detailData.suggestion }} </span>
+          <span class="span-item-name"> 地址 :</span>
+          <span class="span-item-value">{{ detailData.address }} </span>
         </div>
 
         <div class="div-line-wrap">
@@ -81,11 +54,12 @@
           <!-- <div class="div-medicine-wrap"> -->
           <div class="div-medicine-item firstItem" v-for="(item, index) in detailData.list" :key="index">
             <div class="div-line-medicine">
-              <span class="span-item-name"> {{ item.drugName }} </span>
+              <span class="span-item-name" style="width: 70%"> {{ item.drugName }} </span>
               <span class="span-item-value"></span>
+            </div>
 
-              <span class="span-item-name" style="margin-left: 3%"> 数量 :</span>
-
+            <div class="div-line-medicine">
+              <span class="span-item-name"> 数量 :</span>
               <span class="span-item-value">{{ item.num }} </span>
             </div>
 
@@ -104,7 +78,7 @@
             </div>
             <div class="div-line-medicine">
               <span class="span-item-name"> 单次用量 :</span>
-              <span class="span-item-value">{{ item.useNum }} / {{ item.useUnit }}</span>
+              <span class="span-item-value">{{ item.useNum }} {{ item.useUnit }}</span>
 
               <span class="span-item-name" style="margin-left: 3%"> 用药频次 :</span>
               <span class="span-item-value">{{ item.useFrequency }} </span>
@@ -116,14 +90,11 @@
           <span class="span-item-name" style="margin-left: 60%; color: brown"> 总计 : {{ total }}元</span>
         </div>
 
-        <div class="div-line-wrap">
+        <!-- <div class="div-line-wrap">
           <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
           <span class="span-item-name" style="margin-left: 1%"> 医生签名 :</span>
           <span class="sign-name" style="margin-left: 1%">{{ detailData.docName }} </span>
-          <!-- <span class="sign-name" style="margin-left: 1%">周杰伦 </span> -->
-
-          <!-- <img src="http://develop.mclouds.org.cn:8008/content-api/file/I20220610153803611TWQ6T0PCIYUJOV-20211222154853.PNG" style="width:20%;height: 15%;"></img> -->
-        </div>
+        </div> -->
 
         <!-- <div class="btn-add-plan" @click="addPlanItem" type="primary"></div> -->
       </div>
@@ -170,8 +141,8 @@ export default {
         .then((res) => {
           if (res.success) {
             this.detailData = res.data
-            if (this.detailData.list > 0) {
-              this.detailData.list.array.forEach((element) => {
+            if (this.detailData.list.length > 0) {
+              this.detailData.list.forEach((element) => {
                 this.total = this.total + element.num * element.price
               })
             }

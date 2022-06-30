@@ -1106,7 +1106,7 @@ export function delDoctorSchedule(data) {
  * 
  * 电子处方列表
  */
- export function qryMedicalOrdersListUsePc(data) {
+export function qryMedicalOrdersListUsePc(data) {
   return axios({
     url: '/bdcApi/prescription/qryMedicalOrdersListUsePc',
     method: 'post',
@@ -1118,7 +1118,7 @@ export function delDoctorSchedule(data) {
  * 
  * 电子处方详情
  */
- export function getMedicalOrdersDetail(data) {
+export function getMedicalOrdersDetail(data) {
   return axios({
     url: '/bdcApi/prescription/getMedicalOrdersDetail',
     method: 'post',
@@ -1129,10 +1129,21 @@ export function delDoctorSchedule(data) {
  * 
  * 处方订单列表
  */
- export function qryOrdersList(data) {
+export function qryOrdersList(data) {
   return axios({
     url: '/bdcApi/prescription/qryOrdersList',
     method: 'post',
     data: data,
+  })
+}
+/**
+ * 
+ * 根据订单id修改订单状态  get post 请求的结合体
+ */
+export function updateOrderStatusById(data) {
+  return axios({
+    url: '/orderapi/order/tbOrder/updateOrderStatusById',
+    method: 'post',
+    params: data
   })
 }

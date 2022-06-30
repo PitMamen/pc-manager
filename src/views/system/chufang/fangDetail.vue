@@ -77,15 +77,17 @@
           <span class="span-item-value">{{ detailData.preNo }} </span>
         </div>
 
-        <div class="div-medicine-wrap" v-show="detailData.list.length > 0">
+        <!-- <div class="div-medicine-wrap" v-show="detailData.list.length > 0"> -->
+        <div class="div-medicine-wrap">
           <!-- <div class="div-medicine-wrap"> -->
           <div class="div-medicine-item firstItem" v-for="(item, index) in detailData.list" :key="index">
             <div class="div-line-medicine">
-              <span class="span-item-name"> {{ item.drugName }} </span>
+              <span class="span-item-name" style="width: 70%"> {{ item.drugName }} </span>
               <span class="span-item-value"></span>
+            </div>
 
-              <span class="span-item-name" style="margin-left: 3%"> 数量 :</span>
-
+            <div class="div-line-medicine">
+              <span class="span-item-name"> 数量 :</span>
               <span class="span-item-value">{{ item.num }} </span>
             </div>
 
@@ -104,7 +106,7 @@
             </div>
             <div class="div-line-medicine">
               <span class="span-item-name"> 单次用量 :</span>
-              <span class="span-item-value">{{ item.useNum }} / {{ item.useUnit }}</span>
+              <span class="span-item-value">{{ item.useNum }} {{ item.useUnit }}</span>
 
               <span class="span-item-name" style="margin-left: 3%"> 用药频次 :</span>
               <span class="span-item-value">{{ item.useFrequency }} </span>
@@ -170,8 +172,8 @@ export default {
         .then((res) => {
           if (res.success) {
             this.detailData = res.data
-            if (this.detailData.list > 0) {
-              this.detailData.list.array.forEach((element) => {
+            if (this.detailData.list.length > 0) {
+              this.detailData.list.forEach((element) => {
                 this.total = this.total + element.num * element.price
               })
             }

@@ -52,7 +52,7 @@
             <a-col :md="5" :sm="24">
               <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               <a-button type="primary" @click="resetQuery">重置</a-button>
-              <a-button type="primary" @click="exportOut">导出</a-button>
+              <a-button type="primary" @click="exportExcel">导出</a-button>
             </a-col>
           </a-row>
         </a-form>
@@ -72,6 +72,21 @@
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.orderDetail.edit(record.preNo)">查看</a>
         </span>
+        <span slot="update" slot-scope="text, record">
+          <a-popconfirm
+            v-if="record.status == 6"
+            title="是否完成发货配送？"
+            ok-text="确定"
+            cancel-text="取消"
+            @confirm="goUpdate(record)"
+          >
+            <a>{{ record.statusText }}</a>
+          </a-popconfirm>
+
+          <!-- <a-popconfirm title="是否完成发货配送？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record)">
+          </a-popconfirm> -->
+          <span v-else>{{ record.statusText }}</span>
+        </span>
       </s-table>
 
       <order-detail ref="orderDetail" @ok="handleOk" />
@@ -80,8 +95,9 @@
 </template>
 
 <script>
+import JSONbig from 'json-bigint'
 import { STable } from '@/components'
-import { qryOrdersList } from '@/api/modular/system/posManage'
+import { qryOrdersList, updateOrderStatusById } from '@/api/modular/system/posManage'
 import orderDetail from './orderDetail'
 // import { formatDateFull, formatDate } from '@/utils/util'
 
@@ -131,8 +147,9 @@ export default {
         },
         {
           title: '订单状态',
+          scopedSlots: { customRender: 'update' },
           width: '300px',
-          dataIndex: 'statusText',
+          // dataIndex: 'statusText',
         },
       ],
 
@@ -144,7 +161,7 @@ export default {
         }
         return qryOrdersList(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-
+            console.log('orderId', res.data.rows[i].orderId)
             //订单状态（1： 待支付  2： 已完成  3： 部分支付  4： 待收货  5： 订单取消  6: 未配送  7: 已配送 ）
             if (res.data.rows[i].status == 1) {
               this.$set(res.data.rows[i], 'statusText', '待支付')
@@ -169,14 +186,14 @@ export default {
       queryParams: {
         orderId: '',
         preNo: '',
-        status: '',
+        status: -1,
         startTime: '',
         endTime: '',
       },
       queryParamsOrigin: {
         orderId: '',
         preNo: '',
-        status: '',
+        status: -1,
         startTime: '',
         endTime: '',
       },
@@ -186,8 +203,6 @@ export default {
   created() {},
 
   methods: {
-    exportOut() {},
-
     resetQuery() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
     },
@@ -195,6 +210,63 @@ export default {
     onChange(momentArr, dateArr) {
       this.queryParams.startTime = dateArr[0]
       this.queryParams.endTime = dateArr[1]
+    },
+
+    exportExcel() {
+      // let para = {}
+      // if (this.isSearchKeyword) {
+      //   para = {
+      //     keyWord: this.queryParams.keyWord,
+      //     exportType: '1',
+      //   }
+      // } else {
+      //   para = {
+      //     keyWord: this.queryParam,
+      //     exportType: '2',
+      //   }
+      // }
+
+      exportPatients(this.queryParams)
+        .then((res) => {
+          this.downloadfile(res)
+          // eslint-disable-next-line handle-callback-err
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
+    },
+
+    goUpdate(record) {
+      if (record.status == 6) {
+        // let num = JSONbig.parse(record.orderId)
+        updateOrderStatusById({ orderId: record.orderId, status: 7 })
+          .then((res) => {
+            if (res.success) {
+              this.$message.success('操作成功')
+              this.$refs.table.refresh()
+            } else {
+              this.$message.error('操作失败：' + res.message)
+            }
+          })
+      }
     },
 
     handleOk() {
@@ -222,6 +294,10 @@ export default {
   .card-right {
     overflow: hidden;
     width: 100%;
+
+    .canclick {
+      color: #3894ff;
+    }
 
     .span-blue {
       padding: 1% 2%;
