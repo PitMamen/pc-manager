@@ -1,3 +1,7 @@
+export const currentEnv = "test"    //测试环境
+// export const currentEnv = "show"    //演示环境
+// export const currentEnv = "online"  //线上环境
+
 export const appId = "wxb916ba0a16b64a2f"//测试公众号 上面三个湘雅医院的公众号
 // export const appId = "wxdeeb4c8eac73c0b9"//线上公众号
 // export const appId = "wx0bc29297eabbca39"//演示环境公众号

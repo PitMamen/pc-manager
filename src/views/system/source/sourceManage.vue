@@ -81,20 +81,12 @@
       <!-- <a-calendar @panelChange="onPanelChange" @select="onSelectDate" @change="changeCalendar"> -->
       <a-calendar @panelChange="onPanelChange" @select="onSelectDate">
         <ul slot="dateCellRender" slot-scope="value" class="events">
-          <!-- <li v-for="item in getListData(value)" :key="item.content">
-            <a-badge :status="item.type" :text="item.content" />
-          </li> -->
-          <!-- <div v-if="isInside(value)">已分配号源</div> -->
-          <!-- <div v-show="false">{{ isInsideNew(value) }}</div> -->
           <div
             v-for="(item, index) in dutyMap[
               value.year() + '-' + getMonth(value.month() + 1) + '-' + getMonth(value.date())
             ]"
             :key="index + item"
           >
-            <!-- <div>暂未分配{{ item.data.length }}</div> -->
-            <!-- <div>已分配号源{{ item.data[0].tag }}</div> -->
-            <!-- <div>{{ isInside(value) }}</div> -->
             <div v-if="item.length > 0" class="div-aready">已分配号源</div>
             <div v-else class="div-not-aready">暂未分配</div>
           </div>
@@ -337,7 +329,7 @@ export default {
 
           /**两套循环把接口数据组装到 dutyMap */
           Object.keys(this.dutyMap).forEach((dutyKey) => {
-            this.dutyMap[dutyKey].data =[]//把每天对象的，数组先置空，解决修改不成功的问题
+            this.dutyMap[dutyKey].data = [] //把每天对象的，数组先置空，解决修改不成功的问题
             // console.log('Object dutyKey', dutyKey) //这里返回单条 "2022-06-06"
             this.soureDatas.forEach((item) => {
               if (dutyKey == item.schedulingDateChange) {
@@ -534,39 +526,6 @@ export default {
           this.getScheduleInfoOut()
         }
       })
-    },
-
-    // 日历方法
-    getListData(value) {
-      let listData
-      console.log('getListData value', value)
-      switch (value.date()) {
-        case 8:
-          listData = [
-            { type: 'warning', content: 'more.' },
-            // { type: 'success', content: 'This is usual event.' },
-          ]
-          break
-        case 10:
-          listData = [
-            { type: 'warning', content: 'that' },
-            // { type: 'success', content: 'This is usual event.' },
-            // { type: 'error', content: 'This is error event.' },
-          ]
-          break
-        case 15:
-          listData = [
-            { type: 'warning', content: 'billy' },
-            // { type: 'success', content: 'This is very long usual event。。....' },
-            // { type: 'error', content: 'This is error event 1.' },
-            // { type: 'error', content: 'This is error event 2.' },
-            // { type: 'error', content: 'This is error event 3.' },
-            // { type: 'error', content: 'This is error event 4.' },
-          ]
-          break
-        default:
-      }
-      return listData || []
     },
 
     isInside(value) {

@@ -1136,6 +1136,19 @@ export function qryOrdersList(data) {
     data: data,
   })
 }
+
+/**
+ * 
+ * 配送信息导出
+ */
+ export function exportOrders() {
+  return axios({
+    url: '/bdcApi/excel/exportOrders',
+    method: 'get',
+    // data: data,
+  })
+}
+
 /**
  * 
  * 根据订单id修改订单状态  get post 请求的结合体

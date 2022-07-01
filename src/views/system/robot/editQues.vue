@@ -71,7 +71,6 @@
 import { saveSysKnowledge, qryCodeValue } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
-import { appId } from '@/utils/util'
 
 import E from 'wangeditor'
 
