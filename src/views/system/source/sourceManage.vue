@@ -367,8 +367,9 @@ export default {
               id: this.dutyMap[this.chooseDay].data[haveIndex].id, //单条数据id
               itemServiceData: [],
             })
+            console.log('data[haveIndex]', this.dutyMap[this.chooseDay].data[haveIndex])
             this.dutyMap[this.chooseDay].data[haveIndex].detailInfo.forEach((itemService, indexService) => {
-              // console.log('itemService', itemService)
+              console.log('itemService', itemService)
               // debugger
               this.itemData[this.itemData.length - 1].itemServiceData.push({
                 code: index + 1,

@@ -95,7 +95,6 @@
 </template>
 
 <script>
-import JSONbig from 'json-bigint'
 import { STable } from '@/components'
 import { qryOrdersList, updateOrderStatusById, exportOrders } from '@/api/modular/system/posManage'
 import orderDetail from './orderDetail'

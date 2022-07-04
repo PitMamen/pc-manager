@@ -111,7 +111,7 @@ export default {
           dataIndex: 'createTime',
         },
         {
-          title: '开局医生',
+          title: '开具医生',
           dataIndex: 'docName',
         },
 
