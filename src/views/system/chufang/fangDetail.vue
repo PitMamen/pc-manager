@@ -176,6 +176,7 @@ export default {
               this.detailData.list.forEach((element) => {
                 this.total = this.total + element.num * element.price
               })
+              this.total = this.total.toFixed(2)
             }
           } else {
             this.$message.error('请求失败：' + res.message)
