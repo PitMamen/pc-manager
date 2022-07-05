@@ -45,7 +45,7 @@
           <a-row :gutter="48">
             <a-col :md="5" :sm="24">
               <a-form-item label="开具时间">
-                <a-range-picker @change="onChange" />
+                <a-range-picker :value="createValue" @change="onChange" />
               </a-form-item>
             </a-col>
 
@@ -133,14 +133,12 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-
         let param = JSON.parse(JSON.stringify(Object.assign(parameter, this.queryParams)))
         if (param.checkFlag == -1) {
           param.checkFlag = ''
         }
         return qryMedicalOrdersListUsePc(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-
             //工单状态（0： 审核中 ；1： 审核通过-未支付 ；2： 审核通过-已支付  ）
             if (res.data.rows[i].checkFlag == 0) {
               this.$set(res.data.rows[i], 'checkFlagName', '审核中')
@@ -168,7 +166,8 @@ export default {
         startTime: '',
         endTime: '',
       },
-
+      //此属性用来做重置功能的
+      createValue: [],
     }
   },
 
@@ -187,9 +186,11 @@ export default {
 
     resetQuery() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.createValue = []
     },
 
     onChange(momentArr, dateArr) {
+      this.createValue = momentArr
       this.queryParams.startTime = dateArr[0]
       this.queryParams.endTime = dateArr[1]
     },

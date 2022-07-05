@@ -45,7 +45,7 @@
           <a-row :gutter="48">
             <a-col :md="5" :sm="24">
               <a-form-item label="下单时间">
-                <a-range-picker @change="onChange" />
+                <a-range-picker :value="createValue" @change="onChange" />
               </a-form-item>
             </a-col>
 
@@ -153,6 +153,9 @@ export default {
         },
       ],
 
+      //此属性用来做重置功能的
+      createValue: [],
+
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         let param = JSON.parse(JSON.stringify(Object.assign(parameter, this.queryParams)))
@@ -205,9 +208,11 @@ export default {
   methods: {
     resetQuery() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.createValue = []
     },
 
     onChange(momentArr, dateArr) {
+      this.createValue = momentArr
       this.queryParams.startTime = dateArr[0]
       this.queryParams.endTime = dateArr[1]
     },
