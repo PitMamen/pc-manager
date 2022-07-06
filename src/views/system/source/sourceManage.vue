@@ -192,7 +192,7 @@ export default {
       // queryParam: { departmentId: 0 },
       queryParam: {
         pageNo: 1,
-        pageSize: 20,
+        pageSize: 1000,
         roleId: 3,
         departmentId: 0,
         status: 0,
