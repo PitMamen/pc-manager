@@ -135,7 +135,7 @@ export default {
       loadData: (parameter) => {
         let param = JSON.parse(JSON.stringify(Object.assign(parameter, this.queryParams)))
         if (param.checkFlag == -1) {
-          param.checkFlag = ''
+          delete param.checkFlag
         }
         return qryMedicalOrdersListUsePc(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
