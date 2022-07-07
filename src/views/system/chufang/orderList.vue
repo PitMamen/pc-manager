@@ -74,7 +74,7 @@
         </span>
         <span slot="update" slot-scope="text, record">
           <a-popconfirm
-            v-if="record.status == 6"
+            v-if="record.status == 2"
             title="是否完成发货配送？"
             ok-text="确定"
             cancel-text="取消"
@@ -109,15 +109,15 @@ export default {
 
   data() {
     return {
-      //订单状态（1： 待支付  2： 已完成  3： 部分支付  4： 待收货  5： 订单取消  6: 未配送  7: 已配送 ）
+      //订单状态（1： 待支付  2： 未配送  3： 部分支付  4： 待收货  5： 订单取消   7: 已配送 ）
       statusData: [
         { code: -1, value: '全部' },
         { code: 1, value: '待支付' },
-        { code: 2, value: '已完成' },
+        { code: 2, value: '未配送' },
         { code: 3, value: '部分支付' },
         { code: 4, value: '待收货' },
         { code: 5, value: '订单取消' },
-        { code: 6, value: '未配送' },
+        // { code: 6, value: '未配送' },
         { code: 7, value: '已配送' },
       ],
 
@@ -165,19 +165,18 @@ export default {
         return qryOrdersList(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             console.log('orderId', res.data.rows[i].orderId)
-            //订单状态（1： 待支付  2： 已完成  3： 部分支付  4： 待收货  5： 订单取消  6: 未配送  7: 已配送 ）
+            //订单状态（1： 待支付  2： 未配送  3： 部分支付  4： 待收货  5： 订单取消   7: 已配送 ）
+            //6这个状态作废，2变成未配送
             if (res.data.rows[i].status == 1) {
               this.$set(res.data.rows[i], 'statusText', '待支付')
             } else if (res.data.rows[i].status == 2) {
-              this.$set(res.data.rows[i], 'statusText', '已完成')
+              this.$set(res.data.rows[i], 'statusText', '未配送')
             } else if (res.data.rows[i].status == 3) {
               this.$set(res.data.rows[i], 'statusText', '部分支付')
             } else if (res.data.rows[i].status == 4) {
               this.$set(res.data.rows[i], 'statusText', '待收货')
             } else if (res.data.rows[i].status == 5) {
               this.$set(res.data.rows[i], 'statusText', '订单取消')
-            } else if (res.data.rows[i].status == 6) {
-              this.$set(res.data.rows[i], 'statusText', '未配送')
             } else if (res.data.rows[i].status == 7) {
               this.$set(res.data.rows[i], 'statusText', '已配送')
             }
@@ -279,7 +278,7 @@ export default {
     },
 
     goUpdate(record) {
-      if (record.status == 6) {
+      if (record.status == 2) {
         // let num = JSONbig.parse(record.orderId)
         updateOrderStatusById({ orderId: record.orderId, status: 7 }).then((res) => {
           if (res.success) {
