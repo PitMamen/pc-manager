@@ -238,16 +238,25 @@ export default {
 
             ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
             this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
+            let currentTime = new Date().getTime()
             console.log('ddd', res.data.rows[i].execFlag)
+            console.log('currentTime', currentTime)
+            console.log('execTime', Date.parse(res.data.rows[i].execTime))
             if (res.data.rows[i].execFlag == 0) {
+              //已申请的状态也要提醒医生按钮
               this.$set(res.data.rows[i], 'statusText', '已申请')
-              this.$set(res.data.rows[i], 'btnText', '聊天记录')
-              this.$set(res.data.rows[i], 'canAsk', false)
+              this.$set(res.data.rows[i], 'btnText', '提醒医生')
+              this.$set(res.data.rows[i], 'canAsk', true)
             } else if (res.data.rows[i].execFlag == 1) {
               this.$set(res.data.rows[i], 'statusText', '已完成')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
-            } else if (res.data.rows[i].execFlag == 2) {
+              //小于当前时间已接诊  大于当前时间未接诊
+            } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].execTime) < currentTime) {
+              this.$set(res.data.rows[i], 'statusText', '已接诊')
+              this.$set(res.data.rows[i], 'btnText', '聊天记录')
+              this.$set(res.data.rows[i], 'canAsk', false)
+            } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].execTime) > currentTime) {
               this.$set(res.data.rows[i], 'statusText', '未接诊')
               this.$set(res.data.rows[i], 'btnText', '提醒医生')
               this.$set(res.data.rows[i], 'canAsk', true)
