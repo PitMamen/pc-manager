@@ -24,6 +24,15 @@
         </div>
 
         <div class="div-line-wrap">
+          <span class="span-item-name"> 登记号 :</span>
+          <span class="span-item-value">{{ detailData.papmiNo }} </span>
+
+          <span class="span-item-name" style="margin-left: 3%"> 诊疗卡号 :</span>
+
+          <span class="span-item-value">{{ detailData.cardNo }} </span>
+        </div>
+
+        <div class="div-line-wrap">
           <span class="span-item-name"> 患者姓名 :</span>
           <span class="span-item-value">{{ detailData.userName }} </span>
 
@@ -120,7 +129,7 @@
 
         <div class="div-line-wrap">
           <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 医生签名 :</span>
+          <span class="span-item-name" style="margin-left: 1%"> 医生 :</span>
           <span class="sign-name" style="margin-left: 1%">{{ detailData.docName }} </span>
           <!-- <span class="sign-name" style="margin-left: 1%">周杰伦 </span> -->
 

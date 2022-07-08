@@ -10,12 +10,7 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail">
-        <!-- <p class="p-title">查看计划</p> -->
-        <!-- 分割线 -->
-        <!-- <div class="div-divider"></div> -->
-
         <div class="div-line-wrap">
-          <!-- <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span> -->
           <span class="span-item-name">订单编号 :</span>
           <span class="span-item-value">{{ preNo }} </span>
           <span class="span-item-name" style="margin-left: 3%"> 下单日期 :</span>
@@ -24,9 +19,17 @@
         </div>
 
         <div class="div-line-wrap">
+          <span class="span-item-name"> 登记号 :</span>
+          <span class="span-item-value">{{ detailData.papmiNo }} </span>
+
+          <span class="span-item-name" style="margin-left: 3%"> 诊疗卡号 :</span>
+
+          <span class="span-item-value">{{ detailData.cardNo }} </span>
+        </div>
+
+        <div class="div-line-wrap">
           <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
           <span class="span-item-name" style="margin-left: 1%"> 收货信息 :</span>
-          <!-- <span class="span-item-value">{{ detailData.diagnosis }} </span> -->
         </div>
 
         <div class="div-line-wrap">
@@ -89,14 +92,6 @@
         <div class="div-line-wrap">
           <span class="span-item-name" style="margin-left: 60%; color: brown"> 总计 : {{ total }}元</span>
         </div>
-
-        <!-- <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 医生签名 :</span>
-          <span class="sign-name" style="margin-left: 1%">{{ detailData.docName }} </span>
-        </div> -->
-
-        <!-- <div class="btn-add-plan" @click="addPlanItem" type="primary"></div> -->
       </div>
     </a-spin>
   </a-modal>
