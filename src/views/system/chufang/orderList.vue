@@ -226,7 +226,8 @@ export default {
         url = 'http://172.31.160.11:8124/excel/exportOrders'
       } else if (currentEnv == 'online') {
         //线上环境
-        url = 'http://172.31.100.71:8124/excel/exportOrders'
+        // url = 'http://172.31.100.71:8124/excel/exportOrders'
+        url = 'http://manager.mclouds.org.cn:8088/api/bdcApi/excel/exportOrders'
       }
 
       this.downloadUrl(url, '')
