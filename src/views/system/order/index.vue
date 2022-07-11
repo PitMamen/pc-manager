@@ -124,6 +124,7 @@ export default {
         { code: 3, value: '部分支付' },
         { code: 4, value: '待收货' },
         { code: 5, value: '订单取消' },
+        { code: 7, value: '已配送' },
       ],
       functionData: [
         { code: -1, id: '', value: '全部' },
@@ -235,6 +236,8 @@ export default {
               this.$set(res.data.rows[i], 'statusText', '待收货')
             } else if (res.data.rows[i].status == 5) {
               this.$set(res.data.rows[i], 'statusText', '订单取消')
+            } else if (res.data.rows[i].status == 7) {
+              this.$set(res.data.rows[i], 'statusText', '已配送')
             }
           }
           return res.data
@@ -268,6 +271,8 @@ export default {
         return 'span-blue'
       } else if (status == 5) {
         return 'span-gray'
+      } else if (status == 7) {
+        return 'span-blue'
       }
     },
     exportExcel() {
