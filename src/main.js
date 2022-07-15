@@ -21,6 +21,8 @@ import { Dialog } from '@/components'
 
 import { hasBtnPermission } from './utils/permissions' // button permission
 import { sysApplication } from './utils/applocation'
+import Print from 'vue-print-nb'
+Vue.use(Print)
 
 Vue.config.productionTip = false
 

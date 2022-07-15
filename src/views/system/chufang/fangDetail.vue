@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="处方详情"
+    title="处方便笺"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -9,7 +9,7 @@
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-order-detail">
+      <div class="div-order-detail" id="printContent">
         <!-- <p class="p-title">查看计划</p> -->
         <!-- 分割线 -->
         <!-- <div class="div-divider"></div> -->
@@ -47,7 +47,7 @@
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 主述/现病史 :</span>
+          <span class="span-item-name" style="width: 13%"> 主述/现病史 :</span>
           <span class="span-item-value">{{ detailData.presentIllness }} </span>
         </div>
         <div class="div-line-wrap">
@@ -124,7 +124,7 @@
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name" style="margin-left: 60%; color: brown"> 总计 : {{ total }}元</span>
+          <span class="span-item-name" style="margin-left: 60%; width: 15%; color: brown"> 总计 : {{ total }}元</span>
         </div>
 
         <div class="div-line-wrap">
@@ -138,6 +138,8 @@
 
         <!-- <div class="btn-add-plan" @click="addPlanItem" type="primary"></div> -->
       </div>
+      <a-button style="margin-left: 30%; margin-top: 6%" type="primary" v-print="printObj">打印处方</a-button>
+      <div style="height: 25px; color: white"></div>
     </a-spin>
   </a-modal>
 </template>
@@ -161,6 +163,10 @@ export default {
       preNo: 0,
       total: 0,
       detailData: {},
+      printObj: {
+        id: 'printContent',
+        popTitle: '处方便笺',
+      },
     }
   },
   methods: {
@@ -247,7 +253,7 @@ export default {
     overflow: hidden;
 
     .span-item-name {
-      width: 12%;
+      width: 13%;
       display: inline-block;
       color: #000;
       font-size: 14px;
@@ -281,7 +287,7 @@ export default {
     margin-top: 2%;
     width: 96%;
     margin-left: 2%;
-    height: 100%;
+    // height: 100%;
     border-radius: 6px;
     border: 1px solid #e6e6e6;
 
@@ -304,7 +310,7 @@ export default {
         margin-top: 1%;
         overflow: hidden;
         .span-item-name {
-          width: 10%;
+          width: 15%;
           display: inline-block;
           color: #000;
           font-size: 14px;

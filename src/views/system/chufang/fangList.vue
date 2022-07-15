@@ -139,7 +139,7 @@ export default {
         }
         return qryMedicalOrdersListUsePc(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            //工单状态（0： 审核中 ；1： 审核通过-未支付 ；2： 审核通过-已支付  ）
+            //工单状态（0： 审核中 ；1： 审核通过-未支付 ；2： 审核通过-已支付  ） 
             if (res.data.rows[i].checkFlag == 0) {
               this.$set(res.data.rows[i], 'checkFlagName', '审核中')
             } else if (res.data.rows[i].checkFlag == 1) {
