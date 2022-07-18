@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="处方便笺"
+    title="订单详情"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -9,16 +9,11 @@
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-order-detail" id="printContent">
-        <!-- <p class="p-title">查看计划</p> -->
-        <!-- 分割线 -->
-        <!-- <div class="div-divider"></div> -->
-
+      <div class="div-order-detail">
         <div class="div-line-wrap">
-          <!-- <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span> -->
-          <span class="span-item-name">处方编号 :</span>
+          <span class="span-item-name">订单编号 :</span>
           <span class="span-item-value">{{ preNo }} </span>
-          <span class="span-item-name" style="margin-left: 3%"> 开具日期 :</span>
+          <span class="span-item-name" style="margin-left: 3%"> 下单日期 :</span>
 
           <span class="span-item-value">{{ detailData.createTime }} </span>
         </div>
@@ -33,51 +28,23 @@
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 患者姓名 :</span>
+          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
+          <span class="span-item-name" style="margin-left: 1%"> 收货信息 :</span>
+        </div>
+
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 姓名 :</span>
           <span class="span-item-value">{{ detailData.userName }} </span>
-
-          <span class="span-item-name" style="margin-left: 3%"> 患者年龄 :</span>
-
-          <span class="span-item-value">{{ detailData.age }}岁 </span>
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 患者性别 :</span>
-          <span class="span-item-value">{{ detailData.userSex }} </span>
+          <span class="span-item-name"> 电话 :</span>
+          <span class="span-item-value">{{ detailData.tel }} </span>
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name" style="width: 13%"> 主述/现病史 :</span>
-          <span class="span-item-value">{{ detailData.presentIllness }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 既往史 :</span>
-          <span class="span-item-value">{{ detailData.pastIllness || '暂无' }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 个人史 :</span>
-          <span class="span-item-value">{{ detailData.personIllness || '暂无' }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 过敏史 :</span>
-          <span class="span-item-value">{{ detailData.allergicIllness || '暂无' }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 家族史 :</span>
-          <span class="span-item-value">{{ detailData.familyIllness || '暂无' }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 初步诊断 :</span>
-          <span class="span-item-value">{{ detailData.diagnosis }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 处理意见 :</span>
-          <span class="span-item-value">{{ detailData.suggestion }} </span>
+          <span class="span-item-name"> 地址 :</span>
+          <span class="span-item-value">{{ detailData.address }} </span>
         </div>
 
         <div class="div-line-wrap">
@@ -86,8 +53,9 @@
           <span class="span-item-value">{{ detailData.preNo }} </span>
         </div>
 
-        <div class="div-medicine-fang-wrap">
-          <div class="div-medicine-fang-item firstItem" v-for="(item, index) in detailData.list" :key="index">
+        <div class="div-medicine-wrap" v-show="detailData.list.length > 0">
+          <!-- <div class="div-medicine-wrap"> -->
+          <div class="div-medicine-item firstItem" v-for="(item, index) in detailData.list" :key="index">
             <div class="div-line-medicine">
               <span class="span-item-name" style="width: 70%"> {{ item.drugName }} </span>
               <span class="span-item-value"></span>
@@ -122,22 +90,9 @@
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name" style="margin-left: 60%; width: 15%; color: brown"> 总计 : {{ total }}元</span>
+          <span class="span-item-name" style="margin-left: 60%; color: brown"> 总计 : {{ total }}元</span>
         </div>
-
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 医生 :</span>
-          <span class="sign-name" style="margin-left: 1%">{{ detailData.docName }} </span>
-          <!-- <span class="sign-name" style="margin-left: 1%">周杰伦 </span> -->
-
-          <!-- <img src="http://develop.mclouds.org.cn:8008/content-api/file/I20220610153803611TWQ6T0PCIYUJOV-20211222154853.PNG" style="width:20%;height: 15%;"></img> -->
-        </div>
-
-        <!-- <div class="btn-add-plan" @click="addPlanItem" type="primary"></div> -->
       </div>
-      <a-button style="margin-left: 30%; margin-top: 6%" type="primary" v-print="printObj">打印处方</a-button>
-      <div style="height: 25px; color: white"></div>
     </a-spin>
   </a-modal>
 </template>
@@ -161,10 +116,6 @@ export default {
       preNo: 0,
       total: 0,
       detailData: {},
-      printObj: {
-        id: 'printContent',
-        popTitle: '处方便笺',
-      },
     }
   },
   methods: {
@@ -251,7 +202,7 @@ export default {
     overflow: hidden;
 
     .span-item-name {
-      width: 13%;
+      width: 12%;
       display: inline-block;
       color: #000;
       font-size: 14px;
@@ -281,11 +232,11 @@ export default {
     }
   }
 
-  .div-medicine-fang-wrap {
+  .div-medicine-wrap {
     margin-top: 2%;
     width: 96%;
     margin-left: 2%;
-    // height: 100%;
+    height: 100%;
     border-radius: 6px;
     border: 1px solid #e6e6e6;
 
@@ -293,7 +244,7 @@ export default {
       // border-radius: 6px;
       border-bottom: 1px solid #e6e6e6;
     }
-    .div-medicine-fang-item {
+    .div-medicine-item {
       background-color: white;
       padding: 2% 2%;
 
@@ -308,7 +259,7 @@ export default {
         margin-top: 1%;
         overflow: hidden;
         .span-item-name {
-          width: 15%;
+          width: 10%;
           display: inline-block;
           color: #000;
           font-size: 14px;

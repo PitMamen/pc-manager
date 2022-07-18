@@ -119,6 +119,7 @@ export default {
           'total',
           this.record.goodsInfo[index].price * this.record.goodsInfo[index].number
         )
+        this.$set(this.record.goodsInfo[index], 'goodsSpec', this.record.goodsInfo[index].goodsClassInfo.className)
       }
 
       //去掉重复的表头  filter保留满足条件的item

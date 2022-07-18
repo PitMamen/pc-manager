@@ -107,6 +107,11 @@
           <img alt="example" style="width: 100%" :src="previewImageDetail" />
         </a-modal>
       </div>
+
+      <span v-if="chooseDeptItem.departmentId == '1030810'" class="title-des-pic"
+        ><span style="color: red">*</span> 是否限制购买 :
+        <a-switch :checked="uploadData.isLimit" @change="onChangeIsLimit"
+      /></span>
     </div>
     <a-button class="btn-submit" type="primary" @click="validate">提交</a-button>
     <div style="height: 25px; color: white"></div>
@@ -155,6 +160,8 @@ export default {
         topFlag: '',
         isOnline: true,
         isSuggest: true,
+        limitFlag: 0, //购买需要审核标识（0：不审核，1审核
+        isLimit: false,
       },
 
       previewVisible: false,
@@ -231,6 +238,9 @@ export default {
 
     onChangeIsSuggest() {
       this.uploadData.isSuggest = !this.uploadData.isSuggest
+    },
+    onChangeIsLimit() {
+      this.uploadData.isLimit = !this.uploadData.isLimit
     },
 
     handleCancel() {
@@ -361,6 +371,14 @@ export default {
 
             this.uploadData.imgList = str
           }
+
+          if (this.chooseDeptItem.departmentId == '1030810') {
+            this.uploadData.limitFlag = this.uploadData.isLimit ? 1 : 0
+          } else {
+            delete this.uploadData.limitFlag
+          }
+          delete this.uploadData.isLimit
+
           let user = Vue.ls.get(TRUE_USER)
           this.uploadData.owner = user.userId
 
