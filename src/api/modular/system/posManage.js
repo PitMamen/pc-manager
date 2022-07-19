@@ -1160,3 +1160,14 @@ export function updateOrderStatusById(data) {
     params: data
   })
 }
+/**
+ * 
+ * 管理端-查询申请列表
+ */
+export function getReviewList(data) {
+  return axios({
+    url: '/bdcApi/health/apply/page',
+    method: 'post',
+    data: data,
+  })
+}

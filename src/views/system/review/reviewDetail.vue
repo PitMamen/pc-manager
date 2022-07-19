@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="订单详情"
+    title="就诊人上传资料"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -11,86 +11,33 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail">
         <div class="div-line-wrap">
-          <span class="span-item-name">订单编号 :</span>
-          <span class="span-item-value">{{ preNo }} </span>
-          <span class="span-item-name" style="margin-left: 3%"> 下单日期 :</span>
-
-          <span class="span-item-value">{{ detailData.createTime }} </span>
+          <span class="span-item-name">就诊人 :</span>
+          <span class="span-item-value">{{ record.patientName }} </span>
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 登记号 :</span>
-          <span class="span-item-value">{{ detailData.papmiNo }} </span>
-
-          <span class="span-item-name" style="margin-left: 3%"> 诊疗卡号 :</span>
-
-          <span class="span-item-value">{{ detailData.cardNo }} </span>
+          <span class="span-item-name"> 联系方式 :</span>
+          <span class="span-item-value">{{ record.phone }} </span>
         </div>
 
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 收货信息 :</span>
-        </div>
-
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 姓名 :</span>
-          <span class="span-item-value">{{ detailData.userName }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 电话 :</span>
-          <span class="span-item-value">{{ detailData.tel }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 地址 :</span>
-          <span class="span-item-value">{{ detailData.address }} </span>
-        </div>
-
-        <div class="div-line-wrap">
-          <a-icon type="star" theme="twoTone" two-tone-color="#eb2f96" />
-          <span class="span-item-name" style="margin-left: 1%"> 处方清单 :</span>
-          <span class="span-item-value">{{ detailData.preNo }} </span>
-        </div>
-
-        <div class="div-medicine-wrap" v-show="detailData.list.length > 0">
-          <!-- <div class="div-medicine-wrap"> -->
-          <div class="div-medicine-item firstItem" v-for="(item, index) in detailData.list" :key="index">
-            <div class="div-line-medicine">
-              <span class="span-item-name" style="width: 70%"> {{ item.drugName }} </span>
-              <span class="span-item-value"></span>
+        <div class="clearfix" style="margin-top: 20px">
+          <a-upload
+            disabled
+            :action="actionUrl"
+            :multiple="true"
+            list-type="picture-card"
+            :file-list="fileListBanner"
+            @preview="handlePreviewBanner"
+            @change="handleChangeBanner"
+          >
+            <div v-if="false">
+              <a-icon type="plus" />
+              <div class="ant-upload-text">Upload</div>
             </div>
-
-            <div class="div-line-medicine">
-              <span class="span-item-name"> 数量 :</span>
-              <span class="span-item-value">{{ item.num }} </span>
-            </div>
-
-            <div class="div-line-medicine">
-              <span class="span-item-name"> 规格 :</span>
-              <span class="span-item-value">{{ item.drugSpec }} </span>
-
-              <span class="span-item-name" style="margin-left: 3%"> 价格 :</span>
-
-              <span class="span-item-value">{{ item.price }} </span>
-            </div>
-
-            <div class="div-line-medicine">
-              <span class="span-item-name"> 用药方法 :</span>
-              <span class="span-item-value">{{ item.drugUsemethod }} </span>
-            </div>
-            <div class="div-line-medicine">
-              <span class="span-item-name"> 单次用量 :</span>
-              <span class="span-item-value">{{ item.useNum }} {{ item.useUnit }}</span>
-
-              <span class="span-item-name" style="margin-left: 3%"> 用药频次 :</span>
-              <span class="span-item-value">{{ item.useFrequency }} </span>
-            </div>
-          </div>
-        </div>
-
-        <div class="div-line-wrap">
-          <span class="span-item-name" style="margin-left: 60%; color: brown"> 总计 : {{ total }}元</span>
+          </a-upload>
+          <a-modal :visible="previewVisibleBanner" :footer="null" @cancel="handleCancelBanner">
+            <img alt="example" style="width: 100%" :src="previewImageBanner" />
+          </a-modal>
         </div>
       </div>
     </a-spin>
@@ -103,66 +50,56 @@ import { getMedicalOrdersDetail } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 15 },
-      },
       visible: false,
       confirmLoading: false,
-      preNo: 0,
-      total: 0,
-      detailData: {},
+      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      record: {},
+      previewVisibleBanner: false,
+      previewImageBanner: '',
+      fileListBanner: [],
     }
   },
   methods: {
     //初始化方法
-    edit(id) {
-      this.detailData = {}
-      this.total = 0
+    edit(record) {
+      this.record = {}
+      this.fileListBanner = []
+      this.record = record
       this.visible = true
-      this.preNo = id
-      this.$set(this.detailData, 'preNo', id)
 
-      this.getFangDetail(id)
-    },
-
-    getFangDetail(id) {
-      this.confirmLoading = true
-      getMedicalOrdersDetail({ preNo: id })
-        .then((res) => {
-          if (res.success) {
-            this.detailData = res.data
-            if (this.detailData.list.length > 0) {
-              this.detailData.list.forEach((element) => {
-                this.total = this.total + element.num * element.price
-              })
-              this.total = this.total.toFixed(2)
-            }
-          } else {
-            this.$message.error('请求失败：' + res.message)
-          }
+      for (let index = 0; index < this.record.medRecordImagesArr.length; index++) {
+        this.fileListBanner.push({
+          uid: 0 - index + '',
+          name: 'Banner' + index,
+          status: 'done',
+          url: this.record.medRecordImagesArr[index],
         })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
-    getStatusText(status) {
-      if (status == 1) {
-        return '待支付'
-      } else if (status == 2) {
-        return '已完成'
-      } else if (status == 3) {
-        return '部分支付'
-      } else if (status == 4) {
-        return '待收货'
-      } else if (status == 5) {
-        return '订单取消'
       }
+    },
+
+    handleCancelBanner() {
+      this.previewVisibleBanner = false
+    },
+
+    async handlePreviewBanner(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImageBanner = file.url || file.preview
+      this.previewVisibleBanner = true
+    },
+
+    handleChangeBanner({ fileList }) {
+      this.fileListBanner = fileList
+    },
+
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
     },
 
     handleSubmit() {},

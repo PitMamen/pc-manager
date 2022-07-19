@@ -1,8 +1,6 @@
 <template>
   <div class="div-yiji-todo">
     <a-card :bordered="false" class="card-right">
-
-
       <!-- 去掉勾选框 -->
       <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
       <!-- :row-selection="rowSelection" -->
@@ -15,22 +13,24 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.reviewDetail.edit(record.preNo)">查看</a>
+          <a @click="$refs.reviewDetail.edit(record)">点击查看</a>
         </span>
-        <span slot="update" slot-scope="text, record">
-          <a-popconfirm
-            v-if="record.status == 2"
-            title="是否完成发货配送？"
-            ok-text="确定"
-            cancel-text="取消"
-            @confirm="goUpdate(record)"
-          >
-            <a>{{ record.statusText }}</a>
-          </a-popconfirm>
 
-          <!-- <a-popconfirm title="是否完成发货配送？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record)">
-          </a-popconfirm> -->
-          <span v-else>{{ record.statusText }}</span>
+        <span slot="update" slot-scope="text, record">
+          <div v-if="record.status == 0">
+            <a-popconfirm title="是否审核通过？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record)">
+              <a>通过</a>
+            </a-popconfirm>
+
+            <a-divider type="vertical" />
+
+            <a-popconfirm title="是否审核不通过？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record)">
+              <a>拒绝</a>
+            </a-popconfirm>
+          </div>
+
+          <span v-if="record.status == 1">{{ record.statusText }}</span>
+          <span v-else style="color: red">{{ record.statusText }}</span>
         </span>
       </s-table>
 
@@ -41,7 +41,7 @@
 
 <script>
 import { STable } from '@/components'
-import { qryOrdersList, updateOrderStatusById, exportOrders } from '@/api/modular/system/posManage'
+import { getReviewList, updateOrderStatusById } from '@/api/modular/system/posManage'
 import reviewDetail from './reviewDetail'
 import { currentEnv } from '@/utils/util'
 // import { formatDateFull, formatDate } from '@/utils/util'
@@ -54,7 +54,7 @@ export default {
 
   data() {
     return {
-      //订单状态（1： 待支付  2： 未配送  3： 支付中  4： 待收货  5： 订单取消   7: 已配送 ）
+      //审核状态,0审核中/1审核通过/2审核不通过
       statusData: [
         { code: -1, value: '全部' },
         { code: 1, value: '待支付' },
@@ -69,29 +69,26 @@ export default {
       // 表头
       columns: [
         {
-          title: '订单编号',
-          dataIndex: 'orderId',
+          title: '编号',
+          dataIndex: 'xh',
         },
         {
-          title: '处方编号',
-          dataIndex: 'preNo',
+          title: '就诊人',
+          dataIndex: 'patientName',
         },
         {
-          title: '下单日期',
-          dataIndex: 'orderTime',
-        },
-        {
-          title: '订单金额（元）',
-          dataIndex: 'total',
+          title: '申请时间',
+          dataIndex: 'applyTime',
         },
 
         {
-          title: '订单详情',
+          title: '上传资料',
           // dataIndex: 'userName',
           scopedSlots: { customRender: 'action' },
         },
+
         {
-          title: '订单状态',
+          title: '操作',
           scopedSlots: { customRender: 'update' },
           width: '300px',
           // dataIndex: 'statusText',
@@ -107,35 +104,31 @@ export default {
         if (param.status == -1) {
           param.status = ''
         }
-        return qryOrdersList(param).then((res) => {
+        return getReviewList(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            console.log('orderId', res.data.rows[i].orderId)
-            //订单状态（1： 待支付  2： 未配送  3： 支付中  4： 待收货  5： 订单取消   7: 已配送 ）
-            //6这个状态作废，2变成未配送
+            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            this.$set(res.data.rows[i], 'medRecordImagesArr', JSON.parse(res.data.rows[i].medRecordImages))
+            console.log('status***', res.data.rows[i].status)
+            //审核状态,0审核中/1审核通过/2审核不通过
             if (res.data.rows[i].status == 1) {
-              this.$set(res.data.rows[i], 'statusText', '待支付')
+              this.$set(res.data.rows[i], 'statusText', '已通过')
             } else if (res.data.rows[i].status == 2) {
-              this.$set(res.data.rows[i], 'statusText', '未配送')
-            } else if (res.data.rows[i].status == 3) {
-              this.$set(res.data.rows[i], 'statusText', '支付中')
-            } else if (res.data.rows[i].status == 4) {
-              this.$set(res.data.rows[i], 'statusText', '待收货')
-            } else if (res.data.rows[i].status == 5) {
-              this.$set(res.data.rows[i], 'statusText', '订单取消')
-            } else if (res.data.rows[i].status == 7) {
-              this.$set(res.data.rows[i], 'statusText', '已配送')
+              this.$set(res.data.rows[i], 'statusText', '已拒绝')
             }
+            console.log('statusText', res.data.rows[i].statusText)
+            //图片数组 是一个json对象，json对象转js数组对象，才可以用
+            console.log('medRecordImages', JSON.parse(res.data.rows[i].medRecordImages))
           }
           return res.data
         })
       },
 
       queryParams: {
-        orderId: '',
-        preNo: '',
-        status: -1,
-        startTime: '',
-        endTime: '',
+        // orderId: '',
+        // preNo: '',
+        // status: -1,
+        // startTime: '',
+        // endTime: '',
       },
       queryParamsOrigin: {
         orderId: '',
