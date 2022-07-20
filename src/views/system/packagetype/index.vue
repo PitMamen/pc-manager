@@ -12,56 +12,6 @@
                 <a-button type="primary" @click="newPackage">新增类别</a-button>
               </span>
             </a-col>
-
-            <!-- <a-col :md="4" :sm="24">
-              <a-form-item label="科室">
-                <a-select allow-clear v-model="queryParams.belong" placeholder="请选择科室">
-                  <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.deptCode">{{
-                    item.deptName
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col> -->
-            <!-- 
-            <a-col :md="4" :sm="24">
-              <a-form-item label="上架状态">
-                <a-select allow-clear v-model="queryParams.status" placeholder="请选择状态">
-                  <a-select-option v-for="(item, index) in onlineData" :key="index" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="4" :sm="24">
-              <a-form-item label="推荐状态">
-                <a-select allow-clear v-model="queryParams.topFlag" placeholder="请选择状态">
-                  <a-select-option v-for="(item, index) in suggestData" :key="index" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col> -->
-
-            <!-- <a-col :md="4" :sm="24">
-              <a-form-item label="关键字">
-                <a-input
-                  v-model="queryParams.keyWords"
-                  allow-clear
-                  placeholder="请输入套餐关键字"
-                  @keyup.enter="$refs.table.refresh(true)"
-                />
-              </a-form-item>
-            </a-col>
-
-            <a-col :md="3" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              </span>
-            </a-col> -->
           </a-row>
         </a-form>
       </div>
@@ -104,6 +54,12 @@
             <a-switch :checked="record.isSuggest" />
           </a-popconfirm>
         </span>
+
+        <span slot="ifCanBuy" slot-scope="text, record">
+          <a-popconfirm :title="record.isNoBuyText" ok-text="确定" cancel-text="取消" @confirm="goCanBuy(record)">
+            <a-switch :checked="record.isNoBuy" />
+          </a-popconfirm>
+        </span>
       </s-table>
     </a-card>
   </div>
@@ -144,6 +100,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       isSuggestText: '确定推荐？',
+      isNoBuyText: '',
       isOnlineText: '',
       keshiData: [],
       //（1：正常 2：待上架 3 ：下架）
@@ -189,6 +146,11 @@ export default {
           dataIndex: 'ifSuggest',
           scopedSlots: { customRender: 'ifSuggest' },
         },
+        {
+          title: '限制购买',
+          // dataIndex: 'ifCanBuy',
+          scopedSlots: { customRender: 'ifCanBuy' },
+        },
 
         {
           title: '创建人',
@@ -227,6 +189,14 @@ export default {
             } else {
               this.$set(res.data.rows[i], 'isOnline', false)
               this.$set(res.data.rows[i], 'isOnlineText', '确定上架？')
+            }
+
+            if (res.data.rows[i].limitFlag == 1) {
+              this.$set(res.data.rows[i], 'isNoBuy', true)
+              this.$set(res.data.rows[i], 'isNoBuyText', '确定可购买？')
+            } else {
+              this.$set(res.data.rows[i], 'isNoBuy', false)
+              this.$set(res.data.rows[i], 'isNoBuyText', '确定不可购买？')
             }
           }
           this.loadDataOut = res.data
@@ -292,6 +262,27 @@ export default {
 
           setTimeout(() => {
             record.isSuggestText = record.isSuggest ? '确定取消推荐？' : '确定推荐？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    goCanBuy(record) {
+      if (record.limitFlag == 1) {
+        record.limitFlag = 0
+      } else {
+        record.limitFlag = 1
+      }
+      let data = { classId: record.classId, limitFlag: record.limitFlag, className: record.className, owner: record.owner }
+      saveGoodsClass(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isNoBuy = !record.isNoBuy
+
+          setTimeout(() => {
+            record.isNoBuyText = record.isNoBuy ? '确定可购买？' : '确定不可购买？'
           }, 200)
         } else {
           this.$message.error(res.message)

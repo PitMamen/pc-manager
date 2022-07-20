@@ -98,6 +98,9 @@ export default {
         // { code: 1, value: '审核未通过' },
         { code: 1, value: '审核通过-未支付' },
         { code: 2, value: '审核通过-已支付' },
+        { code: 3, value: '审核未通过' },
+        { code: 4, value: '支付中' },
+        { code: 5, value: '已取消' },
       ],
 
       // 表头
@@ -139,13 +142,20 @@ export default {
         }
         return qryMedicalOrdersListUsePc(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            //工单状态（0： 审核中 ；1： 审核通过-未支付 ；2： 审核通过-已支付  ） 
+            //工单状态（0： 审核中 ；1： 审核通过-未支付 ；2： 审核通过-已支付  ）
+            //审核标识（0：审核中1：审核通过待支付2：审核通过已支付;3审核未通过;4支付中;5已取消）
             if (res.data.rows[i].checkFlag == 0) {
               this.$set(res.data.rows[i], 'checkFlagName', '审核中')
             } else if (res.data.rows[i].checkFlag == 1) {
               this.$set(res.data.rows[i], 'checkFlagName', '审核通过-未支付')
             } else if (res.data.rows[i].checkFlag == 2) {
               this.$set(res.data.rows[i], 'checkFlagName', '审核通过-已支付')
+            } else if (res.data.rows[i].checkFlag == 3) {
+              this.$set(res.data.rows[i], 'checkFlagName', '审核未通过')
+            } else if (res.data.rows[i].checkFlag == 4) {
+              this.$set(res.data.rows[i], 'checkFlagName', '支付中')
+            } else if (res.data.rows[i].checkFlag == 5) {
+              this.$set(res.data.rows[i], 'checkFlagName', '已取消')
             }
           }
           return res.data

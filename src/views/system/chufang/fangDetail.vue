@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="处方便笺"
+    title=""
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -13,8 +13,9 @@
         <!-- <p class="p-title">查看计划</p> -->
         <!-- 分割线 -->
         <!-- <div class="div-divider"></div> -->
+        <h2 style="padding-left: 44%">处方便笺</h2>
 
-        <div class="div-line-wrap">
+        <div class="div-line-wrap" style="margin-top: 6%">
           <!-- <span class="span-item-name"><span style="color: red">*</span> 计划名称 :</span> -->
           <span class="span-item-name">处方编号 :</span>
           <span class="span-item-value">{{ preNo }} </span>
@@ -163,7 +164,7 @@ export default {
       detailData: {},
       printObj: {
         id: 'printContent',
-        popTitle: '处方便笺',
+        popTitle: '电子处方',
       },
     }
   },
