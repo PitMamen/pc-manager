@@ -1171,3 +1171,14 @@ export function getReviewList(data) {
     data: data,
   })
 }
+/**
+ * 
+ * 管理端-审核操作
+ */
+export function auditReview(data) {
+  return axios({
+    url: '/bdcApi/health/apply/audit',
+    method: 'post',
+    data: data,
+  })
+}

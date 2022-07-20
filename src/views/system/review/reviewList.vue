@@ -18,13 +18,13 @@
 
         <span slot="update" slot-scope="text, record">
           <div v-if="record.status == 0">
-            <a-popconfirm title="是否审核通过？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record)">
+            <a-popconfirm title="是否审核通过？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record, true)">
               <a>通过</a>
             </a-popconfirm>
 
             <a-divider type="vertical" />
 
-            <a-popconfirm title="是否审核不通过？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record)">
+            <a-popconfirm title="是否审核不通过？" ok-text="确定" cancel-text="取消" @confirm="goUpdate(record, false)">
               <a>拒绝</a>
             </a-popconfirm>
           </div>
@@ -41,7 +41,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getReviewList, updateOrderStatusById } from '@/api/modular/system/posManage'
+import { getReviewList, auditReview } from '@/api/modular/system/posManage'
 import reviewDetail from './reviewDetail'
 import { currentEnv } from '@/utils/util'
 // import { formatDateFull, formatDate } from '@/utils/util'
@@ -216,18 +216,21 @@ export default {
       window.URL.revokeObjectURL(href)
     },
 
-    goUpdate(record) {
-      if (record.status == 2) {
-        // let num = JSONbig.parse(record.orderId)
-        updateOrderStatusById({ orderId: record.orderId, status: 7 }).then((res) => {
-          if (res.success) {
-            this.$message.success('操作成功')
-            this.$refs.table.refresh()
-          } else {
-            this.$message.error('操作失败：' + res.message)
-          }
-        })
-      }
+    /**
+     *
+     * @param {*} record
+     * @param {*} isPass 是否通过
+     */
+    goUpdate(record, isPass) {
+      let data = { id: record.id, status: isPass ? 1 : 2 }
+      auditReview(data).then((res) => {
+        if (res.success) {
+          this.$message.success('操作成功')
+          this.$refs.table.refresh()
+        } else {
+          this.$message.error('操作失败：' + res.message)
+        }
+      })
     },
 
     handleOk() {
