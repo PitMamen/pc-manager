@@ -55,7 +55,8 @@
           </a-popconfirm>
         </span>
 
-        <span slot="ifCanBuy" slot-scope="text, record">
+        <!-- <span slot="ifCanBuy" v-if="record.belong == '1030810'" slot-scope="text, record"> -->
+        <span slot="ifCanBuy" v-if="record.belong == '2350010'" slot-scope="text, record">
           <a-popconfirm :title="record.isNoBuyText" ok-text="确定" cancel-text="取消" @confirm="goCanBuy(record)">
             <a-switch :checked="record.isNoBuy" />
           </a-popconfirm>
@@ -275,7 +276,12 @@ export default {
       } else {
         record.limitFlag = 1
       }
-      let data = { classId: record.classId, limitFlag: record.limitFlag, className: record.className, owner: record.owner }
+      let data = {
+        classId: record.classId,
+        limitFlag: record.limitFlag,
+        className: record.className,
+        owner: record.owner,
+      }
       saveGoodsClass(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')

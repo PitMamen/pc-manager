@@ -108,7 +108,8 @@
         </a-modal>
       </div>
 
-      <span v-if="chooseDeptItem.departmentId == '1030810'" class="title-des-pic"
+      <!-- <span v-if="chooseDeptItem.departmentId == '1030810'" class="title-des-pic" -->
+      <span v-if="chooseDeptItem.departmentId == '2350010'" class="title-des-pic"
         ><span style="color: red">*</span> 是否限制购买 :
         <a-switch :checked="uploadData.isLimit" @change="onChangeIsLimit"
       /></span>
@@ -372,7 +373,8 @@ export default {
             this.uploadData.imgList = str
           }
 
-          if (this.chooseDeptItem.departmentId == '1030810') {
+          // if (this.chooseDeptItem.departmentId == '1030810') {
+          if (this.chooseDeptItem.departmentId == '2350010') {
             this.uploadData.limitFlag = this.uploadData.isLimit ? 1 : 0
           } else {
             delete this.uploadData.limitFlag
