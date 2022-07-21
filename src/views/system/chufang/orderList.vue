@@ -109,7 +109,7 @@ export default {
 
   data() {
     return {
-      //订单状态（1： 待支付  2： 未配送  3： 支付中  4： 待收货  5： 订单取消   7: 已配送 ）
+      //订单状态（1： 待支付  2： 未配送  3： 支付中  4： 待收货  5： 订单取消  6：已退款  7: 已配送 ）
       statusData: [
         { code: -1, value: '全部' },
         { code: 1, value: '待支付' },
@@ -117,7 +117,7 @@ export default {
         { code: 3, value: '支付中' },
         { code: 4, value: '待收货' },
         { code: 5, value: '订单取消' },
-        // { code: 6, value: '未配送' },
+        { code: 6, value: '已退款' },
         { code: 7, value: '已配送' },
       ],
 
@@ -165,7 +165,7 @@ export default {
         return qryOrdersList(param).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             console.log('orderId', res.data.rows[i].orderId)
-            //订单状态（1： 待支付  2： 未配送  3： 支付中  4： 待收货  5： 订单取消   7: 已配送 ）
+            //订单状态（1： 待支付  2： 未配送  3： 支付中  4： 待收货  5： 订单取消 6：已退款   7: 已配送 ）
             //6这个状态作废，2变成未配送
             if (res.data.rows[i].status == 1) {
               this.$set(res.data.rows[i], 'statusText', '待支付')
@@ -177,6 +177,8 @@ export default {
               this.$set(res.data.rows[i], 'statusText', '待收货')
             } else if (res.data.rows[i].status == 5) {
               this.$set(res.data.rows[i], 'statusText', '订单取消')
+            } else if (res.data.rows[i].status == 6) {
+              this.$set(res.data.rows[i], 'statusText', '已退款')
             } else if (res.data.rows[i].status == 7) {
               this.$set(res.data.rows[i], 'statusText', '已配送')
             }

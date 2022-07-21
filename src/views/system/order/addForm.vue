@@ -70,7 +70,14 @@
             <!-- <div class="div-divider"></div> -->
           </div>
         </div>
-
+        <a-button
+          v-if="record.status == 2 && roleName == 'admin'"
+          class="btn-submit"
+          style="margin-left: 42%; margin-top: 5%"
+          type="primary"
+          @click="goRefund"
+          >申请退单</a-button
+        >
         <!-- <div class="btn-add-plan" @click="addPlanItem" type="primary"></div> -->
       </div>
     </a-spin>
@@ -79,7 +86,9 @@
 
 
 <script>
-import { sysPosAdd } from '@/api/modular/system/posManage'
+import { sysPosAdd, refundByAdmin } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -93,10 +102,15 @@ export default {
       },
       visible: false,
       confirmLoading: false,
+      roleName: '',
       form: this.$form.createForm(this),
 
       record: {},
     }
+  },
+  created() {
+    let user = Vue.ls.get(TRUE_USER)
+    this.roleName = user.roleName
   },
   methods: {
     //初始化方法
@@ -135,18 +149,41 @@ export default {
       })
     },
 
+    //订单状态（1：待支付 2：已完成 3：支付中 4：待收货 5：订单取消 6：已退款 7：已配送
     getStatusText(status) {
       if (status == 1) {
         return '待支付'
       } else if (status == 2) {
         return '已完成'
       } else if (status == 3) {
-        return '部分支付'
+        return '支付中'
       } else if (status == 4) {
         return '待收货'
       } else if (status == 5) {
         return '订单取消'
+      } else if (status == 6) {
+        return '已退款'
+      } else if (status == 7) {
+        return '已配送'
       }
+    },
+
+    goRefund() {
+      refundByAdmin({ orderId: this.record.orderId })
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('申请成功')
+            this.visible = false
+            this.confirmLoading = false
+            this.$emit('ok', '')
+            this.form.resetFields()
+          } else {
+            this.$message.error('申请失败：' + res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     handleSubmit() {

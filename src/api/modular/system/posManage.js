@@ -1141,7 +1141,7 @@ export function qryOrdersList(data) {
  * 
  * 配送信息导出
  */
- export function exportOrders() {
+export function exportOrders() {
   return axios({
     url: '/bdcApi/excel/exportOrders',
     method: 'get',
@@ -1178,6 +1178,18 @@ export function getReviewList(data) {
 export function auditReview(data) {
   return axios({
     url: '/bdcApi/health/apply/audit',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 后台管理员退费接口
+ */
+export function refundByAdmin(data) {
+  return axios({
+    url: '/bdcApi/appoint/refundByAdmin',
     method: 'post',
     data: data,
   })

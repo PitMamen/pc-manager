@@ -116,14 +116,15 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
-      //（1：正常 2：待上架 3 ：下架）
+      //订单状态（1：待支付 2：已完成 3：支付中 4：待收货 5：订单取消 6：已退款 7：已配送
       statusData: [
         { code: -1, value: '全部' },
         { code: 1, value: '待支付' },
         { code: 2, value: '已完成' },
-        { code: 3, value: '部分支付' },
+        { code: 3, value: '支付中' },
         { code: 4, value: '待收货' },
         { code: 5, value: '订单取消' },
+        { code: 6, value: '已退款' },
         { code: 7, value: '已配送' },
       ],
       functionData: [
@@ -225,17 +226,19 @@ export default {
               res.data.rows[i].functionType == 0 ? '健康管家在线' : '互联网医院'
             )
 
-            //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
+            //订单状态（1：待支付 2：已完成 3：支付中 4：待收货 5：订单取消 6：已退款 7：已配送
             if (res.data.rows[i].status == 1) {
               this.$set(res.data.rows[i], 'statusText', '待支付')
             } else if (res.data.rows[i].status == 2) {
               this.$set(res.data.rows[i], 'statusText', '已完成')
             } else if (res.data.rows[i].status == 3) {
-              this.$set(res.data.rows[i], 'statusText', '部分支付')
+              this.$set(res.data.rows[i], 'statusText', '支付中')
             } else if (res.data.rows[i].status == 4) {
               this.$set(res.data.rows[i], 'statusText', '待收货')
             } else if (res.data.rows[i].status == 5) {
               this.$set(res.data.rows[i], 'statusText', '订单取消')
+            } else if (res.data.rows[i].status == 6) {
+              this.$set(res.data.rows[i], 'statusText', '已退款')
             } else if (res.data.rows[i].status == 7) {
               this.$set(res.data.rows[i], 'statusText', '已配送')
             }
