@@ -164,7 +164,8 @@ export default {
       detailData: {},
       printObj: {
         id: 'printContent',
-        popTitle: '电子处方',
+        // popTitle: '电子处方',
+        popTitle: '　',
       },
     }
   },
