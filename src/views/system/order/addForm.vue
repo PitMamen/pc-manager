@@ -48,26 +48,22 @@
 
         <!-- 计划内容 -->
         <div class="div-health-plan">
-          <div
-            class="div-plan-item"
-            v-for="(item, index) in record.goodsInfo"
-            :key="index"
-            :class="{ firstItem: index == 0 }"
-          >
+          <div class="div-plan-item firstItem">
+            <span class="span-item-name"> 套餐名称</span>
+            <span class="span-item-name"> 服务类别</span>
+            <span class="span-item-name"> 单价 （元） </span>
+            <span class="span-item-name"> 数量</span>
+            <span class="span-item-name"> 金额（元） </span>
+
+          </div>
+          <!-- :class="{ firstItem: index == 0 }" -->
+          <div class="div-plan-item" v-for="(item, index) in record.goodsInfo" :key="index">
             <span class="span-item-name"> {{ item.goodsName }}</span>
             <span class="span-item-name"> {{ item.goodsSpec }}</span>
-            <span class="span-item-name"> {{ item.price }} <span v-if="index == 0">（元） </span></span>
+            <span class="span-item-name"> {{ item.price }} </span>
             <span class="span-item-name"> {{ item.number }}</span>
-            <span class="span-item-name"> {{ item.total }} <span v-if="index == 0">（元） </span> </span>
-            <!-- <span class="span-item-name"> 计划时间 :</span>
+            <span class="span-item-name"> {{ item.total }} </span>
 
-            <span style="margin-left: 2%">{{ record.goodsInfo[index].execTime }} </span>
-            <span class="span-des">天后</span>
-
-            <div class="div-top-right"></div> -->
-
-            <!-- 分割线 -->
-            <!-- <div class="div-divider"></div> -->
           </div>
         </div>
         <a-button
@@ -119,34 +115,15 @@ export default {
       this.record = record
       this.visible = true
 
-      // this.record.goodsInfo.push({
-      //   goodsName: '套餐名称',
-      //   goodsSpec: '服务类别',
-      //   price: '单价',
-      //   number: '数量',
-      //   total: '金额',
-      // })
-
       for (let index = 0; index < this.record.goodsInfo.length; index++) {
         this.$set(
           this.record.goodsInfo[index],
           'total',
-          this.record.goodsInfo[index].price * this.record.goodsInfo[index].number
+          this.record.goodsInfo[index].price * this.record.goodsInfo[index].number + ''
         )
         this.$set(this.record.goodsInfo[index], 'goodsSpec', this.record.goodsInfo[index].goodsClassInfo.className)
       }
 
-      //去掉重复的表头  filter保留满足条件的item
-      let after = this.record.goodsInfo.filter((item) => item.goodsName != '套餐名称')
-      this.record.goodsInfo = after
-
-      this.record.goodsInfo.unshift({
-        goodsName: '套餐名称',
-        goodsSpec: '服务类别',
-        price: '单价',
-        number: '数量',
-        total: '金额',
-      })
     },
 
     //订单状态（1：待支付 2：已完成 3：支付中 4：待收货 5：订单取消 6：已退款 7：已配送
