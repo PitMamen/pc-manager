@@ -82,7 +82,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       checkData: {
-        remark: 0,
+        remark: 0, //0普通文本  1富文本
         title: '',
         knowledgeType: '',
         content: '', //内容
@@ -157,7 +157,11 @@ export default {
   },
   mounted() {
     this.checkData = JSON.parse(this.$route.query.recordStr)
-    this.checkData.remark = parseInt(this.checkData.remark)
+    if (this.checkData.remark == null) {
+      this.checkData.remark = 0
+    } else {
+      this.checkData.remark = parseInt(this.checkData.remark)
+    }
     console.log('fff', this.checkData)
     var editor = new E('#div1')
 
