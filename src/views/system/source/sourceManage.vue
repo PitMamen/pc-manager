@@ -114,15 +114,14 @@
               :value="itemService.id"
               :key="indexService"
             >
-              <span class="span-name">{{ itemService.value }}</span>
+              <span class="span-serv-name">{{ itemService.value }}</span>
               <!-- v-model="uploadData.templateName" -->
               <a-input-number
-                class="span-item-value"
+                class="span-serv-num"
                 v-model="itemService.num"
                 :min="0"
                 :max="10000"
                 :maxLength="30"
-                style="display: inline-block; width: 45%; height: 25px; margin-left: 3%"
                 allow-clear
                 placeholder=""
               />
@@ -344,7 +343,7 @@ export default {
       })
     },
 
-    //填充当天数据 
+    //填充当天数据
     inputChooseDayData() {
       this.itemData = []
       if (this.dutyMap[this.chooseDay].data.length > 0) {
@@ -881,12 +880,22 @@ export default {
           .item-service {
             margin-top: 5%;
             display: flex;
-            width: 40%;
+            width: 47%;
             margin-right: 2%;
             flex-wrap: wrap;
             font-weight: bold;
             align-items: center;
             flex-direction: row;
+
+            .span-serv-name {
+              width: 38%;
+            }
+            .span-serv-num {
+              display: inline-block;
+              width: 35%;
+              height: 25px;
+              margin-left: 3%;
+            }
           }
           .ant-input {
             height: 25px;
