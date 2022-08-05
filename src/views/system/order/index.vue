@@ -218,8 +218,10 @@ export default {
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
             // this.$set(res.data.rows[i], 'userName', res.data.rows[i].userInfo.userName)
 
-            this.$set(res.data.rows[i], 'userNameIn', res.data.rows[i].userInfo.userName)
-            this.$set(res.data.rows[i], 'userIdIn', res.data.rows[i].userInfo.userId)
+            if (res.data.rows[i].userInfo) {
+              this.$set(res.data.rows[i], 'userNameIn', res.data.rows[i].userInfo.userName)
+              this.$set(res.data.rows[i], 'userIdIn', res.data.rows[i].userInfo.userId)
+            }
             this.$set(
               res.data.rows[i],
               'functionTypeName',
