@@ -119,6 +119,10 @@
               <span class="span-item-name" style="margin-left: 3%"> 用药频次 :</span>
               <span class="span-item-value">{{ item.useFrequency }} </span>
             </div>
+            <div class="div-line-medicine" v-if="item.remark">
+              <span class="span-item-name"> 特殊说明 :</span>
+              <span class="span-item-value" style="width:80%">{{ item.remark }}</span>
+            </div>
           </div>
         </div>
 
@@ -310,7 +314,7 @@ export default {
         margin-top: 1%;
         overflow: hidden;
         .span-item-name {
-          width: 15%;
+          width: 13%;
           display: inline-block;
           color: #000;
           font-size: 14px;
