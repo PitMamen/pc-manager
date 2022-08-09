@@ -54,7 +54,6 @@
             <span class="span-item-name"> 单价 （元） </span>
             <span class="span-item-name"> 数量</span>
             <span class="span-item-name"> 金额（元） </span>
-
           </div>
           <!-- :class="{ firstItem: index == 0 }" -->
           <div class="div-plan-item" v-for="(item, index) in record.goodsInfo" :key="index">
@@ -63,11 +62,11 @@
             <span class="span-item-name"> {{ item.price }} </span>
             <span class="span-item-name"> {{ item.number }}</span>
             <span class="span-item-name"> {{ item.total }} </span>
-
           </div>
         </div>
+        <!-- 仅管理员并是已完成的并是挂号订单才能退费 -->
         <a-button
-          v-if="record.status == 2 && roleName == 'admin'"
+          v-if="record.status == 2 && roleName == 'admin' && record.orderType == 'register'"
           class="btn-submit"
           style="margin-left: 42%; margin-top: 5%"
           type="primary"
@@ -123,7 +122,6 @@ export default {
         )
         this.$set(this.record.goodsInfo[index], 'goodsSpec', this.record.goodsInfo[index].goodsClassInfo.className)
       }
-
     },
 
     //订单状态（1：待支付 2：已完成 3：支付中 4：待收货 5：订单取消 6：已退款 7：已配送

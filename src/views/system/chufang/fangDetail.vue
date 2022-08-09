@@ -48,6 +48,11 @@
         </div>
 
         <div class="div-line-wrap">
+          <span class="span-item-name"> 取药地点 :</span>
+          <span class="span-item-value">{{ detailData.takeMedicineLocDesc || '暂无' }} </span>
+        </div>
+
+        <div class="div-line-wrap">
           <span class="span-item-name" style="width: 13%"> 主述/现病史 :</span>
           <span class="span-item-value">{{ detailData.presentIllness }} </span>
         </div>
@@ -121,7 +126,7 @@
             </div>
             <div class="div-line-medicine" v-if="item.remark">
               <span class="span-item-name"> 特殊说明 :</span>
-              <span class="span-item-value" style="width:80%">{{ item.remark }}</span>
+              <span class="span-item-value" style="width: 80%">{{ item.remark }}</span>
             </div>
           </div>
         </div>
