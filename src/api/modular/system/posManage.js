@@ -1067,12 +1067,22 @@ export function getScheduleInfo(params) {
 /**
  * 获取医生排班时段信息
  * 
- * 获取号源类别列表用 qryCodeValue 接口，codeGroup传入 REGISTER_TYPE
- *
  */
 export function getSchedulePeriods(params) {
   return axios({
     url: '/bdcApi/sys/getSchedulePeriods',
+    method: 'get',
+    params: params
+  })
+}
+
+/**
+ * 获取护士排班时段信息
+ *
+ */
+ export function getScheduleNursePeriods(params) {
+  return axios({
+    url: '/bdcApi/sys/getScheduleNursePeriods',
     method: 'get',
     params: params
   })

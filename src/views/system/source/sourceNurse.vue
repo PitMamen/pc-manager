@@ -140,7 +140,7 @@
 <script>
 import {
   getDepts,
-  getSchedulePeriods,
+  getScheduleNursePeriods,
   qryCodeValue,
   // getDoctorList,
   getUserList,
@@ -187,19 +187,36 @@ export default {
         { code: 2, isChecked: true },
       ],
 
-      //请求医生
+      //请求护士
       // queryParam: { departmentId: 0 },
+      /**
+       *     {
+      "departmentId": 1150000,
+      "departmentName": "精神科",
+      "hospitalId": 1,
+      "parentId": 0,
+      "children": null
+    },
+    {
+      "departmentId": 1150001,
+      "departmentName": "精神科门诊",
+      "hospitalId": 1,
+      "parentId": 0,
+      "children": null
+    },
+       */
       queryParam: {
         pageNo: 1,
         pageSize: 1000,
-        roleId: 3,
-        departmentId: 0,
+        roleId: 5, //护士换成5
+        departmentId: 1150000, //目前只需要精神科的护士，所以写死精神科
         status: 0,
         // userName: '',
       },
       //请求所选医生的号源数据
       queryParamSource: {
         docId: 0,
+        identity: 'nurse',
         beginDate: getDateNow(),
         endDate: getCurrentMonthLast(),
       },
@@ -244,7 +261,7 @@ export default {
       "updateTime": null
     }
      */
-    getSchedulePeriods().then((res) => {
+    getScheduleNursePeriods().then((res) => {
       if (res.code == 0) {
         this.itemData = res.data
         this.itemData.forEach((item) => {
@@ -461,7 +478,7 @@ export default {
      */
     addRecord(index, isEdit) {
       let addParams = {
-        clinicType: '0',
+        clinicType: '2', //护士的类型改成2
         yljgdm: '444885559',
         departmentCode: this.chooseDeptItemDoc.departmentId,
         doctorRank: this.chooseDeptItemDoc.professionalTitle,

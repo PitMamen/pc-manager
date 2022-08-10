@@ -200,6 +200,7 @@ export default {
       //请求所选医生的号源数据
       queryParamSource: {
         docId: 0,
+        identity: 'doctor',
         beginDate: getDateNow(),
         endDate: getCurrentMonthLast(),
       },
