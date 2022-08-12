@@ -155,7 +155,86 @@
         <a-tabs default-active-key="5" @change="callback">
           <a-tab-pane key="5" tab="统计看板"> </a-tab-pane>
 
-          <a-tab-pane key="6" tab="随访详情" force-render> </a-tab-pane>
+          <a-tab-pane key="6" tab="随访详情" force-render>
+            <div class="div-inquiry-text">
+              <a-card :bordered="false" class="card-right">
+                <div class="table-page-search-wrapper">
+                  <a-form :form="form" layout="inline">
+                    <a-row :gutter="48">
+                      <!-- <a-col :md="3" :sm="24">
+                        <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
+                      </a-col> -->
+                      <a-col :md="6" :sm="24">
+                        <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+                          <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
+                          <a-select allow-clear v-model="deptIds" mode="multiple" placeholder="请选择科室">
+                            <a-select-option
+                              v-for="(item, index) in originData"
+                              :key="index"
+                              :value="item.departmentId"
+                              >{{ item.departmentName }}</a-select-option
+                            >
+                          </a-select>
+                        </a-form-item></a-col
+                      >
+
+                      <a-col :md="6" :sm="24">
+                        <a-form-item label="状态">
+                          <a-select allow-clear v-model="queryParamsStat.status" placeholder="请选择状态">
+                            <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                              item.value
+                            }}</a-select-option>
+                          </a-select>
+                        </a-form-item>
+                      </a-col>
+
+                      <a-col :md="6" :sm="24">
+                        <a-form-item label="抽查状态">
+                          <a-select allow-clear v-model="queryParamsStat.status" placeholder="请选择抽查状态">
+                            <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                              item.value
+                            }}</a-select-option>
+                          </a-select>
+                        </a-form-item>
+                      </a-col>
+
+                      <a-col :md="7" :sm="24">
+                        <a-form-item label="时间">
+                          <a-range-picker :value="createValue" @change="onChange" />
+                        </a-form-item>
+                      </a-col>
+
+                      <a-col :md="5" :sm="24">
+                        <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+                        <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
+                      </a-col>
+                    </a-row>
+                  </a-form>
+                </div>
+
+                <s-table
+                  ref="tableStat"
+                  size="default"
+                  :columns="columnsStat"
+                  :data="loadDataStat"
+                  :alert="true"
+                  :rowKey="(record) => record.code"
+                >
+                  <span slot="action" slot-scope="text, record">
+                    <a @click="$refs.statSolve.edit(record)">处理</a>
+                    <a-divider type="vertical" />
+                    <a @click="$refs.statDetail.edit(record)">详情</a>
+                    <a-divider type="vertical" />
+                    <a @click="$refs.statCheck.edit(record)">抽查</a>
+                  </span>
+                </s-table>
+
+                <stat-check ref="statCheck" @ok="handleOkStat" />
+                <stat-detail ref="statDetail" @ok="handleOkStat" />
+                <stat-solve ref="statSolve" @ok="handleOkStat" />
+              </a-card>
+            </div>
+          </a-tab-pane>
         </a-tabs>
       </a-tab-pane>
     </a-tabs>
@@ -164,19 +243,37 @@
 
 <script>
 import { STable } from '@/components'
-import { getDocPlans, delPlan,getOutPatients, getDepts  } from '@/api/modular/system/posManage'
+import {
+  getDocPlans,
+  delPlan,
+  getOutPatients,
+  getDepts,
+  deleteAppVersion,
+  listAppVersion,
+} from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 import addFormDispatch from './addFormDispatch'
 import editFormDispatch from './editFormDispatch'
+
+import statCheck from './statCheck'
+import statDetail from './statDetail'
+import statSolve from './statSolve'
+
+import { formatDate } from '@/utils/util'
 
 export default {
   components: {
     STable,
     addForm,
     editForm,
+
     addFormDispatch,
     editFormDispatch,
+
+    statCheck,
+    statDetail,
+    statSolve,
   },
 
   data() {
@@ -342,6 +439,91 @@ export default {
       originData: [],
       keshiDataTemp: [],
       /** 计划分配数据*/
+
+      /** 统计类别数据*/
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+      },
+
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 11 },
+      },
+      queryParamsStat: {
+        versionNumber: undefined, //
+        startTime: undefined, //
+        endTime: undefined, //
+      },
+      // 表头
+      columnsStat: [
+        {
+          title: '文件名称',
+          dataIndex: 'fileName',
+        },
+        {
+          title: '版本号',
+          dataIndex: 'versionNumber',
+        },
+        {
+          title: '更新时间',
+          dataIndex: 'updateTimeOut',
+        },
+        {
+          title: '上传人员',
+          dataIndex: 'createrName',
+        },
+        {
+          title: '发布中',
+          dataIndex: 'stateText',
+        },
+        {
+          title: '更新说明',
+          dataIndex: 'versionDescription',
+        },
+        {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+      //此属性用来做重置功能的
+      createValue: [],
+      deptIds: [],
+      statusData: [
+        { code: -1, value: '全部' },
+        { code: 1, value: '待支付' },
+        { code: 2, value: '未配送' },
+        { code: 3, value: '支付中' },
+        { code: 4, value: '待收货' },
+        { code: 5, value: '订单取消' },
+        { code: 6, value: '已退款' },
+        { code: 7, value: '已配送' },
+      ],
+
+      // 加载数据方法 必须为 Promise 对象
+      loadDataStat: (parameter) => {
+        return listAppVersion(Object.assign(parameter, this.queryParams)).then((res) => {
+          for (let i = 0; i < res.data.rows.length; i++) {
+            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+            this.$set(res.data.rows[i], 'updateTimeOut', formatDate(res.data.rows[i].updatedTime))
+            // 状态 0 正常 1 发布 2 删除
+            if (res.data.rows[i].state == 1) {
+              this.$set(res.data.rows[i], 'stateText', '是')
+            } else {
+              this.$set(res.data.rows[i], 'stateText', '否')
+            }
+            this.$set(
+              res.data.rows[i],
+              'deleteTitle',
+              '您确定要删除版本号' + res.data.rows[i].versionNumber + '的记录信息么？删除后将不可恢复！'
+            )
+          }
+          return res.data
+        })
+      },
+      /** 统计类别数据*/
     }
   },
 
@@ -545,6 +727,58 @@ export default {
       this.selectedRows = selectedRows
     },
     /** 计划分配方法*/
+
+    /** 统计列表方法*/
+    onChange(momentArr, dateArr) {
+      this.createValue = momentArr
+      this.queryParamsStat.startTime = dateArr[0]
+      this.queryParamsStat.endTime = dateArr[1]
+    },
+
+    reset() {
+      // this.form.resetFields()
+      this.queryParamsStat = {
+        versionNumber: undefined, //
+        startTime: undefined, //
+        endTime: undefined, //
+      }
+      this.createValue = []
+    },
+
+    delVersion(record) {
+      deleteAppVersion({ id: record.id, state: 2 })
+        .then((res) => {
+          if (res.success) {
+            this.$message.success('删除成功')
+            this.$refs.table.refresh()
+          } else {
+            this.$message.error('删除失败：' + res.message)
+          }
+        })
+        .catch((err) => {
+          this.$message.error('删除错误：' + err.message)
+        })
+    },
+
+    //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
+    getClass(status) {
+      if (status == 1) {
+        return 'span-red'
+      } else if (status == 2) {
+        return 'span-blue'
+      } else if (status == 3) {
+        return 'span-red'
+      } else if (status == 4) {
+        return 'span-blue'
+      } else if (status == 5) {
+        return 'span-gray'
+      }
+    },
+
+    handleOkStat() {
+      this.$refs.tableStat.refresh()
+    },
+    /** 统计列表方法*/
   },
 }
 </script>
