@@ -1194,3 +1194,15 @@ export function refundByAdmin(data) {
     data: data,
   })
 }
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function qryRevisitPatientList(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitPatientList',
+    method: 'post',
+    data: data,
+  })
+}

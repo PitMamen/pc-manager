@@ -1,7 +1,39 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
-      <a-button type="primary" @click="goAdd()">新增文章</a-button>
+    <a-button type="primary" @click="goAdd()">新增文章</a-button>
+
+    <!-- 下个版本迭代放出来 -->
+    <div class="table-page-search-wrapper" v-if="false" style="margin-top: 1%">
+      <a-form layout="inline">
+        <a-row :gutter="48">
+          <!-- <a-col :md="3" :sm="24">
+              <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
+            </a-col> -->
+
+          <a-col :md="3" :sm="24">
+            <a-form-item label="">
+              <a-button type="primary" @click="goAdd()">新增文章</a-button>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="7" :sm="24">
+            <a-form-item label="科室">
+              <a-select allow-clear v-model="deptIds" mode="multiple" placeholder="请选择科室">
+                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                  item.departmentName
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="6" :sm="24">
+            <a-form-item label="">
+              <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </a-form>
     </div>
 
     <!-- 去掉勾选框 -->
@@ -35,7 +67,7 @@
 
 <script>
 import { STable } from '@/components'
-import { pushArticle, getAllArticlesTeach, delArticle } from '@/api/modular/system/posManage'
+import { pushArticle, getAllArticlesTeach, delArticle, getDepts } from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -44,11 +76,29 @@ export default {
     // editForm,
   },
 
+  watch: {
+    deptIds(val) {
+      console.log(`selected:`, val)
+    },
+  },
+
   data() {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
+      originData: [],
+      deptIds: [],
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+      },
+
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 11 },
+      },
       queryParam: { source: 'weixin' },
+      queryParamOrigin: { source: 'weixin' },
       // 表头
       columns: [
         {
@@ -135,7 +185,23 @@ export default {
     }
   },
 
+  created() {
+    /** 计划分配方法*/
+    getDepts().then((res) => {
+      if (res.code == 0) {
+        this.originData = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
+  },
+
   methods: {
+    reset() {
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.$refs.table.refresh()
+    },
+
     //新建文章
     goAdd() {
       this.$router.push({ name: 'article_teach_add', params: null })
