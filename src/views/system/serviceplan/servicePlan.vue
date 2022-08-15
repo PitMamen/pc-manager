@@ -164,7 +164,8 @@
                       <!-- <a-col :md="3" :sm="24">
                         <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
                       </a-col> -->
-                      <a-col :md="6" :sm="24">
+                      <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
+                      <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
                         <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                           <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
                           <a-select
@@ -210,7 +211,13 @@
                       </a-col>
 
                       <a-col :md="5" :sm="24">
-                        <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+                        <a-button
+                          style="margin-right: 3%"
+                          type="primary"
+                          v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                          @click="reset"
+                          >全院</a-button
+                        >
                         <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
                       </a-col>
                     </a-row>
@@ -226,11 +233,24 @@
                   :rowKey="(record) => record.code"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="$refs.statSolve.edit(record)">处理</a>
-                    <a-divider type="vertical" />
+                    <!-- 仅对超时的有处理 -->
+                    <a v-if="record.status == 4" @click="$refs.statSolve.edit(record)">处理</a>
+                    <a-divider v-if="record.status == 4" type="vertical" />
+
+                    <!-- <a @click="$refs.statSolve.edit(record)">处理</a>
+                    <a-divider type="vertical" /> -->
+
                     <a @click="$refs.statDetail.edit(record)">详情</a>
-                    <a-divider type="vertical" />
-                    <a @click="$refs.statCheck.edit(record)">抽查</a>
+
+                    <!-- 仅对电话随访有抽查 -->
+                    <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
+                    <a v-if="record.status == 5" @click="$refs.statCheck.edit(record)">抽查</a>
+
+                    <a-divider v-if="record.status == 5 && record.checkStatus == 1" type="vertical" />
+                    <a v-if="record.status == 5" @click="$refs.statCheck.edit(record)">已抽查</a>
+
+                    <!-- <a-divider type="vertical" />
+                    <a @click="$refs.statCheck.edit(record)">抽查</a> -->
                   </span>
                 </s-table>
 
@@ -265,6 +285,8 @@ import moment from 'moment'
 import statCheck from './statCheck'
 import statDetail from './statDetail'
 import statSolve from './statSolve'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 import { formatDate, getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 
@@ -467,8 +489,8 @@ export default {
         deptCodes: [],
         status: undefined,
         checkStatus: undefined,
-        beginDate: getDateNow(),
-        endDate: getCurrentMonthLast(),
+        beginDate: '',
+        endDate: '',
       },
 
       // 表头
@@ -539,7 +561,7 @@ export default {
       ],
       //此属性用来做重置功能的
       createValue: [],
-      deptIds: [],
+      user: {},
       //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访)
       //抽查状态(1已抽查0未抽查)
       statusData: [
@@ -561,13 +583,24 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
-        return qryRevisitPatientList(Object.assign(parameter, this.queryParamsStat)).then((res) => {
+        /**不是病友服务中心和管理员，写死用户当前的科室 */
+        let params = JSON.parse(JSON.stringify(this.queryParamsStat))
+        if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
+          params.deptCodes.push(this.user.departmentCode)
+        }
+        if (this.queryParamsStat.status == -1) {
+          delete params.status
+        }
+        if (this.queryParamsStat.checkStatus == -1) {
+          delete params.checkStatus
+        }
+        return qryRevisitPatientList(Object.assign(parameter, params)).then((res) => {
           if (res.code == 0) {
             for (let i = 0; i < res.data.rows.length; i++) {
               this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
 
               this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
-              this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].status))
+              this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
             }
             return res.data
           }
@@ -625,6 +658,8 @@ export default {
     })
     // this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.user = Vue.ls.get(TRUE_USER)
+    console.log('user', user)
   },
 
   methods: {
