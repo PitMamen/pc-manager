@@ -1218,3 +1218,27 @@ export function qryRevisitPatientList(data) {
     data: data,
   })
 }
+
+/**
+ * 
+ * 保存/修改处理信息（修改时传记录ID）
+ */
+ export function dealsave(data) {
+  return axios({
+    url: '/bdcApi/revisit/deal/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取处理信息
+ */
+ export function dealget(data) {
+  return axios({
+    url: '/bdcApi/revisit/deal/get',
+    method: 'post',
+    data: data,
+  })
+}
