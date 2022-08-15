@@ -153,7 +153,57 @@
 
       <a-tab-pane key="3" tab="随访统计">
         <a-tabs default-active-key="5" @change="callback">
-          <a-tab-pane key="5" tab="统计看板"> </a-tab-pane>
+          <a-tab-pane key="5" tab="统计看板">
+            <div class="row-stat">
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #1890ff">
+                      <div class="item-stat-num">{{ statData.totalPatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">随访总人数</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #4dad90">
+                      <div class="item-stat-num">{{ statData.finishedPatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">随访完成数</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top">
+                      <div class="item-stat-num">{{ statData.visitedRate }}</div>
+                      <div class="item-stat-unit">%</div>
+                    </div>
+                    <div class="item-stat-name">随访率</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a-tab-pane>
 
           <a-tab-pane key="6" tab="随访详情" force-render>
             <div class="div-inquiry-text">
@@ -607,6 +657,17 @@ export default {
         })
       },
       /** 统计类别数据*/
+
+      /**统计看板参数 */
+      statData: {
+        outTimePatient: 0,
+        finishedPatient: 0,
+        assginedPatient: 0,
+        telVisitPatient: 0,
+        totalPatient: 6,
+        visitedRate: '0.0000',
+      },
+      /**统计看板参数 */
     }
   },
 
@@ -979,6 +1040,61 @@ export default {
     margin-top: -1.5%;
     .ant-input {
       height: 30px;
+    }
+  }
+}
+
+.row-stat {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  width: 100%;
+
+  .row-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 50px 50px;
+    justify-content: center;
+    border: 1px #eee solid;
+    border-radius: 10px;
+    background-color: white;
+    height: 200px;
+    width: 30%;
+
+    .item-inside {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .item-image {
+        width: 50px;
+        margin-top: 15px;
+        height: 50px;
+      }
+
+      .item-right {
+        display: flex;
+        margin-left: 20px;
+        flex-direction: column;
+
+        .item-right-top {
+          display: flex;
+          flex-direction: row;
+          align-items: baseline;
+          .item-stat-num {
+            font-size: 46px;
+          }
+          .item-stat-unit {
+            font-size: 20px;
+          }
+        }
+
+        .item-stat-name {
+          font-size: 20px;
+        }
+      }
     }
   }
 }
