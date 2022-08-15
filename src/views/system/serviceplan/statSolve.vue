@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="处理"
+    :title="DealEnd?CheckEnd?'抽查详情':'抽查':'处理'"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -27,13 +27,13 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 所在病区 :</span>
-          <span class="span-item-value">{{ szbq}} </span>
+          <span class="span-item-value">{{ szbq }} </span>
 
           <span class="span-item-value"></span>
         </div>
         <div class="div-divider"></div>
 
-        <div v-if="DealCheck">
+        <div v-if="DealEnd">
           <div class="div-line-wrap">
             <span class="span-item-name"> 处理人 :</span>
             <span class="span-item-value">{{ handleName }} </span>
@@ -61,11 +61,10 @@
           </div>
         </div>
 
-        <div v-if="!DealCheck">
+        <div v-if="!DealEnd">
           <div class="div-line-wrap">
             <span class="span-item-name"> 处理人 :</span>
             <a-input
-              :disabled="DealCheck"
               v-model="handleName"
               class="span-item-value"
               :maxLength="30"
@@ -84,7 +83,6 @@
             <span class="span-item-value">{{ record.reqDocName }} </span>
 
             <a-radio-group
-              :disabled="DealCheck"
               name="radioGroup"
               style="width: 300px; margin-left: -30%"
               :default-value="radioTyPe"
@@ -100,7 +98,6 @@
           <div v-show="radioTyPe === 1" class="div-line-wrap">
             <span class="span-item-name"> 失访理由 :</span>
             <a-input
-              :disabled="DealCheck"
               v-model="handleResult"
               class="span-item-value"
               style="display: inline-block; width: 80%"
@@ -124,6 +121,56 @@
             </a-button>
           </div>
         </div>
+
+        <div v-if="DealEnd && !CheckEnd">
+          <div class="div-line-wrap">
+            <span class="span-item-name"> 抽查人 :</span>
+            <a-input
+              v-model="checkName"
+              class="span-item-value"
+              :maxLength="30"
+              style="display: inline-block"
+              allow-clear
+              placeholder="请填写抽查人姓名"
+            />
+
+            <span class="span-item-name" style="margin-left: 3%"> 抽查时间 :</span>
+
+            <span class="span-item-value">{{ checkTime }} </span>
+          </div>
+
+          <div class="div-line-wrap">
+            <span class="span-item-name"> 抽查结果 :</span>
+            <a-input
+              v-model="checkResult"
+              class="span-item-value"
+              style="display: inline-block; width: 80%"
+              allow-clear
+              placeholder="请填写抽查结果"
+            />
+          </div>
+
+          <div style="margin-top: 50px">
+            <a-button size="large" type="primary" @click="gocheck" style="margin-left: 35%; width: 30%">
+              确定
+            </a-button>
+          </div>
+        </div>
+        <div v-if="CheckEnd">
+          <div class="div-line-wrap">
+            <span class="span-item-name"> 抽查人 :</span>
+            <span class="span-item-value">{{ checkName }} </span>
+
+            <span class="span-item-name" style="margin-left: 3%"> 抽查时间 :</span>
+
+            <span class="span-item-value">{{ checkTime }} </span>
+          </div>
+
+          <div class="div-line-wrap">
+            <span class="span-item-name"> 抽查结果 :</span>
+            <span class="span-item-value">{{ checkResult }}</span>
+          </div>
+        </div>
         <div style="height: 50px; backgroud-color: white" />
       </div>
     </a-spin>
@@ -138,6 +185,8 @@ import {
   dealget,
   queryHealthPlanTaskList,
   queryHealthPlanContent,
+  checksave,
+  checkget,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
@@ -149,8 +198,8 @@ export default {
 
   data() {
     return {
-     
-      DealCheck: false,
+      DealEnd: false, //fasle为未处理  true为已处理待检查
+      CheckEnd: false, //fasle为未检查  true为已检查
       patientId: '', //患者ID
       planId: '',
       patientInfo: {
@@ -163,13 +212,16 @@ export default {
           phone: '',
         },
       },
-      szbq:'',//所在病区
+      szbq: '', //所在病区
       radioTyPe: 0,
       handleName: '',
       handleTime: '',
       handleResult: '',
+      checkTime: '',
+      checkName: '',
+      checkResult: '',
       questionTaskContent: {},
-      questionUrl:'',
+      questionUrl: '',
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -200,51 +252,49 @@ export default {
     },
 
     //处理初始化方法
-    edit(record) {
+    doDeal(record) {
       console.log(record)
-      ;(this.record = record), (this.patientId = record.userId), (this.visible = true), (this.planId = record.planId), (this.szbq = record.ksmc===record.bqmc?record.ksmc:record.ksmc+record.bqmc)
+      ;(this.record = record),
+        (this.patientId = record.userId),
+        (this.visible = true),
+        (this.planId = record.planId),
+        (this.szbq = record.ksmc === record.bqmc ? record.ksmc : record.ksmc + record.bqmc)
       this.handleTime = this.formatDate(new Date())
 
       this.getPatientBaseInfo()
       this.getQueryHealthPlanTaskList()
     },
-    //查看初始化方法
-    check(record) {
-      ;(this.record = record), (this.patientId = record.userId), (this.visible = true), (this.planId = record.planId), (this.szbq = record.ksmc===record.bqmc?record.ksmc:record.ksmc+record.bqmc)
-      this.DealCheck = true
+    //检查初始化方法
+    doCheck(record) {
+      ;(this.record = record),
+        (this.patientId = record.userId),
+        (this.visible = true),
+        (this.planId = record.planId),
+        (this.szbq = record.ksmc === record.bqmc ? record.ksmc : record.ksmc + record.bqmc)
+      this.DealEnd = true
+      this.checkTime = this.formatDate(new Date())
       this.getPatientBaseInfo()
       this.getDealInfo()
       this.getQueryHealthPlanTaskList()
     },
+    //已检查初始化方法
+    checkInfo(record) {
+      ;(this.record = record),
+        (this.patientId = record.userId),
+        (this.visible = true),
+        (this.planId = record.planId),
+        (this.szbq = record.ksmc === record.bqmc ? record.ksmc : record.ksmc + record.bqmc)
+      this.DealEnd = true
+      this.CheckEnd = true
 
+      this.getPatientBaseInfo()
+      this.getDealInfo()
+      this.getCheckInfo()
+      this.getQueryHealthPlanTaskList()
+    },
     getPatientBaseInfo() {
       getBaseInfo({ userId: this.patientId }).then((res) => {
         this.patientInfo = res.data
-      })
-    },
-
-    getDealInfo() {
-      if (this.patientId === '') {
-        this.$message.error('患者ID为空')
-        return
-      }
-      if (this.planId === '') {
-        this.$message.error('计划ID为空')
-        return
-      }
-      var postData = {
-        planId: this.planId,
-        userId: this.patientId, //就诊人ID
-      }
-      dealget(postData).then((res) => {
-        if (res.code === 0) {
-          this.radioTyPe = res.data.dealType === '1' ? 0 : 1
-          this.handleName = res.data.dealUserName
-          this.handleResult = res.data.dealResult
-          this.handleTime = res.data.dealTime
-        } else {
-          this.$message.error(res.message)
-        }
       })
     },
 
@@ -276,8 +326,6 @@ export default {
       })
     },
 
-
-
     //查询任务内容
     getQueryHealthPlanContent() {
       var postData = {
@@ -287,8 +335,8 @@ export default {
       }
       queryHealthPlanContent(postData).then((res) => {
         if (res.code === 0) {
-          this.questionTaskContent.questUrl=res.data.questUrl
-          this.questionUrl=res.data.questUrl
+          this.questionTaskContent.questUrl = res.data.questUrl
+          this.questionUrl = res.data.questUrl
         } else {
           this.$message.error(res.message)
         }
@@ -303,12 +351,12 @@ export default {
             for (var j = 0; j < task.taskInfo.length; j++) {
               var content = task.taskInfo[j]
               if (content.contentId === this.questionTaskContent.contentId) {
-                 if(content.execFlag===1){
-                    //已完成
-                    this.dodealsave()
-                 }else{
+                if (content.execFlag === 1) {
+                  //已完成
+                  this.dodealsave()
+                } else {
                   this.$message.error('请先提交问卷')
-                 }
+                }
                 break
               }
             }
@@ -324,7 +372,7 @@ export default {
         }
       })
     },
-  //完成处理
+    //完成处理按钮
     goConfirm() {
       if (this.patientId === '') {
         this.$message.error('患者ID为空')
@@ -335,7 +383,7 @@ export default {
         return
       }
       if (this.handleName.length === 0) {
-        this.$message.info('请填写处理人')
+        this.$message.info('请填写处理人姓名')
         return
       }
       if (this.radioTyPe === 0) {
@@ -349,12 +397,10 @@ export default {
         }
         this.dodealsave()
       }
-
-
     },
 
     //保存处理信息
-    dodealsave(){
+    dodealsave() {
       var postdata = {
         dealResult: this.handleResult, //失访理由
         dealType: this.radioTyPe === 0 ? 1 : 2, //处理措施,1填写问卷/2失访
@@ -367,13 +413,100 @@ export default {
       dealsave(postdata).then((res) => {
         if (res.code === 0) {
           this.$message.success('操作成功！')
-          this.visible=false
+          this.visible = false
         } else {
           this.$message.error(res.message)
         }
       })
     },
-
+    //获取处理信息
+    getDealInfo() {
+      if (this.patientId === '') {
+        this.$message.error('患者ID为空')
+        return
+      }
+      if (this.planId === '') {
+        this.$message.error('计划ID为空')
+        return
+      }
+      var postData = {
+        planId: this.planId,
+        userId: this.patientId, //就诊人ID
+      }
+      dealget(postData).then((res) => {
+        if (res.code === 0) {
+          this.radioTyPe = res.data.dealType === '1' ? 0 : 1
+          this.handleName = res.data.dealUserName
+          this.handleResult = res.data.dealResult
+          this.handleTime = res.data.dealTime
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    //点击抽查确定按钮
+    gocheck() {
+      if (this.patientId === '') {
+        this.$message.error('患者ID为空')
+        return
+      }
+      if (this.planId === '') {
+        this.$message.error('计划ID为空')
+        return
+      }
+      if (this.checkName.length === 0) {
+        this.$message.info('请填写检查人姓名')
+        return
+      }
+      if (this.checkResult.length === 0) {
+        this.$message.info('请填写检查结果')
+        return
+      }
+      this.dochecksave()
+    },
+    //保存检查信息
+    dochecksave() {
+      var postdata = {
+        checkResult: this.checkResult, //检查理由
+        checkUserName: this.checkName, //检查人
+        ipNo: this.record.zyh, //住院号
+        planId: this.planId, //计划ID
+        regNo: this.record.jzlsh, //就诊流水号
+        userId: this.patientId, //就诊人ID
+      }
+      checksave(postdata).then((res) => {
+        if (res.code === 0) {
+          this.$message.success('操作成功！')
+          this.visible = false
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    //获取检查信息
+    getCheckInfo() {
+      if (this.patientId === '') {
+        this.$message.error('患者ID为空')
+        return
+      }
+      if (this.planId === '') {
+        this.$message.error('计划ID为空')
+        return
+      }
+      var postData = {
+        planId: this.planId,
+        userId: this.patientId, //就诊人ID
+      }
+      checkget(postData).then((res) => {
+        if (res.code === 0) {
+          this.checkName = res.data.checkUserName
+          this.checkResult = res.data.checkResult
+          this.checkTime = res.data.checkTime
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
     handleCancelDetail() {
       this.previewVisibleDetail = false
     },

@@ -1321,3 +1321,29 @@ data: data,
     params: data,
   })
 }
+
+/**
+ * 
+ * 保存/修改抽查信息（修改时传记录ID）
+ */
+
+ export function checksave(data) {
+  return axios({
+    url: '/bdcApi/revisit/check/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取抽查信息
+ */
+
+ export function checkget(data) {
+  return axios({
+    url: '/bdcApi/revisit/check/get',
+    method: 'post',
+    data: data,
+  })
+}
