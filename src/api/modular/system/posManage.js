@@ -1125,6 +1125,20 @@ export function getMedicalOrdersDetail(data) {
     data: data,
   })
 }
+
+/**
+ * 随访详情
+ */
+ export function qryRevisitDetail(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 /**
  * 
  * 处方订单列表

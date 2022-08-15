@@ -1,71 +1,54 @@
 <template>
   <a-modal
-    title="编辑版本"
+    title=""
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
+    :footer="null"
     @ok="handleSubmit"
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
-      <a-form :form="form">
-        <a-form-item v-if="false" label="版本名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-input
-            placeholder="请上传文件"
-            disabled
-            v-decorator="['versionCode', { rules: [{ required: true, message: '请上传文件！' }] }]"
-          />
-        </a-form-item>
+      <div class="div-order-detail" id="printContent">
+        <h2 >详情</h2>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 患者 :</span>
+          <span class="span-item-value">{{ userInfo.userName }} </span>
 
-        <a-form-item label="版本号" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-input
-            placeholder="请上传文件"
-            disabled
-            v-decorator="['versionNumber', { rules: [{ required: true, message: '请上传文件！' }] }]"
-          />
-        </a-form-item>
-        <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <div class="clearfix">
-            <!-- @preview="handlePreview" -->
-            <!--               list-type="picture-card"  -->
-            <a-upload
-              :action="actionUrl"
-              :multiple="false"
-              :data="uploadData"
-              disabled
-              list-type="text"
-              :file-list="fileList"
-              @change="handleChange"
-            >
-              <div v-if="fileList.length < 1">
-                <!-- <div> -->
+          <span class="span-item-name" style="margin-left: 3%"> 诊疗卡号 :</span>
 
-                <!-- <a-icon type="plus" /> -->
-                <div class="upload-btn">选择文件</div>
-              </div>
-            </a-upload>
-            <!-- <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-            <img alt="example" style="width: 100%" :src="previewImage" />
-          </a-modal> -->
-          </div>
-        </a-form-item>
+          <span class="span-item-value" style="margin-left:-5%">{{userInfo.cardNo}}</span>
+        </div>
 
-        <a-form-item label="更新说明" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <a-textarea
-            placeholder="请输入更新说明"
-            v-decorator="['versionDescription', { rules: [{ required: false, message: '请输入更新说明！' }] }]"
-          />
-        </a-form-item>
-      </a-form>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 身份证号码 :</span>
+          <span class="span-item-value">{{userInfo.identificationNo }} </span>
+
+           <span class="span-item-name"  style="margin-left: 3%"> 电话号码 :</span>
+          <span class="span-item-value" style="margin-left:-5%">{{userInfo.phone }} </span>
+        </div>
+
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 紧急连续电话 :</span>
+          <span class="span-item-value">{{ userInfo.phone }} </span>
+        </div>
+         <div class="div-divider"></div>
+      </div>
+     
     </a-spin>
+
+ 
+
+<a-timeline mode="left" style="margin-left: 5%;margin-top: 5%;">
+    <a-timeline-item v-for="(item, index) in detailDataList" :key="index">{{item.type}}   {{item.time}}</a-timeline-item>
+  </a-timeline>
   </a-modal>
 </template>
 
 
 <script>
-import { updateAppVersion } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
+import { qryRevisitDetail } from '@/api/modular/system/posManage'
+
 export default {
   data() {
     return {
@@ -78,124 +61,164 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
-      statusData: [],
       confirmLoading: false,
-      form: this.$form.createForm(this),
-
-      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
-      actionUrl: '/api/bdcApi/appManager/uploadAppFile',
-      fileList: [],
-      uploadData: { platform: 1 },
-      versionData: {
-        fileName: '',
-        fileSize: '',
-        downloadUrl: '',
-        fileHash: '',
-        versionCode: '',
-        versionNumber: 0,
-        versionDescription: '',
-        // 平台 1 医生端
-        platform: 1,
-        // 状态 0 正常 1 发布 2 删除
-        state: 0,
-        // fileName: 'HealthManage_v1.2.2_13_debug.apk',
-        // fileSize: '54592595',
-        // downloadUrl:
-        //   'http://develop.mclouds.org.cn:8008/appManager/downloadApp/doctor/HealthManage_v1.2.2_13_debug.apk',
-        // fileHash: '47f93a95671ab6fd8eebaeb387228ee9',
-        // versionCode: 'v1.2.2',
-        // versionNumber: '13',
-      },
+      preNo: 0,
+      total: 0,
+      detailDataList: [],
+      userInfo:"",
     }
+
+
   },
-  created() {},
   methods: {
     //初始化方法
-    edit(record) {
+    edit(id) {
+      this.detailDataList =[]
+      this.total = 0
       this.visible = true
-      this.record = {}
-      this.fileList = []
-      this.record = record
-      //构造数据，除了name其他都不重要
-      this.fileList.push({
-        uid: 'vc-upload-1653891524699-4',
-        lastModified: 1653637105117,
-        lastModifiedDate: '2022-05-27T07:38:25.117Z',
-        name: record.fileName,
-        size: 54592595,
-        type: 'application/vnd.android.package-archive',
-      })
-      setTimeout(() => {
-        this.form.setFieldsValue({
-          versionCode: this.record.versionCode,
-          versionNumber: this.record.versionNumber,
-          versionDescription: this.record.versionDescription,
-        })
-      }, 100)
+      this.preNo = id
+      this.$set(this.detailDataList, 'preNo', id)
+      this.qryRevisitDetail(id)
     },
 
-    handleChange(changeObj) {
-      console.log('fff', changeObj)
-      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
-        this.$message.error(changeObj.file.response.message)
-        changeObj.fileList.pop()
-        this.fileList = changeObj.fileList
-      } else {
-        this.fileList = changeObj.fileList
-        if (this.fileList[0].response && this.fileList[0].response.data) {
-          this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
-          setTimeout(() => {
-            this.form.setFieldsValue({
-              versionCode: this.versionData.versionCode,
-              versionNumber: this.versionData.versionNumber,
-              // versionDescription: this.versionData.versionDescription,
-            })
-          }, 100)
-        }
-      }
-    },
-
-    handleSubmit() {
-      const {
-        form: { validateFields },
-      } = this
+    qryRevisitDetail(id) {
       this.confirmLoading = true
-      validateFields((errors, values) => {
-        if (!errors) {
-          this.$set(this.record, 'versionDescription', values.versionDescription)
-
-          updateAppVersion(this.record)
-            .then((res) => {
-              if (res.success) {
-                this.$message.success('编辑成功')
-                this.visible = false
-                this.confirmLoading = false
-                this.$emit('ok', values)
-                this.form.resetFields()
-              } else {
-                this.$message.error('编辑失败：' + res.message)
-              }
-            })
-            .finally((res) => {
-              this.confirmLoading = false
-            })
-        } else {
+      qryRevisitDetail({ id: '3' })
+        .then((res) => {
+          if (res.success) {
+            this.detailDataList = res.data.revisitRecord
+            this.userInfo = res.data.userInfo
+          } else {
+            this.$message.error('请求失败：' + res.message)
+          }
+        })
+        .finally((res) => {
           this.confirmLoading = false
-        }
-      })
+        })
     },
+
+
+    handleSubmit() {},
     handleCancel() {
-      this.form.resetFields()
       this.visible = false
     },
   },
 }
 </script>
 <style lang="less">
-.upload-btn {
-  color: white;
-  background-color: #3894ff;
-  padding: 3px 8px;
-  border-radius: 5px;
+.div-order-detail {
+  background-color: white;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 0 5% 0 5%;
+  // padding: 0 15%;
+  .p-title {
+    margin-top: 20px;
+    height: 20px;
+    font-size: 20px;
+    text-align: left;
+    color: #000;
+    font-weight: bold;
+    // border-bottom: 1px solid #e6e6e6;
+  }
+  .div-divider {
+    margin-top: 4%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1.5px;
+  }
+
+  .div-line-wrap {
+    width: 100%;
+    margin-top: 3%;
+    overflow: hidden;
+
+    .span-item-name {
+      width: 13%;
+      display: inline-block;
+      color: #000;
+      font-size: 14px;
+      text-align: left;
+    }
+    .span-item-value {
+      width: 35%;
+      color: #333;
+      text-align: left;
+      padding-left: 20px;
+      font-size: 14px;
+      display: inline-block;
+    }
+
+    .ant-select {
+      width: 18.5% !important;
+      margin-left: 1.5% !important;
+    }
+
+    .sign-name {
+      color: #000;
+      font-size: 18px;
+      font-family: '楷体', '楷体_GB2312';
+      // font-family: 'FZKai-Z03S';
+      // font-family: 'LiSu';
+      font-style: italic;
+    }
+  }
+
+  .div-medicine-fang-wrap {
+    margin-top: 2%;
+    width: 96%;
+    margin-left: 2%;
+    // height: 100%;
+    border-radius: 6px;
+    border: 1px solid #e6e6e6;
+
+    .firstItem {
+      // border-radius: 6px;
+      border-bottom: 1px solid #e6e6e6;
+    }
+    .div-medicine-fang-item {
+      background-color: white;
+      padding: 2% 2%;
+
+      // margin-top: 1%;
+      // margin-bottom: 1%;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      .div-line-medicine {
+        width: 100%;
+        margin-top: 1%;
+        overflow: hidden;
+        .span-item-name {
+          width: 15%;
+          display: inline-block;
+          color: #000;
+          font-size: 14px;
+          text-align: left;
+        }
+
+        .span-item-value {
+          width: 15%;
+          color: #333;
+          text-align: left;
+          padding-left: 10px;
+          font-size: 14px;
+          display: inline-block;
+        }
+      }
+    }
+  }
+
+  .btn-add-plan {
+    margin-top: 3%;
+    margin-left: 35%;
+  }
+  .btn-save-plan {
+    margin-top: 5%;
+    display: block;
+    margin-bottom: 10%;
+  }
 }
 </style>
