@@ -137,6 +137,7 @@ import {
   delPlanTask,
   delPlanTaskContent,
   dispatchPlan,
+  distributePlanList,
 } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import addTeach from './addTeach'
@@ -230,7 +231,9 @@ export default {
     let nameStringTemp = ''
     this.userDatas.forEach((item) => {
       nameStringTemp = nameStringTemp + item.userName + '，'
-      this.userIds.push(item.userId)
+      // this.userIds.push(item.userId)
+      //加了regNo参数
+      this.userIds.push({ userId: item.userId, regNo: item.regNo })
     })
     this.nameString = '患者 ：   ' + nameStringTemp.slice(0, nameStringTemp.length - 1)
 
@@ -565,10 +568,11 @@ export default {
         beginTime: moment(new Date()).format('YYYY-MM-DD') + ' 05:00:00',
         patientId: this.userIds,
         doctorId: this.planData.userId,
+        regNo: this.planData.regNo,
         templateId: this.planData.templateId,
       }
 
-      dispatchPlan(param).then((res) => {
+      distributePlanList(param).then((res) => {
         if (res.code == 0) {
           this.$message.success('分配成功')
           this.$router.go(-1)

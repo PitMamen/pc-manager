@@ -154,13 +154,49 @@
       <a-tab-pane key="3" tab="随访统计">
         <a-tabs default-active-key="5" @change="callback">
           <a-tab-pane key="5" tab="统计看板">
+            <div class="table-page-search-wrapper">
+              <a-form layout="inline">
+                <a-row :gutter="48">
+                  <!-- <a-col :md="3" :sm="24">
+                        <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
+                      </a-col> -->
+                  <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
+                  <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
+                    <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+                      <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
+                      <a-select allow-clear v-model="queryParamsBor.deptCodes" mode="multiple" placeholder="请选择科室">
+                        <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                          item.departmentName
+                        }}</a-select-option>
+                      </a-select>
+                    </a-form-item></a-col
+                  >
+
+                  <a-col :md="7" :sm="24">
+                    <a-form-item label="时间">
+                      <a-range-picker :value="createValueBor" @change="onChangeBor" />
+                    </a-form-item>
+                  </a-col>
+
+                  <a-col :md="5" :sm="24">
+                    <a-button
+                      style="margin-right: 3%"
+                      type="primary"
+                      v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                      @click="resetBor"
+                      >全院</a-button
+                    >
+                    <a-button type="primary" @click="getStatBorData">查询</a-button>
+                  </a-col>
+                </a-row>
+              </a-form>
+            </div>
+
             <div class="row-stat">
               <div class="row-item">
                 <div class="item-inside">
-                  <img
-                    class="item-image"
-                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
-                  />
+                  <!-- src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg" -->
+                  <img class="item-image" src="~@/assets/icons/img1.png" />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #1890ff">
                       <div class="item-stat-num">{{ statData.totalPatient }}</div>
@@ -175,7 +211,7 @@
                 <div class="item-inside">
                   <img
                     class="item-image"
-                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                    src="~@/assets/icons/img2.png"
                   />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #4dad90">
@@ -191,14 +227,64 @@
                 <div class="item-inside">
                   <img
                     class="item-image"
-                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                   src="~@/assets/icons/img3.png"
                   />
                   <div class="item-right">
-                    <div class="item-right-top">
+                    <div class="item-right-top" style="color: #cdad3d">
                       <div class="item-stat-num">{{ statData.visitedRate }}</div>
                       <div class="item-stat-unit">%</div>
                     </div>
                     <div class="item-stat-name">随访率</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row-stat">
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="~@/assets/icons/img4.png"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #4e6e8d">
+                      <div class="item-stat-num">{{ statData.assginedPatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">待分配随访人数</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="~@/assets/icons/img5.png"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #e05852">
+                      <div class="item-stat-num">{{ statData.outTimePatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">随访超时未完成人数</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="~@/assets/icons/img6.png"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #e48533">
+                      <div class="item-stat-num">{{ statData.telVisitPatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">电话随访人数</div>
                   </div>
                 </div>
               </div>
@@ -322,6 +408,7 @@ import {
   getDocPlans,
   delPlan,
   getOutPatients,
+  statRevisit,
   getDepts,
   deleteAppVersion,
   qryRevisitPatientList,
@@ -611,6 +698,7 @@ export default {
       ],
       //此属性用来做重置功能的
       createValue: [],
+      createValueBor: [],
       user: {},
       //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访)
       //抽查状态(1已抽查0未抽查)
@@ -667,6 +755,18 @@ export default {
         totalPatient: 6,
         visitedRate: '0.0000',
       },
+      queryParamsBor: {
+        deptCodes: [],
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
+        // beginDate: '',
+        // endDate: '',
+      },
+      queryParamsBorOrigin: {
+        deptCodes: [],
+        beginDate: '',
+        endDate: '',
+      },
       /**统计看板参数 */
     }
   },
@@ -719,11 +819,25 @@ export default {
     })
     // this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     this.user = Vue.ls.get(TRUE_USER)
-    console.log('user', user)
+    console.log('user', this.user)
+
+    this.getStatBorData()
   },
 
   methods: {
+    getStatBorData() {
+      statRevisit(this.queryParamsBor).then((res) => {
+        if (res.code == 0) {
+          this.statData = res.data
+          this.statData.visitedRate = (this.statData.visitedRate * 100).toFixed(2)
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+
     /** 随访计划方法*/
     callback(s1) {
       console.log('s1', s1)
@@ -874,11 +988,23 @@ export default {
       this.queryParamsStat.endDate = dateArr[1]
     },
 
+    onChangeBor(momentArr, dateArr) {
+      this.createValueBor = momentArr
+      this.queryParamsBor.beginDate = dateArr[0]
+      this.queryParamsBor.endDate = dateArr[1]
+    },
+
     reset() {
       // this.form.resetFields()
       this.queryParamsStat = JSON.parse(JSON.stringify(this.queryParamsStatOrigin))
       this.createValue = []
       this.$refs.tableStat.refresh()
+    },
+    resetBor() {
+      // this.form.resetFields()
+      this.queryParamsBor = JSON.parse(JSON.stringify(this.queryParamsBorOrigin))
+      this.createValueBor = []
+      this.getStatBorData()
     },
 
     delVersion(record) {
@@ -1057,10 +1183,10 @@ export default {
     align-items: center;
     margin: 50px 50px;
     justify-content: center;
-    border: 1px #eee solid;
+    border: 1px #ddd solid;
     border-radius: 10px;
     background-color: white;
-    height: 200px;
+    height: 260px;
     width: 30%;
 
     .item-inside {
