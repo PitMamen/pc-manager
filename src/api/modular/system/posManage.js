@@ -85,21 +85,38 @@ export function getAllArticlesTeach(parameter) {
   })
 }
 
+// /**
+//  * 获取问卷
+//  *
+//  */
+// export function getAllQuestions(parameter) {
+//   parameter.start = parameter.pageNo
+//   var newPara = JSON.parse(JSON.stringify(parameter))
+//   delete newPara.pageSize
+//   delete newPara.start
+//   delete newPara.pageNo
+//   return axios({
+//     url: '/patient/qryQuestByKeyWord?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+//     method: 'get',
+
+//     data: newPara
+//   })
+// }
+
 /**
  * 获取问卷
  *
  */
 export function getAllQuestions(parameter) {
-  parameter.start = parameter.pageNo
-  var newPara = JSON.parse(JSON.stringify(parameter))
-  delete newPara.pageSize
-  delete newPara.start
-  delete newPara.pageNo
   return axios({
-    url: '/patient/qryQuestByKeyWord?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+    url: '/bdcApi/health/doctor/qryQuestByKeyWord',
     method: 'get',
+    params: {
+      start:parameter.pageNo,
+      pageSize:parameter.pageSize,
+      typeName:parameter.typeName
+    },
 
-    data: newPara
   })
 }
 
@@ -1223,13 +1240,13 @@ export function refundByAdmin(data) {
  * 
  * 获取基本信息和更多信息
  */
- export function getBaseInfo(data) {
+export function getBaseInfo(data) {
   return axios({
     url: '/accountapi/userInfo/getBaseInfo',
     method: 'get',
     params: data,
   })
-  }
+}
 
 /**
  * 
@@ -1247,6 +1264,7 @@ export function qryRevisitPatientList(data) {
  * 
  * 保存/修改处理信息（修改时传记录ID）
  */
+
  export function dealsave(data) {
   return axios({
     url: '/bdcApi/revisit/deal/save',
