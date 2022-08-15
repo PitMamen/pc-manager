@@ -1194,6 +1194,7 @@ export function refundByAdmin(data) {
     data: data,
   })
 }
+
 /**
  * 
  * 获取基本信息和更多信息
@@ -1203,5 +1204,17 @@ export function refundByAdmin(data) {
     url: '/accountapi/userInfo/getBaseInfo',
     method: 'get',
     params: data,
+  })
+  }
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function qryRevisitPatientList(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitPatientList',
+    method: 'post',
+    data: data,
   })
 }

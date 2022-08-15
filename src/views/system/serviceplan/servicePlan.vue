@@ -153,24 +153,77 @@
 
       <a-tab-pane key="3" tab="随访统计">
         <a-tabs default-active-key="5" @change="callback">
-          <a-tab-pane key="5" tab="统计看板"> 
+          <a-tab-pane key="5" tab="统计看板">
+            <div class="row-stat">
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #1890ff">
+                      <div class="item-stat-num">{{ statData.totalPatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">随访总人数</div>
+                  </div>
+                </div>
+              </div>
 
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top" style="color: #4dad90">
+                      <div class="item-stat-num">{{ statData.finishedPatient }}</div>
+                      <div class="item-stat-unit">人</div>
+                    </div>
+                    <div class="item-stat-name">随访完成数</div>
+                  </div>
+                </div>
+              </div>
 
+              <div class="row-item">
+                <div class="item-inside">
+                  <img
+                    class="item-image"
+                    src="http://n.sinaimg.cn/ent/4_img/upload/fc8e0ed6/20170427/KNky-fyetwsm0590719.jpg"
+                  />
+                  <div class="item-right">
+                    <div class="item-right-top">
+                      <div class="item-stat-num">{{ statData.visitedRate }}</div>
+                      <div class="item-stat-unit">%</div>
+                    </div>
+                    <div class="item-stat-name">随访率</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </a-tab-pane>
 
           <a-tab-pane key="6" tab="随访详情" force-render>
             <div class="div-inquiry-text">
               <a-card :bordered="false" class="card-right">
                 <div class="table-page-search-wrapper">
-                  <a-form :form="form" layout="inline">
+                  <a-form layout="inline">
                     <a-row :gutter="48">
                       <!-- <a-col :md="3" :sm="24">
                         <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
                       </a-col> -->
-                      <a-col :md="6" :sm="24">
-                        <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+                      <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
+                      <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
+                        <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                           <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                          <a-select allow-clear v-model="deptIds" mode="multiple" placeholder="请选择科室">
+                          <a-select
+                            allow-clear
+                            v-model="queryParamsStat.deptCodes"
+                            mode="multiple"
+                            placeholder="请选择科室"
+                          >
                             <a-select-option
                               v-for="(item, index) in originData"
                               :key="index"
@@ -193,8 +246,8 @@
 
                       <a-col :md="6" :sm="24">
                         <a-form-item label="抽查状态">
-                          <a-select allow-clear v-model="queryParamsStat.status" placeholder="请选择抽查状态">
-                            <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                          <a-select allow-clear v-model="queryParamsStat.checkStatus" placeholder="请选择抽查状态">
+                            <a-select-option v-for="(item, index) in statusDataCheck" :key="index" :value="item.code">{{
                               item.value
                             }}</a-select-option>
                           </a-select>
@@ -208,7 +261,13 @@
                       </a-col>
 
                       <a-col :md="5" :sm="24">
-                        <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+                        <a-button
+                          style="margin-right: 3%"
+                          type="primary"
+                          v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                          @click="reset"
+                          >全院</a-button
+                        >
                         <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
                       </a-col>
                     </a-row>
@@ -224,18 +283,30 @@
                   :rowKey="(record) => record.code"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="$refs.statHandle.add(record)">处理</a>
-                    <a-divider type="vertical" />
+                    <!-- 仅对超时的有处理 -->
+                    <a v-if="record.status == 4" @click="$refs.statSolve.edit(record)">处理</a>
+                    <a-divider v-if="record.status == 4" type="vertical" />
+
+                    <!-- <a @click="$refs.statSolve.edit(record)">处理</a>
+                    <a-divider type="vertical" /> -->
+
                     <a @click="$refs.statDetail.edit(record)">详情</a>
-                    <a-divider type="vertical" />
-                    <a @click="$refs.statCheck.edit(record)">抽查</a>
+
+                    <!-- 仅对电话随访有抽查 -->
+                    <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
+                    <a v-if="record.status == 5" @click="$refs.statCheck.edit(record)">抽查</a>
+
+                    <a-divider v-if="record.status == 5 && record.checkStatus == 1" type="vertical" />
+                    <a v-if="record.status == 5" @click="$refs.statCheck.edit(record)">已抽查</a>
+
+                    <!-- <a-divider type="vertical" />
+                    <a @click="$refs.statCheck.edit(record)">抽查</a> -->
                   </span>
                 </s-table>
 
                 <stat-check ref="statCheck" @ok="handleOkStat" />
                 <stat-detail ref="statDetail" @ok="handleOkStat" />
                 <stat-solve ref="statSolve" @ok="handleOkStat" />
-                <stat-handle ref="statHandle" @ok="handleOkStat" />
               </a-card>
             </div>
           </a-tab-pane>
@@ -253,19 +324,21 @@ import {
   getOutPatients,
   getDepts,
   deleteAppVersion,
-  listAppVersion,
+  qryRevisitPatientList,
 } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 import addFormDispatch from './addFormDispatch'
 import editFormDispatch from './editFormDispatch'
+import moment from 'moment'
 
 import statCheck from './statCheck'
 import statDetail from './statDetail'
 import statSolve from './statSolve'
-import statHandle from './statHandle'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
-import { formatDate } from '@/utils/util'
+import { formatDate, getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 
 export default {
   components: {
@@ -279,8 +352,6 @@ export default {
     statCheck,
     statDetail,
     statSolve,
-    statHandle
-    
   },
 
   data() {
@@ -323,7 +394,7 @@ export default {
       loadData: (parameter) => {
         return getDocPlans(Object.assign(parameter)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'timeDay', this.formatDate(res.data.rows[i].createTime))
+            this.$set(res.data.rows[i], 'timeDay', formatDate(res.data.rows[i].createTime))
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
           }
 
@@ -458,35 +529,78 @@ export default {
         sm: { span: 11 },
       },
       queryParamsStat: {
-        versionNumber: undefined, //
-        startTime: undefined, //
-        endTime: undefined, //
+        deptCodes: [],
+        status: undefined,
+        checkStatus: undefined,
+        beginDate: getDateNow(),
+        endDate: getCurrentMonthLast(),
       },
+      queryParamsStatOrigin: {
+        deptCodes: [],
+        status: undefined,
+        checkStatus: undefined,
+        beginDate: '',
+        endDate: '',
+      },
+
       // 表头
       columnsStat: [
         {
-          title: '文件名称',
-          dataIndex: 'fileName',
+          title: '序号',
+          dataIndex: 'xh',
         },
         {
-          title: '版本号',
-          dataIndex: 'versionNumber',
+          title: '患者',
+          dataIndex: 'xm',
         },
         {
-          title: '更新时间',
-          dataIndex: 'updateTimeOut',
+          title: '所在病区',
+          dataIndex: 'bqmc',
         },
         {
-          title: '上传人员',
-          dataIndex: 'createrName',
+          title: '性别',
+          dataIndex: 'xbmc',
+        },
+
+        {
+          title: '年龄',
+          dataIndex: 'nl',
         },
         {
-          title: '发布中',
+          title: '科室',
+          dataIndex: 'ksmc',
+        },
+        {
+          title: '专病',
+          dataIndex: 'cyzd',
+        },
+        {
+          title: '登记时间',
+          dataIndex: 'updateTime',
+        },
+        {
+          title: '住院号',
+          dataIndex: 'zyh',
+        },
+        {
+          title: '住院时间',
+          dataIndex: 'rysj',
+        },
+        // {
+        //   title: '出院小结',
+        //   dataIndex: 'versionDescription',
+        // },
+        {
+          title: '执行计划',
+          dataIndex: 'planName',
+        },
+        {
+          title: '抽查状态',
+          dataIndex: 'checkText',
+        },
+        {
+          title: '状态',
           dataIndex: 'stateText',
-        },
-        {
-          title: '更新说明',
-          dataIndex: 'versionDescription',
         },
         {
           title: '操作',
@@ -497,40 +611,63 @@ export default {
       ],
       //此属性用来做重置功能的
       createValue: [],
-      deptIds: [],
+      user: {},
+      //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访)
+      //抽查状态(1已抽查0未抽查)
       statusData: [
         { code: -1, value: '全部' },
-        { code: 1, value: '待支付' },
-        { code: 2, value: '未配送' },
-        { code: 3, value: '支付中' },
-        { code: 4, value: '待收货' },
-        { code: 5, value: '订单取消' },
-        { code: 6, value: '已退款' },
-        { code: 7, value: '已配送' },
+        { code: 1, value: '未注册' },
+        { code: 2, value: '待分配' },
+        { code: 3, value: '执行中' },
+        { code: 4, value: '超时' },
+        { code: 5, value: '电话随访' },
+        { code: 6, value: '失访' },
       ],
+
+      statusDataCheck: [
+        { code: -1, value: '全部' },
+        { code: 1, value: '已抽查' },
+        { code: 0, value: '未抽查' },
+      ],
+      dateFormat: 'YYYY-MM-DD',
 
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
-        return listAppVersion(Object.assign(parameter, this.queryParams)).then((res) => {
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-            this.$set(res.data.rows[i], 'updateTimeOut', formatDate(res.data.rows[i].updatedTime))
-            // 状态 0 正常 1 发布 2 删除
-            if (res.data.rows[i].state == 1) {
-              this.$set(res.data.rows[i], 'stateText', '是')
-            } else {
-              this.$set(res.data.rows[i], 'stateText', '否')
+        /**不是病友服务中心和管理员，写死用户当前的科室 */
+        let params = JSON.parse(JSON.stringify(this.queryParamsStat))
+        if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
+          params.deptCodes.push(this.user.departmentCode)
+        }
+        if (this.queryParamsStat.status == -1) {
+          delete params.status
+        }
+        if (this.queryParamsStat.checkStatus == -1) {
+          delete params.checkStatus
+        }
+        return qryRevisitPatientList(Object.assign(parameter, params)).then((res) => {
+          if (res.code == 0) {
+            for (let i = 0; i < res.data.rows.length; i++) {
+              this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+
+              this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
+              this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
             }
-            this.$set(
-              res.data.rows[i],
-              'deleteTitle',
-              '您确定要删除版本号' + res.data.rows[i].versionNumber + '的记录信息么？删除后将不可恢复！'
-            )
+            return res.data
           }
-          return res.data
         })
       },
       /** 统计类别数据*/
+
+      /**统计看板参数 */
+      statData: {
+        outTimePatient: 0,
+        finishedPatient: 0,
+        assginedPatient: 0,
+        telVisitPatient: 0,
+        totalPatient: 6,
+        visitedRate: '0.0000',
+      },
+      /**统计看板参数 */
     }
   },
 
@@ -580,21 +717,16 @@ export default {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
+    // this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
+    this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.user = Vue.ls.get(TRUE_USER)
+    console.log('user', user)
   },
 
   methods: {
     /** 随访计划方法*/
     callback(s1) {
       console.log('s1', s1)
-    },
-    formatDate(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      return `${myyear}-${mymonth}-${myweekday}`
     },
 
     addPlan() {
@@ -695,7 +827,7 @@ export default {
           } else {
             this.queryParam.bqmc = this.keshiData[i].departmentName
           }
-          this.$refs.table.refresh()
+          this.$refs.tableDispatch.refresh()
         }
       }
     },
@@ -738,18 +870,15 @@ export default {
     /** 统计列表方法*/
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
-      this.queryParamsStat.startTime = dateArr[0]
-      this.queryParamsStat.endTime = dateArr[1]
+      this.queryParamsStat.beginDate = dateArr[0]
+      this.queryParamsStat.endDate = dateArr[1]
     },
 
     reset() {
       // this.form.resetFields()
-      this.queryParamsStat = {
-        versionNumber: undefined, //
-        startTime: undefined, //
-        endTime: undefined, //
-      }
+      this.queryParamsStat = JSON.parse(JSON.stringify(this.queryParamsStatOrigin))
       this.createValue = []
+      this.$refs.tableStat.refresh()
     },
 
     delVersion(record) {
@@ -767,18 +896,29 @@ export default {
         })
     },
 
-    //订单状态（1：待支付 2：已完成 3：部分支付 4：待收货 5：订单取消）
-    getClass(status) {
+    //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访)
+    //抽查状态(1已抽查0未抽查)
+    getClassText(status) {
       if (status == 1) {
-        return 'span-red'
+        return '未注册'
       } else if (status == 2) {
-        return 'span-blue'
+        return '待分配'
       } else if (status == 3) {
-        return 'span-red'
+        return '执行中'
       } else if (status == 4) {
-        return 'span-blue'
+        return '超时'
       } else if (status == 5) {
-        return 'span-gray'
+        return '电话随访'
+      } else if (status == 6) {
+        return '失访'
+      }
+    },
+
+    getCheckText(status) {
+      if (status == 0) {
+        return '未抽查'
+      } else if (status == 1) {
+        return '已抽查'
       }
     },
 
@@ -900,6 +1040,61 @@ export default {
     margin-top: -1.5%;
     .ant-input {
       height: 30px;
+    }
+  }
+}
+
+.row-stat {
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  width: 100%;
+
+  .row-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 50px 50px;
+    justify-content: center;
+    border: 1px #eee solid;
+    border-radius: 10px;
+    background-color: white;
+    height: 200px;
+    width: 30%;
+
+    .item-inside {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .item-image {
+        width: 50px;
+        margin-top: 15px;
+        height: 50px;
+      }
+
+      .item-right {
+        display: flex;
+        margin-left: 20px;
+        flex-direction: column;
+
+        .item-right-top {
+          display: flex;
+          flex-direction: row;
+          align-items: baseline;
+          .item-stat-num {
+            font-size: 46px;
+          }
+          .item-stat-unit {
+            font-size: 20px;
+          }
+        }
+
+        .item-stat-name {
+          font-size: 20px;
+        }
+      }
     }
   }
 }
