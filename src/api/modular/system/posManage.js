@@ -1280,3 +1280,26 @@ data: data,
  })
 }
 
+/**
+ * 
+ * 用户健康计划任务列表
+ */
+ export function queryHealthPlanTaskList(data) {
+  return axios({
+    url: '/bdcApi/patient/queryHealthPlanTaskList',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 
+ * 任务内容
+ */
+ export function queryHealthPlanContent(data) {
+  return axios({
+    url: '/bdcApi/health/patient/queryHealthPlanContent',
+    method: 'get',
+    params: data,
+  })
+}

@@ -27,7 +27,7 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 所在病区 :</span>
-          <span class="span-item-value"></span>
+          <span class="span-item-value">{{ szbq}} </span>
 
           <span class="span-item-value"></span>
         </div>
@@ -52,7 +52,7 @@
           </div>
           <div v-show="radioTyPe === 0" style="min-height: 500px; overflow-y: auto">
             <iframe
-              :src="iframeSrc"
+              :src="questionUrl"
               style="width: 100%; min-height: 500px; overflow: scroll"
               frameborder="0"
               scrolling="yes"
@@ -109,9 +109,9 @@
             />
           </div>
 
-          <div v-show="radioTyPe === 0" style="min-height: 500px; overflow-y: auto">
+          <div v-show="radioTyPe === 0" style="margin-top: 50rpx; min-height: 500px; overflow-y: auto">
             <iframe
-              :src="iframeSrc"
+              :src="questionUrl"
               style="width: 100%; min-height: 500px; overflow: scroll"
               frameborder="0"
               scrolling="yes"
@@ -132,7 +132,13 @@
 
 
 <script>
-import { getBaseInfo, dealsave, dealget } from '@/api/modular/system/posManage'
+import {
+  getBaseInfo,
+  dealsave,
+  dealget,
+  queryHealthPlanTaskList,
+  queryHealthPlanContent,
+} from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
 
@@ -143,8 +149,10 @@ export default {
 
   data() {
     return {
+     
       DealCheck: false,
       patientId: '', //患者ID
+      planId: '',
       patientInfo: {
         //患者详情
         baseInfo: {
@@ -155,12 +163,13 @@ export default {
           phone: '',
         },
       },
+      szbq:'',//所在病区
       radioTyPe: 0,
       handleName: '',
       handleTime: '',
       handleResult: '',
-      iframeSrc:
-        'http://develop.mclouds.org.cn:8008/s/ea2524addbb34e109357d6405f78f00d?userId=552&execTime=2022-08-02&showDas28=show',
+      questionTaskContent: {},
+      questionUrl:'',
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -192,17 +201,20 @@ export default {
 
     //处理初始化方法
     edit(record) {
-      ;(this.patientId = 375), (this.visible = true)
+      console.log(record)
+      ;(this.record = record), (this.patientId = record.userId), (this.visible = true), (this.planId = record.planId), (this.szbq = record.ksmc===record.bqmc?record.ksmc:record.ksmc+record.bqmc)
       this.handleTime = this.formatDate(new Date())
 
       this.getPatientBaseInfo()
+      this.getQueryHealthPlanTaskList()
     },
     //查看初始化方法
     check(record) {
-      ;(this.patientId = 375), (this.visible = true)
+      ;(this.record = record), (this.patientId = record.userId), (this.visible = true), (this.planId = record.planId), (this.szbq = record.ksmc===record.bqmc?record.ksmc:record.ksmc+record.bqmc)
       this.DealCheck = true
       this.getPatientBaseInfo()
       this.getDealInfo()
+      this.getQueryHealthPlanTaskList()
     },
 
     getPatientBaseInfo() {
@@ -212,8 +224,16 @@ export default {
     },
 
     getDealInfo() {
+      if (this.patientId === '') {
+        this.$message.error('患者ID为空')
+        return
+      }
+      if (this.planId === '') {
+        this.$message.error('计划ID为空')
+        return
+      }
       var postData = {
-        planId: 1206,
+        planId: this.planId,
         userId: this.patientId, //就诊人ID
       }
       dealget(postData).then((res) => {
@@ -222,13 +242,96 @@ export default {
           this.handleName = res.data.dealUserName
           this.handleResult = res.data.dealResult
           this.handleTime = res.data.dealTime
+        } else {
+          this.$message.error(res.message)
         }
       })
     },
 
+    //查询计划和任务
+    getQueryHealthPlanTaskList() {
+      queryHealthPlanTaskList({ planId: this.planId }).then((res) => {
+        if (res.code === 0) {
+          for (var i = 0; i < res.data.length; i++) {
+            var task = res.data[i]
+            for (var j = 0; j < task.taskInfo.length; j++) {
+              var content = task.taskInfo[j]
+              if (content.planType === 'Quest') {
+                //遇到第一个问卷退出
+                this.questionTaskContent = content
+                console.log(this.questionTaskContent)
+                break
+              }
+            }
+          }
+
+          if (this.questionTaskContent.contentId) {
+            this.getQueryHealthPlanContent()
+          } else {
+            this.$message.error('随访问卷不存在')
+          }
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+
+
+    //查询任务内容
+    getQueryHealthPlanContent() {
+      var postData = {
+        contentId: this.questionTaskContent.contentId,
+        planType: this.questionTaskContent.planType,
+        userId: this.patientId,
+      }
+      queryHealthPlanContent(postData).then((res) => {
+        if (res.code === 0) {
+          this.questionTaskContent.questUrl=res.data.questUrl
+          this.questionUrl=res.data.questUrl
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    //点击处理完成时去查询该问卷任务是否已完成
+    checkHealthPlanTaskEnd() {
+      queryHealthPlanTaskList({ planId: this.planId }).then((res) => {
+        if (res.code === 0) {
+          for (var i = 0; i < res.data.length; i++) {
+            var task = res.data[i]
+            for (var j = 0; j < task.taskInfo.length; j++) {
+              var content = task.taskInfo[j]
+              if (content.contentId === this.questionTaskContent.contentId) {
+                 if(content.execFlag===1){
+                    //已完成
+                    this.dodealsave()
+                 }else{
+                  this.$message.error('请先提交问卷')
+                 }
+                break
+              }
+            }
+          }
+
+          if (this.questionTaskContent.contentId) {
+            this.getQueryHealthPlanContent()
+          } else {
+            this.$message.error('随访问卷不存在')
+          }
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+  //完成处理
     goConfirm() {
       if (this.patientId === '') {
-        this.$message.info('患者为空')
+        this.$message.error('患者ID为空')
+        return
+      }
+      if (this.planId === '') {
+        this.$message.error('计划ID为空')
         return
       }
       if (this.handleName.length === 0) {
@@ -237,31 +340,40 @@ export default {
       }
       if (this.radioTyPe === 0) {
         //处理措施,1填写问卷
+        this.checkHealthPlanTaskEnd()
       } else if (this.radioTyPe === 1) {
         //失访
         if (this.handleResult.length === 0) {
           this.$message.info('请填写失访理由')
           return
         }
+        this.dodealsave()
       }
 
+
+    },
+
+    //保存处理信息
+    dodealsave(){
       var postdata = {
         dealResult: this.handleResult, //失访理由
         dealType: this.radioTyPe === 0 ? 1 : 2, //处理措施,1填写问卷/2失访
         dealUserName: this.handleName, //处理人
-        ipNo: 'string', //住院号
-        planId: 1206, //计划ID
-        regNo: 'string', //就诊流水号
+        ipNo: this.record.zyh, //住院号
+        planId: this.planId, //计划ID
+        regNo: this.record.jzlsh, //就诊流水号
         userId: this.patientId, //就诊人ID
       }
       dealsave(postdata).then((res) => {
         if (res.code === 0) {
           this.$message.success('操作成功！')
+          this.visible=false
         } else {
           this.$message.error(res.message)
         }
       })
     },
+
     handleCancelDetail() {
       this.previewVisibleDetail = false
     },
