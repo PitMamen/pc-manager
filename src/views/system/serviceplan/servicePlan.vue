@@ -153,7 +153,10 @@
 
       <a-tab-pane key="3" tab="随访统计">
         <a-tabs default-active-key="5" @change="callback">
-          <a-tab-pane key="5" tab="统计看板"> </a-tab-pane>
+          <a-tab-pane key="5" tab="统计看板"> 
+
+
+          </a-tab-pane>
 
           <a-tab-pane key="6" tab="随访详情" force-render>
             <div class="div-inquiry-text">
@@ -221,7 +224,7 @@
                   :rowKey="(record) => record.code"
                 >
                   <span slot="action" slot-scope="text, record">
-                    <a @click="$refs.statSolve.edit(record)">处理</a>
+                    <a @click="$refs.statHandle.add(record)">处理</a>
                     <a-divider type="vertical" />
                     <a @click="$refs.statDetail.edit(record)">详情</a>
                     <a-divider type="vertical" />
@@ -232,6 +235,7 @@
                 <stat-check ref="statCheck" @ok="handleOkStat" />
                 <stat-detail ref="statDetail" @ok="handleOkStat" />
                 <stat-solve ref="statSolve" @ok="handleOkStat" />
+                <stat-handle ref="statHandle" @ok="handleOkStat" />
               </a-card>
             </div>
           </a-tab-pane>
@@ -259,6 +263,7 @@ import editFormDispatch from './editFormDispatch'
 import statCheck from './statCheck'
 import statDetail from './statDetail'
 import statSolve from './statSolve'
+import statHandle from './statHandle'
 
 import { formatDate } from '@/utils/util'
 
@@ -274,6 +279,8 @@ export default {
     statCheck,
     statDetail,
     statSolve,
+    statHandle
+    
   },
 
   data() {

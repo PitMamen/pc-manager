@@ -1194,3 +1194,14 @@ export function refundByAdmin(data) {
     data: data,
   })
 }
+/**
+ * 
+ * 获取基本信息和更多信息
+ */
+ export function getBaseInfo(data) {
+  return axios({
+    url: '/accountapi/userInfo/getBaseInfo',
+    method: 'get',
+    params: data,
+  })
+}
