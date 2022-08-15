@@ -1152,6 +1152,20 @@ export function getMedicalOrdersDetail(data) {
     data: data,
   })
 }
+
+/**
+ * 随访详情
+ */
+ export function qryRevisitDetail(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 /**
  * 
  * 处方订单列表
@@ -1248,12 +1262,39 @@ export function qryRevisitPatientList(data) {
 
 /**
  * 
- * 查询随访病人列表
+ * 保存/修改处理信息（修改时传记录ID）
  */
-export function statRevisit(data) {
+
+ export function dealsave(data) {
   return axios({
-    url: '/bdcApi/revisit/statRevisit',
+    url: '/bdcApi/revisit/deal/save',
     method: 'post',
     data: data,
   })
 }
+
+/**
+ * 
+ * 获取处理信息
+ */
+ export function dealget(data) {
+  return axios({
+    url: '/bdcApi/revisit/deal/get',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function statRevisit(data) {
+return axios({
+url: '/bdcApi/revisit/statRevisit',
+method: 'post',
+data: data,
+ })
+}
+
