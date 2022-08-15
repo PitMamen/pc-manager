@@ -303,6 +303,16 @@ export function dispatchPlan(parameter) {
     data: parameter
   })
 }
+/** 
+ * 分配计划 多人distributePlanList
+ */
+export function distributePlanList(parameter) {
+  return axios({
+    url: '/bdcApi/health/doctor/distributePlanList',
+    method: 'post',
+    data: parameter
+  })
+}
 
 /**
  * 查询计划详情
@@ -1204,6 +1214,42 @@ export function auditReview(data) {
 export function refundByAdmin(data) {
   return axios({
     url: '/bdcApi/appoint/refundByAdmin',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取基本信息和更多信息
+ */
+ export function getBaseInfo(data) {
+  return axios({
+    url: '/accountapi/userInfo/getBaseInfo',
+    method: 'get',
+    params: data,
+  })
+  }
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function qryRevisitPatientList(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitPatientList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+ export function statRevisit(data) {
+  return axios({
+    url: '/bdcApi/revisit/statRevisit',
     method: 'post',
     data: data,
   })
