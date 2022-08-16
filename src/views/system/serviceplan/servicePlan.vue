@@ -209,10 +209,7 @@
 
               <div class="row-item">
                 <div class="item-inside">
-                  <img
-                    class="item-image"
-                    src="~@/assets/icons/img2.png"
-                  />
+                  <img class="item-image" src="~@/assets/icons/img2.png" />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #4dad90">
                       <div class="item-stat-num">{{ statData.finishedPatient }}</div>
@@ -225,10 +222,7 @@
 
               <div class="row-item">
                 <div class="item-inside">
-                  <img
-                    class="item-image"
-                   src="~@/assets/icons/img3.png"
-                  />
+                  <img class="item-image" src="~@/assets/icons/img3.png" />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #cdad3d">
                       <div class="item-stat-num">{{ statData.visitedRate }}</div>
@@ -243,10 +237,7 @@
             <div class="row-stat">
               <div class="row-item">
                 <div class="item-inside">
-                  <img
-                    class="item-image"
-                    src="~@/assets/icons/img4.png"
-                  />
+                  <img class="item-image" src="~@/assets/icons/img4.png" />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #4e6e8d">
                       <div class="item-stat-num">{{ statData.assginedPatient }}</div>
@@ -259,10 +250,7 @@
 
               <div class="row-item">
                 <div class="item-inside">
-                  <img
-                    class="item-image"
-                    src="~@/assets/icons/img5.png"
-                  />
+                  <img class="item-image" src="~@/assets/icons/img5.png" />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #e05852">
                       <div class="item-stat-num">{{ statData.outTimePatient }}</div>
@@ -275,10 +263,7 @@
 
               <div class="row-item">
                 <div class="item-inside">
-                  <img
-                    class="item-image"
-                    src="~@/assets/icons/img6.png"
-                  />
+                  <img class="item-image" src="~@/assets/icons/img6.png" />
                   <div class="item-right">
                     <div class="item-right-top" style="color: #e48533">
                       <div class="item-stat-num">{{ statData.telVisitPatient }}</div>
@@ -710,6 +695,7 @@ export default {
         { code: 4, value: '超时' },
         { code: 5, value: '电话随访' },
         { code: 6, value: '失访' },
+        { code: 7, value: '已完成' },
       ],
 
       statusDataCheck: [
@@ -1022,7 +1008,7 @@ export default {
         })
     },
 
-    //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访)
+    //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访；7已完成)
     //抽查状态(1已抽查0未抽查)
     getClassText(status) {
       if (status == 1) {
@@ -1037,6 +1023,8 @@ export default {
         return '电话随访'
       } else if (status == 6) {
         return '失访'
+      } else if (status == 7) {
+        return '已完成'
       }
     },
 
