@@ -366,7 +366,6 @@
                     <a-divider type="vertical" />
 
                     <!-- 仅对电话随访有抽查 -->
-
                     <a v-if="record.status == 5 && record.checkStatus == 0" @click="$refs.statSolve.doCheck(record)"
                       >抽查</a
                     >
@@ -728,7 +727,12 @@ export default {
               this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
 
               this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
-              this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
+              //只有电话随访有抽查状态
+              if (res.data.rows[i].status == 5) {
+                this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
+              } else {
+                this.$set(res.data.rows[i], 'checkText', '')
+              }
               this.$set(res.data.rows[i], 'createTimeOut', formatDate(res.data.rows[i].createTime))
             }
             return res.data
