@@ -363,19 +363,17 @@
 
                     <a @click="$refs.statDetail.edit(record.id)">详情</a>
 
-                    <a-divider type="vertical" />
+                    <a-divider v-if="record.status == 5" type="vertical" />
 
                     <!-- 仅对电话随访有抽查 -->
-
                     <a v-if="record.status == 5 && record.checkStatus == 0" @click="$refs.statSolve.doCheck(record)"
                       >抽查</a
                     >
-                    <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
 
-                    <a v-if="record.status == 5" @click="$refs.statSolve.checkInfo(record)">已抽查</a>
+                    <a v-if="record.status == 5 && record.checkStatus == 1" @click="$refs.statSolve.checkInfo(record)"
+                      >抽查详情</a
+                    >
 
-                    <!-- <a-divider type="vertical" />
-                    <a @click="$refs.statCheck.edit(record)">抽查</a> -->
                   </span>
                 </s-table>
 
@@ -652,15 +650,15 @@ export default {
         },
         {
           title: '登记时间',
-          dataIndex: 'updateTime',
+          dataIndex: 'createTimeOut',
         },
         {
           title: '住院号',
           dataIndex: 'zyh',
         },
         {
-          title: '住院时间',
-          dataIndex: 'rysj',
+          title: '出院时间',
+          dataIndex: 'cysj',
         },
         // {
         //   title: '出院小结',
@@ -728,7 +726,13 @@ export default {
               this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
 
               this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
-              this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
+              //只有电话随访有抽查状态
+              if (res.data.rows[i].status == 5) {
+                this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
+              } else {
+                this.$set(res.data.rows[i], 'checkText', '')
+              }
+              this.$set(res.data.rows[i], 'createTimeOut', formatDate(res.data.rows[i].createTime))
             }
             return res.data
           }

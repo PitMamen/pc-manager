@@ -294,7 +294,11 @@ export default {
     },
     getPatientBaseInfo() {
       getBaseInfo({ userId: this.patientId }).then((res) => {
-        this.patientInfo = res.data
+        if (res.code === 0) {
+          this.patientInfo = res.data
+        } else {
+          this.$message.error(res.message)
+        }
       })
     },
 
@@ -348,7 +352,7 @@ export default {
             '&title=' +
             res.data.questName
 
-          if ( this.questionTaskContent.execFlag === 1) {
+          if (this.questionTaskContent.execFlag === 1) {
             //已完成
             //读状态
             url = url.replace('/s/', '/r/')
