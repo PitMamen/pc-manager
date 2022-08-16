@@ -376,14 +376,14 @@
                     <!-- <a @click="$refs.statSolve.edit(record)">处理</a>
                     <a-divider type="vertical" /> -->
 
-                    <a @click="$refs.statSolve.doDeal(record)">详情</a>
+                    <a @click="$refs.statDetail.edit(record)">详情</a>
 
                     <!-- 仅对电话随访有抽查 -->
                     <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
-                    <a v-if="record.status == 5" @click="$refs.statCheck.edit(record)">抽查</a>
+                    <a v-if="record.status == 5" @click="$refs.statSolve.doCheck(record)">抽查</a>
 
                     <a-divider v-if="record.status == 5 && record.checkStatus == 1" type="vertical" />
-                    <a v-if="record.status == 5" @click="$refs.statCheck.edit(record)">已抽查</a>
+                    <a v-if="record.status == 5" @click="$refs.statSolve.checkInfo(record)">已抽查</a>
 
                     <!-- <a-divider type="vertical" />
                     <a @click="$refs.statCheck.edit(record)">抽查</a> -->

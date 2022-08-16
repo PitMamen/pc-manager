@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="DealEnd?CheckEnd?'抽查详情':'抽查':'处理'"
+    :title="DealEnd ? (CheckEnd ? '抽查详情' : '抽查') : '处理'"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -307,7 +307,7 @@ export default {
             for (var j = 0; j < task.taskInfo.length; j++) {
               var content = task.taskInfo[j]
               if (content.planType === 'Quest') {
-                //遇到第一个问卷退出
+                //遇到第一个问卷任务退出循环
                 this.questionTaskContent = content
                 console.log(this.questionTaskContent)
                 break
@@ -336,7 +336,28 @@ export default {
       queryHealthPlanContent(postData).then((res) => {
         if (res.code === 0) {
           this.questionTaskContent.questUrl = res.data.questUrl
-          this.questionUrl = res.data.questUrl
+
+          var url =
+            res.data.questUrl +
+            '?userId=' +
+            this.patientId +
+            '&groupId=&contentId=' +
+            this.questionTaskContent.contentId +
+            '&execTime=' +
+            this.formatDate(new Date()) +
+            '&title=' +
+            res.data.questName
+
+          if ( this.questionTaskContent.execFlag === 1) {
+            //已完成
+            //读状态
+            url = url.replace('/s/', '/r/')
+          } else {
+            //写状态
+            url = url.replace('/r/', '/s/')
+          }
+
+          this.questionUrl = url
         } else {
           this.$message.error(res.message)
         }
