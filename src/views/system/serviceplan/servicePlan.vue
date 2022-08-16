@@ -376,7 +376,7 @@
                     <!-- <a @click="$refs.statSolve.edit(record)">处理</a>
                     <a-divider type="vertical" /> -->
 
-                    <a @click="$refs.statDetail.edit(record)">详情</a>
+                    <a @click="$refs.statDetail.edit(record.id)">详情</a>
 
                     <!-- 仅对电话随访有抽查 -->
                     <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
