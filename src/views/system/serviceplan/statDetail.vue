@@ -10,38 +10,43 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail" id="printContent">
-        <h2 >详情</h2>
+        <h2>详情</h2>
         <div class="div-line-wrap">
           <span class="span-item-name"> 患者 :</span>
           <span class="span-item-value">{{ userInfo.userName }} </span>
 
           <span class="span-item-name" style="margin-left: 3%"> 诊疗卡号 :</span>
 
-          <span class="span-item-value" style="margin-left:-5%">{{userInfo.cardNo}}</span>
+          <span class="span-item-value" style="margin-left: -5%">{{ userInfo.cardNo }}</span>
         </div>
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 身份证号码 :</span>
-          <span class="span-item-value">{{idcardNo}} </span>
+          <span class="span-item-value">{{ idcardNo }} </span>
 
-           <span class="span-item-name"  style="margin-left: 3%"> 电话号码 :</span>
-          <span class="span-item-value" style="margin-left:-5%">{{subStringPhoneNo(userInfo.phone) }} </span>
+          <span class="span-item-name" style="margin-left: 3%"> 电话号码 :</span>
+          <span class="span-item-value" style="margin-left: -5%">{{ subStringPhoneNo(userInfo.phone) }} </span>
         </div>
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 紧急联系电话 :</span>
           <span class="span-item-value">{{ '' }} </span>
         </div>
-         <div class="div-divider"></div>
+        <div class="div-divider"></div>
       </div>
-     
     </a-spin>
 
- 
+    <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
+      <a-timeline-item v-for="(item, index) in detailDataList" :key="index">
+        <div>
+          {{ item.type }} {{ item.time }}
+          <div v-if="item.type == '失访'" style="margin-left: 2%; margin-top: 1%">失访原因：{{ item.desc }}</div>
+          <div v-if="item.type == '完成计划'" class="div-detail" @click="goDetail(item.data)">问卷详情</div>
 
-<a-timeline mode="left" style="margin-left: 5%;margin-top: 5%;">
-    <a-timeline-item v-for="(item, index) in detailDataList" :key="index">{{item.type}}   {{item.time}}</a-timeline-item>
-  </a-timeline>
+          <!-- <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a> -->
+        </div></a-timeline-item
+      >
+    </a-timeline>
   </a-modal>
 </template>
 
@@ -65,31 +70,33 @@ export default {
       preNo: 0,
       total: 0,
       detailDataList: [],
-      userInfo:"",
-      idcardNo:"",
+      userInfo: '',
+      idcardNo: '',
     }
-
-
   },
   methods: {
     //初始化方法
     edit(id) {
-      this.detailDataList =[]
+      this.detailDataList = []
       this.total = 0
       this.visible = true
       this.preNo = id
       this.qryRevisitDetail(id)
+    },
 
+    goDetail(url) {
+      url = url.replace('/s/', '/r/') + '?userId=' + this.userInfo.userId + '&showsubmitbtn=hide'
+      window.open(url, '_blank')
     },
 
     qryRevisitDetail(id) {
       this.confirmLoading = true
-      qryRevisitDetail({ id: id})
+      qryRevisitDetail({ id: id })
         .then((res) => {
           if (res.success) {
             this.detailDataList = res.data.revisitRecord
             this.userInfo = res.data.userInfo
-            this.idcardNo=this.subStringIdcardNo(res.data.userInfo.identificationNo)
+            this.idcardNo = this.subStringIdcardNo(res.data.userInfo.identificationNo)
           } else {
             this.$message.error('请求失败：' + res.message)
           }
@@ -99,19 +106,16 @@ export default {
         })
     },
 
-
-    subStringIdcardNo(idcard){
-    const temp= idcard.substring(4,15)
-     return idcard.replace(temp,"***********")
+    subStringIdcardNo(idcard) {
+      const temp = idcard.substring(4, 15)
+      return idcard.replace(temp, '***********')
     },
 
-    subStringPhoneNo(phone){
-    var str=phone
-    var pat=/(\d{3})\d*(\d{4})/
-    return str.replace(pat,'$1****$2');
+    subStringPhoneNo(phone) {
+      var str = phone
+      var pat = /(\d{3})\d*(\d{4})/
+      return str.replace(pat, '$1****$2')
     },
-
-
 
     handleSubmit() {},
     handleCancel() {
@@ -234,6 +238,14 @@ export default {
     margin-top: 5%;
     display: block;
     margin-bottom: 10%;
+  }
+}
+.div-detail {
+  margin-left: 2%;
+  margin-top: 1%;
+  color: #1890ff;
+  &:hover {
+    cursor: pointer;
   }
 }
 </style>
