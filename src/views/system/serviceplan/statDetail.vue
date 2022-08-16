@@ -29,7 +29,7 @@
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 紧急连续电话 :</span>
+          <span class="span-item-name"> 紧急联系电话 :</span>
           <span class="span-item-value">{{ userInfo.phone }} </span>
         </div>
          <div class="div-divider"></div>
@@ -73,17 +73,18 @@ export default {
   methods: {
     //初始化方法
     edit(id) {
+      debugger
       this.detailDataList =[]
       this.total = 0
       this.visible = true
       this.preNo = id
-      this.$set(this.detailDataList, 'preNo', id)
       this.qryRevisitDetail(id)
+
     },
 
     qryRevisitDetail(id) {
       this.confirmLoading = true
-      qryRevisitDetail({ id: '3' })
+      qryRevisitDetail({ id: id})
         .then((res) => {
           if (res.success) {
             this.detailDataList = res.data.revisitRecord
