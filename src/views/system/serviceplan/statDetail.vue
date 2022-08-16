@@ -22,7 +22,7 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 身份证号码 :</span>
-          <span class="span-item-value">{{userInfo.identificationNo }} </span>
+          <span class="span-item-value">{{idcardNo}} </span>
 
            <span class="span-item-name"  style="margin-left: 3%"> 电话号码 :</span>
           <span class="span-item-value" style="margin-left:-5%">{{userInfo.phone }} </span>
@@ -30,7 +30,7 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 紧急联系电话 :</span>
-          <span class="span-item-value">{{ userInfo.phone }} </span>
+          <span class="span-item-value">{{ '' }} </span>
         </div>
          <div class="div-divider"></div>
       </div>
@@ -66,6 +66,7 @@ export default {
       total: 0,
       detailDataList: [],
       userInfo:"",
+      idcardNo:"",
     }
 
 
@@ -73,7 +74,6 @@ export default {
   methods: {
     //初始化方法
     edit(id) {
-      debugger
       this.detailDataList =[]
       this.total = 0
       this.visible = true
@@ -89,6 +89,7 @@ export default {
           if (res.success) {
             this.detailDataList = res.data.revisitRecord
             this.userInfo = res.data.userInfo
+            this.idcardNo=this.subStringIdcardNo(res.data.userInfo.identificationNo)
           } else {
             this.$message.error('请求失败：' + res.message)
           }
@@ -98,6 +99,11 @@ export default {
         })
     },
 
+
+    subStringIdcardNo(idcard){
+    const temp= idcard.substring(4,15)
+     return idcard.replace(temp,"***********")
+    },
 
     handleSubmit() {},
     handleCancel() {
