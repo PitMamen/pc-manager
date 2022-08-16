@@ -123,7 +123,6 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         let params = JSON.parse(JSON.stringify(this.queryParam))
-        debugger
         console.log('idArr', this.idArr)
         if (this.idArr.length > 0) {
           this.idArr.forEach((item, index) => {

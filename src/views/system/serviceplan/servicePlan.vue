@@ -372,7 +372,7 @@
                     >
                     <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
 
-                    <a v-if="record.status == 5" @click="$refs.statSolve.checkInfo(record)">已抽查</a>
+                    <a v-if="record.status == 5" @click="$refs.statSolve.checkInfo(record)">抽查详情</a>
 
                     <!-- <a-divider type="vertical" />
                     <a @click="$refs.statCheck.edit(record)">抽查</a> -->
@@ -652,15 +652,15 @@ export default {
         },
         {
           title: '登记时间',
-          dataIndex: 'updateTimeOut',
+          dataIndex: 'createTimeOut',
         },
         {
           title: '住院号',
           dataIndex: 'zyh',
         },
         {
-          title: '住院时间',
-          dataIndex: 'rysj',
+          title: '出院时间',
+          dataIndex: 'cysj',
         },
         // {
         //   title: '出院小结',
@@ -729,7 +729,7 @@ export default {
 
               this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
               this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
-              this.$set(res.data.rows[i], 'updateTimeOut', formatDate(res.data.rows[i].updateTime))
+              this.$set(res.data.rows[i], 'createTimeOut', formatDate(res.data.rows[i].createTime))
             }
             return res.data
           }
