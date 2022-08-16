@@ -652,7 +652,7 @@ export default {
         },
         {
           title: '登记时间',
-          dataIndex: 'updateTime',
+          dataIndex: 'updateTimeOut',
         },
         {
           title: '住院号',
@@ -729,6 +729,7 @@ export default {
 
               this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
               this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
+              this.$set(res.data.rows[i], 'updateTimeOut', formatDate(res.data.rows[i].updateTime))
             }
             return res.data
           }
