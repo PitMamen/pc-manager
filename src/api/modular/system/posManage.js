@@ -85,21 +85,38 @@ export function getAllArticlesTeach(parameter) {
   })
 }
 
+// /**
+//  * 获取问卷
+//  *
+//  */
+// export function getAllQuestions(parameter) {
+//   parameter.start = parameter.pageNo
+//   var newPara = JSON.parse(JSON.stringify(parameter))
+//   delete newPara.pageSize
+//   delete newPara.start
+//   delete newPara.pageNo
+//   return axios({
+//     url: '/patient/qryQuestByKeyWord?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+//     method: 'get',
+
+//     data: newPara
+//   })
+// }
+
 /**
  * 获取问卷
  *
  */
 export function getAllQuestions(parameter) {
-  parameter.start = parameter.pageNo
-  var newPara = JSON.parse(JSON.stringify(parameter))
-  delete newPara.pageSize
-  delete newPara.start
-  delete newPara.pageNo
   return axios({
-    url: '/patient/qryQuestByKeyWord?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+    url: '/bdcApi/health/doctor/qryQuestByKeyWord',
     method: 'get',
+    params: {
+      start:parameter.pageNo,
+      pageSize:parameter.pageSize,
+      typeName:parameter.typeName
+    },
 
-    data: newPara
   })
 }
 
@@ -1223,13 +1240,13 @@ export function refundByAdmin(data) {
  * 
  * 获取基本信息和更多信息
  */
- export function getBaseInfo(data) {
+export function getBaseInfo(data) {
   return axios({
     url: '/accountapi/userInfo/getBaseInfo',
     method: 'get',
     params: data,
   })
-  }
+}
 
 /**
  * 
@@ -1245,11 +1262,87 @@ export function qryRevisitPatientList(data) {
 
 /**
  * 
- * 查询随访病人列表
+ * 保存/修改处理信息（修改时传记录ID）
  */
- export function statRevisit(data) {
+
+ export function dealsave(data) {
   return axios({
-    url: '/bdcApi/revisit/statRevisit',
+    url: '/bdcApi/revisit/deal/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取处理信息
+ */
+ export function dealget(data) {
+  return axios({
+    url: '/bdcApi/revisit/deal/get',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function statRevisit(data) {
+return axios({
+url: '/bdcApi/revisit/statRevisit',
+method: 'post',
+data: data,
+ })
+}
+
+/**
+ * 
+ * 用户健康计划任务列表
+ */
+ export function queryHealthPlanTaskList(data) {
+  return axios({
+    url: '/bdcApi/patient/queryHealthPlanTaskList',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 
+ * 任务内容
+ */
+ export function queryHealthPlanContent(data) {
+  return axios({
+    url: '/bdcApi/health/patient/queryHealthPlanContent',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 
+ * 保存/修改抽查信息（修改时传记录ID）
+ */
+
+ export function checksave(data) {
+  return axios({
+    url: '/bdcApi/revisit/check/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取抽查信息
+ */
+
+ export function checkget(data) {
+  return axios({
+    url: '/bdcApi/revisit/check/get',
     method: 'post',
     data: data,
   })

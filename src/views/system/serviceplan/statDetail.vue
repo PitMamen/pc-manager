@@ -84,7 +84,7 @@ export default {
 
     qryRevisitDetail(id) {
       this.confirmLoading = true
-      qryRevisitDetail({ id: id })
+      qryRevisitDetail({ id: id})
         .then((res) => {
           if (res.success) {
             this.detailDataList = res.data.revisitRecord

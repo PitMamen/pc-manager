@@ -11,32 +11,27 @@
         </a-row>
       </a-form>
     </div>
- <div class="table-page-search-wrapper">
-                  <a-form :form="form" layout="inline">
-                    <a-row :gutter="48">
-                    
-                      <a-col :md="10" :sm="24">
-                        <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-                          <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                          <a-select allow-clear v-model="deptIds" mode="multiple" placeholder="请选择科室">
-                            <a-select-option
-                              v-for="(item, index) in originData"
-                              :key="index"
-                              :value="item.departmentId"
-                              >{{ item.departmentName }}</a-select-option
-                            >
-                          </a-select>
-                        </a-form-item></a-col
-                      >
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline">
+        <a-row :gutter="48">
+          <a-col :md="10" :sm="24">
+            <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+              <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
+              <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
+                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
+                  item.departmentName
+                }}</a-select-option>
+              </a-select>
+            </a-form-item></a-col
+          >
 
-
-                      <a-col :md="5" :sm="24">
-                        <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
-                        <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
-                      </a-col>
-                    </a-row>
-                  </a-form>
-                </div>
+          <a-col :md="5" :sm="24">
+            <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+            <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
     <s-table
       ref="table"
       size="default"
@@ -46,7 +41,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a :href="record.questUrl" target="_blank">查看</a> 
+        <a :href="record.questUrl+'?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
       </span>
     </s-table>
 
@@ -57,7 +52,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getAllQuestions,getDepts  } from '@/api/modular/system/posManage'
+import { getAllQuestions, getDepts } from '@/api/modular/system/posManage'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -74,10 +69,11 @@ export default {
       advanced: false,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       // 查询参数
-      queryParam: { yljgdm: '444885559' },
-       originData: [],
-       deptIds:[],
-       /** 统计类别数据*/
+      queryParam: { typeName: '' },
+      idArr: [],
+      originData: [],
+      deptIds: [],
+      /** 统计类别数据*/
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -97,22 +93,23 @@ export default {
           title: '问卷名称',
           dataIndex: 'name',
         },
-        {//暂时注销此两个字段，目前没有
-          title: '科室',
-          dataIndex: 'xb',
-        },
         {
-          title: '专病',
-          dataIndex: 'age',
+          //暂时注销此两个字段，目前没有
+          title: '科室',
+          dataIndex: 'type_name',
         },
-       
+        // {
+        //   title: '专病',
+        //   dataIndex: 'age',
+        // },
+
         {
           title: '发布时间',
-          dataIndex: '',
+          dataIndex: 'update_time',
         },
         {
           title: '创建时间',
-          dataIndex: 'createTimeDes',
+          dataIndex: 'create_time',
         },
         {
           title: '操作',
@@ -125,7 +122,21 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getAllQuestions(Object.assign(parameter, this.queryParam)).then((res) => {
+        let params = JSON.parse(JSON.stringify(this.queryParam))
+        debugger
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.typeName = params.typeName + item + ','
+            } else {
+              params.typeName = params.typeName + item
+            }
+          })
+        }
+        // params.typeName = '123'
+        console.log('params', parameter)
+        return getAllQuestions(Object.assign(parameter, params)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
 
@@ -142,7 +153,7 @@ export default {
           data.rows.forEach((item, index) => {
             item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
             item.nameDes = item.name
-            item.createTimeDes = item.createTime.substring(0,11)
+            // item.createTimeDes = item.createTime.substring(0,11)
           })
 
           return data
@@ -182,11 +193,13 @@ export default {
           this.$message.error('切换错误：' + err.message)
         })
     },
-//全院
-reset(){
-  this.deptIds=[]
-},
-  
+    //全院
+    reset() {
+      this.idArr = []
+      this.queryParam.typeName = ''
+
+      this.$refs.table.refresh()
+    },
 
     handleOk() {
       this.$refs.table.refresh()
