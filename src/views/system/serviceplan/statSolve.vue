@@ -19,7 +19,7 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 电话号码 :</span>
-          <span class="span-item-value">{{ subStringPhoneNo(patientInfo.externalInfo.phone) }} </span>
+          <span class="span-item-value">{{patientInfo.externalInfo.phone }} </span>
 
           <span class="span-item-name" style="margin-left: 3%"> 紧急联系电话 :</span>
 
