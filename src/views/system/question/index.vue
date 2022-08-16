@@ -41,7 +41,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a :href="record.questUrl" target="_blank">查看</a>
+        <a :href="record.questUrl+'?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
       </span>
     </s-table>
 
