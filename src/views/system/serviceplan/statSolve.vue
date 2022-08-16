@@ -309,7 +309,7 @@ subStringIdcardNo(idcard){
     },
 
       subStringPhoneNo(phone){
-    var str="18912341234"
+    var str=phone
     var pat=/(\d{3})\d*(\d{4})/
     return str.replace(pat,'$1****$2');
     },
