@@ -363,18 +363,17 @@
 
                     <a @click="$refs.statDetail.edit(record.id)">详情</a>
 
-                    <a-divider type="vertical" />
+                    <a-divider v-if="record.status == 5" type="vertical" />
 
                     <!-- 仅对电话随访有抽查 -->
                     <a v-if="record.status == 5 && record.checkStatus == 0" @click="$refs.statSolve.doCheck(record)"
                       >抽查</a
                     >
-                    <a-divider v-if="record.status == 5 && record.checkStatus == 0" type="vertical" />
 
-                    <a v-if="record.status == 5" @click="$refs.statSolve.checkInfo(record)">抽查详情</a>
+                    <a v-if="record.status == 5 && record.checkStatus == 1" @click="$refs.statSolve.checkInfo(record)"
+                      >抽查详情</a
+                    >
 
-                    <!-- <a-divider type="vertical" />
-                    <a @click="$refs.statCheck.edit(record)">抽查</a> -->
                   </span>
                 </s-table>
 

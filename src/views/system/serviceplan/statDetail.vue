@@ -73,7 +73,6 @@ export default {
   methods: {
     //初始化方法
     edit(id) {
-      debugger
       this.detailDataList =[]
       this.total = 0
       this.visible = true
