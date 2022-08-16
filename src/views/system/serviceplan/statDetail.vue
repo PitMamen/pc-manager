@@ -25,7 +25,7 @@
           <span class="span-item-value">{{idcardNo}} </span>
 
            <span class="span-item-name"  style="margin-left: 3%"> 电话号码 :</span>
-          <span class="span-item-value" style="margin-left:-5%">{{userInfo.phone }} </span>
+          <span class="span-item-value" style="margin-left:-5%">{{subStringPhoneNo(userInfo.phone) }} </span>
         </div>
 
         <div class="div-line-wrap">
@@ -104,6 +104,14 @@ export default {
     const temp= idcard.substring(4,15)
      return idcard.replace(temp,"***********")
     },
+
+    subStringPhoneNo(phone){
+    var str="18912341234"
+    var pat=/(\d{3})\d*(\d{4})/
+    return str.replace(pat,'$1****$2');
+    },
+
+
 
     handleSubmit() {},
     handleCancel() {

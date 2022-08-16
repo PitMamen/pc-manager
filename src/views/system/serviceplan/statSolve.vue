@@ -14,12 +14,12 @@
           <span class="span-item-value">{{ patientInfo.baseInfo.userName }} </span>
           <span class="span-item-name" style="margin-left: 3%"> 身份证号 :</span>
 
-          <span class="span-item-value">{{ patientInfo.baseInfo.identificationNo }} </span>
+          <span class="span-item-value">{{ subStringIdcardNo(patientInfo.baseInfo.identificationNo) }} </span>   
         </div>
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 电话号码 :</span>
-          <span class="span-item-value">{{ patientInfo.externalInfo.phone }} </span>
+          <span class="span-item-value">{{ subStringPhoneNo(patientInfo.externalInfo.phone) }} </span>
 
           <span class="span-item-name" style="margin-left: 3%"> 紧急联系电话 :</span>
 
@@ -296,11 +296,25 @@ export default {
       getBaseInfo({ userId: this.patientId }).then((res) => {
         if (res.code === 0) {
           this.patientInfo = res.data
+          // this.subStringIdcardNo(this.patientInfo.identificationNo);
         } else {
           this.$message.error(res.message)
         }
       })
     },
+
+subStringIdcardNo(idcard){
+    const temp= idcard.substring(4,15)
+     return idcard.replace(temp,"***********")
+    },
+
+      subStringPhoneNo(phone){
+    var str="18912341234"
+    var pat=/(\d{3})\d*(\d{4})/
+    return str.replace(pat,'$1****$2');
+    },
+
+
 
     //查询计划和任务
     getQueryHealthPlanTaskList() {
