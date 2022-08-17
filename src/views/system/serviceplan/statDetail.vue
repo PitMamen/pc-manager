@@ -25,7 +25,9 @@
           <span class="span-item-value">{{ idcardNo }} </span>
 
           <span class="span-item-name" style="margin-left: 3%"> 电话号码 :</span>
-          <span class="span-item-value" style="margin-left: -5%">{{ subStringPhoneNo(userInfo.phone) }} </span>
+          <span class="span-item-value" style="margin-left: -5%"
+            >{{ userInfo ? subStringPhoneNo(userInfo.phone) : '' }}
+          </span>
         </div>
 
         <div class="div-line-wrap">
@@ -37,8 +39,14 @@
     </a-spin>
 
     <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
-      <a-timeline-item v-for="(item, index) in detailDataList" :key="index"
-        >{{ item.type }} {{ item.time }}</a-timeline-item
+      <a-timeline-item v-for="(item, index) in detailDataList" :key="index">
+        <div>
+          {{ item.type }} {{ item.time }}
+          <div v-if="item.type == '失访'" style="margin-left: 2%; margin-top: 1%">失访原因：{{ item.desc }}</div>
+          <div v-if="item.type == '完成计划'" class="div-detail" @click="goDetail(item.data)">问卷详情</div>
+
+          <!-- <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a> -->
+        </div></a-timeline-item
       >
     </a-timeline>
   </a-modal>
@@ -78,6 +86,11 @@ export default {
       this.qryRevisitDetail(id)
     },
 
+    goDetail(url) {
+      url = url.replace('/s/', '/r/') + '?userId=' + this.userInfo.userId + '&showsubmitbtn=hide'
+      window.open(url, '_blank')
+    },
+
     qryRevisitDetail(id) {
       this.confirmLoading = true
       qryRevisitDetail({ id: id })
@@ -85,7 +98,9 @@ export default {
           if (res.success) {
             this.detailDataList = res.data.revisitRecord
             this.userInfo = res.data.userInfo
-            this.idcardNo = this.subStringIdcardNo(res.data.userInfo.identificationNo)
+            if (this.userInfo) {
+              this.idcardNo = this.subStringIdcardNo(res.data.userInfo.identificationNo)
+            }
           } else {
             this.$message.error('请求失败：' + res.message)
           }
@@ -96,14 +111,23 @@ export default {
     },
 
     subStringIdcardNo(idcard) {
-      const temp = idcard.substring(4, 15)
-      return idcard.replace(temp, '***********')
+      if (idcard) {
+        const temp = idcard.substring(4, 15)
+        return idcard.replace(temp, '***********')
+      }else{
+        return ''
+      }
     },
 
     subStringPhoneNo(phone) {
-      var str = phone
-      var pat = /(\d{3})\d*(\d{4})/
-      return str.replace(pat, '$1****$2')
+      if (phone) {
+        var str = phone
+        var pat = /(\d{3})\d*(\d{4})/
+        return str.replace(pat, '$1****$2')
+      }else{
+        return ''
+      }
+
     },
 
     handleSubmit() {},
@@ -227,6 +251,14 @@ export default {
     margin-top: 5%;
     display: block;
     margin-bottom: 10%;
+  }
+}
+.div-detail {
+  margin-left: 2%;
+  margin-top: 1%;
+  color: #1890ff;
+  &:hover {
+    cursor: pointer;
   }
 }
 </style>

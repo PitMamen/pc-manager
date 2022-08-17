@@ -14,7 +14,7 @@
           <span class="span-item-value">{{ patientInfo.baseInfo.userName }} </span>
           <span class="span-item-name" style="margin-left: 3%"> 身份证号 :</span>
 
-          <span class="span-item-value">{{ subStringIdcardNo(patientInfo.baseInfo.identificationNo) }} </span>   
+          <span class="span-item-value">{{patientInfo? subStringIdcardNo(patientInfo.baseInfo.identificationNo):'' }} </span>   
         </div>
 
         <div class="div-line-wrap">
@@ -303,9 +303,14 @@ export default {
       })
     },
 
-subStringIdcardNo(idcard){
-    const temp= idcard.substring(4,15)
-     return idcard.replace(temp,"***********")
+
+subStringIdcardNo(idcard) {
+      if (idcard) {
+        const temp = idcard.substring(4, 15)
+        return idcard.replace(temp, '***********')
+      }else{
+        return ''
+      }
     },
 
       subStringPhoneNo(phone){
