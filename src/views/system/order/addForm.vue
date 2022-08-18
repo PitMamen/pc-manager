@@ -49,16 +49,19 @@
         <!-- 计划内容 -->
         <div class="div-health-plan">
           <div class="div-plan-item firstItem">
-            <span class="span-item-name"> 套餐名称</span>
-            <span class="span-item-name"> 服务类别</span>
+            <span class="span-item-name"> {{ colName1 }}</span>
+            <span class="span-item-name"> {{ colName2 }}</span>
             <span class="span-item-name"> 单价 （元） </span>
             <span class="span-item-name"> 数量</span>
             <span class="span-item-name"> 金额（元） </span>
           </div>
           <!-- :class="{ firstItem: index == 0 }" -->
           <div class="div-plan-item" v-for="(item, index) in record.goodsInfo" :key="index">
-            <span class="span-item-name"> {{ item.goodsName }}</span>
-            <span class="span-item-name"> {{ item.goodsSpec }}</span>
+            <!-- 处方订单表头第一二列修改为 项目名称 药品清单 ；项目名称写死线上复诊， 药品清单用goodsName字段-->
+            <span class="span-item-name" v-if="record.orderType != 'prescription'"> {{ item.goodsName }}</span>
+            <span class="span-item-name" v-if="record.orderType == 'prescription'"> 线上复诊</span>
+            <span class="span-item-name" v-if="record.orderType != 'prescription'"> {{ item.goodsSpec }}</span>
+            <span class="span-item-name" v-if="record.orderType == 'prescription'"> {{ item.goodsName }}</span>
             <span class="span-item-name"> {{ item.price }} </span>
             <span class="span-item-name"> {{ item.number }}</span>
             <span class="span-item-name"> {{ item.total }} </span>
@@ -98,6 +101,8 @@ export default {
       visible: false,
       confirmLoading: false,
       roleName: '',
+      colName1: '',
+      colName2: '',
       form: this.$form.createForm(this),
 
       record: {},
@@ -113,6 +118,14 @@ export default {
       this.record = {}
       this.record = record
       this.visible = true
+      // 订单类型（prescription：处方订单；register：挂号订单；service：套餐订单）
+      if (this.record.orderType == 'prescription') {
+        this.colName1 = '项目名称'
+        this.colName2 = '药品清单'
+      } else {
+        this.colName1 = '套餐名称'
+        this.colName2 = '服务类别'
+      }
 
       for (let index = 0; index < this.record.goodsInfo.length; index++) {
         this.$set(
