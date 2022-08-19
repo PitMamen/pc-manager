@@ -268,7 +268,7 @@ export default {
           this.$set(item, 'isChecked', false)
           this.$set(item, 'idPeriod', item.id)
         })
-
+        console.log('itemData getScheduleNursePeriods', JSON.parse(JSON.stringify(this.itemData)))
         this.getServiceData()
       }
     })
@@ -333,6 +333,7 @@ export default {
           this.originEmptyItemData = JSON.parse(JSON.stringify(this.itemData))
         }
       })
+      console.log('itemData qryCodeValue', JSON.parse(JSON.stringify(this.itemData)))
     },
     getScheduleInfoOut() {
       getScheduleInfo(this.queryParamSource).then((res) => {
@@ -399,11 +400,20 @@ export default {
             })
             // console.log('ffffff', this.itemData[this.itemData.length - 1].itemServiceData)
           } else {
-            this.itemData.push(JSON.parse(JSON.stringify(this.originEmptyItemData[index])))
+            // this.itemData.push(JSON.parse(JSON.stringify(this.originEmptyItemData[index])))
+            let item = JSON.parse(JSON.stringify(this.originEmptyItemData[index]))
+            //解决新增有id的情况
+            item.id = ''
+            this.itemData.push(item)
           }
         }
       } else {
-        this.itemData = JSON.parse(JSON.stringify(this.originEmptyItemData))
+        let newArr = JSON.parse(JSON.stringify(this.originEmptyItemData))
+        newArr.forEach((item) => {
+          //解决新增有id的情况
+          this.$set(item, 'id', '')
+        })
+        this.itemData = newArr
       }
       this.$forceUpdate()
     },
@@ -526,6 +536,7 @@ export default {
         // addParams = JSON.parse(JSON.stringify(this.itemData[index]))
       }
 
+      console.log('addParams', addParams)
       saveDoctorSchedule(addParams).then((res) => {
         if (res.code == 0) {
           this.itemData[index].isChecked = !this.itemData[index].isChecked

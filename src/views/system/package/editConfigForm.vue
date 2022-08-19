@@ -135,7 +135,7 @@ export default {
         this.originData = res.data
         this.keshiData = JSON.parse(JSON.stringify(this.originData))
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-        debugger
+        // debugger
         if (isFirst) {
           this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.userId == this.docId)))
         } else {
@@ -164,7 +164,7 @@ export default {
       }
 
       //需求要求,图文咨询服务时，条数限制是必填的，时长限制可以不填；视频咨询服务和电话咨询服务时长限制是必填的，条数限制可以不填
-      if (this.item.attrName == 'textNum') {
+      if (this.item.attrName == 'textNum' || this.item.attrName == 'appointNum') {
         this.isTextNumLimit = true
       } else if (this.item.attrName == 'videoNum' || this.item.attrName == 'telNum') {
         this.isTimeLimit = true

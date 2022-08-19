@@ -1166,7 +1166,7 @@ export function exportOrders() {
 export function updateOrderStatusById(data) {
   return axios({
     url: '/orderapi/order/tbOrder/updateOrderStatusById',
-    method: 'post',
+    method: 'get',
     params: data
   })
 }

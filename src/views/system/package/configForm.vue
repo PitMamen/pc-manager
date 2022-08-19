@@ -178,7 +178,7 @@ export default {
       }
 
       //需求要求,图文咨询服务时，条数限制是必填的，时长限制可以不填；视频咨询服务和电话咨询服务时长限制是必填的，条数限制可以不填
-      if (this.item.attrName == 'textNum') {
+      if (this.item.attrName == 'textNum' || this.item.attrName == 'appointNum') {
         this.isTextNumLimit = true
       } else if (this.item.attrName == 'videoNum' || this.item.attrName == 'telNum') {
         this.isTimeLimit = true
@@ -193,7 +193,7 @@ export default {
       }
 
       setTimeout(() => {
-        debugger
+        // debugger
         console.log('item', item)
         let temp
         if (item.plusInfoVo.whoDeal == 'nurse') {
@@ -257,7 +257,7 @@ export default {
       } = this
       // this.confirmLoading = true
       validateFields((errors, values) => {
-        debugger
+        // debugger
         if (!errors) {
           if (!this.docId && !this.isCaseFlag) {
             this.$message.error('请选择服务医生！')

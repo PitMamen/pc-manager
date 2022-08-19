@@ -383,11 +383,20 @@ export default {
             })
             // console.log('ffffff', this.itemData[this.itemData.length - 1].itemServiceData)
           } else {
-            this.itemData.push(JSON.parse(JSON.stringify(this.originEmptyItemData[index])))
+            let item = JSON.parse(JSON.stringify(this.originEmptyItemData[index]))
+            //解决新增有id的情况
+            item.id = ''
+            this.itemData.push(item)
           }
         }
       } else {
-        this.itemData = JSON.parse(JSON.stringify(this.originEmptyItemData))
+        // this.itemData = JSON.parse(JSON.stringify(this.originEmptyItemData))
+        let newArr = JSON.parse(JSON.stringify(this.originEmptyItemData))
+        newArr.forEach((item) => {
+          //解决新增有id的情况
+          this.$set(item, 'id', '')
+        })
+        this.itemData = newArr
       }
       this.$forceUpdate()
     },
