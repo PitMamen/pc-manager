@@ -191,7 +191,7 @@ export default {
       // queryParam: { departmentId: 0 },
       /**
        *     {
-      "departmentId": 1150000,
+      "departmentId": 1150001,
       "departmentName": "精神科",
       "hospitalId": 1,
       "parentId": 0,
@@ -209,7 +209,7 @@ export default {
         pageNo: 1,
         pageSize: 1000,
         roleId: 5, //护士换成5
-        departmentId: 1150000, //目前只需要精神科的护士，所以写死精神科
+        departmentId: 1150001, //目前只需要精神科的护士，所以写死精神科
         status: 0,
         // userName: '',
       },
