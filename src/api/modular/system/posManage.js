@@ -85,21 +85,38 @@ export function getAllArticlesTeach(parameter) {
   })
 }
 
+// /**
+//  * 获取问卷
+//  *
+//  */
+// export function getAllQuestions(parameter) {
+//   parameter.start = parameter.pageNo
+//   var newPara = JSON.parse(JSON.stringify(parameter))
+//   delete newPara.pageSize
+//   delete newPara.start
+//   delete newPara.pageNo
+//   return axios({
+//     url: '/patient/qryQuestByKeyWord?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+//     method: 'get',
+
+//     data: newPara
+//   })
+// }
+
 /**
  * 获取问卷
  *
  */
 export function getAllQuestions(parameter) {
-  parameter.start = parameter.pageNo
-  var newPara = JSON.parse(JSON.stringify(parameter))
-  delete newPara.pageSize
-  delete newPara.start
-  delete newPara.pageNo
   return axios({
-    url: '/patient/qryQuestByKeyWord?start=' + parameter.start + '&pageSize=' + parameter.pageSize,
+    url: '/bdcApi/health/doctor/qryQuestByKeyWord',
     method: 'get',
+    params: {
+      start:parameter.pageNo,
+      pageSize:parameter.pageSize,
+      typeName:parameter.typeName
+    },
 
-    data: newPara
   })
 }
 
@@ -299,6 +316,16 @@ export function uploadImg(parameter) {
 export function dispatchPlan(parameter) {
   return axios({
     url: '/patient/distributePlan',
+    method: 'post',
+    data: parameter
+  })
+}
+/** 
+ * 分配计划 多人distributePlanList
+ */
+export function distributePlanList(parameter) {
+  return axios({
+    url: '/bdcApi/health/doctor/distributePlanList',
     method: 'post',
     data: parameter
   })
@@ -1135,6 +1162,20 @@ export function getMedicalOrdersDetail(data) {
     data: data,
   })
 }
+
+/**
+ * 随访详情
+ */
+ export function qryRevisitDetail(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 /**
  * 
  * 处方订单列表
@@ -1200,6 +1241,118 @@ export function auditReview(data) {
 export function refundByAdmin(data) {
   return axios({
     url: '/bdcApi/appoint/refundByAdmin',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取基本信息和更多信息
+ */
+export function getBaseInfo(data) {
+  return axios({
+    url: '/accountapi/userInfo/getBaseInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function qryRevisitPatientList(data) {
+  return axios({
+    url: '/bdcApi/revisit/qryRevisitPatientList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 保存/修改处理信息（修改时传记录ID）
+ */
+
+ export function dealsave(data) {
+  return axios({
+    url: '/bdcApi/revisit/deal/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取处理信息
+ */
+ export function dealget(data) {
+  return axios({
+    url: '/bdcApi/revisit/deal/get',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 
+ * 查询随访病人列表
+ */
+export function statRevisit(data) {
+return axios({
+url: '/bdcApi/revisit/statRevisit',
+method: 'post',
+data: data,
+ })
+}
+
+/**
+ * 
+ * 用户健康计划任务列表
+ */
+ export function queryHealthPlanTaskList(data) {
+  return axios({
+    url: '/bdcApi/patient/queryHealthPlanTaskList',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 
+ * 任务内容
+ */
+ export function queryHealthPlanContent(data) {
+  return axios({
+    url: '/bdcApi/health/patient/queryHealthPlanContent',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 
+ * 保存/修改抽查信息（修改时传记录ID）
+ */
+
+ export function checksave(data) {
+  return axios({
+    url: '/bdcApi/revisit/check/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 获取抽查信息
+ */
+
+ export function checkget(data) {
+  return axios({
+    url: '/bdcApi/revisit/check/get',
     method: 'post',
     data: data,
   })
