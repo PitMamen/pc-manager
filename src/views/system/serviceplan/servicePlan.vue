@@ -529,14 +529,14 @@ export default {
         //   title: '出院时间',
         //   dataIndex: 'outTime',
         // },
-        {
-          title: '是否购买套餐',
-          dataIndex: 'hasPlan',
-        },
-        {
-          title: '状态',
-          dataIndex: 'hasGive',
-        },
+        // {
+        //   title: '是否购买套餐',
+        //   dataIndex: 'hasPlan',
+        // },
+        // {
+        //   title: '状态',
+        //   dataIndex: 'hasGive',
+        // },
       ],
       loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
