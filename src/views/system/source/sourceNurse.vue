@@ -142,7 +142,6 @@ import {
   getDepts,
   getScheduleNursePeriods,
   qryCodeValue,
-  // getDoctorList,
   getUserList,
   getScheduleInfo,
   saveDoctorSchedule,

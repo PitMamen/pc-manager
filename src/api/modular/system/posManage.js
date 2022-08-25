@@ -266,7 +266,8 @@ export function getDepPlans(parameter) {
  */
 export function getDiseases(parameter) {
   return axios({
-    url: '/account-api/businessManagement/getDiseaseList',
+    // url: '/account-api/businessManagement/getDiseaseList',//重构接口
+    url: '/info-api/disease/getDiseaseList',
     method: 'get',
     params: parameter
   })
@@ -407,12 +408,23 @@ export function getOutPatients(parameter) {
   })
 }
 
+// /**
+//  * 新增科室接口
+//  */
+// export function newDept(parameter) {
+//   return axios({
+//     url: '/account-api/businessManagement/addDepartment',
+//     method: 'post',
+//     data: parameter
+//   })
+// }
+
 /**
- * 新增科室接口
+ * 新增科室接口  重构接口
  */
 export function newDept(parameter) {
   return axios({
-    url: '/account-api/businessManagement/addDepartment',
+    url: '/info-api/departments/addDepartment',
     method: 'post',
     data: parameter
   })
@@ -423,7 +435,8 @@ export function newDept(parameter) {
  */
 export function newDisease(parameter) {
   return axios({
-    url: '/account-api/businessManagement/addDiseaseList',
+    // url: '/account-api/businessManagement/addDiseaseList',//重构接口
+    url: '/info-api/disease/addDiseaseList',
     method: 'post',
     data: parameter
   })
@@ -434,7 +447,8 @@ export function newDisease(parameter) {
  */
 export function newDiseaseArea(parameter) {
   return axios({
-    url: '/account-api/businessManagement/addInpatientArea',
+    // url: '/account-api/businessManagement/addInpatientArea',//重构接口
+    url: '/info-api/wards/addInpatientArea',
     method: 'post',
     data: parameter
   })
@@ -445,7 +459,7 @@ export function newDiseaseArea(parameter) {
  */
 export function delDept(parameter) {
   return axios({
-    url: '/account-api/businessManagement/deleteDepartment',
+    url: '/info-api/departments/deleteDepartment',
     method: 'post',
     data: parameter
   })
@@ -456,7 +470,8 @@ export function delDept(parameter) {
  */
 export function delDisease(parameter) {
   return axios({
-    url: '/account-api/businessManagement/deleteDisease',
+    // url: '/account-api/businessManagement/deleteDisease',重构接口
+    url: '/info-api/disease/deleteDisease',
     method: 'post',
     data: parameter
   })
@@ -467,7 +482,7 @@ export function delDisease(parameter) {
  */
 export function delDiseaseArea(parameter) {
   return axios({
-    url: '/account-api/businessManagement/deleteInpatientArea',
+    url: '/info-api/wards/deleteInpatientArea',
     method: 'post',
     data: parameter
   })
@@ -501,7 +516,8 @@ export function getDepts(parameter) {
 
 export function getDiseasesNew(parameter) {
   return axios({
-    url: '/account-api/businessManagement/getDiseaseList',
+    // url: '/account-api/businessManagement/getDiseaseList',//重构接口
+    url: '/info-api/disease/getDiseaseList',
     method: 'get',
     params: parameter
   })
@@ -509,7 +525,8 @@ export function getDiseasesNew(parameter) {
 
 export function getDiseaseAreas(parameter) {
   return axios({
-    url: '/account-api/businessManagement/getInpatientAreaList',
+    // url: '/account-api/businessManagement/getInpatientAreaList',重构接口
+    url: '/info-api/wards/getInpatientAreaList',
     method: 'get',
     params: parameter
   })
@@ -517,7 +534,8 @@ export function getDiseaseAreas(parameter) {
 
 export function getDoctorList(parameter) {
   return axios({
-    url: '/account-api/businessManagement/getDoctorList',
+    // url: '/account-api/businessManagement/getDoctorList',
+    url: '/info-api/doctors/getDoctorList',//重构接口
     method: 'get',
     params: parameter
   })

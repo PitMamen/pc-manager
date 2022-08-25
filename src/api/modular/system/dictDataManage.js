@@ -23,7 +23,7 @@ export function sysDictDataPage (parameter) {
  */
 export function sysDictDataAdd (parameter) {
   return axios({
-    url: '/account-api/sysDictData/add',
+    url: '/info-api/sysDictData/add',
     method: 'post',
     data: parameter
   })
@@ -37,7 +37,7 @@ export function sysDictDataAdd (parameter) {
  */
 export function sysDictDataEdit (parameter) {
   return axios({
-    url: '/account-api/sysDictData/edit',
+    url: '/info-api/sysDictData/edit',
     method: 'post',
     data: parameter
   })
@@ -51,7 +51,7 @@ export function sysDictDataEdit (parameter) {
  */
 export function sysDictDataDelete (parameter) {
   return axios({
-    url: '/account-api/sysDictData/delete',
+    url: '/info-api/sysDictData/delete',
     method: 'post',
     data: parameter
   })

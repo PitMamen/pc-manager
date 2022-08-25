@@ -9,7 +9,7 @@ import { axios } from '@/utils/request'
  */
 export function sysDictTypePage (parameter) {
   return axios({
-    url: '/account-api/sysDictType/page',
+    url: '/info-api/sysDictType/page',
     method: 'get',
     params: parameter
   })
@@ -23,7 +23,7 @@ export function sysDictTypePage (parameter) {
  */
 export function sysDictTypeAdd (parameter) {
   return axios({
-    url: '/account-api/sysDictType/add',
+    url: '/info-api/sysDictType/add',
     method: 'post',
     data: parameter
   })
@@ -37,7 +37,7 @@ export function sysDictTypeAdd (parameter) {
  */
 export function sysDictTypeEdit (parameter) {
   return axios({
-    url: '/account-api/sysDictType/edit',
+    url: '/info-api/sysDictType/edit',
     method: 'post',
     data: parameter
   })
@@ -51,7 +51,7 @@ export function sysDictTypeEdit (parameter) {
  */
 export function sysDictTypeDelete (parameter) {
   return axios({
-    url: '/account-api/sysDictType/delete',
+    url: '/info-api/sysDictType/delete',
     method: 'post',
     data: parameter
   })
@@ -65,7 +65,7 @@ export function sysDictTypeDelete (parameter) {
  */
 export function sysDictTypeDropDown (parameter) {
   return axios({
-    url: '/account-api/sysDictType/dropDown',
+    url: '/info-api/sysDictType/dropDown',
     method: 'get',
     params: parameter
   })

@@ -147,8 +147,9 @@ const vueConfig = {
         }
       },
 
+      //info-api的ip不一样  新增的服务
       '/api/info-api': {
-        target: 'http://192.168.1.122/info-api',
+        target: 'http://192.168.1.121/info-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
