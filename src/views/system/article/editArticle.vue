@@ -299,10 +299,10 @@ export default {
 
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
-    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+    editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
 
     editor.config.uploadVideoName = 'file'
-    editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
+    editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
 
     editor.create()
 

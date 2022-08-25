@@ -52,7 +52,7 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   console.log("请求预处理")
-  var manangeApiFlag = config.url.lastIndexOf('bdcApi')> -1 || config.url.lastIndexOf('accountapi')> -1 || config.url.lastIndexOf('contentapi')> -1
+  var manangeApiFlag = config.url.lastIndexOf('health-api')> -1 || config.url.lastIndexOf('account-api')> -1 || config.url.lastIndexOf('content-api')> -1
   if (token) {
     if(manangeApiFlag){ 
       config.headers['Authorization'] =   token

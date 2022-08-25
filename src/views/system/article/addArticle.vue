@@ -300,10 +300,10 @@ export default {
 
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
-    editor.config.uploadImgServer = '/api/contentapi/fileUpload/uploadImgFileForEdit'
+    editor.config.uploadImgServer = '/api/conten-tapi/fileUpload/uploadImgFileForEdit'
 
     editor.config.uploadVideoName = 'file'
-    editor.config.uploadVideoServer = '/api/contentapi/fileUpload/uploadVideoFileForEdit'
+    editor.config.uploadVideoServer = '/api/conten-tapi/fileUpload/uploadVideoFileForEdit'
 
     editor.create()
 

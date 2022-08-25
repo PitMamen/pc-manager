@@ -113,7 +113,7 @@ export default {
 
       chooseDate: '',
       editTitle: 'ddd',
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/conten-tapi/fileUpload/uploadImgFile',
       fileListBanner: [],
       previewImageBanner: '',
       previewVisibleBanner: false,

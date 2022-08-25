@@ -18,7 +18,7 @@ export function login (parameter) {
     header:{
       'Content-Type':'application/json' 
     },
-    url: '/accountapi/user/loginForPC',
+    url: '/account-api/user/loginForPC',
     method: 'post',
     data: parameter
   })
@@ -47,7 +47,7 @@ export function logout (parameter) {
  */
 export function getLoginUser (parameter) {
   return axios({
-    url: '/accountapi/getLoginUser',
+    url: '/account-api/getLoginUser',
     method: 'get',
     params: parameter
   })

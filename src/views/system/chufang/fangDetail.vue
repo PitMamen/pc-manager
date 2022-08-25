@@ -141,7 +141,6 @@
           <span class="sign-name" style="margin-left: 1%">{{ detailData.docName }} </span>
           <!-- <span class="sign-name" style="margin-left: 1%">周杰伦 </span> -->
 
-          <!-- <img src="http://develop.mclouds.org.cn:8008/content-api/file/I20220610153803611TWQ6T0PCIYUJOV-20211222154853.PNG" style="width:20%;height: 15%;"></img> -->
         </div>
 
         <!-- <div class="btn-add-plan" @click="addPlanItem" type="primary"></div> -->

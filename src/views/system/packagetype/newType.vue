@@ -145,7 +145,7 @@ export default {
       hosCode: '444885559',
       loading: false,
       keshiData: [],
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
       },

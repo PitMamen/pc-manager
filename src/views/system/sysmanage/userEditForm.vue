@@ -251,7 +251,7 @@ export default {
       fileList: [],
       previewVisible: false,
       previewImage: '',
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
     }
   },
 

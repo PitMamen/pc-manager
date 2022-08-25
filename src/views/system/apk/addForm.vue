@@ -81,8 +81,7 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
-      // actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
-      actionUrl: '/api/bdcApi/appManager/uploadAppFile',
+      actionUrl: '/api/health-api/appManager/uploadAppFile',
       fileList: [],
       uploadData: { platform: 1 },
       versionData: {

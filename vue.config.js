@@ -100,50 +100,59 @@ const vueConfig = {
   devServer: {
     port: 8089,
     proxy: {
-      '/api/bdcApi': {
+      '/api/health-api': {
         target: 'http://192.168.1.122/health-api',
         logLevel: 'debug',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/api/bdcApi': '' // 需要rewrite的,
+          '^/api/health-api': '' // 需要rewrite的,
         }
       },
 
-      '/api/accountapi': {
+      '/api/account-api': {
         target: 'http://192.168.1.122/account-api',
         ws: false,
         logLevel: 'debug',
         changeOrigin: true,
         pathRewrite: {
-          '^/api/accountapi': ''   //需要rewrite的,
+          '^/api/account-api': ''   //需要rewrite的,
         }
       },
 
-      '/api/contentapi': {
+      '/api/content-api': {
         target: 'http://192.168.1.122/content-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/api/contentapi': ''   //需要rewrite的,
+          '^/api/content-api': ''   //需要rewrite的,
         }
       },
 
-      '/api/pushapi': {
+      '/api/push-api': {
         target: 'http://192.168.1.122/push-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/api/pushapi': ''   //需要rewrite的,
+          '^/api/push-api': ''   //需要rewrite的,
         }
       },
 
-      '/api/orderapi': {
+      '/api/order-api': {
         target: 'http://192.168.1.122/order-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
-          '^/api/orderapi': ''   //需要rewrite的,
+          '^/api/order-api': ''   //需要rewrite的,
+        }
+      },
+
+      '/api/info-api': {
+        target: 'http://192.168.1.122/info-api',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/info-api': ''   //需要rewrite的,
         }
       },
 

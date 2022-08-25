@@ -236,7 +236,6 @@ export default {
       //   { code: 2, valueName: '一年', value: 12 },
       //   { code: 3, valueName: '永久', value: 1200 },
       // ],
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
       },

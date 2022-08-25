@@ -52,7 +52,7 @@ export default {
     return {
       visible: false,
       confirmLoading: false,
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       record: {},
       previewVisibleBanner: false,
       previewImageBanner: '',

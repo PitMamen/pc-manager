@@ -45,7 +45,7 @@ export function getAllArticles(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/bdcApi/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source,
+    url: '/health-api/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source,
     method: 'get',
 
     data: newPara
@@ -58,7 +58,7 @@ export function getAllArticles(parameter) {
  */
 export function getAllArticlesNew(parameter) {
   return axios({
-    url: '/bdcApi/health/patient/allArticlesPage',
+    url: '/health-api/health/patient/allArticlesPage',
     method: 'get',
     params: {
       start: parameter.pageNo,
@@ -74,7 +74,7 @@ export function getAllArticlesNew(parameter) {
  */
 export function getAllArticlesTeach(parameter) {
   return axios({
-    url: '/bdcApi/health/patient/allArticlesPage',
+    url: '/health-api/health/patient/allArticlesPage',
     method: 'get',
     params: {
       start: parameter.pageNo,
@@ -109,7 +109,7 @@ export function getAllArticlesTeach(parameter) {
  */
 export function getAllQuestions(parameter) {
   return axios({
-    url: '/bdcApi/health/doctor/qryQuestByKeyWord',
+    url: '/health-api/health/doctor/qryQuestByKeyWord',
     method: 'get',
     params: {
       start:parameter.pageNo,
@@ -126,7 +126,7 @@ export function getAllQuestions(parameter) {
  */
 export function saveArticle(parameter) {
   return axios({
-    url: '/bdcApi/patient/saveArticle',
+    url: '/health-api/patient/saveArticle',
     method: 'post',
 
     data: parameter
@@ -138,7 +138,7 @@ export function saveArticle(parameter) {
  */
 export function getArticleById(id) {
   return axios({
-    url: '/bdcApi/health/patient/articleById',
+    url: '/health-api/health/patient/articleById',
     method: 'get',
     params: {
       id: id
@@ -153,7 +153,7 @@ export function getArticleById(id) {
  */
 export function saveArticleWeixin(parameter) {
   return axios({
-    url: '/pushapi/health/wx/' + appId + '/uploadNews',
+    url: '/push-api/health/wx/' + appId + '/uploadNews',
     method: 'post',
 
     data: parameter
@@ -166,7 +166,7 @@ export function saveArticleWeixin(parameter) {
  */
 export function pushArticle(param) {
   return axios({
-    url: '/bdcApi/patient/pushWeixinArticle',
+    url: '/health-api/patient/pushWeixinArticle',
     method: 'get',
     params: param,
   })
@@ -179,8 +179,8 @@ export function pushArticle(param) {
 export function getQrUrl(param) {
   return axios({
     // 192.168.1.122:8126/wx/qrcode/{appid}/getQrCode?ks=1&bq=2
-    // url: '/pushapi/wx/qrcode/getQrCode',
-    url: '/pushapi/wx/qrcode/' + appId + '/getQrCode',
+    // url: '/push-api/wx/qrcode/getQrCode',
+    url: '/push-api/wx/qrcode/' + appId + '/getQrCode',
     method: 'get',
     params: param,
 
@@ -193,8 +193,8 @@ export function getQrUrl(param) {
  */
 export function getQrGoodsCode(param) {
   return axios({
-    // url: '/pushapi/wx/qrcode/getQrGoodsCode',
-    url: '/pushapi/wx/qrcode/' + appId + '/getQrGoodsCode',
+    // url: '/push-api/wx/qrcode/getQrGoodsCode',
+    url: '/push-api/wx/qrcode/' + appId + '/getQrGoodsCode',
     method: 'get',
     params: param,
   })
@@ -206,7 +206,7 @@ export function getQrGoodsCode(param) {
  */
 export function queryDepartment(hospitalCode) {
   return axios({
-    url: '/bdcApi/patient/qryDepartment',
+    url: '/health-api/patient/qryDepartment',
     method: 'get',
     params: {
       hospitalCode: hospitalCode
@@ -220,7 +220,7 @@ export function queryDepartment(hospitalCode) {
  */
 export function delArticle(id) {
   return axios({
-    url: '/bdcApi/patient/delArticle',
+    url: '/health-api/patient/delArticle',
     method: 'get',
     params: {
       id: id
@@ -254,7 +254,7 @@ export function getDoctorsNew(parameter) {
  */
 export function getDepPlans(parameter) {
   return axios({
-    url: '/bdcApi/health/patient/queryGoodsList',
+    url: '/health-api/health/patient/queryGoodsList',
     method: 'get',
     params: parameter
   })
@@ -266,7 +266,7 @@ export function getDepPlans(parameter) {
  */
 export function getDiseases(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/getDiseaseList',
+    url: '/account-api/businessManagement/getDiseaseList',
     method: 'get',
     params: parameter
   })
@@ -278,7 +278,7 @@ export function getDiseases(parameter) {
  */
 export function delGoodsAttr(id) {
   return axios({
-    url: '/bdcApi/patient/delGoodsAttr',
+    url: '/health-api/patient/delGoodsAttr',
     method: 'get',
     params: {
       id: id
@@ -304,7 +304,7 @@ export function savePlan(parameter) {
  */
 export function uploadImg(parameter) {
   return axios({
-    url: '/api/contentapi/fileUpload/uploadImgFile',
+    url: '/api/content-api/fileUpload/uploadImgFile',
     method: 'post',
     data: parameter
   })
@@ -325,7 +325,7 @@ export function dispatchPlan(parameter) {
  */
 export function distributePlanList(parameter) {
   return axios({
-    url: '/bdcApi/health/doctor/distributePlanList',
+    url: '/health-api/health/doctor/distributePlanList',
     method: 'post',
     data: parameter
   })
@@ -400,8 +400,8 @@ export function getDocPlans(parameter) {
  */
 export function getOutPatients(parameter) {
   return axios({
-    // url: '/bdcApi/patient/qryPatientList',
-    url: '/bdcApi/patient/qryPatientListByReg',
+    // url: '/health-api/patient/qryPatientList',
+    url: '/health-api/patient/qryPatientListByReg',
     method: 'post',
     data: parameter
   })
@@ -412,7 +412,7 @@ export function getOutPatients(parameter) {
  */
 export function newDept(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/addDepartment',
+    url: '/account-api/businessManagement/addDepartment',
     method: 'post',
     data: parameter
   })
@@ -423,7 +423,7 @@ export function newDept(parameter) {
  */
 export function newDisease(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/addDiseaseList',
+    url: '/account-api/businessManagement/addDiseaseList',
     method: 'post',
     data: parameter
   })
@@ -434,7 +434,7 @@ export function newDisease(parameter) {
  */
 export function newDiseaseArea(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/addInpatientArea',
+    url: '/account-api/businessManagement/addInpatientArea',
     method: 'post',
     data: parameter
   })
@@ -445,7 +445,7 @@ export function newDiseaseArea(parameter) {
  */
 export function delDept(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/deleteDepartment',
+    url: '/account-api/businessManagement/deleteDepartment',
     method: 'post',
     data: parameter
   })
@@ -456,7 +456,7 @@ export function delDept(parameter) {
  */
 export function delDisease(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/deleteDisease',
+    url: '/account-api/businessManagement/deleteDisease',
     method: 'post',
     data: parameter
   })
@@ -467,20 +467,33 @@ export function delDisease(parameter) {
  */
 export function delDiseaseArea(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/deleteInpatientArea',
+    url: '/account-api/businessManagement/deleteInpatientArea',
     method: 'post',
     data: parameter
   })
 }
 
+// /**
+//  * 科室接口列表  科室后面都用这个接口
+//  * @param {} parameter 
+//  * @returns 
+//  */
+// export function getDepts(parameter) {
+//   return axios({
+//     url: '/account-api/businessManagement/getDepartmentList',
+//     method: 'get',
+//     params: parameter
+//   })
+// }
+
 /**
- * 科室接口列表  科室后面都用这个接口
+ * 科室接口列表  科室后面都用这个接口  重构接口
  * @param {} parameter 
  * @returns 
  */
 export function getDepts(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/getDepartmentList',
+    url: '/info-api/departments/getDepartmentList',
     method: 'get',
     params: parameter
   })
@@ -488,7 +501,7 @@ export function getDepts(parameter) {
 
 export function getDiseasesNew(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/getDiseaseList',
+    url: '/account-api/businessManagement/getDiseaseList',
     method: 'get',
     params: parameter
   })
@@ -496,7 +509,7 @@ export function getDiseasesNew(parameter) {
 
 export function getDiseaseAreas(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/getInpatientAreaList',
+    url: '/account-api/businessManagement/getInpatientAreaList',
     method: 'get',
     params: parameter
   })
@@ -504,7 +517,7 @@ export function getDiseaseAreas(parameter) {
 
 export function getDoctorList(parameter) {
   return axios({
-    url: '/accountapi/businessManagement/getDoctorList',
+    url: '/account-api/businessManagement/getDoctorList',
     method: 'get',
     params: parameter
   })
@@ -515,7 +528,7 @@ export function getDoctorList(parameter) {
  */
 export function getRoleList(parameter) {
   return axios({
-    url: '/accountapi/getRoleList',
+    url: '/account-api/getRoleList',
     method: 'get',
     params: parameter
   })
@@ -526,7 +539,7 @@ export function getRoleList(parameter) {
  */
 export function delOrEditRole(parameter) {
   return axios({
-    url: '/accountapi/updateRole',
+    url: '/account-api/updateRole',
     method: 'post',
     data: parameter
   })
@@ -537,7 +550,7 @@ export function delOrEditRole(parameter) {
  */
 export function addRole(parameter) {
   return axios({
-    url: '/accountapi/addRole',
+    url: '/account-api/addRole',
     method: 'post',
     data: parameter
   })
@@ -548,7 +561,7 @@ export function addRole(parameter) {
  */
 export function getMenuTree(parameter) {
   return axios({
-    url: '/accountapi/sysMenu/tree',
+    url: '/account-api/sysMenu/tree',
     method: 'get',
     params: parameter
   })
@@ -559,7 +572,7 @@ export function getMenuTree(parameter) {
  */
 export function getMenuTreeGrant(parameter) {
   return axios({
-    url: '/accountapi/sysMenu/treeForGrant',
+    url: '/account-api/sysMenu/treeForGrant',
     method: 'get',
     params: parameter
   })
@@ -570,7 +583,7 @@ export function getMenuTreeGrant(parameter) {
  */
 export function getOrders(parameter) {
   return axios({
-    url: '/orderapi/order/tbOrder/getOrderList',
+    url: '/order-api/order/tbOrder/getOrderList',
     method: 'get',
     params: parameter
   })
@@ -581,7 +594,7 @@ export function getOrders(parameter) {
  */
 export function getUserList(parameter) {
   return axios({
-    url: '/accountapi/accountInfo/getUsers',
+    url: '/account-api/accountInfo/getUsers',
     method: 'post',
     data: parameter
   })
@@ -592,7 +605,7 @@ export function getUserList(parameter) {
  */
 export function createDoctorUser(parameter) {
   return axios({
-    url: '/accountapi/accountInfo/createDoctorUser',
+    url: '/account-api/accountInfo/createDoctorUser',
     method: 'post',
     data: parameter
   })
@@ -603,7 +616,7 @@ export function createDoctorUser(parameter) {
  */
 export function updateUser(parameter) {
   return axios({
-    url: '/accountapi/accountInfo/updateUser',
+    url: '/account-api/accountInfo/updateUser',
     method: 'post',
     data: parameter
   })
@@ -614,7 +627,7 @@ export function updateUser(parameter) {
  */
 export function getServicePackages(parameter) {
   return axios({
-    url: '/bdcApi/patient/qryServiceGoodsList',
+    url: '/health-api/patient/qryServiceGoodsList',
     method: 'post',
     data: parameter
   })
@@ -625,7 +638,7 @@ export function getServicePackages(parameter) {
  */
 export function getAppointList(parameter) {
   return axios({
-    url: '/bdcApi/appoint/qryTradeAppointList',
+    url: '/health-api/appoint/qryTradeAppointList',
     method: 'post',
     data: parameter
   })
@@ -636,7 +649,7 @@ export function getAppointList(parameter) {
  */
 export function qryTradeAppointLog(parameter) {
   return axios({
-    url: '/bdcApi/appoint/qryTradeAppointLog',
+    url: '/health-api/appoint/qryTradeAppointLog',
     method: 'post',
     data: parameter
   })
@@ -649,7 +662,7 @@ export function qryTradeAppointLog(parameter) {
  */
 export function addCheckData(content, type) {
   return axios({
-    url: '/bdcApi/health/manage/addDict',
+    url: '/health-api/health/manage/addDict',
     method: 'post',
     data: {
       name: content,
@@ -663,7 +676,7 @@ export function addCheckData(content, type) {
  */
 export function editCheckData(record) {
   return axios({
-    url: '/bdcApi/health/manage/editDict',
+    url: '/health-api/health/manage/editDict',
     method: 'post',
     data: {
       name: record.name,
@@ -678,7 +691,7 @@ export function editCheckData(record) {
  */
 export function delCheckData(parameter) {
   return axios({
-    url: '/bdcApi/health/manage/deleteDict',
+    url: '/health-api/health/manage/deleteDict',
     method: 'post',
     data: { id: parameter.id }
   })
@@ -690,7 +703,7 @@ export function delCheckData(parameter) {
  */
 export function getCheckDataList(parameter) {
   return axios({
-    url: '/bdcApi/health/manage/getDictList',
+    url: '/health-api/health/manage/getDictList',
     method: 'post',
     data: {
       pageSize: parameter.pageSize,
@@ -706,7 +719,7 @@ export function getCheckDataList(parameter) {
  */
 export function qryGoodsClass(param) {
   return axios({
-    url: '/bdcApi/sys/qryGoodsClass',
+    url: '/health-api/sys/qryGoodsClass',
     method: 'post',
     data: param,
   })
@@ -718,7 +731,7 @@ export function qryGoodsClass(param) {
  */
 export function saveGoodsClass(param) {
   return axios({
-    url: '/bdcApi/sys/saveGoodsClass',
+    url: '/health-api/sys/saveGoodsClass',
     method: 'post',
     data: param,
   })
@@ -730,7 +743,7 @@ export function saveGoodsClass(param) {
  */
 export function delGoodsClass(param) {
   return axios({
-    url: '/bdcApi/sys/delGoodsClass',
+    url: '/health-api/sys/delGoodsClass',
     method: 'post',
     data: param,
   })
@@ -782,7 +795,7 @@ export function changeStatus(parameter) {
 
 export function getKeShiData(parameter) {
   return axios({
-    url: '/bdcApi/health/patient/queryDepartment',
+    url: '/health-api/health/patient/queryDepartment',
     method: 'get',
     params: { hospitalCode: '444885559' }
   })
@@ -867,7 +880,7 @@ export function sysPosDelete(parameter) {
  */
 export function qryRightsUserRecordList(param) {
   return axios({
-    url: '/bdcApi/patient/qryRightsUserRecordList',
+    url: '/health-api/patient/qryRightsUserRecordList',
     method: 'post',
     data: param,
   })
@@ -880,7 +893,7 @@ export function qryRightsUserRecordList(param) {
  */
 export function sysRemind(param) {
   return axios({
-    url: '/bdcApi/sys/sysRemind',
+    url: '/health-api/sys/sysRemind',
     method: 'post',
     data: param,
   })
@@ -892,7 +905,7 @@ export function sysRemind(param) {
  */
 export function qryCodeValue(codeType) {
   return axios({
-    url: '/bdcApi/medical/common/qryCodeValue',
+    url: '/health-api/medical/common/qryCodeValue',
     method: 'get',
     params: { codeGroup: codeType }
   })
@@ -904,7 +917,7 @@ export function qryCodeValue(codeType) {
  */
 export function getGoodsServiceType() {
   return axios({
-    url: '/bdcApi/medical/common/getGoodsServiceType',
+    url: '/health-api/medical/common/getGoodsServiceType',
     method: 'get',
     // params: { codeGroup: codeType }
   })
@@ -916,7 +929,7 @@ export function getGoodsServiceType() {
  */
 export function saveCodeValue(data) {
   return axios({
-    url: '/bdcApi/medical/common/saveCodeValue',
+    url: '/health-api/medical/common/saveCodeValue',
     method: 'post',
     data: data,
   })
@@ -928,7 +941,7 @@ export function saveCodeValue(data) {
  */
 export function delCodeValue(data) {
   return axios({
-    url: '/bdcApi/medical/common/delCodeValue',
+    url: '/health-api/medical/common/delCodeValue',
     method: 'post',
     data: data,
   })
@@ -940,7 +953,7 @@ export function delCodeValue(data) {
  */
 export function saveRemindParam(data) {
   return axios({
-    url: '/bdcApi/sys/saveRemindParam',
+    url: '/health-api/sys/saveRemindParam',
     method: 'post',
     data: data,
   })
@@ -951,7 +964,7 @@ export function saveRemindParam(data) {
  */
 export function qrySysKnowledge(data) {
   return axios({
-    url: '/bdcApi/sys/qrySysKnowledge',
+    url: '/health-api/sys/qrySysKnowledge',
     method: 'post',
     data: data,
   })
@@ -961,7 +974,7 @@ export function qrySysKnowledge(data) {
  */
 export function saveSysKnowledge(data) {
   return axios({
-    url: '/bdcApi/sys/saveSysKnowledge',
+    url: '/health-api/sys/saveSysKnowledge',
     method: 'post',
     data: data,
   })
@@ -971,7 +984,7 @@ export function saveSysKnowledge(data) {
  */
 export function delSysKnowledge(data) {
   return axios({
-    url: '/bdcApi/sys/delSysKnowledge',
+    url: '/health-api/sys/delSysKnowledge',
     method: 'post',
     data: data,
   })
@@ -983,7 +996,7 @@ export function delSysKnowledge(data) {
  */
 export function qryRemindParam(params) {
   return axios({
-    url: '/bdcApi/sys/qryRemindParam',
+    url: '/health-api/sys/qryRemindParam',
     method: 'get',
     params: params
   })
@@ -994,7 +1007,7 @@ export function qryRemindParam(params) {
  */
 export function statRightsUserRecord(data) {
   return axios({
-    url: '/bdcApi/stat/statRightsUserRecord',
+    url: '/health-api/stat/statRightsUserRecord',
     method: 'post',
     data: data,
   })
@@ -1005,7 +1018,7 @@ export function statRightsUserRecord(data) {
  */
 export function statRightsUserRecordByDoc(data) {
   return axios({
-    url: '/bdcApi/stat/statRightsUserRecordByDoc',
+    url: '/health-api/stat/statRightsUserRecordByDoc',
     method: 'post',
     data: data,
   })
@@ -1016,7 +1029,7 @@ export function statRightsUserRecordByDoc(data) {
  */
 export function statRightsUserRecordDaily(data) {
   return axios({
-    url: '/bdcApi/stat/statRightsUserRecordDaily',
+    url: '/health-api/stat/statRightsUserRecordDaily',
     method: 'post',
     data: data,
   })
@@ -1028,7 +1041,7 @@ export function statRightsUserRecordDaily(data) {
  */
 export function saveTradeAppoint(data) {
   return axios({
-    url: '/bdcApi/appoint/saveTradeAppoint',
+    url: '/health-api/appoint/saveTradeAppoint',
     method: 'post',
     data: data,
   })
@@ -1040,7 +1053,7 @@ export function saveTradeAppoint(data) {
  */
 export function addAppVersion(data) {
   return axios({
-    url: '/bdcApi/appManager/addAppVersion',
+    url: '/health-api/appManager/addAppVersion',
     method: 'post',
     data: data,
   })
@@ -1051,7 +1064,7 @@ export function addAppVersion(data) {
  */
 export function listAppVersion(data) {
   return axios({
-    url: '/bdcApi/appManager/listAppVersion',
+    url: '/health-api/appManager/listAppVersion',
     method: 'post',
     data: data,
   })
@@ -1062,7 +1075,7 @@ export function listAppVersion(data) {
  */
 export function updateAppVersion(data) {
   return axios({
-    url: '/bdcApi/appManager/updateAppVersion',
+    url: '/health-api/appManager/updateAppVersion',
     method: 'post',
     data: data,
   })
@@ -1073,7 +1086,7 @@ export function updateAppVersion(data) {
  */
 export function deleteAppVersion(data) {
   return axios({
-    url: '/bdcApi/appManager/deleteAppVersion',
+    url: '/health-api/appManager/deleteAppVersion',
     method: 'post',
     data: data,
   })
@@ -1085,7 +1098,7 @@ export function deleteAppVersion(data) {
  */
 export function getScheduleInfo(params) {
   return axios({
-    url: '/bdcApi/sys/getScheduleInfo',
+    url: '/health-api/sys/getScheduleInfo',
     method: 'get',
     params: params
   })
@@ -1097,7 +1110,7 @@ export function getScheduleInfo(params) {
  */
 export function getSchedulePeriods(params) {
   return axios({
-    url: '/bdcApi/sys/getSchedulePeriods',
+    url: '/health-api/sys/getSchedulePeriods',
     method: 'get',
     params: params
   })
@@ -1109,7 +1122,7 @@ export function getSchedulePeriods(params) {
  */
  export function getScheduleNursePeriods(params) {
   return axios({
-    url: '/bdcApi/sys/getScheduleNursePeriods',
+    url: '/health-api/sys/getScheduleNursePeriods',
     method: 'get',
     params: params
   })
@@ -1121,7 +1134,7 @@ export function getSchedulePeriods(params) {
  */
 export function saveDoctorSchedule(data) {
   return axios({
-    url: '/bdcApi/sys/saveDoctorSchedule',
+    url: '/health-api/sys/saveDoctorSchedule',
     method: 'post',
     data: data,
   })
@@ -1133,7 +1146,7 @@ export function saveDoctorSchedule(data) {
  */
 export function delDoctorSchedule(data) {
   return axios({
-    url: '/bdcApi/sys/delDoctorSchedule',
+    url: '/health-api/sys/delDoctorSchedule',
     method: 'post',
     data: data,
   })
@@ -1145,7 +1158,7 @@ export function delDoctorSchedule(data) {
  */
 export function qryMedicalOrdersListUsePc(data) {
   return axios({
-    url: '/bdcApi/prescription/qryMedicalOrdersListUsePc',
+    url: '/health-api/prescription/qryMedicalOrdersListUsePc',
     method: 'post',
     data: data,
   })
@@ -1157,7 +1170,7 @@ export function qryMedicalOrdersListUsePc(data) {
  */
 export function getMedicalOrdersDetail(data) {
   return axios({
-    url: '/bdcApi/prescription/getMedicalOrdersDetail',
+    url: '/health-api/prescription/getMedicalOrdersDetail',
     method: 'post',
     data: data,
   })
@@ -1168,7 +1181,7 @@ export function getMedicalOrdersDetail(data) {
  */
  export function qryRevisitDetail(data) {
   return axios({
-    url: '/bdcApi/revisit/qryRevisitDetail',
+    url: '/health-api/revisit/qryRevisitDetail',
     method: 'post',
     data: data,
   })
@@ -1182,7 +1195,7 @@ export function getMedicalOrdersDetail(data) {
  */
 export function qryOrdersList(data) {
   return axios({
-    url: '/bdcApi/prescription/qryOrdersList',
+    url: '/health-api/prescription/qryOrdersList',
     method: 'post',
     data: data,
   })
@@ -1194,7 +1207,7 @@ export function qryOrdersList(data) {
  */
 export function exportOrders() {
   return axios({
-    url: '/bdcApi/excel/exportOrders',
+    url: '/health-api/excel/exportOrders',
     method: 'get',
     // data: data,
   })
@@ -1206,7 +1219,7 @@ export function exportOrders() {
  */
 export function updateOrderStatusById(data) {
   return axios({
-    url: '/orderapi/order/tbOrder/updateOrderStatusById',
+    url: '/order-api/order/tbOrder/updateOrderStatusById',
     method: 'get',
     params: data
   })
@@ -1217,7 +1230,7 @@ export function updateOrderStatusById(data) {
  */
 export function getReviewList(data) {
   return axios({
-    url: '/bdcApi/health/apply/page',
+    url: '/health-api/health/apply/page',
     method: 'post',
     data: data,
   })
@@ -1228,7 +1241,7 @@ export function getReviewList(data) {
  */
 export function auditReview(data) {
   return axios({
-    url: '/bdcApi/health/apply/audit',
+    url: '/health-api/health/apply/audit',
     method: 'post',
     data: data,
   })
@@ -1240,7 +1253,7 @@ export function auditReview(data) {
  */
 export function refundByAdmin(data) {
   return axios({
-    url: '/bdcApi/appoint/refundByAdmin',
+    url: '/health-api/appoint/refundByAdmin',
     method: 'post',
     data: data,
   })
@@ -1252,7 +1265,7 @@ export function refundByAdmin(data) {
  */
 export function getBaseInfo(data) {
   return axios({
-    url: '/accountapi/userInfo/getBaseInfo',
+    url: '/account-api/userInfo/getBaseInfo',
     method: 'get',
     params: data,
   })
@@ -1264,7 +1277,7 @@ export function getBaseInfo(data) {
  */
 export function qryRevisitPatientList(data) {
   return axios({
-    url: '/bdcApi/revisit/qryRevisitPatientList',
+    url: '/health-api/revisit/qryRevisitPatientList',
     method: 'post',
     data: data,
   })
@@ -1277,7 +1290,7 @@ export function qryRevisitPatientList(data) {
 
  export function dealsave(data) {
   return axios({
-    url: '/bdcApi/revisit/deal/save',
+    url: '/health-api/revisit/deal/save',
     method: 'post',
     data: data,
   })
@@ -1289,7 +1302,7 @@ export function qryRevisitPatientList(data) {
  */
  export function dealget(data) {
   return axios({
-    url: '/bdcApi/revisit/deal/get',
+    url: '/health-api/revisit/deal/get',
     method: 'post',
     data: data,
   })
@@ -1302,7 +1315,7 @@ export function qryRevisitPatientList(data) {
  */
 export function statRevisit(data) {
 return axios({
-url: '/bdcApi/revisit/statRevisit',
+url: '/health-api/revisit/statRevisit',
 method: 'post',
 data: data,
  })
@@ -1314,7 +1327,7 @@ data: data,
  */
  export function queryHealthPlanTaskList(data) {
   return axios({
-    url: '/bdcApi/patient/queryHealthPlanTaskList',
+    url: '/health-api/patient/queryHealthPlanTaskList',
     method: 'get',
     params: data,
   })
@@ -1326,7 +1339,7 @@ data: data,
  */
  export function queryHealthPlanContent(data) {
   return axios({
-    url: '/bdcApi/health/patient/queryHealthPlanContent',
+    url: '/health-api/health/patient/queryHealthPlanContent',
     method: 'get',
     params: data,
   })
@@ -1339,7 +1352,7 @@ data: data,
 
  export function checksave(data) {
   return axios({
-    url: '/bdcApi/revisit/check/save',
+    url: '/health-api/revisit/check/save',
     method: 'post',
     data: data,
   })
@@ -1352,7 +1365,7 @@ data: data,
 
  export function checkget(data) {
   return axios({
-    url: '/bdcApi/revisit/check/get',
+    url: '/health-api/revisit/check/get',
     method: 'post',
     data: data,
   })

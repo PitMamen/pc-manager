@@ -9,7 +9,7 @@ import { axios } from '@/utils/request'
  */
 export function sysDictDataPage (parameter) {
   return axios({
-    url: '/accountapi/sysDictData/page',
+    url: '/account-api/sysDictData/page',
     method: 'get',
     params: parameter
   })
@@ -23,7 +23,7 @@ export function sysDictDataPage (parameter) {
  */
 export function sysDictDataAdd (parameter) {
   return axios({
-    url: '/accountapi/sysDictData/add',
+    url: '/account-api/sysDictData/add',
     method: 'post',
     data: parameter
   })
@@ -37,7 +37,7 @@ export function sysDictDataAdd (parameter) {
  */
 export function sysDictDataEdit (parameter) {
   return axios({
-    url: '/accountapi/sysDictData/edit',
+    url: '/account-api/sysDictData/edit',
     method: 'post',
     data: parameter
   })
@@ -51,7 +51,7 @@ export function sysDictDataEdit (parameter) {
  */
 export function sysDictDataDelete (parameter) {
   return axios({
-    url: '/accountapi/sysDictData/delete',
+    url: '/account-api/sysDictData/delete',
     method: 'post',
     data: parameter
   })

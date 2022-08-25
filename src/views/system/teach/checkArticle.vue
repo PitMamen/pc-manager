@@ -102,7 +102,7 @@ export default {
           return res.data
         })
       },
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       fileList: [],
       previewVisible: false,
       previewImage: '',

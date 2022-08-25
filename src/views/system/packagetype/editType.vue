@@ -145,7 +145,7 @@ export default {
       loading: false,
       keshiData: [],
       classId: '',
-      actionUrl: '/api/contentapi/fileUpload/uploadImgFile',
+      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       headers: {
         authorization: 'authorization-text',
       },
