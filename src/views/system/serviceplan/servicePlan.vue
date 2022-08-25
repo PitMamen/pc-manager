@@ -377,7 +377,6 @@
                   </span>
                 </s-table>
 
-                <stat-check ref="statCheck" @ok="handleOkStat" />
                 <stat-detail ref="statDetail" @ok="handleOkStat" />
                 <stat-solve ref="statSolve" @ok="handleOkStat" />
               </a-card>
@@ -406,7 +405,6 @@ import addFormDispatch from './addFormDispatch'
 import editFormDispatch from './editFormDispatch'
 import moment from 'moment'
 
-import statCheck from './statCheck'
 import statDetail from './statDetail'
 import statSolve from './statSolve'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -423,7 +421,6 @@ export default {
     addFormDispatch,
     editFormDispatch,
 
-    statCheck,
     statDetail,
     statSolve,
   },
