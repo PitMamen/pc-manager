@@ -41,7 +41,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a :href="record.questUrl+'?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
+        <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
       </span>
     </s-table>
 
@@ -136,26 +136,30 @@ export default {
         // params.typeName = '123'
         console.log('params', parameter)
         return getAllQuestions(Object.assign(parameter, params)).then((res) => {
-          console.log(parameter)
-          console.log(res.data.total / parameter.pageSize)
+          if (res.code == 0) {
+            console.log(parameter)
+            console.log(res.data.total / parameter.pageSize)
 
-          //组装控件需要的数据结构
-          var data = {
-            pageNo: parameter.pageNo,
-            pageSize: parameter.pageSize,
-            totalRows: res.data.total,
-            totalPage: res.data.total / parameter.pageSize,
-            rows: res.data.list,
+            //组装控件需要的数据结构
+            var data = {
+              pageNo: parameter.pageNo,
+              pageSize: parameter.pageSize,
+              totalRows: res.data.total,
+              totalPage: res.data.total / parameter.pageSize,
+              rows: res.data.list,
+            }
+
+            //设置序号
+            data.rows.forEach((item, index) => {
+              item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+              item.nameDes = item.name
+              // item.createTimeDes = item.createTime.substring(0,11)
+            })
+
+            return data
+          } else {
+            return {}
           }
-
-          //设置序号
-          data.rows.forEach((item, index) => {
-            item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-            item.nameDes = item.name
-            // item.createTimeDes = item.createTime.substring(0,11)
-          })
-
-          return data
         })
       },
 
