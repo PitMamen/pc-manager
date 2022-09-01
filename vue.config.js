@@ -156,6 +156,14 @@ const vueConfig = {
           '^/api/info-api': ''   //需要rewrite的,
         }
       },
+      '/api/wx-api': {
+        target: 'http://192.168.1.121/wx-api',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/wx-api': ''   //需要rewrite的,
+        }
+      },
 
       '/api': {
         target: 'http://192.168.1.122/manager-api',

@@ -153,7 +153,7 @@ export function getArticleById(id) {
  */
 export function saveArticleWeixin(parameter) {
   return axios({
-    url: '/push-api/health/wx/' + appId + '/uploadNews',
+    url: '/wx-api/health/wx/' + appId + '/uploadNews',
     method: 'post',
 
     data: parameter
@@ -180,7 +180,7 @@ export function getQrUrl(param) {
   return axios({
     // 192.168.1.122:8126/wx/qrcode/{appid}/getQrCode?ks=1&bq=2
     // url: '/push-api/wx/qrcode/getQrCode',
-    url: '/push-api/wx/qrcode/' + appId + '/getQrCode',
+    url: '/wx-api/wx/qrcode/' + appId + '/getQrCode',
     method: 'get',
     params: param,
 
@@ -194,7 +194,7 @@ export function getQrUrl(param) {
 export function getQrGoodsCode(param) {
   return axios({
     // url: '/push-api/wx/qrcode/getQrGoodsCode',
-    url: '/push-api/wx/qrcode/' + appId + '/getQrGoodsCode',
+    url: '/wx-api/wx/qrcode/' + appId + '/getQrGoodsCode',
     method: 'get',
     params: param,
   })
