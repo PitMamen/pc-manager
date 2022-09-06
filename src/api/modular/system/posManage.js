@@ -1206,6 +1206,19 @@ export function getMedicalOrdersDetail(data) {
 }
 
 
+/**
+ * 获取随访计划规则列表
+ */
+  export function getTemplateRuleList(data){
+    return axios({
+      url:'/health-api/sys/getTemplateRuleList',
+      method:'get',
+      data:data,
+    })
+  }
+
+
+
 
 /**
  * 

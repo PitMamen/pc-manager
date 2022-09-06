@@ -1125,7 +1125,7 @@ export default {
           padding-left: 1%;
           color: #000;
           font-size: 14px;
-          text-align: left|center;
+          text-align: left;
           &:hover {
             cursor: pointer;
           }
@@ -1133,6 +1133,7 @@ export default {
       }
     }
   }
+}
 
   .card-right-service {
     overflow: hidden;
@@ -1161,7 +1162,7 @@ export default {
       height: 30px;
     }
   }
-}
+
 
 .row-stat {
   display: flex;
