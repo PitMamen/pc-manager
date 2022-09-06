@@ -164,6 +164,14 @@ const vueConfig = {
           '^/api/wx-api': ''   //需要rewrite的,
         }
       },
+      '/api/questionnaire-api': {
+        target: 'http://192.168.1.121/questionnaire-api',
+        ws: false,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/questionnaire-api': '' 
+        }
+      },
 
       '/api': {
         target: 'http://192.168.1.121/manager-api',
@@ -171,7 +179,7 @@ const vueConfig = {
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          '^/api': ''   //需要rewrite的,
+          '^/api': ''   
         }
       },
     }

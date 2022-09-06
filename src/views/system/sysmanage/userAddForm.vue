@@ -144,6 +144,8 @@
             <a-radio :value="4"> 个案管理师 </a-radio>
             <a-radio :value="5"> 护士 </a-radio>
             <a-radio :value="6" style="width: 100px"> 客服 </a-radio>
+            <a-radio :value="7" style="width: 100px"> 随访管理员 </a-radio>
+            <a-radio :value="8" style="width: 100px"> 科室随访员 </a-radio>
             <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
           </a-radio-group>
         </a-form-item>
@@ -194,7 +196,7 @@
         /> -->
         <a-form-item
           label="管理科室"
-          v-show="ifCan && radioValue == 4"
+          v-show="(ifCan || ifSuifang) && (radioValue == 4 || radioValue == 7 || radioValue == 8)"
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           has-feedback
@@ -235,7 +237,8 @@ export default {
       keshiDataPerson: [],
       radioValue: 3,
       isOpen: true,
-      ifCan: false, //false表示是医生，false个案管理师
+      ifCan: false, //true表示所属部门不能选，默认病友服务中心；且为true才展示所属科室
+      ifSuifang: false,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
@@ -354,7 +357,6 @@ export default {
     radioChange(event) {
       if (event.target.value == 3) {
         //添加医生
-
         if (this.radioValue == 4) {
           this.keshiData.shift()
         }
@@ -398,6 +400,26 @@ export default {
         //客服选也不需要
         this.ifCan = true
         this.radioValue = 6
+      } else if (event.target.value == 7) {
+        //随访管理员
+        if (this.radioValue == 4) {
+          this.keshiData.shift()
+        }
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+
+        this.ifCan = false
+        this.ifSuifang = true
+        this.radioValue = 7
+      } else if (event.target.value == 8) {
+        //科室随访员
+        if (this.radioValue == 4) {
+          this.keshiData.shift()
+        }
+        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
+
+        this.ifCan = false
+        this.ifSuifang = true
+        this.radioValue = 8
       }
     },
 
