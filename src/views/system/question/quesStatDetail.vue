@@ -1,18 +1,8 @@
 <template>
-  <a-tabs default-active-key="1" @change="callback">
-    <a-tab-pane key="1" tab="问卷列表">
+
       <a-card :bordered="false">
-        <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="问卷管理">
-                  <a href="http://hmg.mclouds.org.cn/login" target="_blank">跳转问卷管理</a>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-form>
-        </div>
+        <p>查看详情</p>
+
         <div class="table-page-search-wrapper">
           <a-form layout="inline">
             <a-row :gutter="48">
@@ -50,51 +40,10 @@
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
       </a-card>
-    </a-tab-pane>
 
-    <a-tab-pane key="2" tab="问卷统计">
-      <a-card :bordered="false">
 
-        <div class="table-page-search-wrapper">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="10" :sm="24">
-                <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-                  <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                  <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
-                    <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
-                      item.departmentName
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item></a-col
-              >
 
-              <a-col :md="5" :sm="24">
-                <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              </a-col>
-            </a-row>
-          </a-form>
-        </div>
-        <s-table
-          ref="table"
-          size="default"
-          :columns="columns"
-          :data="loadData"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="action" slot-scope="text, record">
-            <!-- <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a> -->
-            <a @click="goCheck(record)">查看</a>
-          </span>
-        </s-table>
 
-        <add-form ref="addForm" @ok="handleOk" />
-        <edit-form ref="editForm" @ok="handleOk" />
-      </a-card>
-    </a-tab-pane>
-  </a-tabs>
 </template>
 
 <script>
@@ -257,13 +206,6 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-    },
-
-    /**
-     * 问卷统计
-     */
-     goCheck(record) {
-      this.$router.push({ name: 'ques_stat_detail', query: { recordStr: JSON.stringify(record) } })
     },
   },
 }
