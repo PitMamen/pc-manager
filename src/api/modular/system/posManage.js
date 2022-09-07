@@ -147,9 +147,30 @@ export function statisticsForUser(parameter) {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
       projectKey: parameter.projectKey,
-      deptIds: parameter.deptIds
+      deptIds: parameter.deptIds,
+      startDate: parameter.startDate,
+      endDate: parameter.endDate
     },
 
+  })
+}
+/**
+ * 导出问卷统计详情
+ *
+ */
+export function exportProjectForUser(parameter) {
+  return axios({
+    url: '/questionnaire-api/user/project/exportProjectForUser',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      projectKey: parameter.projectKey,
+      deptIds: parameter.deptIds,
+      startDate: parameter.startDate,
+      endDate: parameter.endDate
+    },
+    responseType: 'blob'
   })
 }
 
