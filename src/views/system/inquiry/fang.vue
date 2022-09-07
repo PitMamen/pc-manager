@@ -265,11 +265,13 @@ delaySeconds 接诊时长（单位s）
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
               //小于当前时间已接诊  大于当前时间未接诊
-            } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].execTime) < currentTime) {
+            } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime < currentTime) {
+            // } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].confirmTime) < currentTime) {
               this.$set(res.data.rows[i], 'statusText', '已接诊')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
-            } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].execTime) > currentTime) {
+            } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime > currentTime) {
+            // } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].confirmTime) > currentTime) {
               this.$set(res.data.rows[i], 'statusText', '未接诊')
               this.$set(res.data.rows[i], 'btnText', '提醒医生')
               this.$set(res.data.rows[i], 'canAsk', true)

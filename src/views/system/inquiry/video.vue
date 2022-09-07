@@ -252,11 +252,11 @@ export default {
               this.$set(res.data.rows[i], 'statusText', '已完成')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
-            } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].execTime) < currentTime) {
+            } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime < currentTime) {
               this.$set(res.data.rows[i], 'statusText', '已接诊')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
-            } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].execTime) > currentTime) {
+            } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime > currentTime) {
               this.$set(res.data.rows[i], 'statusText', '未接诊')
               this.$set(res.data.rows[i], 'btnText', '提醒医生')
               this.$set(res.data.rows[i], 'canAsk', true)
