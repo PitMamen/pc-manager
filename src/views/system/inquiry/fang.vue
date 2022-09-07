@@ -150,7 +150,7 @@ export default {
 
       queryParams: {
         execDept: '', //科室
-        rightsType: 'revisit', //textNum
+        rightsType: 'appointNum', //textNum
         userName: '', //患者
         execName: '', //医生
         execFlag: -1, //状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
