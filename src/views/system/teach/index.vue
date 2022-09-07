@@ -1,9 +1,9 @@
 <template>
   <a-card :bordered="false">
-    <a-button type="primary" @click="goAdd()">新增文章</a-button>
+    <!-- <a-button type="primary" @click="goAdd()">新增文章</a-button> -->
 
     <!-- 下个版本迭代放出来 -->
-    <div class="table-page-search-wrapper" v-if="false" style="margin-top: 1%">
+    <div class="table-page-search-wrapper" style="margin-top: 1%">
       <a-form layout="inline">
         <a-row :gutter="48">
           <!-- <a-col :md="3" :sm="24">

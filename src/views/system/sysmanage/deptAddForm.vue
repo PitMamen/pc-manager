@@ -7,7 +7,20 @@
     @ok="handleSubmit"
     @cancel="handleCancel"
   >
-    <a-input v-model="deptName" allow-clear placeholder="请输入科室名称 " />
+    <a-form>
+      <a-form-item label="科室名称" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-input v-model="deptName" allow-clear placeholder="请输入科室名称 " />
+      </a-form-item>
+
+      <a-form-item label="是否是病区" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+        <a-radio-group style="width: 300px" name="radioGroup" :default-value="1" @change="radioChange">
+          <a-radio :value="1"> 是 </a-radio>
+          <a-radio :value="0" style="width: 100px"> 否 </a-radio>
+
+          <!-- <a-radio :value="3" style="width: 100px"> 管理员 </a-radio> -->
+        </a-radio-group>
+      </a-form-item>
+    </a-form>
   </a-modal>
 </template>
 
@@ -22,6 +35,16 @@ export default {
 
       confirmLoading: false,
       visible: false,
+      isArea: true,
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+      },
+
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 11 },
+      },
     }
   },
   methods: {
@@ -32,21 +55,31 @@ export default {
       this.index = index
     },
 
+    radioChange(event) {
+      if (event.target.value == 0) {
+        this.isArea = true
+      } else {
+        this.isArea = false
+      }
+    },
+
     handleSubmit() {
       if (!this.deptName) {
         this.$message.error('请输入科室名称！')
         return
       }
 
-      newDept({ departmentName: this.deptName, parentId: 0, hospitalId: 1 }).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('新增成功')
-          this.visible = false
-          this.$emit('ok', this.index, this.type)
-        } else {
-          this.$message.error('新增失败：' + res.message)
+      newDept({ departmentName: this.deptName, parentId: 0, hospitalId: 1, tagWardArea: this.isArea ? 1 : 0 }).then(
+        (res) => {
+          if (res.code == 0) {
+            this.$message.success('新增成功')
+            this.visible = false
+            this.$emit('ok', this.index, this.type)
+          } else {
+            this.$message.error('新增失败：' + res.message)
+          }
         }
-      })
+      )
     },
     handleCancel() {
       this.visible = false
