@@ -234,7 +234,12 @@ export default {
             // this.$set(res.data.rows[i], 'userName', res.data.rows[i].userInfo.userName)
 
             ////状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
-            this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
+            // this.$set(res.data.rows[i], 'createDate', this.formatDateFull(res.data.rows[i].createTime))
+            this.$set(
+              res.data.rows[i],
+              'confirmTimeOut',
+              res.data.rows[i].confirmTime ? this.formatDateFull(res.data.rows[i].confirmTime) : ''
+            )
             let currentTime = new Date().getTime()
             console.log('currentTime', currentTime)
             console.log('execTime', Date.parse(res.data.rows[i].execTime))
