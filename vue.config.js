@@ -101,7 +101,7 @@ const vueConfig = {
     port: 8089,
     proxy: {
       '/api/health-api': {
-        target: 'http://192.168.1.122/health-api',
+        target: 'http://192.168.1.121/health-api',
         logLevel: 'debug',
         ws: false,
         changeOrigin: true,
@@ -111,7 +111,7 @@ const vueConfig = {
       },
 
       '/api/account-api': {
-        target: 'http://192.168.1.122/account-api',
+        target: 'http://192.168.1.121/account-api',
         ws: false,
         logLevel: 'debug',
         changeOrigin: true,
@@ -121,7 +121,7 @@ const vueConfig = {
       },
 
       '/api/content-api': {
-        target: 'http://192.168.1.122/content-api',
+        target: 'http://192.168.1.121/content-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -130,7 +130,7 @@ const vueConfig = {
       },
 
       '/api/push-api': {
-        target: 'http://192.168.1.122/push-api',
+        target: 'http://192.168.1.121/push-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -139,7 +139,7 @@ const vueConfig = {
       },
 
       '/api/order-api': {
-        target: 'http://192.168.1.122/order-api',
+        target: 'http://192.168.1.121/order-api',
         ws: false,
         changeOrigin: true,
         pathRewrite: {
@@ -166,7 +166,7 @@ const vueConfig = {
       },
 
       '/api': {
-        target: 'http://192.168.1.122/manager-api',
+        target: 'http://192.168.1.121/manager-api',
         ws: false,
         changeOrigin: true,
         logLevel: 'debug',

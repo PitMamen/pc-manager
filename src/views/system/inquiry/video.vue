@@ -176,8 +176,8 @@ export default {
           dataIndex: 'deptName',
         },
         {
-          title: '预约问诊时间',
-          dataIndex: 'execTime',
+          title: '预约时间',
+          dataIndex: 'appointTime',
           // scopedSlots: { customRender: 'status' },
         },
         {
