@@ -28,7 +28,13 @@
               >
 
               <a-col :md="5" :sm="24">
-                <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+                <a-button
+                  v-if="user.roleId == 7 || user.roleName == 'admin'"
+                  style="margin-right: 3%"
+                  type="primary"
+                  @click="reset"
+                  >全院</a-button
+                >
                 <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               </a-col>
             </a-row>
@@ -72,7 +78,13 @@
               >
 
               <a-col :md="5" :sm="24">
-                <a-button style="margin-right: 3%" type="primary" @click="resetStat">全院</a-button>
+                <a-button
+                  v-if="user.roleId == 7 || user.roleName == 'admin'"
+                  style="margin-right: 3%"
+                  type="primary"
+                  @click="resetStat"
+                  >全院</a-button
+                >
                 <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
               </a-col>
             </a-row>
@@ -223,6 +235,18 @@ export default {
         if (this.isNoDepart) {
           params.typeName = '-1'
         }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+        
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          this.originData.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.typeName = params.typeName + item.departmentName + ','
+            } else {
+              params.typeName = params.typeName + item.departmentName
+            }
+          })
+        }
         // params.typeName = '123'
         console.log('params', parameter)
         return getAllQuestions(Object.assign(parameter, params)).then((res) => {
@@ -266,9 +290,22 @@ export default {
           })
         }
 
+        //isNoDepart科室随访员没有科室的时候
         if (this.isNoDepart) {
           params.deptIds = '-1'
         }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArrStat.length == 0) {
+          this.originDataStat.forEach((item, index) => {
+            if (index != this.idArrStat.length - 1) {
+              params.deptIds = params.deptIds + item.departmentId + ','
+            } else {
+              params.deptIds = params.deptIds + item.departmentId
+            }
+          })
+        }
+
         // params.typeName = '123'
         console.log('paramsStat', parameter)
         console.log('paramsStatAs', Object.assign(parameter, params))
@@ -318,18 +355,6 @@ export default {
         if (res.code == 0) {
           this.originData = res.data
           this.originDataStat = JSON.parse(JSON.stringify(res.data))
-          //全量的走原逻辑
-          // //非全量的，给科室数组重写
-          // if (this.originData.length > 0) {
-          //   this.originData.forEach((item, index) => {
-          //     this.idArr.push(item.departmentName)
-          //   })
-
-          //   this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
-          // } else {
-          //   this.idArr = []
-          //   this.idArrStat = []
-          // }
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
         }

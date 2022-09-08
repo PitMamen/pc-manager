@@ -23,7 +23,13 @@
           </a-col>
 
           <a-col :md="5" :sm="24">
-            <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+            <a-button
+              v-if="user.roleId == 7 || user.roleName == 'admin'"
+              style="margin-right: 3%"
+              type="primary"
+              @click="reset"
+              >全院</a-button
+            >
             <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
             <a-button type="primary" @click="exportExcel">导出</a-button>
           </a-col>
@@ -253,20 +259,33 @@ export default {
 
     exportExcel() {
       let params = JSON.parse(JSON.stringify(this.queryParam))
-        params.projectKey = this.quesData.key
-        if (this.idArr.length > 0) {
-          this.idArr.forEach((item, index) => {
-            if (index != this.idArr.length - 1) {
-              params.deptIds = params.deptIds + item + ','
-            } else {
-              params.deptIds = params.deptIds + item
-            }
-          })
-        }
+      params.projectKey = this.quesData.key
+      if (this.idArr.length > 0) {
+        this.idArr.forEach((item, index) => {
+          if (index != this.idArr.length - 1) {
+            params.deptIds = params.deptIds + item + ','
+          } else {
+            params.deptIds = params.deptIds + item
+          }
+        })
+      }
 
-        if (this.isNoDepart) {
-          params.deptIds = '-1'
-        }
+      if (this.isNoDepart) {
+        params.deptIds = '-1'
+      }
+
+      //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+
+      if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+        this.originData.forEach((item, index) => {
+          if (index != this.idArr.length - 1) {
+            params.deptIds = params.deptIds + item.departmentName + ','
+          } else {
+            params.deptIds = params.deptIds + item.departmentName
+          }
+        })
+      }
+
       exportProjectForUser(params)
         .then((res) => {
           this.downloadfile(res)

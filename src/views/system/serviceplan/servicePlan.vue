@@ -25,7 +25,13 @@
 
                 <a-col :md="6" :sm="24">
                   <a-form-item label="">
-                    <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+                    <a-button
+                      v-if="user.roleId == 7 || user.roleName == 'admin'"
+                      style="margin-right: 3%"
+                      type="primary"
+                      @click="reset"
+                      >全院</a-button
+                    >
                     <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
                   </a-form-item>
                 </a-col>
@@ -162,7 +168,7 @@
                         <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
                       </a-col> -->
                   <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
-                  <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
+                  <a-col :md="6" :sm="24">
                     <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                       <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
                       <a-select allow-clear v-model="queryParamsBor.deptCodes" mode="multiple" placeholder="请选择科室">
@@ -183,7 +189,7 @@
                     <a-button
                       style="margin-right: 3%"
                       type="primary"
-                      v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                      v-if="user.roleId == 7 || user.roleName == 'admin'"
                       @click="resetBor"
                       >全院</a-button
                     >
@@ -287,7 +293,7 @@
                         <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
                       </a-col> -->
                       <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
-                      <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
+                      <a-col :md="6" :sm="24">
                         <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                           <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
                           <a-select
@@ -336,7 +342,7 @@
                         <a-button
                           style="margin-right: 3%"
                           type="primary"
-                          v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                          v-if="user.roleId == 7 || user.roleName == 'admin'"
                           @click="reset"
                           >全院</a-button
                         >
@@ -395,6 +401,7 @@ import {
   getDocPlans,
   delPlan,
   getOutPatients,
+  getDeptsPersonal,
   statRevisit,
   getDepts,
   deleteAppVersion,
@@ -464,7 +471,36 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDocPlans(Object.assign(parameter)).then((res) => {
+        let params = JSON.parse(JSON.stringify(this.queryParam))
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            console.log('idArrItem', item)
+            if (index != this.idArr.length - 1) {
+              params.departmentIds = params.departmentIds + item + ','
+            } else {
+              params.departmentIds = params.departmentIds + item
+            }
+          })
+        }
+        console.log('departmentIds', params.departmentIds)
+        if (this.isNoDepart) {
+          params.departmentIds = '-1'
+        }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          this.originData.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.departmentIds = params.departmentIds + item.departmentId + ','
+            } else {
+              params.departmentIds = params.departmentIds + item.departmentId
+            }
+          })
+        }
+
+        return getDocPlans(Object.assign(parameter, params)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'timeDay', formatDate(res.data.rows[i].createTime))
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
@@ -485,7 +521,8 @@ export default {
       queryParam: {
         // existsPlanFlag: '2',
         existsPlanFlag: 2,
-        bqmc: '',
+        departmentIds: '',
+        // bqmc: '',
         // deptCode: Vue.ls.get(TRUE_USER).departmentCode,
         // isRegister: '1',
       },
@@ -708,10 +745,35 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
         /**不是病友服务中心和管理员，写死用户当前的科室 */
+        // let params = JSON.parse(JSON.stringify(this.queryParamsStat))
+        // if (this.user.roleId != 7 && this.user.roleName != 'admin') {
+        //   params.deptCodes.push(this.user.departmentCode)
+        // }
+
         let params = JSON.parse(JSON.stringify(this.queryParamsStat))
-        if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
-          params.deptCodes.push(this.user.departmentCode)
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            params.deptCodes.push(item)
+            // if (index != this.idArr.length - 1) {
+            //   params.departmentIds = params.departmentIds + item + ','
+            // } else {
+            //   params.departmentIds = params.departmentIds + item
+            // }
+          })
         }
+        if (this.isNoDepart) {
+          params.deptCodes = '-1'
+        }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          this.originData.forEach((item, index) => {
+            params.deptCodes.push(item.departmentId)
+          })
+        }
+
         if (this.queryParamsStat.status == -1) {
           delete params.status
         }
@@ -785,34 +847,77 @@ export default {
 
   created() {
     /** 计划分配方法*/
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.originData = res.data
-        res.data.unshift({
-          departmentId: '-2',
-          departmentName: '全部',
-          hospitalId: 1,
-          parentId: 0,
-          children: null,
-        })
-        for (let i = 0; i < res.data.length; i++) {
-          // this.$set(res.data[i], 'xh', i + 1)
-          if (i == 0) {
-            this.$set(res.data[i], 'isChecked', true)
-          } else {
-            this.$set(res.data[i], 'isChecked', false)
-          }
+    // getDepts().then((res) => {
+    //   if (res.code == 0) {
+    //     this.originData = res.data
+    //     res.data.unshift({
+    //       departmentId: '-2',
+    //       departmentName: '全部',
+    //       hospitalId: 1,
+    //       parentId: 0,
+    //       children: null,
+    //     })
+    //     for (let i = 0; i < res.data.length; i++) {
+    //       // this.$set(res.data[i], 'xh', i + 1)
+    //       if (i == 0) {
+    //         this.$set(res.data[i], 'isChecked', true)
+    //       } else {
+    //         this.$set(res.data[i], 'isChecked', false)
+    //       }
+    //     }
+    //     this.keshiData = res.data
+    //     this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+    //   } else {
+    //     // this.$message.error('获取计划列表失败：' + res.message)
+    //   }
+    // })
+
+    this.user = Vue.ls.get(TRUE_USER)
+    debugger
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+
+          this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+
+          this.originDataStat = JSON.parse(JSON.stringify(res.data))
+          this.$refs.table.refresh()
+          this.$refs.tableStat.refresh()
         }
-        this.keshiData = res.data
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
+      })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          this.originDataStat = JSON.parse(JSON.stringify(res.data))
+
+          this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+
+          //非全量的，给科室数组重写
+          if (this.originData.length > 0) {
+            this.originData.forEach((item, index) => {
+              this.idArr.push(item.departmentId)
+            })
+
+            this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
+          } else {
+            this.isNoDepart = true
+            this.idArr = []
+            this.idArrStat = []
+          }
+          this.$refs.table.refresh()
+          this.$refs.tableStat.refresh()
+        }
+      })
+    }
+
     // this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-    this.user = Vue.ls.get(TRUE_USER)
     console.log('user', this.user)
 
     this.getStatBorData()
@@ -895,7 +1000,6 @@ export default {
       let index = this.getIndex(departmentId)
       this.chooseDeptItem = this.originData.find((item) => item.departmentId == departmentId)
       console.log('index', index)
-      this.onPartChoose(index)
     },
 
     getIndex(departmentId) {
@@ -920,22 +1024,6 @@ export default {
           ? 1
           : 0)
       return age
-    },
-
-    onPartChoose(index) {
-      this.chooseDeptItem = this.keshiData[index]
-      for (let i = 0; i < this.keshiData.length; i++) {
-        this.$set(this.keshiData[i], 'isChecked', false)
-        if (i == index) {
-          this.$set(this.keshiData[i], 'isChecked', true)
-          if (this.keshiData[i].departmentId == '-2') {
-            this.queryParam.bqmc = ''
-          } else {
-            this.queryParam.bqmc = this.keshiData[i].departmentName
-          }
-          this.$refs.tableDispatch.refresh()
-        }
-      }
     },
 
     dispatchPlan() {

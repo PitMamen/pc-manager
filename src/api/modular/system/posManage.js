@@ -79,7 +79,7 @@ export function getAllArticlesTeach(parameter) {
     params: {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
-      // deptCode: parameter.deptCode,
+      deptCode: parameter.deptCode,
       type: parameter.source,
     }
   })
