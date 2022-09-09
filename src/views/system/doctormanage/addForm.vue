@@ -154,9 +154,12 @@ export default {
       this.isShipinOpen = record.registerTypeOptions.includes("videoNum")?true:false
       this.isKaifOpen = record.registerTypeOptions.includes("appointNum")?true:false
       this.isMdtOpen = record.registerTypeOptions.includes("consult")?true:false
-      // console.log(this.record.registerTypeOptions)
-      // console.log("不不不：",this.isTuwenOpen,this.isDianhuaOpen,this.isShipinOpen,this.isKaifOpen,this.isMdtOpen )
 
+      this.isTuwenOpenText =  this.isTuwenOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isDianhuaOpenText =  this.isDianhuaOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isShipinOpenText =  this.isShipinOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isKaifOpenText =  this.isKaifOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isMdtOpenText =  this.isMdtOpen? '确认关闭吗？' : '确认开启吗？'
 
     },
 
@@ -193,7 +196,7 @@ export default {
       }
 
       setTimeout(() => {
-        this.isShipinOpenText = this.isShipinOpen ? '确定关闭吗？' : '确定开启吗？'
+        this.isShipinOpenText =this.isShipinOpen ? '确定关闭吗？' : '确定开启吗？'
       }, 200)
     },
 
@@ -226,36 +229,32 @@ export default {
 
     //确认按钮
     handleSubmit() {
-      // console.log("不不不：",this.isTuwenOpen,this.isDianhuaOpen,this.isShipinOpen,this.isKaifOpen,this.isMdtOpen )
-
-      // let str = this.isTuwenOpen ? 'textNum,' : ''+this.isShipinOpen ? 'videoNum,' : ''+this.isDianhuaOpen ? 'telNum,' : ''+ this.isKaifOpen ? 'appointNum,' : ''+ this.isMdtOpen ? 'consult' : ''
-       let bb = ''
+       let appendstr = 'none'
        if(this.isTuwenOpen ){
-        bb = 'textNum,'
+        appendstr = 'textNum,'
        }
 
        if(this.isShipinOpen){
-        bb+='videoNum,'
+        appendstr+='videoNum,'
        }
 
        if(this.isDianhuaOpen){
-        bb+='telNum,'
+        appendstr+='telNum,'
        }
 
 
        if(this.isKaifOpen){
-        bb+='appointNum,'
+        appendstr+='appointNum,'
       }
       
       if(this.isMdtOpen){
-         bb+='consult'
-
+        appendstr+='consult'
        }
 
-  //  console.log("叭叭:",bb)
+   console.log("叭叭:",appendstr)
       let data = {
         userId: this.record.userId,
-        registerTypeOptions: bb,
+        registerTypeOptions: appendstr,
       }
       updateRegisterTypes(data).then((res) => {
         if (res.code == 0) {
