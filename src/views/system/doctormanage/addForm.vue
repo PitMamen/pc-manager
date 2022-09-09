@@ -4,11 +4,10 @@
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
-    :footer="null"
-    
+    @ok="handleSubmit"
+    @cancel="handleCancel"
   >
-
-  <!-- @ok="handleSubmit"
+    <!-- @ok="handleSubmit"
     @cancel="handleCancel" -->
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail" id="printContent">
@@ -102,8 +101,8 @@
           </a-popconfirm>
         </div>
       </div>
-      <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="commit()">确认</a-button>
-      <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="cancel()">取消</a-button>
+      <!-- <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="commit()">确认</a-button> -->
+      <!-- <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="cancel()">取消</a-button> -->
       <div style="height: 25px; color: white"></div>
     </a-spin>
   </a-modal>
@@ -143,7 +142,6 @@ export default {
       confirmLoading: false,
       preNo: 0,
       total: 0,
-     
     }
   },
   methods: {
@@ -216,38 +214,34 @@ export default {
       }, 200)
     },
 
-    //确认提交
-    commit(parameter) {
+
+    //确认按钮
+    handleSubmit() {
       console.log('大大阿达大大')
 
-      let str = this.isTuwenOpen?'telNum,':''
-      str = str +this.isShipinOpen?'videoNum,':''
-      str = str +this.isDianhuaOpen?'telNum,':''
-      str = str +this.isKaifOpen?'appointNum,':''
-      str = str +this.isMdtOpen?'consult':''
-
+      let str = this.isTuwenOpen ? 'telNum,' : ''
+      str = str + this.isShipinOpen ? 'videoNum,' : ''
+      str = str + this.isDianhuaOpen ? 'telNum,' : ''
+      str = str + this.isKaifOpen ? 'appointNum,' : ''
+      str = str + this.isMdtOpen ? 'consult' : ''
 
       let data = {
         userId: this.record.userId,
-        registerTypeOptions: str
+        registerTypeOptions: str,
       }
       updateRegisterTypes(data).then((res) => {
         if (res.code == 0) {
           this.$message.success(res.message)
-          this.visible = false;
-        }else{
+          this.visible = false
+        } else {
           this.$message.success(res.message)
-
         }
       })
     },
-
-
     //取消
-    cancel() {
+    handleCancel() {
       this.visible = false
     },
-
   },
 }
 </script>
