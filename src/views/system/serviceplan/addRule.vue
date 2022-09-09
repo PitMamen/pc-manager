@@ -110,14 +110,12 @@ export default {
     //初始化方法
     add() {
       this.visible = true
-      // this.index = index
     },
 
     /**
      * 全院  部分科室选择
      */
     radioChange(event) {
-      // console.log('哈哈哈哈哈', event.target.value)
       //全院
       if (event.target.value == 3) {
         this.isshowDepa = false
@@ -154,7 +152,6 @@ export default {
             }
           })
         }
-        console.log("鸡鸡啊:",params)
       let data = {
         'ruleStatus': this.isOpen?1:0,
         'templateId':this.selectedtemplateId,

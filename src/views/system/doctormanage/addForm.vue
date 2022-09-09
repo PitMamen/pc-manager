@@ -4,11 +4,10 @@
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
-    :footer="null"
-    
+    @ok="handleSubmit"
+    @cancel="handleCancel"
   >
-
-  <!-- @ok="handleSubmit"
+    <!-- @ok="handleSubmit"
     @cancel="handleCancel" -->
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail" id="printContent">
@@ -19,7 +18,7 @@
 
         <div class="div-line-wrap" style="margin-top: 6%">
           <span class="span-item-name">医生姓名 :</span>
-          <span class="span-item-value">{{ record.userName }} </span>
+          <span class="span-item-value">{{ record.docName }} </span>
         </div>
 
         <div class="div-line-wrap">
@@ -44,7 +43,7 @@
             :title="isTuwenOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="gotuwenOpen(record)"
+            @confirm="gotuwenOpen()"
           >
             <a-switch :checked="isTuwenOpen" />
           </a-popconfirm>
@@ -57,7 +56,7 @@
             :title="isDianhuaOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="godianhuaOpen(record)"
+            @confirm="godianhuaOpen()"
           >
             <a-switch :checked="isDianhuaOpen" />
           </a-popconfirm>
@@ -70,7 +69,7 @@
             :title="isShipinOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="goshipinOpen(record)"
+            @confirm="goshipinOpen()"
           >
             <a-switch :checked="isShipinOpen" />
           </a-popconfirm>
@@ -83,7 +82,7 @@
             :title="isKaifOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="gokaifOpen(record)"
+            @confirm="gokaifOpen()"
           >
             <a-switch :checked="isKaifOpen" />
           </a-popconfirm>
@@ -96,14 +95,14 @@
             :title="isMdtOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="gomdtOpen(record)"
+            @confirm="gomdtOpen()"
           >
             <a-switch :checked="isMdtOpen" />
           </a-popconfirm>
         </div>
       </div>
-      <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="commit()">确认</a-button>
-      <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="cancel()">取消</a-button>
+      <!-- <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="commit()">确认</a-button> -->
+      <!-- <a-button style="margin-left: 10%; margin-top: 6%" type="primary" @click="cancel()">取消</a-button> -->
       <div style="height: 25px; color: white"></div>
     </a-spin>
   </a-modal>
@@ -115,20 +114,20 @@ import { updateRegisterTypes } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
-      isTuwenOpenText: '确定关闭吗',
+      isTuwenOpenText: '确定开启吗',
       isTuwenOpen: false,
 
       isDianhuaOpen: false,
-      isDianhuaOpenText: '确认关闭吗',
+      isDianhuaOpenText: '确定开启吗',
 
-      isShipinOpenText: '确认关闭吗',
+      isShipinOpenText: '确定开启吗',
       isShipinOpen: false,
 
       isKaifOpen: false,
-      isKaifOpenText: '确认关闭吗',
+      isKaifOpenText: '确定开启吗',
 
       isMdtOpen: false,
-      isMdtOpenText: '确认关闭吗',
+      isMdtOpenText: '确定开启吗',
 
       record: null,
       labelCol: {
@@ -143,7 +142,6 @@ export default {
       confirmLoading: false,
       preNo: 0,
       total: 0,
-     
     }
   },
   methods: {
@@ -151,6 +149,18 @@ export default {
     edit(record) {
       this.record = record
       this.visible = true
+      this.isTuwenOpen = record.registerTypeOptions.includes("textNum")?true:false
+      this.isDianhuaOpen = record.registerTypeOptions.includes("telNum")?true:false
+      this.isShipinOpen = record.registerTypeOptions.includes("videoNum")?true:false
+      this.isKaifOpen = record.registerTypeOptions.includes("appointNum")?true:false
+      this.isMdtOpen = record.registerTypeOptions.includes("consult")?true:false
+
+      this.isTuwenOpenText =  this.isTuwenOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isDianhuaOpenText =  this.isDianhuaOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isShipinOpenText =  this.isShipinOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isKaifOpenText =  this.isKaifOpen? '确认关闭吗？' : '确认开启吗？'
+      this.isMdtOpenText =  this.isMdtOpen? '确认关闭吗？' : '确认开启吗？'
+
     },
 
     //图文咨询 开关
@@ -186,7 +196,7 @@ export default {
       }
 
       setTimeout(() => {
-        this.isShipinOpenText = this.isShipinOpen ? '确定关闭吗？' : '确定开启吗？'
+        this.isShipinOpenText =this.isShipinOpen ? '确定关闭吗？' : '确定开启吗？'
       }, 200)
     },
 
@@ -216,38 +226,50 @@ export default {
       }, 200)
     },
 
-    //确认提交
-    commit(parameter) {
-      console.log('大大阿达大大')
 
-      let str = this.isTuwenOpen?'telNum,':''
-      str = str +this.isShipinOpen?'videoNum,':''
-      str = str +this.isDianhuaOpen?'telNum,':''
-      str = str +this.isKaifOpen?'appointNum,':''
-      str = str +this.isMdtOpen?'consult':''
+    //确认按钮
+    handleSubmit() {
+       let appendstr = 'none'
+       if(this.isTuwenOpen ){
+        appendstr = 'textNum,'
+       }
+
+       if(this.isShipinOpen){
+        appendstr+='videoNum,'
+       }
+
+       if(this.isDianhuaOpen){
+        appendstr+='telNum,'
+       }
 
 
+       if(this.isKaifOpen){
+        appendstr+='appointNum,'
+      }
+      
+      if(this.isMdtOpen){
+        appendstr+='consult'
+       }
+
+   console.log("叭叭:",appendstr)
       let data = {
         userId: this.record.userId,
-        registerTypeOptions: str
+        registerTypeOptions: appendstr,
       }
       updateRegisterTypes(data).then((res) => {
         if (res.code == 0) {
           this.$message.success(res.message)
-          this.visible = false;
-        }else{
+          this.visible = false
+          this.$emit('ok')
+        } else {
           this.$message.success(res.message)
-
         }
       })
     },
-
-
     //取消
-    cancel() {
+    handleCancel() {
       this.visible = false
     },
-
   },
 }
 </script>

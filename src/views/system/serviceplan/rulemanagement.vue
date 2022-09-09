@@ -48,7 +48,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goconfigure(record)">配置</a>
+        <a @click="$refs.addRule.add()">配置</a>
         <a-divider type="vertical" />
         <a @click="goCheck(record)">查看</a>
         <a-divider type="vertical" />
