@@ -317,7 +317,6 @@ export default {
     },
 
     onChangeIsLimit() {
-      debugger
       this.uploadData.isLimit = !this.uploadData.isLimit
     },
 

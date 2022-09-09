@@ -1,9 +1,9 @@
 <template>
   <a-card :bordered="false">
-    <a-button type="primary" @click="goAdd()">新增文章</a-button>
+    <!-- <a-button type="primary" @click="goAdd()">新增文章</a-button> -->
 
     <!-- 下个版本迭代放出来 -->
-    <div class="table-page-search-wrapper" v-if="false" style="margin-top: 1%">
+    <div class="table-page-search-wrapper" style="margin-top: 1%">
       <a-form layout="inline">
         <a-row :gutter="48">
           <!-- <a-col :md="3" :sm="24">
@@ -18,7 +18,7 @@
 
           <a-col :md="7" :sm="24">
             <a-form-item label="科室">
-              <a-select allow-clear v-model="deptIds" mode="multiple" placeholder="请选择科室">
+              <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
                 <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
                   item.departmentName
                 }}</a-select-option>
@@ -28,7 +28,13 @@
 
           <a-col :md="6" :sm="24">
             <a-form-item label="">
-              <a-button style="margin-right: 3%" type="primary" @click="reset">全院</a-button>
+              <a-button
+                v-if="user.roleId == 7 || user.roleName == 'admin'"
+                style="margin-right: 3%"
+                type="primary"
+                @click="reset"
+                >全院</a-button
+              >
               <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
             </a-form-item>
           </a-col>
@@ -67,7 +73,15 @@
 
 <script>
 import { STable } from '@/components'
-import { pushArticle, getAllArticlesTeach, delArticle, getDepts } from '@/api/modular/system/posManage'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
+import {
+  pushArticle,
+  getAllArticlesTeach,
+  delArticle,
+  getDepts,
+  getDeptsPersonal,
+} from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -76,18 +90,12 @@ export default {
     // editForm,
   },
 
-  watch: {
-    deptIds(val) {
-      console.log(`selected:`, val)
-    },
-  },
-
   data() {
     return {
       // 高级搜索 展开/关闭
       advanced: false,
       originData: [],
-      deptIds: [],
+      idArr: [],
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -97,8 +105,8 @@ export default {
         xs: { span: 24 },
         sm: { span: 11 },
       },
-      queryParam: { source: 'weixin' },
-      queryParamOrigin: { source: 'weixin' },
+      queryParam: { source: 'weixin', deptCode: '' },
+      queryParamOrigin: { source: 'weixin', deptCode: '' },
       // 表头
       columns: [
         {
@@ -150,7 +158,33 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getAllArticlesTeach(Object.assign(parameter, this.queryParam)).then((res) => {
+        let params = JSON.parse(JSON.stringify(this.queryParam))
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.deptCode = params.deptCode + item + ','
+            } else {
+              params.deptCode = params.deptCode + item
+            }
+          })
+        }
+        if (this.isNoDepart) {
+          params.deptCode = '-1'
+        }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          this.originData.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.deptCode = params.deptCode + item.departmentId + ','
+            } else {
+              params.deptCode = params.deptCode + item.departmentId
+            }
+          })
+        }
+        return getAllArticlesTeach(Object.assign(parameter, params)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
 
@@ -187,13 +221,40 @@ export default {
 
   created() {
     /** 计划分配方法*/
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.originData = res.data
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
+    // getDepts().then((res) => {
+    //   if (res.code == 0) {
+    //     this.originData = res.data
+    //   } else {
+    //     // this.$message.error('获取计划列表失败：' + res.message)
+    //   }
+    // })
+
+    this.user = Vue.ls.get(TRUE_USER)
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          this.$refs.table.refresh()
+        }
+      })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          //非全量的，给科室数组重写
+          if (this.originData.length > 0) {
+            this.originData.forEach((item, index) => {
+              this.idArr.push(item.departmentId)
+            })
+          } else {
+            this.isNoDepart = true
+            this.idArr = []
+          }
+          this.$refs.table.refresh()
+        }
+      })
+    }
   },
 
   methods: {

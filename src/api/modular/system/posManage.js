@@ -80,7 +80,7 @@ export function getAllArticlesTeach(parameter) {
     params: {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
-      // deptCode: parameter.deptCode,
+      deptCode: parameter.deptCode,
       type: parameter.source,
     }
   })
@@ -105,7 +105,7 @@ export function getAllArticlesTeach(parameter) {
 // }
 
 /**
- * 获取问卷
+ * 获取问卷列表
  *
  */
 export function getAllQuestions(parameter) {
@@ -113,11 +113,65 @@ export function getAllQuestions(parameter) {
     url: '/health-api/health/doctor/qryQuestByKeyWord',
     method: 'get',
     params: {
-      start:parameter.pageNo,
-      pageSize:parameter.pageSize,
-      typeName:parameter.typeName
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      typeName: parameter.typeName
     },
 
+  })
+}
+/**
+ * 获取问卷统计列表
+ *
+ */
+export function getAllQuestionsStat(parameter) {
+  return axios({
+    url: '/questionnaire-api/user/project/statistics',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      deptIds: parameter.deptIds
+    },
+
+  })
+}
+/**
+ * 获取问卷统计列表
+ *
+ */
+export function statisticsForUser(parameter) {
+  return axios({
+    url: '/questionnaire-api/user/project/statisticsForUser',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      projectKey: parameter.projectKey,
+      deptIds: parameter.deptIds,
+      startDate: parameter.startDate,
+      endDate: parameter.endDate
+    },
+
+  })
+}
+/**
+ * 导出问卷统计详情
+ *
+ */
+export function exportProjectForUser(parameter) {
+  return axios({
+    url: '/questionnaire-api/user/project/exportProjectForUser',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      projectKey: parameter.projectKey,
+      deptIds: parameter.deptIds,
+      startDate: parameter.startDate,
+      endDate: parameter.endDate
+    },
+    responseType: 'blob'
   })
 }
 
@@ -505,15 +559,26 @@ export function delDiseaseArea(parameter) {
 // }
 
 /**
- * 科室接口列表  科室后面都用这个接口  重构接口
- * @param {} parameter 
+ * 科室接口列表 扩展接口   1全部科室(病区) , 2管理科室(病区)
  * @returns 
  */
-export function getDepts(parameter) {
+export function getDepts() {
   return axios({
     url: '/info-api/departments/getDepartmentList',
     method: 'get',
-    params: parameter
+    params: { accessFlag: 1 }
+  })
+}
+
+/**
+ * 科室接口列表 扩展接口   1全部科室(病区) , 2管理科室(病区)
+ * @returns 
+ */
+export function getDeptsPersonal() {
+  return axios({
+    url: '/info-api/departments/getDepartmentList',
+    method: 'get',
+    params: { accessFlag: 2 }
   })
 }
 
@@ -1165,7 +1230,7 @@ export function getSchedulePeriods(params) {
  * 获取护士排班时段信息
  *
  */
- export function getScheduleNursePeriods(params) {
+export function getScheduleNursePeriods(params) {
   return axios({
     url: '/health-api/sys/getScheduleNursePeriods',
     method: 'get',
@@ -1224,7 +1289,7 @@ export function getMedicalOrdersDetail(data) {
 /**
  * 随访详情
  */
- export function qryRevisitDetail(data) {
+export function qryRevisitDetail(data) {
   return axios({
     url: '/health-api/revisit/qryRevisitDetail',
     method: 'post',
@@ -1236,13 +1301,13 @@ export function getMedicalOrdersDetail(data) {
 /**
  * 获取随访计划规则列表
  */
-  export function getTemplateRuleList(data){
-    return axios({
-      url:'/health-api/sys/getTemplateRuleList',
-      method:'get',
-      data:data,
-    })
-  }
+export function getTemplateRuleList(data) {
+  return axios({
+    url: '/health-api/sys/getTemplateRuleList',
+    method: 'get',
+    data: data,
+  })
+}
 
   /**
    * 修改、保存随访计划规则
@@ -1358,7 +1423,7 @@ export function qryRevisitPatientList(data) {
  * 保存/修改处理信息（修改时传记录ID）
  */
 
- export function dealsave(data) {
+export function dealsave(data) {
   return axios({
     url: '/health-api/revisit/deal/save',
     method: 'post',
@@ -1370,7 +1435,7 @@ export function qryRevisitPatientList(data) {
  * 
  * 获取处理信息
  */
- export function dealget(data) {
+export function dealget(data) {
   return axios({
     url: '/health-api/revisit/deal/get',
     method: 'post',
@@ -1380,22 +1445,22 @@ export function qryRevisitPatientList(data) {
 
 
 /**
- * 
- * 查询随访病人列表
- */
+ * 
+ * 查询随访病人列表
+ */
 export function statRevisit(data) {
-return axios({
-url: '/health-api/revisit/statRevisit',
-method: 'post',
-data: data,
- })
+  return axios({
+    url: '/health-api/revisit/statRevisit',
+    method: 'post',
+    data: data,
+  })
 }
 
 /**
  * 
  * 用户健康计划任务列表
  */
- export function queryHealthPlanTaskList(data) {
+export function queryHealthPlanTaskList(data) {
   return axios({
     url: '/health-api/patient/queryHealthPlanTaskList',
     method: 'get',
@@ -1407,7 +1472,7 @@ data: data,
  * 
  * 任务内容
  */
- export function queryHealthPlanContent(data) {
+export function queryHealthPlanContent(data) {
   return axios({
     url: '/health-api/health/patient/queryHealthPlanContent',
     method: 'get',
@@ -1420,7 +1485,7 @@ data: data,
  * 保存/修改抽查信息（修改时传记录ID）
  */
 
- export function checksave(data) {
+export function checksave(data) {
   return axios({
     url: '/health-api/revisit/check/save',
     method: 'post',
@@ -1433,7 +1498,7 @@ data: data,
  * 获取抽查信息
  */
 
- export function checkget(data) {
+export function checkget(data) {
   return axios({
     url: '/health-api/revisit/check/get',
     method: 'post',

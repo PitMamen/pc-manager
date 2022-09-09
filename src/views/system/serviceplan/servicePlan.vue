@@ -8,12 +8,32 @@
             <a-form layout="inline">
               <a-row :gutter="48">
                 <a-col :md="3" :sm="24">
-                  <span
-                    class="table-page-search-submitButtons"
-                    :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-                  >
+                  <a-form-item label="">
                     <a-button type="primary" @click="addPlan">新增计划</a-button>
-                  </span>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="7" :sm="24">
+                  <a-form-item label="科室">
+                    <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
+                      <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                        item.departmentName
+                      }}</a-select-option>
+                    </a-select>
+                  </a-form-item>
+                </a-col>
+
+                <a-col :md="6" :sm="24">
+                  <a-form-item label="">
+                    <a-button
+                      v-if="user.roleId == 7 || user.roleName == 'admin'"
+                      style="margin-right: 3%"
+                      type="primary"
+                      @click="reset"
+                      >全院</a-button
+                    >
+                    <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+                  </a-form-item>
                 </a-col>
               </a-row>
             </a-form>
@@ -45,46 +65,6 @@
 
       <a-tab-pane key="2" tab="计划分配" force-render>
         <div class="div-service-service">
-          <div class="div-service-left-service">
-            <p class="p-part-title">病区选择</p>
-            <!-- 分割线 -->
-            <!-- <div class="div-divider"></div> -->
-
-            <!-- <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index"> -->
-            <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
-            <div class="div-text-auto">
-              <a-auto-complete
-                class="global-search"
-                size="large"
-                style="width: 100%; font-size: 14px"
-                placeholder="请输入并选择病区"
-                option-label-prop="title"
-                @select="onSelect"
-                @search="handleSearch"
-              >
-                <template slot="dataSource">
-                  <a-select-option
-                    v-for="item in keshiDataTemp"
-                    :key="item.departmentId + ''"
-                    :title="item.departmentName"
-                  >
-                    {{ item.departmentName }}
-                  </a-select-option>
-                </template>
-              </a-auto-complete>
-            </div>
-
-            <div class="div-wrap-service" style="margin-top: 8%">
-              <div class="div-part" v-for="(item, index) in keshiData" :value="item.departmentName" :key="index">
-                <p class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">
-                  {{ item.departmentName }}
-                </p>
-                <!-- 分割线 -->
-                <div class="div-divider"></div>
-              </div>
-            </div>
-          </div>
-
           <a-card :bordered="false" class="card-right-service">
             <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
               <a-form layout="inline">
@@ -96,6 +76,33 @@
                     >
                       <a-button type="primary" @click="dispatchPlan">分配计划</a-button>
                     </span>
+                  </a-col>
+
+                  <a-col :md="5" :sm="24">
+                    <a-form-item label="科室">
+                      <div class="div-text-auto">
+                        <a-auto-complete
+                          class="global-search"
+                          v-model="chooseDeptItem.departmentName"
+                          size="large"
+                          style="width: 100%; font-size: 14px"
+                          placeholder="请输入并选择"
+                          option-label-prop="title"
+                          @select="onSelect"
+                          @search="handleSearch"
+                        >
+                          <template slot="dataSource">
+                            <a-select-option
+                              v-for="item in keshiDataTemp"
+                              :key="item.departmentId + ''"
+                              :title="item.departmentName"
+                            >
+                              {{ item.departmentName }}
+                            </a-select-option>
+                          </template>
+                        </a-auto-complete>
+                      </div>
+                    </a-form-item>
                   </a-col>
 
                   <a-col :md="6" :sm="24">
@@ -161,7 +168,7 @@
                         <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
                       </a-col> -->
                   <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
-                  <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
+                  <a-col :md="6" :sm="24">
                     <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                       <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
                       <a-select allow-clear v-model="queryParamsBor.deptCodes" mode="multiple" placeholder="请选择科室">
@@ -182,7 +189,7 @@
                     <a-button
                       style="margin-right: 3%"
                       type="primary"
-                      v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                      v-if="user.roleId == 7 || user.roleName == 'admin'"
                       @click="resetBor"
                       >全院</a-button
                     >
@@ -286,7 +293,7 @@
                         <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
                       </a-col> -->
                       <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
-                      <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
+                      <a-col :md="6" :sm="24">
                         <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                           <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
                           <a-select
@@ -335,7 +342,7 @@
                         <a-button
                           style="margin-right: 3%"
                           type="primary"
-                          v-if="user.departmentCode == 1 || user.roleName == 'admin'"
+                          v-if="user.roleId == 7 || user.roleName == 'admin'"
                           @click="reset"
                           >全院</a-button
                         >
@@ -366,14 +373,14 @@
                     <a-divider v-if="record.status == 5" type="vertical" />
 
                     <!-- 仅对电话随访有抽查 -->
-                    <a v-if="record.status == 5 && record.checkStatus == 0" @click="$refs.statSolve.doCheck(record)"
+                    <!-- <a v-if="record.status == 5 && record.checkStatus == 0" @click="$refs.statSolve.doCheck(record)"
                       >抽查</a
-                    >
+                    > -->
+                    <a v-if="false" @click="$refs.statSolve.doCheck(record)">抽查</a>
 
                     <a v-if="record.status == 5 && record.checkStatus == 1" @click="$refs.statSolve.checkInfo(record)"
                       >抽查详情</a
                     >
-
                   </span>
                 </s-table>
 
@@ -394,6 +401,7 @@ import {
   getDocPlans,
   delPlan,
   getOutPatients,
+  getDeptsPersonal,
   statRevisit,
   getDepts,
   deleteAppVersion,
@@ -430,7 +438,7 @@ export default {
       /** 随访计划数据*/
       // 高级搜索 展开/关闭
       advanced: false,
-
+      idArr: [],
       // 表头
       columns: [
         {
@@ -463,7 +471,36 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDocPlans(Object.assign(parameter)).then((res) => {
+        let params = JSON.parse(JSON.stringify(this.queryParam))
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            console.log('idArrItem', item)
+            if (index != this.idArr.length - 1) {
+              params.departmentIds = params.departmentIds + item + ','
+            } else {
+              params.departmentIds = params.departmentIds + item
+            }
+          })
+        }
+        console.log('departmentIds', params.departmentIds)
+        if (this.isNoDepart) {
+          params.departmentIds = '-1'
+        }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          this.originData.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.departmentIds = params.departmentIds + item.departmentId + ','
+            } else {
+              params.departmentIds = params.departmentIds + item.departmentId
+            }
+          })
+        }
+
+        return getDocPlans(Object.assign(parameter, params)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             this.$set(res.data.rows[i], 'timeDay', formatDate(res.data.rows[i].createTime))
             this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
@@ -484,7 +521,8 @@ export default {
       queryParam: {
         // existsPlanFlag: '2',
         existsPlanFlag: 2,
-        bqmc: '',
+        departmentIds: '',
+        // bqmc: '',
         // deptCode: Vue.ls.get(TRUE_USER).departmentCode,
         // isRegister: '1',
       },
@@ -707,10 +745,35 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
         /**不是病友服务中心和管理员，写死用户当前的科室 */
+        // let params = JSON.parse(JSON.stringify(this.queryParamsStat))
+        // if (this.user.roleId != 7 && this.user.roleName != 'admin') {
+        //   params.deptCodes.push(this.user.departmentCode)
+        // }
+
         let params = JSON.parse(JSON.stringify(this.queryParamsStat))
-        if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
-          params.deptCodes.push(this.user.departmentCode)
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            params.deptCodes.push(item)
+            // if (index != this.idArr.length - 1) {
+            //   params.departmentIds = params.departmentIds + item + ','
+            // } else {
+            //   params.departmentIds = params.departmentIds + item
+            // }
+          })
         }
+        if (this.isNoDepart) {
+          params.deptCodes = '-1'
+        }
+
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
+
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          this.originData.forEach((item, index) => {
+            params.deptCodes.push(item.departmentId)
+          })
+        }
+
         if (this.queryParamsStat.status == -1) {
           delete params.status
         }
@@ -784,34 +847,77 @@ export default {
 
   created() {
     /** 计划分配方法*/
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.originData = res.data
-        res.data.unshift({
-          departmentId: '-2',
-          departmentName: '全部',
-          hospitalId: 1,
-          parentId: 0,
-          children: null,
-        })
-        for (let i = 0; i < res.data.length; i++) {
-          // this.$set(res.data[i], 'xh', i + 1)
-          if (i == 0) {
-            this.$set(res.data[i], 'isChecked', true)
-          } else {
-            this.$set(res.data[i], 'isChecked', false)
-          }
+    // getDepts().then((res) => {
+    //   if (res.code == 0) {
+    //     this.originData = res.data
+    //     res.data.unshift({
+    //       departmentId: '-2',
+    //       departmentName: '全部',
+    //       hospitalId: 1,
+    //       parentId: 0,
+    //       children: null,
+    //     })
+    //     for (let i = 0; i < res.data.length; i++) {
+    //       // this.$set(res.data[i], 'xh', i + 1)
+    //       if (i == 0) {
+    //         this.$set(res.data[i], 'isChecked', true)
+    //       } else {
+    //         this.$set(res.data[i], 'isChecked', false)
+    //       }
+    //     }
+    //     this.keshiData = res.data
+    //     this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+    //   } else {
+    //     // this.$message.error('获取计划列表失败：' + res.message)
+    //   }
+    // })
+
+    this.user = Vue.ls.get(TRUE_USER)
+    debugger
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+
+          this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+
+          this.originDataStat = JSON.parse(JSON.stringify(res.data))
+          this.$refs.table.refresh()
+          this.$refs.tableStat.refresh()
         }
-        this.keshiData = res.data
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
+      })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          this.originDataStat = JSON.parse(JSON.stringify(res.data))
+
+          this.keshiData = res.data
+          this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+
+          //非全量的，给科室数组重写
+          if (this.originData.length > 0) {
+            this.originData.forEach((item, index) => {
+              this.idArr.push(item.departmentId)
+            })
+
+            this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
+          } else {
+            this.isNoDepart = true
+            this.idArr = []
+            this.idArrStat = []
+          }
+          this.$refs.table.refresh()
+          this.$refs.tableStat.refresh()
+        }
+      })
+    }
+
     // this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-    this.user = Vue.ls.get(TRUE_USER)
     console.log('user', this.user)
 
     this.getStatBorData()
@@ -894,7 +1000,6 @@ export default {
       let index = this.getIndex(departmentId)
       this.chooseDeptItem = this.originData.find((item) => item.departmentId == departmentId)
       console.log('index', index)
-      this.onPartChoose(index)
     },
 
     getIndex(departmentId) {
@@ -919,22 +1024,6 @@ export default {
           ? 1
           : 0)
       return age
-    },
-
-    onPartChoose(index) {
-      this.chooseDeptItem = this.keshiData[index]
-      for (let i = 0; i < this.keshiData.length; i++) {
-        this.$set(this.keshiData[i], 'isChecked', false)
-        if (i == index) {
-          this.$set(this.keshiData[i], 'isChecked', true)
-          if (this.keshiData[i].departmentId == '-2') {
-            this.queryParam.bqmc = ''
-          } else {
-            this.queryParam.bqmc = this.keshiData[i].departmentName
-          }
-          this.$refs.tableDispatch.refresh()
-        }
-      }
     },
 
     dispatchPlan() {
@@ -1135,34 +1224,33 @@ export default {
   }
 }
 
-  .card-right-service {
-    overflow: hidden;
-    width: 82%;
+.card-right-service {
+  overflow: hidden;
+  width: 100%;
 
-    .table-operator {
-      margin-bottom: 18px;
-    }
-    button {
-      margin-right: 8px;
-    }
-
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-    }
+  .table-operator {
+    margin-bottom: 18px;
+  }
+  button {
+    margin-right: 8px;
   }
 
-  .div-text-auto {
-    width: 100%;
-    display: inline-block;
-    margin-top: -1.5%;
-    .ant-input {
-      height: 30px;
-    }
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
   }
+}
 
+.div-text-auto {
+  width: 100%;
+  display: inline-block;
+  margin-top: -1.5%;
+  .ant-input {
+    height: 30px;
+  }
+}
 
 .row-stat {
   display: flex;
