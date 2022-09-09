@@ -1,6 +1,6 @@
 <template>
   <a-card :bordered="false">
-    <a-button type="primary" @click="goAdd()">新增</a-button>
+    <a-button type="primary" @click="$refs.addRule.add()">新增</a-button> 
 
     <!-- 下个版本迭代放出来 -->
     <div class="table-page-search-wrapper" v-if="false" style="margin-top: 1%">
@@ -12,7 +12,7 @@
 
           <a-col :md="3" :sm="24">
             <a-form-item label="">
-              <a-button type="primary" @click="goAdd()">新增</a-button>
+              <a-button type="primary"  @click="$refs.addRule.add()">新增</a-button>
             </a-form-item>
           </a-col>
 
@@ -43,24 +43,29 @@
       ref="table"
       size="default"
       :columns="columns"
-      :data = "loadData"
+      :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goPush(record)" v-show="record.status != '2'">发布</a>
-        <a-divider type="vertical" v-show="record.status != '2'" />
         <a @click="goconfigure(record)">配置</a>
         <a-divider type="vertical" />
         <a @click="goCheck(record)">查看</a>
         <a-divider type="vertical" />
         <a @click="goChange(record)">修改</a>
         <a-divider type="vertical" />
-        <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
+        <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
           <a>删除</a>
         </a-popconfirm>
       </span>
+
+      <span slot="isOpen" slot-scope="text, record">
+        <a-popconfirm :title="record.isOpenText" ok-text="确定" cancel-text="取消" @confirm="goOpen(record)">
+          <a-switch :checked="record.isOpen" />
+        </a-popconfirm>
+      </span>
     </s-table>
+    <add-rule ref="addRule" @ok="handleOk" />
     <!-- 
     <add-form ref="addForm" @ok="handleOk" />
     <edit-form ref="editForm" @ok="handleOk" /> -->
@@ -69,12 +74,12 @@
 
 <script>
 import { STable } from '@/components'
-import { getTemplateRuleList, getAllArticlesTeach, delArticle, getDepts } from '@/api/modular/system/posManage'
-
+import { getTemplateRuleList, saveTemplateRule, delArticle, getDepts } from '@/api/modular/system/posManage'
+import addRule from './addRule'
 export default {
   components: {
     STable,
-    // addForm,
+    addRule,
     // editForm,
   },
 
@@ -87,6 +92,8 @@ export default {
   data() {
     return {
       // 高级搜索 展开/关闭
+      isOpenText: '确定关闭吗',
+      isOpen: false,
       advanced: false,
       originData: [],
       deptIds: [],
@@ -103,7 +110,7 @@ export default {
       queryParamOrigin: { source: 'weixin' },
       // 表头
       columns: [
-          {
+        {
           title: '序号',
           dataIndex: 'xh',
         },
@@ -118,7 +125,8 @@ export default {
         },
         {
           title: '是否开启',
-          dataIndex: 'articleType',
+          dataIndex: 'isOpen',
+          scopedSlots: { customRender: 'isOpen' },
         },
         {
           title: '管理科室',
@@ -127,20 +135,16 @@ export default {
         },
         {
           title: '操作',
-          dataIndex: 'statusName',
+          width: '230px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
         },
-        // {
-        //   title: '操作',
-        //   width: '230px',
-        //   dataIndex: 'action',
-        //   scopedSlots: { customRender: 'action' },
-        // },
       ],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getTemplateRuleList({ id: "" }).then((res) => {
-          // console.log(parameter)
+        return getTemplateRuleList({ id: '' }).then((res) => {
+          console.log('卡卡卡:', parameter)
           // console.log(res.data.total / parameter.pageSize)
 
           //组装控件需要的数据结构
@@ -149,20 +153,22 @@ export default {
             pageSize: parameter.pageSize,
             totalRows: res.data.total,
             totalPage: res.data.total / parameter.pageSize,
-            rows: res.data.list,
+            rows: res.data,
           }
 
           //设置序号
           data.rows.forEach((item, index) => {
             item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-            if (!item.clickNum) {
-              item.clickNum = 0
-            }
-            if (item.status == '2') {
-              this.$set(item, 'statusName', '已发布')
-            } else {
-              this.$set(item, 'statusName', '暂存')
-            }
+            
+            this.$set(item, 'categoryName', item.belongName)
+            this.$set(item, 'title', item.planName)
+            this.$set(item, 'brief', item.usedDeptName)
+            this.$set(item, 'isOpen', item.ruleStatus == 1 ? true : false)
+
+             
+            this.$set(item, 'isOpenText', item.ruleStatus == 1 ? '确认关闭吗？' : '确认开启吗？')
+            // this.isOpen = item.ruleStatus == 1 ? true : false
+            // this.$set(item, isOpen, item.ruleStatus == 1 ? true : false)
           })
 
           return data
@@ -186,6 +192,33 @@ export default {
   },
 
   methods: {
+    //打开/关闭 随访计划规则
+    goOpen(record) {
+      // console('请求参数啊:',record)
+      if (record.ruleStatus == 1) {
+        record.ruleStatus = 0
+      } else {
+        record.ruleStatus = 1
+      }
+      let data = {
+        ruleStatus: record.ruleStatus,
+        templateId: record.templateId,
+        usedDept: record.usedDept,
+      }
+
+      saveTemplateRule(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          record.isOpen = res.data.ruleStatus == 1 ? true : false
+          setTimeout(() => {
+            record.isOpenText = res.data.ruleStatus == 1 ? '确定关闭吗？' : '确定开启吗？'
+          }, 200)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
     // reset() {
     //   this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
     //   this.$refs.table.refresh()

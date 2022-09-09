@@ -1,5 +1,6 @@
 import { axios } from '@/utils/request'
 import { appId } from '@/utils/util'
+import { data } from 'jquery'
 import { start } from 'nprogress'
 
 /**
@@ -396,6 +397,8 @@ export function getDocPlans(parameter) {
   })
 }
 
+
+
 /**
  * 获取出院患者列表
  */
@@ -784,6 +787,30 @@ export function uploadPaiban(parameter) {
     data: parameter
   })
 }
+
+// 医生管理界面 查询医生列表
+export function queryDoctorList(parameter){
+  return axios({
+    url:'/account-api/accountInfo/getUsers', 
+    method:'post',
+    data:parameter
+  })
+}
+
+
+// 医生管理界面 配置
+export function updateRegisterTypes(parameter){
+  return axios({
+    url:'/account-api/accountInfo/updateRegisterTypes', 
+    method:'post',
+    data:parameter
+  })
+}
+
+
+
+
+
 
 export function getPaibans(parameter) {
   return axios({
@@ -1216,6 +1243,18 @@ export function getMedicalOrdersDetail(data) {
       data:data,
     })
   }
+
+  /**
+   * 修改、保存随访计划规则
+   */
+  export function saveTemplateRule(data){
+    return axios({
+      url:'/health-api/sys/saveTemplateRule',
+      method:'post',
+      data:data,
+    })
+  }
+
 
 
 
