@@ -18,7 +18,7 @@
 
         <div class="div-line-wrap" style="margin-top: 6%">
           <span class="span-item-name">医生姓名 :</span>
-          <span class="span-item-value">{{ record.userName }} </span>
+          <span class="span-item-value">{{ record.docName }} </span>
         </div>
 
         <div class="div-line-wrap">
@@ -43,7 +43,7 @@
             :title="isTuwenOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="gotuwenOpen(record)"
+            @confirm="gotuwenOpen()"
           >
             <a-switch :checked="isTuwenOpen" />
           </a-popconfirm>
@@ -56,7 +56,7 @@
             :title="isDianhuaOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="godianhuaOpen(record)"
+            @confirm="godianhuaOpen()"
           >
             <a-switch :checked="isDianhuaOpen" />
           </a-popconfirm>
@@ -69,7 +69,7 @@
             :title="isShipinOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="goshipinOpen(record)"
+            @confirm="goshipinOpen()"
           >
             <a-switch :checked="isShipinOpen" />
           </a-popconfirm>
@@ -82,7 +82,7 @@
             :title="isKaifOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="gokaifOpen(record)"
+            @confirm="gokaifOpen()"
           >
             <a-switch :checked="isKaifOpen" />
           </a-popconfirm>
@@ -95,7 +95,7 @@
             :title="isMdtOpenText"
             ok-text="确定"
             cancel-text="取消"
-            @confirm="gomdtOpen(record)"
+            @confirm="gomdtOpen()"
           >
             <a-switch :checked="isMdtOpen" />
           </a-popconfirm>
@@ -114,20 +114,20 @@ import { updateRegisterTypes } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
-      isTuwenOpenText: '确定关闭吗',
+      isTuwenOpenText: '确定开启吗',
       isTuwenOpen: false,
 
       isDianhuaOpen: false,
-      isDianhuaOpenText: '确认关闭吗',
+      isDianhuaOpenText: '确定开启吗',
 
-      isShipinOpenText: '确认关闭吗',
+      isShipinOpenText: '确定开启吗',
       isShipinOpen: false,
 
       isKaifOpen: false,
-      isKaifOpenText: '确认关闭吗',
+      isKaifOpenText: '确定开启吗',
 
       isMdtOpen: false,
-      isMdtOpenText: '确认关闭吗',
+      isMdtOpenText: '确定开启吗',
 
       record: null,
       labelCol: {
@@ -149,6 +149,15 @@ export default {
     edit(record) {
       this.record = record
       this.visible = true
+      this.isTuwenOpen = record.registerTypeOptions.includes("textNum")?true:false
+      this.isDianhuaOpen = record.registerTypeOptions.includes("telNum")?true:false
+      this.isShipinOpen = record.registerTypeOptions.includes("videoNum")?true:false
+      this.isKaifOpen = record.registerTypeOptions.includes("appointNum")?true:false
+      this.isMdtOpen = record.registerTypeOptions.includes("consult")?true:false
+      // console.log(this.record.registerTypeOptions)
+      // console.log("不不不：",this.isTuwenOpen,this.isDianhuaOpen,this.isShipinOpen,this.isKaifOpen,this.isMdtOpen )
+
+
     },
 
     //图文咨询 开关
@@ -217,22 +226,42 @@ export default {
 
     //确认按钮
     handleSubmit() {
-      console.log('大大阿达大大')
+      // console.log("不不不：",this.isTuwenOpen,this.isDianhuaOpen,this.isShipinOpen,this.isKaifOpen,this.isMdtOpen )
 
-      let str = this.isTuwenOpen ? 'telNum,' : ''
-      str = str + this.isShipinOpen ? 'videoNum,' : ''
-      str = str + this.isDianhuaOpen ? 'telNum,' : ''
-      str = str + this.isKaifOpen ? 'appointNum,' : ''
-      str = str + this.isMdtOpen ? 'consult' : ''
+      // let str = this.isTuwenOpen ? 'textNum,' : ''+this.isShipinOpen ? 'videoNum,' : ''+this.isDianhuaOpen ? 'telNum,' : ''+ this.isKaifOpen ? 'appointNum,' : ''+ this.isMdtOpen ? 'consult' : ''
+       let bb = ''
+       if(this.isTuwenOpen ){
+        bb = 'textNum,'
+       }
 
+       if(this.isShipinOpen){
+        bb+='videoNum,'
+       }
+
+       if(this.isDianhuaOpen){
+        bb+='telNum,'
+       }
+
+
+       if(this.isKaifOpen){
+        bb+='appointNum,'
+      }
+      
+      if(this.isMdtOpen){
+         bb+='consult'
+
+       }
+
+  //  console.log("叭叭:",bb)
       let data = {
         userId: this.record.userId,
-        registerTypeOptions: str,
+        registerTypeOptions: bb,
       }
       updateRegisterTypes(data).then((res) => {
         if (res.code == 0) {
           this.$message.success(res.message)
           this.visible = false
+          this.$emit('ok')
         } else {
           this.$message.success(res.message)
         }
