@@ -50,7 +50,7 @@
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.addRule.add(record)">配置</a>
         <a-divider type="vertical" />
-        <a @click="lookPlan(record)">查看</a>
+        <a @click="lookPlan(record)">查看计划</a>
         <a-divider type="vertical" />
         <a @click="editPlan(record)">修改</a>
         <a-divider type="vertical" />
@@ -203,6 +203,7 @@ export default {
         name: 'look_plan',
         query: {
           planId: record.templateId,
+          looktype:1,
         },
       })
     },

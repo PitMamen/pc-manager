@@ -102,9 +102,8 @@ export default {
     //初始化方法
     add(record) {
       this.visible = true
-      console.log('hahaha:', record)
       this.record = record
-      console.log('hahha:', this.record)
+      // console.log('hahha:', this.record)
       if (record) {
         this.title = '配置'
         this.isOpen = this.record.ruleStatus
@@ -115,18 +114,26 @@ export default {
         }
         this.planName = this.record.planName
         this.rangeValue = this.record.range
-        console.log('会懂行的:', this.record.range)
+        this.selectedDeptname = this.record.belongName
+        if(this.record.planName&&this.record.belongName){
+          this.changeText = '重新选择'
+        }
+        // console.log('会懂行的:', this.record.range)
         if (this.record.range == 1) {
           this.isshowDepa = false
         } else {
           this.isshowDepa = true
         }
-        this.selectedDeptname = this.record.belongName
         this.selectedtemplateId = this.record.templateId
+        console.log('bububu:', this.record.usedDept)
+
         this.idArr = this.record.usedDept.split(',')
+        // console.log('sssss:', this.idArr)
         let arr = []
         this.idArr.forEach((item, index) => {
-          arr.push(parseInt(item))
+          if(item!=''){
+            arr.push(parseInt(item))
+          }
         })
         this.idArr = arr
       } else {
@@ -144,8 +151,8 @@ export default {
         this.isshowDepa = false
         //部分科室
       } else if (event.target.value == 2) {
-        this.isshowDepa = true
         this.rangeValue = 2
+        this.isshowDepa = true
       }
     },
 
@@ -166,6 +173,15 @@ export default {
         this.$message.error('请选择科室名称！')
         return
       }
+      // console.log("叭叭叭叭叭:",this.isshowDepa,this.idArr)
+      if(this.isshowDepa){
+        if(this.idArr.length==0){
+        this.$message.error('请选择具体科室名称！')
+        return
+      }
+     }
+
+
       let params = ''
       if (this.idArr.length > 0) {
         this.idArr.forEach((item, index) => {
@@ -186,7 +202,7 @@ export default {
           ruleId: this.record.ruleId,
           ruleStatus: this.isOpen ? 1 : 0,
           templateId: this.selectedtemplateId,
-          usedDept: params,
+          usedDept: this.rangeValue == 1 ? '' : params,
           range: this.rangeValue,
         }
       } else {
