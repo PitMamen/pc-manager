@@ -107,7 +107,7 @@ export default {
         status: 2,
         roleId: 3,
         pageNo: 1,
-        pageSize: 20,
+        pageSize: 10,
       },
       // 表头
       columns: [
@@ -136,7 +136,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return queryDoctorList(Object.assign(parameter, this.queryParams)).then((res) => {
+        return queryDoctorList(Object.assign(parameter, this.queryParams)).then((res) => {       //  item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
           if (res.code == 0) {
             for (let i = 0; i < res.data.rows.length; i++) {
               this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)

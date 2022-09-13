@@ -229,7 +229,7 @@ export default {
 
     //确认按钮
     handleSubmit() {
-       let appendstr = 'none'
+       let appendstr = ''
        if(this.isTuwenOpen ){
         appendstr = 'textNum,'
        }

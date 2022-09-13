@@ -102,6 +102,7 @@ export default {
     //初始化方法
     add(record) {
       this.visible = true
+      console.log('hahaha:', record)
       this.record = record
       console.log('hahha:', this.record)
       if (record) {
@@ -114,7 +115,7 @@ export default {
         }
         this.planName = this.record.planName
         this.rangeValue = this.record.range
-        console.log("会懂行的:", this.record.range )
+        console.log('会懂行的:', this.record.range)
         if (this.record.range == 1) {
           this.isshowDepa = false
         } else {
@@ -177,13 +178,27 @@ export default {
       }
       //  console.log("BIBIBIBI:",params)
 
-      let data = {
-        ruleId: this.record.ruleId,
-        ruleStatus: this.isOpen ? 1 : 0,
-        templateId: this.selectedtemplateId,
-        usedDept: params,
-        range:this.rangeValue,
+      let data = null
+
+      if (this.record) {
+        //配置
+        data = {
+          ruleId: this.record.ruleId,
+          ruleStatus: this.isOpen ? 1 : 0,
+          templateId: this.selectedtemplateId,
+          usedDept: params,
+          range: this.rangeValue,
+        }
+      } else {
+        //新增 去掉ruleid 参数
+        data = {
+          ruleStatus: this.isOpen ? 1 : 0,
+          templateId: this.selectedtemplateId,
+          usedDept: params,
+          range: this.rangeValue,
+        }
       }
+
       console.log('传参：', data)
       this.confirmLoading = true
       saveTemplateRule(data).then((res) => {
