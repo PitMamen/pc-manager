@@ -854,7 +854,7 @@ export default {
         if (res.code == 0) {
           this.originData = res.data
 
-          this.keshiData = res.data
+          this.keshiData = JSON.parse(JSON.stringify(res.data))
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
 
           this.originDataStat = JSON.parse(JSON.stringify(res.data))
@@ -869,7 +869,7 @@ export default {
           this.originData = res.data
           this.originDataStat = JSON.parse(JSON.stringify(res.data))
 
-          this.keshiData = res.data
+          this.keshiData = JSON.parse(JSON.stringify(res.data))
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
 
           //非全量的，给科室数组重写

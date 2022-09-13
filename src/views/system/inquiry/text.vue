@@ -143,8 +143,8 @@ export default {
         { code: -1, value: '全部' },
         { code: 0, value: '已申请' },
         { code: 1, value: '已完成' },
-        { code: 2, value: '未接诊' },
-        { code: 3, value: '已终止' },
+        { code: 2, value: '已接诊' },
+        { code: 3, value: '已中止' },
       ],
       partChoose: '',
 
