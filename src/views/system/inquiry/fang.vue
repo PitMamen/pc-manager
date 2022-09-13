@@ -150,13 +150,19 @@ export default {
 
       queryParams: {
         execDept: '', //科室
-        rightsType: 'videoNum', //videoNum
+        rightsType: 'appointNum', //textNum
         userName: '', //患者
         execName: '', //医生
         execFlag: -1, //状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
         beginDate: '',
         endDate: '',
       },
+      /**
+       * reqTime  申请时间
+confirmTime 接诊时间
+appointTime 预约时间
+delaySeconds 接诊时长（单位s）
+       */
       // 表头
       columns: [
         {
@@ -176,7 +182,8 @@ export default {
           dataIndex: 'deptName',
         },
         {
-          title: '预约时间',
+          title: '问诊时间',
+          // dataIndex: 'execTime',
           dataIndex: 'appointTime',
           // scopedSlots: { customRender: 'status' },
         },
@@ -185,10 +192,14 @@ export default {
           dataIndex: 'statusText',
         },
         {
-          title: '接诊时长',
-          dataIndex: 'timeLength',
+          title: '接诊时间',
+          // dataIndex: 'createDate',
+          dataIndex: 'confirmTimeOut',
         },
-
+        {
+          title: '接诊间隔',
+          dataIndex: 'accountSum',
+        },
         {
           title: '操作',
           width: '150px',
@@ -241,10 +252,11 @@ export default {
               res.data.rows[i].confirmTime ? this.formatDateFull(res.data.rows[i].confirmTime) : ''
             )
             let currentTime = new Date().getTime()
+            console.log('ddd', res.data.rows[i].execFlag)
             console.log('currentTime', currentTime)
             console.log('execTime', Date.parse(res.data.rows[i].execTime))
-            console.log('ddd', res.data.rows[i].execFlag)
             if (res.data.rows[i].execFlag == 0) {
+              //已申请的状态也要提醒医生按钮
               this.$set(res.data.rows[i], 'statusText', '已申请')
               this.$set(res.data.rows[i], 'btnText', '提醒医生')
               this.$set(res.data.rows[i], 'canAsk', true)
@@ -252,11 +264,14 @@ export default {
               this.$set(res.data.rows[i], 'statusText', '已完成')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
+              //小于当前时间已接诊  大于当前时间未接诊
             } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime < currentTime) {
+            // } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].confirmTime) < currentTime) {
               this.$set(res.data.rows[i], 'statusText', '已接诊')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
             } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime > currentTime) {
+            // } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].confirmTime) > currentTime) {
               this.$set(res.data.rows[i], 'statusText', '未接诊')
               this.$set(res.data.rows[i], 'btnText', '提醒医生')
               this.$set(res.data.rows[i], 'canAsk', true)

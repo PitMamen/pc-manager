@@ -753,7 +753,7 @@ export default {
         let params = JSON.parse(JSON.stringify(this.queryParamsStat))
         console.log('idArr', this.idArr)
         if (this.idArr.length > 0) {
-          this.idArr.forEach((item, index) => {
+          this.idArrStat.forEach((item, index) => {
             params.deptCodes.push(item)
             // if (index != this.idArr.length - 1) {
             //   params.departmentIds = params.departmentIds + item + ','
@@ -763,12 +763,12 @@ export default {
           })
         }
         if (this.isNoDepart) {
-          params.deptCodes = '-1'
+          params.deptCodes.push(-1)
         }
 
         //非超管和随访管理员时，清空了查科室随访员管理的所有科室
 
-        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.queryParamsStat.deptCodes.length == 0) {
           this.originData.forEach((item, index) => {
             params.deptCodes.push(item.departmentId)
           })
@@ -846,32 +846,6 @@ export default {
   /** 计划分配方法*/
 
   created() {
-    /** 计划分配方法*/
-    // getDepts().then((res) => {
-    //   if (res.code == 0) {
-    //     this.originData = res.data
-    //     res.data.unshift({
-    //       departmentId: '-2',
-    //       departmentName: '全部',
-    //       hospitalId: 1,
-    //       parentId: 0,
-    //       children: null,
-    //     })
-    //     for (let i = 0; i < res.data.length; i++) {
-    //       // this.$set(res.data[i], 'xh', i + 1)
-    //       if (i == 0) {
-    //         this.$set(res.data[i], 'isChecked', true)
-    //       } else {
-    //         this.$set(res.data[i], 'isChecked', false)
-    //       }
-    //     }
-    //     this.keshiData = res.data
-    //     this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-    //   } else {
-    //     // this.$message.error('获取计划列表失败：' + res.message)
-    //   }
-    // })
-
     this.user = Vue.ls.get(TRUE_USER)
     debugger
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
@@ -886,6 +860,7 @@ export default {
           this.originDataStat = JSON.parse(JSON.stringify(res.data))
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
+          this.getStatBorData()
         }
       })
     } else {
@@ -902,15 +877,17 @@ export default {
             this.originData.forEach((item, index) => {
               this.idArr.push(item.departmentId)
             })
-
             this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
+            this.queryParamsBor.deptCodes = JSON.parse(JSON.stringify(this.idArr))
           } else {
             this.isNoDepart = true
             this.idArr = []
             this.idArrStat = []
+            this.queryParamsBor.deptCodes = []
           }
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
+          this.getStatBorData()
         }
       })
     }
@@ -919,12 +896,20 @@ export default {
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     console.log('user', this.user)
-
-    this.getStatBorData()
   },
 
   methods: {
     getStatBorData() {
+      if (this.isNoDepart) {
+        this.queryParamsBor.deptCodes.push(-1)
+      }
+
+      if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.queryParamsBor.deptCodes.length == 0) {
+        this.originData.forEach((item, index) => {
+          this.queryParamsBor.deptCodes.push(item.departmentId)
+        })
+      }
+
       statRevisit(this.queryParamsBor).then((res) => {
         if (res.code == 0) {
           this.statData = res.data
