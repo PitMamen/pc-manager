@@ -109,6 +109,7 @@
       >
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.addForm.add(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
+          <a @click="$refs.recordForm.add(record)" >聊天记录</a>
         </span>
 
         <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
@@ -117,6 +118,7 @@
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
+      <record-form ref="recordForm" @ok="handleOk" />
     </a-card>
   </div>
 </template>
@@ -125,11 +127,13 @@
 import { STable } from '@/components'
 import { qryRightsUserRecordList, getDepts } from '@/api/modular/system/posManage'
 import addForm from './addForm'
+import recordForm from './recordForm'
 
 export default {
   components: {
     STable,
     addForm,
+    recordForm
     // editForm,
   },
 

@@ -1505,3 +1505,15 @@ export function checkget(data) {
     data: data,
   })
 }
+
+/**
+ * 
+ * 聊天记录
+ */
+ export function queryHistoryIMRecordPage(data) {
+  return axios({
+    url: '/im-api/tencentIM/queryHistoryIMRecordPage',
+    method: 'get',
+    params: data,
+  })
+}

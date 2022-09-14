@@ -172,7 +172,15 @@ const vueConfig = {
           '^/api/questionnaire-api': '' 
         }
       },
-
+      '/api/im-api': {
+        target: 'http://192.168.1.121/im-api',
+        ws: false,
+        changeOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: {
+          '^/api/im-api': ''   
+        }
+      },
       '/api': {
         target: 'http://192.168.1.121/manager-api',
         ws: false,
@@ -182,6 +190,7 @@ const vueConfig = {
           '^/api': ''   
         }
       },
+   
     }
   },
 
