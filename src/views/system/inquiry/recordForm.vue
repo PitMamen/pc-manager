@@ -5,14 +5,14 @@
     :visible="visible"
     :confirmLoading="confirmLoading"
     :footer="null"
-    @ok="handleSubmit"
+   
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail">
-       
+      
         <s-table
-        ref="table"
+        ref="tableInside"
         size="default"
         :columns="columns"
         :data="loadData"
@@ -23,14 +23,28 @@
           <a @click="$refs.addForm.add(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
           <a @click="$refs.recordForm.add(record)" >聊天记录</a>
         </span>
+        <span slot="imgArea" slot-scope="text, record">
+          <img v-if="record.msgType==='TIMImageElem'" @click="clickMessage(record.message2)"  src="~@/assets/icons/msg_tp.png" style="width:auto;height:40px"/>
+          <img v-if="record.msgType==='TIMSoundElem'" @click="clickMessage(record.message2)"  src="~@/assets/icons/msg_yy.png" style="width:auto;height:40px"/>
+          <img v-if="record.msgType==='TIMVideoFileElem'" @click="clickMessage(record.message2)"  src="~@/assets/icons/msg_sp.png" style="width:auto;height:40px"/>
+          <span v-if="record.msgType==='TIMTextElem'">{{record.message2}}</span>
+          <a v-if="record.msgType==='TIMCustomElem'" @click="$refs.customForm.add(record)" >{{record.message2}} </a>
+          <!-- <video v-if="record.msgType==='TIMVideoFileElem'" :src="record.message"  style="width:auto;height:150px"></video> -->
+          <!-- <audio controls  v-if="record.msgType==='TIMSoundElem'" :src="record.message"  style="width:auto;height:150px"></audio> -->
+
+        </span>
+        
       </s-table>
 
-
+      <custom-form ref="customForm" @ok="handleOk" />
       
         
       </div>
     </a-spin>
+   
   </a-modal>
+  
+
 </template>
 
 
@@ -39,9 +53,13 @@ import { STable } from '@/components'
 import { sysPosAdd, queryHistoryIMRecordPage } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import Video from './video.vue'
+import customForm from './customForm'
 export default {
   components: {
     STable,
+    Video,
+    customForm
   },
   data() {
     return {
@@ -62,10 +80,9 @@ export default {
 
       record: {},
       queryParams: {
-        fromAccount: '611', 
-        toAccount: '612', 
-        pageNo: '1', 
-        pageSize: '10', 
+        fromAccount: '', 
+        toAccount: '', 
+     
        
       },
        // 表头
@@ -73,37 +90,93 @@ export default {
         {
           title: '消息时间',
           dataIndex: 'msgTime',
+          width: '150px',
         },
         {
           title: '发送方',
           dataIndex: 'fromAccount',
+          width: '150px',
         },
         {
           title: '接收方',
           dataIndex: 'toAccount',
+          width: '150px',
         },
         {
           title: '消息类型',
-          dataIndex: 'msgType',
-        },
-        {
-          title: '消息内容',
-          dataIndex: 'message',
+          dataIndex: 'msgType2',
+          width: '150px',
         },
         
         {
-          title: '操作',
-          width: '150px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
+          title: '消息内容',
+          // dataIndex: 'imgArea',
+          scopedSlots: { customRender: 'imgArea' },
         },
+      
       ],
       
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
        
         return queryHistoryIMRecordPage(Object.assign(parameter, this.queryParams)).then((res) => {
-          console.log(res)
+          for (let i = 0; i < res.data.rows.length; i++) {
+
+          
+            let time = new Date(Date.parse(res.data.rows[i].msgTime));
+            let hours=time.getHours()
+            let minute=time.getMinutes()
+            hours=hours<10?'0'+hours:hours
+            minute=minute<10?'0'+minute:minute
+            res.data.rows[i].msgTime=res.data.rows[i].msgTime.substring(0,10)+' '+hours+':'+minute
+
+
+           
+            if(res.data.rows[i].msgType === 'TIMCustomElem'){
+              res.data.rows[i].msgType2 ='自定义消息'
+            var mg=  JSON.parse(res.data.rows[i].message)
+            res.data.rows[i].message2= mg.desc
+            }else if(res.data.rows[i].msgType === 'TIMTextElem'){
+              res.data.rows[i].msgType2 ='文本'
+              res.data.rows[i].message2= res.data.rows[i].message
+            }else if(res.data.rows[i].msgType === 'TIMImageElem'){
+              res.data.rows[i].msgType2 ='图片'
+              res.data.rows[i].message2= res.data.rows[i].message
+            }else if(res.data.rows[i].msgType === 'TIMVideoFileElem'){
+              res.data.rows[i].msgType2 ='视频'
+              res.data.rows[i].message2= res.data.rows[i].message
+            }else if(res.data.rows[i].msgType === 'TIMSoundElem'){
+              res.data.rows[i].msgType2 ='语音'
+              res.data.rows[i].message2= res.data.rows[i].message
+            }
+            
+           
+            // if(i%2===0){
+            //   res.data.rows[i].msgType ='TIMVideoFileElem'
+            //   res.data.rows[i].message="https://cos.ap-shanghai.myqcloud.com/f485-shanghai-007-sharedv2-03-1256635546/edc0-1400613243/198e-626/5ce09afc1a38d2ecb46fe2676d282b58-GJtFYHOIjdrC3280a8b6ea62a159a1ee74ec46a6320c.mp4"
+            //   res.data.rows[i].msgType2 ='视频'
+            
+            // }else{
+
+
+            //  res.data.rows[i].msgType ='TIMImageElem'
+            // res.data.rows[i].message='https://cos.ap-shanghai.myqcloud.com/f485-shanghai-007-sharedv2-03-1256635546/edc0-1400613243/198e-626/c506327b465fda4b9c251f3b63751005-dLyoSDHQDdkC4e2b2b9fb99f6d7464a94e9f7b33ecee.png?imageMogr2/'
+            // res.data.rows[i].msgType ='TIMSoundElem'
+            // res.data.rows[i].message="https://cos.ap-shanghai.myqcloud.com/f485-shanghai-007-sharedv2-03-1256635546/edc0-1400613243/198e-626/5a09703e377c9fd42d6a5919b1d40e21-tmp_37c8019777c9a49fa6ccb7332193d09dbd79ebaacd44e6d4.mp3"
+            // res.data.rows[i].msgType2 ='语音'
+            // }
+
+          
+            if(res.data.rows[i].fromAccount === this.record.userId){
+              res.data.rows[i].fromAccount =this.record.userName
+              res.data.rows[i].toAccount =this.record.execName
+            }else {
+              res.data.rows[i].fromAccount =this.record.execName
+              res.data.rows[i].toAccount =this.record.userName
+            }
+
+          }
+          console.log(res.data)
           return res.data
         })
       },
@@ -121,11 +194,18 @@ export default {
       this.record = record
       this.visible = true
      
-      // this.queryHistoryIM()
+      this.queryParams.fromAccount=record.userId
+      this.queryParams.toAccount=record.execUser
 
+      this.$refs.tableInside.refresh()
       
     },
-
+    clickMessage(url){
+      window.open(url, '_blank')
+    },
+    clickCustomMessage(message){
+      
+    },
         //查询聊天记录
         queryHistoryIM() {
           queryHistoryIMRecordPage(this.parameter).then((res) => {
@@ -135,7 +215,9 @@ export default {
 
  
 
-
+    handleOk() {
+      this.$refs.tableInside.refresh()
+    },
 
     handleSubmit() {
       const {
