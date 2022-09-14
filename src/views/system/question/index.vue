@@ -133,7 +133,7 @@ export default {
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       // 查询参数
       queryParam: { typeName: '' },
-      queryParamStat: { deptIds: '' },
+      queryParamStat: { typeName: '' },
       idArr: [],
       idArrStat: [],
       originData: [],
@@ -195,7 +195,7 @@ export default {
         {
           //暂时注销此两个字段，目前没有
           title: '科室',
-          dataIndex: 'department_name',
+          dataIndex: 'type_name',
         },
         // {
         //   title: '专病',
@@ -208,7 +208,8 @@ export default {
         },
         {
           title: '计划分配科室',
-          dataIndex: 'department_nameOut',
+          // dataIndex: 'department_nameOut',
+          dataIndex: 'type_nameOut',
         },
         {
           title: '操作',
@@ -281,27 +282,28 @@ export default {
         let params = JSON.parse(JSON.stringify(this.queryParamStat))
         console.log('idArrStat', this.idArrStat)
         if (this.idArrStat.length > 0) {
+          params.typeName = ''
           this.idArrStat.forEach((item, index) => {
             if (index != this.idArrStat.length - 1) {
-              params.deptIds = params.deptIds + item + ','
+              params.typeName = params.typeName + item + ','
             } else {
-              params.deptIds = params.deptIds + item
+              params.typeName = params.typeName + item
             }
           })
         }
 
         //isNoDepart科室随访员没有科室的时候
         if (this.isNoDepart) {
-          params.deptIds = '-1'
+          params.typeName = '-1'
         }
 
         //非超管和随访管理员时，清空了查科室随访员管理的所有科室
         if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArrStat.length == 0) {
           this.originDataStat.forEach((item, index) => {
             if (index != this.idArrStat.length - 1) {
-              params.deptIds = params.deptIds + item.departmentId + ','
+              params.typeName = params.typeName + item.departmentName + ','
             } else {
-              params.deptIds = params.deptIds + item.departmentId
+              params.typeName = params.typeName + item.departmentName
             }
           })
         }
@@ -330,7 +332,7 @@ export default {
             data.rows.forEach((item, index) => {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               item.nameDes = item.name
-              item.department_nameOut = item.department_name
+              item.type_nameOut = item.type_name
               // item.createTimeDes = item.createTime.substring(0,11)
             })
 
@@ -413,7 +415,7 @@ export default {
     //全院
     resetStat() {
       this.idArrStat = []
-      this.queryParamStat.deptIds = ''
+      this.queryParamStat.typeName = ''
 
       this.$refs.tableStat.refresh()
     },
