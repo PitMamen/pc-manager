@@ -35,10 +35,14 @@
 
 
 <script>
+import { STable } from '@/components'
 import { sysPosAdd, queryHistoryIMRecordPage } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
+  components: {
+    STable,
+  },
   data() {
     return {
       labelCol: {
@@ -117,7 +121,7 @@ export default {
       this.record = record
       this.visible = true
      
-      this.queryHistoryIM()
+      // this.queryHistoryIM()
 
       
     },

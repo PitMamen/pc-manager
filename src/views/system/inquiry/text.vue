@@ -187,9 +187,7 @@ delaySeconds 接诊时长（单位s）
         },
         {
           title: '问诊时间',
-          // dataIndex: 'execTime',
           dataIndex: 'appointTime',
-          // scopedSlots: { customRender: 'status' },
         },
         {
           title: '问诊状态',
