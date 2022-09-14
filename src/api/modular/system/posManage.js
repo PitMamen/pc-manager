@@ -132,7 +132,7 @@ export function getAllQuestionsStat(parameter) {
     params: {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
-      deptIds: parameter.deptIds
+      typeName: parameter.typeName
     },
 
   })
