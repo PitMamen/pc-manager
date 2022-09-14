@@ -1,6 +1,6 @@
 <template>
   <a-card :bordered="false">
-    <a-button type="primary" @click="$refs.addRule.add()">新增</a-button> 
+    <a-button type="primary" @click="$refs.addRule.add(null)">新增</a-button>
 
     <!-- 下个版本迭代放出来 -->
     <div class="table-page-search-wrapper" v-if="false" style="margin-top: 1%">
@@ -12,7 +12,7 @@
 
           <a-col :md="3" :sm="24">
             <a-form-item label="">
-              <a-button type="primary"  @click="$refs.addRule.add()">新增</a-button>
+              <a-button type="primary" @click="$refs.addRule.add()">新增</a-button>
             </a-form-item>
           </a-col>
 
@@ -48,11 +48,11 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.addRule.add()">配置</a>
+        <a @click="$refs.addRule.add(record)">配置</a>
         <a-divider type="vertical" />
-        <a @click="goCheck(record)">查看</a>
+        <a @click="lookPlan(record)">查看计划</a>
         <a-divider type="vertical" />
-        <a @click="goChange(record)">修改</a>
+        <a @click="editPlan(record)">修改</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
           <a>删除</a>
@@ -74,7 +74,7 @@
 
 <script>
 import { STable } from '@/components'
-import { getTemplateRuleList, saveTemplateRule, delArticle, getDepts } from '@/api/modular/system/posManage'
+import { getTemplateRuleList, saveTemplateRule, deleteTempPlanRule } from '@/api/modular/system/posManage'
 import addRule from './addRule'
 export default {
   components: {
@@ -144,7 +144,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getTemplateRuleList({ id: '' }).then((res) => {
-          console.log('卡卡卡:', parameter)
+          // console.log('卡卡卡:', parameter)
           // console.log(res.data.total / parameter.pageSize)
 
           //组装控件需要的数据结构
@@ -159,13 +159,11 @@ export default {
           //设置序号
           data.rows.forEach((item, index) => {
             item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-            
             this.$set(item, 'categoryName', item.belongName)
             this.$set(item, 'title', item.planName)
             this.$set(item, 'brief', item.usedDeptName)
             this.$set(item, 'isOpen', item.ruleStatus == 1 ? true : false)
 
-             
             this.$set(item, 'isOpenText', item.ruleStatus == 1 ? '确认关闭吗？' : '确认开启吗？')
             // this.isOpen = item.ruleStatus == 1 ? true : false
             // this.$set(item, isOpen, item.ruleStatus == 1 ? true : false)
@@ -180,18 +178,56 @@ export default {
     }
   },
 
-  created() {
-    /** 计划分配方法*/
-    // getDepts().then((res) => {
-    //   if (res.code == 0) {
-    //     this.originData = res.data
-    //   } else {
-    //     // this.$message.error('获取计划列表失败：' + res.message)
-    //   }
-    // })
-  },
+  created() {},
 
   methods: {
+    /**
+     * 编辑随访计划规则
+     * @param  record
+     */
+    editPlan(record) {
+      this.$router.push({
+        name: 'edit_plan',
+        query: {
+          planId: record.templateId,
+        },
+      })
+    },
+
+    /**
+     * 查看随访计划 规则
+     * @param  record
+     */
+    lookPlan(record) {
+      this.$router.push({
+        name: 'look_plan',
+        query: {
+          planId: record.templateId,
+          looktype:1,
+        },
+      })
+    },
+
+    /**
+     * 删除随访计划规则
+     * @param  record
+     */
+    goDelete(record) {
+      console.log('啪啪啪啪:', record)
+      let data = {
+        ruleId: record.ruleId,
+      }
+      console.log('Data:', data)
+      deleteTempPlanRule(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('删除成功')
+          this.handleOk()
+        } else {
+          this.$message.error('删除失败：' + res.message)
+        }
+      })
+    },
+
     //打开/关闭 随访计划规则
     goOpen(record) {
       // console('请求参数啊:',record)
@@ -201,6 +237,7 @@ export default {
         record.ruleStatus = 1
       }
       let data = {
+        ruleId: record.ruleId,
         ruleStatus: record.ruleStatus,
         templateId: record.templateId,
         usedDept: record.usedDept,
@@ -209,6 +246,7 @@ export default {
       saveTemplateRule(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
+          // this.$refs.table.refresh()
           record.isOpen = res.data.ruleStatus == 1 ? true : false
           setTimeout(() => {
             record.isOpenText = res.data.ruleStatus == 1 ? '确定关闭吗？' : '确定开启吗？'
@@ -218,47 +256,6 @@ export default {
         }
       })
     },
-
-    // reset() {
-    //   this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-    //   this.$refs.table.refresh()
-    // },
-
-    //新建文章
-    // goAdd() {
-    //   this.$router.push({ name: 'article_teach_add', params: null })
-    // },
-    //查看文章
-    // goCheck(record) {
-    //   this.$router.push({ name: 'article_teach_check', query: { recordStr: JSON.stringify(record) } })
-    // },
-    //修改文章
-    // goChange(record) {
-    //   console.log(record)
-    //   this.$router.push({ name: 'article_teach_edit', query: { recordStr: JSON.stringify(record) } })
-    // },
-    // goPush(record) {
-    //   pushArticle({ articleId: record.articleId }).then((res) => {
-    //     if (res.code == 0) {
-    //       this.$message.success('发布成功')
-    //       this.handleOk()
-    //     } else {
-    //       this.$message.error('发布失败：' + res.message)
-    //     }
-    //   })
-    // },
-
-    //删除文章
-    // goDelete(record) {
-    //   delArticle(record.articleId).then((res) => {
-    //     if (res.code == 0) {
-    //       this.$message.success('删除成功')
-    //       this.handleOk()
-    //     } else {
-    //       this.$message.error('删除失败：' + res.message)
-    //     }
-    //   })
-    // },
 
     handleOk() {
       this.$refs.table.refresh()

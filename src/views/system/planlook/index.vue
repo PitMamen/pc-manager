@@ -99,7 +99,6 @@ export default {
           },
         ],
       },
-
       hosCode: '444885559',
       loading: false,
       planId: '',
@@ -124,6 +123,7 @@ export default {
 
   created() {
     this.planId = this.$route.query.planId
+    console.log("查看类型:",this.looktype)
     this.getPlanDetailOut()
     queryDepartment('444885559').then((res) => {
       if (res.code == 0) {

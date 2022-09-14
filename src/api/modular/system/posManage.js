@@ -1,6 +1,7 @@
 import { axios } from '@/utils/request'
 import { appId } from '@/utils/util'
 import { data } from 'jquery'
+import { method } from 'lodash'
 import { start } from 'nprogress'
 
 /**
@@ -863,7 +864,7 @@ export function queryDoctorList(parameter){
 }
 
 
-// 医生管理界面 配置
+// 医生管理界面 修改配置接口
 export function updateRegisterTypes(parameter){
   return axios({
     url:'/account-api/accountInfo/updateRegisterTypes', 
@@ -1320,6 +1321,18 @@ export function getTemplateRuleList(data) {
     })
   }
 
+
+  /**
+   * 删除 随访计划 规则
+   */
+
+  export function deleteTempPlanRule(data){
+    return axios({
+      url:'/health-api/sys/delTemplateRule',
+      method:'get',
+      params:data,
+    })
+  }
 
 
 

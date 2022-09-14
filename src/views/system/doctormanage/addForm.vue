@@ -147,6 +147,7 @@ export default {
   methods: {
     //初始化方法
     edit(record) {
+      console.log("BBBB:",record.registerTypeOptions)
       this.record = record
       this.visible = true
       this.isTuwenOpen = record.registerTypeOptions.includes("textNum")?true:false
@@ -229,7 +230,7 @@ export default {
 
     //确认按钮
     handleSubmit() {
-       let appendstr = 'none'
+       let appendstr = ''
        if(this.isTuwenOpen ){
         appendstr = 'textNum,'
        }

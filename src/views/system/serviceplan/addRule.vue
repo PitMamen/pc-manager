@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增"
+    :title="title"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -14,7 +14,7 @@
           <span class="span-item-value">{{ planName }} </span>
         </div>
 
-        <a-button class="change-button" type="primary" @click="$refs.changePlan.add()">{{changeText}}</a-button>
+        <a-button class="change-button" type="primary" @click="$refs.changePlan.add()">{{ changeText }}</a-button>
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 所属科室 :</span>
@@ -34,31 +34,20 @@
           </a-popconfirm>
         </div>
 
-
         <div class="div-line-wrap">
-
-          <a-form-item class="span-item-name" label="管理科室"  has-feedback>
-          <a-radio-group
-            name="radioGroup"
-            style="width: 400px"
-            :default-value="3"
-            @change="radioChange"
-            v-decorator="['roleId', { rules: [{ required: true, message: '请选择科室管理！' }] }]"
-          >
-          <a-radio class="btn-add-plan" :value="3"> 全院 </a-radio>
-            <a-radio :value="4"> 部分科室 </a-radio>         
-          </a-radio-group>
-        </a-form-item>
-
+          <a-form-item class="span-item-name" label="管理科室" has-feedback>
+            <a-radio-group
+              name="radioGroup"
+              style="width: 400px"
+              :default-value="rangeValue"
+              @change="radioChange"
+              v-decorator="['roleId', { rules: [{ required: true, message: '请选择科室管理！' }] }]"
+            >
+              <a-radio class="btn-add-plan" :value="1"> 全院 </a-radio>
+              <a-radio :value="2"> 部分科室 </a-radio>
+            </a-radio-group>
+          </a-form-item>
         </div>
-        
-       
-
-
-
-
-
-
 
         <div class="div-line-wrap" v-if="isshowDepa">
           <span class="span-item-name"> 具体科室 :</span>
@@ -77,7 +66,7 @@
 
 
 <script>
-import { saveTemplateRule ,getDepts } from '@/api/modular/system/posManage'
+import { saveTemplateRule, getDepts } from '@/api/modular/system/posManage'
 import changePlan from './changePlan'
 export default {
   components: {
@@ -87,16 +76,19 @@ export default {
 
   data() {
     return {
-      record:'',
-      changeText:'选择',
-      selectedtemplateId:'',
-      planName:'请选择名称',
-      selectedDeptname:'请选择科室',
+      ruleId: '',
+      title: '新增',
+      rangeValue: '2',
+      record: null,
+      changeText: '选择',
+      selectedtemplateId: '',
+      planName: '请选择名称',
+      selectedDeptname: '请选择科室',
       originData: [],
-      idArr:[],
-      isshowDepa:false,
+      idArr: [],
+      isshowDepa: false,
       index: -1,
-      isOpenText: '确认开启吗?',
+      isOpenText: '确定开启吗?',
       isOpen: false,
       labelCol: {
         xs: { span: 24 },
@@ -108,8 +100,45 @@ export default {
   },
   methods: {
     //初始化方法
-    add() {
+    add(record) {
       this.visible = true
+      this.record = record
+      // console.log('hahha:', this.record)
+      if (record) {
+        this.title = '配置'
+        this.isOpen = this.record.ruleStatus
+        if (this.isOpen) {
+          this.isOpenText = '确定关闭吗?'
+        } else {
+          this.isOpenText = '确定开启吗?'
+        }
+        this.planName = this.record.planName
+        this.rangeValue = this.record.range
+        this.selectedDeptname = this.record.belongName
+        if(this.record.planName&&this.record.belongName){
+          this.changeText = '重新选择'
+        }
+        // console.log('会懂行的:', this.record.range)
+        if (this.record.range == 1) {
+          this.isshowDepa = false
+        } else {
+          this.isshowDepa = true
+        }
+        this.selectedtemplateId = this.record.templateId
+        console.log('bububu:', this.record.usedDept)
+
+        this.idArr = this.record.usedDept.split(',')
+        // console.log('sssss:', this.idArr)
+        let arr = []
+        this.idArr.forEach((item, index) => {
+          if(item!=''){
+            arr.push(parseInt(item))
+          }
+        })
+        this.idArr = arr
+      } else {
+        this.title = '新增'
+      }
     },
 
     /**
@@ -117,11 +146,13 @@ export default {
      */
     radioChange(event) {
       //全院
-      if (event.target.value == 3) {
+      if (event.target.value == 1) {
+        this.rangeValue = 1
         this.isshowDepa = false
         //部分科室
-      } else if (event.target.value == 4) {
-       this. isshowDepa = true
+      } else if (event.target.value == 2) {
+        this.rangeValue = 2
+        this.isshowDepa = true
       }
     },
 
@@ -138,38 +169,65 @@ export default {
 
     //确认按钮
     handleSubmit() {
-      if (!this.planName||!this.selectedDeptname) {
+      if (!this.planName || !this.selectedDeptname) {
         this.$message.error('请选择科室名称！')
         return
       }
-      let params 
-        if (this.idArr.length > 0) {
-          this.idArr.forEach((item, index) => {
-            if (index != this.idArr.length - 1) {
-              params = params + item + ','
-            } else {
-              params = params + item
-            }
-          })
-        }
-      let data = {
-        'ruleStatus': this.isOpen?1:0,
-        'templateId':this.selectedtemplateId,
-        'usedDept':params,
+      // console.log("叭叭叭叭叭:",this.isshowDepa,this.idArr)
+      if(this.isshowDepa){
+        if(this.idArr.length==0){
+        this.$message.error('请选择具体科室名称！')
+        return
       }
-      console.log('传参：',data)
+     }
+
+
+      let params = ''
+      if (this.idArr.length > 0) {
+        this.idArr.forEach((item, index) => {
+          if (index != this.idArr.length - 1) {
+            params = params + item + ','
+          } else {
+            params = params + item
+          }
+        })
+      }
+      //  console.log("BIBIBIBI:",params)
+
+      let data = null
+
+      if (this.record) {
+        //配置
+        data = {
+          ruleId: this.record.ruleId,
+          ruleStatus: this.isOpen ? 1 : 0,
+          templateId: this.selectedtemplateId,
+          usedDept: this.rangeValue == 1 ? '' : params,
+          range: this.rangeValue,
+        }
+      } else {
+        //新增 去掉ruleid 参数
+        data = {
+          ruleStatus: this.isOpen ? 1 : 0,
+          templateId: this.selectedtemplateId,
+          usedDept: params,
+          range: this.rangeValue,
+        }
+      }
+
+      console.log('传参：', data)
       this.confirmLoading = true
       saveTemplateRule(data).then((res) => {
         if (res.code == 0) {
           setTimeout(() => {
             this.confirmLoading = false
-            this.$message.success('新增成功')
+            this.$message.success('操作成功')
             this.visible = false
             this.$emit('ok')
           }, 1200)
         } else {
           this.confirmLoading = false
-          this.$message.error('新增失败：' + res.message)
+          this.$message.error('操作失败：' + res.message)
         }
       })
     },
@@ -177,15 +235,13 @@ export default {
       this.visible = false
     },
 
-    handleChoose(record){
-      console.log("选择的数据啊：",record)
+    handleChoose(record) {
+      console.log('选择的数据啊：', record)
       this.planName = record.templateName
       this.selectedDeptname = record.deptName
       this.selectedtemplateId = record.templateId
       this.changeText = '重新选择'
-    }
-
-
+    },
   },
 
   created() {
@@ -200,7 +256,6 @@ export default {
           parentId: 0,
           children: null,
         })
-     
 
         this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
       } else {
@@ -319,7 +374,6 @@ export default {
   }
 
   .btn-add-plan {
-    
     margin-left: 17%;
   }
   .switch-button {

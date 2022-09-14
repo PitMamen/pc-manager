@@ -109,7 +109,6 @@
       >
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.addForm.add(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
-          <a @click="$refs.recordForm.add(record)" >聊天记录</a>
         </span>
 
         <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
@@ -118,7 +117,6 @@
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
-      <record-form ref="recordForm" @ok="handleOk" />
     </a-card>
   </div>
 </template>
@@ -127,13 +125,11 @@
 import { STable } from '@/components'
 import { qryRightsUserRecordList, getDepts } from '@/api/modular/system/posManage'
 import addForm from './addForm'
-import recordForm from './recordForm'
 
 export default {
   components: {
     STable,
     addForm,
-    recordForm
     // editForm,
   },
 
@@ -154,7 +150,7 @@ export default {
 
       queryParams: {
         execDept: '', //科室
-        rightsType: 'textNum', //textNum
+        rightsType: 'appointNum', //textNum
         userName: '', //患者
         execName: '', //医生
         execFlag: -1, //状态 （1：已完成 0：申请2：个案师处理完成3：已中止）
@@ -270,10 +266,12 @@ delaySeconds 接诊时长（单位s）
               this.$set(res.data.rows[i], 'canAsk', false)
               //小于当前时间已接诊  大于当前时间未接诊
             } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime < currentTime) {
+            // } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].confirmTime) < currentTime) {
               this.$set(res.data.rows[i], 'statusText', '已接诊')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
               this.$set(res.data.rows[i], 'canAsk', false)
             } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime > currentTime) {
+            // } else if (res.data.rows[i].execFlag == 2 && Date.parse(res.data.rows[i].confirmTime) > currentTime) {
               this.$set(res.data.rows[i], 'statusText', '未接诊')
               this.$set(res.data.rows[i], 'btnText', '提醒医生')
               this.$set(res.data.rows[i], 'canAsk', true)
