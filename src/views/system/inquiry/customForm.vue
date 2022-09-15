@@ -5,6 +5,7 @@
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
+    :footer="null"
     @ok="handleSubmit"
     @cancel="handleCancel"
   >
@@ -19,6 +20,70 @@
           <span class="span-item-name" style="font-weight: bold"> 处置建议：</span>
           <span class="span-item-value">{{ messageContent.msgDetailId }} </span>
         </div>
+      </div>
+
+       <!-- 确认时间 -->
+       <div v-else-if="messageContent.type === 'CustomAppointmentTimeMessage'">
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 工单号：</span>
+          <span class="span-item-value">{{ messageContent.tradeId }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">预约时间：</span>
+          <span class="span-item-value">{{ messageContent.time }} </span>
+        </div>
+       
+      </div>
+
+
+       <!-- 医生接诊 -->
+       <div v-else-if="messageContent.type === 'CustomDoctorReceptionMessage'">
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 工单号：</span>
+          <span class="span-item-value">{{ messageContent.tradeId }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 医生：</span>
+          <span class="span-item-value">{{ messageContent.docName }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 科室：</span>
+          <span class="span-item-value">{{ messageContent.docdeptName }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 患者：</span>
+          <span class="span-item-value">{{ record.toAccountName }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">开始时间：</span>
+          <span class="span-item-value">{{ messageContent.time }} </span>
+        </div>
+       
+      </div>
+
+         <!-- 医生拒诊 -->
+         <div v-else-if="messageContent.type === 'CustomDoctorRefuseMessage'">
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 工单号：</span>
+          <span class="span-item-value">{{ messageContent.tradeId }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 医生：</span>
+          <span class="span-item-value">{{ messageContent.docName }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 科室：</span>
+          <span class="span-item-value">{{ messageContent.docdeptName }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold"> 患者：</span>
+          <span class="span-item-value">{{ record.toAccountName }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">拒诊原因：</span>
+          <span class="span-item-value">{{ messageContent.reason }} </span>
+        </div>
+       
       </div>
 
       <!-- 病情概述 -->
@@ -40,6 +105,39 @@
             :src="item"
             style="width: auto; height: 70px"
           />
+        </div>
+      </div>
+
+
+       <!-- 风湿科病情概述卡片 -->
+       <div v-else-if ="messageContent.type === 'FengshikeIllnessMessage'">
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">患者问题1：</span>
+          <span class="span-item-value">{{ content.data.question1||'无' }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">患者问题2：</span>
+          <span class="span-item-value">{{ content.data.question2||'无' }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">患者问题3：</span>
+          <span class="span-item-value">{{ content.data.question3||'无' }} </span>
+        </div>
+      </div>
+
+ <!-- 风湿科病情概述 医生回复 -->
+ <div v-else-if ="messageContent.type === 'Fengshike2IllnessMessage'">
+        <div  class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">患者问题1：{{ content.data.question1||'无' }}</span>
+          <span class="span-item-value">{{ content.data.answer1||'无' }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">患者问题2：{{ content.data.question2||'无' }}</span>
+          <span class="span-item-value">{{ content.data.answer2||'无' }} </span>
+        </div>
+        <div class="div-line-wrap" style="margin-bottom: 20px">
+          <span class="span-item-name" style="font-weight: bold">患者问题3：{{ content.data.question3||'无' }}</span>
+          <span class="span-item-value">{{ content.data.answer3||'无' }} </span>
         </div>
       </div>
 
@@ -70,14 +168,14 @@
       <!-- 文章 -->
       <div v-else-if="messageContent.type === 'CustomArticleMessage'">
         <div class="div-line-wrap" style="margin-bottom: 20px">
-          <a @click="goCheckArticle()" class="span-item-value">{{ messageContent.content }}</a>
+          <a @click="goCheckArticle()" class="span-item-value">《{{ messageContent.content }}》</a>
         </div>
       </div>
 
       <!-- 问卷 -->
       <div v-else-if="messageContent.type === 'CustomWenJuanMessage'">
         <div class="div-line-wrap" style="margin-bottom: 20px">
-          <a @click="goCheckQestion()" class="span-item-value">{{ messageContent.name }}</a>
+          <a @click="goCheckQestion()" class="span-item-value">《{{ messageContent.name }}》</a>
         </div>
       </div>
 
