@@ -15,7 +15,7 @@
     </a-spin>
 
     <a-spin :spinning="confirmLoading">
-<div class="div-order-detail"> <div style="color:red;margin-top: 30px;">(注：自定义消息内容为原始数据，暂未解析成卡片。)</div></div>
+<div class="div-order-detail"> <div style="color:red;margin-top: 30px;">(注：自定义消息内容为原始数据，暂未解析。)</div></div>
 </a-spin>
    
   </a-modal>

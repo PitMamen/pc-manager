@@ -5,7 +5,7 @@
     :visible="visible"
     :confirmLoading="confirmLoading"
     :footer="null"
-   
+    @ok="handleSubmit"
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
@@ -24,10 +24,10 @@
           <a @click="$refs.recordForm.add(record)" >聊天记录</a>
         </span>
         <span slot="imgArea" slot-scope="text, record">
-          <img v-if="record.msgType==='TIMImageElem'" @click="clickMessage(record.message2)"  src="~@/assets/icons/msg_tp.png" style="width:auto;height:40px"/>
-          <img v-if="record.msgType==='TIMSoundElem'" @click="clickMessage(record.message2)"  src="~@/assets/icons/msg_yy.png" style="width:auto;height:40px"/>
-          <img v-if="record.msgType==='TIMVideoFileElem'" @click="clickMessage(record.message2)"  src="~@/assets/icons/msg_sp.png" style="width:auto;height:40px"/>
-          <span v-if="record.msgType==='TIMTextElem'">{{record.message2}}</span>
+          <img v-if="record.msgType==='TIMImageElem'" @click="clickMessage(record.message)"  src="~@/assets/icons/msg_tp.png" style="width:auto;height:40px"/>
+          <img v-if="record.msgType==='TIMSoundElem'" @click="clickMessage(record.message)"  src="~@/assets/icons/msg_yy.png" style="width:auto;height:40px"/>
+          <img v-if="record.msgType==='TIMVideoFileElem'" @click="clickMessage(record.message)"  src="~@/assets/icons/msg_sp.png" style="width:auto;height:40px"/>
+          <span v-if="record.msgType==='TIMTextElem'">{{record.message}}</span>
           <a v-if="record.msgType==='TIMCustomElem'" @click="$refs.customForm.add(record)" >{{record.message2}} </a>
           <!-- <video v-if="record.msgType==='TIMVideoFileElem'" :src="record.message"  style="width:auto;height:150px"></video> -->
           <!-- <audio controls  v-if="record.msgType==='TIMSoundElem'" :src="record.message"  style="width:auto;height:150px"></audio> -->
@@ -138,16 +138,16 @@ export default {
             res.data.rows[i].message2= mg.desc
             }else if(res.data.rows[i].msgType === 'TIMTextElem'){
               res.data.rows[i].msgType2 ='文本'
-              res.data.rows[i].message2= res.data.rows[i].message
+           
             }else if(res.data.rows[i].msgType === 'TIMImageElem'){
               res.data.rows[i].msgType2 ='图片'
-              res.data.rows[i].message2= res.data.rows[i].message
+            
             }else if(res.data.rows[i].msgType === 'TIMVideoFileElem'){
               res.data.rows[i].msgType2 ='视频'
-              res.data.rows[i].message2= res.data.rows[i].message
+             
             }else if(res.data.rows[i].msgType === 'TIMSoundElem'){
               res.data.rows[i].msgType2 ='语音'
-              res.data.rows[i].message2= res.data.rows[i].message
+             
             }
             
            
