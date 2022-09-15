@@ -46,44 +46,50 @@
             </a-input>
           </a-form-item>
         </a-tab-pane>
-               <a-tab-pane key="tab2" tab="用户登录">
-                 <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" :message="this.accountLoginErrMsg" />
-                 <a-form-item>
-                   <a-input
-                    size="large"
-                    type="text"
-                    placeholder="账号"
-                    v-decorator="[
-                      'username',
-                      {
-                        rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }],
-                        validateTrigger: 'change',
-                      },
-                    ]"
-                  >
-                  <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
-                  </a-input>
-                 </a-form-item>
+        <a-tab-pane key="tab2" tab="用户登录">
+          <a-alert
+            v-if="isLoginError"
+            type="error"
+            showIcon
+            style="margin-bottom: 24px"
+            :message="this.accountLoginErrMsg"
+          />
+          <a-form-item>
+            <a-input
+              size="large"
+              type="text"
+              placeholder="账号"
+              v-decorator="[
+                'username',
+                {
+                  rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }],
+                  validateTrigger: 'change',
+                },
+              ]"
+            >
+              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
+            </a-input>
+          </a-form-item>
 
-                 <a-row  >
-                   <a-col class="gutter-row"  >
-                     <a-form-item>
-                       <a-input
-                        size="large"
-                        type="password"
-                        autocomplete="false"
-                        placeholder="密码"
-                        v-decorator="[
-                          'password',
-                          { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' },
-                        ]"
-                      >
-                      <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
-                    </a-input>
-                     </a-form-item>
-                   </a-col>
-                 </a-row>
-               </a-tab-pane>
+          <a-row>
+            <a-col class="gutter-row">
+              <a-form-item>
+                <a-input
+                  size="large"
+                  type="password"
+                  autocomplete="false"
+                  placeholder="密码"
+                  v-decorator="[
+                    'password',
+                    { rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur' },
+                  ]"
+                >
+                  <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
+                </a-input>
+              </a-form-item>
+            </a-col>
+          </a-row>
+        </a-tab-pane>
       </a-tabs>
 
       <a-form-item>
@@ -140,6 +146,7 @@ import { TRUE_USER } from '@/store/mutation-types'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, twoStepCode } from '@/api/modular/system/loginManage'
 import { getTrueUser } from '@/api/modular/system/posManage'
+import cryptoJs from 'crypto-js';
 
 export default {
   components: {
@@ -205,15 +212,16 @@ export default {
       state.loginBtn = true
 
       // const validateFieldsKey = customActiveKey === 'tab1' ? ['username', 'password'] : ['mobile', 'captcha']
-      const validateFieldsKey =  ['username', 'password'] 
+      const validateFieldsKey = ['username', 'password']
       validateFields(validateFieldsKey, { force: true }, (err, values) => {
         if (!err) {
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
           loginParams.password = values.password //md5(values.password)
-          loginParams.loginType = customActiveKey ==='tab1'? 1: 2
-          console.log(loginParams)
+          loginParams.loginType = customActiveKey === 'tab1' ? 1 : 2
+          loginParams.password = this.encryptDes(loginParams.password)
+          console.log('loginParams', loginParams)
           Login(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch((err) => this.requestFailed(err))
@@ -266,6 +274,14 @@ export default {
         }
       })
     },
+
+    encryptDes(message) {
+      var keyHex = cryptoJs.enc.Utf8.parse('Login783s7Hyee90.k')
+      var option = { mode: cryptoJs.mode.ECB, padding: cryptoJs.pad.Pkcs7 }
+      var encrypted = cryptoJs.DES.encrypt(message, keyHex, option)
+      return encrypted.ciphertext.toString()
+    },
+
     stepCaptchaSuccess() {
       this.loginSuccess()
     },
