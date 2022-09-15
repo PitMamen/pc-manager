@@ -24,7 +24,7 @@
           <a @click="$refs.recordForm.add(record)" >聊天记录</a>
         </span>
         <span slot="imgArea" slot-scope="text, record">
-          <img v-if="record.msgType==='TIMImageElem'" @click="clickMessage(record.message)"  src="~@/assets/icons/msg_tp.png" style="width:auto;height:40px"/>
+          <img v-if="record.msgType==='TIMImageElem'" @click="clickMessage(record.message)"  :src="record.message" style="width:auto;height:40px"/>
           <img v-if="record.msgType==='TIMSoundElem'" @click="clickMessage(record.message)"  src="~@/assets/icons/msg_yy.png" style="width:auto;height:40px"/>
           <img v-if="record.msgType==='TIMVideoFileElem'" @click="clickMessage(record.message)"  src="~@/assets/icons/msg_sp.png" style="width:auto;height:40px"/>
           <span v-if="record.msgType==='TIMTextElem'">{{record.message}}</span>
@@ -94,12 +94,12 @@ export default {
         },
         {
           title: '发送方',
-          dataIndex: 'fromAccount',
+          dataIndex: 'fromAccountNmae',
           width: '150px',
         },
         {
           title: '接收方',
-          dataIndex: 'toAccount',
+          dataIndex: 'toAccountName',
           width: '150px',
         },
         {
@@ -136,6 +136,8 @@ export default {
               res.data.rows[i].msgType2 ='自定义消息'
             var mg=  JSON.parse(res.data.rows[i].message)
             res.data.rows[i].message2= mg.desc
+
+
             }else if(res.data.rows[i].msgType === 'TIMTextElem'){
               res.data.rows[i].msgType2 ='文本'
            
@@ -150,29 +152,13 @@ export default {
              
             }
             
-           
-            // if(i%2===0){
-            //   res.data.rows[i].msgType ='TIMVideoFileElem'
-            //   res.data.rows[i].message="https://cos.ap-shanghai.myqcloud.com/f485-shanghai-007-sharedv2-03-1256635546/edc0-1400613243/198e-626/5ce09afc1a38d2ecb46fe2676d282b58-GJtFYHOIjdrC3280a8b6ea62a159a1ee74ec46a6320c.mp4"
-            //   res.data.rows[i].msgType2 ='视频'
-            
-            // }else{
-
-
-            //  res.data.rows[i].msgType ='TIMImageElem'
-            // res.data.rows[i].message='https://cos.ap-shanghai.myqcloud.com/f485-shanghai-007-sharedv2-03-1256635546/edc0-1400613243/198e-626/c506327b465fda4b9c251f3b63751005-dLyoSDHQDdkC4e2b2b9fb99f6d7464a94e9f7b33ecee.png?imageMogr2/'
-            // res.data.rows[i].msgType ='TIMSoundElem'
-            // res.data.rows[i].message="https://cos.ap-shanghai.myqcloud.com/f485-shanghai-007-sharedv2-03-1256635546/edc0-1400613243/198e-626/5a09703e377c9fd42d6a5919b1d40e21-tmp_37c8019777c9a49fa6ccb7332193d09dbd79ebaacd44e6d4.mp3"
-            // res.data.rows[i].msgType2 ='语音'
-            // }
-
           
             if(res.data.rows[i].fromAccount === this.record.userId){
-              res.data.rows[i].fromAccount =this.record.userName
-              res.data.rows[i].toAccount =this.record.execName
+              res.data.rows[i].fromAccountNmae =this.record.userName
+              res.data.rows[i].toAccountName =this.record.execName
             }else {
-              res.data.rows[i].fromAccount =this.record.execName
-              res.data.rows[i].toAccount =this.record.userName
+              res.data.rows[i].fromAccountNmae =this.record.execName
+              res.data.rows[i].toAccountName =this.record.userName
             }
 
           }
