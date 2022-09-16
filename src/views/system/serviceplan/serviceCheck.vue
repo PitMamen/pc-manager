@@ -258,17 +258,17 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
         /**不是病友服务中心和管理员，写死用户当前的科室 */
-        let params = JSON.parse(JSON.stringify(this.queryParamsStat))
-        if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
-          params.deptCodes.push(this.user.departmentCode)
-        }
+        // let params = JSON.parse(JSON.stringify(this.queryParamsStat))
+        // if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
+        //   params.deptCodes.push(this.user.departmentCode)
+        // }
         if (this.queryParamsStat.status == -1) {
           delete params.status
         }
         if (this.queryParamsStat.checkStatus == -1) {
           delete params.checkStatus
         }
-        return qryRevisitPatientList(Object.assign(parameter, params)).then((res) => {
+        return qryRevisitPatientList(Object.assign(parameter, this.queryParamsStat)).then((res) => {
           if (res.code == 0) {
             for (let i = 0; i < res.data.rows.length; i++) {
               this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
