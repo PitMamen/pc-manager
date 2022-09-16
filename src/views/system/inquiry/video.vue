@@ -108,7 +108,7 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.addForm.add(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
+          <a @click="goClick(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
         </span>
 
         <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
@@ -117,6 +117,7 @@
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
+      <record-form ref="recordForm" @ok="handleOk" />
     </a-card>
   </div>
 </template>
@@ -125,11 +126,14 @@
 import { STable } from '@/components'
 import { qryRightsUserRecordList, getDepts } from '@/api/modular/system/posManage'
 import addForm from './addForm'
+// import recordForm from './recordForm'
 
 export default {
   components: {
     STable,
     addForm,
+    // recordForm,
+    recordForm: () => import('./recordForm'),
     // editForm,
   },
 
@@ -251,7 +255,7 @@ export default {
             } else if (res.data.rows[i].execFlag == 1) {
               this.$set(res.data.rows[i], 'statusText', '已完成')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
-              this.$set(res.data.rows[i], 'canAsk', false)
+              this.$set(res.data.rows[i], 'canAsk', true)
             } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime < currentTime) {
               this.$set(res.data.rows[i], 'statusText', '已接诊')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
@@ -308,6 +312,15 @@ export default {
       oMin < 10 ? (oMin = '0' + oMin) : oMin
       oSen < 10 ? (oSen = '0' + oSen) : oSen
       return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
+    },
+
+    goClick(record) {
+      console.log('goClick', record)
+      if (record.execFlag == 1) {
+        this.$refs.recordForm.add(record)
+      } else {
+        this.$refs.addForm.add(record)
+      }
     },
 
     /**

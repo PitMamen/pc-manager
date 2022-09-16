@@ -244,17 +244,17 @@ export default {
       "updateTime": null
     }
      */
-    getSchedulePeriods().then((res) => {
-      if (res.code == 0) {
-        this.itemData = res.data
-        this.itemData.forEach((item) => {
-          this.$set(item, 'isChecked', false)
-          this.$set(item, 'idPeriod', item.id)
-        })
+    // getSchedulePeriods().then((res) => {
+    //   if (res.code == 0) {
+    //     this.itemData = res.data
+    //     this.itemData.forEach((item) => {
+    //       this.$set(item, 'isChecked', false)
+    //       this.$set(item, 'idPeriod', item.id)
+    //     })
 
-        this.getServiceData()
-      }
-    })
+    //     this.getServiceData()
+    //   }
+    // })
   },
 
   methods: {
@@ -314,6 +314,7 @@ export default {
           })
 
           this.originEmptyItemData = JSON.parse(JSON.stringify(this.itemData))
+          this.getScheduleInfoOut()
         }
       })
     },
@@ -596,7 +597,17 @@ export default {
           // this.deptDataDoc[0].isChecked = true
           this.$set(this.deptDataDoc[0], 'isChecked', true)
           this.getEmptyDutyMap()
-          this.getScheduleInfoOut()
+          getSchedulePeriods().then((res) => {
+            if (res.code == 0) {
+              this.itemData = res.data
+              this.itemData.forEach((item) => {
+                this.$set(item, 'isChecked', false)
+                this.$set(item, 'idPeriod', item.id)
+              })
+
+              this.getServiceData()
+            }
+          })
           // this.getDocs()
           //TODO  请求第一个医生的号源
         }

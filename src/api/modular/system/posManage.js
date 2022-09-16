@@ -132,7 +132,7 @@ export function getAllQuestionsStat(parameter) {
     params: {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
-      deptIds: parameter.deptIds
+      typeName: parameter.typeName
     },
 
   })
@@ -1516,5 +1516,17 @@ export function checkget(data) {
     url: '/health-api/revisit/check/get',
     method: 'post',
     data: data,
+  })
+}
+
+/**
+ * 
+ * 聊天记录
+ */
+ export function queryHistoryIMRecordPage(data) {
+  return axios({
+    url: '/im-api/tencentIM/queryHistoryIMRecordPage',
+    method: 'get',
+    params: data,
   })
 }

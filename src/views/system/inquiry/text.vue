@@ -108,7 +108,8 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.addForm.add(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
+          <a @click="goClick(record)" :disabled="!record.canAsk">{{ record.btnText }}</a>
+          <!-- <a @click="$refs.recordForm.add(record)" >聊天记录</a> -->
         </span>
 
         <!-- <span slot="status" slot-scope="text, record" :class="getClass(record.status)">
@@ -117,6 +118,7 @@
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
+      <record-form ref="recordForm" @ok="handleOk" />
     </a-card>
   </div>
 </template>
@@ -125,11 +127,13 @@
 import { STable } from '@/components'
 import { qryRightsUserRecordList, getDepts } from '@/api/modular/system/posManage'
 import addForm from './addForm'
+import recordForm from './recordForm'
 
 export default {
   components: {
     STable,
     addForm,
+    recordForm
     // editForm,
   },
 
@@ -183,9 +187,7 @@ delaySeconds 接诊时长（单位s）
         },
         {
           title: '问诊时间',
-          // dataIndex: 'execTime',
           dataIndex: 'appointTime',
-          // scopedSlots: { customRender: 'status' },
         },
         {
           title: '问诊状态',
@@ -255,6 +257,7 @@ delaySeconds 接诊时长（单位s）
             console.log('ddd', res.data.rows[i].execFlag)
             console.log('currentTime', currentTime)
             console.log('execTime', Date.parse(res.data.rows[i].execTime))
+            //canAsk为true表示按钮可点击；已完成状态可以跳转聊天记录
             if (res.data.rows[i].execFlag == 0) {
               //已申请的状态也要提醒医生按钮
               this.$set(res.data.rows[i], 'statusText', '已申请')
@@ -263,7 +266,7 @@ delaySeconds 接诊时长（单位s）
             } else if (res.data.rows[i].execFlag == 1) {
               this.$set(res.data.rows[i], 'statusText', '已完成')
               this.$set(res.data.rows[i], 'btnText', '聊天记录')
-              this.$set(res.data.rows[i], 'canAsk', false)
+              this.$set(res.data.rows[i], 'canAsk', true)
               //小于当前时间已接诊  大于当前时间未接诊
             } else if (res.data.rows[i].execFlag == 2 && res.data.rows[i].execTime < currentTime) {
               this.$set(res.data.rows[i], 'statusText', '已接诊')
@@ -321,6 +324,14 @@ delaySeconds 接诊时长（单位s）
       oMin < 10 ? (oMin = '0' + oMin) : oMin
       oSen < 10 ? (oSen = '0' + oSen) : oSen
       return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
+    },
+
+    goClick(record){
+      if (record.execFlag == 1) {
+        this.$refs.recordForm.add(record)
+      } else {
+        this.$refs.addForm.add(record)
+      }
     },
 
     /**

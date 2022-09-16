@@ -260,17 +260,17 @@ export default {
       "updateTime": null
     }
      */
-    getScheduleNursePeriods().then((res) => {
-      if (res.code == 0) {
-        this.itemData = res.data
-        this.itemData.forEach((item) => {
-          this.$set(item, 'isChecked', false)
-          this.$set(item, 'idPeriod', item.id)
-        })
-        console.log('itemData getScheduleNursePeriods', JSON.parse(JSON.stringify(this.itemData)))
-        this.getServiceData()
-      }
-    })
+    // getScheduleNursePeriods().then((res) => {
+    //   if (res.code == 0) {
+    //     this.itemData = res.data
+    //     this.itemData.forEach((item) => {
+    //       this.$set(item, 'isChecked', false)
+    //       this.$set(item, 'idPeriod', item.id)
+    //     })
+    //     console.log('itemData getScheduleNursePeriods', JSON.parse(JSON.stringify(this.itemData)))
+    //     this.getServiceData()
+    //   }
+    // })
   },
 
   methods: {
@@ -330,6 +330,7 @@ export default {
           })
 
           this.originEmptyItemData = JSON.parse(JSON.stringify(this.itemData))
+          this.getScheduleInfoOut()
         }
       })
       console.log('itemData qryCodeValue', JSON.parse(JSON.stringify(this.itemData)))
@@ -614,9 +615,18 @@ export default {
           // this.deptDataDoc[0].isChecked = true
           this.$set(this.deptDataDoc[0], 'isChecked', true)
           this.getEmptyDutyMap()
-          this.getScheduleInfoOut()
-          // this.getDocs()
-          //TODO  请求第一个医生的号源
+
+          getScheduleNursePeriods().then((res) => {
+            if (res.code == 0) {
+              this.itemData = res.data
+              this.itemData.forEach((item) => {
+                this.$set(item, 'isChecked', false)
+                this.$set(item, 'idPeriod', item.id)
+              })
+              console.log('itemData getScheduleNursePeriods', JSON.parse(JSON.stringify(this.itemData)))
+              this.getServiceData()
+            }
+          })
         }
       })
     },
