@@ -106,8 +106,6 @@ export default {
         userName: '',
         status: 2,
         roleId: 3,
-        pageNo: 1,
-        pageSize: 10,
       },
       // 表头
       columns: [
