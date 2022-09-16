@@ -395,8 +395,7 @@ export default {
     ]
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
-    // editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
-    editor.config.uploadImgServer = '/api/push-api/health/wx/' + appId + '/uploadInnerImg'
+    editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
     // editor.config.uploadVideoName = 'file'
     // editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'

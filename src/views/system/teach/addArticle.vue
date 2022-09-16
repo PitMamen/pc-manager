@@ -390,8 +390,7 @@ export default {
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
-    // editor.config.uploadImgServer = '/api/pushapi/health/wx/uploadInnerImg'
-    editor.config.uploadImgServer = '/api/push-api/health/wx/' + appId + '/uploadInnerImg'
+    editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
     //教育文章先不支持视频，所以注释
     // editor.config.uploadVideoName = 'file'
