@@ -248,10 +248,10 @@ export default {
         host = 'http://develop.mclouds.org.cn:8009/r/'
       } else if (currentEnv == 'show') {
         //演示环境
-        host = 'http://develop.mclouds.org.cn:8009/r/'
+        host = 'https://ys.mclouds.org.cn/r/'
       } else if (currentEnv == 'online') {
         //线上环境
-        host = 'http://develop.mclouds.org.cn:8009/r/'
+        host = 'https://hmg.mclouds.org.cn/r/'
       }
       let url = host + record.project_key + '?userId=' + record.user_id + '&showsubmitbtn=hide'
       window.open(url, '_blank')
