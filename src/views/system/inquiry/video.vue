@@ -126,13 +126,14 @@
 import { STable } from '@/components'
 import { qryRightsUserRecordList, getDepts } from '@/api/modular/system/posManage'
 import addForm from './addForm'
-import recordForm from './recordForm'
+// import recordForm from './recordForm'
 
 export default {
   components: {
     STable,
     addForm,
-    recordForm,
+    // recordForm,
+    recordForm: () => import('./recordForm'),
     // editForm,
   },
 
@@ -313,7 +314,8 @@ export default {
       return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
     },
 
-    goClick(record){
+    goClick(record) {
+      console.log('goClick', record)
       if (record.execFlag == 1) {
         this.$refs.recordForm.add(record)
       } else {
