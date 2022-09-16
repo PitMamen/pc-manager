@@ -23,8 +23,7 @@ import { newDept, getQrUrl } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
-      extraImage:
-        'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=gQEp8TwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAybnJwWDBDSjBlOUMxMDAwME0wN3gAAgQF0DZiAwQAAAAA',
+      extraImage: '',
 
       confirmLoading: false,
       visible: false,

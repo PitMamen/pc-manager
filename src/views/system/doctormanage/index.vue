@@ -106,7 +106,6 @@ export default {
         userName: '',
         status: 2,
         roleId: 3,
-    
       },
       // 表头
       columns: [
