@@ -46,6 +46,7 @@
                 :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
               >
                 <a-button type="primary" @click="$refs.addForm.add()">新增用户</a-button>
+                <a-button type="primary" @click="$refs.addFormNew.add()">新增用户new</a-button>
               </span>
             </a-col>
 
@@ -96,6 +97,7 @@
       >
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.editForm.edit(record)">编辑</a>
+          <a @click="$refs.editFormNew.edit(record)">编辑new</a>
           <a-divider type="vertical" v-show="false" />
           <a-popconfirm v-show="false" placement="topRight" title="确认删除？" @confirm="() => delUser(record)">
             <a>删除</a>
@@ -111,6 +113,8 @@
 
       <add-form ref="addForm" @ok="handleOk" />
       <edit-form ref="editForm" @ok="handleOk" />
+      <add-form-new ref="addFormNew" @ok="handleOk" />
+      <edit-form-new ref="editFormNew" @ok="handleOk" />
     </a-card>
   </div>
 </template>
@@ -120,12 +124,16 @@ import { STable } from '@/components'
 import { getDepts, getUserList, updateUser } from '@/api/modular/system/posManage'
 import addForm from './userAddForm'
 import editForm from './userEditForm'
+import addFormNew from './userAddFormNew'
+import editFormNew from './userEditFormNew'
 
 export default {
   components: {
     STable,
     addForm,
     editForm,
+    addFormNew,
+    editFormNew,
   },
 
   data() {

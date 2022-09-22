@@ -1,6 +1,6 @@
 <template>
   <div class="user-wrapper">
-    <div class="content-box">
+    <div class="content-box top-wrap">
       <!-- fixedPart <a href="https://www.stylefeng.cn" target="_blank"> -->
       <a href="https://www.baidu.com/" target="_blank" v-if="false">
         <span class="action">
@@ -9,6 +9,17 @@
       </a>
       <!-- fixedPart -->
       <notice-icon class="action" v-if="false" />
+      <div style="flex: 1">
+        <span style="font-size: 1px; text-color: #333; font-weight: bold">当前角色：</span>
+        <a-select style="width: 59%" allow-clear v-model="currentRoleId" placeholder="请选择角色">
+          <a-select-option
+            v-for="(itemOrigin, indexOrigin) in roleList"
+            :key="indexOrigin"
+            :value="itemOrigin.roleId"
+            >{{ itemOrigin.roleRealName }}</a-select-option
+          >
+        </a-select>
+      </div>
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
           <!-- icon="user" -->
@@ -162,6 +173,12 @@ export default {
       form2: this.$form.createForm(this),
       defApp: [],
       keshiName: '',
+      currentRoleId: 1,
+      //接口请求的角色列表
+      roleList: [
+        { roleId: 1, roleRealName: '医生' },
+        { roleId: 2, roleRealName: '护士' },
+      ],
     }
   },
 
@@ -283,5 +300,10 @@ export default {
   color: #91d5ff;
   /*display: inline;
     margin-bottom:10px;*/
+}
+
+.top-wrap {
+  width: 350px;
+  display: flex;
 }
 </style>
