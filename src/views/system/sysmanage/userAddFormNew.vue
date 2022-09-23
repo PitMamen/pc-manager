@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增用户new"
+    title="新增用户"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -73,10 +73,9 @@
               class="global-search"
               size="large"
               style="width: 100%; font-size: 14px"
-              placeholder="请输入并选择类别"
+              placeholder="请输入并选择部门"
               option-label-prop="title"
               v-model="chooseDeptItem.departmentName"
-              :disabled="ifCan"
               @select="onSelect"
               @search="handleSearch"
             >
@@ -131,23 +130,32 @@
               >{{ itemOrigin.roleRealName }}</a-select-option
             >
           </a-select>
-          <a-button style="margin-left: 3%" type="primary" @click="$refs.userRoleDoc.add(item)">编辑</a-button>
-          <a-button style="margin-left: 3%" type="primary" @click="addRole">删除</a-button>
+          <a-button
+            style="margin-left: 3%"
+            type="primary"
+            :disabled="item.roleId == 1 || item.roleId == 2 || item.roleId == 6 || item.roleId == 7"
+            @click="goEdit(item)"
+            >编辑</a-button
+          >
+          <a-button style="margin-left: 3%" type="primary" @click="goDelete(index)">删除</a-button>
         </a-form-item>
       </a-form>
     </a-spin>
-    <user-role-doc ref="userRoleDoc" @ok="handleOk" />
+    <user-role-doc ref="userRoleDoc" @ok="handleOkDoc" />
+    <user-role-fang ref="userRoleFang" @ok="handleOkFang" />
   </a-modal>
 </template>
 
 
 <script>
 import { createDoctorUser, getDepts, getRoleList } from '@/api/modular/system/posManage'
-import userRoleDoc from './userRoleDoc'
+import userRoleDoc from './userDoc'
+import userRoleFang from './userFang'
 
 export default {
   components: {
     userRoleDoc,
+    userRoleFang,
   },
 
   data() {
@@ -162,12 +170,7 @@ export default {
         sm: { span: 11 },
       },
       keshiData: [],
-      keshiDataPerson: [],
-      radioValue: 3,
       isOpen: true,
-      ifCan: false, //true表示所属部门不能选，默认病友服务中心；且为true才展示所属科室
-      ifSuifang: false,
-      hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       visible: false,
       confirmLoading: false,
 
@@ -175,12 +178,20 @@ export default {
       chooseDeptItem: {},
       keshiDataTemp: [],
       //要传给后台的数组
-      roles: [
-        { roleId: 1, roleRealName: '医生' },
-        { roleId: 2, roleRealName: '护士' },
-      ],
+      // roles: [
+      //   { roleId: 1, roleRealName: '医生' },
+      //   { roleId: 2, roleRealName: '护士' },
+      // ],
+      roles: [],
       //接口请求的角色列表
       roleList: [],
+      docInfo: {
+        avatarUrl: '',
+        professionalTitle: '',
+        expertInDisease: '',
+        doctorBrief: '',
+      },
+      caseManageIds: [],
     }
   },
 
@@ -188,7 +199,8 @@ export default {
     this.getDeptsOut()
     getRoleList(this.queryParam).then((res) => {
       if (res.code == 0) {
-        this.roleList = res.data
+        // this.roleList = res.data
+        this.roleList = res.data.filter((item) => item.roleId != 1 && item.roleId != 2)
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
@@ -198,66 +210,48 @@ export default {
   methods: {
     //初始化方法
     add() {
-      this.fileList = []
       this.visible = true
-      this.ifCan = false
-      setTimeout(() => {
-        this.form.setFieldsValue({
-          roleId: 3,
-        })
-      }, 100)
-
-      //处理打开后又关闭的逻辑,默认显示第一个
-      let has = this.keshiData.some((item) => {
-        return item.departmentName == '病友服务中心'
-      })
-      if (this.keshiData.length > 0 && !this.ifCan && has) {
-        this.keshiData.shift()
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-      }
+      this.roles = []
     },
 
     addRole() {
       this.roles.push({})
     },
 
-    handleOk(){},
-
-    handleChange(changeObj) {
-      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
-        this.$message.error(changeObj.file.response.message)
-        changeObj.fileList.pop()
-        this.fileList = changeObj.fileList
-      } else {
-        this.fileList = changeObj.fileList
+    /**
+     * 编辑当前选择的角色数据
+     * @param {} item
+     */
+    goEdit(item) {
+      console.log('goEdit', item)
+      if (!item.roleId) {
+        this.$message.error('请选择角色')
+        return
       }
 
-      // this.fileList = fileList
-      // if (this.fileList.length > 1) {
-      //   let newData = this.fileList[0]
-      //   this.fileList = [newData]
-      // }
-    },
-
-    handleCancelPreview() {
-      this.previewVisible = false
-    },
-
-    async handlePreview(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
+      if (item.roleId == 3 || item.roleId == 5) {
+        //医生护士补充信息  professionalTitle  expertInDisease  doctorBrief
+        this.$refs.userRoleDoc.add(this.docInfo)
+      } else if (item.roleId == 4 || item.roleId == 8) {
+        //个案管理师和随访管理员补充信息  caseManageIds
+        this.$refs.userRoleFang.add(this.caseManageIds)
       }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
     },
 
-    getBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = (error) => reject(error)
-      })
+    goDelete(index) {
+      console.log('goDelete', index)
+      console.log('roles', JSON.parse(JSON.stringify(this.roles)))
+      this.roles.splice(index, 1)
+      console.log('roles af', this.roles)
+    },
+
+    handleOkDoc(values) {
+      console.log('handleOkDoc values', values)
+      this.docInfo = values
+    },
+    handleOkFang(values) {
+      console.log('handleOkFang values', values)
+      this.caseManageIds = values.caseManageIds
     },
 
     isPassword(rule, value, callback) {
@@ -265,13 +259,6 @@ export default {
       if (!regexPsd.test(value)) {
         // this.optional(element) || /(?!^[0-9]+$)(?!^[a-z]+$)(?!^[A-Z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{8,}$/.test(value);
         callback('提示：密码必须包含字母、数字或符号至少两种组合且密码长度不小于8位')
-      }
-      callback()
-    },
-
-    hasCaseManageIds(rule, value, callback) {
-      if (this.radioValue == 4 && (!value || value == 0)) {
-        callback('请选择管理科室')
       }
       callback()
     },
@@ -284,86 +271,12 @@ export default {
       getDepts().then((res) => {
         if (res.code == 0) {
           //用于最下面选择的科室数据
-          this.keshiDataPerson = JSON.parse(JSON.stringify(res.data))
-          this.keshiDataPerson.shift()
-
           this.keshiData = res.data
-
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-          this.keshiData.shift()
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
-    },
-
-    radioChange(event) {
-      if (event.target.value == 3) {
-        //添加医生
-        if (this.radioValue == 4) {
-          this.keshiData.shift()
-        }
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-
-        this.ifCan = false
-        this.radioValue = 3
-      } else if (event.target.value == 4) {
-        //个案管理师的时候写死 病友服务中心
-        console.log('radioChange4', this.keshiData)
-        this.keshiData.unshift({
-          departmentId: 1,
-          departmentName: '病友服务中心',
-          hospitalId: 1,
-          parentId: 0,
-          children: null,
-        })
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-        this.ifCan = true
-        this.radioValue = 4
-      } else if (event.target.value == 5) {
-        //添加护士
-        if (this.radioValue == 4) {
-          this.keshiData.shift()
-        }
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-
-        this.ifCan = false
-        this.radioValue = 5
-      } else if (event.target.value == 6) {
-        //客服也跟个案管理师一样，写死病友服务中心，但是不需要选择科室
-        console.log('radioChange4', this.keshiData)
-        this.keshiData.unshift({
-          departmentId: 1,
-          departmentName: '病友服务中心',
-          hospitalId: 1,
-          parentId: 0,
-          children: null,
-        })
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-        //客服选也不需要
-        this.ifCan = true
-        this.radioValue = 6
-      } else if (event.target.value == 7) {
-        //随访管理员
-        if (this.radioValue == 4) {
-          this.keshiData.shift()
-        }
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-
-        this.ifCan = false
-        this.ifSuifang = true
-        this.radioValue = 7
-      } else if (event.target.value == 8) {
-        //科室随访员
-        if (this.radioValue == 4) {
-          this.keshiData.shift()
-        }
-        this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData[0]))
-
-        this.ifCan = false
-        this.ifSuifang = true
-        this.radioValue = 8
-      }
     },
 
     /**
@@ -388,24 +301,46 @@ export default {
         form: { validateFields },
       } = this
       if (!this.chooseDeptItem.departmentId) {
-        this.$message.error('请选择科室')
+        this.$message.error('请选择所属部门')
         return
       }
-      // this.confirmLoading = true
 
       validateFields((errors, values) => {
         console.log('values', values)
         console.log('errors', errors)
         if (!errors) {
-          //组装头像图片  只有医生护士才有头像 职级 擅长 简介
-          if (this.fileList.length > 0) {
-            this.$set(values, 'avatarUrl', '')
-            if (this.fileList[0].response) {
-              values.avatarUrl = this.fileList[0].response.data.fileLinkUrl
-            } else {
-              values.avatarUrl = this.fileList[0].url
-            }
+
+          //组装角色,先清除空值
+          console.log('roles', JSON.parse(JSON.stringify(this.roles)))
+          this.roles = this.roles.filter((item) => item.roleId)
+          console.log('roles', JSON.parse(JSON.stringify(this.roles)))
+          debugger
+
+          if (this.roles.length == 0 || this.roles[0] == {}) {
+            this.$message.error('请添加角色')
+            return
+          } else {
+            debugger
+            let str = ''
+            this.roles.forEach((item, index) => {
+              if (index != this.roles.length - 1) {
+                str = str + item.roleId + ','
+              } else {
+                str = str + item.roleId
+              }
+            })
+            debugger
+            this.$set(values, 'roleIds', str)
           }
+
+          //医生或者护士选填信息
+          this.$set(values, 'avatarUrl', this.docInfo.avatarUrl ? this.docInfo.avatarUrl : '')
+          this.$set(values, 'professionalTitle', this.docInfo.professionalTitle ? this.docInfo.professionalTitle : '')
+          this.$set(values, 'expertInDisease', this.docInfo.expertInDisease ? this.docInfo.expertInDisease : '')
+          this.$set(values, 'doctorBrief', this.docInfo.doctorBrief ? this.docInfo.doctorBrief : '')
+
+          //个案管理师或者科室随访员必填信息
+          this.$set(values, 'caseManageIds', this.caseManageIds ? this.caseManageIds : [])
 
           console.log('createDoctorUser', values)
           this.$set(values, 'departmentId', this.chooseDeptItem.departmentId)
