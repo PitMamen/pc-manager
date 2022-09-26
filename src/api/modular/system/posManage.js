@@ -304,6 +304,60 @@ export function getDoctorsNew(parameter) {
   })
 }
 
+
+
+
+/**
+ * 
+ * @param {复诊预约列表} data 
+ * @returns 
+ */
+
+export function getRdiagnosisList(data){
+
+  return axios({
+    url:'/health-api/revisit/deal/getRdiagnosisList',
+    method:'post',
+    data:data,
+  })
+
+}
+
+
+/**
+ * 复诊预约
+ */
+ export function rdiagnosisFun(data){
+
+  return axios({
+    url:'/health-api/revisit/deal/rdiagnosisFun',
+    method:'post',
+    data:data,
+  })
+
+}
+
+/**
+ * 复诊预约详情
+ */
+ export function getRdiagnosisForId(id){
+
+  return axios({
+    url:'/health-api//revisit/deal/getRdiagnosisForId',
+    method:'get',
+    params:id,
+  })
+
+}
+
+
+
+
+
+
+
+
+
 /**
  * 获取科室套餐列表
  *
@@ -315,6 +369,45 @@ export function getDepPlans(parameter) {
     params: parameter
   })
 }
+
+
+
+/**
+ * 科室属性查询
+ */
+ export function getDepartmentAttr(parameter) {
+  return axios({
+    url: '/health-api/departments/getDepartmentAttr',
+    method: 'get',
+    params: parameter
+  })
+}
+
+
+/**
+ * 删除科室属性
+ */
+ export function delDepartmentAttr(parameter) {
+  return axios({
+    url: '/health-api/departments/delDepartmentAttr',
+    method: 'post',
+    data: parameter
+  })
+}
+
+
+/**
+ * 新增或修改科室属性
+ */
+ export function saveOrUpdateDepartmentAttr(parameter) {
+  return axios({
+    url: '/health-api/departments/saveOrUpdateDepartmentAttr',
+    method: 'post',
+    data: parameter
+  })
+}
+
+
 
 /**
  * 获取科室套餐列表
