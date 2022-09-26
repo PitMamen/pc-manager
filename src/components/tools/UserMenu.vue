@@ -138,9 +138,9 @@
 </template>
 
 <script>
+// import { changeRole } from '@/api/modular/system/posManage'
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
-// import { changeRole } from '@/api/modular/system/posManage'
 import { ALL_APPS_MENU, TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { message } from 'ant-design-vue/es'
@@ -213,7 +213,6 @@ export default {
           that.$message.success('切换角色失败')
         }
       })
-
     },
 
     handleLogout() {
