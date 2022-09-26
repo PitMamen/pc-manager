@@ -54,6 +54,17 @@ export function getLoginUser (parameter) {
 }
 
 /**
+ * 切换角色
+ */
+ export function changeLoginUserRole(parameter) {
+  return axios({
+    url: '/account-api/changeLoginUserRole',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
  * 获取用户头像
  *
  * @author yubaoshan
