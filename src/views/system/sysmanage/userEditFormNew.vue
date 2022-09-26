@@ -123,7 +123,13 @@
           :key="index"
           :value="item.code"
         >
-          <a-select style="width: 50%" allow-clear v-model="item.roleId" placeholder="请选择角色">
+          <a-select
+            style="width: 50%"
+            allow-clear
+            v-model="item.roleId"
+            @select="onRoleSelect"
+            placeholder="请选择角色"
+          >
             <a-select-option
               v-for="(itemOrigin, indexOrigin) in roleList"
               :key="indexOrigin"
@@ -252,21 +258,26 @@ export default {
       this.roles.push({})
     },
 
+    onRoleSelect(roleId) {
+      console.log('onRoleSelect', roleId)
+      this.goEdit(roleId)
+    },
+
     /**
      * 编辑当前选择的角色数据
      * @param {} item
      */
-    goEdit(item) {
-      console.log('goEdit', item)
-      if (!item.roleId) {
+    goEdit(roleId) {
+      console.log('goEdit', roleId)
+      if (!roleId) {
         this.$message.error('请选择角色')
         return
       }
 
-      if (item.roleId == 3 || item.roleId == 5) {
+      if (roleId == 3 || roleId == 5) {
         //医生护士补充信息  professionalTitle  expertInDisease  doctorBrief
         this.$refs.userRoleDoc.add(this.docInfo)
-      } else if (item.roleId == 4 || item.roleId == 8) {
+      } else if (roleId == 4 || roleId == 8) {
         //个案管理师和随访管理员补充信息  caseManageIds
         this.$refs.userRoleFang.add(this.caseManageIds)
       }
@@ -297,7 +308,6 @@ export default {
       }
       callback()
     },
-
 
     isOpenChange() {
       this.isOpen = this.isOpen ? false : true
@@ -349,13 +359,11 @@ export default {
           console.log('roles', JSON.parse(JSON.stringify(this.roles)))
           this.roles = this.roles.filter((item) => item.roleId)
           console.log('roles', JSON.parse(JSON.stringify(this.roles)))
-          debugger
 
           if (this.roles.length == 0 || this.roles[0] == {}) {
             this.$message.error('请添加角色')
             return
           } else {
-            debugger
             let str = ''
             this.roles.forEach((item, index) => {
               if (index != this.roles.length - 1) {
@@ -364,8 +372,21 @@ export default {
                 str = str + item.roleId
               }
             })
-            debugger
             this.$set(values, 'roleIds', str)
+          }
+
+          //提示用户角色去重
+          for (let index = 0; index < this.roles.length; index++) {
+            let tempArr = JSON.parse(JSON.stringify(this.roles))
+            tempArr.splice(index, 1)
+            for (let indexTemp = 0; indexTemp < tempArr.length; indexTemp++) {
+              if (this.roles[index].roleId == tempArr[indexTemp].roleId) {
+                let item = this.roleList.find((item) => item.roleId == this.roles[index].roleId)
+                // console.log('item', item)
+                this.$message.error('角色【' + item.roleRealName + '】重复，相同角色只能有一个，请删除多余的！')
+                return
+              }
+            }
           }
 
           //医生或者护士选填信息

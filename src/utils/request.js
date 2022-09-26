@@ -52,14 +52,15 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   console.log("请求预处理")
-  var manangeApiFlag = config.url.lastIndexOf('health-api')> -1 || config.url.lastIndexOf('account-api')> -1 || config.url.lastIndexOf('content-api')> -1
-  if (token) {
-    if(manangeApiFlag){ 
-      config.headers['Authorization'] =   token
-    }else{
-      config.headers['token'] =   token
-    }
-  }
+  config.headers['Authorization'] =   token
+  // var manangeApiFlag = config.url.lastIndexOf('health-api')> -1 || config.url.lastIndexOf('account-api')> -1 || config.url.lastIndexOf('content-api')> -1
+  // if (token) {
+  //   if(manangeApiFlag){ 
+  //     config.headers['Authorization'] =   token
+  //   }else{
+  //     config.headers['token'] =   token
+  //   }
+  // }
   return config
 }, err)
 

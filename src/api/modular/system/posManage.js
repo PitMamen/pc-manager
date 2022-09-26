@@ -1456,6 +1456,18 @@ export function dealget(data) {
   })
 }
 
+/**
+ * 
+ * 随访计划类型列表
+ */
+export function getPlatTypeList(data) {
+  return axios({
+    url: '/health-api/revisit/deal/getPlatTypeList',
+    method: 'get',
+    params: data,
+  })
+}
+
 
 /**
  * 
