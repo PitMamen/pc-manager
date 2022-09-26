@@ -11,12 +11,12 @@
       <notice-icon class="action" v-if="false" />
       <div style="flex: 1">
         <span style="font-size: 1px; text-color: #333; font-weight: bold">当前角色：</span>
-        <a-select style="width: 59%" allow-clear v-model="currentRoleId" placeholder="请选择角色">
+        <a-select style="width: 62%" v-model="currentRoleId" @select="onRoleChange" placeholder="请选择角色">
           <a-select-option
             v-for="(itemOrigin, indexOrigin) in roleList"
             :key="indexOrigin"
             :value="itemOrigin.roleId"
-            >{{ itemOrigin.roleRealName }}</a-select-option
+            >{{ itemOrigin.roleDesc }}</a-select-option
           >
         </a-select>
       </div>
@@ -140,6 +140,7 @@
 <script>
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
+// import { changeRole } from '@/api/modular/system/posManage'
 import { ALL_APPS_MENU, TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { message } from 'ant-design-vue/es'
@@ -187,12 +188,33 @@ export default {
   },
 
   created() {
-    this.keshiName = Vue.ls.get(TRUE_USER).departmentName
-    this.userName = Vue.ls.get(TRUE_USER).userName
+    debugger
+    let user = Vue.ls.get(TRUE_USER)
+    this.keshiName = user.departmentName
+    this.userName = user.userName
+    this.currentRoleId = user.roleId
+    this.roleList = user.roles
+    console.log('changeRole', changeRole)
   },
 
   methods: {
     ...mapActions(['Logout', 'MenuChange', 'UpdatePwd']),
+
+    onRoleChange(roleId) {
+      debugger
+      console.log('roleId', roleId)
+      let that = this
+      changeRole({ roleId: roleId }).then((res) => {
+        if (res.code == 0) {
+          that.$message.success('切换角色成功')
+          Vue.ls.remove(ALL_APPS_MENU)
+          window.location.reload()
+        } else {
+          that.$message.success('切换角色失败')
+        }
+      })
+
+    },
 
     handleLogout() {
       this.$confirm({

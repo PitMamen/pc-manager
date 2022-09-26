@@ -622,6 +622,17 @@ export function getRoleList(parameter) {
 }
 
 /**
+ * 切换角色
+ */
+ export function changeRole(parameter) {
+  return axios({
+    url: '/account-api/changeLoginUserRole',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
  * 删除或修改角色接口
  */
 export function delOrEditRole(parameter) {
