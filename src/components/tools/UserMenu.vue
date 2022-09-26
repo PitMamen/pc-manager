@@ -175,6 +175,7 @@ export default {
       defApp: [],
       keshiName: '',
       currentRoleId: 1,
+      lastRoleId: 1,
       //接口请求的角色列表
       roleList: [
         { roleId: 1, roleRealName: '医生' },
@@ -193,26 +194,36 @@ export default {
     this.keshiName = user.departmentName
     this.userName = user.userName
     this.currentRoleId = user.roleId
+    this.lastRoleId = user.roleId
     this.roleList = user.roles
-    console.log('changeRole', changeRole)
+    // console.log('changeRole', changeRole)
   },
 
   methods: {
-    ...mapActions(['Logout', 'MenuChange', 'UpdatePwd']),
+    ...mapActions(['Logout', 'MenuChange', 'UpdatePwd', 'ChangeRole']),
 
     onRoleChange(roleId) {
+      if (roleId == this.lastRoleId) {
+        return
+      } else {
+        this.lastRoleId = roleId
+      }
       debugger
       console.log('roleId', roleId)
       let that = this
-      changeRole({ roleId: roleId }).then((res) => {
-        if (res.code == 0) {
-          that.$message.success('切换角色成功')
-          Vue.ls.remove(ALL_APPS_MENU)
-          window.location.reload()
-        } else {
-          that.$message.success('切换角色失败')
-        }
-      })
+
+      this.ChangeRole({ roleId: roleId })
+        .then((res) => this.changeSuccess(res))
+        .catch((err) => this.$message.success('切换角色失败'))
+        .finally(() => {
+          // state.loginBtn = false
+        })
+    },
+
+    changeSuccess(res) {
+      that.$message.success('切换角色成功')
+      Vue.ls.remove(ALL_APPS_MENU)
+      window.location.reload()
     },
 
     handleLogout() {
