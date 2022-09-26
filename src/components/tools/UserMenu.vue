@@ -203,16 +203,11 @@ export default {
     ...mapActions(['Logout', 'MenuChange', 'UpdatePwd', 'ChangeRole']),
 
     onRoleChange(roleId) {
-<<<<<<< HEAD
-      // debugger
-=======
       if (roleId == this.lastRoleId) {
         return
       } else {
         this.lastRoleId = roleId
       }
-      debugger
->>>>>>> 2b22a242f7e590aa53b30a2f4e3ce1f85b7945d3
       console.log('roleId', roleId)
       let that = this
 
