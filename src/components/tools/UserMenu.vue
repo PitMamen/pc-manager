@@ -188,7 +188,7 @@ export default {
   },
 
   created() {
-    debugger
+    // debugger
     let user = Vue.ls.get(TRUE_USER)
     this.keshiName = user.departmentName
     this.userName = user.userName
@@ -201,7 +201,7 @@ export default {
     ...mapActions(['Logout', 'MenuChange', 'UpdatePwd']),
 
     onRoleChange(roleId) {
-      debugger
+      // debugger
       console.log('roleId', roleId)
       let that = this
       changeRole({ roleId: roleId }).then((res) => {

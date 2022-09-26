@@ -377,7 +377,7 @@ export function getDepPlans(parameter) {
  */
  export function getDepartmentAttr(parameter) {
   return axios({
-    url: '/health-api/departments/getDepartmentAttr',
+    url: '/info-api/departments/getDepartmentAttr',
     method: 'get',
     params: parameter
   })
@@ -389,7 +389,7 @@ export function getDepPlans(parameter) {
  */
  export function delDepartmentAttr(parameter) {
   return axios({
-    url: '/health-api/departments/delDepartmentAttr',
+    url: '/info-api/departments/delDepartmentAttr',
     method: 'post',
     data: parameter
   })
@@ -401,7 +401,7 @@ export function getDepPlans(parameter) {
  */
  export function saveOrUpdateDepartmentAttr(parameter) {
   return axios({
-    url: '/health-api/departments/saveOrUpdateDepartmentAttr',
+    url: '/info-api/departments/saveOrUpdateDepartmentAttr',
     method: 'post',
     data: parameter
   })
