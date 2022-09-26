@@ -288,12 +288,6 @@ export default {
       } else {
         this.fileList = changeObj.fileList
       }
-
-      // this.fileList = fileList
-      // if (this.fileList.length > 1) {
-      //   let newData = this.fileList[0]
-      //   this.fileList = [newData]
-      // }
     },
 
     handleCancelPreview() {

@@ -264,7 +264,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
     },
 
-    //Knowledge 健康宣教;Quest 健康问卷;Remind 文字提醒;Check 检查;Exam 检验
+    //Knowledge 健康宣教;Quest 健康问卷;Remind 文字提醒;Check 检查;Exam 检验 ;Rdiagnosis 复诊提醒 ;Ddiagnosis 用药提醒
     //index为计划任务的位置
     handleOk(index, value) {
       //选择类型后，添加条目
@@ -287,6 +287,12 @@ export default {
           break
         case 'Exam':
           this.$refs.addJianYan.add(index)
+          break
+        case 'Rdiagnosis':
+          this.handleRdiagnosis(index, value.remindContent)
+          break
+        case 'Ddiagnosis':
+          this.handleDdiagnosis(index, value.remindContent)
           break
       }
     },
@@ -334,6 +340,32 @@ export default {
         taskDescribe: remindContent,
         contentDetail: {
           //文字提醒
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    //复诊提醒
+    handleRdiagnosis(index, remindContent) {
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Rdiagnosis', //类型
+        taskTypeName: '复诊提醒',
+        taskDescribe: remindContent,
+        contentDetail: {
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    //用药提醒
+    handleDdiagnosis(index, remindContent) {
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Ddiagnosis', //类型
+        taskTypeName: '用药提醒',
+        taskDescribe: remindContent,
+        contentDetail: {
           remindContent: remindContent,
           detailName: remindContent,
         },

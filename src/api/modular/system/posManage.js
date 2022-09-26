@@ -715,6 +715,17 @@ export function getRoleList(parameter) {
 }
 
 /**
+ * 切换角色
+ */
+ export function changeRole(parameter) {
+  return axios({
+    url: '/account-api/changeLoginUserRole',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
  * 删除或修改角色接口
  */
 export function delOrEditRole(parameter) {
@@ -1546,6 +1557,18 @@ export function dealget(data) {
     url: '/health-api/revisit/deal/get',
     method: 'post',
     data: data,
+  })
+}
+
+/**
+ * 
+ * 随访计划类型列表
+ */
+export function getPlatTypeList(data) {
+  return axios({
+    url: '/health-api/revisit/deal/getPlatTypeList',
+    method: 'get',
+    params: data,
   })
 }
 

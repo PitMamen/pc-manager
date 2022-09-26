@@ -95,7 +95,7 @@
               size="large"
               v-model="chooseDeptItem.departmentName"
               style="width: 100%; font-size: 14px"
-              placeholder="请输入并选择类别"
+              placeholder="请输入并选择部门"
               option-label-prop="title"
               :disabled="ifCan"
               @select="onSelect"
