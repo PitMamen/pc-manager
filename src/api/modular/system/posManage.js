@@ -9,7 +9,7 @@ import { start } from 'nprogress'
  */
 export function getTrueUser() {
   return axios({
-    url: '/user/userInfo',
+    url: '/manager-api/user/userInfo',
     method: 'get',
 
   })
@@ -27,7 +27,7 @@ export function getDoctors(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/schedule/qryDeptDoctors',
+    url: '/manager-api/schedule/qryDeptDoctors',
     method: 'post',
     params: {
       start: parameter.start,
@@ -294,7 +294,7 @@ export function getDoctorsNew(parameter) {
   // delete newPara.start
   // delete newPara.pageNo
   return axios({
-    url: '/schedule/qryDeptDoctors',
+    url: '/manager-api/schedule/qryDeptDoctors',
     method: 'post',
     params: {
       start: 0,
@@ -452,7 +452,7 @@ export function delGoodsAttr(id) {
  */
 export function savePlan(parameter) {
   return axios({
-    url: '/patient/savePlanTemplate',
+    url: '/manager-api/patient/savePlanTemplate',
     method: 'post',
     data: parameter
   })
@@ -474,7 +474,7 @@ export function uploadImg(parameter) {
  */
 export function dispatchPlan(parameter) {
   return axios({
-    url: '/patient/distributePlan',
+    url: '/manager-api/patient/distributePlan',
     method: 'post',
     data: parameter
   })
@@ -495,7 +495,7 @@ export function distributePlanList(parameter) {
  */
 export function getPlanDetail(planId) {
   return axios({
-    url: '/patient/qryPlanTemplateDetail',
+    url: '/manager-api/patient/qryPlanTemplateDetail',
     method: 'post',
     data: { templateId: planId }
   })
@@ -506,7 +506,7 @@ export function getPlanDetail(planId) {
  */
 export function delPlan(parameter) {
   return axios({
-    url: '/patient/delPlanTemplate',
+    url: '/manager-api/patient/delPlanTemplate',
     method: 'post',
     data: { templateId: parameter }
   })
@@ -517,7 +517,7 @@ export function delPlan(parameter) {
  */
 export function delPlanTask(parameter) {
   return axios({
-    url: '/patient/delPlanTemplateTask',
+    url: '/manager-api/patient/delPlanTemplateTask',
     method: 'post',
     data: {
       templateId: parameter.templateId,
@@ -531,7 +531,7 @@ export function delPlanTask(parameter) {
  */
 export function delPlanTaskContent(parameter) {
   return axios({
-    url: '/patient/delPlanTemplateTaskContent',
+    url: '/manager-api/patient/delPlanTemplateTaskContent',
     method: 'post',
     data: {
       templateId: parameter.templateId,
@@ -548,7 +548,7 @@ export function delPlanTaskContent(parameter) {
 export function getDocPlans(parameter) {
   return axios({
     // url: '/patient/qryMyPlanTemplates?pageNo =' + parameter.start + '&pageSize=' + parameter.pageSize,
-    url: '/patient/qryMyPlanTemplates',
+    url: '/manager-api/patient/qryMyPlanTemplates',
     method: 'get',
     params: parameter,
   })
@@ -951,7 +951,7 @@ export function delGoodsClass(param) {
 
 export function exportPatients(parameter) {
   return axios({
-    url: '/patient/exportResult',
+    url: '/manager-api/patient/exportResult',
     method: 'post',
     data: parameter,
     // params: parameter,
@@ -961,7 +961,7 @@ export function exportPatients(parameter) {
 
 export function uploadPaiban(parameter) {
   return axios({
-    url: '/schedule/saveDoctorSchedule',
+    url: '/manager-api/schedule/saveDoctorSchedule',
     method: 'post',
     data: parameter
   })
@@ -993,7 +993,7 @@ export function updateRegisterTypes(parameter){
 
 export function getPaibans(parameter) {
   return axios({
-    url: '/schedule/qryDoctorSchedule',
+    url: '/manager-api/schedule/qryDoctorSchedule',
     method: 'get',
     params: parameter
   })
@@ -1001,7 +1001,7 @@ export function getPaibans(parameter) {
 
 export function deletePaiban(id) {
   return axios({
-    url: '/schedule/delDoctorSchedule',
+    url: '/manager-api/schedule/delDoctorSchedule',
     method: 'get',
     params: {
       id: id
@@ -1011,7 +1011,7 @@ export function deletePaiban(id) {
 
 export function changeStatus(parameter) {
   return axios({
-    url: '/schedule/updateDeptDoctor',
+    url: '/manager-api/schedule/updateDeptDoctor',
     method: 'post',
     data: parameter
   })
@@ -1030,7 +1030,7 @@ export function getBanci(thisWeekData) {
 
   }
   return axios({
-    url: '/schedule/qrySchedulePeriods',
+    url: '/manager-api/schedule/qrySchedulePeriods',
     method: 'post',
     params: {
       start: 0,
@@ -1048,7 +1048,7 @@ export function getBanci(thisWeekData) {
  */
 export function sysPosList(parameter) {
   return axios({
-    url: '/sysPos/list',
+    url: '/manager-api/sysPos/list',
     method: 'get',
     params: parameter
   })
@@ -1062,7 +1062,7 @@ export function sysPosList(parameter) {
  */
 export function sysPosAdd(parameter) {
   return axios({
-    url: '/sysPos/add',
+    url: '/manager-api/sysPos/add',
     method: 'post',
     data: parameter
   })
@@ -1076,7 +1076,7 @@ export function sysPosAdd(parameter) {
  */
 export function sysPosEdit(parameter) {
   return axios({
-    url: '/sysPos/edit',
+    url: '/manager-api/sysPos/edit',
     method: 'post',
     data: parameter
   })
@@ -1090,7 +1090,7 @@ export function sysPosEdit(parameter) {
  */
 export function sysPosDelete(parameter) {
   return axios({
-    url: '/sysPos/delete',
+    url: '/manager-api/sysPos/delete',
     method: 'post',
     data: parameter
   })

@@ -79,6 +79,7 @@
           :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
+          :headers="headers"
           @preview="handlePreview"
           @change="handleChange"
         >
@@ -113,6 +114,7 @@
 import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { appId } from '@/utils/util'
 
 import E from 'wangeditor'
@@ -152,10 +154,14 @@ export default {
 
       chooseDeptItem: {},
       ksTypeDataTemp: [],
+      headers: {
+        Authorization: '',
+      },
     }
   },
 
   created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
@@ -387,6 +393,11 @@ export default {
       'undo',
       'redo',
     ]
+
+    editor.config.uploadImgHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
+
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'

@@ -79,6 +79,7 @@
           :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
+          :headers="headers"
           @preview="handlePreview"
           @change="handleChange"
         >
@@ -154,6 +155,9 @@ export default {
       chooseDeptItem: {},
       ksTypeDataTemp: [],
       articleData: {},
+      headers: {
+        Authorization: '',
+      },
     }
   },
 
@@ -393,6 +397,11 @@ export default {
       'undo',
       'redo',
     ]
+
+    editor.config.uploadImgHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
+    
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
