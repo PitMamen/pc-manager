@@ -20,17 +20,13 @@
         <div class="div-line-wrap">
           <span class="span-item-name"> 科室 :</span>
           <span class="span-item-value">{{ record.ksmc || '' }} </span>
-
-          <!-- <span class="span-item-name" style="margin-left: 3%"> 医生 :</span>
-          <span class="span-item-value" style="margin-left: -5%">{{ '李铁' }} </span> -->
+          <span class="span-item-name" style="margin-left: 3%"> 计划 :</span>
+          <span class="span-item-value" style="margin-left: -5%">{{ record.plan_name }} </span>
         </div>
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 复诊时间 :</span>
-          <span class="span-item-value">{{ record.appointment_datetime || '' }} </span>
-
-          <span class="span-item-name" style="margin-left: 3%"> 计划 :</span>
-          <span class="span-item-value" style="margin-left: -5%">{{ record.plan_name }} </span>
+          <span class="span-item-value">{{ record.exec_time || '' }} </span>
         </div>
 
         <div class="div-line-wrap">
@@ -39,17 +35,8 @@
         </div>
 
         <div class="div-line-wrap">
-          <span class="span-item-name"> 预约医生 :
-
-            <a-input with="60%" v-model="queryParamsConfirm.appointmentDoctorName" allow-clear placeholder="请输入医生姓名" />
-          </span>
-        
-
-          <!-- <a-select allow-clear v-model="queryParamsConfirm.appointmentDoctorId" placeholder="医生">
-            <a-select-option v-for="(item, index) in docList" :key="index" :value="item.userId">{{
-              item.userName
-            }}</a-select-option>
-          </a-select> -->
+          <span class="span-item-name"> 预约医生 :</span>
+          <a-input v-model="queryParamsConfirm.appointmentDoctorName" allow-clear placeholder="请输入医生姓名 " />
         </div>
 
         <div class="div-line-wrap">
@@ -92,12 +79,15 @@ export default {
       docList: [],
       timeStr: '',
       record: {},
+      name: '',
       queryParamsConfirm: {
         appointmentDatetime: '',
         appointmentDoctorId: '',
         appointmentDoctorName: '',
         appointmentText: '',
+        name: '',
         id: '',
+        userId: '',
       },
 
       queryParam: {
@@ -122,6 +112,7 @@ export default {
     edit(record) {
       this.visible = true
       this.record = record
+      this.queryParamsConfirm.userId = record.user_id
       this.queryParamsConfirm.id = record.id
       this.getDocs()
     },
@@ -136,12 +127,26 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
+    //预约提交
     rdiagnosisFun() {
-      this.queryParamsConfirm.appointmentDatetime = this.formatDate(queryParamsConfirm.appointmentDatetime) + this.timeStr
-      console.log('请求参数:', this.queryParamsConfirm)
+      let dateStr =moment(this.queryParamsConfirm.appointmentDatetime).format('YYYY-MM-DD') + ' ' + this.timeStr 
+      console.log('时间啊:',dateStr)
+      if (this.queryParamsConfirm.appointmentDoctorName == null ||this.queryParamsConfirm.appointmentDoctorName == '') {
+        this.$message.error('请输入医生姓名!')
+        return
+      }
 
+      if (dateStr == null || dateStr == ''||dateStr.includes('Invalid date')) {
+        this.$message.error('请选择预约时间!')
+        return
+      }
+
+      this.queryParamsConfirm.appointmentDatetime = dateStr
       // rdiagnosisFun(this.queryParamsConfirm).then((res) => {
       //   if (res.code == 0) {
+      //     this.$emit('ok')
+      //     this.visible = false
+      //     this.$message.success('预约成功')
       //   }
       // })
     },
@@ -157,6 +162,7 @@ export default {
     timeChangeStart(moment, time) {
       this.timeStr = time
       console.log('s1', moment)
+
       console.log('s2', time)
     },
 
@@ -292,5 +298,9 @@ export default {
   &:hover {
     cursor: pointer;
   }
+}
+
+.ant-input-affix-wrapper {
+  width: 150px;
 }
 </style>

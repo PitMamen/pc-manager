@@ -9,7 +9,7 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-order-detail" id="printContent">
-        <h2>预约</h2>
+        <h2>预约详情</h2>
         <div class="div-line-wrap">
           <span class="span-item-name"> 姓名 :</span>
           <span class="span-item-value">{{record.xm }}</span>

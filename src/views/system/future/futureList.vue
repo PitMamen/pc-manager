@@ -70,7 +70,7 @@
       </s-table>
 
       <appointment ref="appointment" @ok="handleOk" />
-      <future-Detail ref="futureDetail" @ok="handleOk" />
+      <future-Detail ref="futureDetail" @ok="detailOk" />
     </a-card>
   </div>
 </template>
@@ -126,7 +126,7 @@ export default {
         {
           title: '复诊时间',
           width: '200px',
-          dataIndex: 'appointment_datetime',
+          dataIndex: 'exec_time',
         },
 
         {
@@ -240,6 +240,10 @@ export default {
     handleOk() {
       this.$refs.table.refresh()
     },
+    
+    detailOk(){
+      this.$refs.table.refresh()
+    }
   },
 }
 </script>
