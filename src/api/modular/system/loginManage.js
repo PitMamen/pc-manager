@@ -33,7 +33,7 @@ export function login (parameter) {
  */
 export function logout (parameter) {
   return axios({
-    url: '/logout',
+    url: '/account-api/logout',
     method: 'get',
     params: parameter
   })
