@@ -751,17 +751,8 @@ export default {
         // }
 
         let params = JSON.parse(JSON.stringify(this.queryParamsStat))
-        console.log('idArr', this.idArr)
-        if (this.idArr.length > 0) {
-          this.idArrStat.forEach((item, index) => {
-            params.deptCodes.push(item)
-            // if (index != this.idArr.length - 1) {
-            //   params.departmentIds = params.departmentIds + item + ','
-            // } else {
-            //   params.departmentIds = params.departmentIds + item
-            // }
-          })
-        }
+        console.log('queryParamsStat.deptCodes', this.queryParamsStat.deptCodes)
+
         if (this.isNoDepart) {
           params.deptCodes.push(-1)
         }
@@ -879,13 +870,15 @@ export default {
             this.originData.forEach((item, index) => {
               this.idArr.push(item.departmentId)
             })
-            this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
+            // this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
             this.queryParamsBor.deptCodes = JSON.parse(JSON.stringify(this.idArr))
+            this.queryParamsStat.deptCodes = JSON.parse(JSON.stringify(this.idArr))
           } else {
             this.isNoDepart = true
             this.idArr = []
-            this.idArrStat = []
+            // this.idArrStat = []
             this.queryParamsBor.deptCodes = []
+            this.queryParamsStat.deptCodes = []
           }
           this.getStatBorData()
           this.$refs.table.refresh()
@@ -1062,19 +1055,16 @@ export default {
     },
 
     reset() {
-      // this.form.resetFields()
+      this.idArr = []
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-      // this.createValue = []
       this.$refs.table.refresh()
     },
     resetStat() {
-      // this.form.resetFields()
       this.queryParamsStat = JSON.parse(JSON.stringify(this.queryParamsStatOrigin))
       this.createValue = []
       this.$refs.tableStat.refresh()
     },
     resetBor() {
-      // this.form.resetFields()
       this.queryParamsBor = JSON.parse(JSON.stringify(this.queryParamsBorOrigin))
       this.createValueBor = []
       this.getStatBorData()

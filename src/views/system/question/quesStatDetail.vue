@@ -236,6 +236,7 @@ export default {
     },
     reset() {
       // this.form.resetFields()
+      this.idArr = []
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
       this.createValue = []
       this.$refs.table.refresh()
