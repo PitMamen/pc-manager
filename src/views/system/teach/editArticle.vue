@@ -113,7 +113,7 @@
 <script type="text/javascript">
 import { STable } from '@/components'
 import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import { appId } from '@/utils/util'
 
@@ -401,7 +401,7 @@ export default {
     editor.config.uploadImgHeaders = {
       Authorization: Vue.ls.get(ACCESS_TOKEN),
     }
-    
+
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'

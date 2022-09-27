@@ -13,6 +13,7 @@
           <div class="clearfix" style="margin-top: 20px">
             <a-upload
               :action="actionUrl"
+              :headers="headers"
               :multiple="true"
               list-type="picture-card"
               :file-list="fileList"
@@ -58,7 +59,8 @@
 
 
 <script>
-import { createDoctorUser, getDepts } from '@/api/modular/system/posManage'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   data() {
@@ -82,10 +84,15 @@ export default {
       docInfo: {},
       previewImage: '',
       actionUrl: '/api/content-api/fileUpload/uploadImgFile',
+      headers: {
+        Authorization: '',
+      },
     }
   },
 
-  created() {},
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+  },
 
   methods: {
     //初始化方法

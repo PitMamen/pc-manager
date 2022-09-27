@@ -50,6 +50,7 @@
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
+          :headers="headers"
           :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
@@ -72,6 +73,7 @@
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
+          :headers="headers"
           :multiple="true"
           list-type="picture-card"
           :file-list="fileListBanner"
@@ -92,6 +94,7 @@
       <div class="clearfix" style="margin-top: 20px">
         <a-upload
           :action="actionUrl"
+          :headers="headers"
           :multiple="true"
           list-type="picture-card"
           :file-list="fileListDetail"
@@ -121,7 +124,7 @@
 
 <script>
 import { saveGoodsClass, getDepts } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER,ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 
 export default {
@@ -179,6 +182,9 @@ export default {
 
       chooseDeptItem: {},
       keshiDataTemp: [],
+      headers: {
+        Authorization: '',
+      },
     }
   },
 
@@ -187,6 +193,7 @@ export default {
   },
 
   created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     this.getDeptsOut()
 
     this.form.setFieldsValue({

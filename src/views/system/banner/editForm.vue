@@ -48,6 +48,8 @@
 
 <script>
 import { bannerEdit, host } from '@/api/modular/system/banner'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -66,10 +68,15 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       headers: {
-        authorization: 'authorization-text',
+        Authorization: '',
       },
     }
   },
+
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+  },
+
   methods: {
     handleChange(info) {
       if (info.file.response != null) {

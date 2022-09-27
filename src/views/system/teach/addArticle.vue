@@ -112,9 +112,8 @@
 
 <script type="text/javascript">
 import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
 import { appId } from '@/utils/util'
 
 import E from 'wangeditor'
