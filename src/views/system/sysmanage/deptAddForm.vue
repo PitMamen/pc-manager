@@ -13,7 +13,7 @@
       </a-form-item>
 
       <a-form-item label="是否是病区" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-radio-group style="width: 300px" name="radioGroup" :default-value="1" @change="radioChange">
+        <a-radio-group style="width: 300px" name="radioGroup" v-model="pos"  :default-value="1">
           <a-radio :value="1"> 是 </a-radio>
           <a-radio :value="0" style="width: 100px"> 否 </a-radio>
 
@@ -35,7 +35,7 @@ export default {
 
       confirmLoading: false,
       visible: false,
-      isArea: true,
+      pos:1,
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -55,21 +55,13 @@ export default {
       this.index = index
     },
 
-    radioChange(event) {
-      if (event.target.value == 0) {
-        this.isArea = true
-      } else {
-        this.isArea = false
-      }
-    },
-
     handleSubmit() {
       if (!this.deptName) {
         this.$message.error('请输入科室名称！')
         return
       }
 
-      newDept({ departmentName: this.deptName, parentId: 0, hospitalId: 1, tagWardArea: this.isArea ? 1 : 0 }).then(
+      newDept({ departmentName: this.deptName, parentId: 0, hospitalId: 1, tagWardArea: this.pos }).then(
         (res) => {
           if (res.code == 0) {
             this.$message.success('新增成功')
