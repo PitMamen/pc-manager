@@ -111,8 +111,6 @@
         </span>
       </s-table>
 
-      <add-form ref="addForm" @ok="handleOk" />
-      <edit-form ref="editForm" @ok="handleOk" />
       <add-form-new ref="addFormNew" @ok="handleOk" />
       <edit-form-new ref="editFormNew" @ok="handleOk" />
     </a-card>
@@ -122,8 +120,6 @@
 <script>
 import { STable } from '@/components'
 import { getDepts, getUserList, updateUser } from '@/api/modular/system/posManage'
-import addForm from './userAddForm'
-import editForm from './userEditForm'
 import addFormNew from './userAddFormNew'
 import editFormNew from './userEditFormNew'
 
