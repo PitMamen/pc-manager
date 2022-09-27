@@ -343,7 +343,7 @@
                           style="margin-right: 3%"
                           type="primary"
                           v-if="user.roleId == 7 || user.roleName == 'admin'"
-                          @click="reset"
+                          @click="resetStat"
                           >全院</a-button
                         >
                         <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
@@ -806,8 +806,8 @@ export default {
         finishedPatient: 0,
         assginedPatient: 0,
         telVisitPatient: 0,
-        totalPatient: 6,
-        visitedRate: '0.0000',
+        totalPatient: 0,
+        visitedRate: '0.00',
       },
       queryParamsBor: {
         deptCodes: [],
@@ -857,9 +857,12 @@ export default {
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
 
           this.originDataStat = JSON.parse(JSON.stringify(res.data))
+          this.getStatBorData()
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
-          this.getStatBorData()
+          // setTimeout(() => {
+          //   this.$refs.tableStat.refresh()
+          // }, 1000)
         }
       })
     } else {
@@ -884,9 +887,9 @@ export default {
             this.idArrStat = []
             this.queryParamsBor.deptCodes = []
           }
+          this.getStatBorData()
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
-          this.getStatBorData()
         }
       })
     }
@@ -1059,6 +1062,12 @@ export default {
     },
 
     reset() {
+      // this.form.resetFields()
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      // this.createValue = []
+      this.$refs.table.refresh()
+    },
+    resetStat() {
       // this.form.resetFields()
       this.queryParamsStat = JSON.parse(JSON.stringify(this.queryParamsStatOrigin))
       this.createValue = []
