@@ -33,6 +33,7 @@
               :multiple="false"
               :data="uploadData"
               disabled
+              :headers="headers"
               list-type="text"
               :file-list="fileList"
               @change="handleChange"
@@ -64,7 +65,7 @@
 
 <script>
 import { updateAppVersion } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER,ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   data() {
@@ -105,9 +106,14 @@ export default {
         // versionCode: 'v1.2.2',
         // versionNumber: '13',
       },
+      headers: {
+        Authorization: '',
+      },
     }
   },
-  created() {},
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+  },
   methods: {
     //初始化方法
     edit(record) {
