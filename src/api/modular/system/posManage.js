@@ -408,6 +408,15 @@ export function getDepPlans(parameter) {
 }
 
 
+/**
+ * 复诊预约 发送短信
+ */
+
+
+
+
+
+
 
 /**
  * 获取科室套餐列表

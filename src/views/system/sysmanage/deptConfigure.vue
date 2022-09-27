@@ -17,16 +17,16 @@
         <div class="div-line-wrap" v-for="(item, index) in deptList" :key="item.departmentId + ''">
           <!-- <a-form-item  :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
           <div class="global-search-wrapper" style="width: 200px; margin-top: 3%; display: inline-block">
-            <a-input v-model="item.departmentName" allow-clear placeholder="请输入科室名称" />
+            <a-input v-model="item.attrValue" allow-clear placeholder="请输入科室名称" />
           </div>
 
           <div
             class="global-search-wrapper"
             style="width: 200px; margin-top: 3%; margin-left: 20px; display: inline-block"
           >
-            <a-input v-model="item.departmentCode" allow-clear placeholder="请输入科室编码" />
+            <a-input v-model="item.attrCode" type="number" allow-clear placeholder="请输入科室编码" />
           </div>
-          <a-button style="margin-left: 20px" type="danger" @click="deleteDept(index)">删除</a-button>
+          <a-button style="margin-left: 20px" type="danger" @click="deleteDept(index, item)">删除</a-button>
 
           <!-- </a-form-item> -->
         </div>
@@ -64,7 +64,7 @@ export default {
           attrCode: '',
           attrValue: '',
           attrValueExt: '',
-          deptId: '',
+          deptId: this.departmentId,
           id: '',
           remark: '',
         },
@@ -76,12 +76,11 @@ export default {
         departmentCode: '',
         // isRegister: '1',
       },
-      departmentId:'',
+      departmentId: '',
       goodsAttrFullp: [],
       record: {},
       confirmLoading: false,
       form: this.$form.createForm(this),
-      chooseDeptItem: {},
       keshiDataTemp: [],
     }
   },
@@ -99,32 +98,52 @@ export default {
     },
 
     //   删除科室属性
-    deleteDept(index) {
+    deleteDept(index, item) {
       if (this.deptList.length <= 1) {
         this.$message.error('至少配置一个科室')
         return
       }
       this.deptList.splice(index, 1)
-      delDepartmentAttr(index.id).then((res)=>{
-         if(res.code==0){
-
-         }
-      })
-
+      if (item.id != null && item.id != '') {
+        delDepartmentAttr({ id: item.id }).then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功')
+          }
+        })
+      }
     },
 
     //查询科室属性
     getDepartmentAttr(deptId) {
       getDepartmentAttr({ deptId: deptId }).then((res) => {
         if (res.code == 0) {
+          if (res.data.length == 0) {
+            this.deptList = [
+              {
+                attrCode: '',
+                attrValue: '',
+                attrValueExt: '',
+                deptId: this.departmentId,
+                id: '',
+                remark: '',
+              },
+            ]
+          } else {
+            this.deptList = res.data
+          }
         }
       })
     },
 
     //添加科室属性
     addDepartmentAttr(list) {
+      list.forEach((item, index) => {
+        item.deptId = this.departmentId
+      })
       saveOrUpdateDepartmentAttr(list).then((res) => {
         if (res.code == 0) {
+          this.$message.success('添加成功！')
+          this.visible = false
         }
       })
     },
@@ -133,12 +152,7 @@ export default {
      * 添加条目时不能重复，需要处理
      */
     addItem() {
-      this.deptList.push({
-        attrCode: '1',
-        attrValue: '骨科',
-        deptId:this.departmentId,
-      })
-      this.chooseDeptItem = this.deptList[0]
+      this.deptList.push({})
     },
 
     getDeptsOut() {
@@ -152,21 +166,13 @@ export default {
       })
     },
 
-    onSelect(departmentId) {
-      //选择类别
-      // this.uploadData.belong = departmentId
-      this.chooseDeptItem = JSON.parse(JSON.stringify(this.keshiData.find((item) => item.departmentId == departmentId)))
-    },
-
     handleSubmit() {
-     if(this.deptList.length<=0){
+      if (this.deptList.length <= 0) {
         this.$message.error('至少配置一个科室')
         return
-     }
+      }
 
-     this.addDepartmentAttr(this.deptList)
-
-
+      this.addDepartmentAttr(this.deptList)
     },
     handleCancel() {
       this.form.resetFields()
