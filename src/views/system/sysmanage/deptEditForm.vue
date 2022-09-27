@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增科室"
+    title="编辑科室"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
