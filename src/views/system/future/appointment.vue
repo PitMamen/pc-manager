@@ -36,7 +36,7 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 预约医生 :</span>
-          <a-input v-model="queryParamsConfirm.appointmentDoctorName" allow-clear placeholder="请输入医生姓名 " />
+          <a-input v-model="queryParamsConfirm.appointmentDoctorName" type="text" :maxLength="20" allow-clear placeholder="请输入医生姓名 " />
         </div>
 
         <div class="div-line-wrap">

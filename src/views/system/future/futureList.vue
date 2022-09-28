@@ -6,7 +6,7 @@
           <a-row :gutter="38">
             <a-col :md="5" :sm="16">
               <a-form-item label="科室">
-                <a-select allow-clear v-model="queryParams.depatcode" placeholder="请选择科室">
+                <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
                   <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
                     item.departmentName
                   }}</a-select-option>
@@ -36,22 +36,15 @@
               </a-form-item>
             </a-col>
 
-
             <a-col :md="5" :sm="24">
               <a-form-item label="复诊时间">
                 <a-range-picker :value="createValue" @change="onChange" />
               </a-form-item>
             </a-col>
 
-
-           
-
-
-
             <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
           </a-row>
-          <a-row :gutter="48">
-          </a-row>
+          <a-row :gutter="48"> </a-row>
         </a-form>
       </div>
 
@@ -63,9 +56,8 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
-
         <span slot="actions" slot-scope="text, record">
-          <a @click="goAction(record)">{{record.status}}</a>
+          <a @click="goAction(record)">{{ record.status }}</a>
         </span>
       </s-table>
 
@@ -77,8 +69,10 @@
 
 <script>
 import { STable } from '@/components'
-import { getDepts, getRdiagnosisList } from '@/api/modular/system/posManage'
+import { getDepts, getDeptsPersonal, getRdiagnosisList } from '@/api/modular/system/posManage'
 import appointment from './appointment'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 import futureDetail from './futureDetail'
 // import { formatDateFull, formatDate } from '@/utils/util'
 
@@ -148,60 +142,105 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        let param = JSON.parse(JSON.stringify(Object.assign(parameter, this.queryParams)))
-        return getRdiagnosisList(param).then((res) => {
+        // let param = JSON.parse(JSON.stringify(Object.assign(parameter, this.queryParams)))
 
-          
+        let params = JSON.parse(JSON.stringify(this.queryParams))
 
-            //组装控件需要的数据结构
-            var data = {
-              pageNo: parameter.pageNo,
-              pageSize: parameter.pageSize,
-              totalRows: res.data.total,
-              totalPage: res.data.total / parameter.pageSize,
-              rows: res.data.records,
+        console.log('idArr', this.idArr)
+        if (this.idArr.length > 0) {
+          this.idArr.forEach((item, index) => {
+            if (index != this.idArr.length - 1) {
+              params.deptCodes = params.deptCodes + item + ','
+            } else {
+              params.deptCodes = params.deptCodes + item
             }
+          })
+        }
+        if (this.isNoDepart) {
+          params.deptCodes = '-1'
+        }
 
-            //设置序号
-            data.rows.forEach((item, index) => {
-              item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-              this.$set(item, 'checkFlagName', item.appointment_doctor_name == null ? '未预约' : '已预约')
-              this.$set(item, 'status',item.appointment_doctor_name == null ? '预约' : '预约详情')
-              // this.status = item.appointment_doctor_name==null?'预约':'预约详情'
-            })
+        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
 
+        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+          debugger
+          console.log('originData', this.originData)
+          console.log('params.deptCodes', params.deptCodes)
+          this.originData.forEach((item, index) => {
+            if (index != this.originData.length - 1) {
+              params.deptCodes = params.deptCodes + item.departmentId + ','
+            } else {
+              params.deptCodes = params.deptCodes + item.departmentId
+            }
+          })
+        }
+        // return getRdiagnosisList(param).then((res) => {
+        return getRdiagnosisList(Object.assign(parameter, params)).then((res) => {
+          //组装控件需要的数据结构
+          var data = {
+            pageNo: parameter.pageNo,
+            pageSize: parameter.pageSize,
+            totalRows: res.data.total,
+            totalPage: res.data.total / parameter.pageSize,
+            rows: res.data.records,
+          }
+
+          //设置序号
+          data.rows.forEach((item, index) => {
+            item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+            this.$set(item, 'checkFlagName', item.appointment_doctor_name == null ? '未预约' : '已预约')
+            this.$set(item, 'status', item.appointment_doctor_name == null ? '预约' : '预约详情')
+            // this.status = item.appointment_doctor_name==null?'预约':'预约详情'
+          })
 
           return data
         })
       },
       originData: [],
+      idArr: [],
+      user: {},
+      isNoDepart: false,
       queryParams: {
         deptCodes: '',
         endDate: '',
         name: '',
-        planType: 'Rdiagnosis',    // Check  Rdiagnosis
+        planType: 'Rdiagnosis', // Check  Rdiagnosis
         startDate: '',
         status: '',
       },
-      status:'预约',
+      status: '预约',
       //此属性用来做重置功能的
       createValue: [],
     }
   },
 
   created() {
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.originData = res.data
-        res.data.unshift({
-          departmentId: '-2',
-          departmentName: '全部',
-          hospitalId: 1,
-          parentId: 0,
-          children: null,
-        })
-      }
-    })
+    this.user = Vue.ls.get(TRUE_USER)
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          this.$refs.table.refresh()
+        }
+      })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          //非全量的，给科室数组重写
+          if (this.originData.length > 0) {
+            this.originData.forEach((item, index) => {
+              this.idArr.push(item.departmentId)
+            })
+          } else {
+            this.isNoDepart = true
+            this.idArr = []
+          }
+          this.$refs.table.refresh()
+        }
+      })
+    }
   },
 
   methods: {
@@ -215,14 +254,13 @@ export default {
       }
     },
 
-    goAction(record){
-      if (record.appointment_doctor_name!=null) {
+    goAction(record) {
+      if (record.appointment_doctor_name != null) {
         // console.log('bbbbbbb')
-        this.$refs.futureDetail.edit(record)    //跳转 预约详情弹窗
-      }else{
+        this.$refs.futureDetail.edit(record) //跳转 预约详情弹窗
+      } else {
         // console.log('ccccccccccc:',record)
-        this.$refs.appointment.edit(record)   //跳转 预约弹窗
-
+        this.$refs.appointment.edit(record) //跳转 预约弹窗
       }
     },
 
@@ -240,10 +278,10 @@ export default {
     handleOk() {
       this.$refs.table.refresh()
     },
-    
-    detailOk(){
+
+    detailOk() {
       this.$refs.table.refresh()
-    }
+    },
   },
 }
 </script>
