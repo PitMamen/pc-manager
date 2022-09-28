@@ -46,7 +46,7 @@
           <a-time-picker
             style="margin-left: 2%"
             @change="timeChangeStart"
-            :default-value="moment('12:00', 'HH:mm')"
+            :default-value="moment('10:30', 'HH:mm')"
             format="HH:mm"
           />
         </div>
@@ -77,7 +77,7 @@ export default {
       confirmLoading: false,
       total: 0,
       docList: [],
-      timeStr: '',
+      timeStr: '10:30:00',
       record: {},
       name: '',
       queryParamsConfirm: {
@@ -142,13 +142,13 @@ export default {
       }
 
       this.queryParamsConfirm.appointmentDatetime = dateStr
-      // rdiagnosisFun(this.queryParamsConfirm).then((res) => {
-      //   if (res.code == 0) {
-      //     this.$emit('ok')
-      //     this.visible = false
-      //     this.$message.success('预约成功')
-      //   }
-      // })
+      rdiagnosisFun(this.queryParamsConfirm).then((res) => {
+        if (res.code == 0) {
+          this.$emit('ok')
+          this.visible = false
+          this.$message.success('预约成功')
+        }
+      })
     },
 
     getDocs() {

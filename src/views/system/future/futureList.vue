@@ -179,7 +179,7 @@ export default {
         deptCodes: '',
         endDate: '',
         name: '',
-        planType: 'Check',
+        planType: 'Rdiagnosis',    // Check  Rdiagnosis
         startDate: '',
         status: '',
       },
@@ -217,11 +217,11 @@ export default {
 
     goAction(record){
       if (record.appointment_doctor_name!=null) {
-        console.log('bbbbbbb')
-        this.$refs.futureDetail.edit(record)
+        // console.log('bbbbbbb')
+        this.$refs.futureDetail.edit(record)    //跳转 预约详情弹窗
       }else{
-        console.log('ccccccccccc:',record)
-        this.$refs.appointment.edit(record)
+        // console.log('ccccccccccc:',record)
+        this.$refs.appointment.edit(record)   //跳转 预约弹窗
 
       }
     },
