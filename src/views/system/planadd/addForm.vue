@@ -99,6 +99,8 @@ export default {
       this.index = index
       this.visible = true
       this.index = index
+      this.remindContent = ''
+
       let _this = this
       getPlatTypeList().then((res) => {
         if (res.code == 0) {
