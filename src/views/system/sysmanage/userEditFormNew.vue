@@ -141,7 +141,7 @@
             style="margin-left: 3%"
             type="primary"
             :disabled="item.roleId == 1 || item.roleId == 2 || item.roleId == 6 || item.roleId == 7"
-            @click="goEdit(item)"
+            @click="goEdit(item.roleId)"
             >编辑</a-button
           >
           <a-button style="margin-left: 3%" type="primary" @click="goDelete(index)">删除</a-button>
