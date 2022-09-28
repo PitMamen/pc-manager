@@ -179,7 +179,7 @@ export default {
         deptCodes: '',
         endDate: '',
         name: '',
-        planType: 'Rdiagnosis',    // Check  Rdiagnosis
+        planType: 'Check',    // Check  Rdiagnosis
         startDate: '',
         status: '',
       },

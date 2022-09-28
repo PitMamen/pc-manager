@@ -23,16 +23,18 @@
           <span class="span-item-name"> 科室 :</span>
           <span class="span-item-value">{{record.ksmc}}</span>
 
-          <span class="span-item-name" style="margin-left: 3%"> 医生 :</span>
-          <span class="span-item-value" style="margin-left: -5%">{{record.ksmc.appointment_doctor_name }}</span>
+          <!-- <span class="span-item-name" style="margin-left: 3%"> 医生 :</span>
+          <span class="span-item-value" style="margin-left: -5%">{{record.ksmc.appointment_doctor_name }}</span> -->
+
+          <span class="span-item-name" style="margin-left: 3%"> 计划 :</span>
+          <span class="span-item-value" style="margin-left: -5%">{{record.plan_name }}</span>
         </div>
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 复诊时间 :</span>
           <span class="span-item-value">{{record.appointment_datetime}} </span>
 
-          <span class="span-item-name" style="margin-left: 3%"> 计划 :</span>
-          <span class="span-item-value" style="margin-left: -5%">{{record.plan_name }}</span>
+          
         </div>
 
         <div class="div-line-wrap">
@@ -42,7 +44,7 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 预约医生 :</span>
-          <span class="span-item-value">{{record.ksmc.appointment_doctor_name||
+          <span class="span-item-value">{{record.appointment_doctor_name||
           '-' }} </span>
         </div>
 

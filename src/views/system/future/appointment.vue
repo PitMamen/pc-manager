@@ -114,6 +114,7 @@ export default {
       this.record = record
       this.queryParamsConfirm.userId = record.user_id
       this.queryParamsConfirm.id = record.id
+      this.queryParamsConfirm.name = record.xm
       this.getDocs()
     },
 
@@ -129,7 +130,7 @@ export default {
 
     //预约提交
     rdiagnosisFun() {
-      let dateStr =moment(this.queryParamsConfirm.appointmentDatetime).format('YYYY-MM-DD') + ' ' + this.timeStr 
+      let dateStr =moment(this.queryParamsConfirm.appointmentDatetime).format('YYYY-MM-DD') + ' ' + this.timeStr+":00" 
       console.log('时间啊:',dateStr)
       if (this.queryParamsConfirm.appointmentDoctorName == null ||this.queryParamsConfirm.appointmentDoctorName == '') {
         this.$message.error('请输入医生姓名!')
