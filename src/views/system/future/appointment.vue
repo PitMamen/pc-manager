@@ -36,7 +36,13 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 预约医生 :</span>
-          <a-input v-model="queryParamsConfirm.appointmentDoctorName" allow-clear placeholder="请输入医生姓名 " />
+          <a-input
+            v-model="queryParamsConfirm.appointmentDoctorName"
+            type="text"
+            maxlength="10"
+            allow-clear
+            placeholder="请输入医生姓名 "
+          />
         </div>
 
         <div class="div-line-wrap">
@@ -77,7 +83,7 @@ export default {
       confirmLoading: false,
       total: 0,
       docList: [],
-      timeStr: '10:30:00',
+      timeStr: '10:30',
       record: {},
       name: '',
       queryParamsConfirm: {
@@ -111,6 +117,9 @@ export default {
     //初始化方法
     edit(record) {
       this.visible = true
+      this.queryParamsConfirm.appointmentDoctorName = ''
+      this.queryParamsConfirm.appointmentDatetime = ''
+
       this.record = record
       this.queryParamsConfirm.userId = record.user_id
       this.queryParamsConfirm.id = record.id
@@ -130,14 +139,18 @@ export default {
 
     //预约提交
     rdiagnosisFun() {
-      let dateStr =moment(this.queryParamsConfirm.appointmentDatetime).format('YYYY-MM-DD') + ' ' + this.timeStr+":00" 
-      console.log('时间啊:',dateStr)
-      if (this.queryParamsConfirm.appointmentDoctorName == null ||this.queryParamsConfirm.appointmentDoctorName == '') {
+      let dateStr =
+        moment(this.queryParamsConfirm.appointmentDatetime).format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
+      console.log('时间啊:', dateStr)
+      if (
+        this.queryParamsConfirm.appointmentDoctorName == null ||
+        this.queryParamsConfirm.appointmentDoctorName == ''
+      ) {
         this.$message.error('请输入医生姓名!')
         return
       }
 
-      if (dateStr == null || dateStr == ''||dateStr.includes('Invalid date')) {
+      if (dateStr == null || dateStr == '' || dateStr.includes('Invalid date')) {
         this.$message.error('请选择预约时间!')
         return
       }
