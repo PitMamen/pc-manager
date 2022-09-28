@@ -126,8 +126,6 @@ import editFormNew from './userEditFormNew'
 export default {
   components: {
     STable,
-    addForm,
-    editForm,
     addFormNew,
     editFormNew,
   },
