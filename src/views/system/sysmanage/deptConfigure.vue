@@ -139,6 +139,16 @@ export default {
     addDepartmentAttr(list) {
       list.forEach((item, index) => {
         item.deptId = this.departmentId
+        if(index>0&&item.attrCode==''||item.attrCode==null){
+            this.$message.error('请输入科室编码!')
+            return
+        }
+        
+        if(index>0&&item.attrValue==''||item.attrValue==null){
+            this.$message.error('请输入科室名称!')
+            return
+        }
+
       })
       saveOrUpdateDepartmentAttr(list).then((res) => {
         if (res.code == 0) {
