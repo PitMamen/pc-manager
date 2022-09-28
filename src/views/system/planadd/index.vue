@@ -52,27 +52,6 @@
     <div class="div-health-plan">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <!-- <a-select
-          v-show="false"
-          v-model="planData.templateTask[index].timeCount"
-          allow-clear
-          placeholder="请选择计划时间"
-        >
-          <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
-            itemCount.value
-          }}</a-select-option>
-        </a-select> -->
-
-        <!-- <a-select v-show="false" v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
-          <a-select-option
-            v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
-            :key="timeUnitIndex"
-            :value="itemTimeUnit.code"
-            >{{ itemTimeUnit.value }}</a-select-option
-          >
-        </a-select>
-        <span v-show="false" class="span-des">后</span> -->
-
         <a-input
           style="width: 12.5%; margin-left: 5%"
           type="number"

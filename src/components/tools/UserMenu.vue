@@ -203,13 +203,18 @@ export default {
     ...mapActions(['Logout', 'MenuChange', 'UpdatePwd', 'ChangeRole']),
 
     onRoleChange(roleId) {
+      //客服角色不能登录管理后台
+      if (roleId == 6) {
+        this.$message.success('您当前选定的角色在后台无权限，请切换角色继续使用！')
+        return
+      }
+
+      //切换当前角色无效
       if (roleId == this.lastRoleId) {
         return
       } else {
         this.lastRoleId = roleId
       }
-      console.log('roleId', roleId)
-      let that = this
 
       this.ChangeRole({ roleId: roleId })
         .then((res) => this.changeSuccess(res))

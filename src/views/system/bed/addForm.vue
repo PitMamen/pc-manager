@@ -91,6 +91,7 @@
                   <a-upload
                     disabled
                     :action="actionUrl"
+                    :headers="headers"
                     :multiple="true"
                     list-type="picture-card"
                     :file-list="record.tradeAppointLog[index].dealImgList"
@@ -120,6 +121,8 @@
 
 <script>
 import { sysPosAdd } from '@/api/modular/system/posManage'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import Vue from 'vue'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
 
@@ -145,8 +148,16 @@ export default {
       actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       previewImageDetail: '',
       previewVisibleDetail: false,
+      headers: {
+        Authorization: '',
+      },
     }
   },
+
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+  },
+
   methods: {
     formatDate(date) {
       date = new Date(date)
