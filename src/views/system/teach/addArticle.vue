@@ -385,7 +385,7 @@ export default {
       'quote',
       // 'emoticon',
       'image',
-      // 'video',
+      'video',
       'table',
       'code',
       'splitLine',
@@ -402,8 +402,22 @@ export default {
     // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
     editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
+    // editor.config.showLinkVideo = false
+
     //教育文章先不支持视频，所以注释
-    // editor.config.uploadVideoName = 'file'
+    editor.config.uploadVideoName = 'file'
+    editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+    editor.config.uploadVideoHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
+
+    /**
+     * 插入视频写法：
+     * 
+     * <iframe frameborder="0" src="https://v.qq.com/txp/iframe/player.html?vid=n0020yrnly7" allowFullScreen="true"></iframe>
+     * <iframe frameborder="0" src="https://vd3.bdstatic.com/mda-nit9wfd413e2xjsh/sc/cae_h264/1664351398486048214/mda-nit9wfd413e2xjsh.mp4?v_from_s=hkapp-haokan-hbf&auth_key=1664420478-0-0-ee34ef2d3450dbb1901bde7ab5ebd63b&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=1878163596&vid=7560524968628684931&abtest=104960_1-104959_1&klogid=1878163596" allowFullScreen="true"></iframe>
+     *
+     */
 
     editor.create()
 

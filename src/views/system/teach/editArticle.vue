@@ -406,8 +406,15 @@ export default {
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
-    // editor.config.uploadVideoName = 'file'
-    // editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+    editor.config.showLinkVideo = false
+
+    //教育文章先不支持视频，所以注释
+    editor.config.uploadVideoName = 'file'
+    editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+    editor.config.uploadVideoHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
+
 
     editor.create()
 
