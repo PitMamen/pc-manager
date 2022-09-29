@@ -390,7 +390,7 @@ export default {
       'quote',
       // 'emoticon',
       'image',
-      // 'video',
+      'video',
       'table',
       'code',
       'splitLine',
@@ -406,7 +406,7 @@ export default {
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
-    editor.config.showLinkVideo = false
+    // editor.config.showLinkVideo = false
 
     //教育文章先不支持视频，所以注释
     editor.config.uploadVideoName = 'file'
