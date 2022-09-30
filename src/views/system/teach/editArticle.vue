@@ -162,6 +162,7 @@ export default {
   },
 
   created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
@@ -414,7 +415,6 @@ export default {
     editor.config.uploadVideoHeaders = {
       Authorization: Vue.ls.get(ACCESS_TOKEN),
     }
-
 
     editor.create()
 
