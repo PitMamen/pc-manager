@@ -1,7 +1,6 @@
 <template>
   <div>
-    <!-- <a-tabs default-active-key="1" @change="callback" style="width: 60%"> -->
-    <a-tabs default-active-key="1" @change="callback">
+    <a-tabs default-active-key="1" >
       <a-tab-pane key="1" tab="随访方案">
         <service-list ref="serviceList" @ok="handleOk" />
       </a-tab-pane>
@@ -12,7 +11,15 @@
       <a-tab-pane key="3" tab="短信模板">
 
       </a-tab-pane>
-      <a-tab-pane key="4" tab="随访名单"></a-tab-pane>
+      <a-tab-pane key="4" tab="随访名单">
+        <name-list ref="nameList" @ok="handleOk" />
+      </a-tab-pane>
+
+
+     
+
+
+
     </a-tabs>
   </div>
 </template>
@@ -26,6 +33,7 @@ import {
 } from '@/api/modular/system/posManage'
 
 import serviceList from './serviceList'
+import nameList from './nameList'
 
 
 
@@ -35,6 +43,7 @@ export default {
     // addForm,
     // editForm,
     serviceList,
+    nameList,
     // addFormDispatch,
     // editFormDispatch,
 
@@ -44,6 +53,11 @@ export default {
 
   data() {
     return {
+      keshiData:[],
+      queryParams:{
+        userName:''
+
+      }
      
     }
   },
