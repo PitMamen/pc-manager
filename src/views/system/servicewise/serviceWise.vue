@@ -67,7 +67,8 @@ export default {
   },
 
   methods: {
-
+    callback(){},
+    handleOk(){},
   },
 }
 </script>
