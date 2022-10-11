@@ -48,7 +48,7 @@
       },
 
       addPlan(){
-        this.$message.info('clicked')
+        this.$router.push({ name: 'project_add' })
       },
 
       handleSubmit () {
