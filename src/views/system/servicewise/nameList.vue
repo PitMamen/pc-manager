@@ -6,7 +6,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="查询条件">
               <a-input
-                v-model="queryParams.userName"
+                v-model="queryParams.metaName"
                 allow-clear
                 placeholder="可输入应用名称查询"
                 @keyup.enter="$refs.table.refresh(true)"
@@ -18,7 +18,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="状态:">
               <!-- <a-popconfirm class="switch-button"> -->
-                <a-switch :checked="isOpen" @click="goOpen"/>
+              <a-switch :checked="isOpen" @click="goOpen" />
               <!-- </a-popconfirm> -->
               <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
@@ -39,7 +39,7 @@
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.checkindex.check(record)">查看</a>
         <a-divider type="vertical" />
-        <a @click="Enable(record)">停用</a>
+        <a @click="Enable(record)">{{record.enableStatus}}</a>
       </span>
     </s-table>
 
@@ -62,12 +62,15 @@ export default {
   },
   data() {
     return {
-      isOpen:false,
+      // enableStatus:"",
+      isOpen: false,
+      datas: [],
       keshiData: [],
       queryParams: {
-        databaseTableName: '',
+        metaName: '',
+        status:1,
         pageNo: 1,
-        pageSize: 10
+        pageSize: 10,
       },
       labelCol: {
         xs: { span: 24 },
@@ -101,7 +104,7 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'zt',
         },
         {
           title: '操作',
@@ -114,9 +117,24 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return qryMetaConfigure(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
-            console.log('请求结果:', res.message)
-          }
+          console.log('请求结果:', res.message)
+          // var data = {
+          //   pageNo: parameter.pageNo,
+          //   pageSize: parameter.pageSize,
+          //   totalRows: res.data.total,
+          //   totalPage: res.data.total / parameter.pageSize,
+          //   rows: res.data,
+          // }
+
+           if(res.code==0&&res.data.rows.length>0){
+            res.data.rows.forEach((item, index) => {
+            this.$set(item, 'zt', item.status.description)
+            this.$set(item, 'pushInterfaceType', item.pushInterfaceType.description)
+            this.$set(item, 'enableStatus', item.status.value==1?'停用':'启用')
+          })
+
+           }
+       
           return res.data
         })
       },
@@ -136,7 +154,16 @@ export default {
     /**
      * 启用/停用
      */
-    Enable() {},
+    Enable(record) {
+      console.log('ddd',record)
+      record.status.value =record.status.value==1?2:1
+      record.enableStatus = record.status.value==1?'停用':'启用'
+      // if(this.enableStatus=='停用'){
+      //   this.enableStatus=='启用'
+      // }else{
+      //   this.enableStatus=='停用'
+      // }
+    },
 
     /**
      * 新增
@@ -149,37 +176,6 @@ export default {
       this.$refs.table.refresh()
     },
 
-    // addPlan() {
-    //   this.$message.info('clicked')
-    // },
-
-    // handleSubmit() {
-    //   const {
-    //     form: { validateFields },
-    //   } = this
-    //   this.confirmLoading = true
-    //   validateFields((errors, values) => {
-    //     if (!errors) {
-    //       sysPosAdd(values)
-    //         .then((res) => {
-    //           if (res.success) {
-    //             this.$message.success('新增成功')
-    //             this.visible = false
-    //             this.confirmLoading = false
-    //             this.$emit('ok', values)
-    //             this.form.resetFields()
-    //           } else {
-    //             this.$message.error('新增失败：' + res.message)
-    //           }
-    //         })
-    //         .finally((res) => {
-    //           this.confirmLoading = false
-    //         })
-    //     } else {
-    //       this.confirmLoading = false
-    //     }
-    //   })
-    // },
     handleCancel() {
       this.form.resetFields()
       this.visible = false
@@ -187,7 +183,12 @@ export default {
 
     goOpen() {
       this.isOpen = !this.isOpen
-      // this.uploadData.goodsInfo.isOnline = this.outIsOnline
+      if (this.isOpen) {
+        this.queryParams.status = 1
+      } else {
+        this.queryParams.status = 2
+      }
+      this.handleOk()
     },
   },
 }
