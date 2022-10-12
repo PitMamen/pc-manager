@@ -7,6 +7,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="微信模板" force-render>
+        <a-button type="primary" @click="addwxtemplate">新增微信模板</a-button>
       </a-tab-pane>
 
       <a-tab-pane key="3" tab="短信模板">
@@ -24,6 +25,7 @@ import {
   deleteAppVersion,
   qryRevisitPatientList,
 } from '@/api/modular/system/posManage'
+
 
 import serviceList from './serviceList'
 
@@ -53,7 +55,9 @@ export default {
   },
 
   methods: {
-
+    addwxtemplate (){
+      this.$router.push({ name: 'sys_wxtemplate_add', data: null })
+    }
   },
 }
 </script>
