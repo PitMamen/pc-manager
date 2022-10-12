@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { login, getLoginUser, logout } from '@/api/modular/system/loginManage'
+import { login, getLoginUser, logout, changeLoginUserRole } from '@/api/modular/system/loginManage'
 import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { sysUserUpdatePwd } from '@/api/modular/system/userManage'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
@@ -61,6 +61,34 @@ const user = {
           commit('SET_TOKEN', result)
           resolve()
         }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // 获取用户信息
+    ChangeRole({ commit }, data) {
+      return new Promise((resolve, reject) => {
+        changeLoginUserRole(data).then(response => {
+          debugger
+          console.log("ChangeRole", response)
+          if (response.success) {
+            debugger
+            const data = response.data
+            
+            // that.$message.success('切换角色成功')
+            Vue.ls.remove(ALL_APPS_MENU)
+            window.location.reload()
+            return
+
+            // Vue.ls.set(TRUE_USER, data)
+            resolve(response)
+          } else {
+            debugger
+            reject(new Error(data.message))
+          }
+        }).catch(error => {
+          debugger
           reject(error)
         })
       })

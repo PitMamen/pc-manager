@@ -1,6 +1,6 @@
 <template>
   <div class="user-wrapper">
-    <div class="content-box">
+    <div class="content-box top-wrap">
       <!-- fixedPart <a href="https://www.stylefeng.cn" target="_blank"> -->
       <a href="https://www.baidu.com/" target="_blank" v-if="false">
         <span class="action">
@@ -9,6 +9,17 @@
       </a>
       <!-- fixedPart -->
       <notice-icon class="action" v-if="false" />
+      <div style="flex: 1">
+        <span style="font-size: 1px; text-color: #333; font-weight: bold">当前角色：</span>
+        <a-select style="width: 62%" v-model="currentRoleId" @select="onRoleChange" placeholder="请选择角色">
+          <a-select-option
+            v-for="(itemOrigin, indexOrigin) in roleList"
+            :key="indexOrigin"
+            :value="itemOrigin.roleId"
+            >{{ itemOrigin.roleDesc }}</a-select-option
+          >
+        </a-select>
+      </div>
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
           <!-- icon="user" -->
@@ -127,6 +138,7 @@
 </template>
 
 <script>
+// import { changeRole } from '@/api/modular/system/posManage'
 import NoticeIcon from '@/components/NoticeIcon'
 import { mapActions, mapGetters } from 'vuex'
 import { ALL_APPS_MENU, TRUE_USER } from '@/store/mutation-types'
@@ -162,6 +174,13 @@ export default {
       form2: this.$form.createForm(this),
       defApp: [],
       keshiName: '',
+      currentRoleId: 1,
+      lastRoleId: 1,
+      //接口请求的角色列表
+      roleList: [
+        { roleId: 1, roleRealName: '医生' },
+        { roleId: 2, roleRealName: '护士' },
+      ],
     }
   },
 
@@ -170,12 +189,46 @@ export default {
   },
 
   created() {
-    this.keshiName = Vue.ls.get(TRUE_USER).departmentName
-    this.userName = Vue.ls.get(TRUE_USER).userName
+    // debugger
+    let user = Vue.ls.get(TRUE_USER)
+    this.keshiName = user.departmentName
+    this.userName = user.userName
+    this.currentRoleId = user.roleId
+    this.lastRoleId = user.roleId
+    this.roleList = user.roles
+    // console.log('changeRole', changeRole)
   },
 
   methods: {
-    ...mapActions(['Logout', 'MenuChange', 'UpdatePwd']),
+    ...mapActions(['Logout', 'MenuChange', 'UpdatePwd', 'ChangeRole']),
+
+    onRoleChange(roleId) {
+      //客服角色不能登录管理后台
+      if (roleId == 6) {
+        this.$message.success('您当前选定的角色在后台无权限，请切换角色继续使用！')
+        return
+      }
+
+      //切换当前角色无效
+      if (roleId == this.lastRoleId) {
+        return
+      } else {
+        this.lastRoleId = roleId
+      }
+
+      this.ChangeRole({ roleId: roleId })
+        .then((res) => this.changeSuccess(res))
+        .catch((err) => this.$message.success('切换角色失败'))
+        .finally(() => {
+          // state.loginBtn = false
+        })
+    },
+
+    changeSuccess(res) {
+      that.$message.success('切换角色成功')
+      Vue.ls.remove(ALL_APPS_MENU)
+      window.location.reload()
+    },
 
     handleLogout() {
       this.$confirm({
@@ -283,5 +336,10 @@ export default {
   color: #91d5ff;
   /*display: inline;
     margin-bottom:10px;*/
+}
+
+.top-wrap {
+  width: 350px;
+  display: flex;
 }
 </style>

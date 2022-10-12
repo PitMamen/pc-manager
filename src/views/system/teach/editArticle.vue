@@ -79,6 +79,7 @@
           :multiple="true"
           list-type="picture-card"
           :file-list="fileList"
+          :headers="headers"
           @preview="handlePreview"
           @change="handleChange"
         >
@@ -112,7 +113,7 @@
 <script type="text/javascript">
 import { STable } from '@/components'
 import { saveArticle, getArticleById, getDepts, getDiseases, saveArticleWeixin } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import { appId } from '@/utils/util'
 
@@ -154,10 +155,14 @@ export default {
       chooseDeptItem: {},
       ksTypeDataTemp: [],
       articleData: {},
+      headers: {
+        Authorization: '',
+      },
     }
   },
 
   created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
@@ -386,19 +391,30 @@ export default {
       'quote',
       // 'emoticon',
       'image',
-      // 'video',
+      'video',
       'table',
       'code',
       'splitLine',
       'undo',
       'redo',
     ]
+
+    editor.config.uploadImgHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
+
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
-    // editor.config.uploadVideoName = 'file'
-    // editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+    // editor.config.showLinkVideo = false
+
+    //教育文章先不支持视频，所以注释
+    editor.config.uploadVideoName = 'file'
+    editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+    editor.config.uploadVideoHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
 
     editor.create()
 

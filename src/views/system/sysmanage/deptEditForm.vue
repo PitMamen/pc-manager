@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增科室"
+    title="编辑科室"
     :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -13,7 +13,7 @@
       </a-form-item>
 
       <a-form-item label="是否是病区" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-radio-group style="width: 300px" name="radioGroup"  :default-value="1" @change="radioChange">
+        <a-radio-group style="width: 300px" name="radioGroup" v-model="pos"  :default-value="1" >
           <a-radio :value="1"> 是 </a-radio>
           <a-radio :value="0" style="width: 100px"> 否 </a-radio>
 
@@ -34,7 +34,7 @@ export default {
       record: {},
       confirmLoading: false,
       visible: false,
-      isArea: true,
+      pos:1,
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -53,17 +53,9 @@ export default {
       this.deptName = record.departmentName
       this.record = record
       if (this.record.tagWardArea == 1) {
-        this.isArea = true
+        this.pos = 1
       }else{
-        this.isArea = false
-      }
-    },
-
-    radioChange(event) {
-      if (event.target.value == 0) {
-        this.isArea = true
-      } else {
-        this.isArea = false
+        this.pos = 0
       }
     },
 
@@ -74,7 +66,7 @@ export default {
         return
       }
 
-      this.record.tagWardArea = this.isArea ? 1 : 0
+      this.record.tagWardArea = this.pos
       this.record.departmentName = this.deptName
       newDept(this.record).then((res) => {
         if (res.code == 0) {

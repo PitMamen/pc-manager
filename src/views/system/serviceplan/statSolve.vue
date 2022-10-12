@@ -234,7 +234,6 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       record: {},
-      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       previewImageDetail: '',
       previewVisibleDetail: false,
     }

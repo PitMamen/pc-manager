@@ -511,6 +511,20 @@ export default {
                     'detailName',
                     this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.examType
                   )
+                } else if (taskType == 'Rdiagnosis') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '复诊提醒')
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
+                  )
+                } else if (taskType == 'Ddiagnosis') {
+                  this.$set(this.uploadData.templateTask[i].templateTaskContent[j], 'taskTypeName', '用药提醒')
+                  this.$set(
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail,
+                    'detailName',
+                    this.uploadData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
+                  )
                 }
               }
             }
@@ -702,6 +716,12 @@ export default {
         case 'Exam':
           this.$refs.addJianYan.add(index)
           break
+        case 'Rdiagnosis':
+          this.handleRdiagnosis(index, value.remindContent)
+          break
+        case 'Ddiagnosis':
+          this.handleDdiagnosis(index, value.remindContent)
+          break
       }
     },
 
@@ -748,6 +768,32 @@ export default {
         taskDescribe: remindContent,
         contentDetail: {
           //文字提醒
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    //复诊提醒
+    handleRdiagnosis(index, remindContent) {
+      this.uploadData.templateTask[index].templateTaskContent.push({
+        taskType: 'Rdiagnosis', //类型
+        taskTypeName: '复诊提醒',
+        taskDescribe: remindContent,
+        contentDetail: {
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    //用药提醒
+    handleDdiagnosis(index, remindContent) {
+      this.uploadData.templateTask[index].templateTaskContent.push({
+        taskType: 'Ddiagnosis', //类型
+        taskTypeName: '用药提醒',
+        taskDescribe: remindContent,
+        contentDetail: {
           remindContent: remindContent,
           detailName: remindContent,
         },

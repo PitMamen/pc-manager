@@ -27,6 +27,7 @@
             <a-upload
               disabled
               :action="actionUrl"
+              :headers="headers"
               :multiple="true"
               list-type="picture-card"
               :file-list="fileListBanner"
@@ -106,6 +107,8 @@
 <script>
 import { qryCodeValue, saveTradeAppoint } from '@/api/modular/system/posManage'
 import moment from 'moment'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import Vue from 'vue'
 import { formatDate } from '@/utils/util'
 
 export default {
@@ -139,10 +142,14 @@ export default {
       failReason: '',
       timeData: [],
       choseTimeItem: {},
+      headers: {
+        Authorization: '',
+      },
     }
   },
 
   created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     qryCodeValue('APPOINT_TYPE').then((res) => {
       if (res.code == 0) {
         if (res.data && res.data.length > 0) {

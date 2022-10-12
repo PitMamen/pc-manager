@@ -241,7 +241,7 @@ export default {
         
         if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
           this.originData.forEach((item, index) => {
-            if (index != this.idArr.length - 1) {
+            if (index != this.originData.length - 1) {
               params.typeName = params.typeName + item.departmentName + ','
             } else {
               params.typeName = params.typeName + item.departmentName
