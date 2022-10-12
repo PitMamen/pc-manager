@@ -1337,6 +1337,73 @@ export function getTemplateRuleList(data) {
 
 
 
+ /**
+  * 随访名单列表
+  */
+  export function qryMetaConfigure(data){
+    return axios({
+      url:'/follow-api/followMetaConfigure/qryMetaConfigure',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+  /**
+   * 新增随访名单
+   */
+   export function saveMetaConfigure(data){
+    return axios({
+      url:'/follow-api/followMetaConfigure/saveMetaConfigure',
+      method:'post',
+      data:data,
+    })
+   }
+
+
+
+  /**
+   * 查看随访名单详情
+   */
+  export function checkDetail(data){
+    return axios({
+      url:'/follow-api/followMetaConfigure/qryMetaConfigureDetail',
+      method:'post',
+      data:'data',
+    })
+  }
+
+
+  /**
+   * 更新名单配置状态
+   *
+   */
+  export function updateMetaConfigure(data){
+    return axios({
+      url:'/follow-api/followMetaConfigure/updateMetaConfigure',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
  * 
  * 处方订单列表

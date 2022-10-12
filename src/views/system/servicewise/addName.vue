@@ -12,22 +12,22 @@
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
-            v-model="queryParams.userName"
+            v-model="queryParams.nameDescribe"
             class="span-item-value"
             :maxLength="30"
             style="display: inline-block"
             allow-clear
-            placeholder="请输入内容 "
+            placeholder="请输入内容"
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 数据库表 :</span>
           <a-input
-            v-model="queryParams.userName"
+            v-model="queryParams.formName"
             class="span-item-value"
             :maxLength="30"
             style="display: inline-block"
             allow-clear
-            placeholder="请输入内容 "
+            placeholder="请输入内容"
           />
 
 

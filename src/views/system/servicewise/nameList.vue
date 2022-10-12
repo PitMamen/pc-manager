@@ -17,15 +17,13 @@
 
           <a-col :md="6" :sm="24">
             <a-form-item label="状态:">
-              <a-popconfirm class="switch-button">
+              <!-- <a-popconfirm class="switch-button"> -->
                 <a-switch :checked="true" />
-              </a-popconfirm>
+              <!-- </a-popconfirm> -->
               <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
             </a-form-item>
           </a-col>
-
-          
         </a-row>
       </a-form>
       <a-button style="margin-left: 95%" type="primary" @click="addName()">新增</a-button>
@@ -34,32 +32,31 @@
       ref="table"
       size="default"
       :columns="columns"
-      :date="loadData"
+      :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.checkindex.check(record)">查看</a>
+        <a-divider type="vertical" />
         <a @click="Enable(record)">停用</a>
       </span>
     </s-table>
 
     <check-index ref="checkindex" @ok="handleOk" />
-    <add-Name ref="addName" @ok="handleOk"  />
+    <add-Name ref="addName" @ok="handleOk" />
   </a-card>
 </template>
 
 
 <script>
 import { STable } from '@/components'
-import { sysPosAdd } from '@/api/modular/system/posManage'
+import { qryMetaConfigure } from '@/api/modular/system/posManage'
 import checkindex from './checkindex'
 import addName from './addName'
 export default {
   components: {
-    // STable,
-    // addForm,
-    // editForm,
+    STable,
     checkindex,
     addName,
   },
@@ -67,7 +64,9 @@ export default {
     return {
       keshiData: [],
       queryParams: {
-        userName: '',
+        databaseTableName: '',
+        pageNo: 1,
+        pageSize: 10
       },
       labelCol: {
         xs: { span: 24 },
@@ -85,23 +84,23 @@ export default {
       columns: [
         {
           title: '名单描述',
-          dataIndex: 'mdms',
+          dataIndex: 'metaName',
         },
         {
           title: '数据库表名',
-          dataIndex: 'sjkbm',
+          dataIndex: 'databaseTableName',
         },
         {
           title: '数据库字段',
-          dataIndex: 'sjkzd',
+          dataIndex: 'databaseTableFieldName',
         },
         {
           title: '推送接口',
-          dataIndex: 'tsjk',
+          dataIndex: 'pushInterfaceType',
         },
         {
           title: '状态',
-          dataIndex: 'zt',
+          dataIndex: 'pushInterfaceType',
         },
         {
           title: '操作',
@@ -110,6 +109,16 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
+
+      // 加载数据方法 必须为 Promise 对象
+      loadData: (parameter) => {
+        return qryMetaConfigure(Object.assign(parameter, this.queryParams)).then((res) => {
+          if (res.code == 0) {
+            console.log('请求结果:', res.message)
+          }
+          return res.data
+        })
+      },
     }
   },
   methods: {
@@ -131,10 +140,13 @@ export default {
     /**
      * 新增
      */
-     addName(){
+    addName() {
       this.$refs.addName.add()
-     },
+    },
 
+    handleOk() {
+      this.$refs.table.refresh()
+    },
 
     // addPlan() {
     //   this.$message.info('clicked')
