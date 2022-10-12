@@ -52,27 +52,6 @@
     <div class="div-health-plan">
       <div class="div-plan-item" v-for="(item, index) in planData.templateTask" :key="index">
         <span class="span-item-name"><span style="color: red">*</span> 计划时间 :</span>
-        <!-- <a-select
-          v-show="false"
-          v-model="planData.templateTask[index].timeCount"
-          allow-clear
-          placeholder="请选择计划时间"
-        >
-          <a-select-option v-for="(itemCount, indexCount) in timeCountData" :key="indexCount" :value="itemCount.code">{{
-            itemCount.value
-          }}</a-select-option>
-        </a-select> -->
-
-        <!-- <a-select v-show="false" v-model="planData.templateTask[index].timeUnit" allow-clear placeholder="">
-          <a-select-option
-            v-for="(itemTimeUnit, timeUnitIndex) in timeUnitData"
-            :key="timeUnitIndex"
-            :value="itemTimeUnit.code"
-            >{{ itemTimeUnit.value }}</a-select-option
-          >
-        </a-select>
-        <span v-show="false" class="span-des">后</span> -->
-
         <a-input
           style="width: 12.5%; margin-left: 5%"
           type="number"
@@ -264,7 +243,7 @@ export default {
       this.planData.templateTask[index].templateTaskContent.splice(indexChild, 1)
     },
 
-    //Knowledge 健康宣教;Quest 健康问卷;Remind 文字提醒;Check 检查;Exam 检验
+    //Knowledge 健康宣教;Quest 健康问卷;Remind 文字提醒;Check 检查;Exam 检验 ;Rdiagnosis 复诊提醒 ;Ddiagnosis 用药提醒
     //index为计划任务的位置
     handleOk(index, value) {
       //选择类型后，添加条目
@@ -287,6 +266,12 @@ export default {
           break
         case 'Exam':
           this.$refs.addJianYan.add(index)
+          break
+        case 'Rdiagnosis':
+          this.handleRdiagnosis(index, value.remindContent)
+          break
+        case 'Ddiagnosis':
+          this.handleDdiagnosis(index, value.remindContent)
           break
       }
     },
@@ -334,6 +319,32 @@ export default {
         taskDescribe: remindContent,
         contentDetail: {
           //文字提醒
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    //复诊提醒
+    handleRdiagnosis(index, remindContent) {
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Rdiagnosis', //类型
+        taskTypeName: '复诊提醒',
+        taskDescribe: remindContent,
+        contentDetail: {
+          remindContent: remindContent,
+          detailName: remindContent,
+        },
+      })
+    },
+
+    //用药提醒
+    handleDdiagnosis(index, remindContent) {
+      this.planData.templateTask[index].templateTaskContent.push({
+        taskType: 'Ddiagnosis', //类型
+        taskTypeName: '用药提醒',
+        taskDescribe: remindContent,
+        contentDetail: {
           remindContent: remindContent,
           detailName: remindContent,
         },

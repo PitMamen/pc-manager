@@ -33,7 +33,7 @@ export function login (parameter) {
  */
 export function logout (parameter) {
   return axios({
-    url: '/logout',
+    url: '/account-api/logout',
     method: 'get',
     params: parameter
   })
@@ -48,6 +48,17 @@ export function logout (parameter) {
 export function getLoginUser (parameter) {
   return axios({
     url: '/account-api/getLoginUser',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 切换角色
+ */
+ export function changeLoginUserRole(parameter) {
+  return axios({
+    url: '/account-api/changeLoginUserRole',
     method: 'get',
     params: parameter
   })

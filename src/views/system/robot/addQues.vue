@@ -62,7 +62,7 @@
 
 <script type="text/javascript">
 import { saveSysKnowledge, qryCodeValue } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 
 import E from 'wangeditor'
@@ -186,6 +186,11 @@ export default {
       'undo',
       'redo',
     ]
+
+    editor.config.uploadImgHeaders = {
+      Authorization: Vue.ls.get(ACCESS_TOKEN),
+    }
+
     // 配置 server 接口地址
     editor.config.uploadFileName = 'file'
     editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'

@@ -26,12 +26,14 @@
               :alert="true"
               :rowKey="(record) => record.code"
             >
-              <span slot="action" slot-scope="text, record">
+              <span  slot="action" slot-scope="text, record">
                 <a @click="$refs.depatCode.add(record)">随访二维码</a>
                 <a-divider type="vertical" />
                 <a @click="$refs.areaPackageCode.add(record)">套餐二维码</a>
                 <a-divider type="vertical" />
                 <a @click="$refs.deptEditForm.edit(record)">编辑</a>
+                <a-divider type="vertical" />
+                <a @click="$refs.deptConfigure.edit(record)">科室配置</a>
                 <a-divider type="vertical" v-show="false" />
                 <a-popconfirm
                   v-show="false"
@@ -48,6 +50,7 @@
             <area-package-code ref="areaPackageCode" />
             <dept-add-form ref="deptAddForm" @ok="handleOkDept" />
             <dept-edit-form ref="deptEditForm" @ok="handleOkDept" />
+            <dept-configure ref="deptConfigure" @ok="handleOkDept" />
           </a-card></div
       ></a-tab-pane>
 
@@ -160,6 +163,7 @@ import diseaseEditForm from './diseaseEditForm'
 
 import areaAddForm from './areaAddForm'
 import areaEditForm from './areaEditForm'
+import deptConfigure from './deptConfigure'
 
 export default {
   components: {
@@ -173,6 +177,7 @@ export default {
     diseaseEditForm,
     areaAddForm,
     areaEditForm,
+    deptConfigure,
   },
 
   data() {
@@ -194,7 +199,7 @@ export default {
         },
         {
           title: '操作',
-          width: '250px',
+          width: '370px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

@@ -195,6 +195,20 @@ export default {
                   'detailName',
                   this.planData.templateTask[i].templateTaskContent[j].contentDetail.examType
                 )
+              } else if (taskType == 'Rdiagnosis') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '复诊提醒')
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
+                )
+              } else if (taskType == 'Ddiagnosis') {
+                this.$set(this.planData.templateTask[i].templateTaskContent[j], 'taskTypeName', '用药提醒')
+                this.$set(
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail,
+                  'detailName',
+                  this.planData.templateTask[i].templateTaskContent[j].contentDetail.remindContent
+                )
               }
             }
           }
