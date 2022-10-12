@@ -18,7 +18,7 @@
           <a-col :md="6" :sm="24">
             <a-form-item label="状态:">
               <!-- <a-popconfirm class="switch-button"> -->
-                <a-switch :checked="true" />
+                <a-switch :checked="isOpen" @click="goOpen"/>
               <!-- </a-popconfirm> -->
               <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
               <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
@@ -62,6 +62,7 @@ export default {
   },
   data() {
     return {
+      isOpen:false,
       keshiData: [],
       queryParams: {
         databaseTableName: '',
@@ -182,6 +183,11 @@ export default {
     handleCancel() {
       this.form.resetFields()
       this.visible = false
+    },
+
+    goOpen() {
+      this.isOpen = !this.isOpen
+      // this.uploadData.goodsInfo.isOnline = this.outIsOnline
     },
   },
 }
