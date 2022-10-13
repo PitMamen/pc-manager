@@ -45,21 +45,20 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.checkindex.check(record)">修改</a>
+        <a >修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">停用</a>
       </span>
     </s-table>
 
-    <check-index ref="checkindex" @ok="handleOk" />
-    <add-Name ref="addName" @ok="handleOk" />
+
   </a-card>
 </template>
 
 
 <script>
 import { STable } from '@/components'
-import { qryMetaConfigure ,  getDeptsPersonal,getDepts} from '@/api/modular/system/posManage'
+import { qryMetaConfigure ,  getDeptsPersonal,getDepts,qryFollowPlan} from '@/api/modular/system/posManage'
 import checkindex from './checkindex'
 import addName from './addName'
 export default {
@@ -94,15 +93,15 @@ export default {
       columns: [
         {
           title: '方案名称',
-          dataIndex: 'metaName',
+          dataIndex: 'planName',
         },
         {
-          title: '指定时间',
-          dataIndex: 'databaseTableName',
+          title: '制定时间',
+          dataIndex: 'createdTime',
         },
         {
           title: '制定人员',
-          dataIndex: 'databaseTableFieldName',
+          dataIndex: 'remark',
         },
         {
           title: '执行科室',
@@ -110,15 +109,15 @@ export default {
         },
         {
           title: '随访名单',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'pushInterfaceTyp2e',
         },
         {
           title: '随访类型',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'pushInterfaceT3ype',
         },
         {
           title: '状态',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'pushInterface4Type',
         },
         {
           title: '操作',
@@ -130,7 +129,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryMetaConfigure(Object.assign(parameter, this.queryParams)).then((res) => {
+        return qryFollowPlan(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             console.log('请求结果:', res.message)
           }

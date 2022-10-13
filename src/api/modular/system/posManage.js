@@ -1498,18 +1498,71 @@ export function getTemplateRuleList(data) {
       data:data,
     })
   }
+ /**
+  * 随访方案列表分页查询
+  */
+  export function qryFollowPlan(data){
+    return axios({
+      url:'/follow-api/follow/plan/qryFollowPlan',
+      method:'post',
+      data:data,
+    })
+  }
 
+ /**
+  * 获取公众号列表接口
+  */
+  export function getWxConfigureList(data){
+    return axios({
+      url:'/follow-api/wxConfigure/getWxConfigureList',
+      method:'post',
+      data:data,
+    })
+  }
 
+ /**
+  * 获取公众号模板消息列表接口
+  */
+  export function getTemplateWxMsg(data){
+    return axios({
+      url:'/follow-api/wxConfigure/getTemplateWxMsg',
+      method:'post',
+      data:data,
+    })
+  }
 
+ /**
+  * 查询名单配置详情数据
+  */
+  export function qryMetaConfigureDetail(data){
+    return axios({
+      url:'/follow-api/followMetaConfigure/qryMetaConfigureDetail',
+      method:'post',
+      data:data,
+    })
+  }
 
+ /**
+  * 添加微信模板接口
+  */
+  export function addWxTemplate(data){
+    return axios({
+      url:'/follow-api/wxTemplate/addWxTemplate',
+      method:'post',
+      data:data,
+    })
+  }
 
-
-
-
-
-
-
-
+ /**
+  * 获取微信模板详情
+  */
+  export function getWxTemplateById(id){
+    return axios({
+      url:'/follow-api/wxTemplate/getWxTemplateById/'+id,
+      method:'post',
+    
+    })
+  }
 
 
 
