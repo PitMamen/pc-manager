@@ -1482,7 +1482,7 @@ export function getTemplateRuleList(data) {
     return axios({
       url:'/follow-api/followMetaConfigure/qryMetaConfigureDetail',
       method:'post',
-      data:'data',
+      data:data,
     })
   }
 
@@ -1494,6 +1494,30 @@ export function getTemplateRuleList(data) {
   export function updateMetaConfigure(data){
     return axios({
       url:'/follow-api/followMetaConfigure/updateMetaConfigure',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+
+  /**
+   * 获取微信模板分页列表
+   */
+  export function getWxTemplateList(data){
+    return axios({
+      url:'/follow-api/wxTemplate/getWxTemplateList',
+      method:'post',
+      data:data,
+    })
+  }
+
+  /**
+   * 微信模板 启用 禁用
+   */
+  export function changeStatusWxTemplate(data){
+    return axios({
+      url:'/follow-api/wxTemplate/changeStatusWxTemplate',
       method:'post',
       data:data,
     })

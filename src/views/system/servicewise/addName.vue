@@ -3,16 +3,16 @@
     :title="title"
     :width="1000"
     :visible="visible"
-    :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
+    :confirmLoading="false"
   >
-    <a-card :bordered="false" class="card-top-pac" >
-      <div class="table-page-search-wrapper" style="margin-top:-5%" >
+    <a-card :bordered="false" class="card-top-pac">
+      <div class="table-page-search-wrapper" style="margin-top: -5%">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
-            v-model="queryParams.nameDescribe"
+            v-model="queryParam.metaName"
             class="span-item-value"
             :maxLength="30"
             style="display: inline-block"
@@ -22,43 +22,41 @@
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 数据库表 :</span>
           <a-input
-            v-model="queryParams.formName"
+            v-model="databaseTableName"
             class="span-item-value"
             :maxLength="30"
             style="display: inline-block"
+            @blur="focus()"
             allow-clear
-            placeholder="请输入内容"
           />
 
-
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
-            <a-popconfirm class="switch-button" style="margin-left:1%">
-              <a-switch :checked="true" />
-            </a-popconfirm>
+          <a-switch :checked="isOpen" @click="goOpen" />
         </div>
       </div>
-      <s-table
+      <a-table
         ref="table"
         size="default"
+        :data-source="loadData"
         :columns="columns"
-        :data="loadData"
         :alert="true"
         :rowKey="(record) => record.code"
       >
-        <!-- <span slot="action" slot-scope="text, record"> -->
-        <!-- <a @click="$refs.addForm.check(record)">查看</a> -->
-        <!-- <a @click="Enable(record)">停用</a> -->
-        <!-- </span> -->
-      </s-table>
+        <span slot="show" slot-scope="text, record">
+          <a-checkbox v-model="record.show" @change="shwoChange(record)"></a-checkbox>
+        </span>
 
-      <!-- <add-form ref="addForm" @ok="handleOk" /> -->
+        <span slot="index" slot-scope="text, record">
+          <a-checkbox v-model="record.wysy" @change="isOnlyIndex(record)"></a-checkbox>
+        </span>
+      </a-table>
     </a-card>
   </a-modal>
 </template>
 
 
 <script>
-import { sysPosAdd } from '@/api/modular/system/posManage'
+import { checkDetail, saveMetaConfigure } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -66,10 +64,13 @@ export default {
   },
   data() {
     return {
-      keshiData: [],
-      title: '新增名单',
-      queryParams: {
-        userName: '',
+      loadData: [],
+      isOpen: false,
+      metaName: '',
+      databaseTableName: '',
+      queryParam:{
+        databaseTableName:"",
+        metaName:""
       },
       labelCol: {
         xs: { span: 24 },
@@ -79,10 +80,10 @@ export default {
         xs: { span: 24 },
         sm: { span: 15 },
       },
-
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
+      title: '新增名单',
 
       // 表头
       columns: [
@@ -92,7 +93,7 @@ export default {
         },
         {
           title: '字段描述',
-          dataIndex: 'zdms',
+          dataIndex: 'fieldComment',
         },
         {
           title: '字段类型',
@@ -100,11 +101,11 @@ export default {
         },
         {
           title: '字段大小',
-          dataIndex: 'zddx',
+          dataIndex: 'fieldLength',
         },
         {
           title: '默认值',
-          dataIndex: 'mrz',
+          dataIndex: 'fieldDefaultValue',
         },
         {
           title: '档案字段',
@@ -112,11 +113,14 @@ export default {
         },
         {
           title: '显示',
-          dataIndex: 'xs',
+          dataIndex: 'show',
+          scopedSlots: { customRender: 'show' },
         },
+
         {
           title: '唯一索引',
-          dataIndex: 'wysy',
+          dataIndex: 'index',
+          scopedSlots: { customRender: 'index' },
         },
       ],
     }
@@ -125,50 +129,93 @@ export default {
     //初始化方法
     add() {
       this.visible = true
-      console.log('哈哈:ddddd')
     },
 
-    /**
-     * 重置
-     */
-    reset() {},
+    //失去焦点 查询
+    focus() {
+      var queryParamData = {
+        databaseTableName: this.databaseTableName
+        // metaName: this.metaName,
+      }
+      this.quryCheckDetail(queryParamData)
+    },
+
+    //根据输入的表名查询 数据
+    quryCheckDetail(queryParamData) {
+      console.log('请求参数：', queryParamData)
+      checkDetail(queryParamData).then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+          var dataItem = res.data[0]
+          dataItem.detail.forEach((item, index) => {
+            this.$set(item, 'zdbm', item.tableField)
+            this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
+            this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
+            this.$set(item, 'show', item.showStatus.value == 1 ? true : false)
+            this.$set(item, 'wysy', item.uniqueIndexStatus.value == 1 ? true : false)
+          })
+          // return dataItem.detail
+          this.loadData = dataItem.detail
+        }
+
+        return []
+      })
+    },
+
+    //保存名单
+    saveMetaConfigure() {
+      console.log("新增请求参数：",this.queryParam)
+      saveMetaConfigure(this.queryParam).then((res) => {
+        if (res.success) {
+          console.log("新增成功了没")
+          // this.$emit('ok')
+        } else {
+          this.$message.error('新增失败：' + res.message)
+        }
+      })
+    },
+
+    //
+    shwoChange(record) {
+      if (record.showStatus.value == 1) {
+        this.isShow = true
+      } else {
+        this.isShow = false
+      }
+    },
+
+    handleCancel() {
+      this.form.resetFields()
+      this.visible = false
+    },
+
+    //确定 保存
+    handleSubmit() {
+      this.saveMetaConfigure()
+
+    },
+
+    isOnlyIndex(record) {
+      if (record.uniqueIndexStatus.value == 1) {
+        this.onlyIndex = true
+      } else {
+        this.onlyIndex = false
+      }
+    },
+
+    goOpen() {
+      this.isOpen = !this.isOpen
+      if (this.isOpen) {
+        this.queryParams.status = 1
+      } else {
+        this.queryParams.status = 2
+      }
+    },
 
     /**
      * 启用/停用
      */
     Enable() {},
 
-    addPlan() {
-      this.$message.info('clicked')
-    },
-
-    handleSubmit() {
-      const {
-        form: { validateFields },
-      } = this
-      this.confirmLoading = true
-      validateFields((errors, values) => {
-        if (!errors) {
-          sysPosAdd(values)
-            .then((res) => {
-              if (res.success) {
-                this.$message.success('新增成功')
-                this.visible = false
-                this.confirmLoading = false
-                this.$emit('ok', values)
-                this.form.resetFields()
-              } else {
-                this.$message.error('新增失败：' + res.message)
-              }
-            })
-            .finally((res) => {
-              this.confirmLoading = false
-            })
-        } else {
-          this.confirmLoading = false
-        }
-      })
-    },
     handleCancel() {
       this.form.resetFields()
       this.visible = false
@@ -176,64 +223,3 @@ export default {
   },
 }
 </script>
-
-
-<style lang="less">
-.div-divider {
-  margin-top: 2%;
-  width: 100%;
-  background-color: #e6e6e6;
-  height: 1px;
-}
-
-.div-line-wrap {
-  width: 100%;
-  margin-top: 3%;
-  overflow: hidden;
-
-  .span-item-name {
-    display: inline-block;
-    color: #000;
-    font-size: 14px;
-    text-align: left;
-  }
-  .span-item-value {
-    width: 20%;
-    color: #333;
-    text-align: left;
-    padding-left: 20px;
-    font-size: 14px;
-    display: inline-block;
-  }
-
-  .ant-select {
-    width: 18.5% !important;
-    margin-left: 1.5% !important;
-  }
-
-  // global-search ant-select ant-select-combobox
-  .global-search.ant-select {
-    width: 90% !important;
-  }
-}
-
-.card-top-pac {
-  margin-top: -1%;
-    overflow: hidden;
-    width: 100%;
-
-    .table-operator {
-      margin-bottom: 18px;
-    }
-    button {
-      margin-right: 8px;
-    }
-
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-    }
-  }
-</style>
