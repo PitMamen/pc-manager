@@ -15,23 +15,23 @@
             v-model="queryParam.metaName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block"
+            style="display: inline-block;width: 20%;margin-left: 2%;"
             allow-clear
             placeholder="请输入内容"
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 数据库表 :</span>
           <a-input
-            v-model="databaseTableName"
+            v-model="queryParam.databaseTableName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block"
+            style="display: inline-block;width: 20%;margin-left: 2%;"
             @blur="focus()"
             allow-clear
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
-          <a-switch :checked="isOpen" @click="goOpen" />
+          <a-switch :checked="isOpen" @click="goOpen" style="margin-left: 1%;" />
         </div>
       </div>
       <a-table
@@ -66,8 +66,6 @@ export default {
     return {
       loadData: [],
       isOpen: false,
-      metaName: '',
-      databaseTableName: '',
       queryParam:{
         databaseTableName:"",
         metaName:""
@@ -134,8 +132,7 @@ export default {
     //失去焦点 查询
     focus() {
       var queryParamData = {
-        databaseTableName: this.databaseTableName
-        // metaName: this.metaName,
+        databaseTableName: this.queryParam.databaseTableName
       }
       this.quryCheckDetail(queryParamData)
     },
@@ -166,8 +163,8 @@ export default {
       console.log("新增请求参数：",this.queryParam)
       saveMetaConfigure(this.queryParam).then((res) => {
         if (res.success) {
-          console.log("新增成功了没")
-          // this.$emit('ok')
+          console.log("新增成功")
+          this.$emit('ok')
         } else {
           this.$message.error('新增失败：' + res.message)
         }

@@ -13,7 +13,7 @@
             v-model="metaName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block"
+            style="display: inline-block;width: 20%;margin-left: 2%;"
             allow-clear
             placeholder="请输入内容"
             @blur="focus(record)"
@@ -25,13 +25,13 @@
             class="span-item-value"
             disabled
             :maxLength="30"
-            style="display: inline-block"
+            style="display: inline-block;width: 20%;margin-left: 2%;"
             allow-clear
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
-          <a-switch :checked="isOpen" @click="goOpen" />
+          <a-switch :checked="isOpen" @click="goOpen" style="margin-left: 1%;"/>
           <!-- </a-popconfirm> -->
         </div>
       </div>
