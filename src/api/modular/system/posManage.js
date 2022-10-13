@@ -1791,12 +1791,95 @@ export function dateFields(data) {
     params: data,
   })
 }
+
 /**
  * /follow/dict/operationTypes 操作类型列表：>大于、<小于、=精准匹配、like模糊匹配、in包含
  */
 export function operationTypes(data) {
   return axios({
     url: '/follow-api/follow/dict/operationTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/messageTypes 消息类别列表: 1:电话回访2:微信消息3:短信消息
+ */
+export function messageTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/messageTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/messageContentTypes 推送模板类型：1:问卷2:文章3:短信模板4:微信模板
+ */
+export function messageContentTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/messageContentTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/taskTypes 任务类别列表：1:问卷收集2:健康宣教3:消息提醒
+ */
+export function taskTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/taskTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+/follow/dict/taskExecTypes 执行周期列表: 1:临时执行2:长期执行
+ */
+export function taskExecTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/taskExecTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+/follow/dict/repeatTimeUnitTypes 重复周期列表: 1:间隔2:每周第3:每月第4:每年第
+ */
+export function repeatTimeUnitTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/repeatTimeUnitTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+/follow/dict/timeUnitTypes 时间单位列表: 1:天2:周3:月
+ */
+export function timeUnitTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/timeUnitTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+
+/follow/dict/personnelAssignmentTypes 人员分配方案类型;1:系统自动执行2:每次随机分配3:首次随机分配4:指定人员
+ */
+export function personnelAssignmentTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/personnelAssignmentTypes',
     method: 'get',
     params: data,
   })
