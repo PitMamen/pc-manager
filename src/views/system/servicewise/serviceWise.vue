@@ -6,7 +6,8 @@
       </a-tab-pane>
 
       <a-tab-pane key="2" tab="微信模板" force-render>
-        <a-button type="primary" @click="addwxtemplate">新增微信模板</a-button>
+        <wx-model ref="wxModel" @ok="handleOk" />
+        <!-- <a-button type="primary" @click="addwxtemplate">新增微信模板</a-button> -->
       </a-tab-pane>
 
       <a-tab-pane key="3" tab="短信模板">
@@ -36,6 +37,7 @@ import {
 
 import serviceList from './serviceList'
 import nameList from './nameList'
+import wxModel from './wxModel'
 
 
 
@@ -46,6 +48,7 @@ export default {
     // editForm,
     serviceList,
     nameList,
+    wxModel,
     // addFormDispatch,
     // editFormDispatch,
 

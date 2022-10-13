@@ -23,17 +23,22 @@
         <div class="div-pro-line">
           <span class="span-item-name"><span style="color: red">*</span> 随访类型 :</span>
           <a-select v-model="projectData.type" allow-clear placeholder="请选择随访类型">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"><span style="color: red">*</span> 来源名单 :</span>
-          <a-select v-model="projectData.type" allow-clear placeholder="请选择来源名单">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select
+            v-model="projectData.metaConfigureId"
+            @select="onSourceSelect"
+            allow-clear
+            placeholder="请选择来源名单"
+          >
+            <a-select-option v-for="(item, index) in sourceData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
         </div>
@@ -43,8 +48,8 @@
         <div class="div-pro-line">
           <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
           <a-select v-model="projectData.type" allow-clear placeholder="请选择执行科室">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+            <a-select-option v-for="(item, index) in keshiData" @select="onDeptSelect" :key="index" :value="item.departmentId">{{
+              item.departmentName
             }}</a-select-option>
           </a-select>
         </div>
@@ -71,16 +76,21 @@
 
       <div class="div-rules">
         <div class="div-middle-content" v-for="(item, index) in projectData.ruleList" :key="index" :value="item.typeId">
-          <!-- <span class="span-item-name"><span style="color: red">*</span> 随访类型 :</span> -->
-          <a-select class="mid-select-one" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select
+            class="mid-select-one"
+            @focus="getFocus"
+            v-model="projectData.type"
+            allow-clear
+            placeholder="请选择字段"
+          >
+            <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
 
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择操作">
+            <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
 
@@ -95,12 +105,12 @@
 
           <div style="margin-left: 1%">
             <!-- <a-icon type="delete" theme="filled" style="color: #1890ff" /> -->
-            <a-button class="span-add-item" type="primary" @click="delRule()">删除</a-button>
+            <a-button class="span-add-item" type="primary" @click="delRule(index, item)">删除</a-button>
           </div>
         </div>
       </div>
 
-      <a-button style="margin-top: 1%; margin-left: 2%" type="primary" @click="delRule()">新增</a-button>
+      <a-button style="margin-top: 1%; margin-left: 2%" type="primary" @click="addRule()">新增</a-button>
     </div>
 
     <div class="div-pro-mission">
@@ -110,48 +120,75 @@
       </div>
 
       <!-- <div class="div-mission-content"> -->
-      <div class="div-mission-content" v-for="(item, index) in projectData.ruleList" :key="index" :value="item.typeId">
+      <div class="div-mission-content" v-for="(item, index) in projectData.missions" :key="index" :value="item.typeId">
         <div class="mission-top">
-          <a-select class="mid-select-one" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select class="mid-select-one" v-model="projectData.type" allow-clear placeholder="请选择随访方式">
+            <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
 
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择模版">
+            <a-select-option v-for="(item, index) in msgContentData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select class="mid-select-two" v-model="projectData.type" disabled allow-clear placeholder="任务类型">
+            <a-select-option v-for="(item, index) in taskTypeData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择执行周期">
+            <a-select-option v-for="(item, index) in taskExecData" :key="index" :value="item.value">{{
+              item.description
+            }}</a-select-option>
+          </a-select>
+          <a-select
+            class="mid-select-two"
+            @focus="getFocus"
+            v-model="projectData.type"
+            allow-clear
+            placeholder="请选择日期类别"
+          >
+            <a-select-option v-for="(item, index) in dateFieldsData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
           <span class="span-titl" style="margin-left: 1%">后</span>
-          <a-input
+
+          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择重复周期">
+            <a-select-option v-for="(item, index) in repeatTimeUnitTypesData" :key="index" :value="item.value">{{
+              item.description
+            }}</a-select-option>
+          </a-select>
+
+          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择">
+            <a-select-option v-for="(item, index) in everyData" :key="index" :value="item.value">{{
+              item.description
+            }}</a-select-option>
+          </a-select>
+
+          <a-input-number
+            style="display: inline-block; margin-left: 1%; width: 96px"
             v-model="projectData.templateName"
+            :min="0"
+            :max="10000"
             :maxLength="30"
-            style="display: inline-block; margin-left: 1%; width: 200px"
             allow-clear
-            placeholder="请输入内容"
+            placeholder="请输入数量"
           />
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
+          <a-select
+            class="mid-select-two"
+            style="width: 8% !important"
+            v-model="projectData.type"
+            allow-clear
+            placeholder="请选择单位"
+          >
+            <a-select-option v-for="(item, index) in timeUnitTypesData" :key="index" :value="item.value">{{
+              item.description
             }}</a-select-option>
           </a-select>
           <a-time-picker style="margin-left: 1%" :default-value="moment('12:08', 'HH:mm')" format="HH:mm" />
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-            <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-              item.typeName
-            }}</a-select-option>
-          </a-select>
         </div>
 
         <!-- 分割线 -->
@@ -161,51 +198,79 @@
           <div class="mission-bottom-left">
             <span class="span-titl" style="margin-left: 1%">人员分配方案</span>
             <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择字段">
-              <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.typeId">{{
-                item.typeName
+              <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
+                item.description
               }}</a-select-option>
             </a-select>
+            <a-checkbox checked disabled style="margin-left: 1%" @change="onChange" />
             <span class="span-titl" style="margin-left: 1%">电话跟进</span>
-            <span class="span-titl" style="margin-left: 1%">执行人员:</span>
-            <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="delRule()"
+            <span class="span-titl" style="margin-left: 0.5%">执行人员:</span>
+            <span class="span-titl" style="margin-left: 1%">李四、王二</span>
+            <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="addPerson(index)"
               >添加人员</a-button
             >
           </div>
 
-          <a-button style="margin-left: 2%" type="primary" @click="delRule()">刪除任务</a-button>
+          <a-button style="margin-left: 2%" type="primary" @click="delMission(index, item)">刪除任务</a-button>
         </div>
       </div>
 
-      <a-button style="margin-top: 1%; margin-left: 2%" type="primary" @click="delRule()">新增任务</a-button>
+      <a-button style="margin-top: 1%; margin-left: 2%" type="primary" @click="addMission()">新增任务</a-button>
     </div>
 
-    <div style="margin-top:3%;margin-bottom:2%;margin-right: 15%;">
-      <a-button style="margin-left: 2%; float: right" type="primary" @click="delRule()">取消</a-button>
-      <a-button style="margin-left: 2%; float: right" type="primary" @click="delRule()">提交</a-button>
+    <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
+      <!-- <a-button style="margin-left: 2%; float: right" type="primary" @click="cancel()">取消</a-button> -->
+      <a-button style="margin-left: 2%; float: right" type="primary" @click="submitData()">提交</a-button>
     </div>
 
-    <!-- <add-cha ref="addJianCha" @ok="handleJianCha" /> -->
+    <add-people ref="addPeople" @ok="handleAddPeople" />
   </div>
   <!-- </a-spin> -->
 </template>
 
 <script>
-import { getDepts } from '@/api/modular/system/posManage'
+import {
+  getDepts,
+  followTypes,
+  tables,
+  fields,
+  dateFields,
+  operationTypes,
+  messageTypes,
+  messageContentTypes,
+  taskTypes,
+  taskExecTypes,
+  repeatTimeUnitTypes,
+  timeUnitTypes,
+  personnelAssignmentTypes,
+} from '@/api/modular/system/posManage'
 import moment from 'moment'
-// import addCha from './addJianCha'
+import addPeople from './addPeople'
 
 export default {
   components: {
-    // addCha,
+    addPeople,
   },
 
   data() {
     return {
-      projectData: { ruleList: [{}, {}, {}] },
-      typeData: [
-        { typeId: 1, typeName: '关怀型随访' },
-        { typeId: 2, typeName: '慰问型随访' },
-      ],
+      projectData: { ruleList: [{}, {}, {}], missions: [{}, {}], metaConfigureId: '' },
+      typeData: [],
+      sourceData: [],
+      chooseData: [],
+      operateData: [],
+      msgData: [],
+      msgContentData: [],
+      taskTypeData: [],
+      taskExecData: [],
+      dateFieldsData: [],
+      repeatTimeUnitTypesData: [],
+      timeUnitTypesData: [],
+      assignmentTypes: [],
+      everyData: [
+        { value: '1', description: '周一' },
+        { value: '2', description: '周二' },
+      ], //每周第、每月第、每年第切换时改变的集合
       confirmLoading: false,
     }
   },
@@ -214,18 +279,131 @@ export default {
     getDepts().then((res) => {
       if (res.code == 0) {
         this.keshiData = res.data
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+        // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
+
+    this.confirmLoading = true
+    followTypes()
+      .then((res) => {
+        this.confirmLoading = false
+        if (res.code == 0) {
+          this.typeData = res.data
+        }
+      })
+      .finally((res) => {
+        this.confirmLoading = false
+      })
+
+    tables().then((res) => {
+      if (res.code == 0) {
+        this.sourceData = res.data
+      }
+    })
+    operationTypes().then((res) => {
+      if (res.code == 0) {
+        this.operateData = res.data
+      }
+    })
+
+    messageTypes().then((res) => {
+      if (res.code == 0) {
+        this.msgData = res.data
+      }
+    })
+
+    /**
+     * 接口要改，获取模版列表
+     */
+    messageContentTypes().then((res) => {
+      if (res.code == 0) {
+        this.msgContentData = res.data
+      }
+    })
+
+    taskTypes().then((res) => {
+      if (res.code == 0) {
+        this.taskTypeData = res.data
+      }
+    })
+
+    taskExecTypes().then((res) => {
+      if (res.code == 0) {
+        this.taskExecData = res.data
+      }
+    })
+    repeatTimeUnitTypes().then((res) => {
+      if (res.code == 0) {
+        this.repeatTimeUnitTypesData = res.data
+      }
+    })
+    timeUnitTypes().then((res) => {
+      if (res.code == 0) {
+        this.timeUnitTypesData = res.data
+      }
+    })
+    personnelAssignmentTypes().then((res) => {
+      if (res.code == 0) {
+        this.assignmentTypes = res.data
       }
     })
   },
 
   methods: {
     moment,
+    getFocus() {
+      if (!this.projectData.metaConfigureId) {
+        this.$message.warn('请先选择来源名单')
+        return
+      }
+    },
 
     saveProject() {},
-    delRule() {},
+    delRule(index, item) {
+      this.projectData.ruleList.splice(index, 1)
+    },
+
+    addRule() {
+      this.projectData.ruleList.push({})
+    },
+
+    addPerson(index) {
+      this.$refs.addPeople.add(index)
+    },
+
+    delMission(index, item) {
+      this.projectData.missions.splice(index, 1)
+    },
+
+    addMission() {
+      this.projectData.missions.push({})
+    },
+
+    onSourceSelect() {
+      this.fieldsOut()
+      this.dateFieldsOut()
+    },
+
+    onDeptSelect(){
+      
+    },
+
+    fieldsOut() {
+      fields({ metaConfigureId: this.projectData.metaConfigureId }).then((res) => {
+        if (res.code == 0) {
+          this.chooseData = res.data
+        }
+      })
+    },
+    dateFieldsOut() {
+      dateFields({ metaConfigureId: this.projectData.metaConfigureId }).then((res) => {
+        if (res.code == 0) {
+          this.dateFieldsData = res.data
+        }
+      })
+    },
   },
 }
 </script>
@@ -326,7 +504,7 @@ export default {
           margin-left: 1% !important;
         }
         .mid-select-two.ant-select {
-          width: 20% !important;
+          width: 25% !important;
           margin-left: 1% !important;
         }
 
@@ -354,7 +532,7 @@ export default {
         align-items: center;
 
         .mid-select-one.ant-select {
-          width: 12% !important;
+          width: 10% !important;
           margin-left: 1% !important;
         }
         .mid-select-two.ant-select {

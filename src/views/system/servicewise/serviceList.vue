@@ -58,6 +58,7 @@
 
 <script>
 import { STable } from '@/components'
+
 import { qryMetaConfigure ,  getDeptsPersonal,getDepts,qryFollowPlan} from '@/api/modular/system/posManage'
 import checkindex from './checkindex'
 import addName from './addName'
@@ -172,7 +173,8 @@ export default {
      * 新增
      */
     addName() {
-      this.$refs.addName.add()
+      // this.$refs.addName.add()
+      this.$router.push({ name: 'project_add' })
     },
 
     handleOk() {
