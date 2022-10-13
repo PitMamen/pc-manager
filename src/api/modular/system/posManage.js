@@ -313,12 +313,12 @@ export function getDoctorsNew(parameter) {
  * @returns 
  */
 
-export function getRdiagnosisList(data){
+export function getRdiagnosisList(data) {
 
   return axios({
-    url:'/health-api/revisit/deal/getRdiagnosisList',
-    method:'post',
-    data:data,
+    url: '/health-api/revisit/deal/getRdiagnosisList',
+    method: 'post',
+    data: data,
   })
 
 }
@@ -327,12 +327,12 @@ export function getRdiagnosisList(data){
 /**
  * 复诊预约
  */
- export function rdiagnosisFun(data){
+export function rdiagnosisFun(data) {
 
   return axios({
-    url:'/health-api/revisit/deal/rdiagnosisFun',
-    method:'post',
-    data:data,
+    url: '/health-api/revisit/deal/rdiagnosisFun',
+    method: 'post',
+    data: data,
   })
 
 }
@@ -340,12 +340,12 @@ export function getRdiagnosisList(data){
 /**
  * 复诊预约详情
  */
- export function getRdiagnosisForId(id){
+export function getRdiagnosisForId(id) {
 
   return axios({
-    url:'/health-api//revisit/deal/getRdiagnosisForId',
-    method:'get',
-    params:id,
+    url: '/health-api//revisit/deal/getRdiagnosisForId',
+    method: 'get',
+    params: id,
   })
 
 }
@@ -375,7 +375,7 @@ export function getDepPlans(parameter) {
 /**
  * 科室属性查询
  */
- export function getDepartmentAttr(parameter) {
+export function getDepartmentAttr(parameter) {
   return axios({
     url: '/info-api/departments/getDepartmentAttr',
     method: 'get',
@@ -387,7 +387,7 @@ export function getDepPlans(parameter) {
 /**
  * 删除科室属性
  */
- export function delDepartmentAttr(parameter) {
+export function delDepartmentAttr(parameter) {
   return axios({
     url: '/info-api/departments/delDepartmentAttr',
     method: 'post',
@@ -399,7 +399,7 @@ export function getDepPlans(parameter) {
 /**
  * 新增或修改科室属性
  */
- export function saveOrUpdateDepartmentAttr(parameter) {
+export function saveOrUpdateDepartmentAttr(parameter) {
   return axios({
     url: '/info-api/departments/saveOrUpdateDepartmentAttr',
     method: 'post',
@@ -726,7 +726,7 @@ export function getRoleList(parameter) {
 /**
  * 切换角色
  */
- export function changeRole(parameter) {
+export function changeRole(parameter) {
   return axios({
     url: '/account-api/changeLoginUserRole',
     method: 'get',
@@ -968,21 +968,21 @@ export function uploadPaiban(parameter) {
 }
 
 // 医生管理界面 查询医生列表
-export function queryDoctorList(parameter){
+export function queryDoctorList(parameter) {
   return axios({
-    url:'/account-api/accountInfo/getUsers', 
-    method:'post',
-    data:parameter
+    url: '/account-api/accountInfo/getUsers',
+    method: 'post',
+    data: parameter
   })
 }
 
 
 // 医生管理界面 修改配置接口
-export function updateRegisterTypes(parameter){
+export function updateRegisterTypes(parameter) {
   return axios({
-    url:'/account-api/accountInfo/updateRegisterTypes', 
-    method:'post',
-    data:parameter
+    url: '/account-api/accountInfo/updateRegisterTypes',
+    method: 'post',
+    data: parameter
   })
 }
 
@@ -1423,43 +1423,43 @@ export function getTemplateRuleList(data) {
   })
 }
 
-  /**
-   * 修改、保存随访计划规则
-   */
-  export function saveTemplateRule(data){
-    return axios({
-      url:'/health-api/sys/saveTemplateRule',
-      method:'post',
-      data:data,
-    })
-  }
+/**
+ * 修改、保存随访计划规则
+ */
+export function saveTemplateRule(data) {
+  return axios({
+    url: '/health-api/sys/saveTemplateRule',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-  /**
-   * 删除 随访计划 规则
-   */
+/**
+ * 删除 随访计划 规则
+ */
 
-  export function deleteTempPlanRule(data){
-    return axios({
-      url:'/health-api/sys/delTemplateRule',
-      method:'get',
-      params:data,
-    })
-  }
-
-
+export function deleteTempPlanRule(data) {
+  return axios({
+    url: '/health-api/sys/delTemplateRule',
+    method: 'get',
+    params: data,
+  })
+}
 
 
- /**
-  * 随访名单列表
-  */
-  export function qryMetaConfigure(data){
-    return axios({
-      url:'/follow-api/followMetaConfigure/qryMetaConfigure',
-      method:'post',
-      data:data,
-    })
-  }
+
+
+/**
+ * 随访名单列表
+ */
+export function qryMetaConfigure(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/qryMetaConfigure',
+    method: 'post',
+    data: data,
+  })
+}
 
 
   /**
@@ -1487,17 +1487,18 @@ export function getTemplateRuleList(data) {
   }
 
 
-  /**
-   * 更新名单配置状态
-   *
-   */
-  export function updateMetaConfigure(data){
-    return axios({
-      url:'/follow-api/followMetaConfigure/updateMetaConfigure',
-      method:'post',
-      data:data,
-    })
-  }
+
+/**
+ * 更新名单配置状态
+ *
+ */
+export function updateMetaConfigure(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/updateMetaConfigure',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
@@ -1739,9 +1740,63 @@ export function checkget(data) {
  * 
  * 聊天记录
  */
- export function queryHistoryIMRecordPage(data) {
+export function queryHistoryIMRecordPage(data) {
   return axios({
     url: '/im-api/tencentIM/queryHistoryIMRecordPage',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 随访类型列表：1:关怀型随访2:管理型随访3:科研型随访
+ */
+export function followTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/followTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 来源名单列表：门诊病人，住院病人，体检病人
+ */
+export function tables(data) {
+  return axios({
+    url: '/follow-api/follow/dict/tables',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/fields 名单过滤字段列表：科室，患者姓名，出院日期
+ */
+export function fields(data) {
+  return axios({
+    url: '/follow-api/follow/dict/fields',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/dateFields 时间过滤字段列表：科室，患者姓名，出院日期
+ */
+export function dateFields(data) {
+  return axios({
+    url: '/follow-api/follow/dict/dateFields',
+    method: 'get',
+    params: data,
+  })
+}
+/**
+ * /follow/dict/operationTypes 操作类型列表：>大于、<小于、=精准匹配、like模糊匹配、in包含
+ */
+export function operationTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/operationTypes',
     method: 'get',
     params: data,
   })
