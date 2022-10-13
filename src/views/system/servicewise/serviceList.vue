@@ -173,7 +173,8 @@ export default {
      * 新增
      */
     addName() {
-      this.$refs.addName.add()
+      // this.$refs.addName.add()
+      this.$router.push({ name: 'project_add' })
     },
 
     handleOk() {
