@@ -25,7 +25,7 @@
             class="span-item-value"
             disabled
             :maxLength="30"
-            style="display: inline-block;width: 20%;margin-left: 2%;"
+            style="display: inline-block;width: 20%;margin-left: 2%;" 
             allow-clear
           />
 

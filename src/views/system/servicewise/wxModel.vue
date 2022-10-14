@@ -166,7 +166,7 @@ export default {
      * 新增
      */
     addModel() {
-      this.$router.push({ name: 'sys_wxtemplate_add', data: null })
+      this.$router.push( {path:'./addwxtemplate'})
     },
 
     handleOk() {

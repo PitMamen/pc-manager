@@ -1577,7 +1577,16 @@ export function updateMetaConfigure(data) {
       data:data,
     })
   }
-
+ /**
+  * 修改微信模板接口
+  */
+  export function modifyWxTemplate(data){
+    return axios({
+      url:'/follow-api/wxTemplate/modifyWxTemplate',
+      method:'post',
+      data:data,
+    })
+  }
  /**
   * 获取微信模板详情
   */
@@ -1589,7 +1598,16 @@ export function updateMetaConfigure(data) {
     })
   }
 
-
+ /**
+  * 获取微信模板详情
+  */
+  export function updateFollowPlanStatus(data){
+    return axios({
+      url:'/follow-api/follow/plan/updateFollowPlanStatus',
+      method:'post',
+      data:data,
+    })
+  }
 
 
 

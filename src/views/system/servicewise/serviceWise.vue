@@ -74,7 +74,7 @@ export default {
   methods: {
 
     addwxtemplate (){
-      this.$router.push( {path:'./addwxtemplate'})
+      this.$router.push( {path:'./addwxtemplate?id=10'})
     },
 
     callback(){},
