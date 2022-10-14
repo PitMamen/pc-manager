@@ -18,7 +18,6 @@
 
           <a-col :md="6" :sm="24">
             <!-- <a-form-item label="状态:"> -->
-            <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
             <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
             <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
             <!-- </a-form-item> -->
@@ -36,7 +35,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.checkIndex.check(record)">修改</a>
+        <a @click="addModel(record.id)">修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
@@ -61,7 +60,6 @@ export default {
   },
   data() {
     return {
-      isOpen: true,
       datas: [],
       keshiData: [],
       queryParams: {
@@ -165,8 +163,8 @@ export default {
     /**
      * 新增
      */
-    addModel() {
-      this.$router.push({ name: 'sys_wxtemplate_add', data: null })
+    addModel(id) {
+      this.$router.push({ name: 'sys_wxtemplate_add', data: id })
     },
 
     handleOk() {
@@ -178,15 +176,6 @@ export default {
       this.visible = false
     },
 
-    // goOpen() {
-    //   this.isOpen = !this.isOpen
-    //   if (this.isOpen) {
-    //     this.queryParams.templateStatus = 1
-    //   } else {
-    //     this.queryParams.templateStatus = 2
-    //   }
-    //   this.handleOk()
-    // },
   },
 }
 </script>

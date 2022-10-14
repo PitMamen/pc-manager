@@ -1,19 +1,21 @@
 <template>
-  <a-modal :title="title" 
-  :width="1000" 
-  :visible="visible" 
-   @ok="handleSubmit"
+  <a-modal
+    :title="title"
+    :width="1500"
+    :visible="visible"
+    @ok="handleSubmit"
     @cancel="handleCancel"
-     :confirmLoading="false">
+    :confirmLoading="false"
+  >
     <a-card :bordered="false" class="card-top-pac">
-      <div class="table-page-wrapper" style="margin-top: -5%">
+      <div class="table-page-wrapper" style="margin-top: -2%">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
             v-model="metaName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block;width: 20%;margin-left: 2%;"
+            style="display: inline-block; width: 20%; margin-left: 2%"
             allow-clear
             placeholder="请输入内容"
             @blur="focus(record)"
@@ -25,13 +27,13 @@
             class="span-item-value"
             disabled
             :maxLength="30"
-            style="display: inline-block;width: 20%;margin-left: 2%;"
+            style="display: inline-block; width: 20%; margin-left: 2%"
             allow-clear
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
-          <a-switch :checked="isOpen" @click="goOpen" style="margin-left: 1%;"/>
+          <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->
         </div>
       </div>
@@ -43,19 +45,40 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
+        <span slot="show" slot-scope="text, record">
+          <a-checkbox v-model="record.show" @change="shwoChange(record)"></a-checkbox>
+        </span>
 
+        <span slot="index" slot-scope="text, record">
+          <a-checkbox v-model="record.wysy" @change="isOnlyIndex(record)"></a-checkbox>
+        </span>
 
-      <span slot="show" slot-scope="text, record">
-        <a-checkbox v-model="record.show" @change="shwoChange(record)" ></a-checkbox>
-      </span>
+        <span slot="eleDes" slot-scope="text, record">
+          <a-input
+            v-model="record.fieldComment"
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            class="span-item-value"
+            :maxLength="30"
+            style="display: inline-block; width: 65%; margin-left: 2%"
+            allow-clear
+            @blur="changeDes(record)"
+          />
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldComment }}</span>
+        </span>
 
-      <span slot="index" slot-scope="text, record">
-        <a-checkbox v-model="record.wysy" @change="isOnlyIndex(record)" ></a-checkbox>
-      </span>
-      
-
-
-
+        <span slot="fileDes" slot-scope="text, record">
+          <a-select
+            style="width: 60%"
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            v-model="record.fieldArchives.value"
+            @select="selectDes(record)"
+          >
+            <a-select-option v-for="(item, index) in dazdList" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldArchives }}</span>
+        </span>
       </a-table>
     </a-card>
   </a-modal>
@@ -63,7 +86,7 @@
 
 
 <script>
-import { checkDetail,updateMetaConfigure } from '@/api/modular/system/posManage'
+import { checkDetail, updateMetaConfigure, saveMetaConfigure } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -72,9 +95,10 @@ export default {
   data() {
     return {
       loadData: [],
+      id: '', //表名ID
       isOpen: false,
       record: {},
-      metaName:'',
+      metaName: '',
       queryParams: {
         databaseTableName: '',
         metaName: '',
@@ -88,48 +112,63 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
+      detailList: [],
       confirmLoading: false,
       form: this.$form.createForm(this),
       title: '编辑名单',
+      dazdList: [
+        { code: 1, value: '紧急联系人' },
+        { code: 2, value: '紧急电话' },
+        { code: 3, value: '微信OpenID' },
+      ],
 
       // 表头
       columns: [
         {
           title: '字段编码',
           dataIndex: 'zdbm',
+          width: 100,
         },
         {
           title: '字段描述',
-          dataIndex: 'fieldComment',
+          // dataIndex: 'fieldComment',
+          scopedSlots: { customRender: 'eleDes' },
+          width: 250,
         },
         {
           title: '字段类型',
           dataIndex: 'zdlx',
+          width: 100,
         },
         {
           title: '字段大小',
           dataIndex: 'fieldLength',
+          width: 100,
         },
         {
           title: '默认值',
           dataIndex: 'fieldDefaultValue',
+          width: 100,
         },
         {
           title: '档案字段',
-          dataIndex: 'dazd',
+          // dataIndex: 'dazd',
+          scopedSlots: { customRender: 'fileDes' },
+          width: 200,
         },
         {
           title: '显示',
           dataIndex: 'show',
           scopedSlots: { customRender: 'show' },
+          width: 100,
         },
 
         {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
+          width: 100,
         },
-      
       ],
     }
   },
@@ -139,6 +178,8 @@ export default {
       this.visible = true
       this.record = record
       this.metaName = record.metaName
+      this.id = record.id
+      this.isOpen = record.status.value == 1
       this.queryParams.databaseTableName = record.databaseTableName
       // this.queryParams.metaName = record.metaName
 
@@ -149,11 +190,12 @@ export default {
           dataItem.detail.forEach((item, index) => {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
-            this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
-            this.$set(item, 'show', item.showStatus.value == 1 ? true : false)
-            this.$set(item, 'wysy', item.uniqueIndexStatus.value == 1 ? true : false)
+            // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
+            this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
+            this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
           })
           // return dataItem.detail
+          this.detailList = dataItem.detail
           this.loadData = dataItem.detail
         }
 
@@ -161,84 +203,147 @@ export default {
       })
     },
 
-
     //失去焦点
-    focus(record){
+    focus(record) {
       var queryParamData = {
-        id:record.id,
-        metaName:this.metaName
+        id: record.id,
+        metaName: this.metaName,
       }
       this.updateMetaConfigure(queryParamData)
     },
 
+    //修改字段描述
+    changeDes(record) {
+      var queryParam = {
+        id: this.id,
+        detail: [
+          {
+            id: record.id,
+            fieldComment: record.fieldComment,
+          },
+        ],
+      }
+      console.log('sss:', queryParam)
+      // this.saveMetaConfigure(queryParam)
+    },
+
+    /**
+     * 选择档案字段
+     * @param
+     */
+    selectDes(record) {
+      // var queryParam = {
+      //   id: this.id,
+      //   detail: [
+      //     {
+      //       id: record.id,
+      //       fieldArchives: record.fieldArchives,
+      //     },
+      //   ],
+      // }
+      // console.log('sss:', queryParam)
+      // this.saveMetaConfigure(queryParam)
+    },
 
     //更新名单
-    updateMetaConfigure(queryParamData){
-
-      updateMetaConfigure(queryParamData).then((res) => {
-        if (res.success) {
-          this.$emit('ok')
-        } else {
-          this.$message.error('编辑失败：' + res.message)
-        }
-      })
+    updateMetaConfigure(queryParamData) {
+      this.confirmLoading = true
+      updateMetaConfigure(queryParamData)
+        .then((res) => {
+          if (res.success) {
+            this.$emit('ok')
+          } else {
+            this.$message.error('编辑失败：' + res.message)
+          }
+          this.confirmLoading = false
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
+    //保存名单
+    saveMetaConfigure(queryParam) {
+      this.confirmLoading = true
+      saveMetaConfigure(queryParam)
+        .then((res) => {
+          if (res.success) {
+            console.log('新增成功')
+            this.visible = false
+            this.$emit('ok')
+          } else {
+            this.$message.error('新增失败：' + res.message)
+          }
+          this.confirmLoading = false
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
-    //
-    shwoChange(record){
-      if(record.showStatus.value==1){
+    // 是否显示
+    shwoChange(record) {
+      if (record.showStatus.value == 1) {
         this.isShow = true
-      }else{
+      } else {
         this.isShow = false
       }
-
     },
 
-
-    handleCancel() {
-      this.form.resetFields()
-      this.visible = false
-    },
-
-
-
-    isOnlyIndex(record){
-      if(record.uniqueIndexStatus.value==1){
+    //是否 唯一索引
+    isOnlyIndex(record) {
+      if (record.uniqueIndexStatus.value == 1) {
         this.onlyIndex = true
-      }else{
+      } else {
         this.onlyIndex = false
       }
-
     },
 
-
-
-    goOpen() {
+    /**
+     *
+     * 状态开关  这里每操作一次 调用一次接口
+     */
+     Enable() {
       this.isOpen = !this.isOpen
       if (this.isOpen) {
         this.queryParams.status = 1
       } else {
         this.queryParams.status = 2
       }
+      var queryParamData = {
+        id: this.id,
+        status: this.isOpen ? 1 : 2,
+      }
+      this.updateMetaConfigure(queryParamData)
     },
 
-    /**
-     * 重置
-     */
-    reset() {},
-
-    /**
-     * 启用/停用
-     */
-    Enable() {},
 
     handleCancel() {
       this.form.resetFields()
       this.visible = false
     },
 
-    handleSubmit(){
+    /**
+     * 提交
+     */
+    handleSubmit() {
+      let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
+      detailListTemp.forEach((item) => {
+        console.log("档案字段：",item.fieldComment)
+        item.defaultField = item.defaultField.value //是否缺省值
+        item.id = item.id//id
+        item.fieldComment = item.fieldComment //字段描述
+        item.fieldArchives = item.fieldArchives.value //档案字段
+        item.fieldType = item.fieldType.value //字段类型
+        item.showStatus = item.show ? 1 : 2 //是否显示
+        item.uniqueIndexStatus = item.wysy?1:2 //是否唯一索引
+      })
+
+      let queryData = {
+        id: this.id,
+        detail: detailListTemp,
+      }
+      this.saveMetaConfigure(queryData)
 
     },
   },

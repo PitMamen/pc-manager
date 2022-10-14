@@ -45,13 +45,13 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.checkindex.check(record)">修改</a>
+        <a @click="$refs.checkIndex.check(record)">修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">停用</a>
       </span>
     </s-table>
 
-    <check-index ref="checkindex" @ok="handleOk" />
+    <check-index ref="checkIndex" @ok="handleOk" />
     <add-Name ref="addName" @ok="handleOk" />
   </a-card>
 </template>
@@ -106,19 +106,19 @@ export default {
         },
         {
           title: '执行科室',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'zxks',
         },
         {
           title: '随访名单',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'sfmd',
         },
         {
           title: '随访类型',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'sflx',
         },
         {
           title: '状态',
-          dataIndex: 'pushInterfaceType',
+          dataIndex: 'zt',
         },
         {
           title: '操作',

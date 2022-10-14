@@ -68,7 +68,8 @@ export default {
       isOpen: false,
       queryParam:{
         databaseTableName:"",
-        metaName:""
+        metaName:"",
+        status:1
       },
       labelCol: {
         xs: { span: 24 },
@@ -147,8 +148,8 @@ export default {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
             this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
-            this.$set(item, 'show', item.showStatus.value == 1 ? true : false)
-            this.$set(item, 'wysy', item.uniqueIndexStatus.value == 1 ? true : false)
+            this.$set(item, 'show', item.showStatus!=null&&item.showStatus.value == 1 )
+            this.$set(item, 'wysy', item.uniqueIndexStatus!=null&&item.uniqueIndexStatus.value == 1 )
           })
           // return dataItem.detail
           this.loadData = dataItem.detail
@@ -160,10 +161,21 @@ export default {
 
     //保存名单
     saveMetaConfigure() {
-      console.log("新增请求参数：",this.queryParam)
+      // console.log("新增请求参数：",this.queryParam)
+      if(this.queryParam.databaseTableName==''){
+        this.$message.error('请输入表名!' )
+        return
+      }
+
+      if(this.queryParam.metaName==''){
+        this.$message.error('请输入名单描述!' )
+        return
+      }
+
       saveMetaConfigure(this.queryParam).then((res) => {
         if (res.success) {
           console.log("新增成功")
+          this.visible = false
           this.$emit('ok')
         } else {
           this.$message.error('新增失败：' + res.message)
@@ -199,12 +211,15 @@ export default {
       }
     },
 
+    /**
+     * 状态开关
+     */
     goOpen() {
       this.isOpen = !this.isOpen
       if (this.isOpen) {
-        this.queryParams.status = 1
+        this.queryParam.status = 1
       } else {
-        this.queryParams.status = 2
+        this.queryParam.status = 2
       }
     },
 
