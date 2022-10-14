@@ -19,8 +19,8 @@
             @search="handleSearch"
           >
             <template slot="dataSource">
-              <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
-                {{ item.departmentName }}
+              <a-select-option v-for="item in autoUsers" :key="item.userId + ''" :title="item.userName">
+                {{ item.userName }}
               </a-select-option>
             </template>
           </a-auto-complete>
@@ -28,14 +28,23 @@
           <div class="left-num-des">
             <span><span style="color: red">*</span> 选择人员</span>
 
-            <span style="margin-left: 50%">已选人数<span style="color: #1890ff">2/2</span> 人</span>
+            <span style="margin-left: 50%"
+              >已选人数<span style="color: #1890ff">{{ choseNum }}/{{ deptUsers[0].users.length }}</span> 人</span
+            >
           </div>
 
-          <span style="margin-left: 9%; margin-top: 1%">*儿科</span>
+          <span style="margin-left: 9%; margin-top: 1%">{{ deptUsers[0].deptName }}</span>
 
-          <div class="item-person" v-for="(item, index) in persons" :key="index" :value="item.id">
-            <span style="margin-left: 15%; margin-top: 1%; flex: 1">{{ item.name }}</span>
-            <a-icon style="margin-top: 1%; color: #1890ff" type="plus" @click="addPerson" />
+          <div class="item-person" v-for="(item, index) in deptUsers[0].users" :key="index" :value="item.id">
+            <span style="margin-left: 15%; margin-top: 1%; flex: 1" :class="{ checked: item.isChecked }">{{
+              item.userName
+            }}</span>
+            <a-icon
+              style="margin-top: 1%"
+              :class="{ checked: item.canAdd }"
+              type="plus"
+              @click="addPerson(item, index)"
+            />
           </div>
         </div>
 
@@ -46,19 +55,24 @@
             ref="table"
             :pagination="false"
             size="default"
-            style="margin-left: 2%"
+            style="margin-left: 2%; min-height: 20%"
             :columns="columns"
-            :data-source="persons"
+            :data-source="choseUsers"
             :alert="true"
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a-icon type="delete" @click="deleteChoosed(record)" theme="filled" style="color: #1890ff;margin-left: 10px;" />
+              <a-icon
+                type="delete"
+                @click="deleteChoosed(record)"
+                theme="filled"
+                style="color: #1890ff; margin-left: 10px"
+              />
             </span>
             <span slot="act_num" slot-scope="text, record">
               <a-input-number
                 style="display: inline-block; margin-left: 1%; width: 100px"
-                v-model="record.num"
+                v-model="record.weight"
                 :min="0"
                 :max="10000"
                 :maxLength="30"
@@ -67,6 +81,12 @@
               />
             </span>
           </a-table>
+          <div class="right-bottom">
+            <div class="right-bottom-left">
+              <span>平均分配权重：</span><a-switch :checked="isAverage" @click="goOpen" />
+            </div>
+            <span>权重合计：{{ totolAverage + '' }}%</span>
+          </div>
         </div>
       </div>
     </a-spin>
@@ -81,23 +101,25 @@ export default {
     return {
       index: -1,
       chooseName: '',
-      persons: [
-        { id: 1, name: '张三' },
-        { id: 2, name: '张五' },
-      ],
       confirmLoading: false,
+      isAverage: false,
+      choseNum: 0,
+      totolAverage: 0,
+      deptUsers: [{ deptName: '', users: [] }],
+      choseUsers: [],
+      autoUsers: [],
       visible: false,
       columns: [
         {
           title: '序号',
           width: 60,
           // innerHeight:20,
-          dataIndex: 'id',
+          dataIndex: 'xh',
         },
         {
           title: '姓名',
           width: 100,
-          dataIndex: 'name',
+          dataIndex: 'userName',
         },
         {
           title: '分配权重',
@@ -114,26 +136,138 @@ export default {
     }
   },
   methods: {
-    //初始化方法
-    add(index) {
-      // this.type = ''
+    /**
+     * 初始化方法
+     *  "deptUsers": [
+      {
+        "deptName": "精神科门诊",
+        "users": [
+          {
+            "userId": "608",
+            "userName": "护士001"
+          },
+          {
+            "userId": "667",
+            "userName": "护士002"
+          }
+        ]
+      }
+    ]
+     * 
+     * @param {*} index 
+     * @param {*} deptUsers 
+     */
+    add(index, deptUsers) {
       this.index = index
       this.visible = true
+      this.deptUsers = deptUsers
+      console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
+      this.deptUsers[0].users.forEach((item) => {
+        this.$set(item, 'isChecked', false)
+        this.$set(item, 'canAdd', true)
+        // this.$set(item, 'weight', 0)
+      })
+      this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers[0].users))
+      // console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
     },
 
-    onSelect() {},
-    handleSearch() {},
+    goOpen() {
+      this.isAverage = !this.isAverage
+      if (this.isAverage) {
+        let num = (100 / this.choseUsers.length).toFixed(0)
+        this.choseUsers.forEach((item, index) => {
+          this.$set(item, 'weight', num)
+        })
+        this.totolAverage = 100
+      }
+    },
 
-    addPerson() {
-      this.persons.push({ id: 1, name: '张三d' })
+    handleSearch(inputName) {
+      if (inputName) {
+        this.autoUsers = this.deptUsers[0].users.filter((item) => item.userName.indexOf(inputName) != -1)
+      } else {
+        this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers[0].users))
+        // this.chooseDeptItem = { departmentName: '', departmentId: '' }
+      }
+    },
+
+    onSelect(userId) {
+      console.log('userId', userId)
+      // console.log('s2', s2) s2为系统参数
+      this.deptUsers[0].users.forEach((item, index) => {
+        if (item.userId == userId) {
+          this.addPerson(item, index)
+        }
+      })
+    },
+
+    /**
+     * 左侧添加按钮，左边列表isChecked = true , isDisabled = true
+     * @param {} item
+     * @param {*} index
+     */
+    addPerson(item, index) {
+      // debugger
+      if (!item.canAdd) {
+        return
+      }
+      item.isChecked = true
+      item.canAdd = false
+      let tempItem = JSON.parse(JSON.stringify(item))
+      this.$set(tempItem, 'weight', 0)
+      this.choseUsers.push(tempItem)
+      this.sortChoseUsers()
+      this.choseNum = this.choseUsers.length
     },
 
     deleteChoosed(record) {
-      this.persons.splice(this.persons.indexOf(record), 1)
+      this.choseUsers.splice(this.choseUsers.indexOf(record), 1)
+      this.deptUsers[0].users.forEach((item) => {
+        if (item.userId == record.userId) {
+          debugger
+          item.isChecked = false
+          item.canAdd = true
+        }
+      })
+      this.sortChoseUsers()
+      this.choseNum = this.choseUsers.length
+    },
+
+    sortChoseUsers() {
+      this.choseUsers.forEach((item, index) => {
+        this.$set(item, 'xh', index + 1)
+      })
     },
 
     handleSubmit() {
-      this.$emit('ok', this.index, typeBean)
+      this.totolAverage = 0
+      for (let index = 0; index < this.choseUsers.length; index++) {
+        this.totolAverage = parseInt(this.totolAverage) + parseInt(this.choseUsers[index].weight)
+      }
+
+      if (this.choseNum == 0) {
+        this.$message.error('请选择人员')
+        return
+      }
+
+      if (this.totolAverage < 98) {
+        this.$message.error('总权重过小')
+        return
+      }
+
+      if (this.totolAverage > 100) {
+        this.$message.error('总权重过大')
+        return
+      }
+
+      for (let index = 0; index < this.choseUsers.length; index++) {
+        if (this.choseUsers[index].weight == 0) {
+          this.$message.error(this.choseUsers[index].userName + '权重为0')
+          return
+        }
+      }
+
+      this.$emit('ok', this.index, this.choseUsers)
       this.visible = false
     },
     handleCancel() {
@@ -164,6 +298,10 @@ export default {
       align-items: center;
     }
 
+    .checked {
+      color: #1890ff;
+    }
+
     .item-person {
       width: 90%;
       margin-top: 2%;
@@ -183,17 +321,28 @@ export default {
     margin-left: 2%;
     display: flex;
     flex-direction: column;
-
-    // /deep/.ant-table-row .ant-table-row-level-0 {
-    //   height: 10% !important;
-    // }
-
     /deep/ .ant-table-tbody > tr > td {
       padding: 5px;
     }
     //调整head行属性
     /deep/ .ant-table-thead > tr > th {
       padding: 5px;
+    }
+
+    .right-bottom {
+      width: 90%;
+      margin-top: 2%;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      .right-bottom-left {
+        width: 90%;
+        margin-top: 2%;
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+      }
     }
   }
 }
