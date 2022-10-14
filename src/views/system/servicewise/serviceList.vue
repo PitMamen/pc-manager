@@ -155,7 +155,7 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
   //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-  if (this.user.roleName == 'admin') {
+  if (this.user.roleId == 7 || this.user.roleName == 'admin') {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
