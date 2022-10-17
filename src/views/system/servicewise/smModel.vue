@@ -50,7 +50,7 @@
     
     <script>
   import { STable } from '@/components'
-  import { getWxTemplateList, changeStatusWxTemplate } from '@/api/modular/system/posManage'
+  import { getSmsTemplateList, changeStatusSmsTemplate } from '@/api/modular/system/posManage'
   import checkIndex from './checkIndex'
   import addName from './addName'
   export default {
@@ -111,8 +111,10 @@
   
         // 加载数据方法 必须为 Promise 对象
         loadData: (parameter) => {
-          return getWxTemplateList(Object.assign(parameter, this.queryParams)).then((res) => {
+          this.confirmLoading = true
+          return getSmsTemplateList(Object.assign(parameter, this.queryParams)).then((res) => {
             console.log('请求结果:', res.message)
+            this.confirmLoading = false
             var data = {
               pageNo: parameter.pageNo,
               pageSize: parameter.pageSize,
@@ -152,7 +154,7 @@
         }
         this.confirmLoading = true
         //更新接口调用
-        changeStatusWxTemplate(queryParamData).then((res) => {
+        changeStatusSmsTemplate(queryParamData).then((res) => {
           if (res.success) {
             this.confirmLoading = false
             this.handleOk()

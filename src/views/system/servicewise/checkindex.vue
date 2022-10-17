@@ -187,6 +187,7 @@ export default {
       checkDetail(this.queryParams).then((res) => {
         if (res.code == 0 && res.data.length > 0) {
           var dataItem = res.data[0]
+         
           dataItem.detail.forEach((item, index) => {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')

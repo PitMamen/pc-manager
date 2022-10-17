@@ -167,9 +167,10 @@ export default {
       //更新接口调用
       updateMetaConfigure(queryParamData).then((res) => {
         if (res.success) {
+          this.$message.success('操作成功!')
           this.handleOk()
         } else {
-          this.$message.error('编辑失败：' + res.message)
+          this.$message.error('操作失败!' )
         }
       })
     },

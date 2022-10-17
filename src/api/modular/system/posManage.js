@@ -1527,6 +1527,33 @@ export function updateMetaConfigure(data) {
 
 
 
+  /**
+   * 短信模板 分页列表
+   */
+  export function getSmsTemplateList(data){
+    return axios({
+      url:'/follow-api/smsTemplate/getSmsTemplateList',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+
+  /**
+   * 短信模板 启用 禁用
+   */
+  export function changeStatusSmsTemplate(data){
+    return axios({
+      url:'/follow-api/smsTemplate/changeStatusSmsTemplate',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+
+
 
 
 
