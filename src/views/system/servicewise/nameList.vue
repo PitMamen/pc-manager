@@ -98,10 +98,10 @@ export default {
           title: '数据库字段',
           dataIndex: 'databaseTableFieldName',
         },
-        {
-          title: '推送接口',
-          dataIndex: 'pushInterfaceType',
-        },
+        // {
+        //   title: '推送接口',
+        //   dataIndex: 'pushInterfaceType',
+        // },
         {
           title: '状态',
           dataIndex: 'zt',
@@ -128,7 +128,7 @@ export default {
           if (res.code == 0 && res.data.rows.length > 0) {
             data.rows.forEach((item, index) => {
               this.$set(item, 'zt', item.status.description)
-              this.$set(item, 'pushInterfaceType', item.pushInterfaceType.description)
+              // this.$set(item, 'pushInterfaceType', item.pushInterfaceType!=null?item.pushInterfaceType.description:'')
               this.$set(item, 'enableStatus', item.status.value == 1 ? '停用' : '启用')
             })
           }
@@ -167,9 +167,10 @@ export default {
       //更新接口调用
       updateMetaConfigure(queryParamData).then((res) => {
         if (res.success) {
+          this.$message.success('操作成功!')
           this.handleOk()
         } else {
-          this.$message.error('编辑失败：' + res.message)
+          this.$message.error('操作失败!' )
         }
       })
     },

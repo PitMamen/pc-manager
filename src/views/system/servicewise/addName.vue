@@ -1,23 +1,26 @@
 <template>
   <a-modal
     :title="title"
-    :width="1000"
+    :width="1500"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="false"
   >
     <a-card :bordered="false" class="card-top-pac">
-      <div class="table-page-search-wrapper" style="margin-top: -5%">
+      <div class="table-page-wrapper" style="margin-top: -2%">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
-            v-model="queryParam.metaName"
+            v-model="metaName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block;width: 20%;margin-left: 2%;"
+            style="display: inline-block; width: 20%; margin-left: 2%"
             allow-clear
             placeholder="请输入内容"
+            @blur="changeName()"
+            @keyup.enter="changeName()"
+            @search="changeName()"
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 数据库表 :</span>
@@ -25,13 +28,23 @@
             v-model="queryParam.databaseTableName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block;width: 20%;margin-left: 2%;"
-            @blur="focus()"
+            style="display: inline-block; width: 20%; margin-left: 2%"
             allow-clear
+            @blur="focus()"
+            @keyup.enter="focus()"
+            @search="focus()"
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
-          <a-switch :checked="isOpen" @click="goOpen" style="margin-left: 1%;" />
+          <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
+          <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
+          <!-- </a-popconfirm> -->
+        </div>
+
+        <div class="div-line-wrap">
+          <span v-show="failShow" class="span-item-name"
+            ><span style="color: red; margin-left: 45%">当前表名不符合名单建立要求,请重新选择</span>
+          </span>
         </div>
       </div>
       <a-table
@@ -49,6 +62,33 @@
         <span slot="index" slot-scope="text, record">
           <a-checkbox v-model="record.wysy" @change="isOnlyIndex(record)"></a-checkbox>
         </span>
+
+        <span slot="eleDes" slot-scope="text, record">
+          <a-input
+            v-model="record.fieldComment"
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            class="span-item-value"
+            :maxLength="30"
+            style="display: inline-block; width: 65%; margin-left: 2%"
+            allow-clear
+            @blur="changeDes(record)"
+          />
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldComment }}</span>
+        </span>
+
+        <span slot="fileDes" slot-scope="text, record">
+          <a-select
+            style="width: 60%"
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            v-model="record.fieldArchives.value"
+            @select="selectDes(record)"
+          >
+            <a-select-option v-for="(item, index) in dazdList" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldArchives }}</span>
+        </span>
       </a-table>
     </a-card>
   </a-modal>
@@ -56,7 +96,7 @@
 
 
 <script>
-import { checkDetail, saveMetaConfigure } from '@/api/modular/system/posManage'
+import { checkDetail, updateMetaConfigure, saveMetaConfigure } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -64,11 +104,15 @@ export default {
   },
   data() {
     return {
+      failShow: false,
       loadData: [],
+      id: '', //表名ID
       isOpen: false,
-      queryParam:{
-        databaseTableName:"",
-        metaName:""
+      record: {},
+      metaName: '',
+      queryParam: {
+        databaseTableName: '',
+        metaName: '',
       },
       labelCol: {
         xs: { span: 24 },
@@ -79,46 +123,62 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
+      detailList: [],
       confirmLoading: false,
       form: this.$form.createForm(this),
-      title: '新增名单',
+      title: '编辑名单',
+      dazdList: [
+        { code: 1, value: '紧急联系人' },
+        { code: 2, value: '紧急电话' },
+        { code: 3, value: '微信OpenID' },
+      ],
 
       // 表头
       columns: [
         {
           title: '字段编码',
           dataIndex: 'zdbm',
+          width: 100,
         },
         {
           title: '字段描述',
-          dataIndex: 'fieldComment',
+          // dataIndex: 'fieldComment',
+          scopedSlots: { customRender: 'eleDes' },
+          width: 250,
         },
         {
           title: '字段类型',
           dataIndex: 'zdlx',
+          width: 100,
         },
         {
           title: '字段大小',
           dataIndex: 'fieldLength',
+          width: 100,
         },
         {
           title: '默认值',
           dataIndex: 'fieldDefaultValue',
+          width: 100,
         },
         {
           title: '档案字段',
-          dataIndex: 'dazd',
+          // dataIndex: 'dazd',
+          scopedSlots: { customRender: 'fileDes' },
+          width: 200,
         },
         {
           title: '显示',
           dataIndex: 'show',
           scopedSlots: { customRender: 'show' },
+          width: 100,
         },
 
         {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
+          width: 100,
         },
       ],
     }
@@ -127,51 +187,130 @@ export default {
     //初始化方法
     add() {
       this.visible = true
-    },
-
-    //失去焦点 查询
-    focus() {
-      var queryParamData = {
-        databaseTableName: this.queryParam.databaseTableName
-      }
-      this.quryCheckDetail(queryParamData)
+      // this.queryParam = ''
     },
 
     //根据输入的表名查询 数据
     quryCheckDetail(queryParamData) {
       console.log('请求参数：', queryParamData)
-      checkDetail(queryParamData).then((res) => {
-        if (res.code == 0 && res.data.length > 0) {
-          var dataItem = res.data[0]
-          dataItem.detail.forEach((item, index) => {
-            this.$set(item, 'zdbm', item.tableField)
-            this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
-            this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
-            this.$set(item, 'show', item.showStatus.value == 1 ? true : false)
-            this.$set(item, 'wysy', item.uniqueIndexStatus.value == 1 ? true : false)
-          })
-          // return dataItem.detail
-          this.loadData = dataItem.detail
-        }
+      this.confirmLoading = true
+      checkDetail(queryParamData)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0 && res.data.length > 0) {
+            this.failShow = false
+            var dataItem = res.data[0]
+            this.id = dataItem.id
+            this.queryParam.metaName = dataItem.metaName
+            console.log('名单ID：', this.id)
+            dataItem.detail.forEach((item, index) => {
+              this.$set(item, 'zdbm', item.tableField)
+              this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
+              this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
+              this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
+              this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
+            })
+            // return dataItem.detail
+            this.detailList = dataItem.detail
+            this.loadData = dataItem.detail
+          } else {
+            this.failShow = true
+          }
 
-        return []
-      })
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    //失去焦点 查询
+    focus() {
+      var queryParamData = {
+        databaseTableName: this.queryParam.databaseTableName,
+      }
+      this.quryCheckDetail(queryParamData)
+    },
+
+    //修改名单描述
+    changeName() {
+      var queryParamData = {
+        id: this.id,
+        metaName: this.metaName,
+      }
+      this.updateMetaConfigure(queryParamData)
+    },
+
+    //修改字段描述
+    changeDes(record) {
+      var queryParam = {
+        id: this.id,
+        detail: [
+          {
+            id: record.id,
+            fieldComment: record.fieldComment,
+          },
+        ],
+      }
+      console.log('sss:', queryParam)
+      // this.saveMetaConfigure(queryParam)
+    },
+
+    /**
+     * 选择档案字段
+     * @param
+     */
+    selectDes(record) {
+      // var queryParam = {
+      //   id: this.id,
+      //   detail: [
+      //     {
+      //       id: record.id,
+      //       fieldArchives: record.fieldArchives,
+      //     },
+      //   ],
+      // }
+      // console.log('sss:', queryParam)
+      // this.saveMetaConfigure(queryParam)
+    },
+
+    //更新名单
+    updateMetaConfigure(queryParamData) {
+      this.confirmLoading = true
+      updateMetaConfigure(queryParamData)
+        .then((res) => {
+          if (res.success) {
+            this.$emit('ok')
+          } else {
+            this.$message.error('编辑失败：' + res.message)
+          }
+          this.confirmLoading = false
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     //保存名单
-    saveMetaConfigure() {
-      console.log("新增请求参数：",this.queryParam)
-      saveMetaConfigure(this.queryParam).then((res) => {
-        if (res.success) {
-          console.log("新增成功")
-          this.$emit('ok')
-        } else {
-          this.$message.error('新增失败：' + res.message)
-        }
-      })
+    saveMetaConfigure(queryParam) {
+      this.confirmLoading = true
+      saveMetaConfigure(queryParam)
+        .then((res) => {
+          if (res.success) {
+            console.log('新增成功')
+            this.visible = false
+            this.$emit('ok')
+          } else {
+            this.$message.error('新增失败：' + res.message)
+          }
+          this.confirmLoading = false
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
-    //
+    // 是否显示
     shwoChange(record) {
       if (record.showStatus.value == 1) {
         this.isShow = true
@@ -180,17 +319,7 @@ export default {
       }
     },
 
-    handleCancel() {
-      this.form.resetFields()
-      this.visible = false
-    },
-
-    //确定 保存
-    handleSubmit() {
-      this.saveMetaConfigure()
-
-    },
-
+    //是否 唯一索引
     isOnlyIndex(record) {
       if (record.uniqueIndexStatus.value == 1) {
         this.onlyIndex = true
@@ -199,24 +328,86 @@ export default {
       }
     },
 
-    goOpen() {
+    /**
+     *
+     * 状态开关  这里每操作一次 调用一次接口
+     */
+    Enable() {
       this.isOpen = !this.isOpen
       if (this.isOpen) {
         this.queryParams.status = 1
       } else {
         this.queryParams.status = 2
       }
+      var queryParamData = {
+        id: this.id,
+        status: this.isOpen ? 1 : 2,
+      }
+      this.updateMetaConfigure(queryParamData)
     },
-
-    /**
-     * 启用/停用
-     */
-    Enable() {},
 
     handleCancel() {
       this.form.resetFields()
       this.visible = false
     },
+
+    /**
+     * 提交
+     */
+    handleSubmit() {
+      let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
+      detailListTemp.forEach((item) => {
+        console.log('档案字段：', item.fieldComment)
+        item.defaultField = item.defaultField.value //是否缺省值
+        item.id = item.id //id
+        item.fieldComment = item.fieldComment //字段描述
+        item.fieldArchives = item.fieldArchives.value //档案字段
+        item.fieldType = item.fieldType.value //字段类型
+        item.showStatus = item.show ? 1 : 2 //是否显示
+        item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
+        item.metaName = this.metaName //名单描述
+      })
+
+      let queryData = {
+        id: this.id,
+        detail: detailListTemp,
+      }
+      this.saveMetaConfigure(queryData)
+    },
   },
 }
 </script>
+
+<style lang="less">
+.table-page-wrapper {
+  .ant-form-inline {
+    .ant-form-item {
+      display: flex;
+      margin-bottom: 24px;
+      margin-right: 0;
+
+      .ant-form-item-control-wrapper {
+        flex: 1 1;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      > .ant-form-item-label {
+        line-height: 32px;
+        padding-right: 8px;
+        width: auto;
+      }
+      .ant-form-item-control {
+        height: 32px;
+        line-height: 32px;
+      }
+    }
+  }
+
+  .table-page-search-submitButtons {
+    display: block;
+    margin-bottom: 24px;
+    white-space: nowrap;
+  }
+}
+</style>

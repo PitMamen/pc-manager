@@ -47,7 +47,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a>修改</a>
+        <a @click="$refs.checkIndex.check(record)">修改</a>
         <a-divider type="vertical" />
        
         <a-popconfirm :title="upDateStatesText(record.status.value)" ok-text="确定" cancel-text="取消" @confirm="Enable(record)">
@@ -55,6 +55,9 @@
               </a-popconfirm>
       </span>
     </s-table>
+
+    <check-index ref="checkIndex" @ok="handleOk" />
+    <add-Name ref="addName" @ok="handleOk" />
   </a-card>
 </template>
 
