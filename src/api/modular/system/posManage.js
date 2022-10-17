@@ -1955,3 +1955,57 @@ export function personnelAssignmentTypes(data) {
     params: data,
   })
 }
+
+ /**
+  * 获取短信平台列表
+  */
+  export function getSmsConfigureList(data){
+    return axios({
+      url:'/follow-api/smsConfigure/getSmsConfigureList',
+      method:'post',
+      data:data,
+    })
+  }
+
+   /**
+  * 获取短信模板内容列表
+  */
+    export function getSmsConfigureTemplateList(smsConfigureId){
+      return axios({
+        url:'/follow-api/smsConfigureTemplate/getSmsConfigureTemplateList/'+smsConfigureId,
+        method:'post',
+       
+      })
+    }
+     /**
+  * 添加短信模板接口
+  */
+  export function addSmsTemplate(data){
+    return axios({
+      url:'/follow-api/smsTemplate/addSmsTemplate',
+      method:'post',
+      data:data,
+    })
+  }
+
+       /**
+  * 添加短信模板接口
+  */
+        export function modifySmsTemplate(data){
+          return axios({
+            url:'/follow-api/smsTemplate/modifySmsTemplate',
+            method:'post',
+            data:data,
+          })
+        }
+
+     /**
+  * 获取短信模板详情
+  */
+      export function getSmsTemplateById(id){
+        return axios({
+          url:'/follow-api/smsTemplate/getSmsTemplateById/'+id,
+          method:'post',
+         
+        })
+      }
