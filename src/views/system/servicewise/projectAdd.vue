@@ -47,8 +47,8 @@
       <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
-          <a-select v-model="projectData.type" allow-clear placeholder="请选择执行科室">
-            <a-select-option v-for="(item, index) in keshiData" @select="onDeptSelect" :key="index" :value="item.departmentId">{{
+          <a-select v-model="projectData.deptId" @select="onDeptSelect" allow-clear placeholder="请选择执行科室">
+            <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
               item.departmentName
             }}</a-select-option>
           </a-select>
@@ -75,7 +75,12 @@
       </div>
 
       <div class="div-rules">
-        <div class="div-middle-content" v-for="(item, index) in projectData.ruleList" :key="index" :value="item.typeId">
+        <div
+          class="div-middle-content"
+          v-for="(itemRule, indexRule) in projectData.ruleList"
+          :key="indexRule"
+          :value="itemRule.typeId"
+        >
           <a-select
             class="mid-select-one"
             @focus="getFocus"
@@ -105,7 +110,7 @@
 
           <div style="margin-left: 1%">
             <!-- <a-icon type="delete" theme="filled" style="color: #1890ff" /> -->
-            <a-button class="span-add-item" type="primary" @click="delRule(index, item)">删除</a-button>
+            <a-button class="span-add-item" type="primary" @click="delRule(indexRule, itemRule)">删除</a-button>
           </div>
         </div>
       </div>
@@ -120,17 +125,34 @@
       </div>
 
       <!-- <div class="div-mission-content"> -->
-      <div class="div-mission-content" v-for="(item, index) in projectData.missions" :key="index" :value="item.typeId">
+      <div
+        class="div-mission-content"
+        v-for="(itemMisson, indexMisson) in projectData.missions"
+        :key="indexMisson"
+        :value="itemMisson.typeId"
+      >
         <div class="mission-top">
-          <a-select class="mid-select-one" v-model="projectData.type" allow-clear placeholder="请选择随访方式">
+          <a-select
+            class="mid-select-one"
+            v-model="projectData.followType"
+            @select="onTypeSelect"
+            allow-clear
+            placeholder="请选择随访方式"
+          >
             <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
           </a-select>
 
-          <a-select class="mid-select-two" v-model="projectData.type" allow-clear placeholder="请选择模版">
-            <a-select-option v-for="(item, index) in msgContentData" :key="index" :value="item.value">{{
-              item.description
+          <a-select
+            class="mid-select-two"
+            v-model="projectData.type"
+            @focus="onTemFocus"
+            allow-clear
+            placeholder="请选择模版"
+          >
+            <a-select-option v-for="(item, index) in templateList" :key="index" :value="item.id">{{
+              item.template_title
             }}</a-select-option>
           </a-select>
           <a-select class="mid-select-two" v-model="projectData.type" disabled allow-clear placeholder="任务类型">
@@ -202,16 +224,19 @@
                 item.description
               }}</a-select-option>
             </a-select>
-            <a-checkbox checked disabled style="margin-left: 1%" @change="onChange" />
+            <!-- @change="onChange" -->
+            <a-checkbox checked disabled style="margin-left: 1%" />
             <span class="span-titl" style="margin-left: 1%">电话跟进</span>
             <span class="span-titl" style="margin-left: 0.5%">执行人员:</span>
             <span class="span-titl" style="margin-left: 1%">李四、王二</span>
-            <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="addPerson(index)"
+            <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="addPerson(indexMisson)"
               >添加人员</a-button
             >
           </div>
 
-          <a-button style="margin-left: 2%" type="primary" @click="delMission(index, item)">刪除任务</a-button>
+          <a-button style="margin-left: 2%" type="primary" @click="delMission(indexMisson, itemMisson)"
+            >刪除任务</a-button
+          >
         </div>
       </div>
 
@@ -243,6 +268,8 @@ import {
   repeatTimeUnitTypes,
   timeUnitTypes,
   personnelAssignmentTypes,
+  getWxTemplateList,
+  getUsersByDeptIdAndRole,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import addPeople from './addPeople'
@@ -254,6 +281,9 @@ export default {
 
   data() {
     return {
+      keshiData: {},
+      keshiDataTemp: {},
+      deptUsers: {},
       projectData: { ruleList: [{}, {}, {}], missions: [{}, {}], metaConfigureId: '' },
       typeData: [],
       sourceData: [],
@@ -267,6 +297,7 @@ export default {
       repeatTimeUnitTypesData: [],
       timeUnitTypesData: [],
       assignmentTypes: [],
+      templateList: [],
       everyData: [
         { value: '1', description: '周一' },
         { value: '2', description: '周二' },
@@ -353,6 +384,9 @@ export default {
 
   methods: {
     moment,
+    /**
+     * 选名单过滤前先选名单来源
+     */
     getFocus() {
       if (!this.projectData.metaConfigureId) {
         this.$message.warn('请先选择来源名单')
@@ -360,17 +394,39 @@ export default {
       }
     },
 
+    /**
+     * 选模版前先选随访方式
+     */
+    onTemFocus() {
+      if (!this.projectData.followType) {
+        this.$message.warn('请先选择随访方式')
+        return
+      }
+    },
+
     saveProject() {},
-    delRule(index, item) {
-      this.projectData.ruleList.splice(index, 1)
+    delRule(indexRule, itemRule) {
+      this.projectData.ruleList.splice(indexRule, 1)
     },
 
     addRule() {
       this.projectData.ruleList.push({})
     },
 
-    addPerson(index) {
-      this.$refs.addPeople.add(index)
+    /**
+     * 执行科室选择后需要请求执行人员
+     */
+    onDeptSelect() {
+      this.getUsersByDeptIdAndRoleOut()
+    },
+
+    addPerson(indexMisson) {
+      //需增加人员先选执行科室
+      if (!this.projectData.deptId) {
+        this.$message.warn('请先选择执行科室')
+        return
+      }
+      this.$refs.addPeople.add(indexMisson, this.deptUsers)
     },
 
     delMission(index, item) {
@@ -381,14 +437,22 @@ export default {
       this.projectData.missions.push({})
     },
 
+    /**
+     * 名单来源选择后需要请求 名单过滤字段列表 时间名滤字段列表
+     */
     onSourceSelect() {
       this.fieldsOut()
       this.dateFieldsOut()
     },
 
-    onDeptSelect(){
-      
+    /**
+     * 随访方式选择后需要请求模版列表
+     */
+    onTypeSelect() {
+      this.getWxTemplateListOut()
     },
+
+    handleAddPeople() {},
 
     fieldsOut() {
       fields({ metaConfigureId: this.projectData.metaConfigureId }).then((res) => {
@@ -401,6 +465,22 @@ export default {
       dateFields({ metaConfigureId: this.projectData.metaConfigureId }).then((res) => {
         if (res.code == 0) {
           this.dateFieldsData = res.data
+        }
+      })
+    },
+
+    getWxTemplateListOut() {
+      getWxTemplateList({ templateTitle: '', pageNo: 1, pageSize: 100 }).then((res) => {
+        if (res.code == 0) {
+          this.templateList = res.data.records
+        }
+      })
+    },
+
+    getUsersByDeptIdAndRoleOut() {
+      getUsersByDeptIdAndRole({ departmentId: this.projectData.deptId, roleId: 5 }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsers = res.data.deptUsers
         }
       })
     },

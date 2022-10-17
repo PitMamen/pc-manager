@@ -36,14 +36,14 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="$refs.checkIndex.check(record)">修改</a>
+          <!-- <a @click="$refs.checkIndex.check(record)">修改</a> -->
           <a-divider type="vertical" />
           <a @click="Enable(record)">{{ record.enableStatus }}</a>
         </span>
       </s-table>
   
-      <check-Index ref="checkIndex" @ok="handleOk" />
-      <add-Name ref="addName" />
+      <!-- <check-Index ref="checkIndex" @ok="handleOk" /> -->
+      <!-- <add-Name ref="addName" /> -->
     </a-card>
   </template>
     
@@ -51,13 +51,13 @@
     <script>
   import { STable } from '@/components'
   import { getSmsTemplateList, changeStatusSmsTemplate } from '@/api/modular/system/posManage'
-  import checkIndex from './checkIndex'
-  import addName from './addName'
+  // import checkIndex from './checkIndex'
+  import adddxtemplate from './adddxtemplate'
   export default {
     components: {
       STable,
-      checkIndex,
-      addName,
+      // checkIndex,
+      adddxtemplate,
     },
     data() {
       return {
@@ -165,10 +165,11 @@
       },
   
       /**
-       * 新增
+       * 新增 短信模板
        */
       addModel() {
-        this.$router.push({ name: 'sys_wxtemplate_add', data: null })
+        this.$router.push( {path:'./adddxtemplate'})
+        // this.$router.push({ name: 'sys_dxtemplate_add', data: null })
       },
   
       handleOk() {

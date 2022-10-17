@@ -19,6 +19,8 @@
             allow-clear
             placeholder="请输入内容"
             @blur="changeName()"
+            @keyup.enter="changeName()"
+            @search="changeName()"
           />
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 数据库表 :</span>
@@ -29,9 +31,9 @@
             style="display: inline-block; width: 20%; margin-left: 2%"
             allow-clear
             @blur="focus()"
+            @keyup.enter="focus()"
+            @search="focus()"
           />
-
-          
 
           <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
@@ -40,10 +42,10 @@
         </div>
 
         <div class="div-line-wrap">
-          <span v-show="failShow" class="span-item-name"><span style="color: red; margin-left: 45%;" >当前表名不符合名单建立要求,请重新选择</span> </span>
-
+          <span v-show="failShow" class="span-item-name"
+            ><span style="color: red; margin-left: 45%">当前表名不符合名单建立要求,请重新选择</span>
+          </span>
         </div>
-        
       </div>
       <a-table
         ref="table"
@@ -102,12 +104,12 @@ export default {
   },
   data() {
     return {
-      failShow:false,
+      failShow: false,
       loadData: [],
       id: '', //表名ID
       isOpen: false,
       record: {},
-      metaName:'',
+      metaName: '',
       queryParam: {
         databaseTableName: '',
         metaName: '',
@@ -191,29 +193,35 @@ export default {
     //根据输入的表名查询 数据
     quryCheckDetail(queryParamData) {
       console.log('请求参数：', queryParamData)
-      checkDetail(queryParamData).then((res) => {
-        if (res.code == 0 && res.data.length > 0) {
-          this.failShow = false
-          var dataItem = res.data[0]
-          this.id = dataItem.id
-          this.queryParam.metaName = dataItem.metaName
-          console.log("名单ID：",this.id)
-          dataItem.detail.forEach((item, index) => {
-            this.$set(item, 'zdbm', item.tableField)
-            this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
-            this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
-            this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
-            this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
-          })
-          // return dataItem.detail
-          this.detailList = dataItem.detail
-          this.loadData = dataItem.detail
-        }else{
-          this.failShow = true
-        }
+      this.confirmLoading = true
+      checkDetail(queryParamData)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0 && res.data.length > 0) {
+            this.failShow = false
+            var dataItem = res.data[0]
+            this.id = dataItem.id
+            this.queryParam.metaName = dataItem.metaName
+            console.log('名单ID：', this.id)
+            dataItem.detail.forEach((item, index) => {
+              this.$set(item, 'zdbm', item.tableField)
+              this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
+              this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
+              this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
+              this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
+            })
+            // return dataItem.detail
+            this.detailList = dataItem.detail
+            this.loadData = dataItem.detail
+          } else {
+            this.failShow = true
+          }
 
-        return []
-      })
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     //失去焦点 查询
@@ -225,15 +233,13 @@ export default {
     },
 
     //修改名单描述
-    changeName(){
+    changeName() {
       var queryParamData = {
-        id:this.id,
-        metaName:this.metaName
+        id: this.id,
+        metaName: this.metaName,
       }
       this.updateMetaConfigure(queryParamData)
     },
-
-
 
     //修改字段描述
     changeDes(record) {

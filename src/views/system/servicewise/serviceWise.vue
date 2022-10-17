@@ -77,7 +77,7 @@ export default {
   methods: {
 
     addwxtemplate (){
-      this.$router.push({ name: 'sys_wxtemplate_add', data: null })
+      this.$router.push( {path:'./addwxtemplate?id=10'})
     },
 
     callback(){},
