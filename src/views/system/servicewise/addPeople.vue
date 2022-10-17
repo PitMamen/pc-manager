@@ -103,6 +103,7 @@ export default {
       chooseName: '',
       confirmLoading: false,
       isAverage: false,
+      isSingle: false,
       choseNum: 0,
       totolAverage: 0,
       deptUsers: [{ deptName: '', users: [] }],
@@ -157,11 +158,12 @@ export default {
      * @param {*} index 
      * @param {*} deptUsers 
      */
-    add(index, deptUsers, assignments) {
+    add(index, deptUsers, assignments, isSingle) {
       this.index = index
       this.visible = true
       this.isAverage = false
       this.deptUsers = deptUsers
+      this.isSingle = isSingle
       this.choseUsers = []
 
       console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
@@ -232,6 +234,12 @@ export default {
       if (!item.canAdd) {
         return
       }
+
+      if (this.isSingle && this.choseUsers.length == 1) {
+        this.$message.error('指定人员仅需添加一个')
+        return
+      }
+
       item.isChecked = true
       item.canAdd = false
       let tempItem = JSON.parse(JSON.stringify(item))
