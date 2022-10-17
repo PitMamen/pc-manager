@@ -1565,8 +1565,6 @@ export function qryFollowPlan(data) {
   })
 }
 
-
-
 /**
  * 获取公众号列表接口
  */

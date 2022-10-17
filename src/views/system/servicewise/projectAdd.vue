@@ -12,7 +12,7 @@
           <span class="span-item-name"><span style="color: red">*</span> 方案名称 :</span>
           <a-input
             class="span-item-value"
-            v-model="projectData.templateName"
+            v-model="projectData.planName"
             :maxLength="30"
             style="display: inline-block"
             allow-clear
@@ -77,7 +77,7 @@
       <div class="div-rules">
         <div
           class="div-middle-content"
-          v-for="(itemRule, indexRule) in projectData.ruleList"
+          v-for="(itemRule, indexRule) in projectData.filterRules"
           :key="indexRule"
           :value="itemRule.typeId"
         >
@@ -127,8 +127,8 @@
       <!-- <div class="div-mission-content"> -->
       <div
         class="div-mission-content"
-        v-for="(itemMisson, indexMisson) in projectData.missions"
-        :key="indexMisson"
+        v-for="(itemMisson, indexTask) in projectData.tasks"
+        :key="indexTask"
         :value="itemMisson.typeId"
       >
         <div class="mission-top">
@@ -228,13 +228,13 @@
             <a-checkbox checked disabled style="margin-left: 1%" />
             <span class="span-titl" style="margin-left: 1%">电话跟进</span>
             <span class="span-titl" style="margin-left: 0.5%">执行人员:</span>
-            <span class="span-titl" style="margin-left: 1%">李四、王二</span>
-            <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="addPerson(indexMisson)"
+            <span class="span-titl" style="margin-left: 1%">{{ projectData.tasks[indexTask].nameStr }}</span>
+            <a-button class="span-add-item" type="primary" style="margin-left: 1%" @click="addPerson(indexTask)"
               >添加人员</a-button
             >
           </div>
 
-          <a-button style="margin-left: 2%" type="primary" @click="delMission(indexMisson, itemMisson)"
+          <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemMisson)"
             >刪除任务</a-button
           >
         </div>
@@ -255,6 +255,7 @@
 
 <script>
 import {
+  getDeptsPersonal,
   getDepts,
   followTypes,
   tables,
@@ -272,6 +273,8 @@ import {
   getUsersByDeptIdAndRole,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 import addPeople from './addPeople'
 
 export default {
@@ -281,10 +284,10 @@ export default {
 
   data() {
     return {
+      user: {},
       keshiData: {},
-      keshiDataTemp: {},
       deptUsers: {},
-      projectData: { ruleList: [{}, {}, {}], missions: [{}, {}], metaConfigureId: '' },
+
       typeData: [],
       sourceData: [],
       chooseData: [],
@@ -303,18 +306,97 @@ export default {
         { value: '2', description: '周二' },
       ], //每周第、每月第、每年第切换时改变的集合
       confirmLoading: false,
+
+      projectData: { filterRules: [{}, {}, {}], tasks: [{ assignments: [] }, {}], metaConfigureId: '' },
+      // projectData: {
+      //   basePlan: {
+      //     executeDepartment: 'string',
+      //     followType: 0,
+      //     metaConfigureId: 0,
+      //     planId: 0,
+      //     planName: 'string',
+      //     remark: 'string',
+      //   },
+      //   createdTime: '2022-10-17T03:20:59.512Z',
+      //   creatorId: 0,
+      //   executeDepartment: 'string',
+      //   filterRules: [
+      //     {
+      //       condition: 'string',
+      //       metaConfigureDetailId: 0,
+      //       queryValue: 'string',
+      //       ruleId: 0,
+      //     },
+      //   ],
+      //   followType: {
+      //     description: 'string',
+      //     value: 0,
+      //   },
+      //   formulateTime: '2022-10-17T03:20:59.512Z',
+      //   formulateUserId: 0,
+      //   hospitalCode: 'string',
+      //   id: 0,
+      //   metaConfigureId: 0,
+      //   pageNo: 0,
+      //   pageSize: 0,
+      //   planName: 'string',
+      //   remark: 'string',
+      //   status: {
+      //     description: 'string',
+      //     value: 0,
+      //   },
+      //   tasks: [
+      //     {
+      //       assignments: [
+      //         {
+      //           assignId: 0,
+      //           userId: 0,
+      //           weight: 0,
+      //         },
+      //       ],
+      //       cron: 'string',
+      //       hospitalCode: 'string',
+      //       messageContentId: 'string',
+      //       messageContentType: 0,
+      //       messageType: 0,
+      //       metaConfigureDetailId: 0,
+      //       overdueFollowType: 0,
+      //       personnelAssignmentType: 0,
+      //       planId: 0,
+      //       pushTimePoint: 'string',
+      //       repeatTimeUnit: 0,
+      //       taskExecType: 0,
+      //       taskId: 0,
+      //       taskType: 0,
+      //       tenantId: 'string',
+      //       timeQuantity: 0,
+      //       timeUnit: 0,
+      //     },
+      //   ],
+      //   tenantId: 'string',
+      //   updatedTime: '2022-10-17T03:20:59.512Z',
+      //   updaterId: 0,
+      //   version: 0,
+      // },
     }
   },
 
   created() {
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.keshiData = res.data
-        // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
+    this.user = Vue.ls.get(TRUE_USER)
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+        }
+      })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          this.keshiData = res.data
+        }
+      })
+    }
 
     this.confirmLoading = true
     followTypes()
@@ -406,11 +488,11 @@ export default {
 
     saveProject() {},
     delRule(indexRule, itemRule) {
-      this.projectData.ruleList.splice(indexRule, 1)
+      this.projectData.filterRules.splice(indexRule, 1)
     },
 
     addRule() {
-      this.projectData.ruleList.push({})
+      this.projectData.filterRules.push({})
     },
 
     /**
@@ -426,15 +508,16 @@ export default {
         this.$message.warn('请先选择执行科室')
         return
       }
-      this.$refs.addPeople.add(indexMisson, this.deptUsers)
+      console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
+      this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments)
     },
 
     delMission(index, item) {
-      this.projectData.missions.splice(index, 1)
+      this.projectData.tasks.splice(index, 1)
     },
 
     addMission() {
-      this.projectData.missions.push({})
+      this.projectData.tasks.push({})
     },
 
     /**
@@ -452,7 +535,23 @@ export default {
       this.getWxTemplateListOut()
     },
 
-    handleAddPeople() {},
+    handleAddPeople(indexTask, proccesedAssignments) {
+      this.projectData.tasks[indexTask].assignments = proccesedAssignments
+      let nameStr = ''
+      // debugger
+      if (this.projectData.tasks[indexTask].assignments.length > 0) {
+        this.projectData.tasks[indexTask].assignments.forEach((item, index) => {
+          if (index != this.projectData.tasks[indexTask].assignments.length - 1) {
+            nameStr = nameStr + item.userName + ','
+          } else {
+            nameStr = nameStr + item.userName
+          }
+        })
+        // debugger
+        console.log('nameStr', nameStr)
+        this.$set(this.projectData.tasks[indexTask], 'nameStr', nameStr)
+      }
+    },
 
     fieldsOut() {
       fields({ metaConfigureId: this.projectData.metaConfigureId }).then((res) => {
