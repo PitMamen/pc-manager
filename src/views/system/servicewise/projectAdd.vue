@@ -721,6 +721,7 @@ export default {
           if (res.code == 0) {
             res.data.forEach((item) => {
               this.$set(item, 'messageContentType', 3)
+              this.$set(item, 'templateName', item.templateTitle)
             })
             this.templateList = res.data
           }
@@ -733,6 +734,7 @@ export default {
         if (res.code == 0) {
           res.data.forEach((item) => {
             this.$set(item, 'messageContentType', 3)
+            this.$set(item, 'templateName', item.templateTitle)
           })
           this.templateList = this.templateList.concat(res.data)
           console.log('getSmsTemplateListForJumpTypeOut', this.templateList.length)
@@ -983,7 +985,8 @@ export default {
           delete item.assignments
         }
 
-        if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
+        //微信和短信消息时勾选了加人，以及电话随访时需要添加人员
+        if (((item.messageType == 2 || item.messageType == 3) && item.isChecked) || item.messageType == 1) {
           if (!item.assignments || item.assignments.length == 0) {
             this.$message.error('请添加人员分配')
             return
