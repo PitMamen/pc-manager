@@ -73,21 +73,23 @@
             allow-clear
             @blur="changeDes(record)"
           />
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldComment }}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldComment!=null?record.fieldComment:'' }}</span>
         </span>
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
             style="width: 60%"
             v-if="record.defaultField != null && record.defaultField.value == 2"
-            v-model="record.fieldArchives.value"
+            v-model="record.fieldArchives.description"
             @select="selectDes(record)"
           >
             <a-select-option v-for="(item, index) in dazdList" :key="index" :value="item.code">{{
               item.value
             }}</a-select-option>
           </a-select>
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldArchives }}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{
+            record.fieldArchives!=null? record.fieldArchives.description:''
+          }}</span>
         </span>
       </a-table>
     </a-card>
@@ -105,6 +107,7 @@ export default {
   data() {
     return {
       failShow: false,
+      title:'新增名单',
       loadData: [],
       id: '', //表名ID
       isOpen: false,
@@ -126,7 +129,6 @@ export default {
       detailList: [],
       confirmLoading: false,
       form: this.$form.createForm(this),
-      title: '编辑名单',
       dazdList: [
         { code: 1, value: '紧急联系人' },
         { code: 2, value: '紧急电话' },
@@ -142,7 +144,6 @@ export default {
         },
         {
           title: '字段描述',
-          // dataIndex: 'fieldComment',
           scopedSlots: { customRender: 'eleDes' },
           width: 250,
         },
@@ -158,7 +159,7 @@ export default {
         },
         {
           title: '默认值',
-          dataIndex: 'fieldDefaultValue',
+          dataIndex: 'DefaultValue',
           width: 100,
         },
         {
@@ -187,7 +188,10 @@ export default {
     //初始化方法
     add() {
       this.visible = true
-      // this.queryParam = ''
+      this.loadData = null
+      this.failShow = false
+      this.queryParam.databaseTableName = null
+      this.metaName = ''
     },
 
     //根据输入的表名查询 数据
@@ -202,13 +206,16 @@ export default {
             var dataItem = res.data[0]
             this.id = dataItem.id
             this.queryParam.metaName = dataItem.metaName
-            console.log('名单ID：', this.id)
             dataItem.detail.forEach((item, index) => {
               this.$set(item, 'zdbm', item.tableField)
               this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
-              this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
+              // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '无')
+              if (item.fieldArchive == null) {
+                this.$set(item, 'fieldArchives', {description:''})
+              }
               this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
               this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
+              this.$set(item, 'DefaultValue', item.fieldDefaultValue != null?item.fieldDefaultValue:'')
             })
             // return dataItem.detail
             this.detailList = dataItem.detail
@@ -238,7 +245,7 @@ export default {
         id: this.id,
         metaName: this.metaName,
       }
-      this.updateMetaConfigure(queryParamData)
+      // this.updateMetaConfigure(queryParamData)
     },
 
     //修改字段描述
@@ -261,17 +268,7 @@ export default {
      * @param
      */
     selectDes(record) {
-      // var queryParam = {
-      //   id: this.id,
-      //   detail: [
-      //     {
-      //       id: record.id,
-      //       fieldArchives: record.fieldArchives,
-      //     },
-      //   ],
-      // }
-      // console.log('sss:', queryParam)
-      // this.saveMetaConfigure(queryParam)
+      console.log("papapapap",record.fieldArchives)  //2
     },
 
     //更新名单
@@ -292,18 +289,18 @@ export default {
     },
 
     //保存名单
-    saveMetaConfigure(queryParam) {
+    saveMetaConfigureOut(queryParam) {
       this.confirmLoading = true
       saveMetaConfigure(queryParam)
         .then((res) => {
           if (res.success) {
-            console.log('新增成功')
-            this.visible = false
+            this.$message.success('新增成功' )
             this.$emit('ok')
+            this.visible = false
           } else {
             this.$message.error('新增失败：' + res.message)
           }
-          this.confirmLoading = false
+          // this.confirmLoading = false
         })
         .finally((res) => {
           this.confirmLoading = false
@@ -356,12 +353,11 @@ export default {
      */
     handleSubmit() {
       let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
-      detailListTemp.forEach((item) => {
-        console.log('档案字段：', item.fieldComment)
-        item.defaultField = item.defaultField.value //是否缺省值
-        item.id = item.id //id
+      detailListTemp.forEach((item,index) => {
+        item.defaultField = item.defaultField != null ? item.defaultField.value : 2 //是否缺省值
         item.fieldComment = item.fieldComment //字段描述
-        item.fieldArchives = item.fieldArchives.value //档案字段
+        item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
+        // item.fieldArchives = item.fieldArchives  //档案字段
         item.fieldType = item.fieldType.value //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
@@ -369,10 +365,18 @@ export default {
       })
 
       let queryData = {
-        id: this.id,
+        status: this.isOpen ? 1 : 2, //状态
+        databaseTableName: this.queryParam.databaseTableName,
+        metaName: this.metaName,
         detail: detailListTemp,
       }
-      this.saveMetaConfigure(queryData)
+      console.log('queryData', queryData)
+      if (queryData.metaName == null || queryData.metaName == '') {
+        this.$message.error('请输入名单描述!')
+        return
+      }
+
+      this.saveMetaConfigureOut(queryData)
     },
   },
 }

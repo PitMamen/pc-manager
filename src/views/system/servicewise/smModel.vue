@@ -36,7 +36,7 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <!-- <a @click="$refs.checkIndex.check(record)">修改</a> -->
+          <a @click="changeModel(record.id)" :disabled="record.templateStatus==2">修改</a>
           <a-divider type="vertical" />
           <a @click="Enable(record)">{{ record.enableStatus }}</a>
         </span>
@@ -83,19 +83,23 @@
         columns: [
           {
             title: '模板名称',
-            dataIndex: 'template_title',
+            dataIndex: 'templateTitle',
+            width: 200,
           },
           {
             title: '内部编码',
-            dataIndex: 'template_inside_code',
+            dataIndex: 'templateInsideCode',
+            width: 300,
           },
           {
             title: '模板ID',
-            dataIndex: 'template_id',
+            dataIndex: 'templateId',
+            width: 180,
           },
           {
             title: '模板内容',
-            dataIndex: 'template_content',
+            dataIndex: 'templateContent',
+            width: 350,
           },
           {
             title: '状态',
@@ -123,8 +127,8 @@
               rows: res.data.records,
             }
             data.rows.forEach((item, index) => {
-              this.$set(item, 'zt', item.template_status == 1 ? '正常' : '停用')
-              this.$set(item, 'enableStatus', item.template_status == 1 ? '停用' : '启用')
+              this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
+              this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
             })
   
             return data
@@ -146,11 +150,11 @@
        * 启用/停用
        */
       Enable(record) {
-        record.template_status = record.template_status == 1 ? 2 : 1
-        record.enableStatus = record.template_status == 1 ? '停用' : '启用'
+        record.templateStatus = record.templateStatus == 1 ? 2 : 1
+        record.enableStatus = record.templateStatus == 1 ? '停用' : '启用'
         var queryParamData = {
           id: record.id,
-          templateStatus: record.template_status,
+          templateStatus: record.templateStatus,
         }
         this.confirmLoading = true
         //更新接口调用
@@ -161,6 +165,8 @@
           } else {
             this.$message.error('编辑失败：' + res.message)
           }
+        }).finally((res) => {
+          this.confirmLoading = false
         })
       },
   
@@ -172,6 +178,15 @@
         // this.$router.push({ name: 'sys_dxtemplate_add', data: null })
       },
   
+
+ /**
+     * 修改
+     */
+     changeModel(record) {
+      this.$router.push({ path: './addwxtemplate?id=' + record.id })
+    },
+
+
       handleOk() {
         this.$refs.table.refresh()
       },
@@ -181,15 +196,6 @@
         this.visible = false
       },
   
-      // goOpen() {
-      //   this.isOpen = !this.isOpen
-      //   if (this.isOpen) {
-      //     this.queryParams.templateStatus = 1
-      //   } else {
-      //     this.queryParams.templateStatus = 2
-      //   }
-      //   this.handleOk()
-      // },
     },
   }
   </script>

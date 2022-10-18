@@ -27,7 +27,7 @@
             class="span-item-value"
             disabled
             :maxLength="30"
-            style="display: inline-block;width: 20%;margin-left: 2%;" 
+            style="display: inline-block; width: 20%; margin-left: 2%"
             allow-clear
           />
 
@@ -70,7 +70,7 @@
           <a-select
             style="width: 60%"
             v-if="record.defaultField != null && record.defaultField.value == 2"
-            v-model="record.fieldArchives.value"
+            v-model="record.fieldArchives"
             @select="selectDes(record)"
           >
             <a-select-option v-for="(item, index) in dazdList" :key="index" :value="item.code">{{
@@ -79,8 +79,6 @@
           </a-select>
           <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldArchives }}</span>
         </span>
-
-        
       </a-table>
     </a-card>
   </a-modal>
@@ -189,7 +187,7 @@ export default {
       checkDetail(this.queryParams).then((res) => {
         if (res.code == 0 && res.data.length > 0) {
           var dataItem = res.data[0]
-         
+
           dataItem.detail.forEach((item, index) => {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
@@ -271,11 +269,11 @@ export default {
       saveMetaConfigure(queryParam)
         .then((res) => {
           if (res.success) {
-            console.log('新增成功')
+            console.log('修改成功')
             this.visible = false
             this.$emit('ok')
           } else {
-            this.$message.error('新增失败：' + res.message)
+            this.$message.error('修改失败：' + res.message)
           }
           this.confirmLoading = false
         })
@@ -306,7 +304,7 @@ export default {
      *
      * 状态开关  这里每操作一次 调用一次接口
      */
-     Enable() {
+    Enable() {
       this.isOpen = !this.isOpen
       if (this.isOpen) {
         this.queryParams.status = 1
@@ -320,7 +318,6 @@ export default {
       this.updateMetaConfigure(queryParamData)
     },
 
-
     handleCancel() {
       this.form.resetFields()
       this.visible = false
@@ -332,14 +329,14 @@ export default {
     handleSubmit() {
       let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
       detailListTemp.forEach((item) => {
-        console.log("档案字段：",item.fieldComment)
-        item.defaultField = item.defaultField.value //是否缺省值
-        item.id = item.id//id
+        console.log('档案字段：', item.fieldComment)
+        item.defaultField = item.defaultField!=null?item.defaultField.value:2 //是否缺省值
+        item.id = item.id //id
         item.fieldComment = item.fieldComment //字段描述
-        item.fieldArchives = item.fieldArchives.value //档案字段
-        item.fieldType = item.fieldType.value //字段类型
+        item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.value : 2 //档案字段
+        item.fieldType = item.fieldType != null ? item.fieldType.value : '' //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
-        item.uniqueIndexStatus = item.wysy?1:2 //是否唯一索引
+        item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
       })
 
       let queryData = {
@@ -347,7 +344,6 @@ export default {
         detail: detailListTemp,
       }
       this.saveMetaConfigure(queryData)
-
     },
   },
 }
