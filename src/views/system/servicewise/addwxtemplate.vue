@@ -40,7 +40,7 @@
             style="display: inline-block"
             allow-clear
             type="text"
-            maxLength="30"
+            :maxLength="30"
             placeholder="请输入模板标题 "
           />
         </div>
@@ -92,7 +92,7 @@
             class="span-item-value"
             style="width: 90%; display: inline-block"
             allow-clear
-            maxLength="150"
+            :maxLength="150"
             placeholder="请输入参数,不超过150字 "
           />
         </div>

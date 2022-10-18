@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="6" :sm="24">
-            <a-form-item label="查询条件">
+            <a-form-item label="查询微信条件">
               <a-input
                 v-model="queryParams.templateTitle"
                 allow-clear
@@ -160,14 +160,27 @@ export default {
      * 新增
      */
     addModel() {
-      this.$router.push({ path: './addwxtemplate' })
+      console.log('新增 微信模板 按钮')
+      this.$router.push({
+        name: 'sys_wxtemplate_add',
+        query: {
+          
+        },
+      })
+      // this.$router.push({ path: './adddxtemplate' })
     },
 
     /**
      * 修改
      */
     changeModel(record) {
-      this.$router.push({ path: './addwxtemplate?id=' + record.id })
+      this.$router.push({
+        name: 'sys_wxtemplate_add',
+        query: {
+          id:record.id,
+        },
+      })
+      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
     },
     handleOk() {
       this.$refs.table.refresh()
