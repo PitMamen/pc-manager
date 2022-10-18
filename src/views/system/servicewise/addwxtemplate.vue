@@ -124,6 +124,7 @@
             class="span-item-value"
             style="display: inline-block"
             allow-clear
+            readOnly
             placeholder="请选择问卷 "
           />
           <a-button type="primary" @click="selectQestionBtn" style="margin-left: 3%"> 选择 </a-button>
@@ -136,6 +137,7 @@
             v-model="teachContent.title"
             class="span-item-value"
             style="display: inline-block"
+            readOnly
             allow-clear
             placeholder="请选择宣教文章 "
           />
