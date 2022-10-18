@@ -73,7 +73,9 @@
             allow-clear
             @blur="changeDes(record)"
           />
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldComment!=null?record.fieldComment:'' }}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{
+            record.fieldComment != null ? record.fieldComment : ''
+          }}</span>
         </span>
 
         <span slot="fileDes" slot-scope="text, record">
@@ -88,7 +90,7 @@
             }}</a-select-option>
           </a-select>
           <span v-if="record.defaultField != null && record.defaultField.value == 1">{{
-            record.fieldArchives!=null? record.fieldArchives.description:''
+            record.fieldArchives != null ? record.fieldArchives.description : ''
           }}</span>
         </span>
       </a-table>
@@ -107,7 +109,7 @@ export default {
   data() {
     return {
       failShow: false,
-      title:'新增名单',
+      title: '新增名单',
       loadData: [],
       id: '', //表名ID
       isOpen: false,
@@ -130,6 +132,7 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       dazdList: [
+        { code: 0, value: '无' },
         { code: 1, value: '紧急联系人' },
         { code: 2, value: '紧急电话' },
         { code: 3, value: '微信OpenID' },
@@ -211,11 +214,11 @@ export default {
               this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
               // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '无')
               if (item.fieldArchives == null) {
-                this.$set(item, 'fieldArchives', {description:''})
+                this.$set(item, 'fieldArchives', { description: '' })
               }
               this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
               this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
-              this.$set(item, 'DefaultValue', item.fieldDefaultValue != null?item.fieldDefaultValue:'')
+              this.$set(item, 'DefaultValue', item.fieldDefaultValue != null ? item.fieldDefaultValue : '')
             })
             // return dataItem.detail
             this.detailList = dataItem.detail
@@ -268,7 +271,7 @@ export default {
      * @param
      */
     selectDes(record) {
-      console.log("papapapap",record.fieldArchives)  //2
+      console.log('papapapap', record.fieldArchives) //2
     },
 
     //更新名单
@@ -294,7 +297,7 @@ export default {
       saveMetaConfigure(queryParam)
         .then((res) => {
           if (res.success) {
-            this.$message.success('新增成功' )
+            this.$message.success('新增成功')
             this.$emit('ok')
             this.visible = false
           } else {
@@ -353,10 +356,22 @@ export default {
      */
     handleSubmit() {
       let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
-      detailListTemp.forEach((item,index) => {
+      detailListTemp.forEach((item, index) => {
         item.defaultField = item.defaultField != null ? item.defaultField.value : 2 //是否缺省值
         item.fieldComment = item.fieldComment //字段描述
-        item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
+        var value = 0
+        if (item.fieldArchives != null) {
+          if (item.fieldArchives.description == '紧急联系人') {
+            value = 1
+          } else if (item.fieldArchives.description == '紧急电话') {
+            value = 2
+          } else if (item.fieldArchives.description == '无') {
+            value = 0
+          }
+          itdem.fieldArchives = item.fieldArchives != null ? value : '' //档案字段
+        }else{
+          itdem.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
+        }
         // item.fieldArchives = item.fieldArchives  //档案字段
         item.fieldType = item.fieldType.value //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
