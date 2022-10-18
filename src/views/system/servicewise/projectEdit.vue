@@ -343,12 +343,14 @@ import {
   saveFollow,
   getSmsTemplateListForJumpType,
   getWxTemplateListForJumpType,
+  getDetail,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
 import { formatDate, formatDateFull } from '@/utils/util'
+import { parseString } from 'loader-utils'
 
 export default {
   components: {
@@ -358,6 +360,7 @@ export default {
   data() {
     return {
       user: {},
+      planId: '',
       keshiData: {},
       deptUsers: {},
 
@@ -409,73 +412,6 @@ export default {
         // tasks: [{ assignments: [] }, {}],
         // metaConfigureId: '',
       },
-      // projectData: {
-      //   basePlan: {
-      //     executeDepartment: 'string',
-      //     followType: 0,
-      //     metaConfigureId: 0,
-      //     planId: 0,
-      //     planName: 'string',
-      //     remark: 'string',
-      //   },
-      //   filterRules: [
-      //     {
-      //       condition: 'string',
-      //       metaConfigureDetailId: 0,
-      //       queryValue: 'string',
-      //       ruleId: 0,
-      //     },
-      //   ],
-      //   followType: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   formulateTime: '2022-10-17T03:20:59.512Z',
-      //   formulateUserId: 0,
-      //   hospitalCode: 'string',
-      //   id: 0,
-      //   metaConfigureId: 0,
-      //   pageNo: 0,
-      //   pageSize: 0,
-      //   planName: 'string',
-      //   remark: 'string',
-      //   status: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   tasks: [
-      //     {
-      //       assignments: [
-      //         {
-      //           assignId: 0,
-      //           userId: 0,
-      //           weight: 0,
-      //         },
-      //       ],
-      //       cron: 'string',
-      //       hospitalCode: 'string',
-      //       messageContentId: 'string',
-      //       messageContentType: 0,
-      //       messageType: 0,
-      //       metaConfigureDetailId: 0,
-      //       overdueFollowType: 0,
-      //       personnelAssignmentType: 0,
-      //       planId: 0,
-      //       pushTimePoint: 'string',
-      //       repeatTimeUnit: 0,
-      //       taskExecType: 0,
-      //       taskId: 0,
-      //       taskType: 0,
-      //       tenantId: 'string',
-      //       timeQuantity: 0,
-      //       timeUnit: 0,
-      //     },
-      //   ],
-      //   tenantId: 'string',
-      //   updatedTime: '2022-10-17T03:20:59.512Z',
-      //   updaterId: 0,
-      //   version: 0,
-      // },
     }
   },
 
@@ -495,6 +431,14 @@ export default {
         }
       })
     }
+
+    this.planId = this.$route.query.planId
+    getDetail({ planId: this.planId }).then((res) => {
+      if (res.code == 0) {
+        this.projectData = res.data
+        this.processData()
+      }
+    })
 
     this.confirmLoading = true
     followTypes()
@@ -597,6 +541,37 @@ export default {
 
   methods: {
     moment,
+
+    processData() {
+      this.fieldsOut()
+      this.dateFieldsOut()
+
+      this.projectData.basePlan.followType = parseString(this.projectData.basePlan.followType)
+      this.projectData.basePlan.metaConfigureId = parseString(this.projectData.basePlan.metaConfigureId)
+      this.projectData.basePlan.executeDepartment = parseInt(this.projectData.basePlan.executeDepartment)
+
+      this.projectData.filterRules.forEach((item) => {
+        item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+      })
+
+      this.projectData.tasks.forEach((item) => {
+        console.log('tasks item', item)
+        item.messageType = parseString(item.messageType)
+        item.messageContentId = parseInt(item.messageContentId)
+        // item.messageContentId = parseInt(item.messageContentId)
+
+        if (item.messageType == 1) {
+          item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
+        } else if (item.messageType == 2) {
+          //查所有微信模版
+          item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
+        } else if (item.messageType == 3) {
+          //查所有短信模版
+          item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+        }
+      })
+    },
+
     /**
      * 选名单过滤前先选名单来源
      */
@@ -738,8 +713,6 @@ export default {
         //查所有短信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
       }
-      
-      //TODO
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
 

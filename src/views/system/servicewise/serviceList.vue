@@ -47,7 +47,8 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.checkIndex.check(record)">修改</a>
+        <!-- <a @click="$refs.checkIndex.check(record)">修改</a> -->
+        <a @click="editPlan(record)">修改</a>
         <a-divider type="vertical" />
        
         <a-popconfirm :title="upDateStatesText(record.status.value)" ok-text="确定" cancel-text="取消" @confirm="Enable(record)">
@@ -185,6 +186,15 @@ export default {
     }
   },
   methods: {
+
+    editPlan(record) {
+      this.$router.push({
+        name: 'project_edit',
+        query: {
+          planId: record.id,
+        },
+      })
+    },
    
     onSwitchChange(value){
       console.log(value)
