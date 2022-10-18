@@ -337,6 +337,7 @@ export default {
         item.defaultField = item.defaultField!=null?item.defaultField.value:2 //是否缺省值
         item.id = item.id //id
         item.fieldComment = item.fieldComment //字段描述
+        var value = 0
         if (item.fieldArchives != null) {
           if (item.fieldArchives.description == '紧急联系人') {
             value = 1
