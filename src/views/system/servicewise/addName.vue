@@ -210,7 +210,7 @@ export default {
               this.$set(item, 'zdbm', item.tableField)
               this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
               // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '无')
-              if (item.fieldArchive == null) {
+              if (item.fieldArchives == null) {
                 this.$set(item, 'fieldArchives', {description:''})
               }
               this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)

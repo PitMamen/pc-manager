@@ -63,21 +63,21 @@
             allow-clear
             @blur="changeDes(record)"
           />
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldComment }}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{record.fieldComment!=null?record.fieldComment:''}}</span>
         </span>
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
             style="width: 60%"
             v-if="record.defaultField != null && record.defaultField.value == 2"
-            v-model="record.fieldArchives"
+            v-model="record.fieldArchives.description"
             @select="selectDes(record)"
           >
             <a-select-option v-for="(item, index) in dazdList" :key="index" :value="item.code">{{
               item.value
             }}</a-select-option>
           </a-select>
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{ record.fieldArchives }}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{  record.fieldArchives!=null? record.fieldArchives.description:''}}</span>
         </span>
       </a-table>
     </a-card>
@@ -192,6 +192,9 @@ export default {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
             // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
+            if (item.fieldArchives == null) {
+                this.$set(item, 'fieldArchives', {description:''})
+              }
             this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
             this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
           })
@@ -333,7 +336,7 @@ export default {
         item.defaultField = item.defaultField!=null?item.defaultField.value:2 //是否缺省值
         item.id = item.id //id
         item.fieldComment = item.fieldComment //字段描述
-        item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.value : 2 //档案字段
+        item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         item.fieldType = item.fieldType != null ? item.fieldType.value : '' //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
