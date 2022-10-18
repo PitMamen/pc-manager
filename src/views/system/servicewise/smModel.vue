@@ -25,7 +25,7 @@
             </a-col>
           </a-row>
         </a-form>
-        <a-button style="margin-left: 95%" type="primary" @click="addModel()">新增</a-button>
+        <a-button style="margin-left: 95%" type="primary" @click="addModel2()">新增</a-button>
       </div>
       <s-table
         ref="table"
@@ -170,8 +170,15 @@
       /**
        * 新增 短信模板
        */
-      addModel() {
-        this.$router.push( {path:'./adddxtemplate'})
+      addModel2() {
+        console.log('新增 短信模板 按钮')
+        this.$router.push({
+        name: 'sys_dxtemplate_add',
+        query: {
+          
+        },
+      })
+        // this.$router.push( {path:'./adddxtemplate'})
         // this.$router.push({ name: 'sys_dxtemplate_add', data: null })
       },
   
@@ -180,7 +187,13 @@
      * 修改
      */
      changeModel(record) {
-      this.$router.push({ path: './adddxtemplate?id=' + record.id })
+      this.$router.push({
+        name: 'sys_dxtemplate_add',
+        query: {
+          id:record.id,
+        },
+      })
+      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
     },
 
 
