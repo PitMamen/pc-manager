@@ -44,7 +44,7 @@
     </s-table>
 
     <check-Index ref="checkIndex" @ok="handleOk" />
-    <add-Name ref="addName"  />
+    <add-Name ref="addName" @ok="handleOk"  />
   </a-card>
 </template>
 

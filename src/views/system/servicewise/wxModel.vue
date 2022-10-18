@@ -35,14 +35,14 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="modifyModel(record.id)">修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus==1">修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
     </s-table>
 
-    <check-Index ref="checkIndex" @ok="handleOk" />
-    <add-Name ref="addName" />
+    <!-- <check-Index ref="checkIndex" @ok="handleOk" /> -->
+    <!-- <add-Name ref="addName" /> -->
   </a-card>
 </template>
   
@@ -50,13 +50,13 @@
   <script>
 import { STable } from '@/components'
 import { getWxTemplateList, changeStatusWxTemplate } from '@/api/modular/system/posManage'
-import checkIndex from './checkIndex'
-import addName from './addName'
+// import checkIndex from './checkIndex'
+// import addName from './addName'
 export default {
   components: {
     STable,
-    checkIndex,
-    addName,
+    // checkIndex,
+    // addName,
   },
   data() {
     return {
@@ -81,19 +81,19 @@ export default {
       columns: [
         {
           title: '模板名称',
-          dataIndex: 'template_title',
+          dataIndex: 'templateTitle',
         },
         {
           title: '内部编码',
-          dataIndex: 'template_inside_code',
+          dataIndex: 'templateInsideCode',
         },
         {
           title: '微信平台模板ID',
-          dataIndex: 'template_id',
+          dataIndex: 'templateId',
         },
         {
           title: '模板内容',
-          dataIndex: 'template_content',
+          dataIndex: 'templateContent',
         },
         {
           title: '状态',
@@ -119,8 +119,9 @@ export default {
             rows: res.data.records,
           }
           data.rows.forEach((item, index) => {
-            this.$set(item, 'zt', item.template_status == 1 ? '正常' : '停用')
-            this.$set(item, 'enableStatus', item.template_status == 1 ? '停用' : '启用')
+            console.log("vvvv:",item.templateStatus)
+            this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
+            this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
           })
 
           return data
@@ -142,11 +143,11 @@ export default {
      * 启用/停用
      */
     Enable(record) {
-      record.template_status = record.template_status == 1 ? 2 : 1
-      record.enableStatus = record.template_status == 1 ? '停用' : '启用'
+      record.templateStatus = record.templateStatus == 1 ? 2 : 1
+      record.enableStatus = record.templateStatus == 1 ? '停用' : '启用'
       var queryParamData = {
         id: record.id,
-        templateStatus: record.template_status,
+        templateStatus: record.templateStatus,
       }
       this.confirmLoading = true
       //更新接口调用
@@ -164,13 +165,14 @@ export default {
      * 新增
      */
     addModel() {
-      this.$router.push( {path:'./addwxtemplate'})
+      this.$router.push({ path: './addwxtemplate' })
     },
+
     /**
      * 修改
      */
-     modifyModel(id) {
-      this.$router.push( {path:'./addwxtemplate?id='+id})
+    changeModel(record) {
+      this.$router.push({ path: './addwxtemplate?id=' + record.id })
     },
     handleOk() {
       this.$refs.table.refresh()
@@ -180,7 +182,6 @@ export default {
       this.form.resetFields()
       this.visible = false
     },
-
   },
 }
 </script>

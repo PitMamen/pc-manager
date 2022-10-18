@@ -1502,54 +1502,54 @@ export function updateMetaConfigure(data) {
 
 
 
-  /**
-   * 获取微信模板分页列表
-   */
-  export function getWxTemplateList(data){
-    return axios({
-      url:'/follow-api/wxTemplate/getWxTemplateList',
-      method:'post',
-      data:data,
-    })
-  }
+/**
+ * 获取微信模板分页列表
+ */
+export function getWxTemplateList(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/getWxTemplateList',
+    method: 'post',
+    data: data,
+  })
+}
 
-  /**
-   * 微信模板 启用 禁用
-   */
-  export function changeStatusWxTemplate(data){
-    return axios({
-      url:'/follow-api/wxTemplate/changeStatusWxTemplate',
-      method:'post',
-      data:data,
-    })
-  }
-
-
-
-
-  /**
-   * 短信模板 分页列表
-   */
-  export function getSmsTemplateList(data){
-    return axios({
-      url:'/follow-api/smsTemplate/getSmsTemplateList',
-      method:'post',
-      data:data,
-    })
-  }
+/**
+ * 微信模板 启用 禁用
+ */
+export function changeStatusWxTemplate(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/changeStatusWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
-  /**
-   * 短信模板 启用 禁用
-   */
-  export function changeStatusSmsTemplate(data){
-    return axios({
-      url:'/follow-api/smsTemplate/changeStatusSmsTemplate',
-      method:'post',
-      data:data,
-    })
-  }
+
+/**
+ * 短信模板 分页列表
+ */
+export function getSmsTemplateList(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/getSmsTemplateList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+/**
+ * 短信模板 启用 禁用
+ */
+export function changeStatusSmsTemplate(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/changeStatusSmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
@@ -2049,6 +2049,17 @@ export function getUsersByDeptIdAndRole(data) {
     url: '/account-api/accountInfo/getUsersByDeptIdAndRole',
     method: 'get',
     params: data,
+  })
+}
+
+/**
+ *accountInfo/getUsersByDeptIdAndRole 新增/修改方案
+ */
+export function saveFollow(data) {
+  return axios({
+    url: '/follow-api/follow/plan/save',
+    method: 'post',
+    data: data,
   })
 }
 
