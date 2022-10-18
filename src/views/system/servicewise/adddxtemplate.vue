@@ -3,18 +3,18 @@
     <div class="div-part">
       <div class="div-line-wrap">
         <div class="div-left">
-          <span class="span-item-name">公众号 :</span>
-          <a-select v-model="checkData.wxAppId" allow-clear placeholder="请选择" @change="onWXProgramChange">
-            <a-select-option v-for="(item, index) in wxgzhData" :key="index" :value="item.wxAppId">{{
-              item.wxPublicName
+          <span class="span-item-name">短信平台 :</span>
+          <a-select v-model="checkData.smsConfigureId" allow-clear placeholder="请选择" @change="onWXProgramChange">
+            <a-select-option v-for="(item, index) in wxgzhData" :key="index" :value="item.id">{{
+              item.supplierName
             }}</a-select-option>
           </a-select>
         </div>
         <div class="div-right">
           <span class="span-item-name">模板ID :</span>
           <a-select v-model="checkData.templateId" allow-clear placeholder="请选择" @change="onTemplateChange">
-            <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.templateId">{{
-              item.title
+            <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.id">{{
+              item.smsTemplateTitle
             }}</a-select-option>
           </a-select>
           <!-- <a-button type="primary" @click="readTemplateInfoBtn" style="margin-left: 3%"> 读取模板信息 </a-button> -->
@@ -24,7 +24,7 @@
         <div class="div-left">
           <span class="span-item-name">内部编码 :</span>
           <a-input
-            v-model="templateContent.templateId"
+            v-model="templateContent.smsTemplateCode"
             class="span-item-value"
             style="display: inline-block"
             readOnly
@@ -49,7 +49,7 @@
         <div class="div-total-one">
           <span class="span-item-name">模板内容 :</span>
           <a-textarea
-            v-model="templateContent.content"
+            v-model="templateContent.smsTemplateContent"
             class="span-item-value"
             readOnly
             style="height: 100px; width: 900px; display: inline-block"
@@ -169,12 +169,12 @@
 
 <script type="text/javascript">
 import {
-  getTemplateWxMsg,
-  getWxConfigureList,
+  getSmsConfigureTemplateList,
+  getSmsConfigureList,
   qryMetaConfigureDetail,
-  addWxTemplate,
-  getWxTemplateById,
-  modifyWxTemplate
+  addSmsTemplate,
+  getSmsTemplateById,
+  modifySmsTemplate
 } from '@/api/modular/system/posManage'
 import addQuestion from '../package/addQuestion'
 import addTeach from '../package/addTeach'
@@ -190,14 +190,16 @@ export default {
       advanced: false,
       radioTyPe: 0,
       checkData: {
-        wxConfigureId:'',//公众号配置ID
-        wxAppId: '', //公众号ID
+        smsConfigureId:'',//短信平台配置ID
+        id: '', //短信平台ID
+        supplierName:'',//短信平台名称
         templateId: '', //模板ID
-        templateTitle: '', //模板標題
+        smsTemplateTitle:'',//模板标题
+        templateTitle: '', //模板输入标题
         navigatorType: '', //跳转类型
         navigatorContent: '', //跳转内容
       },
-      templateContent: { templateId: '', title: '', primaryIndustry: '', deputyIndustry: '', content: '', example: '' },
+      templateContent: { smsConfigureId: '',smsTemplateCode:'', smsTemplateTitle: '',  smsTemplateContent: '',  },
       questionContent: { name: '' },
       teachContent: { title: '' },
 
@@ -211,26 +213,27 @@ export default {
   },
 
   created() {
-    console.log(this.$route.query.id)
+    console.log("传参id："+this.$route.query.id)
  
     //获取公众号列表
-    getWxConfigureList({}).then((res) => {
+    getSmsConfigureList({}).then((res) => {
       if (res.code == 0) {
         this.wxgzhData = res.data
 
         if (this.$route.query.id) {
       //若有值，则查询详情
       this.id = this.$route.query.id
-      getWxTemplateById(this.id).then((res) => {
+      getSmsTemplateById(this.id).then((res) => {
         if (res.code == 0) {
           this.checkData=res.data
-          this.templateContent.templateId=res.data.templateId
-          this.templateContent.content=res.data.templateContent
-          this.templateContent.title=res.data.templateName
+          this.checkData.templateId=Number(res.data.templateId)
+          this.templateContent.smsConfigureId=res.data.smsConfigureId
+          this.templateContent.smsTemplateContent=res.data.templateContent
+          this.templateContent.smsTemplateCode=res.data.templateInsideCode
 
           var thisWXData=[];
           this.wxgzhData.forEach(item=>{
-            if(item.wxAppId === res.data.wxAppId){
+            if(item.id+'' === res.data.smsConfigureId){
               thisWXData.push(item)
             }
           })
@@ -251,7 +254,7 @@ export default {
 
       this.fieldList=JSON.parse(res.data.templateParamJson)
 
-      this.onWXProgramChange(res.data.wxAppId)
+      this.onWXProgramChange(Number(res.data.smsConfigureId) )
 
         }
       })
@@ -273,26 +276,28 @@ export default {
 
     //选择公众号
     onWXProgramChange(value) {
-      console.log(value)
+      console.log('选择公众号:'+value)
       this.wxgzhData.forEach((item) => {
-        if (item.wxAppId === value) {
-          this.checkData.wxConfigureId = item.id
+        if (item.id === value) {
+          this.checkData.smsConfigureId = item.id
         }
       })
-      this.getTemplateWxMsg(value, '')
+      this.getSmsConfigureTemplateList(value)
     },
     //获取模板列表或者单个
-    getTemplateWxMsg(wxAppId, templateId) {
-      getTemplateWxMsg({ templateId: templateId, wxAppId: wxAppId, wxPublicName: '', wxSecret: '' }).then((res) => {
+    getSmsConfigureTemplateList(id) {
+      getSmsConfigureTemplateList(id).then((res) => {
         if (res.code == 0) {
           if (this.$route.query.id) {//详情
             var thistemplateData=[];
             res.data.forEach(item=>{
-            if(item.templateId === this.checkData.templateId){
+            if(item.id === this.checkData.templateId){
               thistemplateData.push(item)
             }
           })
+          console.log("thistemplateData",thistemplateData)
          this.templateData=thistemplateData
+      
           }else{//新增
             this.templateData = res.data
           }
@@ -302,16 +307,22 @@ export default {
     },
     //选择模板
     onTemplateChange(value) {
+      console.log("onTemplateChange="+value)
+      if (this.$route.query.id) {//详情
+      return
+    }
       this.templateData.forEach((item) => {
-        if (item.templateId === value) {
+        if (item.id === value) {
           this.templateContent = item
           this.fieldList = []
         }
       })
       console.log(this.templateContent)
 
-      let text = this.templateContent.content
-      let regex = /\{\{(.+?)\./g
+      let text = this.templateContent.smsTemplateContent
+    
+      console.log(text)
+      let regex = /\$\{(.+?)\}/g
       let result
       while ((result = regex.exec(text)) != null) {
         this.fieldList.push({
@@ -366,8 +377,8 @@ export default {
     readTemplateInfoBtn() {},
     goConfirm() {
       console.log(this.checkData)
-      if (!this.checkData.wxAppId) {
-        this.$message.error('请选择微信公众号')
+      if (!this.checkData.smsConfigureId) {
+        this.$message.error('请选择短信平台')
         return
       }
       if (!this.checkData.templateId) {
@@ -415,13 +426,13 @@ export default {
       }
 
       var postData = {
-        wxAppId: this.checkData.wxAppId,
-        wxConfigureId:this.checkData.wxConfigureId,
+        smsConfigureId:this.checkData.smsConfigureId,
         templateId: this.checkData.templateId,
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
-        templateContent:this.templateContent.content,
-        templateName:this.templateContent.title,
+        templateContent:this.templateContent.smsTemplateContent,
+        templateName:this.templateContent.smsTemplateTitle,
+        templateInsideCode:this.templateContent.smsTemplateCode,
         jumpType: this.radioTyPe + 1,
         jumpValue: jumpValue,
         jumpTitle: jumpTitle,
@@ -437,7 +448,7 @@ export default {
     },
 
     add(postData){
-      addWxTemplate(postData).then((res) => {
+      addSmsTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.$router.go(-1)
@@ -447,7 +458,7 @@ export default {
       })
     },
     modify(postData){
-      modifyWxTemplate(postData).then((res) => {
+      modifySmsTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
           this.$router.go(-1)

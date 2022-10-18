@@ -103,6 +103,7 @@ export default {
       chooseName: '',
       confirmLoading: false,
       isAverage: false,
+      isSingle: false,
       choseNum: 0,
       totolAverage: 0,
       deptUsers: [{ deptName: '', users: [] }],
@@ -157,17 +158,37 @@ export default {
      * @param {*} index 
      * @param {*} deptUsers 
      */
-    add(index, deptUsers) {
+    add(index, deptUsers, assignments, isSingle) {
       this.index = index
       this.visible = true
+      this.isAverage = false
       this.deptUsers = deptUsers
+      this.isSingle = isSingle
+      this.choseUsers = []
+
       console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
       this.deptUsers[0].users.forEach((item) => {
         this.$set(item, 'isChecked', false)
         this.$set(item, 'canAdd', true)
+        if (assignments && assignments.length > 0) {
+          assignments.forEach((itemAss) => {
+            if (itemAss.userId == item.userId) {
+              //组装可以添加的用户
+              this.$set(item, 'canAdd', false)
+
+              //组装已添加用户
+              let tempItem = JSON.parse(JSON.stringify(item))
+              this.$set(tempItem, 'weight', itemAss.weight)
+              this.choseUsers.push(tempItem)
+            }
+          })
+        }
         // this.$set(item, 'weight', 0)
       })
+      this.choseNum = this.choseUsers.length
       this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers[0].users))
+      // debugger
+      this.countTotal()
       // console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
     },
 
@@ -175,9 +196,11 @@ export default {
       this.isAverage = !this.isAverage
       if (this.isAverage) {
         let num = (100 / this.choseUsers.length).toFixed(0)
+        //平均的时候先设均值，然后改变最后一个值
         this.choseUsers.forEach((item, index) => {
           this.$set(item, 'weight', num)
         })
+        this.choseUsers[this.choseUsers.length - 1].weight = 100 - num * (this.choseUsers.length - 1)
         this.totolAverage = 100
       }
     },
@@ -211,6 +234,12 @@ export default {
       if (!item.canAdd) {
         return
       }
+
+      if (this.isSingle && this.choseUsers.length == 1) {
+        this.$message.error('指定人员仅需添加一个')
+        return
+      }
+
       item.isChecked = true
       item.canAdd = false
       let tempItem = JSON.parse(JSON.stringify(item))
@@ -224,7 +253,7 @@ export default {
       this.choseUsers.splice(this.choseUsers.indexOf(record), 1)
       this.deptUsers[0].users.forEach((item) => {
         if (item.userId == record.userId) {
-          debugger
+          // debugger
           item.isChecked = false
           item.canAdd = true
         }
@@ -239,11 +268,15 @@ export default {
       })
     },
 
-    handleSubmit() {
+    countTotal() {
       this.totolAverage = 0
       for (let index = 0; index < this.choseUsers.length; index++) {
         this.totolAverage = parseInt(this.totolAverage) + parseInt(this.choseUsers[index].weight)
       }
+    },
+
+    handleSubmit() {
+      this.countTotal()
 
       if (this.choseNum == 0) {
         this.$message.error('请选择人员')
@@ -266,8 +299,16 @@ export default {
           return
         }
       }
-
-      this.$emit('ok', this.index, this.choseUsers)
+      console.log('this.choseUsers', this.choseUsers)
+      let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
+      proccesedAssignments.forEach((item, index) => {
+        delete item.canAdd
+        delete item.isChecked
+        // delete item.userName
+        delete item.xh
+      })
+      console.log('this.proccesedAssignments', proccesedAssignments)
+      this.$emit('ok', this.index, proccesedAssignments)
       this.visible = false
     },
     handleCancel() {

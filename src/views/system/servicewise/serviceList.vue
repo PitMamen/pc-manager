@@ -231,6 +231,7 @@ export default {
           this.$message.error('编辑失败：' + res.message)
         }
       })
+
     },
     upDateStatesText(_status){
       return _status==1?'确定停用此方案吗？':'确定启用用此方案吗？'

@@ -1502,54 +1502,54 @@ export function updateMetaConfigure(data) {
 
 
 
-  /**
-   * 获取微信模板分页列表
-   */
-  export function getWxTemplateList(data){
-    return axios({
-      url:'/follow-api/wxTemplate/getWxTemplateList',
-      method:'post',
-      data:data,
-    })
-  }
+/**
+ * 获取微信模板分页列表
+ */
+export function getWxTemplateList(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/getWxTemplateList',
+    method: 'post',
+    data: data,
+  })
+}
 
-  /**
-   * 微信模板 启用 禁用
-   */
-  export function changeStatusWxTemplate(data){
-    return axios({
-      url:'/follow-api/wxTemplate/changeStatusWxTemplate',
-      method:'post',
-      data:data,
-    })
-  }
-
-
-
-
-  /**
-   * 短信模板 分页列表
-   */
-  export function getSmsTemplateList(data){
-    return axios({
-      url:'/follow-api/smsTemplate/getSmsTemplateList',
-      method:'post',
-      data:data,
-    })
-  }
+/**
+ * 微信模板 启用 禁用
+ */
+export function changeStatusWxTemplate(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/changeStatusWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
-  /**
-   * 短信模板 启用 禁用
-   */
-  export function changeStatusSmsTemplate(data){
-    return axios({
-      url:'/follow-api/smsTemplate/changeStatusSmsTemplate',
-      method:'post',
-      data:data,
-    })
-  }
+
+/**
+ * 短信模板 分页列表
+ */
+export function getSmsTemplateList(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/getSmsTemplateList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+/**
+ * 短信模板 启用 禁用
+ */
+export function changeStatusSmsTemplate(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/changeStatusSmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
@@ -1564,8 +1564,6 @@ export function qryFollowPlan(data) {
     data: data,
   })
 }
-
-
 
 /**
  * 获取公众号列表接口
@@ -1989,6 +1987,60 @@ export function personnelAssignmentTypes(data) {
   })
 }
 
+ /**
+  * 获取短信平台列表
+  */
+  export function getSmsConfigureList(data){
+    return axios({
+      url:'/follow-api/smsConfigure/getSmsConfigureList',
+      method:'post',
+      data:data,
+    })
+  }
+
+   /**
+  * 获取短信模板内容列表
+  */
+    export function getSmsConfigureTemplateList(smsConfigureId){
+      return axios({
+        url:'/follow-api/smsConfigureTemplate/getSmsConfigureTemplateList/'+smsConfigureId,
+        method:'post',
+       
+      })
+    }
+     /**
+  * 添加短信模板接口
+  */
+  export function addSmsTemplate(data){
+    return axios({
+      url:'/follow-api/smsTemplate/addSmsTemplate',
+      method:'post',
+      data:data,
+    })
+  }
+
+       /**
+  * 添加短信模板接口
+  */
+        export function modifySmsTemplate(data){
+          return axios({
+            url:'/follow-api/smsTemplate/modifySmsTemplate',
+            method:'post',
+            data:data,
+          })
+        }
+
+     /**
+  * 获取短信模板详情
+  */
+      export function getSmsTemplateById(id){
+        return axios({
+          url:'/follow-api/smsTemplate/getSmsTemplateById/'+id,
+          method:'post',
+         
+        })
+      }
+
 /**
  *accountInfo/getUsersByDeptIdAndRole 根据科室与角色查询用户列表
  */
@@ -1999,3 +2051,15 @@ export function getUsersByDeptIdAndRole(data) {
     params: data,
   })
 }
+
+/**
+ *accountInfo/getUsersByDeptIdAndRole 新增/修改方案
+ */
+export function saveFollow(data) {
+  return axios({
+    url: '/follow-api/follow/plan/save',
+    method: 'post',
+    data: data,
+  })
+}
+
