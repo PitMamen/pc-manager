@@ -11,7 +11,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="3" tab="短信模板">
-        <wx-model ref="smModel" @ok="handleOk" />
+        <sm-model ref="smModel" @ok="handleOk" />
       </a-tab-pane>
       <a-tab-pane key="4" tab="随访名单">
         <name-list ref="nameList" @ok="handleOk" />
