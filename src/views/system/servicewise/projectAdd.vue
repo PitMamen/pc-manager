@@ -983,6 +983,13 @@ export default {
           delete item.assignments
         }
 
+        if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
+          if (!item.assignments || item.assignments.length == 0) {
+            this.$message.error('请添加人员分配')
+            return
+          }
+        }
+
         delete item.everyData
         delete item.nameStr
       }
@@ -992,7 +999,8 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
-            this.$message.error('保存成功')
+            this.$message.success('保存成功')
+            this.$router.go(-1)
           }
         })
         .finally((res) => {
