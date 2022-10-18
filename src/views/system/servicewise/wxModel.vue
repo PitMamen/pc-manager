@@ -18,13 +18,15 @@
 
           <a-col :md="6" :sm="24">
             <!-- <a-form-item label="状态:"> -->
-            <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
+            <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search"
+              >查询</a-button
+            >
+            <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
             <!-- </a-form-item> -->
           </a-col>
         </a-row>
       </a-form>
-      <a-button style="margin-left: 95%" type="primary" @click="addModel()">新增</a-button>
+      <a-button style="margin-left: 95%" type="primary" @click="addModel()" icon="plus">新增</a-button>
     </div>
     <s-table
       ref="table"
@@ -34,13 +36,17 @@
       :alert="true"
       :rowKey="(record) => record.code"
     >
+      <!-- add -->
+      <span slot="content" slot-scope="text, record">
+        <div :title="record.templateContent">{{ record.templateContent }}</div>
+      </span>
+
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus == 2">修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
     </s-table>
-
   </a-card>
 </template>
   
@@ -87,7 +93,7 @@ export default {
         },
         {
           title: '模板内容',
-          dataIndex: 'templateContent',
+          scopedSlots: { customRender: 'content' },
         },
         {
           title: '状态',
@@ -163,9 +169,7 @@ export default {
       console.log('新增 微信模板 按钮')
       this.$router.push({
         name: 'sys_wxtemplate_add',
-        query: {
-          
-        },
+        query: {},
       })
       // this.$router.push({ path: './adddxtemplate' })
     },
@@ -177,7 +181,7 @@ export default {
       this.$router.push({
         name: 'sys_wxtemplate_add',
         query: {
-          id:record.id,
+          id: record.id,
         },
       })
       // this.$router.push({ path: './adddxtemplate?id=' + record.id })

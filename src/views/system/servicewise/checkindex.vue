@@ -339,16 +339,16 @@ export default {
         item.fieldComment = item.fieldComment //字段描述
         var value = 0
         if (item.fieldArchives != null) {
-          if (item.fieldArchives.description == '紧急联系人') {
+          if (item.fieldArchives.description === '紧急联系人'||item.fieldArchives.description==1) {
             value = 1
-          } else if (item.fieldArchives.description == '紧急电话') {
+          } else if (item.fieldArchives.description === '紧急电话'||item.fieldArchives.description==2) {
             value = 2
-          } else if (item.fieldArchives.description == '无') {
+          } else if (item.fieldArchives.description === '无'||item.fieldArchives.description==0) {
             value = 0
           }
-          itdem.fieldArchives = item.fieldArchives != null ? value : '' //档案字段
+          item.fieldArchives = item.fieldArchives != null ? value : '' //档案字段
         }else{
-          itdem.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
+          item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         }
         // item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         item.fieldType = item.fieldType != null ? item.fieldType.value : '' //字段类型

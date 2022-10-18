@@ -19,13 +19,13 @@
             <a-col :md="6" :sm="24">
               <!-- <a-form-item label="状态:"> -->
               <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
+              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
+              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
               <!-- </a-form-item> -->
             </a-col>
           </a-row>
         </a-form>
-        <a-button style="margin-left: 95%" type="primary" @click="addModel2()">新增</a-button>
+        <a-button style="margin-left: 95%" type="primary" @click="addModel2()"  icon="plus">新增</a-button>
       </div>
       <s-table
         ref="table"
@@ -35,6 +35,10 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
+      <!-- add -->
+      <span slot="content" slot-scope="text, record">
+        <div :title="record.templateContent">{{ record.templateContent }}</div>
+      </span>
         <span slot="action" slot-scope="text, record">
           <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
           <a-divider type="vertical" />
@@ -94,8 +98,8 @@
           },
           {
             title: '模板内容',
-            dataIndex: 'templateContent',
-            width: 350,
+            scopedSlots: { customRender: 'content' },
+            // width: 350,
           },
           {
             title: '状态',
@@ -113,7 +117,7 @@
         loadData: (parameter) => {
           this.confirmLoading = true
           return getSmsTemplateList(Object.assign(parameter, this.queryParams)).then((res) => {
-            console.log('请求结果:', res.message)
+            // console.log('请求结果:', res.message)
             this.confirmLoading = false
             var data = {
               pageNo: parameter.pageNo,

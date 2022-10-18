@@ -20,13 +20,13 @@
               <!-- <a-popconfirm class="switch-button"> -->
               <a-switch :checked="isOpen" @click="goOpen" />
               <!-- </a-popconfirm> -->
-              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
+              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
+              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
             </a-form-item>
           </a-col>
         </a-row>
       </a-form>
-      <a-button style="margin-left: 95%" type="primary" @click="addName()">新增</a-button>
+      <a-button style="margin-left: 95%" type="primary" @click="addName()" icon="plus">新增</a-button>
     </div>
     <s-table
       ref="table"
