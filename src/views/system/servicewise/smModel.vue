@@ -36,7 +36,7 @@
         :rowKey="(record) => record.code"
       >
         <span slot="action" slot-scope="text, record">
-          <a @click="changeModel(record.id)" :disabled="record.templateStatus==2">修改</a>
+          <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
           <a-divider type="vertical" />
           <a @click="Enable(record)">{{ record.enableStatus }}</a>
         </span>
@@ -183,7 +183,7 @@
      * 修改
      */
      changeModel(record) {
-      this.$router.push({ path: './addwxtemplate?id=' + record.id })
+      this.$router.push({ path: './adddxtemplate?id=' + record.id })
     },
 
 
