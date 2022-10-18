@@ -153,12 +153,12 @@
               class="mid-select-two"
               v-model="itemTask.messageContentId"
               @focus="onTemFocus(indexTask, itemTask)"
-              @select="onTemSelect"
+              @select="onTemSelect(indexTask, itemTask)"
               allow-clear
               placeholder="请选择模版"
             >
               <a-select-option v-for="(item, index) in templateList" :key="index" :value="item.id">{{
-                item.templateTitle
+                item.templateName
               }}</a-select-option>
             </a-select>
             <a-select class="mid-select-two" v-model="itemTask.taskType" disabled allow-clear placeholder="任务类型">
@@ -341,12 +341,14 @@ import {
   getWxTemplateList,
   getUsersByDeptIdAndRole,
   saveFollow,
+  getSmsTemplateListForJumpType,
+  getWxTemplateListForJumpType,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
-import { formatDateFull } from '@/utils/util'
+import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
   components: {
@@ -583,10 +585,8 @@ export default {
       // this.timeStr = time
       console.log('itemTask', itemTask)
       console.log('indexTask', indexTask)
-      // itemTask.pushTimePoint = moment(itemTask.pushTimePoint, 'HH:mm')
-      // itemTask.pushTimePoint = formatDateFull(itemTask.pushTimePoint).substring(12,4)
-      // console.log('itemTask.pushTimePoint', formatDateFull(itemTask.pushTimePoint))
-      itemTask.pushTimePoint = formatDateFull(itemTask.pushTimePoint).substring(11, 16)
+      console.log('pushTimePoint timeChangeStart', itemTask.pushTimePoint)
+      // itemTask.pushTimePoint = formatDateFull(itemTask.pushTimePoint).substring(11, 16)
       // console.log('itemTask.pushTimePoint', formatDateFull(itemTask.pushTimePoint).substring(11, 16))
     },
 
@@ -667,25 +667,112 @@ export default {
     },
 
     /**
+     *
+     * 【任务类别】字段为只读选项，选项有：1）问卷收集、2）健康宣教、3）消息提醒，其匹配规则：根据【随访方式】和【模板列表】字段来匹配：
+     * 如果【随访方式】选电话回访，自动选择：问卷收集；
+     * 如果【随访方式】选微信消息和短信消息，根据【模板列表】属性来匹配，模板选的是问卷，自动选择：问卷收集，模板选的是文章，
+     * 自动选择：健康宣教，模板选的是其它，自动选择：消息提醒
+     *
      * 随访方式选择后需要请求模版列表
+     *
      */
     onTypeSelect(indexTask, itemTask) {
-      this.getWxTemplateListOut()
-      console.log('onTypeSelect', value)
+      // this.getWxTemplateListOut()
+      console.log('onTypeSelect', itemTask)
       if (itemTask.messageType == 1) {
-        delete item.pushTimePoint
+        //电话消息不需要时间
+        console.log('pushTimePoint delete', itemTask.pushTimePoint)
+        delete itemTask.pushTimePoint
       } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
-        item.pushTimePoint = '08:00'
+        //微信短信消息需要时间
+        let date = formatDate(new Date()) + ' 08:00:00'
+        console.log('date', date)
+        let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
+        console.log('mom', mom)
+        itemTask.pushTimePoint = mom
+        console.log('pushTimePoint add', itemTask.pushTimePoint)
       }
+
+      if (itemTask.messageType == 1) {
+        //查微信短信的模版合起来
+        getWxTemplateListForJumpType(1).then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              this.$set(item, 'messageContentType', 4)
+            })
+            this.templateList = res.data
+            this.getSmsTemplateListForJumpTypeOut()
+            console.log('getWxTemplateListForJumpType', res.data.length)
+          }
+        })
+      } else if (itemTask.messageType == 2) {
+        //查所有微信模版
+        getWxTemplateListForJumpType(0).then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              this.$set(item, 'messageContentType', 4)
+            })
+            this.templateList = res.data
+          }
+        })
+      } else if (itemTask.messageType == 3) {
+        //查所有短信模版
+        getSmsTemplateListForJumpType(0).then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              this.$set(item, 'messageContentType', 3)
+            })
+            this.templateList = res.data
+          }
+        })
+      }
+    },
+
+    getSmsTemplateListForJumpTypeOut() {
+      getSmsTemplateListForJumpType(1).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 3)
+          })
+          this.templateList = this.templateList.concat(res.data)
+          console.log('getSmsTemplateListForJumpTypeOut', this.templateList.length)
+        }
+      })
     },
 
     /**
      * 随访方式,随访模版选择后需要自动选择任务类型
      *
+     * 【任务类别】字段为只读选项，选项有：1）问卷收集、2）健康宣教、3）消息提醒，其匹配规则：根据【随访方式】和【模板列表】字段来匹配：
+     * 如果【随访方式】选电话回访，自动选择：问卷收集；
+     * 如果【随访方式】选微信消息和短信消息，根据【模板列表】属性来匹配，模板选的是问卷，自动选择：问卷收集，模板选的是文章，
+     * 自动选择：健康宣教，模板选的是其它，自动选择：消息提醒
+     *
+     *
      * "data":[{"value":"1","description":"问卷收集"},{"value":"2","description":"健康宣教"},{"value":"3","description":"消息提醒"}]}
      */
-    onTemSelect() {
+    onTemSelect(indexTask, itemTask) {
+      let chooseOne = this.templateList.find((item) => {
+        return item.id == itemTask.messageContentId
+      })
+
+      itemTask.messageContentType = chooseOne.messageContentType
+
+      if (itemTask.messageType == 1) {
+        itemTask.taskType = '1'
+      } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
+        //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
+        if (chooseOne.jumpType == 1) {
+          itemTask.taskType = '1'
+        } else if (chooseOne.jumpType == 2) {
+          itemTask.taskType = '2'
+        } else {
+          itemTask.taskType = '3'
+        }
+      }
       //TODO 选任务类型
+      console.log('onTemSelect indexTask', indexTask)
+      console.log('onTemSelect itemTask', itemTask)
     },
 
     // /**
@@ -765,6 +852,7 @@ export default {
         }
       })
     },
+
     dateFieldsOut() {
       dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then((res) => {
         if (res.code == 0) {
@@ -773,13 +861,13 @@ export default {
       })
     },
 
-    getWxTemplateListOut() {
-      getWxTemplateList({ templateTitle: '', pageNo: 1, pageSize: 100 }).then((res) => {
-        if (res.code == 0) {
-          this.templateList = res.data.records
-        }
-      })
-    },
+    // getWxTemplateListOut() {
+    //   getWxTemplateList({ templateTitle: '', pageNo: 1, pageSize: 100 }).then((res) => {
+    //     if (res.code == 0) {
+    //       this.templateList = res.data.records
+    //     }
+    //   })
+    // },
 
     getUsersByDeptIdAndRoleOut() {
       getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: 5 }).then((res) => {
@@ -872,6 +960,9 @@ export default {
           this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
           return
         }
+        console.log('pushTimePoint before', item.pushTimePoint)
+        item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
+        console.log('pushTimePoint after', item.pushTimePoint)
 
         // //时间配置
         // if (item.messageType == 2 || item.messageType == 3) {
@@ -892,6 +983,13 @@ export default {
           delete item.assignments
         }
 
+        if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
+          if (!item.assignments || item.assignments.length == 0) {
+            this.$message.error('请添加人员分配')
+            return
+          }
+        }
+
         delete item.everyData
         delete item.nameStr
       }
@@ -901,7 +999,8 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
-            this.$message.error('保存成功')
+            this.$message.success('保存成功')
+            this.$router.go(-1)
           }
         })
         .finally((res) => {

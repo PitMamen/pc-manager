@@ -66,14 +66,14 @@
 import { STable } from '@/components'
 
 import { qryMetaConfigure, getDeptsPersonal, getDepts, qryFollowPlan,updateFollowPlanStatus } from '@/api/modular/system/posManage'
-import checkindex from './checkIndex'
+import checkIndex from './checkIndex'
 import addName from './addName'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    checkindex,
+    checkIndex,
     addName,
   },
   data() {

@@ -104,7 +104,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getWxTemplateList(Object.assign(parameter, this.queryParams)).then((res) => {
-          console.log('请求结果:', res.message)
+          // console.log('请求结果:', res.message)
           var data = {
             pageNo: parameter.pageNo,
             pageSize: parameter.pageSize,
@@ -113,7 +113,7 @@ export default {
             rows: res.data.records,
           }
           data.rows.forEach((item, index) => {
-            console.log("vvvv:",item.templateStatus)
+            // console.log("vvvv:",item.templateStatus)
             this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
             this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
           })
