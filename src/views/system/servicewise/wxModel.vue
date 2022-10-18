@@ -174,7 +174,6 @@ export default {
     changeModel(record) {
       this.$router.push({ path: './addwxtemplate?id=' + record.id })
     },
-
     handleOk() {
       this.$refs.table.refresh()
     },

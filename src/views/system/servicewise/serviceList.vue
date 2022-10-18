@@ -16,8 +16,8 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="执行科室">
-              <a-select allow-clear v-model="queryParams.departmentName" placeholder="请选择科室">
-                <a-select-option v-for="(item, index) in originData" :key="index" @change="onDepartmentChange(index)">{{
+              <a-select allow-clear v-model="queryParams.departmentName" placeholder="请选择科室"  @change="onDepartmentChange">
+                <a-select-option v-for="(item, index) in originData" :key="index">{{
                   item.departmentName
                 }}</a-select-option>
               </a-select>
@@ -193,8 +193,17 @@ export default {
       this.$refs.table.refresh(true)
     },
     onDepartmentChange(index){
+      console.log("index="+index)
+      if(index == undefined){
+        this.queryParams.executeDepartment= ''
+      this.queryParams.departmentName= ''
+      
+      }else{
+        console.log(this.originData[index])
       this.queryParams.executeDepartment= this.originData[index].departmentId
       this.queryParams.departmentName= this.originData[index].departmentName
+      }
+     
     },
     /**
      * 重置
