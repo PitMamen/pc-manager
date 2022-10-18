@@ -42,8 +42,6 @@
         </span>
       </s-table>
   
-      <!-- <check-Index ref="checkIndex" @ok="handleOk" /> -->
-      <!-- <add-Name ref="addName" /> -->
     </a-card>
   </template>
     
@@ -51,13 +49,11 @@
     <script>
   import { STable } from '@/components'
   import { getSmsTemplateList, changeStatusSmsTemplate } from '@/api/modular/system/posManage'
-  // import checkIndex from './checkIndex'
-  import adddxtemplate from './adddxtemplate'
+  // import adddxtemplate from './adddxtemplate'
   export default {
     components: {
       STable,
-      // checkIndex,
-      adddxtemplate,
+      // adddxtemplate,
     },
     data() {
       return {
@@ -161,6 +157,7 @@
         changeStatusSmsTemplate(queryParamData).then((res) => {
           if (res.success) {
             this.confirmLoading = false
+            this.$message.success('操作成功!')
             this.handleOk()
           } else {
             this.$message.error('编辑失败：' + res.message)

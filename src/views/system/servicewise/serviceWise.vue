@@ -11,7 +11,7 @@
       </a-tab-pane>
 
       <a-tab-pane key="3" tab="短信模板">
-
+        <wx-model ref="smModel" @ok="handleOk" />
       </a-tab-pane>
       <a-tab-pane key="4" tab="随访名单">
         <name-list ref="nameList" @ok="handleOk" />
@@ -38,6 +38,7 @@ import {
 import serviceList from './serviceList'
 import nameList from './nameList'
 import wxModel from './wxModel'
+import smModel from './smModel'
 
 
 
@@ -49,6 +50,7 @@ export default {
     serviceList,
     nameList,
     wxModel,
+    smModel,
     // addFormDispatch,
     // editFormDispatch,
 

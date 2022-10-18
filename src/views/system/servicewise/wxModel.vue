@@ -35,14 +35,12 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus==1">修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
     </s-table>
 
-    <!-- <check-Index ref="checkIndex" @ok="handleOk" /> -->
-    <!-- <add-Name ref="addName" /> -->
   </a-card>
 </template>
   
@@ -50,13 +48,9 @@
   <script>
 import { STable } from '@/components'
 import { getWxTemplateList, changeStatusWxTemplate } from '@/api/modular/system/posManage'
-// import checkIndex from './checkIndex'
-// import addName from './addName'
 export default {
   components: {
     STable,
-    // checkIndex,
-    // addName,
   },
   data() {
     return {
@@ -154,6 +148,7 @@ export default {
       changeStatusWxTemplate(queryParamData).then((res) => {
         if (res.success) {
           this.confirmLoading = false
+          this.$message.success('操作成功!')
           this.handleOk()
         } else {
           this.$message.error('编辑失败：' + res.message)
