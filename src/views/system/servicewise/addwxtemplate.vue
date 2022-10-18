@@ -40,7 +40,7 @@
             style="display: inline-block"
             allow-clear
             type="text"
-            maxlength="10"
+            maxLength="30"
             placeholder="请输入模板标题 "
           />
         </div>
@@ -92,7 +92,7 @@
             class="span-item-value"
             style="width: 90%; display: inline-block"
             allow-clear
-            maxlength="10"
+            maxLength="150"
             placeholder="请输入参数,不超过150字 "
           />
         </div>
@@ -379,12 +379,14 @@ export default {
         return
       }
 
-      this.fieldList.forEach((item) => {
-        if (!item.content) {
-          this.$message.error('模板参数' + item.name + '为空')
+
+      for(var i=0;i<this.fieldList.length;i++){
+        
+        if (!this.fieldList[i].content) {
+          this.$message.error('模板参数' + this.fieldList[i].name + '为空')
           return
         }
-      })
+      }
 
       var jumpValue = ''
       var jumpTitle = ''
@@ -440,7 +442,7 @@ export default {
       addWxTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
-          this.$router.go(-1)
+          this.$router.push( {path:'./serviceWise?keyindex=2'})
         } else {
           this.$message.error(res.message)
         }
@@ -450,7 +452,7 @@ export default {
       modifyWxTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
-          this.$router.go(-1)
+          this.$router.push( {path:'./serviceWise?keyindex=2'})
         } else {
           this.$message.error(res.message)
         }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-tabs default-active-key="1" >
+    <a-tabs  v-model="keyindex" >
       <a-tab-pane key="1" tab="随访方案">
         <service-list ref="serviceList" @ok="handleOk" />
       </a-tab-pane>
@@ -9,9 +9,8 @@
         <wx-model ref="wxModel" @ok="handleOk" />
         <!-- <a-button type="primary" @click="addwxtemplate">新增微信模板</a-button> -->
       </a-tab-pane>
-      
-      <a-tab-pane key="3" tab="短信模板" force-render>
-        <sm-model ref="smModel" @ok="handleOk" />
+
+      <a-tab-pane key="3" tab="短信模板">
 
       </a-tab-pane>
       <a-tab-pane key="4" tab="随访名单">
@@ -39,7 +38,6 @@ import {
 import serviceList from './serviceList'
 import nameList from './nameList'
 import wxModel from './wxModel'
-import smModel from './smModel'
 
 
 
@@ -51,7 +49,6 @@ export default {
     serviceList,
     nameList,
     wxModel,
-    smModel,
     // addFormDispatch,
     // editFormDispatch,
 
@@ -61,23 +58,27 @@ export default {
 
   data() {
     return {
+      keyindex:'1',
       keshiData:[],
       queryParams:{
-        userName:''
-
+        userName:'',
+       
       }
      
     }
   },
 
   created() {
-
+    console.log(this.$route.query.keyindex)
+    if(this.$route.query.keyindex){
+      this.keyindex=this.$route.query.keyindex
+    }
   },
 
   methods: {
 
     addwxtemplate (){
-      this.$router.push( {path:'./addwxtemplate?id=10'})
+      this.$router.push( {path:'./addwxtemplate'})
     },
 
     callback(){},
