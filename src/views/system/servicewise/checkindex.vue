@@ -117,6 +117,7 @@ export default {
       form: this.$form.createForm(this),
       title: '编辑名单',
       dazdList: [
+        { code: 0, value: '无' },
         { code: 1, value: '紧急联系人' },
         { code: 2, value: '紧急电话' },
         { code: 3, value: '微信OpenID' },
@@ -336,7 +337,20 @@ export default {
         item.defaultField = item.defaultField!=null?item.defaultField.value:2 //是否缺省值
         item.id = item.id //id
         item.fieldComment = item.fieldComment //字段描述
-        item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
+        var value = 0
+        if (item.fieldArchives != null) {
+          if (item.fieldArchives.description === '紧急联系人'||item.fieldArchives.description==1) {
+            value = 1
+          } else if (item.fieldArchives.description === '紧急电话'||item.fieldArchives.description==2) {
+            value = 2
+          } else if (item.fieldArchives.description === '无'||item.fieldArchives.description==0) {
+            value = 0
+          }
+          item.fieldArchives = item.fieldArchives != null ? value : '' //档案字段
+        }else{
+          item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
+        }
+        // item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         item.fieldType = item.fieldType != null ? item.fieldType.value : '' //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
