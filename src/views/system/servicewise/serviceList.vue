@@ -111,7 +111,7 @@ export default {
         },
         {
           title: '制定时间',
-          dataIndex: 'createdTime',
+          dataIndex: 'formulateTime',
         },
         {
           title: '制定人员',
