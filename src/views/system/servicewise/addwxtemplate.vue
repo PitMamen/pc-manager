@@ -159,7 +159,7 @@
     </div>
 
     <div style="margin-top: 60px">
-      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 47%"> 确定 </a-button>
+      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 47%"> {{id?'确认修改':'确认提交'}} </a-button>
     </div>
     <div style="height: 50px; backgroud-color: white" />
 
