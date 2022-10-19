@@ -81,7 +81,7 @@ export default {
 
   created() {
     console.log("query:"+this.$route.query)
-    document.title = '健康随访'
+    document.title = '健康随访文章'
     
     var url = window.location.href ;             //获取当前url
     console.log("url:"+url)
