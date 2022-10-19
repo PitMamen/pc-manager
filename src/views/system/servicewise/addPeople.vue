@@ -33,7 +33,12 @@
             >
           </div>
 
-          <span style="margin-left: 9%; margin-top: 1%">{{ deptUsers[0].deptName }}</span>
+          <div class="left-num-des">
+            <span style="margin-left: 9%; margin-top: 1%">{{ deptUsers[0].deptName }}</span>
+            <a-icon style="margin-left: 62%" class="checked" :type="iconType" @click="allClicked" />
+            <!-- plus -->
+            <!-- <a-icon v-if="!isAllChecked" style="margin-left: 2%" :class="{ checked: isAllChecked }" type="minus" @click="allClickedMi" /> -->
+          </div>
 
           <div class="item-person" v-for="(item, index) in deptUsers[0].users" :key="index" :value="item.id">
             <span style="margin-left: 15%; margin-top: 1%; flex: 1" :class="{ checked: item.isChecked }">{{
@@ -73,6 +78,7 @@
               <a-input-number
                 style="display: inline-block; margin-left: 1%; width: 100px"
                 v-model="record.weight"
+                @change="countTotal"
                 :min="0"
                 :max="10000"
                 :maxLength="30"
@@ -104,6 +110,8 @@ export default {
       confirmLoading: false,
       isAverage: false,
       isSingle: false,
+      isAllChecked: false,
+      iconType: 'plus',
       choseNum: 0,
       totolAverage: 0,
       deptUsers: [{ deptName: '', users: [] }],
@@ -190,6 +198,38 @@ export default {
       // debugger
       this.countTotal()
       // console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
+    },
+
+    allClicked() {
+      if (this.isSingle) {
+        this.$message.error('指定人员仅需添加一个')
+        return
+      }
+
+      this.isAllChecked = !this.isAllChecked
+
+      if (this.isAllChecked) {
+        this.iconType = 'minus'
+
+        this.choseUsers = []
+        this.deptUsers[0].users.forEach((item) => {
+          item.isChecked = true
+          item.canAdd = false
+          let tempItem = JSON.parse(JSON.stringify(item))
+          this.$set(tempItem, 'weight', 0)
+          this.choseUsers.push(tempItem)
+        })
+      } else {
+        this.iconType = 'plus'
+        this.choseUsers = []
+        this.deptUsers[0].users.forEach((item) => {
+          item.isChecked = false
+          item.canAdd = true
+        })
+      }
+
+      this.sortChoseUsers()
+      this.choseNum = this.choseUsers.length
     },
 
     goOpen() {

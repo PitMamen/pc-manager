@@ -738,7 +738,7 @@ export default {
         //查所有短信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
       }
-      
+
       //TODO
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
@@ -767,7 +767,8 @@ export default {
      * "data":[{"value":"1","description":"问卷收集"},{"value":"2","description":"健康宣教"},{"value":"3","description":"消息提醒"}]}
      */
     onTemSelect(indexTask, itemTask) {
-      let chooseOne = this.templateList.find((item) => {
+      // let chooseOne = this.templateList.find((item) => {
+      let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
 
@@ -916,28 +917,31 @@ export default {
         return
       }
 
-      if (tempData.filterRules.length == 0) {
-        this.$message.error('请添加名单过滤')
-        return
-      }
+      // if (tempData.filterRules.length == 0) {
+      //   this.$message.error('请添加名单过滤')
+      //   return
+      // }
+
       if (tempData.tasks.length == 0) {
         this.$message.error('请添加任务')
         return
       }
 
-      for (let index = 0; index < tempData.filterRules.length; index++) {
-        let item = tempData.filterRules[index]
-        if (!item.metaConfigureDetailId) {
-          this.$message.error('请选择第' + (index + 1) + '条名单过滤字段')
-          return
-        }
-        if (!item.condition) {
-          this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
-          return
-        }
-        if (!item.queryValue) {
-          this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
-          return
+      if (tempData.filterRules.length > 0) {
+        for (let index = 0; index < tempData.filterRules.length; index++) {
+          let item = tempData.filterRules[index]
+          if (!item.metaConfigureDetailId) {
+            this.$message.error('请选择第' + (index + 1) + '条名单过滤字段')
+            return
+          }
+          if (!item.condition) {
+            this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
+            return
+          }
+          if (!item.queryValue) {
+            this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
+            return
+          }
         }
       }
 

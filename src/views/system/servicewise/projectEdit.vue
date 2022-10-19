@@ -433,12 +433,6 @@ export default {
     }
 
     this.planId = this.$route.query.planId
-    getDetail({ planId: this.planId }).then((res) => {
-      if (res.code == 0) {
-        this.projectData = res.data
-        this.processData()
-      }
-    })
 
     this.confirmLoading = true
     followTypes()
@@ -505,42 +499,74 @@ export default {
       }
     })
 
-    //全部的微信模板
-    getWxTemplateListForJumpType(0).then((res) => {
-      if (res.code == 0) {
-        res.data.forEach((item) => {
-          this.$set(item, 'messageContentType', 4)
-        })
-        this.templateListWX = res.data
-      }
-    })
-
-    //全部的短信模板
-    getSmsTemplateListForJumpType(0).then((res) => {
-      if (res.code == 0) {
-        res.data.forEach((item) => {
-          this.$set(item, 'messageContentType', 3)
-          this.$set(item, 'templateName', item.templateTitle)
-        })
-        this.templateListSMS = res.data
-      }
-    })
-
-    //全部的问卷模板
-    getWxTemplateListForJumpType(1).then((res) => {
-      if (res.code == 0) {
-        res.data.forEach((item) => {
-          this.$set(item, 'messageContentType', 4)
-        })
-        this.templateListQues = res.data
-        this.getSmsTemplateListForJumpTypeOut()
-        console.log('getWxTemplateListForJumpType', res.data.length)
-      }
-    })
+    this.getWxTemplateListForJumpTypeOut()
   },
 
   methods: {
     moment,
+
+    getWxTemplateListForJumpTypeOut() {
+      //全部的微信模板
+      getWxTemplateListForJumpType(0).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 4)
+          })
+          this.templateListWX = res.data
+        }
+        this.getSmsTemplateListForJumpTypeOut()
+      })
+    },
+    getSmsTemplateListForJumpTypeOut() {
+      //全部的短信模板
+      getSmsTemplateListForJumpType(0).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 3)
+            this.$set(item, 'templateName', item.templateTitle)
+          })
+          this.templateListSMS = res.data
+        }
+
+        this.getQuesTemplateListForJumpTypeOut()
+      })
+    },
+
+    getQuesTemplateListForJumpTypeOut() {
+      //全部的问卷模板
+      getWxTemplateListForJumpType(1).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 4)
+          })
+          this.templateListQues = res.data
+          this.getQuesSmsTemplateList()
+          console.log('getWxTemplateListForJumpType', res.data.length)
+        }
+      })
+    },
+
+    getQuesSmsTemplateList() {
+      getSmsTemplateListForJumpType(1).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 3)
+            this.$set(item, 'templateName', item.templateTitle)
+          })
+          this.templateListQues = this.templateListQues.concat(res.data)
+          this.getDetailOut()
+        }
+      })
+    },
+
+    getDetailOut() {
+      getDetail({ planId: this.planId }).then((res) => {
+        if (res.code == 0) {
+          this.projectData = res.data
+          this.processData()
+        }
+      })
+    },
 
     processData() {
       this.fieldsOut()
@@ -555,19 +581,31 @@ export default {
       })
 
       this.projectData.tasks.forEach((item) => {
-        console.log('tasks item', item)
+        // console.log('tasks item', item)
         item.messageType = parseString(item.messageType)
         item.messageContentId = parseInt(item.messageContentId)
+        item.taskType = parseString(item.taskType)
+        item.taskExecType = parseString(item.taskExecType)
+
+        item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+        item.taskExecType = parseString(item.taskExecType)
+        item.taskExecType = parseString(item.taskExecType)
+
+        console.log('item processData', item)
         // item.messageContentId = parseInt(item.messageContentId)
 
         if (item.messageType == 1) {
-          item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
+          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
+
+          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
         } else if (item.messageType == 2) {
           //查所有微信模版
-          item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
+          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
+          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
         } else if (item.messageType == 3) {
           //查所有短信模版
-          item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
+          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         }
       })
     },
@@ -716,18 +754,6 @@ export default {
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
 
-    getSmsTemplateListForJumpTypeOut() {
-      getSmsTemplateListForJumpType(1).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 3)
-            this.$set(item, 'templateName', item.templateTitle)
-          })
-          this.templateListQues = this.templateListQues.concat(res.data)
-        }
-      })
-    },
-
     /**
      * 随访方式,随访模版选择后需要自动选择任务类型
      *
@@ -740,7 +766,7 @@ export default {
      * "data":[{"value":"1","description":"问卷收集"},{"value":"2","description":"健康宣教"},{"value":"3","description":"消息提醒"}]}
      */
     onTemSelect(indexTask, itemTask) {
-      let chooseOne = this.templateList.find((item) => {
+      let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
 
@@ -758,9 +784,6 @@ export default {
           itemTask.taskType = '3'
         }
       }
-      //TODO 选任务类型
-      console.log('onTemSelect indexTask', indexTask)
-      console.log('onTemSelect itemTask', itemTask)
     },
 
     // /**
@@ -889,28 +912,31 @@ export default {
         return
       }
 
-      if (tempData.filterRules.length == 0) {
-        this.$message.error('请添加名单过滤')
-        return
-      }
+      // if (tempData.filterRules.length == 0) {
+      //   this.$message.error('请添加名单过滤')
+      //   return
+      // }
+
       if (tempData.tasks.length == 0) {
         this.$message.error('请添加任务')
         return
       }
 
-      for (let index = 0; index < tempData.filterRules.length; index++) {
-        let item = tempData.filterRules[index]
-        if (!item.metaConfigureDetailId) {
-          this.$message.error('请选择第' + (index + 1) + '条名单过滤字段')
-          return
-        }
-        if (!item.condition) {
-          this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
-          return
-        }
-        if (!item.queryValue) {
-          this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
-          return
+      if (tempData.filterRules.length > 0) {
+        for (let index = 0; index < tempData.filterRules.length; index++) {
+          let item = tempData.filterRules[index]
+          if (!item.metaConfigureDetailId) {
+            this.$message.error('请选择第' + (index + 1) + '条名单过滤字段')
+            return
+          }
+          if (!item.condition) {
+            this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
+            return
+          }
+          if (!item.queryValue) {
+            this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
+            return
+          }
         }
       }
 
