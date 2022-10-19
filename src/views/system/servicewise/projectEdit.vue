@@ -81,46 +81,74 @@
 
         <div class="div-rules">
           <div
+            class="end-btn"
+            style="margin-left: 2%; margin-top: 1%"
+            v-if="projectData.filterRules.length == 0"
+            @click="addRule()"
+          >
+            <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+
+            <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
+          </div>
+
+          <div
             class="div-middle-content"
             v-for="(itemRule, indexRule) in projectData.filterRules"
             :key="indexRule"
             :value="itemRule.metaConfigureDetailId"
           >
-            <a-select
-              class="mid-select-one"
-              @focus="getFocus"
-              v-model="itemRule.metaConfigureDetailId"
-              allow-clear
-              placeholder="请选择字段"
-            >
-              <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value">{{
-                item.description
-              }}</a-select-option>
-            </a-select>
+            <div class="div-rule-left">
+              <a-select
+                class="mid-select-one"
+                @focus="getFocus"
+                v-model="itemRule.metaConfigureDetailId"
+                allow-clear
+                placeholder="请选择字段"
+              >
+                <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value">{{
+                  item.description
+                }}</a-select-option>
+              </a-select>
 
-            <a-select class="mid-select-two" v-model="itemRule.condition" allow-clear placeholder="请选择操作">
-              <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value">{{
-                item.description
-              }}</a-select-option>
-            </a-select>
+              <a-select class="mid-select-two" v-model="itemRule.condition" allow-clear placeholder="请选择操作">
+                <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value">{{
+                  item.description
+                }}</a-select-option>
+              </a-select>
 
-            <a-input
-              class="span-middle-value"
-              v-model="itemRule.queryValue"
-              :maxLength="30"
-              style="display: inline-block"
-              allow-clear
-              placeholder="请输入内容"
-            />
+              <a-input
+                class="span-middle-value"
+                v-model="itemRule.queryValue"
+                :maxLength="30"
+                style="display: inline-block"
+                allow-clear
+                placeholder="请输入内容"
+              />
+            </div>
 
-            <div style="margin-left: 1%">
-              <!-- <a-icon type="delete" theme="filled" style="color: #1890ff" /> -->
-              <a-button class="span-add-item" type="primary" @click="delRule(indexRule, itemRule)">删除</a-button>
+            <div class="div-rule-right">
+              <div class="end-btn" style="margin-left: 10%" @click="delRule(indexRule, itemRule)">
+                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_delete.jpg" />
+
+                <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
+              </div>
+
+              <!-- v-if="indexRule == projectData.filterRules.length - 1" -->
+              <div
+                class="end-btn"
+                style="margin-left: 2%"
+                v-if="indexRule == projectData.filterRules.length - 1"
+                @click="addRule()"
+              >
+                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+
+                <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addRule()">新增</a-button>
+        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addRule()">新增</a-button> -->
       </div>
 
       <div class="div-pro-mission">
@@ -293,14 +321,26 @@
               <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
                 itemTask.nameStr
               }}</span>
-              <a-button
+
+              <div
+                class="end-btn"
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                style="margin-left: 2%; width: 20%"
+                @click="addPerson(indexTask)"
+              >
+                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+
+                <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
+              </div>
+
+              <!-- <a-button
                 v-if="itemTask.isChecked || itemTask.messageType == 1"
                 class="span-add-item"
                 type="primary"
                 style="margin-left: 1%"
                 @click="addPerson(indexTask)"
                 >添加人员</a-button
-              >
+              > -->
             </div>
 
             <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
@@ -1180,26 +1220,50 @@ export default {
       flex-wrap: wrap;
       align-content: center;
 
+      .end-btn {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
       .div-middle-content {
         margin-right: 2%;
-        width: 40%;
+        width: 45%;
         display: flex;
         margin-top: 1%;
         flex-direction: row;
         align-items: center;
 
-        .mid-select-one.ant-select {
-          width: 30% !important;
-          margin-left: 1% !important;
-        }
-        .mid-select-two.ant-select {
-          width: 25% !important;
-          margin-left: 1% !important;
+        .div-rule-left {
+          display: flex;
+          width: 80%;
+          flex-direction: row;
+          align-items: center;
+
+          .mid-select-one.ant-select {
+            width: 30% !important;
+            margin-left: 1% !important;
+          }
+          .mid-select-two.ant-select {
+            width: 25% !important;
+            margin-left: 1% !important;
+          }
+
+          .span-middle-value {
+            margin-left: 1%;
+            width: 50%;
+          }
         }
 
-        .span-middle-value {
-          margin-left: 1%;
-          width: 50%;
+        .div-rule-right {
+          width: 20%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
         }
       }
     }
@@ -1244,6 +1308,16 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        .end-btn {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
 
         .mission-bottom-left {
           width: 100%;
