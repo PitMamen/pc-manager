@@ -108,6 +108,7 @@ export default {
   },
   data() {
     return {
+      clickTtime: new Date().getTime(),
       failShow: false,
       title: '新增名单',
       loadData: [],
@@ -355,6 +356,8 @@ export default {
      * 提交
      */
     handleSubmit() {
+      // repeatclickFun()
+      // console.log('重复点击啊：', this.repeatclickFun())
       let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
       detailListTemp.forEach((item, index) => {
         item.defaultField = item.defaultField != null ? item.defaultField.value : 2 //是否缺省值
@@ -362,16 +365,16 @@ export default {
         var value = 0
         // console.log("防晒霜111:",item.fieldArchives.description)
         if (item.fieldArchives != null) {
-          if (item.fieldArchives.description === '紧急联系人'||item.fieldArchives.description==1) {
+          if (item.fieldArchives.description === '紧急联系人' || item.fieldArchives.description == 1) {
             value = 1
-          } else if (item.fieldArchives.description === '紧急电话'||item.fieldArchives.description==2) {
+          } else if (item.fieldArchives.description === '紧急电话' || item.fieldArchives.description == 2) {
             value = 2
-          } else if (item.fieldArchives.description === '无'||item.fieldArchives.description==0) {
+          } else if (item.fieldArchives.description === '无' || item.fieldArchives.description == 0) {
             value = 0
           }
           item.fieldArchives = item.fieldArchives != null ? value : '' //档案字段
           // console.log("防晒霜222:",item.fieldArchives)
-        }else{
+        } else {
           item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         }
         // item.fieldArchives = item.fieldArchives  //档案字段
@@ -387,13 +390,34 @@ export default {
         metaName: this.metaName,
         detail: detailListTemp,
       }
-      console.log('queryData', queryData)
-      if (queryData.metaName == null || queryData.metaName == '') {
+      if (this.repeatclickFun()) {
+        // console.log('执行调用---')
+        if (queryData.metaName == null || queryData.metaName == '') {
         this.$message.error('请输入名单描述!')
         return
       }
+        this.saveMetaConfigureOut(queryData)
+      } else {
+        this.$message.error('请勿重复操作!')
+      }
+    },
 
-      this.saveMetaConfigureOut(queryData)
+    /**
+     * 防重复点击
+     */
+    repeatclickFun() {
+      let delta = Date.now() - this.clickTtime //计算两次点击时间差
+      this.clickTtime = Date.now()
+      console.log('OOOOO', delta)
+      if (delta > 0 && delta <= 500) {
+        //双击事件
+        console.log('双击事件')
+        return false
+      } else {
+        //滑动事件
+        console.log('单击事件')
+        return true
+      }
     },
   },
 }

@@ -94,6 +94,7 @@ export default {
   },
   data() {
     return {
+      clickTtime: new Date().getTime(),
       loadData: [],
       id: '', //表名ID
       isOpen: false,
@@ -333,7 +334,7 @@ export default {
     handleSubmit() {
       let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
       detailListTemp.forEach((item) => {
-        console.log('档案字段：', item.fieldComment)
+        // console.log('档案字段：', item.fieldComment)
         item.defaultField = item.defaultField!=null?item.defaultField.value:2 //是否缺省值
         item.id = item.id //id
         item.fieldComment = item.fieldComment //字段描述
@@ -360,8 +361,32 @@ export default {
         id: this.id,
         detail: detailListTemp,
       }
-      this.saveMetaConfigure(queryData)
+      if (this.repeatclickFun()) {
+        // console.log('执行调用2222---')
+        this.saveMetaConfigure(queryData)
+      } else {
+        this.$message.error('请勿重复操作!')
+      }
     },
+
+
+  /**
+     * 防重复点击
+     */
+     repeatclickFun() {
+      let delta = Date.now() - this.clickTtime //计算两次点击时间差
+      this.clickTtime = Date.now()
+      if (delta > 0 && delta <= 500) {
+        //双击事件
+        // console.log('双击事件')
+        return false
+      } else {
+        //滑动事件
+        // console.log('单击事件')
+        return true
+      }
+    },
+
   },
 }
 </script>

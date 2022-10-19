@@ -2085,3 +2085,15 @@ export function getWxTemplateListForJumpType(data) {
   })
 }
 
+/**
+ * /follow/plan/detail  查询方案详情
+ */
+export function getDetail(data) {
+  return axios({
+    url: '/follow-api/follow/plan/detail',
+    method: 'get',
+    params: data,
+  })
+}
+
+

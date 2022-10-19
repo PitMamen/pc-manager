@@ -343,12 +343,14 @@ import {
   saveFollow,
   getSmsTemplateListForJumpType,
   getWxTemplateListForJumpType,
+  getDetail,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
 import { formatDate, formatDateFull } from '@/utils/util'
+import { parseString } from 'loader-utils'
 
 export default {
   components: {
@@ -358,6 +360,7 @@ export default {
   data() {
     return {
       user: {},
+      planId: '',
       keshiData: {},
       deptUsers: {},
 
@@ -409,73 +412,6 @@ export default {
         // tasks: [{ assignments: [] }, {}],
         // metaConfigureId: '',
       },
-      // projectData: {
-      //   basePlan: {
-      //     executeDepartment: 'string',
-      //     followType: 0,
-      //     metaConfigureId: 0,
-      //     planId: 0,
-      //     planName: 'string',
-      //     remark: 'string',
-      //   },
-      //   filterRules: [
-      //     {
-      //       condition: 'string',
-      //       metaConfigureDetailId: 0,
-      //       queryValue: 'string',
-      //       ruleId: 0,
-      //     },
-      //   ],
-      //   followType: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   formulateTime: '2022-10-17T03:20:59.512Z',
-      //   formulateUserId: 0,
-      //   hospitalCode: 'string',
-      //   id: 0,
-      //   metaConfigureId: 0,
-      //   pageNo: 0,
-      //   pageSize: 0,
-      //   planName: 'string',
-      //   remark: 'string',
-      //   status: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   tasks: [
-      //     {
-      //       assignments: [
-      //         {
-      //           assignId: 0,
-      //           userId: 0,
-      //           weight: 0,
-      //         },
-      //       ],
-      //       cron: 'string',
-      //       hospitalCode: 'string',
-      //       messageContentId: 'string',
-      //       messageContentType: 0,
-      //       messageType: 0,
-      //       metaConfigureDetailId: 0,
-      //       overdueFollowType: 0,
-      //       personnelAssignmentType: 0,
-      //       planId: 0,
-      //       pushTimePoint: 'string',
-      //       repeatTimeUnit: 0,
-      //       taskExecType: 0,
-      //       taskId: 0,
-      //       taskType: 0,
-      //       tenantId: 'string',
-      //       timeQuantity: 0,
-      //       timeUnit: 0,
-      //     },
-      //   ],
-      //   tenantId: 'string',
-      //   updatedTime: '2022-10-17T03:20:59.512Z',
-      //   updaterId: 0,
-      //   version: 0,
-      // },
     }
   },
 
@@ -495,6 +431,8 @@ export default {
         }
       })
     }
+
+    this.planId = this.$route.query.planId
 
     this.confirmLoading = true
     followTypes()
@@ -561,42 +499,117 @@ export default {
       }
     })
 
-    //全部的微信模板
-    getWxTemplateListForJumpType(0).then((res) => {
-      if (res.code == 0) {
-        res.data.forEach((item) => {
-          this.$set(item, 'messageContentType', 4)
-        })
-        this.templateListWX = res.data
-      }
-    })
-
-    //全部的短信模板
-    getSmsTemplateListForJumpType(0).then((res) => {
-      if (res.code == 0) {
-        res.data.forEach((item) => {
-          this.$set(item, 'messageContentType', 3)
-          this.$set(item, 'templateName', item.templateTitle)
-        })
-        this.templateListSMS = res.data
-      }
-    })
-
-    //全部的问卷模板
-    getWxTemplateListForJumpType(1).then((res) => {
-      if (res.code == 0) {
-        res.data.forEach((item) => {
-          this.$set(item, 'messageContentType', 4)
-        })
-        this.templateListQues = res.data
-        this.getSmsTemplateListForJumpTypeOut()
-        console.log('getWxTemplateListForJumpType', res.data.length)
-      }
-    })
+    this.getWxTemplateListForJumpTypeOut()
   },
 
   methods: {
     moment,
+
+    getWxTemplateListForJumpTypeOut() {
+      //全部的微信模板
+      getWxTemplateListForJumpType(0).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 4)
+          })
+          this.templateListWX = res.data
+        }
+        this.getSmsTemplateListForJumpTypeOut()
+      })
+    },
+    getSmsTemplateListForJumpTypeOut() {
+      //全部的短信模板
+      getSmsTemplateListForJumpType(0).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 3)
+            this.$set(item, 'templateName', item.templateTitle)
+          })
+          this.templateListSMS = res.data
+        }
+
+        this.getQuesTemplateListForJumpTypeOut()
+      })
+    },
+
+    getQuesTemplateListForJumpTypeOut() {
+      //全部的问卷模板
+      getWxTemplateListForJumpType(1).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 4)
+          })
+          this.templateListQues = res.data
+          this.getQuesSmsTemplateList()
+          console.log('getWxTemplateListForJumpType', res.data.length)
+        }
+      })
+    },
+
+    getQuesSmsTemplateList() {
+      getSmsTemplateListForJumpType(1).then((res) => {
+        if (res.code == 0) {
+          res.data.forEach((item) => {
+            this.$set(item, 'messageContentType', 3)
+            this.$set(item, 'templateName', item.templateTitle)
+          })
+          this.templateListQues = this.templateListQues.concat(res.data)
+          this.getDetailOut()
+        }
+      })
+    },
+
+    getDetailOut() {
+      getDetail({ planId: this.planId }).then((res) => {
+        if (res.code == 0) {
+          this.projectData = res.data
+          this.processData()
+        }
+      })
+    },
+
+    processData() {
+      this.fieldsOut()
+      this.dateFieldsOut()
+
+      this.projectData.basePlan.followType = parseString(this.projectData.basePlan.followType)
+      this.projectData.basePlan.metaConfigureId = parseString(this.projectData.basePlan.metaConfigureId)
+      this.projectData.basePlan.executeDepartment = parseInt(this.projectData.basePlan.executeDepartment)
+
+      this.projectData.filterRules.forEach((item) => {
+        item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+      })
+
+      this.projectData.tasks.forEach((item) => {
+        // console.log('tasks item', item)
+        item.messageType = parseString(item.messageType)
+        item.messageContentId = parseInt(item.messageContentId)
+        item.taskType = parseString(item.taskType)
+        item.taskExecType = parseString(item.taskExecType)
+
+        item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+        item.taskExecType = parseString(item.taskExecType)
+        item.taskExecType = parseString(item.taskExecType)
+
+        console.log('item processData', item)
+        // item.messageContentId = parseInt(item.messageContentId)
+
+        if (item.messageType == 1) {
+          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
+
+          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
+        } else if (item.messageType == 2) {
+          //查所有微信模版
+          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
+          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
+        } else if (item.messageType == 3) {
+          //查所有短信模版
+          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
+          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+        }
+      })
+    },
+
     /**
      * 选名单过滤前先选名单来源
      */
@@ -738,21 +751,7 @@ export default {
         //查所有短信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
       }
-
-      //TODO
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
-    },
-
-    getSmsTemplateListForJumpTypeOut() {
-      getSmsTemplateListForJumpType(1).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 3)
-            this.$set(item, 'templateName', item.templateTitle)
-          })
-          this.templateListQues = this.templateListQues.concat(res.data)
-        }
-      })
     },
 
     /**
@@ -767,7 +766,6 @@ export default {
      * "data":[{"value":"1","description":"问卷收集"},{"value":"2","description":"健康宣教"},{"value":"3","description":"消息提醒"}]}
      */
     onTemSelect(indexTask, itemTask) {
-      // let chooseOne = this.templateList.find((item) => {
       let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
@@ -786,9 +784,6 @@ export default {
           itemTask.taskType = '3'
         }
       }
-      //TODO 选任务类型
-      console.log('onTemSelect indexTask', indexTask)
-      console.log('onTemSelect itemTask', itemTask)
     },
 
     // /**
