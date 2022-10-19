@@ -417,20 +417,7 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-        }
-      })
-    }
+    this.getDeptsOut()
 
     this.planId = this.$route.query.planId
 
@@ -505,6 +492,23 @@ export default {
   methods: {
     moment,
 
+    getDeptsOut() {
+      //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+        getDepts().then((res) => {
+          if (res.code == 0) {
+            this.keshiData = res.data
+          }
+        })
+      } else {
+        getDeptsPersonal().then((res) => {
+          if (res.code == 0) {
+            this.keshiData = res.data
+          }
+        })
+      }
+    },
+
     getWxTemplateListForJumpTypeOut() {
       //全部的微信模板
       getWxTemplateListForJumpType(0).then((res) => {
@@ -564,6 +568,8 @@ export default {
         if (res.code == 0) {
           this.projectData = res.data
           this.processData()
+        } else {
+          this.$message.error('请求数据失败')
         }
       })
     },
@@ -571,6 +577,8 @@ export default {
     processData() {
       this.fieldsOut()
       this.dateFieldsOut()
+      // this.getDeptsOut()
+      this.getUsersByDeptIdAndRoleOut()
 
       this.projectData.basePlan.followType = parseString(this.projectData.basePlan.followType)
       this.projectData.basePlan.metaConfigureId = parseString(this.projectData.basePlan.metaConfigureId)
@@ -589,11 +597,70 @@ export default {
 
         item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
         item.taskExecType = parseString(item.taskExecType)
-        item.taskExecType = parseString(item.taskExecType)
+        item.timeUnit = parseString(item.timeUnit)
+        item.personnelAssignmentType = parseString(item.personnelAssignmentType)
+        item.repeatTimeUnit = parseString(item.repeatTimeUnit)
+        item.timeQuantity = parseString(item.timeQuantity)
 
+        //处理每周每月选择的集合
+        if (item.repeatTimeUnit == 2) {
+          item.everyData = []
+          //造周数据
+          item.everyData = [
+            { value: '1', description: '周一' },
+            { value: '2', description: '周二' },
+            { value: '3', description: '周三' },
+            { value: '4', description: '周四' },
+            { value: '5', description: '周五' },
+            { value: '6', description: '周六' },
+            { value: '7', description: '周日' },
+          ]
+        } else if (item.repeatTimeUnit == 3) {
+          //造月里面的天数据
+          item.everyData = []
+          for (let index = 0; index < 31; index++) {
+            item.everyData.push({ value: parseString(index + 1), description: index + 1 + '号' })
+          }
+        }
+
+        //处理微信短信是否显示电话跟进
+        this.$set(item, 'isChecked', true)
+        if ((item.messageType == 2 || item.messageType == 3) && (!item.assignments || item.assignments.length == 0)) {
+          this.$set(item, 'isChecked', false)
+        } else {
+          this.$set(item, 'isChecked', true)
+        }
+
+        //处理电话跟进用户名
+        if (item.assignments && item.assignments.length > 0) {
+          let nameStr = ''
+          console.log('item.assignments', item.assignments)
+          item.assignments.forEach((itemUser, index) => {
+            if (index != item.assignments.length - 1) {
+              nameStr = nameStr + itemUser.userName + ','
+            } else {
+              nameStr = nameStr + itemUser.userName
+            }
+          })
+          // debugger
+          console.log('nameStr', nameStr)
+          this.$set(item, 'nameStr', nameStr)
+        }
+
+        //处理时间字段 微信短信消息需要时间
+        if (item.messageType == 2 || item.messageType == 3) {
+          let date = formatDate(new Date()) + ' ' + item.pushTimePoint + ':00'
+          item.pushTimePoint = moment(date, 'YYYY-MM-DD HH:mm:ss')
+        } else {
+          //微信短信消息需要时间,电话给个默认值
+          let date = formatDate(new Date()) + ' 08:00:00'
+          let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
+          // console.log('mom', mom)
+          item.pushTimePoint = mom
+        }
+        console.log('pushTimePoint ddd', item.pushTimePoint)
         console.log('item processData', item)
         // item.messageContentId = parseInt(item.messageContentId)
-
         if (item.messageType == 1) {
           this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
 
@@ -649,7 +716,10 @@ export default {
      * } itemTask 
      */
     goCheck(indexTask) {
+      debugger
+      console.log('isChecked be', this.projectData.tasks[indexTask].isChecked)
       this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
+      console.log('isChecked af', this.projectData.tasks[indexTask].isChecked)
 
       // //1 电话 2 微信 3 短信
       // if (this.projectData.tasks[indexTask].messageType == 1) {
@@ -807,19 +877,19 @@ export default {
         itemTask.everyData = []
         //造周数据
         itemTask.everyData = [
-          { value: 1, description: '周一' },
-          { value: 2, description: '周二' },
-          { value: 3, description: '周三' },
-          { value: 4, description: '周四' },
-          { value: 5, description: '周五' },
-          { value: 6, description: '周六' },
-          { value: 7, description: '周日' },
+          { value: '1', description: '周一' },
+          { value: '2', description: '周二' },
+          { value: '3', description: '周三' },
+          { value: '4', description: '周四' },
+          { value: '5', description: '周五' },
+          { value: '6', description: '周六' },
+          { value: '7', description: '周日' },
         ]
       } else if (itemTask.repeatTimeUnit == 3) {
         //造月里面的天数据
         itemTask.everyData = []
         for (let index = 0; index < 31; index++) {
-          itemTask.everyData.push({ value: index + 1, description: index + 1 + '号' })
+          itemTask.everyData.push({ value: parseString(index + 1), description: index + 1 + '号' })
         }
       }
     },
@@ -974,10 +1044,11 @@ export default {
           this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
           return
         }
-        console.log('pushTimePoint before', item.pushTimePoint)
-        item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
-        console.log('pushTimePoint after', item.pushTimePoint)
-
+        if (item.messageType == 2 || item.messageType == 3) {
+          item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
+        } else {
+          delete item.pushTimePoint
+        }
         // //时间配置
         // if (item.messageType == 2 || item.messageType == 3) {
         //   delete item.assignments

@@ -481,20 +481,7 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.keshiData = res.data
-        }
-      })
-    }
+    this.getDeptsOut()
 
     this.confirmLoading = true
     followTypes()
@@ -597,6 +584,24 @@ export default {
 
   methods: {
     moment,
+
+    getDeptsOut() {
+      //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+        getDepts().then((res) => {
+          if (res.code == 0) {
+            this.keshiData = res.data
+          }
+        })
+      } else {
+        getDeptsPersonal().then((res) => {
+          if (res.code == 0) {
+            this.keshiData = res.data
+          }
+        })
+      }
+    },
+
     /**
      * 选名单过滤前先选名单来源
      */
@@ -812,19 +817,19 @@ export default {
         itemTask.everyData = []
         //造周数据
         itemTask.everyData = [
-          { value: 1, description: '周一' },
-          { value: 2, description: '周二' },
-          { value: 3, description: '周三' },
-          { value: 4, description: '周四' },
-          { value: 5, description: '周五' },
-          { value: 6, description: '周六' },
-          { value: 7, description: '周日' },
+          { value: '1', description: '周一' },
+          { value: '2', description: '周二' },
+          { value: '3', description: '周三' },
+          { value: '4', description: '周四' },
+          { value: '5', description: '周五' },
+          { value: '6', description: '周六' },
+          { value: '7', description: '周日' },
         ]
       } else if (itemTask.repeatTimeUnit == 3) {
         //造月里面的天数据
         itemTask.everyData = []
         for (let index = 0; index < 31; index++) {
-          itemTask.everyData.push({ value: index + 1, description: index + 1 + '号' })
+          itemTask.everyData.push({ value: parseString(index + 1), description: index + 1 + '号' })
         }
       }
     },
@@ -979,9 +984,15 @@ export default {
           this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
           return
         }
-        console.log('pushTimePoint before', item.pushTimePoint)
-        item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
-        console.log('pushTimePoint after', item.pushTimePoint)
+
+        if (item.messageType == 2 || item.messageType == 3) {
+          item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
+        } else {
+          delete item.pushTimePoint
+        }
+        // console.log('pushTimePoint before', item.pushTimePoint)
+        // item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
+        // console.log('pushTimePoint after', item.pushTimePoint)
 
         // //时间配置
         // if (item.messageType == 2 || item.messageType == 3) {
