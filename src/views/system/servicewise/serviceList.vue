@@ -36,7 +36,7 @@
           </a-col>
         </a-row>
       </a-form>
-      <a-button style="margin-left: 95%" type="primary" @click="addName()" icon="plus">新增</a-button>
+      <a-button style="margin-left: 95%;margin-bottom: 10px;" type="primary" @click="addName()" icon="plus">新增</a-button>
     </div>
     <s-table
       ref="table"
@@ -87,8 +87,7 @@ export default {
         departmentName: '',
         planName: '',
         executeDepartment: '',
-        pageNo: 1,
-        pageSize: 10,
+      
         status:1,
       },
       labelCol: {
