@@ -14,7 +14,7 @@
               class="span-item-value"
               v-model="projectData.basePlan.planName"
               :maxLength="30"
-              style="display: inline-block"
+              style="display: inline-block; width: 60%"
               allow-clear
               placeholder="请输入方案名称 "
             />
@@ -127,7 +127,7 @@
             </div>
 
             <div class="div-rule-right">
-              <div class="end-btn" style="margin-left: 2%" @click="delRule(indexRule, itemRule)">
+              <div class="end-btn" style="margin-left: 15%" @click="delRule(indexRule, itemRule)">
                 <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_delete.jpg" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
@@ -317,7 +317,7 @@
               </a-select>
               <!-- @change="onChange" -->
 
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 0.5%"
+              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 2%"
                 >执行人员:</span
               >
               <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
@@ -1126,7 +1126,7 @@ export default {
     overflow: hidden;
 
     .ant-select {
-      width: 38% !important;
+      width:58.5% !important;
       margin-left: 1.5% !important;
     }
 
@@ -1320,7 +1320,7 @@ export default {
             margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
-            width: 10% !important;
+            width: 20% !important;
             margin-left: 1% !important;
           }
         }
