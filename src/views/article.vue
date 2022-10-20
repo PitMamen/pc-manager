@@ -28,7 +28,7 @@
       </div>
     </div>
   
-  <img alt="example" style="width: 100%;margin-top: 30px;margin-bottom: 30px;" :src="checkData.previewUrl" />
+  <!-- <img alt="example" style="width: 100%;margin-top: 30px;margin-bottom: 30px;" :src="checkData.previewUrl" /> -->
     <div id="myHtml" ></div>
 
     <div style="height: 50px; backgroud-color: white" />
@@ -81,7 +81,7 @@ export default {
 
   created() {
     console.log("query:"+this.$route.query)
-    document.title = '健康随访文章'
+    document.title = '健康宣教'
     
     var url = window.location.href ;             //获取当前url
     console.log("url:"+url)

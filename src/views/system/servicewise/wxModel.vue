@@ -4,7 +4,7 @@
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="6" :sm="24">
-            <a-form-item label="查询微信条件">
+            <a-form-item label="查询条件">
               <a-input
                 v-model="queryParams.templateTitle"
                 allow-clear
@@ -18,15 +18,15 @@
 
           <a-col :md="10" :sm="24">
             <!-- <a-form-item label="状态:"> -->
-            <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search"
-              >查询</a-button
-            >
-            <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
+            <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
+            <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
             <!-- </a-form-item> -->
           </a-col>
         </a-row>
       </a-form>
+
       <a-button style="margin-left: 95%;margin-bottom: 1%;" type="primary" @click="addModel()" icon="plus">新增</a-button>
+
     </div>
     <s-table
       ref="table"
@@ -36,17 +36,13 @@
       :alert="true"
       :rowKey="(record) => record.code"
     >
-      <!-- add -->
-      <span slot="content" slot-scope="text, record">
-        <div :title="record.templateContent">{{ record.templateContent }}</div>
-      </span>
-
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus == 2">修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
         <a-divider type="vertical" />
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
     </s-table>
+
   </a-card>
 </template>
   
@@ -93,7 +89,7 @@ export default {
         },
         {
           title: '模板内容',
-          scopedSlots: { customRender: 'content' },
+          dataIndex: 'templateContent',
         },
         {
           title: '状态',
@@ -110,7 +106,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getWxTemplateList(Object.assign(parameter, this.queryParams)).then((res) => {
-          // console.log('请求结果:', res.message)
+          console.log('请求结果:', res.message)
           var data = {
             pageNo: parameter.pageNo,
             pageSize: parameter.pageSize,
@@ -119,7 +115,7 @@ export default {
             rows: res.data.records,
           }
           data.rows.forEach((item, index) => {
-            // console.log("vvvv:",item.templateStatus)
+            console.log("vvvv:",item.templateStatus)
             this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
             this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
           })
@@ -169,7 +165,9 @@ export default {
       console.log('新增 微信模板 按钮')
       this.$router.push({
         name: 'sys_wxtemplate_add',
-        query: {},
+        query: {
+          
+        },
       })
       // this.$router.push({ path: './adddxtemplate' })
     },
@@ -181,7 +179,7 @@ export default {
       this.$router.push({
         name: 'sys_wxtemplate_add',
         query: {
-          id: record.id,
+          id:record.id,
         },
       })
       // this.$router.push({ path: './adddxtemplate?id=' + record.id })
