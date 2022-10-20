@@ -51,6 +51,7 @@
         style="margin-top: 2%;"
         ref="table"
         size="default"
+        :pagination="false"
         :data-source="loadData"
         :columns="columns"
         :alert="true"
