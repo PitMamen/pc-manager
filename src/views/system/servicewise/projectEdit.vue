@@ -370,10 +370,14 @@
         <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
-      <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
-        <!-- <a-button style="margin-left: 2%; float: right" type="primary" @click="cancel()">取消</a-button> -->
-        <a-button style="margin-left: 2%; float: right" type="primary" @click="submitData()">提交</a-button>
+      <div class="div-pro-btn">
+        <a-button style="margin-left: 79.5%; float: right" type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
       </div>
+
+      <!-- <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
+        <a-button style="margin-left: 2%; float: right" type="primary" @click="submitData()">提交</a-button>
+      </div> -->
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
     </div>
@@ -1159,6 +1163,10 @@ export default {
           this.confirmLoading = false
         })
     },
+
+    cancel() {
+      this.$router.go(-1)
+    },
   },
 }
 </script>
@@ -1303,9 +1311,9 @@ export default {
       margin-left: 2%;
       color: #1890ff;
       display: inline-block;
-      border: 1px solid #18b6f5;
+      border: 1px solid #1890FF;
 
-      border-radius: 8px;
+      // border-radius: 8px;
       // margin-left: 2%;
 
       &:hover {
@@ -1371,10 +1379,10 @@ export default {
             // background-color: yellow;
             // width: 100px;
             color: #1890ff;
-            border: 1px solid #18b6f5;
+            border: 1px solid #1890FF;
             // border: 2px solid #1890ff;
             // border: 2px solid #01AFF4;
-            border-radius: 8px;
+            // border-radius: 8px;
             margin-left: 2%;
 
             &:hover {
@@ -1401,6 +1409,14 @@ export default {
         }
       }
     }
+  }
+
+  .div-pro-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    margin-top: 3%;
   }
 }
 </style>

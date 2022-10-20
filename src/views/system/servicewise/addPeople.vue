@@ -60,7 +60,7 @@
             ref="table"
             :pagination="false"
             size="default"
-            style="margin-left: 2%; min-height: 20%"
+            style="margin-left: 2%; min-height: 450px; overflow-y: auto"
             :columns="columns"
             :data-source="choseUsers"
             :alert="true"
@@ -372,6 +372,8 @@ export default {
   width: 100%;
   // height: 100%;
   overflow: hidden;
+  overflow-y: auto;
+  height: 500px;
   display: flex;
   flex-direction: row;
 
@@ -394,6 +396,8 @@ export default {
 
     .item-person {
       width: 90%;
+      // height: 400px;
+      overflow-y: auto;
       margin-top: 2%;
       display: flex;
       flex-direction: row;
