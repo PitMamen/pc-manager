@@ -70,9 +70,9 @@
           }}</span>
         </span>
 
-        <span slot="fileDes" style="display:inline-block" slot-scope="text, record">
+        <span slot="fileDes" style="display: inline-block" slot-scope="text, record">
           <a-select
-            class="select-modify"
+            style="width: 130px"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -397,19 +397,6 @@ export default {
 
 <style lang="less">
 .table-page-wrapper {
-  // .select-modify {
-  //   width: 100px !important;
-  //   //   /deep/ .ant-select-selection.ant-select-selection--single {
-  //   //     width: 100px !important;
-  //   //   }
-  //   // }
-  //   // /deep/ .ant-select-selection-selected-value {
-  //   //   width: 100px !important;
-  //   // }
-  // }
-  /deep/ .select-modify .ant-select .ant-select-enabled{
-    width: 100px !important;
-  }
   .ant-form-inline {
     .ant-form-item {
       display: flex;

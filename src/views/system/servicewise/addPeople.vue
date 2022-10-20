@@ -170,6 +170,13 @@ export default {
       this.index = index
       this.visible = true
       this.isAverage = false
+
+      if (assignments && assignments.length > 0 && deptUsers[0].users.length == assignments.length) {
+        this.iconType = 'minus'
+      } else {
+        this.iconType = 'plus'
+      }
+
       this.deptUsers = deptUsers
       this.isSingle = isSingle
       this.choseUsers = []
@@ -300,6 +307,8 @@ export default {
       })
       this.sortChoseUsers()
       this.choseNum = this.choseUsers.length
+
+      this.countTotal()
     },
 
     sortChoseUsers() {

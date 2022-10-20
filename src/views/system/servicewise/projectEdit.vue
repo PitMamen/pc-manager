@@ -49,6 +49,7 @@
             <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
             <a-select
               v-model="projectData.basePlan.executeDepartment"
+              disabled
               @select="onDeptSelect"
               allow-clear
               placeholder="请选择执行科室"
@@ -80,12 +81,9 @@
         </div>
 
         <div class="div-rules">
-          <div
-            class="end-btn"
-            style="margin-left: 2%; margin-top: 1%"
-            v-if="projectData.filterRules.length == 0"
-            @click="addRule()"
-          >
+          <!-- 修改名单过滤不能动，也不能增删 -->
+          <!-- v-if="projectData.filterRules.length == 0" -->
+          <div class="end-btn" style="margin-left: 2%; margin-top: 1%" v-if="false" @click="addRule()">
             <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
 
             <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
@@ -101,6 +99,7 @@
               <a-select
                 class="mid-select-one"
                 @focus="getFocus"
+                disabled
                 v-model="itemRule.metaConfigureDetailId"
                 allow-clear
                 placeholder="请选择字段"
@@ -110,7 +109,13 @@
                 }}</a-select-option>
               </a-select>
 
-              <a-select class="mid-select-two" v-model="itemRule.condition" allow-clear placeholder="请选择操作">
+              <a-select
+                disabled
+                class="mid-select-two"
+                v-model="itemRule.condition"
+                allow-clear
+                placeholder="请选择操作"
+              >
                 <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value">{{
                   item.description
                 }}</a-select-option>
@@ -119,6 +124,7 @@
               <a-input
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
+                disabled
                 :maxLength="30"
                 style="display: inline-block"
                 allow-clear
@@ -126,7 +132,7 @@
               />
             </div>
 
-            <div class="div-rule-right">
+            <div class="div-rule-right" v-if="false">
               <div class="end-btn" style="margin-left: 10%" @click="delRule(indexRule, itemRule)">
                 <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_delete.jpg" />
 
@@ -156,6 +162,8 @@
           <div class="div-line-blue"></div>
           <span class="span-title">任务管理</span>
         </div>
+
+        <span class="span-top" v-show="projectData.tasks.length == 0" @click="addMission()">新增任务</span>
 
         <!-- <div class="div-mission-content"> -->
         <div
@@ -328,7 +336,7 @@
                 style="margin-left: 2%; width: 20%"
                 @click="addPerson(indexTask)"
               >
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
 
                 <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
@@ -343,13 +351,22 @@
               > -->
             </div>
 
-            <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
-              >刪除任务</a-button
-            >
+            <div class="end-btn-task" style="width: 20%">
+              <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
+              <span
+                class="span-end"
+                style="margin-left: 10%"
+                v-show="indexTask == projectData.tasks.length - 1"
+                @click="addMission()"
+                >新增任务</span
+              >
+            </div>
+            <!-- <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
+              >刪除任务</a-button> -->
           </div>
         </div>
 
-        <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button>
+        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
       <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
@@ -624,9 +641,11 @@ export default {
       this.projectData.basePlan.metaConfigureId = parseString(this.projectData.basePlan.metaConfigureId)
       this.projectData.basePlan.executeDepartment = parseInt(this.projectData.basePlan.executeDepartment)
 
-      this.projectData.filterRules.forEach((item) => {
-        item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
-      })
+      if (this.projectData.filterRules && this.projectData.filterRules.length > 0) {
+        this.projectData.filterRules.forEach((item) => {
+          item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+        })
+      }
 
       this.projectData.tasks.forEach((item) => {
         // console.log('tasks item', item)
@@ -659,7 +678,8 @@ export default {
           //造月里面的天数据
           item.everyData = []
           for (let index = 0; index < 31; index++) {
-            item.everyData.push({ value: parseString(index + 1), description: index + 1 + '号' })
+            let str = index + 1
+            item.everyData.push({ value: str + '', description: index + 1 + '号' })
           }
         }
 
@@ -929,7 +949,8 @@ export default {
         //造月里面的天数据
         itemTask.everyData = []
         for (let index = 0; index < 31; index++) {
-          itemTask.everyData.push({ value: parseString(index + 1), description: index + 1 + '号' })
+          let str = index + 1
+          itemTask.everyData.push({ value: str + '', description: index + 1 + '号' })
         }
       }
     },
@@ -1032,7 +1053,7 @@ export default {
         return
       }
 
-      if (tempData.filterRules.length > 0) {
+      if (tempData.filterRules && tempData.filterRules.length > 0) {
         for (let index = 0; index < tempData.filterRules.length; index++) {
           let item = tempData.filterRules[index]
           if (!item.metaConfigureDetailId) {
@@ -1271,6 +1292,22 @@ export default {
   .div-pro-mission {
     margin-top: 1%;
 
+    .span-top {
+      padding: 7px 15px;
+      margin-top: 2%;
+      margin-left: 2%;
+      color: #1890ff;
+      display: inline-block;
+      border: 1px solid #18b6f5;
+
+      border-radius: 8px;
+      // margin-left: 2%;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
     .div-mission-content {
       border-radius: 6px;
       margin-top: 1%;
@@ -1316,6 +1353,28 @@ export default {
 
           &:hover {
             cursor: pointer;
+          }
+        }
+
+        .end-btn-task {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          .span-end {
+            padding: 7px 15px;
+            // background-color: yellow;
+            // width: 100px;
+            color: #1890ff;
+            border: 1px solid #18b6f5;
+            // border: 2px solid #1890ff;
+            // border: 2px solid #01AFF4;
+            border-radius: 8px;
+            margin-left: 2%;
+
+            &:hover {
+              cursor: pointer;
+            }
           }
         }
 
