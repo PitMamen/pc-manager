@@ -782,9 +782,13 @@ export default {
       } else if (itemTask.messageType == 2) {
         //查所有微信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
+
+        //短信消息和微信消息默认不勾选
+        itemTask.isChecked = false
       } else if (itemTask.messageType == 3) {
         //查所有短信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+        itemTask.isChecked = false
       }
 
       //TODO
