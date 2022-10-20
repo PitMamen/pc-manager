@@ -111,7 +111,7 @@
             <a-radio :value="0"> 问卷 </a-radio>
             <a-radio :value="1" style="margin-left: 52px"> 宣教 </a-radio>
             <a-radio :value="2" style="margin-left: 52px"> 不跳转任何内容 </a-radio>
-            <a-radio :value="3" style="margin-left: 52px"> 跳转外网地址 </a-radio>
+           
           </a-radio-group>
         </div>
       </div>
@@ -159,7 +159,7 @@
     </div>
 
     <div style="margin-top: 60px">
-      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 47%"> 确定 </a-button>
+      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 47%"> {{id?'确认修改':'确认提交'}} </a-button>
     </div>
     <div style="height: 50px; backgroud-color: white" />
 
