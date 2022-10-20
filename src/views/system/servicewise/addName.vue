@@ -82,7 +82,7 @@
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
-            style="width: 60%"
+            style="width: 130px"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
