@@ -157,6 +157,8 @@
           <span class="span-title">任务管理</span>
         </div>
 
+        <span class="span-top" v-show="projectData.tasks.length == 0" @click="addMission()">新增任务</span>
+
         <!-- <div class="div-mission-content"> -->
         <div
           class="div-mission-content"
@@ -328,19 +330,29 @@
                 style="margin-left: 2%; width: 20%"
                 @click="addPerson(indexTask)"
               >
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
 
                 <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
             </div>
 
-            <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
-              >刪除任务</a-button
-            >
+            <div class="end-btn-task" style="width: 20%">
+              <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
+              <span
+                class="span-end"
+                style="margin-left: 10%"
+                v-show="indexTask == projectData.tasks.length - 1"
+                @click="addMission()"
+                >新增任务</span
+              >
+            </div>
+
+            <!-- <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
+              >刪除任务</a-button> -->
           </div>
         </div>
 
-        <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button>
+        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
       <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
@@ -860,9 +872,12 @@ export default {
         //造月里面的天数据
         itemTask.everyData = []
         for (let index = 0; index < 31; index++) {
-          itemTask.everyData.push({ value: parseString(index + 1), description: index + 1 + '号' })
+          let str = index + 1
+          itemTask.everyData.push({ value: str + '', description: index + 1 + '号' })
         }
       }
+
+      console.log('itemTask.everyData', itemTask.everyData)
     },
 
     // /**
@@ -1207,6 +1222,22 @@ export default {
   .div-pro-mission {
     margin-top: 1%;
 
+    .span-top {
+      padding: 7px 15px;
+      margin-top: 2%;
+      margin-left: 2%;
+      color: #1890ff;
+      display: inline-block;
+      border: 1px solid #18b6f5;
+
+      border-radius: 8px;
+      // margin-left: 2%;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
+
     .div-mission-content {
       border-radius: 6px;
       margin-top: 1%;
@@ -1252,6 +1283,28 @@ export default {
 
           &:hover {
             cursor: pointer;
+          }
+        }
+
+        .end-btn-task {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          .span-end {
+            padding: 7px 15px;
+            // background-color: yellow;
+            // width: 100px;
+            color: #1890ff;
+            border: 1px solid #18b6f5;
+            // border: 2px solid #1890ff;
+            // border: 2px solid #01AFF4;
+            border-radius: 8px;
+            margin-left: 2%;
+
+            &:hover {
+              cursor: pointer;
+            }
           }
         }
 

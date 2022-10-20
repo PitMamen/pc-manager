@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="title"
-    :width="1500"
+    :width="950"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
@@ -38,8 +38,10 @@
         </div>
       </div>
       <a-table
+        style="margin-top: 2%"
         ref="table"
         size="default"
+        :pagination="false"
         :data-source="loadData"
         :columns="columns"
         :alert="true"
@@ -59,16 +61,18 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 65%; margin-left: 2%"
+            style="display: inline-block; width: 90%; margin-left: 2%"
             allow-clear
             @blur="changeDes(record)"
           />
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{record.fieldComment!=null?record.fieldComment:''}}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{
+            record.fieldComment != null ? record.fieldComment : ''
+          }}</span>
         </span>
 
-        <span slot="fileDes" slot-scope="text, record">
+        <span slot="fileDes" style="display: inline-block" slot-scope="text, record">
           <a-select
-            style="width: 60%"
+            style="width: 130px"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -77,7 +81,9 @@
               item.value
             }}</a-select-option>
           </a-select>
-          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{  record.fieldArchives!=null? record.fieldArchives.description:''}}</span>
+          <span v-if="record.defaultField != null && record.defaultField.value == 1">{{
+            record.fieldArchives != null ? record.fieldArchives.description : ''
+          }}</span>
         </span>
       </a-table>
     </a-card>
@@ -129,13 +135,13 @@ export default {
         {
           title: '字段编码',
           dataIndex: 'zdbm',
-          width: 100,
+          // width: 100,
         },
         {
           title: '字段描述',
           // dataIndex: 'fieldComment',
           scopedSlots: { customRender: 'eleDes' },
-          width: 250,
+          // width: 250,
         },
         {
           title: '字段类型',
@@ -150,26 +156,26 @@ export default {
         {
           title: '默认值',
           dataIndex: 'fieldDefaultValue',
-          width: 100,
+          width: 90,
         },
         {
           title: '档案字段',
           // dataIndex: 'dazd',
           scopedSlots: { customRender: 'fileDes' },
-          width: 200,
+          width: 100,
         },
         {
           title: '显示',
           dataIndex: 'show',
           scopedSlots: { customRender: 'show' },
-          width: 100,
+          width: 90,
         },
 
         {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
-          width: 100,
+          width: 90,
         },
       ],
     }
@@ -195,8 +201,8 @@ export default {
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
             // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
             if (item.fieldArchives == null) {
-                this.$set(item, 'fieldArchives', {description:''})
-              }
+              this.$set(item, 'fieldArchives', { description: '' })
+            }
             this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
             this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
           })
@@ -335,20 +341,20 @@ export default {
       let detailListTemp = JSON.parse(JSON.stringify(this.detailList))
       detailListTemp.forEach((item) => {
         // console.log('档案字段：', item.fieldComment)
-        item.defaultField = item.defaultField!=null?item.defaultField.value:2 //是否缺省值
+        item.defaultField = item.defaultField != null ? item.defaultField.value : 2 //是否缺省值
         item.id = item.id //id
         item.fieldComment = item.fieldComment //字段描述
         var value = 0
         if (item.fieldArchives != null) {
-          if (item.fieldArchives.description === '紧急联系人'||item.fieldArchives.description==1) {
+          if (item.fieldArchives.description === '紧急联系人' || item.fieldArchives.description == 1) {
             value = 1
-          } else if (item.fieldArchives.description === '紧急电话'||item.fieldArchives.description==2) {
+          } else if (item.fieldArchives.description === '紧急电话' || item.fieldArchives.description == 2) {
             value = 2
-          } else if (item.fieldArchives.description === '无'||item.fieldArchives.description==0) {
+          } else if (item.fieldArchives.description === '无' || item.fieldArchives.description == 0) {
             value = 0
           }
           item.fieldArchives = item.fieldArchives != null ? value : '' //档案字段
-        }else{
+        } else {
           item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         }
         // item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
@@ -369,11 +375,10 @@ export default {
       }
     },
 
-
-  /**
+    /**
      * 防重复点击
      */
-     repeatclickFun() {
+    repeatclickFun() {
       let delta = Date.now() - this.clickTtime //计算两次点击时间差
       this.clickTtime = Date.now()
       if (delta > 0 && delta <= 500) {
@@ -386,7 +391,6 @@ export default {
         return true
       }
     },
-
   },
 }
 </script>

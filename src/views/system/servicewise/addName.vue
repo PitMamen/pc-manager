@@ -1,14 +1,14 @@
 <template>
   <a-modal
     :title="title"
-    :width="1500"
+    :width="1000"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="false"
   >
     <a-card :bordered="false" class="card-top-pac">
-      <div class="table-page-wrapper" style="margin-top: -2%">
+      <div class="table-page-wrapper" style="margin-top: -1%">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
@@ -48,8 +48,10 @@
         </div>
       </div>
       <a-table
+        style="margin-top: 2%;"
         ref="table"
         size="default"
+        :pagination="false"
         :data-source="loadData"
         :columns="columns"
         :alert="true"
@@ -80,7 +82,7 @@
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
-            style="width: 60%"
+            style="width: 130px"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -144,12 +146,12 @@ export default {
         {
           title: '字段编码',
           dataIndex: 'zdbm',
-          width: 100,
+          // width: 100,
         },
         {
           title: '字段描述',
           scopedSlots: { customRender: 'eleDes' },
-          width: 250,
+          // width: 250,
         },
         {
           title: '字段类型',
@@ -170,13 +172,13 @@ export default {
           title: '档案字段',
           // dataIndex: 'dazd',
           scopedSlots: { customRender: 'fileDes' },
-          width: 200,
+          // width: 200,
         },
         {
           title: '显示',
           dataIndex: 'show',
           scopedSlots: { customRender: 'show' },
-          width: 100,
+          width: 80,
         },
 
         {
