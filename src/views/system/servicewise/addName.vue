@@ -2,6 +2,7 @@
   <a-modal
     :title="title"
     :width="1000"
+    :height="650"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
@@ -48,7 +49,7 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2%;"
+        style="margin-top: 2%;overflow-y:auto;height:600px;"
         ref="table"
         size="default"
         :pagination="false"
@@ -71,7 +72,7 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 65%; margin-left: 2%"
+            style="display: inline-block; width: 130px; margin-left: 2%"
             allow-clear
             @blur="changeDes(record)"
           />
@@ -151,7 +152,7 @@ export default {
         {
           title: '字段描述',
           scopedSlots: { customRender: 'eleDes' },
-          // width: 250,
+          // width: 200,
         },
         {
           title: '字段类型',
