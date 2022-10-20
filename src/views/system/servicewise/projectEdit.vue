@@ -34,6 +34,7 @@
             <a-select
               v-model="projectData.basePlan.metaConfigureId"
               @select="onSourceSelect"
+              disabled
               allow-clear
               placeholder="请选择来源名单"
             >
@@ -481,13 +482,15 @@ export default {
     this.confirmLoading = true
     followTypes()
       .then((res) => {
-        this.confirmLoading = false
+        // this.confirmLoading = false
         if (res.code == 0) {
           this.typeData = res.data
+        } else {
+          this.confirmLoading = false
         }
       })
       .finally((res) => {
-        this.confirmLoading = false
+        // this.confirmLoading = false
       })
 
     tables().then((res) => {
@@ -734,6 +737,8 @@ export default {
           this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
           // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         }
+
+        this.confirmLoading = false
       })
     },
 
