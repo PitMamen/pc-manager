@@ -1,14 +1,14 @@
 <template>
   <a-modal
     :title="title"
-    :width="1500"
+    :width="1000"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="false"
   >
     <a-card :bordered="false" class="card-top-pac">
-      <div class="table-page-wrapper" style="margin-top: -2%">
+      <div class="table-page-wrapper" style="margin-top: -1%">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
@@ -48,6 +48,7 @@
         </div>
       </div>
       <a-table
+        style="margin-top: 2%;"
         ref="table"
         size="default"
         :data-source="loadData"
@@ -144,46 +145,46 @@ export default {
         {
           title: '字段编码',
           dataIndex: 'zdbm',
-          width: 100,
+          // width: 100,
         },
         {
           title: '字段描述',
           scopedSlots: { customRender: 'eleDes' },
-          width: 250,
+          // width: 250,
         },
         {
           title: '字段类型',
           dataIndex: 'zdlx',
-          width: 100,
+          // width: 100,
         },
         {
           title: '字段大小',
           dataIndex: 'fieldLength',
-          width: 100,
+          // width: 100,
         },
         {
           title: '默认值',
           dataIndex: 'DefaultValue',
-          width: 100,
+          // width: 100,
         },
         {
           title: '档案字段',
           // dataIndex: 'dazd',
           scopedSlots: { customRender: 'fileDes' },
-          width: 200,
+          // width: 200,
         },
         {
           title: '显示',
           dataIndex: 'show',
           scopedSlots: { customRender: 'show' },
-          width: 100,
+          // width: 100,
         },
 
         {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
-          width: 100,
+          // width: 100,
         },
       ],
     }

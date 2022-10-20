@@ -16,7 +16,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="6" :sm="24">
+          <a-col :md="10" :sm="24">
             <!-- <a-form-item label="状态:"> -->
             <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search"
               >查询</a-button
@@ -26,7 +26,7 @@
           </a-col>
         </a-row>
       </a-form>
-      <a-button style="margin-left: 95%" type="primary" @click="addModel()" icon="plus">新增</a-button>
+      <a-button style="margin-left: 95%;margin-bottom: 1%;" type="primary" @click="addModel()" icon="plus">新增</a-button>
     </div>
     <s-table
       ref="table"
