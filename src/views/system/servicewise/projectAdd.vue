@@ -773,7 +773,8 @@ export default {
         console.log('date', date)
         let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
         console.log('mom', mom)
-        itemTask.pushTimePoint = mom
+        this.$set(itemTask, 'pushTimePoint', mom)
+        // itemTask.pushTimePoint = mom
         console.log('pushTimePoint add', itemTask.pushTimePoint)
       }
 
