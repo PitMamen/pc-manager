@@ -156,17 +156,17 @@ export default {
         {
           title: '字段类型',
           dataIndex: 'zdlx',
-          // width: 100,
+          width: 100,
         },
         {
           title: '字段大小',
           dataIndex: 'fieldLength',
-          // width: 100,
+          width: 100,
         },
         {
           title: '默认值',
           dataIndex: 'DefaultValue',
-          // width: 100,
+          width: 100,
         },
         {
           title: '档案字段',
@@ -178,14 +178,14 @@ export default {
           title: '显示',
           dataIndex: 'show',
           scopedSlots: { customRender: 'show' },
-          // width: 100,
+          width: 80,
         },
 
         {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
-          // width: 100,
+          width: 100,
         },
       ],
     }
