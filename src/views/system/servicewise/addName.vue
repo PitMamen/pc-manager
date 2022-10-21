@@ -49,9 +49,10 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2%; overflow-y: auto; height: 600px"
+        style="margin-top: 2%; overflow-y: auto; height: 500px"
         ref="table"
         size="default"
+        :scroll="{ y:400,x:600 }"
         :pagination="false"
         :data-source="loadData"
         :columns="columns"
@@ -72,7 +73,7 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 130px; margin-left: 2%"
+            style="display: inline-block; width: 110px; margin-right: 20px;"
             allow-clear
             @blur="changeDes(record)"
           />
@@ -83,7 +84,7 @@
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
-            style="width: 130px"
+            style="width: 110px;margin-right: 20px;"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"

@@ -39,9 +39,10 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2% ;overflow-y:auto;height:600px;"
+        style="margin-top: 2% ;overflow-y:auto;height:500px;"
         ref="table"
         size="default"
+        :scroll="{ y:400,x:600 }"
         :pagination="false"
         :data-source="loadData"
         :columns="columns"
@@ -62,7 +63,7 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 120px; margin-left: 2%"
+            style="display: inline-block; width: 120px; margin-right: 1%;"
             allow-clear
             @blur="changeDes(record)"
           />
@@ -73,7 +74,7 @@
 
         <span slot="fileDes" style="display: inline-block" slot-scope="text, record">
           <a-select
-            style="width: 130px"
+            style="width: 110px;margin-right: 1%;"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -164,7 +165,7 @@ export default {
           title: '档案字段',
           // dataIndex: 'dazd',
           scopedSlots: { customRender: 'fileDes' },
-          width: 100,
+          // width: 100,
         },
         {
           title: '显示',
