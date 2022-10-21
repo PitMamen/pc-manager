@@ -52,7 +52,7 @@
             v-model="templateContent.content"
             class="span-item-value"
             readOnly
-            style="height: 100px; width: 900px; display: inline-block"
+            style="height: 100px; width: 72.5%; display: inline-block"
             allow-clear
             placeholder="请输入模板内容 "
           />
@@ -78,6 +78,7 @@
           <a-select
             v-show="item.property === '档案字段'"
             v-model="fieldList[index].content"
+            style="width: 65% !important;"
             allow-clear
             placeholder="请选择参数"
           >
@@ -90,7 +91,7 @@
             v-show="item.property === '自定义传参'"
             v-model="fieldList[index].content"
             class="span-item-value"
-            style="width: 90%; display: inline-block"
+            style="width: 65%;margin-left: 0; display: inline-block"
             allow-clear
             :maxLength="150"
             placeholder="请输入参数,不超过150字 "
@@ -104,14 +105,14 @@
 
           <a-radio-group
             name="radioGroup"
-            style="width: 900px; margin-left: 0%"
+            style="width: 70%; margin-left: 0%;"
             v-model="radioTyPe"
             @change="radioChange"
           >
             <a-radio :value="0"> 问卷 </a-radio>
-            <a-radio :value="1" style="margin-left: 52px"> 宣教 </a-radio>
-            <a-radio :value="2" style="margin-left: 52px"> 不跳转任何内容 </a-radio>
-            <a-radio :value="3" style="margin-left: 52px"> 跳转外网地址 </a-radio>
+            <a-radio :value="1" style="margin-left: 3%"> 宣教 </a-radio>
+            <a-radio :value="2" style="margin-left:  3%"> 不跳转任何内容 </a-radio>
+            <a-radio :value="3" style="margin-left:  3%"> 跳转外网地址 </a-radio>
           </a-radio-group>
         </div>
       </div>
@@ -120,28 +121,30 @@
         <div class="div-total-one">
           <span class="span-item-name">问卷名称 :</span>
           <a-input
+          v-show="questionContent.name"
             v-model="questionContent.name"
             class="span-item-value"
-            style="display: inline-block"
+            style="display: inline-block;margin-right: 3%;width: 64.5% !important;"
             allow-clear
             readOnly
             placeholder="请选择问卷 "
           />
-          <a-button type="primary" @click="selectQestionBtn" style="margin-left: 3%"> 选择 </a-button>
+          <a-button type="primary" @click="selectQestionBtn" > 选择 </a-button>
         </div>
       </div>
       <div class="div-line-wrap" v-show="radioTyPe === 1">
         <div class="div-total-one">
           <span class="span-item-name">宣教名称 :</span>
           <a-input
+          v-show="teachContent.title"
             v-model="teachContent.title"
             class="span-item-value"
-            style="display: inline-block"
+            style="display: inline-block;margin-right: 3%;width: 64.5% !important;"
             readOnly
             allow-clear
             placeholder="请选择宣教文章 "
           />
-          <a-button type="primary" @click="selectTeachBtn" style="margin-left: 3%"> 选择 </a-button>
+          <a-button type="primary" @click="selectTeachBtn" > 选择 </a-button>
         </div>
       </div>
       <div class="div-line-wrap" v-show="radioTyPe === 3">
@@ -150,7 +153,7 @@
           <a-input
             v-model="checkData.navigatorContent"
             class="span-item-value"
-            style="display: inline-block"
+            style="display: inline-block;margin-right: 3%;width: 73%!important;"
             allow-clear
             placeholder="请输入第三方链接 "
           />
@@ -159,7 +162,7 @@
     </div>
 
     <div style="margin-top: 60px">
-      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 47%"> {{id?'确认修改':'确认提交'}} </a-button>
+      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 37%"> {{id?'确认修改':'确认提交'}} </a-button>
     </div>
     <div style="height: 50px; backgroud-color: white" />
 
@@ -508,7 +511,7 @@ export default {
 
 .div-check {
   background-color: white;
-  padding: 0 15% 0 5%;
+  padding: 0 5% 0 5%;
   // padding: 0 15%;
 
   .top-btn {
@@ -542,14 +545,7 @@ export default {
       font-weight: bold;
     }
 
-    .ant-select {
-      width: 42% !important;
-      margin-left: 0% !important;
-    }
 
-    .ant-input {
-      margin-left: 2% !important;
-    }
 
     .ant-calendar-picker {
       margin-left: 3.5%;
@@ -576,13 +572,12 @@ export default {
           width: 45%;
           color: #333;
           text-align: left;
-          padding-left: 0px;
           font-size: 14px;
           display: inline-block;
         }
         .ant-select {
           width: 45% !important;
-          margin-left: 6px !important;
+        
         }
       }
 
@@ -602,14 +597,13 @@ export default {
           width: 45%;
           color: #333;
           font-size: 14px;
-
           text-align: left;
           display: inline-block;
         }
         .ant-select {
           width: 45% !important;
-          margin-left: 6px !important;
         }
+       
       }
 
       .div-total-one {
@@ -633,10 +627,7 @@ export default {
           display: inline-block;
         }
 
-        .ant-input {
-          margin-left: 0.5% !important;
-        }
-
+        
         .ant-select {
           width: 45% !important;
           margin-left: 0% !important;
