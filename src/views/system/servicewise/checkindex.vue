@@ -92,6 +92,7 @@
 </template>
 
 
+
 <script>
 import { checkDetail, updateMetaConfigure, saveMetaConfigure } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
@@ -210,6 +211,10 @@ export default {
           // return dataItem.detail
           this.detailList = dataItem.detail
           this.loadData = dataItem.detail
+        }else{
+          //重置数据
+          this.detailList = null
+          this.loadData = null
         }
 
         return []

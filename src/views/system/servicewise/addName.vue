@@ -49,7 +49,7 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2%;overflow-y:auto;height:600px;"
+        style="margin-top: 2%; overflow-y: auto; height: 600px"
         ref="table"
         size="default"
         :pagination="false"
@@ -229,6 +229,9 @@ export default {
             this.loadData = dataItem.detail
           } else {
             this.failShow = true
+            //重置数据
+            this.detailList = null
+            this.loadData = null
           }
 
           return []
@@ -396,9 +399,9 @@ export default {
       if (this.repeatclickFun()) {
         // console.log('执行调用---')
         if (queryData.metaName == null || queryData.metaName == '') {
-        this.$message.error('请输入名单描述!')
-        return
-      }
+          this.$message.error('请输入名单描述!')
+          return
+        }
         this.saveMetaConfigureOut(queryData)
       } else {
         this.$message.error('请勿重复操作!')
