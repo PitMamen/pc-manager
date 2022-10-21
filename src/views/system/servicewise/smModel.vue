@@ -25,8 +25,8 @@
             </a-col>
           </a-row>
         </a-form>
-
-        <a-button style="margin-left: 95%;margin-bottom: 1%;" type="primary" @click="addModel2()"  icon="plus">新增</a-button>
+        <div class="div-divider"></div>
+        <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addModel2()"  icon="plus">新增</a-button>
 
       </div>
       <s-table
@@ -106,6 +106,7 @@
           {
             title: '状态',
             dataIndex: 'zt',
+            width:80,
           },
           {
             title: '操作',
@@ -215,4 +216,12 @@
     },
   }
   </script>
-    
+    <style lang="less">
+    .div-divider {
+        margin-top: 1%;
+        margin-bottom: 1%;
+        width: 100%;
+        background-color: #e6e6e6;
+        height: 1px;
+      }
+    </style>

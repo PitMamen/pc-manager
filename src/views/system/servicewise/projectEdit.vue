@@ -14,7 +14,7 @@
               class="span-item-value"
               v-model="projectData.basePlan.planName"
               :maxLength="30"
-              style="display: inline-block"
+              style="display: inline-block; width: 60%"
               allow-clear
               placeholder="请输入方案名称 "
             />
@@ -34,6 +34,7 @@
             <a-select
               v-model="projectData.basePlan.metaConfigureId"
               @select="onSourceSelect"
+              disabled
               allow-clear
               placeholder="请选择来源名单"
             >
@@ -61,7 +62,7 @@
           </div>
 
           <div class="div-pro-line" style="width: 60%">
-            <span class="span-item-name"><span style="color: red">*</span> 补充说明 :</span>
+            <span class="span-item-name" style="margin-left:1%">  补充说明 :</span>
             <a-input
               class="span-item-value"
               v-model="projectData.basePlan.remark"
@@ -136,7 +137,7 @@
               <div class="end-btn" style="margin-left: 10%" @click="delRule(indexRule, itemRule)">
                 <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_delete.jpg" />
 
-                <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
+                <span style="width: 50px; color: #1890ff; margin-left: 15%">删除</span>
               </div>
 
               <!-- v-if="indexRule == projectData.filterRules.length - 1" -->
@@ -323,7 +324,7 @@
               </a-select>
               <!-- @change="onChange" -->
 
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 0.5%"
+              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 2%"
                 >执行人员:</span
               >
               <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
@@ -369,10 +370,14 @@
         <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
-      <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
-        <!-- <a-button style="margin-left: 2%; float: right" type="primary" @click="cancel()">取消</a-button> -->
-        <a-button style="margin-left: 2%; float: right" type="primary" @click="submitData()">提交</a-button>
+      <div class="div-pro-btn">
+        <a-button style="margin-left: 79.5%; float: right" type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
       </div>
+
+      <!-- <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
+        <a-button style="margin-left: 2%; float: right" type="primary" @click="submitData()">提交</a-button>
+      </div> -->
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
     </div>
@@ -481,13 +486,15 @@ export default {
     this.confirmLoading = true
     followTypes()
       .then((res) => {
-        this.confirmLoading = false
+        // this.confirmLoading = false
         if (res.code == 0) {
           this.typeData = res.data
+        } else {
+          this.confirmLoading = false
         }
       })
       .finally((res) => {
-        this.confirmLoading = false
+        // this.confirmLoading = false
       })
 
     tables().then((res) => {
@@ -734,6 +741,8 @@ export default {
           this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
           // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         }
+
+        this.confirmLoading = false
       })
     },
 
@@ -877,10 +886,17 @@ export default {
       } else if (itemTask.messageType == 2) {
         //查所有微信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
+
+        //短信消息和微信消息默认不勾选
+        itemTask.isChecked = false
       } else if (itemTask.messageType == 3) {
         //查所有短信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+        itemTask.isChecked = false
       }
+
+      //TODO 修改随访方式时，如果id不存在，给它的模版或者问卷置空
+
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
 
@@ -1038,10 +1054,10 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
-      if (!tempData.basePlan.remark) {
-        this.$message.error('请输入补充说明')
-        return
-      }
+      // if (!tempData.basePlan.remark) {
+      //   this.$message.error('请输入补充说明')
+      //   return
+      // }
 
       // if (tempData.filterRules.length == 0) {
       //   this.$message.error('请添加名单过滤')
@@ -1147,12 +1163,17 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            this.$router.go(-1)
+            // this.$router.go(-1)
+            this.$router.push({ path: './serviceWise?keyindex=1' })
           }
         })
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    cancel() {
+      this.$router.go(-1)
     },
   },
 }
@@ -1196,7 +1217,7 @@ export default {
     overflow: hidden;
 
     .ant-select {
-      width: 38% !important;
+      width: 58.5% !important;
       margin-left: 1.5% !important;
     }
 
@@ -1298,9 +1319,9 @@ export default {
       margin-left: 2%;
       color: #1890ff;
       display: inline-block;
-      border: 1px solid #18b6f5;
+      border: 1px solid #1890ff;
 
-      border-radius: 8px;
+      // border-radius: 8px;
       // margin-left: 2%;
 
       &:hover {
@@ -1366,10 +1387,10 @@ export default {
             // background-color: yellow;
             // width: 100px;
             color: #1890ff;
-            border: 1px solid #18b6f5;
+            border: 1px solid #1890ff;
             // border: 2px solid #1890ff;
             // border: 2px solid #01AFF4;
-            border-radius: 8px;
+            // border-radius: 8px;
             margin-left: 2%;
 
             &:hover {
@@ -1390,12 +1411,20 @@ export default {
             margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
-            width: 10% !important;
+            width: 20% !important;
             margin-left: 1% !important;
           }
         }
       }
     }
+  }
+
+  .div-pro-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    margin-top: 3%;
   }
 }
 </style>

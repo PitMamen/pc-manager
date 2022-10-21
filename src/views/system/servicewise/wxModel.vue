@@ -18,14 +18,14 @@
 
           <a-col :md="10" :sm="24">
             <!-- <a-form-item label="状态:"> -->
-            <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            <a-button style="margin-left: 10%" type="primary" @click="reset()">重置</a-button>
+            <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
+            <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
             <!-- </a-form-item> -->
           </a-col>
         </a-row>
       </a-form>
-
-      <a-button style="margin-left: 95%;margin-bottom: 1%;" type="primary" @click="addModel()" icon="plus">新增</a-button>
+      <div class="div-divider"></div>
+      <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addModel()" icon="plus">新增</a-button>
 
     </div>
     <s-table
@@ -94,6 +94,7 @@ export default {
         {
           title: '状态',
           dataIndex: 'zt',
+          width:80,
         },
         {
           title: '操作',
@@ -195,4 +196,14 @@ export default {
   },
 }
 </script>
+
+<style lang="less">
+.div-divider {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
+</style>
   
