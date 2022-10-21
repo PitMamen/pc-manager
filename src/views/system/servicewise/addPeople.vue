@@ -294,6 +294,9 @@ export default {
       this.choseUsers.push(tempItem)
       this.sortChoseUsers()
       this.choseNum = this.choseUsers.length
+      if (this.isSingle) {
+        this.totolAverage = 100
+      }
     },
 
     deleteChoosed(record) {

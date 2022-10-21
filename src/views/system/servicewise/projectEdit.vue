@@ -62,7 +62,7 @@
           </div>
 
           <div class="div-pro-line" style="width: 60%">
-            <span class="span-item-name"><span style="color: red">*</span> 补充说明 :</span>
+            <span class="span-item-name" style="margin-left:1%">  补充说明 :</span>
             <a-input
               class="span-item-value"
               v-model="projectData.basePlan.remark"
@@ -886,7 +886,7 @@ export default {
       } else if (itemTask.messageType == 2) {
         //查所有微信模版
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
-        
+
         //短信消息和微信消息默认不勾选
         itemTask.isChecked = false
       } else if (itemTask.messageType == 3) {
@@ -894,6 +894,9 @@ export default {
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         itemTask.isChecked = false
       }
+
+      //TODO 修改随访方式时，如果id不存在，给它的模版或者问卷置空
+
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
 
@@ -1051,10 +1054,10 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
-      if (!tempData.basePlan.remark) {
-        this.$message.error('请输入补充说明')
-        return
-      }
+      // if (!tempData.basePlan.remark) {
+      //   this.$message.error('请输入补充说明')
+      //   return
+      // }
 
       // if (tempData.filterRules.length == 0) {
       //   this.$message.error('请添加名单过滤')
@@ -1160,7 +1163,8 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            this.$router.go(-1)
+            // this.$router.go(-1)
+            this.$router.push({ path: './serviceWise?keyindex=1' })
           }
         })
         .finally((res) => {
@@ -1315,7 +1319,7 @@ export default {
       margin-left: 2%;
       color: #1890ff;
       display: inline-block;
-      border: 1px solid #1890FF;
+      border: 1px solid #1890ff;
 
       // border-radius: 8px;
       // margin-left: 2%;
@@ -1383,7 +1387,7 @@ export default {
             // background-color: yellow;
             // width: 100px;
             color: #1890ff;
-            border: 1px solid #1890FF;
+            border: 1px solid #1890ff;
             // border: 2px solid #1890ff;
             // border: 2px solid #01AFF4;
             // border-radius: 8px;

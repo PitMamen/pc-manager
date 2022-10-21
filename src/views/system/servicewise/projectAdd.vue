@@ -60,7 +60,7 @@
           </div>
 
           <div class="div-pro-line" style="width: 60%">
-            <span class="span-item-name"><span style="color: red">*</span> 补充说明 :</span>
+            <span class="span-item-name" style="margin-left:1%">  补充说明 :</span>
             <a-input
               class="span-item-value"
               v-model="projectData.basePlan.remark"
@@ -968,10 +968,10 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
-      if (!tempData.basePlan.remark) {
-        this.$message.error('请输入补充说明')
-        return
-      }
+      // if (!tempData.basePlan.remark) {
+      //   this.$message.error('请输入补充说明')
+      //   return
+      // }
 
       // if (tempData.filterRules.length == 0) {
       //   this.$message.error('请添加名单过滤')
@@ -1082,7 +1082,8 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            this.$router.go(-1)
+            // this.$router.go(-1)
+            this.$router.push( {path:'./serviceWise?keyindex=1'})
           }
         })
         .finally((res) => {
