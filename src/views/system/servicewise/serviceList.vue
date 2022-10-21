@@ -224,6 +224,7 @@ export default {
       this.queryParams.status=1
       this.queryParams.planName=''
       this.queryParams.executeDepartment=''
+      this.queryParams.departmentName=''
       this.queryParams. pageNo= 1
       
       this.$refs.table.refresh(true)
