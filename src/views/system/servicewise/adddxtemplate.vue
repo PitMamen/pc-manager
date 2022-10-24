@@ -76,22 +76,38 @@
         </div>
         <div class="div-right" style="width: 50%">
           <a-select
-            v-show="item.property === '档案字段'"
+            v-show="item.property === '档案字段' && item.name.indexOf('date')<0"
             v-model="fieldList[index].content"
-            style="width: 65% !important;"
+            style="width: 65% !important"
             allow-clear
             placeholder="请选择参数"
           >
-            <a-select-option v-for="(item, index) in dananfieldList" :key="index" :value="item.tableField">{{
-              item.fieldComment
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in dananfieldList"
+              :key="index"
+              :value="item.tableField"
+              >{{ item.fieldComment }}</a-select-option
+            >
           </a-select>
-
+          <a-select
+            v-show="item.property === '档案字段' && item.name.indexOf('date')>-1"
+            v-model="fieldList[index].content"
+            style="width: 65% !important"
+            allow-clear
+            placeholder="请选择参数"
+          >
+            <a-select-option
+              v-for="(item, index) in danandataList"
+              :key="index"
+              :value="item.tableField"
+              >{{ item.fieldComment }}</a-select-option
+            >
+          </a-select>
           <a-input
             v-show="item.property === '自定义传参'"
             v-model="fieldList[index].content"
             class="span-item-value"
-            style="width: 65%;margin-left: 0; display: inline-block"
+            style="width: 65%; margin-left: 0; display: inline-block"
             allow-clear
             :maxLength="150"
             placeholder="请输入参数,不超过150字 "
@@ -112,7 +128,6 @@
             <a-radio :value="0"> 问卷 </a-radio>
             <a-radio :value="1" style="margin-left: 3%"> 宣教 </a-radio>
             <a-radio :value="2" style="margin-left: 3%"> 不跳转任何内容 </a-radio>
-           
           </a-radio-group>
         </div>
       </div>
@@ -121,30 +136,30 @@
         <div class="div-total-one">
           <span class="span-item-name">问卷名称 :</span>
           <a-input
-          v-show="questionContent.name"
+            v-show="questionContent.name"
             v-model="questionContent.name"
             class="span-item-value"
-            style="display: inline-block;margin-right: 3%;width: 64.5% !important;"
+            style="display: inline-block; margin-right: 3%; width: 64.5% !important"
             allow-clear
             readOnly
             placeholder="请选择问卷 "
           />
-          <a-button type="primary" @click="selectQestionBtn" > 选择 </a-button>
+          <a-button type="primary" @click="selectQestionBtn"> 选择 </a-button>
         </div>
       </div>
       <div class="div-line-wrap" v-show="radioTyPe === 1">
         <div class="div-total-one">
           <span class="span-item-name">宣教名称 :</span>
           <a-input
-          v-show="teachContent.title"
+            v-show="teachContent.title"
             v-model="teachContent.title"
             class="span-item-value"
-            style="display: inline-block;margin-right: 3%;width: 64.5% !important;"
+            style="display: inline-block; margin-right: 3%; width: 64.5% !important"
             allow-clear
             readOnly
             placeholder="请选择宣教文章 "
           />
-          <a-button type="primary" @click="selectTeachBtn" > 选择 </a-button>
+          <a-button type="primary" @click="selectTeachBtn"> 选择 </a-button>
         </div>
       </div>
       <div class="div-line-wrap" v-show="radioTyPe === 3">
@@ -162,7 +177,9 @@
     </div>
 
     <div style="margin-top: 60px">
-      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 37%"> {{id?'确认修改':'确认提交'}} </a-button>
+      <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 37%">
+        {{ id ? '确认修改' : '确认提交' }}
+      </a-button>
     </div>
     <div style="height: 50px; backgroud-color: white" />
 
@@ -179,7 +196,7 @@ import {
   qryMetaConfigureDetail,
   addSmsTemplate,
   getSmsTemplateById,
-  modifySmsTemplate
+  modifySmsTemplate,
 } from '@/api/modular/system/posManage'
 import addQuestion from '../package/addQuestion'
 import addTeach from '../package/addTeach'
@@ -190,88 +207,94 @@ export default {
   data() {
     return {
       id: '', //业务模板详情ID 修改时才有值
-      templateBean:'',//业务模板详情
+      templateBean: '', //业务模板详情
       // 高级搜索 展开/关闭
       advanced: false,
       radioTyPe: 0,
       checkData: {
-        smsConfigureId:'',//短信平台配置ID
+        smsConfigureId: '', //短信平台配置ID
         id: '', //短信平台ID
-        supplierName:'',//短信平台名称
+        supplierName: '', //短信平台名称
         templateId: '', //模板ID
-        smsTemplateTitle:'',//模板标题
+        smsTemplateTitle: '', //模板标题
         templateTitle: '', //模板输入标题
         navigatorType: '', //跳转类型
         navigatorContent: '', //跳转内容
       },
-      templateContent: { smsConfigureId: '',smsTemplateCode:'', smsTemplateTitle: '',  smsTemplateContent: '',  },
+      templateContent: { smsConfigureId: '', smsTemplateCode: '', smsTemplateTitle: '', smsTemplateContent: '' },
       questionContent: { name: '' },
       teachContent: { title: '' },
 
       wxgzhData: [], //公众号列表
       templateData: [], //模板列表
       zdsxData: ['档案字段', '自定义传参'], //字段属性
-      fieldList: [], //微信字段列表
-      dananfieldList: [], //微信字段列表
+      fieldList: [], //字段列表
+      dananfieldList: [], //档案字段列表
+      danandataList: [], //档案日期字段列表
       navigateListData: [],
     }
   },
 
   created() {
-    console.log("传参id："+this.$route.query.id)
- 
+    console.log('传参id：' + this.$route.query.id)
+
     //获取公众号列表
     getSmsConfigureList({}).then((res) => {
       if (res.code == 0) {
         this.wxgzhData = res.data
 
         if (this.$route.query.id) {
-      //若有值，则查询详情
-      this.id = this.$route.query.id
-      getSmsTemplateById(this.id).then((res) => {
-        if (res.code == 0) {
-          this.checkData=res.data
-          this.checkData.templateId=Number(res.data.templateId)
-          this.templateContent.smsConfigureId=res.data.smsConfigureId
-          this.templateContent.smsTemplateContent=res.data.templateContent
-          this.templateContent.smsTemplateCode=res.data.templateInsideCode
+          //若有值，则查询详情
+          this.id = this.$route.query.id
+          getSmsTemplateById(this.id).then((res) => {
+            if (res.code == 0) {
+              this.checkData = res.data
+              this.checkData.templateId = Number(res.data.templateId)
+              this.templateContent.smsConfigureId = res.data.smsConfigureId
+              this.templateContent.smsTemplateContent = res.data.templateContent
+              this.templateContent.smsTemplateCode = res.data.templateInsideCode
 
-          var thisWXData=[];
-          this.wxgzhData.forEach(item=>{
-            if(item.id+'' === res.data.smsConfigureId){
-              thisWXData.push(item)
+              var thisWXData = []
+              this.wxgzhData.forEach((item) => {
+                if (item.id + '' === res.data.smsConfigureId) {
+                  thisWXData.push(item)
+                }
+              })
+              this.wxgzhData = thisWXData
+
+              this.radioTyPe = res.data.jumpType - 1
+              if (this.radioTyPe == 0) {
+                this.questionContent.questUrl = res.data.jumpValue
+                this.questionContent.name = res.data.jumpTitle
+              } else if (this.radioTyPe == 1) {
+                this.teachContent.articleId = res.data.jumpValue
+                this.teachContent.title = res.data.jumpTitle
+              } else if (this.radioTyPe == 3) {
+                this.checkData.navigatorContent = res.data.jumpValue
+              }
+
+              this.fieldList = JSON.parse(res.data.templateParamJson)
+
+              this.onWXProgramChange(Number(res.data.smsConfigureId))
             }
           })
-          this.wxgzhData=thisWXData
-
-        this.radioTyPe=res.data.jumpType-1
-         if (this.radioTyPe == 0) {
-         this.questionContent.questUrl=res.data.jumpValue
-         this.questionContent.name=res.data.jumpTitle
-      } else if (this.radioTyPe == 1) {
-       
-        this.teachContent.articleId=res.data.jumpValue
-        this.teachContent.title=res.data.jumpTitle
-      } else if (this.radioTyPe == 3) {
-      
-        this.checkData.navigatorContent =res.data.jumpValue
-      }
-
-      this.fieldList=JSON.parse(res.data.templateParamJson)
-
-      this.onWXProgramChange(Number(res.data.smsConfigureId) )
-
         }
-      })
-    }
       }
     })
-    
 
     //获取档案字段列表
     qryMetaConfigureDetail({ databaseTableName: 'tb_patient_baseinfo' }).then((res) => {
       if (res.code == 0) {
         this.dananfieldList = res.data[0].detail
+
+        //如果是日期类的 需要限制
+        var dataList = []
+        this.dananfieldList.forEach((item) => {
+          if (item.fieldType.value == 2) {
+            dataList.push(item)
+          }
+        })
+        this.danandataList = dataList
       }
     })
   },
@@ -281,7 +304,7 @@ export default {
 
     //选择公众号
     onWXProgramChange(value) {
-      console.log('选择公众号:'+value)
+      console.log('选择公众号:' + value)
       this.wxgzhData.forEach((item) => {
         if (item.id === value) {
           this.checkData.smsConfigureId = item.id
@@ -293,29 +316,30 @@ export default {
     getSmsConfigureTemplateList(id) {
       getSmsConfigureTemplateList(id).then((res) => {
         if (res.code == 0) {
-          if (this.$route.query.id) {//详情
-            var thistemplateData=[];
-            res.data.forEach(item=>{
-            if(item.id === this.checkData.templateId){
-              thistemplateData.push(item)
-            }
-          })
-          console.log("thistemplateData",thistemplateData)
-         this.templateData=thistemplateData
-      
-          }else{//新增
+          if (this.$route.query.id) {
+            //详情
+            var thistemplateData = []
+            res.data.forEach((item) => {
+              if (item.id === this.checkData.templateId) {
+                thistemplateData.push(item)
+              }
+            })
+            console.log('thistemplateData', thistemplateData)
+            this.templateData = thistemplateData
+          } else {
+            //新增
             this.templateData = res.data
           }
-         
         }
       })
     },
     //选择模板
     onTemplateChange(value) {
-      console.log("onTemplateChange="+value)
-      if (this.$route.query.id) {//详情
-      return
-    }
+      console.log('onTemplateChange=' + value)
+      if (this.$route.query.id) {
+        //详情
+        return
+      }
       this.templateData.forEach((item) => {
         if (item.id === value) {
           this.templateContent = item
@@ -325,7 +349,7 @@ export default {
       console.log(this.templateContent)
 
       let text = this.templateContent.smsTemplateContent
-    
+
       console.log(text)
       let regex = /\$\{(.+?)\}/g
       let result
@@ -395,9 +419,7 @@ export default {
         return
       }
 
-
-      for(var i=0;i<this.fieldList.length;i++){
-        
+      for (var i = 0; i < this.fieldList.length; i++) {
         if (!this.fieldList[i].content) {
           this.$message.error('模板参数' + this.fieldList[i].name + '为空')
           return
@@ -415,60 +437,61 @@ export default {
           return
         }
         jumpValue = this.questionContent.questUrl
-        jumpTitle=this.questionContent.name
+        jumpTitle = this.questionContent.name
       } else if (this.radioTyPe == 1) {
         if (!this.teachContent.articleId) {
           this.$message.error('请选择宣教文章')
           return
         }
         jumpValue = this.teachContent.articleId
-        jumpTitle=this.teachContent.title
+        jumpTitle = this.teachContent.title
       } else if (this.radioTyPe == 3) {
         if (!this.checkData.navigatorContent) {
           this.$message.error('请输入第三方链接')
           return
         }
         jumpValue = this.checkData.navigatorContent
-        jumpTitle=this.checkData.navigatorContent
+        jumpTitle = this.checkData.navigatorContent
       }
 
       var postData = {
-        smsConfigureId:this.checkData.smsConfigureId,
+        smsConfigureId: this.checkData.smsConfigureId,
         templateId: this.checkData.templateId,
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
-        templateContent:this.templateContent.smsTemplateContent,
-        templateName:this.templateContent.smsTemplateTitle,
-        templateInsideCode:this.templateContent.smsTemplateCode,
+        templateContent: this.templateContent.smsTemplateContent,
+        templateName: this.templateContent.smsTemplateTitle,
+        templateInsideCode: this.templateContent.smsTemplateCode,
         jumpType: this.radioTyPe + 1,
         jumpValue: jumpValue,
         jumpTitle: jumpTitle,
-        templateParamJson: JSON.stringify(this.fieldList), 
+        templateParamJson: JSON.stringify(this.fieldList),
       }
-      if(this.id){//修改
-        postData.id=this.id
+      if (this.id) {
+        //修改
+        postData.id = this.id
         this.modify(postData)
-      }else{//新增
+      } else {
+        //新增
         this.add(postData)
       }
-    
     },
 
-    add(postData){
+    add(postData) {
       addSmsTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
-          this.$router.push( {path:'./serviceWise?keyindex=3'})
+          this.$router.push({ path: './serviceWise?keyindex=3' })
         } else {
           this.$message.error(res.message)
         }
       })
     },
-    modify(postData){
+    modify(postData) {
       modifySmsTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
-          this.$router.push( {path:'./serviceWise?keyindex=3'})
+          this.$router.push({ path: './serviceWise?keyindex=3' })
         } else {
           this.$message.error(res.message)
         }
@@ -556,8 +579,6 @@ export default {
       font-weight: bold;
     }
 
-
-
     .ant-calendar-picker {
       margin-left: 3.5%;
     }
@@ -588,7 +609,6 @@ export default {
         }
         .ant-select {
           width: 45% !important;
-        
         }
       }
 
@@ -614,7 +634,6 @@ export default {
         .ant-select {
           width: 45% !important;
         }
-       
       }
 
       .div-total-one {
@@ -638,7 +657,6 @@ export default {
           display: inline-block;
         }
 
-        
         .ant-select {
           width: 45% !important;
           margin-left: 0% !important;
