@@ -76,15 +76,32 @@
         </div>
         <div class="div-left" style="width: 50%">
           <a-select
-            v-show="item.property === '档案字段'"
+            v-show="item.property === '档案字段' && item.name.indexOf('time')<0"
             v-model="fieldList[index].content"
-            style="width: 65% !important;"
+            style="width: 65% !important"
             allow-clear
             placeholder="请选择参数"
           >
-            <a-select-option v-for="(item, index) in dananfieldList" :key="index" :value="item.tableField">{{
-              item.fieldComment
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in dananfieldList"
+              :key="index"
+              :value="item.tableField"
+              >{{ item.fieldComment }}</a-select-option
+            >
+          </a-select>
+          <a-select
+            v-show="item.property === '档案字段' && item.name.indexOf('time')>-1"
+            v-model="fieldList[index].content"
+            style="width: 65% !important"
+            allow-clear
+            placeholder="请选择参数"
+          >
+            <a-select-option
+              v-for="(item, index) in danandataList"
+              :key="index"
+              :value="item.tableField"
+              >{{ item.fieldComment }}</a-select-option
+            >
           </a-select>
 
           <a-input
@@ -211,6 +228,7 @@ export default {
       zdsxData: ['档案字段', '自定义传参'], //字段属性
       fieldList: [], //微信字段列表
       dananfieldList: [], //微信字段列表
+      danandataList: [], //档案日期字段列表
       navigateListData: [],
     }
   },
@@ -269,6 +287,15 @@ export default {
     qryMetaConfigureDetail({ databaseTableName: 'tb_patient_baseinfo' }).then((res) => {
       if (res.code == 0) {
         this.dananfieldList = res.data[0].detail
+        
+        //如果是日期类的 需要限制
+        var dataList = []
+        this.dananfieldList.forEach((item) => {
+          if (item.fieldType.value == 2) {
+            dataList.push(item)
+          }
+        })
+        this.danandataList = dataList
       }
     })
   },
