@@ -198,11 +198,12 @@ export default {
       checkDetail(this.queryParams).then((res) => {
         if (res.code == 0 && res.data.length > 0) {
           var dataItem = res.data[0]
-
+          dataItem.detail = dataItem.detail.filter(function(item){
+              return  item.tableField!='id'
+            })
           dataItem.detail.forEach((item, index) => {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
-            // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '')
             if (item.fieldArchives == null) {
               this.$set(item, 'fieldArchives', { description: '' })
             }
