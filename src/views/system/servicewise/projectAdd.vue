@@ -614,7 +614,7 @@ export default {
     })
 
     //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
-    this.getDeptAllQues()
+    // this.getDeptAllQues()
 
     //全部的问卷模板
     // getWxTemplateListForJumpType(1).then((res) => {

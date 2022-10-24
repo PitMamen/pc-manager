@@ -563,12 +563,14 @@ export default {
         getDepts().then((res) => {
           if (res.code == 0) {
             this.keshiData = res.data
+            this.getDetailOut()
           }
         })
       } else {
         getDeptsPersonal().then((res) => {
           if (res.code == 0) {
             this.keshiData = res.data
+            this.getDetailOut()
           }
         })
       }
