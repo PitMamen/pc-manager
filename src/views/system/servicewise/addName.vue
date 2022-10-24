@@ -204,7 +204,7 @@ export default {
 
     //根据输入的表名查询 数据
     quryCheckDetail(queryParamData) {
-      console.log('请求参数：', queryParamData)
+      // console.log('请求参数：', queryParamData)
       this.confirmLoading = true
       checkDetail(queryParamData)
         .then((res) => {
