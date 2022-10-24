@@ -1057,7 +1057,7 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务日期类别')
           return
         }
-        
+
         //1临时  2长期  临时任务 timeQuantity 可以为0，所以这里注释
         // if (item.taskExecType && !item.timeQuantity) {
         //   this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
@@ -1122,6 +1122,8 @@ export default {
             this.$message.success('保存成功')
             // this.$router.go(-1)
             this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
           }
         })
         .finally((res) => {

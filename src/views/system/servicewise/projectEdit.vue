@@ -1205,6 +1205,8 @@ export default {
             this.$message.success('保存成功')
             // this.$router.go(-1)
             this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
           }
         })
         .finally((res) => {
