@@ -62,7 +62,7 @@
           </div>
 
           <div class="div-pro-line" style="width: 60%">
-            <span class="span-item-name" style="margin-left:1%">  补充说明 :</span>
+            <span class="span-item-name" style="margin-left: 1%"> 补充说明 :</span>
             <a-input
               class="span-item-value"
               v-model="projectData.basePlan.remark"
@@ -406,6 +406,7 @@ import {
   getSmsTemplateListForJumpType,
   getWxTemplateListForJumpType,
   getDetail,
+  getAllQuestions,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -596,41 +597,45 @@ export default {
           this.templateListSMS = res.data
         }
 
-        this.getQuesTemplateListForJumpTypeOut()
+        // this.getQuesTemplateListForJumpTypeOut()
       })
     },
 
-    getQuesTemplateListForJumpTypeOut() {
-      //全部的问卷模板
-      getWxTemplateListForJumpType(1).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 4)
-          })
-          this.templateListQues = res.data
-          this.getQuesSmsTemplateList()
-          console.log('getWxTemplateListForJumpType', res.data.length)
-        }
-      })
-    },
+    // getQuesTemplateListForJumpTypeOut() {
+    //   //全部的问卷模板
+    //   getWxTemplateListForJumpType(1).then((res) => {
+    //     if (res.code == 0) {
+    //       res.data.forEach((item) => {
+    //         this.$set(item, 'messageContentType', 4)
+    //       })
+    //       this.templateListQues = res.data
+    //       this.getQuesSmsTemplateList()
+    //       console.log('getWxTemplateListForJumpType', res.data.length)
+    //     }
+    //   })
+    // },
 
-    getQuesSmsTemplateList() {
-      getSmsTemplateListForJumpType(1).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 3)
-            this.$set(item, 'templateName', item.templateTitle)
-          })
-          this.templateListQues = this.templateListQues.concat(res.data)
-          this.getDetailOut()
-        }
-      })
-    },
+    // getQuesSmsTemplateList() {
+    //   getSmsTemplateListForJumpType(1).then((res) => {
+    //     if (res.code == 0) {
+    //       res.data.forEach((item) => {
+    //         this.$set(item, 'messageContentType', 3)
+    //         this.$set(item, 'templateName', item.templateTitle)
+    //       })
+    //       this.templateListQues = this.templateListQues.concat(res.data)
+    //       this.getDetailOut()
+    //     }
+    //   })
+    // },
 
     getDetailOut() {
       getDetail({ planId: this.planId }).then((res) => {
         if (res.code == 0) {
           this.projectData = res.data
+
+          //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
+          this.getDeptAllQues()
+
           this.processData()
         } else {
           this.$message.error('请求数据失败')
@@ -760,6 +765,11 @@ export default {
      * 选模版前先选随访方式
      */
     onTemFocus(indexTask, itemTask) {
+      if (!this.projectData.basePlan.executeDepartment) {
+        this.$message.warn('请先选择执行科室')
+        return
+      }
+
       if (!this.projectData.tasks[indexTask].messageType) {
         this.$message.warn('请先选择随访方式')
         return
@@ -813,6 +823,28 @@ export default {
      */
     onDeptSelect() {
       this.getUsersByDeptIdAndRoleOut()
+      this.getDeptAllQues()
+    },
+
+    getDeptAllQues() {
+      let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
+
+      let param = {
+        pageNo: 1,
+        pageSize: 100,
+        typeName: chooseDept.departmentName,
+        // typeName: this.projectData.basePlan.executeDepartment,
+      }
+      getAllQuestions(param).then((res) => {
+        if (res.code == 0) {
+          res.data.list.forEach((item) => {
+            this.$set(item, 'templateTitle', item.name)
+          })
+          this.templateListQues = res.data.list
+        } else {
+          // return {}
+        }
+      })
     },
 
     addPerson(indexMisson) {
@@ -829,6 +861,11 @@ export default {
 
       console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
 
+      if (!this.deptUsers.users || !this.deptUsers.users.length == 0) {
+        this.$message.warn('所选执行科室没有可选人员')
+        return
+      }
+
       //     * 2每次随机 3首次随机 4指定人员    指定人员只能单选，其他多选
       if (this.projectData.tasks[indexMisson].personnelAssignmentType == 4) {
         this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
@@ -843,7 +880,7 @@ export default {
     },
 
     addMission() {
-      this.projectData.tasks.push({ isChecked: true })
+      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1 })
     },
 
     /**
@@ -1070,18 +1107,19 @@ export default {
       }
 
       if (tempData.filterRules && tempData.filterRules.length > 0) {
-        for (let index = 0; index < tempData.filterRules.length; index++) {
-          let item = tempData.filterRules[index]
-          if (!item.metaConfigureDetailId) {
-            this.$message.error('请选择第' + (index + 1) + '条名单过滤字段')
+        for (let indexRule = 0; indexRule < tempData.filterRules.length; indexRule++) {
+          debugger
+          let itemRule = tempData.filterRules[indexRule]
+          if (!itemRule.metaConfigureDetailId) {
+            this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤字段')
             return
           }
-          if (!item.condition) {
-            this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
+          if (!itemRule.condition) {
+            this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
             return
           }
-          if (!item.queryValue) {
-            this.$message.error('请选择第' + (index + 1) + '条名单过滤操作')
+          if (!itemRule.queryValue) {
+            this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
             return
           }
         }
@@ -1106,11 +1144,11 @@ export default {
           return
         }
 
-        //1临时  2长期
-        if (item.taskExecType && !item.timeQuantity) {
-          this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
-          return
-        }
+        //1临时  2长期  临时任务 timeQuantity 可以为0，所以这里注释
+        // if (item.taskExecType && !item.timeQuantity) {
+        //   this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
+        //   return
+        // }
 
         if (item.taskExecType && item.taskExecType == 1 && !item.timeUnit) {
           this.$message.error('请选择第' + (index + 1) + '条任务时间单位')

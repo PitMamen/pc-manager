@@ -59,7 +59,7 @@
       </span>
     </s-table>
 
-    <check-index ref="checkIndex" @ok="handleOk" />
+    <check-Index ref="checkIndex" @ok="handleOk" />
     <add-Name ref="addName" @ok="handleOk" />
   </a-card>
 </template>
