@@ -52,7 +52,7 @@
         style="margin-top: 2%; overflow-y: auto; height: 500px"
         ref="table"
         size="default"
-        :scroll="{ y:400,x:600 }"
+        :scroll="{ y: 400, x: 600 }"
         :pagination="false"
         :data-source="loadData"
         :columns="columns"
@@ -73,7 +73,7 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 110px; margin-right: 20px;"
+            style="display: inline-block; width: 110px; margin-right: 20px"
             allow-clear
             @blur="changeDes(record)"
           />
@@ -84,7 +84,7 @@
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
-            style="width: 110px;margin-right: 20px;"
+            style="width: 110px; margin-right: 20px"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -214,10 +214,13 @@ export default {
             var dataItem = res.data[0]
             this.id = dataItem.id
             this.queryParam.metaName = dataItem.metaName
+          
+            dataItem.detail = dataItem.detail.filter(function(item){
+              return  item.tableField!='id'
+            })
             dataItem.detail.forEach((item, index) => {
               this.$set(item, 'zdbm', item.tableField)
               this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
-              // this.$set(item, 'dazd', item.fieldArchive != null ? item.fieldArchives.description : '无')
               if (item.fieldArchives == null) {
                 this.$set(item, 'fieldArchives', { description: '' })
               }
@@ -225,7 +228,6 @@ export default {
               this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
               this.$set(item, 'DefaultValue', item.fieldDefaultValue != null ? item.fieldDefaultValue : '')
             })
-            // return dataItem.detail
             this.detailList = dataItem.detail
             this.loadData = dataItem.detail
           } else {
