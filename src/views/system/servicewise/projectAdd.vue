@@ -734,8 +734,8 @@ export default {
       }
 
       console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
-
-      if (!this.deptUsers.users || !this.deptUsers.users.length == 0) {
+      debugger
+      if (!this.deptUsers[0].users || this.deptUsers[0].users.length == 0) {
         this.$message.warn('所选执行科室没有可选人员')
         return
       }
