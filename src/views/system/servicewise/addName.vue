@@ -323,9 +323,9 @@ export default {
     // 是否显示
     shwoChange(record) {
       if (record.showStatus.value == 1) {
-        this.isShow = true
+        // this.isShow = true
       } else {
-        this.isShow = false
+        // this.isShow = false
       }
     },
 
@@ -344,11 +344,11 @@ export default {
      */
     Enable() {
       this.isOpen = !this.isOpen
-      if (this.isOpen) {
-        this.queryParams.status = 1
-      } else {
-        this.queryParams.status = 2
-      }
+      // if (this.isOpen) {
+        // this.queryParams.status = 1
+      // } else {
+        // this.queryParams.status = 2
+      // }
       var queryParamData = {
         id: this.id,
         status: this.isOpen ? 1 : 2,
