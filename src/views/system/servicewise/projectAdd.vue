@@ -824,6 +824,8 @@ export default {
         if (res.code == 0) {
           res.data.list.forEach((item) => {
             this.$set(item, 'templateTitle', item.name)
+            //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
+            this.$set(item, 'messageContentType', 1)
           })
           this.templateListQues = res.data.list
         } else {

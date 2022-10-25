@@ -79,6 +79,7 @@
                 style="display: inline-block; margin-left: 1%; width: 100px"
                 v-model="record.weight"
                 @change="countTotal"
+                :disabled="isSingle"
                 :min="0"
                 :max="10000"
                 :maxLength="30"
@@ -89,7 +90,7 @@
           </a-table>
           <div class="right-bottom">
             <div class="right-bottom-left">
-              <span>平均分配权重：</span><a-switch :checked="isAverage" @click="goOpen" />
+              <span>平均分配权重：</span><a-switch :disabled="isSingle" :checked="isAverage" @click="goOpen" />
             </div>
             <span>权重合计：{{ totolAverage + '' }}%</span>
           </div>
@@ -296,6 +297,7 @@ export default {
       this.choseNum = this.choseUsers.length
       if (this.isSingle) {
         this.totolAverage = 100
+        this.choseUsers[0].weight = 100
       }
     },
 
