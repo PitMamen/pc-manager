@@ -551,7 +551,7 @@ export default {
       }
     })
 
-    this.getWxTemplateListForJumpTypeOut()
+    // this.getWxTemplateListForJumpTypeOut()
   },
 
   methods: {
@@ -563,12 +563,14 @@ export default {
         getDepts().then((res) => {
           if (res.code == 0) {
             this.keshiData = res.data
+            this.getDetailOut()
           }
         })
       } else {
         getDeptsPersonal().then((res) => {
           if (res.code == 0) {
             this.keshiData = res.data
+            this.getDetailOut()
           }
         })
       }
@@ -597,7 +599,8 @@ export default {
           this.templateListSMS = res.data
         }
 
-        // this.getQuesTemplateListForJumpTypeOut()
+        //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
+        this.getDeptAllQues()
       })
     },
 
@@ -628,13 +631,13 @@ export default {
     //   })
     // },
 
+    /**
+     * 时序问题多，先获取详情再根据详情获取科室列表；再获取模版问卷列表添加到每条数据去
+     */
     getDetailOut() {
       getDetail({ planId: this.planId }).then((res) => {
         if (res.code == 0) {
           this.projectData = res.data
-
-          //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
-          this.getDeptAllQues()
 
           this.processData()
         } else {
@@ -732,22 +735,49 @@ export default {
         }
         console.log('pushTimePoint ddd', item.pushTimePoint)
         console.log('item processData', item)
-        // item.messageContentId = parseInt(item.messageContentId)
-        if (item.messageType == 1) {
-          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
 
-          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
-        } else if (item.messageType == 2) {
-          //查所有微信模版
-          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
-          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
-        } else if (item.messageType == 3) {
-          //查所有短信模版
-          this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
-          // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+        this.getWxTemplateListForJumpTypeOut()
+      })
+    },
+
+    getDeptAllQues() {
+      let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
+
+      let param = {
+        pageNo: 1,
+        pageSize: 100,
+        typeName: chooseDept.departmentName,
+        // typeName: this.projectData.basePlan.executeDepartment,
+      }
+      getAllQuestions(param).then((res) => {
+        if (res.code == 0) {
+          res.data.list.forEach((item) => {
+            this.$set(item, 'templateTitle', item.name)
+          })
+          this.templateListQues = res.data.list
+
+          //所有问卷请求下来之后，再每条任务赋值模板和问卷列表数据
+          this.projectData.tasks.forEach((item) => {
+            // item.messageContentId = parseInt(item.messageContentId)
+            if (item.messageType == 1) {
+              this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
+
+              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
+            } else if (item.messageType == 2) {
+              //查所有微信模版
+              this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
+              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
+            } else if (item.messageType == 3) {
+              //查所有短信模版
+              this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
+              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
+            }
+
+            this.confirmLoading = false
+          })
+        } else {
+          // return {}
         }
-
-        this.confirmLoading = false
       })
     },
 
@@ -824,27 +854,6 @@ export default {
     onDeptSelect() {
       this.getUsersByDeptIdAndRoleOut()
       this.getDeptAllQues()
-    },
-
-    getDeptAllQues() {
-      let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
-
-      let param = {
-        pageNo: 1,
-        pageSize: 100,
-        typeName: chooseDept.departmentName,
-        // typeName: this.projectData.basePlan.executeDepartment,
-      }
-      getAllQuestions(param).then((res) => {
-        if (res.code == 0) {
-          res.data.list.forEach((item) => {
-            this.$set(item, 'templateTitle', item.name)
-          })
-          this.templateListQues = res.data.list
-        } else {
-          // return {}
-        }
-      })
     },
 
     addPerson(indexMisson) {
@@ -1203,6 +1212,8 @@ export default {
             this.$message.success('保存成功')
             // this.$router.go(-1)
             this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
           }
         })
         .finally((res) => {
