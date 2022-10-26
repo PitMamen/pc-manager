@@ -260,6 +260,7 @@ export default {
   methods: {
     reset() {
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.idArr =[]
       this.$refs.table.refresh()
     },
 

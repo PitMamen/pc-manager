@@ -2,6 +2,7 @@
   <a-modal
     title="选择健康宣教"
     :width="900"
+    :height="900" 
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"

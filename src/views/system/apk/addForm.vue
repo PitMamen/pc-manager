@@ -31,6 +31,7 @@
             <a-upload
               :action="actionUrl"
               :multiple="false"
+              :headers="headers"
               :data="uploadData"
               list-type="text"
               :file-list="fileList"
@@ -63,7 +64,7 @@
 
 <script>
 import { addAppVersion } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   data() {
@@ -72,6 +73,7 @@ export default {
         xs: { span: 24 },
         sm: { span: 5 },
       },
+      
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 15 },
@@ -104,9 +106,14 @@ export default {
         // versionCode: 'v1.2.2',
         // versionNumber: '13',
       },
+      headers: {
+        Authorization: '',
+      },
     }
   },
-  created() {},
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+  },
   methods: {
     //初始化方法
     add() {

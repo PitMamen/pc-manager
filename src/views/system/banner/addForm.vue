@@ -57,6 +57,8 @@
 
 <script>
 import { bannerAdd, host } from '@/api/modular/system/banner'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   data() {
     return {
@@ -75,7 +77,7 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       headers: {
-        authorization: 'authorization-text',
+        Authorization: '',
       },
     }
   },
@@ -89,6 +91,11 @@ export default {
       console.log('this.ImgKey :>> ', this.ImgKey)
     },
   },
+
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+  },
+
   methods: {
     handleChange(info) {
       if (info.file.response != null) {

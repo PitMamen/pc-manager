@@ -9,7 +9,7 @@ import { start } from 'nprogress'
  */
 export function getTrueUser() {
   return axios({
-    url: '/user/userInfo',
+    url: '/manager-api/user/userInfo',
     method: 'get',
 
   })
@@ -27,7 +27,7 @@ export function getDoctors(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/schedule/qryDeptDoctors',
+    url: '/manager-api/schedule/qryDeptDoctors',
     method: 'post',
     params: {
       start: parameter.start,
@@ -294,7 +294,7 @@ export function getDoctorsNew(parameter) {
   // delete newPara.start
   // delete newPara.pageNo
   return axios({
-    url: '/schedule/qryDeptDoctors',
+    url: '/manager-api/schedule/qryDeptDoctors',
     method: 'post',
     params: {
       start: 0,
@@ -303,6 +303,60 @@ export function getDoctorsNew(parameter) {
     data: parameter
   })
 }
+
+
+
+
+/**
+ * 
+ * @param {复诊预约列表} data 
+ * @returns 
+ */
+
+export function getRdiagnosisList(data) {
+
+  return axios({
+    url: '/health-api/revisit/deal/getRdiagnosisList',
+    method: 'post',
+    data: data,
+  })
+
+}
+
+
+/**
+ * 复诊预约
+ */
+export function rdiagnosisFun(data) {
+
+  return axios({
+    url: '/health-api/revisit/deal/rdiagnosisFun',
+    method: 'post',
+    data: data,
+  })
+
+}
+
+/**
+ * 复诊预约详情
+ */
+export function getRdiagnosisForId(id) {
+
+  return axios({
+    url: '/health-api//revisit/deal/getRdiagnosisForId',
+    method: 'get',
+    params: id,
+  })
+
+}
+
+
+
+
+
+
+
+
 
 /**
  * 获取科室套餐列表
@@ -315,6 +369,54 @@ export function getDepPlans(parameter) {
     params: parameter
   })
 }
+
+
+
+/**
+ * 科室属性查询
+ */
+export function getDepartmentAttr(parameter) {
+  return axios({
+    url: '/info-api/departments/getDepartmentAttr',
+    method: 'get',
+    params: parameter
+  })
+}
+
+
+/**
+ * 删除科室属性
+ */
+export function delDepartmentAttr(parameter) {
+  return axios({
+    url: '/info-api/departments/delDepartmentAttr',
+    method: 'post',
+    data: parameter
+  })
+}
+
+
+/**
+ * 新增或修改科室属性
+ */
+export function saveOrUpdateDepartmentAttr(parameter) {
+  return axios({
+    url: '/info-api/departments/saveOrUpdateDepartmentAttr',
+    method: 'post',
+    data: parameter
+  })
+}
+
+
+/**
+ * 复诊预约 发送短信
+ */
+
+
+
+
+
+
 
 /**
  * 获取科室套餐列表
@@ -350,7 +452,7 @@ export function delGoodsAttr(id) {
  */
 export function savePlan(parameter) {
   return axios({
-    url: '/patient/savePlanTemplate',
+    url: '/manager-api/patient/savePlanTemplate',
     method: 'post',
     data: parameter
   })
@@ -372,7 +474,7 @@ export function uploadImg(parameter) {
  */
 export function dispatchPlan(parameter) {
   return axios({
-    url: '/patient/distributePlan',
+    url: '/manager-api/patient/distributePlan',
     method: 'post',
     data: parameter
   })
@@ -393,7 +495,7 @@ export function distributePlanList(parameter) {
  */
 export function getPlanDetail(planId) {
   return axios({
-    url: '/patient/qryPlanTemplateDetail',
+    url: '/manager-api/patient/qryPlanTemplateDetail',
     method: 'post',
     data: { templateId: planId }
   })
@@ -404,7 +506,7 @@ export function getPlanDetail(planId) {
  */
 export function delPlan(parameter) {
   return axios({
-    url: '/patient/delPlanTemplate',
+    url: '/manager-api/patient/delPlanTemplate',
     method: 'post',
     data: { templateId: parameter }
   })
@@ -415,7 +517,7 @@ export function delPlan(parameter) {
  */
 export function delPlanTask(parameter) {
   return axios({
-    url: '/patient/delPlanTemplateTask',
+    url: '/manager-api/patient/delPlanTemplateTask',
     method: 'post',
     data: {
       templateId: parameter.templateId,
@@ -429,7 +531,7 @@ export function delPlanTask(parameter) {
  */
 export function delPlanTaskContent(parameter) {
   return axios({
-    url: '/patient/delPlanTemplateTaskContent',
+    url: '/manager-api/patient/delPlanTemplateTaskContent',
     method: 'post',
     data: {
       templateId: parameter.templateId,
@@ -446,7 +548,7 @@ export function delPlanTaskContent(parameter) {
 export function getDocPlans(parameter) {
   return axios({
     // url: '/patient/qryMyPlanTemplates?pageNo =' + parameter.start + '&pageSize=' + parameter.pageSize,
-    url: '/patient/qryMyPlanTemplates',
+    url: '/manager-api/patient/qryMyPlanTemplates',
     method: 'get',
     params: parameter,
   })
@@ -616,6 +718,17 @@ export function getDoctorList(parameter) {
 export function getRoleList(parameter) {
   return axios({
     url: '/account-api/getRoleList',
+    method: 'get',
+    params: parameter
+  })
+}
+
+/**
+ * 切换角色
+ */
+export function changeRole(parameter) {
+  return axios({
+    url: '/account-api/changeLoginUserRole',
     method: 'get',
     params: parameter
   })
@@ -838,7 +951,7 @@ export function delGoodsClass(param) {
 
 export function exportPatients(parameter) {
   return axios({
-    url: '/patient/exportResult',
+    url: '/manager-api/patient/exportResult',
     method: 'post',
     data: parameter,
     // params: parameter,
@@ -848,28 +961,28 @@ export function exportPatients(parameter) {
 
 export function uploadPaiban(parameter) {
   return axios({
-    url: '/schedule/saveDoctorSchedule',
+    url: '/manager-api/schedule/saveDoctorSchedule',
     method: 'post',
     data: parameter
   })
 }
 
 // 医生管理界面 查询医生列表
-export function queryDoctorList(parameter){
+export function queryDoctorList(parameter) {
   return axios({
-    url:'/account-api/accountInfo/getUsers', 
-    method:'post',
-    data:parameter
+    url: '/account-api/accountInfo/getUsers',
+    method: 'post',
+    data: parameter
   })
 }
 
 
 // 医生管理界面 修改配置接口
-export function updateRegisterTypes(parameter){
+export function updateRegisterTypes(parameter) {
   return axios({
-    url:'/account-api/accountInfo/updateRegisterTypes', 
-    method:'post',
-    data:parameter
+    url: '/account-api/accountInfo/updateRegisterTypes',
+    method: 'post',
+    data: parameter
   })
 }
 
@@ -880,7 +993,7 @@ export function updateRegisterTypes(parameter){
 
 export function getPaibans(parameter) {
   return axios({
-    url: '/schedule/qryDoctorSchedule',
+    url: '/manager-api/schedule/qryDoctorSchedule',
     method: 'get',
     params: parameter
   })
@@ -888,7 +1001,7 @@ export function getPaibans(parameter) {
 
 export function deletePaiban(id) {
   return axios({
-    url: '/schedule/delDoctorSchedule',
+    url: '/manager-api/schedule/delDoctorSchedule',
     method: 'get',
     params: {
       id: id
@@ -898,7 +1011,7 @@ export function deletePaiban(id) {
 
 export function changeStatus(parameter) {
   return axios({
-    url: '/schedule/updateDeptDoctor',
+    url: '/manager-api/schedule/updateDeptDoctor',
     method: 'post',
     data: parameter
   })
@@ -917,7 +1030,7 @@ export function getBanci(thisWeekData) {
 
   }
   return axios({
-    url: '/schedule/qrySchedulePeriods',
+    url: '/manager-api/schedule/qrySchedulePeriods',
     method: 'post',
     params: {
       start: 0,
@@ -935,7 +1048,7 @@ export function getBanci(thisWeekData) {
  */
 export function sysPosList(parameter) {
   return axios({
-    url: '/sysPos/list',
+    url: '/manager-api/sysPos/list',
     method: 'get',
     params: parameter
   })
@@ -949,7 +1062,7 @@ export function sysPosList(parameter) {
  */
 export function sysPosAdd(parameter) {
   return axios({
-    url: '/sysPos/add',
+    url: '/manager-api/sysPos/add',
     method: 'post',
     data: parameter
   })
@@ -963,7 +1076,7 @@ export function sysPosAdd(parameter) {
  */
 export function sysPosEdit(parameter) {
   return axios({
-    url: '/sysPos/edit',
+    url: '/manager-api/sysPos/edit',
     method: 'post',
     data: parameter
   })
@@ -977,7 +1090,7 @@ export function sysPosEdit(parameter) {
  */
 export function sysPosDelete(parameter) {
   return axios({
-    url: '/sysPos/delete',
+    url: '/manager-api/sysPos/delete',
     method: 'post',
     data: parameter
   })
@@ -1310,29 +1423,223 @@ export function getTemplateRuleList(data) {
   })
 }
 
-  /**
-   * 修改、保存随访计划规则
-   */
-  export function saveTemplateRule(data){
-    return axios({
-      url:'/health-api/sys/saveTemplateRule',
-      method:'post',
-      data:data,
-    })
-  }
+/**
+ * 修改、保存随访计划规则
+ */
+export function saveTemplateRule(data) {
+  return axios({
+    url: '/health-api/sys/saveTemplateRule',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-  /**
-   * 删除 随访计划 规则
-   */
+/**
+ * 删除 随访计划 规则
+ */
 
-  export function deleteTempPlanRule(data){
-    return axios({
-      url:'/health-api/sys/delTemplateRule',
-      method:'get',
-      params:data,
-    })
-  }
+export function deleteTempPlanRule(data) {
+  return axios({
+    url: '/health-api/sys/delTemplateRule',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
+
+/**
+ * 随访名单列表
+ */
+export function qryMetaConfigure(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/qryMetaConfigure',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 新增随访名单
+ */
+export function saveMetaConfigure(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/saveMetaConfigure',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+/**
+ * 查看随访名单详情
+ */
+export function checkDetail(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/qryMetaConfigureDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+/**
+ * 更新名单配置状态
+ *
+ */
+export function updateMetaConfigure(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/updateMetaConfigure',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+/**
+ * 获取微信模板分页列表
+ */
+export function getWxTemplateList(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/getWxTemplateList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 微信模板 启用 禁用
+ */
+export function changeStatusWxTemplate(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/changeStatusWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+/**
+ * 短信模板 分页列表
+ */
+export function getSmsTemplateList(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/getSmsTemplateList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+/**
+ * 短信模板 启用 禁用
+ */
+export function changeStatusSmsTemplate(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/changeStatusSmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+/**
+ * 随访方案列表分页查询
+ */
+export function qryFollowPlan(data) {
+  return axios({
+    url: '/follow-api/follow/plan/qryFollowPlan',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 获取公众号列表接口
+ */
+export function getWxConfigureList(data) {
+  return axios({
+    url: '/follow-api/wxConfigure/getWxConfigureList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 获取公众号模板消息列表接口
+ */
+export function getTemplateWxMsg(data) {
+  return axios({
+    url: '/follow-api/wxConfigure/getTemplateWxMsg',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 查询名单配置详情数据
+ */
+export function qryMetaConfigureDetail(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/qryMetaConfigureDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 添加微信模板接口
+ */
+export function addWxTemplate(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/addWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 修改微信模板接口
+ */
+export function modifyWxTemplate(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/modifyWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 获取微信模板详情
+ */
+export function getWxTemplateById(id) {
+  return axios({
+    url: '/follow-api/wxTemplate/getWxTemplateById/' + id,
+    method: 'post',
+
+  })
+}
+
+/**
+ * 获取微信模板详情
+ */
+export function updateFollowPlanStatus(data) {
+  return axios({
+    url: '/follow-api/follow/plan/updateFollowPlanStatus',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 
@@ -1456,6 +1763,18 @@ export function dealget(data) {
   })
 }
 
+/**
+ * 
+ * 随访计划类型列表
+ */
+export function getPlatTypeList(data) {
+  return axios({
+    url: '/health-api/revisit/deal/getPlatTypeList',
+    method: 'get',
+    params: data,
+  })
+}
+
 
 /**
  * 
@@ -1523,10 +1842,258 @@ export function checkget(data) {
  * 
  * 聊天记录
  */
- export function queryHistoryIMRecordPage(data) {
+export function queryHistoryIMRecordPage(data) {
   return axios({
     url: '/im-api/tencentIM/queryHistoryIMRecordPage',
     method: 'get',
     params: data,
   })
 }
+
+/**
+ * 随访类型列表：1:关怀型随访2:管理型随访3:科研型随访
+ */
+export function followTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/followTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 来源名单列表：门诊病人，住院病人，体检病人
+ */
+export function tables(data) {
+  return axios({
+    url: '/follow-api/follow/dict/tables',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/fields 名单过滤字段列表：科室，患者姓名，出院日期
+ */
+export function fields(data) {
+  return axios({
+    url: '/follow-api/follow/dict/fields',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/dateFields 时间过滤字段列表：科室，患者姓名，出院日期
+ */
+export function dateFields(data) {
+  return axios({
+    url: '/follow-api/follow/dict/dateFields',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/operationTypes 操作类型列表：>大于、<小于、=精准匹配、like模糊匹配、in包含
+ */
+export function operationTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/operationTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/messageTypes 消息类别列表: 1:电话回访2:微信消息3:短信消息
+ */
+export function messageTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/messageTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/messageContentTypes 推送模板类型：1:问卷2:文章3:短信模板4:微信模板
+ */
+export function messageContentTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/messageContentTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/taskTypes 任务类别列表：1:问卷收集2:健康宣教3:消息提醒
+ */
+export function taskTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/taskTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+/follow/dict/taskExecTypes 执行周期列表: 1:临时执行2:长期执行
+ */
+export function taskExecTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/taskExecTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+/follow/dict/repeatTimeUnitTypes 重复周期列表: 1:间隔2:每周第3:每月第4:每年第
+ */
+export function repeatTimeUnitTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/repeatTimeUnitTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+/follow/dict/timeUnitTypes 时间单位列表: 1:天2:周3:月
+ */
+export function timeUnitTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/timeUnitTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *
+
+/follow/dict/personnelAssignmentTypes 人员分配方案类型;1:系统自动执行2:每次随机分配3:首次随机分配4:指定人员
+ */
+export function personnelAssignmentTypes(data) {
+  return axios({
+    url: '/follow-api/follow/dict/personnelAssignmentTypes',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 获取短信平台列表
+ */
+export function getSmsConfigureList(data) {
+  return axios({
+    url: '/follow-api/smsConfigure/getSmsConfigureList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+* 获取短信模板内容列表
+*/
+export function getSmsConfigureTemplateList(smsConfigureId) {
+  return axios({
+    url: '/follow-api/smsConfigureTemplate/getSmsConfigureTemplateList/' + smsConfigureId,
+    method: 'post',
+
+  })
+}
+/**
+* 添加短信模板接口
+*/
+export function addSmsTemplate(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/addSmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+* 添加短信模板接口
+*/
+export function modifySmsTemplate(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/modifySmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+* 获取短信模板详情
+*/
+export function getSmsTemplateById(id) {
+  return axios({
+    url: '/follow-api/smsTemplate/getSmsTemplateById/' + id,
+    method: 'post',
+
+  })
+}
+
+/**
+ *accountInfo/getUsersByDeptIdAndRole 根据科室与角色查询用户列表
+ */
+export function getUsersByDeptIdAndRole(data) {
+  return axios({
+    url: '/account-api/accountInfo/getUsersByDeptIdAndRole',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ *accountInfo/getUsersByDeptIdAndRole 新增/修改方案
+ */
+export function saveFollow(data) {
+  return axios({
+    url: '/follow-api/follow/plan/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ *  /smsTemplate/getSmsTemplateListForJumpType/{jumpType} 获取短信模板列表,根据jumpType
+ */
+export function getSmsTemplateListForJumpType(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/getSmsTemplateListForJumpType/' + data,
+    method: 'post',
+    data: {},
+  })
+}
+
+/**
+ * /wxTemplate/getWxTemplateListForJumpType/{jumpType} 获取微信模板,根据模板跳转内容
+ */
+export function getWxTemplateListForJumpType(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/getWxTemplateListForJumpType/' + data,
+    method: 'post',
+    data: {},
+  })
+}
+
+/**
+ * /follow/plan/detail  查询方案详情
+ */
+export function getDetail(data) {
+  return axios({
+    url: '/follow-api/follow/plan/detail',
+    method: 'get',
+    params: data,
+  })
+}
+
+

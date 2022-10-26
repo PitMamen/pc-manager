@@ -343,7 +343,7 @@
                           style="margin-right: 3%"
                           type="primary"
                           v-if="user.roleId == 7 || user.roleName == 'admin'"
-                          @click="reset"
+                          @click="resetStat"
                           >全院</a-button
                         >
                         <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
@@ -492,7 +492,7 @@ export default {
 
         if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
           this.originData.forEach((item, index) => {
-            if (index != this.idArr.length - 1) {
+            if (index != this.originData.length - 1) {
               params.departmentIds = params.departmentIds + item.departmentId + ','
             } else {
               params.departmentIds = params.departmentIds + item.departmentId
@@ -751,17 +751,8 @@ export default {
         // }
 
         let params = JSON.parse(JSON.stringify(this.queryParamsStat))
-        console.log('idArr', this.idArr)
-        if (this.idArr.length > 0) {
-          this.idArrStat.forEach((item, index) => {
-            params.deptCodes.push(item)
-            // if (index != this.idArr.length - 1) {
-            //   params.departmentIds = params.departmentIds + item + ','
-            // } else {
-            //   params.departmentIds = params.departmentIds + item
-            // }
-          })
-        }
+        console.log('queryParamsStat.deptCodes', this.queryParamsStat.deptCodes)
+
         if (this.isNoDepart) {
           params.deptCodes.push(-1)
         }
@@ -806,8 +797,8 @@ export default {
         finishedPatient: 0,
         assginedPatient: 0,
         telVisitPatient: 0,
-        totalPatient: 6,
-        visitedRate: '0.0000',
+        totalPatient: 0,
+        visitedRate: '0.00',
       },
       queryParamsBor: {
         deptCodes: [],
@@ -847,7 +838,6 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    debugger
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
     if (this.user.roleId == 7 || this.user.roleName == 'admin') {
       getDepts().then((res) => {
@@ -858,9 +848,12 @@ export default {
           this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
 
           this.originDataStat = JSON.parse(JSON.stringify(res.data))
+          this.getStatBorData()
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
-          this.getStatBorData()
+          // setTimeout(() => {
+          //   this.$refs.tableStat.refresh()
+          // }, 1000)
         }
       })
     } else {
@@ -877,17 +870,19 @@ export default {
             this.originData.forEach((item, index) => {
               this.idArr.push(item.departmentId)
             })
-            this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
+            // this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
             this.queryParamsBor.deptCodes = JSON.parse(JSON.stringify(this.idArr))
+            this.queryParamsStat.deptCodes = JSON.parse(JSON.stringify(this.idArr))
           } else {
             this.isNoDepart = true
             this.idArr = []
-            this.idArrStat = []
+            // this.idArrStat = []
             this.queryParamsBor.deptCodes = []
+            this.queryParamsStat.deptCodes = []
           }
+          this.getStatBorData()
           this.$refs.table.refresh()
           this.$refs.tableStat.refresh()
-          this.getStatBorData()
         }
       })
     }
@@ -1060,13 +1055,16 @@ export default {
     },
 
     reset() {
-      // this.form.resetFields()
+      this.idArr = []
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.$refs.table.refresh()
+    },
+    resetStat() {
       this.queryParamsStat = JSON.parse(JSON.stringify(this.queryParamsStatOrigin))
       this.createValue = []
       this.$refs.tableStat.refresh()
     },
     resetBor() {
-      // this.form.resetFields()
       this.queryParamsBor = JSON.parse(JSON.stringify(this.queryParamsBorOrigin))
       this.createValueBor = []
       this.getStatBorData()

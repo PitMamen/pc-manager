@@ -224,7 +224,12 @@ export default {
             } else {
               this.$set(res.data.rows[i], 'updateTimeOut', '')
             }
-            this.$set(res.data.rows[i], 'identificationNoOut', res.data.rows[i].userInfo.identificationNo)
+
+            this.$set(
+              res.data.rows[i],
+              'identificationNoOut',
+              res.data.rows[i].userInfo.identificationNo ? res.data.rows[i].userInfo.identificationNo : ''
+            )
 
             this.$set(
               res.data.rows[i],

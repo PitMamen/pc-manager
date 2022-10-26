@@ -11,20 +11,25 @@
         <div class="div-left">
           <span class="span-item-name">所属科室 :{{ checkData.categoryName }}</span>
         </div>
-        <div class="div-left">
+        <div class="div-right">
           <span class="span-item-name">所属病种 :{{ checkData.articleType }}</span>
         </div>
 
+      </div>
+
+      <div class="div-line-wrap">
+  
         <div class="div-left">
-          <span class="span-item-name">创建作者 :{{ checkData.author }}</span>
+          <span class="span-item-name">创建作者 :{{ checkData.publisherName }}</span>
         </div>
-        <div class="div-left">
+        <div class="div-right">
           <span class="span-item-name">创建时间 :{{ checkData.createTime }}</span>
         </div>
       </div>
     </div>
-
-    <div id="myHtml" style="margin-left: 8%"></div>
+  
+  <!-- <img alt="example" style="width: 100%;margin-top: 30px;margin-bottom: 30px;" :src="checkData.previewUrl" /> -->
+    <div id="myHtml" ></div>
 
     <div style="height: 50px; backgroud-color: white" />
   </div>
@@ -32,8 +37,7 @@
 
 
 <script type="text/javascript">
-import { STable } from '@/components'
-import { saveArticle, getArticleById } from '@/api/modular/system/posManage'
+import {getArticleById } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -61,18 +65,45 @@ export default {
       keshiData: {},
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
-          return res.data
-        })
+        // return getAllArticles(Object.assign(parameter, this.queryParam)).then((res) => {
+        //   return res.data
+        // })
       },
+      actionUrl: '/api/content-api/fileUpload/uploadImgFile',
+      fileList: [],
+      previewVisible: false,
+      previewImage: '',
       selectedRowKeys: [],
       selectedRows: [],
+      articleData: {},
     }
   },
 
   created() {
-    var articleId = this.$route.params.articleId
-    console.log(articleId)
+    console.log("query:"+this.$route.query)
+    document.title = '健康宣教'
+    
+    var url = window.location.href ;             //获取当前url
+    console.log("url:"+url)
+ 
+    var dz_url = url.split('#')[0];                //获取#/之前的字符串
+ 
+    var cs = dz_url.split('?')[1];                //获取?之后的参数字符串
+ 
+    var cs_arr = cs.split('&');                    //参数字符串分割为数组
+ 
+    var cs={};
+ 
+    for(var i=0;i<cs_arr.length;i++){         //遍历数组，拿到json对象
+ 
+      cs[cs_arr[i].split('=')[0]] = cs_arr[i].split('=')[1]
+ 
+    }
+ 
+    console.log("传参:",cs)                                         //这样就拿到了参数中的数据
+
+    let articleId = cs.id
+
     if (articleId) {
       getArticleById(articleId).then((res) => {
         if (res.code == 0) {
@@ -80,6 +111,12 @@ export default {
 
           //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
           document.getElementById('myHtml').innerHTML = res.data.content
+          this.fileList.push({
+            uid: '-1',
+            name: '封面',
+            status: 'done',
+            url: this.checkData.previewUrl,
+          })
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -90,6 +127,35 @@ export default {
   methods: {
     toggleAdvanced() {
       this.advanced = !this.advanced
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
+    handleChange({ fileList }) {
+      this.fileList = fileList
+      if (this.fileList.length > 1) {
+        let newData = this.fileList[0]
+        this.fileList = [newData]
+      }
+    },
+
+    handleCancel() {
+      this.previewVisible = false
     },
 
     goBack() {
@@ -132,12 +198,7 @@ export default {
         })
     },
 
-    goHistoryDetail() {
-      window.open(
-        'http://www.mclouds.org.cn:30000/patient-view.html?token=eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiIwMTk4IiwiZXhwIjoxNjQwODY2NjQxfQ.p8rozkAXsPzdBDeAkck3NjUI7iBYWM_4UA4A22rlbElPNYiZMthDnLQ0jhJIk8CpnRJEPfoi11Fybs2bajSb2hnGpVegVqTae_fxc30qL4sXPVPpvG_88ehhylBDtetVXpvJkkETQXq5ZWSfaItrBGZqr0r2NwPJIon6gy-NKditLhu8T7RPYj65qVsh7mX6gr-rhfnC9Ol4gRHjAyxiKm33M_sCn3ELMhDchjHrjE8WfllrT1mfaiP7kB4eDas9FB2D3zpAEb3EWHHdweQIsY8DTidslqjN-OkpjJsnXfahRoHEeiWiagkNzAhNM3-zcsQykvmrVzab2u_PhG-u3g&no=000006392145&type=9',
-        '_blank'
-      )
-    },
+  
 
     onChange() {},
 
@@ -155,9 +216,13 @@ export default {
 
 <style lang="less">
 .div-check-article {
-  background-color: white;
-  padding: 0 15% 0 5%;
+  padding: 0 3% 0 3%;
   // padding: 0 15%;
+
+  #myHtml {
+    word-wrap: break-word;
+    word-break: break-all;
+  }
 
   .top-btn {
     margin-left: 47%;
@@ -203,13 +268,22 @@ export default {
       margin-left: 3.5%;
     }
 
+    .title-article-pic {
+      display: inline-block;
+      color: #000;
+      text-align: left;
+      margin-top: 3%;
+      margin-left: 7%;
+      font-size: 14px;
+    }
+
     .div-line-wrap {
       width: 100%;
       overflow: hidden;
 
       .div-left {
         float: left;
-        width: 25%;
+        width: 50%;
         margin-top: 3%;
         overflow: hidden;
 
@@ -217,20 +291,20 @@ export default {
           display: inline-block;
           color: #000;
           font-size: 14px;
-          text-align: center;
+          text-align: left;
           width: 100%;
         }
       }
 
       .div-right {
         margin-top: 3%;
-        width: 25%;
+        width: 50%;
         float: right;
         overflow: hidden;
         .span-item-name {
           display: inline-block;
           color: #000;
-          text-align: left;
+          text-align: right;
           font-size: 14px;
           width: 100%;
         }

@@ -181,13 +181,23 @@ const vueConfig = {
           '^/api/im-api': ''   
         }
       },
-      '/api': {
+      '/api/follow-api': {
+        target: 'http://192.168.1.121/follow-api',
+        ws: false,
+        changeOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: {
+          '^/api/follow-api': ''   
+        }
+      },
+
+      '/api/manager-api': {
         target: 'http://192.168.1.121/manager-api',
         ws: false,
         changeOrigin: true,
         logLevel: 'debug',
         pathRewrite: {
-          '^/api': ''   
+          '^/api/manager-api': ''   
         }
       },
    

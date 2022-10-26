@@ -72,7 +72,12 @@ export const constantRouterMap = [
       }
     ]
   },
-
+  {
+    path: '/article',
+    name:'article',
+    hidden: true,
+    component: () => import(/* webpackChunkName: "article" */'@/views/article')
+  },
   {
     path: '/404',
     component: () => import(/* webpackChunkName: "fail" */ '@/views/system/exception/404')
