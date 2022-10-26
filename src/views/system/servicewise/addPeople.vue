@@ -107,7 +107,7 @@ export default {
   data() {
     return {
       index: -1,
-      chooseName: '',
+      chooseName: '',//
       confirmLoading: false,
       isAverage: false,
       isSingle: false,
