@@ -827,7 +827,7 @@ export default {
      * } itemTask 
      */
     goCheck(indexTask) {
-      debugger
+      // debugger
       console.log('isChecked be', this.projectData.tasks[indexTask].isChecked)
       this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
       console.log('isChecked af', this.projectData.tasks[indexTask].isChecked)
