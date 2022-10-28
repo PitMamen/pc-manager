@@ -104,41 +104,41 @@
       </span>
     </s-table>
 
+    <!-- width="100" -->
+    <!-- title="选择随访列表" -->
+    <!-- :title="drawerTitle" -->
     <a-drawer
-      width="100"
+      :width="drawerWidth"
       :mask="false"
+      :get-container="false"
       :closable="false"
       :visible="visible"
+      :wrap-style="{ position: 'absolute' }"
+      :header-Style="{ height: '100px' }"
       @close="onClose"
       style="display: flex; flex-direction: row"
     >
-      <a-button type="primary" @click="showChildrenDrawer"> 显示 </a-button>
-      <a-drawer
-        title=""
-        width="320"
-        :closable="false"
-        :mask="false"
-        :visible="childrenDrawer"
-        @close="onChildrenDrawerClose"
-      >
-        <a-button type="primary" @click="hideChildrenDrawer"> 隐藏 </a-button>
-      </a-drawer>
-      <!-- <div
-        :style="{
-          position: 'absolute',
-          bottom: 0,
-          width: '100%',
-          borderTop: '1px solid #e8e8e8',
-          padding: '10px 16px',
-          textAlign: 'right',
-          left: 0,
-          background: '#fff',
-          borderRadius: '0 0 4px 4px',
-        }"
-      >
-        <a-button style="marginright: 8px" @click="onClose"> Cancel </a-button>
-        <a-button type="primary" @click="onClose"> Submit </a-button>
-      </div> -->
+      <div class="draw-wrap">
+        <div class="div-btn" @click="goVise()">{{ btnText }}</div>
+
+        <div class="draw-bottom">
+          <div class="bottom-top">{{ drawerTitle }}</div>
+          <div class="bottom-down">
+            <a-tree
+              v-model="checkedKeys"
+              checkable
+              :expanded-keys="expandedKeys"
+              :auto-expand-parent="autoExpandParent"
+              :selected-keys="selectedKeys"
+              :tree-data="treeData"
+              @expand="onExpand"
+              @check="onCheck"
+              @select="onSelect"
+            />
+          </div>
+        </div>
+      </div>
+
     </a-drawer>
   </a-card>
 </template>
@@ -158,6 +158,36 @@ export default {
       isOpen: true,
       childrenDrawer: true,
       datas: [],
+      drawerWidth: 300,
+      drawerTitle: '选择随访列表',
+      btnText: '隐藏',
+      expandedKeys: ['3'],
+      autoExpandParent: true,
+      checkedKeys: ['2'],
+      selectedKeys: [],
+      // treeData,
+      treeData: [
+        {
+          title: '今日待随访',
+          key: '1',
+        },
+        {
+          title: '全部待随访',
+          key: '2',
+        },
+        {
+          title: '逾期随访',
+          key: '3',
+          children: [
+            { title: '出院随访问卷1', key: '4' },
+            { title: '出院随访问卷2', key: '5' },
+          ],
+        },
+        {
+          title: '已随访',
+          key: '6',
+        },
+      ],
       keshiData: [],
       queryParams: {
         templateTitle: '',
@@ -171,6 +201,9 @@ export default {
         sm: { span: 15 },
       },
       visible: true,
+      clicked: true,
+      createValue: [],
+      originData: [],
       confirmLoading: false,
       form: this.$form.createForm(this),
 
@@ -232,6 +265,13 @@ export default {
       },
     }
   },
+
+  watch: {
+    checkedKeys(val) {
+      console.log('onCheckWatch', val)
+    },
+  },
+
   methods: {
     /**
      * 重置
@@ -242,13 +282,46 @@ export default {
       }
     },
 
+    onExpand(expandedKeys) {
+      console.log('onExpand', expandedKeys)
+      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
+      // or, you can remove all expanded children keys.
+      this.expandedKeys = expandedKeys
+      this.autoExpandParent = false
+    },
+    onCheck(checkedKeys) {
+      let that = this
+      console.log('onCheck', checkedKeys)
+      this.checkedKeys = []
+      this.checkedKeys = checkedKeys
+      // if (checkedKeys.length > 0) {
+      //   this.checkedKeys.push(checkedKeys[checkedKeys.length - 1])
+      // }
+      // console.log('onCheckEnd', this.checkedKeys)
+
+      // setTimeout(() => {
+      //   that.$forceupdate()
+      // }, 200)
+    },
+    onSelect(selectedKeys, info) {
+      console.log('onSelect', info)
+      console.log('onSelect selectedKeys', selectedKeys)
+      this.selectedKeys = selectedKeys
+    },
+
     goVise() {
-      this.visible = !this.visible
+      // this.visible = !this.visible
+      this.clicked = !this.clicked
+      this.drawerWidth = this.clicked ? 300 : 35
+      this.drawerTitle = this.clicked ? '选择随访列表' : '  '
+      this.btnText = this.clicked ? '隐藏' : '展开'
     },
 
     showDrawer() {
       this.visible = true
     },
+
+    onChange() {},
     onClose() {
       this.visible = false
     },
@@ -333,5 +406,53 @@ export default {
   width: 100%;
   background-color: #e6e6e6;
   height: 1px;
+}
+
+.ant-drawer-body {
+  padding: 0 !important;
+}
+
+.draw-wrap {
+  height: 300px;
+  display: flex;
+  flex-direction: row;
+  // align-items: center;
+
+  .div-btn {
+    // margin-top: 40%;
+    // height: 100%;
+    height: 38px;
+    margin-top: 300px;
+    margin-left: 3px;
+    margin-right: 3px;
+    padding: 5px 2px;
+    // margin: 100px 3px 0 3px;
+    color: white;
+    background-color: #1890ff;
+    writing-mode: tb-rl;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .draw-bottom {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    // justify-content: center;
+    // align-items: center;
+
+    .bottom-top {
+      // color: #1890ff;
+      margin-top: 15px;
+      margin-left: 30%;
+      font-size: 14px;
+    }
+    .bottom-down {
+      margin-top: 10px;
+      border-top: #e6e6e6 1px solid;
+      // border-left: #e6e6e6 1px solid;
+    }
+  }
 }
 </style>
