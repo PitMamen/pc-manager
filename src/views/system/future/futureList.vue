@@ -163,7 +163,6 @@ export default {
         //非超管和随访管理员时，清空了查科室随访员管理的所有科室
 
         if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
-          debugger
           console.log('originData', this.originData)
           console.log('params.deptCodes', params.deptCodes)
           this.originData.forEach((item, index) => {

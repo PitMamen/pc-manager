@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-tabs  v-model="keyindex" >
+    <a-tabs v-model="keyindex">
       <a-tab-pane key="1" tab="随访方案">
         <service-list ref="serviceList" @ok="handleOk" />
       </a-tab-pane>
@@ -16,76 +16,56 @@
       <a-tab-pane key="4" tab="随访名单">
         <name-list ref="nameList" @ok="handleOk" />
       </a-tab-pane>
-
-
-     
-
-
-
+      <a-tab-pane key="5" tab="电话随访">
+        <phone-list ref="phoneList" @ok="handleOk" />
+      </a-tab-pane>
     </a-tabs>
   </div>
 </template>
 
 <script>
 // import { STable } from '@/components'
-import {
-
-  deleteAppVersion,
-  qryRevisitPatientList,
-} from '@/api/modular/system/posManage'
-
+import { deleteAppVersion, qryRevisitPatientList } from '@/api/modular/system/posManage'
 
 import serviceList from './serviceList'
 import nameList from './nameList'
 import wxModel from './wxModel'
 import smModel from './smModel'
-
-
+import phoneList from './phoneList'
 
 export default {
   components: {
-    // STable,
-    // addForm,
-    // editForm,
     serviceList,
     nameList,
     wxModel,
     smModel,
-    // addFormDispatch,
-    // editFormDispatch,
-
-    // statDetail,
-    // statSolve,
+    phoneList,
   },
 
   data() {
     return {
-      keyindex:'1',
-      keshiData:[],
-      queryParams:{
-        userName:'',
-       
-      }
-     
+      keyindex: '1',
+      keshiData: [],
+      queryParams: {
+        userName: '',
+      },
     }
   },
 
   created() {
     console.log(this.$route.query.keyindex)
-    if(this.$route.query.keyindex){
-      this.keyindex=this.$route.query.keyindex
+    if (this.$route.query.keyindex) {
+      this.keyindex = this.$route.query.keyindex
     }
   },
 
   methods: {
-
-    addwxtemplate (){
-      this.$router.push( {path:'./addwxtemplate'})
+    addwxtemplate() {
+      this.$router.push({ path: './addwxtemplate' })
     },
 
-    callback(){},
-    handleOk(){},
-
+    callback() {},
+    handleOk() {},
   },
 }
 </script>
@@ -115,5 +95,4 @@ export default {
     }
   }
 }
-
 </style>

@@ -746,7 +746,8 @@ export default {
       let param = {
         pageNo: 1,
         pageSize: 100,
-        typeName: chooseDept.departmentName,
+        typeName: '',//获取全量问卷，不根据科室获取
+        // typeName: chooseDept.departmentName,
         // typeName: this.projectData.basePlan.executeDepartment,
       }
       getAllQuestions(param).then((res) => {
@@ -827,7 +828,7 @@ export default {
      * } itemTask 
      */
     goCheck(indexTask) {
-      debugger
+      // debugger
       console.log('isChecked be', this.projectData.tasks[indexTask].isChecked)
       this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
       console.log('isChecked af', this.projectData.tasks[indexTask].isChecked)

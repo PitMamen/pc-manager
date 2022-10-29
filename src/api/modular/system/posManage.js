@@ -1555,6 +1555,21 @@ export function changeStatusSmsTemplate(data) {
 
 
 /**
+ * 
+ * 患者管理列表分页查询
+ */
+ export function qryMetaDataByPage(data){
+  return axios({
+   url:'/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
+   method:'post',
+   data:data,
+  })
+ }
+
+
+
+
+/**
  * 随访方案列表分页查询
  */
 export function qryFollowPlan(data) {
