@@ -95,7 +95,7 @@ export default {
       loginParams: {
         username: '',
         password: '',
-        loginType: 2
+        loginType: 1
       }
     }
   },

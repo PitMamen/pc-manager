@@ -170,6 +170,7 @@ export const generatorDynamicRouter = (data) => {
      * 增加静态网页
      */
     listToTree(userAccount, childrenNav, 0)
+    
     rootRouter.children = childrenNav
     menuNav.push(rootRouter)
     const routers = generator(menuNav)
