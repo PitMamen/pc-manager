@@ -2092,7 +2092,7 @@ export function getUsersByDeptIdAndRole(data) {
 }
 
 /**
- *accountInfo/getUsersByDeptIdAndRole 新增/修改方案
+ *follow/saveFollow 新增/修改方案
  */
 export function saveFollow(data) {
   return axios({
@@ -2134,5 +2134,29 @@ export function getDetail(data) {
     params: data,
   })
 }
+
+/**
+ * /tbFollowExecuteRecord/qryPhoneFollowTaskStatistics 查询电话随访任务-统计
+ */
+export function qryPhoneFollowTaskStatistics(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/qryPhoneFollowTaskStatistics',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /tbFollowExecuteRecord/qryPhoneFollowTask 查询电话随访任务
+ */
+export function qryPhoneFollowTask(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/qryPhoneFollowTask',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 
 

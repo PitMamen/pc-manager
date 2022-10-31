@@ -17,6 +17,7 @@ import './core/lazy_use'
 import './permission' // permission control
 import './utils/filter' // global filter
 import './components/global.less'
+import './components/v2/global.less'
 import { Dialog } from '@/components'
 
 import { hasBtnPermission } from './utils/permissions' // button permission

@@ -160,8 +160,8 @@ export default {
             return
           }
           this.localPagination = this.showPagination && Object.assign({}, this.localPagination, {
-            current: r.pageNo,//pageNo, // 返回结果中的当前分页数
-            total:r.totalRows,//totalCount, // 返回结果中的总记录数
+            current: parameter.pageNo,
+            total: parseInt(r.totalRows || r.total || 0), // totalCount, // 返回结果中的总记录数
             showSizeChanger: this.showSizeChanger,
             pageSize: (pagination && pagination.pageSize) ||
               this.localPagination.pageSize
