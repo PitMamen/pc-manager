@@ -1,0 +1,207 @@
+<template>
+  <a-card :bordered="false">
+    <div class="table-page-search-wrapper">
+      <a-form layout="inline">
+        <a-row :gutter="48">
+          <a-col :md="6" :sm="12">
+            <a-form-item label="应用名称">
+              <a-input v-model="queryParam.applicationName" allow-clear placeholder="请输入应用名称" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="12">
+            <a-form-item label="应用类型">
+              <a-select v-model="queryParam.applicationType" placeholder="请选择应用类型" allow-clear>
+                <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="12">
+            <a-form-item label="应用状态">
+              <a-select v-model="queryParam.status" placeholder="请选择应用状态" allow-clear>
+                <a-select-option v-for="item in selects2" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+          <a-col :md="6" :sm="12">
+            <span class="table-page-search-submitButtons" :style="{ float: 'right', overflow: 'hidden' }">
+              <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+              <a-button type="primary" icon="undo" style="margin-left: 8px" @click="() => (queryParam = {status: 1})">重置</a-button>
+            </span>
+          </a-col>
+        </a-row>
+      </a-form>
+    </div>
+    <div class="table-operator" style="overflow: hidden;">
+      <a-button type="primary" icon="plus" style="float: right;" @click="$refs.addForm.add()">新增</a-button>
+    </div>
+    <s-table
+      ref="table"
+      size="default"
+      :columns="columns"
+      :data="loadData"
+      :alert="true"
+      :rowKey="record => record.id"
+    >
+      <span slot="statusDesc" slot-scope="text, record">
+        <template v-if="true">
+          <a-popconfirm placement="topRight" :title="record.status===1 ? '确认关闭？' : '确认开启？'" @confirm="() => update(record)">
+            <a-switch size="small" :checked="record.status === 1" />
+          </a-popconfirm>
+        </template>
+      </span>
+      <span slot="action" slot-scope="text, record">
+        <template v-if="true">
+          <a @click="$refs.editForm.edit(record)"><a-icon type="edit" style="margin-right: 0px;" />修改</a>
+        </template>
+      </span>
+    </s-table>
+    <add-form ref="addForm" @ok="handleOk" />
+    <edit-form ref="editForm" @ok="handleOk" />
+  </a-card>
+</template>
+
+<script>
+import { list, update } from '@/api/modular/system/sysapp'
+import { STable, Ellipsis } from '@/components'
+import addForm from './addForm'
+import editForm from './editForm'
+export default {
+  components: {
+    STable,
+    Ellipsis,
+    addForm,
+    editForm
+  },
+  data() {
+    return {
+      // 高级搜索 展开/关闭
+      advanced: false,
+      // 查询参数
+      queryParam: {
+        status: 1
+      },
+      // 表头
+      columns: [
+        {
+          title: '应用名称',
+          dataIndex: 'applicationName',
+          scopedSlots: { customRender: 'applicationName' }
+        },
+        {
+          title: '应用编码',
+          dataIndex: 'id',
+          scopedSlots: { customRender: 'id' }
+        },
+        {
+          title: '应用路径',
+          dataIndex: 'indexUrl',
+          scopedSlots: { customRender: 'indexUrl' }
+        },
+        {
+          title: '应用类型',
+          dataIndex: 'applicationTypeDesc',
+          scopedSlots: { customRender: 'applicationTypeDesc' }
+        },
+        {
+          title: '状态',
+          dataIndex: 'statusDesc',
+          scopedSlots: { customRender: 'statusDesc' }
+        },
+        {
+          title: '显示',
+          dataIndex: 'visibleStatusDesc',
+          scopedSlots: { customRender: 'visibleStatusDesc' }
+        },
+        {
+          title: '创建时间',
+          dataIndex: 'createTime',
+          scopedSlots: { customRender: 'createTime' }
+        },
+        {
+          title: '操作',
+          width: '80px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' }
+        }
+      ],
+      // 加载数据方法 必须为 Promise 对象
+      loadData: parameter => {
+        return list(Object.assign(parameter, this.queryParam)).then(res => {
+          if (res.code === 0){
+            return {
+              rows: res.data || [],
+              total: (res.data || []).length
+            }
+          }else {
+            this.$message.error(res.message)
+          }
+        })
+      },
+
+      selects: [
+        {
+          id: 1,
+          name: '内部应用'
+        },
+        {
+          id: 2,
+          name: '外部应用'
+        }
+      ],
+      selects2: [
+        {
+          id: 1,
+          name: '开启'
+        },
+        {
+          id: 2,
+          name: '关闭'
+        }
+      ],
+      selectedRowKeys: [],
+      selectedRows: []
+    }
+  },
+  /**
+   * 初始化判断按钮权限是否拥有，没有则不现实列
+   */
+  created() {
+    this.queryParam = {...this.queryParam, ...this.$route.query}
+  },
+  methods: {
+    update(item) {
+      update({
+        id: item.id,
+        status: item.status===1 ? 2 : 1
+      }).then(res => {
+        if (res.code === 0){
+          this.$message.success(`${item.status===1 ? '关闭' : '开启'}成功!`)
+          this.handleOk()
+        }else {
+          this.$message.error(`${item.status===1 ? '关闭' : '开启'}失败：` + res.message)
+        }
+      })
+    },
+
+    toggleAdvanced() {
+      this.advanced = !this.advanced
+    },
+    handleOk() {
+      this.$refs.table.refresh()
+    },
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    }
+  }
+}
+</script>
+
+<style lang="less">
+.table-operator {
+  margin-bottom: 10px;
+}
+button {
+  margin-right: 8px;
+}
+</style>

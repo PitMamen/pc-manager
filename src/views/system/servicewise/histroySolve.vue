@@ -10,9 +10,9 @@
           @click="onHistoryItemClick(item.id)"
         >
           <div style="width: 26px">
-            <img v-show="item.messageType.value == 1" src="~@/assets/icons/dh.png" />
-            <img v-show="item.messageType.value == 2" src="~@/assets/icons/weixin.png" />
-            <img v-show="item.messageType.value == 3" src="~@/assets/icons/dx.png" />
+            <img v-show="item.messageType.value == 1" src="~@/assets/icons/dh_icon.png" />
+            <img v-show="item.messageType.value == 2" src="~@/assets/icons/weixin_icon.png" />
+            <img v-show="item.messageType.value == 3" src="~@/assets/icons/dx_icon.png" />
           </div>
 
           <span class="div-time">{{ item.userFollowTime }}</span>
