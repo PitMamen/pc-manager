@@ -2062,8 +2062,8 @@ export function getSmsTemplateById(id) {
 export function getUsersByDeptIdAndRole(data) {
   return axios({
     url: '/account-api/accountInfo/getUsersByDeptIdAndRole',
-    method: 'get',
-    params: data,
+    method: 'post',
+    data: data,
   })
 }
 
