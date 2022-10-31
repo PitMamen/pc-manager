@@ -2096,4 +2096,62 @@ export function getDetail(data) {
   })
 }
 
+/**
+ * 本次随访，随访结果
+ */
+ export function followPlanPhoneCurrent(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/current/'+id,
+    method: 'post'
+  })
+}
+/**
+ * 本次随访，随访名单信息
+ */
+ export function followPlanPhonePatientInfo(userId) {
+  return axios({
+    url: '/follow-api/followPlanPhone/getPatientInfo/'+userId,
+    method: 'post'
+  })
+}
 
+/**
+ * 执行随访
+ */
+ export function modifyFollowExecuteRecord(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/modifyFollowExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 随访人历史随访列表
+ */
+ export function followPlanPhoneHistory(userId) {
+  return axios({
+    url: '/follow-api/followPlanPhone/history/'+userId,
+    method: 'post'
+  })
+}
+
+/**
+ * 随访历史记录详情(页面中间部分)
+ */
+ export function followPlanPhonehistoryDetail(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/historyDetail/'+id,
+    method: 'post'
+  })
+}
+
+/**
+ * 历史随访结果(类型不同展示不一样)
+ */
+ export function historyFollowResult(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/historyFollowResult/'+id,
+    method: 'post'
+  })
+}
