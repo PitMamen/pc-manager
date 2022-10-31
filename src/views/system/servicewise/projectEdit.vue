@@ -342,6 +342,17 @@
                 <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
 
+              <span class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
+              <a-input-number
+                style="display: inline-block; margin-left: 1%; width: 96px"
+                v-model="itemTask.overdueTimeUnit"
+                :min="0"
+                :max="10000"
+                :maxLength="30"
+                allow-clear
+                placeholder="请输入数量"
+              />
+
               <!-- <a-button
                 v-if="itemTask.isChecked || itemTask.messageType == 1"
                 class="span-add-item"
@@ -746,7 +757,7 @@ export default {
       let param = {
         pageNo: 1,
         pageSize: 100,
-        typeName: '',//获取全量问卷，不根据科室获取
+        typeName: '', //获取全量问卷，不根据科室获取
         // typeName: chooseDept.departmentName,
         // typeName: this.projectData.basePlan.executeDepartment,
       }
@@ -798,10 +809,10 @@ export default {
      * 选模版前先选随访方式
      */
     onTemFocus(indexTask, itemTask) {
-      if (!this.projectData.basePlan.executeDepartment) {
-        this.$message.warn('请先选择执行科室')
-        return
-      }
+      // if (!this.projectData.basePlan.executeDepartment) {
+      //   this.$message.warn('请先选择执行科室')
+      //   return
+      // }
 
       if (!this.projectData.tasks[indexTask].messageType) {
         this.$message.warn('请先选择随访方式')
@@ -892,7 +903,7 @@ export default {
     },
 
     addMission() {
-      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1 })
+      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1, overdueTimeUnit: 1 })
     },
 
     /**
@@ -1077,11 +1088,14 @@ export default {
     // },
 
     getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: 5 }).then((res) => {
-        if (res.code == 0) {
-          this.deptUsers = res.data.deptUsers
+      // getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: 5 }).then((res) => {
+      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5] }).then(
+        (res) => {
+          if (res.code == 0) {
+            this.deptUsers = res.data.deptUsers
+          }
         }
-      })
+      )
     },
 
     submitData() {
