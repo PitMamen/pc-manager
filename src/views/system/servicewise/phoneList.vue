@@ -161,9 +161,9 @@ export default {
       drawerWidth: 300,
       drawerTitle: '选择随访列表',
       btnText: '隐藏',
-      expandedKeys: ['3'],
+      expandedKeys: [3],
       autoExpandParent: true,
-      checkedKeys: ['2'],
+      checkedKeys: [6],
       staticData: {},
       selectedKeys: [],
       // treeData,
@@ -175,46 +175,73 @@ export default {
       ],
       treeData: [
         {
-          title: '今日待随访',
-          key: '1',
-        },
-        {
-          title: '全部待随访',
-          key: '2',
-        },
-        {
-          title: '逾期随访',
-          key: '3',
+          key: 3,
+          parentKey: 0,
+          title: '全病程管理',
+          value: '3',
+          weight: 100,
           children: [
-            { title: '出院随访问卷1', key: '4' },
-            { title: '出院随访问卷2', key: '5' },
+            {
+              key: 6,
+              parentKey: 3,
+              title: '检查配置',
+              value: '6',
+              weight: 100,
+              children: [],
+            },
+            {
+              key: 7,
+              parentKey: 3,
+              title: '用户管理',
+              value: '7',
+              weight: 100,
+              children: [],
+            },
           ],
         },
-        {
-          title: '已随访',
-          key: '6',
-        },
       ],
+      // treeData: [
+      //   {
+      //     title: '今日待随访',
+      //     key: '1',
+      //   },
+      //   {
+      //     title: '全部待随访',
+      //     key: '2',
+      //   },
+      //   {
+      //     title: '逾期随访',
+      //     key: '3',
+      //     children: [
+      //       { title: '出院随访问卷1', key: '4' },
+      //       { title: '出院随访问卷2', key: '5' },
+      //     ],
+      //   },
+      //   {
+      //     title: '已随访',
+      //     key: '6',
+      //   },
+      // ],
       keshiData: [],
       queryParams: {
-        userName: '',
-        phone: '',
-        executeDepartmentId: '',
-        messageType: '',
+        userName: null,
+        phone: null,
+        executeDepartmentId: null,
+        messageType: null,
         overdueStatus: -1,
-        userName: '',
-        startDate: '',
-        endDate: '',
+        userName: null,
+        startDate: null,
+        endDate: null,
       },
       queryParamsOrigin: {
-        userName: '',
-        phone: '',
-        executeDepartmentId: '',
-        messageType: '',
-        overdueStatus: '',
-        userName: '',
-        startDate: '',
-        endDate: '',
+        userName: null,
+        phone: null,
+        executeDepartmentId: null,
+        messageType: null,
+        overdueStatus: -1,
+        userName: null,
+        startDate: null,
+        endDate: null,
       },
 
       labelCol: {
@@ -333,6 +360,7 @@ export default {
     qryPhoneFollowTaskStatistics({ queryStatus: '' }).then((res) => {
       if (res.code == 0) {
         this.staticData = res.data
+        this.transfromData()
       }
     })
 
@@ -344,6 +372,21 @@ export default {
   },
 
   methods: {
+    transfromData() {
+      for (let index = 0; index < this.staticData.length; index++) {
+        this.staticData[index].name = this.staticData[index].title
+        this.staticData[index].key = this.staticData[index].id
+        // this.$set(data[index], 'name', data[index].title)
+        // this.$set(data[index], 'key', data[index].id)
+        // this.$set(data[index], 'checked', true)
+        this.allKeys.push(this.staticData[index].key)
+
+        if (this.staticData[index].children && this.staticData[index].children.length > 0) {
+          this.transfromData(this.staticData[index].children)
+        }
+      }
+    },
+
     getDeptsOut() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
       if (this.user.roleId == 7 || this.user.roleName == 'admin') {
@@ -364,11 +407,7 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams = {
-        versionNumber: undefined, //
-        startTime: undefined, //
-        endTime: undefined, //
-      }
+      this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
       this.createValue = []
     },
 
