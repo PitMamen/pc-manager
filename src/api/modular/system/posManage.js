@@ -352,6 +352,30 @@ export function getRdiagnosisForId(id) {
 
 
 
+/**
+ * 新增随访记录
+ */
+export function addExecuteRecord(data) {
+  return axios({
+    url:'/follow-api/tbFollowExecuteRecord/addExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 根据Userid 查询随访历史记录
+ */
+export function qryExecuteRecordByUserId(data){
+  return axios({
+   url:'/follow-api/tbFollowExecuteRecord/qryExecuteRecordByUserId',
+   method: 'post',
+   data: data,
+  })
+}
+
+
 
 
 
@@ -1558,13 +1582,13 @@ export function changeStatusSmsTemplate(data) {
  * 
  * 患者管理列表分页查询
  */
- export function qryMetaDataByPage(data){
+export function qryMetaDataByPage(data) {
   return axios({
-   url:'/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
-   method:'post',
-   data:data,
+    url: '/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
+    method: 'post',
+    data: data,
   })
- }
+}
 
 
 
