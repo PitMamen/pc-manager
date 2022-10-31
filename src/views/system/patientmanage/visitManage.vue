@@ -23,7 +23,7 @@
         </div>
 
         <!--  -->
-        <div class="display-item">
+        <div class="display-item" style="margin-top: 10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select allow-clear v-model="queryParams.style" placeholder="微信随访模板">
@@ -35,7 +35,7 @@
         </div>
 
         <!--  -->
-        <div class="display-item">
+        <div class="display-item" style="margin-top: 10px">
           <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
           <a-radio-group
             name="radioGroup"
@@ -49,47 +49,62 @@
           </a-radio-group>
         </div>
 
-        <div class="display-item">
-          <a-form-item style="margin-top: 25px">
-            <a-date-picker format="YYYY-MM-DD" v-model="queryParams.beginDate" />
+        <div class="display-item" style="margin-top: 2px">
+          <a-form-item>
+            <a-date-picker style="margin-top: 27px" format="YYYY-MM-DD" v-model="queryParams.beginDate" />
           </a-form-item>
 
-          <a-time-picker
-            style="margin-left: 2%; margin-top: 29px; width: 30%"
-            @change="timeChangeStart"
-            :default-value="moment('00:00', 'HH:mm')"
-            format="HH:mm"
-          />
+          <div class="display-item" style="margin-top: 5px">
+            <a-time-picker
+              style="margin-left: 2%; width: 50%; margin: 20px"
+              @change="timeChangeStart"
+              :default-value="moment('00:00', 'HH:mm')"
+              format="HH:mm"
+            />
+          </div>
         </div>
 
         <div class="display-item" style="margin-top: 20px">
-          <a-col :md="10" :sm="24">
-            <a-button style="margin-left: 1%" type="primary" @click="commit()">提交</a-button>
-            <a-button style="margin-left: 20px" type="default" @click="reset()">重置</a-button>
-          </a-col>
+          <a-button style="margin-left: 1%" type="primary" @click="commit()">提交</a-button>
+          <a-button style="margin-left: 20px" type="default" @click="reset()">重置</a-button>
         </div>
       </div>
 
       <!-- ri -->
-      <a-card :bordered="false" class="card-right-user">
-    
-    
-        <!-- <div class="row-stat">
-              <div class="row-item">
-                <div class="item-inside">
-                  <img class="item-image" src="~@/assets/icons/img1.png" />
-                  <div class="item-right">
-                    <div class="item-right-top" style="color: #1890ff">
-                      <div class="item-stat-num">{{ statData.totalPatient }}</div>
-                      <div class="item-stat-unit">人</div>
-                    </div>
-                    <div class="item-stat-name">随访总人数</div>
-                  </div>
-                </div>
-              </div>
-            </div> -->
-    
-    </a-card>
+      <div class="card-right-user" style="overflow-y:auto;height:400px;">
+        
+        <div class="div-total1" v-for="(item, index) in recordList" :key="index">
+          <div class="div-line-wrap" style="margin-left: 30px">
+            <span class="span-item-name"> 随访方式 :</span>
+            <span class="span-item-value" style="margin-left: 30px">{{item.messageType.description}} </span>
+
+            <span class="span-item-name" style="margin-left: 90px"> 状态 :</span>
+
+            <span class="span-item-value" style="margin-left: 15%">{{ item.taskBizStatus==null?'':item.taskBizStatus.description }}</span>
+          </div>
+
+          <!--  -->
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+            <span class="span-item-name"> 随访内容 :</span>
+            <span class="span-item-value" style="margin-left: 30px">{{ item.messageContentType.description }} </span>
+
+            <span class="span-item-name" style="margin-left: 90px"> 是否逾期 :</span>
+
+            <span class="span-item-value" style="margin-left: 15%">{{ item.overdueStatus.description }}</span>
+          </div>
+
+
+              <!--  -->
+              <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+            <span class="span-item-name"> 计划日期 :</span>
+            <span class="span-item-value" style="margin-left: 30px">{{ item.actualExecTime }} </span>
+
+            <span class="span-item-name" style="margin-left: 30px"> 完成日期 :</span>
+
+            <span class="span-item-value" style="margin-left: 15%">{{ item.executeTime }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </a-modal>
 </template>
@@ -98,7 +113,13 @@
   
   <script>
 import moment from 'moment'
-import { addExecuteRecord, qryExecuteRecordByUserId, messageTypes,getSmsTemplateListForJumpType,getWxTemplateListForJumpType} from '@/api/modular/system/posManage'
+import {
+  addExecuteRecord,
+  qryExecuteRecordByUserId,
+  messageTypes,
+  getSmsTemplateListForJumpType,
+  getWxTemplateListForJumpType,
+} from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -107,19 +128,23 @@ export default {
   data() {
     return {
       clickTtime: new Date().getTime(),
-      loadData: [],
+      userId:"",
+      recordList: [],
       timeStr: '',
-      msgData:[],
+      msgData: [],
       templateListWX: [],
       templateListSMS: [],
       id: '', //表名ID
       rangeValue: 1,
-      isOpen: false,
       record: {},
-      metaName: '',
       queryParams: {
         style: '',
       },
+
+       queryParamsRecord:{
+        userId:''
+       },
+
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -144,10 +169,26 @@ export default {
     //初始化方法
     distribution(record) {
       this.visible = true
+    //   this.queryParamsRecord.userId = record.userId
+      this.queryParamsRecord.userId = '612'
+      this.qryExecuteRecordByUserIdOut()
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()
       this.getWxTemplateListForJumpTypeOut()
     },
+
+    /**
+     * 查询历史随访记录
+     */
+     qryExecuteRecordByUserIdOut(){
+        qryExecuteRecordByUserId(this.queryParamsRecord).then((res)=>{
+             if(res.code==0){
+                this.recordList = res.data
+             }
+        })
+     },
+
+
 
     /**
      * 获取随访方式
@@ -266,9 +307,34 @@ export default {
 </style>
 <style lang="less">
 .div-service-user {
+  display: flex;
+  flex-direction: row;
   width: 100%;
   overflow: hidden;
   height: 100%;
+
+  .div-total1 {
+    height: 100px;
+    width: 90%;
+    margin: 20px;
+    margin-right: 60px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
 
   .div-service-left-user {
     background-color: white;
