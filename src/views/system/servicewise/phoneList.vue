@@ -81,7 +81,7 @@
     <s-table
       ref="table"
       size="default"
-      style="margin-top: 15px"
+      style="margin-top: 15px;min-height: 500px;"
       :columns="columns"
       :data="loadData"
       :alert="true"
@@ -98,7 +98,7 @@
         </div>
 
         <div @click="goSolve(record)" class="div-action" v-else>
-          <img src="~@/assets/icons/eye.png" />
+          <img src="~@/assets/icons/dh_icon.png" />
           <a style="margin-left: 5px">开始随访</a>
         </div>
       </span>
@@ -166,12 +166,14 @@
         </div>
       </div>
     </a-drawer>
+    <follow-Model ref="followModel" @ok="handleOk" />
   </a-card>
 </template>
     
     
     <script>
 import { STable } from '@/components'
+import followModel from './followModel'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import {
@@ -183,11 +185,10 @@ import {
   getDepts,
   getDeptsPersonal,
 } from '@/api/modular/system/posManage'
-// import adddxtemplate from './adddxtemplate'
 export default {
   components: {
     STable,
-    // adddxtemplate,
+    followModel,
   },
   data() {
     return {
@@ -557,7 +558,8 @@ export default {
 
     //点击第一层选中按钮，
     onChangeOut(itemOut, indexOut) {
-      itemOut.isChecked = !itemOut.isChecked
+      // itemOut.isChecked = !itemOut.isChecked
+      itemOut.isChecked = true
       if (itemOut.isChecked) {
         //当父节点切换之后需要切换tree的选中状态；需要改变请求条件；需要改变表格列表数据；需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）；需要改变表格里面操作的按钮
 
@@ -629,6 +631,13 @@ export default {
           }
         })
         this.queryParams.messageContentIds.splice(num, 1)
+      }
+
+      // 需要改变表格列表数据；
+      if (this.queryParams.queryStatus == 4) {
+        this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+      } else {
+        this.columns = JSON.parse(JSON.stringify(this.columnsOrigin))
       }
 
       this.$refs.table.refresh(true)
@@ -716,13 +725,7 @@ export default {
      * 查看
      */
     goLook(record) {
-      this.$router.push({
-        name: 'sys_dxtemplate_add',
-        query: {
-          id: record.id,
-        },
-      })
-      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
+      this.$refs.followModel.doDeal(record)
     },
 
     /**
@@ -730,13 +733,7 @@ export default {
      * @param {} record
      */
     goSolve(record) {
-      this.$router.push({
-        name: 'sys_dxtemplate_add',
-        query: {
-          id: record.id,
-        },
-      })
-      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
+      this.$refs.followModel.doDeal(record)
     },
 
     handleOk() {

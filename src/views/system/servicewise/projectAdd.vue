@@ -287,13 +287,13 @@
           <div class="mission-bottom">
             <div class="mission-bottom-left">
               <a-checkbox
-                v-if="itemTask.messageType == 2 || itemTask.messageType == 3"
+                v-if="(itemTask.messageType == 2 || itemTask.messageType == 3) && itemTask.taskType == '1'"
                 @click="goCheck(indexTask)"
                 :checked="itemTask.isChecked"
                 style="margin-left: 1%"
               />
               <span
-                v-if="itemTask.messageType == 2 || itemTask.messageType == 3"
+                v-if="(itemTask.messageType == 2 || itemTask.messageType == 3) && itemTask.taskType == '1'"
                 class="span-titl"
                 style="margin-left: 1%"
                 >电话跟进</span
@@ -765,7 +765,7 @@ export default {
     },
 
     addMission() {
-      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1, overdueTimeUnit: 1 })
+      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1, overdueTimeUnit: 24 })
     },
 
     /**
