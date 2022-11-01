@@ -40,7 +40,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="5" :sm="24">
+          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
             <a-form-item label="随访方式">
               <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
                 <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
@@ -52,7 +52,7 @@
         </a-row>
 
         <a-row :gutter="48">
-          <a-col :md="5" :sm="24">
+          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 4">
             <a-form-item label="状态">
               <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择状态">
                 <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
@@ -62,7 +62,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="7" :sm="24">
+          <a-col :md="7" :sm="24" v-if="queryParams.queryStatus == 4">
             <a-form-item label="执行日期">
               <a-range-picker :value="createValue" @change="onChange" />
             </a-form-item>
@@ -81,6 +81,7 @@
     <s-table
       ref="table"
       size="default"
+      style="margin-top: 15px"
       :columns="columns"
       :data="loadData"
       :alert="true"
@@ -91,7 +92,15 @@
         <div :title="record.templateContent">{{ record.templateContent }}</div>
       </span>
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus == 2">开始随访</a>
+        <div @click="goLook(record)" class="div-action" v-if="queryParams.queryStatus == 4">
+          <img src="~@/assets/icons/eye.png" />
+          <a style="margin-left: 5px">查看</a>
+        </div>
+
+        <div @click="goSolve(record)" class="div-action" v-else>
+          <img src="~@/assets/icons/eye.png" />
+          <a style="margin-left: 5px">开始随访</a>
+        </div>
       </span>
     </s-table>
 
@@ -115,7 +124,7 @@
         <div class="draw-bottom">
           <div class="bottom-top">{{ drawerTitle }}</div>
           <div class="bottom-down">
-            <a-tree
+            <!-- <a-tree
               v-model="checkedKeys"
               checkable
               :expanded-keys="expandedKeys"
@@ -125,7 +134,34 @@
               @expand="onExpand"
               @check="onCheck"
               @select="onSelect"
-            />
+            /> -->
+            <div class="item-out" v-for="(itemOut, indexOut) in treeData" :key="indexOut" :value="itemOut.key">
+              <div class="out-top">
+                <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
+                <!-- <a-icon type="caret-down" /> <-->
+                <a-checkbox
+                  style="margin-left: 1%"
+                  @change="onChangeOut(itemOut, indexOut)"
+                  :checked="itemOut.isChecked"
+                />
+                <span style="margin-left: 1%">{{ itemOut.title }}</span>
+              </div>
+
+              <!-- v-if="itemOut.isVisible" -->
+              <div
+                class="out-list"
+                v-show="itemOut.isVisible"
+                v-for="(itemChild, indexChild) in treeData[indexOut].children"
+                :key="indexChild"
+                :value="itemChild.key"
+              >
+                <a-checkbox
+                  @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
+                  :checked="itemChild.isChecked"
+                />
+                <span style="margin-left: 1%">{{ itemChild.title }}</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -161,9 +197,9 @@ export default {
       drawerWidth: 300,
       drawerTitle: '选择随访列表',
       btnText: '隐藏',
-      expandedKeys: [3],
+      expandedKeys: [1],
       autoExpandParent: true,
-      checkedKeys: [6],
+      checkedKeys: [1],
       staticData: {},
       selectedKeys: [],
       // treeData,
@@ -175,53 +211,50 @@ export default {
       ],
       treeData: [
         {
-          key: 3,
-          parentKey: 0,
-          title: '全病程管理',
-          value: '3',
-          weight: 100,
+          key: 1,
+          title: '今日待随访',
+          count: 0,
+          children: [],
+        },
+        {
+          key: 2,
+          title: '全部待随访',
+          count: 8,
           children: [
             {
-              key: 6,
-              parentKey: 3,
-              title: '检查配置',
-              value: '6',
-              weight: 100,
-              children: [],
+              key: 37,
+              parentKey: 2,
+              title: '问卷名称',
+              count: 8,
+            },
+          ],
+        },
+        {
+          key: 3,
+          title: '逾期待随访',
+          count: 0,
+          children: [],
+        },
+        {
+          key: 4,
+          title: '已随访',
+          count: 45,
+          children: [
+            {
+              key: 37,
+              parentKey: 4,
+              title: '问卷名称',
+              count: 15,
             },
             {
-              key: 7,
-              parentKey: 3,
-              title: '用户管理',
-              value: '7',
-              weight: 100,
-              children: [],
+              key: 41,
+              parentKey: 4,
+              title: '问卷名称',
+              count: 30,
             },
           ],
         },
       ],
-      // treeData: [
-      //   {
-      //     title: '今日待随访',
-      //     key: '1',
-      //   },
-      //   {
-      //     title: '全部待随访',
-      //     key: '2',
-      //   },
-      //   {
-      //     title: '逾期随访',
-      //     key: '3',
-      //     children: [
-      //       { title: '出院随访问卷1', key: '4' },
-      //       { title: '出院随访问卷2', key: '5' },
-      //     ],
-      //   },
-      //   {
-      //     title: '已随访',
-      //     key: '6',
-      //   },
-      // ],
       keshiData: [],
       queryParams: {
         userName: null,
@@ -229,9 +262,10 @@ export default {
         executeDepartmentId: null,
         messageType: null,
         overdueStatus: -1,
-        userName: null,
         startDate: null,
         endDate: null,
+        queryStatus: null,
+        messageContentIds: null,
       },
       queryParamsOrigin: {
         userName: null,
@@ -239,9 +273,10 @@ export default {
         executeDepartmentId: null,
         messageType: null,
         overdueStatus: -1,
-        userName: null,
         startDate: null,
         endDate: null,
+        queryStatus: null,
+        messageContentIds: null,
       },
 
       labelCol: {
@@ -261,7 +296,7 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
-      // 表头
+      // 表头  默认是
       columns: [
         {
           title: '序号',
@@ -283,11 +318,13 @@ export default {
           dataIndex: 'phone',
           width: 80,
         },
+        //今日带 全部 预期 都有字段
         {
           title: '计划时间',
           dataIndex: 'execTime',
           width: 100,
         },
+
         {
           title: '随访方式',
           dataIndex: 'messageTypeName',
@@ -309,6 +346,120 @@ export default {
           width: 80,
         },
         {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      columnsOrigin: [
+        {
+          title: '序号',
+          dataIndex: 'xh',
+          width: 60,
+        },
+        {
+          title: '姓名',
+          dataIndex: 'userName',
+          width: 80,
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          width: 60,
+        },
+        {
+          title: '手机号码',
+          dataIndex: 'phone',
+          width: 80,
+        },
+        //今日带 全部 预期 都有字段
+        {
+          title: '计划时间',
+          dataIndex: 'execTime',
+          width: 100,
+        },
+
+        {
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
+          width: 80,
+        },
+        {
+          title: '执行科室',
+          dataIndex: 'executeDepartmentName',
+          width: 80,
+        },
+        {
+          title: '随访方案',
+          dataIndex: 'followPlanName',
+          width: 80,
+        },
+        {
+          title: '随访内容',
+          dataIndex: 'followPlanContent',
+          width: 80,
+        },
+        {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      columnsAready: [
+        {
+          title: '序号',
+          dataIndex: 'xh',
+          width: 60,
+        },
+        {
+          title: '姓名',
+          dataIndex: 'userName',
+          width: 80,
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          width: 60,
+        },
+        {
+          title: '手机号码',
+          dataIndex: 'phone',
+          width: 80,
+        },
+
+        //已执行的特有字段
+        {
+          title: '执行日期',
+          dataIndex: 'execTime',
+          width: 100,
+        },
+
+        {
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
+          width: 80,
+        },
+        {
+          title: '执行科室',
+          dataIndex: 'executeDepartmentName',
+          width: 80,
+        },
+        {
+          title: '随访方案',
+          dataIndex: 'followPlanName',
+          width: 80,
+        },
+        {
+          title: '随访内容',
+          dataIndex: 'followPlanContent',
+          width: 80,
+        },
+        //已执行的特有字段  已执行操作为查看
+        {
           title: '状态',
           dataIndex: 'overdueStatusName',
           width: 80,
@@ -328,13 +479,41 @@ export default {
         if (param.overdueStatus == -1) {
           param.overdueStatus = ''
         }
+
+        //后台需要null
+        if (!param.messageContentIds || param.messageContentIds.length == 0) {
+          param.messageContentIds == null
+        }
+
+        //         userName: null,
+        //         phone: null,
+        //         executeDepartmentId: null,
+        //         messageType: null,
+        //         overdueStatus: -1,
+        //         startDate: null,
+        //         endDate: null,
+        //         queryStatus: null,
+        //         messageContentIds: null,
+        // 需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）
+        if (param.queryStatus == 1 || param.queryStatus == 2) {
+          delete param.messageType
+          delete param.overdueStatus
+          delete param.startDate
+          delete param.endDate
+        } else if (param.queryStatus == 3) {
+          delete param.overdueStatus
+          delete param.startDate
+          delete param.endDate
+        }
+
         this.confirmLoading = true
         return qryPhoneFollowTask(Object.assign(parameter, param)).then((res) => {
+          this.confirmLoading = false
           if (res.code == 0) {
             res.data.rows.forEach((item, index) => {
               this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
               this.$set(item, 'messageTypeName', item.messageType.description)
-              if (item.overdueStatus == 1) {
+              if (item.overdueStatus.value == 1) {
                 this.$set(item, 'overdueStatusName', '正常')
               } else {
                 this.$set(item, 'overdueStatusName', '已逾期')
@@ -356,11 +535,10 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.getDeptsOut()
-    // qryPhoneFollowTaskStatistics().then((res) => {
-    qryPhoneFollowTaskStatistics({ queryStatus: '' }).then((res) => {
+    qryPhoneFollowTaskStatistics().then((res) => {
       if (res.code == 0) {
-        this.staticData = res.data
-        this.transfromData()
+        this.treeData = res.data
+        this.processData()
       }
     })
 
@@ -372,19 +550,124 @@ export default {
   },
 
   methods: {
-    transfromData() {
-      for (let index = 0; index < this.staticData.length; index++) {
-        this.staticData[index].name = this.staticData[index].title
-        this.staticData[index].key = this.staticData[index].id
-        // this.$set(data[index], 'name', data[index].title)
-        // this.$set(data[index], 'key', data[index].id)
-        // this.$set(data[index], 'checked', true)
-        this.allKeys.push(this.staticData[index].key)
+    onHideAndSee(itemOut, indexOut) {
+      itemOut.isVisible = !itemOut.isVisible
+      itemOut.outIcon = itemOut.isVisible ? 'caret-down' : 'caret-right'
+    },
 
-        if (this.staticData[index].children && this.staticData[index].children.length > 0) {
-          this.transfromData(this.staticData[index].children)
+    //点击第一层选中按钮，
+    onChangeOut(itemOut, indexOut) {
+      itemOut.isChecked = !itemOut.isChecked
+      if (itemOut.isChecked) {
+        //当父节点切换之后需要切换tree的选中状态；需要改变请求条件；需要改变表格列表数据；需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）；需要改变表格里面操作的按钮
+
+        //当父节点切换之后需要切换tree的选中状态；需要改变请求条件
+        this.treeData.forEach((itemOutTemp, indexOutTemp) => {
+          if (indexOutTemp != indexOut) {
+            this.$set(itemOutTemp, 'isChecked', false)
+            this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
+              this.$set(itemChild, 'isChecked', false)
+            })
+          } else {
+            //处理查询入参
+            this.queryParams.queryStatus = itemOutTemp.key
+            this.queryParams.messageContentIds = []
+            this.$set(itemOutTemp, 'isChecked', true)
+            this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
+              this.$set(itemChild, 'isChecked', true)
+              this.queryParams.messageContentIds.push(itemChild.key)
+            })
+          }
+        })
+
+        // 需要改变表格列表数据；
+        if (this.queryParams.queryStatus == 4) {
+          this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+        } else {
+          this.columns = JSON.parse(JSON.stringify(this.columnsOrigin))
+        }
+      } else {
+        //TODO 取消勾选的状态还没做
+      }
+
+      this.$refs.table.refresh(true)
+    },
+
+    //点击第二层选中按钮，先判断是否改变
+    onChangeIn(itemChild, indexChild, itemOut, indexOut) {
+      itemChild.isChecked = !itemChild.isChecked
+
+      if (itemChild.isChecked) {
+        //当父节点切换之后需要切换选中状态；需要改变列表数据；需求改变请求条件
+        if (this.queryParams.queryStatus != itemOut.key) {
+          debugger
+          this.treeData.forEach((itemOutTemp, indexOutTemp) => {
+            if (indexOutTemp != indexOut) {
+              this.$set(itemOutTemp, 'isChecked', false)
+              this.treeData[indexOutTemp].children.forEach((itemChildTemp, indexChildTemp) => {
+                this.$set(itemChildTemp, 'isChecked', false)
+              })
+            } else {
+            }
+          })
+
+          this.queryParams.queryStatus = itemOut.key
+          this.queryParams.messageContentIds = []
+          this.queryParams.messageContentIds.push(itemChild.key)
+        } else {
+          debugger
+          this.$set(itemChild, 'isChecked', true)
+          console.log('itemChild.isChecked 直接添加', itemChild.isChecked)
+          this.queryParams.messageContentIds.push(itemChild.key)
+        }
+      } else {
+        debugger
+        let num = 0
+        itemOut.children.forEach((itemChildTemp, indexChildTemp) => {
+          if (indexChild == indexChildTemp) {
+            num = indexChildTemp
+          }
+        })
+        this.queryParams.messageContentIds.splice(num, 1)
+      }
+
+      this.$refs.table.refresh(true)
+    },
+
+    processData() {
+      //先整体初始化
+      for (let index = 0; index < this.treeData.length; index++) {
+        this.treeData[index].title = this.treeData[index].title + '（' + this.treeData[index].count + '）'
+        console.log('title', this.treeData[index].title)
+        console.log('count', this.treeData[index].count)
+
+        this.$set(this.treeData[index], 'outIcon', 'caret-right')
+        this.$set(this.treeData[index], 'isChecked', false)
+        this.$set(this.treeData[index], 'isVisible', false)
+
+        if (this.treeData[index].children && this.treeData[index].children.length > 0) {
+          this.treeData[0].children.forEach((itemChild, indexChild) => {
+            this.$set(itemChild, 'isChecked', false)
+          })
         }
       }
+
+      //再把首个全部展开和勾选
+      this.$set(this.treeData[0], 'isChecked', true)
+      this.$set(this.treeData[0], 'isVisible', true)
+      if (this.treeData[0].children && this.treeData[0].children.length > 0) {
+        this.treeData[0].children.forEach((item, index) => {
+          this.$set(item, 'isChecked', true)
+        })
+      }
+
+      //初始化请求数据
+      this.queryParams.queryStatus = this.treeData[0].key
+      this.queryParams.messageContentIds = []
+      this.treeData[0].children.forEach((item, index) => {
+        this.queryParams.messageContentIds.push(item.key)
+      })
+      this.$refs.table.refresh(true)
     },
 
     getDeptsOut() {
@@ -417,33 +700,6 @@ export default {
       this.queryParams.endDate = dateArr[1]
     },
 
-    onExpand(expandedKeys) {
-      console.log('onExpand', expandedKeys)
-      // if not set autoExpandParent to false, if children expanded, parent can not collapse.
-      // or, you can remove all expanded children keys.
-      this.expandedKeys = expandedKeys
-      this.autoExpandParent = false
-    },
-    onCheck(checkedKeys) {
-      let that = this
-      console.log('onCheck', checkedKeys)
-      this.checkedKeys = []
-      this.checkedKeys = checkedKeys
-      // if (checkedKeys.length > 0) {
-      //   this.checkedKeys.push(checkedKeys[checkedKeys.length - 1])
-      // }
-      // console.log('onCheckEnd', this.checkedKeys)
-
-      // setTimeout(() => {
-      //   that.$forceupdate()
-      // }, 200)
-    },
-    onSelect(selectedKeys, info) {
-      console.log('onSelect', info)
-      console.log('onSelect selectedKeys', selectedKeys)
-      this.selectedKeys = selectedKeys
-    },
-
     goVise() {
       // this.visible = !this.visible
       this.clicked = !this.clicked
@@ -457,9 +713,23 @@ export default {
     },
 
     /**
-     * 修改
+     * 查看
      */
-    changeModel(record) {
+    goLook(record) {
+      this.$router.push({
+        name: 'sys_dxtemplate_add',
+        query: {
+          id: record.id,
+        },
+      })
+      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
+    },
+
+    /**
+     *开始随访
+     * @param {} record
+     */
+    goSolve(record) {
       this.$router.push({
         name: 'sys_dxtemplate_add',
         query: {
@@ -491,6 +761,12 @@ export default {
 
 .ant-drawer-body {
   padding: 0 !important;
+}
+
+.div-action {
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .draw-wrap {
@@ -533,6 +809,28 @@ export default {
       margin-top: 10px;
       border-top: #e6e6e6 1px solid;
       // border-left: #e6e6e6 1px solid;
+
+      .item-out {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .out-top {
+          margin-top: 3%;
+          display: flex;
+          flex-direction: row;
+          width: 100%;
+          align-items: center;
+        }
+
+        .out-list {
+          margin-top: 3%;
+          margin-left: 15%;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+        }
+      }
     }
   }
 }
