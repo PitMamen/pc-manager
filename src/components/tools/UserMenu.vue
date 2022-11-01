@@ -37,7 +37,7 @@
             </a>
           </a-menu-item>
           <!-- <a-menu-item key="5" v-if="hasPerm('sysUser:updatePwd')"  > -->
-          <a-menu-item key="5" v-if="false">
+          <a-menu-item key="5" v-if="true">
             <a @click="updatePwd()">
               <a-icon type="tool" />
               <span>修改密码</span>
