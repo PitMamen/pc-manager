@@ -1,58 +1,7 @@
 <template>
   <div style="height: 650px; ">
     <div class="div-appoint-detail">
-      <div class="div-span-content-left" style="overflow-y: auto !important; max-height: 100%">
-        <div
-          class="div-his-item"
-          v-for="(item, index) in historyList"
-          :key="index"
-          :value="item"
-          @click="onHistoryItemClick(item.id)"
-        >
-          <div style="width: 26px">
-            <img v-show="item.messageType.value == 1" src="~@/assets/icons/dh_icon.png" />
-            <img v-show="item.messageType.value == 2" src="~@/assets/icons/weixin_icon.png" />
-            <img v-show="item.messageType.value == 3" src="~@/assets/icons/dx_icon.png" />
-          </div>
-
-          <span class="div-time">{{ item.userFollowTime }}</span>
-          <span class="div-content">{{ item.contentTitle }}</span>
-        </div>
-      </div>
-
-      <div class="midline"></div>
-
-      <div class="div-span-content-mid">
-        <div class="span-mid-title">{{ historyDetail.contentTitle }}</div>
-        <div class="span-mid-audio" v-show="audioShow"> <audio class="audio"  controls :src="audioSrc" autoplay></audio></div>
-        <div class="div-voice-wrap">
-          <div class="span-item-name">电话录音 :</div>
-          <div class="div-voice-content">
-            <a ref="#" class="div-voice-item" @click="playAudio('http://develop.mclouds.org.cn:8009/content-api/file/S20220928110502547T4PSXJVUOGKFJY-tmp_8ca1a0e623c088975dc24d12a49bedf5e8f8f0731e094df7.mp3')"><img src="~@/assets/icons/ly.png" class="img" />202210121134.wav</a>
-            <a ref="#" class="div-voice-item"  @click="playAudio('http://develop.mclouds.org.cn:8009/content-api/file/S20220915103002087Y9ZGSROFNR0INU-tmp_1e999b00345fc3f4a153c09dc75879f9687607c0102a45f9.mp3')" ><img src="~@/assets/icons/ly.png" class="img" />202210121134.wav</a>
-          </div>
-
-          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
-          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
-        </div>
-        <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
-          historyDetail.contentText
-        }}</span>
-        <div style="flex: 1; margin-top: 10px; overflow-y: auto">
-          <iframe
-            defer="true"
-            :src="questionUrl"
-            style="width: 100%; height: 100%; overflow: scroll"
-            frameborder="0"
-            scrolling="yes"
-          >
-          </iframe>
-        </div>
-      </div>
-
-      <div class="midline"></div>
-
-      <div class="div-span-content-right">
+      <div class="div-span-content-left" >
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">随访结果</span>
@@ -158,6 +107,72 @@
           </span>
         </span>
       </div>
+
+      <div class="midline"></div>
+
+      <div class="div-span-content-mid">
+        <div class="span-mid-title">{{ historyDetail.contentTitle }}</div>
+        <div class="span-mid-audio" v-show="audioShow"> <audio class="audio"  controls :src="audioSrc" autoplay></audio></div>
+        <div class="div-voice-wrap">
+          <div class="span-item-name">电话录音 :</div>
+          <div class="div-voice-content">
+            
+            <a ref="#" class="div-voice-item" @click="playAudio('http://develop.mclouds.org.cn:8009/content-api/file/S20220928110502547T4PSXJVUOGKFJY-tmp_8ca1a0e623c088975dc24d12a49bedf5e8f8f0731e094df7.mp3')"><img src="~@/assets/icons/ly.png" class="img" />202210121134.wav</a>
+            <a ref="#" class="div-voice-item"  @click="playAudio('http://develop.mclouds.org.cn:8009/content-api/file/S20220915103002087Y9ZGSROFNR0INU-tmp_1e999b00345fc3f4a153c09dc75879f9687607c0102a45f9.mp3')" ><img src="~@/assets/icons/ly.png" class="img" />202210121134.wav</a>
+          </div>
+
+          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
+          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
+        </div>
+
+       
+        <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
+          historyDetail.contentText
+        }}</span>
+        <div style="flex: 1; margin-top: 10px; overflow-y: auto">
+          <iframe
+            defer="true"
+            :src="questionUrl"
+            style="width: 100%; height: 100%; overflow: scroll"
+            frameborder="0"
+            scrolling="yes"
+          >
+          </iframe>
+        </div>
+      </div>
+
+      <div class="midline"></div>
+
+      <div class="div-span-content-right">
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">基本信息</span>
+        </div>
+        <div class="div-line-wrap">
+          <span class="span-item-name">患者姓名 :</span>
+          <span class="span-item-value">{{ patientInfo.userName }} </span>
+        </div>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 身份证号 :</span>
+          <span class="span-item-value">{{ patientInfo ? subStringIdcardNo(patientInfo.idNumber) : '' }} </span>
+        </div>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 出生日期 :</span>
+          <span class="span-item-value">{{ patientInfo.birthDate }} </span>
+        </div>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 联系电话 :</span>
+          <span class="span-item-value">{{ patientInfo.tel }} </span>
+        </div>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 紧急联系人 :</span>
+          <span class="span-item-value">{{ patientInfo.urgentContacts ||'无'}}</span>
+        </div>
+        <div class="div-line-wrap">
+          <span class="span-item-name"> 紧急联系电话 :</span>
+          <span class="span-item-value">{{ patientInfo.urgentTel||'无' }} </span>
+        </div>
+      </div>
     </div>
     <div style="margin-top: 12px;display: flex; flex-direction: row-reverse">
       <a-button type="default" @click="goCancel"  style="width: 90px"> 关闭 </a-button>
@@ -170,12 +185,14 @@
 import {
  
   followPlanPhoneHistory,
+  followPlanPhonePatientInfo,
   followPlanPhonehistoryDetail,
   historyFollowResult,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
 
+let  audio=null;
 export default {
   components: {
     [Timeline.Item.name]: Timeline.Item,
@@ -185,8 +202,7 @@ export default {
   },
   data() {
     return {
-      patientId: '612', //患者ID
-      planId: '',
+    
       audioSrc:'',
       audioShow:false,
       patientInfo: {},
@@ -233,16 +249,38 @@ export default {
   },
 
   created() {
- 
-    followPlanPhoneHistory(this.record.userId).then((res) => {
-      if (res.code === 0) {
-        this.historyList = res.data
-        this.onHistoryItemClick(res.data[0].id)
-      } else {
-        this.$message.error(res.message)
-      }
-    })
+    
+    followPlanPhonehistoryDetail(this.record.id).then((res) => {
+        if (res.code === 0) {
+          this.historyDetail = res.data
+         
+          this.questionUrl = res.data.contentUrl
+        } else {
+          this.$message.error(res.message)
+        }
+      })
 
+      historyFollowResult(this.record.id).then((res) => {
+        if (res.code === 0) {
+          if(res.data.overdueFollowType ==null){
+            res.data.overdueFollowType ={
+              value: 0,
+          description: '',
+            }
+          }
+          this.historyResult = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+
+      followPlanPhonePatientInfo(this.record.userId).then((res) => {
+        if (res.code === 0) {
+          this.patientInfo = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
   
   },
   methods: {
@@ -256,37 +294,13 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    onHistoryItemClick(id) {
-      followPlanPhonehistoryDetail(id).then((res) => {
-        if (res.code === 0) {
-          this.historyDetail = res.data
-         
-          this.questionUrl = res.data.contentUrl
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-
-      historyFollowResult(id).then((res) => {
-        if (res.code === 0) {
-          if(res.data.overdueFollowType ==null){
-            res.data.overdueFollowType ={
-              value: 0,
-          description: '',
-            }
-          }
-          this.historyResult = res.data
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
 //播放音频
 playAudio(src) {
   this.audioSrc=src
   this.audioShow=true
 
  },
+
     subStringIdcardNo(idcard) {
       if (idcard) {
         const temp = idcard.substring(4, 15)
@@ -355,7 +369,9 @@ playAudio(src) {
   margin-left: 21px;
   margin-right: 21px;
 }
-
+.audio{
+ 
+}
 .div-title {
   display: flex;
   background-color: #f7f7f7;

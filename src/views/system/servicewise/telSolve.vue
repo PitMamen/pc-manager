@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 650px;">
+  <div style="height: 650px">
     <div class="div-appoint-detail">
       <div class="div-span-content-left">
         <div class="div-title">
@@ -18,9 +18,7 @@
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访方案 :</span>
           <a-select placeholder="请选择" disabled :value="followResultContent.planName">
-            <a-select-option :value="followResultContent.planName">{{
-              followResultContent.planName
-            }}</a-select-option>
+            <a-select-option :value="followResultContent.planName">{{ followResultContent.planName }}</a-select-option>
           </a-select>
         </div>
         <div class="div-line-wrap">
@@ -41,9 +39,10 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 实际随访人 :</span>
-          <a-select placeholder="请选择" disabled :value="followResultContent.actualDoctorUserName">
-            <a-select-option :value="followResultContent.actualDoctorUserName">{{
-              followResultContent.actualDoctorUserName
+
+          <a-select v-model="followResultContent.actualDoctorUserId" placeholder="请选择">
+            <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
+              item.userName
             }}</a-select-option>
           </a-select>
         </div>
@@ -86,7 +85,7 @@
             id="iframeId"
             defer="true"
             :src="questionUrl"
-            style="width: 100%; height: 600px; overflow: scroll"
+            style="width: 100%; height: 100%; overflow: scroll"
             frameborder="0"
             scrolling="yes"
           >
@@ -119,16 +118,16 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 紧急联系人 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentContacts }}</span>
+          <span class="span-item-value">{{ patientInfo.urgentContacts ||'无'}}</span>
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 紧急联系电话 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentTel }} </span>
+          <span class="span-item-value">{{ patientInfo.urgentTel||'无' }} </span>
         </div>
       </div>
     </div>
-    <div style="display: flex; flex-direction: row-reverse">
-      <a-button type="default" @click="goConfirm" style="width: 90px"> 关闭 </a-button>
+    <div style="margin-top: 12px; display: flex; flex-direction: row-reverse; align-items: center">
+      <a-button type="default" @click="goCancel" style="width: 90px"> 关闭 </a-button>
       <a-button type="primary" @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
     </div>
   </div>
@@ -137,21 +136,16 @@
 
 <script>
 import {
-  getBaseInfo,
-  dealsave,
-  dealget,
-  queryHealthPlanTaskList,
-  queryHealthPlanContent,
-  checksave,
-  checkget,
   followPlanPhoneCurrent,
   followPlanPhonePatientInfo,
   modifyFollowExecuteRecord,
+  getUsersByDeptIdAndRole,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+let self ;  //最外面全局的
 export default {
   components: {
     [Timeline.Item.name]: Timeline.Item,
@@ -161,12 +155,8 @@ export default {
   },
   data() {
     return {
-      id: '612',
+     
       activeKey: '1',
-      DealEnd: false, //fasle为未处理  true为已处理待检查
-      CheckEnd: false, //fasle为未检查  true为已检查
-      patientId: '', //患者ID
-      planId: '',
       failureList: [
         '电话无人接听',
         '电话号码有误',
@@ -178,6 +168,7 @@ export default {
         '患者已迁出',
         '其他',
       ],
+      deptUsers: [],
       followResultContent: {
         messageType: {
           value: '',
@@ -203,75 +194,45 @@ export default {
         planName: '',
         overdueFollowType: null,
       },
-      patientInfo: {
-        //患者详情
-        baseInfo: {
-          identificationNo: '',
-          userName: '',
-        },
-        externalInfo: {
-          phone: '',
-        },
-      },
-      szbq: '', //所在病区
+      patientInfo: {},
       radioTyPe: 0,
       failureRadioTyPe: '',
-      handleName: '',
-      handleTime: '',
       handleResult: '',
-      checkTime: '',
-      checkName: '',
-      checkResult: '',
-      questionTaskContent: {},
       questionUrl: '',
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 15 },
-      },
-      visible: false,
-      confirmLoading: false,
-      form: this.$form.createForm(this),
-
       iframe: {},
-      previewImageDetail: '',
-      previewVisibleDetail: false,
     }
   },
 
   created() {
-    var user = Vue.ls.get(TRUE_USER)
-    this.followResultContent.actualDoctorUserName = user.userName
-    this.followResultContent.actualDoctorUserId = user.userId
-    ;(this.patientId = this.record.userId),
-      (this.visible = true),
-      (this.planId = this.record.planId),
-      (this.szbq = this.record.ksmc === this.record.bqmc ? this.record.ksmc : this.record.ksmc + this.record.bqmc)
-    this.handleTime = this.formatDate(new Date())
+    // var user = Vue.ls.get(TRUE_USER)
+    self = this
+    console.log("telSolve",this.record)
+    this.followPlanPhonePatientInfo(this.record.userId)
+    this.followPlanPhoneCurrent(this.record.id)
+    this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
 
-    this.followPlanPhonePatientInfo(612)
-    this.followPlanPhoneCurrent(this.id)
+    // this.$nextTick(() => {
+    //   const iframe = window.frames['iframeId']
+    //   console.log('iframe', iframe)
+    //   const handleLoad = () => {
+    //     console.log('handleLoad')
+    //     setTimeout(() => {
+    //       const Do = iframe.contentWindow || iframe.contentDocument
 
-    this.$nextTick(() => {
-      const iframe = window.frames['iframeId']
-      console.log('iframe', iframe)
-      const handleLoad = () => {
-        console.log('handleLoad')
-        setTimeout(() => {
-          const Do = iframe.contentWindow || iframe.contentDocument
+    //       Do.postMessage('clickToConfirm', '*')
+    //     }, 500)
+    //   }
+    //   iframe.addEventListener('load', handleLoad, true)
+    // })
 
-          Do.postMessage('clickToConfirm', '*')
-        }, 500)
-      }
-      iframe.addEventListener('load', handleLoad, true)
-    })
 
-    addEventListener('message', (e) => {
+    //监听iframe发过来的消息
+    window.addEventListener('message', (e) => {
       // e.data为子页面发送的数据
-      console.log(e.data)
+      if (e.data == 'submitFormSuccess') {
+        console.log('iframe中已提交成功')
+        self.dodealsave()
+      }
     })
   },
   methods: {
@@ -285,42 +246,19 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    //处理初始化方法
-    doDeal(record) {},
-    //检查初始化方法
-    doCheck(record) {
-      ;(this.record = record),
-        (this.patientId = record.userId),
-        (this.visible = true),
-        (this.planId = record.planId),
-        (this.szbq = record.ksmc === record.bqmc ? record.ksmc : record.ksmc + record.bqmc)
-      this.DealEnd = true
-      this.checkTime = this.formatDate(new Date())
-      this.getPatientBaseInfo()
-      this.getDealInfo()
-      this.getQueryHealthPlanTaskList()
-    },
-    //已检查初始化方法
-    checkInfo(record) {
-      ;(this.record = record),
-        (this.patientId = record.userId),
-        (this.visible = true),
-        (this.planId = record.planId),
-        (this.szbq = record.ksmc === record.bqmc ? record.ksmc : record.ksmc + record.bqmc)
-      this.DealEnd = true
-      this.CheckEnd = true
-
-      this.getPatientBaseInfo()
-      this.getDealInfo()
-      this.getCheckInfo()
-      this.getQueryHealthPlanTaskList()
+    //发送消息给iframe 通知其提交问卷
+    postMessageToSubmit() {
+      console.log('发送消息给iframe:submitForm')
+      const iframe = window.frames['iframeId']
+      const Do = iframe.contentWindow || iframe.contentDocument
+      Do.postMessage('submitForm', '*')
     },
 
     //随访结果
     followPlanPhoneCurrent(id) {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
-          this.followResultContent=res.data
+          this.followResultContent = res.data
           this.questionUrl = res.data.projectKeyUrlW
           console.log(this.followResultContent)
           console.log(this.questionUrl)
@@ -339,7 +277,14 @@ export default {
         }
       })
     },
-
+    getUsersByDeptIdAndRoleOut(departmentId) {
+      getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5] }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsers = res.data.deptUsers[0].users
+          console.log(this.deptUsers)
+        }
+      })
+    },
     subStringIdcardNo(idcard) {
       if (idcard) {
         const temp = idcard.substring(4, 15)
@@ -354,104 +299,17 @@ export default {
       var pat = /(\d{3})\d*(\d{4})/
       return str.replace(pat, '$1****$2')
     },
-
-    //查询计划和任务
-    getQueryHealthPlanTaskList() {
-      queryHealthPlanTaskList({ planId: this.planId }).then((res) => {
-        if (res.code === 0) {
-          for (var i = 0; i < res.data.length; i++) {
-            var task = res.data[i]
-            for (var j = 0; j < task.taskInfo.length; j++) {
-              var content = task.taskInfo[j]
-              if (content.planType === 'Quest') {
-                //遇到第一个问卷任务退出循环
-                this.questionTaskContent = content
-                console.log(this.questionTaskContent)
-                break
-              }
-            }
-          }
-
-          if (this.questionTaskContent.contentId) {
-            this.getQueryHealthPlanContent()
-          } else {
-            this.$message.error('随访问卷不存在')
-          }
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-
-    //查询任务内容
-    getQueryHealthPlanContent() {
-      var postData = {
-        contentId: this.questionTaskContent.contentId,
-        planType: this.questionTaskContent.planType,
-        userId: this.patientId,
-      }
-      queryHealthPlanContent(postData).then((res) => {
-        if (res.code === 0) {
-          this.questionTaskContent.questUrl = res.data.questUrl
-
-          var url =
-            res.data.questUrl +
-            '?userId=' +
-            this.patientId +
-            '&groupId=&contentId=' +
-            this.questionTaskContent.contentId +
-            '&execTime=' +
-            this.formatDate(new Date()) +
-            '&title=' +
-            res.data.questName
-
-          if (this.questionTaskContent.execFlag === 1) {
-            //已完成
-            //读状态
-            url = url.replace('/s/', '/r/')
-          } else {
-            //写状态
-            url = url.replace('/r/', '/s/')
-          }
-
-          this.questionUrl = url
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    //点击处理完成时去查询该问卷任务是否已完成
-    checkHealthPlanTaskEnd() {
-      queryHealthPlanTaskList({ planId: this.planId }).then((res) => {
-        if (res.code === 0) {
-          for (var i = 0; i < res.data.length; i++) {
-            var task = res.data[i]
-            for (var j = 0; j < task.taskInfo.length; j++) {
-              var content = task.taskInfo[j]
-              if (content.contentId === this.questionTaskContent.contentId) {
-                if (content.execFlag === 1) {
-                  //已完成
-                  this.dodealsave()
-                } else {
-                  this.$message.error('请先提交问卷')
-                }
-                break
-              }
-            }
-          }
-
-          if (this.questionTaskContent.contentId) {
-            this.getQueryHealthPlanContent()
-          } else {
-            this.$message.error('随访问卷不存在')
-          }
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+    goCancel(){
+     
+      this.$emit("handleCancel", '');
     },
     //完成处理按钮
     goConfirm() {
+    
+      if (!this.followResultContent.actualDoctorUserId) {
+        this.$message.info('请选择实际随访人')
+        return
+      }
       if (this.radioTyPe === 1) {
         console.log(this.failureRadioTyPe)
         if (this.failureRadioTyPe.length === 0) {
@@ -465,9 +323,10 @@ export default {
             return
           }
         }
-
-        this.dodealsave()
       }
+              
+        //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
+        this.postMessageToSubmit()
     },
 
     //保存处理信息
@@ -475,135 +334,18 @@ export default {
       var postdata = {
         actualDoctorUserId: this.followResultContent.actualDoctorUserId, //实际随访人
         failReason: this.failureRadioTyPe + 1,
-        id: this.id,
+        id: this.record.id,
         remark: this.handleResult,
         taskBizStatus: this.radioTyPe === 0 ? 2 : 3, //成功失败
       }
       modifyFollowExecuteRecord(postdata).then((res) => {
         if (res.code === 0) {
           this.$message.success('操作成功！')
+          this.$emit('handleCancel', '')
         } else {
           this.$message.error(res.message)
         }
       })
-    },
-    //获取处理信息
-    getDealInfo() {
-      if (this.patientId === '') {
-        this.$message.error('患者ID为空')
-        return
-      }
-      if (this.planId === '') {
-        this.$message.error('计划ID为空')
-        return
-      }
-      var postData = {
-        planId: this.planId,
-        userId: this.patientId, //就诊人ID
-      }
-      dealget(postData).then((res) => {
-        if (res.code === 0) {
-          this.radioTyPe = res.data.dealType === '1' ? 0 : 1
-          this.handleName = res.data.dealUserName
-          this.handleResult = res.data.dealResult
-          this.handleTime = res.data.dealTime
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    //点击抽查确定按钮
-    gocheck() {
-      if (this.patientId === '') {
-        this.$message.error('患者ID为空')
-        return
-      }
-      if (this.planId === '') {
-        this.$message.error('计划ID为空')
-        return
-      }
-      if (this.checkName.length === 0) {
-        this.$message.info('请填写检查人姓名')
-        return
-      }
-      if (this.checkResult.length === 0) {
-        this.$message.info('请填写检查结果')
-        return
-      }
-      this.dochecksave()
-    },
-    //保存检查信息
-    dochecksave() {
-      var postdata = {
-        checkResult: this.checkResult, //检查理由
-        checkUserName: this.checkName, //检查人
-        ipNo: this.record.zyh, //住院号
-        planId: this.planId, //计划ID
-        regNo: this.record.jzlsh, //就诊流水号
-        userId: this.patientId, //就诊人ID
-      }
-      checksave(postdata).then((res) => {
-        if (res.code === 0) {
-          this.$message.success('操作成功！')
-          this.visible = false
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    //获取检查信息
-    getCheckInfo() {
-      if (this.patientId === '') {
-        this.$message.error('患者ID为空')
-        return
-      }
-      if (this.planId === '') {
-        this.$message.error('计划ID为空')
-        return
-      }
-      var postData = {
-        planId: this.planId,
-        userId: this.patientId, //就诊人ID
-      }
-      checkget(postData).then((res) => {
-        if (res.code === 0) {
-          this.checkName = res.data.checkUserName
-          this.checkResult = res.data.checkResult
-          this.checkTime = res.data.checkTime
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    handleCancelDetail() {
-      this.previewVisibleDetail = false
-    },
-
-    async handlePreviewDetail(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
-      }
-      this.previewImageDetail = file.url || file.preview
-      this.previewVisibleDetail = true
-    },
-
-    getBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = (error) => reject(error)
-      })
-    },
-
-    handleChangeDetail({ fileList }) {
-      //this.record.tradeAppointLog[index].dealImgList
-      // this.fileListDetail = fileList
-    },
-
-    handleCancel() {
-      this.form.resetFields()
-      this.visible = false
     },
 
     radioChange(e) {
@@ -650,7 +392,7 @@ export default {
 .div-appoint-detail {
   background-color: white;
   width: 100%;
-  height: 100%;
+  height: 92%;
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -658,7 +400,6 @@ export default {
   .div-span-content-left {
     width: 21%;
     height: 100%;
- 
   }
   .div-span-content-mid {
     width: 58%;
