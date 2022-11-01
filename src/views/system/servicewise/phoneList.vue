@@ -40,7 +40,11 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
+          <a-col
+            :md="5"
+            :sm="24"
+            v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
+          >
             <a-form-item label="随访方式">
               <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
                 <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
@@ -52,9 +56,19 @@
         </a-row>
 
         <a-row :gutter="48">
-          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 4">
+          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
+            <a-form-item label="是否逾期">
+              <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态">
+                <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
+                  item.name
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
             <a-form-item label="状态">
-              <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择状态">
+              <a-select allow-clear v-model="queryParams.bizStatus" placeholder="请选择状态">
                 <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
                   item.name
                 }}</a-select-option>
@@ -62,7 +76,11 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="7" :sm="24" v-if="queryParams.queryStatus == 4">
+          <a-col
+            :md="7"
+            :sm="24"
+            v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
+          >
             <a-form-item label="执行日期">
               <a-range-picker :value="createValue" @change="onChange" />
             </a-form-item>
@@ -81,18 +99,22 @@
     <s-table
       ref="table"
       size="default"
-      style="margin-top: 15px;min-height: 500px;"
+      style="margin-top: 15px; min-height: 500px"
       :columns="columns"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
     >
-      <!-- add -->
-      <span slot="content" slot-scope="text, record">
-        <div :title="record.templateContent">{{ record.templateContent }}</div>
+      <span slot="status-overdue" slot-scope="text, record" :class="getClass(record.overdueStatus)">
+        {{ record.overdueStatusName }}
       </span>
+
       <span slot="action" slot-scope="text, record">
-        <div @click="goLook(record)" class="div-action" v-if="queryParams.queryStatus == 4">
+        <div
+          @click="goLook(record)"
+          class="div-action"
+          v-if="(queryParams.queryStatus == 3 && record.bizStatus != 1) || queryParams.queryStatus == 4"
+        >
           <img src="~@/assets/icons/eye.png" />
           <a style="margin-left: 5px">查看</a>
         </div>
@@ -101,6 +123,7 @@
           <img src="~@/assets/icons/dh_icon.png" />
           <a style="margin-left: 5px">开始随访</a>
         </div>
+        <!-- <a style="margin-left: 5px">开始随访</a> -->
       </span>
     </s-table>
 
@@ -204,11 +227,18 @@ export default {
       staticData: {},
       selectedKeys: [],
       // treeData,
-      //逾期状态;1:正常2:已逾期
+      //随访任务逾期状态;1:未逾期2:已逾期
+      overdueData: [
+        { code: -1, name: '全部' },
+        { code: 1, name: '未逾期' },
+        { code: 2, name: '已逾期' },
+      ],
+      //任务状态;1:未执行2:成功3:失败
       statusData: [
         { code: -1, name: '全部' },
-        { code: 1, name: '正常' },
-        { code: 2, name: '已逾期' },
+        { code: 1, name: '未执行' },
+        { code: 2, name: '成功' },
+        { code: 3, name: '失败' },
       ],
       treeData: [
         {
@@ -263,6 +293,7 @@ export default {
         executeDepartmentId: null,
         messageType: null,
         overdueStatus: -1,
+        bizStatus: -1,
         startDate: null,
         endDate: null,
         queryStatus: null,
@@ -274,6 +305,7 @@ export default {
         executeDepartmentId: null,
         messageType: null,
         overdueStatus: -1,
+        bizStatus: -1,
         startDate: null,
         endDate: null,
         queryStatus: null,
@@ -319,7 +351,6 @@ export default {
           dataIndex: 'phone',
           width: 80,
         },
-        //今日带 全部 预期 都有字段
         {
           title: '计划时间',
           dataIndex: 'execTime',
@@ -334,7 +365,7 @@ export default {
         {
           title: '执行科室',
           dataIndex: 'executeDepartmentName',
-          width: 80,
+          width: 90,
         },
         {
           title: '随访方案',
@@ -348,13 +379,13 @@ export default {
         },
         {
           title: '操作',
-          width: '150px',
+          width: 80,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
       ],
 
-      columnsOrigin: [
+      columnsNeed: [
         {
           title: '序号',
           dataIndex: 'xh',
@@ -375,7 +406,6 @@ export default {
           dataIndex: 'phone',
           width: 80,
         },
-        //今日带 全部 预期 都有字段
         {
           title: '计划时间',
           dataIndex: 'execTime',
@@ -404,9 +434,133 @@ export default {
         },
         {
           title: '操作',
-          width: '150px',
+          width: 80,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      columnsAll: [
+        {
+          title: '序号',
+          dataIndex: 'xh',
+          width: 60,
+        },
+        {
+          title: '姓名',
+          dataIndex: 'userName',
+          width: 80,
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          width: 60,
+        },
+        {
+          title: '手机号码',
+          dataIndex: 'phone',
+          width: 80,
+        },
+        {
+          title: '计划时间',
+          dataIndex: 'execTime',
+          width: 100,
+        },
+
+        {
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
+          width: 80,
+        },
+        {
+          title: '执行科室',
+          dataIndex: 'executeDepartmentName',
+          width: 90,
+        },
+        {
+          title: '随访方案',
+          dataIndex: 'followPlanName',
+          width: 80,
+        },
+        {
+          title: '随访内容',
+          dataIndex: 'followPlanContent',
+          width: 80,
+        },
+        {
+          title: '是否逾期',
+          scopedSlots: { customRender: 'status-overdue' },
+          width: 80,
+        },
+        {
+          title: '操作',
+          width: 80,
+
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      columnsOverdue: [
+        {
+          title: '序号',
+          dataIndex: 'xh',
+          width: 60,
+        },
+        {
+          title: '姓名',
+          dataIndex: 'userName',
+          width: 80,
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          width: 60,
+        },
+        {
+          title: '手机号码',
+          dataIndex: 'phone',
+          width: 80,
+        },
+
+        {
+          title: '计划时间',
+          dataIndex: 'execTime',
+          width: 100,
+        },
+
+        {
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
+          width: 80,
+        },
+        {
+          title: '执行科室',
+          dataIndex: 'executeDepartmentName',
+          width: 90,
+        },
+        {
+          title: '随访方案',
+          dataIndex: 'followPlanName',
+          width: 80,
+        },
+        {
+          title: '随访内容',
+          dataIndex: 'followPlanContent',
+          width: 80,
+        },
+        {
+          title: '状态',
+          dataIndex: 'bizStatusName',
+          width: 80,
+          // scopedSlots: { customRender: 'status-overdue' },
+        },
+        {
+          title: '操作',
+          width: 80,
+
+          scopedSlots: { customRender: 'action' },
+          dataIndex: 'action',
         },
       ],
 
@@ -447,7 +601,7 @@ export default {
         {
           title: '执行科室',
           dataIndex: 'executeDepartmentName',
-          width: 80,
+          width: 90,
         },
         {
           title: '随访方案',
@@ -459,15 +613,20 @@ export default {
           dataIndex: 'followPlanContent',
           width: 80,
         },
-        //已执行的特有字段  已执行操作为查看
+        {
+          title: '是否逾期',
+          scopedSlots: { customRender: 'status-overdue' },
+          width: 80,
+        },
         {
           title: '状态',
-          dataIndex: 'overdueStatusName',
+          dataIndex: 'bizStatusName',
           width: 80,
         },
         {
           title: '操作',
-          width: '150px',
+          width: 80,
+
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -478,7 +637,11 @@ export default {
         let param = JSON.parse(JSON.stringify(this.queryParams))
         param.messageType = parseInt(param.messageType)
         if (param.overdueStatus == -1) {
-          param.overdueStatus = ''
+          param.overdueStatus = null
+        }
+
+        if (param.bizStatus == -1) {
+          param.bizStatus = null
         }
 
         //后台需要null
@@ -496,15 +659,16 @@ export default {
         //         queryStatus: null,
         //         messageContentIds: null,
         // 需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）
-        if (param.queryStatus == 1 || param.queryStatus == 2) {
+        if (param.queryStatus == 1) {
           delete param.messageType
           delete param.overdueStatus
+          delete param.bizStatus
           delete param.startDate
           delete param.endDate
+        } else if (param.queryStatus == 2) {
+          delete param.bizStatus
         } else if (param.queryStatus == 3) {
           delete param.overdueStatus
-          delete param.startDate
-          delete param.endDate
         }
 
         this.confirmLoading = true
@@ -515,9 +679,18 @@ export default {
               this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
               this.$set(item, 'messageTypeName', item.messageType.description)
               if (item.overdueStatus.value == 1) {
-                this.$set(item, 'overdueStatusName', '正常')
+                this.$set(item, 'overdueStatusName', '是')
               } else {
-                this.$set(item, 'overdueStatusName', '已逾期')
+                this.$set(item, 'overdueStatusName', '否')
+              }
+
+              //任务状态;1:未执行2:成功3:失败
+              if (item.bizStatus.value == 1) {
+                this.$set(item, 'bizStatusName', '未执行')
+              } else if (item.bizStatus.value == 2) {
+                this.$set(item, 'bizStatusName', '成功')
+              } else if (item.bizStatus.value == 3) {
+                this.$set(item, 'bizStatusName', '失败')
               }
             })
           }
@@ -539,7 +712,7 @@ export default {
     qryPhoneFollowTaskStatistics().then((res) => {
       if (res.code == 0) {
         this.treeData = res.data
-        this.processData()
+        this.processData(false)
       }
     })
 
@@ -583,10 +756,14 @@ export default {
         })
 
         // 需要改变表格列表数据；
-        if (this.queryParams.queryStatus == 4) {
+        if (this.queryParams.queryStatus == 1) {
+          this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+        } else if (this.queryParams.queryStatus == 2) {
+          this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+        } else if (this.queryParams.queryStatus == 3) {
+          this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+        } else if (this.queryParams.queryStatus == 4) {
           this.columns = JSON.parse(JSON.stringify(this.columnsAready))
-        } else {
-          this.columns = JSON.parse(JSON.stringify(this.columnsOrigin))
         }
       } else {
         //TODO 取消勾选的状态还没做
@@ -634,19 +811,25 @@ export default {
       }
 
       // 需要改变表格列表数据；
-      if (this.queryParams.queryStatus == 4) {
+      if (this.queryParams.queryStatus == 1) {
+        this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+      } else if (this.queryParams.queryStatus == 2) {
+        this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+      } else if (this.queryParams.queryStatus == 3) {
+        this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+      } else if (this.queryParams.queryStatus == 4) {
         this.columns = JSON.parse(JSON.stringify(this.columnsAready))
-      } else {
-        this.columns = JSON.parse(JSON.stringify(this.columnsOrigin))
       }
 
       this.$refs.table.refresh(true)
     },
 
-    processData() {
+    processData(isReset) {
       //先整体初始化
       for (let index = 0; index < this.treeData.length; index++) {
-        this.treeData[index].title = this.treeData[index].title + '（' + this.treeData[index].count + '）'
+        if (!isReset) {
+          this.treeData[index].title = this.treeData[index].title + '（' + this.treeData[index].count + '）'
+        }
         console.log('title', this.treeData[index].title)
         console.log('count', this.treeData[index].count)
 
@@ -655,8 +838,11 @@ export default {
         this.$set(this.treeData[index], 'isVisible', false)
 
         if (this.treeData[index].children && this.treeData[index].children.length > 0) {
-          this.treeData[0].children.forEach((itemChild, indexChild) => {
+          this.treeData[index].children.forEach((itemChild, indexChild) => {
             this.$set(itemChild, 'isChecked', false)
+            if (!isReset) {
+              this.$set(itemChild, 'title', itemChild.title + '（' + itemChild.count + '）')
+            }
           })
         }
       }
@@ -695,12 +881,28 @@ export default {
         })
       }
     },
+
+    //随访任务逾期状态;1:未逾期2:已逾期
+    getClass(status) {
+      debugger
+      if (status.value == 1) {
+        return 'span-red'
+      } else if (status.value == 2) {
+        return 'span-gray'
+      }
+    },
+
     /**
      * 重置
      */
     reset() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+
+      this.processData(true)
+
       this.createValue = []
+
+      this.$refs.table.refresh()
     },
 
     onChange(momentArr, dateArr) {
@@ -764,6 +966,20 @@ export default {
   &:hover {
     cursor: pointer;
   }
+}
+
+.span-red {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #f26161;
+  // background-color: #f26161;
+}
+
+.span-gray {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #85888e;
+  // background-color: #85888e;
 }
 
 .draw-wrap {
