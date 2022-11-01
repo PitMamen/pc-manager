@@ -6,7 +6,7 @@
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
-    :confirmLoading="false"
+    :confirmLoading="confirmLoading"
   >
     <div class="div-service-user">
       <!-- 左边 -->
@@ -14,9 +14,15 @@
         <div class="display-item">
           <span style="margin-top: 10px"> 随访方式:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-            <a-select allow-clear v-model="queryParams.style" placeholder="微信随访/电话随访">
-              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
-                item.description
+            <a-select
+              style="width: 120px"
+              allow-clear
+              v-model="queryParams.messageType"
+              @select="onTypeSelect(queryParams.messageType)"
+              placeholder="微信随访/短信随访"
+            >
+              <a-select-option v-for="(item, index) in visitTypeList" :key="index" :value="item.code">{{
+                item.value
               }}</a-select-option>
             </a-select>
           </a-form-item>
@@ -26,9 +32,9 @@
         <div class="display-item" style="margin-top: 10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-            <a-select allow-clear v-model="queryParams.style" placeholder="微信随访模板">
-              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
-                item.description
+            <a-select style="width: 120px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
+              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
+                item.templateTitle
               }}</a-select-option>
             </a-select>
           </a-form-item>
@@ -40,18 +46,17 @@
           <a-radio-group
             name="radioGroup"
             style="width: 50%; margin-top: 10px"
-            :default-value="rangeValue"
             @change="radioChange"
-            v-decorator="['roleId', { rules: [{ required: true, message: '请选择科室管理！' }] }]"
+            v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
           >
-            <a-radio class="btn-add-plan" :value="1"> 全院 </a-radio>
-            <a-radio :value="2"> 部分科室 </a-radio>
+            <a-radio class="btn-add-plan" :value="1"> 立即发送 </a-radio>
+            <a-radio :value="2"> 延时发送 </a-radio>
           </a-radio-group>
         </div>
 
-        <div class="display-item" style="margin-top: 2px">
+        <div v-if="rangeValue == '2'" class="display-item" style="margin-top: 2px">
           <a-form-item>
-            <a-date-picker style="margin-top: 27px" format="YYYY-MM-DD" v-model="queryParams.beginDate" />
+            <a-date-picker v-model="queryParams.executeTime" style="margin-top: 27px" format="YYYY-MM-DD" />
           </a-form-item>
 
           <div class="display-item" style="margin-top: 5px">
@@ -71,37 +76,49 @@
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style="overflow-y:auto;height:400px;">
-        
+      <div class="card-right-user" style="overflow-y: auto; height: 400px">
         <div class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
-            <span class="span-item-value" style="margin-left: 30px">{{item.messageType.description}} </span>
+            <span class="span-item-value" style="margin-left: 30px"
+              >{{ item.messageType != null ? item.messageType.description : '' }}
+            </span>
 
-            <span class="span-item-name" style="margin-left: 90px"> 状态 :</span>
+            <span class="span-item-name" style="margin-left: 90px">
+              状态 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
+            >
 
-            <span class="span-item-value" style="margin-left: 15%">{{ item.taskBizStatus==null?'':item.taskBizStatus.description }}</span>
+            <span class="span-item-value" style="margin-left: 15%">{{
+              item.taskBizStatus != null ? item.taskBizStatus.description : '-'
+            }}</span>
           </div>
 
           <!--  -->
           <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
             <span class="span-item-name"> 随访内容 :</span>
-            <span class="span-item-value" style="margin-left: 30px">{{ item.messageContentType.description }} </span>
+            <span class="span-item-value" style="margin-left: 30px"
+              >{{ item.messageContentType != null ? item.messageContentType.description : '-' }}
+            </span>
 
             <span class="span-item-name" style="margin-left: 90px"> 是否逾期 :</span>
 
-            <span class="span-item-value" style="margin-left: 15%">{{ item.overdueStatus.description }}</span>
+            <span class="span-item-value" style="margin-left: 15%">{{
+              item.overdueStatus != null ? item.overdueStatus.description : '-'
+            }}</span>
           </div>
 
-
-              <!--  -->
-              <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+          <!--  -->
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
             <span class="span-item-name"> 计划日期 :</span>
-            <span class="span-item-value" style="margin-left: 30px">{{ item.actualExecTime }} </span>
+            <span class="span-item-value" style="margin-left: 30px"
+              >{{ item.executeTime != null ? item.executeTime : '' }}
+            </span>
 
             <span class="span-item-name" style="margin-left: 30px"> 完成日期 :</span>
 
-            <span class="span-item-value" style="margin-left: 15%">{{ item.executeTime }}</span>
+            <span class="span-item-value" style="margin-left: 15%">{{
+              item.actualExecTime != null ? item.actualExecTime : ''
+            }}</span>
           </div>
         </div>
       </div>
@@ -121,29 +138,42 @@ import {
   getWxTemplateListForJumpType,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
+import { formatDate, formatDateFull } from '@/utils/util'
 export default {
   components: {
     STable,
   },
   data() {
     return {
-      clickTtime: new Date().getTime(),
-      userId:"",
+      userId: '',
       recordList: [],
       timeStr: '',
       msgData: [],
       templateListWX: [],
       templateListSMS: [],
+      templateListQues: [],
       id: '', //表名ID
-      rangeValue: 1,
+      rangeValue: '2',
       record: {},
+      messageContentType: '',
       queryParams: {
-        style: '',
+        userId: '',
+        tenantId: '',
+        messageType: '',
+        messageContentType: '',
+        messageContentId: '',
+        hospitalCode: '',
+        executeTime: '2022-11-01',
       },
 
-       queryParamsRecord:{
-        userId:''
-       },
+      queryParamsRecord: {
+        userId: '',
+      },
+
+      visitTypeList: [
+        { code: 2, value: '微信消息' },
+        { code: 3, value: '短信消息' },
+      ],
 
       labelCol: {
         xs: { span: 24 },
@@ -154,7 +184,6 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
-      detailList: [],
       confirmLoading: false,
       form: this.$form.createForm(this),
       title: '添加任务',
@@ -169,8 +198,12 @@ export default {
     //初始化方法
     distribution(record) {
       this.visible = true
-    //   this.queryParamsRecord.userId = record.userId
-      this.queryParamsRecord.userId = '612'
+      this.reset()
+      this.confirmLoading = true
+      this.recordList = []
+      this.queryParams.userId = record.userId
+      this.queryParamsRecord.userId = record.userId
+      //   this.queryParamsRecord.userId = '612'
       this.qryExecuteRecordByUserIdOut()
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()
@@ -178,82 +211,183 @@ export default {
     },
 
     /**
+     *
+     * @param {随访方式选择}
+     *
+     */
+    onTypeSelect(messageType) {
+      // this.getWxTemplateListOut()
+      console.log('type', messageType)
+      if (messageType == 1) {
+        //电话消息不需要时间
+      } else if (messageType == 2 || messageType == 3) {
+        //微信短信消息需要时间
+        let date = formatDate(new Date()) + ' 08:00:00'
+        console.log('date', date)
+        let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
+        console.log('mom', mom)
+      }
+
+      if (messageType == 1) {
+        itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
+      } else if (messageType == 2) {
+        //查所有微信模版
+        this.msgData = JSON.parse(JSON.stringify(this.templateListWX))
+      } else if (messageType == 3) {
+        //查所有短信模版
+        this.msgData = JSON.parse(JSON.stringify(this.templateListSMS))
+      }
+    },
+
+    formatDateOut(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    /**
+     * 新增随访记录
+     */
+    addExecuteRecordOut() {
+      this.confirmLoading = true
+      addExecuteRecord(this.queryParams)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功!')
+            this.handleCancel()
+          } else {
+            this.$message.error('操作失败!')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
      * 查询历史随访记录
      */
-     qryExecuteRecordByUserIdOut(){
-        qryExecuteRecordByUserId(this.queryParamsRecord).then((res)=>{
-             if(res.code==0){
-                this.recordList = res.data
-             }
+    qryExecuteRecordByUserIdOut() {
+      qryExecuteRecordByUserId(this.queryParamsRecord)
+        .then((res) => {
+          if (res.code == 0) {
+            this.recordList = res.data
+          }
         })
-     },
-
-
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     /**
      * 获取随访方式
      */
     getmessageTypes() {
-      messageTypes().then((res) => {
-        if (res.code == 0) {
-          this.msgData = res.data
-        }
-      })
+      messageTypes()
+        .then((res) => {
+          if (res.code == 0) {
+            this.msgData = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     //全部的短信模板
     getSmsTemplateListForJumpTypeOut() {
-      getSmsTemplateListForJumpType(0).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 3)
-            this.$set(item, 'templateName', item.templateTitle)
-          })
-          this.templateListSMS = res.data
-        }
-      })
+      getSmsTemplateListForJumpType(0)
+        .then((res) => {
+          if (res.code == 0) {
+            this.templateListSMS = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     //全部的微信模板
     getWxTemplateListForJumpTypeOut() {
-      getWxTemplateListForJumpType(0).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            // this.$set(item, 'messageContentType', 4)
-          })
-          this.templateListWX = res.data
-        }
-      })
+      getWxTemplateListForJumpType(0)
+        .then((res) => {
+          if (res.code == 0) {
+            this.templateListWX = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     timeChangeStart(moment, time) {
       this.timeStr = time
-      console.log('s1', moment)
-      console.log('s2', time)
     },
 
     /**
-     * 全院  部分科室选择
+     * 立即发送  延时发送选择
      */
     radioChange(event) {
-      //全院
+      //立即发送
       if (event.target.value == 1) {
-        this.rangeValue = 1
-        //部分科室
+        this.rangeValue = '1'
+        //延时发送
       } else if (event.target.value == 2) {
-        this.rangeValue = 2
+        this.rangeValue = '2'
       }
     },
 
     /**
      * 提交
      */
-    commit() {},
+    commit() {
+      if (!this.queryParams.messageType) {
+        this.$message.error('请选择随访方式')
+        return
+      }
+
+      if (!this.messageContentType) {
+        this.$message.error('请选择随访内容')
+        return
+      }
+
+      if (this.rangeValue == '1') {
+        //立即发送的
+        let currentTime = formatDateFull(new Date().getTime())
+        this.queryParams.executeTime = currentTime
+      } else {
+        //延时发送的
+        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
+        this.queryParams.executeTime = dateStr
+      }
+      if (!this.queryParams.executeTime) {
+        this.$message.error('请选择发送时间')
+        return
+      }
+      let temp = this.msgData.find((item) => item.id == this.messageContentType) //通过ID查询 列表中的当前item
+      this.queryParams.hospitalCode = temp.hospitalCode
+      this.queryParams.tenantId = temp.tenantId
+      this.queryParams.messageContentId = temp.id
+      this.queryParams.messageContentType = this.queryParams.messageType == 2 ? 4 : 3
+      console.log('选择的时间：', this.queryParams)
+      this.addExecuteRecordOut()
+    },
 
     /**
      * 重置
      */
-    reset() {},
+    reset() {
+      this.messageContentType = ''
+      this.queryParams.executeTime = ''
+      this.timeStr = ''
+      this.queryParams.messageType = ''
+      this.queryParams.messageContentType = ''
+      this.queryParams.messageContentId = ''
+    },
 
     /**
      * 取消
