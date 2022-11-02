@@ -46,8 +46,8 @@
               label="所属应用"
               has-feedback
             >
-              <a-select style="width: 100%" placeholder="请选择应用分类" v-decorator="['application', {rules: [{ required: true, message: '请选择应用分类！' }]}]" >
-                <a-select-option v-for='(item,index) in appData' :key="index" :value="item.code" @click="changeApplication(item.code)">{{item.name}}</a-select-option>
+              <a-select style="width: 100%" placeholder="请选择应用分类" disabled v-decorator="['applicationId', {rules: [{ required: true, message: '请选择应用分类！' }]}]" >
+                <a-select-option v-for='(item) in appData' :key="item.id" :value="item.id" @click="changeApplication(item.id)">{{item.applicationName}}</a-select-option>
               </a-select>
             </a-form-item>
           </a-col>
@@ -272,6 +272,7 @@
 
 <script>
   import { getAppList } from '@/api/modular/system/appManage'
+  import { list } from '@/api/modular/system/sysapp'
   import { getMenuTree ,sysMenuAdd} from '@/api/modular/system/menuManage'
   import IconSelector from '@/components/IconSelector'
   import { sysDictTypeDropDown } from '@/api/modular/system/dictManage'
@@ -317,14 +318,23 @@
         linkRequired:true,
         linkDisabled:false,
         type:'',
+        currentItem: {},
         form: this.$form.createForm(this),
       }
     },
 
     methods: {
       //打开页面初始化
-      add (type) {
+      add (type, item) {
         this.visible = true
+
+        this.currentItem = item
+        setTimeout(() => {
+          this.form.setFieldsValue({
+            applicationId: item.id
+          })
+        })
+        this.changeApplication(item.id)
         //图标
         this.currentSelectedIcon = type
 
@@ -338,7 +348,7 @@
         this.form.getFieldDecorator('visible',{initialValue:true})
 
         //获取系统应用列表
-        this.getSysApplist();
+        this.getSysApplist()
         this.sysDictTypeDropDown()
       },
 
@@ -363,17 +373,18 @@
       },
 
       getSysApplist() {
-        // return getAppList().then((res) => {
-        //   if (res.success) {
-        //     this.appData=res.data
-        //   } else {
-        //     this.$message.warning(res.message)
-        //   }
-        // })
-        return this.appData=[{"createTime":"2020-03-25 19:07:00.000","createUser":"1265476890672672808","updateTime":"2020-07-12 00:17:28.000","updateUser":"1265476890672672808","id":"1","name":"系统应用","code":"system","active":"Y","status":0}]
+        list({
+          status: 1
+        }).then(res => {
+          if (res.code === 0){
+            this.appData = res.data || []
+          }else {
+            this.$message.error(res.message)
+          }
+        })
       },
       changeApplication(value){
-        getMenuTree({'application':value}).then((res) => {
+        getMenuTree({'applicationIds':value}).then((res) => {
           if (res.success) {
             this.form.resetFields(`pid`,[]);
             this.menuTreeData=[{
