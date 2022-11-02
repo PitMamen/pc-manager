@@ -76,8 +76,12 @@
           <div class="span-item-name">电话录音 :</div>
           <div class="div-voice-content"></div>
 
-          <img src="~@/assets/icons/dianhua2.png" style="width: 34px; height: auto" />
-          <img src="~@/assets/icons/jinji2.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
+          <img src="~@/assets/icons/dianhua2.png" @click="goCall(patientInfo.tel)" style="width: 34px; height: auto" />
+          <img
+            src="~@/assets/icons/jinji2.png"
+            @click="goCall(patientInfo.urgentTel)"
+            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+          />
         </div>
 
         <div style="height: 600px; margin-top: 10px; overflow-y: auto">
@@ -140,6 +144,8 @@ import {
   followPlanPhonePatientInfo,
   modifyFollowExecuteRecord,
   getUsersByDeptIdAndRole,
+  createSdkLoginToken,
+  addTencentPhoneTape,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
@@ -204,7 +210,6 @@ export default {
   },
 
   created() {
- 
     // var user = Vue.ls.get(TRUE_USER)
     self = this
     console.log('telSolve', this.record)
@@ -228,13 +233,84 @@ export default {
 
     //监听iframe发过来的消息
     window.addEventListener('message', self.submitFormFun)
+
+    createSdkLoginToken().then((res) => {
+      if (res.code == 0) {
+        this.injectTcccWebSDK(res.data.sdkURL)
+      }
+    })
   },
   destroyed() {
-    console.log("随访操作destroyed")
+    console.log('随访操作destroyed')
     window.removeEventListener('message', self.submitFormFun)
-    
   },
   methods: {
+    injectTcccWebSDK(sdkURL) {
+      return new Promise(function (resolve) {
+        const script = document.createElement('script')
+        script.setAttribute('crossorigin', 'anonymous')
+        script.src = sdkURL
+        document.body.appendChild(script)
+        script.addEventListener('load', function () {
+          // 加载JS SDK文件成功，此时可使用全局变量"tccc"
+          tccc.on(tccc.events.ready, function () {
+            /**
+             * Tccc SDK初始化成功，此时可调用外呼等功能。
+             * 注意：请确保只初始化一次SDK
+             * */
+            console.log('ddfff', '初始化成功')
+            resolve('初始化成功')
+            // this.$message.success('初始化成功')
+          })
+        })
+      })
+    },
+
+    goCall(phone) {
+      tccc.Call.startOutboundCall({
+        phoneNumber: phone, //修改为需要外呼的号码
+        // phoneNumber: '13524371592', //修改为需要外呼的号码
+        phoneDesc: '电话随访', //名称，将显示在坐席界面
+      })
+        .then(function (res) {
+          if (res.status !== 'success') {
+            throw res
+          }
+          console.log('goCall Success', res)
+          // 外呼成功，执行您的业务逻辑
+          this.addTencentPhoneTapeOut(res)
+        })
+        .catch(function (err) {
+          // 对错误进行处理
+          console.error('goCall Fail ee', err)
+          console.error('goCall Fail', err.errorMsg)
+          this.addTencentPhoneTapeOut(err)
+        })
+    },
+
+    addTencentPhoneTapeOut(res) {
+      let param = {}
+      if (res.status == 'success') {
+        param = {
+          followExecuteRecordId: this.record.id, //随访任务id
+          calleePhoneNumber: res.calleePhoneNumber, //被呼叫人
+          callerPhoneNumber: res.callerPhoneNumber, //呼叫人
+          sessionId: res.sessionId,
+          status: 1, //随访电话通话状态;1:成功2:失败
+        }
+      } else if (res.status == 'error') {
+        param = {
+          followExecuteRecordId: this.record.id,
+          status: 2,
+        }
+      }
+      addTencentPhoneTape(param).then((resIn) => {
+        if (resIn.code == 0) {
+          console.error('新增腾讯云呼叫电话记录成功', resIn)
+        }
+      })
+    },
+
     //监听iframe发过来的消息
     submitFormFun(e) {
       // e.data为子页面发送的数据
@@ -266,7 +342,7 @@ export default {
     followPlanPhoneCurrent(id) {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
-          res.data.actualDoctorUserId=''
+          res.data.actualDoctorUserId = ''
           this.followResultContent = res.data
           this.questionUrl = res.data.projectKeyUrlW
           console.log(this.followResultContent)
@@ -348,7 +424,6 @@ export default {
       modifyFollowExecuteRecord(postdata).then((res) => {
         if (res.code === 0) {
           this.$message.success('操作成功！')
-
           this.$emit('handleCancel', '')
         } else {
           this.$message.error(res.message)
