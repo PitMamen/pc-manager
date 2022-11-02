@@ -352,6 +352,30 @@ export function getRdiagnosisForId(id) {
 
 
 
+/**
+ * 新增随访记录
+ */
+export function addExecuteRecord(data) {
+  return axios({
+    url:'/follow-api/tbFollowExecuteRecord/addExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 根据Userid 查询随访历史记录
+ */
+export function qryExecuteRecordByUserId(data){
+  return axios({
+   url:'/follow-api/tbFollowExecuteRecord/qryExecuteRecordByUserId',
+   method: 'post',
+   data: data,
+  })
+}
+
+
 
 
 
@@ -1558,13 +1582,13 @@ export function changeStatusSmsTemplate(data) {
  * 
  * 患者管理列表分页查询
  */
- export function qryMetaDataByPage(data){
+export function qryMetaDataByPage(data) {
   return axios({
-   url:'/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
-   method:'post',
-   data:data,
+    url: '/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
+    method: 'post',
+    data: data,
   })
- }
+}
 
 
 
@@ -2062,13 +2086,13 @@ export function getSmsTemplateById(id) {
 export function getUsersByDeptIdAndRole(data) {
   return axios({
     url: '/account-api/accountInfo/getUsersByDeptIdAndRole',
-    method: 'get',
-    params: data,
+    method: 'post',
+    data: data,
   })
 }
 
 /**
- *accountInfo/getUsersByDeptIdAndRole 新增/修改方案
+ *follow/saveFollow 新增/修改方案
  */
 export function saveFollow(data) {
   return axios({
@@ -2111,4 +2135,86 @@ export function getDetail(data) {
   })
 }
 
+/**
+ * 本次随访，随访结果
+ */
+ export function followPlanPhoneCurrent(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/current/'+id,
+    method: 'post'
+  })
+}
+/**
+ * 本次随访，随访名单信息
+ */
+ export function followPlanPhonePatientInfo(userId) {
+  return axios({
+    url: '/follow-api/followPlanPhone/getPatientInfo/'+userId,
+    method: 'post'
+  })
+}
 
+/**
+ * /tbFollowExecuteRecord/qryPhoneFollowTaskStatistics 查询电话随访任务-统计
+ */
+export function qryPhoneFollowTaskStatistics(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/qryPhoneFollowTaskStatistics',
+    method: 'get',
+    params: data,
+
+  })
+}
+
+/**
+ * 执行随访
+ */
+ export function modifyFollowExecuteRecord(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/modifyFollowExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /tbFollowExecuteRecord/qryPhoneFollowTask 查询电话随访任务
+ */
+export function qryPhoneFollowTask(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/qryPhoneFollowTask',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 随访人历史随访列表
+ */
+ export function followPlanPhoneHistory(userId) {
+  return axios({
+    url: '/follow-api/followPlanPhone/history/'+userId,
+    method: 'post'
+  })
+}
+
+/**
+ * 随访历史记录详情(页面中间部分)
+ */
+ export function followPlanPhonehistoryDetail(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/historyDetail/'+id,
+    method: 'post'
+  })
+}
+
+/**
+ * 历史随访结果(类型不同展示不一样)
+ */
+ export function historyFollowResult(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/historyFollowResult/'+id,
+    method: 'post'
+  })
+}

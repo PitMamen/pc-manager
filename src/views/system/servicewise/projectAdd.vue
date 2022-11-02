@@ -287,13 +287,13 @@
           <div class="mission-bottom">
             <div class="mission-bottom-left">
               <a-checkbox
-                v-if="itemTask.messageType == 2 || itemTask.messageType == 3"
+                v-if="(itemTask.messageType == 2 || itemTask.messageType == 3) && itemTask.taskType == '1'"
                 @click="goCheck(indexTask)"
                 :checked="itemTask.isChecked"
                 style="margin-left: 1%"
               />
               <span
-                v-if="itemTask.messageType == 2 || itemTask.messageType == 3"
+                v-if="(itemTask.messageType == 2 || itemTask.messageType == 3) && itemTask.taskType == '1'"
                 class="span-titl"
                 style="margin-left: 1%"
                 >电话跟进</span
@@ -334,6 +334,17 @@
 
                 <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
+
+              <span class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
+              <a-input-number
+                style="display: inline-block; margin-left: 1%; width: 96px"
+                v-model="itemTask.overdueTimeUnit"
+                :min="0"
+                :max="10000"
+                :maxLength="30"
+                allow-clear
+                placeholder="请输入数量"
+              />
             </div>
 
             <div class="end-btn-task" style="width: 20%">
@@ -663,10 +674,10 @@ export default {
      * 选模版前先选随访方式
      */
     onTemFocus(indexTask, itemTask) {
-      if (!this.projectData.basePlan.executeDepartment) {
-        this.$message.warn('请先选择执行科室')
-        return
-      }
+      // if (!this.projectData.basePlan.executeDepartment) {
+      //   this.$message.warn('请先选择执行科室')
+      //   return
+      // }
 
       if (!this.projectData.tasks[indexTask].messageType) {
         this.$message.warn('请先选择随访方式')
@@ -754,7 +765,7 @@ export default {
     },
 
     addMission() {
-      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1 })
+      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1, overdueTimeUnit: 24 })
     },
 
     /**
@@ -817,7 +828,7 @@ export default {
       let param = {
         pageNo: 1,
         pageSize: 100,
-        typeName: '',//获取全量问卷，不根据科室获取
+        typeName: '', //获取全量问卷，不根据科室获取
         // typeName: chooseDept.departmentName,
         // typeName: this.projectData.basePlan.executeDepartment,
       }
@@ -981,11 +992,13 @@ export default {
     // },
 
     getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: 5 }).then((res) => {
-        if (res.code == 0) {
-          this.deptUsers = res.data.deptUsers
+      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5] }).then(
+        (res) => {
+          if (res.code == 0) {
+            this.deptUsers = res.data.deptUsers
+          }
         }
-      })
+      )
     },
 
     submitData() {
@@ -1111,6 +1124,10 @@ export default {
             this.$message.error('请添加人员分配')
             return
           }
+        }
+
+        //处理逾期时间
+        if (item.overdueTimeUnit) {
         }
 
         delete item.everyData

@@ -54,13 +54,15 @@
       </span>
 
       <span style="inline-block" slot="action" slot-scope="text, record">
-        <a >健康档案</a>
+        <a  >健康档案</a>
         <a-divider type="vertical" />
-      <a >随访管理</a>
+      <a  @click="$refs.visitManage.distribution(record)" >随访管理</a>
       </span>
 
     
     </s-table>
+
+    <visit-Manage ref="visitManage" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -72,14 +74,14 @@ import {
   qryMetaDataByPage,
   getDeptsPersonal,
   getDepts,
-  qryFollowPlan,
-  updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
+import visitManage from './visitManage'
 import Vue from 'vue'
 export default {
   components: {
     STable,
+    visitManage,
   },
   data() {
     return {
@@ -228,10 +230,10 @@ export default {
       console.log('index=' + index)
       if (index == undefined) {
         this.queryParams.depts = []
-        // this.queryParams.departmentName= ''
+        // this.queryParams.departmentName= '' 
       } else {
         // debugger
-        console.log("啪啪啪啪：",this.originData[index].departmentId)
+        console.log("11111:",this.originData[index].departmentId)
         this.queryParams.depts.push(this.originData[index].departmentId)
         // this.queryParams.depts = this.originData[index].departmentId
         // console.log("ssss:",this.queryParams.depts)

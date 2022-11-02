@@ -1,0 +1,627 @@
+<template>
+  <a-modal
+    :title="title"
+    :width="1000"
+    :height="650"
+    :visible="visible"
+    @ok="handleSubmit"
+    @cancel="handleCancel"
+    :confirmLoading="confirmLoading"
+  >
+    <div class="div-service-user">
+      <!-- 左边 -->
+      <div class="div-totalleft">
+        <div class="div-totaltopleft">
+          <span class="span-item-name" style="margin-left: 10px"> 添加任务</span>
+        </div>
+
+        <div class="display-item" style="margin-left:10px;margin-top: 10px;">
+          <span style="margin-top: 10px"> 随访方式:</span>
+          <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
+            <a-select
+              style="width: 120px"
+              allow-clear
+              v-model="queryParams.messageType"
+              @select="onTypeSelect(queryParams.messageType)"
+              placeholder="微信随访/短信随访"
+            >
+              <a-select-option v-for="(item, index) in visitTypeList" :key="index" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </div>
+
+        <!--  -->
+        <div class="display-item" style="margin-top: 10px;margin-left:10px">
+          <span style="margin-top: 10px"> 随访内容:</span>
+          <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
+            <a-select style="width: 120px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
+              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
+                item.templateTitle
+              }}</a-select-option>
+            </a-select>
+          </a-form-item>
+        </div>
+
+        <!--  -->
+        <div class="display-item" style="margin-top: 10px;margin-left:10px">
+          <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
+          <a-radio-group
+            name="radioGroup"
+            style="width: 50%; margin-top: 10px"
+            @change="radioChange"
+            v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
+          >
+            <a-radio class="btn-add-plan" :value="1"> 立即发送 </a-radio>
+            <a-radio :value="2"> 延时发送 </a-radio>
+          </a-radio-group>
+        </div>
+
+        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px;width: 100%;">
+          <!-- <a-form-item> -->
+            <a-date-picker v-model="queryParams.executeTime" style="margin-top: 27px;margin-left:10px" format="YYYY-MM-DD" />
+          <!-- </a-form-item> -->
+
+          <!-- <div class="display-item;" style="margin-top: 5px"> -->
+            <a-time-picker
+              style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px"
+              @change="timeChangeStart"
+              :default-value="moment('00:00', 'HH:mm')"
+              format="HH:mm"
+            />
+          <!-- </div> -->
+        </div>
+
+        <div class="display-item" style="margin-top: 20px;margin-left:10px">
+          <a-button style="margin-left: 1%" type="primary" @click="commit()">提交</a-button>
+          <a-button style="margin-left: 20px" type="default" @click="reset()">重置</a-button>
+        </div>
+      </div>
+
+      <!-- ri -->
+      <div class="card-right-user" style="overflow-y: auto; height: 400px">
+        <div class="div-totaltop">
+          <span class="span-item-name" style="margin-left: 20px"> 随访历史任务</span>
+        </div>
+
+        <div class="div-total1" v-for="(item, index) in recordList" :key="index">
+          <div class="div-line-wrap" style="margin-left: 30px">
+            <span class="span-item-name"> 随访方式 :</span>
+            <span class="span-item-value" style="margin-left: 30px"
+              >{{ item.messageType != null ? item.messageType.description : '' }}
+            </span>
+
+            <span class="span-item-name" style="margin-left: 90px">
+              状态 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
+            >
+
+            <span class="span-item-value" style="margin-left: 15%">{{
+              item.taskBizStatus != null ? item.taskBizStatus.description : '-'
+            }}</span>
+          </div>
+
+          <!--  -->
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+            <span class="span-item-name"> 随访内容 :</span>
+            <span class="span-item-value" style="margin-left: 30px"
+              >{{ item.messageContentType != null ? item.messageContentType.description : '-' }}
+            </span>
+
+            <span class="span-item-name" style="margin-left: 90px"> 是否逾期 :</span>
+
+            <span class="span-item-value" style="margin-left: 15%">{{
+              item.overdueStatus != null ? item.overdueStatus.description : '-'
+            }}</span>
+          </div>
+
+          <!--  -->
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+            <span class="span-item-name"> 计划日期 :</span>
+            <span class="span-item-value" style="margin-left: 30px"
+              >{{ item.executeTime != null ? item.executeTime : '' }}
+            </span>
+
+            <span class="span-item-name" style="margin-left: 30px"> 完成日期 :</span>
+
+            <span class="span-item-value" style="margin-left: 15%">{{
+              item.actualExecTime != null ? item.actualExecTime : ''
+            }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </a-modal>
+</template>
+  
+  
+  
+  <script>
+import moment from 'moment'
+import {
+  addExecuteRecord,
+  qryExecuteRecordByUserId,
+  messageTypes,
+  getSmsTemplateListForJumpType,
+  getWxTemplateListForJumpType,
+} from '@/api/modular/system/posManage'
+import { STable } from '@/components'
+import { formatDate, formatDateFull } from '@/utils/util'
+export default {
+  components: {
+    STable,
+  },
+  data() {
+    return {
+      userId: '',
+      recordList: [],
+      timeStr: '',
+      msgData: [],
+      templateListWX: [],
+      templateListSMS: [],
+      templateListQues: [],
+      id: '', //表名ID
+      rangeValue: '2',
+      record: {},
+      messageContentType: '',
+      queryParams: {
+        userId: '',
+        tenantId: '',
+        messageType: '',
+        messageContentType: '',
+        messageContentId: '',
+        hospitalCode: '',
+        executeTime: '2022-11-01',
+      },
+
+      queryParamsRecord: {
+        userId: '',
+      },
+
+      visitTypeList: [
+        { code: 2, value: '微信消息' },
+        { code: 3, value: '短信消息' },
+      ],
+
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 15 },
+      },
+      visible: false,
+      confirmLoading: false,
+      form: this.$form.createForm(this),
+      title: '添加任务',
+    }
+  },
+
+  watch: {
+    timeStr() {},
+  },
+  methods: {
+    moment,
+    //初始化方法
+    distribution(record) {
+      this.visible = true
+      this.reset()
+      this.confirmLoading = true
+      this.recordList = []
+      this.queryParams.userId = record.userId
+      this.queryParamsRecord.userId = record.userId
+      //   this.queryParamsRecord.userId = '612'
+      this.qryExecuteRecordByUserIdOut()
+      this.getmessageTypes()
+      this.getSmsTemplateListForJumpTypeOut()
+      this.getWxTemplateListForJumpTypeOut()
+    },
+
+    /**
+     *
+     * @param {随访方式选择}
+     *
+     */
+    onTypeSelect(messageType) {
+      // this.getWxTemplateListOut()
+      console.log('type', messageType)
+      if (messageType == 1) {
+        //电话消息不需要时间
+      } else if (messageType == 2 || messageType == 3) {
+        //微信短信消息需要时间
+        let date = formatDate(new Date()) + ' 08:00:00'
+        console.log('date', date)
+        let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
+        console.log('mom', mom)
+      }
+
+      if (messageType == 1) {
+        itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
+      } else if (messageType == 2) {
+        //查所有微信模版
+        this.msgData = JSON.parse(JSON.stringify(this.templateListWX))
+      } else if (messageType == 3) {
+        //查所有短信模版
+        this.msgData = JSON.parse(JSON.stringify(this.templateListSMS))
+      }
+    },
+
+    formatDateOut(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    /**
+     * 新增随访记录
+     */
+    addExecuteRecordOut() {
+      this.confirmLoading = true
+      addExecuteRecord(this.queryParams)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功!')
+            this.handleCancel()
+          } else {
+            this.$message.error('操作失败!')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 查询历史随访记录
+     */
+    qryExecuteRecordByUserIdOut() {
+      qryExecuteRecordByUserId(this.queryParamsRecord)
+        .then((res) => {
+          if (res.code == 0) {
+            this.recordList = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取随访方式
+     */
+    getmessageTypes() {
+      messageTypes()
+        .then((res) => {
+          if (res.code == 0) {
+            this.msgData = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    //全部的短信模板
+    getSmsTemplateListForJumpTypeOut() {
+      getSmsTemplateListForJumpType(0)
+        .then((res) => {
+          if (res.code == 0) {
+            this.templateListSMS = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    //全部的微信模板
+    getWxTemplateListForJumpTypeOut() {
+      getWxTemplateListForJumpType(0)
+        .then((res) => {
+          if (res.code == 0) {
+            this.templateListWX = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    timeChangeStart(moment, time) {
+      this.timeStr = time
+    },
+
+    /**
+     * 立即发送  延时发送选择
+     */
+    radioChange(event) {
+      //立即发送
+      if (event.target.value == 1) {
+        this.rangeValue = '1'
+        //延时发送
+      } else if (event.target.value == 2) {
+        this.rangeValue = '2'
+      }
+    },
+
+    /**
+     * 提交
+     */
+    commit() {
+      if (!this.queryParams.messageType) {
+        this.$message.error('请选择随访方式')
+        return
+      }
+
+      if (!this.messageContentType) {
+        this.$message.error('请选择随访内容')
+        return
+      }
+
+      if (this.rangeValue == '1') {
+        //立即发送的
+        let currentTime = formatDateFull(new Date().getTime())
+        this.queryParams.executeTime = currentTime
+      } else {
+        //延时发送的
+        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
+        this.queryParams.executeTime = dateStr
+      }
+      if (this.queryParams.executeTime.includes('Invalid date')) {
+        this.$message.error('请选择发送时间')
+        return
+      }
+      let temp = this.msgData.find((item) => item.id == this.messageContentType) //通过ID查询 列表中的当前item
+      this.queryParams.hospitalCode = temp.hospitalCode
+      this.queryParams.tenantId = temp.tenantId
+      this.queryParams.messageContentId = temp.id
+      this.queryParams.messageContentType = this.queryParams.messageType == 2 ? 4 : 3
+      console.log('选择的时间：', this.queryParams)
+      this.addExecuteRecordOut()
+    },
+
+    /**
+     * 重置
+     */
+    reset() {
+      this.messageContentType = ''
+      this.queryParams.executeTime = ''
+      this.timeStr = ''
+      this.queryParams.messageType = ''
+      this.queryParams.messageContentType = ''
+      this.queryParams.messageContentId = ''
+    },
+
+    /**
+     * 取消
+     */
+    handleCancel() {
+      this.visible = false
+    },
+
+    /**
+     * 提交
+     */
+    handleSubmit() {
+      this.visible = false
+    },
+  },
+}
+</script>
+  
+  <style lang="less">
+.table-page-wrapper {
+  .ant-form-inline {
+    .ant-form-item {
+      display: flex;
+      margin-bottom: 24px;
+      margin-right: 0;
+
+      .ant-form-item-control-wrapper {
+        flex: 1 1;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      > .ant-form-item-label {
+        line-height: 32px;
+        padding-right: 8px;
+        width: auto;
+      }
+      .ant-form-item-control {
+        height: 32px;
+        line-height: 32px;
+      }
+    }
+  }
+
+  .table-page-search-submitButtons {
+    display: block;
+    margin-bottom: 24px;
+    white-space: nowrap;
+  }
+}
+</style>
+<style lang="less">
+.div-service-user {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
+
+  .div-total1 {
+    height: 100px;
+    width: 90%;
+    margin-left: 20px;
+    margin-right: 60px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+  .div-totalleft {
+    height: 100%;
+    width: 50%;
+    margin-left: 10px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+
+  .div-totaltopleft{
+    height: 40px;
+    width: 100%;
+    margin-right: 60px;
+    margin-top: -20px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+
+
+  .div-totaltop {
+    height: 40px;
+    width: 90%;
+    margin-left: 20px;
+    margin-right: 60px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+  .div-service-left-user {
+    background-color: white;
+    padding: 2% 3%;
+    float: left;
+    height: 100%;
+    min-height: 300px;
+    border-right: 1px dashed #e6e6e6;
+    width: 50%;
+    overflow: hidden;
+
+    .div-divider {
+      width: 100%;
+      background-color: #e6e6e6;
+      height: 1px;
+    }
+
+    .p-part-title {
+      height: 18px;
+      font-size: 18px;
+      text-align: left;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .div-part {
+      overflow: hidden;
+      width: 100%;
+      padding-left: 5%;
+      height: 10%;
+
+      .checked {
+        color: #1890ff !important;
+      }
+
+      .p-name {
+        margin-top: 3.5%;
+        display: block;
+        height: 100%;
+        padding-left: 1%;
+        color: #000;
+        font-size: 14px;
+        text-align: left|center;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  .display-item {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: -20px;
+  }
+
+  .card-right-user {
+    overflow: hidden;
+    width: 85% !important;
+
+    .table-operator {
+      margin-bottom: 18px;
+    }
+    button {
+      margin-right: 8px;
+    }
+
+    .title {
+      background: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
+    }
+  }
+}
+</style>
