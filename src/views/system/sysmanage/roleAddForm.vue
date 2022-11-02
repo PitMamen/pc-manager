@@ -29,30 +29,53 @@
           <a-switch @change="isOpenChange" :checked="isOpen" />
         </a-form-item>
 
-        <a-form-item label="菜单权限" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <!-- v-decorator="['treeState', { rules: [{ required: true, message: '请选择菜单权限！' }] }]" -->
-          <a-radio-group name="radioGroup" @change="radioChange" :default-value="2">
-            <a-radio :value="1"> 全选 </a-radio>
-            <a-radio :value="2" style="width: 100px"> 全不选 </a-radio>
-            <!-- <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio> -->
-          </a-radio-group>
-        </a-form-item>
+        <div class="content">
+          <div class="left">
+            <a-form-item label="角色权限" :labelCol="labelCol2" :wrapperCol="wrapperCol2" has-feedback>
+              <div
+                class="item"
+                v-for="item in list"
+                :key="item.id"
+                :class="{active: item.id === currentItem.id}"
+                @click="itemClick(item)"
+              >
+                <a-checkbox
+                  class="check"
+                  :checked="(item.checkedKeys||[]).length > 0"
+                  @change="onItemChange"
+                ></a-checkbox>
+                <span class="name">{{ item.applicationName }}</span>
+              </div>
+            </a-form-item>
+          </div>
+          <div
+            class="right"
+            v-for="item in list"
+            :key="item.id"
+            v-show="item.id === currentItem.id"
+          >
+            <a-form-item label="菜单权限" :labelCol="labelCol2" :wrapperCol="wrapperCol2" has-feedback>
+              <!-- v-decorator="['treeState', { rules: [{ required: true, message: '请选择菜单权限！' }] }]" -->
+              <a-radio-group name="radioGroup" @change="radioChange" :default-value="2">
+                <a-radio :value="1"> 全选 </a-radio>
+                <a-radio :value="2" style="width: 100px"> 全不选 </a-radio>
+                <!-- <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio> -->
+              </a-radio-group>
+            </a-form-item>
 
-        <a-form-item style="margin-left: 28%" label="" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-          <!-- :default-expanded-keys="['0-0-0', '0-0-1']"
-            :default-selected-keys="['0-0-0', '0-0-1']"
-            :default-checked-keys="['0-0-0', '0-0-1']" -->
-          <!-- :replace-fields="replaceFields" -->
-          <!-- :checked-keys="checkedKeys" -->
-          <a-tree checkable v-model="checkedKeys" :tree-data="treeData" @select="onSelect" @check="onCheck" />
-        </a-form-item>
+            <a-form-item style="margin-left: 85px;" label="" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+              <a-tree checkable v-model="item.checkedKeys" :tree-data="item.treeData" @select="onSelect" @check="onCheck" />
+            </a-form-item>
+          </div>
+        </div>
+
       </a-form>
     </a-spin>
   </a-modal>
 </template>
 
-
 <script>
+import { list } from '@/api/modular/system/sysapp'
 import { getMenuTree, addRole } from '@/api/modular/system/posManage'
 
 export default {
@@ -65,6 +88,14 @@ export default {
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 15 },
+      },
+      labelCol2: {
+        span: 5,
+        offset:0
+      },
+      wrapperCol2: {
+        span: 19,
+        offset:0
       },
       grantMenuIdList: [],
       replaceFields: {
@@ -81,6 +112,9 @@ export default {
       confirmLoading: false,
       treeData: [],
 
+      list: [],
+      currentItem: {},
+
       form: this.$form.createForm(this),
     }
   },
@@ -88,14 +122,70 @@ export default {
   created() {},
 
   methods: {
+    //初始化方法
+    add() {
+      this.list = []
+      this.allKeys = []
+      this.halfKeys = []
+      this.treeData = []
+      this.visible = true
+      this.checkedKeys = []
+      this.getList()
+    },
+    getList() {
+      list({
+        status: 1
+      }).then(res => {
+        if (res.code === 0){
+          this.list = res.data || []
+          this.currentItem = this.list[0] || {}
+          if (this.list.length > 0){
+            this.confirmLoading = true
+            this.list.forEach((item, index) => {
+              getMenuTree({
+                applicationIds: item.id
+              }).then(res2 => {
+                if (res2.code === 0) {
+                  res2.data = res2.data || []
+                  const allKeys = []
+                  const treeData = this.transfromData(res2.data, allKeys)
+                  this.$set(item, 'halfKeys', [])
+                  this.$set(item, 'checkedKeys', [])
+                  this.$set(item, 'allKeys', allKeys)
+                  this.$set(item, 'treeData', treeData)
+                } else {
+                  this.$message.error(res2.message)
+                }
+              }).finally(() => {
+                if (index === this.list.length - 1){
+                  this.confirmLoading = false
+                }
+              })
+            })
+          }
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    itemClick(item) {
+      this.currentItem = item
+    },
+    onItemChange(e) {
+      if (e.target.checked){
+        this.$set(this.currentItem, 'checkedKeys', this.currentItem.allKeys)
+      }else {
+        this.$set(this.currentItem, 'checkedKeys', [])
+      }
+    },
+
     onSelect(selectedKeys, info) {
       console.log('selected', selectedKeys, info)
     },
     onCheck(checkedKeys, info) {
       console.log('onCheck', checkedKeys, info)
-      this.halfKeys = info.halfCheckedKeys
-      // this.checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //将父节点拼接到子节点
-      console.log('onCheck2', this.checkedKeys, info)
+      this.$set(this.currentItem, 'halfKeys', info.halfCheckedKeys)
+      console.log('onCheck2', this.currentItem.checkedKeys, info)
     },
     isOpenChange() {
       this.isOpen = this.isOpen ? false : true
@@ -104,38 +194,24 @@ export default {
     radioChange(event) {
       if (event.target.value == 1) {
         //全选
-        // this.checkedKeys = JSON.parse(JSON.stringify(this.allKeys))
-        this.checkedKeys = this.allKeys
+        this.$set(this.currentItem, 'checkedKeys', this.currentItem.allKeys)
       } else if (event.target.value == 2) {
         //全不选
-        this.checkedKeys = []
+        this.$set(this.currentItem, 'checkedKeys', [])
       }
     },
-    //初始化方法
-    add() {
-      this.treeData = []
-      this.visible = true
-      this.checkedKeys = []
-      getMenuTree({}).then((res) => {
-        if (res.code == 0) {
-          this.treeData = this.transfromData(res.data)
-        } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
-        }
-      })
-    },
 
-    transfromData(data) {
+    transfromData(data, allKeys) {
       for (let index = 0; index < data.length; index++) {
         data[index].name = data[index].title
         data[index].key = data[index].id
         // this.$set(data[index], 'name', data[index].title)
         // this.$set(data[index], 'key', data[index].id)
         // this.$set(data[index], 'checked', true)
-        this.allKeys.push(data[index].key)
+        allKeys.push(data[index].key)
 
         if (data[index].children && data[index].children.length > 0) {
-          this.transfromData(data[index].children)
+          this.transfromData(data[index].children, allKeys)
         }
       }
       return data
@@ -148,8 +224,15 @@ export default {
       this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
+          this.halfKeys = []
+          this.checkedKeys = []
+          this.list.forEach(item => {
+            this.halfKeys = this.halfKeys.concat(item.halfKeys || [])
+            this.checkedKeys = this.checkedKeys.concat(item.checkedKeys || [])
+          })
           if (this.checkedKeys.length == 0) {
             this.$message.error('请选择菜单权限')
+            this.confirmLoading = false
             return
           }
           let state = this.isOpen ? 1 : 0
@@ -279,3 +362,37 @@ export default {
   },
 }
 </script>
+
+<style lang="less" scoped>
+.content {
+  overflow: hidden;
+  .left {
+    float: left;
+    width: 300px;
+    margin-left: 115px;
+    overflow-y: auto;
+    .item {
+      padding: 7px 0;
+      font-size: 12px;
+      color: #000000;
+      line-height: 21px;
+      text-align: left;
+      cursor: pointer;
+      &:first-child {
+        margin-top: 2px;
+      }
+      &.active {
+        color: #1890ff;
+      }
+      .name {
+        margin-left: 5px;
+      }
+    }
+  }
+  .right {
+    float: right;
+    width: calc(100% - 415px);
+    border-left: 1px solid #e8e8e8;
+  }
+}
+</style>
