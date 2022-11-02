@@ -8,6 +8,8 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
+
+
     <div class="div-service-user">
       <!-- 左边 -->
       <div class="div-totalleft">
@@ -105,7 +107,7 @@
           <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
             <span class="span-item-name"> 随访内容 :</span>
             <span class="span-item-value" style="margin-left: 30px"
-              >{{ item.messageContentType != null ? item.messageContentType.description : '-' }}
+              >{{ item.templateTitle != null ? item.templateTitle : '-' }}
             </span>
 
             <span class="span-item-name" style="margin-left: 90px"> 是否逾期 :</span>
@@ -125,7 +127,7 @@
             <span class="span-item-name" style="margin-left: 30px"> 完成日期 :</span>
 
             <span class="span-item-value" style="margin-left: 15%">{{
-              item.actualExecTime != null ? item.actualExecTime : ''
+                item.taskType.value==1?item.userFollowTime:item.actualExecTime
             }}</span>
           </div>
         </div>
