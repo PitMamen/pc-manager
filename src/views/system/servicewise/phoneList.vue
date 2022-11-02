@@ -89,7 +89,7 @@
           <a-col :md="4" :sm="24">
             <!-- <a-form-item label="状态:"> -->
             <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-            <a-button type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
+            <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
             <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
             <!-- </a-form-item> -->
           </a-col>
@@ -724,6 +724,34 @@ export default {
   },
 
   methods: {
+    //点击查询时 重置数量
+    goSearch() {
+      this.$refs.table.refresh(true)
+      qryPhoneFollowTaskStatistics().then((res) => {
+        if (res.code == 0) {
+          let treeDataTemp = res.data
+          for (let index = 0; index < this.treeData.length; index++) {
+            if (!isReset) {
+              this.treeData[index].title = treeDataTemp[index].title + '（' + treeDataTemp[index].count + '）'
+            }
+
+            if (this.treeData[index].children && this.treeData[index].children.length > 0) {
+              for (let indexChild = 0; indexChild < this.treeData.children.length; indexChild++) {
+                this.$set(
+                  this.treeData[index].children[indexChild],
+                  'title',
+                  treeDataTemp[index].children[indexChild].title +
+                    '（' +
+                    treeDataTemp[index].children[indexChild].count +
+                    '）'
+                )
+              }
+            }
+          }
+        }
+      })
+    },
+
     onHideAndSee(itemOut, indexOut) {
       itemOut.isVisible = !itemOut.isVisible
       itemOut.outIcon = itemOut.isVisible ? 'caret-down' : 'caret-right'
