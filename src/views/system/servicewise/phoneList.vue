@@ -927,7 +927,7 @@ export default {
      * 查看
      */
     goLook(record) {
-      this.$refs.followModel.doDeal(record)
+      this.$refs.followModel.doInfo(record)
     },
 
     /**
