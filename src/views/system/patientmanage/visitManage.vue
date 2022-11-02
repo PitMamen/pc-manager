@@ -10,8 +10,12 @@
   >
     <div class="div-service-user">
       <!-- 左边 -->
-      <div class="div-service-left-user">
-        <div class="display-item">
+      <div class="div-totalleft">
+        <div class="div-totaltopleft">
+          <span class="span-item-name" style="margin-left: 10px"> 添加任务</span>
+        </div>
+
+        <div class="display-item" style="margin-left:10px;margin-top: 10px;">
           <span style="margin-top: 10px"> 随访方式:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select
@@ -29,7 +33,7 @@
         </div>
 
         <!--  -->
-        <div class="display-item" style="margin-top: 10px">
+        <div class="display-item" style="margin-top: 10px;margin-left:10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select style="width: 120px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
@@ -41,7 +45,7 @@
         </div>
 
         <!--  -->
-        <div class="display-item" style="margin-top: 10px">
+        <div class="display-item" style="margin-top: 10px;margin-left:10px">
           <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
           <a-radio-group
             name="radioGroup"
@@ -54,22 +58,22 @@
           </a-radio-group>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item" style="margin-top: 2px">
-          <a-form-item>
-            <a-date-picker v-model="queryParams.executeTime" style="margin-top: 27px" format="YYYY-MM-DD" />
-          </a-form-item>
+        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px;width: 100%;">
+          <!-- <a-form-item> -->
+            <a-date-picker v-model="queryParams.executeTime" style="margin-top: 27px;margin-left:10px" format="YYYY-MM-DD" />
+          <!-- </a-form-item> -->
 
-          <div class="display-item" style="margin-top: 5px">
+          <!-- <div class="display-item;" style="margin-top: 5px"> -->
             <a-time-picker
-              style="margin-left: 2%; width: 50%; margin: 20px"
+              style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px"
               @change="timeChangeStart"
               :default-value="moment('00:00', 'HH:mm')"
               format="HH:mm"
             />
-          </div>
+          <!-- </div> -->
         </div>
 
-        <div class="display-item" style="margin-top: 20px">
+        <div class="display-item" style="margin-top: 20px;margin-left:10px">
           <a-button style="margin-left: 1%" type="primary" @click="commit()">提交</a-button>
           <a-button style="margin-left: 20px" type="default" @click="reset()">重置</a-button>
         </div>
@@ -77,6 +81,10 @@
 
       <!-- ri -->
       <div class="card-right-user" style="overflow-y: auto; height: 400px">
+        <div class="div-totaltop">
+          <span class="span-item-name" style="margin-left: 20px"> 随访历史任务</span>
+        </div>
+
         <div class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
@@ -364,7 +372,7 @@ export default {
         let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
         this.queryParams.executeTime = dateStr
       }
-      if (!this.queryParams.executeTime) {
+      if (this.queryParams.executeTime.includes('Invalid date')) {
         this.$message.error('请选择发送时间')
         return
       }
@@ -450,7 +458,78 @@ export default {
   .div-total1 {
     height: 100px;
     width: 90%;
-    margin: 20px;
+    margin-left: 20px;
+    margin-right: 60px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+  .div-totalleft {
+    height: 100%;
+    width: 50%;
+    margin-left: 10px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+
+  .div-totaltopleft{
+    height: 40px;
+    width: 100%;
+    margin-right: 60px;
+    margin-top: -20px;
+    //   background-color: #f0f0f2;
+    background-color: #ffffff;
+    border: 1px solid #e6e6e6;
+    border-radius: 5px;
+    padding: 2% 0;
+    overflow: hidden;
+
+    .div-item {
+      float: left;
+      width: 20%;
+
+      p {
+        margin: 0 auto;
+        text-align: center;
+      }
+    }
+  }
+
+
+
+  .div-totaltop {
+    height: 40px;
+    width: 90%;
+    margin-left: 20px;
     margin-right: 60px;
     //   background-color: #f0f0f2;
     background-color: #ffffff;
