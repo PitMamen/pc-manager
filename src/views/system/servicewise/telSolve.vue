@@ -349,7 +349,7 @@ export default {
         if (res.code === 0) {
           this.$message.success('操作成功！')
 
-          this.$emit('handleCancel',  this.followResultContent.actualDoctorUserId)
+          this.$emit('handleCancel', '')
         } else {
           this.$message.error(res.message)
         }

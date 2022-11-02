@@ -54,7 +54,8 @@ export default {
   components: {
     telSolve,
     histroySolve,
-    telDetail
+    telDetail,
+   
   },
 
   data() {
@@ -63,6 +64,7 @@ export default {
       activeKey: '3',
       visible: false,
       record: Object,
+     
     }
   },
   mounted() {},
@@ -86,7 +88,6 @@ export default {
 
     handleCancel() {
       this.visible = false
-      
     },
   },
 }
