@@ -1126,6 +1126,11 @@ export default {
           }
         }
 
+        //后期加的  如果是微信或者电话随访，勾选了这个字段就传1
+        if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
+          this.$set(item, 'overdueFollowType', 1)
+        }
+
         //处理逾期时间
         if (item.overdueTimeUnit) {
         }

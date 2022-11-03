@@ -31,26 +31,31 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访状态 :</span>
-          <a-select placeholder="请选择" :value="historyResult.execStatus.description" disabled>
+          <a-select placeholder="请选择" :value="historyResult.taskBizStatus.description" disabled>
             disabled>
-            <a-select-option :value="historyResult.execStatus.description" disabled>{{
-              historyResult.execStatus.description
+            <a-select-option :value="historyResult.taskBizStatus.description" disabled>{{
+              historyResult.taskBizStatus.description
             }}</a-select-option>
           </a-select>
         </div>
-        <span v-show="historyResult.messageType.value == 1 && historyResult.execStatus.value == 3">
-          <!-- 电话回访  已随访显示 -->
-          <div class="div-line-wrap">
+
+        <span v-show="historyResult.messageType.value == 1 ">
+          <!-- 电话回访  已随访成功显示 -->
+          <span v-show="historyResult.taskBizStatus.value == 2">
+            <div class="div-line-wrap">
             <span class="span-item-name">实际随访人 :</span>
             <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
           </div>
-          <div class="div-line-wrap">
-            <span class="span-item-name"> 随访结果 :</span>
-            <span class="span-item-value">{{ historyResult.taskBizStatus.description }} </span>
-          </div>
+          </span>
+          
+      
 
           <span v-show="historyResult.taskBizStatus.value == 3">
             <!-- 电话回访  已随访 随访失败显示 -->
+            <div class="div-line-wrap">
+            <span class="span-item-name">实际随访人 :</span>
+            <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
+          </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 失败原因 :</span>
               <span class="span-item-value">{{ historyResult.failReason }}</span>
@@ -148,34 +153,16 @@
           <div class="div-line-blue"></div>
           <span class="span-title">基本信息</span>
         </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name">患者姓名 :</span>
-          <span class="span-item-value">{{ patientInfo.userName }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 身份证号 :</span>
-          <span class="span-item-value">{{ patientInfo ? subStringIdcardNo(patientInfo.idNumber) : '' }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 出生日期 :</span>
-          <span class="span-item-value">{{ patientInfo.birthDate }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 联系电话 :</span>
-          <span class="span-item-value">{{ patientInfo.tel }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 紧急联系人 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentContacts ||'无'}}</span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 紧急联系电话 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentTel||'无' }} </span>
+        <div class="div-line-wrap"  v-for="(item, index) in fieldList"
+          :key="index"
+          :value="item">
+          <span class="span-item-name">{{item.fieldComment}} :</span>
+          <span class="span-item-value">{{item.fieldValue}} </span>
         </div>
       </div>
     </div>
     <div style="margin-top: 12px;display: flex; flex-direction: row-reverse">
-      <a-button type="default" @click="goCancel"  style="width: 90px"> 关闭 </a-button>
+      <a-button type="default" @click="goCancel"  style="width: 90px;color: #1890FF !important; border-color: #1890FF !important;"> 关闭 </a-button>
     </div>
   </div>
 </template>
@@ -219,11 +206,7 @@ export default {
           value: '',
           description: '',
         },
-        execStatus: {
-          // 随访状态 1:待随访 2:待随访 3:已随访
-          value: '',
-          description: '',
-        },
+       
         actualDoctorUserId: null,
         taskBizStatus: {
           //随访结果 1:未执行2:成功 3:失败
@@ -243,7 +226,7 @@ export default {
       },
      
       questionUrl: '',
-
+      fieldList:[],
   
     }
   },
@@ -268,6 +251,7 @@ export default {
           description: '',
             }
           }
+        
           this.historyResult = res.data
         } else {
           this.$message.error(res.message)
@@ -276,7 +260,16 @@ export default {
 
       followPlanPhonePatientInfo(this.record.userId).then((res) => {
         if (res.code === 0) {
-          this.patientInfo = res.data
+          res.data.forEach(element => {
+            if(element.tableField=='id_card'){
+              element.fieldValue=this.subStringIdcardNo(element.fieldValue)
+            }
+            if(element.tableField=='sex'){
+              element.fieldValue=element.fieldValue==1?'男':'女'
+            }
+           
+          });
+          this.fieldList = res.data
         } else {
           this.$message.error(res.message)
         }
@@ -406,12 +399,12 @@ playAudio(src) {
 
 
   .div-span-content-left {
-    width: 21%;
+    width: 22%;
     height: 100%;
    
   }
   .div-span-content-mid {
-    width: 58%;
+    width: 56%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -433,10 +426,9 @@ playAudio(src) {
     }
   }
   .div-span-content-right {
-    width: 21%;
+    width: 22%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+  
   }
 
   .div-line-wrap {
