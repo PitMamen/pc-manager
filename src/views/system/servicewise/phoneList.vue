@@ -240,52 +240,53 @@ export default {
         { code: 2, name: '成功' },
         { code: 3, name: '失败' },
       ],
-      treeData: [
-        {
-          key: 1,
-          title: '今日待随访',
-          count: 0,
-          children: [],
-        },
-        {
-          key: 2,
-          title: '全部待随访',
-          count: 8,
-          children: [
-            {
-              key: 37,
-              parentKey: 2,
-              title: '问卷名称',
-              count: 8,
-            },
-          ],
-        },
-        {
-          key: 3,
-          title: '逾期待随访',
-          count: 0,
-          children: [],
-        },
-        {
-          key: 4,
-          title: '已随访',
-          count: 45,
-          children: [
-            {
-              key: 37,
-              parentKey: 4,
-              title: '问卷名称',
-              count: 15,
-            },
-            {
-              key: 41,
-              parentKey: 4,
-              title: '问卷名称',
-              count: 30,
-            },
-          ],
-        },
-      ],
+      treeData: [],
+      // treeData: [
+      //   {
+      //     key: 1,
+      //     title: '今日待随访',
+      //     count: 0,
+      //     children: [],
+      //   },
+      //   {
+      //     key: 2,
+      //     title: '全部待随访',
+      //     count: 8,
+      //     children: [
+      //       {
+      //         key: 37,
+      //         parentKey: 2,
+      //         title: '问卷名称',
+      //         count: 8,
+      //       },
+      //     ],
+      //   },
+      //   {
+      //     key: 3,
+      //     title: '逾期待随访',
+      //     count: 0,
+      //     children: [],
+      //   },
+      //   {
+      //     key: 4,
+      //     title: '已随访',
+      //     count: 45,
+      //     children: [
+      //       {
+      //         key: 37,
+      //         parentKey: 4,
+      //         title: '问卷名称',
+      //         count: 15,
+      //       },
+      //       {
+      //         key: 41,
+      //         parentKey: 4,
+      //         title: '问卷名称',
+      //         count: 30,
+      //       },
+      //     ],
+      //   },
+      // ],
       keshiData: [],
       queryParams: {
         userName: null,
@@ -912,10 +913,9 @@ export default {
 
     //随访任务逾期状态;1:未逾期2:已逾期
     getClass(status) {
-      
-      if (status.value == 1) {
+      if (status.value == 2) {
         return 'span-red'
-      } else if (status.value == 2) {
+      } else if (status.value == 1) {
         return 'span-gray'
       }
     },
@@ -1075,5 +1075,11 @@ export default {
       }
     }
   }
+}
+
+/deep/ svg {
+  width: 0 !important;
+  height: 0 !important;
+  display: none;
 }
 </style>

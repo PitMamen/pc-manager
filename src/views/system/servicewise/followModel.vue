@@ -118,6 +118,7 @@ export default {
            
              that.isSDKReady=true
             console.log('云呼叫初始化成功',  that.isSDKReady)
+            // tccc.UI.hidefloatButton()//隐藏悬浮按钮
             resolve('初始化成功')
             // this.$message.success('初始化成功')
           })
