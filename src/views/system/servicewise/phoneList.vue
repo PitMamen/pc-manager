@@ -884,7 +884,7 @@ export default {
 
     //随访任务逾期状态;1:未逾期2:已逾期
     getClass(status) {
-      debugger
+      
       if (status.value == 1) {
         return 'span-red'
       } else if (status.value == 2) {
