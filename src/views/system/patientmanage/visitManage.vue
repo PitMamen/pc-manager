@@ -8,16 +8,14 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
-
-
     <div class="div-service-user">
       <!-- 左边 -->
       <div class="div-totalleft">
         <div class="div-totaltopleft">
-          <span class="span-item-name" style="margin-left: 10px"> 添加任务</span>
+          <span class="span-item-name" style="margin-left: 10px;width: 30%;"> 添加任务</span>
         </div>
 
-        <div class="display-item" style="margin-left:10px;margin-top: 10px;">
+        <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> 随访方式:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select
@@ -35,7 +33,7 @@
         </div>
 
         <!--  -->
-        <div class="display-item" style="margin-top: 10px;margin-left:10px">
+        <div class="display-item" style="margin-top: 10px; margin-left: 10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select style="width: 120px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
@@ -47,7 +45,7 @@
         </div>
 
         <!--  -->
-        <div class="display-item" style="margin-top: 10px;margin-left:10px">
+        <div class="display-item" style="margin-top: 10px; margin-left: 10px">
           <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
           <a-radio-group
             name="radioGroup"
@@ -60,22 +58,26 @@
           </a-radio-group>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px;width: 100%;">
+        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%">
           <!-- <a-form-item> -->
-            <a-date-picker v-model="queryParams.executeTime" style="margin-top: 27px;margin-left:10px" format="YYYY-MM-DD" />
+          <a-date-picker
+            v-model="queryParams.executeTime"
+            style="margin-top: 27px; margin-left: 10px"
+            format="YYYY-MM-DD"
+          />
           <!-- </a-form-item> -->
 
           <!-- <div class="display-item;" style="margin-top: 5px"> -->
-            <a-time-picker
-              style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px"
-              @change="timeChangeStart"
-              :default-value="moment('00:00', 'HH:mm')"
-              format="HH:mm"
-            />
+          <a-time-picker
+            style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px"
+            @change="timeChangeStart"
+            :default-value="moment('00:00', 'HH:mm')"
+            format="HH:mm"
+          />
           <!-- </div> -->
         </div>
 
-        <div class="display-item" style="margin-top: 20px;margin-left:10px">
+        <div class="display-item" style="margin-top: 20px; margin-left: 10px">
           <a-button style="margin-left: 1%" type="primary" @click="commit()">提交</a-button>
           <a-button style="margin-left: 20px" type="default" @click="reset()">重置</a-button>
         </div>
@@ -90,44 +92,44 @@
         <div class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
-            <span class="span-item-value" style="margin-left: 30px"
+            <span class="span-item-value" style="margin-left: 10px"
               >{{ item.messageType != null ? item.messageType.description : '' }}
             </span>
 
-            <span class="span-item-name" style="margin-left: 90px">
-              状态 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
+            <span class="span-item-name" style="margin-left: 4%">
+              状态 :&nbsp;</span
             >
 
-            <span class="span-item-value" style="margin-left: 15%">{{
+            <span class="span-item-value" style="margin-left: 3%">{{
               item.taskBizStatus != null ? item.taskBizStatus.description : '-'
             }}</span>
           </div>
 
           <!--  -->
-          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 1px">
             <span class="span-item-name"> 随访内容 :</span>
-            <span class="span-item-value" style="margin-left: 30px"
+            <span class="span-item-value" style="margin-left: 0px;width: 25%;"
               >{{ item.templateTitle != null ? item.templateTitle : '-' }}
             </span>
 
-            <span class="span-item-name" style="margin-left: 90px"> 是否逾期 :</span>
+            <span class="span-item-name" style="margin-left: 0%"> 是否逾期 :</span>
 
-            <span class="span-item-value" style="margin-left: 15%">{{
+            <span class="span-item-value" style="margin-left: 3%">{{
               item.overdueStatus != null ? item.overdueStatus.description : '-'
             }}</span>
           </div>
 
           <!--  -->
-          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 15px">
+          <div class="div-line-wrap" style="margin-left: 30px;margin-top: 1px">
             <span class="span-item-name"> 计划日期 :</span>
-            <span class="span-item-value" style="margin-left: 30px"
+            <span class="span-item-value" style="width: 30%;"
               >{{ item.executeTime != null ? item.executeTime : '' }}
             </span>
 
-            <span class="span-item-name" style="margin-left: 30px"> 完成日期 :</span>
+            <span class="span-item-name" style="margin-left: -5%;width: 12%;"> 完成日期 :</span>
 
-            <span class="span-item-value" style="margin-left: 15%">{{
-                item.taskType.value==1?item.userFollowTime:item.actualExecTime
+            <span class="span-item-value" style="width: 25%; ">{{
+              item.taskType.value == 1 ? item.userFollowTime : item.actualExecTime
             }}</span>
           </div>
         </div>
@@ -148,6 +150,8 @@ import {
   getWxTemplateListForJumpType,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
 import { formatDate, formatDateFull } from '@/utils/util'
 export default {
   components: {
@@ -167,6 +171,8 @@ export default {
       record: {},
       messageContentType: '',
       queryParams: {
+        execDoctorUserId:'',
+        executeDepartmentId:'',
         userId: '',
         tenantId: '',
         messageType: '',
@@ -218,6 +224,8 @@ export default {
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()
       this.getWxTemplateListForJumpTypeOut()
+      let user = Vue.ls.get(TRUE_USER)
+      console.log("user:",user)
     },
 
     /**
@@ -236,6 +244,10 @@ export default {
         console.log('date', date)
         let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
         console.log('mom', mom)
+      }
+
+      if(messageType>0){
+        this.queryParams.messageContentType=''
       }
 
       if (messageType == 1) {
@@ -355,6 +367,7 @@ export default {
      * 提交
      */
     commit() {
+        
       if (!this.queryParams.messageType) {
         this.$message.error('请选择随访方式')
         return
@@ -378,7 +391,14 @@ export default {
         this.$message.error('请选择发送时间')
         return
       }
+      let user = Vue.ls.get(TRUE_USER)
       let temp = this.msgData.find((item) => item.id == this.messageContentType) //通过ID查询 列表中的当前item
+      if(!temp){
+        this.$message.error('随访方式与随访内容不匹配,请重新选择!')
+        return
+      }
+      this.queryParams.execDoctorUserId =user.userId
+      this.queryParams.executeDepartmentId =user.departmentCode
       this.queryParams.hospitalCode = temp.hospitalCode
       this.queryParams.tenantId = temp.tenantId
       this.queryParams.messageContentId = temp.id
@@ -502,8 +522,7 @@ export default {
     }
   }
 
-
-  .div-totaltopleft{
+  .div-totaltopleft {
     height: 40px;
     width: 100%;
     margin-right: 60px;
@@ -525,8 +544,6 @@ export default {
       }
     }
   }
-
-
 
   .div-totaltop {
     height: 40px;
@@ -550,6 +567,30 @@ export default {
       }
     }
   }
+
+  .div-line-wrap {
+    width: 120%;
+    overflow: hidden;
+
+    .span-item-name {
+    width: 15%;
+    display: inline-block;
+    color: #000;
+    font-size: 14px;
+    text-align: left;
+  }
+
+  .span-item-value {
+    width: 20%;
+    color: #333;
+    text-align: left;
+    font-size: 14px;
+    display: inline-block;
+  }
+  }
+
+
+ 
 
   .div-service-left-user {
     background-color: white;
