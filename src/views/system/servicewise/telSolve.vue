@@ -31,9 +31,9 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访状态 :</span>
-          <a-select placeholder="请选择" disabled :value="followResultContent.execStatus.description">
-            <a-select-option :value="followResultContent.execStatus.description">{{
-              followResultContent.execStatus.description
+          <a-select placeholder="请选择" disabled :value="followResultContent.taskBizStatus.description">
+            <a-select-option :value="followResultContent.taskBizStatus.description">{{
+              followResultContent.taskBizStatus.description
             }}</a-select-option>
           </a-select>
         </div>
@@ -291,6 +291,11 @@ export default {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
           res.data.actualDoctorUserId = ''
+          if(res.data.taskBizStatus.value == 2 || res.data.taskBizStatus.value == 3){
+            res.data.taskBizStatus.description='已随访'
+          }else{
+            res.data.taskBizStatus.description='待随访'
+          }
           this.followResultContent = res.data
           this.questionUrl = res.data.projectKeyUrlW
           console.log(this.followResultContent)

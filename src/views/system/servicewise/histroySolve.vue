@@ -89,19 +89,23 @@
             }}</a-select-option>
           </a-select>
         </div>
-        <span v-show="historyResult.messageType.value == 1 && historyResult.execStatus.value == 3">
-          <!-- 电话回访  已随访显示 -->
-          <div class="div-line-wrap">
+        <span v-show="historyResult.messageType.value == 1 ">
+          <!-- 电话回访  已随访成功显示 -->
+          <span v-show="historyResult.taskBizStatus.value == 2">
+            <div class="div-line-wrap">
             <span class="span-item-name">实际随访人 :</span>
             <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
           </div>
-          <div class="div-line-wrap">
-            <span class="span-item-name"> 随访结果 :</span>
-            <span class="span-item-value">{{ historyResult.taskBizStatus.description }} </span>
-          </div>
+          </span>
+          
+      
 
           <span v-show="historyResult.taskBizStatus.value == 3">
             <!-- 电话回访  已随访 随访失败显示 -->
+            <div class="div-line-wrap">
+            <span class="span-item-name">实际随访人 :</span>
+            <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
+          </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 失败原因 :</span>
               <span class="span-item-value">{{ historyResult.failReason }}</span>
