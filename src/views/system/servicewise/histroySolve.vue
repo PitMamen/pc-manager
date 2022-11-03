@@ -164,7 +164,7 @@
       </div>
     </div>
     <div style="margin-top: 12px;display: flex; flex-direction: row-reverse">
-      <a-button type="default" @click="goCancel"  style="width: 90px"> 关闭 </a-button>
+      <a-button type="default" @click="goCancel"  style="width: 90px;color: #1890FF !important; border-color: #1890FF !important;"> 关闭 </a-button>
     </div>
   </div>
 </template>
@@ -392,12 +392,12 @@ playAudio(src) {
 
 
   .div-span-content-left {
-    width: 21%;
+    width: 22%;
     height: 100%;
    
   }
   .div-span-content-mid {
-    width: 58%;
+    width: 56%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -419,10 +419,9 @@ playAudio(src) {
     }
   }
   .div-span-content-right {
-    width: 21%;
+    width: 22%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+  
   }
 
   .div-line-wrap {

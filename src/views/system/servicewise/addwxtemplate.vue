@@ -263,9 +263,10 @@ export default {
          if (this.radioTyPe == 0) {
          this.questionContent.questUrl=res.data.jumpValue
          this.questionContent.name=res.data.jumpTitle
+         this.questionContent.id = res.data.jumpId
       } else if (this.radioTyPe == 1) {
        
-        this.teachContent.articleId=res.data.jumpValue
+        this.teachContent.articleId=res.data.jumpId
         this.teachContent.title=res.data.jumpTitle
       } else if (this.radioTyPe == 3) {
       

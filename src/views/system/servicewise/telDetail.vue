@@ -153,34 +153,16 @@
           <div class="div-line-blue"></div>
           <span class="span-title">基本信息</span>
         </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name">患者姓名 :</span>
-          <span class="span-item-value">{{ patientInfo.userName }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 身份证号 :</span>
-          <span class="span-item-value">{{ patientInfo ? subStringIdcardNo(patientInfo.idNumber) : '' }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 出生日期 :</span>
-          <span class="span-item-value">{{ patientInfo.birthDate }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 联系电话 :</span>
-          <span class="span-item-value">{{ patientInfo.tel }} </span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 紧急联系人 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentContacts ||'无'}}</span>
-        </div>
-        <div class="div-line-wrap">
-          <span class="span-item-name"> 紧急联系电话 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentTel||'无' }} </span>
+        <div class="div-line-wrap"  v-for="(item, index) in fieldList"
+          :key="index"
+          :value="item">
+          <span class="span-item-name">{{item.fieldComment}} :</span>
+          <span class="span-item-value">{{item.fieldValue}} </span>
         </div>
       </div>
     </div>
     <div style="margin-top: 12px;display: flex; flex-direction: row-reverse">
-      <a-button type="default" @click="goCancel"  style="width: 90px"> 关闭 </a-button>
+      <a-button type="default" @click="goCancel"  style="width: 90px;color: #1890FF !important; border-color: #1890FF !important;"> 关闭 </a-button>
     </div>
   </div>
 </template>
@@ -244,7 +226,7 @@ export default {
       },
      
       questionUrl: '',
-
+      fieldList:[],
   
     }
   },
@@ -278,7 +260,16 @@ export default {
 
       followPlanPhonePatientInfo(this.record.userId).then((res) => {
         if (res.code === 0) {
-          this.patientInfo = res.data
+          res.data.forEach(element => {
+            if(element.tableField=='id_card'){
+              element.fieldValue=this.subStringIdcardNo(element.fieldValue)
+            }
+            if(element.tableField=='sex'){
+              element.fieldValue=element.fieldValue==1?'男':'女'
+            }
+           
+          });
+          this.fieldList = res.data
         } else {
           this.$message.error(res.message)
         }
@@ -408,12 +399,12 @@ playAudio(src) {
 
 
   .div-span-content-left {
-    width: 21%;
+    width: 22%;
     height: 100%;
    
   }
   .div-span-content-mid {
-    width: 58%;
+    width: 56%;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -435,10 +426,9 @@ playAudio(src) {
     }
   }
   .div-span-content-right {
-    width: 21%;
+    width: 22%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
+  
   }
 
   .div-line-wrap {
