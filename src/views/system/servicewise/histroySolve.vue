@@ -185,8 +185,6 @@ export default {
   },
   data() {
     return {
-      patientId: '612', //患者ID
-      planId: '',
       audioSrc:'',
       audioShow:false,
       patientInfo: {},

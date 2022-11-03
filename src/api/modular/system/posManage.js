@@ -357,7 +357,7 @@ export function getRdiagnosisForId(id) {
  */
 export function addExecuteRecord(data) {
   return axios({
-    url:'/follow-api/tbFollowExecuteRecord/addExecuteRecord',
+    url: '/follow-api/tbFollowExecuteRecord/addExecuteRecord',
     method: 'post',
     data: data,
   })
@@ -367,11 +367,11 @@ export function addExecuteRecord(data) {
 /**
  * 根据Userid 查询随访历史记录
  */
-export function qryExecuteRecordByUserId(data){
+export function qryExecuteRecordByUserId(data) {
   return axios({
-   url:'/follow-api/tbFollowExecuteRecord/qryExecuteRecordByUserId',
-   method: 'post',
-   data: data,
+    url: '/follow-api/tbFollowExecuteRecord/qryExecuteRecordByUserId',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -2138,18 +2138,18 @@ export function getDetail(data) {
 /**
  * 本次随访，随访结果
  */
- export function followPlanPhoneCurrent(id) {
+export function followPlanPhoneCurrent(id) {
   return axios({
-    url: '/follow-api/followPlanPhone/current/'+id,
+    url: '/follow-api/followPlanPhone/current/' + id,
     method: 'post'
   })
 }
 /**
  * 本次随访，随访名单信息
  */
- export function followPlanPhonePatientInfo(userId) {
+export function followPlanPhonePatientInfo(userId) {
   return axios({
-    url: '/follow-api/followPlanPhone/getPatientInfo/'+userId,
+    url: '/follow-api/followPlanPhone/getPatientInfo/' + userId,
     method: 'post'
   })
 }
@@ -2169,7 +2169,7 @@ export function qryPhoneFollowTaskStatistics(data) {
 /**
  * 执行随访
  */
- export function modifyFollowExecuteRecord(data) {
+export function modifyFollowExecuteRecord(data) {
   return axios({
     url: '/follow-api/followPlanPhone/modifyFollowExecuteRecord',
     method: 'post',
@@ -2192,9 +2192,9 @@ export function qryPhoneFollowTask(data) {
 /**
  * 随访人历史随访列表
  */
- export function followPlanPhoneHistory(userId) {
+export function followPlanPhoneHistory(userId) {
   return axios({
-    url: '/follow-api/followPlanPhone/history/'+userId,
+    url: '/follow-api/followPlanPhone/history/' + userId,
     method: 'post'
   })
 }
@@ -2202,9 +2202,9 @@ export function qryPhoneFollowTask(data) {
 /**
  * 随访历史记录详情(页面中间部分)
  */
- export function followPlanPhonehistoryDetail(id) {
+export function followPlanPhonehistoryDetail(id) {
   return axios({
-    url: '/follow-api/followPlanPhone/historyDetail/'+id,
+    url: '/follow-api/followPlanPhone/historyDetail/' + id,
     method: 'post'
   })
 }
@@ -2212,9 +2212,28 @@ export function qryPhoneFollowTask(data) {
 /**
  * 历史随访结果(类型不同展示不一样)
  */
- export function historyFollowResult(id) {
+export function historyFollowResult(id) {
   return axios({
-    url: '/follow-api/followPlanPhone/historyFollowResult/'+id,
+    url: '/follow-api/followPlanPhone/historyFollowResult/' + id,
+    method: 'post'
+  })
+}
+/**
+ *  /ccc/createSdkLoginToken 创建 SDK 登录 Token
+ */
+export function createSdkLoginToken() {
+  return axios({
+    url: '/follow-api/ccc/createSdkLoginToken',
+    method: 'post'
+  })
+}
+
+/**
+ *  /ccc/addTencentPhoneTape 新增腾讯云呼叫电话记录
+ */
+export function addTencentPhoneTape() {
+  return axios({
+    url: '/follow-api/ccc/addTencentPhoneTape',
     method: 'post'
   })
 }

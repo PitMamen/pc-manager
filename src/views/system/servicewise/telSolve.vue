@@ -76,8 +76,28 @@
           <div class="span-item-name">电话录音 :</div>
           <div class="div-voice-content"></div>
 
-          <img src="~@/assets/icons/dianhua2.png" style="width: 34px; height: auto" />
-          <img src="~@/assets/icons/jinji2.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
+          <img
+            v-if="patientInfo.tel"
+            src="~@/assets/icons/dianhua2.png"
+            @click="goCall(patientInfo.tel)"
+            style="width: 34px; height: auto"
+          />
+          <img
+            v-else
+            src="~@/assets/icons/dianhua.png"
+            style="width: 34px; height: auto"
+          />
+          <img
+          v-if="patientInfo.urgentTel"
+            src="~@/assets/icons/jinji2.png"
+            @click="goCall(patientInfo.urgentTel)"
+            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+          />
+          <img
+          v-else
+            src="~@/assets/icons/jinji.png"
+            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+          />
         </div>
 
         <div style="height: 600px; margin-top: 10px; overflow-y: auto">
@@ -118,11 +138,11 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 紧急联系人 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentContacts ||'无'}}</span>
+          <span class="span-item-value">{{ patientInfo.urgentContacts || '无' }}</span>
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 紧急联系电话 :</span>
-          <span class="span-item-value">{{ patientInfo.urgentTel||'无' }} </span>
+          <span class="span-item-value">{{ patientInfo.urgentTel || '无' }} </span>
         </div>
       </div>
     </div>
@@ -140,12 +160,15 @@ import {
   followPlanPhonePatientInfo,
   modifyFollowExecuteRecord,
   getUsersByDeptIdAndRole,
+  createSdkLoginToken,
+  addTencentPhoneTape,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
-let self ;  //最外面全局的
+import { parseString } from 'loader-utils'
+let self //最外面全局的
 export default {
   components: {
     [Timeline.Item.name]: Timeline.Item,
@@ -155,7 +178,6 @@ export default {
   },
   data() {
     return {
-     
       activeKey: '1',
       failureList: [
         '电话无人接听',
@@ -206,7 +228,7 @@ export default {
   created() {
     // var user = Vue.ls.get(TRUE_USER)
     self = this
-    console.log("telSolve",this.record)
+    console.log('telSolve', this.record)
     this.followPlanPhonePatientInfo(this.record.userId)
     this.followPlanPhoneCurrent(this.record.id)
     this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
@@ -225,17 +247,27 @@ export default {
     //   iframe.addEventListener('load', handleLoad, true)
     // })
 
+    //监听iframe发过来的消息
+    window.addEventListener('message', self.submitFormFun)
+  },
+  destroyed() {
+    console.log('随访操作destroyed')
+    window.removeEventListener('message', self.submitFormFun)
+  },
+  methods: {
+    goCall(phone) {
+      this.$emit('goCall', phone, this.record.id)
+    },
 
     //监听iframe发过来的消息
-    window.addEventListener('message', (e) => {
+    submitFormFun(e) {
       // e.data为子页面发送的数据
       if (e.data == 'submitFormSuccess') {
         console.log('iframe中已提交成功')
         self.dodealsave()
       }
-    })
-  },
-  methods: {
+    },
+
     formatDate(date) {
       date = new Date(date)
       let myyear = date.getFullYear()
@@ -258,6 +290,7 @@ export default {
     followPlanPhoneCurrent(id) {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
+          res.data.actualDoctorUserId = ''
           this.followResultContent = res.data
           this.questionUrl = res.data.projectKeyUrlW
           console.log(this.followResultContent)
@@ -299,13 +332,11 @@ export default {
       var pat = /(\d{3})\d*(\d{4})/
       return str.replace(pat, '$1****$2')
     },
-    goCancel(){
-     
-      this.$emit("handleCancel", '');
+    goCancel() {
+      this.$emit('handleCancel', '')
     },
     //完成处理按钮
     goConfirm() {
-    
       if (!this.followResultContent.actualDoctorUserId) {
         this.$message.info('请选择实际随访人')
         return
@@ -324,9 +355,9 @@ export default {
           }
         }
       }
-              
-        //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
-        this.postMessageToSubmit()
+
+      //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
+      this.postMessageToSubmit()
     },
 
     //保存处理信息

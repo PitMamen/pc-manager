@@ -37,8 +37,8 @@
             本次随访
           </span>
         </template>
-        <tel-solve v-if="modelType==0" ref="telSolve" :record="record" @handleCancel="handleCancel" />
-        <tel-detail v-else-if="modelType==1" ref="telDetail" :record="record" @handleCancel="handleCancel" />
+        <tel-solve v-if="modelType==0" ref="telSolve" :record="record" @handleCancel="handleCancel"  @goCall="goCall"/>
+        <tel-detail v-else-if="modelType==1" ref="telDetail" :record="record" @handleCancel="handleCancel" @goCall="goCall"/>
       </a-tab-pane>
     </a-tabs>
 
@@ -50,11 +50,17 @@
 import telSolve from './telSolve'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
+import {
+  createSdkLoginToken,
+  addTencentPhoneTape,
+} from '@/api/modular/system/posManage'
+import { info } from '@/api/modular/system/sysapp'
 export default {
   components: {
     telSolve,
     histroySolve,
-    telDetail
+    telDetail,
+   
   },
 
   data() {
@@ -63,9 +69,16 @@ export default {
       activeKey: '3',
       visible: false,
       record: Object,
+      isSDKReady:false
     }
   },
-  mounted() {},
+  created() {
+    createSdkLoginToken().then((res) => {
+      if (res.code == 0) {
+        this.injectTcccWebSDK(res.data.sdkURL)
+      }
+    })
+  },
 
   methods: {
     //随访
@@ -86,6 +99,84 @@ export default {
 
     handleCancel() {
       this.visible = false
+    },
+
+    injectTcccWebSDK(sdkURL) {
+      let that=this
+      return new Promise(function (resolve) {
+        const script = document.createElement('script')
+        script.setAttribute('crossorigin', 'anonymous')
+        script.src = sdkURL
+        document.body.appendChild(script)
+        script.addEventListener('load', function () {
+          // 加载JS SDK文件成功，此时可使用全局变量"tccc"
+          tccc.on(tccc.events.ready, function () {
+            /**
+             * Tccc SDK初始化成功，此时可调用外呼等功能。
+             * 注意：请确保只初始化一次SDK
+             * */
+           
+             that.isSDKReady=true
+            console.log('云呼叫初始化成功',  that.isSDKReady)
+            resolve('初始化成功')
+            // this.$message.success('初始化成功')
+          })
+        })
+      })
+    },
+
+    goCall(phone,recordId) {
+      let that=this
+      console.log( this.isSDKReady)
+      console.log( '参数',phone+'=='+recordId)
+      if(!this.isSDKReady){
+        this.$message.info('等待云呼叫功能初始化')
+        return
+      }
+
+      tccc.Call.startOutboundCall({
+        phoneNumber: phone, //修改为需要外呼的号码
+        // phoneNumber: '13524371592', //修改为需要外呼的号码
+        phoneDesc: '电话随访', //名称，将显示在坐席界面
+      })
+        .then(function (res) {
+          if (res.status !== 'success') {
+            throw res
+          }
+          console.log('goCall Success', res)
+          // 外呼成功，执行您的业务逻辑
+          that.addTencentPhoneTapeOut(res,recordId)
+        })
+        .catch(function (err) {
+          // 对错误进行处理
+          console.error('goCall Fail ee', err)
+          console.error('goCall Fail', err.errorMsg)
+          that.$message.error( err.errorMsg)
+          that.addTencentPhoneTapeOut(err,recordId)
+        })
+    },
+
+    addTencentPhoneTapeOut(res,recordId) {
+      let param = {}
+      if (res.status == 'success') {
+        param = {
+          followExecuteRecordId: recordId, //随访任务id
+          calleePhoneNumber: res.calleePhoneNumber, //被呼叫人
+          callerPhoneNumber: res.callerPhoneNumber, //呼叫人
+          sessionId: res.sessionId,
+          status: 1, //随访电话通话状态;1:成功2:失败
+        }
+      } else if (res.status == 'error') {
+        param = {
+          followExecuteRecordId: recordId,
+          status: 2,
+        }
+      }
+      addTencentPhoneTape(param).then((resIn) => {
+        if (resIn.code == 0) {
+          console.error('新增腾讯云呼叫电话记录成功', resIn)
+        }
+      })
     },
   },
 }

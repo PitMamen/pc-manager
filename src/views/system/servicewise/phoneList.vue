@@ -89,7 +89,7 @@
           <a-col :md="4" :sm="24">
             <!-- <a-form-item label="状态:"> -->
             <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-            <a-button type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
+            <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
             <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
             <!-- </a-form-item> -->
           </a-col>
@@ -297,7 +297,7 @@ export default {
         startDate: null,
         endDate: null,
         queryStatus: null,
-        messageContentIds: null,
+        messageOriginalIds: null,
       },
       queryParamsOrigin: {
         userName: null,
@@ -309,7 +309,7 @@ export default {
         startDate: null,
         endDate: null,
         queryStatus: null,
-        messageContentIds: null,
+        messageOriginalIds: null,
       },
 
       labelCol: {
@@ -645,8 +645,8 @@ export default {
         }
 
         //后台需要null
-        if (!param.messageContentIds || param.messageContentIds.length == 0) {
-          param.messageContentIds == null
+        if (!param.messageOriginalIds || param.messageOriginalIds.length == 0) {
+          param.messageOriginalIds == null
         }
 
         //         userName: null,
@@ -657,7 +657,7 @@ export default {
         //         startDate: null,
         //         endDate: null,
         //         queryStatus: null,
-        //         messageContentIds: null,
+        //         messageOriginalIds: null,
         // 需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）
         if (param.queryStatus == 1) {
           delete param.messageType
@@ -679,9 +679,9 @@ export default {
               this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
               this.$set(item, 'messageTypeName', item.messageType.description)
               if (item.overdueStatus.value == 1) {
-                this.$set(item, 'overdueStatusName', '是')
-              } else {
                 this.$set(item, 'overdueStatusName', '否')
+              } else {
+                this.$set(item, 'overdueStatusName', '是')
               }
 
               //任务状态;1:未执行2:成功3:失败
@@ -724,6 +724,34 @@ export default {
   },
 
   methods: {
+    //点击查询时 重置数量
+    goSearch() {
+      this.$refs.table.refresh(true)
+      qryPhoneFollowTaskStatistics().then((res) => {
+        if (res.code == 0) {
+          let treeDataTemp = res.data
+          for (let index = 0; index < this.treeData.length; index++) {
+            if (!isReset) {
+              this.treeData[index].title = treeDataTemp[index].title + '（' + treeDataTemp[index].count + '）'
+            }
+
+            if (this.treeData[index].children && this.treeData[index].children.length > 0) {
+              for (let indexChild = 0; indexChild < this.treeData.children.length; indexChild++) {
+                this.$set(
+                  this.treeData[index].children[indexChild],
+                  'title',
+                  treeDataTemp[index].children[indexChild].title +
+                    '（' +
+                    treeDataTemp[index].children[indexChild].count +
+                    '）'
+                )
+              }
+            }
+          }
+        }
+      })
+    },
+
     onHideAndSee(itemOut, indexOut) {
       itemOut.isVisible = !itemOut.isVisible
       itemOut.outIcon = itemOut.isVisible ? 'caret-down' : 'caret-right'
@@ -746,11 +774,11 @@ export default {
           } else {
             //处理查询入参
             this.queryParams.queryStatus = itemOutTemp.key
-            this.queryParams.messageContentIds = []
+            this.queryParams.messageOriginalIds = []
             this.$set(itemOutTemp, 'isChecked', true)
             this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
               this.$set(itemChild, 'isChecked', true)
-              this.queryParams.messageContentIds.push(itemChild.key)
+              this.queryParams.messageOriginalIds.push(itemChild.key)
             })
           }
         })
@@ -791,13 +819,13 @@ export default {
           })
 
           this.queryParams.queryStatus = itemOut.key
-          this.queryParams.messageContentIds = []
-          this.queryParams.messageContentIds.push(itemChild.key)
+          this.queryParams.messageOriginalIds = []
+          this.queryParams.messageOriginalIds.push(itemChild.key)
         } else {
           debugger
           this.$set(itemChild, 'isChecked', true)
           console.log('itemChild.isChecked 直接添加', itemChild.isChecked)
-          this.queryParams.messageContentIds.push(itemChild.key)
+          this.queryParams.messageOriginalIds.push(itemChild.key)
         }
       } else {
         debugger
@@ -807,7 +835,7 @@ export default {
             num = indexChildTemp
           }
         })
-        this.queryParams.messageContentIds.splice(num, 1)
+        this.queryParams.messageOriginalIds.splice(num, 1)
       }
 
       // 需要改变表格列表数据；
@@ -858,9 +886,9 @@ export default {
 
       //初始化请求数据
       this.queryParams.queryStatus = this.treeData[0].key
-      this.queryParams.messageContentIds = []
+      this.queryParams.messageOriginalIds = []
       this.treeData[0].children.forEach((item, index) => {
-        this.queryParams.messageContentIds.push(item.key)
+        this.queryParams.messageOriginalIds.push(item.key)
       })
       this.$refs.table.refresh(true)
     },
@@ -884,7 +912,7 @@ export default {
 
     //随访任务逾期状态;1:未逾期2:已逾期
     getClass(status) {
-      debugger
+      
       if (status.value == 1) {
         return 'span-red'
       } else if (status.value == 2) {
@@ -939,7 +967,8 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      this.goSearch()
+      // this.$refs.table.refresh()
     },
 
     handleCancel() {
