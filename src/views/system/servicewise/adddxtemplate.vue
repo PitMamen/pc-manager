@@ -428,6 +428,7 @@ export default {
 
       var jumpValue = ''
       var jumpTitle = ''
+      var jumpId = ''
       if (this.radioTyPe == -1) {
         this.$message.error('请选择跳转类型')
         return
@@ -438,6 +439,7 @@ export default {
         }
         jumpValue = this.questionContent.questUrl
         jumpTitle = this.questionContent.name
+        jumpId = this.questionContent.id
       } else if (this.radioTyPe == 1) {
         if (!this.teachContent.articleId) {
           this.$message.error('请选择宣教文章')
@@ -445,6 +447,7 @@ export default {
         }
         jumpValue = this.teachContent.articleId
         jumpTitle = this.teachContent.title
+        jumpId = this.teachContent.articleId
       } else if (this.radioTyPe == 3) {
         if (!this.checkData.navigatorContent) {
           this.$message.error('请输入第三方链接')
@@ -465,6 +468,7 @@ export default {
         jumpType: this.radioTyPe + 1,
         jumpValue: jumpValue,
         jumpTitle: jumpTitle,
+        jumpId: jumpId,
         templateParamJson: JSON.stringify(this.fieldList),
       }
       if (this.id) {
