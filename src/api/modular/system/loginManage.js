@@ -18,7 +18,7 @@ export function login (parameter) {
     header:{
       'Content-Type':'application/json' 
     },
-    url: '/account-api/user/loginForPC',
+    url: '/account-api/user/loginPc',
     method: 'post',
     data: parameter
   })
