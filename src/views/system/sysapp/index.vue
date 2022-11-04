@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
       <a-form layout="inline">
         <a-row :gutter="48">
@@ -25,14 +25,14 @@
           <a-col :md="6" :sm="12">
             <span class="table-page-search-submitButtons" :style="{ float: 'right', overflow: 'hidden' }">
               <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button type="primary" icon="undo" style="margin-left: 8px" @click="() => (queryParam = {status: 1})">重置</a-button>
+              <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="() => (queryParam = {status: 1})">重置</a-button>
             </span>
           </a-col>
         </a-row>
       </a-form>
     </div>
     <div class="table-operator" style="overflow: hidden;">
-      <a-button type="primary" icon="plus" style="float: right;" @click="$refs.addForm.add()">新增</a-button>
+      <a-button icon="plus" style="float: right;margin-right: 0;" @click="$refs.addForm.add()">新增</a-button>
     </div>
     <s-table
       ref="table"
@@ -51,7 +51,7 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <a @click="$refs.editForm.edit(record)"><a-icon type="edit" style="margin-right: 0px;" />修改</a>
+          <a @click="$refs.editForm.edit(record)"><a-icon type="edit" style="margin-right: 0;" />修改</a>
         </template>
       </span>
     </s-table>
@@ -198,10 +198,24 @@ export default {
 </script>
 
 <style lang="less">
-.table-operator {
-  margin-bottom: 10px;
-}
 button {
   margin-right: 8px;
+}
+</style>
+<style lang="less" scoped>
+.table-page-search-wrapper {
+  border-bottom: 1px solid #e8e8e8;
+}
+.table-operator {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.sys-card {
+  height: 100%;
+  /deep/ .ant-table-pagination {
+    position: fixed;
+    right: 32px;
+    bottom: 17px;
+  }
 }
 </style>
