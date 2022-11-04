@@ -1,5 +1,5 @@
 <template>
-  <div class="footer">
+  <div class="footer" v-if="false">
     <div class="links">
     </div>
     <div class="copyright">

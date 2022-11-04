@@ -2231,10 +2231,11 @@ export function createSdkLoginToken() {
 /**
  *  /ccc/addTencentPhoneTape 新增腾讯云呼叫电话记录
  */
-export function addTencentPhoneTape() {
+export function addTencentPhoneTape(param) {
   return axios({
     url: '/follow-api/ccc/addTencentPhoneTape',
-    method: 'post'
+    method: 'post',
+    data: param,
   })
 }
 

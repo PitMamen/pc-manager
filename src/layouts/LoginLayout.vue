@@ -2,7 +2,7 @@
   <div id="loginLayout">
     <div class="left">
       <img class="chahua" src="@/assets/login/chahua.png" />
-      <div class="mask" v-if="hasLogin">
+      <div class="mask" v-if="hasLogin && sysApps && sysApps.length>1">
         <img class="logo" src="@/assets/login/logo.png" />
         <div class="menus">
           <div class="row">
@@ -43,10 +43,10 @@
     <div class="right">
       <div class="right-wrap">
         <div class="title">
-          <div class="title1">全病程管理系统</div>
+          <div class="title1">患者服务信息系统</div>
           <div class="title2">健/康/城/市  智/慧/医/疗</div>
         </div>
-        <div class="success-wrap" v-if="hasLogin">
+        <div class="success-wrap" v-if="hasLogin && sysApps && sysApps.length>1">
           <div class="welcome">平台管理员，您好！欢迎使用本系统。</div>
           <img class="success" src="@/assets/login/success.png" />
           <div class="msg">登录成功!</div>
@@ -276,7 +276,7 @@ export default {
             text-align: center;
             cursor: pointer;
             &:first-child {
-              float: left;
+              float: left !important;
             }
             &:last-child {
               float: right;
@@ -384,7 +384,11 @@ export default {
           }
           /deep/ .ant-input {
             padding-left: 0 !important;
+            .px2rem(font-size, 24) !important;
             .px2rem(text-indent, 90);
+            &:-webkit-autofill::first-line {
+              .px2rem(font-size, 24) !important;
+            }
           }
         }
         .password-input {
@@ -395,11 +399,16 @@ export default {
           }
           /deep/ .ant-input {
             padding-left: 0 !important;
+            .px2rem(font-size, 24) !important;
             .px2rem(text-indent, 90);
+            &:-webkit-autofill::first-line {
+              .px2rem(font-size, 24) !important;
+            }
           }
         }
         .login-button {
           .px2rem(height, 58) !important;
+          .px2rem(font-size, 24) !important;
           .px2rem(margin-top, 84);
           width: 100%;
         }
@@ -458,6 +467,7 @@ export default {
           margin: 0 auto;
           .px2rem(width, 510);
           .px2rem(height, 58) !important;
+          .px2rem(font-size, 24) !important;
           .px2rem(margin-top, 200);
         }
       }
