@@ -127,7 +127,7 @@
           >
             <a-radio :value="0"> 问卷 </a-radio>
             <a-radio :value="1" style="margin-left: 3%"> 宣教 </a-radio>
-            <a-radio :value="2" style="margin-left: 3%"> 不跳转任何内容 </a-radio>
+            <a-radio :value="2" style="margin-left: 3%" v-if="!hasUrlField"> 不跳转任何内容 </a-radio>
           </a-radio-group>
         </div>
       </div>
@@ -208,6 +208,7 @@ export default {
     return {
       id: '', //业务模板详情ID 修改时才有值
       templateBean: '', //业务模板详情
+      hasUrlField:false,
       // 高级搜索 展开/关闭
       advanced: false,
       radioTyPe: 0,
@@ -275,6 +276,8 @@ export default {
               }
 
               this.fieldList = JSON.parse(res.data.templateParamJson)
+                      
+            this.sortFieldList(this.templateContent.smsTemplateContent)
 
               this.onWXProgramChange(Number(res.data.smsConfigureId))
             }
@@ -351,19 +354,33 @@ export default {
 
       let text = this.templateContent.smsTemplateContent
 
+     this.fieldList=this.sortFieldList(text)
+    },
+
+    //阿里短信平台字段解析 是否有url字段  如果有则不显示url字段和不跳转任何链接
+    sortFieldList(text){
+      this.hasUrlField=false
       console.log(text)
+      var arr=[]
       let regex = /\$\{(.+?)\}/g
       let result
       while ((result = regex.exec(text)) != null) {
-        this.fieldList.push({
+        console.log(result[1])
+        if(result[1] == 'url'){
+          this.hasUrlField=true
+        }else{
+          arr.push({
           name: result[1],
           property: '请选择',
           content: '',
         })
+        }
+      
       }
-
-      console.log(this.fieldList)
+      console.log(arr)
+      return arr
     },
+
     //字段属性选择
     fieldSXChange(value) {
       console.log(value)

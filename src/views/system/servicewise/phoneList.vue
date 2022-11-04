@@ -9,9 +9,9 @@
                 v-model="queryParams.userName"
                 allow-clear
                 placeholder="请输入姓名"
-                @blur="$refs.table.refresh(true)"
-                @keyup.enter="$refs.table.refresh(true)"
-                @search="$refs.table.refresh(true)"
+                @blur="goSearch"
+                @keyup.enter="goSearch"
+                @search="goSearch"
               />
             </a-form-item>
           </a-col>
@@ -23,8 +23,8 @@
                 v-model="queryParams.phone"
                 allow-clear
                 placeholder="请输入手机号"
-                @keyup.enter="$refs.table.refresh(true)"
-                @search="$refs.table.refresh(true)"
+                @keyup.enter="goSearch"
+                @search="goSearch"
               />
             </a-form-item>
           </a-col>
@@ -86,7 +86,7 @@
             </a-form-item>
           </a-col>
 
-          <a-col :md="4" :sm="24">
+          <a-col :md="6" :sm="24">
             <!-- <a-form-item label="状态:"> -->
             <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
             <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
@@ -323,6 +323,7 @@ export default {
       },
       visible: true,
       clicked: true,
+      canHide: false,
       createValue: [],
       originData: [],
       user: {},
@@ -674,7 +675,9 @@ export default {
 
         this.confirmLoading = true
         return qryPhoneFollowTask(Object.assign(parameter, param)).then((res) => {
-          this.confirmLoading = false
+          if (this.canHide) {
+            this.confirmLoading = false
+          }
           if (res.code == 0) {
             res.data.rows.forEach((item, index) => {
               this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
@@ -713,6 +716,7 @@ export default {
     qryPhoneFollowTaskStatistics().then((res) => {
       if (res.code == 0) {
         this.treeData = res.data
+        console.log('Tree created', JSON.parse(JSON.stringify(this.treeData)))
         this.processData(false)
       }
     })
@@ -727,17 +731,15 @@ export default {
   methods: {
     //点击查询时 重置数量
     goSearch() {
-      this.$refs.table.refresh(true)
       qryPhoneFollowTaskStatistics().then((res) => {
         if (res.code == 0) {
           let treeDataTemp = res.data
           for (let index = 0; index < this.treeData.length; index++) {
-            if (!isReset) {
-              this.treeData[index].title = treeDataTemp[index].title + '（' + treeDataTemp[index].count + '）'
-            }
+            this.treeData[index].title = treeDataTemp[index].title + '（' + treeDataTemp[index].count + '）'
 
+            console.log('Tree goSearch ', JSON.parse(JSON.stringify(this.treeData)))
             if (this.treeData[index].children && this.treeData[index].children.length > 0) {
-              for (let indexChild = 0; indexChild < this.treeData.children.length; indexChild++) {
+              for (let indexChild = 0; indexChild < this.treeData[index].children.length; indexChild++) {
                 this.$set(
                   this.treeData[index].children[indexChild],
                   'title',
@@ -750,6 +752,7 @@ export default {
             }
           }
         }
+        this.$refs.table.refresh(true)
       })
     },
 
@@ -798,7 +801,8 @@ export default {
         //TODO 取消勾选的状态还没做
       }
 
-      this.$refs.table.refresh(true)
+      // this.$refs.table.refresh(true)
+      this.goSearch()
     },
 
     //点击第二层选中按钮，先判断是否改变
@@ -808,7 +812,6 @@ export default {
       if (itemChild.isChecked) {
         //当父节点切换之后需要切换选中状态；需要改变列表数据；需求改变请求条件
         if (this.queryParams.queryStatus != itemOut.key) {
-          debugger
           this.treeData.forEach((itemOutTemp, indexOutTemp) => {
             if (indexOutTemp != indexOut) {
               this.$set(itemOutTemp, 'isChecked', false)
@@ -823,13 +826,11 @@ export default {
           this.queryParams.messageOriginalIds = []
           this.queryParams.messageOriginalIds.push(itemChild.key)
         } else {
-          debugger
           this.$set(itemChild, 'isChecked', true)
           console.log('itemChild.isChecked 直接添加', itemChild.isChecked)
           this.queryParams.messageOriginalIds.push(itemChild.key)
         }
       } else {
-        debugger
         let num = 0
         itemOut.children.forEach((itemChildTemp, indexChildTemp) => {
           if (indexChild == indexChildTemp) {
@@ -850,7 +851,8 @@ export default {
         this.columns = JSON.parse(JSON.stringify(this.columnsAready))
       }
 
-      this.$refs.table.refresh(true)
+      // this.$refs.table.refresh(true)
+      this.goSearch()
     },
 
     processData(isReset) {
@@ -891,6 +893,8 @@ export default {
       this.treeData[0].children.forEach((item, index) => {
         this.queryParams.messageOriginalIds.push(item.key)
       })
+
+      this.canHide = true
       this.$refs.table.refresh(true)
     },
 
