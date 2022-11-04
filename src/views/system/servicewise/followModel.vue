@@ -99,6 +99,7 @@ export default {
 
     handleCancel() {
       this.visible = false
+      this.$emit('ok','')
     },
 
     injectTcccWebSDK(sdkURL) {
