@@ -42,7 +42,7 @@
         ><a-tab-pane key="2" tab="待抽查"> <service-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
       ></a-tabs> -->
 
-      <a-radio-group default-value="a" button-style="solid">
+      <a-radio-group v-model="queryParams.type" default-value="a" button-style="solid">
         <a-radio-button value="a"> 已抽查 </a-radio-button>
         <a-radio-button value="b"> 待抽查 </a-radio-button>
       </a-radio-group>
@@ -50,37 +50,87 @@
       <div class="div-divider"></div>
 
       <!-- <div class="table-page-search-wrapper"> -->
-      <a-form layout="inline">
+      <a-form layout="inline" style="margin-top: 1%">
         <a-row :gutter="48">
-          <a-col :md="6" :sm="24">
-            <a-form-item label="专病">
-              <a-input
-                v-model="queryParam.cyzd"
+          <a-col :md="5" :sm="24">
+            <a-form-item label="执行科室">
+              <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
+              <a-select
+                style="width: 110px"
                 allow-clear
-                placeholder="请输入专病 "
-                @keyup.enter="$refs.table.refresh(true)"
+                @select="onDeptSelect"
+                v-model="queryParams.executeDepartmentId"
+                placeholder="请选择科室"
+              >
+                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                  item.departmentName
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="4" :sm="24">
+            <a-form-item label="执行结果">
+              <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择">
+                <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
+                  item.description
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="4" :sm="24">
+            <a-form-item label="随访医生">
+              <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
+                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.value">{{
+                  item.description
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="5" :sm="24">
+            <a-form-item label="随访方式">
+              <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.value">{{
+                  item.description
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
+          </a-col>
+        </a-row>
+
+        <a-row :gutter="48">
+          <a-col :md="9" :sm="24">
+            <a-form-item label="执行日期">
+              <a-range-picker :value="createValue" @change="onChange" />
+            </a-form-item>
+          </a-col>
+          <a-col :md="9" :sm="24">
+            <a-form-item label="抽查日期">
+              <a-range-picker :value="createValue" @change="onChange" />
+            </a-form-item>
+          </a-col>
+
+          <a-col :md="6" :sm="24">
+            <a-form-item label="姓名">
+              <a-input
+                v-model="queryParams.queryStr"
+                allow-clear
+                placeholder="请输入姓名"
+                @blur="goSearch"
+                @keyup.enter="goSearch"
+                @search="goSearch"
               />
             </a-form-item>
           </a-col>
 
           <a-col :md="6" :sm="24">
-            <a-form-item label="患者名称">
-              <a-input
-                v-model="queryParam.userName"
-                allow-clear
-                placeholder="请输入患者名称"
-                @keyup.enter="$refs.table.refresh(true)"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="3" :sm="24">
-            <span
-              class="table-page-search-submitButtons"
-              :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-            >
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            </span>
+            <!-- <a-form-item label="状态:"> -->
+            <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
+            <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
+            <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
+            <!-- </a-form-item> -->
           </a-col>
         </a-row>
       </a-form>
@@ -107,9 +157,11 @@
 
 <script>
 import { STable } from '@/components'
-import { getOutPatients, getDepts } from '@/api/modular/system/posManage'
+import { getOutPatients, getDepts, getDeptsPersonal, taskBizStatus } from '@/api/modular/system/posManage'
+import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import { formatDate, formatDateFull } from '@/utils/util'
 import addForm from './addForm'
 import editForm from './editForm'
 
@@ -146,13 +198,26 @@ export default {
       partChoose: '',
       keyindex: '1',
       keshiData: [],
+      createValue: [],
       // 查询参数 existsPlanFlag传 1：已订购套餐患者；2：未订购套餐患者；不传和其他：全部患者
-      queryParam: {
-        // existsPlanFlag: '2',
-        existsPlanFlag: 2,
-        bqmc: '',
-        // deptCode: Vue.ls.get(TRUE_USER).departmentCode,
-        // isRegister: '1',
+      queryParams: {
+        executeDepartmentId: -1, //执行科室id
+        taskBizStatus: '-1', //执行结果2:成功3:失败
+        actualDoctorUserId: null, //实际随访医生
+        messageType: null, //随访方式
+
+        beginCheckTime: null, //开始抽查时间，yyyy-MM-dd
+        endCheckTime: null, //结束抽查时间，yyyy-MM-dd
+        beginExecuteTime: null, //开始执行时间，yyyy-MM-dd
+        endExecuteTime: null, //结束执行时间，yyyy-MM-dd
+        queryStr: null, //姓名或手机号
+
+        checkStatus: null, //抽查状态，1:通过2:不通过
+
+        messageContentId: null, //推送具体内容id
+        messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
+
+        type: null, //类型，1:待抽查2:已抽查
       },
       // 表头
       columns: [
@@ -204,7 +269,7 @@ export default {
       loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        console.log('loadData', Object.assign(parameter, this.queryParam))
+        console.log('loadData', Object.assign(parameter, this.queryParams))
         return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
           for (let i = 0; i < res.data.rows.length; i++) {
             // this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
@@ -253,37 +318,94 @@ export default {
       chooseDeptItem: {},
       originData: [],
       keshiDataTemp: [],
+      taskBizStatusData: [],
     }
   },
 
   created() {
-    getDepts().then((res) => {
-      if (res.code == 0) {
-        this.originData = res.data
-        // res.data.unshift({
-        //   departmentId: '-2',
-        //   departmentName: '全部',
-        //   hospitalId: 1,
-        //   parentId: 0,
-        //   children: null,
-        // })
-        for (let i = 0; i < res.data.length; i++) {
-          // this.$set(res.data[i], 'xh', i + 1)
-          if (i == 0) {
-            this.$set(res.data[i], 'isChecked', true)
-          } else {
-            this.$set(res.data[i], 'isChecked', false)
+    this.user = Vue.ls.get(TRUE_USER)
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+      getDepts().then((res) => {
+        if (res.code == 0) {
+          res.data.unshift({ departmentName: '全部', departmentId: -1 })
+          for (let i = 0; i < res.data.length; i++) {
+            // this.$set(res.data[i], 'xh', i + 1)
+            if (i == 0) {
+              this.$set(res.data[i], 'isChecked', true)
+            } else {
+              this.$set(res.data[i], 'isChecked', false)
+            }
           }
+          // this.keshiData = res.data
+          // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+          this.originData = JSON.parse(JSON.stringify(res.data))
         }
-        this.keshiData = res.data
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
+      })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          res.data.unshift({ departmentName: '全部', departmentId: -1 })
+          for (let i = 0; i < res.data.length; i++) {
+            // this.$set(res.data[i], 'xh', i + 1)
+            if (i == 0) {
+              this.$set(res.data[i], 'isChecked', true)
+            } else {
+              this.$set(res.data[i], 'isChecked', false)
+            }
+          }
+          // this.keshiData = res.data
+          // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+          this.originData = JSON.parse(JSON.stringify(res.data))
+        }
+      })
+    }
+
+    taskBizStatus().then((res) => {
+      if (res.code == 0) {
+        this.taskBizStatusData = res.data
+        this.taskBizStatusData.unshift({ value: '-1', description: '全部' })
       }
     })
   },
 
   methods: {
+    goSearch() {
+      this.$refs.table.refresh(true)
+    },
+
+    onChange(momentArr, dateArr) {
+      this.createValue = momentArr
+      this.queryParams.startDate = dateArr[0]
+      this.queryParams.endDate = dateArr[1]
+    },
+
+    /**
+     * 执行科室选择后需要请求执行人员
+     */
+    onDeptSelect() {
+      this.getUsersByDeptIdAndRoleOut()
+      this.getDeptAllQues()
+    },
+
+    /**
+     * 选名单过滤前先选名单来源
+     */
+    getFocus() {
+      if (!this.queryParams.executeDepartmentId || this.queryParams.executeDepartmentId == -1) {
+        this.$message.warn('请先选择执行科室')
+        return
+      }
+    },
+
+    getUsersByDeptIdAndRoleOut() {
+      getUsersByDeptIdAndRole({ departmentId: this.queryParams.executeDepartmentId, roleId: [3, 5] }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsers = res.data.deptUsers
+        }
+      })
+    },
+
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
@@ -470,6 +592,10 @@ export default {
     overflow: hidden;
     float: right;
     width: 81%;
+
+    .ant-select {
+      width: 90px;
+    }
 
     .table-page-search-wrapper {
       margin-top: 1%;

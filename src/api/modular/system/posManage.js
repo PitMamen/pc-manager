@@ -2223,7 +2223,7 @@ export function historyFollowResult(id) {
  */
 export function createSdkLoginToken() {
   return axios({
-    url: '/follow-api/ccc/createSdkLoginToken',
+    url: '/follow-api/follow/ccc/createSdkLoginToken',
     method: 'post'
   })
 }
@@ -2233,7 +2233,7 @@ export function createSdkLoginToken() {
  */
 export function addTencentPhoneTape(param) {
   return axios({
-    url: '/follow-api/ccc/addTencentPhoneTape',
+    url: '/follow-api/follow/ccc/addTencentPhoneTape',
     method: 'post',
     data: param,
   })
@@ -2242,9 +2242,20 @@ export function addTencentPhoneTape(param) {
 /**
  * 电话录音列表
  */
- export function getSoundRecordingList(id) {
+export function getSoundRecordingList(id) {
   return axios({
     url: '/follow-api/followPlanPhone/getSoundRecordingList/' + id,
     method: 'post'
+  })
+}
+/**
+ * /follow/dict/taskBizStatus 任务状态;2:成功3:失败
+ */
+export function taskBizStatus(data) {
+  return axios({
+    url: '/follow-api/follow/dict/taskBizStatus',
+    method: 'get',
+    params: data,
+
   })
 }
