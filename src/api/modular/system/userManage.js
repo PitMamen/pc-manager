@@ -162,7 +162,7 @@ export function sysUserResetPwd (parameter) {
  */
 export function sysUserUpdatePwd (parameter) {
   return axios({
-    url: '/sysUser/updatePwd',
+    url: 'account-api/accountInfo/updatePassword',
     method: 'post',
     data: parameter
   })

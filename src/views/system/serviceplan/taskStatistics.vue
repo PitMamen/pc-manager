@@ -74,11 +74,10 @@
               <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
             </span>
   
-            <!-- <span slot="action" slot-scope="text, record">
-              <a >{{ record.planName }}</a>
-            </span> -->
   
-            <template slot="titleNNN">随访方式</template>
+            <template v-if="queryParamsStatisit.statType==1" slot="titleNNN">按随访方案</template>
+            <template v-if="queryParamsStatisit.statType==2" slot="titleNNN">按执行科室</template>
+            <template v-if="queryParamsStatisit.statType==3" slot="titleNNN">按问卷</template>
           </s-table>
   
           <statisit-Detail ref="statisitDetail" @ok="handleOk" />
@@ -242,9 +241,9 @@
                 rows: res.data,
               }
               data.rows.forEach((item, index) => {
-                this.$set(item, 'successRate', item.successRate * 100 + '%')
-                this.$set(item, 'failRate', item.failRate * 100 + '%')
-                this.$set(item, 'overdueRate', item.overdueRate * 100 + '%')
+                this.$set(item, 'successRate',Math.round(item.successRate * 100)  + '%')
+                this.$set(item, 'failRate', Math.round(item.failRate * 100) + '%')
+                this.$set(item, 'overdueRate', Math.round(item.overdueRate * 100) + '%')
                 this.$set(item, 'statType', this.queryParamsStatisit.statType)
                 this.$set(item, 'beginDate', this.queryParamsStatisit.beginDate)
                 this.$set(item, 'endDate', this.queryParamsStatisit.endDate)

@@ -139,7 +139,7 @@ export default {
     //初始化方法
     checkDetail(record, type) {
       this.visible = true
-      console.log("sss:",record.planName)
+      this.reset()
       var status = record.success==1?'成功':"失败"
       this.titleTop = record.planName+'-'+record.messageName+'-'+status+" 【"+record.beginDate+" 至 "+record.endDate+"】"
       console.log('PPPPPPP:', record)
@@ -150,6 +150,10 @@ export default {
       this.queryParamsData.messageType = record.messageType
       this.queryParamsData.planId = record.planId
       this.queryParamsData.statType = record.statType
+      this.$nextTick(() => {
+        this.$refs.table.refresh()
+      })
+      
     },
 
     handleCancel() {
@@ -160,6 +164,20 @@ export default {
     handleSubmit() {
       this.visible = false
     },
+
+
+    /**
+     * 重置参数
+     */
+    reset(){
+      this.queryParamsData.beginDate =''
+      this.queryParamsData.endDate = ''
+      this.queryParamsData.execDept = ''
+      this.queryParamsData.flag = ''
+      this.queryParamsData.messageType = ''
+      this.queryParamsData.planId = ''
+      this.queryParamsData.statType = ''
+    }
   },
 }
 </script>
