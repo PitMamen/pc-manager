@@ -7,36 +7,27 @@
           <div class="table-page-search-wrapper">
             <a-form layout="inline">
               <a-row :gutter="48">
-                <!-- <a-col :md="3" :sm="24">
-                          <a-button type="primary" @click="$refs.addForm.add()">新增版本</a-button>
-                        </a-col> -->
-                <!-- 只有病友服务中心账号和管理员能查看所有科室 -->
-                <a-col v-if="user.departmentCode == 1 || user.roleName == 'admin'" :md="6" :sm="24">
-                  <a-form-item label="科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+                <a-col :md="6" :sm="24">
+                  <a-form-item label="统计方式" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
                     <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                    <a-select allow-clear v-model="queryParamsStat.deptCodes" mode="multiple" placeholder="请选择科室">
-                      <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                        item.departmentName
+                    <a-select
+                      allow-clear
+                      v-model="queryParamsStatisit.statType"
+                      @select="onSelected"
+                      placeholder="请选择统计方式"
+                    >
+                      <a-select-option v-for="(item, index) in StatisticsMode" :key="index" :value="item.code">{{
+                        item.value
                       }}</a-select-option>
                     </a-select>
                   </a-form-item></a-col
                 >
   
                 <a-col :md="6" :sm="24">
-                  <a-form-item label="状态">
-                    <a-select allow-clear v-model="queryParamsStat.status" placeholder="请选择状态">
-                      <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
-                        item.value
-                      }}</a-select-option>
-                    </a-select>
-                  </a-form-item>
-                </a-col>
-  
-                <a-col :md="6" :sm="24">
-                  <a-form-item label="抽查状态">
-                    <a-select allow-clear v-model="queryParamsStat.checkStatus" placeholder="请选择抽查状态">
-                      <a-select-option v-for="(item, index) in statusDataCheck" :key="index" :value="item.code">{{
-                        item.value
+                  <a-form-item label="执行科室">
+                    <a-select allow-clear v-model="queryParamsStatisit.execDept" placeholder="请选择科室">
+                      <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
+                        item.departmentName
                       }}</a-select-option>
                     </a-select>
                   </a-form-item>
@@ -48,21 +39,19 @@
                   </a-form-item>
                 </a-col>
   
-                <a-col :md="5" :sm="24">
-                  <a-button
-                    style="margin-right: 3%"
-                    type="primary"
-                    v-if="user.departmentCode == 1 || user.roleName == 'admin'"
-                    @click="reset"
-                    >全院</a-button
-                  >
+                <a-col :md="4" :sm="24">
                   <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
+                  <a-button type="primary" style="margin-left: 2%" @click="reset()">重置</a-button>
                 </a-col>
               </a-row>
             </a-form>
           </div>
   
           <s-table
+            style="overflow-y: auto"
+            :showPagination="false"
+            :scroll="{ y: 500, x: 600 }"
+            bordered
             ref="tableStat"
             size="default"
             :columns="columnsStat"
@@ -70,75 +59,95 @@
             :alert="true"
             :rowKey="(record) => record.code"
           >
-            <span slot="action" slot-scope="text, record">
-              <!-- 仅对超时的有处理 -->
-              <a v-if="record.status == 4" @click="$refs.statSolve.doDeal(record)">处理</a>
-              <a-divider v-if="record.status == 4" type="vertical" />
-  
-              <!-- <a @click="$refs.statSolve.edit(record)">处理</a>
-                      <a-divider type="vertical" /> -->
-  
-              <a @click="$refs.statDetail.edit(record.id)">详情</a>
-  
-              <a-divider v-if="record.status == 5" type="vertical" />
-  
-              <!-- 仅对电话随访有抽查 -->
-              <a v-if="record.status == 5 && record.checkStatus == 0" @click="$refs.statSolve.doCheck(record)">抽查</a>
-  
-              <a v-if="record.status == 5 && record.checkStatus == 1" @click="$refs.statSolve.checkInfo(record)"
-                >抽查详情</a
-              >
+            <span slot="action_total" slot-scope="text, record">
+              <a @click="$refs.statisitDetail.checkDetail(record, 1)">{{ record.total }}</a>
             </span>
+            <span slot="action_success" slot-scope="text, record">
+              <a @click="$refs.statisitDetail.checkDetail(record, 2)">{{ record.success }}</a>
+            </span>
+  
+            <span slot="action_fail" slot-scope="text, record">
+              <a @click="$refs.statisitDetail.checkDetail(record, 3)"> {{ record.fail }}</a>
+            </span>
+  
+            <span slot="action_overdue" slot-scope="text, record">
+              <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
+            </span>
+  
+            <!-- <span slot="action" slot-scope="text, record">
+              <a >{{ record.planName }}</a>
+            </span> -->
+  
+            <template slot="titleNNN">随访方式</template>
           </s-table>
   
-          <stat-detail ref="statDetail" @ok="handleOkStat" />
-          <stat-solve ref="statSolve" @ok="handleOkStat" />
+          <statisit-Detail ref="statisitDetail" @ok="handleOk" />
         </a-card>
       </div>
     </div>
   </template>
   
   <script>
-  import { STable } from '@/components'
-  import {
-    getDocPlans,
-    delPlan,
-    getOutPatients,
-    statRevisit,
-    getDepts,
-    deleteAppVersion,
-    qryRevisitPatientList,
-  } from '@/api/modular/system/posManage'
-  import addForm from './addForm'
-  import editForm from './editForm'
-  import addFormDispatch from './addFormDispatch'
-  import editFormDispatch from './editFormDispatch'
   import moment from 'moment'
+  import { STable } from '@/components'
+  import { getDepts, statExecuteRecord } from '@/api/modular/system/posManage'
+  import statisitDetail from './statisitDetail'
   
-  import statDetail from './statDetail'
-  import statSolve from './statSolve'
   import { TRUE_USER } from '@/store/mutation-types'
-  import Vue from 'vue'
   
   import { formatDate, getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
   
   export default {
     components: {
       STable,
-      addForm,
-      editForm,
-  
-      addFormDispatch,
-      editFormDispatch,
-  
-      statDetail,
-      statSolve,
+      statisitDetail,
     },
   
     data() {
-      return {
-    
   
+      var spanArr = []
+      var position = 0
+      //列合并
+      const renderContent = (value, row, index) => {
+        const obj = {
+          children: value,
+          attrs: {},
+        }
+        const _row = spanArr[index]
+        const _col = _row > 0 ? 1 : 0
+        obj.attrs = {
+          rowSpan: _row,
+          colSpan: _col,
+        }
+  
+        return obj
+      }
+  
+      //计算合并
+      const rowspan = (userData) => {
+        spanArr = []
+        position = 0
+        userData.forEach((item, index) => {
+          if (index === 0) {
+            spanArr.push(1)
+            position = 0
+          } else {
+            //需要合并的地方判断
+            if (userData[index].planName === userData[index - 1].planName) {
+              spanArr[position] += 1
+              spanArr.push(0)
+            } else {
+              spanArr.push(1)
+              position = index
+            }
+          }
+        })
+      }
+  
+      return {
+        createValue: [],
+        createValueBor: [],
+        titleName: '按随访方案',
         /** 统计类别数据*/
         labelCol: {
           xs: { span: 24 },
@@ -149,85 +158,59 @@
           xs: { span: 24 },
           sm: { span: 11 },
         },
-        queryParamsStat: {
-          deptCodes: [],
-          status: undefined,
-          checkStatus: undefined,
+        form: this.$form.createForm(this),
+        queryParamsStatisit: {
           beginDate: getDateNow(),
           endDate: getCurrentMonthLast(),
-        },
-        queryParamsStatOrigin: {
-          deptCodes: [],
-          status: undefined,
-          checkStatus: undefined,
-          beginDate: '',
-          endDate: '',
+          execDept: '',
+          hospitalCode: '',
+          statType: 1,
+          tenantId: '',
         },
   
         // 表头
         columnsStat: [
           {
-            title: '序号',
-            dataIndex: 'xh',
+            dataIndex: 'planName',
+            scopedSlots: { customRender: 'action', title: 'titleNNN' },
+            customRender: renderContent,
           },
           {
-            title: '患者',
-            dataIndex: 'xm',
+            title: '随访方式',
+            dataIndex: 'messageName',
           },
           {
-            title: '所在病区',
-            dataIndex: 'bqmc',
-          },
-          {
-            title: '性别',
-            dataIndex: 'xbmc',
+            title: '任务数',
+            dataIndex: 'total',
+            scopedSlots: { customRender: 'action_total' },
           },
   
           {
-            title: '年龄',
-            dataIndex: 'nl',
+            title: '成功数',
+            dataIndex: 'success',
+            scopedSlots: { customRender: 'action_success' },
           },
           {
-            title: '科室',
-            dataIndex: 'ksmc',
+            title: '成功率',
+            dataIndex: 'successRate',
           },
           {
-            title: '专病',
-            dataIndex: 'cyzd',
+            title: '失败数',
+            dataIndex: 'fail',
+            scopedSlots: { customRender: 'action_fail' },
           },
           {
-            title: '登记时间',
-            dataIndex: 'createTimeOut',
+            title: '失败率',
+            dataIndex: 'failRate',
           },
           {
-            title: '住院号',
-            dataIndex: 'zyh',
+            title: '逾期数',
+            dataIndex: 'overdue',
+            scopedSlots: { customRender: 'action_overdue' },
           },
           {
-            title: '出院时间',
-            dataIndex: 'cysj',
-          },
-          // {
-          //   title: '出院小结',
-          //   dataIndex: 'versionDescription',
-          // },
-          {
-            title: '执行计划',
-            dataIndex: 'planName',
-          },
-          {
-            title: '抽查状态',
-            dataIndex: 'checkText',
-          },
-          {
-            title: '状态',
-            dataIndex: 'stateText',
-          },
-          {
-            title: '操作',
-            width: '150px',
-            dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
+            title: '逾期率',
+            dataIndex: 'overdueRate',
           },
         ],
         //此属性用来做重置功能的
@@ -235,65 +218,47 @@
         createValueBor: [],
         originData: [],
         user: {},
-        //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访)
-        //抽查状态(1已抽查0未抽查)
-        statusData: [
-          { code: -1, value: '全部' },
-          { code: 1, value: '未注册' },
-          { code: 2, value: '待分配' },
-          { code: 3, value: '执行中' },
-          { code: 4, value: '超时' },
-          { code: 5, value: '电话随访' },
-          { code: 6, value: '失访' },
-          { code: 7, value: '已完成' },
+  
+        keshiData: [],
+        keshiDataTemp: [],
+  
+        StatisticsMode: [
+          { code: 1, value: '按随访方案' },
+          { code: 2, value: '按执行科室' },
+          { code: 3, value: '按问卷' },
         ],
   
-        statusDataCheck: [
-          { code: -1, value: '全部' },
-          { code: 1, value: '已抽查' },
-          { code: 0, value: '未抽查' },
-        ],
         dateFormat: 'YYYY-MM-DD',
   
         // 加载数据方法 必须为 Promise 对象
         loadDataStat: (parameter) => {
-          /**不是病友服务中心和管理员，写死用户当前的科室 */
-          // let params = JSON.parse(JSON.stringify(this.queryParamsStat))
-          // if (this.user.departmentCode != 1 && this.user.roleName != 'admin') {
-          //   params.deptCodes.push(this.user.departmentCode)
-          // }
-          if (this.queryParamsStat.status == -1) {
-            delete params.status
-          }
-          if (this.queryParamsStat.checkStatus == -1) {
-            delete params.checkStatus
-          }
-          return qryRevisitPatientList(Object.assign(parameter, this.queryParamsStat)).then((res) => {
+          return statExecuteRecord(Object.assign(parameter, this.queryParamsStatisit)).then((res) => {
             if (res.code == 0) {
-              for (let i = 0; i < res.data.rows.length; i++) {
-                this.$set(res.data.rows[i], 'xh', i + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-  
-                this.$set(res.data.rows[i], 'stateText', this.getClassText(res.data.rows[i].status))
-                //只有电话随访有抽查状态
-                if (res.data.rows[i].status == 5) {
-                  this.$set(res.data.rows[i], 'checkText', this.getCheckText(res.data.rows[i].checkStatus))
-                } else {
-                  this.$set(res.data.rows[i], 'checkText', '')
-                }
-                this.$set(res.data.rows[i], 'createTimeOut', formatDate(res.data.rows[i].createTime))
+              var data = {
+                pageNo: 1,
+                pageSize: res.data.length,
+                totalRows: res.data.length,
+                totalPage: 1,
+                rows: res.data,
               }
-              return res.data
+              data.rows.forEach((item, index) => {
+                this.$set(item, 'successRate', item.successRate * 100 + '%')
+                this.$set(item, 'failRate', item.failRate * 100 + '%')
+                this.$set(item, 'overdueRate', item.overdueRate * 100 + '%')
+                this.$set(item, 'statType', this.queryParamsStatisit.statType)
+                this.$set(item, 'beginDate', this.queryParamsStatisit.beginDate)
+                this.$set(item, 'endDate', this.queryParamsStatisit.endDate)
+                this.$set(item, 'execDept', this.queryParamsStatisit.execDept)
+              })
+              rowspan(data.rows)
+              return data
             }
           })
         },
-        /** 统计类别数据*/
-  
       }
     },
   
-  
     created() {
-      /** 计划分配方法*/
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
@@ -318,63 +283,43 @@
           // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
-      // this.nowDateEnd = moment(getCurrentMonthLast(), this.dateFormat)
+  
       this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
       this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-      this.user = Vue.ls.get(TRUE_USER)
-      console.log('user', this.user)
-  
-      // this.getStatBorData()
     },
   
     methods: {
       /** 统计列表方法*/
       onChange(momentArr, dateArr) {
         this.createValue = momentArr
-        this.queryParamsStat.beginDate = dateArr[0]
-        this.queryParamsStat.endDate = dateArr[1]
+        this.queryParamsStatisit.beginDate = dateArr[0]
+        this.queryParamsStatisit.endDate = dateArr[1]
       },
   
+      onSelected(ssks) {
+        console.log('---------:', ssks)
+        if (ssks == 1) {
+          this.titleName = '按随访方案'
+        } else if (ssks == 2) {
+          this.titleName = '按执行科室'
+        } else if (ssks == 3) {
+          this.titleName = '按问卷'
+        }
+      },
   
+      handleOk() {
+        this.$refs.table.refresh()
+      },
+  
+      /**
+       * 重置
+       */
       reset() {
-        // this.form.resetFields()
-        this.queryParamsStat = JSON.parse(JSON.stringify(this.queryParamsStatOrigin))
         this.createValue = []
-        this.$refs.tableStat.refresh()
+        this.queryParamsStatisit.statType = ''
+        this.queryParamsStatisit.execDept = ''
+        this.$refs.table.refresh()
       },
-  
-      //状态(1未注册；2待分配；3执行中；4超时；5电话随访；6失访；7已完成)
-      //抽查状态(1已抽查0未抽查)
-      getClassText(status) {
-        if (status == 1) {
-          return '未注册'
-        } else if (status == 2) {
-          return '待分配'
-        } else if (status == 3) {
-          return '执行中'
-        } else if (status == 4) {
-          return '超时'
-        } else if (status == 5) {
-          return '电话随访'
-        } else if (status == 6) {
-          return '失访'
-        } else if (status == 7) {
-          return '已完成'
-        }
-      },
-  
-      getCheckText(status) {
-        if (status == 0) {
-          return '未抽查'
-        } else if (status == 1) {
-          return '已抽查'
-        }
-      },
-  
-      handleOkStat() {
-        this.$refs.tableStat.refresh()
-      },
-      /** 统计列表方法*/
     },
   }
   </script>
