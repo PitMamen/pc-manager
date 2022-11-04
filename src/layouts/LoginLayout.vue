@@ -1,88 +1,107 @@
 <template>
   <div id="loginLayout">
     <div class="left">
+      <img class="chahua" src="@/assets/login/chahua.png" />
       <div class="mask" v-if="hasLogin">
         <img class="logo" src="@/assets/login/logo.png" />
         <div class="menus">
           <div class="row">
-            <div class="item item1" @click="item1Click()">
-              <img class="icon icon1" src="@/assets/login/icon1.png" />
-              <div class="title">全病程管理</div>
+            <div class="item item1" @click="itemClick(sysApps[0])" v-if="sysApps && sysApps[0]">
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[0].logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[0].logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[0].logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[0].logo === 'icon4'" />
+              <div class="title">{{ sysApps[0].applicationName }}</div>
             </div>
-            <div class="item item2" @click="item2Click()">
-              <img class="icon icon2" src="@/assets/login/icon2.png" />
-              <div class="title">互联网医院</div>
+            <div class="item item2" @click="itemClick(sysApps[1])" v-if="sysApps && sysApps[1]">
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[1].logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[1].logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[1].logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[1].logo === 'icon4'" />
+              <div class="title">{{ sysApps[1].applicationName }}</div>
             </div>
           </div>
           <div class="row">
-            <div class="item item3" @click="item3Click()">
-              <img class="icon icon3" src="@/assets/login/icon3.png" />
-              <div class="title">统一权限管理</div>
+            <div class="item item3" @click="itemClick(sysApps[2])" v-if="sysApps && sysApps[2]">
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[2].logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[2].logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[2].logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[2].logo === 'icon4'" />
+              <div class="title">{{ sysApps[2].applicationName }}</div>
             </div>
-            <div class="item item4" @click="item4Click()">
-              <img class="icon icon4" src="@/assets/login/icon4.png" />
-              <div class="title">健康商城</div>
+            <div class="item item4" @click="itemClick(sysApps[3])" v-if="sysApps && sysApps[3]">
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[3].logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[3].logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[3].logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[3].logo === 'icon4'" />
+              <div class="title">{{ sysApps[3].applicationName }}</div>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="right">
-      <div class="title">
-        <div class="title1">全病程管理系统</div>
-        <div class="title2">健/康/城/市  智/慧/医/疗</div>
-      </div>
-      <div class="success-wrap" v-if="hasLogin">
-        <div class="welcome">平台管理员，您好！欢迎使用本系统。</div>
-        <img class="success" src="@/assets/login/success.png" />
-        <div class="msg">登录成功!</div>
-        <a-button size="large" class="logout-button" @click="handleLogout">退出</a-button>
-      </div>
-      <div class="login-wrap" v-else>
-        <div class="intro">用户名</div>
-        <a-input
-          size="large"
-          type="text"
-          class="text-input"
-          v-model="loginParams.username"
-          placeholder="请输入用户名"
-        >
-          <div class="slot" slot="prefix">
-            <img class="text-icon" src="@/assets/login/account.png" />
-          </div>
-        </a-input>
-        <div class="intro">密码</div>
-        <a-input
-          size="large"
-          type="password"
-          class="password-input"
-          v-model="loginParams.password"
-          placeholder="请输入密码"
-        >
-          <div class="slot" slot="prefix">
-            <img class="password-icon" src="@/assets/login/passwd.png" />
-          </div>
-        </a-input>
-        <a-button
-          size="large"
-          type="primary"
-          class="login-button"
-          :loading="flag"
-          :disabled="flag"
-          @click="handleLogin"
-        >
-          登录
-        </a-button>
+      <div class="right-wrap">
+        <div class="title">
+          <div class="title1">全病程管理系统</div>
+          <div class="title2">健/康/城/市  智/慧/医/疗</div>
+        </div>
+        <div class="success-wrap" v-if="hasLogin">
+          <div class="welcome">平台管理员，您好！欢迎使用本系统。</div>
+          <img class="success" src="@/assets/login/success.png" />
+          <div class="msg">登录成功!</div>
+          <a-button size="large" class="logout-button" @click="handleLogout">退出</a-button>
+        </div>
+        <div class="login-wrap" v-else>
+          <div class="intro">用户名</div>
+          <a-input
+            size="large"
+            type="text"
+            class="text-input"
+            v-model="loginParams.username"
+            placeholder="请输入用户名"
+          >
+            <div class="slot" slot="prefix">
+              <img class="text-icon" src="@/assets/login/account.png" />
+            </div>
+          </a-input>
+          <div class="intro">密码</div>
+          <a-input
+            size="large"
+            type="password"
+            class="password-input"
+            v-model="loginParams.password"
+            placeholder="请输入密码"
+          >
+            <div class="slot" slot="prefix">
+              <img class="password-icon" src="@/assets/login/passwd.png" />
+            </div>
+          </a-input>
+          <a-button
+            size="large"
+            type="primary"
+            class="login-button"
+            :loading="flag"
+            :disabled="flag"
+            @click="handleLogin"
+          >
+            登录
+          </a-button>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
 import cryptoJs from 'crypto-js';
 import RouteView from './RouteView'
 import { mixinDevice } from '@/utils/mixin'
 import { mapActions, mapGetters } from 'vuex'
+import { SYS_APP } from '@/store/mutation-types'
+import { SYS_APP_ID } from '@/store/mutation-types'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
 
 export default {
   name: 'LoginLayout',
@@ -94,9 +113,9 @@ export default {
       logined: false,
       loginParams: {
         username: '',
-        password: '',
-        loginType: 1
-      }
+        password: ''
+      },
+      sysApps: []
     }
   },
   computed: {
@@ -109,27 +128,36 @@ export default {
       if (this.userInfo && this.userInfo.id){
         return true
       }
+      if (Vue.ls.get(ACCESS_TOKEN)){
+        return true
+      }
       return false
     }
   },
   mounted () {
+    this.setSysApps()
   },
   beforeDestroy () {
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
+    ...mapActions(['Login', 'Logout', 'LogoutApp']),
 
-    item1Click() {
-      this.$router.push({ path: '/' })
+    itemClick(item) {
+      this.LogoutApp()
+      Vue.ls.set(SYS_APP_ID, item.id)
+      if ((item.indexUrl || '').startsWith('http')){
+        location.href = item.indexUrl
+        return
+      }
+      this.$router.push({ path: item.indexUrl })
     },
-    item2Click() {
-      this.$router.push({ path: '/' })
-    },
-    item3Click() {
-      this.$router.push({ path: '/' })
-    },
-    item4Click() {
-      this.$router.push({ path: '/' })
+    setSysApps(apps) {
+      if (apps){
+        Vue.ls.set(SYS_APP, apps)
+      }else {
+        apps = Vue.ls.get(SYS_APP) || []
+      }
+      this.sysApps = apps
     },
     encryptDes(message) {
       var keyHex = cryptoJs.enc.Utf8.parse('Login783s7Hyee90.k')
@@ -152,6 +180,17 @@ export default {
       this.Login({...{}, ...this.loginParams, ...{
         password: this.encryptDes(this.loginParams.password)
       }}).then(res => {
+        const apps = res.data.applications || []
+        if (apps.length === 0){
+          Vue.ls.remove(ACCESS_TOKEN)
+          this.$message.error('您账号未绑定系统应用，无法登录')
+          return
+        }
+        this.setSysApps(apps)
+        if (apps.length === 1){
+          this.itemClick(apps[0])
+          return
+        }
         this.logined = true
       }).catch(err => {
         this.$message.error(err)
@@ -187,20 +226,32 @@ export default {
 
 <style lang="less" scoped>
 @import '~@/components/px2rem.less';
-
 #loginLayout {
-  overflow: hidden;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
   .left {
     .px2rem(width, 1100);
-    .px2rem(height, 1080);
+    position: relative;
+    height: 100%;
     float: left;
-    background-size: contain;
-    background-image: url('~@/assets/login/bg1.png');
+    background-size: cover;
+    background-image: url('~@/assets/login/bg.jpg');
+    .chahua {
+      .px2rem(width, 708);
+      .px2rem(height, 429);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+    }
     .mask {
       position: relative;
       width: 100%;
       height: 100%;
       background: rgba(55, 102, 159, 0.6);
+      z-index: 2;
       .logo {
         .px2rem(width, 192);
         .px2rem(height, 56);
@@ -209,9 +260,12 @@ export default {
         position: absolute;
       }
       .menus {
-        .px2rem(padding-top, 370);
         .px2rem(padding-left, 82);
         .px2rem(padding-right, 82);
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        transform: translateY(-50%);
         .row {
           .px2rem(margin-bottom, 78);
           overflow: hidden;
@@ -278,126 +332,134 @@ export default {
     }
   }
   .right {
-    .px2rem(height, 1079);
     .px2rem(margin-left, 1100);
     .px2rem(border-radius, 8);
+    position: relative;
+    height: 100%;
     background: #FFFFFF;
     box-shadow: 0px 5px 10px 0px rgba(217,239,255,0.35);
-    .title {
-      .px2rem(padding-top, 155);
-      .title1 {
-        .px2rem(font-size, 48);
-        .px2rem(line-height, 46);
-        font-family: PingFang SC;
-        font-weight: 400;
-        color: #409EFF;
-        text-align: center;
-      }
-      .title2 {
-        .px2rem(margin-top, 17);
-        .px2rem(font-size, 20);
-        .px2rem(line-height, 19);
-        font-family: PingFang SC;
-        font-weight: 400;
-        color: #CCCCCC;
-        text-align: center;
-      }
-    }
-    .login-wrap {
-      .px2rem(margin-top, 114);
-      .px2rem(padding-left, 155);
-      .px2rem(padding-right, 155);
-      .intro {
-        .px2rem(font-size, 24);
-        .px2rem(line-height, 23);
-        .px2rem(margin-bottom, 14);
-        font-family: PingFang SC;
-        font-weight: 400;
-        color: #999999;
-      }
-      .text-input {
-        .px2rem(height, 54);
-        .px2rem(margin-bottom, 18);
-        /deep/ .ant-input-prefix {
-          left: 1px;
-          bottom: 1px;
+    .right-wrap {
+      position: absolute;
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      .title {
+        // .px2rem(padding-top, 155);
+        .title1 {
+          .px2rem(font-size, 48);
+          .px2rem(line-height, 46);
+          font-family: PingFang SC;
+          font-weight: 400;
+          color: #409EFF;
+          text-align: center;
         }
-        /deep/ .ant-input {
-          padding-left: 0 !important;
-          .px2rem(text-indent, 90);
+        .title2 {
+          .px2rem(margin-top, 17);
+          .px2rem(font-size, 20);
+          .px2rem(line-height, 19);
+          font-family: PingFang SC;
+          font-weight: 400;
+          color: #CCCCCC;
+          text-align: center;
         }
       }
-      .password-input {
-        .px2rem(height, 54);
-        /deep/ .ant-input-prefix {
-          left: 1px;
-          bottom: 1px;
+      .login-wrap {
+        .px2rem(margin-top, 114);
+        .px2rem(padding-left, 155);
+        .px2rem(padding-right, 155);
+        .intro {
+          .px2rem(font-size, 24);
+          .px2rem(line-height, 23);
+          .px2rem(margin-bottom, 14);
+          font-family: PingFang SC;
+          font-weight: 400;
+          color: #999999;
         }
-        /deep/ .ant-input {
-          padding-left: 0 !important;
-          .px2rem(text-indent, 90);
+        .text-input {
+          height: calc(0.27083333rem + 2px);
+          .px2rem(margin-bottom, 18);
+          /deep/ .ant-input-prefix {
+            left: 1px;
+            bottom: 1px;
+          }
+          /deep/ .ant-input {
+            padding-left: 0 !important;
+            .px2rem(text-indent, 90);
+          }
+        }
+        .password-input {
+          height: calc(0.27083333rem + 2px);
+          /deep/ .ant-input-prefix {
+            left: 1px;
+            bottom: 1px;
+          }
+          /deep/ .ant-input {
+            padding-left: 0 !important;
+            .px2rem(text-indent, 90);
+          }
+        }
+        .login-button {
+          .px2rem(height, 58) !important;
+          .px2rem(margin-top, 84);
+          width: 100%;
+        }
+        .slot {
+          .px2rem(width, 68);
+          // .px2rem(height, 52);
+          height: 0.27083333rem;
+          position: relative;
+          background: #F6F8FB;
+          .text-icon {
+            .px2rem(width, 26);
+            .px2rem(height, 26);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
+          .password-icon {
+            .px2rem(width, 24);
+            .px2rem(height, 28);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
         }
       }
-      .login-button {
-        .px2rem(height, 58);
-        .px2rem(margin-top, 84);
-        width: 100%;
-      }
-      .slot {
-        .px2rem(width, 68);
-        .px2rem(height, 52);
-        position: relative;
-        background: #F6F8FB;
-        .text-icon {
-          .px2rem(width, 26);
-          .px2rem(height, 26);
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+      .success-wrap {
+        .px2rem(margin-top, 68);
+        .welcome {
+          .px2rem(font-size, 24);
+          .px2rem(line-height, 24);
+          font-family: PingFang SC;
+          font-weight: 400;
+          color: #4D4D4D;
+          text-align: center;
         }
-        .password-icon {
-          .px2rem(width, 24);
-          .px2rem(height, 28);
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
+        .success {
+          display: block;
+          margin: 0 auto;
+          .px2rem(width, 240);
+          .px2rem(height, 185);
+          .px2rem(margin-top, 137);
         }
-      }
-    }
-    .success-wrap {
-      .px2rem(margin-top, 68);
-      .welcome {
-        .px2rem(font-size, 24);
-        .px2rem(line-height, 24);
-        font-family: PingFang SC;
-        font-weight: 400;
-        color: #4D4D4D;
-        text-align: center;
-      }
-      .success {
-        display: block;
-        margin: 0 auto;
-        .px2rem(width, 240);
-        .px2rem(height, 185);
-        .px2rem(margin-top, 137);
-      }
-      .msg {
-        .px2rem(font-size, 24);
-        .px2rem(line-height, 23);
-        .px2rem(margin-top, 33);
-        font-family: PingFang SC;
-        font-weight: 400;
-        color: #409EFF;
-        text-align: center;
-      }
-      .logout-button {
-        display: block;
-        margin: 0 auto;
-        .px2rem(width, 510);
-        .px2rem(height, 58);
-        .px2rem(margin-top, 200);
+        .msg {
+          .px2rem(font-size, 24);
+          .px2rem(line-height, 23);
+          .px2rem(margin-top, 33);
+          font-family: PingFang SC;
+          font-weight: 400;
+          color: #409EFF;
+          text-align: center;
+        }
+        .logout-button {
+          display: block;
+          margin: 0 auto;
+          .px2rem(width, 510);
+          .px2rem(height, 58) !important;
+          .px2rem(margin-top, 200);
+        }
       }
     }
   }

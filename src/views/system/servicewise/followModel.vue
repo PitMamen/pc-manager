@@ -8,7 +8,7 @@
     :maskClosable="false"
     :destroyOnClose="true"
   >
-    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px;">
+    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px">
       <!-- <a-tab-pane key="1">
           <template #tab>
             <span>
@@ -37,11 +37,22 @@
             本次随访
           </span>
         </template>
-        <tel-solve v-if="modelType==0" ref="telSolve" :record="record" @handleCancel="handleCancel"  @goCall="goCall"/>
-        <tel-detail v-else-if="modelType==1" ref="telDetail" :record="record" @handleCancel="handleCancel" @goCall="goCall"/>
+        <tel-solve
+          v-if="modelType == 0"
+          ref="telSolve"
+          :record="record"
+          @handleCancel="handleCancel"
+          @goCall="goCall"
+        />
+        <tel-detail
+          v-else-if="modelType == 1"
+          ref="telDetail"
+          :record="record"
+          @handleCancel="handleCancel"
+          @goCall="goCall"
+        />
       </a-tab-pane>
     </a-tabs>
-
   </a-modal>
 </template>
 
@@ -50,26 +61,22 @@
 import telSolve from './telSolve'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
-import {
-  createSdkLoginToken,
-  addTencentPhoneTape,
-} from '@/api/modular/system/posManage'
+import { createSdkLoginToken, addTencentPhoneTape } from '@/api/modular/system/posManage'
 import { info } from '@/api/modular/system/sysapp'
 export default {
   components: {
     telSolve,
     histroySolve,
     telDetail,
-   
   },
 
   data() {
     return {
-      modelType:'',
+      modelType: '',
       activeKey: '3',
       visible: false,
       record: Object,
-      isSDKReady:false
+      isSDKReady: false,
     }
   },
   created() {
@@ -83,7 +90,7 @@ export default {
   methods: {
     //随访
     doDeal(record) {
-      this.modelType=0
+      this.modelType = 0
       this.activeKey = '3'
       this.visible = true
       this.record = record
@@ -91,7 +98,7 @@ export default {
 
     //详情
     doInfo(record) {
-      this.modelType=1
+      this.modelType = 1
       this.activeKey = '3'
       this.visible = true
       this.record = record
@@ -99,10 +106,11 @@ export default {
 
     handleCancel() {
       this.visible = false
+      this.$emit('ok', '')
     },
 
     injectTcccWebSDK(sdkURL) {
-      let that=this
+      let that = this
       return new Promise(function (resolve) {
         const script = document.createElement('script')
         script.setAttribute('crossorigin', 'anonymous')
@@ -115,9 +123,10 @@ export default {
              * Tccc SDK初始化成功，此时可调用外呼等功能。
              * 注意：请确保只初始化一次SDK
              * */
-           
-             that.isSDKReady=true
-            console.log('云呼叫初始化成功',  that.isSDKReady)
+
+            that.isSDKReady = true
+            console.log('云呼叫初始化成功', that.isSDKReady)
+            // tccc.UI.hidefloatButton()//隐藏悬浮按钮
             resolve('初始化成功')
             // this.$message.success('初始化成功')
           })
@@ -125,11 +134,11 @@ export default {
       })
     },
 
-    goCall(phone,recordId) {
-      let that=this
-      console.log( this.isSDKReady)
-      console.log( '参数',phone+'=='+recordId)
-      if(!this.isSDKReady){
+    goCall(phone, recordId) {
+      let that = this
+      console.log(this.isSDKReady)
+      console.log('参数', phone + '==' + recordId)
+      if (!this.isSDKReady) {
         this.$message.info('等待云呼叫功能初始化')
         return
       }
@@ -145,25 +154,25 @@ export default {
           }
           console.log('goCall Success', res)
           // 外呼成功，执行您的业务逻辑
-          that.addTencentPhoneTapeOut(res,recordId)
+          that.addTencentPhoneTapeOut(res, recordId)
         })
         .catch(function (err) {
           // 对错误进行处理
           console.error('goCall Fail ee', err)
           console.error('goCall Fail', err.errorMsg)
-          that.$message.error( err.errorMsg)
-          that.addTencentPhoneTapeOut(err,recordId)
+          that.$message.error(err.errorMsg)
+          that.addTencentPhoneTapeOut(err, recordId)
         })
     },
 
-    addTencentPhoneTapeOut(res,recordId) {
+    addTencentPhoneTapeOut(res, recordId) {
       let param = {}
       if (res.status == 'success') {
         param = {
           followExecuteRecordId: recordId, //随访任务id
-          calleePhoneNumber: res.calleePhoneNumber, //被呼叫人
-          callerPhoneNumber: res.callerPhoneNumber, //呼叫人
-          sessionId: res.sessionId,
+          calleePhoneNumber: res.data.calleePhoneNumber, //被呼叫人
+          callerPhoneNumber: res.data.callerPhoneNumber, //呼叫人
+          sessionId: res.data.sessionId,
           status: 1, //随访电话通话状态;1:成功2:失败
         }
       } else if (res.status == 'error') {
@@ -172,6 +181,7 @@ export default {
           status: 2,
         }
       }
+      console.error('goCall param', param)
       addTencentPhoneTape(param).then((resIn) => {
         if (resIn.code == 0) {
           console.error('新增腾讯云呼叫电话记录成功', resIn)
@@ -187,5 +197,4 @@ export default {
   height: 18px;
   margin-bottom: 3px;
 }
-
 </style>

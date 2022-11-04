@@ -3,6 +3,8 @@ import { login, getLoginUser, logout, changeLoginUserRole } from '@/api/modular/
 import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { sysUserUpdatePwd } from '@/api/modular/system/userManage'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { SYS_APP } from '@/store/mutation-types'
+import { SYS_APP_ID } from '@/store/mutation-types'
 import { ALL_APPS_MENU } from '@/store/mutation-types'
 import { TRUE_USER } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
@@ -59,7 +61,7 @@ const user = {
           const result = response.data
           Vue.ls.set(ACCESS_TOKEN, result.jwt, 7 * 24 * 60 * 60 * 1000)
           commit('SET_TOKEN', result)
-          resolve()
+          resolve(response)
         }).catch(error => {
           reject(error)
         })
@@ -97,7 +99,9 @@ const user = {
     // 获取用户信息
     GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
-        getLoginUser().then(response => {
+        getLoginUser({
+          applicationId: Vue.ls.get(SYS_APP_ID) || ''
+        }).then(response => {
           console.log("GetInfo", response)
           if (response.success) {
             const data = response.data
@@ -130,12 +134,23 @@ const user = {
           commit('SET_ROLES', [])
           commit('SET_BUTTONS', [])
           commit('SET_ADMINTYPE', '')
+          Vue.ls.remove(SYS_APP)
+          Vue.ls.remove(SYS_APP_ID)
           Vue.ls.remove(ACCESS_TOKEN)
           Vue.ls.remove(ALL_APPS_MENU)
         })
       })
     },
 
+    // 登出app
+    LogoutApp({ commit, state }) {
+      return new Promise((resolve) => {
+        commit('SET_ROLES', [])
+        Vue.ls.remove(ALL_APPS_MENU)
+        resolve()
+      })
+    },
+    
     // 切换应用菜单
     MenuChange({ commit }, application) {
       return new Promise((resolve) => {

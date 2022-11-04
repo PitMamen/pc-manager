@@ -51,9 +51,12 @@
             placeholder="应用图标"
             v-decorator="['logo', { rules: [{ required: true, message: '请选择应用图标！' }] }]"
           >
-            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{
-              item.name
-            }}</a-select-option>
+            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">
+              <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon1.png" v-if="item.id === 'icon1'" />
+              <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon2.png" v-if="item.id === 'icon2'" />
+              <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon3.png" v-if="item.id === 'icon3'" />
+              <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon4.png" v-if="item.id === 'icon4'" />
+            </a-select-option>
           </a-select>
         </a-form-item>
         <a-form-item label="应用路径" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -93,20 +96,16 @@ export default {
       
       selects: [
         {
-          id: 'apple',
-          name: '图标1'
+          id: 'icon1'
         },
         {
-          id: 'windows',
-          name: '图标2'
+          id: 'icon2'
         },
         {
-          id: 'android',
-          name: '图标3'
+          id: 'icon3'
         },
         {
-          id: 'chrome',
-          name: '图标4'
+          id: 'icon4'
         }
       ],
       form: this.$form.createForm(this)
@@ -157,5 +156,5 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 </style>
