@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="张三 | 男 | 35岁"
+    :title="title"
     :width="1500"
     :visible="visible"
     :footer="null"
@@ -72,7 +72,8 @@ export default {
 
   data() {
     return {
-      modelType: '',
+      title:'',
+      modelType:'',
       activeKey: '3',
       visible: false,
       record: Object,
@@ -90,15 +91,17 @@ export default {
   methods: {
     //随访
     doDeal(record) {
-      this.modelType = 0
-      this.activeKey = '3'
-      this.visible = true
-      this.record = record
+      this.modelType=0
+      this.init(record)   
     },
 
     //详情
     doInfo(record) {
-      this.modelType = 1
+      this.modelType=1
+      this.init(record)   
+    },
+    init(record){
+      this.title=record.userName+' | '+record.sex.description+' | '+record.age+'岁'
       this.activeKey = '3'
       this.visible = true
       this.record = record

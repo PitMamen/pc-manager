@@ -52,7 +52,8 @@
 
       <div class="midline"></div>
 
-      <div class="div-span-content-right">
+      <div class="div-span-content-right" >
+        <div v-show="showResultInfo">
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">随访结果</span>
@@ -82,10 +83,10 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访状态 :</span>
-          <a-select placeholder="请选择" :value="historyResult.execStatus.description" disabled>
+          <a-select placeholder="请选择" :value="historyResult.taskBizStatus.description" disabled>
             disabled>
-            <a-select-option :value="historyResult.execStatus.description" disabled>{{
-              historyResult.execStatus.description
+            <a-select-option :value="historyResult.taskBizStatus.description" disabled>{{
+              historyResult.taskBizStatus.description
             }}</a-select-option>
           </a-select>
         </div>
@@ -108,7 +109,7 @@
           </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 失败原因 :</span>
-              <span class="span-item-value">{{ historyResult.failReason }}</span>
+              <span class="span-item-value">{{ failureList[historyResult.failReason-1] }}</span>
             </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
@@ -152,7 +153,7 @@
               <!--  随访失败显示 -->
               <div class="div-line-wrap">
                 <span class="span-item-name"> 失败原因 :</span>
-                <span class="span-item-value">{{ historyResult.failReason }}</span>
+                <span class="span-item-value">{{ failureList[historyResult.failReason-1] }}</span>
               </div>
               <div class="div-line-wrap">
                 <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
@@ -161,6 +162,7 @@
             </span>
           </span>
         </span>
+      </div>
       </div>
     </div>
     <div style="margin-top: 12px;display: flex; flex-direction: row-reverse">
@@ -189,9 +191,21 @@ export default {
   },
   data() {
     return {
+      showResultInfo:false,
       audioSrc:'',
       audioShow:false,
       patientInfo: {},
+      failureList: [
+        '电话无人接听',
+        '电话号码有误',
+        '主动放弃随访',
+        '患者拒绝随访',
+        '电话占线',
+        '电话关机',
+        '患者已死亡',
+        '患者已迁出',
+        '其他',
+      ],
       historyList: [],
       historyDetail: {},
       historyResult: {
@@ -211,6 +225,7 @@ export default {
           description: '',
         },
         actualDoctorUserId: null,
+        actualDoctorUserName:'',
         taskBizStatus: {
           //随访结果 1:未执行2:成功 3:失败
           value: '',
@@ -220,7 +235,7 @@ export default {
         remark: null,
         projectKeyUrlR: null,
         projectKeyUrlW: null,
-        planName: '定制',
+        planName: '',
         overdueFollowType: {
           //是否电话跟进 1:电话跟进
           value: '',
@@ -259,15 +274,6 @@ export default {
     },
 
     onHistoryItemClick(id) {
-      followPlanPhonehistoryDetail(id).then((res) => {
-        if (res.code === 0) {
-          this.historyDetail = res.data
-         
-          this.questionUrl = res.data.contentUrl
-        } else {
-          this.$message.error(res.message)
-        }
-      })
 
       historyFollowResult(id).then((res) => {
         if (res.code === 0) {
@@ -278,10 +284,24 @@ export default {
             }
           }
           this.historyResult = res.data
+          this.showResultInfo=true
+          console.log("historyFollowResult", this.historyResult)
         } else {
           this.$message.error(res.message)
         }
       })
+
+      followPlanPhonehistoryDetail(id).then((res) => {
+        if (res.code === 0) {
+          this.historyDetail = res.data
+         
+          this.questionUrl = res.data.contentUrl
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+
+
     },
 //播放音频
 playAudio(src) {

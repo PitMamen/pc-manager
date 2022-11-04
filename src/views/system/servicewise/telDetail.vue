@@ -2,6 +2,7 @@
   <div style="height: 650px; ">
     <div class="div-appoint-detail">
       <div class="div-span-content-left" >
+        <div v-show="showResultInfo">
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">随访结果</span>
@@ -9,67 +10,67 @@
 
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访方式 :</span>
-          <a-select placeholder="请选择" :value="historyResult.messageType.description" disabled>
-            <a-select-option :value="historyResult.messageType.description">{{
-              historyResult.messageType.description
+          <a-select placeholder="请选择" :value="detailResult.messageType.description" disabled>
+            <a-select-option :value="detailResult.messageType.description">{{
+              detailResult.messageType.description
             }}</a-select-option>
           </a-select>
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访方案 :</span>
-          <a-select placeholder="请选择" :value="historyResult.planName" disabled>
-            <a-select-option :value="historyResult.planName">{{ historyResult.planName }}</a-select-option>
+          <a-select placeholder="请选择" :value="detailResult.planName" disabled>
+            <a-select-option :value="detailResult.planName">{{ detailResult.planName }}</a-select-option>
           </a-select>
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 是否逾期 :</span>
-          <a-select placeholder="请选择" :value="historyResult.overdueStatus.description" disabled>
-            <a-select-option :value="historyResult.overdueStatus.description">{{
-              historyResult.overdueStatus.description
+          <a-select placeholder="请选择" :value="detailResult.overdueStatus.description" disabled>
+            <a-select-option :value="detailResult.overdueStatus.description">{{
+              detailResult.overdueStatus.description
             }}</a-select-option>
           </a-select>
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 随访状态 :</span>
-          <a-select placeholder="请选择" :value="historyResult.taskBizStatus.description" disabled>
+          <a-select placeholder="请选择" :value="detailResult.taskBizStatus.description" disabled>
             disabled>
-            <a-select-option :value="historyResult.taskBizStatus.description" disabled>{{
-              historyResult.taskBizStatus.description
+            <a-select-option :value="detailResult.taskBizStatus.description" disabled>{{
+              detailResult.taskBizStatus.description
             }}</a-select-option>
           </a-select>
         </div>
 
-        <span v-show="historyResult.messageType.value == 1 ">
+        <span v-show="detailResult.messageType.value == 1 ">
           <!-- 电话回访  已随访成功显示 -->
-          <span v-show="historyResult.taskBizStatus.value == 2">
+          <span v-show="detailResult.taskBizStatus.value == 2">
             <div class="div-line-wrap">
             <span class="span-item-name">实际随访人 :</span>
-            <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
+            <span class="span-item-value">{{ detailResult.actualDoctorUserName }} </span>
           </div>
           </span>
           
       
 
-          <span v-show="historyResult.taskBizStatus.value == 3">
+          <span v-show="detailResult.taskBizStatus.value == 3">
             <!-- 电话回访  已随访 随访失败显示 -->
             <div class="div-line-wrap">
             <span class="span-item-name">实际随访人 :</span>
-            <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
+            <span class="span-item-value">{{ detailResult.actualDoctorUserName }} </span>
           </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 失败原因 :</span>
-              <span class="span-item-value">{{ historyResult.failReason }}</span>
+              <span class="span-item-value">{{ failureList[detailResult.failReason-1] }}</span>
             </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
-              <span class="span-item-value">{{ historyResult.remark }}</span>
+              <span class="span-item-value">{{ detailResult.remark }}</span>
             </div>
           </span>
         </span>
 
-        <span v-show="historyResult.messageType.value != 1">
+        <span v-show="detailResult.messageType.value != 1">
           <!-- 微信和短信  显示 -->
-          <span v-show="historyResult.overdueFollowType.value ==0">
+          <span v-show="detailResult.overdueFollowType.value ==0">
             <div class="div-line-wrap">
               <span class="span-item-name"> 电话跟进 :</span>
               <a-select placeholder="请选择" value="否" disabled>
@@ -78,39 +79,40 @@
               </a-select>
             </div>
           </span>
-          <span v-show="historyResult.overdueFollowType.value!=0">
+          <span v-show="detailResult.overdueFollowType.value!=0">
             <!-- 微信和短信  电话跟进显示 -->
             <div class="div-line-wrap">
               <span class="span-item-name"> 电话跟进 :</span>
-              <a-select placeholder="请选择" :value="historyResult.overdueFollowType.description" disabled>
+              <a-select placeholder="请选择" :value="detailResult.overdueFollowType.description" disabled>
                 disabled>
-                <a-select-option :value="historyResult.overdueFollowType.description" disabled>{{
-                  historyResult.overdueFollowType.description
+                <a-select-option :value="detailResult.overdueFollowType.description" disabled>{{
+                  detailResult.overdueFollowType.description
                 }}</a-select-option>
               </a-select>
             </div>
             <div class="div-line-wrap">
               <span class="span-item-name">实际随访人 :</span>
-              <span class="span-item-value">{{ historyResult.actualDoctorUserName }} </span>
+              <span class="span-item-value">{{ detailResult.actualDoctorUserName }} </span>
             </div>
             <div class="div-line-wrap">
               <span class="span-item-name"> 随访结果 :</span>
-              <span class="span-item-value">{{ historyResult.taskBizStatus.description }} </span>
+              <span class="span-item-value">{{ detailResult.taskBizStatus.description }} </span>
             </div>
 
-            <span v-show="historyResult.taskBizStatus.value == 3">
+            <span v-show="detailResult.taskBizStatus.value == 3">
               <!--  随访失败显示 -->
               <div class="div-line-wrap">
                 <span class="span-item-name"> 失败原因 :</span>
-                <span class="span-item-value">{{ historyResult.failReason }}</span>
+                <span class="span-item-value">{{failureList[detailResult.failReason-1]}}</span>
               </div>
               <div class="div-line-wrap">
                 <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
-                <span class="span-item-value">{{ historyResult.remark }}</span>
+                <span class="span-item-value">{{ detailResult.remark }}</span>
               </div>
             </span>
           </span>
         </span>
+      </div>
       </div>
 
       <div class="midline"></div>
@@ -122,8 +124,8 @@
           <div class="span-item-name">电话录音 :</div>
           <div class="div-voice-content">
             
-            <a ref="#" class="div-voice-item" @click="playAudio('http://develop.mclouds.org.cn:8009/content-api/file/S20220928110502547T4PSXJVUOGKFJY-tmp_8ca1a0e623c088975dc24d12a49bedf5e8f8f0731e094df7.mp3')"><img src="~@/assets/icons/ly.png" class="img" />202210121134.wav</a>
-            <a ref="#" class="div-voice-item"  @click="playAudio('http://develop.mclouds.org.cn:8009/content-api/file/S20220915103002087Y9ZGSROFNR0INU-tmp_1e999b00345fc3f4a153c09dc75879f9687607c0102a45f9.mp3')" ><img src="~@/assets/icons/ly.png" class="img" />202210121134.wav</a>
+            <a ref="#" v-for="(item, index) in soundRecordingList" :key="index" :value="item" class="div-voice-item" @click="playAudio(item)"><img src="~@/assets/icons/ly.png" class="img" />{{item.recordName}}.mp3</a>
+          
           </div>
 
           <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
@@ -164,13 +166,15 @@
     <div style="margin-top: 12px;display: flex; flex-direction: row-reverse">
       <a-button type="default" @click="goCancel"  style="width: 90px;color: #1890FF !important; border-color: #1890FF !important;"> 关闭 </a-button>
     </div>
+    <audio-Model ref="audioModel"  />
   </div>
+  
 </template>
 
 
 <script>
 import {
- 
+  getSoundRecordingList,
   followPlanPhoneHistory,
   followPlanPhonePatientInfo,
   followPlanPhonehistoryDetail,
@@ -178,10 +182,11 @@ import {
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
-
+import audioModel from './audioModel'
 let  audio=null;
 export default {
   components: {
+    audioModel,
     [Timeline.Item.name]: Timeline.Item,
   },
   props: {
@@ -189,13 +194,25 @@ export default {
   },
   data() {
     return {
-    
+      showResultInfo:false,
       audioSrc:'',
       audioShow:false,
       patientInfo: {},
+      failureList: [
+        '电话无人接听',
+        '电话号码有误',
+        '主动放弃随访',
+        '患者拒绝随访',
+        '电话占线',
+        '电话关机',
+        '患者已死亡',
+        '患者已迁出',
+        '其他',
+      ],
       historyList: [],
       historyDetail: {},
-      historyResult: {
+      soundRecordingList:[],
+      detailResult: {
         messageType: {
           //消息类型;1:电话回访2:微信消息3:短信消息
           value: '',
@@ -217,7 +234,7 @@ export default {
         remark: null,
         projectKeyUrlR: null,
         projectKeyUrlW: null,
-        planName: '定制',
+        planName: '',
         overdueFollowType: {
           //是否电话跟进 1:电话跟进
           value: '',
@@ -233,6 +250,23 @@ export default {
 
   created() {
     
+
+    historyFollowResult(this.record.id).then((res) => {
+        if (res.code === 0) {
+          if(res.data.overdueFollowType ==null){
+            res.data.overdueFollowType ={
+              value: 0,
+          description: '',
+            }
+          }
+        
+          this.detailResult = res.data
+          this.showResultInfo=true
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+
     followPlanPhonehistoryDetail(this.record.id).then((res) => {
         if (res.code === 0) {
           this.historyDetail = res.data
@@ -243,20 +277,7 @@ export default {
         }
       })
 
-      historyFollowResult(this.record.id).then((res) => {
-        if (res.code === 0) {
-          if(res.data.overdueFollowType ==null){
-            res.data.overdueFollowType ={
-              value: 0,
-          description: '',
-            }
-          }
-        
-          this.historyResult = res.data
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+
 
       followPlanPhonePatientInfo(this.record.userId).then((res) => {
         if (res.code === 0) {
@@ -270,6 +291,16 @@ export default {
            
           });
           this.fieldList = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+
+      //电话记录
+      getSoundRecordingList(1218).then((res) => {
+        if (res.code === 0) {
+          
+          this.soundRecordingList = res.data
         } else {
           this.$message.error(res.message)
         }
@@ -288,10 +319,10 @@ export default {
     },
 
 //播放音频
-playAudio(src) {
-  this.audioSrc=src
+playAudio(soundRecord) {
+  this.audioSrc=soundRecord.recordUrL+'?bitValueOsType=miniProgram'
   this.audioShow=true
-
+  this.$refs.audioModel.doDeal(soundRecord)
  },
 
     subStringIdcardNo(idcard) {
