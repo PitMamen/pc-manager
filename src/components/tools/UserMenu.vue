@@ -30,7 +30,7 @@
         <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
           <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
-          <a-menu-item key="4" v-if="false">
+          <a-menu-item key="4" v-if="true">
             <a @click="appToggled()">
               <a-icon type="swap" />
               <span>切换应用</span>
@@ -95,7 +95,7 @@
           <a-input
             placeholder="请输入原密码"
             type="password"
-            v-decorator="['password', { rules: [{ required: true, message: '请输入原密码！' }] }]"
+            v-decorator="['oldPassword', { rules: [{ required: true, message: '请输入原密码！' }] }]"
           />
         </a-form-item>
         <a-form-item label="新密码" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
@@ -103,7 +103,7 @@
             placeholder="请输入新密码"
             type="password"
             v-decorator="[
-              'newPassword',
+              'password',
               {
                 rules: [
                   { required: true, message: '请输入新密码！' },
@@ -269,7 +269,7 @@ export default {
 
     compareToFirstPassword(rule, value, callback) {
       const form2 = this.form2
-      if (value && value !== form2.getFieldValue('newPassword')) {
+      if (value && value !== form2.getFieldValue('password')) {
         callback('请确认两次输入密码的一致性！')
       } else {
         callback()
@@ -302,18 +302,40 @@ export default {
         form2: { validateFields },
       } = this
       validateFields((errors, values) => {
+        console.log('bbbbbbb:', values)
         if (!errors) {
           values.id = this.userInfo.id
-          this.UpdatePwd(values).then((res) => {
+          var requestData = {
+            oldPassword: values.oldPassword,
+            password: values.password,
+          }
+          this.UpdatePwd(requestData).then((res) => {
             if (res.success) {
-              this.$message.success('修改成功')
+              this.$message.success('修改成功,请重新登录!')
               this.handleCancel()
+              this.forcelogOut()
             } else {
               this.$message.error('修改失败：' + res.message)
             }
           })
         }
       })
+    },
+
+    //密码修改之后强制退出登录
+    forcelogOut() {
+      this.Logout({})
+        .then(() => {
+          setTimeout(() => {
+            window.location.reload()
+          }, 16)
+        })
+        .catch((err) => {
+          this.$message.error({
+            title: '错误',
+            description: err.message,
+          })
+        })
     },
 
     handleCancel() {

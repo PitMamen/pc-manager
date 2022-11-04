@@ -12,7 +12,7 @@
       <!-- 左边 -->
       <div class="div-totalleft">
         <div class="div-totaltopleft">
-          <span class="span-item-name" style="margin-left: 10px;width: 30%;"> 添加任务</span>
+          <span class="span-item-name" style="margin-left: 10px; width: 30%"> 添加任务</span>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -96,9 +96,7 @@
               >{{ item.messageType != null ? item.messageType.description : '' }}
             </span>
 
-            <span class="span-item-name" style="margin-left: 4%">
-              状态 :&nbsp;</span
-            >
+            <span class="span-item-name" style="margin-left: 4%"> 状态 :&nbsp;</span>
 
             <span class="span-item-value" style="margin-left: 3%">{{
               item.taskBizStatus != null ? item.taskBizStatus.description : '-'
@@ -108,27 +106,31 @@
           <!--  -->
           <div class="div-line-wrap" style="margin-left: 30px; margin-top: 1px">
             <span class="span-item-name"> 随访内容 :</span>
-            <span class="span-item-value" style="margin-left: 0px;width: 25%;"
+            <span class="span-item-value" style="margin-left: 0px; width: 25%"
               >{{ item.templateTitle != null ? item.templateTitle : '-' }}
             </span>
 
             <span class="span-item-name" style="margin-left: 0%"> 是否逾期 :</span>
 
-            <span class="span-item-value" style="margin-left: 3%">{{
-              item.overdueStatus != null ? item.overdueStatus.description : '-'
+            <span v-if="item.taskType.value == 1" class="span-item-value" style="margin-left: 3%">{{
+              item.overdueStatus != null ? item.overdueStatus.description : ' '
+            }}</span>
+
+            <span v-if="item.taskType.value == 2||item.taskType.value == 3" class="span-item-value" style="margin-left: 3%">&nbsp;&nbsp;&nbsp;{{
+             '-'
             }}</span>
           </div>
 
           <!--  -->
-          <div class="div-line-wrap" style="margin-left: 30px;margin-top: 1px">
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 1px">
             <span class="span-item-name"> 计划日期 :</span>
-            <span class="span-item-value" style="width: 30%;"
+            <span class="span-item-value" style="width: 30%"
               >{{ item.executeTime != null ? item.executeTime : '' }}
             </span>
 
-            <span class="span-item-name" style="margin-left: -5%;width: 12%;"> 完成日期 :</span>
+            <span class="span-item-name" style="margin-left: -5%; width: 12%"> 完成日期 :</span>
 
-            <span class="span-item-value" style="width: 25%; ">{{
+            <span class="span-item-value" style="width: 25%">{{
               item.taskType.value == 1 ? item.userFollowTime : item.actualExecTime
             }}</span>
           </div>
@@ -171,8 +173,8 @@ export default {
       record: {},
       messageContentType: '',
       queryParams: {
-        execDoctorUserId:'',
-        executeDepartmentId:'',
+        execDoctorUserId: '',
+        executeDepartmentId: '',
         userId: '',
         tenantId: '',
         messageType: '',
@@ -225,7 +227,7 @@ export default {
       this.getSmsTemplateListForJumpTypeOut()
       this.getWxTemplateListForJumpTypeOut()
       let user = Vue.ls.get(TRUE_USER)
-      console.log("user:",user)
+      console.log('user:', user)
     },
 
     /**
@@ -246,8 +248,8 @@ export default {
         console.log('mom', mom)
       }
 
-      if(messageType>0){
-        this.queryParams.messageContentType=''
+      if (messageType > 0) {
+        this.queryParams.messageContentType = ''
       }
 
       if (messageType == 1) {
@@ -367,7 +369,6 @@ export default {
      * 提交
      */
     commit() {
-        
       if (!this.queryParams.messageType) {
         this.$message.error('请选择随访方式')
         return
@@ -393,12 +394,12 @@ export default {
       }
       let user = Vue.ls.get(TRUE_USER)
       let temp = this.msgData.find((item) => item.id == this.messageContentType) //通过ID查询 列表中的当前item
-      if(!temp){
+      if (!temp) {
         this.$message.error('随访方式与随访内容不匹配,请重新选择!')
         return
       }
-      this.queryParams.execDoctorUserId =user.userId
-      this.queryParams.executeDepartmentId =user.departmentCode
+      this.queryParams.execDoctorUserId = user.userId
+      this.queryParams.executeDepartmentId = user.departmentCode
       this.queryParams.hospitalCode = temp.hospitalCode
       this.queryParams.tenantId = temp.tenantId
       this.queryParams.messageContentId = temp.id
@@ -573,24 +574,21 @@ export default {
     overflow: hidden;
 
     .span-item-name {
-    width: 15%;
-    display: inline-block;
-    color: #000;
-    font-size: 14px;
-    text-align: left;
-  }
+      width: 15%;
+      display: inline-block;
+      color: #000;
+      font-size: 14px;
+      text-align: left;
+    }
 
-  .span-item-value {
-    width: 20%;
-    color: #333;
-    text-align: left;
-    font-size: 14px;
-    display: inline-block;
+    .span-item-value {
+      width: 20%;
+      color: #333;
+      text-align: left;
+      font-size: 14px;
+      display: inline-block;
+    }
   }
-  }
-
-
- 
 
   .div-service-left-user {
     background-color: white;

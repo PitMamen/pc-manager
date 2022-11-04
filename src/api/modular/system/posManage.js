@@ -376,6 +376,31 @@ export function qryExecuteRecordByUserId(data) {
 }
 
 
+/**
+ * 查询随访执行统计
+ */
+export function statExecuteRecord(data){
+  return axios({
+    url:'/follow-api/tbFollowExecuteRecord/statExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 随访统计详情
+ *
+ */
+
+export function statExecuteRecordDetail(data){
+  return axios({
+    url:'/follow-api/tbFollowExecuteRecord/statExecuteRecordDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 
