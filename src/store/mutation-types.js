@@ -1,4 +1,6 @@
 export const ACCESS_TOKEN = 'Access-Token'
+export const SYS_APP = 'Sys-App'
+export const SYS_APP_ID = 'Sys-App-Id'
 export const SIDEBAR_TYPE = 'SIDEBAR_TYPE'
 export const ALL_APPS_MENU = []
 export const DEFAULT_THEME = 'DEFAULT_THEME'
