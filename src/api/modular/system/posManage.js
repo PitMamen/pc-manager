@@ -2237,3 +2237,13 @@ export function addTencentPhoneTape() {
     method: 'post'
   })
 }
+
+/**
+ * 电话录音列表
+ */
+ export function getSoundRecordingList(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/getSoundRecordingList/' + id,
+    method: 'post'
+  })
+}
