@@ -2273,6 +2273,28 @@ export function getSoundRecordingList(id) {
     method: 'post'
   })
 }
+
+/**
+ * 抽查
+ */
+ export function modifyFollowSpotExecuteRecord(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/modifyFollowSpotExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 抽查详情
+ */
+ export function spotDetailForId(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/spotDetailForId/'+id,
+    method: 'post',
+  })
+}
+
 /**
  * /follow/dict/taskBizStatus 任务状态;2:成功3:失败
  */
@@ -2281,6 +2303,5 @@ export function taskBizStatus(data) {
     url: '/follow-api/follow/dict/taskBizStatus',
     method: 'get',
     params: data,
-
   })
 }

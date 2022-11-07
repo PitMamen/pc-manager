@@ -63,6 +63,7 @@ router.beforeEach((to, from, next) => {
               Vue.ls.set(ALL_APPS_MENU, applocation, 7 * 24 * 60 * 60 * 1000)
               // 延迟 1 秒显示欢迎信息
               setTimeout(() => {
+                return
                 notification.success({
                   message: '欢迎',
                   description: `${timeFix()}，欢迎回来`

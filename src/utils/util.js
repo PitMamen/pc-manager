@@ -133,6 +133,49 @@ export function getDateNow() {
   return firstDay;
 }
 
+
+/**
+ * 获取上个月的今天
+ */
+ export function getlastMonthToday(){
+ 
+  var now=new Date();
+  var year = now.getFullYear();//getYear()+1900=getFullYear()
+  var month = now.getMonth() +1;//0-11表示1-12月
+  var day = now.getDate();
+  if(parseInt(month)<10){
+      month="0"+month;
+  }
+  if(parseInt(day)<10){
+      day="0"+day;
+  }
+
+  now =year + '-'+ month + '-' + day;
+
+  if (parseInt(month) ==1) {//如果是1月份，则取上一年的12月份
+      return (parseInt(year) - 1) + '-12-' + day;
+  }
+
+  var  preSize= new Date(year, parseInt(month)-1, 0).getDate();//上月总天数
+  if (preSize < parseInt(day)) {//上月总天数<本月日期，比如3月的30日，在2月中没有30
+      return year + '-' + month + '-01';
+  }
+
+  if(parseInt(month) <=10){
+      return year + '-0' + (parseInt(month)-1) + '-' + day;
+  }else{
+      return year + '-' + (parseInt(month)-1) + '-' + day;
+  }
+
+}
+
+
+
+
+
+
+
+
 /**获取本月最后一天 */
 export function getCurrentMonthLast() {
   var date = new Date();

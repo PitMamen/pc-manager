@@ -14,57 +14,35 @@
           <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
           <a-menu-item key="4" v-if="true">
             <a @click="appToggled()">
-              <!-- <a-icon type="swap" /> -->
               <span>切换应用</span>
             </a>
           </a-menu-item>
           <!-- <a-menu-item key="5" v-if="hasPerm('sysUser:updatePwd')"  > -->
           <a-menu-item key="5" v-if="true">
             <a @click="updatePwd()">
-              <!-- <a-icon type="tool" /> -->
               <span>修改密码</span>
             </a>
           </a-menu-item>
 
           <a-menu-item key="0" v-if="false">
             <router-link :to="{ name: 'center' }">
-              <!-- <a-icon type="user" /> -->
               <span>个人中心</span>
             </router-link>
           </a-menu-item>
           <a-menu-item key="1" v-if="false">
             <router-link :to="{ name: 'settings' }">
-              <!-- <a-icon type="setting" /> -->
               <span>账户设置</span>
             </router-link>
           </a-menu-item>
           <a-menu-divider v-if="false" />
           <a-menu-item key="3">
             <a href="javascript:;" @click="handleLogout">
-              <!-- <a-icon type="logout" /> -->
               <span>退出登录</span>
             </a>
           </a-menu-item>
         </a-menu>
       </a-dropdown>
     </div>
-    <a-modal
-      title="切换应用"
-      :visible="visible"
-      :footer="null"
-      :confirm-loading="confirmLoading"
-      @cancel="handleCancel"
-    >
-      <a-form :form="form1">
-        <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="选择应用">
-          <a-menu mode="inline" :default-selected-keys="this.defApp" style="border-bottom: 0px; lineheight: 62px">
-            <a-menu-item v-for="item in userInfo.apps" :key="item.code" style="top: 0px" @click="switchApp(item.code)">
-              {{ item.name }}
-            </a-menu-item>
-          </a-menu>
-        </a-form-item>
-      </a-form>
-    </a-modal>
     <a-modal
       title="修改密码"
       :visible="visible_updPwd"
@@ -240,8 +218,9 @@ export default {
      * 打开切换应用框
      */
     appToggled() {
-      this.visible = true
-      this.defApp.push(Vue.ls.get(ALL_APPS_MENU)[0].code)
+      this.$router.push({
+        path: '/user/login'
+      })
     },
 
     /**

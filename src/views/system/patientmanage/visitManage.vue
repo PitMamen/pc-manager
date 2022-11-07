@@ -106,7 +106,7 @@
           <!--  -->
           <div class="div-line-wrap" style="margin-left: 30px; margin-top: 1px">
             <span class="span-item-name"> 随访内容 :</span>
-            <span class="span-item-value" style="margin-left: 0px; width: 25%"
+            <span :title="item.templateTitle" class="span-item-value1" style="margin-left: 0px; width: 25%"
               >{{ item.templateTitle != null ? item.templateTitle : '-' }}
             </span>
 
@@ -116,9 +116,12 @@
               item.overdueStatus != null ? item.overdueStatus.description : ' '
             }}</span>
 
-            <span v-if="item.taskType.value == 2||item.taskType.value == 3" class="span-item-value" style="margin-left: 3%">&nbsp;&nbsp;&nbsp;{{
-             '-'
-            }}</span>
+            <span
+              v-if="item.taskType.value == 2 || item.taskType.value == 3"
+              class="span-item-value"
+              style="margin-left: 3%"
+              >&nbsp;&nbsp;&nbsp;{{ '-' }}</span
+            >
           </div>
 
           <!--  -->
@@ -216,18 +219,19 @@ export default {
     //初始化方法
     distribution(record) {
       this.visible = true
+      console.log("记录啊：",record)
       this.reset()
       this.confirmLoading = true
       this.recordList = []
       this.queryParams.userId = record.userId
       this.queryParamsRecord.userId = record.userId
-      //   this.queryParamsRecord.userId = '612'
       this.qryExecuteRecordByUserIdOut()
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()
       this.getWxTemplateListForJumpTypeOut()
-      let user = Vue.ls.get(TRUE_USER)
-      console.log('user:', user)
+      this.title = "添加任务【"+record.name+"  |   "+record.sex+"    |    "+record.age+"】"
+      // let user = Vue.ls.get(TRUE_USER)
+      // console.log('user:', user)
     },
 
     /**
@@ -583,10 +587,26 @@ export default {
 
     .span-item-value {
       width: 20%;
+      // overflow: hidden;
       color: #333;
       text-align: left;
       font-size: 14px;
       display: inline-block;
+      text-overflow: ellipsis;
+    }
+
+    .span-item-value1 {
+      width: 10%;
+      margin-bottom: -4px;
+      color: #333;
+      text-align: left;
+      font-size: 14px;
+      display: inline-block;
+      white-space: nowrap;
+      -webkit-line-clamp: 1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
   }
 
