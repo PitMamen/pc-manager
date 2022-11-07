@@ -133,7 +133,7 @@
               </a-form-item>
             </a-col>
 
-            <a-col :md="6" :sm="24">
+            <a-col :md="9" :sm="24">
               <!-- <a-form-item label="状态:"> -->
               <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
               <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
