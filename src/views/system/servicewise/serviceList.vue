@@ -263,7 +263,8 @@ export default {
      */
     addName() {
       // this.$refs.addName.add()
-      this.$router.push({ name: 'project_add' })
+      // this.$router.push({ name: 'project_add' })
+      this.$router.push({ path: '/servicewise/projectAdd' })
     },
 
     handleOk() {
