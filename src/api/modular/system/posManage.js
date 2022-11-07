@@ -376,6 +376,31 @@ export function qryExecuteRecordByUserId(data) {
 }
 
 
+/**
+ * 查询随访执行统计
+ */
+export function statExecuteRecord(data){
+  return axios({
+    url:'/follow-api/tbFollowExecuteRecord/statExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 随访统计详情
+ *
+ */
+
+export function statExecuteRecordDetail(data){
+  return axios({
+    url:'/follow-api/tbFollowExecuteRecord/statExecuteRecordDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 
@@ -2223,7 +2248,7 @@ export function historyFollowResult(id) {
  */
 export function createSdkLoginToken() {
   return axios({
-    url: '/follow-api/ccc/createSdkLoginToken',
+    url: '/follow-api/follow/ccc/createSdkLoginToken',
     method: 'post'
   })
 }
@@ -2233,7 +2258,7 @@ export function createSdkLoginToken() {
  */
 export function addTencentPhoneTape(param) {
   return axios({
-    url: '/follow-api/ccc/addTencentPhoneTape',
+    url: '/follow-api/follow/ccc/addTencentPhoneTape',
     method: 'post',
     data: param,
   })
@@ -2242,7 +2267,7 @@ export function addTencentPhoneTape(param) {
 /**
  * 电话录音列表
  */
- export function getSoundRecordingList(id) {
+export function getSoundRecordingList(id) {
   return axios({
     url: '/follow-api/followPlanPhone/getSoundRecordingList/' + id,
     method: 'post'
@@ -2267,5 +2292,16 @@ export function addTencentPhoneTape(param) {
   return axios({
     url: '/follow-api/followPlanPhone/spotDetailForId/'+id,
     method: 'post',
+  })
+}
+
+/**
+ * /follow/dict/taskBizStatus 任务状态;2:成功3:失败
+ */
+export function taskBizStatus(data) {
+  return axios({
+    url: '/follow-api/follow/dict/taskBizStatus',
+    method: 'get',
+    params: data,
   })
 }

@@ -24,9 +24,6 @@
 </template>
 
 <script>
-// import { STable } from '@/components'
-import { deleteAppVersion, qryRevisitPatientList } from '@/api/modular/system/posManage'
-
 import serviceList from './serviceList'
 import nameList from './nameList'
 import wxModel from './wxModel'

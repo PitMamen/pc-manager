@@ -19,7 +19,7 @@
           />
         </a-form-item>
         <a-form-item label="应用类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
-          <a-radio-group v-decorator="['applicationType', { rules: [{ required: true, message: '请选择应用类型！' }] }]">
+          <a-radio-group v-decorator="['applicationType', { rules: [{ required: true, message: '请选择应用类型！' }] }]" disabled>
             <a-radio-button value="1">内部应用</a-radio-button>
             <a-radio-button value="2">外部应用</a-radio-button>
           </a-radio-group>
@@ -63,6 +63,7 @@
           <a-input
             placeholder="应用路径"
             v-decorator="['indexUrl', { rules: [{ required: true, message: '请输入应用路径！' }] }]"
+            disabled
           />
         </a-form-item>
         <a-form-item label="应用描述" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>

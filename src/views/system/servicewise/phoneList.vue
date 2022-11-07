@@ -1,153 +1,10 @@
 <template>
-  <a-card :bordered="false" class="card-right-pac" :confirmLoading="confirmLoading">
-    <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="4" :sm="24">
-            <a-form-item label="姓名">
-              <a-input
-                v-model="queryParams.userName"
-                allow-clear
-                placeholder="请输入姓名"
-                @blur="goSearch"
-                @keyup.enter="goSearch"
-                @search="goSearch"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="5" :sm="24">
-            <a-form-item label="手机号">
-              <!-- @blur="$refs.table.refresh(true)" -->
-              <a-input
-                v-model="queryParams.phone"
-                allow-clear
-                placeholder="请输入手机号"
-                @keyup.enter="goSearch"
-                @search="goSearch"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="6" :sm="24">
-            <a-form-item label="执行科室">
-              <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
-              <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室">
-                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                  item.departmentName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col
-            :md="5"
-            :sm="24"
-            v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
-          >
-            <a-form-item label="随访方式">
-              <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
-                <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
-                  item.description
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-
-        <a-row :gutter="48">
-          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
-            <a-form-item label="是否逾期">
-              <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态">
-                <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
-                  item.name
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
-            <a-form-item label="状态">
-              <a-select allow-clear v-model="queryParams.bizStatus" placeholder="请选择状态">
-                <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
-                  item.name
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col
-            :md="7"
-            :sm="24"
-            v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
-          >
-            <a-form-item label="执行日期">
-              <a-range-picker :value="createValue" @change="onChange" />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="6" :sm="24">
-            <!-- <a-form-item label="状态:"> -->
-            <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-            <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
-            <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-            <!-- </a-form-item> -->
-          </a-col>
-        </a-row>
-      </a-form>
-    </div>
-    <s-table
-      ref="table"
-      size="default"
-      style="margin-top: 15px; min-height: 500px"
-      :columns="columns"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="status-overdue" slot-scope="text, record" :class="getClass(record.overdueStatus)">
-        {{ record.overdueStatusName }}
-      </span>
-
-      <span slot="action" slot-scope="text, record">
-        <div
-          @click="goLook(record)"
-          class="div-action"
-          v-if="(queryParams.queryStatus == 3 && record.bizStatus != 1) || queryParams.queryStatus == 4"
-        >
-          <img src="~@/assets/icons/eye.png" />
-          <a style="margin-left: 5px">查看</a>
-        </div>
-
-        <div @click="goSolve(record)" class="div-action" v-else>
-          <img src="~@/assets/icons/dh_icon.png" />
-          <a style="margin-left: 5px">开始随访</a>
-        </div>
-        <!-- <a style="margin-left: 5px">开始随访</a> -->
-      </span>
-    </s-table>
-
-    <!-- width="100" -->
-    <!-- title="选择随访列表" -->
-    <!-- :title="drawerTitle" -->
-    <a-drawer
-      :width="drawerWidth"
-      :mask="false"
-      :get-container="false"
-      :closable="false"
-      :visible="visible"
-      :wrap-style="{ position: 'absolute' }"
-      :header-Style="{ height: '100px' }"
-      @close="onClose"
-      style="display: flex; flex-direction: row"
-    >
-      <div class="draw-wrap">
-        <div class="div-btn" @click="goVise()">{{ btnText }}</div>
-
-        <div class="draw-bottom">
-          <div class="bottom-top">{{ drawerTitle }}</div>
-          <div class="bottom-down">
-            <!-- <a-tree
+  <div class="div-service-phone">
+    <div class="div-service-left-phone">
+      <div class="draw-bottom">
+        <div class="bottom-top">{{ drawerTitle }}</div>
+        <div class="bottom-down">
+          <!-- <a-tree
               v-model="checkedKeys"
               checkable
               :expanded-keys="expandedKeys"
@@ -158,39 +15,175 @@
               @check="onCheck"
               @select="onSelect"
             /> -->
-            <div class="item-out" v-for="(itemOut, indexOut) in treeData" :key="indexOut" :value="itemOut.key">
-              <div class="out-top">
-                <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
-                <!-- <a-icon type="caret-down" /> <-->
-                <a-checkbox
-                  style="margin-left: 1%"
-                  @change="onChangeOut(itemOut, indexOut)"
-                  :checked="itemOut.isChecked"
-                />
-                <span style="margin-left: 1%">{{ itemOut.title }}</span>
-              </div>
+          <div class="item-out" v-for="(itemOut, indexOut) in treeData" :key="indexOut" :value="itemOut.key">
+            <div class="out-top">
+              <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
+              <!-- <a-icon type="caret-down" /> <-->
+              <a-checkbox
+                style="margin-left: 1%"
+                @change="onChangeOut(itemOut, indexOut)"
+                :checked="itemOut.isChecked"
+              />
+              <span style="margin-left: 1%">{{ itemOut.title }}</span>
+            </div>
 
-              <!-- v-if="itemOut.isVisible" -->
-              <div
-                class="out-list"
-                v-show="itemOut.isVisible"
-                v-for="(itemChild, indexChild) in treeData[indexOut].children"
-                :key="indexChild"
-                :value="itemChild.key"
-              >
-                <a-checkbox
-                  @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
-                  :checked="itemChild.isChecked"
-                />
-                <span style="margin-left: 1%">{{ itemChild.title }}</span>
-              </div>
+            <!-- v-if="itemOut.isVisible" -->
+            <div
+              class="out-list"
+              v-show="itemOut.isVisible"
+              v-for="(itemChild, indexChild) in treeData[indexOut].children"
+              :key="indexChild"
+              :value="itemChild.key"
+            >
+              <a-checkbox
+                @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
+                :checked="itemChild.isChecked"
+              />
+              <span style="margin-left: 1%">{{ itemChild.title }}</span>
             </div>
           </div>
         </div>
       </div>
-    </a-drawer>
-    <follow-Model ref="followModel" @ok="handleOk" />
-  </a-card>
+    </div>
+
+    <a-card :bordered="false" class="card-right-phone" :confirmLoading="confirmLoading">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="4" :sm="24">
+              <a-form-item label="姓名">
+                <a-input
+                  v-model="queryParams.userName"
+                  allow-clear
+                  placeholder="请输入姓名"
+                  @blur="goSearch"
+                  @keyup.enter="goSearch"
+                  @search="goSearch"
+                />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="5" :sm="24">
+              <a-form-item label="手机号">
+                <!-- @blur="$refs.table.refresh(true)" -->
+                <a-input
+                  v-model="queryParams.phone"
+                  allow-clear
+                  placeholder="请输入手机号"
+                  @keyup.enter="goSearch"
+                  @search="goSearch"
+                />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="6" :sm="24">
+              <a-form-item label="执行科室">
+                <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
+                <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室">
+                  <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                    item.departmentName
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col
+              :md="5"
+              :sm="24"
+              v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
+            >
+              <a-form-item label="随访方式">
+                <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+                  <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
+                    item.description
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <a-row :gutter="48">
+            <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
+              <a-form-item label="是否逾期">
+                <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态">
+                  <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
+                    item.name
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
+              <a-form-item label="状态">
+                <a-select allow-clear v-model="queryParams.bizStatus" placeholder="请选择状态">
+                  <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                    item.name
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col
+              :md="7"
+              :sm="24"
+              v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
+            >
+              <a-form-item label="执行日期">
+                <a-range-picker :value="createValue" @change="onChange" />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="9" :sm="24">
+              <!-- <a-form-item label="状态:"> -->
+              <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
+              <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
+              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
+              <!-- </a-form-item> -->
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+      <s-table
+        ref="table"
+        size="default"
+        style="margin-top: 15px; min-height: 500px"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+        <span slot="status-overdue" slot-scope="text, record" :class="getClass(record.overdueStatus)">
+          {{ record.overdueStatusName }}
+        </span>
+
+        <span slot="action" slot-scope="text, record">
+          <div
+            @click="goLook(record)"
+            class="div-action"
+            v-if="(queryParams.queryStatus == 3 && record.bizStatus.value != 1) || queryParams.queryStatus == 4"
+          >
+            <img src="~@/assets/icons/eye.png" />
+            <a style="margin-left: 5px">查看</a>
+          </div>
+
+          <div @click="goSolve(record)" class="div-action" v-else>
+            <img src="~@/assets/icons/dh_icon.png" />
+            <a style="margin-left: 5px">开始随访</a>
+          </div>
+          <!-- <a style="margin-left: 5px">开始随访</a> -->
+        </span>
+      </s-table>
+
+      <!-- width="100" -->
+      <!-- title="选择随访列表" -->
+      <!-- :title="drawerTitle" -->
+      <follow-Model ref="followModel" @ok="handleOk" />
+    </a-card>
+  </div>
+
+  <!-- <a-card :bordered="false" class="card-right-pac" :confirmLoading="confirmLoading">
+
+  </a-card> -->
 </template>
     
     
@@ -1015,69 +1008,76 @@ export default {
   // background-color: #85888e;
 }
 
-.draw-wrap {
-  height: 300px;
-  display: flex;
-  flex-direction: row;
-  // align-items: center;
+.div-service-phone {
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
 
-  .div-btn {
-    // margin-top: 40%;
-    // height: 100%;
-    height: 38px;
-    margin-top: 300px;
-    margin-left: 3px;
-    margin-right: 3px;
-    padding: 5px 2px;
-    // margin: 100px 3px 0 3px;
-    color: white;
-    background-color: #1890ff;
-    writing-mode: tb-rl;
-    &:hover {
-      cursor: pointer;
-    }
+  .div-divider {
+    margin: 0% 0% 0% 1%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
   }
 
-  .draw-bottom {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    // justify-content: center;
-    // align-items: center;
+  .div-service-left-phone {
+    background-color: white;
+    padding: 1% 1%;
+    float: left;
+    height: 100%;
+    min-height: 300px;
+    // border-right: 1px dashed #e6e6e6;
+    border: 1px solid #e6e6e6;
+    width: 18%;
+    overflow: hidden;
 
-    .bottom-top {
-      // color: #1890ff;
-      margin-top: 15px;
-      margin-left: 30%;
-      font-size: 14px;
-    }
-    .bottom-down {
-      margin-top: 10px;
-      border-top: #e6e6e6 1px solid;
-      // border-left: #e6e6e6 1px solid;
+    .draw-bottom {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      // justify-content: center;
+      // align-items: center;
 
-      .item-out {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
+      .bottom-top {
+        // color: #1890ff;
+        margin-top: 15px;
+        margin-left: 30%;
+        font-size: 14px;
+      }
+      .bottom-down {
+        margin-top: 10px;
+        border-top: #e6e6e6 1px solid;
+        // border-left: #e6e6e6 1px solid;
 
-        .out-top {
-          margin-top: 3%;
+        .item-out {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           width: 100%;
-          align-items: center;
-        }
 
-        .out-list {
-          margin-top: 3%;
-          margin-left: 15%;
-          display: flex;
-          flex-direction: row;
-          align-items: center;
+          .out-top {
+            margin-top: 3%;
+            display: flex;
+            flex-direction: row;
+            width: 100%;
+            align-items: center;
+          }
+
+          .out-list {
+            margin-top: 3%;
+            margin-left: 15%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+          }
         }
       }
     }
+  }
+
+  .card-right-phone {
+    overflow: hidden;
+    float: right;
+    width: 81%;
   }
 }
 

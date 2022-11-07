@@ -221,6 +221,10 @@ export default {
     },
 
     addRole() {
+      if (this.roles.length == 1) {
+        this.$message.error('单个用户仅限添加一种角色')
+        return
+      }
       this.roles.push({})
     },
 
