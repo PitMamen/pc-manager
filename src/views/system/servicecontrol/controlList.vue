@@ -1,12 +1,10 @@
 <template>
-  
   <div class="div-service-control">
     <div class="div-service-left-control">
-      <span class="span-current-ques">当前问卷：哒哒哒</span>
+      <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
       <!-- 分割线 -->
       <!-- <div class="div-divider"></div> -->
 
-      <!-- <div class="div-part" v-for="(item, index) in partData" :value="item.code" :key="index"> -->
       <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
       <div class="div-text-auto">
         <a-auto-complete
@@ -19,20 +17,39 @@
           @search="handleSearch"
         >
           <template slot="dataSource">
-            <a-select-option v-for="item in keshiDataTemp" :key="item.departmentId + ''" :title="item.departmentName">
-              {{ item.departmentName }}
+            <a-select-option
+              v-for="item in quesDataTemp"
+              :key="item.questionnaireId + ''"
+              :title="item.questionnaireName"
+            >
+              {{ item.questionnaireName }}
             </a-select-option>
           </template>
         </a-auto-complete>
       </div>
 
       <div class="div-wrap-service" style="margin-top: 2%">
-        <div class="div-part" v-for="(item, index) in keshiData" :value="item.departmentName" :key="index">
-          <span class="p-name" :class="{ checked: item.isChecked }" @click="onPartChoose(index)">
-            {{ item.departmentName }}
+        <div
+          class="div-part"
+          :class="{ checked: item.isChecked }"
+          v-for="(item, index) in quesData"
+          @click="onItemClick(item, index)"
+          :value="item.departmentName"
+          :key="index"
+        >
+          <span class="span-name" @click="onPartChoose(index)">
+            {{ item.questionnaireName }}
           </span>
+          <div class="div-rate">
+            <span style="width: 30px; text-align: center">
+              {{ item.checkPercentage }}
+            </span>
+            <span style="margin-left: 15px; width: 30px; text-align: center">
+              {{ item.passCheckPercentage }}
+            </span>
+          </div>
           <!-- 分割线 -->
-          <div class="div-divider"></div>
+          <!-- <div class="div-divider"></div> -->
         </div>
       </div>
     </div>
@@ -43,12 +60,13 @@
         ><a-tab-pane key="2" tab="待抽查"> <service-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
       ></a-tabs> -->
 
-      <a-radio-group v-model="queryParams.type" default-value="a" button-style="solid">
-        <a-radio-button value="a"> 已抽查 </a-radio-button>
-        <a-radio-button value="b"> 待抽查 </a-radio-button>
+      <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
+        <!-- 类型，1: 待抽查 2: 已抽查 -->
+        <a-radio-button value="1"> 待抽查 </a-radio-button>
+        <a-radio-button value="2"> 已抽查 </a-radio-button>
       </a-radio-group>
 
-      <div class="div-divider"></div>
+      <div class="div-divider" style="margin-left: 0"></div>
 
       <!-- <div class="table-page-search-wrapper"> -->
       <a-form layout="inline" style="margin-top: 1%">
@@ -83,8 +101,8 @@
           <a-col :md="4" :sm="24">
             <a-form-item label="随访医生">
               <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
-                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.value">{{
-                  item.description
+                <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
+                  item.userName
                 }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -93,7 +111,7 @@
           <a-col :md="5" :sm="24">
             <a-form-item label="随访方式">
               <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
-                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.value">{{
+                <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
                   item.description
                 }}</a-select-option>
               </a-select>
@@ -107,18 +125,18 @@
               <a-range-picker :value="createValue" @change="onChange" />
             </a-form-item>
           </a-col>
-          <a-col :md="9" :sm="24">
+          <a-col :md="9" :sm="24" v-if="queryParams.type == 2">
             <a-form-item label="抽查日期">
-              <a-range-picker :value="createValue" @change="onChange" />
+              <a-range-picker :value="createValueCheck" @change="onChangeCheck" />
             </a-form-item>
           </a-col>
 
-          <a-col :md="6" :sm="24">
-            <a-form-item label="姓名">
+          <a-col :md="6" :sm="24" v-if="queryParams.type == 1">
+            <a-form-item label="患者查找">
               <a-input
                 v-model="queryParams.queryStr"
                 allow-clear
-                placeholder="请输入姓名"
+                placeholder="请输入患者姓名或手机号"
                 @blur="goSearch"
                 @keyup.enter="goSearch"
                 @search="goSearch"
@@ -127,7 +145,6 @@
           </a-col>
 
           <a-col :md="6" :sm="24">
-            <!-- <a-form-item label="状态:"> -->
             <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
             <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
             <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
@@ -138,16 +155,21 @@
       <!-- </div> -->
 
       <!-- 去掉勾选框 -->
-      <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
       <s-table
         ref="table"
         size="default"
         :columns="columns"
         :data="loadData"
-        :row-selection="rowSelection"
         :alert="true"
         :rowKey="(record) => record.code"
       >
+        <span slot="action" slot-scope="text, record">
+          <a @click="goAction(record)">{{ queryParams.type == 1 ? '抽查' : '详情' }}</a>
+        </span>
+        <span slot="result" slot-scope="text, record">
+          <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
+          <!-- <a-divider type="vertical" /> -->
+        </span>
       </s-table>
 
       <add-form ref="addForm" @ok="handleOk" />
@@ -160,11 +182,13 @@
 <script>
 import { STable } from '@/components'
 import {
-  getOutPatients,
+  questionnaires,
   getDepts,
   getDeptsPersonal,
+  messageTypes,
   taskBizStatus,
   getUsersByDeptIdAndRole,
+  followRecords,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -180,24 +204,6 @@ export default {
     editForm,
   },
 
-  computed: {
-    rowSelection() {
-      return {
-        onChange: this.onSelectChange,
-        getCheckboxProps: (record) => ({
-          props: {
-            disabled: !record.userId, // Column configuration not to be checked
-            name: record.userId,
-          },
-        }),
-      }
-    },
-
-    hasSelected() {
-      return this.selectedRowKeys.length > 0
-    },
-  },
-
   data() {
     return {
       selectedRowKeys: [], // Check here to configure the default column
@@ -205,13 +211,22 @@ export default {
       advanced: false,
       partChoose: '',
       keyindex: '1',
+      choseQues: {},
       keshiData: [],
+      deptUsers: [{ userId: '-1', userName: '全部' }],
+      msgData: [],
       createValue: [],
+      createValueCheck: [],
+      quesData: [],
+      quesDataTemp: [],
       // 查询参数 existsPlanFlag传 1：已订购套餐患者；2：未订购套餐患者；不传和其他：全部患者
       queryParams: {
+        // 默认本月的代码
+        // beginCheckTime: getDateNow(),
+        // endCheckTime: getCurrentMonthLast(),
         executeDepartmentId: -1, //执行科室id
         taskBizStatus: '-1', //执行结果2:成功3:失败
-        actualDoctorUserId: null, //实际随访医生
+        actualDoctorUserId: '-1', //实际随访医生
         messageType: null, //随访方式
 
         beginCheckTime: null, //开始抽查时间，yyyy-MM-dd
@@ -219,103 +234,214 @@ export default {
         beginExecuteTime: null, //开始执行时间，yyyy-MM-dd
         endExecuteTime: null, //结束执行时间，yyyy-MM-dd
         queryStr: null, //姓名或手机号
+        type: '1', //类型，1:待抽查2:已抽查
 
         checkStatus: null, //抽查状态，1:通过2:不通过
 
         messageContentId: null, //推送具体内容id
         messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
+      },
+      queryParamsOrigin: {
+        // 默认本月的代码
+        // beginCheckTime: getDateNow(),
+        // endCheckTime: getCurrentMonthLast(),
+        executeDepartmentId: -1, //执行科室id
+        taskBizStatus: '-1', //执行结果2:成功3:失败
+        actualDoctorUserId: '-1', //实际随访医生
+        messageType: null, //随访方式
 
-        type: null, //类型，1:待抽查2:已抽查
+        beginCheckTime: null, //开始抽查时间，yyyy-MM-dd
+        endCheckTime: null, //结束抽查时间，yyyy-MM-dd
+        beginExecuteTime: null, //开始执行时间，yyyy-MM-dd
+        endExecuteTime: null, //结束执行时间，yyyy-MM-dd
+        queryStr: null, //姓名或手机号
+        type: '1', //类型，1:待抽查2:已抽查
+
+        checkStatus: null, //抽查状态，1:通过2:不通过
+
+        messageContentId: null, //推送具体内容id
+        messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
       },
       // 表头
       columns: [
         {
-          title: '姓名',
-          dataIndex: 'userName',
-        },
-        {
-          title: '身份证号',
-          dataIndex: 'idNumber',
-        },
-        {
-          title: '电话号码',
-          dataIndex: 'tel',
-        },
-        {
-          title: '所在病区',
-          dataIndex: 'bqmc',
-        },
-        {
-          title: '性别',
-          dataIndex: 'sex',
-        },
-        {
-          title: '年龄',
-          dataIndex: 'ageCount',
-        },
-        {
-          title: '科室',
-          dataIndex: 'ksmc',
-        },
-        {
-          title: '专病',
-          dataIndex: 'cyzd',
-        },
-        // {
-        //   title: '出院时间',
-        //   dataIndex: 'outTime',
-        // },
-        {
-          title: '是否购买套餐',
-          dataIndex: 'hasPlan',
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
         },
         {
           title: '状态',
-          dataIndex: 'hasGive',
+          dataIndex: 'taskBizStatusName',
+        },
+        {
+          title: '随访患者',
+          dataIndex: 'userName',
+        },
+        {
+          title: '性别',
+          dataIndex: 'userSex',
+        },
+        {
+          title: '年龄（岁）',
+          dataIndex: 'userAge',
+        },
+        {
+          title: '联系电话',
+          dataIndex: 'userPhone',
+        },
+        {
+          title: '随访医生',
+          dataIndex: 'doctorName',
+        },
+        {
+          title: '执行时间',
+          dataIndex: 'followDate',
+        },
+        {
+          title: '随访问卷',
+          dataIndex: 'questionnaireName',
+        },
+
+        {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
         },
       ],
+
+      columnsWait: [
+        {
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
+        },
+        {
+          title: '状态',
+          dataIndex: 'taskBizStatusName',
+        },
+        {
+          title: '随访患者',
+          dataIndex: 'userName',
+        },
+        {
+          title: '性别',
+          dataIndex: 'userSex',
+        },
+        {
+          title: '年龄（岁）',
+          dataIndex: 'userAge',
+        },
+        {
+          title: '联系电话',
+          dataIndex: 'userPhone',
+        },
+        {
+          title: '随访医生',
+          dataIndex: 'doctorName',
+        },
+        {
+          title: '执行时间',
+          dataIndex: 'followDate',
+        },
+        {
+          title: '随访问卷',
+          dataIndex: 'questionnaireName',
+        },
+
+        {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      columnsAready: [
+        {
+          title: '随访方式',
+          dataIndex: 'messageTypeName',
+        },
+        {
+          title: '状态',
+          dataIndex: 'taskBizStatusName',
+        },
+        {
+          title: '随访患者',
+          dataIndex: 'userName',
+        },
+        {
+          title: '性别',
+          dataIndex: 'userSex',
+        },
+        {
+          title: '年龄（岁）',
+          dataIndex: 'userAge',
+        },
+        {
+          title: '联系电话',
+          dataIndex: 'userPhone',
+        },
+        {
+          title: '随访医生',
+          dataIndex: 'doctorName',
+        },
+        {
+          title: '执行时间',
+          dataIndex: 'followDate',
+        },
+        {
+          title: '抽查时间',
+          dataIndex: 'checkDate',
+        },
+        {
+          title: '抽查结果',
+          scopedSlots: { customRender: 'result' },
+          // dataIndex: 'checkStatusName',
+        },
+        {
+          title: '操作',
+          width: '150px',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
       loadDataOut: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        console.log('loadData', Object.assign(parameter, this.queryParams))
-        return getOutPatients(Object.assign(parameter, this.queryParam)).then((res) => {
+        let param = JSON.parse(JSON.stringify(this.queryParams))
+        if (param.executeDepartmentId == '-1') {
+          delete param.executeDepartmentId
+        }
+        if (param.taskBizStatus == '-1') {
+          delete param.taskBizStatus
+        }
+        if (param.actualDoctorUserId == '-1') {
+          delete param.actualDoctorUserId
+        }
+
+        //待抽查不需要抽出时间
+        if (param.type == '1') {
+          delete param.endCheckTime
+          delete param.beginCheckTime
+        }
+
+        //已抽查不需要抽出时间 姓名
+        if (param.type == '2') {
+          delete param.queryStr
+        }
+
+        console.log('loadData', Object.assign(parameter, param))
+        return followRecords(Object.assign(parameter, param)).then((res) => {
+          if (res.code == 0) {
+          }
           for (let i = 0; i < res.data.rows.length; i++) {
-            // this.$set(res.data.rows[i], 'phoneNo', res.data.rows[i].infoDetail.dhhm) //设置电话号码
-            if (res.data.rows[i].age) {
-              this.$set(res.data.rows[i], 'ageCount', this.countAge(res.data.rows[i].age)) //计算设置年龄
-            } else {
-              this.$set(res.data.rows[i], 'ageCount', '暂无') //计算设置年龄
-            }
+            this.$set(res.data.rows[i], 'messageTypeName', res.data.rows[i].messageType.description)
             this.$set(
               res.data.rows[i],
-              'outTime',
-              res.data.rows[i].cysj.substring(0, 4) +
-                '-' +
-                res.data.rows[i].cysj.substring(4, 6) +
-                '-' +
-                res.data.rows[i].cysj.substring(6, 8)
-            ) //计算设置出院时间
-            //计算是否购买套餐
-            if (!res.data.rows[i].planInfo || res.data.rows[i].planInfo.length == 0) {
-              this.$set(res.data.rows[i], 'hasPlan', '否')
-            } else {
-              this.$set(res.data.rows[i], 'hasPlan', '是')
-            }
-            // //分配状态：  未注册 注册未分配 已分配
-            // if (!res.data.rows[i].userId) {
-            //   this.$set(res.data.rows[i], 'hasGive', '未注册')
-            // } else if (res.data.rows[i].planInfo && res.data.rows[i].planInfo.length > 0) {
-            //   this.$set(res.data.rows[i], 'hasGive', '已分配')
-            // } else {
-            //   this.$set(res.data.rows[i], 'hasGive', '注册未分配')
-            // }
-
-            //状态：  未注册 注册未分配 已分配
-            if (!res.data.rows[i].bqmc) {
-              this.$set(res.data.rows[i], 'hasGive', '门诊')
-            } else {
-              this.$set(res.data.rows[i], 'hasGive', '住院')
-            }
+              'taskBizStatusName',
+              res.data.rows[i].taskBizStatus.value == 2 ? '成功' : '失败'
+            )
+            this.$set(res.data.rows[i], 'checkStatusName', res.data.rows[i].checkStatus == 1 ? '通过' : '不通过')
           }
           this.loadDataOut = res.data
           return res.data
@@ -375,6 +501,14 @@ export default {
         this.taskBizStatusData.unshift({ value: '-1', description: '全部' })
       }
     })
+
+    messageTypes().then((res) => {
+      if (res.code == 0) {
+        this.msgData = res.data
+      }
+    })
+
+    this.questionnairesOut()
   },
 
   methods: {
@@ -382,10 +516,55 @@ export default {
       this.$refs.table.refresh(true)
     },
 
+    reset() {
+      this.createValue = []
+      this.createValueCheck = []
+      this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.queryParams.messageContentId = this.choseQues.questionnaireId
+    },
+
+    onClickChange(event) {
+      //已抽查
+      if (event.target.value == '1') {
+        this.columns = JSON.parse(JSON.stringify(this.columnsWait))
+      } else {
+        this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+      }
+
+      this.goSearch()
+    },
+
+    //抽查状态，1:通过2:不通过
+    getClass(checkStatus) {
+      if (!checkStatus) {
+        return ''
+      }
+      if (checkStatus.value == 1) {
+        return 'span-red'
+      } else if (checkStatus.value == 2) {
+        return 'span-gray'
+      }
+    },
+
+    /**
+     * 
+     *  beginCheckTime: null, //开始抽查时间，yyyy-MM-dd
+        endCheckTime: null, //结束抽查时间，yyyy-MM-dd
+        beginExecuteTime: null, //开始执行时间，yyyy-MM-dd
+        endExecuteTime: null, //结束执行时间，yyyy-MM-dd
+     * @param {*} momentArr 
+     * @param {*} dateArr 
+     */
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
-      this.queryParams.startDate = dateArr[0]
-      this.queryParams.endDate = dateArr[1]
+      this.queryParams.beginExecuteTime = dateArr[0]
+      this.queryParams.endExecuteTime = dateArr[1]
+    },
+
+    onChangeCheck(momentArr, dateArr) {
+      this.createValueCheck = momentArr
+      this.queryParams.beginCheckTime = dateArr[0]
+      this.queryParams.endCheckTime = dateArr[1]
     },
 
     /**
@@ -409,44 +588,69 @@ export default {
     getUsersByDeptIdAndRoleOut() {
       getUsersByDeptIdAndRole({ departmentId: this.queryParams.executeDepartmentId, roleId: [3, 5] }).then((res) => {
         if (res.code == 0) {
-          this.deptUsers = res.data.deptUsers
+          this.deptUsers = []
+          this.deptUsers.push({ userId: '-1', userName: '全部' })
+          this.deptUsers = this.deptUsers.concat(res.data.deptUsers[0].users)
+        }
+      })
+    },
+    questionnairesOut() {
+      // questionnaires({ questionnaireName: '' }).then((res) => {
+      questionnaires({}).then((res) => {
+        if (res.code == 0) {
+          this.quesData = res.data
+          for (let index = 0; index < this.quesData.length; index++) {
+            this.$set(this.quesData[index], 'isChecked', false)
+          }
+          this.$set(this.quesData[0], 'isChecked', true)
+          this.choseQues = JSON.parse(JSON.stringify(this.quesData[0]))
+          this.queryParams.messageContentId = this.choseQues.questionnaireId
+          this.$refs.table.refresh(true)
+
+          this.quesDataTemp = JSON.parse(JSON.stringify(this.quesData))
         }
       })
     },
 
-    onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
-      this.selectedRowKeys = selectedRowKeys
-    },
-
     handleSearch(inputName) {
       if (inputName) {
-        this.keshiDataTemp = this.originData.filter((item) => item.departmentName.indexOf(inputName) != -1)
+        this.quesDataTemp = this.quesData.filter((item) => item.questionnaireName.indexOf(inputName) != -1)
       } else {
-        this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
+        this.quesDataTemp = JSON.parse(JSON.stringify(this.quesData))
         // this.chooseDeptItem = { departmentName: '', departmentId: '' }
       }
     },
 
-    onSelect(departmentId, s2) {
-      console.log('departmentId', departmentId)
+    onSelect(questionnaireId, s2) {
+      console.log('questionnaireId', questionnaireId)
       console.log('s2', s2)
       //选择类别
-      let index = this.getIndex(departmentId)
-      this.chooseDeptItem = this.originData.find((item) => item.departmentId == departmentId)
+      let itemQues = this.quesData.find((item) => item.questionnaireId == questionnaireId)
+      this.choseQues = JSON.parse(JSON.stringify(itemQues))
+      let index = this.getIndex(questionnaireId)
       console.log('index', index)
-      this.onPartChoose(index)
+      this.onItemClick({}, index)
     },
 
-    getIndex(departmentId) {
+    getIndex(questionnaireId) {
       let myIndex = -1
-      for (let index = 0; index < this.keshiData.length; index++) {
-        if (this.keshiData[index].departmentId == departmentId) {
+      for (let index = 0; index < this.quesData.length; index++) {
+        if (this.quesData[index].questionnaireId == questionnaireId) {
           myIndex = index
           return myIndex
         }
       }
       return myIndex
+    },
+
+    onItemClick(item, index) {
+      for (let index = 0; index < this.quesData.length; index++) {
+        this.$set(this.quesData[index], 'isChecked', false)
+      }
+      this.$set(this.quesData[index], 'isChecked', true)
+      this.choseQues = JSON.parse(JSON.stringify(this.quesData[index]))
+      this.queryParams.messageContentId = this.choseQues.questionnaireId
+      this.$refs.table.refresh(true)
     },
 
     countAge(age) {
@@ -478,6 +682,10 @@ export default {
       }
     },
 
+    goAction(record) {
+      //TODO 弹窗抽查/详情
+    },
+
     dispatchPlan() {
       if (this.selectedRowKeys.length == 0) {
         this.$message.error('请勾选分配计划的患者')
@@ -506,10 +714,6 @@ export default {
 
     handleOk() {
       this.$refs.table.refresh()
-    },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
     },
   },
 }
@@ -567,30 +771,41 @@ export default {
     .div-wrap-service {
       max-height: 662px;
       overflow-y: auto !important;
+      .checked {
+        color: #1890ff !important;
+      }
 
       .div-part {
         overflow: hidden;
         width: 100%;
+        display: flex;
+        align-items: center;
+        flex-direction: row;
         // padding-left: 5%;
+        border-bottom: #e6e6e6 1px solid;
         height: 26px;
 
-        .checked {
-          color: #1890ff !important;
-        }
-
-        .p-name {
+        .span-name {
           // margin-top: 3.5%;
-          display: block;
+          // display: inline-block;
+          flex: 1;
           height: 85%;
           overflow: hidden;
           // padding-left: 1%;
-          color: #000;
+          // color: #000;
           margin-top: 1%;
           font-size: 12px;
           text-align: left|center;
           &:hover {
             cursor: pointer;
           }
+        }
+
+        .div-rate {
+          display: flex;
+          align-items: center;
+          flex-direction: row;
+          margin-right: 2%;
         }
       }
     }
@@ -600,6 +815,20 @@ export default {
     overflow: hidden;
     float: right;
     width: 81%;
+
+    .span-red {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: #f26161 !important;
+      // background-color: #f26161;
+    }
+
+    .span-gray {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: #69c07d !important;
+      // background-color: #85888e;
+    }
 
     .ant-select {
       width: 90px;
