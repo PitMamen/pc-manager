@@ -1,65 +1,47 @@
 <template>
   <div class="user-wrapper">
     <div class="content-box top-wrap">
-      <!-- fixedPart <a href="https://www.stylefeng.cn" target="_blank"> -->
-      <a href="https://www.baidu.com/" target="_blank" v-if="false">
-        <span class="action">
-          <a-icon type="question-circle-o"></a-icon>
-        </span>
-      </a>
-      <!-- fixedPart -->
-      <notice-icon class="action" v-if="false" />
-      <div style="flex: 1">
-        <span style="font-size: 1px; text-color: #333; font-weight: bold">当前角色：</span>
-        <a-select style="width: 62%" v-model="currentRoleId" @select="onRoleChange" placeholder="请选择角色">
-          <a-select-option
-            v-for="(itemOrigin, indexOrigin) in roleList"
-            :key="indexOrigin"
-            :value="itemOrigin.roleId"
-            >{{ itemOrigin.roleDesc }}</a-select-option
-          >
-        </a-select>
+      <div class="name-wrap">
+        <span class="line"></span>
+        <span class="name hospital-name">{{ hospitalName }}</span>
+        <span class="name user-name">{{ userName }}</span>
+        <span class="line"></span>
       </div>
       <a-dropdown>
-        <span class="action ant-dropdown-link user-dropdown-menu">
-          <!-- icon="user" -->
-          <a-avatar class="avatar" size="small" :src="avatar" />
-          <span style="margin-right: 6%; color: #1890ff; font-size: 9px">{{ keshiName }}</span>
-          <span>{{ userName }}</span>
-        </span>
+        <a-icon class="icon-setting" type="setting" />
         <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
           <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
           <a-menu-item key="4" v-if="true">
             <a @click="appToggled()">
-              <a-icon type="swap" />
+              <!-- <a-icon type="swap" /> -->
               <span>切换应用</span>
             </a>
           </a-menu-item>
           <!-- <a-menu-item key="5" v-if="hasPerm('sysUser:updatePwd')"  > -->
           <a-menu-item key="5" v-if="true">
             <a @click="updatePwd()">
-              <a-icon type="tool" />
+              <!-- <a-icon type="tool" /> -->
               <span>修改密码</span>
             </a>
           </a-menu-item>
 
           <a-menu-item key="0" v-if="false">
             <router-link :to="{ name: 'center' }">
-              <a-icon type="user" />
+              <!-- <a-icon type="user" /> -->
               <span>个人中心</span>
             </router-link>
           </a-menu-item>
           <a-menu-item key="1" v-if="false">
             <router-link :to="{ name: 'settings' }">
-              <a-icon type="setting" />
+              <!-- <a-icon type="setting" /> -->
               <span>账户设置</span>
             </router-link>
           </a-menu-item>
           <a-menu-divider v-if="false" />
           <a-menu-item key="3">
             <a href="javascript:;" @click="handleLogout">
-              <a-icon type="logout" />
+              <!-- <a-icon type="logout" /> -->
               <span>退出登录</span>
             </a>
           </a-menu-item>
@@ -173,6 +155,7 @@ export default {
       form1: this.$form.createForm(this),
       form2: this.$form.createForm(this),
       defApp: [],
+      hospitalName: '',
       keshiName: '',
       currentRoleId: 1,
       lastRoleId: 1,
@@ -191,6 +174,7 @@ export default {
   created() {
     // debugger
     let user = Vue.ls.get(TRUE_USER)
+    this.hospitalName = user.hospitalName
     this.keshiName = user.departmentName
     this.userName = user.userName
     this.currentRoleId = user.roleId
@@ -348,6 +332,33 @@ export default {
 }
 </script>
 
+<style lang="less">
+.user-dropdown-menu-wrapper.ant-dropdown-menu {
+    padding: 0 !important;
+    background: #3375A8;
+    border-radius: 4px;
+    .ant-dropdown-menu-item {
+      width: 120px !important;
+      margin: 0 10px;
+      padding: 4px 0;
+      font-size: 12px !important;
+      line-height: 20px !important;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      &:hover {
+        background: #3375A8 !important;
+      }
+      &:last-child {
+        border-bottom: none;
+      }
+      a {
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #FFFFFF !important;
+      }
+    }
+}
+</style>
 <style lang="less" scoped>
 .appRedio {
   border: 1px solid #91d5ff;
@@ -360,8 +371,41 @@ export default {
     margin-bottom:10px;*/
 }
 
-.top-wrap {
-  width: 350px;
-  display: flex;
+.user-wrapper {
+  .top-wrap {
+    height: 100%;
+    .name-wrap {
+      display: inline-block;
+      overflow: hidden;
+      .line {
+        float: left;
+        width: 2px;
+        height: 42px;
+        background: linear-gradient(0deg, #01B1F6, #FFFFFF, #01B1F6);
+        opacity: 0.6;
+      }
+      .name {
+        float: left;
+        margin: 14px 0;
+        padding: 0 10px;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 14px;
+        color: #FFFFFF;
+      }
+      .hospital-name {
+        border-right: 1px solid #FFFFFF;
+      }
+    }
+    .icon-setting {
+      float: right;
+      padding: 13px 20px 11px 20px;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 16px;
+      color: #FFFFFF;
+      cursor: pointer;
+    }
+  }
 }
 </style>

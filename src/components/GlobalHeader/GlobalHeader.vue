@@ -9,26 +9,10 @@
           <!-- fixedPart 隐藏tab菜单 -->
           <a-menu
             mode="horizontal"
-            :default-selected-keys=this.defApp
-            style="border-bottom:0px;lineHeight:62px;"
+            style="border-bottom:0px;"
           >
-            <a-icon v-if="device==='mobile'" class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle"/>
-            <a-icon v-else class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'" @click="toggle"/>
-            <a-menu-item v-for='(item) in userInfo.apps' :key="item.code" style="top:0px;" @click="switchApp(item.code)" v-show="false">
-              {{item.name}}
-            </a-menu-item>
             <user-menu></user-menu>
           </a-menu>
-        </div>
-        <div v-else :class="['top-nav-header-index', theme]">
-          <div class="header-index-wide">
-            <div class="header-index-left">
-              <logo class="top-nav-header" :show-title="device !== 'mobile'"/>
-              <s-menu v-if="device !== 'mobile'" mode="horizontal" :menu="menus" :theme="theme" />
-              <a-icon v-else class="trigger" :type="collapsed ? 'menu-fold' : 'menu-unfold'" @click="toggle" />
-            </div>
-            <user-menu class="header-index-right"></user-menu>
-          </div>
         </div>
       </a-layout-header>
     </div>
