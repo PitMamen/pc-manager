@@ -324,8 +324,8 @@ export default {
       })
     },
     //播放音频
-    playAudio(src) {
-      this.audioSrc = src
+    playAudio(item) {
+      this.audioSrc = item.recordUrL
       this.audioShow = true
     },
     subStringIdcardNo(idcard) {
