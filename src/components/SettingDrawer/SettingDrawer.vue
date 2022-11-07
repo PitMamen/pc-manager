@@ -1,5 +1,5 @@
 <template>
-  <div class="setting-drawer">
+  <div class="setting-drawer" v-if="false">
     <a-drawer
       width="300"
       placement="right"
