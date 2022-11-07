@@ -13,7 +13,7 @@
         <div class="div-line-wrap"></div>
       </div>
       <s-table
-        style="margin-top: 2%;"
+        style="margin-top: 2%"
         ref="table"
         size="default"
         :pagination="false"
@@ -22,7 +22,7 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
-    </s-table>
+      </s-table>
     </a-card>
   </a-modal>
 </template>
@@ -122,8 +122,8 @@ export default {
               //设置序号
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                this.$set(item, 'messageType', item.messageType!=null?item.messageType.description:'')
-                this.$set(item, 'taskBizStatus', item.taskBizStatus!=null?item.taskBizStatus.description:'')
+                this.$set(item, 'messageType', item.messageType != null ? item.messageType.description : '')
+                this.$set(item, 'taskBizStatus', item.taskBizStatus != null ? item.taskBizStatus.description : '')
               })
             }
 
@@ -140,20 +140,30 @@ export default {
     checkDetail(record, type) {
       this.visible = true
       this.reset()
-      var status = record.success==1?'成功':"失败"
-      this.titleTop = record.planName+'-'+record.messageName+'-'+status+" 【"+record.beginDate+" 至 "+record.endDate+"】"
+      var status = record.success == 1 ? '成功' : '失败'
+      this.titleTop =
+        record.planName +
+        '-' +
+        record.messageName +
+        '-' +
+        status +
+        ' 【' +
+        record.beginDate +
+        ' 至 ' +
+        record.endDate +
+        '】'
       console.log('PPPPPPP:', record)
       this.queryParamsData.beginDate = record.beginDate
       this.queryParamsData.endDate = record.endDate
       this.queryParamsData.execDept = record.execDept
       this.queryParamsData.flag = type
-      this.queryParamsData.messageType = record.messageType
-      this.queryParamsData.planId = record.planId
+
+      this.queryParamsData.messageType = record.messageType == '合计' ? '' : record.messageType //如果是点了合计 就不传值
+      this.queryParamsData.planId = record.planId == '合计' ? '' : record.planId ///如果是点了合计 就不传值
       this.queryParamsData.statType = record.statType
       this.$nextTick(() => {
         this.$refs.table.refresh()
       })
-      
     },
 
     handleCancel() {
@@ -165,19 +175,18 @@ export default {
       this.visible = false
     },
 
-
     /**
      * 重置参数
      */
-    reset(){
-      this.queryParamsData.beginDate =''
+    reset() {
+      this.queryParamsData.beginDate = ''
       this.queryParamsData.endDate = ''
       this.queryParamsData.execDept = ''
       this.queryParamsData.flag = ''
       this.queryParamsData.messageType = ''
       this.queryParamsData.planId = ''
       this.queryParamsData.statType = ''
-    }
+    },
   },
 }
 </script>
