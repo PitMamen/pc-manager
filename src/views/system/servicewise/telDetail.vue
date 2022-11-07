@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 650px">
+  <div style="height: 650px;width: 100%;">
     <div class="div-appoint-detail-detail">
       <div class="div-span-content-left">
         <div v-show="showResultInfo">

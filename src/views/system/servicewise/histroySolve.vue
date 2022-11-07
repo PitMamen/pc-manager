@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 650px">
+  <div style="height: 650px;width: 100%;">
     <div class="div-appoint-detail">
       <div class="div-span-content-left" style="overflow-y: auto !important; max-height: 100%">
         <div
@@ -190,6 +190,7 @@ import {
   followPlanPhoneHistory,
   followPlanPhonehistoryDetail,
   historyFollowResult,
+  getSoundRecordingList
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'

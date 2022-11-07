@@ -1,5 +1,5 @@
-<template>
-  <div style="height: 650px">
+<template >
+  <div style="height: 650px;width: 100%;">
     <div class="div-appoint-detail">
       <div class="div-span-content-left">
         <div class="div-title">
