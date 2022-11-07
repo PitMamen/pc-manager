@@ -2248,3 +2248,24 @@ export function addTencentPhoneTape(param) {
     method: 'post'
   })
 }
+
+/**
+ * 抽查
+ */
+ export function modifyFollowSpotExecuteRecord(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/modifyFollowSpotExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 抽查详情
+ */
+ export function spotDetailForId(id) {
+  return axios({
+    url: '/follow-api/followPlanPhone/spotDetailForId/'+id,
+    method: 'post',
+  })
+}

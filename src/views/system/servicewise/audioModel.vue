@@ -8,7 +8,9 @@
     :maskClosable="false"
     :destroyOnClose="true"
     :mask="false"
-    :dialogStyle="dialogStyle"
+    :maskStyle="null"
+    style="top: 20px"
+  
   >
 
 <audio class="audio"  controls src="http://develop.mclouds.org.cn:8009/content-api/file/S20220928110502547T4PSXJVUOGKFJY-tmp_8ca1a0e623c088975dc24d12a49bedf5e8f8f0731e094df7.mp3" autoplay></audio>
@@ -27,7 +29,7 @@ export default {
   data() {
     return {
       dialogStyle:{
-        top:0
+        top:-120
       },
       visible: false,
     }
