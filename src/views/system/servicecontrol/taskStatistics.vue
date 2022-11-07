@@ -259,13 +259,13 @@
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
-          res.data.unshift({
-            departmentId: '-2',
-            departmentName: '全部',
-            hospitalId: 1,
-            parentId: 0,
-            children: null,
-          })
+          // res.data.unshift({
+          //   departmentId: '-2',
+          //   departmentName: '全部',
+          //   hospitalId: 1,
+          //   parentId: 0,
+          //   children: null,
+          // })
           for (let i = 0; i < res.data.length; i++) {
             // this.$set(res.data[i], 'xh', i + 1)
             if (i == 0) {
