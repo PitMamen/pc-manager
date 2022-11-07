@@ -94,7 +94,7 @@
   
   import { TRUE_USER } from '@/store/mutation-types'
   
-  import { formatDate, getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
+  import { formatDate, getDateNow,getlastMonthToday } from '@/utils/util'
   
   export default {
     components: {
@@ -159,8 +159,8 @@
         },
         form: this.$form.createForm(this),
         queryParamsStatisit: {
-          beginDate: getDateNow(),
-          endDate: getCurrentMonthLast(),
+          beginDate: getlastMonthToday(), 
+          endDate: formatDate(new Date().getTime()),
           execDept: '',
           hospitalCode: '',
           statType: 1,
@@ -213,8 +213,6 @@
           },
         ],
         //此属性用来做重置功能的
-        createValue: [],
-        createValueBor: [],
         originData: [],
         user: {},
   
@@ -283,13 +281,14 @@
         }
       })
   
-      this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-      this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+      this.createValue = [moment(getlastMonthToday(), this.dateFormat), moment(formatDate(new Date().getTime()), this.dateFormat)]
+      this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getDateNow(), this.dateFormat)]
     },
   
     methods: {
       /** 统计列表方法*/
       onChange(momentArr, dateArr) {
+        console.log("MMMMM:",dateArr)
         this.createValue = momentArr
         this.queryParamsStatisit.beginDate = dateArr[0]
         this.queryParamsStatisit.endDate = dateArr[1]
@@ -304,6 +303,7 @@
         } else if (ssks == 3) {
           this.titleName = '按问卷'
         }
+       this.$refs.tableStat.refresh(true)
       },
   
       handleOk() {

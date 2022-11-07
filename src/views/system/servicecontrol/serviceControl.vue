@@ -2,17 +2,22 @@
   <div>
     <a-tabs v-model="keyindex">
       <a-tab-pane key="1" tab="院级抽查"> <control-list ref="serviceList" @ok="handleOk" /> </a-tab-pane>
-      <a-tab-pane key="2" tab="任务统计"> <control-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
+      <a-tab-pane key="2" tab="任务统计"> 
+        <task-statistics ref="taskStatistics" @ok="handleOk" />
+        <!-- <service-list ref="serviceList" @ok="handleOk" /> -->
+        </a-tab-pane
     ></a-tabs>
   </div>
 </template>
 
 <script>
 import controlList from './controlList'
+import taskStatistics from './taskStatistics'
 
 export default {
   components: {
     controlList,
+    taskStatistics,
   },
 
   data() {
