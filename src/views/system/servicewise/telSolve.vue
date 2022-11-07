@@ -1,5 +1,5 @@
 <template >
-  <div style="height: 650px;width: 100%;">
+  <div style="height: 650px; width: 100%">
     <div class="div-appoint-detail">
       <div class="div-span-content-left">
         <div class="div-title">
@@ -330,6 +330,7 @@ export default {
         return
       }
       if (this.radioTyPe === 1) {
+        //失败
         console.log(this.failureRadioTyPe)
         if (this.failureRadioTyPe.length === 0) {
           this.$message.info('请选择失败理由')
@@ -342,10 +343,13 @@ export default {
             return
           }
         }
+        //保存处理信息
+        this.dodealsave()
+      } else {
+        //成功
+        //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
+        this.postMessageToSubmit()
       }
-
-      //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
-      this.postMessageToSubmit()
     },
 
     //保存处理信息

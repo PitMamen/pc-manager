@@ -16,7 +16,11 @@
           </div>
 
           <span class="div-time">{{ item.userFollowTime }}</span>
-          <span class="div-content">{{ item.contentTitle }}</span>
+          <a-tooltip>
+    <template #title>{{ item.contentTitle }}</template>
+    <span class="div-content">{{ item.contentTitle }}</span>
+  </a-tooltip>
+          
         </div>
       </div>
 
