@@ -140,7 +140,14 @@ export default {
     checkDetail(record, type) {
       this.visible = true
       this.reset()
-      var status = record.success == 1 ? '成功' : '失败'
+      var status = ""
+      if(type==1){
+        status = "任务数"
+      }else if(type==4){
+        status = "逾期数"
+      }else{
+       status = record.success == 1 ? '成功' : '失败'
+      }
       this.titleTop =
         record.planName +
         '-' +

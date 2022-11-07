@@ -263,8 +263,8 @@ export default {
       setTimeout(() => {
         this.confirmLoading = false
         this.$router.push({ path: './user/login' })
+        // window.location.reload()
       }, 1000)
-      // this.defApp.push(Vue.ls.get(ALL_APPS_MENU)[0].code)
     },
 
     /**
