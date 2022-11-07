@@ -30,8 +30,8 @@
         <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
           <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
-          <a-menu-item key="4" v-if="true">
-            <a @click="appToggled()">
+          <a-menu-item key="4" v-if="true"  >
+            <a @click="appToggled()" :confirm-loading="confirmLoading">
               <a-icon type="swap" />
               <span>切换应用</span>
             </a>
@@ -66,14 +66,15 @@
         </a-menu>
       </a-dropdown>
     </div>
-    <a-modal
+    <!-- <a-modal
       title="切换应用"
       :visible="visible"
       :footer="null"
       :confirm-loading="confirmLoading"
       @cancel="handleCancel"
-    >
-      <a-form :form="form1">
+      @click="switchApp()"
+    > -->
+    <!-- <a-form :form="form1">
         <a-form-item :labelCol="labelCol" :wrapperCol="wrapperCol" label="选择应用">
           <a-menu mode="inline" :default-selected-keys="this.defApp" style="border-bottom: 0px; lineheight: 62px">
             <a-menu-item v-for="item in userInfo.apps" :key="item.code" style="top: 0px" @click="switchApp(item.code)">
@@ -81,8 +82,8 @@
             </a-menu-item>
           </a-menu>
         </a-form-item>
-      </a-form>
-    </a-modal>
+      </a-form> -->
+    <!-- </a-modal> -->
     <a-modal
       title="修改密码"
       :visible="visible_updPwd"
@@ -256,8 +257,14 @@ export default {
      * 打开切换应用框
      */
     appToggled() {
-      this.visible = true
-      this.defApp.push(Vue.ls.get(ALL_APPS_MENU)[0].code)
+      this.confirmLoading = true
+      console.log('00000000000000')
+      this.$message.success('正在切换应用,请稍后...')
+      setTimeout(() => {
+        this.confirmLoading = false
+        this.$router.push({ path: './user/login' })
+      }, 1000)
+      // this.defApp.push(Vue.ls.get(ALL_APPS_MENU)[0].code)
     },
 
     /**
@@ -284,17 +291,19 @@ export default {
     },
 
     switchApp(appCode) {
+      console.log('PPPPPPPPPPPPPP')
       this.visible = false
       this.defApp = []
       const applicationData = this.userInfo.apps.filter((item) => item.code == appCode)
       const hideMessage = message.loading('正在切换应用！', 0)
-      this.MenuChange(applicationData[0])
-        .then((res) => {
-          hideMessage()
-        })
-        .catch((err) => {
-          message.error('应用切换异常')
-        })
+      this.$router.push({ path: './user/login' })
+      // this.MenuChange(applicationData[0])
+      //   .then((res) => {
+      //     hideMessage()
+      //   })
+      //   .catch((err) => {
+      //     message.error('应用切换异常')
+      //   })
     },
 
     handleOkUpdPwd() {
