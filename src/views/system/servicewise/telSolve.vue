@@ -1,5 +1,5 @@
-<template>
-  <div style="height: 650px">
+<template >
+  <div style="height: 650px;width: 100%;">
     <div class="div-appoint-detail">
       <div class="div-span-content-left">
         <div class="div-title">
@@ -82,19 +82,15 @@
             @click="goCall(patientInfo.tel)"
             style="width: 34px; height: auto"
           />
+          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
           <img
-            v-else
-            src="~@/assets/icons/dianhua.png"
-            style="width: 34px; height: auto"
-          />
-          <img
-          v-if="patientInfo.urgentTel"
+            v-if="patientInfo.urgentTel"
             src="~@/assets/icons/jinji2.png"
             @click="goCall(patientInfo.urgentTel)"
             style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
           />
           <img
-          v-else
+            v-else
             src="~@/assets/icons/jinji.png"
             style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
           />
@@ -120,17 +116,20 @@
           <div class="div-line-blue"></div>
           <span class="span-title">基本信息</span>
         </div>
-        <div class="div-line-wrap"  v-for="(item, index) in fieldList"
-          :key="index"
-          :value="item">
-          <span class="span-item-name">{{item.fieldComment}} :</span>
-          <span class="span-item-value">{{item.fieldValue}} </span>
+        <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
+          <span class="span-item-name">{{ item.fieldComment }} :</span>
+          <span class="span-item-value">{{ item.fieldValue }} </span>
         </div>
-      
       </div>
     </div>
     <div style="margin-top: 12px; display: flex; flex-direction: row-reverse; align-items: center">
-      <a-button type="default" @click="goCancel" style="width: 90px;color: #1890FF !important; border-color: #1890FF !important;"> 关闭 </a-button>
+      <a-button
+        type="default"
+        @click="goCancel"
+        style="width: 90px; color: #1890ff !important; border-color: #1890ff !important"
+      >
+        关闭
+      </a-button>
       <a-button type="primary" @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
     </div>
   </div>
@@ -199,7 +198,7 @@ export default {
         planName: '',
         overdueFollowType: null,
       },
-      fieldList:[],
+      fieldList: [],
       patientInfo: {},
       radioTyPe: 0,
       failureRadioTyPe: '',
@@ -216,7 +215,6 @@ export default {
     this.followPlanPhonePatientInfo(this.record.userId)
     this.followPlanPhoneCurrent(this.record.id)
     this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
-
 
     //监听iframe发过来的消息
     window.addEventListener('message', self.submitFormFun)
@@ -262,13 +260,19 @@ export default {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
           res.data.actualDoctorUserId = ''
-          if(res.data.taskBizStatus.value == 2 || res.data.taskBizStatus.value == 3){
-            res.data.taskBizStatus.description='已随访'
-          }else{
-            res.data.taskBizStatus.description='待随访'
+          if (res.data.taskBizStatus.value == 2 || res.data.taskBizStatus.value == 3) {
+            res.data.taskBizStatus.description = '已随访'
+          } else {
+            res.data.taskBizStatus.description = '待随访'
           }
           this.followResultContent = res.data
           this.questionUrl = res.data.projectKeyUrlW
+          if (res.data.contacts) {
+            this.patientInfo.tel = res.data.contacts
+          }
+          if (res.data.urgentContacts) {
+            this.patientInfo.urgentTel = res.data.urgentContacts
+          }
           console.log(this.followResultContent)
           console.log(this.questionUrl)
         } else {
@@ -280,20 +284,14 @@ export default {
     followPlanPhonePatientInfo(userId) {
       followPlanPhonePatientInfo(userId).then((res) => {
         if (res.code === 0) {
-          res.data.forEach(element => {
-            if(element.tableField=='id_card'){
-              element.fieldValue=this.subStringIdcardNo(element.fieldValue)
+          res.data.forEach((element) => {
+            if (element.tableField == 'id_card') {
+              element.fieldValue = this.subStringIdcardNo(element.fieldValue)
             }
-            if(element.tableField=='sex'){
-              element.fieldValue=element.fieldValue==1?'男':'女'
+            if (element.tableField == 'sex') {
+              element.fieldValue = element.fieldValue == 1 ? '男' : '女'
             }
-            if(element.tableField=='phone'){
-              this.patientInfo.tel=element.fieldValue
-            }
-            if(element.tableField=='phone'){
-              this.patientInfo.urgentTel=element.fieldValue
-            }
-          });
+          })
           this.fieldList = res.data
         } else {
           this.$message.error(res.message)
@@ -431,7 +429,6 @@ export default {
   .div-span-content-right {
     width: 22%;
     height: 100%;
-   
   }
   .p-title {
     margin-top: 20px;
@@ -451,7 +448,7 @@ export default {
 
   .div-line-wrap {
     width: 100%;
-    margin-top: 6%;
+    margin-top: 3%;
     overflow: hidden;
 
     .span-item-name {

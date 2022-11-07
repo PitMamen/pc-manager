@@ -1,35 +1,28 @@
 <template>
   <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="6" :sm="12">
-            <a-form-item label="应用名称">
-              <a-input v-model="queryParam.applicationName" allow-clear placeholder="请输入应用名称" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="12">
-            <a-form-item label="应用类型">
-              <a-select v-model="queryParam.applicationType" placeholder="请选择应用类型" allow-clear>
-                <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="12">
-            <a-form-item label="应用状态">
-              <a-select v-model="queryParam.status" placeholder="请选择应用状态" allow-clear>
-                <a-select-option v-for="item in selects2" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="12">
-            <span class="table-page-search-submitButtons" :style="{ float: 'right', overflow: 'hidden' }">
-              <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="() => (queryParam = {status: 1})">重置</a-button>
-            </span>
-          </a-col>
-        </a-row>
-      </a-form>
+      <div class="search-row">
+        <span class="name">应用名称:</span>
+        <a-input v-model="queryParam.applicationName" allow-clear placeholder="请输入应用名称" style="width: 120px;" />
+      </div>
+      <div class="search-row">
+        <span class="name">应用类型:</span>
+        <a-select v-model="queryParam.applicationType" placeholder="请选择应用类型" allow-clear style="width: 120px;">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+      <div class="search-row">
+        <span class="name">应用状态:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择应用状态" allow-clear style="width: 120px;height: 28px;">
+          <a-select-option v-for="item in selects2" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="() => (queryParam = {status: 1})">重置</a-button>
+        </span>
+      </div>
     </div>
     <div class="table-operator" style="overflow: hidden;">
       <a-button icon="plus" style="float: right;margin-right: 0;" @click="$refs.addForm.add()">新增</a-button>
@@ -103,11 +96,6 @@ export default {
           scopedSlots: { customRender: 'applicationTypeDesc' }
         },
         {
-          title: '状态',
-          dataIndex: 'statusDesc',
-          scopedSlots: { customRender: 'statusDesc' }
-        },
-        {
           title: '显示',
           dataIndex: 'visibleStatusDesc',
           scopedSlots: { customRender: 'visibleStatusDesc' }
@@ -116,6 +104,12 @@ export default {
           title: '创建时间',
           dataIndex: 'createTime',
           scopedSlots: { customRender: 'createTime' }
+        },
+        {
+          title: '状态',
+          width: '60px',
+          dataIndex: 'statusDesc',
+          scopedSlots: { customRender: 'statusDesc' }
         },
         {
           title: '操作',
@@ -203,19 +197,37 @@ button {
 }
 </style>
 <style lang="less" scoped>
+.table-wrapper {
+  // max-height: 600px;
+  // overflow-y: auto;
+}
+.sys-card {
+  // height: 100%;
+  // padding-bottom: 52px;
+  // /deep/ .ant-table-pagination {
+  //   position: fixed;
+  //   right: 32px;
+  //   bottom: 20px;
+  // }
+}
 .table-page-search-wrapper {
+  padding-bottom: 10px;
   border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
 }
 .table-operator {
   margin-top: 10px;
   margin-bottom: 10px;
-}
-.sys-card {
-  height: 100%;
-  /deep/ .ant-table-pagination {
-    position: fixed;
-    right: 32px;
-    bottom: 17px;
-  }
 }
 </style>

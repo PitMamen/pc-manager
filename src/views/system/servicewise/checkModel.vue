@@ -1,7 +1,7 @@
 <template>
   <a-modal
-    :title="title"
-    width="90%"
+     title="开始抽查"
+     width="90%"
     :visible="visible"
     :footer="null"
     @cancel="handleCancel"
@@ -9,43 +9,28 @@
     :destroyOnClose="true"
   >
     <a-tabs v-model="activeKey" type="line" style="margin-top: -10px">
-      <!-- <a-tab-pane key="1">
-          <template #tab>
-            <span>
-              <img v-show="activeKey!='1'" src="~@/assets/icons/jkda.png"  class="icon"/>
-              <img v-show="activeKey=='1'" src="~@/assets/icons/jkda1.png"  class="icon"/>
-              健康档案
-            </span>
-          </template>
-          健康档案
-        </a-tab-pane> -->
-      <a-tab-pane key="2">
+      <a-tab-pane key="1">
         <template #tab>
           <span>
-            <img v-show="activeKey != '2'" src="~@/assets/icons/lsjl.png" class="icon" />
-            <img v-show="activeKey == '2'" src="~@/assets/icons/lsjl1.png" class="icon" />
-            历史记录
+            本轮抽查
           </span>
         </template>
-        <histroy-solve ref="histroySolve" :record="record" @handleCancel="handleCancel" />
-      </a-tab-pane>
-      <a-tab-pane key="3">
-        <template #tab>
-          <span>
-            <img v-show="activeKey != '3'" src="~@/assets/icons/bcsf.png" class="icon" />
-            <img v-show="activeKey == '3'" src="~@/assets/icons/bcsf1.png" class="icon" />
-            本次随访
-          </span>
-        </template>
-        <tel-solve
-          v-if="modelType == 0"
-          ref="telSolve"
+        <check-solve
+          ref="checkSolve"
           :record="record"
           @handleCancel="handleCancel"
           @goCall="goCall"
         />
+       
+      </a-tab-pane>
+      <a-tab-pane key="2">
+        <template #tab>
+          <span>
+            任务情况
+          </span>
+        </template>
+       
         <tel-detail
-          v-else-if="modelType == 1"
           ref="telDetail"
           :record="record"
           @handleCancel="handleCancel"
@@ -58,15 +43,13 @@
 
 
 <script>
-import telSolve from './telSolve'
-import histroySolve from './histroySolve'
+import checkSolve from './checkSolve'
 import telDetail from './telDetail'
 import { createSdkLoginToken, addTencentPhoneTape } from '@/api/modular/system/posManage'
 import { info } from '@/api/modular/system/sysapp'
 export default {
   components: {
-    telSolve,
-    histroySolve,
+    checkSolve,
     telDetail,
   },
 
@@ -74,7 +57,7 @@ export default {
     return {
       title:'',
       modelType:'',
-      activeKey: '3',
+      activeKey: '1',
       visible: false,
       record: Object,
       isSDKReady: false,
@@ -89,20 +72,18 @@ export default {
   },
 
   methods: {
-    //随访
+    //抽查
     doDeal(record) {
-      this.modelType=0
       this.init(record)   
     },
 
-    //详情
+    //抽查详情
     doInfo(record) {
-      this.modelType=1
+      record.isCheckInfo=true
       this.init(record)   
     },
     init(record){
-      this.title=record.userName+' | '+record.sex.description+' | '+record.age+'岁'
-      this.activeKey = '3'
+      this.activeKey = '1'
       this.visible = true
       this.record = record
     },
@@ -129,8 +110,7 @@ export default {
 
             that.isSDKReady = true
             console.log('云呼叫初始化成功', that.isSDKReady)
-            tccc.UI.hideWorkbench()//隐藏工作台
-            tccc.UI.hidefloatButton()//隐藏悬浮按钮
+            // tccc.UI.hidefloatButton()//隐藏悬浮按钮
             resolve('初始化成功')
             // this.$message.success('初始化成功')
           })
@@ -150,7 +130,7 @@ export default {
       tccc.Call.startOutboundCall({
         phoneNumber: phone, //修改为需要外呼的号码
         // phoneNumber: '13524371592', //修改为需要外呼的号码
-        phoneDesc: '电话随访', //名称，将显示在坐席界面
+        phoneDesc: '随访抽查', //名称，将显示在坐席界面
       })
         .then(function (res) {
           if (res.status !== 'success') {
