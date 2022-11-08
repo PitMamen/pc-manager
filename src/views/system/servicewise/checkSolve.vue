@@ -317,7 +317,7 @@ export default {
     if(this.record.isCheckInfo){
       //是抽查详情
       this.isCheckInfo=true
-      spotDetailForId(63).then((res) => {
+      spotDetailForId(this.record.spotCheckRecordId).then((res) => {
         if (res.code === 0) {
           this.checkInfo=res.data
           this.handleResult=res.data.contentJson
@@ -440,7 +440,9 @@ playAudio(soundRecord) {
       
     },
 
-
+    goCall(phone) {
+      this.$emit('goCall', phone, this.record.id)
+    },
     
 
     subStringIdcardNo(idcard) {
