@@ -379,19 +379,20 @@ export default {
             return
           }
         }
-        this.isLoading=true
+      
         //保存处理信息
         this.dodealsave()
       } else {
         //成功
         //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
-        this.isLoading=true
+       
         this.postMessageToSubmit()
       }
     },
 
     //保存处理信息
     dodealsave() {
+      this.isLoading=true
       var postdata = {
         actualDoctorUserId: this.followResultContent.actualDoctorUserId, //实际随访人
         failReason: this.failureRadioTyPe + 1,
