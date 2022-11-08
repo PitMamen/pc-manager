@@ -1,6 +1,13 @@
 <template>
   <transition name="showHeader">
     <div v-if="visible" class="header-animat">
+      <div class="sysapp-logo">
+        <img class="icon" src="@/assets/login/icon1.png" v-if="userInfo.sysApp.logo === 'icon1'" />
+        <img class="icon" src="@/assets/login/icon2.png" v-if="userInfo.sysApp.logo === 'icon2'" />
+        <img class="icon" src="@/assets/login/icon3.png" v-if="userInfo.sysApp.logo === 'icon3'" />
+        <img class="icon" src="@/assets/login/icon4.png" v-if="userInfo.sysApp.logo === 'icon4'" />
+        <div class="titles">{{ userInfo.sysApp.applicationName }}</div>
+      </div>
       <a-layout-header
         v-if="visible"
         :class="[fixedHeader && 'ant-header-fixedHeader', sidebarOpened ? 'ant-header-side-opened' : 'ant-header-side-closed', ]"

@@ -1,5 +1,5 @@
 <template>
-  <a-layout :class="['layout', device]">
+  <a-layout :class="['basicLayout', 'layout', device]">
     <!-- SideMenu -->
     <a-drawer
       v-if="isMobile()"
@@ -10,6 +10,7 @@
       @close="drawerClose"
     >
       <side-menu
+        class="side-menu"
         mode="inline"
         :menus="menus"
         :theme="navTheme"
@@ -21,6 +22,7 @@
 
     <side-menu
       v-else-if="isSideMenu()"
+      class="side-menu"
       mode="inline"
       :menus="menus"
       :theme="navTheme"
@@ -28,7 +30,7 @@
       :collapsible="true"
     ></side-menu>
 
-    <a-layout :class="[layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
+    <a-layout :class="['main-content', layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
       <!-- layout header -->
       <global-header
         :mode="layoutMode"
@@ -99,9 +101,9 @@ export default {
         return '0'
       }
       if (this.sidebarOpened) {
-        return '256px'
+        return '170px'
       }
-      return '80px'
+      return '50px'
     }
   },
   watch: {
@@ -145,9 +147,9 @@ export default {
     paddingCalc () {
       let left = ''
       if (this.sidebarOpened) {
-        left = this.isDesktop() ? '256px' : '80px'
+        left = this.isDesktop() ? '170px' : '50px'
       } else {
-        left = (this.isMobile() && '0') || ((this.fixSidebar && '80px') || '0')
+        left = (this.isMobile() && '0') || ((this.fixSidebar && '50px') || '0')
       }
       return left
     },
@@ -161,23 +163,107 @@ export default {
 </script>
 
 <style lang="less">
-/*
- * The following styles are auto-applied to elements with
- * transition="page-transition" when their visibility is toggled
- * by Vue.js.
- *
- * You can easily play with the page transition by editing
- * these styles.
- */
-
+.basicLayout {
+  .side-menu {
+    position: relative;
+    margin-top: 42px;
+    min-height: calc(100vh - 42px) !important;
+    box-shadow: none !important;
+    background: #F5F5F5 !important;
+    > .ant-layout-sider-children {
+      > .ant-menu {
+        color: #1A1A1A;
+        padding: 0 0 15px 0 !important;
+        background: #F5F5F5 !important;
+      }
+      .ant-menu-item > a {
+        color: #666666;
+      }
+      .ant-menu-vertical .ant-menu-item,
+      .ant-menu-vertical-left .ant-menu-item,
+      .ant-menu-vertical-right .ant-menu-item,
+      .ant-menu-inline .ant-menu-item,
+      .ant-menu-vertical .ant-menu-submenu-title,
+      .ant-menu-vertical-left .ant-menu-submenu-title,
+      .ant-menu-vertical-right .ant-menu-submenu-title,
+      .ant-menu-inline .ant-menu-submenu-title {
+        margin-top: 0px !important;
+        margin-bottom: 0px !important;
+      }
+    }
+  }
+  .main-content {
+    > .header-animat {
+      .sysapp-logo {
+        position: relative;
+        float: left;
+        margin: 0 30px 0 24px;
+        padding: 10px 0;
+        z-index: 1;
+        .icon {
+          float: left;
+          width: auto;
+          height: 22px;
+          margin-right: 20px;
+        }
+        .titles {
+          position: relative;
+          float: left;
+          font-size: 20px;
+          font-weight: 400;
+          line-height: 22px;
+          color: #FFFFFF;
+          top: -2px;
+        }
+      }
+    }
+  }
+  &.desktop {
+    .side-menu {
+      flex: 0 0 170px !important;
+      max-width: 170px !important;
+      min-width: 170px !important;
+      width: 170px !important;
+    }
+    .main-content {
+      margin-left: -170px !important;
+      > .ant-layout-content {
+        margin-left: 190px !important;
+      }
+    }
+  }
+  &.tablet {
+    .side-menu {
+      flex: 0 0 50px !important;
+      max-width: 50px !important;
+      min-width: 50px !important;
+      width: 50px !important;
+    }
+    .main-content {
+      margin-left: -50px !important;
+      > .header-animat {
+        .sysapp-logo {
+          display: none;
+        }
+      }
+      > .ant-layout-content {
+        margin-left: 70px !important;
+      }
+    }
+  }
+  &.mobile {
+    .side-menu {}
+    .main-content {}
+  }
+}
+</style>
+<style lang="less">
 .page-transition-enter {
   opacity: 0;
 }
-
 .page-transition-leave-active {
   opacity: 0;
 }
-
 .page-transition-enter .page-transition-container,
 .page-transition-leave-active .page-transition-container {
   -webkit-transform: scale(1.1);

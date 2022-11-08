@@ -104,7 +104,15 @@ const user = {
         }).then(response => {
           console.log("GetInfo", response)
           if (response.success) {
+            const sysAppId = Vue.ls.get(SYS_APP_ID) || ''
+            const sysAppList = Vue.ls.get(SYS_APP) || []
+            const sysApp = sysAppList.find(item => {
+              return sysAppId == item.id
+            })
             const data = response.data
+            data.sysApp = sysApp
+            data.sysAppId = sysAppId
+            data.sysAppList = sysAppList
             commit('SET_ADMINTYPE', data.adminType)
             commit('SET_ROLES', 1)
             commit('SET_BUTTONS', data.permissions)

@@ -1,11 +1,10 @@
 <template>
   <a-layout-sider
     :class="['sider', isDesktop() ? null : 'shadow', theme, fixSiderbar ? 'ant-fixed-sidemenu' : null ]"
-    width="256px"
+    width="170px"
     :collapsible="collapsible"
     v-model="collapsed"
     :trigger="null">
-    <logo />
     <s-menu
       :collapsed="collapsed"
       :menu="menus"
@@ -14,7 +13,6 @@
       @select="onSelect"
       style="padding: 16px 0px;"></s-menu>
   </a-layout-sider>
-
 </template>
 
 <script>
