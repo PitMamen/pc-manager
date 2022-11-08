@@ -160,7 +160,14 @@
           :rowKey="(record) => record.code"
         >
           <span slot="action" slot-scope="text, record">
-            <a @click="goAction(record)">{{ queryParams.type == 1 ? '抽查' : '详情' }}</a>
+            <!-- 跳转详情 -->
+            <a @click="goDetai(record)">详情</a>
+            <!-- 跳转抽查 -->
+            <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)">{{
+              queryParams.type == 1 ? '抽查' : '详情'
+            }}</a>
+            <!-- 跳转抽查结果 -->
+            <a style="margin-left: 6%" v-if="queryParams.type == 2" @click="goAction(record)">抽查结果</a>
           </span>
           <span slot="result" slot-scope="text, record">
             <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
@@ -210,6 +217,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       confirmLoading: false,
+      quesGot: false,
       partChoose: '',
       keyindex: '1',
       choseQues: {},
@@ -438,7 +446,9 @@ export default {
         this.confirmLoading = true
         return followRecords(Object.assign(parameter, param))
           .then((res) => {
-            this.confirmLoading = false
+            if (this.quesGot) {
+              this.confirmLoading = false
+            }
 
             for (let i = 0; i < res.data.rows.length; i++) {
               this.$set(res.data.rows[i], 'messageTypeName', res.data.rows[i].messageType.description)
@@ -617,6 +627,7 @@ export default {
     questionnairesOut() {
       // questionnaires({ questionnaireName: '' }).then((res) => {
       questionnaires({}).then((res) => {
+        this.quesGot = true
         if (res.code == 0) {
           this.quesData = res.data
           for (let index = 0; index < this.quesData.length; index++) {
@@ -706,10 +717,20 @@ export default {
       //TODO 弹窗抽查/详情
 
       if (record.type == 1) {
+        //抽查
         this.$refs.checkModel.doDeal(record)
       } else if (record.type == 2) {
+        //抽查结果
         this.$refs.checkModel.doInfo(record)
       }
+    },
+
+    goDetai(record) {
+      if (record.type == 2) {
+        // record.isCheckInfo = true
+        this.$set(record, 'isCheckInfo', true)
+      }
+      this.$refs.checkModel.doDetail(record)
     },
 
     dispatchPlan() {

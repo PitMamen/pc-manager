@@ -431,7 +431,7 @@ playAudio(soundRecord) {
       modifyFollowSpotExecuteRecord(postdata).then((res) => {
         if (res.code === 0) {
           this.$message.success('操作成功！')
-          this.$emit('handleCancel', '')
+          this.$emit('ok', '')
         } else {
           this.isLoading=false
           this.$message.error(res.message)

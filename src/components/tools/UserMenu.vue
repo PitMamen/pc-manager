@@ -12,7 +12,7 @@
         <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
           <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
-          <a-menu-item key="4" v-if="true">
+          <a-menu-item key="4" v-if="userappList.length>1">
             <a @click="appToggled()">
               <span>切换应用</span>
             </a>
@@ -104,6 +104,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { ALL_APPS_MENU, TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { message } from 'ant-design-vue/es'
+// import { use } from 'vue/types/umd'
 
 export default {
   name: 'UserMenu',
@@ -137,6 +138,7 @@ export default {
       keshiName: '',
       currentRoleId: 1,
       lastRoleId: 1,
+      userappList:[],
       //接口请求的角色列表
       roleList: [
         { roleId: 1, roleRealName: '医生' },
@@ -158,7 +160,8 @@ export default {
     this.currentRoleId = user.roleId
     this.lastRoleId = user.roleId
     this.roleList = user.roles
-    // console.log('changeRole', changeRole)
+    this.userappList = user.sysAppList
+    // console.log('changeRole', this.userappList.length)
   },
 
   methods: {
