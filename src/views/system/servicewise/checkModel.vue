@@ -60,15 +60,13 @@ export default {
       activeKey: '1',
       visible: false,
       record: Object,
-      isSDKReady: false,
+      recordId: '',
+      phone: '',
+      isSDKReady:false
     }
   },
   created() {
-    createSdkLoginToken().then((res) => {
-      if (res.code == 0) {
-        this.injectTcccWebSDK(res.data.sdkURL)
-      }
-    })
+    
   },
 
   methods: {
@@ -110,29 +108,64 @@ export default {
              * 注意：请确保只初始化一次SDK
              * */
 
-            that.isSDKReady = true
-            console.log('云呼叫初始化成功', that.isSDKReady)
-            // tccc.UI.hidefloatButton()//隐藏悬浮按钮
+            tccc.UI.hideWorkbench() //隐藏工作台
+            tccc.UI.hidefloatButton() //隐藏悬浮按钮
+
+            this.isSDKReady=true
+            console.log('云呼叫初始化成功 Agent', tccc.Agent)
+            if (tccc.Agent.getStatus() == 'free') {
+              //空闲状态可以打电话
+            
+              that.startOutboundCall(that.phone, that.recordId)
+            }
+
             resolve('初始化成功')
             // this.$message.success('初始化成功')
+          })
+
+          tccc.on(tccc.events.sessionEnded, function (data) {
+            /**
+             *  监听挂断
+             * */
+
+            tccc.Agent.offline()
+
+            console.log('云呼叫挂断 sessionEnded', data)
           })
         })
       })
     },
-
+  
     goCall(phone, recordId) {
+      this.phone = phone
+      this.recordId = recordId
       let that = this
-      console.log(this.isSDKReady)
+
       console.log('参数', phone + '==' + recordId)
       if (!this.isSDKReady) {
-        this.$message.info('等待云呼叫功能初始化')
+        this.$message.info('正在初始化，请稍后...')
+        createSdkLoginToken().then((res) => {
+          if (res.code == 0) {
+            this.injectTcccWebSDK(res.data.sdkURL)
+          }
+        })
         return
       }
+     
+      if (tccc.Agent.getStatus() != 'free') {
+        this.$message.info('忙线中，请稍等')
+        return
+      }
+      this.startOutboundCall(phone, recordId)
+    },
 
+    startOutboundCall(phone, recordId){
+      let that = this
+      tccc.Agent.online()
       tccc.Call.startOutboundCall({
         phoneNumber: phone, //修改为需要外呼的号码
         // phoneNumber: '13524371592', //修改为需要外呼的号码
-        phoneDesc: '随访抽查', //名称，将显示在坐席界面
+        phoneDesc: '电话随访', //名称，将显示在坐席界面
       })
         .then(function (res) {
           if (res.status !== 'success') {
@@ -150,6 +183,8 @@ export default {
           that.addTencentPhoneTapeOut(err, recordId)
         })
     },
+
+
 
     addTencentPhoneTapeOut(res, recordId) {
       let param = {}

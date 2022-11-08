@@ -62,7 +62,7 @@ import telSolve from './telSolve'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import { createSdkLoginToken, addTencentPhoneTape } from '@/api/modular/system/posManage'
-import {  canCall } from '@/utils/util'
+import { canCall } from '@/utils/util'
 export default {
   components: {
     telSolve,
@@ -77,19 +77,13 @@ export default {
       activeKey: '3',
       visible: false,
       record: Object,
-      isSDKReady: false,
       isFree: false,
       recordId: '',
       phone: '',
+      isSDKReady:''
     }
   },
-  created() {
-    // createSdkLoginToken().then((res) => {
-    //   if (res.code == 0) {
-    //     this.injectTcccWebSDK(res.data.sdkURL)
-    //   }
-    // })
-  },
+  created() {},
 
   methods: {
     //随访
@@ -130,17 +124,15 @@ export default {
              * 注意：请确保只初始化一次SDK
              * */
 
-            that.isSDKReady = true
-            console.log('云呼叫初始化成功', that.isSDKReady)
             tccc.UI.hideWorkbench() //隐藏工作台
             tccc.UI.hidefloatButton() //隐藏悬浮按钮
 
-            let agentStatus = tccc.Agent.getStatus()
+            this.isSDKReady=true
             console.log('云呼叫初始化成功 Agent', tccc.Agent)
-            if (agentStatus == 'free') {
+            if (tccc.Agent.getStatus() == 'free') {
               //空闲状态可以打电话
-              that.isFree = true
-              that.goCall(that.phone, that.recordId)
+            
+              that.startOutboundCall(that.phone, that.recordId)
             }
 
             resolve('初始化成功')
@@ -159,16 +151,12 @@ export default {
         })
       })
     },
-
+   
     goCall(phone, recordId) {
-      // if (canCall) {
-        
-      // }
-
       this.phone = phone
       this.recordId = recordId
       let that = this
-      console.log(this.isSDKReady)
+
       console.log('参数', phone + '==' + recordId)
       if (!this.isSDKReady) {
         this.$message.info('正在初始化，请稍后...')
@@ -179,12 +167,17 @@ export default {
         })
         return
       }
-      tccc.Agent.online()
-      if (!this.isFree) {
+     
+      if (tccc.Agent.getStatus() != 'free') {
         this.$message.info('忙线中，请稍等')
         return
       }
+      this.startOutboundCall(phone, recordId)
+    },
 
+    startOutboundCall(phone, recordId){
+      let that = this
+      tccc.Agent.online()
       tccc.Call.startOutboundCall({
         phoneNumber: phone, //修改为需要外呼的号码
         // phoneNumber: '13524371592', //修改为需要外呼的号码

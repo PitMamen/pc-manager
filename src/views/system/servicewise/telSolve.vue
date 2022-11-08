@@ -1,6 +1,6 @@
 <template >
   <div style="height: 650px; width: 100%">
-    <div class="div-appoint-detail">
+    <div class="div-appoint-detail-tel">
       <div class="div-span-content-left">
         <div class="div-title">
           <div class="div-line-blue"></div>
@@ -72,9 +72,23 @@
       <div class="midline"></div>
 
       <div class="div-span-content-mid">
-        <div class="div-voice-wrap" style="justify-content: center">
+        <div class="span-mid-audio" v-show="audioShow">
+          <audio class="audio" controls :src="audioSrc" autoplay></audio>
+        </div>
+        <div class="div-voice-wrap">
           <div class="span-item-name">电话录音 :</div>
-          <div class="div-voice-content"></div>
+          
+          <div class="div-voice-content">
+            <a
+              ref="#"
+              v-for="(item, index) in soundRecordingList"
+              :key="index"
+              :value="item"
+              class="div-voice-item"
+              @click="playAudio(item)"
+              ><img src="~@/assets/icons/ly.png" class="img" />{{ item.recordName }}.mp3</a
+            >
+          </div>
 
           <img
             v-if="patientInfo.tel"
@@ -138,6 +152,7 @@
 
 <script>
 import {
+  getSoundRecordingList,
   followPlanPhoneCurrent,
   followPlanPhonePatientInfo,
   modifyFollowExecuteRecord,
@@ -161,6 +176,8 @@ export default {
   data() {
     return {
       activeKey: '1',
+      audioSrc: '',
+      audioShow: false,
       isLoading:false,
       failureList: [
         '电话无人接听',
@@ -174,6 +191,7 @@ export default {
         '其他',
       ],
       deptUsers: [],
+      soundRecordingList: [],
       followResultContent: {
         messageType: {
           value: '',
@@ -216,6 +234,7 @@ export default {
     this.followPlanPhonePatientInfo(this.record.userId)
     this.followPlanPhoneCurrent(this.record.id)
     this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
+    this.getSoundRecordingList(this.record.id)
 
     //监听iframe发过来的消息
     window.addEventListener('message', self.submitFormFun)
@@ -307,6 +326,18 @@ export default {
         }
       })
     },
+    getSoundRecordingList(id) {
+      //电话记录
+      getSoundRecordingList(id).then((res) => {
+        if (res.code === 0) {
+          
+          this.soundRecordingList = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
     subStringIdcardNo(idcard) {
       if (idcard) {
         const temp = idcard.substring(4, 15)
@@ -315,7 +346,11 @@ export default {
         return ''
       }
     },
-
+ //播放音频
+ playAudio(soundRecord) {
+      this.audioSrc = soundRecord.recordUrL
+      this.audioShow = true
+    },
     subStringPhoneNo(phone) {
       var str = phone
       var pat = /(\d{3})\d*(\d{4})/
@@ -416,7 +451,7 @@ export default {
   width: 100%;
   overflow: hidden;
 }
-.div-appoint-detail {
+.div-appoint-detail-tel {
   background-color: white;
   width: 100%;
   height: 92%;
@@ -433,6 +468,12 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    .span-mid-audio {
+      width: 100%;
+      display: inline-block;
+      text-align: right;
+      margin-bottom: 10px;
+    }
   }
   .div-span-content-right {
     width: 22%;
@@ -476,8 +517,36 @@ export default {
     .ant-select {
       width: 65% !important;
     }
+    
   }
-
+  .div-voice-wrap {
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    .img {
+      width: 12px;
+      height: 19px;
+      margin-right: 8px;
+      margin-bottom: 3px;
+    }
+    .span-item-name {
+      display: inline-block;
+      color: #000;
+      font-size: 14px;
+      text-align: left;
+    }
+    .div-voice-content {
+      flex: 1;
+    }
+    .div-voice-item {
+      display: inline-block;
+      color: #409eff;
+      font-size: 14px;
+      text-align: left;
+      margin-left: 16px;
+      margin-right: 20px;
+    }
+  }
   .div-appoint-content {
     margin-top: 2%;
     width: 100%;
