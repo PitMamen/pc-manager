@@ -337,7 +337,7 @@ export default {
       this.createValue = []
       this.queryParamsStatisit.statType = ''
       this.queryParamsStatisit.execDept = []
-      this.$refs.table.refresh()
+      this.$refs.tableStat.refresh(true)
     },
   },
 }
