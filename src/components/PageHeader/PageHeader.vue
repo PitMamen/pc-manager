@@ -1,5 +1,5 @@
 <template>
-  <div class="page-header">
+  <div class="page-header" v-if="false">
     <div class="page-header-index-wide">
       <s-breadcrumb />
       <div class="detail">
