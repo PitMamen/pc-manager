@@ -227,10 +227,16 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
+        this.user = Vue.ls.get(TRUE_USER)
         let param = JSON.parse(JSON.stringify(this.queryParamsStatisit))
-        if(this.originData.length==0){
-          param.execDept = "-1"
-        }
+        // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+        //   param.execDept = []
+        // }else{
+        //   if(this.originData.length==0){
+        //   param.execDept = "-1"
+        // }
+        // }
+       
         return statExecuteRecord(Object.assign(parameter, param)).then((res) => {
           if (res.code == 0) {
             var data = {
@@ -278,8 +284,15 @@ export default {
           if (res.code == 0) {
             this.originData = res.data
             if (res.data.length == 0) {
-              this.queryParamsStatisit.execDept = null
+              this.queryParamsStatisit.execDept = ['暂无科室']
+            }else{
+              var departmentIds = []
+              res.data.forEach((item, index) => {
+                departmentIds.push(item.departmentId)
+            })
+            this.queryParamsStatisit.execDept = departmentIds
             }
+            this.$refs.tableStat.refresh(true)
             // var departmentIds = []
             // res.data.forEach((item, index) => {
             //   departmentIds = departmentIds + item.departmentId
@@ -336,8 +349,8 @@ export default {
     reset() {
       this.createValue = []
       this.queryParamsStatisit.statType = ''
-      this.queryParamsStatisit.execDept = ''
-      this.$refs.table.refresh()
+      this.queryParamsStatisit.execDept = []
+      this.$refs.tableStat.refresh(true)
     },
   },
 }
