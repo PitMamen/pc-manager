@@ -130,7 +130,7 @@
       >
         关闭
       </a-button>
-      <a-button type="primary" @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
+      <a-button type="primary" :loading="isLoading"  @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
     </div>
   </div>
 </template>
@@ -161,6 +161,7 @@ export default {
   data() {
     return {
       activeKey: '1',
+      isLoading:false,
       failureList: [
         '电话无人接听',
         '电话号码有误',
@@ -343,11 +344,13 @@ export default {
             return
           }
         }
+        this.isLoading=true
         //保存处理信息
         this.dodealsave()
       } else {
         //成功
         //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
+        this.isLoading=true
         this.postMessageToSubmit()
       }
     },
@@ -366,6 +369,7 @@ export default {
           this.$message.success('操作成功！')
           this.$emit('handleCancel', '')
         } else {
+          this.isLoading=false
           this.$message.error(res.message)
         }
       })

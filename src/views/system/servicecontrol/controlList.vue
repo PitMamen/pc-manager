@@ -55,11 +55,6 @@
     </div>
 
     <a-card :bordered="false" class="card-right-control">
-      <!-- <a-tabs v-model="keyindex">
-        <a-tab-pane key="1" tab="已抽查"> <service-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
-        ><a-tab-pane key="2" tab="待抽查"> <service-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
-      ></a-tabs> -->
-
       <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
         <!-- 类型，1: 待抽查 2: 已抽查 -->
         <a-radio-button value="1"> 待抽查 </a-radio-button>
@@ -174,6 +169,7 @@
 
       <add-form ref="addForm" @ok="handleOk" />
       <edit-form ref="editForm" @ok="handleOk" />
+      <check-model ref="checkModel" @ok="handleOk" />
     </a-card>
   </div>
 </template>
@@ -196,12 +192,14 @@ import Vue from 'vue'
 import { formatDate, formatDateFull } from '@/utils/util'
 import addForm from './addForm'
 import editForm from './editForm'
+import checkModel from '../servicewise/checkModel'
 
 export default {
   components: {
     STable,
     addForm,
     editForm,
+    checkModel
   },
 
   data() {
@@ -684,6 +682,14 @@ export default {
 
     goAction(record) {
       //TODO 弹窗抽查/详情
+     
+      if(record.type == 1){
+        this.$refs.checkModel.doDeal(record)
+      }else if(record.type == 2){
+        this.$refs.checkModel.doInfo(record)
+      }
+
+    
     },
 
     dispatchPlan() {
