@@ -347,7 +347,7 @@ export default {
      * 重置
      */
     reset() {
-      this.createValue = []
+      // this.createValue = []
       this.queryParamsStatisit.statType = ''
       this.queryParamsStatisit.execDept = []
       this.$refs.tableStat.refresh(true)
