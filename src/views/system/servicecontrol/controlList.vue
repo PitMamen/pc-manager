@@ -447,7 +447,16 @@ export default {
                 'taskBizStatusName',
                 res.data.rows[i].taskBizStatus.value == 2 ? '成功' : '失败'
               )
-              this.$set(res.data.rows[i], 'checkStatusName', res.data.rows[i].checkStatus.value == 1 ? '通过' : '不通过')
+
+              if (res.data.rows[i].checkStatus) {
+                this.$set(
+                  res.data.rows[i],
+                  'checkStatusName',
+                  res.data.rows[i].checkStatus.value == 1 ? '通过' : '不通过'
+                )
+              } else {
+                this.$set(res.data.rows[i], 'checkStatusName', '')
+              }
             }
             this.loadDataOut = res.data
             return res.data
