@@ -379,9 +379,9 @@ export function qryExecuteRecordByUserId(data) {
 /**
  * 查询随访执行统计
  */
-export function statExecuteRecord(data){
+export function statExecuteRecord(data) {
   return axios({
-    url:'/follow-api/tbFollowExecuteRecord/statExecuteRecord',
+    url: '/follow-api/tbFollowExecuteRecord/statExecuteRecord',
     method: 'post',
     data: data,
   })
@@ -393,9 +393,9 @@ export function statExecuteRecord(data){
  *
  */
 
-export function statExecuteRecordDetail(data){
+export function statExecuteRecordDetail(data) {
   return axios({
-    url:'/follow-api/tbFollowExecuteRecord/statExecuteRecordDetail',
+    url: '/follow-api/tbFollowExecuteRecord/statExecuteRecordDetail',
     method: 'post',
     data: data,
   })
@@ -2259,6 +2259,30 @@ export function createSdkLoginToken() {
 export function addTencentPhoneTape(param) {
   return axios({
     url: '/follow-api/follow/ccc/addTencentPhoneTape',
+    method: 'post',
+    data: param,
+  })
+}
+
+/**
+ *   
+ * /tbFollowExecuteRecord/followRecords 查询随访任务列表
+ */
+export function followRecords(param) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/followRecords',
+    method: 'post',
+    data: param,
+  })
+}
+
+/**
+ *   
+ * /follow/plan/questionnaires 随访方案问卷列表
+ */
+export function questionnaires(param) {
+  return axios({
+    url: '/follow-api/follow/plan/questionnaires',
     method: 'post',
     data: param,
   })
