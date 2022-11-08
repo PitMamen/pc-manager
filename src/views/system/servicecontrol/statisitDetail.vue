@@ -55,7 +55,7 @@ export default {
       queryParamsData: {
         beginDate: '',
         endDate: '',
-        execDept: '',
+        execDept: [],
         flag: '',
         messageType: '',
         planId: '',
@@ -188,7 +188,7 @@ export default {
     reset() {
       this.queryParamsData.beginDate = ''
       this.queryParamsData.endDate = ''
-      this.queryParamsData.execDept = ''
+      this.queryParamsData.execDept = []
       this.queryParamsData.flag = ''
       this.queryParamsData.messageType = ''
       this.queryParamsData.planId = ''
