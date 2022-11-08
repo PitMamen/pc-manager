@@ -1,181 +1,179 @@
 <template>
-  <div class="div-service-control">
-    <div class="div-service-left-control">
-      <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
-      <!-- 分割线 -->
-      <!-- <div class="div-divider"></div> -->
+  <a-spin :spinning="confirmLoading">
+    <div class="div-service-control">
+      <div class="div-service-left-control">
+        <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
+        <!-- 分割线 -->
+        <!-- <div class="div-divider"></div> -->
 
-      <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
-      <div class="div-text-auto">
-        <a-auto-complete
-          class="global-search"
-          size="large"
-          style="width: 100%; font-size: 14px"
-          placeholder="请输入名称查询"
-          option-label-prop="title"
-          @select="onSelect"
-          @search="handleSearch"
-        >
-          <template slot="dataSource">
-            <a-select-option
-              v-for="item in quesDataTemp"
-              :key="item.questionnaireId + ''"
-              :title="item.questionnaireName"
-            >
+        <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
+        <div class="div-text-auto">
+          <a-auto-complete
+            class="global-search"
+            size="large"
+            style="width: 100%; font-size: 14px"
+            placeholder="请输入名称查询"
+            option-label-prop="title"
+            @select="onSelect"
+            @search="handleSearch"
+          >
+            <template slot="dataSource">
+              <a-select-option
+                v-for="item in quesDataTemp"
+                :key="item.questionnaireId + ''"
+                :title="item.questionnaireName"
+              >
+                {{ item.questionnaireName }}
+              </a-select-option>
+            </template>
+          </a-auto-complete>
+        </div>
+
+        <div class="div-wrap-service" style="margin-top: 2%">
+          <div
+            class="div-part"
+            :class="{ checked: item.isChecked }"
+            v-for="(item, index) in quesData"
+            @click="onItemClick(item, index)"
+            :value="item.departmentName"
+            :key="index"
+          >
+            <span class="span-name" @click="onPartChoose(index)">
               {{ item.questionnaireName }}
-            </a-select-option>
-          </template>
-        </a-auto-complete>
-      </div>
-
-      <div class="div-wrap-service" style="margin-top: 2%">
-        <div
-          class="div-part"
-          :class="{ checked: item.isChecked }"
-          v-for="(item, index) in quesData"
-          @click="onItemClick(item, index)"
-          :value="item.departmentName"
-          :key="index"
-        >
-          <span class="span-name" @click="onPartChoose(index)">
-            {{ item.questionnaireName }}
-          </span>
-          <div class="div-rate">
-            <span style="width: 30px; text-align: center">
-              {{ item.checkPercentage }}
             </span>
-            <span style="margin-left: 15px; width: 30px; text-align: center">
-              {{ item.passCheckPercentage }}
-            </span>
+            <div class="div-rate">
+              <span style="width: 30px; text-align: center">
+                {{ item.checkPercentage }}
+              </span>
+              <span style="margin-left: 15px; width: 30px; text-align: center">
+                {{ item.passCheckPercentage }}
+              </span>
+            </div>
+            <!-- 分割线 -->
+            <!-- <div class="div-divider"></div> -->
           </div>
-          <!-- 分割线 -->
-          <!-- <div class="div-divider"></div> -->
         </div>
       </div>
+
+      <a-card :bordered="false" class="card-right-control">
+        <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
+          <!-- 类型，1: 待抽查 2: 已抽查 -->
+          <a-radio-button value="1"> 待抽查 </a-radio-button>
+          <a-radio-button value="2"> 已抽查 </a-radio-button>
+        </a-radio-group>
+
+        <div class="div-divider" style="margin-left: 0"></div>
+
+        <!-- <div class="table-page-search-wrapper"> -->
+        <a-form layout="inline" style="margin-top: 1%">
+          <a-row :gutter="48">
+            <a-col :md="5" :sm="24">
+              <a-form-item label="执行科室">
+                <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
+                <a-select
+                  style="width: 110px"
+                  allow-clear
+                  @select="onDeptSelect"
+                  v-model="queryParams.executeDepartmentId"
+                  placeholder="请选择科室"
+                >
+                  <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                    item.departmentName
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="执行结果">
+                <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择">
+                  <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
+                    item.description
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="4" :sm="24">
+              <a-form-item label="随访医生">
+                <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
+                  <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
+                    item.userName
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="5" :sm="24">
+              <a-form-item label="随访方式">
+                <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+                  <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
+                    item.description
+                  }}</a-select-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+          </a-row>
+
+          <a-row :gutter="48">
+            <a-col :md="9" :sm="24">
+              <a-form-item label="执行日期">
+                <a-range-picker :value="createValue" @change="onChange" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="9" :sm="24" v-if="queryParams.type == 2">
+              <a-form-item label="抽查日期">
+                <a-range-picker :value="createValueCheck" @change="onChangeCheck" />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="6" :sm="24" v-if="queryParams.type == 1">
+              <a-form-item label="患者查找">
+                <a-input
+                  v-model="queryParams.queryStr"
+                  allow-clear
+                  placeholder="请输入患者姓名或手机号"
+                  @blur="goSearch"
+                  @keyup.enter="goSearch"
+                  @search="goSearch"
+                />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="6" :sm="24">
+              <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
+              <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
+              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
+              <!-- </a-form-item> -->
+            </a-col>
+          </a-row>
+        </a-form>
+        <!-- </div> -->
+
+        <!-- 去掉勾选框 -->
+        <s-table
+          ref="table"
+          size="default"
+          :columns="columns"
+          :data="loadData"
+          :alert="true"
+          :rowKey="(record) => record.code"
+        >
+          <span slot="action" slot-scope="text, record">
+            <a @click="goAction(record)">{{ queryParams.type == 1 ? '抽查' : '详情' }}</a>
+          </span>
+          <span slot="result" slot-scope="text, record">
+            <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
+            <!-- <a-divider type="vertical" /> -->
+          </span>
+        </s-table>
+
+        <add-form ref="addForm" @ok="handleOk" />
+        <edit-form ref="editForm" @ok="handleOk" />
+        <check-model ref="checkModel" @ok="handleOk" />
+      </a-card>
     </div>
-
-    <a-card :bordered="false" class="card-right-control">
-      <!-- <a-tabs v-model="keyindex">
-        <a-tab-pane key="1" tab="已抽查"> <service-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
-        ><a-tab-pane key="2" tab="待抽查"> <service-list ref="serviceList" @ok="handleOk" /> </a-tab-pane
-      ></a-tabs> -->
-
-      <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
-        <!-- 类型，1: 待抽查 2: 已抽查 -->
-        <a-radio-button value="1"> 待抽查 </a-radio-button>
-        <a-radio-button value="2"> 已抽查 </a-radio-button>
-      </a-radio-group>
-
-      <div class="div-divider" style="margin-left: 0"></div>
-
-      <!-- <div class="table-page-search-wrapper"> -->
-      <a-form layout="inline" style="margin-top: 1%">
-        <a-row :gutter="48">
-          <a-col :md="5" :sm="24">
-            <a-form-item label="执行科室">
-              <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
-              <a-select
-                style="width: 110px"
-                allow-clear
-                @select="onDeptSelect"
-                v-model="queryParams.executeDepartmentId"
-                placeholder="请选择科室"
-              >
-                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                  item.departmentName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="4" :sm="24">
-            <a-form-item label="执行结果">
-              <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择">
-                <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
-                  item.description
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="4" :sm="24">
-            <a-form-item label="随访医生">
-              <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
-                <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
-                  item.userName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="5" :sm="24">
-            <a-form-item label="随访方式">
-              <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
-                <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
-                  item.description
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-        </a-row>
-
-        <a-row :gutter="48">
-          <a-col :md="9" :sm="24">
-            <a-form-item label="执行日期">
-              <a-range-picker :value="createValue" @change="onChange" />
-            </a-form-item>
-          </a-col>
-          <a-col :md="9" :sm="24" v-if="queryParams.type == 2">
-            <a-form-item label="抽查日期">
-              <a-range-picker :value="createValueCheck" @change="onChangeCheck" />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="6" :sm="24" v-if="queryParams.type == 1">
-            <a-form-item label="患者查找">
-              <a-input
-                v-model="queryParams.queryStr"
-                allow-clear
-                placeholder="请输入患者姓名或手机号"
-                @blur="goSearch"
-                @keyup.enter="goSearch"
-                @search="goSearch"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="6" :sm="24">
-            <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-            <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
-            <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-            <!-- </a-form-item> -->
-          </a-col>
-        </a-row>
-      </a-form>
-      <!-- </div> -->
-
-      <!-- 去掉勾选框 -->
-      <s-table
-        ref="table"
-        size="default"
-        :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowKey="(record) => record.code"
-      >
-        <span slot="action" slot-scope="text, record">
-          <a @click="goAction(record)">{{ queryParams.type == 1 ? '抽查' : '详情' }}</a>
-        </span>
-        <span slot="result" slot-scope="text, record">
-          <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
-          <!-- <a-divider type="vertical" /> -->
-        </span>
-      </s-table>
-
-      <add-form ref="addForm" @ok="handleOk" />
-      <edit-form ref="editForm" @ok="handleOk" />
-    </a-card>
-  </div>
+  </a-spin>
 </template>
 
 
@@ -196,12 +194,14 @@ import Vue from 'vue'
 import { formatDate, formatDateFull } from '@/utils/util'
 import addForm from './addForm'
 import editForm from './editForm'
+import checkModel from '../servicewise/checkModel'
 
 export default {
   components: {
     STable,
     addForm,
     editForm,
+    checkModel,
   },
 
   data() {
@@ -209,6 +209,7 @@ export default {
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
+      confirmLoading: false,
       partChoose: '',
       keyindex: '1',
       choseQues: {},
@@ -227,7 +228,7 @@ export default {
         executeDepartmentId: -1, //执行科室id
         taskBizStatus: '-1', //执行结果2:成功3:失败
         actualDoctorUserId: '-1', //实际随访医生
-        messageType: null, //随访方式
+        messageType: '-1', //随访方式
 
         beginCheckTime: null, //开始抽查时间，yyyy-MM-dd
         endCheckTime: null, //结束抽查时间，yyyy-MM-dd
@@ -248,7 +249,7 @@ export default {
         executeDepartmentId: -1, //执行科室id
         taskBizStatus: '-1', //执行结果2:成功3:失败
         actualDoctorUserId: '-1', //实际随访医生
-        messageType: null, //随访方式
+        messageType: '-1', //随访方式
 
         beginCheckTime: null, //开始抽查时间，yyyy-MM-dd
         endCheckTime: null, //结束抽查时间，yyyy-MM-dd
@@ -418,6 +419,9 @@ export default {
         if (param.actualDoctorUserId == '-1') {
           delete param.actualDoctorUserId
         }
+        if (param.messageType == '-1') {
+          delete param.messageType
+        }
 
         //待抽查不需要抽出时间
         if (param.type == '1') {
@@ -431,21 +435,35 @@ export default {
         }
 
         console.log('loadData', Object.assign(parameter, param))
-        return followRecords(Object.assign(parameter, param)).then((res) => {
-          if (res.code == 0) {
-          }
-          for (let i = 0; i < res.data.rows.length; i++) {
-            this.$set(res.data.rows[i], 'messageTypeName', res.data.rows[i].messageType.description)
-            this.$set(
-              res.data.rows[i],
-              'taskBizStatusName',
-              res.data.rows[i].taskBizStatus.value == 2 ? '成功' : '失败'
-            )
-            this.$set(res.data.rows[i], 'checkStatusName', res.data.rows[i].checkStatus == 1 ? '通过' : '不通过')
-          }
-          this.loadDataOut = res.data
-          return res.data
-        })
+        this.confirmLoading = true
+        return followRecords(Object.assign(parameter, param))
+          .then((res) => {
+            this.confirmLoading = false
+
+            for (let i = 0; i < res.data.rows.length; i++) {
+              this.$set(res.data.rows[i], 'messageTypeName', res.data.rows[i].messageType.description)
+              this.$set(
+                res.data.rows[i],
+                'taskBizStatusName',
+                res.data.rows[i].taskBizStatus.value == 2 ? '成功' : '失败'
+              )
+
+              if (res.data.rows[i].checkStatus) {
+                this.$set(
+                  res.data.rows[i],
+                  'checkStatusName',
+                  res.data.rows[i].checkStatus.value == 1 ? '通过' : '不通过'
+                )
+              } else {
+                this.$set(res.data.rows[i], 'checkStatusName', '')
+              }
+            }
+            this.loadDataOut = res.data
+            return res.data
+          })
+          .finally(() => {
+            this.confirmLoading = false
+          })
       },
       selectedRows: [],
 
@@ -505,6 +523,7 @@ export default {
     messageTypes().then((res) => {
       if (res.code == 0) {
         this.msgData = res.data
+        this.msgData.unshift({ value: '-1', description: '全部' })
       }
     })
 
@@ -536,13 +555,14 @@ export default {
 
     //抽查状态，1:通过2:不通过
     getClass(checkStatus) {
+      console.log('checkStatus', checkStatus)
       if (!checkStatus) {
         return ''
       }
       if (checkStatus.value == 1) {
-        return 'span-red'
-      } else if (checkStatus.value == 2) {
         return 'span-gray'
+      } else if (checkStatus.value == 2) {
+        return 'span-red'
       }
     },
 
@@ -684,6 +704,12 @@ export default {
 
     goAction(record) {
       //TODO 弹窗抽查/详情
+
+      if (record.type == 1) {
+        this.$refs.checkModel.doDeal(record)
+      } else if (record.type == 2) {
+        this.$refs.checkModel.doInfo(record)
+      }
     },
 
     dispatchPlan() {

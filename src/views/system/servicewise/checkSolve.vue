@@ -140,8 +140,24 @@
           
           </div>
 
-          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
-          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
+          <img
+            v-if="patientInfo.tel"
+            src="~@/assets/icons/dianhua2.png"
+            @click="goCall(patientInfo.tel)"
+            style="width: 34px; height: auto"
+          />
+          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
+          <img
+            v-if="patientInfo.urgentTel"
+            src="~@/assets/icons/jinji2.png"
+            @click="goCall(patientInfo.urgentTel)"
+            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+          />
+          <img
+            v-else
+            src="~@/assets/icons/jinji.png"
+            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+          />
         </div>
 
        
@@ -165,7 +181,7 @@
       <div class="div-span-content-right">
         <div class="div-title">
           <div class="div-line-blue"></div>
-          <span class="span-title">基本信息</span>
+          <span class="span-title">{{isCheckInfo?'抽查结果':'抽查结果登记'}}</span>
         </div>
         <div class="div-line-wrap" >
           <span class="span-item-name">抽查人员 :</span>
@@ -203,7 +219,7 @@
       >
         关闭
       </a-button>
-      <a-button  v-show="!isCheckInfo" type="primary" @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
+      <a-button  v-show="!isCheckInfo" :loading="isLoading" type="primary" @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
     </div>
     <audio-Model ref="audioModel"  />
   </div>
@@ -238,6 +254,7 @@ export default {
   data() {
     return {
       user:{},
+      isLoading:false,
       showResultInfo:false,
       audioSrc:'',
       audioShow:false,
@@ -300,7 +317,7 @@ export default {
     if(this.record.isCheckInfo){
       //是抽查详情
       this.isCheckInfo=true
-      spotDetailForId(63).then((res) => {
+      spotDetailForId(this.record.spotCheckRecordId).then((res) => {
         if (res.code === 0) {
           this.checkInfo=res.data
           this.handleResult=res.data.contentJson
@@ -324,6 +341,14 @@ export default {
         
           this.detailResult = res.data
           this.showResultInfo=true
+
+          if (res.data.contacts) {
+            this.patientInfo.tel = res.data.contacts
+          }
+          if (res.data.urgentContacts) {
+            this.patientInfo.urgentTel = res.data.urgentContacts
+          }
+
         } else {
           this.$message.error(res.message)
         }
@@ -395,6 +420,7 @@ playAudio(soundRecord) {
         this.$message.info('请选择抽查结论')
           return
       }
+      this.isLoading=true
       var postdata = {
        
         writeUserId:this.user.userId,
@@ -407,13 +433,16 @@ playAudio(soundRecord) {
           this.$message.success('操作成功！')
           this.$emit('handleCancel', '')
         } else {
+          this.isLoading=false
           this.$message.error(res.message)
         }
       })
       
     },
 
-
+    goCall(phone) {
+      this.$emit('goCall', phone, this.record.id)
+    },
     
 
     subStringIdcardNo(idcard) {

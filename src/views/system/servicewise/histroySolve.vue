@@ -1,6 +1,6 @@
 <template>
   <div style="height: 650px;width: 100%;">
-    <div class="div-appoint-detail">
+    <div class="div-appoint-detail2">
       <div class="div-span-content-left" style="overflow-y: auto !important; max-height: 100%">
         <div
           class="div-his-item"
@@ -269,6 +269,7 @@ export default {
     followPlanPhoneHistory(this.record.userId).then((res) => {
       if (res.code === 0) {
         this.historyList = res.data
+  
         this.onHistoryItemClick(res.data[0].id)
       } else {
         this.$message.error(res.message)
@@ -425,10 +426,11 @@ export default {
   width: 100%;
   overflow: hidden;
 }
-.div-appoint-detail {
+.div-appoint-detail2 {
   background-color: white;
   width: 100%;
   height: 92%;
+  display: flex;
   overflow: hidden;
 
   .div-span-content-left {

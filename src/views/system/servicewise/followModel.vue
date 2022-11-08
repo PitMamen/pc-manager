@@ -42,12 +42,14 @@
           ref="telSolve"
           :record="record"
           @handleCancel="handleCancel"
+          @ok="handleOk"
           @goCall="goCall"
         />
         <tel-detail
           v-else-if="modelType == 1"
           ref="telDetail"
           :record="record"
+          @ok="handleOk"
           @handleCancel="handleCancel"
           @goCall="goCall"
         />
@@ -62,7 +64,7 @@ import telSolve from './telSolve'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import { createSdkLoginToken, addTencentPhoneTape } from '@/api/modular/system/posManage'
-import { info } from '@/api/modular/system/sysapp'
+import { canCall } from '@/utils/util'
 export default {
   components: {
     telSolve,
@@ -72,42 +74,43 @@ export default {
 
   data() {
     return {
-      title:'',
-      modelType:'',
+      title: '',
+      modelType: '',
       activeKey: '3',
       visible: false,
       record: Object,
-      isSDKReady: false,
+      isFree: false,
+      recordId: '',
+      phone: '',
+      isSDKReady: '',
     }
   },
-  created() {
-    createSdkLoginToken().then((res) => {
-      if (res.code == 0) {
-        this.injectTcccWebSDK(res.data.sdkURL)
-      }
-    })
-  },
+  created() {},
 
   methods: {
     //随访
     doDeal(record) {
-      this.modelType=0
-      this.init(record)   
+      this.modelType = 0
+      this.init(record)
     },
 
     //详情
     doInfo(record) {
-      this.modelType=1
-      this.init(record)   
+      this.modelType = 1
+      this.init(record)
     },
-    init(record){
-      this.title=record.userName+' | '+record.sex.description+' | '+record.age+'岁'
+    init(record) {
+      this.title = record.userName + ' | ' + record.sex.description + ' | ' + record.age + '岁'
       this.activeKey = '3'
       this.visible = true
       this.record = record
     },
 
     handleCancel() {
+      this.visible = false
+      this.$emit('cancel', '')
+    },
+    handleOk() {
       this.visible = false
       this.$emit('ok', '')
     },
@@ -127,26 +130,60 @@ export default {
              * 注意：请确保只初始化一次SDK
              * */
 
-            that.isSDKReady = true
-            console.log('云呼叫初始化成功', that.isSDKReady)
-            tccc.UI.hideWorkbench()//隐藏工作台
-            tccc.UI.hidefloatButton()//隐藏悬浮按钮
+            tccc.UI.hideWorkbench() //隐藏工作台
+            tccc.UI.hidefloatButton() //隐藏悬浮按钮
+
+            this.isSDKReady = true
+            console.log('云呼叫初始化成功 Agent', tccc.Agent)
+            if (tccc.Agent.getStatus() == 'free') {
+              //空闲状态可以打电话
+
+              that.startOutboundCall(that.phone, that.recordId)
+            }
+
             resolve('初始化成功')
             // this.$message.success('初始化成功')
+          })
+
+          tccc.on(tccc.events.sessionEnded, function (data) {
+            /**
+             *  监听挂断
+             * */
+
+            tccc.Agent.offline()
+
+            console.log('云呼叫挂断 sessionEnded', data)
           })
         })
       })
     },
 
     goCall(phone, recordId) {
+      this.phone = phone
+      this.recordId = recordId
       let that = this
-      console.log(this.isSDKReady)
+
       console.log('参数', phone + '==' + recordId)
       if (!this.isSDKReady) {
-        this.$message.info('等待云呼叫功能初始化')
+        this.$message.info('正在初始化，请稍后...')
+        createSdkLoginToken().then((res) => {
+          if (res.code == 0) {
+            this.injectTcccWebSDK(res.data.sdkURL)
+          }
+        })
         return
       }
 
+      if (tccc.Agent.getStatus() != 'free') {
+        this.$message.info('忙线中，请稍等')
+        return
+      }
+      this.startOutboundCall(phone, recordId)
+    },
+
+    startOutboundCall(phone, recordId) {
+      let that = this
+      tccc.Agent.online()
       tccc.Call.startOutboundCall({
         phoneNumber: phone, //修改为需要外呼的号码
         // phoneNumber: '13524371592', //修改为需要外呼的号码

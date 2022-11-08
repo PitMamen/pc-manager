@@ -25,7 +25,7 @@
 
               <a-col :md="6" :sm="24">
                 <a-form-item label="执行科室">
-                  <a-select allow-clear v-model="queryParamsStatisit.execDept" placeholder="请选择科室">
+                  <a-select allow-clear v-model="queryParamsStatisit.execDept" placeholder="请选择科室"  mode="multiple">
                     <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
                       item.departmentName
                     }}</a-select-option>
@@ -102,6 +102,7 @@ export default {
   },
 
   data() {
+    
     var spanArr = []
     var position = 0
     //列合并
@@ -162,7 +163,7 @@ export default {
       queryParamsStatisit: {
         beginDate: getlastMonthToday(),
         endDate: formatDate(new Date().getTime()),
-        execDept: '',
+        execDept: [],
         hospitalCode: '',
         statType: 1,
         tenantId: '',
@@ -226,10 +227,17 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
-        if(this.originData.length==0){
-          this.queryParamsStatisit.execDept = "暂无科室"
-        }
-        return statExecuteRecord(Object.assign(parameter, this.queryParamsStatisit)).then((res) => {
+        this.user = Vue.ls.get(TRUE_USER)
+        let param = JSON.parse(JSON.stringify(this.queryParamsStatisit))
+        // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+        //   param.execDept = []
+        // }else{
+        //   if(this.originData.length==0){
+        //   param.execDept = "-1"
+        // }
+        // }
+       
+        return statExecuteRecord(Object.assign(parameter, param)).then((res) => {
           if (res.code == 0) {
             var data = {
               pageNo: 1,
@@ -276,8 +284,15 @@ export default {
           if (res.code == 0) {
             this.originData = res.data
             if (res.data.length == 0) {
-              this.queryParamsStatisit.execDept = '暂无科室'
+              this.queryParamsStatisit.execDept = ['暂无科室']
+            }else{
+              var departmentIds = []
+              res.data.forEach((item, index) => {
+                departmentIds.push(item.departmentId)
+            })
+            this.queryParamsStatisit.execDept = departmentIds
             }
+            this.$refs.tableStat.refresh(true)
             // var departmentIds = []
             // res.data.forEach((item, index) => {
             //   departmentIds = departmentIds + item.departmentId
@@ -294,6 +309,7 @@ export default {
           this.confirmLoading = false
         })
     }
+
 
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
@@ -331,10 +347,10 @@ export default {
      * 重置
      */
     reset() {
-      this.createValue = []
+      // this.createValue = []
       this.queryParamsStatisit.statType = ''
-      this.queryParamsStatisit.execDept = ''
-      this.$refs.table.refresh()
+      this.queryParamsStatisit.execDept = []
+      this.$refs.tableStat.refresh(true)
     },
   },
 }

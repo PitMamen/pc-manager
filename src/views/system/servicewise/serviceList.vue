@@ -16,7 +16,12 @@
           </a-col>
           <a-col :md="6" :sm="24">
             <a-form-item label="执行科室">
-              <a-select allow-clear v-model="queryParams.departmentName" placeholder="请选择科室"  @change="onDepartmentChange">
+              <a-select
+                allow-clear
+                v-model="queryParams.departmentName"
+                placeholder="请选择科室"
+                @change="onDepartmentChange"
+              >
                 <a-select-option v-for="(item, index) in originData" :key="index">{{
                   item.departmentName
                 }}</a-select-option>
@@ -26,7 +31,7 @@
           <a-col :md="10" :sm="24">
             <a-form-item label="方案状态:">
               <!-- <a-popconfirm class="switch-button"> -->
-              <a-switch :checked="queryParams.status===1" @change="onSwitchChange"/>
+              <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
               <!-- </a-popconfirm> -->
               <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search"
                 >查询</a-button
@@ -37,8 +42,9 @@
         </a-row>
       </a-form>
       <div class="div-divider"></div>
-      <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addName()" icon="plus">新增</a-button>
-
+      <a-button style="margin-left: 90%; margin-bottom: 1%" type="primary" @click="addName()" icon="plus"
+        >新增</a-button
+      >
     </div>
     <s-table
       ref="table"
@@ -50,12 +56,17 @@
     >
       <span slot="action" slot-scope="text, record">
         <!-- <a @click="$refs.checkIndex.check(record)">修改</a> -->
-        <a @click="editPlan(record)" :disabled="record.status.value!=1">修改</a>
+        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
-       
-        <a-popconfirm :title="upDateStatesText(record.status.value)" ok-text="确定" cancel-text="取消" @confirm="Enable(record)">
-                <a>{{record.status.value==1?'停用':'启用'}}</a>
-              </a-popconfirm>
+
+        <a-popconfirm
+          :title="upDateStatesText(record.status.value)"
+          ok-text="确定"
+          cancel-text="取消"
+          @confirm="Enable(record)"
+        >
+          <a>{{ record.status.value == 1 ? '停用' : '启用' }}</a>
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -68,7 +79,13 @@
 <script>
 import { STable } from '@/components'
 
-import { qryMetaConfigure, getDeptsPersonal, getDepts, qryFollowPlan,updateFollowPlanStatus } from '@/api/modular/system/posManage'
+import {
+  qryMetaConfigure,
+  getDeptsPersonal,
+  getDepts,
+  qryFollowPlan,
+  updateFollowPlanStatus,
+} from '@/api/modular/system/posManage'
 import checkIndex from './checkIndex'
 import addName from './addName'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -81,7 +98,7 @@ export default {
   },
   data() {
     return {
-      user:{},
+      user: {},
       keshiData: [],
       originData: [],
       idArr: [],
@@ -89,8 +106,8 @@ export default {
         departmentName: '',
         planName: '',
         executeDepartment: '',
-      
-        status:1,
+
+        status: 1,
       },
       labelCol: {
         xs: { span: 24 },
@@ -133,7 +150,7 @@ export default {
         {
           title: '状态',
           dataIndex: 'statusText',
-          width:80,
+          width: 80,
         },
         {
           title: '操作',
@@ -160,8 +177,8 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-  //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-  if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
@@ -171,62 +188,61 @@ export default {
       getDeptsPersonal().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
-          var departmentIds=[]
-        
-          res.data.forEach((item,index)=>{
-            departmentIds=departmentIds+item.departmentId
-           
-            if(index < res.data.length-1){
-              departmentIds=departmentIds+','
+          var departmentIds = []
+
+          res.data.forEach((item, index) => {
+            departmentIds = departmentIds + item.departmentId
+
+            if (index < res.data.length - 1) {
+              departmentIds = departmentIds + ','
             }
           })
           console.log(departmentIds)
-          this.queryParams.executeDepartment= departmentIds
+          this.queryParams.executeDepartment = departmentIds
           this.$refs.table.refresh(true)
         }
       })
     }
   },
   methods: {
-
+    // this.$router.push({ path: '/servicewise/projectAdd' })
     editPlan(record) {
       this.$router.push({
         name: 'project_edit',
+        // path: '/servicewise/projectEdit',
         query: {
           planId: record.id,
         },
       })
     },
-   
-    onSwitchChange(value){
+
+    onSwitchChange(value) {
       console.log(value)
-      this.queryParams.status=value?1:2
-    
+      this.queryParams.status = value ? 1 : 2
+
       this.$refs.table.refresh(true)
     },
-    onDepartmentChange(index){
-      console.log("index="+index)
-      if(index == undefined){
-        this.queryParams.executeDepartment= ''
-      this.queryParams.departmentName= ''
-      
-      }else{
+    onDepartmentChange(index) {
+      console.log('index=' + index)
+      if (index == undefined) {
+        this.queryParams.executeDepartment = ''
+        this.queryParams.departmentName = ''
+      } else {
         console.log(this.originData[index])
-      this.queryParams.executeDepartment= this.originData[index].departmentId
-      this.queryParams.departmentName= this.originData[index].departmentName
+        this.queryParams.executeDepartment = this.originData[index].departmentId
+        this.queryParams.departmentName = this.originData[index].departmentName
       }
-     
     },
     /**
      * 重置
      */
     reset() {
-      this.queryParams.status=1
-      this.queryParams.planName=''
-      this.queryParams.executeDepartment=''
-      this.queryParams.departmentName=''
-      this.queryParams. pageNo= 1
-      
+      this.queryParams.status = 1
+      this.queryParams.planName = ''
+      this.queryParams.executeDepartment = ''
+      this.queryParams.departmentName = ''
+      this.queryParams.pageNo = 1
+
       this.$refs.table.refresh(true)
     },
 
@@ -234,29 +250,27 @@ export default {
      * 启用/停用
      */
     Enable(record) {
-    
       this.confirmLoading = true
-      var _status=record.status.value==1?2:1
+      var _status = record.status.value == 1 ? 2 : 1
       //更新接口调用
       updateFollowPlanStatus({
-        id:record.id,
-        status:_status
+        id: record.id,
+        status: _status,
       }).then((res) => {
         this.confirmLoading = false
         if (res.success) {
           this.$message.success('操作成功！')
-          record.status.value=_status
-          record.status.description=_status==1?'启用':'停用'
-          record.statusText=_status==1?'启用':'停用'
+          record.status.value = _status
+          record.status.description = _status == 1 ? '启用' : '停用'
+          record.statusText = _status == 1 ? '启用' : '停用'
           this.handleOk()
         } else {
           this.$message.error('编辑失败：' + res.message)
         }
       })
-
     },
-    upDateStatesText(_status){
-      return _status==1?'确定停用此方案吗？':'确定启用用此方案吗？'
+    upDateStatesText(_status) {
+      return _status == 1 ? '确定停用此方案吗？' : '确定启用用此方案吗？'
     },
     /**
      * 新增
@@ -311,10 +325,10 @@ export default {
 </script>
 <style lang="less">
 .div-divider {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    width: 100%;
-    background-color: #e6e6e6;
-    height: 1px;
-  }
+  margin-top: 1%;
+  margin-bottom: 1%;
+  width: 100%;
+  background-color: #e6e6e6;
+  height: 1px;
+}
 </style>

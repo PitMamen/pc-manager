@@ -116,42 +116,48 @@ export default {
         {
           title: '姓名',
           dataIndex: 'name',
+          width: 80,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
+          width: 120,
         },
         {
           title: '年龄',
           dataIndex: 'age',
+          width: 60,
         },
         {
           title: '性别',
           dataIndex: 'sex',
+          width: 60,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
+          width: 100,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
+          width: 120,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
-          width: 150,
+          width: 100,
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
-          width: 150,
+          width: 100,
         },
 
         {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
-          // width: 200,
+          width: 80,
         },
         {
           title: '操作',
