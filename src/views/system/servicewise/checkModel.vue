@@ -1,9 +1,10 @@
 <template>
   <a-modal
-     title="开始抽查"
-     width="90%"
+    title="开始抽查"
+    width="90%"
     :visible="visible"
     :footer="null"
+    @ok="handleOk"
     @cancel="handleCancel"
     :maskClosable="false"
     :destroyOnClose="true"
@@ -11,31 +12,16 @@
     <a-tabs v-model="activeKey" type="line" style="margin-top: -10px">
       <a-tab-pane key="1">
         <template #tab>
-          <span>
-            本轮抽查
-          </span>
+          <span> 本轮抽查 </span>
         </template>
-        <check-solve
-          ref="checkSolve"
-          :record="record"
-          @handleCancel="handleCancel"
-          @goCall="goCall"
-        />
-       
+        <check-solve ref="checkSolve" :record="record" @ok="handleOk" @handleCancel="handleCancel" @goCall="goCall" />
       </a-tab-pane>
       <a-tab-pane key="2">
         <template #tab>
-          <span>
-            任务情况
-          </span>
+          <span> 任务情况 </span>
         </template>
-       
-        <tel-detail
-          ref="telDetail"
-          :record="record"
-          @handleCancel="handleCancel"
-          @goCall="goCall"
-        />
+
+        <tel-detail ref="telDetail" :record="record" @ok="handleOk" @handleCancel="handleCancel" @goCall="goCall" />
       </a-tab-pane>
     </a-tabs>
   </a-modal>
@@ -55,40 +41,51 @@ export default {
 
   data() {
     return {
-      title:'',
-      modelType:'',
+      title: '',
+      modelType: '',
       activeKey: '1',
       visible: false,
       record: Object,
       recordId: '',
       phone: '',
-      isSDKReady:false
+      isSDKReady: false,
     }
   },
-  created() {
-    
-  },
+  created() {},
 
   methods: {
     //抽查
     doDeal(record) {
-      this.init(record)   
+      this.init(record)
     },
 
     //抽查详情
     doInfo(record) {
-      record.isCheckInfo=true
-      this.init(record)   
+      record.isCheckInfo = true
+      this.init(record)
     },
-    init(record){
+    //抽查详情
+    doDetail(record) {
+      console.log(record)
+      this.activeKey = '2'
+      this.visible = true
+      record.id = record.recordId
+      this.record = record
+    },
+    init(record) {
       console.log(record)
       this.activeKey = '1'
       this.visible = true
-      record.id=record.recordId
+      record.id = record.recordId
       this.record = record
     },
 
     handleCancel() {
+      this.visible = false
+      this.$emit('cancel', '')
+    },
+
+    handleOk() {
       this.visible = false
       this.$emit('ok', '')
     },
@@ -111,11 +108,11 @@ export default {
             tccc.UI.hideWorkbench() //隐藏工作台
             tccc.UI.hidefloatButton() //隐藏悬浮按钮
 
-            this.isSDKReady=true
+            this.isSDKReady = true
             console.log('云呼叫初始化成功 Agent', tccc.Agent)
             if (tccc.Agent.getStatus() == 'free') {
               //空闲状态可以打电话
-            
+
               that.startOutboundCall(that.phone, that.recordId)
             }
 
@@ -135,7 +132,7 @@ export default {
         })
       })
     },
-  
+
     goCall(phone, recordId) {
       this.phone = phone
       this.recordId = recordId
@@ -151,7 +148,7 @@ export default {
         })
         return
       }
-     
+
       if (tccc.Agent.getStatus() != 'free') {
         this.$message.info('忙线中，请稍等')
         return
@@ -159,7 +156,7 @@ export default {
       this.startOutboundCall(phone, recordId)
     },
 
-    startOutboundCall(phone, recordId){
+    startOutboundCall(phone, recordId) {
       let that = this
       tccc.Agent.online()
       tccc.Call.startOutboundCall({
@@ -183,8 +180,6 @@ export default {
           that.addTencentPhoneTapeOut(err, recordId)
         })
     },
-
-
 
     addTencentPhoneTapeOut(res, recordId) {
       let param = {}
