@@ -26,7 +26,7 @@
                 <a-col :md="6" :sm="24">
                   <a-form-item label="执行科室">
                     <a-select allow-clear v-model="queryParamsStatisit.execDept" placeholder="请选择科室">
-                      <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
+                      <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
                         item.departmentName
                       }}</a-select-option>
                     </a-select>
@@ -89,9 +89,9 @@
   <script>
   import moment from 'moment'
   import { STable } from '@/components'
-  import { getDepts, statExecuteRecord } from '@/api/modular/system/posManage'
+  import { getDepts, getDeptsPersonal,statExecuteRecord } from '@/api/modular/system/posManage'
   import statisitDetail from './statisitDetail'
-  
+  import Vue from 'vue'
   import { TRUE_USER } from '@/store/mutation-types'
   
   import { formatDate, getDateNow,getlastMonthToday } from '@/utils/util'
@@ -217,7 +217,6 @@
         user: {},
   
         keshiData: [],
-        keshiDataTemp: [],
   
         StatisticsMode: [
           { code: 1, value: '按随访方案' },
@@ -256,30 +255,36 @@
     },
   
     created() {
+
+      this.user = Vue.ls.get(TRUE_USER)
+    console.log("csscsc:",this.user)
+    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
-          // res.data.unshift({
-          //   departmentId: '-2',
-          //   departmentName: '全部',
-          //   hospitalId: 1,
-          //   parentId: 0,
-          //   children: null,
-          // })
-          for (let i = 0; i < res.data.length; i++) {
-            // this.$set(res.data[i], 'xh', i + 1)
-            if (i == 0) {
-              this.$set(res.data[i], 'isChecked', true)
-            } else {
-              this.$set(res.data[i], 'isChecked', false)
-            }
-          }
-          this.keshiData = res.data
-          this.keshiDataTemp = JSON.parse(JSON.stringify(this.originData))
-        } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
         }
       })
+    } else {
+      getDeptsPersonal().then((res) => {
+        if (res.code == 0) {
+          this.originData = res.data
+          if(res.data.length==0){
+            this.queryParamsStatisit.execDept = "暂无科室"
+          }
+          // var departmentIds = []
+          // res.data.forEach((item, index) => {
+          //   departmentIds = departmentIds + item.departmentId
+          //   if (index < res.data.length - 1) {
+          //     departmentIds.push(item.departmentId)
+          //   }
+          // })
+          // console.log(departmentIds)
+          // this.queryParams.depts= departmentIds
+          // this.$refs.table.refresh(true)
+        }
+      })
+    }
   
       this.createValue = [moment(getlastMonthToday(), this.dateFormat), moment(formatDate(new Date().getTime()), this.dateFormat)]
       this.createValueBor = [moment(getDateNow(), this.dateFormat), moment(getDateNow(), this.dateFormat)]
