@@ -278,7 +278,7 @@ export default {
           if (res.code == 0) {
             this.originData = res.data
             if (res.data.length == 0) {
-              this.queryParamsStatisit.execDept = null
+              this.queryParamsStatisit.execDept = []
             }
             // var departmentIds = []
             // res.data.forEach((item, index) => {
@@ -336,7 +336,7 @@ export default {
     reset() {
       this.createValue = []
       this.queryParamsStatisit.statType = ''
-      this.queryParamsStatisit.execDept = ''
+      this.queryParamsStatisit.execDept = []
       this.$refs.table.refresh()
     },
   },
