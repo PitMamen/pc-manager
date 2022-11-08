@@ -1,5 +1,5 @@
 <template>
-  <a-layout :class="['basicLayout', 'layout', device]">
+  <a-layout :class="['basicLayout', 'layout', sideFlag ? 'sideAction tablet' : device]">
     <!-- SideMenu -->
     <a-drawer
       v-if="isMobile()"
@@ -16,6 +16,7 @@
         :theme="navTheme"
         :collapsed="false"
         :collapsible="true"
+        @sideAction="sideAction"
         @menuSelect="menuSelect"
       ></side-menu>
     </a-drawer>
@@ -28,6 +29,7 @@
       :theme="navTheme"
       :collapsed="collapsed"
       :collapsible="true"
+      @sideAction="sideAction"
     ></side-menu>
 
     <a-layout :class="['main-content', layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
@@ -58,7 +60,6 @@
       <setting-drawer v-if="!production"></setting-drawer>
     </a-layout>
   </a-layout>
-
 </template>
 
 <script>
@@ -87,6 +88,7 @@ export default {
   data () {
     return {
       production: config.production,
+      sideFlag: false,
       collapsed: false,
       menus: []
     }
@@ -103,7 +105,7 @@ export default {
       if (this.sidebarOpened) {
         return '170px'
       }
-      return '50px'
+      return '64px'
     }
   },
   watch: {
@@ -144,12 +146,18 @@ export default {
       this.setSidebar(!this.collapsed)
       triggerWindowResizeEvent()
     },
+    sideAction () {
+      this.sideFlag = !this.sideFlag
+      this.collapsed = this.sideFlag
+      this.setSidebar(!this.collapsed)
+      triggerWindowResizeEvent()
+    },
     paddingCalc () {
       let left = ''
       if (this.sidebarOpened) {
-        left = this.isDesktop() ? '170px' : '50px'
+        left = this.isDesktop() ? '170px' : '64px'
       } else {
-        left = (this.isMobile() && '0') || ((this.fixSidebar && '50px') || '0')
+        left = (this.isMobile() && '0') || ((this.fixSidebar && '64px') || '0')
       }
       return left
     },
@@ -170,14 +178,25 @@ export default {
     min-height: calc(100vh - 42px) !important;
     box-shadow: none !important;
     background: #F5F5F5 !important;
+    .side-action {
+      display: none;
+    }
     > .ant-layout-sider-children {
       > .ant-menu {
         color: #1A1A1A;
         padding: 0 0 15px 0 !important;
         background: #F5F5F5 !important;
+        > .ant-menu-item {
+          > a {
+            color: #1A1A1A;
+          }
+        }
       }
       .ant-menu-item > a {
         color: #666666;
+      }
+      .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+        background-color: #eff7ff;
       }
       .ant-menu-vertical .ant-menu-item,
       .ant-menu-vertical-left .ant-menu-item,
@@ -224,6 +243,15 @@ export default {
       max-width: 170px !important;
       min-width: 170px !important;
       width: 170px !important;
+      .side-action {
+        display: block;
+        .anticon-left {
+          display: block;
+        }
+        .anticon-right {
+          display: none;
+        }
+      }
     }
     .main-content {
       margin-left: -170px !important;
@@ -234,26 +262,79 @@ export default {
   }
   &.tablet {
     .side-menu {
-      flex: 0 0 50px !important;
-      max-width: 50px !important;
-      min-width: 50px !important;
-      width: 50px !important;
-    }
-    .main-content {
-      margin-left: -50px !important;
-      > .header-animat {
-        .sysapp-logo {
-          display: none;
+      flex: 0 0 64px !important;
+      max-width: 64px !important;
+      min-width: 64px !important;
+      width: 64px !important;
+      > .ant-layout-sider-children {
+        > .ant-menu {
+          &.ant-menu-inline-collapsed {
+            width: 64px;
+          }
+        }
+        .ant-menu-inline-collapsed > .ant-menu-item,
+        .ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-item,
+        .ant-menu-inline-collapsed > .ant-menu-item-group > .ant-menu-item-group-list > .ant-menu-submenu > .ant-menu-submenu-title,
+        .ant-menu-inline-collapsed > .ant-menu-submenu > .ant-menu-submenu-title {
+          padding: 0 24px !important;
         }
       }
+    }
+    .main-content {
+      margin-left: -64px !important;
+      > .header-animat {
+        .sysapp-logo {}
+      }
       > .ant-layout-content {
-        margin-left: 70px !important;
+        margin-left: 84px !important;
       }
     }
   }
   &.mobile {
     .side-menu {}
-    .main-content {}
+    .main-content {
+      > .header-animat {
+        .sysapp-logo {
+          display: none;
+        }
+      }
+    }
+  }
+  &.sideAction {
+    .side-menu {
+      .side-action {
+        display: block !important;
+        .anticon-left {
+          display: none !important;
+        }
+        .anticon-right {
+          display: block !important;
+        }
+      }
+    }
+  }
+}
+.ant-menu-submenu-popup {
+  > .ant-menu {
+    min-width: 120px !important;
+    > .ant-menu-item {
+      > a {
+        color: #666666;
+      }
+    }
+  }
+  .ant-menu-vertical .ant-menu-item,
+  .ant-menu-vertical-left .ant-menu-item,
+  .ant-menu-vertical-right .ant-menu-item,
+  .ant-menu-inline .ant-menu-item,
+  .ant-menu-vertical .ant-menu-submenu-title,
+  .ant-menu-vertical-left .ant-menu-submenu-title,
+  .ant-menu-vertical-right .ant-menu-submenu-title,
+  .ant-menu-inline .ant-menu-submenu-title {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 15px !important;
+    font-size: 14px !important;
   }
 }
 </style>
