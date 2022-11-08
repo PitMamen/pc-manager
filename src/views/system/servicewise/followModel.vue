@@ -62,7 +62,7 @@ import telSolve from './telSolve'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import { createSdkLoginToken, addTencentPhoneTape } from '@/api/modular/system/posManage'
-import { info } from '@/api/modular/system/sysapp'
+import {  canCall } from '@/utils/util'
 export default {
   components: {
     telSolve,
@@ -72,36 +72,39 @@ export default {
 
   data() {
     return {
-      title:'',
-      modelType:'',
+      title: '',
+      modelType: '',
       activeKey: '3',
       visible: false,
       record: Object,
       isSDKReady: false,
+      isFree: false,
+      recordId: '',
+      phone: '',
     }
   },
   created() {
-    createSdkLoginToken().then((res) => {
-      if (res.code == 0) {
-        this.injectTcccWebSDK(res.data.sdkURL)
-      }
-    })
+    // createSdkLoginToken().then((res) => {
+    //   if (res.code == 0) {
+    //     this.injectTcccWebSDK(res.data.sdkURL)
+    //   }
+    // })
   },
 
   methods: {
     //随访
     doDeal(record) {
-      this.modelType=0
-      this.init(record)   
+      this.modelType = 0
+      this.init(record)
     },
 
     //详情
     doInfo(record) {
-      this.modelType=1
-      this.init(record)   
+      this.modelType = 1
+      this.init(record)
     },
-    init(record){
-      this.title=record.userName+' | '+record.sex.description+' | '+record.age+'岁'
+    init(record) {
+      this.title = record.userName + ' | ' + record.sex.description + ' | ' + record.age + '岁'
       this.activeKey = '3'
       this.visible = true
       this.record = record
@@ -129,21 +132,56 @@ export default {
 
             that.isSDKReady = true
             console.log('云呼叫初始化成功', that.isSDKReady)
-            tccc.UI.hideWorkbench()//隐藏工作台
-            tccc.UI.hidefloatButton()//隐藏悬浮按钮
+            tccc.UI.hideWorkbench() //隐藏工作台
+            tccc.UI.hidefloatButton() //隐藏悬浮按钮
+
+            let agentStatus = tccc.Agent.getStatus()
+            console.log('云呼叫初始化成功 Agent', tccc.Agent)
+            if (agentStatus == 'free') {
+              //空闲状态可以打电话
+              that.isFree = true
+              that.goCall(that.phone, that.recordId)
+            }
+
             resolve('初始化成功')
             // this.$message.success('初始化成功')
+          })
+
+          tccc.on(tccc.events.sessionEnded, function (data) {
+            /**
+             *  监听挂断
+             * */
+
+            tccc.Agent.offline()
+
+            console.log('云呼叫挂断 sessionEnded', data)
           })
         })
       })
     },
 
     goCall(phone, recordId) {
+      // if (canCall) {
+        
+      // }
+
+      this.phone = phone
+      this.recordId = recordId
       let that = this
       console.log(this.isSDKReady)
       console.log('参数', phone + '==' + recordId)
       if (!this.isSDKReady) {
-        this.$message.info('等待云呼叫功能初始化')
+        this.$message.info('正在初始化，请稍后...')
+        createSdkLoginToken().then((res) => {
+          if (res.code == 0) {
+            this.injectTcccWebSDK(res.data.sdkURL)
+          }
+        })
+        return
+      }
+      tccc.Agent.online()
+      if (!this.isFree) {
+        this.$message.info('忙线中，请稍等')
         return
       }
 
