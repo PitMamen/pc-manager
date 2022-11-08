@@ -83,8 +83,10 @@ export default {
       this.init(record)   
     },
     init(record){
+      console.log(record)
       this.activeKey = '1'
       this.visible = true
+      record.id=record.recordId
       this.record = record
     },
 
