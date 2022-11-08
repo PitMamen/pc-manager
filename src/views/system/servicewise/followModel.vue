@@ -42,12 +42,14 @@
           ref="telSolve"
           :record="record"
           @handleCancel="handleCancel"
+          @ok="handleOk"
           @goCall="goCall"
         />
         <tel-detail
           v-else-if="modelType == 1"
           ref="telDetail"
           :record="record"
+          @ok="handleOk"
           @handleCancel="handleCancel"
           @goCall="goCall"
         />
@@ -80,7 +82,7 @@ export default {
       isFree: false,
       recordId: '',
       phone: '',
-      isSDKReady:''
+      isSDKReady: '',
     }
   },
   created() {},
@@ -106,6 +108,10 @@ export default {
 
     handleCancel() {
       this.visible = false
+      this.$emit('cancel', '')
+    },
+    handleOk() {
+      this.visible = false
       this.$emit('ok', '')
     },
 
@@ -127,11 +133,11 @@ export default {
             tccc.UI.hideWorkbench() //隐藏工作台
             tccc.UI.hidefloatButton() //隐藏悬浮按钮
 
-            this.isSDKReady=true
+            this.isSDKReady = true
             console.log('云呼叫初始化成功 Agent', tccc.Agent)
             if (tccc.Agent.getStatus() == 'free') {
               //空闲状态可以打电话
-            
+
               that.startOutboundCall(that.phone, that.recordId)
             }
 
@@ -151,7 +157,7 @@ export default {
         })
       })
     },
-   
+
     goCall(phone, recordId) {
       this.phone = phone
       this.recordId = recordId
@@ -167,7 +173,7 @@ export default {
         })
         return
       }
-     
+
       if (tccc.Agent.getStatus() != 'free') {
         this.$message.info('忙线中，请稍等')
         return
@@ -175,7 +181,7 @@ export default {
       this.startOutboundCall(phone, recordId)
     },
 
-    startOutboundCall(phone, recordId){
+    startOutboundCall(phone, recordId) {
       let that = this
       tccc.Agent.online()
       tccc.Call.startOutboundCall({
