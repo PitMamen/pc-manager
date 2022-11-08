@@ -11,14 +11,14 @@
               <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[0].logo === 'icon2'" />
               <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[0].logo === 'icon3'" />
               <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[0].logo === 'icon4'" />
-              <div class="title">{{ sysApps[0].applicationName }}</div>
+              <div class="titles">{{ sysApps[0].applicationName }}</div>
             </div>
             <div class="item item2" @click="itemClick(sysApps[1])" v-if="sysApps && sysApps[1]">
               <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[1].logo === 'icon1'" />
               <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[1].logo === 'icon2'" />
               <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[1].logo === 'icon3'" />
               <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[1].logo === 'icon4'" />
-              <div class="title">{{ sysApps[1].applicationName }}</div>
+              <div class="titles">{{ sysApps[1].applicationName }}</div>
             </div>
           </div>
           <div class="row">
@@ -27,14 +27,14 @@
               <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[2].logo === 'icon2'" />
               <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[2].logo === 'icon3'" />
               <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[2].logo === 'icon4'" />
-              <div class="title">{{ sysApps[2].applicationName }}</div>
+              <div class="titles">{{ sysApps[2].applicationName }}</div>
             </div>
             <div class="item item4" @click="itemClick(sysApps[3])" v-if="sysApps && sysApps[3]">
               <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[3].logo === 'icon1'" />
               <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[3].logo === 'icon2'" />
               <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[3].logo === 'icon3'" />
               <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[3].logo === 'icon4'" />
-              <div class="title">{{ sysApps[3].applicationName }}</div>
+              <div class="titles">{{ sysApps[3].applicationName }}</div>
             </div>
           </div>
         </div>
@@ -42,7 +42,7 @@
     </div>
     <div class="right">
       <div class="right-wrap">
-        <div class="title">
+        <div class="titles">
           <div class="title1">患者服务信息系统</div>
           <div class="title2">健/康/城/市  智/慧/医/疗</div>
         </div>
@@ -317,7 +317,7 @@ export default {
               .px2rem(width, 42);
               .px2rem(height, 38);
             }
-            .title {
+            .titles {
               .px2rem(font-size, 28);
               .px2rem(line-height, 112);
               vertical-align: middle;
@@ -343,7 +343,7 @@ export default {
       width: 100%;
       top: 50%;
       transform: translateY(-50%);
-      .title {
+      .titles {
         // .px2rem(padding-top, 155);
         .title1 {
           .px2rem(font-size, 48);
