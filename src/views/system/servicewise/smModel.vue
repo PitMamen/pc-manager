@@ -1,34 +1,27 @@
 <template>
-    <a-card :bordered="false" class="card-right-pac" :confirmLoading="confirmLoading">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="6" :sm="24">
-              <a-form-item label="查询条件">
-                <a-input
-                  v-model="queryParams.templateTitle"
-                  allow-clear
-                  placeholder="可输入模板名称查询"
-                  @blur="$refs.table.refresh(true)"
-                  @keyup.enter="$refs.table.refresh(true)"
-                  @search="$refs.table.refresh(true)"
-                />
-              </a-form-item>
-            </a-col>
-  
-            <a-col :md="10" :sm="24">
-              <!-- <a-form-item label="状态:"> -->
-              <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
-              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-              <!-- </a-form-item> -->
-            </a-col>
-          </a-row>
-        </a-form>
-        <div class="div-divider"></div>
-        <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addModel2()"  icon="plus">新增</a-button>
-
+      <a-card :bordered="false" class="sys-card" :confirmLoading="confirmLoading">
+    <div class="table-page-search-wrapper">
+      <div class="search-row">
+        <span class="name">查询条件:</span>
+        <a-input v-model="queryParams.templateTitle" allow-clear placeholder="可输入模板名称查询" style="width: 120px;" 
+        @blur="$refs.table.refresh(true)"
+                @keyup.enter="$refs.table.refresh(true)"
+                @search="$refs.table.refresh(true)"/>
       </div>
+     
+
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+        </span>
+      </div>
+    </div>
+  
+    <div class="table-operator" style="overflow: hidden;">
+      <a-button icon="plus" style="float: right;margin-right: 0;" @click="addModel2()">新增</a-button>
+    </div>
+
       <s-table
         ref="table"
         size="default"
@@ -93,11 +86,7 @@
             dataIndex: 'templateInsideCode',
             width: 300,
           },
-          {
-            title: '模板ID',
-            dataIndex: 'templateId',
-            width: 180,
-          },
+
           {
             title: '模板内容',
             scopedSlots: { customRender: 'content' },
@@ -110,7 +99,7 @@
           },
           {
             title: '操作',
-            width: '150px',
+            width: '100px',
             dataIndex: 'action',
             scopedSlots: { customRender: 'action' },
           },

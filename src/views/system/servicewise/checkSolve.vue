@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 650px;width: 100%; ">
+  <div style="height: 500px;width: 100%; ">
     <div class="div-appoint-detail-check">
       <div class="div-span-content-left" style="overflow-y: auto !important; max-height: 100%">
 
@@ -543,7 +543,7 @@ playAudio(soundRecord) {
 .div-appoint-detail-check {
   background-color: white;
   width: 100%;
-  height: 92%;
+  height: 90%;
   overflow: hidden;
   display: flex;
 
@@ -563,7 +563,7 @@ playAudio(soundRecord) {
       width: 100%;
       display: inline-block;
       color: #4d4d4d;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
@@ -590,14 +590,14 @@ playAudio(soundRecord) {
       width: 33%;
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
       width: 65%;
       color: #333;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
     .span-textarea-value {
@@ -605,7 +605,7 @@ playAudio(soundRecord) {
       color: #333;
       text-align: left;
       height: 200px !important;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
     .ant-select {
@@ -624,7 +624,7 @@ playAudio(soundRecord) {
     .div-time {
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
       margin-left: 16px;
       width: 92px;
@@ -632,7 +632,7 @@ playAudio(soundRecord) {
     .div-content {
       color: #000;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;

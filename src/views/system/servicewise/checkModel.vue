@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="开始抽查"
-    width="90%"
+    width="1224px"
     :visible="visible"
     :footer="null"
     @ok="handleOk"
