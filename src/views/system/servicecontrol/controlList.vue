@@ -173,6 +173,12 @@
             <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
             <!-- <a-divider type="vertical" /> -->
           </span>
+          <span slot="operition" slot-scope="text, record">
+            <span :class="{ 'span-red': record.overdueStatus && record.overdueStatus.value == 2 }">{{
+              record.followDate
+            }}</span>
+            <!-- <a-divider type="vertical" /> -->
+          </span>
         </s-table>
 
         <add-form ref="addForm" @ok="handleOk" />
@@ -303,7 +309,8 @@ export default {
         },
         {
           title: '执行时间',
-          dataIndex: 'followDate',
+          // dataIndex: 'followDate',
+          scopedSlots: { customRender: 'operition' },
         },
         {
           title: '随访问卷',
@@ -348,8 +355,8 @@ export default {
           dataIndex: 'doctorName',
         },
         {
-          title: '执行时间',
-          dataIndex: 'followDate',
+          // dataIndex: 'followDate',
+          scopedSlots: { customRender: 'operition' },
         },
         {
           title: '随访问卷',
@@ -394,8 +401,8 @@ export default {
           dataIndex: 'doctorName',
         },
         {
-          title: '执行时间',
-          dataIndex: 'followDate',
+          // dataIndex: 'followDate',
+          scopedSlots: { customRender: 'operition' },
         },
         {
           title: '抽查时间',
@@ -620,7 +627,9 @@ export default {
         if (res.code == 0) {
           this.deptUsers = []
           this.deptUsers.push({ userId: '-1', userName: '全部' })
-          this.deptUsers = this.deptUsers.concat(res.data.deptUsers[0].users)
+          if (res.data.deptUsers[0].users && res.data.deptUsers[0].users.length > 0) {
+            this.deptUsers = this.deptUsers.concat(res.data.deptUsers[0].users)
+          }
         }
       })
     },
@@ -797,7 +806,13 @@ export default {
     }
 
     .span-current-ques {
+      //限制一行
+      overflow: hidden; //溢出隐藏
+      text-overflow: ellipsis; //超出省略号显示
+      white-space: nowrap; //文字不换行
+
       height: 20px;
+      width: 80%;
       display: inline-block;
       font-size: 12px;
       border-bottom: #1890ff solid 1px;

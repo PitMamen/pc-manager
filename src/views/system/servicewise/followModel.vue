@@ -82,7 +82,7 @@ export default {
       isFree: false,
       recordId: '',
       phone: '',
-      isSDKReady: '',
+      isSDKReady: false,
     }
   },
   created() {},
@@ -100,7 +100,9 @@ export default {
       this.init(record)
     },
     init(record) {
-      this.title = record.userName + ' | ' + record.sex.description + ' | ' + record.age + '岁'
+      let strSex = record.sex ? record.sex.description : ''
+      // this.title = record.userName + ' | ' + record.sex ? record.sex.description : '' + ' | ' + record.age + '岁'
+      this.title = record.userName + ' | ' + strSex + ' | ' + record.age + '岁'
       this.activeKey = '3'
       this.visible = true
       this.record = record
@@ -133,7 +135,7 @@ export default {
             tccc.UI.hideWorkbench() //隐藏工作台
             tccc.UI.hidefloatButton() //隐藏悬浮按钮
 
-            this.isSDKReady = true
+            that.isSDKReady = true
             console.log('云呼叫初始化成功 Agent', tccc.Agent)
             if (tccc.Agent.getStatus() == 'free') {
               //空闲状态可以打电话
@@ -233,6 +235,14 @@ export default {
 }
 </script>
 <style lang="less">
+// /deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
+//   display: none !important;
+// }
+
+/deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
+  visibility: hidden !important;
+}
+
 .icon {
   width: 17px;
   height: 18px;
