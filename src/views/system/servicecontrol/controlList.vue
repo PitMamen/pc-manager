@@ -64,90 +64,80 @@
 
         <div class="div-divider" style="margin-left: 0"></div>
 
-        <!-- <div class="table-page-search-wrapper"> -->
-        <a-form layout="inline" style="margin-top: 1%">
-          <a-row :gutter="48">
-            <a-col :md="5" :sm="24">
-              <a-form-item label="执行科室">
-                <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
-                <a-select
-                  style="width: 110px"
-                  allow-clear
-                  @select="onDeptSelect"
-                  v-model="queryParams.executeDepartmentId"
-                  placeholder="请选择科室"
-                >
-                  <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                    item.departmentName
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
+        <div class="table-page-search-wrapper">
+          <div class="search-row">
+            <span class="name">执行科室:</span>
+            <a-select
+              style="width: 110px"
+              allow-clear
+              @select="onDeptSelect"
+              v-model="queryParams.executeDepartmentId"
+              placeholder="请选择科室"
+            >
+              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                item.departmentName
+              }}</a-select-option>
+            </a-select>
+          </div>
 
-            <a-col :md="4" :sm="24">
-              <a-form-item label="执行结果">
-                <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择">
-                  <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
-                    item.description
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
+          <div class="search-row">
+            <span class="name">执行结果:</span>
+            <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择">
+              <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
+            </a-select>
+          </div>
 
-            <a-col :md="4" :sm="24">
-              <a-form-item label="随访医生">
-                <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
-                  <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
-                    item.userName
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
+          <div class="search-row">
+            <span class="name">随访医生:</span>
+            <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
+              <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
+                item.userName
+              }}</a-select-option>
+            </a-select>
+          </div>
 
-            <a-col :md="5" :sm="24">
-              <a-form-item label="随访方式">
-                <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
-                  <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
-                    item.description
-                  }}</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-          </a-row>
+          <div class="search-row">
+            <span class="name">随访方式:</span>
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
+            </a-select>
+          </div>
 
-          <a-row :gutter="48">
-            <a-col :md="9" :sm="24">
-              <a-form-item label="执行日期">
-                <a-range-picker :value="createValue" @change="onChange" />
-              </a-form-item>
-            </a-col>
-            <a-col :md="9" :sm="24" v-if="queryParams.type == 2">
-              <a-form-item label="抽查日期">
-                <a-range-picker :value="createValueCheck" @change="onChangeCheck" />
-              </a-form-item>
-            </a-col>
+          <div class="search-row">
+            <span class="name">执行日期:</span>
+            <a-range-picker :value="createValue" @change="onChange" />
+          </div>
 
-            <a-col :md="6" :sm="24" v-if="queryParams.type == 1">
-              <a-form-item label="患者查找">
-                <a-input
-                  v-model="queryParams.queryStr"
-                  allow-clear
-                  placeholder="请输入患者姓名或手机号"
-                  @blur="goSearch"
-                  @keyup.enter="goSearch"
-                  @search="goSearch"
-                />
-              </a-form-item>
-            </a-col>
+          <div class="search-row" v-if="queryParams.type == 2">
+            <span class="name">抽查日期:</span>
+            <a-range-picker :value="createValueCheck" @change="onChangeCheck" />
+          </div>
+          <div class="search-row" v-if="queryParams.type == 1">
+            <span class="name">患者查找:</span>
+            <a-input
+              v-model="queryParams.queryStr"
+              allow-clear
+              placeholder="请输入患者姓名或手机号"
+              @blur="goSearch"
+              @keyup.enter="goSearch"
+              @search="goSearch"
+            />
+          </div>
 
-            <a-col :md="6" :sm="24">
-              <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-              <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
-              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-              <!-- </a-form-item> -->
-            </a-col>
-          </a-row>
-        </a-form>
+          <div class="action-row">
+            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+              <!-- <a-button type="primary" @click="goSearch" icon="search">查询</a-button> -->
+              <!-- <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button> -->
+
+              <a-button type="primary" icon="search" @click="goSearch">查询</a-button>
+              <a-button icon="undo" @click="reset()" style="margin-left: 8px; margin-right: 0">重置</a-button>
+            </span>
+          </div>
+        </div>
         <!-- </div> -->
 
         <!-- 去掉勾选框 -->
@@ -878,6 +868,30 @@ export default {
     float: right;
     width: 81%;
 
+    .table-page-search-wrapper {
+      padding-bottom: 10px;
+      margin-top: 1%;
+      border-bottom: 1px solid #e8e8e8;
+      .action-row {
+        margin-top: 1px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .search-row {
+        margin-top: 1px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 20px;
+        .name {
+          margin-right: 10px;
+        }
+      }
+
+      .ant-input-affix-wrapper {
+        width: auto;
+      }
+    }
+
     .span-red {
       padding: 1% 2%;
       font-size: 12px;
@@ -894,10 +908,6 @@ export default {
 
     .ant-select {
       width: 90px;
-    }
-
-    .table-page-search-wrapper {
-      margin-top: 1%;
     }
 
     .table-operator {

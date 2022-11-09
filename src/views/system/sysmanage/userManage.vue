@@ -21,18 +21,20 @@
           </template>
         </a-auto-complete>
       </div>
-      <div
-        class="div-part"
-        style="margin-top: 7%"
-        v-for="(item, index) in deptData"
-        :value="item.departmentId"
-        :key="index"
-      >
-        <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
-          {{ item.departmentName }}
-        </p>
-        <!-- 分割线 -->
-        <div class="div-divider"></div>
+      <div style="max-height: 600px; overflow-y: auto; margin-top: 7%">
+        <div
+          class="div-part-user"
+          style="margin-top: 7%"
+          v-for="(item, index) in deptData"
+          :value="item.departmentId"
+          :key="index"
+        >
+          <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
+            {{ item.departmentName }}
+          </p>
+          <!-- 分割线 -->
+          <div class="div-divider"></div>
+        </div>
       </div>
     </div>
 
@@ -361,11 +363,11 @@ export default {
       font-weight: bold;
     }
 
-    .div-part {
+    .div-part-user {
       overflow: hidden;
       width: 100%;
       padding-left: 5%;
-      height: 10%;
+      // height: 10%;
 
       .checked {
         color: #1890ff !important;
@@ -374,7 +376,7 @@ export default {
       .p-name {
         margin-top: 3.5%;
         display: block;
-        height: 100%;
+        // height: 100%;
         padding-left: 1%;
         color: #000;
         font-size: 14px;
