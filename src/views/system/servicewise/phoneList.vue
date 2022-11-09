@@ -986,6 +986,14 @@ export default {
   height: 1px;
 }
 
+// /deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
+//   display: none !important;
+// }.
+
+/deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
+  visibility: hidden !important;
+}
+
 .ant-drawer-body {
   padding: 0 !important;
 }
