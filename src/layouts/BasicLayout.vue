@@ -197,6 +197,9 @@ export default {
       }
       .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
         background-color: #eff7ff;
+        > a {
+          color: #1890ff !important;
+        }
       }
       .ant-menu-vertical .ant-menu-item,
       .ant-menu-vertical-left .ant-menu-item,
