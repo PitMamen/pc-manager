@@ -1,5 +1,5 @@
 <template >
-  <div style="height: 650px; width: 100%">
+  <div style="height: 500px; width: 100%">
     <div class="div-appoint-detail-tel">
       <div class="div-span-content-left">
         <div class="div-title">
@@ -110,7 +110,7 @@
           />
         </div>
 
-        <div style="height: 600px; margin-top: 10px; overflow-y: auto">
+        <div style="flex: 1; margin-top: 10px; ">
           <iframe
             id="iframeId"
             defer="true"
@@ -131,8 +131,8 @@
           <span class="span-title">基本信息</span>
         </div>
         <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-          <span class="span-item-name">{{ item.fieldComment }} :</span>
-          <span class="span-item-value">{{ item.fieldValue }} </span>
+          <span class="span-item-name" style="width: auto;">{{ item.fieldComment }} :&#12288;</span>
+          <span class="span-item-value" style="width: auto;">{{ item.fieldValue }} </span>
         </div>
       </div>
     </div>
@@ -455,7 +455,7 @@ export default {
 .div-appoint-detail-tel {
   background-color: white;
   width: 100%;
-  height: 92%;
+  height: 90%;
   overflow: hidden;
   display: flex;
   flex-direction: row;
@@ -505,14 +505,14 @@ export default {
       width: 33%;
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
       width: 65%;
       color: #333;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
     .ant-select {
@@ -563,7 +563,7 @@ export default {
       .span-dot {
         margin-top: 5px;
         display: inline-block;
-        font-size: 14px;
+        font-size: 12px;
         text-align: center;
       }
     }

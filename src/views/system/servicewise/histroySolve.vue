@@ -1,8 +1,9 @@
 <template>
-  <div style="height: 650px;width: 100%;">
+  <div style="height: 500px;width: 100%;">
     <div class="div-appoint-detail2">
       <div class="div-span-content-left" style="overflow-y: auto !important; max-height: 100%">
-        <div
+        <a
+        ref="#"
           class="div-his-item"
           v-for="(item, index) in historyList"
           :key="index"
@@ -21,7 +22,7 @@
     <span class="div-content">{{ item.contentTitle }}</span>
   </a-tooltip>
           
-        </div>
+</a>
       </div>
 
       <div class="midline"></div>
@@ -51,7 +52,7 @@
         <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 10px; overflow-y: auto">
+        <div style="flex: 1; margin-top: 10px; ">
           <iframe
             defer="true"
             :src="questionUrl"
@@ -429,7 +430,7 @@ export default {
 .div-appoint-detail2 {
   background-color: white;
   width: 100%;
-  height: 92%;
+  height: 90%;
   display: flex;
   overflow: hidden;
 
@@ -473,14 +474,14 @@ export default {
       width: 33%;
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
       width: 65%;
       color: #333;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
     .ant-select {
@@ -499,7 +500,7 @@ export default {
     .div-time {
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
       margin-left: 16px;
       width: 92px;
@@ -507,7 +508,7 @@ export default {
     .div-content {
       color: #000;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       flex: 1;
       overflow: hidden;
       text-overflow: ellipsis;

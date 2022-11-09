@@ -1,51 +1,35 @@
 <template>
-  <a-card :bordered="false" class="card-right-pac">
+  <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="6" :sm="24">
-            <a-form-item label="方案名称">
-              <a-input
-                v-model="queryParams.planName"
-                allow-clear
-                placeholder="可输入方案名称"
-                @keyup.enter="$refs.table.refresh(true)"
-                @search="$refs.table.refresh(true)"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item label="执行科室">
-              <a-select
-                allow-clear
-                v-model="queryParams.departmentName"
-                placeholder="请选择科室"
-                @change="onDepartmentChange"
-              >
-                <a-select-option v-for="(item, index) in originData" :key="index">{{
-                  item.departmentName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="10" :sm="24">
-            <a-form-item label="方案状态:">
-              <!-- <a-popconfirm class="switch-button"> -->
-              <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
-              <!-- </a-popconfirm> -->
-              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search"
-                >查询</a-button
-              >
-              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
-      <div class="div-divider"></div>
-      <a-button style="margin-left: 90%; margin-bottom: 1%" type="primary" @click="addName()" icon="plus"
-        >新增</a-button
-      >
+      <div class="search-row">
+        <span class="name">方案名称:</span>
+        <a-input v-model="queryParams.planName" allow-clear placeholder="可输入方案名称" style="width: 120px;" @keyup.enter="$refs.table.refresh(true)" @search="$refs.table.refresh(true)"/>
+      </div>
+      <div class="search-row">
+        <span class="name">执行科室:</span>
+        <a-select v-model="queryParams.departmentName" placeholder="请选择科室" allow-clear style="width: 120px;" @change="onDepartmentChange">
+          <a-select-option v-for="(item, index) in originData" :key="index" >{{ item.departmentName }}</a-select-option>
+        </a-select>
+      </div>
+      <div class="search-row">
+        <span class="name">方案状态:</span>
+        <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
+      </div>
+
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+        </span>
+      </div>
     </div>
+  
+    <div class="table-operator" style="overflow: hidden;">
+      <a-button icon="plus" style="float: right;margin-right: 0;" @click="addName()">新增</a-button>
+    </div>
+
+    
+   
     <s-table
       ref="table"
       size="default"
@@ -149,12 +133,13 @@ export default {
         },
         {
           title: '状态',
+          width: '60px',
           dataIndex: 'statusText',
-          width: 80,
+          
         },
         {
           title: '操作',
-          width: '150px',
+          width: '100px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -324,6 +309,39 @@ export default {
 }
 </script>
 <style lang="less">
+.table-wrapper {
+  // max-height: 600px;
+  // overflow-y: auto;
+}
+.sys-card {
+  // height: 100%;
+  // padding-bottom: 52px;
+  // /deep/ .ant-table-pagination {
+  //   position: fixed;
+  //   right: 32px;
+  //   bottom: 20px;
+  // }
+}
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
+.table-operator {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 .div-divider {
   margin-top: 1%;
   margin-bottom: 1%;
