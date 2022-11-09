@@ -7,15 +7,15 @@
           v-model="queryParams.name"
           allow-clear
           placeholder="人员姓名查询"
-          style="width: 120px"
+          style="width: 120px;"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
       <div class="search-row">
         <span class="name">科室管理:</span>
-        <a-select allow-clear v-model="queryParams.depts" mode="multiple" style="width: 120px;height: 28px;" placeholder="请选择科室">
-          <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
+        <a-select allow-clear v-model="queryParams.depts" style="width: 120px;" mode="multiple"  placeholder="请选择科室">
+          <a-select-option  v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
           }}</a-select-option>
         </a-select>

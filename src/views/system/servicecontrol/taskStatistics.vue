@@ -21,7 +21,7 @@
           allow-clear
           v-model="queryParamsStatisit.execDept"
           mode="multiple"
-          style="width: 120px; height: 28px"
+          style="width: 120px;"
           placeholder="请选择科室"
         >
           <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
