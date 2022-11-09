@@ -121,7 +121,7 @@ export default {
         {
           title: '身份证号',
           dataIndex: 'idCard',
-          width: 120,
+          width: 140,
         },
         {
           title: '年龄',
@@ -146,7 +146,7 @@ export default {
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
-          width: 100,
+          width: 120,
         },
         {
           title: '管理科室',
