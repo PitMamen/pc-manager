@@ -1,88 +1,82 @@
 <template>
-  <div>
-    <!-- <a-tabs default-active-key="1" @change="callback" style="width: 60%"> -->
+  <a-card :bordered="false" class="sys-card" :confirmLoading="confirmLoading">
+    <div class="table-page-search-wrapper">
+      <div class="search-row">
+        <span class="name">统计方式:</span>
+        <a-select
+          @select="onSelected"
+          allow-clear
+          v-model="queryParamsStatisit.statType"
+          style="width: 120px; height: 28px"
+          placeholder="请选择统计方式">
+          <a-select-option v-for="(item, index) in StatisticsMode" :value="item.code" :key="index">{{
+            item.value
+          }}</a-select-option>
+        </a-select>
+      </div>
 
-    <div class="div-inquiry-text">
-      <a-card :bordered="false" class="card-right" :confirmLoading="confirmLoading">
-        <div class="table-page-search-wrapper">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="6" :sm="24">
-                <a-form-item label="统计方式" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-                  <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                  <a-select
-                    allow-clear
-                    v-model="queryParamsStatisit.statType"
-                    @select="onSelected"
-                    placeholder="请选择统计方式"
-                  >
-                    <a-select-option v-for="(item, index) in StatisticsMode" :key="index" :value="item.code">{{
-                      item.value
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item></a-col
-              >
-
-              <a-col :md="6" :sm="24">
-                <a-form-item label="执行科室">
-                  <a-select allow-clear v-model="queryParamsStatisit.execDept" placeholder="请选择科室"  mode="multiple">
-                    <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                      item.departmentName
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :md="7" :sm="24">
-                <a-form-item label="时间">
-                  <a-range-picker :value="createValue" @change="onChange" />
-                </a-form-item>
-              </a-col>
-
-              <a-col :md="4" :sm="24">
-                <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
-                <a-button type="primary" style="margin-left: 2%" @click="reset()">重置</a-button>
-              </a-col>
-            </a-row>
-          </a-form>
-        </div>
-
-        <s-table
-          style="overflow-y: auto"
-          :showPagination="false"
-          :scroll="{ y: 500, x: 600 }"
-          bordered
-          ref="tableStat"
-          size="default"
-          :columns="columnsStat"
-          :data="loadDataStat"
-          :alert="true"
-          :rowKey="(record) => record.code"
+      <div class="search-row">
+        <span class="name">执行科室:</span>
+        <a-select
+          allow-clear
+          v-model="queryParamsStatisit.execDept"
+          mode="multiple"
+          style="width: 120px;"
+          placeholder="请选择科室"
         >
-          <span slot="action_total" slot-scope="text, record">
-            <a @click="$refs.statisitDetail.checkDetail(record, 1)">{{ record.total }}</a>
-          </span>
-          <span slot="action_success" slot-scope="text, record">
-            <a @click="$refs.statisitDetail.checkDetail(record, 2)">{{ record.success }}</a>
-          </span>
+          <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
+            item.departmentName
+          }}</a-select-option>
+        </a-select>
+      </div>
 
-          <span slot="action_fail" slot-scope="text, record">
-            <a @click="$refs.statisitDetail.checkDetail(record, 3)"> {{ record.fail }}</a>
-          </span>
+      <div class="search-row">
+        <span class="name">时间:</span>
+        <a-range-picker :value="createValue" @change="onChange" />
+      </div>
 
-          <span slot="action_overdue" slot-scope="text, record">
-            <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
-          </span>
-
-          <template v-if="queryParamsStatisit.statType == 1" slot="titleNNN">按随访方案</template>
-          <template v-if="queryParamsStatisit.statType == 2" slot="titleNNN">按执行科室</template>
-          <template v-if="queryParamsStatisit.statType == 3" slot="titleNNN">按问卷</template>
-        </s-table>
-
-        <statisit-Detail ref="statisitDetail" @ok="handleOk" />
-      </a-card>
+      <div  class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+        </span>
+      </div>
     </div>
-  </div>
+
+    <s-table
+      style="overflow-y: auto"
+      :showPagination="false"
+      :scroll="{ y: 500, x: 600 }"
+      bordered
+      ref="tableStat"
+      size="default"
+      :columns="columnsStat"
+      :data="loadDataStat"
+      :alert="true"
+      :rowKey="(record) => record.code"
+    >
+      <span slot="action_total" slot-scope="text, record">
+        <a @click="$refs.statisitDetail.checkDetail(record, 1)">{{ record.total }}</a>
+      </span>
+      <span slot="action_success" slot-scope="text, record">
+        <a @click="$refs.statisitDetail.checkDetail(record, 2)">{{ record.success }}</a>
+      </span>
+
+      <span slot="action_fail" slot-scope="text, record">
+        <a @click="$refs.statisitDetail.checkDetail(record, 3)"> {{ record.fail }}</a>
+      </span>
+
+      <span slot="action_overdue" slot-scope="text, record">
+        <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
+      </span>
+
+      <template v-if="queryParamsStatisit.statType == 1" slot="titleNNN">按随访方案</template>
+      <template v-if="queryParamsStatisit.statType == 2" slot="titleNNN">按执行科室</template>
+      <template v-if="queryParamsStatisit.statType == 3" slot="titleNNN">按问卷</template>
+    </s-table>
+
+    <statisit-Detail ref="statisitDetail" @ok="handleOk" />
+  </a-card>
 </template>
   
   <script>
@@ -102,7 +96,6 @@ export default {
   },
 
   data() {
-    
     var spanArr = []
     var position = 0
     //列合并
@@ -236,7 +229,7 @@ export default {
         //   param.execDept = "-1"
         // }
         // }
-       
+
         return statExecuteRecord(Object.assign(parameter, param)).then((res) => {
           if (res.code == 0) {
             var data = {
@@ -285,12 +278,12 @@ export default {
             this.originData = res.data
             if (res.data.length == 0) {
               this.queryParamsStatisit.execDept = ['暂无科室']
-            }else{
+            } else {
               var departmentIds = []
               res.data.forEach((item, index) => {
                 departmentIds.push(item.departmentId)
-            })
-            this.queryParamsStatisit.execDept = departmentIds
+              })
+              this.queryParamsStatisit.execDept = departmentIds
             }
             this.$refs.tableStat.refresh(true)
             // var departmentIds = []
@@ -309,7 +302,6 @@ export default {
           this.confirmLoading = false
         })
     }
-
 
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
@@ -357,6 +349,23 @@ export default {
 </script>
   
   <style lang="less">
+
+.table-page-search-wrapper {
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e8e8e8;
+    .action-row {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .search-row {
+      display: inline-block;
+      vertical-align: middle;
+      padding-right: 20px;
+      .name {
+        margin-right: 10px;
+      }
+    }
+  }
 .div-service {
   width: 100%;
   overflow: hidden;
@@ -386,6 +395,7 @@ export default {
   width: 100%;
   overflow: hidden;
   height: 100%;
+
 
   .div-service-left-service {
     background-color: white;

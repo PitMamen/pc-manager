@@ -21,7 +21,7 @@
                 <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
                 <!-- <a-icon type="caret-down" /> <-->
                 <a-checkbox
-                  style="margin-left: 1%"
+                  style="margin-left: 3%"
                   @change="onChangeOut(itemOut, indexOut)"
                   :checked="itemOut.isChecked"
                 />
@@ -40,7 +40,10 @@
                   @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
                   :checked="itemChild.isChecked"
                 />
-                <span style="margin-left: 1%">{{ itemChild.title }}</span>
+                <!--  overflow: hidden; text-overflow: ellipsis; white-space: nowrap   限制一行 -->
+                <span style="margin-left: 3%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
+                  itemChild.title
+                }}</span>
               </div>
             </div>
           </div>
@@ -48,102 +51,82 @@
       </div>
 
       <a-card :bordered="false" class="card-right-phone">
-        <!-- <a-card :bordered="false" class="card-right-phone" :confirmLoading="confirmLoading"> -->
         <div class="table-page-search-wrapper">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="4" :sm="24">
-                <a-form-item label="姓名">
-                  <a-input
-                    v-model="queryParams.userName"
-                    allow-clear
-                    placeholder="请输入姓名"
-                    @blur="goSearch"
-                    @keyup.enter="goSearch"
-                    @search="goSearch"
-                  />
-                </a-form-item>
-              </a-col>
+          <div class="search-row">
+            <span class="name">姓名:</span>
+            <a-input
+              v-model="queryParams.userName"
+              allow-clear
+              placeholder="请输入姓名"
+              @blur="goSearch"
+              @keyup.enter="goSearch"
+              @search="goSearch"
+            />
+          </div>
+          <div class="search-row">
+            <span class="name">手机号:</span>
+            <a-input
+              v-model="queryParams.phone"
+              allow-clear
+              placeholder="请输入手机号"
+              @keyup.enter="goSearch"
+              @search="goSearch"
+            />
+          </div>
+          <div class="search-row">
+            <span class="name">执行科室:</span>
+            <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室">
+              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+                item.departmentName
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div
+            class="search-row"
+            v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
+          >
+            <span class="name">随访方式:</span>
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div class="search-row" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
+            <span class="name">是否逾期:</span>
+            <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态">
+              <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
+                item.name
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div class="search-row" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
+            <span class="name">状态:</span>
+            <a-select allow-clear v-model="queryParams.bizStatus" placeholder="请选择状态">
+              <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
+                item.name
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div
+            class="search-row"
+            v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
+          >
+            <span class="name">执行日期:</span>
+            <a-range-picker :value="createValue" @change="onChange" />
+          </div>
 
-              <a-col :md="5" :sm="24">
-                <a-form-item label="手机号">
-                  <a-input
-                    v-model="queryParams.phone"
-                    allow-clear
-                    placeholder="请输入手机号"
-                    @keyup.enter="goSearch"
-                    @search="goSearch"
-                  />
-                </a-form-item>
-              </a-col>
+          <div class="action-row">
+            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+              <a-button type="primary" icon="search" @click="goSearch">查询</a-button>
+              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
 
-              <a-col :md="6" :sm="24">
-                <a-form-item label="执行科室">
-                  <!-- <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室"> -->
-                  <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室">
-                    <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                      item.departmentName
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col
-                :md="5"
-                :sm="24"
-                v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
-              >
-                <a-form-item label="随访方式">
-                  <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
-                    <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
-                      item.description
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-            </a-row>
-
-            <a-row :gutter="48">
-              <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
-                <a-form-item label="是否逾期">
-                  <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态">
-                    <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
-                      item.name
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col :md="5" :sm="24" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
-                <a-form-item label="状态">
-                  <a-select allow-clear v-model="queryParams.bizStatus" placeholder="请选择状态">
-                    <a-select-option v-for="(item, index) in statusData" :key="index" :value="item.code">{{
-                      item.name
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item>
-              </a-col>
-
-              <a-col
-                :md="7"
-                :sm="24"
-                v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
-              >
-                <a-form-item label="执行日期">
-                  <a-range-picker :value="createValue" @change="onChange" />
-                </a-form-item>
-              </a-col>
-
-              <a-col :md="9" :sm="24">
-                <!-- <a-form-item label="状态:"> -->
-                <!-- <a-switch :checked="isOpen" @click="goOpen" /> -->
-                <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
-                <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-                <!-- </a-form-item> -->
-              </a-col>
-            </a-row>
-          </a-form>
+              <!-- <a-button type="primary" @click="goSearch" icon="search">查询</a-button>
+                <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button> -->
+            </span>
+          </div>
         </div>
+
         <s-table
           ref="table"
           size="default"
@@ -191,8 +174,6 @@ import followModel from './followModel'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import {
-  getSmsTemplateList,
-  changeStatusSmsTemplate,
   qryPhoneFollowTaskStatistics,
   qryPhoneFollowTask,
   messageTypes,
@@ -232,52 +213,6 @@ export default {
         { code: 3, name: '失败' },
       ],
       treeData: [],
-      // treeData: [
-      //   {
-      //     key: 1,
-      //     title: '今日待随访',
-      //     count: 0,
-      //     children: [],
-      //   },
-      //   {
-      //     key: 2,
-      //     title: '全部待随访',
-      //     count: 8,
-      //     children: [
-      //       {
-      //         key: 37,
-      //         parentKey: 2,
-      //         title: '问卷名称',
-      //         count: 8,
-      //       },
-      //     ],
-      //   },
-      //   {
-      //     key: 3,
-      //     title: '逾期待随访',
-      //     count: 0,
-      //     children: [],
-      //   },
-      //   {
-      //     key: 4,
-      //     title: '已随访',
-      //     count: 45,
-      //     children: [
-      //       {
-      //         key: 37,
-      //         parentKey: 4,
-      //         title: '问卷名称',
-      //         count: 15,
-      //       },
-      //       {
-      //         key: 41,
-      //         parentKey: 4,
-      //         title: '问卷名称',
-      //         count: 30,
-      //       },
-      //     ],
-      //   },
-      // ],
       keshiData: [],
       queryParams: {
         userName: null,
@@ -986,6 +921,14 @@ export default {
   height: 1px;
 }
 
+// /deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
+//   display: none !important;
+// }.
+
+/deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
+  visibility: hidden !important;
+}
+
 .ant-drawer-body {
   padding: 0 !important;
 }
@@ -1058,6 +1001,7 @@ export default {
 
           .out-top {
             margin-top: 3%;
+            font-size: 12px;
             display: flex;
             flex-direction: row;
             width: 100%;
@@ -1065,6 +1009,7 @@ export default {
           }
 
           .out-list {
+            font-size: 12px;
             margin-top: 3%;
             margin-left: 15%;
             display: flex;
@@ -1080,6 +1025,33 @@ export default {
     overflow: hidden;
     float: right;
     width: 81%;
+
+    .table-page-search-wrapper {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e8e8e8;
+      .action-row {
+        margin-top: 2px;
+        display: inline-block;
+        vertical-align: middle;
+      }
+      .search-row {
+        margin-top: 2px;
+        display: inline-block;
+        vertical-align: middle;
+        padding-right: 20px;
+        .name {
+          margin-right: 10px;
+        }
+      }
+
+      .ant-input-affix-wrapper {
+        width: auto;
+      }
+
+      .ant-select {
+        width: 90px;
+      }
+    }
   }
 }
 

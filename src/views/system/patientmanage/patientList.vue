@@ -1,44 +1,34 @@
 <template>
   <a-card :bordered="false" class="card-right-pac" :confirmLoading="confirmLoading">
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="4" :sm="12">
-            <a-form-item label="姓名">
-              <a-input
-                v-model="queryParams.name"
-                allow-clear
-                placeholder="人员姓名查询"
-                @keyup.enter="$refs.table.refresh(true)"
-                @search="$refs.table.refresh(true)"
-              />
-            </a-form-item>
-          </a-col>
-          <a-col :md="6" :sm="24">
-            <a-form-item style="margin-left:-10%" label="管理科室">
-              <a-select
-                allow-clear
-                v-model="queryParams.depts"
-                mode="multiple"
-                placeholder="请选择科室"
-           
-              >
-                <a-select-option v-for="(item, index) in originData"  :value="item.departmentId" :key="index">{{
-                  item.departmentName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-          <a-col :md="10" :sm="24">
-            <a-button style="margin-left: 1%" type="primary" @click="$refs.table.refresh(true)" icon="search"
-              >查询</a-button
-            >
-            <a-button style="margin-left: 2%" type="primary" @click="reset()" icon="reload">重置</a-button>
-          </a-col>
-        </a-row>
-      </a-form>
-      <div class="div-divider"></div>
-      <!-- <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addName()" icon="plus">新增</a-button> -->
+      <div class="search-row">
+        <span class="name">应用名称:</span>
+        <a-input
+          v-model="queryParams.name"
+          allow-clear
+          placeholder="人员姓名查询"
+          style="width: 120px;"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+      <div class="search-row">
+        <span class="name">科室管理:</span>
+        <a-select allow-clear v-model="queryParams.depts" style="width: 120px;" mode="multiple"  placeholder="请选择科室">
+          <a-select-option  v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
+            item.departmentName
+          }}</a-select-option>
+        </a-select>
+      </div>
+
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+        </span>
+      </div>
+
+      <!-- <div class="div-divider"></div> -->
     </div>
     <s-table
       ref="table"
@@ -49,17 +39,15 @@
       :rowKey="(record) => record.code"
     >
       <span style="inline-block" slot="acount" slot-scope="text, record">
-        <img v-if="record.openidFlag==1" style="width:25px;height:25px" src="~@/assets/icons/weixin.png" />
-        <img v-if="record.openidFlag==0" style="width:25px;height:25px" src="~@/assets/icons/weixin2.png" />
+        <img v-if="record.openidFlag == 1" style="width: 25px; height: 25px" src="~@/assets/icons/weixin.png" />
+        <img v-if="record.openidFlag == 0" style="width: 25px; height: 25px" src="~@/assets/icons/weixin2.png" />
       </span>
 
       <span style="inline-block" slot="action" slot-scope="text, record">
-        <a  >健康档案</a>
+        <a>健康档案</a>
         <a-divider type="vertical" />
-      <a  @click="$refs.visitManage.distribution(record)" >随访管理</a>
+        <a @click="$refs.visitManage.distribution(record)">随访管理</a>
       </span>
-
-    
     </s-table>
 
     <visit-Manage ref="visitManage" @ok="handleOk" />
@@ -70,11 +58,7 @@
 <script>
 import { STable } from '@/components'
 
-import {
-  qryMetaDataByPage,
-  getDeptsPersonal,
-  getDepts,
-} from '@/api/modular/system/posManage'
+import { qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
 import Vue from 'vue'
@@ -183,7 +167,7 @@ export default {
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               })
-            }else{
+            } else {
               data = null
             }
             return res.data
@@ -236,10 +220,10 @@ export default {
       console.log('index=' + index)
       if (index == undefined) {
         this.queryParams.depts = []
-        // this.queryParams.departmentName= '' 
+        // this.queryParams.departmentName= ''
       } else {
         // debugger
-        console.log("11111:",this.originData[index].departmentId)
+        console.log('11111:', this.originData[index].departmentId)
         this.queryParams.depts.push(this.originData[index].departmentId)
         // this.queryParams.depts = this.originData[index].departmentId
         // console.log("ssss:",this.queryParams.depts)
@@ -277,5 +261,22 @@ export default {
   width: 100%;
   background-color: #e6e6e6;
   height: 1px;
+}
+
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
 }
 </style>
