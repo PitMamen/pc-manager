@@ -23,8 +23,8 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider"></div>
-      <div class="table-operator" style="overflow: hidden; margin-bottom: 0%; margin-top: 0%">
+      <div class="div-divider1"></div>
+      <div class="table-operator" style="overflow: hidden">
         <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
       </div>
 
@@ -233,8 +233,9 @@ export default {
 </script>
 
 <style lang="less">
-.div-divider {
+.div-divider1 {
   margin-bottom: 0.5%;
+  margin-top: 0.5%;
   width: 100%;
   background-color: #e6e6e6;
   height: 1px;
