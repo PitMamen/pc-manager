@@ -479,7 +479,7 @@ export default {
       addWxTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
-          this.$router.push( {path:'./serviceWise?keyindex=2'})
+          this.$router.go(-1)
         } else {
           this.$message.error(res.message)
         }
@@ -489,7 +489,7 @@ export default {
       modifyWxTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
-          this.$router.push( {path:'./serviceWise?keyindex=2'})
+          this.$router.go(-1)
         } else {
           this.$message.error(res.message)
         }
