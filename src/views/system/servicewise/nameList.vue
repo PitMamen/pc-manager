@@ -1,7 +1,34 @@
 <template>
   <a-card :bordered="false" class="card-right-pac">
     <div class="table-page-search-wrapper">
-      <a-form layout="inline">
+      <div class="search-row">
+        <span class="name">查询条件:</span>
+        <a-input
+          v-model="queryParams.metaName"
+          allow-clear
+          placeholder="可输入应用名称查询"
+          style="width: 120px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-switch :checked="isOpen" @click="goOpen" />
+      </div>
+
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
+        </span>
+      </div>
+      <div class="div-divider"></div>
+      <div class="table-operator" style="overflow: hidden; margin-bottom: 0%; margin-top: 0%">
+        <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
+      </div>
+
+      <!-- <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="6" :sm="24">
             <a-form-item label="查询条件">
@@ -17,17 +44,15 @@
 
           <a-col :md="10" :sm="24">
             <a-form-item label="状态:">
-              <!-- <a-popconfirm class="switch-button"> -->
               <a-switch :checked="isOpen" @click="goOpen" />
-              <!-- </a-popconfirm> -->
               <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
               <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
             </a-form-item>
           </a-col>
         </a-row>
       </a-form>
-      <div class="div-divider"></div>
-      <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addName()" icon="plus">新增</a-button>
+      <div class="div-divider"></div> -->
+      <!-- <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addName()" icon="plus">新增</a-button> -->
     </div>
     <s-table
       ref="table"
@@ -45,7 +70,7 @@
     </s-table>
 
     <check-Index ref="checkIndex" @ok="handleOk" />
-    <add-Name ref="addName" @ok="handleOk"  />
+    <add-Name ref="addName" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -90,7 +115,7 @@ export default {
         {
           title: '名单描述',
           dataIndex: 'metaName',
-          width:100,
+          width: 100,
         },
         {
           title: '数据库表名',
@@ -107,7 +132,7 @@ export default {
         {
           title: '状态',
           dataIndex: 'zt',
-          width:80,
+          width: 80,
         },
         {
           title: '操作',
@@ -151,7 +176,7 @@ export default {
      * 重置
      */
     reset() {
-      if(this.queryParams.metaName != ''){
+      if (this.queryParams.metaName != '') {
         this.queryParams.metaName = ''
       }
     },
@@ -164,8 +189,8 @@ export default {
       record.status.value = record.status.value == 1 ? 2 : 1
       record.enableStatus = record.status.value == 1 ? '停用' : '启用'
       var queryParamData = {
-        id:record.id,
-        status:record.status.value
+        id: record.id,
+        status: record.status.value,
       }
       //更新接口调用
       updateMetaConfigure(queryParamData).then((res) => {
@@ -173,7 +198,7 @@ export default {
           this.$message.success('操作成功!')
           this.handleOk()
         } else {
-          this.$message.error('操作失败!' )
+          this.$message.error('操作失败!')
         }
       })
     },
@@ -209,10 +234,26 @@ export default {
 
 <style lang="less">
 .div-divider {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    width: 100%;
-    background-color: #e6e6e6;
-    height: 1px;
+  margin-bottom: 0.5%;
+  width: 100%;
+  background-color: #e6e6e6;
+  height: 1px;
+}
+
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
   }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
 </style>
