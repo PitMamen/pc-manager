@@ -358,6 +358,7 @@ export default {
     },
 
     timeChangeStart(moment, time) {
+      console.log("00000:",time)
       this.timeStr = time
     },
 
@@ -394,7 +395,11 @@ export default {
         this.queryParams.executeTime = currentTime
       } else {
         //延时发送的
-        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
+        // console.log("延时发送时间：",this.timeStr)
+        if(!this.timeStr){
+          this.timeStr = "00:00"
+        }
+        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr
         this.queryParams.executeTime = dateStr
       }
       if (this.queryParams.executeTime.includes('Invalid date')) {
