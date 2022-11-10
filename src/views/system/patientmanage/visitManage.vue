@@ -8,6 +8,10 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
+
+  <template slot="footer">
+    <a-button @click="handleCancel">关闭</a-button>
+  </template>
     <div class="div-service-user">
       <!-- 左边 -->
       <div class="div-totalleft">
@@ -286,7 +290,8 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.$message.success('操作成功!')
-            this.handleCancel()
+            // this.handleCancel()
+            this.qryExecuteRecordByUserIdOut()
           } else {
             this.$message.error('操作失败!')
           }

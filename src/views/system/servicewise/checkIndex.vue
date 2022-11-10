@@ -42,7 +42,7 @@
         style="margin-top: 2% ;overflow-y:auto;height:500px;"
         ref="table"
         size="default"
-        :scroll="{ y:400,x:600 }"
+        :scroll="{ y:400,x:0 }"
         :pagination="false"
         :data-source="loadData"
         :columns="columns"
