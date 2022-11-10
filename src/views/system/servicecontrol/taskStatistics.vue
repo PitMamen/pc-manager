@@ -8,34 +8,38 @@
           allow-clear
           v-model="queryParamsStatisit.statType"
           style="width: 120px; height: 28px"
-          placeholder="请选择统计方式">
+          placeholder="请选择统计方式"
+        >
           <a-select-option v-for="(item, index) in StatisticsMode" :value="item.code" :key="index">{{
             item.value
           }}</a-select-option>
         </a-select>
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row"> -->
         <span class="name">执行科室:</span>
         <a-select
+        class="sitemore"
+        :maxTagCount=1
+          :collapse-tags="true"
           allow-clear
           v-model="queryParamsStatisit.execDept"
           mode="multiple"
-          style="width: 120px;"
+          style="min-width: 120px;;height: 30px;"
           placeholder="请选择科室"
         >
-          <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
+          <a-select-option  style="max-height:30px" v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
           }}</a-select-option>
         </a-select>
-      </div>
+      <!-- </div> -->
 
-      <div class="search-row">
+      <div class="search-row" style="margin-left:15px">
         <span class="name">时间:</span>
         <a-range-picker :value="createValue" @change="onChange" />
       </div>
 
-      <div  class="action-row">
+      <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
@@ -45,8 +49,9 @@
 
     <s-table
       style="overflow-y: auto"
+      class="table-hover-hidden"
       :showPagination="false"
-      :scroll="{ y: 500, x: 600 }"
+      :scroll="{ y: 700, x: 0 }"
       bordered
       ref="tableStat"
       size="default"
@@ -349,23 +354,74 @@ export default {
 </script>
   
   <style lang="less">
-
-.table-page-search-wrapper {
-    padding-bottom: 10px;
-    border-bottom: 1px solid #e8e8e8;
-    .action-row {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .search-row {
-      display: inline-block;
-      vertical-align: middle;
-      padding-right: 20px;
-      .name {
-        margin-right: 10px;
+.sitemore {
+  margin-left: 5px;
+  align-items: center;
+  /deep/ .ant-select-selection--multiple {
+    width: 100%;
+    height: 32px;
+    /deep/ .ant-select-selection__rendered {
+      height: 100%;
+      ul {
+        width: 100%;
+        height: 30px;
+        overflow-y: hidden;
+        display: -webkit-box;
+        &::-webkit-scrollbar {
+          width: 5px;
+          height: 5px;
+        }
+        &::-webkit-scrollbar-track {
+          background-color: #dedede;
+          -webkit-border-radius: 1em;
+          -moz-border-radius: 1em;
+          border-radius: 1em;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #bfbfbf;
+          -webkit-border-radius: 1em;
+          -moz-border-radius: 1em;
+          border-radius: 1em;
+        }
+        & li {
+          padding: 0px 10px 0px 5px;
+          box-sizing: border-box;
+          width: 75px;
+          float: unset;
+        }
       }
     }
   }
+}
+
+.table-hover-hidden {
+  .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
+    background-color: #ffffff !important;
+  }
+  .ant-table-body .ant-table-row-hover {
+    background: #e7f1ff;
+  }
+  .ant-table-body .ant-table-row-hover > td {
+    background: #e7f1ff;
+  }
+}
+
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
 .div-service {
   width: 100%;
   overflow: hidden;
@@ -395,7 +451,6 @@ export default {
   width: 100%;
   overflow: hidden;
   height: 100%;
-
 
   .div-service-left-service {
     background-color: white;

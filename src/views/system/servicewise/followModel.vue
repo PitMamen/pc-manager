@@ -100,9 +100,15 @@ export default {
       this.init(record)
     },
     init(record) {
-      let strSex = record.sex ? record.sex.description : ''
+      var strSex=''
+      if(record.sex){
+         strSex =record.sex.description 
+      }else if(record.userSex){
+        strSex=record.userSex
+      }
+      var age=record.age || record.userAge
       // this.title = record.userName + ' | ' + record.sex ? record.sex.description : '' + ' | ' + record.age + '岁'
-      this.title = record.userName + ' | ' + strSex + ' | ' + record.age + '岁'
+      this.title = record.userName + ' | ' + strSex + ' | ' + age + '岁'
       this.activeKey = '3'
       this.visible = true
       this.record = record
@@ -235,6 +241,8 @@ export default {
 }
 </script>
 <style lang="less">
+
+
 // /deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
 //   display: none !important;
 // }

@@ -145,6 +145,8 @@
           ref="table"
           size="default"
           :columns="columns"
+          :scroll="{ x: true }"
+          :isShowLoading="false"
           :data="loadData"
           :alert="true"
           :rowKey="(record) => record.code"
@@ -164,9 +166,11 @@
             <!-- <a-divider type="vertical" /> -->
           </span>
           <span slot="operition" slot-scope="text, record">
-            <span :class="{ 'span-red': record.overdueStatus && record.overdueStatus.value == 2 }">{{
-              record.followDate
-            }}</span>
+            <span
+              :title="record.followDate"
+              :class="{ 'span-red': record.overdueStatus && record.overdueStatus.value == 2 }"
+              >{{ record.followDate }}</span
+            >
             <!-- <a-divider type="vertical" /> -->
           </span>
         </s-table>
@@ -174,6 +178,7 @@
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
         <check-model ref="checkModel" @ok="handleOk" />
+        <follow-Model ref="followModel" @ok="handleOk" @cancel="handleCancel" />
       </a-card>
     </div>
   </a-spin>
@@ -190,6 +195,7 @@ import {
   taskBizStatus,
   getUsersByDeptIdAndRole,
   followRecords,
+ 
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -198,6 +204,7 @@ import { formatDate, formatDateFull } from '@/utils/util'
 import addForm from './addForm'
 import editForm from './editForm'
 import checkModel from '../servicewise/checkModel'
+import followModel from '../servicewise/followModel'
 
 export default {
   components: {
@@ -205,6 +212,7 @@ export default {
     addForm,
     editForm,
     checkModel,
+    followModel
   },
 
   data() {
@@ -272,44 +280,53 @@ export default {
         {
           title: '随访方式',
           dataIndex: 'messageTypeName',
+          ellipsis: true,
         },
         {
           title: '状态',
           dataIndex: 'taskBizStatusName',
+          ellipsis: true,
         },
         {
           title: '随访患者',
           dataIndex: 'userName',
+          ellipsis: true,
         },
         {
           title: '性别',
           dataIndex: 'userSex',
         },
         {
-          title: '年龄（岁）',
+          title: '年龄',
           dataIndex: 'userAge',
         },
         {
           title: '联系电话',
           dataIndex: 'userPhone',
+          ellipsis: true,
         },
         {
           title: '随访医生',
           dataIndex: 'doctorName',
+          ellipsis: true,
         },
         {
           title: '执行时间',
           // dataIndex: 'followDate',
+          // with: '220px',
           scopedSlots: { customRender: 'operition' },
+          ellipsis: true,
         },
         {
           title: '随访问卷',
+          ellipsis: true,
           dataIndex: 'questionnaireName',
         },
 
         {
           title: '操作',
-          width: '150px',
+          width: '100px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -319,6 +336,7 @@ export default {
         {
           title: '随访方式',
           dataIndex: 'messageTypeName',
+          ellipsis: true,
         },
         {
           title: '状态',
@@ -327,35 +345,43 @@ export default {
         {
           title: '随访患者',
           dataIndex: 'userName',
+          ellipsis: true,
         },
         {
           title: '性别',
           dataIndex: 'userSex',
         },
         {
-          title: '年龄（岁）',
+          title: '年龄',
           dataIndex: 'userAge',
         },
         {
           title: '联系电话',
           dataIndex: 'userPhone',
+          ellipsis: true,
         },
         {
           title: '随访医生',
           dataIndex: 'doctorName',
+          ellipsis: true,
         },
         {
+          title: '执行时间',
           // dataIndex: 'followDate',
+          // with: '220px',
           scopedSlots: { customRender: 'operition' },
+          ellipsis: true,
         },
         {
           title: '随访问卷',
           dataIndex: 'questionnaireName',
+          ellipsis: true,
         },
 
         {
           title: '操作',
-          width: '150px',
+          width: '100px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -365,6 +391,7 @@ export default {
         {
           title: '随访方式',
           dataIndex: 'messageTypeName',
+          ellipsis: true,
         },
         {
           title: '状态',
@@ -372,6 +399,7 @@ export default {
         },
         {
           title: '随访患者',
+          ellipsis: true,
           dataIndex: 'userName',
         },
         {
@@ -379,33 +407,41 @@ export default {
           dataIndex: 'userSex',
         },
         {
-          title: '年龄（岁）',
+          title: '年龄',
           dataIndex: 'userAge',
         },
         {
           title: '联系电话',
           dataIndex: 'userPhone',
+          ellipsis: true,
         },
         {
           title: '随访医生',
           dataIndex: 'doctorName',
+          ellipsis: true,
         },
         {
+          title: '执行时间',
           // dataIndex: 'followDate',
+          // with: '220px',
           scopedSlots: { customRender: 'operition' },
+          ellipsis: true,
         },
         {
           title: '抽查时间',
+          ellipsis: true,
           dataIndex: 'checkDate',
         },
         {
           title: '抽查结果',
+          ellipsis: true,
           scopedSlots: { customRender: 'result' },
           // dataIndex: 'checkStatusName',
         },
         {
           title: '操作',
-          width: '150px',
+          width: '120px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -623,6 +659,7 @@ export default {
         }
       })
     },
+
     questionnairesOut() {
       // questionnaires({ questionnaireName: '' }).then((res) => {
       questionnaires({}).then((res) => {
@@ -729,7 +766,8 @@ export default {
         // record.isCheckInfo = true
         this.$set(record, 'isCheckInfo', true)
       }
-      this.$refs.checkModel.doDetail(record)
+      record.id=record.recordId
+      this.$refs.followModel.doInfo(record)
     },
 
     dispatchPlan() {
@@ -780,7 +818,7 @@ export default {
 
   .div-service-left-control {
     background-color: white;
-    padding: 1% 1%;
+    padding: 0.5% 1%;
     float: left;
     height: 100%;
     min-height: 300px;
@@ -868,17 +906,21 @@ export default {
     float: right;
     width: 81%;
 
+    .ant-card-body {
+      padding: 0px 10px !important;
+    }
+
     .table-page-search-wrapper {
       padding-bottom: 10px;
-      margin-top: 1%;
+      // margin-top: 1%;
       border-bottom: 1px solid #e8e8e8;
       .action-row {
-        margin-top: 1px;
+        margin-top: 7px;
         display: inline-block;
         vertical-align: middle;
       }
       .search-row {
-        margin-top: 1px;
+        margin-top: 7px;
         display: inline-block;
         vertical-align: middle;
         padding-right: 20px;
@@ -893,7 +935,6 @@ export default {
     }
 
     .span-red {
-      padding: 1% 2%;
       font-size: 12px;
       color: #f26161 !important;
       // background-color: #f26161;

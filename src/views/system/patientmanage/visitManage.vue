@@ -8,6 +8,10 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
+
+  <template slot="footer">
+    <a-button @click="handleCancel">关闭</a-button>
+  </template>
     <div class="div-service-user">
       <!-- 左边 -->
       <div class="div-totalleft">
@@ -286,7 +290,8 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.$message.success('操作成功!')
-            this.handleCancel()
+            // this.handleCancel()
+            this.qryExecuteRecordByUserIdOut()
           } else {
             this.$message.error('操作失败!')
           }
@@ -353,6 +358,7 @@ export default {
     },
 
     timeChangeStart(moment, time) {
+      console.log("00000:",time)
       this.timeStr = time
     },
 
@@ -389,7 +395,11 @@ export default {
         this.queryParams.executeTime = currentTime
       } else {
         //延时发送的
-        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
+        // console.log("延时发送时间：",this.timeStr)
+        if(!this.timeStr){
+          this.timeStr = "00:00"
+        }
+        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr
         this.queryParams.executeTime = dateStr
       }
       if (this.queryParams.executeTime.includes('Invalid date')) {

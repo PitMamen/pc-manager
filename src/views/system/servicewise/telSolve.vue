@@ -40,7 +40,7 @@
         <div class="div-line-wrap">
           <span class="span-item-name"> 实际随访人 :</span>
 
-          <a-select v-model="followResultContent.actualDoctorUserId" placeholder="请选择">
+          <a-select v-model="followResultContent.actualDoctorUserId"  placeholder="请选择">
             <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
               item.userName
             }}</a-select-option>
@@ -94,23 +94,23 @@
             v-if="patientInfo.tel"
             src="~@/assets/icons/dianhua2.png"
             @click="goCall(patientInfo.tel)"
-            style="width: 34px; height: auto"
+            style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;"
           />
-          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
+          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
           <img
             v-if="patientInfo.urgentTel"
             src="~@/assets/icons/jinji2.png"
             @click="goCall(patientInfo.urgentTel)"
-            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+            style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
           />
           <img
             v-else
             src="~@/assets/icons/jinji.png"
-            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+            style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
           />
         </div>
 
-        <div style="flex: 1; margin-top: 10px; ">
+        <div style="flex: 1; margin-top: 5px; ">
           <iframe
             id="iframeId"
             defer="true"
@@ -175,6 +175,7 @@ export default {
   },
   data() {
     return {
+      user:{},
       activeKey: '1',
       audioSrc: '',
       audioShow: false,
@@ -228,7 +229,8 @@ export default {
   },
 
   created() {
-    // var user = Vue.ls.get(TRUE_USER)
+     this.user = Vue.ls.get(TRUE_USER)
+   
     self = this
     console.log('telSolve', this.record)
     this.followPlanPhonePatientInfo(this.record.userId)
@@ -279,7 +281,8 @@ export default {
     followPlanPhoneCurrent(id) {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
-          res.data.actualDoctorUserId = ''
+         
+          res.data.actualDoctorUserId =this.followResultContent.actualDoctorUserId
           if (res.data.taskBizStatus.value == 2 || res.data.taskBizStatus.value == 3) {
             res.data.taskBizStatus.description = '已随访'
           } else {
@@ -321,7 +324,16 @@ export default {
     getUsersByDeptIdAndRoleOut(departmentId) {
       getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5] }).then((res) => {
         if (res.code == 0) {
-          this.deptUsers = res.data.deptUsers[0].users
+
+          var deptUsers = res.data.deptUsers[0].users
+          deptUsers.forEach(item=>{
+           
+            if(item.userId == this.user.userId+''){
+              console.log('相等')
+              this.followResultContent.actualDoctorUserId=item.userId
+            }
+          })
+          this.deptUsers=deptUsers
           console.log(this.deptUsers)
         }
       })
@@ -463,12 +475,14 @@ export default {
   .div-span-content-left {
     width: 22%;
     height: 100%;
+    overflow-y: auto !important;
   }
   .div-span-content-mid {
     width: 56%;
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
     .span-mid-audio {
       width: 100%;
       display: inline-block;
