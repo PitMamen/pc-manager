@@ -1,34 +1,34 @@
 <template>
-  <div style="height: 500px;width: 100%;">
-    <div class="div-appoint-detail2">
+  <div style="height: 500px; width: 100%">
+    <div class="div-appoint-detail2" v-if="historyList.length>0">
       <div class="div-span-content-left" style="overflow-y: auto !important; max-height: 100%">
         <a
-        ref="#"
+          ref="#"
           class="div-his-item"
+          :style="clickId==item.id?' background-color: #EFF7FF;color: #1890ff ;':' background-color: #ffffff;color: #000 ;'"
           v-for="(item, index) in historyList"
           :key="index"
           :value="item"
           @click="onHistoryItemClick(item.id)"
         >
-          <div style="width: 26px">
-            <img v-show="item.messageType.value == 1" src="~@/assets/icons/dh_icon.png" />
-            <img v-show="item.messageType.value == 2" src="~@/assets/icons/weixin_icon.png" />
-            <img v-show="item.messageType.value == 3" src="~@/assets/icons/dx_icon.png" />
+          <div style="width: 20px">
+            <img v-show="item.messageType.value == 1" style="width: 16px;height: auto;"  src="~@/assets/icons/dh_icon.png" />
+            <img v-show="item.messageType.value == 2" style="width: 19px;height: auto;" src="~@/assets/icons/weixin_icon.png" />
+            <img v-show="item.messageType.value == 3" style="width: 17px;height: auto;" src="~@/assets/icons/dx_icon.png" />
           </div>
 
           <span class="div-time">{{ item.userFollowTime }}</span>
           <a-tooltip>
-    <template #title>{{ item.contentTitle }}</template>
-    <span class="div-content">{{ item.contentTitle }}</span>
-  </a-tooltip>
-          
-</a>
+            <template #title>{{ item.contentTitle }}</template>
+            <span class="div-content">{{ item.contentTitle }}</span>
+          </a-tooltip>
+        </a>
       </div>
 
       <div class="midline"></div>
 
       <div class="div-span-content-mid">
-        <div class="span-mid-title">{{ historyDetail.contentTitle }}</div>
+        <!-- <div class="span-mid-title">{{ historyResult.messageType.description }}</div> -->
         <div class="span-mid-audio" v-show="audioShow">
           <audio class="audio" controls :src="audioSrc" autoplay></audio>
         </div>
@@ -44,15 +44,16 @@
               @click="playAudio(item)"
               ><img src="~@/assets/icons/ly.png" class="img" />{{ item.recordName }}.mp3</a
             >
+            
           </div>
 
-          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
-          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
+          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;flex-shrink:0" />
+          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px;flex-shrink:0" />
         </div>
         <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 10px; ">
+        <div style="flex: 1; margin-top: 0px">
           <iframe
             defer="true"
             :src="questionUrl"
@@ -177,6 +178,9 @@
         </div>
       </div>
     </div>
+    <div v-else class="nodata">
+      <img src="~@/assets/icons/img_nodata.png"  />
+    </div>
     <div style="margin-top: 12px; display: flex; flex-direction: row-reverse">
       <a-button
         type="default"
@@ -195,7 +199,7 @@ import {
   followPlanPhoneHistory,
   followPlanPhonehistoryDetail,
   historyFollowResult,
-  getSoundRecordingList
+  getSoundRecordingList,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
@@ -224,6 +228,7 @@ export default {
         '患者已迁出',
         '其他',
       ],
+      clickId:'',
       soundRecordingList: [],
       historyList: [],
       historyDetail: {},
@@ -270,7 +275,7 @@ export default {
     followPlanPhoneHistory(this.record.userId).then((res) => {
       if (res.code === 0) {
         this.historyList = res.data
-  
+
         this.onHistoryItemClick(res.data[0].id)
       } else {
         this.$message.error(res.message)
@@ -289,6 +294,7 @@ export default {
     },
 
     onHistoryItemClick(id) {
+      this.clickId=id
       historyFollowResult(id).then((res) => {
         if (res.code === 0) {
           if (res.data.overdueFollowType == null) {
@@ -324,6 +330,9 @@ export default {
       getSoundRecordingList(id).then((res) => {
         if (res.code === 0) {
           this.soundRecordingList = res.data
+          this.soundRecordingList.push(res.data[0])
+          this.soundRecordingList.push(res.data[0])
+          this.soundRecordingList.push(res.data[0])
         } else {
           this.$message.error(res.message)
         }
@@ -393,6 +402,12 @@ export default {
 }
 </script>
 <style lang="less">
+.nodata{
+  height: 90%;
+  width: 100%;
+  text-align: center;
+  padding-top: 150px;
+}
 .midline {
   height: 100%;
   width: 1px;
@@ -448,16 +463,19 @@ export default {
       width: 100%;
       display: inline-block;
       color: #4d4d4d;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: bold;
       text-align: center;
       margin-bottom: 10px;
     }
     .span-mid-audio {
-      width: 100%;
-      display: inline-block;
-      text-align: right;
-      margin-bottom: 10px;
+      position: fixed;
+
+      left: 100px;
+
+      top: 100px;
+
+      z-index: 100;
     }
   }
   .div-span-content-right {
@@ -495,18 +513,20 @@ export default {
     display: flex;
     height: 40px;
     align-items: center;
+    color: #000;
+    
 
     border-bottom: 1px solid #dfe3e5;
     .div-time {
       display: inline-block;
-      color: #000;
+      margin-right: 14px;
       font-size: 12px;
       text-align: left;
-      margin-left: 16px;
-      width: 92px;
+      margin-left: 10px;
+     
     }
     .div-content {
-      color: #000;
+     
       text-align: left;
       font-size: 12px;
       flex: 1;

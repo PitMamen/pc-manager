@@ -35,6 +35,10 @@ export default {
       type: Boolean,
       default: true
     },
+    isShowLoading: {
+      type: Boolean,
+      default: true
+    },
     size: {
       type: String,
       default: 'default'
@@ -137,7 +141,9 @@ export default {
      * @param {Object} sorter 排序条件
      */
     loadData(pagination, filters, sorter) {
-      this.localLoading = true
+      if (this.isShowLoading) {
+        this.localLoading = true
+      }
       console.log(345)
       const parameter = Object.assign({
         pageNo: (pagination && pagination.current) ||

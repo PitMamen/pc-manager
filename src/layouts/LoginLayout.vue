@@ -177,6 +177,7 @@ export default {
         return
       }
       this.flag = true
+      Vue.ls.clear()
       this.Login({...{}, ...this.loginParams, ...{
         password: this.encryptDes(this.loginParams.password)
       }}).then(res => {

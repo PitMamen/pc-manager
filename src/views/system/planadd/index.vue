@@ -493,7 +493,7 @@ export default {
 
   .div-health-plan {
     width: 100%;
-    height: 100%;
+    // height: 100%;
 
     .div-plan-item {
       margin-left: 2%;
@@ -503,7 +503,7 @@ export default {
       padding: 2% 2%;
       margin-top: 1%;
       width: 80%;
-      height: 100%;
+      // height: 100%;
       overflow: hidden;
 
       .span-item-name {
