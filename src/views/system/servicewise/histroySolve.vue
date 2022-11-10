@@ -47,13 +47,13 @@
             
           </div>
 
-          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;flex-shrink:0" />
-          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px;flex-shrink:0" />
+          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0; " />
+          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto;position: absolute;right: 0;top: 4px;" />
         </div>
-        <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
+        <span class="span-item-value" style="width: 100%; margin-top: 20px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 0px">
+        <div style="flex: 1; margin-top: 5px">
           <iframe
             defer="true"
             :src="questionUrl"
@@ -330,9 +330,7 @@ export default {
       getSoundRecordingList(id).then((res) => {
         if (res.code === 0) {
           this.soundRecordingList = res.data
-          this.soundRecordingList.push(res.data[0])
-          this.soundRecordingList.push(res.data[0])
-          this.soundRecordingList.push(res.data[0])
+
         } else {
           this.$message.error(res.message)
         }
@@ -458,6 +456,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .span-mid-title {
       width: 100%;

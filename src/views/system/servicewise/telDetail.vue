@@ -134,14 +134,14 @@
             >
           </div>
 
-          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
-          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px" />
+          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
+          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;" />
         </div>
 
-        <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
+        <span class="span-item-value" style="width: 100%; margin-top: 20px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 0px; overflow-y: auto">
+        <div style="flex: 1; margin-top: 5px; overflow-y: auto">
           <iframe
             defer="true"
             :src="questionUrl"
@@ -440,6 +440,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .span-mid-title {
       width: 100%;
