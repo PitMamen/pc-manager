@@ -178,6 +178,7 @@
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
         <check-model ref="checkModel" @ok="handleOk" />
+        <follow-Model ref="followModel" @ok="handleOk" @cancel="handleCancel" />
       </a-card>
     </div>
   </a-spin>
@@ -194,6 +195,7 @@ import {
   taskBizStatus,
   getUsersByDeptIdAndRole,
   followRecords,
+ 
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -202,6 +204,7 @@ import { formatDate, formatDateFull } from '@/utils/util'
 import addForm from './addForm'
 import editForm from './editForm'
 import checkModel from '../servicewise/checkModel'
+import followModel from '../servicewise/followModel'
 
 export default {
   components: {
@@ -209,6 +212,7 @@ export default {
     addForm,
     editForm,
     checkModel,
+    followModel
   },
 
   data() {
@@ -762,7 +766,8 @@ export default {
         // record.isCheckInfo = true
         this.$set(record, 'isCheckInfo', true)
       }
-      this.$refs.checkModel.doDetail(record)
+      record.id=record.recordId
+      this.$refs.followModel.doInfo(record)
     },
 
     dispatchPlan() {

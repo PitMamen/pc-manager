@@ -94,23 +94,23 @@
             v-if="patientInfo.tel"
             src="~@/assets/icons/dianhua2.png"
             @click="goCall(patientInfo.tel)"
-            style="width: 34px; height: auto"
+            style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;"
           />
-          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto" />
+          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
           <img
             v-if="patientInfo.urgentTel"
             src="~@/assets/icons/jinji2.png"
             @click="goCall(patientInfo.urgentTel)"
-            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+            style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
           />
           <img
             v-else
             src="~@/assets/icons/jinji.png"
-            style="width: 29px; height: auto; margin-left: 20px; margin-top: 3px"
+            style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
           />
         </div>
 
-        <div style="flex: 1; margin-top: 0px; ">
+        <div style="flex: 1; margin-top: 5px; ">
           <iframe
             id="iframeId"
             defer="true"
@@ -482,6 +482,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
     .span-mid-audio {
       width: 100%;
       display: inline-block;

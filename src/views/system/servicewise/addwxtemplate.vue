@@ -269,8 +269,8 @@ export default {
         this.teachContent.articleId=res.data.jumpId
         this.teachContent.title=res.data.jumpTitle
       } else if (this.radioTyPe == 3) {
-      
-        this.checkData.navigatorContent =res.data.jumpValue
+        this.$set(this.checkData,'navigatorContent',res.data.jumpValue)
+        // this.checkData.navigatorContent =res.data.jumpValue
       }
 
       this.fieldList=JSON.parse(res.data.templateParamJson)
