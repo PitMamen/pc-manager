@@ -178,7 +178,7 @@
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
         <check-model ref="checkModel" @ok="handleOk" />
-        <follow-Model ref="followModel" @ok="handleOk" @cancel="handleCancel" />
+        <follow-Model ref="followModel" @ok="handleOk"  />
       </a-card>
     </div>
   </a-spin>
