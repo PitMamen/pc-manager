@@ -145,11 +145,11 @@ export default {
       selects2: [
         {
           id: 1,
-          name: '开启'
+          name: '启用'
         },
         {
           id: 2,
-          name: '关闭'
+          name: '停用'
         }
       ],
       selectedRowKeys: [],

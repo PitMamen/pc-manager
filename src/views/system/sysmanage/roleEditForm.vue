@@ -55,11 +55,10 @@
             v-show="item.id === currentItem.id"
           >
             <a-form-item label="菜单权限" :labelCol="labelCol2" :wrapperCol="wrapperCol2" has-feedback>
-              <!-- v-decorator="['treeState', { rules: [{ required: true, message: '请选择菜单权限！' }] }]" -->
-              <a-radio-group name="radioGroup" @change="radioChange" :default-value="2">
-                <a-radio :value="1"> 全选 </a-radio>
-                <a-radio :value="2" style="width: 100px"> 全不选 </a-radio>
-                <!-- <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio> -->
+              <a-radio-group name="radioGroup" @change="radioChange" v-model="item.radio">
+                <a-radio :value="1">全选</a-radio>
+                <a-radio :value="2">全不选</a-radio>
+                <a-radio :value="3">部分选择</a-radio>
               </a-radio-group>
             </a-form-item>
 
@@ -159,13 +158,25 @@ export default {
                   res2.data = res2.data || []
                   const allKeys = []
                   const treeData = this.transfromData(res2.data, allKeys)
+                  this.$set(item, 'radio', 2)
                   this.$set(item, 'halfKeys', [])
                   this.$set(item, 'checkedKeys', [])
                   this.$set(item, 'allKeys', allKeys)
                   this.$set(item, 'treeData', treeData)
                   if ((this.record.applicationIds||[]).includes(item.id)){
+                    const sysObj = (this.record.applicationMenus || []).find(subItem => {
+                      return subItem.applicationId === item.id
+                    }) || {}
+                    sysObj.menuIds = sysObj.menuIds || []
                     this.$set(item, 'halfKeys', [])
-                    this.$set(item, 'checkedKeys', this.record.grantMenuIdList || [])
+                    this.$set(item, 'checkedKeys', sysObj.menuIds)
+                    if (sysObj.menuIds.length === 0){
+                      this.$set(item, 'radio', 2)
+                    }else if (sysObj.menuIds.length === allKeys.length){
+                      this.$set(item, 'radio', 1)
+                    }else {
+                      this.$set(item, 'radio', 3)
+                    }
                   }
                 } else {
                   this.$message.error(res2.message)
@@ -187,8 +198,10 @@ export default {
     },
     onItemChange(e) {
       if (e.target.checked){
+        this.$set(this.currentItem, 'radio', 1)
         this.$set(this.currentItem, 'checkedKeys', this.currentItem.allKeys)
       }else {
+        this.$set(this.currentItem, 'radio', 2)
         this.$set(this.currentItem, 'checkedKeys', [])
       }
     },
@@ -200,6 +213,13 @@ export default {
       console.log('onCheck', checkedKeys, info)
       this.$set(this.currentItem, 'halfKeys', info.halfCheckedKeys)
       console.log('onCheck2', this.currentItem.checkedKeys, info)
+      if (this.currentItem.checkedKeys.length === 0){
+        this.$set(this.currentItem, 'radio', 2)
+      }else if (this.currentItem.checkedKeys.length === this.currentItem.allKeys.length){
+        this.$set(this.currentItem, 'radio', 1)
+      }else {
+        this.$set(this.currentItem, 'radio', 3)
+      }
     },
     isOpenChange() {
       this.isOpen = this.isOpen ? false : true
@@ -247,8 +267,6 @@ export default {
             return
           }
           let state = this.isOpen ? 1 : 0
-          // let sdd = this.randomString(8)
-
           let uploadKeys = JSON.parse(JSON.stringify(this.checkedKeys))
           if (this.halfKeys.length > 0) {
             uploadKeys = uploadKeys.concat(this.halfKeys)

@@ -26,8 +26,8 @@
         </a-form-item>
         <a-form-item label="应用状态" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-radio-group v-decorator="['status', { rules: [{ required: true, message: '请选择应用状态！' }] }]">
-            <a-radio-button value="1">开启</a-radio-button>
-            <a-radio-button value="2">关闭</a-radio-button>
+            <a-radio-button value="1">启用</a-radio-button>
+            <a-radio-button value="2">停用</a-radio-button>
           </a-radio-group>
         </a-form-item>
         <a-form-item label="显示类型" :labelCol="labelCol" :wrapperCol="wrapperCol">
