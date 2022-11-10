@@ -14,7 +14,7 @@
       </div>
       <div class="search-row">
         <span class="name">科室管理:</span>
-        <a-select :title="queryParams.depts" :maxTagCount=1 allow-clear v-model="queryParams.depts" style="width: 140px;" mode="multiple"  placeholder="请选择科室">
+        <a-select  class="sitemore" :title="queryParams.depts" :maxTagCount=1 allow-clear v-model="queryParams.depts" style="min-width: 120px;" mode="multiple"  placeholder="请选择科室">
           <a-select-option  v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
           }}</a-select-option>
