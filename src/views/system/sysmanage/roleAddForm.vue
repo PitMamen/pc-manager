@@ -55,11 +55,10 @@
             v-show="item.id === currentItem.id"
           >
             <a-form-item label="菜单权限" :labelCol="labelCol2" :wrapperCol="wrapperCol2" has-feedback>
-              <!-- v-decorator="['treeState', { rules: [{ required: true, message: '请选择菜单权限！' }] }]" -->
-              <a-radio-group name="radioGroup" @change="radioChange" :default-value="2">
-                <a-radio :value="1"> 全选 </a-radio>
-                <a-radio :value="2" style="width: 100px"> 全不选 </a-radio>
-                <!-- <a-radio :value="3" style="width: 100px"> 父子联动 </a-radio> -->
+              <a-radio-group name="radioGroup" @change="radioChange" v-model="item.radio">
+                <a-radio :value="1">全选</a-radio>
+                <a-radio :value="2">全不选</a-radio>
+                <a-radio :value="3">部分选择</a-radio>
               </a-radio-group>
             </a-form-item>
 
@@ -149,6 +148,7 @@ export default {
                   res2.data = res2.data || []
                   const allKeys = []
                   const treeData = this.transfromData(res2.data, allKeys)
+                  this.$set(item, 'radio', 2)
                   this.$set(item, 'halfKeys', [])
                   this.$set(item, 'checkedKeys', [])
                   this.$set(item, 'allKeys', allKeys)
@@ -173,8 +173,10 @@ export default {
     },
     onItemChange(e) {
       if (e.target.checked){
+        this.$set(this.currentItem, 'radio', 1)
         this.$set(this.currentItem, 'checkedKeys', this.currentItem.allKeys)
       }else {
+        this.$set(this.currentItem, 'radio', 2)
         this.$set(this.currentItem, 'checkedKeys', [])
       }
     },
@@ -186,6 +188,13 @@ export default {
       console.log('onCheck', checkedKeys, info)
       this.$set(this.currentItem, 'halfKeys', info.halfCheckedKeys)
       console.log('onCheck2', this.currentItem.checkedKeys, info)
+      if (this.currentItem.checkedKeys.length === 0){
+        this.$set(this.currentItem, 'radio', 2)
+      }else if (this.currentItem.checkedKeys.length === this.currentItem.allKeys.length){
+        this.$set(this.currentItem, 'radio', 1)
+      }else {
+        this.$set(this.currentItem, 'radio', 3)
+      }
     },
     isOpenChange() {
       this.isOpen = this.isOpen ? false : true
@@ -283,83 +292,8 @@ export default {
         n = ''
       for (let i = 0; i < e; i++) n += t.charAt(Math.floor(Math.random() * a))
       return n
-    },
-
-    // for (let i = 0; i < res.data.length; i++) {
-    //   this.$set(res.data[i], 'xh', i + 1)
-    // }
-    //组装数据
-    // treeData: [
-    //   {
-    //     name: 'parent 1',
-    //     key: '0-0',
-    //     child: [
-    //       {
-    //         name: '张晨成',
-    //         key: '0-0-0',
-    //         disabled: true,
-    //         child: [
-    //           { name: 'leaf', key: '0-0-0-0', disableCheckbox: true },
-    //           { name: 'leaf', key: '0-0-0-1' },
-    //         ],
-    //       },
-    //       {
-    //         name: 'parent 1-1',
-    //         key: '0-0-1',
-    //         child: [{ key: '0-0-1-0', name: 'zcvc' }],
-    //       },
-    //     ],
-    //   },
-    // ],
-
-    /**
-           * {
-  "code": 0,
-  "success": true,
-  "message": "操作成功",
-  "data": [
-    {
-      "id": 3,
-      "parentId": 0,
-      "title": "服务配置",
-      "value": "3",
-      "weight": 100,
-      "children": [
-        {
-          "id": 4,
-          "parentId": 3,
-          "title": "计划配置",
-          "value": "4",
-          "weight": 100,
-          "children": [
-            
-          ],
-          "pid": 3
-        },
-        {
-          "id": 5,
-          "parentId": 3,
-          "title": "问卷管理",
-          "value": "5",
-          "weight": 100,
-          "children": [
-            
-          ],
-          "pid": 3
-        },
-        {
-          "id": 6,
-          "parentId": 3,
-          "title": "检查配置",
-          "value": "6",
-          "weight": 100,
-          "children": [
-            
-          ],
-          "pid": 3
-        },
-           */
-  },
+    }
+  }
 }
 </script>
 
