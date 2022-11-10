@@ -40,7 +40,7 @@
         <div class="div-line-wrap">
           <span class="span-item-name"> 实际随访人 :</span>
 
-          <a-select v-model="followResultContent.actualDoctorUserId" placeholder="请选择">
+          <a-select v-model="followResultContent.actualDoctorUserId"  placeholder="请选择">
             <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
               item.userName
             }}</a-select-option>
@@ -110,7 +110,7 @@
           />
         </div>
 
-        <div style="flex: 1; margin-top: 10px; ">
+        <div style="flex: 1; margin-top: 0px; ">
           <iframe
             id="iframeId"
             defer="true"
@@ -175,6 +175,7 @@ export default {
   },
   data() {
     return {
+      user:{},
       activeKey: '1',
       audioSrc: '',
       audioShow: false,
@@ -228,7 +229,8 @@ export default {
   },
 
   created() {
-    // var user = Vue.ls.get(TRUE_USER)
+     this.user = Vue.ls.get(TRUE_USER)
+   
     self = this
     console.log('telSolve', this.record)
     this.followPlanPhonePatientInfo(this.record.userId)
@@ -279,7 +281,8 @@ export default {
     followPlanPhoneCurrent(id) {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
-          res.data.actualDoctorUserId = ''
+         
+          res.data.actualDoctorUserId =this.followResultContent.actualDoctorUserId
           if (res.data.taskBizStatus.value == 2 || res.data.taskBizStatus.value == 3) {
             res.data.taskBizStatus.description = '已随访'
           } else {
@@ -321,7 +324,16 @@ export default {
     getUsersByDeptIdAndRoleOut(departmentId) {
       getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5] }).then((res) => {
         if (res.code == 0) {
-          this.deptUsers = res.data.deptUsers[0].users
+
+          var deptUsers = res.data.deptUsers[0].users
+          deptUsers.forEach(item=>{
+           
+            if(item.userId == this.user.userId+''){
+              console.log('相等')
+              this.followResultContent.actualDoctorUserId=item.userId
+            }
+          })
+          this.deptUsers=deptUsers
           console.log(this.deptUsers)
         }
       })
@@ -463,6 +475,7 @@ export default {
   .div-span-content-left {
     width: 22%;
     height: 100%;
+    overflow-y: auto !important;
   }
   .div-span-content-mid {
     width: 56%;

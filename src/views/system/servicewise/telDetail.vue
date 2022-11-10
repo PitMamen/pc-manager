@@ -116,7 +116,7 @@
       <div class="midline"></div>
 
       <div class="div-span-content-mid">
-        <div class="span-mid-title">{{ historyDetail.contentTitle }}</div>
+        <!-- <div class="span-mid-title">{{ historyDetail.contentTitle }}</div> -->
         <div class="span-mid-audio" v-show="audioShow">
           <audio class="audio" controls :src="audioSrc" autoplay></audio>
         </div>
@@ -141,7 +141,7 @@
         <span class="span-item-value" style="width: 100%; margin-top: 10px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 10px; overflow-y: auto">
+        <div style="flex: 1; margin-top: 0px; overflow-y: auto">
           <iframe
             defer="true"
             :src="questionUrl"
