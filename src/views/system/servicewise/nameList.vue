@@ -67,10 +67,13 @@
         <a-divider type="vertical" />
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
+
     </s-table>
 
     <check-Index ref="checkIndex" @ok="handleOk" />
     <add-Name ref="addName" @ok="handleOk" />
+
+   
   </a-card>
 </template>
 
@@ -120,15 +123,26 @@ export default {
         {
           title: '数据库表名',
           dataIndex: 'databaseTableName',
+          width: 180,
         },
         {
           title: '数据库字段',
           dataIndex: 'databaseTableFieldName',
+          ellipsis:true,
+          maxWidth:180,
+          // onCell:()=>{
+          //   return {
+          //     style:{
+          //       maxWidth:120,
+          //       overflow:'hidden',
+          //       textOverflow:'ellipsis',
+              
+          //     }
+          //   }
+          // }
+      
         },
-        // {
-        //   title: '推送接口',
-        //   dataIndex: 'pushInterfaceType',
-        // },
+
         {
           title: '状态',
           dataIndex: 'zt',

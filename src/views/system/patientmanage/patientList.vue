@@ -21,7 +21,7 @@
         </a-select>
       </div>
 
-      <div class="action-row">
+      <div class="action-row" style="margin-bottom:-2px">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
@@ -101,11 +101,13 @@ export default {
           title: '姓名',
           dataIndex: 'name',
           width: 80,
+          ellipsis:true,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
           width: 140,
+          ellipsis:true,
         },
         {
           title: '年龄',
@@ -120,12 +122,13 @@ export default {
         {
           title: '联系电话',
           dataIndex: 'phone',
-          width: 100,
+          width: 120,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
           width: 120,
+          ellipsis:true,
         },
         {
           title: '紧急联系人电话',

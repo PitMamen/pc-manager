@@ -81,6 +81,7 @@ export default {
         {
           title: '模板内容',
           dataIndex: 'templateContent',
+          ellipsis:true,
         },
         {
           title: '状态',

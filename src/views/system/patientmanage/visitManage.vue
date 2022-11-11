@@ -16,7 +16,7 @@
       <!-- 左边 -->
       <div class="div-totalleft">
         <div class="div-totaltopleft">
-          <span class="span-item-name" style="margin-left: 10px; width: 30%"> 添加任务</span>
+          <span class="span-item-name" style="margin-left: 20px; width: 30%;display: inline-block; margin-top: 3px;"> 添加任务</span>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -90,10 +90,10 @@
       <!-- ri -->
       <div class="card-right-user" style="overflow-y: auto; height: 400px">
         <div class="div-totaltop">
-          <span class="span-item-name" style="margin-left: 20px"> 随访历史任务</span>
+          <span class="span-item-name" style="margin-left: 20px;display: flex; margin-top: -2px;"> 随访历史任务</span>
         </div>
 
-        <div class="div-total1" v-for="(item, index) in recordList" :key="index">
+        <div style="margin-top:22px" class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
             <span class="span-item-value" style="margin-left: 10px"
@@ -108,7 +108,7 @@
           </div>
 
           <!--  -->
-          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 1px">
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 5px">
             <span class="span-item-name"> 随访内容 :</span>
             <span :title="item.templateTitle" class="span-item-value1" style="margin-left: 0px; width: 25%"
               >{{ item.templateTitle != null ? item.templateTitle : '-' }}
@@ -129,7 +129,7 @@
           </div>
 
           <!--  -->
-          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 1px">
+          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 5px">
             <span class="span-item-name"> 计划日期 :</span>
             <span class="span-item-value" style="width: 30%"
               >{{ item.executeTime != null ? item.executeTime : '' }}
