@@ -645,6 +645,9 @@ export default {
 
         this.confirmLoading = true
         return qryPhoneFollowTask(Object.assign(parameter, param)).then((res) => {
+          /**
+           *用于屏蔽第一次刷新的loading，第一次系统自动加在数据的时候loading不隐藏
+           */
           if (this.canHide) {
             this.confirmLoading = false
           }
@@ -687,7 +690,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.getDeptsOut()
-    this.initData()
+    this.initData(true)
     messageTypes().then((res) => {
       if (res.code == 0) {
         this.msgData = res.data
@@ -696,12 +699,16 @@ export default {
   },
 
   methods: {
-    initData() {
+    /**
+     * 第一次和重置的时候 isRest为true
+     * @param {*} isRest
+     */
+    initData(isRest) {
       qryPhoneFollowTaskStatistics().then((res) => {
         if (res.code == 0) {
           this.treeData = res.data
           console.log('Tree created', JSON.parse(JSON.stringify(this.treeData)))
-          this.processData(false)
+          this.processDataNew(isRest)
         }
       })
     },
@@ -709,31 +716,8 @@ export default {
     //点击查询时 重置数量
     goSearch() {
       this.confirmLoading = true
-      //TODO 记住当前勾选的条目
 
-      qryPhoneFollowTaskStatistics().then((res) => {
-        if (res.code == 0) {
-          let treeDataTemp = res.data
-          for (let index = 0; index < this.treeData.length; index++) {
-            this.treeData[index].title = treeDataTemp[index].title + '（' + treeDataTemp[index].count + '）'
-
-            console.log('Tree goSearch ', JSON.parse(JSON.stringify(this.treeData)))
-            if (this.treeData[index].children && this.treeData[index].children.length > 0) {
-              for (let indexChild = 0; indexChild < this.treeData[index].children.length; indexChild++) {
-                this.$set(
-                  this.treeData[index].children[indexChild],
-                  'title',
-                  treeDataTemp[index].children[indexChild].title +
-                    '（' +
-                    treeDataTemp[index].children[indexChild].count +
-                    '）'
-                )
-              }
-            }
-          }
-        }
-        this.$refs.table.refresh(true)
-      })
+      this.initData(false)
     },
 
     onHideAndSee(itemOut, indexOut) {
@@ -846,12 +830,14 @@ export default {
       this.goSearch()
     },
 
-    processData(isReset) {
+    /**
+     * 处理树和勾选
+     * @param {} isReset
+     */
+    processDataNew(isReset) {
       //先整体初始化
       for (let index = 0; index < this.treeData.length; index++) {
-        if (!isReset) {
-          this.treeData[index].title = this.treeData[index].title + '（' + this.treeData[index].count + '）'
-        }
+        this.treeData[index].title = this.treeData[index].title + '（' + this.treeData[index].count + '）'
         console.log('title', this.treeData[index].title)
         console.log('count', this.treeData[index].count)
 
@@ -862,48 +848,81 @@ export default {
         if (this.treeData[index].children && this.treeData[index].children.length > 0) {
           this.treeData[index].children.forEach((itemChild, indexChild) => {
             this.$set(itemChild, 'isChecked', false)
-            if (!isReset) {
-              this.$set(itemChild, 'title', itemChild.title + '（' + itemChild.count + '）')
-            }
+            this.$set(itemChild, 'title', itemChild.title + '（' + itemChild.count + '）')
           })
         }
       }
 
-      //再把首个全部展开和勾选
-      this.$set(this.treeData[0], 'isChecked', true)
-      this.$set(this.treeData[0], 'isVisible', true)
-      this.$set(this.treeData[0], 'outIcon', 'caret-down')
-      if (this.treeData[0].children && this.treeData[0].children.length > 0) {
-        this.treeData[0].children.forEach((item, index) => {
-          this.$set(item, 'isChecked', true)
-        })
-      }
+      debugger
+      //初始化逻辑
+      if (isReset) {
+        debugger
+        //再把首个全部展开和勾选
+        this.$set(this.treeData[0], 'isChecked', true)
+        this.$set(this.treeData[0], 'isVisible', true)
+        this.$set(this.treeData[0], 'outIcon', 'caret-down')
+        if (this.treeData[0].children && this.treeData[0].children.length > 0) {
+          this.treeData[0].children.forEach((item, index) => {
+            this.$set(item, 'isChecked', true)
+          })
+        }
 
-      //初始化请求数据
-      this.queryParams.queryStatus = this.treeData[0].key
-      this.queryParams.messageOriginalIds = []
-      this.treeData[0].children.forEach((item, index) => {
-        this.queryParams.messageOriginalIds.push(item.key)
-      })
+        //初始化请求数据
+        this.queryParams.queryStatus = this.treeData[0].key
+        this.queryParams.messageOriginalIds = []
+        this.treeData[0].children.forEach((item, index) => {
+          this.queryParams.messageOriginalIds.push(item.key)
+        })
+      } else {
+        debugger
+        //非初始化逻辑，记住了以前选择的父层和子层；子层可能记住了，但是新的树里面没有了，要判断删除请求数据
+        this.$set(this.treeData[this.queryParams.queryStatus - 1], 'isChecked', true)
+        this.$set(this.treeData[this.queryParams.queryStatus - 1], 'isVisible', true)
+        this.$set(this.treeData[this.queryParams.queryStatus - 1], 'outIcon', 'caret-down')
+        if (
+          this.treeData[this.queryParams.queryStatus - 1].children &&
+          this.treeData[this.queryParams.queryStatus - 1].children.length > 0
+        ) {
+          //勾选记住的子层
+          for (let index = 0; index < this.treeData[this.queryParams.queryStatus - 1].children.length; index++) {
+            for (let indexIn = 0; indexIn < this.queryParams.messageOriginalIds.length; indexIn++) {
+              if (
+                this.queryParams.messageOriginalIds[indexIn] ==
+                this.treeData[this.queryParams.queryStatus - 1].children[index].key
+              ) {
+                this.$set(this.treeData[this.queryParams.queryStatus - 1].children[index], 'isChecked', true)
+              }
+            }
+          }
+
+          console.log('messageOriginalIds', JSON.parse(JSON.stringify(this.queryParams.messageOriginalIds)))
+
+          // 子层可能记住了，但是新的树里面没有了，要判断删除请求数据
+          let newIds = []
+          for (let index = 0; index < this.queryParams.messageOriginalIds.length; index++) {
+            for (
+              let indexIn = 0;
+              indexIn < this.treeData[this.queryParams.queryStatus - 1].children.length;
+              indexIn++
+            ) {
+              if (
+                this.treeData[this.queryParams.queryStatus - 1].children[indexIn].key ==
+                this.queryParams.messageOriginalIds[index]
+              ) {
+                newIds.push(this.queryParams.messageOriginalIds[index])
+              }
+            }
+          }
+          this.queryParams.messageOriginalIds = JSON.parse(JSON.stringify(newIds))
+          console.log('messageOriginalIds After', JSON.parse(JSON.stringify(this.queryParams.messageOriginalIds)))
+        } else {
+          //父层没有子层了
+          this.queryParams.messageOriginalIds = []
+        }
+      }
 
       this.canHide = true
       this.$refs.table.refresh(true)
-
-      //给悬停
-      nextTick(() => {
-        var rowsDom = document.getElementsByClassName('ant-table-row-cell-break-word')
-        rowsDom.forEach((item1) => {
-          if (item1.nodeName === 'TD') {
-            item1.setAttribute('title', item1.textContent)
-          }
-        })
-
-        var tableHeadDom = document.getElementsByClassName('ant-table-thead')
-        var colsDom = tableHeadDom[0].getElementsByClassName('ant-table-row-cell-ellipsis')
-        colsDom.forEach((item) => {
-          item.setAttribute('title', item.textContent)
-        })
-      })
     },
 
     getDeptsOut() {
@@ -938,29 +957,14 @@ export default {
     reset() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
 
-      this.processData(true)
-
       this.createValue = []
-
-      this.$refs.table.refresh()
+      this.initData(true)
     },
 
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
       this.queryParams.startDate = dateArr[0]
       this.queryParams.endDate = dateArr[1]
-    },
-
-    goVise() {
-      // this.visible = !this.visible
-      this.clicked = !this.clicked
-      this.drawerWidth = this.clicked ? 300 : 35
-      this.drawerTitle = this.clicked ? '选择随访列表' : '  '
-      this.btnText = this.clicked ? '隐藏' : '展开'
-    },
-
-    onClose() {
-      this.visible = false
     },
 
     /**
@@ -979,7 +983,7 @@ export default {
     },
 
     handleOk() {
-      this.initData()
+      this.initData(false)
     },
 
     handleCancel() {

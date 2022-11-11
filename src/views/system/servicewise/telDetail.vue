@@ -326,8 +326,9 @@ export default {
 
     //播放音频
     playAudio(soundRecord) {
-      this.audioSrc = soundRecord.recordUrL
-      this.audioShow = true
+      // this.audioSrc = soundRecord.recordUrL
+      // this.audioShow = true
+      this.$emit('playAudio', soundRecord.recordUrL)
     },
 
     subStringIdcardNo(idcard) {
@@ -452,10 +453,13 @@ export default {
       margin-bottom: 10px;
     }
     .span-mid-audio {
-      width: 100%;
-      display: inline-block;
-      text-align: right;
-      margin-bottom: 10px;
+      position: absolute;
+
+      left:26%;
+
+      top: 35px;
+
+      z-index: 10000;
     }
   }
   .div-span-content-right {

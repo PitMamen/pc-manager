@@ -294,6 +294,7 @@ export default {
     },
 
     onHistoryItemClick(id) {
+      this.stopAudio()
       this.clickId=id
       historyFollowResult(id).then((res) => {
         if (res.code === 0) {
@@ -338,9 +339,15 @@ export default {
     },
     //播放音频
     playAudio(item) {
-      this.audioSrc = item.recordUrL
-      this.audioShow = true
+      // this.audioSrc = item.recordUrL
+      // this.audioShow = true
+      this.$emit('playAudio', item.recordUrL)
     },
+    stopAudio(){
+      this.audioSrc =''
+      this.audioShow = false
+    },
+    
     subStringIdcardNo(idcard) {
       if (idcard) {
         const temp = idcard.substring(4, 15)
@@ -468,13 +475,13 @@ export default {
       margin-bottom: 10px;
     }
     .span-mid-audio {
-      position: fixed;
+      position: absolute;
 
-      left: 100px;
+      left:26%;
 
-      top: 100px;
+      top: 35px;
 
-      z-index: 100;
+      z-index: 10000;
     }
   }
   .div-span-content-right {

@@ -8,7 +8,7 @@
     :maskClosable="false"
     :destroyOnClose="true"
   >
-    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px">
+    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px;position: relative;">
       <!-- <a-tab-pane key="1">
           <template #tab>
             <span>
@@ -27,7 +27,7 @@
             历史记录
           </span>
         </template>
-        <histroy-solve ref="histroySolve" :record="record" @handleCancel="handleCancel" />
+        <histroy-solve ref="histroySolve" :record="record" @handleCancel="handleCancel" @playAudio="playAudio"/>
       </a-tab-pane>
       <a-tab-pane key="3">
         <template #tab>
@@ -44,6 +44,7 @@
           @handleCancel="handleCancel"
           @ok="handleOk"
           @goCall="goCall"
+          @playAudio="playAudio"
         />
         <tel-detail
           v-else-if="modelType == 1"
@@ -52,8 +53,12 @@
           @ok="handleOk"
           @handleCancel="handleCancel"
           @goCall="goCall"
+          @playAudio="playAudio"
         />
       </a-tab-pane>
+      <div class="span-mid-audio" v-show="audioShow">
+          <audio style="height: 44px;" controls :src="audioUrl" autoplay></audio>
+        </div>
     </a-tabs>
   </a-modal>
 </template>
@@ -83,6 +88,8 @@ export default {
       recordId: '',
       phone: '',
       isSDKReady: false,
+      audioUrl:'',
+      audioShow:false
     }
   },
   created() {},
@@ -116,13 +123,24 @@ export default {
 
     handleCancel() {
       this.visible = false
+      this.stopAudio()
       this.$emit('cancel', '')
     },
     handleOk() {
       this.visible = false
+      this.stopAudio()
       this.$emit('ok', '')
     },
-
+ //播放音频
+    playAudio(url) {
+      this.audioUrl = url
+      this.audioShow = true
+    },
+     //结束音频
+     stopAudio() {
+      this.audioUrl = ''
+      this.audioShow = false
+    },
     injectTcccWebSDK(sdkURL) {
       let that = this
       return new Promise(function (resolve) {
@@ -250,7 +268,15 @@ export default {
 /deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
   visibility: hidden !important;
 }
+.span-mid-audio {
+      position: absolute;
 
+      right: 0;
+
+      top: 0;
+
+      z-index: 10000;
+    }
 .icon {
   width: 17px;
   height: 18px;

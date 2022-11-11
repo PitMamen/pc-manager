@@ -89,20 +89,23 @@
               ><img src="~@/assets/icons/ly.png" class="img" />{{ item.recordName }}.mp3</a
             >
           </div>
-
+          <a ref="#" v-if="patientInfo.tel">
           <img
-            v-if="patientInfo.tel"
+            
             src="~@/assets/icons/dianhua2.png"
             @click="goCall(patientInfo.tel)"
             style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;"
           />
+        </a>
           <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
+          <a ref="#" v-if="patientInfo.urgentTel">
           <img
-            v-if="patientInfo.urgentTel"
+            
             src="~@/assets/icons/jinji2.png"
             @click="goCall(patientInfo.urgentTel)"
             style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
           />
+        </a>
           <img
             v-else
             src="~@/assets/icons/jinji.png"
@@ -360,8 +363,9 @@ export default {
     },
  //播放音频
  playAudio(soundRecord) {
-      this.audioSrc = soundRecord.recordUrL
-      this.audioShow = true
+      // this.audioSrc = soundRecord.recordUrL
+      // this.audioShow = true
+      this.$emit('playAudio', soundRecord.recordUrL)
     },
     subStringPhoneNo(phone) {
       var str = phone
@@ -484,10 +488,13 @@ export default {
     flex-direction: column;
     position: relative;
     .span-mid-audio {
-      width: 100%;
-      display: inline-block;
-      text-align: right;
-      margin-bottom: 10px;
+      position: absolute;
+
+      left:26%;
+
+      top: 35px;
+
+      z-index: 10000;
     }
   }
   .div-span-content-right {
