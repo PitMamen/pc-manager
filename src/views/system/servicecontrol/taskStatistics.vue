@@ -17,24 +17,28 @@
       </div>
 
       <!-- <div class="search-row"> -->
-        <span class="name">执行科室:</span>
-        <a-select
+      <span class="name">执行科室:</span>
+      <a-select
         class="sitemore"
-        :maxTagCount=1
-          :collapse-tags="true"
-          allow-clear
-          v-model="queryParamsStatisit.execDept"
-          mode="multiple"
-          style="min-width: 120px;;height: 30px;"
-          placeholder="请选择科室"
+        :maxTagCount="1"
+        :collapse-tags="true"
+        allow-clear
+        v-model="queryParamsStatisit.execDept"
+        mode="multiple"
+        style="min-width: 120px; height: 30px"
+        placeholder="请选择科室"
+      >
+        <a-select-option
+          style="max-height: 30px"
+          v-for="(item, index) in originData"
+          :value="item.departmentId"
+          :key="index"
+          >{{ item.departmentName }}</a-select-option
         >
-          <a-select-option  style="max-height:30px" v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
-            item.departmentName
-          }}</a-select-option>
-        </a-select>
+      </a-select>
       <!-- </div> -->
 
-      <div class="search-row" style="margin-left:15px">
+      <div class="search-row" style="margin-left: 15px">
         <span class="name">时间:</span>
         <a-range-picker :value="createValue" @change="onChange" />
       </div>
@@ -234,6 +238,10 @@ export default {
         //   param.execDept = "-1"
         // }
         // }
+
+        if (this.originData.length == 0&&this.user.roleName != 'admin') {
+          param.execDept = '-1'
+        }
 
         return statExecuteRecord(Object.assign(parameter, param)).then((res) => {
           if (res.code == 0) {
