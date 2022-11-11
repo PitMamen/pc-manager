@@ -4,7 +4,7 @@
       <p class="p-part-title">组织架构</p>
       <!-- 分割线 -->
       <!-- <div class="div-divider"></div> -->
-      <div class="global-search-wrapper" style="width: 160px; display: inline-block">
+      <div class="global-search-wrapper" style="width: 126px; display: inline-block">
         <a-auto-complete
           class="global-search"
           size="large"
@@ -24,14 +24,13 @@
       <div style="max-height: 600px; overflow-y: auto; margin-top: 7%">
         <div
           class="div-part-user"
-          style="margin-top: 7%"
           v-for="(item, index) in deptData"
           :value="item.departmentId"
           :key="index"
         >
-          <p class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
+          <span class="p-name" :class="{ checked: item.isChecked }" @click="onDeptChoose(index)">
             {{ item.departmentName }}
-          </p>
+          </span>
           <!-- 分割线 -->
           <div class="div-divider"></div>
         </div>
@@ -341,7 +340,7 @@ export default {
 
   .div-service-left-user {
     background-color: white;
-    padding: 2% 3%;
+    padding: 10px 15px;
     float: left;
     height: 100%;
     min-height: 300px;
@@ -366,7 +365,8 @@ export default {
     .div-part-user {
       overflow: hidden;
       width: 100%;
-      padding-left: 5%;
+      // padding: 3px 5px;
+      padding-left: 5px;
       // height: 10%;
 
       .checked {
@@ -374,8 +374,9 @@ export default {
       }
 
       .p-name {
-        margin-top: 3.5%;
+        // margin-top: 3.5%;
         display: block;
+        margin: 3px 0;
         // height: 100%;
         padding-left: 1%;
         color: #000;

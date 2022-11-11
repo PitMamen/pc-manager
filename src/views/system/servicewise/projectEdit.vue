@@ -102,6 +102,7 @@
                 @focus="getFocus"
                 disabled
                 v-model="itemRule.metaConfigureDetailId"
+                @select="onFieldSelect(itemRule, indexRule)"
                 allow-clear
                 placeholder="请选择字段"
               >
@@ -122,12 +123,19 @@
                 }}</a-select-option>
               </a-select>
 
+              <a-date-picker
+                style="margin-left: 1%"
+                v-if="itemRule.fieldType == 2"
+                format="YYYY-MM-DD"
+                v-model="itemRule.queryValue"
+              />
+
               <a-input
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
-                disabled
                 :maxLength="30"
                 style="display: inline-block"
+                v-if="itemRule.fieldType == 1"
                 allow-clear
                 placeholder="请输入内容"
               />
@@ -342,8 +350,9 @@
                 <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
 
-              <span class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
+              <span v-if="itemTask.taskType == 1" class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
               <a-input-number
+                v-if="itemTask.taskType == 1"
                 style="display: inline-block; margin-left: 1%; width: 96px"
                 v-model="itemTask.overdueTimeUnit"
                 :min="0"
@@ -562,6 +571,7 @@ export default {
       }
     })
 
+    // this.getDeptAllQues()
     // this.getWxTemplateListForJumpTypeOut()
   },
 
@@ -610,7 +620,10 @@ export default {
           this.templateListSMS = res.data
         }
 
+        this.confirmLoading = false
+
         //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
+        // this.getDeptAllQues()
         this.getDeptAllQues()
       })
     },
@@ -670,6 +683,9 @@ export default {
       if (this.projectData.filterRules && this.projectData.filterRules.length > 0) {
         this.projectData.filterRules.forEach((item) => {
           item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+          if (item.fieldType == 2) {
+            item.queryValue = moment(item.queryValue, 'YYYY-MM-DD')
+          }
         })
       }
 
@@ -752,7 +768,7 @@ export default {
     },
 
     getDeptAllQues() {
-      let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
+      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
 
       let param = {
         pageNo: 1,
@@ -775,16 +791,12 @@ export default {
             // item.messageContentId = parseInt(item.messageContentId)
             if (item.messageType == 1) {
               this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
-
-              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
             } else if (item.messageType == 2) {
               //查所有微信模版
               this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
-              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
             } else if (item.messageType == 3) {
               //查所有短信模版
               this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
-              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
             }
 
             this.confirmLoading = false
@@ -859,7 +871,8 @@ export default {
     },
 
     addRule() {
-      this.projectData.filterRules.push({})
+      // this.projectData.filterRules.push({})
+      this.projectData.filterRules.push({ fieldType: 1 })
     },
 
     /**
@@ -867,7 +880,7 @@ export default {
      */
     onDeptSelect() {
       this.getUsersByDeptIdAndRoleOut()
-      this.getDeptAllQues()
+      // this.getDeptAllQues()
     },
 
     addPerson(indexMisson) {
@@ -990,6 +1003,16 @@ export default {
           itemTask.taskType = '3'
         }
       }
+    },
+
+    onFieldSelect(itemRule, indexRule) {
+      console.log('onFieldSelect chooseData', this.chooseData)
+      console.log('onFieldSelect itemRule Be', JSON.parse(JSON.stringify(itemRule)))
+      let chooseOne = this.chooseData.find((item) => {
+        return item.value == itemRule.metaConfigureDetailId
+      })
+      this.$set(itemRule, 'fieldType', chooseOne.fieldType)
+      console.log('onFieldSelect itemRule Af', JSON.parse(JSON.stringify(itemRule)))
     },
 
     // /**
@@ -1134,7 +1157,7 @@ export default {
 
       if (tempData.filterRules && tempData.filterRules.length > 0) {
         for (let indexRule = 0; indexRule < tempData.filterRules.length; indexRule++) {
-          debugger
+          // debugger
           let itemRule = tempData.filterRules[indexRule]
           if (!itemRule.metaConfigureDetailId) {
             this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤字段')
@@ -1148,6 +1171,11 @@ export default {
             this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
             return
           }
+
+          if (itemRule.fieldType == 2) {
+            itemRule.queryValue = moment(itemRule.queryValue).format('YYYY-MM-DD')
+          }
+          console.log('itemRule.queryValue', itemRule.queryValue)
         }
       }
 
@@ -1220,6 +1248,11 @@ export default {
         //后期加的  如果是微信或者电话随访，勾选了这个字段就传1
         if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
           this.$set(item, 'overdueFollowType', 1)
+        }
+
+        //处理逾期时间
+        if (item.taskType != 1) {
+          item.overdueTimeUnit
         }
 
         delete item.everyData
