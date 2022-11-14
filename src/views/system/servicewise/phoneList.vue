@@ -853,10 +853,10 @@ export default {
         }
       }
 
-      debugger
+      // debugger
       //初始化逻辑
       if (isReset) {
-        debugger
+        // debugger
         //再把首个全部展开和勾选
         this.$set(this.treeData[0], 'isChecked', true)
         this.$set(this.treeData[0], 'isVisible', true)
@@ -874,7 +874,7 @@ export default {
           this.queryParams.messageOriginalIds.push(item.key)
         })
       } else {
-        debugger
+        // debugger
         //非初始化逻辑，记住了以前选择的父层和子层；子层可能记住了，但是新的树里面没有了，要判断删除请求数据
         this.$set(this.treeData[this.queryParams.queryStatus - 1], 'isChecked', true)
         this.$set(this.treeData[this.queryParams.queryStatus - 1], 'isVisible', true)
@@ -1050,8 +1050,9 @@ export default {
     background-color: white;
     padding: 0 1%;
     float: left;
-    height: 100%;
-    min-height: 300px;
+    min-height: 100%;
+    // height: 100%;
+    // min-height: 300px;
     // border-right: 1px dashed #e6e6e6;
     border: 1px solid #e6e6e6;
     width: 18%;
@@ -1061,18 +1062,22 @@ export default {
       display: flex;
       flex-direction: column;
       width: 100%;
+      // height: 100%;
+      min-height: 100%;
       // justify-content: center;
       // align-items: center;
 
       .bottom-top {
         // color: #1890ff;
         margin-top: 15px;
+        height: 10%;
         margin-left: 30%;
         font-size: 14px;
       }
       .bottom-down {
         margin-top: 10px;
-        // height: 550px;
+        max-height: 90%;
+        min-height: 90%;
         margin-bottom: 10px;
         border-top: #e6e6e6 1px solid;
         // border-left: #e6e6e6 1px solid;
@@ -1080,7 +1085,7 @@ export default {
         .item-out {
           display: flex;
           flex-direction: column;
-          max-height: 550px;
+          // max-height: 550px;
           overflow-y: auto;
           width: 100%;
 
