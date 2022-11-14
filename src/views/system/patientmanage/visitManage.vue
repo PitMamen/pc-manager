@@ -96,7 +96,7 @@
         <div style="margin-top:22px" class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
-            <span class="span-item-value" style="margin-left: 10px"
+            <span class="span-item-value" style="margin-left: 8px"
               >{{ item.messageType != null ? item.messageType.description : '' }}
             </span>
 
