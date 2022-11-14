@@ -29,7 +29,7 @@
           </a-auto-complete>
         </div>
 
-        <div class="div-wrap-service" style="margin-top: 2%">
+        <div class="div-wrap-control" style="margin-top: 2%">
           <div
             class="div-part"
             :class="{ checked: item.isChecked }"
@@ -45,7 +45,7 @@
               <span style="width: 30px; text-align: center">
                 {{ item.checkPercentage }}
               </span>
-              <span style="margin-left: 15px; width: 30px; text-align: center">
+              <span style="margin-left: 5px; width: 30px; text-align: center">
                 {{ item.passCheckPercentage }}
               </span>
             </div>
@@ -178,7 +178,7 @@
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
         <check-model ref="checkModel" @ok="handleOk" />
-        <follow-Model ref="followModel" @ok="handleOk"  />
+        <follow-Model ref="followModel" @ok="handleOk" />
       </a-card>
     </div>
   </a-spin>
@@ -195,7 +195,6 @@ import {
   taskBizStatus,
   getUsersByDeptIdAndRole,
   followRecords,
- 
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -212,7 +211,7 @@ export default {
     addForm,
     editForm,
     checkModel,
-    followModel
+    followModel,
   },
 
   data() {
@@ -766,7 +765,7 @@ export default {
         // record.isCheckInfo = true
         this.$set(record, 'isCheckInfo', true)
       }
-      record.id=record.recordId
+      record.id = record.recordId
       this.$refs.followModel.doInfo(record)
     },
 
@@ -858,8 +857,8 @@ export default {
       }
     }
 
-    .div-wrap-service {
-      max-height: 662px;
+    .div-wrap-control {
+      max-height: 420px;
       overflow-y: auto !important;
       .checked {
         color: #1890ff !important;
@@ -880,7 +879,11 @@ export default {
           // display: inline-block;
           flex: 1;
           height: 85%;
-          overflow: hidden;
+          width: 60%;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+
           // padding-left: 1%;
           // color: #000;
           margin-top: 1%;
@@ -893,9 +896,11 @@ export default {
 
         .div-rate {
           display: flex;
+          width: 38%;
+          font-size: 12px;
           align-items: center;
           flex-direction: row;
-          margin-right: 2%;
+          margin-right: 3%;
         }
       }
     }

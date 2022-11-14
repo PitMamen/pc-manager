@@ -125,6 +125,7 @@
 
               <a-date-picker
                 style="margin-left: 1%"
+                disabled
                 v-if="itemRule.fieldType == 2"
                 format="YYYY-MM-DD"
                 v-model="itemRule.queryValue"
@@ -134,6 +135,7 @@
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
                 :maxLength="30"
+                disabled
                 style="display: inline-block"
                 v-if="itemRule.fieldType == 1"
                 allow-clear

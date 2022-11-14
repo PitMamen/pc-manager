@@ -200,10 +200,10 @@ export default {
         return
       }
 
-      if (tccc.Agent.getStatus() != 'free') {
-        this.$message.info('忙线中，请稍等')
-        return
-      }
+      // if (tccc.Agent.getStatus() != 'free') {
+      //   this.$message.info('忙线中，请稍等')
+      //   return
+      // }
       this.startOutboundCall(phone, recordId)
     },
 
