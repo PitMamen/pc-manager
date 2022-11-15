@@ -580,7 +580,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" >
 .ant-select-dropdown {
   z-index: 20000;
 }
@@ -712,6 +712,12 @@ export default {
         .ant-select {
           width:22.5% !important;
           margin-left: 0% !important;
+        }
+        .ant-radio-wrapper{
+          font-size: 12px;
+        }
+        .ant-radio {
+          font-size: 12px;
         }
       }
     }

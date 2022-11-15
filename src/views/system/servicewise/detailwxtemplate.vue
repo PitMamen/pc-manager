@@ -680,6 +680,12 @@ export default {
           width:22.5% !important;
           margin-left: 0% !important;
         }
+        .ant-radio-wrapper{
+          font-size: 12px;
+        }
+        .ant-radio {
+          font-size: 12px;
+        }
       }
     }
   }
