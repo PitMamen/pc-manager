@@ -2,44 +2,26 @@
   <a-card :bordered="false">
     <!-- <a-button type="primary" @click="goAdd()">新增文章</a-button> -->
 
-    <!-- 下个版本迭代放出来 -->
-    <div class="table-page-search-wrapper" style="margin-top: 1%">
-      <a-form layout="inline">
-        <a-row :gutter="48">
-          <!-- <a-col :md="3" :sm="24">
-              <a-button type="primary" @click="$refs.addForm.add()">新增内容</a-button>
-            </a-col> -->
+    <div class="table-page-search-wrapper">
+      
+      <div class="search-row">
+        <span class="name">科室:</span>
+        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;">
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{ item.departmentName }}</a-select-option>
+        </a-select>
+      </div>
+     
 
-          <a-col :md="3" :sm="24">
-            <a-form-item label="">
-              <a-button type="primary" @click="goAdd()">新增文章</a-button>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="7" :sm="24">
-            <a-form-item label="科室">
-              <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
-                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                  item.departmentName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="6" :sm="24">
-            <a-form-item label="">
-              <a-button
-                v-if="user.roleId == 7 || user.roleName == 'admin'"
-                style="margin-right: 3%"
-                type="primary"
-                @click="reset"
-                >全院</a-button
-              >
-              <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset">重置</a-button>
+        </span>
+      </div>
+    </div>
+  
+    <div class="table-operator" style="overflow: hidden;">
+      <a-button icon="plus" style="float: right;margin-right: 0;" @click="goAdd()">新增</a-button>
     </div>
 
     <!-- 去掉勾选框 -->
@@ -312,6 +294,46 @@ export default {
 </script>
 
 <style lang="less">
+.table-wrapper {
+  // max-height: 600px;
+  // overflow-y: auto;
+}
+.sys-card {
+  // height: 100%;
+  // padding-bottom: 52px;
+  // /deep/ .ant-table-pagination {
+  //   position: fixed;
+  //   right: 32px;
+  //   bottom: 20px;
+  // }
+}
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
+.table-operator {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.div-divider {
+  margin-top: 1%;
+  margin-bottom: 1%;
+  width: 100%;
+  background-color: #e6e6e6;
+  height: 1px;
+}
 .table-operator {
   margin-bottom: 18px;
 }

@@ -237,20 +237,7 @@ export default {
       navigateListData: [],
     }
   },
-  watch: {
-    $route(to, from) {
-        
-        if(to.path.indexOf('adddxtemplate')>-1){
-          console.log("watch----",to,from)
-          this.init()
-        }
-        if(from.path.indexOf('adddxtemplate')>-1){
-          this.$destroy()
-        }
-       
-      },
-    
-    },
+ 
   created() {
   
 
