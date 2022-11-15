@@ -126,11 +126,12 @@ export default {
         {
           title: '发布时间',
           dataIndex: 'updateTime',
-          // width: '110px',
+          width: '160px',
         },
         {
           title: '创建时间',
           dataIndex: 'createTime',
+          width: '160px',
         },
         {
           title: '操作',
