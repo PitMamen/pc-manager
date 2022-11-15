@@ -39,8 +39,8 @@
       :rowKey="(record) => record.code"
     >
       <span style="inline-block" slot="acount" slot-scope="text, record">
-        <img v-if="record.openidFlag == 1" style="width: 25px; height: 25px" src="~@/assets/icons/weixin.png" />
-        <img v-if="record.openidFlag == 0" style="width: 25px; height: 25px" src="~@/assets/icons/weixin2.png" />
+        <img v-if="record.openidFlag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
+        <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
       <span style="inline-block" slot="action" slot-scope="text, record">
@@ -62,6 +62,7 @@ import { qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/sys
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
 import Vue from 'vue'
+import { size } from 'lodash'
 export default {
   components: {
     STable,
@@ -96,57 +97,68 @@ export default {
           title: '序号',
           dataIndex: 'xh',
           width: 60,
+          size:12,
         },
         {
           title: '姓名',
           dataIndex: 'name',
           width: 80,
           ellipsis:true,
+          size:12,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
           width: 140,
           ellipsis:true,
+          size:12,
         },
         {
           title: '年龄',
           dataIndex: 'age',
           width: 60,
+          size:12,
         },
         {
           title: '性别',
           dataIndex: 'sex',
           width: 60,
+          size:12,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
           width: 120,
+          size:12,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
           width: 120,
           ellipsis:true,
+          size:12,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
           width: 120,
+          size:12,
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
           width: 100,
+          size:12,
         },
 
         {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
           width: 80,
+          size:12,
         },
         {
+          size:12,
           title: '操作',
           width: '180px',
           dataIndex: 'action',
@@ -258,6 +270,61 @@ export default {
 }
 </script>
 <style lang="less">
+  .ant-select-selection--multiple {
+    min-height: 28px;
+    cursor: text;
+    zoom: 1;
+}
+
+.sitemore {
+  .ant-select-selection.ant-select-selection--single {
+    height: 28px !important;
+  }
+
+  margin-left: 5px;
+  align-items: center;
+   .ant-select-selection--multiple {
+    width: 100%;
+    height: 28px;
+    padding-bottom: 0px !important;
+    /deep/ .ant-select-selection__rendered {
+      height: 100%;
+      ul {
+        width: 100%;
+        height: 28px;
+        overflow-y: hidden;
+        display: -webkit-box;
+        &::-webkit-scrollbar {
+          width: 5px;
+          height: 5px;
+        }
+        &::-webkit-scrollbar-track {
+          background-color: #dedede;
+          -webkit-border-radius: 1em;
+          -moz-border-radius: 1em;
+          border-radius: 1em;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #bfbfbf;
+          -webkit-border-radius: 1em;
+          -moz-border-radius: 1em;
+          border-radius: 1em;
+        }
+        & li {
+          padding: 0px 10px 0px 5px;
+          box-sizing: border-box;
+          width: 75px;
+          float: unset;
+        }
+      }
+    }
+  }
+}
+
+
+
+
+
 .div-divider {
   margin-top: 1%;
   margin-bottom: 1%;

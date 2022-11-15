@@ -58,7 +58,7 @@
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
           >
             <a-radio class="btn-add-plan" :value="1" style="font-size:12px"> 立即发送 </a-radio>
-            <a-radio :value="2"> 延时发送 </a-radio>
+            <a-radio :value="2"  style="font-size:12px"> 延时发送 </a-radio>
           </a-radio-group>
         </div>
 
@@ -93,7 +93,7 @@
           <span class="span-item-name" style="margin-left: 20px;display: flex; margin-top: -2px;"> 随访历史任务</span>
         </div>
 
-        <div style="margin-top:22px" class="div-total1" v-for="(item, index) in recordList" :key="index">
+        <div style="margin-top:20px" class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
             <span class="span-item-value" 
@@ -500,7 +500,7 @@ export default {
     //   background-color: #f0f0f2;
     background-color: #ffffff;
     border: 1px solid #e6e6e6;
-    border-radius: 5px;
+    border-radius: 2px;
     padding: 2% 0;
     overflow: hidden;
 
@@ -568,7 +568,7 @@ export default {
     //   background-color: #f0f0f2;
     background-color: #ffffff;
     border: 1px solid #e6e6e6;
-    border-radius: 5px;
+    border-radius: 2px;
     padding: 2% 0;
     overflow: hidden;
 
