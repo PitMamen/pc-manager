@@ -7,7 +7,7 @@
           v-model="queryParams.name"
           allow-clear
           placeholder="人员姓名查询"
-          style="width: 120px;"
+          style="width: 120px;height: 30px;"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />

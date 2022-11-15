@@ -96,11 +96,11 @@
         <div style="margin-top:22px" class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
-            <span class="span-item-value" style="margin-left: 8px"
+            <span class="span-item-value" 
               >{{ item.messageType != null ? item.messageType.description : '' }}
             </span>
 
-            <span class="span-item-name" style="margin-left: 4%"> 状态 :&nbsp;</span>
+            <span class="span-item-name" style="margin-left: 5%"> 状态 :&nbsp;</span>
 
             <span class="span-item-value" style="margin-left: 3%">{{
               item.taskBizStatus != null ? item.taskBizStatus.description : '-'
