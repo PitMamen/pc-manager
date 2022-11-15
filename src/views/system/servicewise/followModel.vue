@@ -208,21 +208,36 @@ export default {
     },
 
     startOutboundCall(phone, recordId) {
-      // tccc.overrideButtonConfig((config) => {
-      //   return {
-      //     active: config.active.filter(
-      //       (c) =>
-      //         ![
-      //           'transferSeat',
-      //           'transferSkillGroup',
-      //           'holdToggle',
-      //           'forwardOut',
-      //           'showKeyboard',
-      //           'selfService',
-      //         ].includes(c.type)
-      //     ),
-      //   }
-      // })
+      tccc.overrideButtonConfig((config) => {
+        console.log('call config ', config)
+        console.log(
+          'call btn',
+          config.active.filter(
+            (c) =>
+              ![
+                'transferSeat',
+                'transferSkillGroup',
+                'holdToggle',
+                'forwardOut',
+                'showKeyboard',
+                'selfService',
+              ].includes(c.type)
+          )
+        )
+        return {
+          active: config.active.filter(
+            (c) =>
+              ![
+                'transferSeat',
+                'transferSkillGroup',
+                'holdToggle',
+                'forwardOut',
+                'showKeyboard',
+                'selfService',
+              ].includes(c.type)
+          ),
+        }
+      })
       let that = this
       tccc.Agent.online()
       tccc.Call.startOutboundCall({
