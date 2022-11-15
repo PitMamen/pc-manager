@@ -170,7 +170,7 @@ export default {
      */
     changeModel(record) {
       this.$router.push({
-        name: 'sys_wxtemplate_add',
+        name: 'sys_wxtemplate_detail',
         query: {
           id:record.id,
         },

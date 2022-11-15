@@ -186,7 +186,7 @@
      */
      changeModel(record) {
       this.$router.push({
-        name: 'sys_dxtemplate_add',
+        name: 'sys_dxtemplate_detail',
         query: {
           id:record.id,
         },

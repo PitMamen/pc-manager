@@ -1,4 +1,5 @@
 <template>
+   <a-spin :spinning="confirmLoading">
   <div class="div-check">
     <div class="div-part">
       <div class="div-line-wrap">
@@ -186,6 +187,7 @@
     <add-question ref="addQuestion" @ok="handleQuestion" />
     <add-teach ref="addTeach" @ok="handleTeach" />
   </div>
+</a-spin>
 </template>
 
 
@@ -206,6 +208,7 @@ export default {
 
   data() {
     return {
+      confirmLoading:true,
       id: '', //业务模板详情ID 修改时才有值
       templateBean:'',//业务模板详情
       // 高级搜索 展开/关闭
@@ -232,7 +235,18 @@ export default {
       navigateListData: [],
     }
   },
+  watch: {
+    $route(to, from) {
+        
+        if(to.path.indexOf('detailwxtemplate')>-1){
+          console.log("watch----",to,from)
+          this.init()
+        }
 
+       
+      },
+    
+    },
   created() {
     console.log(this.$route.query.id)
     this.init()
@@ -241,7 +255,7 @@ export default {
   methods: {
 
     init(){
- 
+      this.confirmLoading=true
     //获取公众号列表
     getWxConfigureList({}).then((res) => {
       if (res.code == 0) {
@@ -282,7 +296,7 @@ export default {
       this.fieldList=JSON.parse(res.data.templateParamJson)
 
       this.onWXProgramChange(res.data.wxAppId)
-
+      this.confirmLoading=false
         }
       })
     }

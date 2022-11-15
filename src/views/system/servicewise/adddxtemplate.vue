@@ -1,5 +1,6 @@
 <template>
   <div class="div-check">
+   
     <div class="div-part">
       <div class="div-line-wrap">
         <div class="div-left">
@@ -206,6 +207,7 @@ export default {
 
   data() {
     return {
+      key:'',
       id: '', //业务模板详情ID 修改时才有值
       templateBean: '', //业务模板详情
       hasUrlField:false,
@@ -235,9 +237,48 @@ export default {
       navigateListData: [],
     }
   },
-
+  watch: {
+    $route(to, from) {
+        
+        if(to.path.indexOf('adddxtemplate')>-1){
+          console.log("watch----",to,from)
+          this.init()
+        }
+        if(from.path.indexOf('adddxtemplate')>-1){
+          this.$destroy()
+        }
+       
+      },
+    
+    },
   created() {
+  
+
     console.log('传参id：' + this.$route.query.id)
+    this.init()
+  },
+
+
+
+  methods: {
+
+    clearData(){
+      this.wxgzhData=[]
+      this.checkData={
+        smsConfigureId: '', //短信平台配置ID
+        id: '', //短信平台ID
+        supplierName: '', //短信平台名称
+        templateId: '', //模板ID
+        smsTemplateTitle: '', //模板标题
+        templateTitle: '', //模板输入标题
+        navigatorType: '', //跳转类型
+        navigatorContent: '', //跳转内容
+      }
+      this.templateContent={ smsConfigureId: '', smsTemplateCode: '', smsTemplateTitle: '', smsTemplateContent: '' },
+      this.fieldList=[]
+    },
+
+    init(){
 
     //获取公众号列表
     getSmsConfigureList({}).then((res) => {
@@ -301,9 +342,8 @@ export default {
         this.danandataList = dataList
       }
     })
-  },
-
-  methods: {
+    },
+    
     handleChange(code) {},
 
     //选择公众号
