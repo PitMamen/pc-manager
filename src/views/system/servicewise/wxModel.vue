@@ -81,6 +81,7 @@ export default {
         {
           title: '模板内容',
           dataIndex: 'templateContent',
+          ellipsis:true,
         },
         {
           title: '状态',
@@ -169,7 +170,7 @@ export default {
      */
     changeModel(record) {
       this.$router.push({
-        name: 'sys_wxtemplate_add',
+        name: 'sys_wxtemplate_detail',
         query: {
           id:record.id,
         },

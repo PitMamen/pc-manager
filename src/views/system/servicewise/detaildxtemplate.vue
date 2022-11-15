@@ -1,4 +1,5 @@
 <template>
+  <a-spin :spinning="confirmLoading">
   <div class="div-check">
    
     <div class="div-part">
@@ -93,7 +94,7 @@
           <a-select
             v-show="item.property === '档案字段' && item.name.indexOf('date')>-1"
             v-model="fieldList[index].content"
-            style="width: 100% !important"
+            style="width:  100%  !important"
             allow-clear
             placeholder="请选择参数"
           >
@@ -108,7 +109,7 @@
             v-show="item.property === '自定义传参'"
             v-model="fieldList[index].content"
             class="span-item-value"
-            style="width: 100%; margin-left: 0; display: inline-block"
+            style="width:  100% ; margin-left: 0; display: inline-block"
             allow-clear
             :maxLength="150"
             placeholder="请输入参数,不超过150字 "
@@ -140,7 +141,7 @@
             v-show="questionContent.name"
             v-model="questionContent.name"
             class="span-item-value"
-            style="display: inline-block; margin-right: 20px;"
+            style="display: inline-block; margin-right: 20px; "
             allow-clear
             readOnly
             placeholder="请选择问卷 "
@@ -155,7 +156,7 @@
             v-show="teachContent.title"
             v-model="teachContent.title"
             class="span-item-value"
-            style="display: inline-block; margin-right: 20px; "
+            style="display: inline-block; margin-right: 20px;"
             allow-clear
             readOnly
             placeholder="请选择宣教文章 "
@@ -187,6 +188,7 @@
     <add-question ref="addQuestion" @ok="handleQuestion" />
     <add-teach ref="addTeach" @ok="handleTeach" />
   </div>
+  </a-spin>
 </template>
 
 
@@ -207,6 +209,7 @@ export default {
 
   data() {
     return {
+      confirmLoading:true,
       key:'',
       id: '', //业务模板详情ID 修改时才有值
       templateBean: '', //业务模板详情
@@ -237,7 +240,18 @@ export default {
       navigateListData: [],
     }
   },
- 
+  watch: {
+    $route(to, from) {
+        
+        if(to.path.indexOf('detaildxtemplate')>-1){
+          console.log("watch----",to,from)
+          this.init()
+        }
+
+       
+      },
+    
+    },
   created() {
   
 
@@ -266,7 +280,7 @@ export default {
     },
 
     init(){
-
+      this.confirmLoading=true
     //获取公众号列表
     getSmsConfigureList({}).then((res) => {
       if (res.code == 0) {
@@ -308,6 +322,7 @@ export default {
             this.sortFieldList(this.templateContent.smsTemplateContent)
 
               this.onWXProgramChange(Number(res.data.smsConfigureId))
+              this.confirmLoading=false
             }
           })
         }

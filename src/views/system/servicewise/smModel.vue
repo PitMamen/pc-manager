@@ -31,9 +31,9 @@
         :rowKey="(record) => record.code"
       >
       <!-- add -->
-      <span slot="content" slot-scope="text, record">
-        <div :title="record.templateContent">{{ record.templateContent }}</div>
-      </span>
+      <!-- <span  slot="content" slot-scope="text, record">
+        <div :title="record.templateContent" >{{ record.templateContent }}</div>
+      </span> -->
         <span slot="action" slot-scope="text, record">
           <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
           <a-divider type="vertical" />
@@ -89,8 +89,10 @@
 
           {
             title: '模板内容',
-            scopedSlots: { customRender: 'content' },
-            // width: 350,
+            dataIndex:'templateContent',
+            // scopedSlots: { customRender: 'content' },
+            ellipsis:true,
+            width: 300,
           },
           {
             title: '状态',
@@ -184,7 +186,7 @@
      */
      changeModel(record) {
       this.$router.push({
-        name: 'sys_dxtemplate_add',
+        name: 'sys_dxtemplate_detail',
         query: {
           id:record.id,
         },

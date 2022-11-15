@@ -353,7 +353,7 @@ export default {
         id: this.id,
         status: this.isOpen ? 1 : 2,
       }
-      this.updateMetaConfigure(queryParamData)
+      // this.updateMetaConfigure(queryParamData)
     },
 
     handleCancel() {
@@ -387,6 +387,7 @@ export default {
           item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         }
         // item.fieldArchives = item.fieldArchives  //档案字段
+        item.status=this.isOpen ? 1 : 2,
         item.fieldType = item.fieldType.value //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引

@@ -102,6 +102,7 @@
                 @focus="getFocus"
                 disabled
                 v-model="itemRule.metaConfigureDetailId"
+                @select="onFieldSelect(itemRule, indexRule)"
                 allow-clear
                 placeholder="请选择字段"
               >
@@ -122,12 +123,21 @@
                 }}</a-select-option>
               </a-select>
 
+              <a-date-picker
+                style="margin-left: 1%"
+                disabled
+                v-if="itemRule.fieldType == 2"
+                format="YYYY-MM-DD"
+                v-model="itemRule.queryValue"
+              />
+
               <a-input
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
-                disabled
                 :maxLength="30"
+                disabled
                 style="display: inline-block"
+                v-if="itemRule.fieldType == 1"
                 allow-clear
                 placeholder="请输入内容"
               />
@@ -324,27 +334,39 @@
               </a-select>
               <!-- @change="onChange" -->
 
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 2%"
+              <span v-if="itemTask.isChecked || itemTask.messageType == 1" style="margin-left: 2%; width: 60px"
                 >执行人员:</span
               >
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
-                itemTask.nameStr
-              }}</span>
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="
+                  /* width: 200px; */
+                  max-width: 200px;
+                  margin-left: 1%;
+                  overflow: hidden;
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ itemTask.nameStr }}</span
+              >
 
               <div
                 class="end-btn"
                 v-if="itemTask.isChecked || itemTask.messageType == 1"
-                style="margin-left: 2%; width: 20%"
+                style="margin-left: 2%; width: 80px"
                 @click="addPerson(indexTask)"
               >
                 <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
 
-                <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
+                <span style="width: 50px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
 
-              <span class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
+              <span v-if="itemTask.taskType == 1" class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
               <a-input-number
-                style="display: inline-block; margin-left: 1%; width: 96px"
+                v-if="itemTask.taskType == 1"
+                style="display: inline-block; margin-left: 1%; width: 50px"
                 v-model="itemTask.overdueTimeUnit"
                 :min="0"
                 :max="10000"
@@ -489,13 +511,20 @@ export default {
     }
   },
 
+  watch: {
+    $route(to, from) {
+      console.log('watch----project_edit out', to, from)
+      if (to.path.indexOf('projectEdit') > -1) {
+        console.log('watch----project_edit', to, from)
+        this.init()
+      }
+    },
+  },
+
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.getDeptsOut()
+    this.init()
 
-    this.planId = this.$route.query.planId
-
-    this.confirmLoading = true
     followTypes()
       .then((res) => {
         // this.confirmLoading = false
@@ -562,11 +591,18 @@ export default {
       }
     })
 
+    // this.getDeptAllQues()
     // this.getWxTemplateListForJumpTypeOut()
   },
 
   methods: {
     moment,
+
+    init() {
+      this.confirmLoading = true
+      this.planId = this.$route.query.planId
+      this.getDeptsOut()
+    },
 
     getDeptsOut() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
@@ -610,7 +646,10 @@ export default {
           this.templateListSMS = res.data
         }
 
+        this.confirmLoading = false
+
         //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
+        // this.getDeptAllQues()
         this.getDeptAllQues()
       })
     },
@@ -670,6 +709,9 @@ export default {
       if (this.projectData.filterRules && this.projectData.filterRules.length > 0) {
         this.projectData.filterRules.forEach((item) => {
           item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
+          if (item.fieldType == 2) {
+            item.queryValue = moment(item.queryValue, 'YYYY-MM-DD')
+          }
         })
       }
 
@@ -752,7 +794,7 @@ export default {
     },
 
     getDeptAllQues() {
-      let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
+      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
 
       let param = {
         pageNo: 1,
@@ -775,16 +817,12 @@ export default {
             // item.messageContentId = parseInt(item.messageContentId)
             if (item.messageType == 1) {
               this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
-
-              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
             } else if (item.messageType == 2) {
               //查所有微信模版
               this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
-              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
             } else if (item.messageType == 3) {
               //查所有短信模版
               this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
-              // item.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
             }
 
             this.confirmLoading = false
@@ -859,7 +897,8 @@ export default {
     },
 
     addRule() {
-      this.projectData.filterRules.push({})
+      // this.projectData.filterRules.push({})
+      this.projectData.filterRules.push({ fieldType: 1 })
     },
 
     /**
@@ -867,7 +906,7 @@ export default {
      */
     onDeptSelect() {
       this.getUsersByDeptIdAndRoleOut()
-      this.getDeptAllQues()
+      // this.getDeptAllQues()
     },
 
     addPerson(indexMisson) {
@@ -992,6 +1031,16 @@ export default {
       }
     },
 
+    onFieldSelect(itemRule, indexRule) {
+      console.log('onFieldSelect chooseData', this.chooseData)
+      console.log('onFieldSelect itemRule Be', JSON.parse(JSON.stringify(itemRule)))
+      let chooseOne = this.chooseData.find((item) => {
+        return item.value == itemRule.metaConfigureDetailId
+      })
+      this.$set(itemRule, 'fieldType', chooseOne.fieldType)
+      console.log('onFieldSelect itemRule Af', JSON.parse(JSON.stringify(itemRule)))
+    },
+
     // /**
     //  * 6-2、当【执行周期】为临时执行时，只有单位的选择，时间单位为：天、周、月。选择周的话，发送时间点为该周第一天，
     //  * 选择月的话，发送时间点为该月第一天。
@@ -1089,7 +1138,7 @@ export default {
 
     getUsersByDeptIdAndRoleOut() {
       // getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: 5 }).then((res) => {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5] }).then(
+      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
         (res) => {
           if (res.code == 0) {
             this.deptUsers = res.data.deptUsers
@@ -1134,7 +1183,7 @@ export default {
 
       if (tempData.filterRules && tempData.filterRules.length > 0) {
         for (let indexRule = 0; indexRule < tempData.filterRules.length; indexRule++) {
-          debugger
+          // debugger
           let itemRule = tempData.filterRules[indexRule]
           if (!itemRule.metaConfigureDetailId) {
             this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤字段')
@@ -1148,6 +1197,11 @@ export default {
             this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
             return
           }
+
+          if (itemRule.fieldType == 2) {
+            itemRule.queryValue = moment(itemRule.queryValue).format('YYYY-MM-DD')
+          }
+          console.log('itemRule.queryValue', itemRule.queryValue)
         }
       }
 
@@ -1222,6 +1276,11 @@ export default {
           this.$set(item, 'overdueFollowType', 1)
         }
 
+        //处理逾期时间
+        if (item.taskType != 1) {
+          item.overdueTimeUnit
+        }
+
         delete item.everyData
         delete item.nameStr
       }
@@ -1232,8 +1291,8 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            // this.$router.go(-1)
-            this.$router.push({ path: './serviceWise?keyindex=1' })
+            this.$router.go(-1)
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
             this.$message.error(res.message)
           }
@@ -1250,7 +1309,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .div-project-add {
   background-color: white;
   width: 100%;
@@ -1258,6 +1317,10 @@ export default {
   overflow: hidden;
   padding: 1%;
   padding-bottom: 2%;
+
+  span {
+    font-size: 12px;
+  }
 
   .div-title {
     display: flex;
@@ -1275,7 +1338,6 @@ export default {
       background-color: #1890ff;
     }
     .span-title {
-      font-size: 14px;
       margin-left: 10px;
       font-weight: bold;
       color: #333;
@@ -1295,7 +1357,6 @@ export default {
     .span-item-name {
       display: inline-block;
       color: #000;
-      font-size: 14px;
       text-align: left;
     }
     .span-item-value {
@@ -1303,7 +1364,6 @@ export default {
       color: #333;
       text-align: left;
       padding-left: 1.5%;
-      font-size: 14px;
       display: inline-block;
     }
 
@@ -1482,7 +1542,7 @@ export default {
             margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
-            width: 20% !important;
+            width: 120px !important;
             margin-left: 1% !important;
           }
         }

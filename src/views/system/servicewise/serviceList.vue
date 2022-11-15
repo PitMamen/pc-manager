@@ -3,12 +3,25 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">方案名称:</span>
-        <a-input v-model="queryParams.planName" allow-clear placeholder="可输入方案名称" style="width: 120px;" @keyup.enter="$refs.table.refresh(true)" @search="$refs.table.refresh(true)"/>
+        <a-input
+          v-model="queryParams.planName"
+          allow-clear
+          placeholder="可输入方案名称"
+          style="width: 120px; height: 28px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
       </div>
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <a-select v-model="queryParams.departmentName" placeholder="请选择科室" allow-clear style="width: 120px;" @change="onDepartmentChange">
-          <a-select-option v-for="(item, index) in originData" :key="index" >{{ item.departmentName }}</a-select-option>
+        <a-select
+          v-model="queryParams.departmentName"
+          placeholder="请选择科室"
+          allow-clear
+          style="width: 120px"
+          @change="onDepartmentChange"
+        >
+          <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
         </a-select>
       </div>
       <div class="search-row">
@@ -19,17 +32,15 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
       </div>
     </div>
-  
-    <div class="table-operator" style="overflow: hidden;">
-      <a-button icon="plus" style="float: right;margin-right: 0;" @click="addName()">新增</a-button>
+
+    <div class="table-operator" style="overflow: hidden">
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
     </div>
 
-    
-   
     <s-table
       ref="table"
       size="default"
@@ -135,7 +146,6 @@ export default {
           title: '状态',
           width: '60px',
           dataIndex: 'statusText',
-          
         },
         {
           title: '操作',
@@ -159,6 +169,17 @@ export default {
       },
     }
   },
+
+  watch: {
+    $route(to, from) {
+      console.log('watch----serviceList out', to, from)
+      if (to.path.indexOf('serviceList') > -1) {
+        console.log('watch----serviceList', to, from)
+        this.refresh()
+      }
+    },
+  },
+
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
@@ -167,6 +188,7 @@ export default {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
+          this.$refs.table.refresh(true)
         }
       })
     } else {
@@ -190,6 +212,9 @@ export default {
     }
   },
   methods: {
+    refresh() {
+      this.$refs.table.refresh(true)
+    },
     // this.$router.push({ path: '/servicewise/projectAdd' })
     editPlan(record) {
       this.$router.push({
@@ -335,6 +360,9 @@ export default {
     padding-right: 20px;
     .name {
       margin-right: 10px;
+    }
+    .ant-select-selection--single {
+      height: 28px !important;
     }
   }
 }

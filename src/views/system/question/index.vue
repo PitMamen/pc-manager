@@ -1,95 +1,85 @@
 <template>
+   <a-card :bordered="false" class="sys-card">
   <a-tabs default-active-key="1" @change="callback">
     <a-tab-pane key="1" tab="问卷列表">
-      <a-card :bordered="false">
-        <div class="table-page-search-wrapper" v-if="hasPerm('sysPos:page')">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="8" :sm="24">
-                <a-form-item label="问卷管理">
-                  <a href="http://hmg.mclouds.org.cn/login" target="_blank">跳转问卷管理</a>
-                </a-form-item>
-              </a-col>
-            </a-row>
-          </a-form>
+    
+      <div class="table-page-search-wrapper">
+        <div class="search-row">
+          <span class="name">科室:</span>
+          <a-select
+            :maxTagCount="1"
+            :collapse-tags="true"
+            allow-clear
+            v-model="idArr"
+            mode="multiple"
+            placeholder="请选择科室"
+            style="min-width: 120px"
+          >
+            <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
+              item.departmentName
+            }}</a-select-option>
+          </a-select>
         </div>
-        <div class="table-page-search-wrapper">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="10" :sm="24">
-                <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-                  <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                  <a-select allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室">
-                    <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
-                      item.departmentName
-                    }}</a-select-option>
-                  </a-select>
-                </a-form-item></a-col
-              >
 
-              <a-col :md="5" :sm="24">
-                <a-button
-                  v-if="user.roleId == 7 || user.roleName == 'admin'"
-                  style="margin-right: 3%"
-                  type="primary"
-                  @click="reset"
-                  >全院</a-button
-                >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-              </a-col>
-            </a-row>
-          </a-form>
-        </div>
-        <s-table
-          ref="table"
-          size="default"
-          :columns="columns"
-          :data="loadData"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="action" slot-scope="text, record">
-            <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
+        <div class="action-row">
+          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+            <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
           </span>
-        </s-table>
+        </div>
+      </div>
 
-        <add-form ref="addForm" @ok="handleOk" />
-        <edit-form ref="editForm" @ok="handleOk" />
-      </a-card>
+      <div class="table-operator" style="overflow: hidden">
+        <a href="http://hmg.mclouds.org.cn/login" target="_blank"
+          ><a-button icon="plus" style="float: right; margin-right: 0">新增</a-button></a
+        >
+      </div>
+      <s-table
+        ref="table"
+        size="default"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+        <span slot="action" slot-scope="text, record">
+          <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
+        </span>
+      </s-table>
+
+      <add-form ref="addForm" @ok="handleOk" />
+      <edit-form ref="editForm" @ok="handleOk" />
+     
     </a-tab-pane>
 
     <a-tab-pane key="2" tab="问卷统计">
-      <a-card :bordered="false">
+     
         <div class="table-page-search-wrapper">
-          <a-form layout="inline">
-            <a-row :gutter="48">
-              <a-col :md="10" :sm="24">
-                <a-form-item label="科室科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-                  <!-- v-decorator="['caseManageIds', { rules: [{ validator: hasCaseManageIds }] }]" -->
-                  <a-select allow-clear v-model="idArrStat" mode="multiple" placeholder="请选择科室">
-                    <a-select-option
-                      v-for="(item, index) in originDataStat"
-                      :key="index"
-                      :value="item.departmentName"
-                      >{{ item.departmentName }}</a-select-option
-                    >
-                  </a-select>
-                </a-form-item></a-col
-              >
+          <div class="search-row">
+            <span class="name">科室:</span>
+            <a-select
+              :maxTagCount="1"
+              :collapse-tags="true"
+              allow-clear
+              v-model="idArrStat"
+              mode="multiple"
+              placeholder="请选择科室"
+              style="min-width: 120px"
+            >
+              <a-select-option v-for="(item, index) in originDataStat" :key="index" :value="item.departmentName">{{
+                item.departmentName
+              }}</a-select-option>
+            </a-select>
+          </div>
 
-              <a-col :md="5" :sm="24">
-                <a-button
-                  v-if="user.roleId == 7 || user.roleName == 'admin'"
-                  style="margin-right: 3%"
-                  type="primary"
-                  @click="resetStat"
-                  >全院</a-button
-                >
-                <a-button type="primary" @click="$refs.tableStat.refresh(true)">查询</a-button>
-              </a-col>
-            </a-row>
-          </a-form>
+          <div class="action-row">
+            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+              <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
+              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="resetStat">重置</a-button>
+            </span>
+          </div>
         </div>
+
         <s-table
           ref="tableStat"
           size="default"
@@ -106,9 +96,10 @@
 
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
-      </a-card>
+      
     </a-tab-pane>
   </a-tabs>
+</a-card>
 </template>
 
 <script>
@@ -238,7 +229,7 @@ export default {
         }
 
         //非超管和随访管理员时，清空了查科室随访员管理的所有科室
-        
+
         if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
           this.originData.forEach((item, index) => {
             if (index != this.originData.length - 1) {
@@ -453,5 +444,45 @@ button {
   font-size: 18px;
   font-weight: bold;
   color: #000;
+}
+.table-wrapper {
+  // max-height: 600px;
+  // overflow-y: auto;
+}
+.sys-card {
+  // height: 100%;
+  // padding-bottom: 52px;
+  // /deep/ .ant-table-pagination {
+  //   position: fixed;
+  //   right: 32px;
+  //   bottom: 20px;
+  // }
+}
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
+.table-operator {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.div-divider {
+  margin-top: 1%;
+  margin-bottom: 1%;
+  width: 100%;
+  background-color: #e6e6e6;
+  height: 1px;
 }
 </style>

@@ -62,6 +62,7 @@
             size="default"
             style="margin-left: 2%; min-height: 450px; overflow-y: auto"
             :columns="columns"
+            :scroll="{ x: true }"
             :data-source="choseUsers"
             :alert="true"
             :rowKey="(record) => record.code"
@@ -76,7 +77,7 @@
             </span>
             <span slot="act_num" slot-scope="text, record">
               <a-input-number
-                style="display: inline-block; margin-left: 1%; width: 100px"
+                style="display: inline-block; margin-left: 1%; width: 50px"
                 v-model="record.weight"
                 @change="countTotal"
                 :disabled="isSingle"
@@ -130,15 +131,16 @@ export default {
           title: '姓名',
           width: 100,
           dataIndex: 'userName',
+          ellipsis: true,
         },
         {
           title: '分配权重',
-          width: 100,
           scopedSlots: { customRender: 'act_num' },
         },
         {
           title: '操作',
           width: 100,
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -201,6 +203,7 @@ export default {
         }
         // this.$set(item, 'weight', 0)
       })
+      this.sortChoseUsers()
       this.choseNum = this.choseUsers.length
       this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers[0].users))
       // debugger
@@ -401,8 +404,8 @@ export default {
 
     .item-person {
       width: 90%;
-      // height: 400px;
-      overflow-y: auto;
+      // height: 100px;
+      // overflow-y: auto;
       margin-top: 2%;
       display: flex;
       flex-direction: row;

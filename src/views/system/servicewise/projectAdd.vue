@@ -102,6 +102,7 @@
                 class="mid-select-one"
                 @focus="getFocus"
                 v-model="itemRule.metaConfigureDetailId"
+                @select="onFieldSelect(itemRule, indexRule)"
                 allow-clear
                 placeholder="请选择字段"
               >
@@ -116,11 +117,19 @@
                 }}</a-select-option>
               </a-select>
 
+              <a-date-picker
+                style="margin-left: 1%"
+                v-if="itemRule.fieldType == 2"
+                format="YYYY-MM-DD"
+                v-model="itemRule.queryValue"
+              />
+
               <a-input
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
                 :maxLength="30"
                 style="display: inline-block"
+                v-if="itemRule.fieldType == 1"
                 allow-clear
                 placeholder="请输入内容"
               />
@@ -133,7 +142,6 @@
                 <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
               </div>
 
-              <!-- v-if="indexRule == projectData.filterRules.length - 1" -->
               <div
                 class="end-btn"
                 style="margin-left: 2%"
@@ -147,8 +155,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addRule()">新增</a-button> -->
       </div>
 
       <div class="div-pro-mission">
@@ -317,27 +323,42 @@
               </a-select>
               <!-- @change="onChange" -->
 
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 2%"
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="margin-left: 2%; width: 60px"
                 >执行人员:</span
               >
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
-                itemTask.nameStr
-              }}</span>
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="
+                  max-width: 200px;
+                  margin-left: 1%;
+                  overflow: hidden;
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ itemTask.nameStr }}</span
+              >
 
               <div
                 class="end-btn"
                 v-if="itemTask.isChecked || itemTask.messageType == 1"
-                style="margin-left: 2%; width: 20%"
+                style="margin-left: 2%; width: 80px"
                 @click="addPerson(indexTask)"
               >
                 <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
 
-                <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
+                <span style="width: 50px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
 
-              <span class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
+              <!-- v-if="itemTask.messageType == 1 || ((itemTask.messageType == 2 || itemTask.messageType == 3)&&itemTask.)" -->
+              <span class="span-titl" v-if="itemTask.taskType == 1" style="margin-left: 2%">设置逾期时间（小时）:</span>
               <a-input-number
-                style="display: inline-block; margin-left: 1%; width: 96px"
+                v-if="itemTask.taskType == 1"
+                style="display: inline-block; margin-left: 1%; width: 50px"
                 v-model="itemTask.overdueTimeUnit"
                 :min="0"
                 :max="10000"
@@ -624,9 +645,6 @@ export default {
       }
     })
 
-    //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
-    // this.getDeptAllQues()
-
     //全部的问卷模板
     // getWxTemplateListForJumpType(1).then((res) => {
     //   if (res.code == 0) {
@@ -638,6 +656,8 @@ export default {
     //     console.log('getWxTemplateListForJumpType', res.data.length)
     //   }
     // })
+
+    this.getDeptAllQues()
   },
 
   methods: {
@@ -721,7 +741,7 @@ export default {
     },
 
     addRule() {
-      this.projectData.filterRules.push({})
+      this.projectData.filterRules.push({ fieldType: 1 })
     },
 
     /**
@@ -729,7 +749,7 @@ export default {
      */
     onDeptSelect() {
       this.getUsersByDeptIdAndRoleOut()
-      this.getDeptAllQues()
+      // this.getDeptAllQues()
     },
 
     addPerson(indexMisson) {
@@ -745,7 +765,6 @@ export default {
       }
 
       console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
-      debugger
       if (!this.deptUsers[0].users || this.deptUsers[0].users.length == 0) {
         this.$message.warn('所选执行科室没有可选人员')
         return
@@ -823,7 +842,7 @@ export default {
     },
 
     getDeptAllQues() {
-      let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
+      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
 
       let param = {
         pageNo: 1,
@@ -892,6 +911,16 @@ export default {
       //TODO 选任务类型
       console.log('onTemSelect indexTask', indexTask)
       console.log('onTemSelect itemTask', itemTask)
+    },
+
+    onFieldSelect(itemRule, indexRule) {
+      console.log('onFieldSelect chooseData', this.chooseData)
+      console.log('onFieldSelect itemRule Be', JSON.parse(JSON.stringify(itemRule)))
+      let chooseOne = this.chooseData.find((item) => {
+        return item.value == itemRule.metaConfigureDetailId
+      })
+      this.$set(itemRule, 'fieldType', chooseOne.fieldType)
+      console.log('onFieldSelect itemRule Af', JSON.parse(JSON.stringify(itemRule)))
     },
 
     // /**
@@ -992,7 +1021,7 @@ export default {
     // },
 
     getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5] }).then(
+      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
         (res) => {
           if (res.code == 0) {
             this.deptUsers = res.data.deptUsers
@@ -1050,6 +1079,11 @@ export default {
             this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
             return
           }
+
+          if (itemRule.fieldType == 2) {
+            itemRule.queryValue = moment(itemRule.queryValue).format('YYYY-MM-DD')
+          }
+          console.log('itemRule.queryValue', itemRule.queryValue)
         }
       }
 
@@ -1132,7 +1166,8 @@ export default {
         }
 
         //处理逾期时间
-        if (item.overdueTimeUnit) {
+        if (item.taskType != 1) {
+          item.overdueTimeUnit
         }
 
         delete item.everyData
@@ -1145,8 +1180,8 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            // this.$router.go(-1)
-            this.$router.push({ path: './serviceWise?keyindex=1' })
+            this.$router.go(-1)
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
             this.$message.error(res.message)
           }
@@ -1163,7 +1198,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .div-project-add {
   background-color: white;
   width: 100%;
@@ -1171,6 +1206,10 @@ export default {
   overflow: hidden;
   padding: 1%;
   padding-bottom: 2%;
+
+  span {
+    font-size: 12px;
+  }
 
   .div-title {
     display: flex;
@@ -1188,7 +1227,7 @@ export default {
       background-color: #1890ff;
     }
     .span-title {
-      font-size: 14px;
+      font-size: 12px;
       margin-left: 10px;
       font-weight: bold;
       color: #333;
@@ -1208,7 +1247,7 @@ export default {
     .span-item-name {
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
@@ -1216,7 +1255,7 @@ export default {
       color: #333;
       text-align: left;
       padding-left: 1.5%;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
 
@@ -1395,7 +1434,7 @@ export default {
             margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
-            width: 20% !important;
+            width: 120px !important;
             margin-left: 1% !important;
           }
         }

@@ -174,6 +174,10 @@ export function canCall() {
   return tccc && tccc.Agent.getStatus() == 'free';
 }
 
+
+
+
+
 /**获取本月最后一天 */
 export function getCurrentMonthLast() {
   var date = new Date();
