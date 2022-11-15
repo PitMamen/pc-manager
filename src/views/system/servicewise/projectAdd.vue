@@ -326,9 +326,19 @@
               <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 2%"
                 >执行人员:</span
               >
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
-                itemTask.nameStr
-              }}</span>
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="
+                  width: 200px;
+                  margin-left: 1%;
+                  overflow: hidden;
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ itemTask.nameStr }}</span
+              >
 
               <div
                 class="end-btn"
@@ -1167,8 +1177,8 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            // this.$router.go(-1)
-            this.$router.push({ path: './serviceWise?keyindex=1' })
+            this.$router.go(-1)
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
             this.$message.error(res.message)
           }
@@ -1194,6 +1204,10 @@ export default {
   padding: 1%;
   padding-bottom: 2%;
 
+  span {
+    font-size: 12px;
+  }
+
   .div-title {
     display: flex;
     background-color: #ebebeb;
@@ -1210,7 +1224,7 @@ export default {
       background-color: #1890ff;
     }
     .span-title {
-      font-size: 14px;
+      font-size: 12px;
       margin-left: 10px;
       font-weight: bold;
       color: #333;
@@ -1230,7 +1244,7 @@ export default {
     .span-item-name {
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
@@ -1238,7 +1252,7 @@ export default {
       color: #333;
       text-align: left;
       padding-left: 1.5%;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
 
