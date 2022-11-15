@@ -116,7 +116,7 @@ import editFormDispatch from './editFormDispatch'
 import moment from 'moment'
 
 import statDetail from './statDetail'
-import statSolve from '../servicewise/followModel'
+import statSolve from './statSolve'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
