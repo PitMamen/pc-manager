@@ -8,11 +8,11 @@
           @select="onSelected"
           allow-clear
           v-model="queryParamsStatisit.statType"
-          style="width: 120px; height: 32px"
+          style="width: 120px; height: 28px"
           placeholder="请选择统计方式"
         >
           <a-select-option
-            style="height: 32px !important"
+            style="height: 28px !important"
             v-for="(item, index) in StatisticsMode"
             :value="item.code"
             :key="index"
@@ -30,11 +30,11 @@
           allow-clear
           v-model="queryParamsStatisit.execDept"
           mode="multiple"
-          style="min-width: 120px; height: 30px"
+          style="min-width: 120px; height: 28px"
           placeholder="请选择科室"
         >
           <a-select-option
-            style="max-height: 30px"
+            style="max-height: 28px;padding-bottom: 0px;"
             v-for="(item, index) in originData"
             :value="item.departmentId"
             :key="index"
@@ -43,12 +43,12 @@
         </a-select>
       </div>
 
-      <div class="search-row" style="margin-left: 15px">
+      <div class="search-row" style="margin-left: 15px;padding-bottom: 0%;">
         <span class="name">时间:</span>
-        <a-range-picker :value="createValue" @change="onChange"  />
+        <a-range-picker :value="createValue" @change="onChange" style="height:28px !important"  />
       </div>
 
-      <div class="action-row" style="margin-bottom:-2px">
+      <div class="action-row" >
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
@@ -367,21 +367,27 @@ export default {
 </script>
   
   <style lang="less">
+  .ant-select-selection--multiple {
+    min-height: 28px;
+    cursor: text;
+    zoom: 1;
+}
 .sitemore {
   .ant-select-selection.ant-select-selection--single {
-    height: 32px !important;
+    height: 28px !important;
   }
 
   margin-left: 5px;
   align-items: center;
-  /deep/ .ant-select-selection--multiple {
+   .ant-select-selection--multiple {
     width: 100%;
-    height: 32px;
+    height: 28px;
+    padding-bottom: 0px !important;
     /deep/ .ant-select-selection__rendered {
       height: 100%;
       ul {
         width: 100%;
-        height: 30px;
+        height: 28px;
         overflow-y: hidden;
         display: -webkit-box;
         &::-webkit-scrollbar {
@@ -438,9 +444,11 @@ export default {
     .name {
       margin-right: 10px;
     }
+  
+
     .ant-input {
             width: 100%;
-            height: 32px !important;
+            height: 28px !important;
             padding: 4px 11px;
             color: rgba(0, 0, 0, 0.65);
             font-size: 12px !important;
@@ -557,7 +565,7 @@ export default {
   display: inline-block;
   margin-top: -1.5%;
   .ant-input {
-    height: 30px;
+    height: 28px;
   }
 }
 
@@ -618,4 +626,3 @@ export default {
   }
 }
 </style>
-  

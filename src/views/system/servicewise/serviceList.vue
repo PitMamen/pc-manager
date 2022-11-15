@@ -3,7 +3,7 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">方案名称:</span>
-        <a-input v-model="queryParams.planName" allow-clear placeholder="可输入方案名称" style="width: 120px; height: 30px;" @keyup.enter="$refs.table.refresh(true)" @search="$refs.table.refresh(true)"/>
+        <a-input v-model="queryParams.planName" allow-clear placeholder="可输入方案名称" style="width: 120px; height: 28px;" @keyup.enter="$refs.table.refresh(true)" @search="$refs.table.refresh(true)"/>
       </div>
       <div class="search-row">
         <span class="name">执行科室:</span>
@@ -337,7 +337,7 @@ export default {
       margin-right: 10px;
     }
     .ant-select-selection--single {
-    height: 30px !important;
+    height: 28px !important;
 }
   }
 }
