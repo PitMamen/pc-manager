@@ -56,20 +56,28 @@
       </div>
 
       <a-card :bordered="false" class="card-right-control">
-        <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
-          <!-- 类型，1: 待抽查 2: 已抽查 -->
+        <!-- <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
           <a-radio-button value="1"> 待抽查 </a-radio-button>
           <a-radio-button value="2"> 已抽查 </a-radio-button>
-        </a-radio-group>
+        </a-radio-group> -->
 
-        <!-- <div class="div-radio">
-          <div class="radio-item" @click="onRadioClick(1)">
-            <img style="width: 13px; height: 13px" src="~@/assets/icons/dh_icon.png" /><span>待抽查</span>
+        <!-- 类型，1: 待抽查 2: 已抽查 -->
+        <div class="div-radio">
+          <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 1 }" @click="onRadioClick(1)">
+            <img
+              style="width: 13px; height: 13px"
+              :class="{ 'checked-icon': queryParams.type == 1 }"
+              src="~@/assets/icons/icon_wait.svg"
+            /><span style="margin-left: 3px">待抽查</span>
           </div>
-          <div class="radio-item" @click="onRadioClick(2)">
-            <img style="width: 13px; height: 13px" src="~@/assets/icons/dh_icon.png" /><span>已抽查</span>
+          <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 2 }" @click="onRadioClick(2)">
+            <img
+              :class="{ 'checked-icon': queryParams.type == 2 }"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/icon_completed.svg"
+            /><span style="margin-left: 3px">已抽查</span>
           </div>
-        </div> -->
+        </div>
 
         <div class="div-divider" style="margin-left: 0"></div>
 
@@ -947,12 +955,26 @@ export default {
       flex-direction: row;
       .radio-item {
         display: flex;
-        padding: 6px 11px;
+        // color: white;
+        overflow: hidden;
+        padding: 10px 20px;
         align-items: center;
         flex-direction: row;
         &:hover {
           cursor: pointer;
         }
+      }
+
+      .checked-btn {
+        background-color: #eff7ff;
+        color: #1890ff;
+        border-bottom: #1890ff 2px solid;
+      }
+
+      // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
+      .checked-icon {
+        filter: drop-shadow(#1890ff 200px 0);
+        transform: translateX(-200px);
       }
     }
 
