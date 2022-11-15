@@ -1,6 +1,8 @@
 <template>
+   <a-card :bordered="false" class="sys-card">
   <a-tabs default-active-key="1" @change="callback">
     <a-tab-pane key="1" tab="问卷列表">
+    
       <div class="table-page-search-wrapper">
         <div class="search-row">
           <span class="name">科室:</span>
@@ -47,6 +49,7 @@
 
       <add-form ref="addForm" @ok="handleOk" />
       <edit-form ref="editForm" @ok="handleOk" />
+     
     </a-tab-pane>
 
     <a-tab-pane key="2" tab="问卷统计">
@@ -93,9 +96,10 @@
 
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
-     
+      
     </a-tab-pane>
   </a-tabs>
+</a-card>
 </template>
 
 <script>
