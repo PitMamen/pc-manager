@@ -1,69 +1,82 @@
 <template>
   <a-tabs default-active-key="1" @change="callback">
     <a-tab-pane key="1" tab="问卷列表">
-     
-        <div class="table-page-search-wrapper">
-      
-      <div class="search-row">
-        <span class="name">科室:</span>
-        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;">
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{ item.departmentName }}</a-select-option>
-        </a-select>
-      </div>
-     
+      <div class="table-page-search-wrapper">
+        <div class="search-row">
+          <span class="name">科室:</span>
+          <a-select
+            :maxTagCount="1"
+            :collapse-tags="true"
+            allow-clear
+            v-model="idArr"
+            mode="multiple"
+            placeholder="请选择科室"
+            style="min-width: 120px"
+          >
+            <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
+              item.departmentName
+            }}</a-select-option>
+          </a-select>
+        </div>
 
-      <div class="action-row">
-        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset">重置</a-button>
-        </span>
-      </div>
-    </div>
-  
-    <div class="table-operator" style="overflow: hidden;">
-      <a href="http://hmg.mclouds.org.cn/login" target="_blank"><a-button icon="plus" style="float: right;margin-right: 0;" >新增</a-button></a>
-      
-    </div>
-        <s-table
-          ref="table"
-          size="default"
-          :columns="columns"
-          :data="loadData"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="action" slot-scope="text, record">
-            <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
+        <div class="action-row">
+          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+            <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
           </span>
-        </s-table>
+        </div>
+      </div>
 
-        <add-form ref="addForm" @ok="handleOk" />
-        <edit-form ref="editForm" @ok="handleOk" />
-      </a-card>
+      <div class="table-operator" style="overflow: hidden">
+        <a href="http://hmg.mclouds.org.cn/login" target="_blank"
+          ><a-button icon="plus" style="float: right; margin-right: 0">新增</a-button></a
+        >
+      </div>
+      <s-table
+        ref="table"
+        size="default"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+        <span slot="action" slot-scope="text, record">
+          <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
+        </span>
+      </s-table>
+
+      <add-form ref="addForm" @ok="handleOk" />
+      <edit-form ref="editForm" @ok="handleOk" />
     </a-tab-pane>
 
     <a-tab-pane key="2" tab="问卷统计">
-      <a-card :bordered="false">
-
-        <div class="table-page-search-wrapper">
-      
-      <div class="search-row">
-        <span class="name">科室:</span>
-        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArrStat" mode="multiple" placeholder="请选择科室" style="min-width: 120px;">
-          <a-select-option v-for="(item, index) in originDataStat" :key="index" :value="item.departmentName">{{ item.departmentName }}</a-select-option>
-        </a-select>
-      </div>
      
+        <div class="table-page-search-wrapper">
+          <div class="search-row">
+            <span class="name">科室:</span>
+            <a-select
+              :maxTagCount="1"
+              :collapse-tags="true"
+              allow-clear
+              v-model="idArrStat"
+              mode="multiple"
+              placeholder="请选择科室"
+              style="min-width: 120px"
+            >
+              <a-select-option v-for="(item, index) in originDataStat" :key="index" :value="item.departmentName">{{
+                item.departmentName
+              }}</a-select-option>
+            </a-select>
+          </div>
 
-      <div class="action-row">
-        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="resetStat">重置</a-button>
-        </span>
-      </div>
-    </div>
+          <div class="action-row">
+            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+              <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
+              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="resetStat">重置</a-button>
+            </span>
+          </div>
+        </div>
 
-      
         <s-table
           ref="tableStat"
           size="default"
@@ -80,7 +93,7 @@
 
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
-      </a-card>
+     
     </a-tab-pane>
   </a-tabs>
 </template>
@@ -212,7 +225,7 @@ export default {
         }
 
         //非超管和随访管理员时，清空了查科室随访员管理的所有科室
-        
+
         if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
           this.originData.forEach((item, index) => {
             if (index != this.originData.length - 1) {
