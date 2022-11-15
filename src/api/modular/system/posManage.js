@@ -197,7 +197,8 @@ export function getArticleById(id) {
     url: '/health-api/health/patient/articleById',
     method: 'get',
     params: {
-      id: id
+      id: id,
+      recordId:0
     },
 
   })

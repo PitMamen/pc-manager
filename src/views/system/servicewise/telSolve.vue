@@ -325,7 +325,7 @@ export default {
       })
     },
     getUsersByDeptIdAndRoleOut(departmentId) {
-      getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5] }).then((res) => {
+      getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5,7,8] }).then((res) => {
         if (res.code == 0) {
 
           var deptUsers = res.data.deptUsers[0].users
