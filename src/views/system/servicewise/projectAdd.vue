@@ -1008,7 +1008,7 @@ export default {
     // },
 
     getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5] }).then(
+      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
         (res) => {
           if (res.code == 0) {
             this.deptUsers = res.data.deptUsers
@@ -1185,7 +1185,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .div-project-add {
   background-color: white;
   width: 100%;

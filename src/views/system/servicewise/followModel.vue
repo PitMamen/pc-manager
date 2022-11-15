@@ -8,7 +8,7 @@
     :maskClosable="false"
     :destroyOnClose="true"
   >
-    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px;position: relative;">
+    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
       <!-- <a-tab-pane key="1">
           <template #tab>
             <span>
@@ -27,7 +27,7 @@
             历史记录
           </span>
         </template>
-        <histroy-solve ref="histroySolve" :record="record" @handleCancel="handleCancel" @playAudio="playAudio"/>
+        <histroy-solve ref="histroySolve" :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
       </a-tab-pane>
       <a-tab-pane key="3">
         <template #tab>
@@ -57,8 +57,8 @@
         />
       </a-tab-pane>
       <div class="span-mid-audio" v-show="audioShow">
-          <audio style="height: 44px;" controls :src="audioUrl" autoplay></audio>
-        </div>
+        <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
+      </div>
     </a-tabs>
   </a-modal>
 </template>
@@ -88,8 +88,8 @@ export default {
       recordId: '',
       phone: '',
       isSDKReady: false,
-      audioUrl:'',
-      audioShow:false
+      audioUrl: '',
+      audioShow: false,
     }
   },
   created() {},
@@ -107,13 +107,13 @@ export default {
       this.init(record)
     },
     init(record) {
-      var strSex=''
-      if(record.sex){
-         strSex =record.sex.description 
-      }else if(record.userSex){
-        strSex=record.userSex
+      var strSex = ''
+      if (record.sex) {
+        strSex = record.sex.description
+      } else if (record.userSex) {
+        strSex = record.userSex
       }
-      var age=record.age || record.userAge
+      var age = record.age || record.userAge
       // this.title = record.userName + ' | ' + record.sex ? record.sex.description : '' + ' | ' + record.age + '岁'
       this.title = record.userName + ' | ' + strSex + ' | ' + age + '岁'
       this.activeKey = '3'
@@ -131,13 +131,13 @@ export default {
       this.stopAudio()
       this.$emit('ok', '')
     },
- //播放音频
+    //播放音频
     playAudio(url) {
       this.audioUrl = url
       this.audioShow = true
     },
-     //结束音频
-     stopAudio() {
+    //结束音频
+    stopAudio() {
       this.audioUrl = ''
       this.audioShow = false
     },
@@ -208,6 +208,21 @@ export default {
     },
 
     startOutboundCall(phone, recordId) {
+      // tccc.overrideButtonConfig((config) => {
+      //   return {
+      //     active: config.active.filter(
+      //       (c) =>
+      //         ![
+      //           'transferSeat',
+      //           'transferSkillGroup',
+      //           'holdToggle',
+      //           'forwardOut',
+      //           'showKeyboard',
+      //           'selfService',
+      //         ].includes(c.type)
+      //     ),
+      //   }
+      // })
       let that = this
       tccc.Agent.online()
       tccc.Call.startOutboundCall({
@@ -259,8 +274,6 @@ export default {
 }
 </script>
 <style lang="less">
-
-
 // /deep/ .MuiSvgIcon-root.MuiSvgIcon-colorAction {
 //   display: none !important;
 // }
@@ -269,14 +282,14 @@ export default {
   visibility: hidden !important;
 }
 .span-mid-audio {
-      position: absolute;
+  position: absolute;
 
-      right: 0;
+  right: 0;
 
-      top: 0;
+  top: 0;
 
-      z-index: 10000;
-    }
+  z-index: 10000;
+}
 .icon {
   width: 17px;
   height: 18px;

@@ -401,8 +401,8 @@ export default {
 
     .item-person {
       width: 90%;
-      // height: 400px;
-      overflow-y: auto;
+      // height: 100px;
+      // overflow-y: auto;
       margin-top: 2%;
       display: flex;
       flex-direction: row;
