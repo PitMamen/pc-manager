@@ -4,46 +4,51 @@
       <div class="search-row">
         <span class="name">统计方式:</span>
         <a-select
+          class="sitemore"
           @select="onSelected"
           allow-clear
           v-model="queryParamsStatisit.statType"
-          style="width: 120px; height: 28px"
+          style="width: 120px; height: 32px"
           placeholder="请选择统计方式"
         >
-          <a-select-option v-for="(item, index) in StatisticsMode" :value="item.code" :key="index">{{
-            item.value
-          }}</a-select-option>
+          <a-select-option
+            style="height: 32px !important"
+            v-for="(item, index) in StatisticsMode"
+            :value="item.code"
+            :key="index"
+            >{{ item.value }}</a-select-option
+          >
         </a-select>
       </div>
 
-      <!-- <div class="search-row"> -->
-      <span class="name">执行科室:</span>
-      <a-select
-        class="sitemore"
-        :maxTagCount="1"
-        :collapse-tags="true"
-        allow-clear
-        v-model="queryParamsStatisit.execDept"
-        mode="multiple"
-        style="min-width: 120px; height: 30px"
-        placeholder="请选择科室"
-      >
-        <a-select-option
-          style="max-height: 30px"
-          v-for="(item, index) in originData"
-          :value="item.departmentId"
-          :key="index"
-          >{{ item.departmentName }}</a-select-option
+      <div class="search-row">
+        <span class="name">执行科室:</span>
+        <a-select
+          class="sitemore"
+          :maxTagCount="1"
+          :collapse-tags="true"
+          allow-clear
+          v-model="queryParamsStatisit.execDept"
+          mode="multiple"
+          style="min-width: 120px; height: 30px"
+          placeholder="请选择科室"
         >
-      </a-select>
-      <!-- </div> -->
+          <a-select-option
+            style="max-height: 30px"
+            v-for="(item, index) in originData"
+            :value="item.departmentId"
+            :key="index"
+            >{{ item.departmentName }}</a-select-option
+          >
+        </a-select>
+      </div>
 
       <div class="search-row" style="margin-left: 15px">
         <span class="name">时间:</span>
-        <a-range-picker :value="createValue" @change="onChange" />
+        <a-range-picker :value="createValue" @change="onChange"  />
       </div>
 
-      <div class="action-row">
+      <div class="action-row" style="margin-bottom:-2px">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
@@ -239,7 +244,7 @@ export default {
         // }
         // }
 
-        if (this.originData.length == 0&&this.user.roleName != 'admin') {
+        if (this.originData.length == 0 && this.user.roleName != 'admin') {
           param.execDept = '-1'
         }
 
@@ -363,6 +368,10 @@ export default {
   
   <style lang="less">
 .sitemore {
+  .ant-select-selection.ant-select-selection--single {
+    height: 32px !important;
+  }
+
   margin-left: 5px;
   align-items: center;
   /deep/ .ant-select-selection--multiple {
@@ -402,6 +411,7 @@ export default {
   }
 }
 
+
 .table-hover-hidden {
   .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
     background-color: #ffffff !important;
@@ -428,6 +438,14 @@ export default {
     .name {
       margin-right: 10px;
     }
+    .ant-input {
+            width: 100%;
+            height: 32px !important;
+            padding: 4px 11px;
+            color: rgba(0, 0, 0, 0.65);
+            font-size: 12px !important;
+            line-height: 1.5;
+          }
   }
 }
 .div-service {
@@ -592,6 +610,8 @@ export default {
 
         .item-stat-name {
           font-size: 20px;
+
+        
         }
       }
     }
