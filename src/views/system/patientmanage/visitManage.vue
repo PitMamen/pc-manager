@@ -57,23 +57,23 @@
             @change="radioChange"
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
           >
-            <a-radio class="btn-add-plan" :value="1"> 立即发送 </a-radio>
+            <a-radio class="btn-add-plan" :value="1" style="font-size:12px"> 立即发送 </a-radio>
             <a-radio :value="2"> 延时发送 </a-radio>
           </a-radio-group>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%">
+        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%;font-size:12px">
           <!-- <a-form-item> -->
           <a-date-picker
+          style="margin-top: 27px; margin-left: 10px;height: 28px;"
             v-model="queryParams.executeTime"
-            style="margin-top: 27px; margin-left: 10px"
             format="YYYY-MM-DD"
           />
           <!-- </a-form-item> -->
 
           <!-- <div class="display-item;" style="margin-top: 5px"> -->
           <a-time-picker
-            style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px"
+            style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px;height:28px"
             @change="timeChangeStart"
             :default-value="moment('00:00', 'HH:mm')"
             format="HH:mm"
@@ -545,7 +545,7 @@ export default {
     //   background-color: #f0f0f2;
     background-color: #ffffff;
     border: 1px solid #e6e6e6;
-    border-radius: 5px;
+    // border-radius: 5px;
     padding: 2% 0;
     overflow: hidden;
 
@@ -590,17 +590,17 @@ export default {
     .span-item-name {
       width: 15%;
       display: inline-block;
-      color: #000;
-      font-size: 14px;
+      color: #4D4D4D;
+      font-size: 12px;
       text-align: left;
     }
 
     .span-item-value {
       width: 20%;
       // overflow: hidden;
-      color: #333;
+      color: #4D4D4D;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
       text-overflow: ellipsis;
     }
@@ -608,9 +608,9 @@ export default {
     .span-item-value1 {
       width: 10%;
       margin-bottom: -4px;
-      color: #333;
+      color: #4D4D4D;
       text-align: left;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
       white-space: nowrap;
       -webkit-line-clamp: 1;

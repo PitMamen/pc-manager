@@ -9,23 +9,37 @@
     :maskClosable="false"
     :destroyOnClose="true"
   >
-    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px;position: relative;">
+    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
       <a-tab-pane key="1">
         <template #tab>
           <span> 本轮抽查 </span>
         </template>
-        <check-solve ref="checkSolve" :record="record" @ok="handleOk" @handleCancel="handleCancel" @goCall="goCall" @playAudio="playAudio"/>
+        <check-solve
+          ref="checkSolve"
+          :record="record"
+          @ok="handleOk"
+          @handleCancel="handleCancel"
+          @goCall="goCall"
+          @playAudio="playAudio"
+        />
       </a-tab-pane>
       <a-tab-pane key="2">
         <template #tab>
           <span> 任务情况 </span>
         </template>
 
-        <tel-detail ref="telDetail" :record="record" @ok="handleOk" @handleCancel="handleCancel" @goCall="goCall" @playAudio="playAudio"/>
+        <tel-detail
+          ref="telDetail"
+          :record="record"
+          @ok="handleOk"
+          @handleCancel="handleCancel"
+          @goCall="goCall"
+          @playAudio="playAudio"
+        />
       </a-tab-pane>
       <div class="span-mid-audio" v-show="audioShow">
-          <audio style="height: 44px;" controls :src="audioUrl" autoplay></audio>
-        </div>
+        <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
+      </div>
     </a-tabs>
   </a-modal>
 </template>
@@ -52,8 +66,8 @@ export default {
       recordId: '',
       phone: '',
       isSDKReady: false,
-      audioUrl:'',
-      audioShow:false
+      audioUrl: '',
+      audioShow: false,
     }
   },
   created() {},
@@ -96,13 +110,13 @@ export default {
       this.stopAudio()
       this.$emit('ok', '')
     },
- //播放音频
- playAudio(url) {
+    //播放音频
+    playAudio(url) {
       this.audioUrl = url
       this.audioShow = true
     },
-     //结束音频
-     stopAudio() {
+    //结束音频
+    stopAudio() {
       this.audioUrl = ''
       this.audioShow = false
     },
@@ -173,6 +187,36 @@ export default {
     },
 
     startOutboundCall(phone, recordId) {
+      tccc.overrideButtonConfig((config) => {
+        console.log('call config ', config)
+        console.log(
+          'call btn',
+          config.active.filter(
+            (c) =>
+              ![
+                'transferSeat',
+                'transferSkillGroup',
+                'holdToggle',
+                'forwardOut',
+                'showKeyboard',
+                'selfService',
+              ].includes(c.type)
+          )
+        )
+        return {
+          active: config.active.filter(
+            (c) =>
+              ![
+                'transferSeat',
+                'transferSkillGroup',
+                'holdToggle',
+                'forwardOut',
+                'showKeyboard',
+                'selfService',
+              ].includes(c.type)
+          ),
+        }
+      })
       let that = this
       tccc.Agent.online()
       tccc.Call.startOutboundCall({

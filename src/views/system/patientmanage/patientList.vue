@@ -7,21 +7,21 @@
           v-model="queryParams.name"
           allow-clear
           placeholder="人员姓名查询"
-          style="width: 120px;height: 30px;"
+          style="width: 120px;height: 28px;"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
       <div class="search-row">
         <span class="name">科室管理:</span>
-        <a-select  class="sitemore" :title="queryParams.depts" :maxTagCount=1 allow-clear v-model="queryParams.depts" style="min-width: 120px;" mode="multiple"  placeholder="请选择科室">
+        <a-select  class="sitemore" style="min-width: 120px;height:28px; padding-bottom:0px" :title="queryParams.depts" :maxTagCount=1 allow-clear v-model="queryParams.depts" mode="multiple"  placeholder="请选择科室">
           <a-select-option  v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
           }}</a-select-option>
         </a-select>
       </div>
 
-      <div class="action-row" style="margin-bottom:-2px">
+      <div class="action-row" >
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
