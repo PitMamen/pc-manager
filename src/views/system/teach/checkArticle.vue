@@ -1,4 +1,5 @@
 <template>
+  <a-spin :spinning="confirmLoading">
   <div class="div-check-article">
     <div class="div-part">
       <div class="div-line-wrap">
@@ -65,6 +66,7 @@
 
     <div style="height: 50px; backgroud-color: white" />
   </div>
+</a-spin>
 </template>
 
 
@@ -109,12 +111,30 @@ export default {
       selectedRowKeys: [],
       selectedRows: [],
       articleData: {},
+      confirmLoading:true
     }
   },
+  watch: {
+    $route(to, from) {
+        console.log(to)
+        if(to.path.indexOf('checkArticle')>-1){
+          this.init()
+        }
 
+       
+      },
+    
+    },
   created() {
-    // var articleId = this.$route.params.articleId
-    this.articleData = JSON.parse(this.$route.query.recordStr)
+    this.init()
+  },
+
+  methods: {
+
+    init(){
+   // var articleId = this.$route.params.articleId
+   this.confirmLoading=true
+   this.articleData = JSON.parse(this.$route.query.recordStr)
     let articleId = this.articleData.articleId
     console.log(articleId)
     if (articleId) {
@@ -124,6 +144,7 @@ export default {
 
           //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
           document.getElementById('myHtml').innerHTML = res.data.content
+          this.fileList=[]
           this.fileList.push({
             uid: '-1',
             name: '封面',
@@ -133,11 +154,10 @@ export default {
         } else {
           this.$message.error('获取失败：' + res.message)
         }
+        this.confirmLoading=false
       })
     }
-  },
-
-  methods: {
+    },
     toggleAdvanced() {
       this.advanced = !this.advanced
     },

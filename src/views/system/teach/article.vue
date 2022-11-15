@@ -111,10 +111,25 @@ export default {
       articleData: {},
     }
   },
+  watch: {
+    $route(to, from) {
+        console.log(to)
+        if(to.path.indexOf('article')>-1){
+          this.init()
+        }
 
+       
+      },
+    
+    },
   created() {
     // var articleId = this.$route.params.articleId
-    this.articleData = JSON.parse(this.$route.query.recordStr)
+    this.init()
+  },
+
+  methods: {
+    init(){
+      this.articleData = JSON.parse(this.$route.query.recordStr)
     let articleId = this.articleData.articleId
     console.log(articleId)
     if (articleId) {
@@ -135,9 +150,7 @@ export default {
         }
       })
     }
-  },
-
-  methods: {
+    },
     toggleAdvanced() {
       this.advanced = !this.advanced
     },

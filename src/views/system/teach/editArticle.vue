@@ -1,4 +1,5 @@
 <template>
+    <a-spin :spinning="confirmLoading">
   <div class="div-check">
     <div class="div-part">
       <div class="div-line-wrap">
@@ -107,6 +108,7 @@
     </div>
     <div style="height: 50px; backgroud-color: white" />
   </div>
+</a-spin>
 </template>
 
 
@@ -125,6 +127,8 @@ export default {
   data() {
     return {
       // 高级搜索 展开/关闭
+      editor:{},
+      confirmLoading:true,
       advanced: false,
       checkData: {
         title: '',
@@ -160,9 +164,25 @@ export default {
       },
     }
   },
+  watch: {
+    $route(to, from) {
+        console.log(to)
+        if(to.path.indexOf('editArticle')>-1){
+          this.init()
+        }
 
+       
+      },
+    
+    },
   created() {
-    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+   
+  },
+
+  methods: {
+    init(){
+      this.confirmLoading=true
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getDepts().then((res) => {
       if (res.code == 0) {
         this.ksTypeData = res.data
@@ -171,9 +191,37 @@ export default {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
     })
-  },
-
-  methods: {
+       // var articleId = this.$route.params.articleId
+       this.articleData = JSON.parse(this.$route.query.recordStr)
+    let articleId = this.articleData.articleId
+    if (this.articleData.articleId) {
+      document.title = '修改教育文章'
+    } else {
+      document.title = '新增教育文章'
+    }
+    if (articleId) {
+      getArticleById(articleId).then((res) => {
+        if (res.code == 0) {
+          this.checkData = res.data
+          this.checkData.categoryId = parseInt(this.checkData.categoryId)
+          this.editor.txt.html(res.data.content)
+          this.getDiseasesOut(this.checkData.categoryId)
+          console.log('push media_id', this.checkData.extraData)
+          this.fileList=[]
+          this.fileList.push({
+            uid: '-1',
+            name: '封面',
+            status: 'done',
+            url: this.checkData.previewUrl,
+            media_id: this.checkData.extraData,
+          })
+        } else {
+          this.$message.error('获取失败：' + res.message)
+        }
+        this.confirmLoading=false
+      })
+    }
+    },
     handleChangeDept(code) {
       this.getDiseasesOut(code)
     },
@@ -362,6 +410,7 @@ export default {
   },
   mounted() {
     var editor = new E('#div1')
+    this.editor=editor
 
     editor.config.height = 600
     editor.config.pasteFilterStyle = false
@@ -418,34 +467,7 @@ export default {
 
     editor.create()
 
-    // var articleId = this.$route.params.articleId
-    this.articleData = JSON.parse(this.$route.query.recordStr)
-    let articleId = this.articleData.articleId
-    if (this.articleData.articleId) {
-      document.title = '修改教育文章'
-    } else {
-      document.title = '新增教育文章'
-    }
-    if (articleId) {
-      getArticleById(articleId).then((res) => {
-        if (res.code == 0) {
-          this.checkData = res.data
-          this.checkData.categoryId = parseInt(this.checkData.categoryId)
-          editor.txt.html(res.data.content)
-          this.getDiseasesOut(this.checkData.categoryId)
-          console.log('push media_id', this.checkData.extraData)
-          this.fileList.push({
-            uid: '-1',
-            name: '封面',
-            status: 'done',
-            url: this.checkData.previewUrl,
-            media_id: this.checkData.extraData,
-          })
-        } else {
-          this.$message.error('获取失败：' + res.message)
-        }
-      })
-    }
+    this.init()
   },
 }
 </script>

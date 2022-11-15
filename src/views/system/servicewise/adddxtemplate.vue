@@ -61,8 +61,8 @@
       </div>
 
       <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-        <div class="div-left" style="width: 15%; margin-left: 10%; margin-top: 3.5%">
-          <span class="span-item-name" style="width: 100%">模板参数{{ index + 1 }} :[{{ item.name }}]</span>
+        <div class="div-left" style="width: 15%; margin-left: 95px;">
+          <span class="span-item-name" style="width: 100%;text-align: left;">模板参数{{ index + 1 }} :[{{ item.name }}]</span>
         </div>
         <div class="div-left" style="width: 25%">
           <span class="span-item-name" style="width: 30%">匹配字段 :</span>
@@ -75,11 +75,11 @@
             <a-select-option v-for="(item, index) in zdsxData" :key="index" :value="item">{{ item }}</a-select-option>
           </a-select>
         </div>
-        <div class="div-right" style="width: 50%">
+        <div class="div-right" style="width: 32.5%;float: left;">
           <a-select
             v-show="item.property === '档案字段' && item.name.indexOf('date')<0"
             v-model="fieldList[index].content"
-            style="width: 65% !important"
+            style="width: 100% !important"
             allow-clear
             placeholder="请选择参数"
           >
@@ -93,7 +93,7 @@
           <a-select
             v-show="item.property === '档案字段' && item.name.indexOf('date')>-1"
             v-model="fieldList[index].content"
-            style="width: 65% !important"
+            style="width: 100% !important"
             allow-clear
             placeholder="请选择参数"
           >
@@ -108,7 +108,7 @@
             v-show="item.property === '自定义传参'"
             v-model="fieldList[index].content"
             class="span-item-value"
-            style="width: 65%; margin-left: 0; display: inline-block"
+            style="width: 100%; margin-left: 0; display: inline-block"
             allow-clear
             :maxLength="150"
             placeholder="请输入参数,不超过150字 "
@@ -116,7 +116,7 @@
         </div>
       </div>
 
-      <div class="div-line-wrap" style="margin-top: 3%">
+      <div class="div-line-wrap" >
         <div class="div-total-one">
           <span class="span-item-name"> 模板跳转内容 :</span>
 
@@ -140,7 +140,7 @@
             v-show="questionContent.name"
             v-model="questionContent.name"
             class="span-item-value"
-            style="display: inline-block; margin-right: 3%; width: 64.5% !important"
+            style="display: inline-block; margin-right: 20px;"
             allow-clear
             readOnly
             placeholder="请选择问卷 "
@@ -155,7 +155,7 @@
             v-show="teachContent.title"
             v-model="teachContent.title"
             class="span-item-value"
-            style="display: inline-block; margin-right: 3%; width: 64.5% !important"
+            style="display: inline-block; margin-right: 20px; "
             allow-clear
             readOnly
             placeholder="请选择宣教文章 "
@@ -177,7 +177,7 @@
       </div>
     </div>
 
-    <div style="margin-top: 60px">
+    <div style="margin-top: 30px">
       <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 37%">
         {{ id ? '确认修改' : '确认提交' }}
       </a-button>
@@ -237,20 +237,7 @@ export default {
       navigateListData: [],
     }
   },
-  watch: {
-    $route(to, from) {
-        
-        if(to.path.indexOf('adddxtemplate')>-1){
-          console.log("watch----",to,from)
-          this.init()
-        }
-        if(from.path.indexOf('adddxtemplate')>-1){
-          this.$destroy()
-        }
-       
-      },
-    
-    },
+ 
   created() {
   
 
@@ -652,21 +639,22 @@ export default {
       .div-left {
         float: left;
         width: 50%;
-        margin-top: 3%;
+        margin-top: 20px;
         overflow: hidden;
 
         .span-item-name {
           display: inline-block;
           color: #000;
-          font-size: 14px;
-          text-align: left;
-          width: 20%;
+          font-size: 12px;
+          text-align: right;
+          margin-right: 10px;
+          width: 85px;
         }
         .span-item-value {
           width: 45%;
           color: #333;
           text-align: left;
-          font-size: 14px;
+          font-size: 12px;
           display: inline-block;
         }
         .ant-select {
@@ -675,21 +663,22 @@ export default {
       }
 
       .div-right {
-        margin-top: 3%;
+        margin-top: 20px;
         width: 50%;
         float: right;
         overflow: hidden;
         .span-item-name {
           display: inline-block;
           color: #000;
-          text-align: left;
-          font-size: 14px;
-          width: 20%;
+          text-align: right;
+          font-size: 12px;
+          margin-right: 10px;
+          width: 85px;
         }
         .span-item-value {
           width: 45%;
           color: #333;
-          font-size: 14px;
+          font-size: 12px;
           text-align: left;
           display: inline-block;
         }
@@ -699,28 +688,29 @@ export default {
       }
 
       .div-total-one {
-        margin-top: 3%;
+        margin-top: 20px;
         overflow: hidden;
         width: 100%;
 
         .span-item-name {
           display: inline-block;
           color: #000;
-          text-align: left;
-          font-size: 14px;
-          width: 10%;
+          text-align: right;
+          font-size: 12px;
+          margin-right: 10px;
+          width: 85px;
         }
         .span-item-value {
-          width: 45%;
+          width: 22.5%;
           color: #333;
-          font-size: 14px;
+          font-size: 12px;
           padding-left: 0px;
           text-align: left;
           display: inline-block;
         }
 
         .ant-select {
-          width: 45% !important;
+          width:22.5% !important;
           margin-left: 0% !important;
         }
       }

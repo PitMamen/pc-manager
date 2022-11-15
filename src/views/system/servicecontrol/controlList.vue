@@ -11,7 +11,7 @@
           <a-auto-complete
             class="global-search"
             size="large"
-            style="width: 100%; font-size: 14px"
+            style="width: 100%; font-size: 12px"
             placeholder="请输入名称查询"
             option-label-prop="title"
             @select="onSelect"
@@ -56,11 +56,28 @@
       </div>
 
       <a-card :bordered="false" class="card-right-control">
-        <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
-          <!-- 类型，1: 待抽查 2: 已抽查 -->
+        <!-- <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
           <a-radio-button value="1"> 待抽查 </a-radio-button>
           <a-radio-button value="2"> 已抽查 </a-radio-button>
-        </a-radio-group>
+        </a-radio-group> -->
+
+        <!-- 类型，1: 待抽查 2: 已抽查 -->
+        <div class="div-radio">
+          <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 1 }" @click="onRadioClick(1)">
+            <img
+              style="width: 13px; height: 13px"
+              :class="{ 'checked-icon': queryParams.type == 1 }"
+              src="~@/assets/icons/icon_wait.svg"
+            /><span style="margin-left: 3px">待抽查</span>
+          </div>
+          <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 2 }" @click="onRadioClick(2)">
+            <img
+              :class="{ 'checked-icon': queryParams.type == 2 }"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/icon_completed.svg"
+            /><span style="margin-left: 3px">已抽查</span>
+          </div>
+        </div>
 
         <div class="div-divider" style="margin-left: 0"></div>
 
@@ -573,6 +590,19 @@ export default {
   },
 
   methods: {
+    onRadioClick(type) {
+      this.queryParams.type = type
+      //改变样式
+
+      if (this.queryParams.type == 1) {
+        this.columns = JSON.parse(JSON.stringify(this.columnsWait))
+      } else {
+        this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+      }
+
+      this.goSearch()
+    },
+
     goSearch() {
       this.$refs.table.refresh(true)
     },
@@ -665,6 +695,9 @@ export default {
         this.quesGot = true
         if (res.code == 0) {
           this.quesData = res.data
+          if (!this.quesData || this.quesData.length == 0) {
+            return
+          }
           for (let index = 0; index < this.quesData.length; index++) {
             this.$set(this.quesData[index], 'isChecked', false)
           }
@@ -808,6 +841,10 @@ export default {
   overflow: hidden;
   height: 100%;
 
+  span {
+    font-size: 12px;
+  }
+
   .div-divider {
     margin: 0% 0% 0% 1%;
     width: 100%;
@@ -874,6 +911,10 @@ export default {
         border-bottom: #e6e6e6 1px solid;
         height: 26px;
 
+        &:hover {
+          cursor: pointer;
+        }
+
         .span-name {
           // margin-top: 3.5%;
           // display: inline-block;
@@ -889,9 +930,6 @@ export default {
           margin-top: 1%;
           font-size: 12px;
           text-align: left|center;
-          &:hover {
-            cursor: pointer;
-          }
         }
 
         .div-rate {
@@ -910,6 +948,35 @@ export default {
     overflow: hidden;
     float: right;
     width: 81%;
+
+    .div-radio {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      .radio-item {
+        display: flex;
+        // color: white;
+        overflow: hidden;
+        padding: 10px 20px;
+        align-items: center;
+        flex-direction: row;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .checked-btn {
+        background-color: #eff7ff;
+        color: #1890ff;
+        border-bottom: #1890ff 2px solid;
+      }
+
+      // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
+      .checked-icon {
+        filter: drop-shadow(#1890ff 200px 0);
+        transform: translateX(-200px);
+      }
+    }
 
     .ant-card-body {
       padding: 0px 10px !important;

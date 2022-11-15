@@ -323,29 +323,42 @@
               </a-select>
               <!-- @change="onChange" -->
 
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 2%"
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="margin-left: 2%; width: 60px"
                 >执行人员:</span
               >
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" class="span-titl" style="margin-left: 1%">{{
-                itemTask.nameStr
-              }}</span>
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="
+                  max-width: 200px;
+                  margin-left: 1%;
+                  overflow: hidden;
+                  font-size: 12px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                "
+                >{{ itemTask.nameStr }}</span
+              >
 
               <div
                 class="end-btn"
                 v-if="itemTask.isChecked || itemTask.messageType == 1"
-                style="margin-left: 2%; width: 20%"
+                style="margin-left: 2%; width: 80px"
                 @click="addPerson(indexTask)"
               >
                 <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
 
-                <span style="width: 100px; color: #1890ff; margin-left: 2%">添加人员</span>
+                <span style="width: 50px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
 
               <!-- v-if="itemTask.messageType == 1 || ((itemTask.messageType == 2 || itemTask.messageType == 3)&&itemTask.)" -->
               <span class="span-titl" v-if="itemTask.taskType == 1" style="margin-left: 2%">设置逾期时间（小时）:</span>
               <a-input-number
                 v-if="itemTask.taskType == 1"
-                style="display: inline-block; margin-left: 1%; width: 96px"
+                style="display: inline-block; margin-left: 1%; width: 50px"
                 v-model="itemTask.overdueTimeUnit"
                 :min="0"
                 :max="10000"
@@ -1167,8 +1180,8 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            // this.$router.go(-1)
-            this.$router.push({ path: './serviceWise?keyindex=1' })
+            this.$router.go(-1)
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
             this.$message.error(res.message)
           }
@@ -1194,6 +1207,10 @@ export default {
   padding: 1%;
   padding-bottom: 2%;
 
+  span {
+    font-size: 12px;
+  }
+
   .div-title {
     display: flex;
     background-color: #ebebeb;
@@ -1210,7 +1227,7 @@ export default {
       background-color: #1890ff;
     }
     .span-title {
-      font-size: 14px;
+      font-size: 12px;
       margin-left: 10px;
       font-weight: bold;
       color: #333;
@@ -1230,7 +1247,7 @@ export default {
     .span-item-name {
       display: inline-block;
       color: #000;
-      font-size: 14px;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
@@ -1238,7 +1255,7 @@ export default {
       color: #333;
       text-align: left;
       padding-left: 1.5%;
-      font-size: 14px;
+      font-size: 12px;
       display: inline-block;
     }
 
@@ -1417,7 +1434,7 @@ export default {
             margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
-            width: 20% !important;
+            width: 120px !important;
             margin-left: 1% !important;
           }
         }
