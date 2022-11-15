@@ -78,7 +78,7 @@
             <!-- <a @click="$refs.statSolve.edit(record)">处理</a>
                     <a-divider type="vertical" /> -->
 
-            <a @click="$refs.statDetail.edit(record.id)">详情</a>
+            <a @click="$refs.statSolve.doInfo(record)">详情</a>
 
             <a-divider v-if="record.status == 5" type="vertical" />
 
@@ -116,7 +116,7 @@ import editFormDispatch from './editFormDispatch'
 import moment from 'moment'
 
 import statDetail from './statDetail'
-import statSolve from './statSolve'
+import statSolve from '../servicewise/followModel'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
