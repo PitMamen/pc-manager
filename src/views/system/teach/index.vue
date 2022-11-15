@@ -27,7 +27,7 @@
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
-      style="margin-top: 2%"
+     
       ref="table"
       size="default"
       :columns="columns"
@@ -103,10 +103,12 @@ export default {
         {
           title: '科室',
           dataIndex: 'categoryName',
+          width: '120px',
         },
         {
           title: '专病',
           dataIndex: 'articleType',
+          width: '120px',
         },
         {
           title: '摘要说明',
