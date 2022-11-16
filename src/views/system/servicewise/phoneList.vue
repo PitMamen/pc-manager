@@ -266,7 +266,7 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-          width: '50px',
+          width: '60px',
         },
         {
           title: '姓名',
@@ -277,7 +277,7 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
-          width: '50px',
+          width: '60px',
         },
         {
           title: '手机号码',
@@ -329,7 +329,7 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-          width: 60,
+          width: '60px',
         },
         {
           title: '姓名',
@@ -340,7 +340,7 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 60,
+          width: '60px',
         },
         {
           title: '手机号码',
@@ -393,7 +393,7 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-          width: 60,
+          width: '60px',
         },
         {
           title: '姓名',
@@ -404,7 +404,7 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 60,
+          width: '60px',
         },
         {
           title: '手机号码',
@@ -463,7 +463,7 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-          width: 60,
+          width: '60px',
         },
         {
           title: '姓名',
@@ -474,7 +474,7 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 60,
+          width: '60px',
         },
         {
           title: '手机号码',
@@ -533,7 +533,7 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-          width: 60,
+          width: '60px',
         },
         {
           title: '姓名',
@@ -544,7 +544,7 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 60,
+          width: '60px',
         },
         {
           title: '手机号码',
