@@ -103,12 +103,12 @@ export default {
         {
           title: '科室',
           dataIndex: 'categoryName',
-          width: '120px',
+          width: '150px',
         },
         {
           title: '专病',
           dataIndex: 'articleType',
-          width: '120px',
+          width: '150px',
         },
         {
           title: '摘要说明',
