@@ -16,6 +16,7 @@
           <a-col :span="12">
             <a-form-item label="应用类型" class="row-bottom-0" :labelCol="labelCol" :wrapperCol="wrapperCol">
               <a-select
+                disabled
                 style="width: 100%"
                 placeholder="应用类型"
                 v-decorator="['applicationType', { rules: [{ required: true, message: '请选择应用类型！' }] }]"
@@ -86,6 +87,7 @@
         </a-row>
         <a-form-item label="应用路径" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
           <a-input
+            disabled
             placeholder="应用路径"
             v-decorator="['indexUrl', { rules: [{ required: true, message: '请输入应用路径！' }] }]"
           />
