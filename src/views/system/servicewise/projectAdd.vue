@@ -86,7 +86,7 @@
             v-if="projectData.filterRules.length == 0"
             @click="addRule()"
           >
-            <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+            <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_rule.png" />
 
             <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
           </div>
@@ -137,7 +137,7 @@
 
             <div class="div-rule-right">
               <div class="end-btn" style="margin-left: 15%" @click="delRule(indexRule, itemRule)">
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_delete.jpg" />
+                <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_delete.jpg" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
               </div>
@@ -148,7 +148,7 @@
                 v-if="indexRule == projectData.filterRules.length - 1"
                 @click="addRule()"
               >
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+                <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_rule.png" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
               </div>
@@ -349,7 +349,7 @@
                 style="margin-left: 2%; width: 80px"
                 @click="addPerson(indexTask)"
               >
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
+                <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
@@ -384,7 +384,6 @@
           </div>
         </div>
 
-        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
       <div class="div-pro-btn">
@@ -1276,7 +1275,7 @@ export default {
   }
 
   .div-pro-middle {
-    margin-top: 2%;
+    margin-top: 1%;
 
     .div-rules {
       width: 100%;
@@ -1337,7 +1336,7 @@ export default {
     margin-top: 1%;
 
     .span-top {
-      padding: 7px 15px;
+      padding: 4px 15px;
       margin-top: 2%;
       margin-left: 2%;
       color: #1890ff;
@@ -1406,7 +1405,7 @@ export default {
           align-items: center;
 
           .span-end {
-            padding: 7px 15px;
+            padding: 4px 15px;
             // background-color: yellow;
             // width: 100px;
             color: #1890ff;
