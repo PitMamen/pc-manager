@@ -81,6 +81,7 @@
         </div>
 
         <s-table
+        :scroll="{ x: true }"
           ref="tableStat"
           size="default"
           :columns="columnsStat"
@@ -204,7 +205,8 @@ export default {
         },
         {
           title: '操作',
-          width: '150px',
+          fixed: 'right',
+          width: '80px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

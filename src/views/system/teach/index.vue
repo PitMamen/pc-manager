@@ -27,7 +27,7 @@
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
-     
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -135,7 +135,8 @@ export default {
         },
         {
           title: '操作',
-          width: '230px',
+          width: '180px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
