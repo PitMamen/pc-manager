@@ -6,7 +6,7 @@
       
       <div class="search-row">
         <span class="name">科室:</span>
-        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;">
+        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;height: 28px;">
           <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{ item.departmentName }}</a-select-option>
         </a-select>
       </div>
@@ -317,6 +317,7 @@ export default {
     display: inline-block;
     vertical-align: middle;
   }
+  
   .search-row {
     display: inline-block;
     vertical-align: middle;
