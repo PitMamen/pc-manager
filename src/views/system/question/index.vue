@@ -1,6 +1,6 @@
 <template>
    <a-card :bordered="false" class="sys-card">
-  <a-tabs default-active-key="1" @change="callback">
+  <a-tabs default-active-key="1" @change="callback" style=" margin-top: -17px">
     <a-tab-pane key="1" tab="问卷列表">
     
       <div class="table-page-search-wrapper">
