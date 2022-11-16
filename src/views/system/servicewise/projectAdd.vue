@@ -86,7 +86,7 @@
             v-if="projectData.filterRules.length == 0"
             @click="addRule()"
           >
-            <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+            <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_rule.png" />
 
             <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
           </div>
@@ -137,7 +137,7 @@
 
             <div class="div-rule-right">
               <div class="end-btn" style="margin-left: 15%" @click="delRule(indexRule, itemRule)">
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_delete.jpg" />
+                <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_delete.jpg" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
               </div>
@@ -148,7 +148,7 @@
                 v-if="indexRule == projectData.filterRules.length - 1"
                 @click="addRule()"
               >
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_rule.png" />
+                <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_rule.png" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
               </div>
@@ -349,7 +349,7 @@
                 style="margin-left: 2%; width: 80px"
                 @click="addPerson(indexTask)"
               >
-                <img style="width: 25px; height: 25px" src="~@/assets/icons/icon_add_people.png" />
+                <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
                 <span style="width: 50px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
@@ -383,8 +383,6 @@
               >刪除任务</a-button> -->
           </div>
         </div>
-
-        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
       <div class="div-pro-btn">
@@ -485,73 +483,6 @@ export default {
         // tasks: [{ assignments: [] }, {}],
         // metaConfigureId: '',
       },
-      // projectData: {
-      //   basePlan: {
-      //     executeDepartment: 'string',
-      //     followType: 0,
-      //     metaConfigureId: 0,
-      //     planId: 0,
-      //     planName: 'string',
-      //     remark: 'string',
-      //   },
-      //   filterRules: [
-      //     {
-      //       condition: 'string',
-      //       metaConfigureDetailId: 0,
-      //       queryValue: 'string',
-      //       ruleId: 0,
-      //     },
-      //   ],
-      //   followType: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   formulateTime: '2022-10-17T03:20:59.512Z',
-      //   formulateUserId: 0,
-      //   hospitalCode: 'string',
-      //   id: 0,
-      //   metaConfigureId: 0,
-      //   pageNo: 0,
-      //   pageSize: 0,
-      //   planName: 'string',
-      //   remark: 'string',
-      //   status: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   tasks: [
-      //     {
-      //       assignments: [
-      //         {
-      //           assignId: 0,
-      //           userId: 0,
-      //           weight: 0,
-      //         },
-      //       ],
-      //       cron: 'string',
-      //       hospitalCode: 'string',
-      //       messageContentId: 'string',
-      //       messageContentType: 0,
-      //       messageType: 0,
-      //       metaConfigureDetailId: 0,
-      //       overdueFollowType: 0,
-      //       personnelAssignmentType: 0,
-      //       planId: 0,
-      //       pushTimePoint: 'string',
-      //       repeatTimeUnit: 0,
-      //       taskExecType: 0,
-      //       taskId: 0,
-      //       taskType: 0,
-      //       tenantId: 'string',
-      //       timeQuantity: 0,
-      //       timeUnit: 0,
-      //     },
-      //   ],
-      //   tenantId: 'string',
-      //   updatedTime: '2022-10-17T03:20:59.512Z',
-      //   updaterId: 0,
-      //   version: 0,
-      // },
     }
   },
 
@@ -1276,7 +1207,7 @@ export default {
   }
 
   .div-pro-middle {
-    margin-top: 2%;
+    margin-top: 1%;
 
     .div-rules {
       width: 100%;
@@ -1337,7 +1268,7 @@ export default {
     margin-top: 1%;
 
     .span-top {
-      padding: 7px 15px;
+      padding: 4px 15px;
       margin-top: 2%;
       margin-left: 2%;
       color: #1890ff;
@@ -1364,6 +1295,10 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        /deep/ .ant-time-picker-input {
+          height: 28px !important;
+        }
 
         .mid-select-one.ant-select {
           width: 10% !important;
@@ -1406,7 +1341,7 @@ export default {
           align-items: center;
 
           .span-end {
-            padding: 7px 15px;
+            padding: 4px 15px;
             // background-color: yellow;
             // width: 100px;
             color: #1890ff;

@@ -1,6 +1,6 @@
 <template>
    <a-card :bordered="false" class="sys-card">
-  <a-tabs default-active-key="1" @change="callback">
+  <a-tabs default-active-key="1" @change="callback" style=" margin-top: -17px">
     <a-tab-pane key="1" tab="问卷列表">
     
       <div class="table-page-search-wrapper">
@@ -81,6 +81,7 @@
         </div>
 
         <s-table
+        :scroll="{ x: true }"
           ref="tableStat"
           size="default"
           :columns="columnsStat"
@@ -204,7 +205,8 @@ export default {
         },
         {
           title: '操作',
-          width: '150px',
+          fixed: 'right',
+          width: '80px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

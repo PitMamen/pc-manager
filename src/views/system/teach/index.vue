@@ -6,7 +6,7 @@
       
       <div class="search-row">
         <span class="name">科室:</span>
-        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;">
+        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;height: 28px;">
           <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{ item.departmentName }}</a-select-option>
         </a-select>
       </div>
@@ -27,7 +27,7 @@
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
-     
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -103,12 +103,12 @@ export default {
         {
           title: '科室',
           dataIndex: 'categoryName',
-          width: '120px',
+          width: '150px',
         },
         {
           title: '专病',
           dataIndex: 'articleType',
-          width: '120px',
+          width: '150px',
         },
         {
           title: '摘要说明',
@@ -135,7 +135,8 @@ export default {
         },
         {
           title: '操作',
-          width: '230px',
+          width: '180px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -317,6 +318,7 @@ export default {
     display: inline-block;
     vertical-align: middle;
   }
+  
   .search-row {
     display: inline-block;
     vertical-align: middle;
