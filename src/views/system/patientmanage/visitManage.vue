@@ -65,7 +65,7 @@
         <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%;font-size:12px">
           <!-- <a-form-item> -->
           <a-date-picker
-          style="margin-top: 27px; margin-left: 10px;height: 28px;"
+          style="margin-top: 27px; margin-left: 10px;height: 28px;width: 128px;"
             v-model="queryParams.executeTime"
             format="YYYY-MM-DD"
           />
@@ -73,7 +73,7 @@
 
           <!-- <div class="display-item;" style="margin-top: 5px"> -->
           <a-time-picker
-            style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px;height:28px"
+            style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px;height:28px;font-size:12px"
             @change="timeChangeStart"
             :default-value="moment('00:00', 'HH:mm')"
             format="HH:mm"
