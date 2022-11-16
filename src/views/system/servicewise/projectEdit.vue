@@ -654,33 +654,6 @@ export default {
       })
     },
 
-    // getQuesTemplateListForJumpTypeOut() {
-    //   //全部的问卷模板
-    //   getWxTemplateListForJumpType(1).then((res) => {
-    //     if (res.code == 0) {
-    //       res.data.forEach((item) => {
-    //         this.$set(item, 'messageContentType', 4)
-    //       })
-    //       this.templateListQues = res.data
-    //       this.getQuesSmsTemplateList()
-    //       console.log('getWxTemplateListForJumpType', res.data.length)
-    //     }
-    //   })
-    // },
-
-    // getQuesSmsTemplateList() {
-    //   getSmsTemplateListForJumpType(1).then((res) => {
-    //     if (res.code == 0) {
-    //       res.data.forEach((item) => {
-    //         this.$set(item, 'messageContentType', 3)
-    //         this.$set(item, 'templateName', item.templateTitle)
-    //       })
-    //       this.templateListQues = this.templateListQues.concat(res.data)
-    //       this.getDetailOut()
-    //     }
-    //   })
-    // },
-
     /**
      * 时序问题多，先获取详情再根据详情获取科室列表；再获取模版问卷列表添加到每条数据去
      */
@@ -1472,6 +1445,10 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        /deep/ .ant-time-picker-input {
+          height: 28px !important;
+        }
 
         .mid-select-one.ant-select {
           width: 10% !important;
