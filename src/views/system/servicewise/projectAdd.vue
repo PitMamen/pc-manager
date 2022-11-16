@@ -383,7 +383,6 @@
               >刪除任务</a-button> -->
           </div>
         </div>
-
       </div>
 
       <div class="div-pro-btn">
@@ -484,73 +483,6 @@ export default {
         // tasks: [{ assignments: [] }, {}],
         // metaConfigureId: '',
       },
-      // projectData: {
-      //   basePlan: {
-      //     executeDepartment: 'string',
-      //     followType: 0,
-      //     metaConfigureId: 0,
-      //     planId: 0,
-      //     planName: 'string',
-      //     remark: 'string',
-      //   },
-      //   filterRules: [
-      //     {
-      //       condition: 'string',
-      //       metaConfigureDetailId: 0,
-      //       queryValue: 'string',
-      //       ruleId: 0,
-      //     },
-      //   ],
-      //   followType: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   formulateTime: '2022-10-17T03:20:59.512Z',
-      //   formulateUserId: 0,
-      //   hospitalCode: 'string',
-      //   id: 0,
-      //   metaConfigureId: 0,
-      //   pageNo: 0,
-      //   pageSize: 0,
-      //   planName: 'string',
-      //   remark: 'string',
-      //   status: {
-      //     description: 'string',
-      //     value: 0,
-      //   },
-      //   tasks: [
-      //     {
-      //       assignments: [
-      //         {
-      //           assignId: 0,
-      //           userId: 0,
-      //           weight: 0,
-      //         },
-      //       ],
-      //       cron: 'string',
-      //       hospitalCode: 'string',
-      //       messageContentId: 'string',
-      //       messageContentType: 0,
-      //       messageType: 0,
-      //       metaConfigureDetailId: 0,
-      //       overdueFollowType: 0,
-      //       personnelAssignmentType: 0,
-      //       planId: 0,
-      //       pushTimePoint: 'string',
-      //       repeatTimeUnit: 0,
-      //       taskExecType: 0,
-      //       taskId: 0,
-      //       taskType: 0,
-      //       tenantId: 'string',
-      //       timeQuantity: 0,
-      //       timeUnit: 0,
-      //     },
-      //   ],
-      //   tenantId: 'string',
-      //   updatedTime: '2022-10-17T03:20:59.512Z',
-      //   updaterId: 0,
-      //   version: 0,
-      // },
     }
   },
 
@@ -1363,6 +1295,10 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        /deep/ .ant-time-picker-input {
+          height: 28px !important;
+        }
 
         .mid-select-one.ant-select {
           width: 10% !important;
