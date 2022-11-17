@@ -155,7 +155,6 @@ export default {
     },
 
     goChange(record) {
-      console.log(record)
       this.$router.push({ name: 'wise_robot_edit', query: { recordStr: JSON.stringify(record) } })
     },
 
