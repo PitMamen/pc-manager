@@ -187,6 +187,7 @@ export default {
     goCall(phone, recordId) {
       this.phone = phone
       this.recordId = recordId
+      
       let that = this
 
       console.log('参数', phone + '==' + recordId)
