@@ -165,7 +165,7 @@ import {
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER,CURRENT_FOLLOW_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { parseString } from 'loader-utils'
 let self //最外面全局的
@@ -327,11 +327,12 @@ export default {
     getUsersByDeptIdAndRoleOut(departmentId) {
       getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5,7,8] }).then((res) => {
         if (res.code == 0) {
-
+          //保存的上次选择的实际随访人
+          const actualDoctorUserId= Vue.ls.get(CURRENT_FOLLOW_USER)
           var deptUsers = res.data.deptUsers[0].users
           deptUsers.forEach(item=>{
            
-            if(item.userId == this.user.userId+''){
+            if(item.userId == actualDoctorUserId+''){
               console.log('相等')
               this.followResultContent.actualDoctorUserId=item.userId
             }
@@ -419,6 +420,8 @@ export default {
       modifyFollowExecuteRecord(postdata).then((res) => {
         if (res.code === 0) {
           this.$message.success('操作成功！')
+          //保存实际随访人
+          Vue.ls.set(CURRENT_FOLLOW_USER, this.followResultContent.actualDoctorUserId)
           this.$emit('ok', '')
         } else {
           this.isLoading=false
