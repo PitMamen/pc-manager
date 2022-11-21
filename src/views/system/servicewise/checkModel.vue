@@ -9,38 +9,40 @@
     :maskClosable="false"
     :destroyOnClose="true"
   >
-    <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
-      <a-tab-pane key="1">
-        <template #tab>
-          <span> 本轮抽查 </span>
-        </template>
-        <check-solve
-          ref="checkSolve"
-          :record="record"
-          @ok="handleOk"
-          @handleCancel="handleCancel"
-          @goCall="goCall"
-          @playAudio="playAudio"
-        />
-      </a-tab-pane>
-      <a-tab-pane key="2">
-        <template #tab>
-          <span> 任务情况 </span>
-        </template>
+    <a-spin :spinning="confirmLoading">
+      <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
+        <a-tab-pane key="1">
+          <template #tab>
+            <span> 本轮抽查 </span>
+          </template>
+          <check-solve
+            ref="checkSolve"
+            :record="record"
+            @ok="handleOk"
+            @handleCancel="handleCancel"
+            @goCall="goCall"
+            @playAudio="playAudio"
+          />
+        </a-tab-pane>
+        <a-tab-pane key="2">
+          <template #tab>
+            <span> 任务情况 </span>
+          </template>
 
-        <tel-detail
-          ref="telDetail"
-          :record="record"
-          @ok="handleOk"
-          @handleCancel="handleCancel"
-          @goCall="goCall"
-          @playAudio="playAudio"
-        />
-      </a-tab-pane>
-      <div class="span-mid-audio" v-show="audioShow">
-        <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
-      </div>
-    </a-tabs>
+          <tel-detail
+            ref="telDetail"
+            :record="record"
+            @ok="handleOk"
+            @handleCancel="handleCancel"
+            @goCall="goCall"
+            @playAudio="playAudio"
+          />
+        </a-tab-pane>
+        <div class="span-mid-audio" v-show="audioShow">
+          <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
+        </div>
+      </a-tabs>
+    </a-spin>
   </a-modal>
 </template>
 
@@ -62,6 +64,7 @@ export default {
       modelType: '',
       activeKey: '1',
       visible: false,
+      confirmLoading: false,
       record: Object,
       recordId: '',
       phone: '',
@@ -70,7 +73,13 @@ export default {
       audioShow: false,
     }
   },
-  created() {},
+  created() {
+    createSdkLoginToken().then((res) => {
+      if (res.code == 0) {
+        this.injectTcccWebSDK(res.data.sdkURL)
+      }
+    })
+  },
 
   methods: {
     //抽查
@@ -137,14 +146,39 @@ export default {
 
             tccc.UI.hideWorkbench() //隐藏工作台
             tccc.UI.hidefloatButton() //隐藏悬浮按钮
+            tccc.overrideButtonConfig((config) => {
+              console.log('call config ', config)
+              console.log(
+                'call config modified ',
+                config.active.filter(
+                  (c) =>
+                    ![
+                      'transferSeat',
+                      'transferSkillGroup',
+                      'holdToggle',
+                      'forwardOut',
+                      'showKeyboard',
+                      'selfService',
+                    ].includes(c.type)
+                )
+              )
+              return {
+                active: config.active.filter(
+                  (c) =>
+                    ![
+                      'transferSeat',
+                      'transferSkillGroup',
+                      'holdToggle',
+                      'forwardOut',
+                      'showKeyboard',
+                      'selfService',
+                    ].includes(c.type)
+                ),
+              }
+            })
 
-            this.isSDKReady = true
+            that.isSDKReady = true
             console.log('云呼叫初始化成功 Agent', tccc.Agent)
-            if (tccc.Agent.getStatus() == 'free') {
-              //空闲状态可以打电话
-
-              that.startOutboundCall(that.phone, that.recordId)
-            }
 
             resolve('初始化成功')
             // this.$message.success('初始化成功')
@@ -155,7 +189,7 @@ export default {
              *  监听挂断
              * */
 
-            tccc.Agent.offline()
+            // tccc.Agent.offline()
 
             console.log('云呼叫挂断 sessionEnded', data)
           })
@@ -164,67 +198,26 @@ export default {
     },
 
     goCall(phone, recordId) {
+      if (!this.isSDKReady) {
+        this.$message.warn('正在初始化，请稍后...')
+        return
+      }
       this.phone = phone
       this.recordId = recordId
-      let that = this
-
-      console.log('参数', phone + '==' + recordId)
-      if (!this.isSDKReady) {
-        this.$message.info('正在初始化，请稍后...')
-        createSdkLoginToken().then((res) => {
-          if (res.code == 0) {
-            this.injectTcccWebSDK(res.data.sdkURL)
-          }
-        })
-        return
-      }
-
-      if (tccc.Agent.getStatus() != 'free') {
-        this.$message.info('忙线中，请稍等')
-        return
-      }
       this.startOutboundCall(phone, recordId)
     },
 
     startOutboundCall(phone, recordId) {
-      tccc.overrideButtonConfig((config) => {
-        console.log('call config ', config)
-        console.log(
-          'call btn',
-          config.active.filter(
-            (c) =>
-              ![
-                'transferSeat',
-                'transferSkillGroup',
-                'holdToggle',
-                'forwardOut',
-                'showKeyboard',
-                'selfService',
-              ].includes(c.type)
-          )
-        )
-        return {
-          active: config.active.filter(
-            (c) =>
-              ![
-                'transferSeat',
-                'transferSkillGroup',
-                'holdToggle',
-                'forwardOut',
-                'showKeyboard',
-                'selfService',
-              ].includes(c.type)
-          ),
-        }
-      })
       let that = this
-      tccc.Agent.online()
+      // tccc.Agent.online()
+      this.confirmLoading = true
       tccc.Call.startOutboundCall({
         phoneNumber: phone, //修改为需要外呼的号码
         // phoneNumber: '13524371592', //修改为需要外呼的号码
         phoneDesc: '电话随访', //名称，将显示在坐席界面
       })
         .then(function (res) {
+          this.confirmLoading = false
           if (res.status !== 'success') {
             throw res
           }
@@ -234,10 +227,16 @@ export default {
         })
         .catch(function (err) {
           // 对错误进行处理
+          this.confirmLoading = false
           console.error('goCall Fail ee', err)
           console.error('goCall Fail', err.errorMsg)
           that.$message.error(err.errorMsg)
           that.addTencentPhoneTapeOut(err, recordId)
+        })
+        .finally((res) => {
+          console.error('goCall finally', res)
+          // this.$message.error('呼叫失败！')
+          this.confirmLoading = false
         })
     },
 
