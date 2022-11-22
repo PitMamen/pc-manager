@@ -198,7 +198,7 @@ export function getArticleById(id) {
     method: 'get',
     params: {
       id: id,
-      recordId:0
+      recordId: 0
     },
 
   })
@@ -2266,6 +2266,18 @@ export function addTencentPhoneTape(param) {
 }
 
 /**
+ * paramKey follow_caller_phone获取账号打电话号码
+ * accountParamInfo/getAccountParam/{paramKey} 获取账号参数值
+ */
+export function getAccountParam(paramKey) {
+  return axios({
+    url: '/account-api/accountParamInfo/getAccountParam/' + paramKey,
+    method: 'get',
+    // params: data,
+  })
+}
+
+/**
  *   
  * /tbFollowExecuteRecord/followRecords 查询随访任务列表
  */
@@ -2302,7 +2314,7 @@ export function getSoundRecordingList(id) {
 /**
  * 抽查
  */
- export function modifyFollowSpotExecuteRecord(data) {
+export function modifyFollowSpotExecuteRecord(data) {
   return axios({
     url: '/follow-api/followPlanPhone/modifyFollowSpotExecuteRecord',
     method: 'post',
@@ -2313,9 +2325,9 @@ export function getSoundRecordingList(id) {
 /**
  * 抽查详情
  */
- export function spotDetailForId(id) {
+export function spotDetailForId(id) {
   return axios({
-    url: '/follow-api/followPlanPhone/spotDetailForId/'+id,
+    url: '/follow-api/followPlanPhone/spotDetailForId/' + id,
     method: 'post',
   })
 }

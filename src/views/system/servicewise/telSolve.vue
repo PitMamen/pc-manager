@@ -89,7 +89,7 @@
               ><img src="~@/assets/icons/ly.png" class="img" />{{ item.recordName }}.mp3</a
             >
           </div>
-          <a ref="#" v-if="patientInfo.tel">
+          <a ref="#" v-if="patientInfo.tel && callers.length>0">
           <img
             
             src="~@/assets/icons/dianhua2.png"
@@ -98,7 +98,7 @@
           />
         </a>
           <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
-          <a ref="#" v-if="patientInfo.urgentTel">
+          <a ref="#" v-if="patientInfo.urgentTel && callers.length>0">
           <img
             
             src="~@/assets/icons/jinji2.png"
@@ -160,7 +160,7 @@ import {
   followPlanPhonePatientInfo,
   modifyFollowExecuteRecord,
   getUsersByDeptIdAndRole,
-  createSdkLoginToken,
+  getAccountParam,
   addTencentPhoneTape,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
@@ -222,6 +222,7 @@ export default {
         overdueFollowType: null,
       },
       fieldList: [],
+      callers: [],
       patientInfo: {},
       radioTyPe: 0,
       failureRadioTyPe: '',
@@ -243,6 +244,12 @@ export default {
 
     //监听iframe发过来的消息
     window.addEventListener('message', self.submitFormFun)
+
+    getAccountParam('follow_caller_phone').then((res) => {
+      if (res.code == 0) {
+        this.callers = res.data
+      }
+    })
   },
   destroyed() {
     console.log('随访操作destroyed')

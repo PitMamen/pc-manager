@@ -50,7 +50,7 @@
 <script>
 import checkSolve from './checkSolve'
 import telDetail from './telDetail'
-import { createSdkLoginToken, addTencentPhoneTape } from '@/api/modular/system/posManage'
+import { createSdkLoginToken, addTencentPhoneTape,getAccountParam } from '@/api/modular/system/posManage'
 import { info } from '@/api/modular/system/sysapp'
 export default {
   components: {
@@ -71,12 +71,30 @@ export default {
       isSDKReady: false,
       audioUrl: '',
       audioShow: false,
+      callers: [],
     }
   },
   created() {
     createSdkLoginToken().then((res) => {
       if (res.code == 0) {
         this.injectTcccWebSDK(res.data.sdkURL)
+      }
+    })
+
+    
+    /**
+     *   "data": [
+    {
+      "accountId": 1,
+      "paramKey": "follow_caller_phone",
+      "paramValue": "073184450363",
+      "remark": null
+    }
+  ]
+     */
+     getAccountParam('follow_caller_phone').then((res) => {
+      if (res.code == 0) {
+        this.callers = res.data
       }
     })
   },
@@ -215,9 +233,10 @@ export default {
         phoneNumber: phone, //修改为需要外呼的号码
         // phoneNumber: '13524371592', //修改为需要外呼的号码
         phoneDesc: '电话随访', //名称，将显示在坐席界面
+        callerPhoneNumber: this.callers[0].paramValue, //指定外呼号码
       })
         .then(function (res) {
-          this.confirmLoading = false
+          that.confirmLoading = false
           if (res.status !== 'success') {
             throw res
           }
@@ -227,7 +246,7 @@ export default {
         })
         .catch(function (err) {
           // 对错误进行处理
-          this.confirmLoading = false
+          that.confirmLoading = false
           console.error('goCall Fail ee', err)
           console.error('goCall Fail', err.errorMsg)
           that.$message.error(err.errorMsg)
@@ -236,7 +255,7 @@ export default {
         .finally((res) => {
           console.error('goCall finally', res)
           // this.$message.error('呼叫失败！')
-          this.confirmLoading = false
+          that.confirmLoading = false
         })
     },
 
