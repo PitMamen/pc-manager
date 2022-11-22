@@ -285,6 +285,11 @@
               :default-value="moment('8:00', 'HH:mm')"
               format="HH:mm"
             />
+
+            <div class="end-btn-stop" style="margin-left: 2%; width: 80px" @click="addStop(indexTask)">
+              <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop.png" />
+              <span style="width: 50px; color: #1890ff; margin-left: 3%">终止条件</span>
+            </div>
           </div>
 
           <!-- 分割线 -->
@@ -391,6 +396,7 @@
       </div>
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
+      <add-stop ref="addStop" @ok="handleAddStop" />
     </div>
   </a-spin>
 </template>
@@ -422,11 +428,13 @@ import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
+import addStop from './addStop'
 import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
   components: {
     addPeople,
+    addStop,
   },
 
   data() {
@@ -710,12 +718,41 @@ export default {
       // this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments)
     },
 
+    addStop(indexMisson) {
+      if (!this.projectData.basePlan.metaConfigureId) {
+        this.$message.error('请选择来源名单')
+        return
+      }
+
+      if (!this.projectData.tasks[indexMisson].taskExecType) {
+        this.$message.error('请选择执行周期')
+        return
+      }
+
+      let newData = this.sourceData.filter((item) => item.value != this.projectData.basePlan.metaConfigureId)
+
+      this.$refs.addStop.add(
+        indexMisson,
+        this.projectData.tasks[indexMisson].stopTaskDetailDtos,
+        newData,
+        this.projectData.tasks[indexMisson].taskExecType
+      )
+    },
+
+    handleAddStop() {},
+
     delMission(index, item) {
       this.projectData.tasks.splice(index, 1)
     },
 
     addMission() {
-      this.projectData.tasks.push({ isChecked: true, timeQuantity: 1, overdueTimeUnit: 24 })
+      //stopType 任务终止类型;1:制定日期2:出现在特殊名单3:指定次数
+      this.projectData.tasks.push({
+        isChecked: true,
+        timeQuantity: 1,
+        overdueTimeUnit: 24,
+        stopTaskDetailDtos: [{ conditionValue: '', stopType: '' }],
+      })
     },
 
     /**
@@ -1307,6 +1344,16 @@ export default {
         .mid-select-two.ant-select {
           width: 10% !important;
           margin-left: 1% !important;
+        }
+
+        .end-btn-stop {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+
+          &:hover {
+            cursor: pointer;
+          }
         }
       }
 
