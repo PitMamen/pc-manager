@@ -97,12 +97,6 @@ export default {
     }
   },
   created() {
-    createSdkLoginToken().then((res) => {
-      if (res.code == 0) {
-        this.injectTcccWebSDK(res.data.sdkURL)
-      }
-    })
-
     /**
      *   "data": [
     {
@@ -116,6 +110,9 @@ export default {
     getAccountParam('follow_caller_phone').then((res) => {
       if (res.code == 0) {
         this.callers = res.data
+        if (this.callers.length > 0) {
+          this.goInitTccc()
+        }
       }
     })
   },
@@ -167,6 +164,15 @@ export default {
       this.audioUrl = ''
       this.audioShow = false
     },
+
+    goInitTccc() {
+      createSdkLoginToken().then((res) => {
+        if (res.code == 0) {
+          this.injectTcccWebSDK(res.data.sdkURL)
+        }
+      })
+    },
+
     injectTcccWebSDK(sdkURL) {
       let that = this
       return new Promise(function (resolve) {
