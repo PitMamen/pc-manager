@@ -720,12 +720,12 @@ export default {
 
     addStop(indexMisson) {
       if (!this.projectData.basePlan.metaConfigureId) {
-        this.$message.error('请选择来源名单')
+        this.$message.warn('请选择来源名单')
         return
       }
 
       if (!this.projectData.tasks[indexMisson].taskExecType) {
-        this.$message.error('请选择执行周期')
+        this.$message.warn('请选择执行周期')
         return
       }
 
@@ -739,7 +739,10 @@ export default {
       )
     },
 
-    handleAddStop() {},
+    handleAddStop(index, arr) {
+      this.projectData.tasks[index].stopTaskDetailDtos = arr
+      console.log('stopTaskDetailDtos got', arr)
+    },
 
     delMission(index, item) {
       this.projectData.tasks.splice(index, 1)
@@ -751,7 +754,7 @@ export default {
         isChecked: true,
         timeQuantity: 1,
         overdueTimeUnit: 24,
-        stopTaskDetailDtos: [{ conditionValue: '', stopType: '' }],
+        stopTaskDetailDtos: [],
       })
     },
 
