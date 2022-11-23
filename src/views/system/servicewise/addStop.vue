@@ -18,12 +18,13 @@
           <a-date-picker
             v-if="item.stopType == 1"
             style="margin-left: 1%"
+            :default-value="nowDateBegin"
             format="YYYY-MM-DD"
             v-model="item.conditionValue"
           />
 
           <a-select
-            v-if="item.stopType == 2 && showList"
+            v-if="item.stopType == 2"
             style="margin-left: 1%; width: 96px"
             v-model="item.conditionValue"
             allow-clear
@@ -35,7 +36,7 @@
           </a-select>
 
           <a-input-number
-            v-if="item.stopType == 3 && showNum"
+            v-if="item.stopType == 3"
             style="display: inline-block; margin-left: 1%; width: 96px"
             v-model="item.conditionValue"
             :min="0"
@@ -53,20 +54,24 @@
 
 <script>
 import { getPlatTypeList } from '@/api/modular/system/posManage'
+import { getDateNow } from '@/utils/util'
+import moment from 'moment'
 export default {
   data() {
     return {
       index: -1,
       chooseName: '', //
+      nowDateBegin: '', //
+      dateFormat: 'YYYY-MM-DD',
       confirmLoading: false,
       showList: true,
       showNum: true,
       stopTaskDetailDtos: [],
       //  stopType 任务终止类型;1:制定日期2:出现在特殊名单3:指定次数
       stopTaskDetailDtosOrigin: [
-        { conditionValue: '', stopType: 1 },
-        { conditionValue: '', stopType: 2 },
-        { conditionValue: '', stopType: 3 },
+        { conditionValue: undefined, stopType: 1 },
+        { conditionValue: undefined, stopType: 2 },
+        { conditionValue: undefined, stopType: 3 },
       ],
       sourceData: [],
       visible: false,
@@ -81,6 +86,9 @@ export default {
       console.log('addStop', index)
       console.log('stopTaskDetailDtos', stopTaskDetailDtos)
       console.log('sourceData', sourceData)
+      this.nowDateBegin = moment(new Date(), this.dateFormat)
+      console.log('nowDateBegin', this.nowDateBegin)
+      this.stopTaskDetailDtosOrigin[0].conditionValue = this.nowDateBegin
 
       //名单没有了不显示名单
       this.showList = this.sourceData.length == 0 ? false : true
@@ -97,9 +105,16 @@ export default {
       let tempList = []
       for (let index = 0; index < this.stopTaskDetailDtosOrigin.length; index++) {
         let tempItem = this.stopTaskDetailDtosOrigin[index]
-        let hasItem = this.stopTaskDetailDtos.find((item) => item.stopType == tempItem.stopType)
+        let hasItem
+        if (this.stopTaskDetailDtos) {
+          hasItem = this.stopTaskDetailDtos.find((item) => item.stopType == tempItem.stopType)
+        }
         if (hasItem) {
           this.$set(hasItem, 'isChecked', true)
+          // hasItem.conditionValue = moment(item.conditionValue, 'YYYY-MM-DD')
+          if (hasItem.stopType == 1) {
+            hasItem.conditionValue = moment(hasItem.conditionValue, 'YYYY-MM-DD HH:mm:ss')
+          }
           tempList.push(JSON.parse(JSON.stringify(hasItem)))
         } else {
           this.$set(tempItem, 'isChecked', false)
@@ -113,6 +128,9 @@ export default {
           this.$set(item, 'stopTitle', '指定日期结束')
         } else if (item.stopType == 2) {
           this.$set(item, 'stopTitle', '出现在特殊名单')
+          // if (item.conditionValue) {
+          //   item.conditionValue = moment(item.conditionValue, 'YYYY-MM-DD')
+          // }
         }
         if (item.stopType == 3) {
           this.$set(item, 'stopTitle', '指定次数后结束')
@@ -126,23 +144,58 @@ export default {
       if (!this.showNum) {
         this.stopTaskDetailDtos = this.stopTaskDetailDtos.filter((item) => item.stopType != 3)
       }
+
+      console.log('stopTaskDetailDtos processed', this.stopTaskDetailDtos)
     },
 
     goCheck(item) {
       item.isChecked = !item.isChecked
     },
 
-    handleSearch(inputName) {},
-
-    onSelect(userId) {},
-
     handleSubmit() {
-      if (this.choseNum == 0) {
-        this.$message.error('请选择人员')
-        return
+      let arr = []
+      for (let index = 0; index < this.stopTaskDetailDtos.length; index++) {
+        const element = this.stopTaskDetailDtos[index]
+        if (this.stopTaskDetailDtos[index].isChecked) {
+          let tempItem = {}
+          if (this.stopTaskDetailDtos[index].stopType == 1) {
+            if (!this.stopTaskDetailDtos[index].conditionValue) {
+              this.$message.warn('请选择日期')
+              return
+            }
+            tempItem = {
+              stopType: 1,
+              conditionValue: moment(this.stopTaskDetailDtos[index].conditionValue).format('YYYY-MM-DD') + ' 23:59:59',
+            }
+          }
+
+          if (this.stopTaskDetailDtos[index].stopType == 2) {
+            if (!this.stopTaskDetailDtos[index].conditionValue) {
+              this.$message.warn('请选择名单')
+              return
+            }
+            tempItem = {
+              stopType: 2,
+              conditionValue: this.stopTaskDetailDtos[index].conditionValue,
+            }
+          }
+
+          if (this.stopTaskDetailDtos[index].stopType == 3) {
+            if (!this.stopTaskDetailDtos[index].conditionValue) {
+              this.$message.warn('请输入次数')
+              return
+            }
+            tempItem = {
+              stopType: 3,
+              conditionValue: this.stopTaskDetailDtos[index].conditionValue,
+            }
+          }
+          arr.push(tempItem)
+        }
       }
-      console.log('this.proccesedAssignments', proccesedAssignments)
-      this.$emit('ok', this.index, proccesedAssignments)
+
+      console.log('addStop arr', arr)
+      this.$emit('ok', this.index, arr)
       this.visible = false
     },
     handleCancel() {
