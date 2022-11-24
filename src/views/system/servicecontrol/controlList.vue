@@ -915,7 +915,7 @@ export default {
 
       .div-part {
         overflow: hidden;
-        width: 100%;
+        width: 95%;
         display: flex;
         align-items: center;
         flex-direction: row;
@@ -946,7 +946,7 @@ export default {
 
         .div-rate {
           display: flex;
-          width: 38%;
+          width: 30%;
           font-size: 12px;
           align-items: center;
           flex-direction: row;

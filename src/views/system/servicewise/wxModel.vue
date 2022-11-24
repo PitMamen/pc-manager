@@ -36,17 +36,18 @@
         <a @click="Enable(record)">{{ record.enableStatus }}</a>
       </span>
     </s-table>
-
+    <addwx-Model ref="addwxModel" @ok="handleOk" @cancel="handleCancel" />
   </a-card>
 </template>
   
   
   <script>
 import { STable } from '@/components'
+import addwxModel from './addwxModel'
 import { getWxTemplateList, changeStatusWxTemplate } from '@/api/modular/system/posManage'
 export default {
   components: {
-    STable,
+    STable,addwxModel
   },
   data() {
     return {
@@ -156,26 +157,26 @@ export default {
      */
     addModel() {
       console.log('新增 微信模板 按钮')
-      this.$router.push({
-        name: 'sys_wxtemplate_add',
-        query: {
+      // this.$router.push({
+      //   name: 'sys_wxtemplate_add',
+      //   query: {
           
-        },
-      })
-      // this.$router.push({ path: './adddxtemplate' })
+      //   },
+      // })
+      this.$refs.addwxModel.addModel()
     },
 
     /**
      * 修改
      */
     changeModel(record) {
-      this.$router.push({
-        name: 'sys_wxtemplate_detail',
-        query: {
-          id:record.id,
-        },
-      })
-      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
+      // this.$router.push({
+      //   name: 'sys_wxtemplate_detail',
+      //   query: {
+      //     id:record.id,
+      //   },
+      // })
+      this.$refs.addwxModel.checkModel(record.id)
     },
     handleOk() {
       this.$refs.table.refresh()
@@ -204,7 +205,7 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -221,7 +222,7 @@ export default {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
 }
 .div-divider {
     margin-top: 1%;
