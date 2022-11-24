@@ -1,5 +1,6 @@
 <template>
   <s-table
+    v-if="show"
     ref="table"
     size="default"
     :columns="columns"
@@ -8,7 +9,17 @@
     :showPagination="false"
     :rowKey="record => record.id"
   >
-    <span slot="status" slot-scope="text, record">
+    <span slot="questName" slot-scope="text">
+      <ellipsis :length="10" tooltip>{{ text }}</ellipsis>
+    </span>
+    <span slot="telFinishedTotal" slot-scope="text, record">
+      <span>{{ record.telFinishedTotal }}/{{ record.telTotal }}</span>
+    </span>
+    <span slot="wxFinishedTotal" slot-scope="text, record">
+      <span>{{ record.wxFinishedTotal }}/{{ record.wxTotal }}</span>
+    </span>
+    <span slot="smsFinishedTotal" slot-scope="text, record">
+      <span>{{ record.smsFinishedTotal }}/{{ record.smsTotal }}</span>
     </span>
   </s-table>
 </template>
@@ -23,41 +34,37 @@ export default {
   },
   data() {
     return {
+      show: false,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {
-        status: 1
-      },
+      queryParam: {},
       // 表头
       columns: [
         {
           title: '问卷名称',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'questName',
+          scopedSlots: { customRender: 'questName' }
         },
         {
           title: '电话随访',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'telFinishedTotal',
+          scopedSlots: { customRender: 'telFinishedTotal' }
         },
         {
           title: '微信随访',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'wxFinishedTotal',
+          scopedSlots: { customRender: 'wxFinishedTotal' }
         },
         {
           title: '短信随访',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'smsFinishedTotal',
+          scopedSlots: { customRender: 'smsFinishedTotal' }
         }
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return list(Object.assign(parameter, this.queryParam)).then(res => {
+        return list(Object.assign({}, this.queryParam)).then(res => {
           if (res.code === 0){
             return {
               rows: res.data || [],
@@ -75,15 +82,20 @@ export default {
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
-  created() {
-    this.queryParam = {...this.queryParam, ...this.$route.query}
-  },
+  created() {},
   methods: {
+    search(params) {
+      this.show = true
+      setTimeout(() => {
+        this.queryParam = params
+        this.handleOk()
+      })
+    },
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh(true)
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys

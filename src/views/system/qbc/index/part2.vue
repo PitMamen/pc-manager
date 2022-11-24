@@ -1,5 +1,6 @@
 <template>
   <s-table
+    v-if="show"
     ref="table"
     size="default"
     :columns="columns"
@@ -8,7 +9,8 @@
     :showPagination="false"
     :rowKey="record => record.id"
   >
-    <span slot="status" slot-scope="text, record">
+    <span slot="metaName" slot-scope="text">
+      <ellipsis :length="16" tooltip>{{ text }}</ellipsis>
     </span>
   </s-table>
 </template>
@@ -23,41 +25,37 @@ export default {
   },
   data() {
     return {
+      show: false,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {
-        status: 1
-      },
+      queryParam: {},
       // 表头
       columns: [
         {
           title: '名单',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'metaName',
+          scopedSlots: { customRender: 'metaName' }
         },
         {
           title: '新增人数',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'totalNum',
+          scopedSlots: { customRender: 'totalNum' }
         },
         {
           title: '随访人数',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'followedNum',
+          scopedSlots: { customRender: 'followedNum' }
         },
         {
           title: '随访率',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'followedRate',
+          scopedSlots: { customRender: 'followedRate' }
         }
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return list(Object.assign(parameter, this.queryParam)).then(res => {
+        return list(Object.assign({}, this.queryParam)).then(res => {
           if (res.code === 0){
             return {
               rows: res.data || [],
@@ -75,15 +73,20 @@ export default {
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
-  created() {
-    this.queryParam = {...this.queryParam, ...this.$route.query}
-  },
+  created() {},
   methods: {
+    search(params) {
+      this.show = true
+      setTimeout(() => {
+        this.queryParam = params
+        this.handleOk()
+      })
+    },
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh(true)
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys

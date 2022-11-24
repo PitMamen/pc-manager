@@ -1,5 +1,6 @@
 <template>
   <s-table
+    v-if="show"
     ref="table"
     size="default"
     :columns="columns"
@@ -8,7 +9,11 @@
     :showPagination="false"
     :rowKey="record => record.id"
   >
-    <span slot="status" slot-scope="text, record">
+    <span slot="titles" slot-scope="text">
+      <ellipsis :length="12" tooltip>{{ text }}</ellipsis>
+    </span>
+    <span slot="readNum" slot-scope="text, record">
+      <span>{{ record.readNum }}/{{ record.totalNum }}</span>
     </span>
   </s-table>
 </template>
@@ -23,41 +28,37 @@ export default {
   },
   data() {
     return {
+      show: false,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {
-        status: 1
-      },
+      queryParam: {},
       // 表头
       columns: [
         {
           title: '文章标题',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'title',
+          scopedSlots: { customRender: 'titles' }
         },
         {
           title: '浏览人次',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'clickNum',
+          scopedSlots: { customRender: 'clickNum' }
         },
         {
           title: '推送人数',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'readNum',
+          scopedSlots: { customRender: 'readNum' }
         },
         {
           title: '阅读率',
-          width: '80px',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
+          dataIndex: 'readRate',
+          scopedSlots: { customRender: 'readRate' }
         }
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return list(Object.assign(parameter, this.queryParam)).then(res => {
+        return list(Object.assign({}, this.queryParam)).then(res => {
           if (res.code === 0){
             return {
               rows: res.data || [],
@@ -75,15 +76,20 @@ export default {
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
-  created() {
-    this.queryParam = {...this.queryParam, ...this.$route.query}
-  },
+  created() {},
   methods: {
+    search(params) {
+      this.show = true
+      setTimeout(() => {
+        this.queryParam = params
+        this.handleOk()
+      })
+    },
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh(true)
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys

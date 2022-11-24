@@ -2,13 +2,16 @@
   <a-card :bordered="false">
     <div class="wrap">
       <div class="search">
-        <div class="time time1 active">近7天</div>
-        <div class="time time2">近1月</div>
+        <div class="time time1" :class="{active: num === 7}" @click="timeClick(7)">近7天</div>
+        <div class="time time2" :class="{active: num === 31}" @click="timeClick(31)">近1月</div>
         <div class="time time3">
           <a-range-picker
             v-model="times"
             :format="format"
-            @change="timesChange"
+            :disabledDate="disabledDate"
+            @change="change"
+            @openChange="openChange"
+            @calendarChange="calendarChange"
           />
         </div>
       </div>
@@ -19,7 +22,7 @@
             <div class="list">
               <div class="item item1">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.followNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">随访人次</span>
@@ -27,7 +30,7 @@
               </div>
               <div class="item item2">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.telFollowNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">电话随访</span>
@@ -35,7 +38,7 @@
               </div>
               <div class="item item3">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.wxFollowNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">微信随访</span>
@@ -43,7 +46,7 @@
               </div>
               <div class="item item4">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.smsFollowNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">短信随访</span>
@@ -53,7 +56,7 @@
             <div class="list">
               <div class="item item5">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.questNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">问卷推送</span>
@@ -61,7 +64,7 @@
               </div>
               <div class="item item6">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.articleNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">健康文章推送</span>
@@ -69,7 +72,7 @@
               </div>
               <div class="item item7">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.remindNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">消息提醒</span>
@@ -77,7 +80,7 @@
               </div>
               <div class="item item8">
                 <div class="row">
-                  <span class="num">124<span class="unit">人</span></span>
+                  <span class="num">{{ model1.bindNums || 0 }}<span class="unit">人</span></span>
                 </div>
                 <div class="row">
                   <span class="desc">手机绑定</span>
@@ -88,25 +91,25 @@
         </div>
         <div class="part part2">
           <div class="title">我的待办
-            <a class="more">查看更多>></a>
+            <a class="more" @click="gotoUrl()">查看更多>></a>
           </div>
           <div class="bottom">
             <div class="list">
               <div class="item item1">
                 <span class="name">待我执行随访</span>
-                <span class="num">90人</span>
+                <span class="num">{{ model2.taskNums || 0 }}人</span>
               </div>
               <div class="item item2">
                 <span class="name">我完成的随访</span>
-                <span class="num">90人</span>
+                <span class="num">{{ model2.finishedTaskNums || 0 }}人</span>
               </div>
               <div class="item item3">
                 <span class="name">随访逾期任务</span>
-                <span class="num">90人</span>
+                <span class="num">{{ model2.overdueNums || 0 }}人</span>
               </div>
               <div class="item item4">
                 <span class="name">抽查不合格任务</span>
-                <span class="num">90人</span>
+                <span class="num">{{ model2.checkFailedNums || 0 }}人</span>
               </div>
             </div>
           </div>
@@ -116,19 +119,19 @@
         <div class="part part1">
           <div class="title">Top10问卷回收分析</div>
           <div class="bottom">
-            <table1></table1>
+            <table1 ref="table1"></table1>
           </div>
         </div>
         <div class="part part2">
           <div class="title">Top10名单随访率</div>
           <div class="bottom">
-            <table2></table2>
+            <table2 ref="table2"></table2>
           </div>
         </div>
         <div class="part part3">
           <div class="title">Top10宣教文章阅读量</div>
           <div class="bottom">
-            <table3></table3>
+            <table3 ref="table3"></table3>
           </div>
         </div>
       </div>
@@ -138,15 +141,15 @@
           <div class="bottom">
             <div class="item item1">
               <span class="name">抽查任务数</span>
-              <span class="num">99<span class="unit">人</span></span>
+              <span class="num">{{ model67.total || 0 }}<span class="unit">人</span></span>
             </div>
             <div class="item item2">
               <span class="name">合格数</span>
-              <span class="num">99<span class="unit">人</span></span>
+              <span class="num">{{ model67.successNum || 0 }}<span class="unit">人</span></span>
             </div>
             <div class="item item3">
               <span class="name">不合格数</span>
-              <span class="num">99<span class="unit">人</span></span>
+              <span class="num">{{ model67.failNum || 0 }}<span class="unit">人</span></span>
             </div>
           </div>
         </div>
@@ -155,15 +158,15 @@
           <div class="bottom">
             <div class="item">
               <span class="name">随访方案</span>
-              <span class="num">99<span class="unit">套</span></span>
+              <span class="num">{{ model67.planNum || 0 }}<span class="unit">套</span></span>
             </div>
             <div class="item">
               <span class="name">宣教文章</span>
-              <span class="num">99<span class="unit">篇</span></span>
+              <span class="num">{{ model67.articleNum || 0 }}<span class="unit">篇</span></span>
             </div>
             <div class="item">
               <span class="name">问卷设计</span>
-              <span class="num">99<span class="unit">篇</span></span>
+              <span class="num">{{ model67.questNum || 0 }}<span class="unit">篇</span></span>
             </div>
           </div>
         </div>
@@ -177,6 +180,8 @@ import { part1, part2, part67 } from '@/api/modular/system/qbc/index'
 import table1 from './part1'
 import table2 from './part2'
 import table3 from './part3'
+import moment from 'moment'
+
 export default {
   components: {
     table1,
@@ -185,34 +190,105 @@ export default {
   },
   data() {
     return {
+      num: 7,
       times: [],
+      model1: {},
+      model2: {},
+      model67: {},
+      startDate: null,
       format: 'YYYY-MM-DD'
     }
   },
-  created() {
-    this.init()
+  created() {},
+  mounted() {
+    this.timeClick(7)
   },
   methods: {
-    init() {
-      this.getPart1()
-      this.getPart2()
-      this.getPart3()
-      this.getPart4()
-      this.getPart5()
-      this.getPart67()
+    search() {
+      const params = {
+        beginDate: this.times[0].format(this.format),
+        endDate: this.times[1].format(this.format)
+      }
+      this.getPart1(params)
+      this.getPart2(params)
+      this.getPart3(params)
+      this.getPart4(params)
+      this.getPart5(params)
+      this.getPart67(params)
     },
-    getPart1() {},
-    getPart2() {},
-    getPart3() {},
-    getPart4() {},
-    getPart5() {},
-    getPart67() {},
-    timesChange(value) {
-      if (!value || value.length === 0) {
-        this.$message.warning('请选择时间！')
+    getPart1(params) {
+      part1(params).then(res => {
+        if (res.code === 0){
+          this.model1 = res.data || {}
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    getPart2(params) {
+      part2(params).then(res => {
+        if (res.code === 0){
+          this.model2 = res.data || {}
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    getPart3(params) {
+      this.$refs.table1.search(params)
+    },
+    getPart4(params) {
+      this.$refs.table2.search(params)
+    },
+    getPart5(params) {
+      this.$refs.table3.search(params)
+    },
+    getPart67(params) {
+      part67(params).then(res => {
+        if (res.code === 0){
+          this.model67 = res.data || {}
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    gotoUrl() {
+      this.$router.push({ path: '/servicewise/phoneList' })
+    },
+    timeClick(num) {
+      this.num = num
+      this.times = [
+        moment().subtract(num, 'days'),
+        moment().subtract(1, 'days')
+      ]
+      this.search()
+    },
+    change(dates) {
+      this.num = 'self'
+      if (!dates || dates.length === 0) {
+        this.$message.warning('请选择查询时间！')
         return
       }
-      this.init()
+      this.search()
+    },
+    openChange(status) {
+      this.startDate = null
+    },
+    calendarChange(dates) {
+      if (dates && dates.length>0){
+        this.startDate = dates[0]
+      }
+    },
+    disabledDate(current) {
+      if (this.startDate){
+        if (moment(this.startDate.format(this.format)).add(31, 'days') < current){
+          return true
+        }
+        if (moment(this.startDate.format(this.format)).subtract(30, 'days') > current){
+          return true
+        }
+      }
+      return current && current>moment().subtract(1, 'days').endOf('day')
     }
   }
 }
@@ -419,14 +495,14 @@ export default {
           }
         }
         /deep/ .ant-table-thead > tr > th {
-          padding: 3.52px 15px !important;
+          padding: 3.52px 10px !important;
           font-weight: 500 !important;
           color: #1A1A1A;
           background: #F2F4F7;
           border-bottom: 1px solid #E4E4E4;
         }
         /deep/ .ant-table-tbody > tr > td {
-          padding: 2.34px 15px !important;
+          padding: 2.34px 10px !important;
           border-bottom: none;
         }
       }
