@@ -993,7 +993,7 @@ export default {
   },
 }
 </script>
-    <style lang="less">
+    <style lang="less" scoped>
 .div-divider {
   margin-top: 1%;
   margin-bottom: 1%;
@@ -1048,18 +1048,16 @@ export default {
 
   .div-service-left-phone {
     background-color: white;
-    padding: 0 1%;
+    padding: 20px 0 20px 20px;
+    // margin:  20px 20px;
     float: left;
     min-height: 100%;
-    // height: 100%;
-    // min-height: 300px;
-    // border-right: 1px dashed #e6e6e6;
-    border: 1px solid #e6e6e6;
-    width: 18%;
+    width: 19%;
     overflow: hidden;
 
     .draw-bottom {
       display: flex;
+      border: 1px solid #e6e6e6;
       flex-direction: column;
       width: 100%;
       // height: 100%;
@@ -1133,20 +1131,20 @@ export default {
     float: right;
     width: 81%;
 
-    .ant-card-body {
-      padding: 0px 10px !important;
+    /deep/ .ant-card-body {
+      padding: 0px 20px !important;
     }
 
     .table-page-search-wrapper {
-      padding-bottom: 10px;
+      padding-bottom: 20px;
       border-bottom: 1px solid #e8e8e8;
       .action-row {
-        margin-top: 7px;
+        margin-top: 20px;
         display: inline-block;
         vertical-align: middle;
       }
       .search-row {
-        margin-top: 7px;
+        margin-top: 20px;
         display: inline-block;
         vertical-align: middle;
         padding-right: 20px;

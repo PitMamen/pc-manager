@@ -2,55 +2,57 @@
   <a-spin :spinning="confirmLoading">
     <div class="div-service-control">
       <div class="div-service-left-control">
-        <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
-        <!-- 分割线 -->
-        <!-- <div class="div-divider"></div> -->
+        <div class="left-control">
+          <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
+          <!-- 分割线 -->
+          <!-- <div class="div-divider"></div> -->
 
-        <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
-        <div class="div-text-auto">
-          <a-auto-complete
-            class="global-search"
-            size="large"
-            style="width: 100%; font-size: 12px"
-            placeholder="请输入名称查询"
-            option-label-prop="title"
-            @select="onSelect"
-            @search="handleSearch"
-          >
-            <template slot="dataSource">
-              <a-select-option
-                v-for="item in quesDataTemp"
-                :key="item.questionnaireId + ''"
-                :title="item.questionnaireName"
-              >
+          <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
+          <div class="div-text-auto">
+            <a-auto-complete
+              class="global-search"
+              size="large"
+              style="width: 93%; font-size: 12px"
+              placeholder="请输入名称查询"
+              option-label-prop="title"
+              @select="onSelect"
+              @search="handleSearch"
+            >
+              <template slot="dataSource">
+                <a-select-option
+                  v-for="item in quesDataTemp"
+                  :key="item.questionnaireId + ''"
+                  :title="item.questionnaireName"
+                >
+                  {{ item.questionnaireName }}
+                </a-select-option>
+              </template>
+            </a-auto-complete>
+          </div>
+
+          <div class="div-wrap-control" style="margin-top: 2%">
+            <div
+              class="div-part"
+              :class="{ checked: item.isChecked }"
+              v-for="(item, index) in quesData"
+              @click="onItemClick(item, index)"
+              :value="item.departmentName"
+              :key="index"
+            >
+              <span class="span-name" @click="onPartChoose(index)">
                 {{ item.questionnaireName }}
-              </a-select-option>
-            </template>
-          </a-auto-complete>
-        </div>
-
-        <div class="div-wrap-control" style="margin-top: 2%">
-          <div
-            class="div-part"
-            :class="{ checked: item.isChecked }"
-            v-for="(item, index) in quesData"
-            @click="onItemClick(item, index)"
-            :value="item.departmentName"
-            :key="index"
-          >
-            <span class="span-name" @click="onPartChoose(index)">
-              {{ item.questionnaireName }}
-            </span>
-            <div class="div-rate">
-              <span style="width: 30px; text-align: center">
-                {{ item.checkPercentage }}
               </span>
-              <span style="margin-left: 5px; width: 30px; text-align: center">
-                {{ item.passCheckPercentage }}
-              </span>
+              <div class="div-rate">
+                <span style="width: 30px; text-align: center">
+                  {{ item.checkPercentage }}
+                </span>
+                <span style="margin-left: 5px; width: 30px; text-align: center">
+                  {{ item.passCheckPercentage }}
+                </span>
+              </div>
+              <!-- 分割线 -->
+              <!-- <div class="div-divider"></div> -->
             </div>
-            <!-- 分割线 -->
-            <!-- <div class="div-divider"></div> -->
           </div>
         </div>
       </div>
@@ -835,7 +837,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .div-service-control {
   width: 100%;
   overflow: hidden;
@@ -854,14 +856,24 @@ export default {
 
   .div-service-left-control {
     background-color: white;
-    padding: 0.5% 1%;
+    padding: 20px 0 20px 20px;
     float: left;
     height: 100%;
     min-height: 300px;
     // border-right: 1px dashed #e6e6e6;
-    border: 1px solid #e6e6e6;
-    width: 18%;
+    // border: 1px solid #e6e6e6;
+    width: 19%;
     overflow: hidden;
+
+    .left-control {
+      display: flex;
+      padding: 20px 0 20px 20px;
+      border: 1px solid #e6e6e6;
+      flex-direction: column;
+      // width: 100%;
+      // // height: 100%;
+      // min-height: 100%;
+    }
 
     .div-divider {
       width: 100%;
@@ -950,6 +962,7 @@ export default {
     width: 81%;
 
     .div-radio {
+      margin-top: 20px;
       display: flex;
       align-items: center;
       flex-direction: row;
@@ -978,21 +991,21 @@ export default {
       }
     }
 
-    .ant-card-body {
-      padding: 0px 10px !important;
+    /deep/ .ant-card-body {
+      padding: 0px 20px !important;
     }
 
     .table-page-search-wrapper {
-      padding-bottom: 10px;
+      padding-bottom: 20px;
       // margin-top: 1%;
       border-bottom: 1px solid #e8e8e8;
       .action-row {
-        margin-top: 7px;
+        margin-top: 20px;
         display: inline-block;
         vertical-align: middle;
       }
       .search-row {
-        margin-top: 7px;
+        margin-top: 20px;
         display: inline-block;
         vertical-align: middle;
         padding-right: 20px;
