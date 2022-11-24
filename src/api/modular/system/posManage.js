@@ -198,7 +198,7 @@ export function getArticleById(id) {
     method: 'get',
     params: {
       id: id,
-      recordId:0
+      recordId: 0
     },
 
   })
@@ -2302,7 +2302,7 @@ export function getSoundRecordingList(id) {
 /**
  * 抽查
  */
- export function modifyFollowSpotExecuteRecord(data) {
+export function modifyFollowSpotExecuteRecord(data) {
   return axios({
     url: '/follow-api/followPlanPhone/modifyFollowSpotExecuteRecord',
     method: 'post',
@@ -2313,9 +2313,9 @@ export function getSoundRecordingList(id) {
 /**
  * 抽查详情
  */
- export function spotDetailForId(id) {
+export function spotDetailForId(id) {
   return axios({
-    url: '/follow-api/followPlanPhone/spotDetailForId/'+id,
+    url: '/follow-api/followPlanPhone/spotDetailForId/' + id,
     method: 'post',
   })
 }
@@ -2328,5 +2328,38 @@ export function taskBizStatus(data) {
     url: '/follow-api/follow/dict/taskBizStatus',
     method: 'get',
     params: data,
+  })
+}
+
+/**
+ * /pushRecordHistory/getSmsPushRecordHistory 短信推送日志
+ */
+export function getSmsPushRecordHistory(data) {
+  return axios({
+    url: '/follow-api/pushRecordHistory/getSmsPushRecordHistory',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /pushRecordHistory/getWxPushRecordHistory 短信推送日志
+ */
+export function getWxPushRecordHistory(data) {
+  return axios({
+    url: '/follow-api/pushRecordHistory/getWxPushRecordHistory',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /followPlanPhone/historyDetail/{id} 随访历史记录详情(页面中间部分)
+ */
+export function historyDetail(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/historyDetail/' + data,
+    method: 'post',
+    // data: data,
   })
 }
