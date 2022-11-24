@@ -35,7 +35,7 @@
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
-      :scroll="{ x:  true }"
+      :scroll="{ x:   true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -213,6 +213,23 @@ export default {
     }
   },
 
+  watch: {
+    $route(to, from) {
+        
+        if(to.path.path == this.$router.path ){
+          if(from.path =='/teach/editArticle' || from.path =='/teach/addArticle' ){
+            console.log("watch----",'去刷新')
+            this.handleOk()
+          }
+         
+          
+        }
+
+       
+      },
+    
+    },
+
   created() {
     /** 计划分配方法*/
     // getDepts().then((res) => {
@@ -305,7 +322,10 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
+.ant-table-body{
+  overflow-x: auto !important;
+}
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
