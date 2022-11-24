@@ -168,7 +168,7 @@
         <span class="span-item-value" style="width: 100%; margin-top: 20px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 5px; overflow-y: auto">
+        <div style="flex: 1; margin-top: 5px; ">
           <iframe
             defer="true"
             :src="questionUrl"

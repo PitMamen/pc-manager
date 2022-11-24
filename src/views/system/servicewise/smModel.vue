@@ -40,19 +40,20 @@
           <a @click="Enable(record)">{{ record.enableStatus }}</a>
         </span>
       </s-table>
-  
+      <adddx-Model ref="adddxModel" @ok="handleOk" @cancel="handleCancel" />
     </a-card>
   </template>
     
     
     <script>
   import { STable } from '@/components'
+  import adddxModel from './adddxModel'
   import { getSmsTemplateList, changeStatusSmsTemplate } from '@/api/modular/system/posManage'
   // import adddxtemplate from './adddxtemplate'
   export default {
     components: {
       STable,
-      // adddxtemplate,
+      adddxModel,
     },
     data() {
       return {
@@ -170,14 +171,13 @@
        */
       addModel2() {
         console.log('新增 短信模板 按钮')
-        this.$router.push({
-        name: 'sys_dxtemplate_add',
-        query: {
+      //   this.$router.push({
+      //   name: 'sys_dxtemplate_add',
+      //   query: {
           
-        },
-      })
-        // this.$router.push( {path:'./adddxtemplate'})
-        // this.$router.push({ name: 'sys_dxtemplate_add', data: null })
+      //   },
+      // })
+      this.$refs.adddxModel.addModel()
       },
   
 
@@ -185,13 +185,13 @@
      * 修改
      */
      changeModel(record) {
-      this.$router.push({
-        name: 'sys_dxtemplate_detail',
-        query: {
-          id:record.id,
-        },
-      })
-      // this.$router.push({ path: './adddxtemplate?id=' + record.id })
+      // this.$router.push({
+      //   name: 'sys_dxtemplate_detail',
+      //   query: {
+      //     id:record.id,
+      //   },
+      // })
+      this.$refs.adddxModel.checkModel(record.id)
     },
 
 
@@ -207,12 +207,46 @@
     },
   }
   </script>
-    <style lang="less">
-    .div-divider {
-        margin-top: 1%;
-        margin-bottom: 1%;
-        width: 100%;
-        background-color: #e6e6e6;
-        height: 1px;
-      }
+    <style lang="less" >
+
+      .table-wrapper {
+  // max-height: 600px;
+  // overflow-y: auto;
+}
+.sys-card {
+  // height: 100%;
+  // padding-bottom: 52px;
+  // /deep/ .ant-table-pagination {
+  //   position: fixed;
+  //   right: 32px;
+  //   bottom: 20px;
+  // }
+}
+.table-page-search-wrapper {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
+.table-operator {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+.div-divider {
+    margin-top: 1%;
+    margin-bottom: 1%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
     </style>

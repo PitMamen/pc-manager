@@ -3,31 +3,39 @@
     <!-- <a-button type="primary" @click="goAdd()">新增文章</a-button> -->
 
     <div class="table-page-search-wrapper">
-      
       <div class="search-row">
         <span class="name">科室:</span>
-        <a-select :maxTagCount="1"  :collapse-tags="true" allow-clear v-model="idArr" mode="multiple" placeholder="请选择科室" style="min-width: 120px;height: 28px;">
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{ item.departmentName }}</a-select-option>
+        <a-select
+          :maxTagCount="1"
+          :collapse-tags="true"
+          allow-clear
+          v-model="idArr"
+          mode="multiple"
+          placeholder="请选择科室"
+          style="min-width: 120px; height: 28px"
+        >
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+            item.departmentName
+          }}</a-select-option>
         </a-select>
       </div>
-     
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
         </span>
       </div>
     </div>
-  
-    <div class="table-operator" style="overflow: hidden;">
-      <a-button icon="plus" style="float: right;margin-right: 0;" @click="goAdd()">新增</a-button>
+
+    <div class="table-operator" style="overflow: hidden">
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="goAdd()">新增</a-button>
     </div>
 
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -98,22 +106,22 @@ export default {
         {
           title: '文章名称',
           dataIndex: 'title',
-          width: '200px',
+          // width: '200px',
         },
         {
           title: '科室',
           dataIndex: 'categoryName',
-          width: '150px',
+          // width: '150px',
         },
         {
           title: '专病',
           dataIndex: 'articleType',
-          width: '150px',
+          // width: '150px',
         },
         {
           title: '摘要说明',
           dataIndex: 'brief',
-          width: '200px',
+          // width: '200px',
         },
         {
           title: '状态',
@@ -126,12 +134,12 @@ export default {
         {
           title: '发布时间',
           dataIndex: 'updateTime',
-          width: '160px',
+          // width: '160px',
         },
         {
           title: '创建时间',
           dataIndex: 'createTime',
-          width: '160px',
+          // width: '160px',
         },
         {
           title: '操作',
@@ -246,7 +254,7 @@ export default {
   methods: {
     reset() {
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-      this.idArr =[]
+      this.idArr = []
       this.$refs.table.refresh()
     },
 
@@ -318,7 +326,7 @@ export default {
     display: inline-block;
     vertical-align: middle;
   }
-  
+
   .search-row {
     display: inline-block;
     vertical-align: middle;
