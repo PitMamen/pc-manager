@@ -205,7 +205,7 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -222,7 +222,7 @@ export default {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
 }
 .div-divider {
     margin-top: 1%;

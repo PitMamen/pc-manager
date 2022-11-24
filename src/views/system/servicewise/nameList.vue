@@ -23,10 +23,8 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider1"></div>
-      <div class="table-operator" style="overflow: hidden">
-        <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
-      </div>
+     
+    
 
       <!-- <a-form layout="inline">
         <a-row :gutter="48">
@@ -53,6 +51,9 @@
       </a-form>
       <div class="div-divider"></div> -->
       <!-- <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addName()" icon="plus">新增</a-button> -->
+    </div>
+    <div class="table-operator" style="overflow: hidden;">
+      <a-button icon="plus" style="float: right;margin-right: 0;" @click="addName()">新增</a-button>
     </div>
     <s-table
       ref="table"
@@ -256,7 +257,7 @@ export default {
 }
 
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -270,5 +271,9 @@ export default {
       margin-right: 10px;
     }
   }
+}
+.table-operator {
+  margin-top: 10px;
+  margin-bottom: 10px !important;
 }
 </style>

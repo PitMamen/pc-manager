@@ -35,7 +35,7 @@
     <!-- 去掉勾选框 -->
     <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
     <s-table
-      :scroll="{ x: true }"
+      :scroll="{ x:  true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -143,7 +143,7 @@ export default {
         },
         {
           title: '操作',
-          width: '180px',
+          width: 180,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -320,7 +320,7 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -338,7 +338,7 @@ export default {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 10px!important;
 }
 .div-divider {
   margin-top: 1%;
@@ -347,9 +347,7 @@ export default {
   background-color: #e6e6e6;
   height: 1px;
 }
-.table-operator {
-  margin-bottom: 18px;
-}
+
 button {
   margin-right: 8px;
 }

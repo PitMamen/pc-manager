@@ -433,10 +433,8 @@ export default {
 }
 </script>
 
-<style lang="less">
-.table-operator {
-  margin-bottom: 18px;
-}
+<style lang="less" scoped>
+
 button {
   margin-right: 8px;
 }
@@ -461,7 +459,8 @@ button {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px;
+  padding-top: 8px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -478,7 +477,7 @@ button {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 10px!important;
 }
 .div-divider {
   margin-top: 1%;

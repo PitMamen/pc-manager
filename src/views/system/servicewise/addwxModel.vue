@@ -8,7 +8,7 @@
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-check">
+      <div class="div-check3">
         <div class="div-part">
           <div class="div-line-wrap">
             <div class="div-left">
@@ -613,7 +613,7 @@ export default {
   width: 300px !important;
 }
 
-.div-check {
+.div-check3 {
   // background-color: white;
   // padding: 0 5% 0 5%;
   // padding: 0 15%;
