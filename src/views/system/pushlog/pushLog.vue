@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrap">
     <a-tabs v-model="keyindex">
       <a-tab-pane key="1" tab="短信记录">
         <sms-list ref="smsList" />
@@ -49,5 +49,20 @@ export default {
 <style lang="less" scoped>
 /deep/ .ant-tabs-bar.ant-tabs-top-bar {
   margin: 0 0 0 20px !important;
+}
+</style>
+
+<style lang="less" scoped>
+.wrap {
+  height: calc(100% - 40px);
+  .ant-tabs {
+    height: 100%;
+    /deep/ .ant-tabs-content {
+      height: calc(100% - 44px);
+      .ant-tabs-tabpane {
+        height: 100%;
+      }
+    }
+  }
 }
 </style>
