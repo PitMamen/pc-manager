@@ -5,7 +5,7 @@ import { axios } from '@/utils/request'
  */
 export function list (parameter) {
   return axios({
-    url: '/account-api/application/list',
+    url: '/uam-api/application/list',
     method: 'post',
     data: parameter
   })
@@ -16,7 +16,7 @@ export function list (parameter) {
  */
  export function info (parameter) {
   return axios({
-    url: '/account-api/application/detail',
+    url: '/uam-api/application/detail',
     method: 'get',
     params: parameter
   })
@@ -27,7 +27,7 @@ export function list (parameter) {
  */
  export function add (parameter) {
   return axios({
-    url: '/account-api/application/save',
+    url: '/uam-api/application/save',
     method: 'post',
     data: parameter
   })
@@ -38,7 +38,7 @@ export function list (parameter) {
  */
  export function update (parameter) {
   return axios({
-    url: '/account-api/application/enable',
+    url: '/uam-api/application/enable',
     method: 'post',
     data: parameter
   })

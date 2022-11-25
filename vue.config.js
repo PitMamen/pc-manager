@@ -110,6 +110,16 @@ const vueConfig = {
         }
       },
 
+      '/api/uam-api': {
+        target: 'http://192.168.1.121/uam-api',
+        ws: false,
+        logLevel: 'debug',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/uam-api': ''   //需要rewrite的,
+        }
+      },
+
       '/api/account-api': {
         target: 'http://192.168.1.121/account-api',
         ws: false,

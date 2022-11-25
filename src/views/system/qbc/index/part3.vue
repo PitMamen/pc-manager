@@ -80,8 +80,8 @@ export default {
   methods: {
     search(params) {
       this.show = true
+      this.queryParam = params
       setTimeout(() => {
-        this.queryParam = params
         this.handleOk()
       })
     },

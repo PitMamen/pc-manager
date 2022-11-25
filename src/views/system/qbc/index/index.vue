@@ -480,6 +480,9 @@ export default {
       .bottom {
         height: 277.22px;
         border: 1px solid #E4E4E4;
+        /deep/ .ant-pagination {
+          display: none;
+        }
         /deep/ .ant-empty-normal {
           margin: 70px 0;
         }
