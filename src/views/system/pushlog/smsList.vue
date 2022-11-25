@@ -67,6 +67,10 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goCheck(record)">查看</a>
       </span>
+      <span slot="status" slot-scope="text, record">
+        <span v-if="record.status == '发送成功'" style="color: green">{{ record.status }}</span>
+        <span v-if="record.status == '发送失败'" style="color: red">{{ record.status }}</span>
+      </span>
     </s-table>
     <log-detail ref="logDetail" @ok="handleOk" />
   </a-card>
@@ -92,7 +96,7 @@ export default {
       originData: [],
       idArr: [],
       queryParams: {
-        executeDepartmentId: '', //科室id
+        executeDepartmentId: -1, //科室id
         executeEndTime: '',
         executeStartTime: '',
         planName: '',
@@ -100,7 +104,7 @@ export default {
         userNameOrTel: undefined,
       },
       queryParamsOrigin: {
-        executeDepartmentId: '', //科室id
+        executeDepartmentId: -1, //科室id
         executeEndTime: '',
         executeStartTime: '',
         planName: '',
@@ -153,7 +157,8 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'status',
+          // dataIndex: 'status',
+          scopedSlots: { customRender: 'status' },
         },
         {
           title: '原因',
@@ -174,6 +179,9 @@ export default {
         // param.messageType = parseInt(param.messageType)
         if (param.status == -1) {
           delete param.status
+        }
+        if (param.executeDepartmentId == -1) {
+          delete param.executeDepartmentId
         }
         console.log('fff', Object.assign(parameter, param))
         return getSmsPushRecordHistory(Object.assign(parameter, param)).then((res) => {
@@ -216,6 +224,7 @@ export default {
       getDepts().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
+          this.originData.unshift({ departmentName: '全部', departmentId: -1 })
           this.$refs.table.refresh(true)
         }
       })
@@ -223,17 +232,7 @@ export default {
       getDeptsPersonal().then((res) => {
         if (res.code == 0) {
           this.originData = res.data
-          var departmentIds = []
-
-          res.data.forEach((item, index) => {
-            departmentIds = departmentIds + item.departmentId
-
-            if (index < res.data.length - 1) {
-              departmentIds = departmentIds + ','
-            }
-          })
-          console.log(departmentIds)
-          this.queryParams.executeDepartment = departmentIds
+          this.originData.unshift({ departmentName: '全部', departmentId: -1 })
           this.$refs.table.refresh(true)
         }
       })
