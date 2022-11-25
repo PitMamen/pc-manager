@@ -1,8 +1,8 @@
 <template>
   <a-modal
     :title="title"
-    :width="800"
-    :height="650"
+    :width="700"
+    :height="450"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
@@ -10,14 +10,14 @@
   >
     <div class="div-service-user">
       <!-- 左边 -->
-      <div class="div-totalleft">
+      <div class="div-totalleft" style="margin-top:-12px">
         <div class="display-item" style="margin-left: 10px">
-          <span style="margin-top: 5px"> <span style="color: red">*</span> 租户编码:</span>
+          <span style="margin-top: 0px"> <span style="color: red">*</span> 租户编码:</span>
           <a-input
             v-model="queryParams.tenantCode"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-left: 5px"
+            style="width: 200px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -29,7 +29,7 @@
             v-model="queryParams.tenantName"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -38,10 +38,15 @@
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 7px"> <span style="color: red">*</span> 到期时间:</span>
           <a-date-picker
-            style="margin-top: 5px; margin-left: 5px; height: 28px; width: 180px"
+            style="margin-top: 5px; margin-left: 5px; height: 28px; width: 200px"
             v-model="queryParams.expireDate"
             format="YYYY-MM-DD"
           />
+        </div>
+
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">租户管理员信息</span>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -50,7 +55,7 @@
             v-model="queryParams.adminAccount"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -62,7 +67,7 @@
             v-model="queryParams.adminName"
             allow-clear
             placeholder="请输入内容"
-            style="width: 167px; margin-top: 5px; margin-left: 5px"
+            style="width: 188px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -74,7 +79,7 @@
             v-model="queryParams.phone"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -86,10 +91,15 @@
             v-model="queryParams.email"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
+        </div>
+
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">初始化机构</span>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -98,7 +108,7 @@
             v-model="queryParams.hospitalCode"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -110,7 +120,7 @@
             v-model="queryParams.hospitalName"
             allow-clear
             placeholder="请输入内容"
-            style="width: 180px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -118,7 +128,7 @@
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style="overflow-y: auto; height: 400px">
+      <div class="card-right-user" style="overflow-y: auto; height: 450px">
         <div style="margin-bottom: 20px" class="div-total1" v-for="(item, index) in appListOut" :key="index">
           <div class="div-line-wrap" style="margin-left: 20%; margin-top: 10px">
             <span class="span-item-value">{{ item.applicationName }} </span>
@@ -168,8 +178,6 @@ export default {
       templateListSMS: [],
       templateListQues: [],
       id: '', //表名ID
-      rangeValue: '2',
-      record: {},
       messageContentType: '',
       queryParams: {
         adminAccount: '',
@@ -255,7 +263,7 @@ export default {
             this.$message.success('新增成功')
             this.$emit('ok')
           } else {
-            this.$message.error("新增失败:"+res.message)
+            this.$message.error('新增失败:' + res.message)
           }
         })
         .finally((res) => {
@@ -275,27 +283,26 @@ export default {
 
     //选择应用
     selectChange(record) {
-    //   console.log('999999:', record.isChecked)
+      //   console.log('999999:', record.isChecked)
       if (record.isChecked) {
-          this.queryParams.applicationIds.push(record.id)
-        }else{
-            this.queryParams.applicationIds.splice(this.queryParams.applicationIds.indexOf(record.id),1)
-            console.log('8888888:',this.queryParams.applicationIds)
-        }
-        this.queryParams.applicationIds= this.removeDuplicate(this.queryParams.applicationIds)
-        console.log('999999:',this.queryParams.applicationIds)
-
+        this.queryParams.applicationIds.push(record.id)
+      } else {
+        this.queryParams.applicationIds.splice(this.queryParams.applicationIds.indexOf(record.id), 1)
+        console.log('8888888:', this.queryParams.applicationIds)
+      }
+      this.queryParams.applicationIds = this.removeDuplicate(this.queryParams.applicationIds)
+      console.log('999999:', this.queryParams.applicationIds)
     },
 
     //数组元素去重
     removeDuplicate(arry) {
       const newArry = []
-      if(arry!=null&&arry.length>0){
+      if (arry != null && arry.length > 0) {
         arry.forEach((item) => {
-        if (!newArry.includes(item)) {
-          newArry.push(item)
-        }
-      })
+          if (!newArry.includes(item)) {
+            newArry.push(item)
+          }
+        })
       }
       return newArry
     },
@@ -375,41 +382,37 @@ export default {
   },
 }
 </script>
-    
-    <style lang="less">
-.table-page-wrapper {
-  .ant-form-inline {
-    .ant-form-item {
-      display: flex;
-      margin-bottom: 24px;
-      margin-right: 0;
 
-      .ant-form-item-control-wrapper {
-        flex: 1 1;
-        display: inline-block;
-        vertical-align: middle;
-      }
 
-      > .ant-form-item-label {
-        line-height: 32px;
-        padding-right: 8px;
-        width: auto;
-      }
-      .ant-form-item-control {
-        height: 32px;
-        line-height: 32px;
-      }
-    }
+
+
+  <style lang="less">
+.div-title {
+    margin-top: 10px;
+  display: flex;
+  background-color: #ebebeb;
+  flex-direction: row;
+  width: 98% !important;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 26px;
+
+  .div-line-blue {
+    width: 5px;
+    height: 100%;
+    background-color: #1890ff;
   }
-
-  .table-page-search-submitButtons {
-    display: block;
-    margin-bottom: 24px;
-    white-space: nowrap;
+  .span-title {
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: bold;
+    color: #333;
   }
 }
-</style>
-  <style lang="less">
+
+
+
 .div-service-user {
   display: flex;
   flex-direction: row;
@@ -446,30 +449,7 @@ export default {
     margin-left: 10px;
     //   background-color: #f0f0f2;
     background-color: #ffffff;
-    border: 1px solid #e6e6e6;
-    border-radius: 5px;
-    padding: 2% 0;
-    overflow: hidden;
-
-    .div-item {
-      float: left;
-      width: 20%;
-
-      p {
-        margin: 0 auto;
-        text-align: center;
-      }
-    }
-  }
-
-  .div-totaltopleft {
-    height: 40px;
-    width: 100%;
-    margin-right: 60px;
-    margin-top: -20px;
-    //   background-color: #f0f0f2;
-    background-color: #ffffff;
-    border: 1px solid #e6e6e6;
+    border: 1px solid #ffffff !important;
     // border-radius: 5px;
     padding: 2% 0;
     overflow: hidden;

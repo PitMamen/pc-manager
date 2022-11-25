@@ -4,10 +4,11 @@
       <div class="search-row">
         <span class="name">查询条件:</span>
         <a-input
+        allow-clear
           v-model="queryParams.tenantName"
-          allow-clear
           placeholder="可输入用户名称名称查询"
           style="width: 120px"
+          @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />

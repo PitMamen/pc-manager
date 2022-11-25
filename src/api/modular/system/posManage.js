@@ -2352,7 +2352,7 @@ export function getApplicationlist(data){
  */
 export function getTenantList(data){
   return axios({
-    url:'/account-api/tenant/list',
+    url:'/uam-api/tenant/list',
     method:'post',
     data:data,
   })
@@ -2364,7 +2364,7 @@ export function getTenantList(data){
  */
   export function saveaddTenand(data){
     return axios({
-      url:'/account-api/tenant/save',
+      url:'/uam-api/tenant/save',
       method:'post',
       data:data,
     })
@@ -2375,7 +2375,7 @@ export function getTenantList(data){
    */
   export function queryTenantDetail(data){
     return axios({
-      url:"/account-api/tenant/detail",
+      url:"/uam-api/tenant/detail",
       method:'get',
       params:data,
     })
@@ -2388,7 +2388,7 @@ export function getTenantList(data){
  */
 export function queryinitProgress(data){
   return axios({
-    url:'/account-api/tenant/initProgress',
+    url:'/uam-api/tenant/initProgress',
     method:'get',
     params: data,
   })
@@ -2399,7 +2399,7 @@ export function queryinitProgress(data){
  */
  export function tenantInit(data){
   return axios({
-    url:'/account-api/tenant/init',
+    url:'/uam-api/tenant/init',
     method:'get',
     params:data,
   })
@@ -2411,9 +2411,45 @@ export function queryinitProgress(data){
   */
  export function resetTenantPwd(data){
   return axios({
-    url:'/account-api/tenant/resetPwd',
+    url:'/uam-api/tenant/resetPwd',
     method:'post',
     data:data,
+  })
+ }
+
+ /**
+  * 机构列表
+  */
+ export function queryHospitalList(data){
+  return axios({
+    url:'/uam-api/hospital/list',
+    method:'post',
+    data:data,
+  })
+ } 
+
+
+ /**
+  * 机构类型
+  */
+ export function queryHospitalType(data){
+  return axios({
+    url:'/account-api/hospital/hospitalType',
+    method:'get',
+    params:data,
+  })
+ }
+
+
+
+ /**
+  * 机构等级
+  */
+ export function queryHospitalLevel(data){
+  return axios({
+    url:'/account-api/hospital/hospitalLevel',
+    method:'get',
+    params:data,
   })
  }
 
