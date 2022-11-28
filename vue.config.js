@@ -191,6 +191,15 @@ const vueConfig = {
           '^/api/im-api': ''   
         }
       },
+      '/api/uam-api': {
+        target: 'http://192.168.1.121/uam-api',
+        ws: false,
+        changeOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: {
+          '^/api/uam-api': ''   
+        }
+      },
       '/api/follow-api': {
         target: 'http://192.168.1.121/follow-api',
         ws: false,
