@@ -99,9 +99,8 @@
         <a @click="resetPwsd(record)">重置密码</a>
         <a-divider type="vertical" />
         <a
-          @click="record.initStatuas == 3||record.initStatuas == 4 ? $refs.initRecord.initrecord(record) : init(record)">初始化</a
+          @click="record.initStatuas == 3||record.initStatuas == 4 ? $refs.initRecord.initrecord(record) : initTenant(record)">初始化</a
         >
-        <!-- <a v-if="record.initStatuas == 2" @click="init(record)">初始化</a> -->
       </span>
 
       <span slot="statuas" slot-scope="text, record">
@@ -332,9 +331,10 @@ export default {
     /**
      * 初始化操作
      */
-    init(record) {
+    initTenant(record) {
       this.confirmLoading = true
-      tenantInit({ tenandId: record.tenandId })
+      console.log("租户ID啊：",record.tenantId)
+      tenantInit({ tenantId: record.tenantId })
         .then((res) => {
           if (res.code == 0 && res.success) {
             this.$message.success("初始化成功!")
