@@ -2371,7 +2371,7 @@ export function getWxPushRecordHistory(data) {
  */
 export function getApplicationlist(data) {
   return axios({
-    url: '/account-api/application/list',
+    url: '/uam-api/application/list',
     method: 'post',
     data: data,
   })
