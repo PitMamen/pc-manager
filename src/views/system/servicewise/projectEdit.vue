@@ -932,7 +932,11 @@ export default {
       let newData = this.sourceData.filter((item) => item.value != this.projectData.basePlan.metaConfigureId)
       let arr = []
       this.projectData.tasks[indexMisson].stopTaskDetailDtos.forEach((item) => {
-        arr.push({ stopType: item.stopType.value, conditionValue: item.conditionValue })
+        if (item.stopType.value) {
+          arr.push({ stopType: item.stopType.value, conditionValue: item.conditionValue })
+        } else {
+          arr.push({ stopType: item.stopType, conditionValue: item.conditionValue })
+        }
       })
 
       this.$refs.addStop.add(
@@ -1309,6 +1313,7 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
+            this.$bus.$emit('proEvent', '刷新数据-方案修改')
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {

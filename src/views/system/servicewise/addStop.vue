@@ -20,7 +20,7 @@
             style="margin-left: 1%"
             :default-value="nowDateBegin"
             format="YYYY-MM-DD"
-            v-model="item.conditionValue"
+            v-model="dateValue"
           />
 
           <a-select
@@ -62,6 +62,7 @@ export default {
       index: -1,
       chooseName: '', //
       nowDateBegin: '', //
+      dateValue: '', //
       dateFormat: 'YYYY-MM-DD',
       confirmLoading: false,
       showList: true,
@@ -81,11 +82,12 @@ export default {
     add(index, stopTaskDetailDtos, sourceData, taskExecType) {
       this.index = index
       this.visible = true
-      this.stopTaskDetailDtos = stopTaskDetailDtos
-      this.sourceData = sourceData
+      this.dateValue = moment(new Date(), this.dateFormat)
+      this.stopTaskDetailDtos = JSON.parse(JSON.stringify(stopTaskDetailDtos))
+      this.sourceData = JSON.parse(JSON.stringify(sourceData))
       console.log('addStop', index)
-      console.log('stopTaskDetailDtos', stopTaskDetailDtos)
-      console.log('sourceData', sourceData)
+      console.log('stopTaskDetailDtos', JSON.parse(JSON.stringify(stopTaskDetailDtos)))
+      console.log('sourceData', JSON.parse(JSON.stringify(sourceData)))
       this.nowDateBegin = moment(new Date(), this.dateFormat)
       console.log('nowDateBegin', this.nowDateBegin)
       this.stopTaskDetailDtosOrigin[0].conditionValue = this.nowDateBegin
@@ -111,16 +113,19 @@ export default {
         }
         if (hasItem) {
           this.$set(hasItem, 'isChecked', true)
-          // hasItem.conditionValue = moment(item.conditionValue, 'YYYY-MM-DD')
           if (hasItem.stopType == 1) {
             hasItem.conditionValue = moment(hasItem.conditionValue, 'YYYY-MM-DD HH:mm:ss')
+            this.dateValue = moment(hasItem.conditionValue, 'YYYY-MM-DD HH:mm:ss')
+            console.log('hasItem.conditionValue', hasItem.conditionValue)
           }
-          tempList.push(JSON.parse(JSON.stringify(hasItem)))
+          // tempList.push(JSON.parse(JSON.stringify(hasItem)))
+          tempList.push(hasItem)
         } else {
           this.$set(tempItem, 'isChecked', false)
           tempList.push(JSON.parse(JSON.stringify(tempItem)))
         }
       }
+      console.log('tempList', JSON.parse(JSON.stringify(tempList)))
       this.stopTaskDetailDtos = JSON.parse(JSON.stringify(tempList))
       //  stopType 任务终止类型;1:制定日期2:出现在特殊名单3:指定次数
       this.stopTaskDetailDtos.forEach((item) => {
@@ -145,7 +150,7 @@ export default {
         this.stopTaskDetailDtos = this.stopTaskDetailDtos.filter((item) => item.stopType != 3)
       }
 
-      console.log('stopTaskDetailDtos processed', this.stopTaskDetailDtos)
+      console.log('stopTaskDetailDtos processed', JSON.parse(JSON.stringify(this.stopTaskDetailDtos)))
     },
 
     goCheck(item) {
@@ -165,7 +170,7 @@ export default {
             }
             tempItem = {
               stopType: 1,
-              conditionValue: moment(this.stopTaskDetailDtos[index].conditionValue).format('YYYY-MM-DD') + ' 23:59:59',
+              conditionValue: moment(this.dateValue).format('YYYY-MM-DD') + ' 23:59:59',
             }
           }
 
