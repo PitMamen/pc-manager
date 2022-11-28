@@ -5,7 +5,7 @@ import { axios } from '@/utils/request'
  */
 export function list (parameter) {
   return axios({
-    url: '/account-api/application/list',
+    url: '/uam-api/application/list',
     method: 'post',
     data: parameter
   })

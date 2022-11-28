@@ -1610,7 +1610,7 @@ export function changeStatusSmsTemplate(data) {
  */
 export function qryMetaDataByPage(data) {
   return axios({
-    url: '/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
+    url: '/follow-api/followMetaConfigureDetail/qryPatientByPage',
     method: 'post',
     data: data,
   })
@@ -2350,7 +2350,7 @@ export function taskBizStatus(data) {
  */
 export function getApplicationlist(data){
   return axios({
-    url:'/account-api/application/list',
+    url:'/uam-api/application/list',
     method:'post',
     data:data,
   })
@@ -2464,5 +2464,75 @@ export function queryinitProgress(data){
     params:data,
   })
  }
+
+ /***
+  * 上级机构
+  */
+export function parent(data){
+  return axios({
+    url:'/uam-api/hospital/parent',
+    method:'get',
+    params:data,
+  })
+}
+
+
+ /**
+  * 新增机构
+  */
+  export function save(data){
+    return axios({
+      url:'/uam-api/hospital/save',
+      method:'post',
+      data:data,
+    })
+   } 
+
+
+   /**
+    * 机构详情
+    */
+
+   export function queryHospitaldetail(data){
+    return axios({
+      url:'/uam-api/hospital/detail',
+      method:'get',
+      params:data,
+    })
+   }
+
+
+   /**
+    * 科室列表
+    */
+   export function getDepartmentListForReq(data){
+    return axios({
+      url:'/follow-api/departmentManger/getDepartmentListForReq',
+      method:'post',
+      data:data,
+    })
+   }
+
+   /**
+    * 添加科室
+    */
+   export function addDepartmentForReq(data){
+    return axios({
+      url:"/follow-api/departmentManger/addDepartmentForReq",
+      method:'post',
+      data:data,
+    })
+   }
+
+     /**
+    * 修改科室
+    */
+      export function modifyDepartmentForReq(data){
+        return axios({
+          url:"/follow-api/departmentManger/modifyDepartmentForReq",
+          method:'post',
+          data:data,
+        })
+       }
 
 
