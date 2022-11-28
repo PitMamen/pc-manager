@@ -17,77 +17,87 @@
       </div>
       <div class="content content1">
         <div class="part part1">
-          <div class="title">工作量统计</div>
-          <div class="bottom">
-            <div class="list">
-              <div class="item item1">
-                <div class="row">
-                  <span class="num">{{ model1.followNums || 0 }}<span class="unit">人</span></span>
+          <a-spin :spinning="confirmLoading1">
+            <div class="title">工作量统计</div>
+            <div class="bottom">
+              <div class="list">
+                <div class="item item1">
+                  <img src="@/assets/qbc/index/1.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.followNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">随访人次</span>
+                  </div>
                 </div>
-                <div class="row">
-                  <span class="desc">随访人次</span>
+                <div class="item item2">
+                  <img src="@/assets/qbc/index/2.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.telFollowNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">电话随访</span>
+                  </div>
+                </div>
+                <div class="item item3">
+                  <img src="@/assets/qbc/index/3.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.wxFollowNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">微信随访</span>
+                  </div>
+                </div>
+                <div class="item item4">
+                  <img src="@/assets/qbc/index/4.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.smsFollowNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">短信随访</span>
+                  </div>
                 </div>
               </div>
-              <div class="item item2">
-                <div class="row">
-                  <span class="num">{{ model1.telFollowNums || 0 }}<span class="unit">人</span></span>
+              <div class="list">
+                <div class="item item5">
+                  <img src="@/assets/qbc/index/5.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.questNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">问卷推送</span>
+                  </div>
                 </div>
-                <div class="row">
-                  <span class="desc">电话随访</span>
+                <div class="item item6">
+                  <img src="@/assets/qbc/index/6.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.articleNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">健康文章推送</span>
+                  </div>
                 </div>
-              </div>
-              <div class="item item3">
-                <div class="row">
-                  <span class="num">{{ model1.wxFollowNums || 0 }}<span class="unit">人</span></span>
+                <div class="item item7">
+                  <img src="@/assets/qbc/index/7.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.remindNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">消息提醒</span>
+                  </div>
                 </div>
-                <div class="row">
-                  <span class="desc">微信随访</span>
-                </div>
-              </div>
-              <div class="item item4">
-                <div class="row">
-                  <span class="num">{{ model1.smsFollowNums || 0 }}<span class="unit">人</span></span>
-                </div>
-                <div class="row">
-                  <span class="desc">短信随访</span>
+                <div class="item item8">
+                  <img src="@/assets/qbc/index/8.png" />
+                  <div class="row">
+                    <span class="num">{{ model1.bindNums || 0 }}<span class="unit">人</span></span>
+                  </div>
+                  <div class="row">
+                    <span class="desc">手机绑定</span>
+                  </div>
                 </div>
               </div>
             </div>
-            <div class="list">
-              <div class="item item5">
-                <div class="row">
-                  <span class="num">{{ model1.questNums || 0 }}<span class="unit">人</span></span>
-                </div>
-                <div class="row">
-                  <span class="desc">问卷推送</span>
-                </div>
-              </div>
-              <div class="item item6">
-                <div class="row">
-                  <span class="num">{{ model1.articleNums || 0 }}<span class="unit">人</span></span>
-                </div>
-                <div class="row">
-                  <span class="desc">健康文章推送</span>
-                </div>
-              </div>
-              <div class="item item7">
-                <div class="row">
-                  <span class="num">{{ model1.remindNums || 0 }}<span class="unit">人</span></span>
-                </div>
-                <div class="row">
-                  <span class="desc">消息提醒</span>
-                </div>
-              </div>
-              <div class="item item8">
-                <div class="row">
-                  <span class="num">{{ model1.bindNums || 0 }}<span class="unit">人</span></span>
-                </div>
-                <div class="row">
-                  <span class="desc">手机绑定</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          </a-spin>
         </div>
         <div class="part part2">
           <div class="title">我的待办
@@ -196,7 +206,8 @@ export default {
       model2: {},
       model67: {},
       startDate: null,
-      format: 'YYYY-MM-DD'
+      format: 'YYYY-MM-DD',
+      confirmLoading1: false
     }
   },
   created() {},
@@ -217,12 +228,15 @@ export default {
       this.getPart67(params)
     },
     getPart1(params) {
+      this.confirmLoading1 = true
       part1(params).then(res => {
         if (res.code === 0){
           this.model1 = res.data || {}
         }else {
           this.$message.error(res.message)
         }
+      }).finally(() => {
+        this.confirmLoading1 = false
       })
     },
     getPart2(params) {
@@ -349,18 +363,31 @@ export default {
   }
   .content1 {
     .part1 {
-      width: 640px;
+      width: 55.32%;
       .bottom {
         .list {
           display: flex;
           justify-content: space-between;
           margin-top: 10px;
           .item {
+            position: relative;
+            flex-grow: 1;
             width: 145px;
             height: 68px;
+            margin-right: 20px;
             padding: 15px 20px;
             border-radius: 2px;
-            background-size: cover;
+            &:last-child {
+              margin-right: 0px;
+            }
+            > img {
+              position: absolute;
+              top: 50%;
+              left: 12px;
+              width: 35px;
+              height: 35px;
+              transform: translateY(-50%);
+            }
             .row {
               font-family: PingFang SC;
               color: #FFFFFF;
@@ -382,35 +409,35 @@ export default {
               }
             }
             &.item1 {
-              background: url('~@/assets/qbc/index/bg1.png');
+              background: #E6849C;
               box-shadow: 0px 2px 4px 0px rgba(230,132,156,0.35);
             }
             &.item2 {
-              background: url('~@/assets/qbc/index/bg2.png');
+              background: #F28C73;
               box-shadow: 0px 2px 4px 0px rgba(242,140,115,0.35);
             }
             &.item3 {
-              background: url('~@/assets/qbc/index/bg3.png');
+              background: #F4BA62;
               box-shadow: 0px 2px 4px 0px rgba(244,186,98,0.35);
             }
             &.item4 {
-              background: url('~@/assets/qbc/index/bg4.png');
+              background: #8FCB4A;
               box-shadow: 0px 2px 4px 0px rgba(143,203,74,0.35);
             }
             &.item5 {
-              background: url('~@/assets/qbc/index/bg5.png');
+              background: #9379ED;
               box-shadow: 0px 2px 4px 0px rgba(147,121,237,0.35);
             }
             &.item6 {
-              background: url('~@/assets/qbc/index/bg6.png');
+              background: #6C8DF1;
               box-shadow: 0px 2px 4px 0px rgba(108,141,241,0.35);
             }
             &.item7 {
-              background: url('~@/assets/qbc/index/bg7.png');
+              background: #5794E9;
               box-shadow: 0px 2px 4px 0px rgba(87,148,233,0.35);
             }
             &.item8 {
-              background: url('~@/assets/qbc/index/bg8.png');
+              background: #58CDAE;
               box-shadow: 0px 2px 4px 0px rgba(88,205,174,0.35);
             }
           }
@@ -418,7 +445,7 @@ export default {
       }
     }
     .part2 {
-      width: calc(100% - 640px - 30px);
+      width: calc(100% - 55.32% - 30px);
       .title {
         .more {
           float: right;
@@ -529,13 +556,17 @@ export default {
       .bottom {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-start;
         height: 81px;
         padding: 0 15px;
         background: #F2F4F7;
         .item {
+          margin-right: 25px;
           font-family: PingFang SC;
           line-height: 20px;
+          &:last-child {
+            margin-right: 0px;
+          }
           .name {
             margin-right: 10px;
             font-size: 12px;
