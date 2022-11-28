@@ -2434,7 +2434,7 @@ export function queryinitProgress(data){
   */
  export function queryHospitalType(data){
   return axios({
-    url:'/account-api/hospital/hospitalType',
+    url:'/uam-api/hospital/hospitalType',
     method:'get',
     params:data,
   })
@@ -2447,7 +2447,7 @@ export function queryinitProgress(data){
   */
  export function queryHospitalLevel(data){
   return axios({
-    url:'/account-api/hospital/hospitalLevel',
+    url:'/uam-api/hospital/hospitalLevel',
     method:'get',
     params:data,
   })

@@ -99,8 +99,8 @@
             v-model="queryParams.depts"
             placeholder="请选择机构类型"
           >
-            <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
-              item.departmentName
+            <a-select-option v-for="(item, index) in HospitalTypeList" :value="item.value" :key="index">{{
+              item.description
             }}</a-select-option>
           </a-select>
         </div>
@@ -116,8 +116,8 @@
             v-model="queryParams.depts"
             placeholder="请选择机构等级"
           >
-            <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
-              item.departmentName
+            <a-select-option v-for="(item, index) in HospitalLevelList" :value="item.value" :key="index">{{
+              item.description
             }}</a-select-option>
           </a-select>
         </div>
@@ -196,7 +196,7 @@
       
       <script>
 import moment from 'moment'
-import { saveaddTenand } from '@/api/modular/system/posManage'
+import { saveaddTenand ,queryHospitalLevel,queryHospitalType} from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
@@ -216,6 +216,8 @@ export default {
       originData: [],
       id: '', //表名ID
       rangeValue: '2',
+      HospitalLevelList:[],
+      HospitalTypeList:[],
       record: {},
       queryParams: {
         adminAccount: '',
@@ -265,6 +267,8 @@ export default {
     add(record) {
       this.visible = true
       this.reset()
+      this.getHospitalLevel()
+      this.getHospitalType()
      this.$nextTick(()=>{
       this.init()
      })
@@ -272,7 +276,6 @@ export default {
 
     init() {
       let that = this
-      debugger
       let editor = new E('#div1')
       editor.config.height = 600
       editor.config.pasteFilterStyle = false
@@ -326,6 +329,38 @@ export default {
       }
       editor.create()
     },
+
+
+
+    /***
+     * 机构等级接口
+     */
+     getHospitalLevel(){
+      queryHospitalLevel().then((res)=>{
+        if(res.code==0){
+          this.HospitalLevelList = res.data
+        }
+        
+      }) .finally((res) => {
+          this.confirmLoading = false
+        })
+
+     },
+
+
+   /**
+    * 机构类型
+    */
+    getHospitalType(){
+      queryHospitalType().then((res)=>{
+        if(res.code==0){
+          this.HospitalTypeList = res.data
+        }
+      }) .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
 
 
     /**
