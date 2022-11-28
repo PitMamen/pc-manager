@@ -2266,6 +2266,18 @@ export function addTencentPhoneTape(param) {
 }
 
 /**
+ * paramKey follow_caller_phone获取账号打电话号码
+ * accountParamInfo/getAccountParam/{paramKey} 获取账号参数值
+ */
+export function getAccountParam(paramKey) {
+  return axios({
+    url: '/account-api/accountParamInfo/getAccountParam/' + paramKey,
+    method: 'get',
+    // params: data,
+  })
+}
+
+/**
  *   
  * /tbFollowExecuteRecord/followRecords 查询随访任务列表
  */
@@ -2353,7 +2365,70 @@ export function getWxPushRecordHistory(data) {
   })
 }
 
+/** 
+ *
+ * /account-api/application/list 查询应用列表
+ */
+export function getApplicationlist(data) {
+  return axios({
+    url: '/uam-api/application/list',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 /**
+ * 
+ * @param {租户信息列表} data 
+ * @returns 
+ */
+export function getTenantList(data) {
+  return axios({
+    url: '/uam-api/tenant/list',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/***
+ * 新增租户、修改租户信息
+ */
+export function saveaddTenand(data) {
+  return axios({
+    url: '/uam-api/tenant/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 查看租户详情
+ */
+export function queryTenantDetail(data) {
+  return axios({
+    url: "/uam-api/tenant/detail",
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
+/***
+ * 查看初始化进度
+ */
+export function queryinitProgress(data) {
+  return axios({
+    url: '/uam-api/tenant/initProgress',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+<<<<<<< HEAD
  * /followPlanPhone/historyDetail/{id} 随访历史记录详情(页面中间部分)
  */
 export function historyDetail(data) {
@@ -2363,3 +2438,62 @@ export function historyDetail(data) {
     // data: data,
   })
 }
+/*
+ * 租户初始化操作接口
+ */
+ export function tenantInit(data){
+  return axios({
+    url:'/uam-api/tenant/init',
+    method:'get',
+    params:data,
+  })
+ }
+
+
+ /**
+  * 重置管理员密码
+  */
+ export function resetTenantPwd(data){
+  return axios({
+    url:'/uam-api/tenant/resetPwd',
+    method:'post',
+    data:data,
+  })
+ }
+
+ /**
+  * 机构列表
+  */
+ export function queryHospitalList(data){
+  return axios({
+    url:'/uam-api/hospital/list',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 机构类型
+  */
+ export function queryHospitalType(data){
+  return axios({
+    url:'/uam-api/hospital/hospitalType',
+    method:'get',
+    params:data,
+  })
+ }
+
+
+
+ /**
+  * 机构等级
+  */
+ export function queryHospitalLevel(data){
+  return axios({
+    url:'/uam-api/hospital/hospitalLevel',
+    method:'get',
+    params:data,
+  })
+ }
+

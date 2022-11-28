@@ -145,9 +145,14 @@ export default {
         status = "任务数"
       }else if(type==4){
         status = "逾期数"
-      }else{
-       status = record.success == 1 ? '成功' : '失败'
+      }else if(type==2){
+       status =  '成功'
+      }else if(type==3){
+       status =  '失败'
       }
+     if(record.planName==null){
+      record.planName=""
+     }
       this.titleTop =
         record.planName +
         '-' +

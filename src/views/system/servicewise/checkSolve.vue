@@ -139,7 +139,7 @@
             <a ref="#" v-for="(item, index) in soundRecordingList" :key="index" :value="item" class="div-voice-item" @click="playAudio(item)"><img src="~@/assets/icons/ly.png" class="img" />{{item.recordName}}.mp3</a>
           
           </div>
-          <a ref="#" v-if="patientInfo.tel">
+          <a ref="#" v-if="patientInfo.tel && callers.length>0">
           <img
     
             src="~@/assets/icons/dianhua2.png"
@@ -149,7 +149,7 @@
           </a>
           <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
         
-          <a ref="#" v-if="patientInfo.urgentTel">
+          <a ref="#" v-if="patientInfo.urgentTel && callers.length>0">
           <img
            
             src="~@/assets/icons/jinji2.png"
@@ -239,6 +239,7 @@ import {
   followPlanPhonehistoryDetail,
   historyFollowResult,
   modifyFollowSpotExecuteRecord,
+  getAccountParam,
   spotDetailForId
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
@@ -311,6 +312,7 @@ export default {
       handleResult:'',
       questionUrl: '',
       fieldList:[],
+      callers: [],
       checkInfo:{},//抽查详情
       isCheckInfo:false
     }
@@ -397,6 +399,12 @@ export default {
           this.$message.error(res.message)
         }
       })
+
+      getAccountParam('follow_caller_phone').then((res) => {
+      if (res.code == 0) {
+        this.callers = res.data
+      }
+    })
   
   },
   methods: {

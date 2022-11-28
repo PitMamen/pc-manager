@@ -1184,15 +1184,6 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
-      // if (!tempData.basePlan.remark) {
-      //   this.$message.error('请输入补充说明')
-      //   return
-      // }
-
-      // if (tempData.filterRules.length == 0) {
-      //   this.$message.error('请添加名单过滤')
-      //   return
-      // }
 
       if (tempData.tasks.length == 0) {
         this.$message.error('请添加任务')
@@ -1242,11 +1233,20 @@ export default {
           return
         }
 
-        //1临时  2长期  临时任务 timeQuantity 可以为0，所以这里注释
-        // if (item.taskExecType && !item.timeQuantity) {
-        //   this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
-        //   return
-        // }
+        //筛选出来是否修改的数据 详情和上报接口给的数据不一样
+        //不是修改的条目和点击修改后的条目数据处理不一样，点击修改后数据提交的时候不用变，没点击修改的需要改变
+        let arr = []
+        item.stopTaskDetailDtos.forEach((itemDto) => {
+          if (itemDto.stopType.value) {
+            //不是修改的条目
+            // itemDto = JSON.parse(JSON.stringify({ stopType: itemDto.stopType.value, conditionValue: itemDto.conditionValue }))
+            arr.push({ stopType: itemDto.stopType.value, conditionValue: itemDto.conditionValue })
+          } else {
+            arr.push(JSON.parse(JSON.stringify(itemDto)))
+          }
+        })
+
+        item.stopTaskDetailDtos = JSON.parse(JSON.stringify(arr))
 
         if (item.taskExecType && item.taskExecType == 1 && !item.timeUnit) {
           this.$message.error('请选择第' + (index + 1) + '条任务时间单位')
