@@ -56,10 +56,12 @@
       </div>
     </div>
 
+    <!-- :scroll="{ y: 700, x: 0 }"  -->
     <s-table
       style="overflow-y: auto"
       class="table-hover-hidden"
       :showPagination="false"
+      
       :scroll="{ y: 700, x: 0 }"
       bordered
       ref="tableStat"
@@ -379,17 +381,26 @@ export default {
     align-items: center;
   }
 
+  li{
+
+    height: 24px;
+    margin-top: 1px !important;
+    line-height: 22px;
+  }
+
   margin-left: 5px;
   align-items: center;
    .ant-select-selection--multiple {
     width: 100%;
     height: 28px;
+    margin-top: 1px !important;
     padding-bottom: 0px !important;
     /deep/ .ant-select-selection__rendered {
       height: 100%;
       ul {
         width: 100%;
         height: 28px;
+        margin-top: 1px !important;
         overflow-y: hidden;
         display: -webkit-box;
         &::-webkit-scrollbar {
