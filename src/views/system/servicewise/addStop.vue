@@ -1,8 +1,7 @@
 <template>
   <a-modal
     title="终止条件配置"
-    :width="800"
-    :height="50"
+    style="width:800px"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -25,7 +24,7 @@
 
           <a-select
             v-if="item.stopType == 2"
-            style="margin-left: 1%; width: 96px"
+            style="margin-left: 1%; width: 155px"
             v-model="item.conditionValue"
             allow-clear
             placeholder="请选择名单"
@@ -37,7 +36,7 @@
 
           <a-input-number
             v-if="item.stopType == 3"
-            style="display: inline-block; margin-left: 1%; width: 96px"
+            style="display: inline-block; margin-left: 1%; width: 155px"
             v-model="item.conditionValue"
             :min="0"
             :max="10000"
@@ -211,14 +210,15 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
 .stop-wrap {
   width: 100%;
   // height: 100%;
   overflow: hidden;
   overflow-y: auto;
-  margin-top: 5%;
-  margin-left: 5%;
-  height: 500px;
+  margin-top: 30px;
+  margin-left: 85px;
+  height:350px;
   // display: flex;
   // flex-direction: row;
 
