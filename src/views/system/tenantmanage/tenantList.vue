@@ -208,7 +208,7 @@ export default {
 
         {
           title: '操作',
-          width: '150px',
+          width: '170px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -239,18 +239,12 @@ export default {
     }
   },
   methods: {
-    //初始化方法
-    // add(record) {
-    //   this.visible = true
-    // },
 
     /**
      * 重置
      */
     reset() {
-      if (this.queryParams.metaName != '') {
-        this.queryParams.metaName = ''
-      }
+        this.queryParams.tenantName = ''
     },
 
     /**

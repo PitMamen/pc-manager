@@ -93,12 +93,13 @@
   
         <a-radio-group
           name="radioGroup"
+          v-model="rangeValue"
           @change="radioChange"
           defaultValue="2"
           v-decorator="['roleId', { rules: [{ required: true, message: '请选择科室类型！' }] }]"
         >
-          <a-radio :value="1" style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 互联网医院科室 </a-radio>
-          <a-radio :value="2" style="font-size: 8px; margin-top: 10px"> 全病程科室 </a-radio>
+          <a-radio :value=1 style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 互联网医院科室 </a-radio>
+          <a-radio :value=2 style="font-size: 8px; margin-top: 10px"> 全病程科室 </a-radio>
         </a-radio-group>
       </div>
   
@@ -135,7 +136,7 @@
         userId: '',
         timeStr: '',
         originData: [],
-        rangeValue: '2',
+        rangeValue: 2,
         previewVisible: false,
         HospitalLevelList: [],
         HospitalTypeList: [],
@@ -198,6 +199,14 @@
         this.queryParams.departmentIntroduce = record.department_introduce
         this.queryParams.departmentOrder = record.department_order
         this.queryParams.departmentType = record.department_type
+        if(record.is_internet_hospital==1){
+            console.log("111111111111111")
+            this.rangeValue=1
+        }else if(record.is_full_disease==1){
+            console.log("2222222222222")
+            this.rangeValue=2
+
+        }
 
 
 
@@ -298,12 +307,12 @@
       radioChange(event) {
         //立即发送
         if (event.target.value == 1) {
-          this.rangeValue = '1'
+          this.rangeValue = 1
           this.queryParams.isInternetHospital = 1
           this.queryParams.isFullDisease = 2
           //延时发送
         } else if (event.target.value == 2) {
-          this.rangeValue = '2'
+          this.rangeValue = 2
           this.queryParams.isFullDisease = 1
           this.queryParams.isInternetHospital = 2
         }

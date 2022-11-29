@@ -81,8 +81,6 @@
             defaultValue="2"
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择机构类型！' }] }]"
           >
-            <!-- <a-radio class="btn-add-plan" :value="1" style="font-size:12px"> 立即发送 </a-radio>
-            <a-radio :value="2"  style="font-size:12px"> 延时发送 </a-radio> -->
             <a-radio :value="1" style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 管理机构 </a-radio>
             <a-radio :value="2" style="font-size: 8px; margin-top: 10px"> 医疗机构 </a-radio>
           </a-radio-group>
@@ -404,7 +402,10 @@ export default {
     /**
      * upload commit
      */
-    uploadFile() {},
+    uploadFile() {
+      this.handlePreview()
+       this.handleChange()
+    },
 
     /**
      *
