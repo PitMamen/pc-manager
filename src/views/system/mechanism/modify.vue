@@ -127,12 +127,12 @@
             </a-select>
           </div>
   
-          <div class="div-title">
+          <div v-if="rangeValue == '2'" class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">接口配置</span>
           </div>
   
-          <div class="display-item" style="margin-left: 10px; margin-top: 10px">
+          <div v-if="rangeValue == '2'" class="display-item" style="margin-left: 10px; margin-top: 10px">
             <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
             <a-input
             type="number"
@@ -145,7 +145,7 @@
             />
           </div>
   
-          <div class="display-item" style="margin-left: 10px; margin-top: 10px">
+          <div v-if="rangeValue == '2'" class="display-item" style="margin-left: 10px; margin-top: 10px">
             <span style="margin-top: 10px"> <span style="color: red">*</span> 服务地址:</span>
             <a-input
               v-model="queryParams.middleware"
@@ -181,18 +181,18 @@
             </a-upload>
   
             <div class="domw-r">
-              <a-button
+              <!-- <a-button
                 class=""
                 icon="vertical-align-top"
                 style="margin-left: 5px; margin-top: 20px"
                 @click="uploadFile()"
                 >上传文件</a-button
-              >
-              <span style="margin-left: 5px; margin-top: 20px">支持扩展名:jpg、jpeg、png、bmp格式</span>
+              > -->
+              <span style=" margin-top: 20px">支持扩展名:jpg、jpeg、png、bmp格式</span>
             </div>
           </div>
   
-          <div id="div2" ref="editorEl" style="margin-top: 3%"></div>
+          <div id="div2" ref="editorEl" style="margin-top: 15%"></div>
         </div>
       </div>
     </a-modal>
@@ -288,6 +288,7 @@
         editor.config.height = 600
         editor.config.pasteFilterStyle = false
         editor.config.onchange = (html) => {
+           console.log("editor modify:",html)
           this.queryParams.introduction = html
         }
         // 默认情况下，显示所有菜单
@@ -548,36 +549,36 @@
        */
       handleSubmit() {
         if (!this.queryParams.hospitalId) {
-          this.$message.$error('请选择上级机构')
+          this.$message.error('请选择上级机构')
           return
         }
   
         if (!this.queryParams.hospitalCode) {
-          this.$message.$error('请输入机构代码')
+          this.$message.error('请输入机构代码')
           return
         }
         if (!this.queryParams.hospitalName) {
-          this.$message.$error('请输入机构名称')
+          this.$message.error('请输入机构名称')
           return
         }
         if (!this.queryParams.orgType) {
-          this.$message.$error('请选择机构类型')
+          this.$message.error('请选择机构类型')
           return
         }
         if (!this.queryParams.hospitalType) {
-          this.$message.$error('请选择机构类型')
+          this.$message.error('请选择机构类型')
           return
         }
         if (!this.queryParams.level) {
-          this.$message.$error('请选择机构等级')
+          this.$message.error('请选择机构等级')
           return
         }
         if (!this.queryParams.hisCode) {
-          this.$message.$error('请输入HIS编码')
+          this.$message.error('请输入HIS编码')
           return
         }
         if (!this.queryParams.middleware) {
-          this.$message.$error('请输入服务地址')
+          this.$message.error('请输入服务地址')
           return
         }
   

@@ -333,24 +333,24 @@ export default {
      */
     handleSubmit() {
       if (!this.queryParams.parentDisarmamentId) {
-        this.$message.$error('请选择上级机构')
+        this.$message.error('请选择上级机构')
         return
       }
 
       if (!this.queryParams.departmentName) {
-        this.$message.$error('请输入科室名称')
+        this.$message.error('请输入科室名称')
         return
       }
       if (!this.queryParams.departmentAddr) {
-        this.$message.$error('请输入科室地址')
+        this.$message.error('请输入科室地址')
         return
       }
       if (!this.queryParams.departmentOrder) {
-        this.$message.$error('请选择科室排序')
+        this.$message.error('请选择科室排序')
         return
       }
       if (!this.queryParams.hisId) {
-        this.$message.$error('请输入His编码')
+        this.$message.error('请输入His编码')
         return
       }
 
