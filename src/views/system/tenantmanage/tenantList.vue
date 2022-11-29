@@ -208,7 +208,7 @@ export default {
 
         {
           title: '操作',
-          width: '150px',
+          width: '170px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -239,18 +239,12 @@ export default {
     }
   },
   methods: {
-    //初始化方法
-    // add(record) {
-    //   this.visible = true
-    // },
 
     /**
      * 重置
      */
     reset() {
-      if (this.queryParams.metaName != '') {
-        this.queryParams.metaName = ''
-      }
+        this.queryParams.tenantName = ''
     },
 
     /**
@@ -337,6 +331,7 @@ export default {
       tenantInit({ tenantId: record.tenantId })
         .then((res) => {
           if (res.code == 0 && res.success) {
+            this.handleOk()
             this.$message.success("初始化成功!")
           }else{
             this.$message.error("初始化失败:"+res.message)

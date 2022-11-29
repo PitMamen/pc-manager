@@ -82,7 +82,7 @@
       <a-input
         v-model="queryParams.departmentOrder"
         :disabled="true"
-        :defaultValue=0
+        :defaultValue=1
         allow-clear
         style="width: 135px; margin-left: 5px; text-align: center"
       />
