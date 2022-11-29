@@ -34,7 +34,7 @@
           placeholder="请选择科室"
         >
           <a-select-option
-            style="max-height: 28px;padding-bottom: 0px;"
+            style="max-height: 28px;padding-bottom: 0px;align-items: center"
             v-for="(item, index) in originData"
             :value="item.departmentId"
             :key="index"
@@ -373,8 +373,10 @@ export default {
     zoom: 1;
 }
 .sitemore {
+  align-items: center;
   .ant-select-selection.ant-select-selection--single {
     height: 28px !important;
+    align-items: center;
   }
 
   margin-left: 5px;
