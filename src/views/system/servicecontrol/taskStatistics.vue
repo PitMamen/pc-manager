@@ -62,7 +62,7 @@
       class="table-hover-hidden"
       :showPagination="false"
       style="overflow-y: auto"
-      :scroll="{ y: 700,x: true }"
+      :scroll="{ y: 700,x: 0 }"
       bordered
       ref="tableStat"
       size="default"
