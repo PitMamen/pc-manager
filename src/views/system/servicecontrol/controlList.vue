@@ -472,6 +472,12 @@ export default {
         if (param.executeDepartmentId == '-1') {
           delete param.executeDepartmentId
         }
+
+        // //非管理员和随访管理员要单独处理
+        // if (!(this.user.roleId == 7 || this.user.roleName == 'admin')) {
+        //   this.$set(param, 'executeDepartmentId', this.originData[0].departmentId)
+        // }
+
         if (param.taskBizStatus == '-1') {
           delete param.taskBizStatus
         }
