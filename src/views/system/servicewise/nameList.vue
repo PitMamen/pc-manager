@@ -247,7 +247,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .div-divider1 {
   margin-bottom: 0.5%;
   margin-top: 0.5%;
@@ -257,7 +257,7 @@ export default {
 }
 
 .table-page-search-wrapper {
-  padding-bottom: 20px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;

@@ -2428,15 +2428,27 @@ export function queryinitProgress(data) {
 }
 
 /**
- * /followPlanPhone/historyDetail/{id} 随访历史记录详情(页面中间部分)
+ * /pushRecordHistory/historySmsPushDetail/{id} 短信推送日志详情
  */
-export function historyDetail(data) {
+ export function historySmsPushDetail(data) {
   return axios({
-    url: '/follow-api/followPlanPhone/historyDetail/' + data,
+    url: '/follow-api/pushRecordHistory/historySmsPushDetail/' + data,
     method: 'post',
     // data: data,
   })
 }
+
+/**
+ * /pushRecordHistory/historySmsPushDetail/{id} 随访历史记录详情(页面中间部分)
+ */
+ export function historyWxPushDetail(data) {
+  return axios({
+    url: '/follow-api/pushRecordHistory/historyWxPushDetail/' + data,
+    method: 'post',
+    // data: data,
+  })
+}
+
 /*
  * 租户初始化操作接口
  */

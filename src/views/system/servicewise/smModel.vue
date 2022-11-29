@@ -207,7 +207,7 @@
     },
   }
   </script>
-    <style lang="less" >
+    <style lang="less" scoped>
 
       .table-wrapper {
   // max-height: 600px;
@@ -223,7 +223,7 @@
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 20px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;

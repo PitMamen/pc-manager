@@ -18,7 +18,7 @@
 
 
 <script>
-import { historyDetail } from '@/api/modular/system/posManage'
+import { historySmsPushDetail, historyWxPushDetail } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -38,16 +38,29 @@ export default {
       this.title = title
       this.visible = true
       this.confirmLoading = true
-      historyDetail(record.id)
-        .then((res) => {
-          this.confirmLoading = false
-          if (res.code == 0) {
-            this.detail = res.data.contentText
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
+      if (title == '短信详情') {
+        historySmsPushDetail(record.id)
+          .then((res) => {
+            this.confirmLoading = false
+            if (res.code == 0) {
+              this.detail = res.data.contentText
+            }
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
+      } else {
+        historyWxPushDetail(record.id)
+          .then((res) => {
+            this.confirmLoading = false
+            if (res.code == 0) {
+              this.detail = res.data.contentText
+            }
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
+      }
     },
 
     handleCancel() {
