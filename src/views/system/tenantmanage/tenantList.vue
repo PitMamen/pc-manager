@@ -331,6 +331,7 @@ export default {
       tenantInit({ tenantId: record.tenantId })
         .then((res) => {
           if (res.code == 0 && res.success) {
+            this.handleOk()
             this.$message.success("初始化成功!")
           }else{
             this.$message.error("初始化失败:"+res.message)
