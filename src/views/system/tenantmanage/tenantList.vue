@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false" class="card-right-pac">
+  <a-card  :confirm-loading="confirm2Loading" :bordered="false" class="card-right-pac">
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">查询条件:</span>
@@ -161,6 +161,7 @@ export default {
       },
       visible: false,
       confirmLoading: false,
+      confirm2Loading:false,
       form: this.$form.createForm(this),
 
       // 表头
@@ -245,6 +246,7 @@ export default {
      */
     reset() {
         this.queryParams.tenantName = ''
+        this.handleOk()
     },
 
     /**
@@ -326,7 +328,7 @@ export default {
      * 初始化操作
      */
     initTenant(record) {
-      this.confirmLoading = true
+      this.confirm2Loading = true
       console.log("租户ID啊：",record.tenantId)
       tenantInit({ tenantId: record.tenantId })
         .then((res) => {
@@ -339,7 +341,7 @@ export default {
           }
         })
         .finally((data) => {
-          this.confirmLoading = false
+          this.confirm2Loading = false
         })
     },
 

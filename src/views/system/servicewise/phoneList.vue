@@ -1177,11 +1177,11 @@ export default {
   }
 }
 
-/deep/ svg {
-  width: 0 !important;
-  height: 0 !important;
-  display: none;
-}
+// /deep/ svg {
+//   width: 0 !important;
+//   height: 0 !important;
+//   display: none;
+// }
 </style>
 
 <style lang="less" scoped>

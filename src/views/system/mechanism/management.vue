@@ -36,6 +36,7 @@
     <a-table
       ref="table"
       size="default"
+      :pagination="false"
       :columns="columns"
       :data-source="loadData"
       :expandedRowsChange="expandedRowKeys"
@@ -62,7 +63,7 @@
     
     <script>
 import { STable } from '@/components'
-import { getTenantList, tenantInit, resetTenantPwd, queryHospitalList } from '@/api/modular/system/posManage'
+import { tenantInit,  queryHospitalList } from '@/api/modular/system/posManage'
 import addMechanism from './addMechanism'
 import modify from './modify'
 // import initRecord from './initRecord'

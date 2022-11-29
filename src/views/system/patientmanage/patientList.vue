@@ -2,7 +2,7 @@
   <a-card :bordered="false" class="card-right-pac" :confirmLoading="confirmLoading">
     <div class="table-page-search-wrapper">
       <div class="search-row">
-        <span class="name">应用名称:</span>
+        <span class="name">姓名:</span>
         <a-input
           v-model="queryParams.name"
           allow-clear

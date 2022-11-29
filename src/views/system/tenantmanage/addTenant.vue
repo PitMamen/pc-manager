@@ -76,6 +76,7 @@
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 联系电话:</span>
           <a-input
+            type="number"
             v-model="queryParams.phone"
             allow-clear
             placeholder="请输入内容"
@@ -105,6 +106,7 @@
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构编码:</span>
           <a-input
+          type="number"
             v-model="queryParams.hospitalCode"
             allow-clear
             placeholder="请输入内容"
