@@ -1610,7 +1610,7 @@ export function changeStatusSmsTemplate(data) {
  */
 export function qryMetaDataByPage(data) {
   return axios({
-    url: '/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
+    url: '/follow-api/followMetaConfigureDetail/qryPatientByPage',
     method: 'post',
     data: data,
   })
@@ -2371,9 +2371,9 @@ export function getWxPushRecordHistory(data) {
  */
 export function getApplicationlist(data) {
   return axios({
-    url: '/uam-api/application/list',
-    method: 'post',
-    data: data,
+    url:'/uam-api/application/list',
+    method:'post',
+    data:data,
   })
 }
 
@@ -2428,16 +2428,27 @@ export function queryinitProgress(data) {
 }
 
 /**
-<<<<<<< HEAD
- * /followPlanPhone/historyDetail/{id} 随访历史记录详情(页面中间部分)
+ * /pushRecordHistory/historySmsPushDetail/{id} 短信推送日志详情
  */
-export function historyDetail(data) {
+ export function historySmsPushDetail(data) {
   return axios({
-    url: '/follow-api/followPlanPhone/historyDetail/' + data,
+    url: '/follow-api/pushRecordHistory/historySmsPushDetail/' + data,
     method: 'post',
     // data: data,
   })
 }
+
+/**
+ * /pushRecordHistory/historySmsPushDetail/{id} 随访历史记录详情(页面中间部分)
+ */
+ export function historyWxPushDetail(data) {
+  return axios({
+    url: '/follow-api/pushRecordHistory/historyWxPushDetail/' + data,
+    method: 'post',
+    // data: data,
+  })
+}
+
 /*
  * 租户初始化操作接口
  */
@@ -2496,4 +2507,75 @@ export function historyDetail(data) {
     params:data,
   })
  }
+
+ /***
+  * 上级机构
+  */
+export function parent(data){
+  return axios({
+    url:'/uam-api/hospital/parent',
+    method:'get',
+    params:data,
+  })
+}
+
+
+ /**
+  * 新增机构
+  */
+  export function save(data){
+    return axios({
+      url:'/uam-api/hospital/save',
+      method:'post',
+      data:data,
+    })
+   } 
+
+
+   /**
+    * 机构详情
+    */
+
+   export function queryHospitaldetail(data){
+    return axios({
+      url:'/uam-api/hospital/detail',
+      method:'get',
+      params:data,
+    })
+   }
+
+
+   /**
+    * 科室列表
+    */
+   export function getDepartmentListForReq(data){
+    return axios({
+      url:'/follow-api/departmentManger/getDepartmentListForReq',
+      method:'post',
+      data:data,
+    })
+   }
+
+   /**
+    * 添加科室
+    */
+   export function addDepartmentForReq(data){
+    return axios({
+      url:"/follow-api/departmentManger/addDepartmentForReq",
+      method:'post',
+      data:data,
+    })
+   }
+
+     /**
+    * 修改科室
+    */
+      export function modifyDepartmentForReq(data){
+        return axios({
+          url:"/follow-api/departmentManger/modifyDepartmentForReq",
+          method:'post',
+          data:data,
+        })
+       }
+
 

@@ -195,6 +195,9 @@ export default {
 
             this.loadData = res.data
             this.hospitals = res.data
+          }else{
+            this.loadData = res.data
+            this.hospitals = res.data
           }
           return []
         })
@@ -203,18 +206,6 @@ export default {
         })
     },
 
-    /**
-     * 启用/停用
-     */
-    Enable(record) {
-      console.log('ddd', record)
-      record.status.value = record.status.value == 1 ? 2 : 1
-      record.enableStatus = record.status.value == 1 ? '停用' : '启用'
-      var queryParamData = {
-        id: record.id,
-        status: record.status.value,
-      }
-    },
 
     /**
      * 初始化操作
@@ -242,7 +233,9 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      // console.log("收到消息------")
+      // this.$refs.table.refresh()
+      this.queryHospitalListOut(this.queryParams)
     },
 
     handleCancel() {
@@ -260,7 +253,7 @@ export default {
       } else {
         this.queryParams.status = 2
       }
-      this.handleOk()
+      this.queryHospitalListOut(this.queryParams)
     },
   },
 }

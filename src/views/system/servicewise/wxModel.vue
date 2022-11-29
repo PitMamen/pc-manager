@@ -77,6 +77,7 @@ export default {
         {
           title: '内部编码',
           dataIndex: 'templateId',
+          ellipsis:true,
         },
        
         {
@@ -190,7 +191,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -205,7 +206,7 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 20px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;

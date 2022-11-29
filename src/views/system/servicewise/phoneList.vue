@@ -136,6 +136,7 @@
           style="margin-top: 15px; min-height: 500px"
           :columns="columns"
           :data="loadData"
+          :class="{ doubled: isDoubled }"
           :isShowLoading="false"
           :alert="true"
           :rowKey="(record) => record.code"
@@ -193,6 +194,7 @@ export default {
     return {
       isOpen: true,
       childrenDrawer: true,
+      isDoubled: false,
       datas: [],
       drawerWidth: 300,
       drawerTitle: '选择随访列表',
@@ -759,12 +761,16 @@ export default {
         // 需要改变表格列表数据；
         if (this.queryParams.queryStatus == 1) {
           this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+          this.isDoubled = false
         } else if (this.queryParams.queryStatus == 2) {
           this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+          this.isDoubled = true
         } else if (this.queryParams.queryStatus == 3) {
           this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+          this.isDoubled = true
         } else if (this.queryParams.queryStatus == 4) {
           this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+          this.isDoubled = true
         }
 
         for (let index = 0; index < this.treeData.length; index++) {
@@ -1133,6 +1139,13 @@ export default {
 
     /deep/ .ant-card-body {
       padding: 0px 20px !important;
+    }
+
+    /deep/ .table-wrapper {
+      &.doubled {
+        height: calc(100% - 140px);
+      }
+      // height: calc(100% - 38px);
     }
 
     .table-page-search-wrapper {

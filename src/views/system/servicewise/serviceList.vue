@@ -172,14 +172,22 @@ export default {
     }
   },
 
-  watch: {
-    $route(to, from) {
-      console.log('watch----serviceList out', to, from)
-      if (to.path.indexOf('serviceList') > -1) {
-        console.log('watch----serviceList', to, from)
-        this.refresh()
-      }
-    },
+  // watch: {
+  //   $route(to, from) {
+  //     console.log('watch----serviceList out', to, from)
+  //     if (to.path.indexOf('serviceList') > -1) {
+  //       console.log('watch----serviceList', to, from)
+  //       this.refresh()
+  //     }
+  //   },
+  // },
+
+  mounted() { 
+  //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
+    this.$bus.$on("proEvent", (data) => {
+      console.log('proEvent Refres',data)
+      // this.objct = data;
+    })
   },
 
   created() {
@@ -350,7 +358,7 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 20px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;

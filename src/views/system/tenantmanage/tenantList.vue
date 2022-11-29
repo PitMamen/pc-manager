@@ -99,9 +99,8 @@
         <a @click="resetPwsd(record)">重置密码</a>
         <a-divider type="vertical" />
         <a
-          @click="record.initStatuas == 3||record.initStatuas == 4 ? $refs.initRecord.initrecord(record) : init(record)">初始化</a
+          @click="record.initStatuas == 3||record.initStatuas == 4 ? $refs.initRecord.initrecord(record) : initTenant(record)">初始化</a
         >
-        <!-- <a v-if="record.initStatuas == 2" @click="init(record)">初始化</a> -->
       </span>
 
       <span slot="statuas" slot-scope="text, record">
@@ -209,7 +208,7 @@ export default {
 
         {
           title: '操作',
-          width: '150px',
+          width: '170px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -240,18 +239,12 @@ export default {
     }
   },
   methods: {
-    //初始化方法
-    // add(record) {
-    //   this.visible = true
-    // },
 
     /**
      * 重置
      */
     reset() {
-      if (this.queryParams.metaName != '') {
-        this.queryParams.metaName = ''
-      }
+        this.queryParams.tenantName = ''
     },
 
     /**
@@ -332,11 +325,13 @@ export default {
     /**
      * 初始化操作
      */
-    init(record) {
+    initTenant(record) {
       this.confirmLoading = true
-      tenantInit({ tenandId: record.tenandId })
+      console.log("租户ID啊：",record.tenantId)
+      tenantInit({ tenantId: record.tenantId })
         .then((res) => {
           if (res.code == 0 && res.success) {
+            this.handleOk()
             this.$message.success("初始化成功!")
           }else{
             this.$message.error("初始化失败:"+res.message)

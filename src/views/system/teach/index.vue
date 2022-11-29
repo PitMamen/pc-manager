@@ -340,7 +340,7 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 20px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;

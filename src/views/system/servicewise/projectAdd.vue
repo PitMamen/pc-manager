@@ -1151,6 +1151,7 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
+            this.$bus.$emit("proEvent", '刷新数据-方案新增')
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
