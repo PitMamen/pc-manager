@@ -57,12 +57,12 @@
     </div>
 
     <!-- :scroll="{ y: 700, x: 0 }"  -->
+    <!--  style="overflow-y: auto" -->
     <s-table
-      style="overflow-y: auto"
       class="table-hover-hidden"
       :showPagination="false"
-      
-      :scroll="{ y: 700, x: 0 }"
+      style="overflow-y: auto"
+      :scroll="{ y: 700,x: true }"
       bordered
       ref="tableStat"
       size="default"
@@ -440,6 +440,10 @@ export default {
   }
   .ant-table-body .ant-table-row-hover > td {
     background: #e7f1ff;
+  }
+
+  .ant-table-body{
+    overflow: auto !important;
   }
 }
 
