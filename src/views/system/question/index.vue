@@ -460,7 +460,7 @@ button {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 20px;
+  padding-bottom: 20px !important;
   padding-top: 8px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
