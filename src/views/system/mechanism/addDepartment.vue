@@ -26,7 +26,7 @@
 
       <a-tree-select
         v-model="queryParams.parentDisarmamentId"
-        style="min-width: 28.5%"
+        style="min-width: 28.7%"
         :tree-data="treeData"
         placeholder="请选择"
         @select="onSelect"
