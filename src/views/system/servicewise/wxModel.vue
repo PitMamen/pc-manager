@@ -23,6 +23,7 @@
       <a-button icon="plus" style="float: right;margin-right: 0;" @click="addModel()">新增</a-button>
     </div>
     <s-table
+      :scroll="{ x:   true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -91,7 +92,8 @@ export default {
         },
         {
           title: '操作',
-          width: '100px',
+          width: 100,
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

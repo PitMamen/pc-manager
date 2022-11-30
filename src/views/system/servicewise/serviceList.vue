@@ -187,6 +187,7 @@ export default {
     this.$bus.$on("proEvent", (data) => {
       console.log('proEvent Refres',data)
       // this.objct = data;
+      this.refresh()
     })
   },
 
