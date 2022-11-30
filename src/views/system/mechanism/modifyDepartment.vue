@@ -12,17 +12,15 @@
         <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
           ><span style="color: red">*</span> 上级机构:</span
         >
-        <a-select
-          style="min-width: 190px"
-          v-model="queryParams.parentDisarmamentId"
-          @select="onSelect()"
-          allow-clear
-          placeholder="请选择上级机构"
-        >
-          <a-select-option v-for="(item, index) in ParentList" :key="index" :value="item.hospitalId">{{
-            item.hospitalName
-          }}</a-select-option>
-        </a-select>
+        <a-tree-select
+        v-model="queryParams.parentDisarmamentId"
+        style="min-width: 28.5%"
+        :tree-data="treeData"
+        placeholder="请选择"
+        @select="onSelect"
+        tree-default-expand-all
+      >
+      </a-tree-select>
   
         <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
           ><span style="color: red">*</span> 科室名称:</span
@@ -105,7 +103,7 @@
   
       <a-form-item style="margin-left: -68px" label="科室简介" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-textarea
-        style="min-height: 80px;height:80px"
+        style="min-height: 80px;height:80px;margin-top: 10px;"
           v-model="queryParams.departmentIntroduce"
           placeholder="请输入科室简介"
           v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
@@ -119,7 +117,7 @@
           
           <script>
   import moment from 'moment'
-  import { addDepartmentForReq, queryHospitalLevel, queryHospitalType, parent } from '@/api/modular/system/posManage'
+  import { modifyDepartmentForReq, queryHospitalLevel, queryHospitalType, parent,queryHospitalList } from '@/api/modular/system/posManage'
   import { STable } from '@/components'
   import { formatDate, formatDateFull } from '@/utils/util'
   import E from 'wangeditor'
@@ -143,6 +141,8 @@
         HospitalTypeList: [],
         ParentList: [],
         record: {},
+        findItemData:{},
+        treeData:[],
         queryParams: {
           departmentName: '',
           parentDisarmamentId: '',
@@ -210,20 +210,78 @@
             this.rangeValue=2
 
         }
-
-
-
-        this.getParentList()
+        // this.getParentList()
+        this.queryHospitalListOut()
       },
   
-      onSelect() {
-        //选择类别
-        let chooseDeptItem = JSON.parse(JSON.stringify(this.ParentList.find((item) => item.hospitalId == this.queryParams.parentDisarmamentId)))
-        this.queryParams.parentDisarmamentName = chooseDeptItem.hospitalName
-        console.log("sssss:",this.queryParams.parentDisarmamentName)
-      },
+      onSelect(hospitalId) {
+      //选择类别
+      console.log('99999:', hospitalId)
+      for (let index = 0; index < this.treeData.length; index++) {
+        if (hospitalId == this.treeData[index].hospitalId) {
+          this.findItemData = JSON.parse(JSON.stringify(this.treeData[index]))
+          break
+        }
+        if (this.treeData[index].children && this.treeData[index].children.length > 0) {
+          for (let indexIn = 0; indexIn < this.treeData[index].children.length; indexIn++) {
+              if (hospitalId == this.treeData[index].children[indexIn].hospitalId) {
+              this.findItemData = JSON.parse(JSON.stringify(this.treeData[index].children[indexIn]))
+              break
+            }
+          }
+        }
+      }
+
+      this.queryParams.parentDisarmamentName = this.findItemData.hospitalName
+
+    //   console.log("7777:", this.findItemData)
+      //   let chooseDeptItem = JSON.parse(JSON.stringify(this.treeData.find((item) => item.value == this.queryParams.parentDisarmamentId)))
+      //   this.queryParams.parentDisarmamentName = chooseDeptItem.hospitalName
+      //   console.log("sssss:",this.queryParams.parentDisarmamentName)
+    },
   
   
+
+       /**
+     * 所属机构接口
+     */
+    /**
+     *
+     * @param {}
+     */
+    queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalId)
+              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
+
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalId)
+                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
   
   
       /**
@@ -285,11 +343,11 @@
       },
   
       /***
-       * 新增租户接口调用
+       * 修改科室接口调用
        */
-      addDepartmentForReqOut() {
+       modifyDepartmentForReqOut() {
         this.confirmLoading = true
-        addDepartmentForReq(this.queryParams)
+        modifyDepartmentForReq(this.queryParams)
           .then((res) => {
             if (res.code == 0 && res.success) {
               this.visible = false
@@ -375,7 +433,7 @@
           return
         }
   
-        this.addDepartmentForReqOut()
+        this.modifyDepartmentForReqOut()
       },
     },
   }
