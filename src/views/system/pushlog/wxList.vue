@@ -298,18 +298,18 @@ export default {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 0 !important;
+  padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
     vertical-align: middle;
-    padding-bottom: 20px !important;
+    padding-bottom: 10px !important;
   }
   .search-row {
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
-    padding-bottom: 20px !important;
+    padding-bottom: 10px !important;
     .name {
       margin-right: 10px;
     }
