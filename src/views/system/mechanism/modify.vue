@@ -20,11 +20,11 @@
           <a-select
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
-            :title="queryParams.hospitalId"
             :maxTagCount="1"
             allow-clear
-            v-model="queryParams.hospitalId"
+            v-model="shoudata"
             placeholder="请选择机构类型"
+            @select="onSelect"
           >
             <a-select-option v-for="(item, index) in ParentList" :value="item.hospitalId" :key="index">{{
               item.hospitalName
@@ -238,6 +238,7 @@ export default {
   },
   data() {
     return {
+      shoudata: '',
       bb: '1',
       userId: '',
       timeStr: '',
@@ -253,7 +254,7 @@ export default {
       queryParams: {
         hisCode: '',
         hospitalCode: '',
-        hospitalId: '',
+        hospitalId: 0,
         hospitalName: '',
         hospitalType: '',
         imgUrl: '',
@@ -291,11 +292,13 @@ export default {
     //初始化方法
     modify(record) {
       this.visible = true
+      console.log('444:', record)
       this.reset()
-      this.queryParams.hospitalId = record.hospitalId
+      this.shoudata = record.hospitalName
       this.queryParams.pid = record.pid
       this.hospitalId = record.hospitalId
-      console.log('pid', record.pid)
+      this.queryParams.hospitalId = record.hospitalId
+      console.log('9999', record.pid,this.queryParams.hospitalId)
       this.getHospitalDetailOut()
       this.getHospitalLevel()
       this.getHospitalType()
@@ -380,13 +383,26 @@ export default {
     },
 
     /**
+     * 选择
+     * 
+     */
+    onSelect(hospitalId, s2) {
+      console.log('hospitalId', hospitalId)
+      this.queryParams.hospitalId = hospitalId
+
+      //   this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.id == departmentId)))
+      //   console.log('chooseDeptItem', this.chooseDeptItem)
+      //   this.queryParams.appointItemName = this.chooseDeptItem.name
+    },
+
+    /**
      * 获取机构详情
      */
     getHospitalDetailOut() {
       queryHospitaldetail({ hospitalId: this.hospitalId })
         .then((res) => {
           if (res.code == 0) {
-            this.queryParams.hospitalId = res.data.pid
+            // this.queryParams.hospitalId = res.data.pid
             this.queryParams.hospitalCode = res.data.hospitalCode
             this.queryParams.hospitalName = res.data.hospitalName
             this.queryParams.sortedNo = res.data.sortedNo
@@ -569,7 +585,8 @@ export default {
      * 提交
      */
     handleSubmit() {
-      if (!this.queryParams.hospitalId) {
+        console.log("0000000:",this.queryParams.hospitalId)
+      if (this.queryParams.hospitalId==='') {
         this.$message.error('请选择上级机构')
         return
       }
@@ -587,26 +604,24 @@ export default {
         return
       }
 
-      if(this.queryParams.orgType==2){
+      if (this.queryParams.orgType == 2) {
         if (!this.queryParams.hospitalType) {
-        this.$message.error('请选择机构类型')
-        return
+          this.$message.error('请选择机构类型')
+          return
+        }
+        if (!this.queryParams.level) {
+          this.$message.error('请选择机构等级')
+          return
+        }
+        if (!this.queryParams.hisCode) {
+          this.$message.error('请输入HIS编码')
+          return
+        }
+        if (!this.queryParams.middleware) {
+          this.$message.error('请输入服务地址')
+          return
+        }
       }
-      if (!this.queryParams.level) {
-        this.$message.error('请选择机构等级')
-        return
-      }
-      if (!this.queryParams.hisCode) {
-        this.$message.error('请输入HIS编码')
-        return
-      }
-      if (!this.queryParams.middleware) {
-        this.$message.error('请输入服务地址')
-        return
-      }
-      }
-
-     
 
       //组装图片
       //  if (this.fileList.length == 0) {

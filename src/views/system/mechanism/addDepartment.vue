@@ -105,6 +105,7 @@
 
     <a-form-item style="margin-left: -68px" label="科室简介" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
       <a-textarea
+        style="height:80px;min-height: 80px;"
         v-model="queryParams.departmentIntroduce"
         placeholder="请输入科室简介"
         v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入个人简介！' }] }]"

@@ -78,6 +78,7 @@ export default {
         {
           title: '内部编码',
           dataIndex: 'templateId',
+          ellipsis:true,
         },
        
         {

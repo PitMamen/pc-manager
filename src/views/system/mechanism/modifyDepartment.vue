@@ -105,6 +105,7 @@
   
       <a-form-item style="margin-left: -68px" label="科室简介" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
         <a-textarea
+        style="min-height: 80px;height:80px"
           v-model="queryParams.departmentIntroduce"
           placeholder="请输入科室简介"
           v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
@@ -152,6 +153,7 @@
           isInternetHospital: '',
           isFullDisease: '',
           departmentIntroduce: '',
+          departmentId: '',
         },
   
         labelCol: {
@@ -199,6 +201,7 @@
         this.queryParams.departmentIntroduce = record.department_introduce
         this.queryParams.departmentOrder = record.department_order
         this.queryParams.departmentType = record.department_type
+        this.queryParams.departmentId = record.department_id
         if(record.is_internet_hospital==1){
             console.log("111111111111111")
             this.rangeValue=1
@@ -290,10 +293,10 @@
           .then((res) => {
             if (res.code == 0 && res.success) {
               this.visible = false
-              this.$message.success('新增成功')
+              this.$message.success('修改成功')
               this.$emit('ok')
             } else {
-              this.$message.error('新增失败:' + res.message)
+              this.$message.error('修改失败:' + res.message)
             }
           })
           .finally((res) => {

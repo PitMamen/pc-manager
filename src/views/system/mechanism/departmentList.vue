@@ -5,7 +5,7 @@
         <span class="name">查询条件:</span>
         <a-input
           allow-clear
-          v-model="queryParams.tenantName"
+          v-model="queryParams.departmentName"
           placeholder="可输入科室名称名称查询"
           style="width: 120px"
           @blur="$refs.table.refresh(true)"
@@ -13,22 +13,17 @@
           @search="$refs.table.refresh(true)"
         />
       </div>
-
+<!--  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" -->
       <div class="search-row">
         <span class="name"> 所属机构:</span>
-        <a-select
-          class="sitemore"
-          style="min-width: 200px; height: 28px"
-          :title="queryParams.parentDisarmamentId"
-          :maxTagCount="1"
-          allow-clear
+        <a-tree-select
           v-model="queryParams.parentDisarmamentId"
+          style="min-width: 120px"
+          :tree-data="treeData"
           placeholder="请选择"
+          tree-default-expand-all
         >
-          <a-select-option v-for="(item, index) in HospitalTypeList" :value="item.value" :key="index">{{
-            item.description
-          }}</a-select-option>
-        </a-select>
+        </a-tree-select>
       </div>
 
       <div class="search-row">
@@ -75,9 +70,9 @@
     
     <script>
 import { STable } from '@/components'
-import { getDepartmentListForReq, queryHospitalType } from '@/api/modular/system/posManage'
+import { getDepartmentListForReq, queryHospitalType, queryHospitalList } from '@/api/modular/system/posManage'
 import addDepartment from './addDepartment'
-  import modifyDepartment from './modifyDepartment'
+import modifyDepartment from './modifyDepartment'
 export default {
   components: {
     STable,
@@ -90,10 +85,10 @@ export default {
       titleResetPwd: '',
       tenantId: '',
       datas: [],
-      keshiData: [],
-      HospitalTypeList:[],
+      treeData: [],
+      HospitalTypeList: [],
       queryParams: {
-        parentDisarmamentId:'',
+        parentDisarmamentId: '',
         status: 1,
         departmentName: '',
       },
@@ -185,10 +180,10 @@ export default {
     }
   },
 
-
-   created(){
+  created() {
     this.getHospitalType()
-   },
+    this.queryHospitalListOut()
+  },
 
   methods: {
     /**
@@ -198,10 +193,9 @@ export default {
       if (this.queryParams.metaName != '') {
         this.queryParams.metaName = ''
       }
+      this.queryParams.parentDisarmamentId = undefined
 
-      if(!this.queryParams.parentDisarmamentId){
-        this.queryParams.parentDisarmamentId=''
-      }
+      this.handleOk()
     },
 
     /**
@@ -211,22 +205,65 @@ export default {
       this.$refs.addDepartment.addDepartment()
     },
 
+    onChange(value) {
+      console.log('onChange ', value, arguments)
+      this.setState({ value })
+    },
+    /**
+     * 机构类型
+     */
+    getHospitalType() {
+      queryHospitalType()
+        .then((res) => {
+          if (res.code == 0) {
+            this.HospitalTypeList = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     /**
-       * 机构类型
-       */
-       getHospitalType() {
-        queryHospitalType()
-          .then((res) => {
-            if (res.code == 0) {
-              this.HospitalTypeList = res.data
-            }
-          })
-          .finally((res) => {
-            this.confirmLoading = false
-          })
-      },
+     * 所属机构接口
+     */
+    /**
+     *
+     * @param {}
+     */
+    queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalId)
+              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
 
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalId)
+                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     /**
      * 启用/停用
@@ -240,7 +277,6 @@ export default {
         status: record.status.value,
       }
     },
-
 
     /**
      * 新增
@@ -275,6 +311,13 @@ export default {
 </script>
     
     <style lang="less">
+.ant-select-selection{
+    .ant-select-selection-single{
+        width: 128px !important;
+    }
+}
+
+
 .div-divider1 {
   margin-bottom: 0.5%;
   margin-top: 0.5%;
