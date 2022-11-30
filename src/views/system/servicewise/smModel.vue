@@ -23,6 +23,7 @@
     </div>
 
       <s-table
+        :scroll="{ x:   true }"
         ref="table"
         size="default"
         :columns="columns"
@@ -80,12 +81,12 @@
           {
             title: '模板名称',
             dataIndex: 'templateTitle',
-            width: 200,
+            // width: 200,
           },
           {
             title: '内部编码',
             dataIndex: 'templateInsideCode',
-            width: 300,
+            // width: 300,
           },
 
           {
@@ -102,7 +103,8 @@
           },
           {
             title: '操作',
-            width: '100px',
+            width: 100,
+            fixed: 'right',
             dataIndex: 'action',
             scopedSlots: { customRender: 'action' },
           },
