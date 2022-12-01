@@ -1092,6 +1092,7 @@ export default {
           { value: '6', description: '周六' },
           { value: '7', description: '周日' },
         ]
+        itemTask.timeQuantity = '1'
       } else if (itemTask.repeatTimeUnit == 3) {
         //造月里面的天数据
         itemTask.everyData = []
@@ -1099,6 +1100,7 @@ export default {
           let str = index + 1
           itemTask.everyData.push({ value: str + '', description: index + 1 + '号' })
         }
+        itemTask.timeQuantity = '1'
       }
     },
 

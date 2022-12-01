@@ -194,11 +194,10 @@ export default {
               rows: res.data.records,
             }
 
-            //设置序号
-            data.rows.forEach((item, index) => {
-              // item.executeTime = item.executeTime.sub
-              item.executeTime = item.executeTime.substring(0, 11)
-            })
+            // //设置序号
+            // data.rows.forEach((item, index) => {
+            //   item.executeTime = item.executeTime.substring(0, 11)
+            // })
           }
           return data
         })
