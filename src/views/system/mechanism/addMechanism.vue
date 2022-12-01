@@ -323,18 +323,18 @@ export default {
 
       // 配置 server 接口地址
       editor.config.uploadFileName = 'file'
-      // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
+      editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
       // editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
-      editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFile'
+      // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFile'
 
       // editor.config.showLinkVideo = false
 
       //教育文章先不支持视频，所以注释
-      editor.config.uploadVideoName = 'file'
-      editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
-      editor.config.uploadVideoHeaders = {
-        Authorization: Vue.ls.get(ACCESS_TOKEN),
-      }
+      // editor.config.uploadVideoName = 'file'
+      // editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+      // editor.config.uploadVideoHeaders = {
+      //   Authorization: Vue.ls.get(ACCESS_TOKEN),
+      // }
       editor.create()
     },
 
@@ -509,7 +509,7 @@ export default {
       this.queryParams.hospitalId = ''
       this.queryParams.hospitalType = ''
       this.queryParams.imgUrl = ''
-      // this.queryParams.introduction = ''
+      this.queryParams.introduction = ''
       this.queryParams.level = ''
       this.queryParams.middleware = ''
       this.queryParams.orgType = ''
@@ -573,17 +573,20 @@ export default {
       }
 
      
-      
+      if (this.fileList[0].response) {
+        this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
+      } else {
+        this.queryParams.imgUrl = this.fileList[0].url
+      }
 
        //组装图片
-       if (this.fileList.length == 0) {
-        this.$message.error('请上传图片！')
-        return
-      } else {
-        // this.checkData.extraData = this.fileList[0].response.data.mediaId
-        this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
-        console.log("8888888:",this.queryParams.imgUrl,this.fileList[0].response.data.fileLinkUrl)
-      }
+      //  if (this.fileList.length == 0) {
+      //   this.$message.error('请上传图片！')
+      //   return
+      // } else {
+      //   this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
+      //   console.log("8888888:",this.queryParams.imgUrl,this.fileList[0].response.data.fileLinkUrl)
+      // }
 
       if (!this.queryParams.introduction) {
         this.$message.error('请编辑内容')

@@ -192,8 +192,10 @@
             @preview="handlePreview"
             @change="handleChange"
           >
+          <div v-if="fileList.length < 1">
             <a-icon type="plus" />
-            <div class="ant-upload-text">upload</div>
+            <div class="ant-upload-text">Upload</div>
+          </div>
           </a-upload>
 
           <div class="domw-r">
@@ -357,9 +359,9 @@ export default {
 
       // 配置 server 接口地址
       this.editor.config.uploadFileName = 'file'
-      // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
-      this.editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
-
+      this.editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
+      // this.editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
+      // this.editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFile'
       // editor.config.showLinkVideo = false
 
       //教育文章先不支持视频，所以注释
