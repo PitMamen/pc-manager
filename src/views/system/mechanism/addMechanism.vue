@@ -63,8 +63,7 @@
           <!-- <a-icon type="plus" /> -->
           <a-input
             v-model="queryParams.sortedNo"
-            :disabled="true"
-            :defaultValue="1"
+            disabled
             allow-clear
             style="width: 90px; margin-left: 8px; text-align: center"
           />
@@ -237,7 +236,7 @@ export default {
         middleware: '',
         orgType: 0,
         pid: 0,
-        sortedNo: 0,
+        sortedNo: 1,
         tenantId: 0,
       },
 
@@ -515,7 +514,7 @@ export default {
       this.queryParams.middleware = ''
       this.queryParams.orgType = ''
       this.queryParams.pid = ''
-      this.queryParams.sortedNo = ''
+      this.queryParams.sortedNo = 1
       this.queryParams.tenantId = ''
     },
 

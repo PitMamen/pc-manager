@@ -281,7 +281,7 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-      title: '新增机构',
+      title: '修改机构',
       actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
       fileList: [],
     }
@@ -411,6 +411,7 @@ export default {
             this.queryParams.level = res.data.level != null ? res.data.level.value : ''
             this.queryParams.hisCode = res.data.hisCode
             this.queryParams.middleware = res.data.middleware
+            this.queryParams.introduction = res.data.introduction
             console.log('5555:', this.queryParams.orgType)
           }
         })

@@ -1,20 +1,19 @@
 <template>
     <a-modal
       :title="title"
-      :width="700"
-      :height="650"
+      :width="730"
       :visible="visible"
       @ok="handleSubmit"
       @cancel="handleCancel"
       :confirmLoading="confirmLoading"
     >
-      <div class="div-service-user">
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
-          ><span style="color: red">*</span> 上级机构:</span
+      <div class="div-service-user" >
+        <span class="span-item-name" style="margin-top: 5px;"
+          ><span style="color: red">*</span> 上级机构 :</span
         >
         <a-tree-select
         v-model="queryParams.parentDisarmamentId"
-        style="min-width: 28.7%"
+        style="min-width: 248px;margin-left: 5px"
         :tree-data="treeData"
         placeholder="请选择"
         @select="onSelect"
@@ -22,58 +21,58 @@
       >
       </a-tree-select>
   
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
-          ><span style="color: red">*</span> 科室名称:</span
+        <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
+          ><span style="color: red">*</span> 科室名称 :</span
         >
         <a-input
           class="span-item-value"
           v-model="queryParams.departmentName"
           :maxLength="30"
-          style="display: inline-block; width: 30%"
+          style="display: inline-block; width: 248px;margin-left: 5px;"
           allow-clear
           placeholder="请输入科室名称 "
         />
       </div>
   
-      <div class="div-service-user" style="margin-top: 20px">
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
-          ><span style="color: red">*</span> 科室类型:</span
+      <div class="div-service-user" style="margin-top: 20px;">
+        <span class="span-item-name" style="margin-top: 5px;"
+          ><span style="color: red">*</span> 科室类型 :</span
         >
-        <a-select style="min-width: 190px" v-model="queryParams.departmentType" allow-clear placeholder="请选择科室类型">
+        <a-select style="min-width: 248px;margin-left:5px" v-model="queryParams.departmentType" allow-clear placeholder="请选择科室类型">
           <a-select-option v-for="(item, index) in departmentTypeList" :key="index" :value="item.code">{{
             item.name
           }}</a-select-option>
         </a-select>
   
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
-          ><span style="color: red">*</span> 科室位置:</span
+        <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
+          ><span style="color: red">*</span> 科室位置 :</span
         >
         <a-input
           class="span-item-value"
           v-model="queryParams.departmentAddr"
           :maxLength="30"
-          style="display: inline-block; width: 30%"
+          style="display: inline-block; width: 248px;margin-left: 5px;"
           allow-clear
-          placeholder="请输入方案名称 "
+          placeholder="请输入科室位置 "
         />
       </div>
   
-      <div class="div-service-user" style="margin-top: 20px">
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 20px"
-          ><span style="color: red">*</span> HIS编码:</span
+      <div class="div-service-user" style="margin-top: 20px;">
+        <span class="span-item-name" style="margin-top: 5px; "
+          ><span style="color: red">*</span> HIS编码  :</span
         >
         <a-input
           type="number"
           class="span-item-value"
           v-model="queryParams.hisId"
           :maxLength="30"
-          style="display: inline-block; width: 30%"
+          style="display: inline-block; width: 248px;margin-left: 8px;"
           allow-clear
-          placeholder="请输入方案名称 "
+          placeholder="请输入HIS编码 "
         />
   
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 17px"
-          ><span style="color: red">*</span> 显示序号:</span
+        <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
+          ><span style="color: red">*</span> 显示序号 :</span
         >
         <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
         <a-input
@@ -81,13 +80,13 @@
           :disabled="true"
           :defaultValue=0
           allow-clear
-          style="width: 135px; margin-left: 5px; text-align: center"
+          style="width: 190px; margin-left: 5px; text-align: center"
         />
         <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
       </div>
   
-      <div class="display-item" style="margin-left: 23px; margin-top: 10px">
-        <span style="margin-top: 10px"> 科室类型:</span>
+      <div class="display-item" style="margin-left: 5px; margin-top: 10px;">
+        <span style="margin-top: 10px"> 科室类型 :</span>
   
         <a-radio-group
           name="radioGroup"
@@ -101,14 +100,14 @@
         </a-radio-group>
       </div>
   
-      <a-form-item style="margin-left: -68px" label="科室简介" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
-        <a-textarea
-        style="min-height: 80px;height:80px;margin-top: 10px;"
-          v-model="queryParams.departmentIntroduce"
-          placeholder="请输入科室简介"
-          v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
-        />
-      </a-form-item>
+      <a-form-item style="margin-left: -98px;" label="科室简介" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+      <a-textarea
+        style="min-width: 123%;height: 80px; min-height: 80px; margin-top: 10px"
+        v-model="queryParams.departmentIntroduce"
+        placeholder="请输入科室简介"
+        v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
+      />
+    </a-form-item>
   
     </a-modal>
   </template>

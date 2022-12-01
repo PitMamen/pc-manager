@@ -132,8 +132,25 @@
       <!-- ri -->
       <div class="card-right-user" style="overflow-y: auto; height: 450px">
         <div style="margin-bottom: 20px" class="div-total1" v-for="(item, index) in appListOut" :key="index">
-          <div class="div-line-wrap" style="margin-left: 20%; margin-top: 10px">
-            <span class="span-item-value">{{ item.applicationName }} </span>
+          <div class="rigth-content" style="margin-left: 20%; margin-top: 10px">
+            <img v-if="item.id==1"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/manbing.svg"/>
+
+              <img v-if="item.id==2"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/yiyuan.svg"/>
+
+              <img v-if="item.id==3"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/shezhi.svg"/>
+
+
+              <img v-if="item.id==4"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/shangchengxiantiao.svg"/>
+
+            <span class="span-item-value" style="font-size:14px;margin-top: -5px;margin-left: 3px;color: #4D4D4D;">{{ item.applicationName }} </span>
           </div>
 
           <a-checkbox
@@ -142,13 +159,13 @@
             @change="selectChange(item)"
           ></a-checkbox>
 
-          <!-- <div class="div-line-wrap" style="margin-left: 15%; "> -->
+          <div class="rigth-content" style="margin-left: 20%; ">
 
-          <span class="span-item-name" style="margin-left: 5%; font-size: 10px; color: #d9d9d9">
+          <span  style="margin-left: 1px; font-size: 12px; color: #999999;margin-top: -30px;">
             {{ item.remark }}</span
           >
 
-          <!-- </div> -->
+          </div>
         </div>
         <!-- </div> -->
       </div>
@@ -389,6 +406,14 @@ export default {
 
 
   <style lang="less">
+
+  .rigth-content{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+
 .div-title {
     margin-top: 10px;
   display: flex;

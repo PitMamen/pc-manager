@@ -1,59 +1,56 @@
 <template>
-   <a-card :bordered="false" class="sys-card">
-  <a-tabs default-active-key="1" @change="callback" style=" margin-top: -17px">
-    <a-tab-pane key="1" tab="问卷列表">
-    
-      <div class="table-page-search-wrapper">
-        <div class="search-row">
-          <span class="name">科室:</span>
-          <a-select
-            :maxTagCount="1"
-            :collapse-tags="true"
-            allow-clear
-            v-model="idArr"
-            mode="multiple"
-            placeholder="请选择科室"
-            style="min-width: 120px"
+  <a-card :bordered="false" class="sys-card">
+    <a-tabs default-active-key="1" @change="callback" style="margin-top: -17px">
+      <a-tab-pane key="1" tab="问卷列表">
+        <div class="table-page-search-wrapper">
+          <div class="search-row">
+            <span class="name">科室:</span>
+            <a-select
+              :maxTagCount="1"
+              :collapse-tags="true"
+              allow-clear
+              v-model="idArr"
+              mode="multiple"
+              placeholder="请选择科室"
+              style="min-width: 120px; align-items: center;margin-top: -2px;"
+            >
+              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
+                item.departmentName
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+          <div class="action-row">
+            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+              <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+            </span>
+          </div>
+        </div>
+
+        <div class="table-operator" style="overflow: hidden">
+          <a href="http://hmg.mclouds.org.cn/login" target="_blank"
+            ><a-button icon="plus" style="float: right; margin-right: 0">新增</a-button></a
           >
-            <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
-              item.departmentName
-            }}</a-select-option>
-          </a-select>
         </div>
-
-        <div class="action-row">
-          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-            <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
-          </span>
-        </div>
-      </div>
-
-      <div class="table-operator" style="overflow: hidden">
-        <a href="http://hmg.mclouds.org.cn/login" target="_blank"
-          ><a-button icon="plus" style="float: right; margin-right: 0">新增</a-button></a
+        <s-table
+          ref="table"
+          size="default"
+          :columns="columns"
+          :data="loadData"
+          :alert="true"
+          :rowKey="(record) => record.code"
         >
-      </div>
-      <s-table
-        ref="table"
-        size="default"
-        :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowKey="(record) => record.code"
-      >
-        <span slot="action" slot-scope="text, record">
-          <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
-        </span>
-      </s-table>
+          <span slot="action" slot-scope="text, record">
+            <a :href="record.questUrl + '?userId=0&showsubmitbtn=hide'" target="_blank">查看</a>
+          </span>
+        </s-table>
 
-      <add-form ref="addForm" @ok="handleOk" />
-      <edit-form ref="editForm" @ok="handleOk" />
-     
-    </a-tab-pane>
+        <add-form ref="addForm" @ok="handleOk" />
+        <edit-form ref="editForm" @ok="handleOk" />
+      </a-tab-pane>
 
-    <a-tab-pane key="2" tab="问卷统计">
-     
+      <a-tab-pane key="2" tab="问卷统计">
         <div class="table-page-search-wrapper">
           <div class="search-row">
             <span class="name">科室:</span>
@@ -81,7 +78,7 @@
         </div>
 
         <s-table
-        :scroll="{ x: true }"
+          :scroll="{ x: true }"
           ref="tableStat"
           class="tableStat"
           size="default"
@@ -98,10 +95,9 @@
 
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
-      
-    </a-tab-pane>
-  </a-tabs>
-</a-card>
+      </a-tab-pane>
+    </a-tabs>
+  </a-card>
 </template>
 
 <script>
@@ -435,7 +431,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 button {
   margin-right: 8px;
 }
@@ -461,24 +456,36 @@ button {
 }
 .table-page-search-wrapper {
   padding-bottom: 20px !important;
+  margin-top: -1px !important;
   padding-top: 8px;
   border-bottom: 1px solid #e8e8e8;
+  // li {
+  //   height: 24px;
+  //   margin-top: 1px !important;
+  //   line-height: 22px;
+  // }
   .action-row {
     display: inline-block;
     vertical-align: middle;
   }
   .search-row {
+    /deep/.ant-select-selection__rendered{
+      margin-top: -2px !important;
+    }
+
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
     .name {
       margin-right: 10px;
     }
+   
+
   }
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px!important;
+  margin-bottom: 10px !important;
 }
 .div-divider {
   margin-top: 1%;

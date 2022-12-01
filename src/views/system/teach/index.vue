@@ -348,6 +348,10 @@ export default {
   }
 
   .search-row {
+    /deep/.ant-select-selection__rendered{
+      margin-top: -2px !important;
+    }
+
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
