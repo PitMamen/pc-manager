@@ -100,14 +100,15 @@
         </a-radio-group>
       </div>
   
-      <a-form-item style="margin-left: -98px;" label="科室简介" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+      <div class="div-service-user" style="margin-top: 10px;margin-left: 7px;">
+      <span style="margin-top: 10px;width: 90px;"> 科室简介 :</span>
       <a-textarea
-        style="min-width: 123%;height: 80px; min-height: 80px; margin-top: 10px"
-        v-model="queryParams.departmentIntroduce"
-        placeholder="请输入科室简介"
-        v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
-      />
-    </a-form-item>
+      style="height: 80px; min-height: 80px; margin-top: 10px;margin-left: -28px;width: 87%;"
+      v-model="queryParams.departmentIntroduce"
+      placeholder="请输入科室简介"
+      v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
+    />
+      </div>
   
     </a-modal>
   </template>
