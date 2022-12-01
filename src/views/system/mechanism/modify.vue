@@ -280,11 +280,16 @@ export default {
       },
       visible: false,
       confirmLoading: false,
+      editor: null,
       form: this.$form.createForm(this),
       title: '新增机构',
       actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
       fileList: [],
     }
+  },
+
+  created() {
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
   },
 
   methods: {
@@ -298,27 +303,27 @@ export default {
       this.queryParams.pid = record.pid
       this.hospitalId = record.hospitalId
       this.queryParams.hospitalId = record.hospitalId
-      console.log('9999', record.pid,this.queryParams.hospitalId)
+      console.log('9999', record.pid, this.queryParams.hospitalId)
       this.getHospitalDetailOut()
       this.getHospitalLevel()
       this.getHospitalType()
       this.getParentList()
-      this.$nextTick(() => {
-        this.init()
-      })
     },
 
-    init() {
-      let that = this
-      let editor = new E('#div2')
-      editor.config.height = 600
-      editor.config.pasteFilterStyle = false
-      editor.config.onchange = (html) => {
+    init(introduction) {
+      if (this.editor) {
+        this.editor.txt.html(introduction)
+        return
+      }
+      this.editor = new E('#div2')
+      this.editor.config.height = 600
+      this.editor.config.pasteFilterStyle = false
+      this.editor.config.onchange = (html) => {
         console.log('editor modify:', html)
         this.queryParams.introduction = html
       }
       // 默认情况下，显示所有菜单
-      editor.config.menus = [
+      this.editor.config.menus = [
         'head',
         'bold',
         'fontSize',
@@ -345,24 +350,26 @@ export default {
         'redo',
       ]
 
-      editor.config.uploadImgHeaders = {
+      this.editor.config.uploadImgHeaders = {
         Authorization: Vue.ls.get(ACCESS_TOKEN),
       }
+      console.log('Vue.ls.get(ACCESS_TOKEN)', Vue.ls.get(ACCESS_TOKEN))
 
       // 配置 server 接口地址
-      editor.config.uploadFileName = 'file'
+      this.editor.config.uploadFileName = 'file'
       // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
-      editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
+      this.editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
       // editor.config.showLinkVideo = false
 
       //教育文章先不支持视频，所以注释
-      editor.config.uploadVideoName = 'file'
-      editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
-      editor.config.uploadVideoHeaders = {
+      this.editor.config.uploadVideoName = 'file'
+      this.editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+      this.editor.config.uploadVideoHeaders = {
         Authorization: Vue.ls.get(ACCESS_TOKEN),
       }
-      editor.create()
+      this.editor.create()
+      this.editor.txt.html(introduction)
     },
 
     /**
@@ -384,7 +391,7 @@ export default {
 
     /**
      * 选择
-     * 
+     *
      */
     onSelect(hospitalId, s2) {
       console.log('hospitalId', hospitalId)
@@ -412,6 +419,17 @@ export default {
             this.queryParams.hisCode = res.data.hisCode
             this.queryParams.middleware = res.data.middleware
             console.log('5555:', this.queryParams.orgType)
+            this.$nextTick(() => {
+              this.init(res.data.introduction)
+            })
+            this.fileList = []
+            this.fileList.push({
+              uid: '-1',
+              name: '封面',
+              status: 'done',
+              url: res.data.imgUrl,
+              // media_id: this.checkData.extraData,
+            })
           }
         })
         .finally((res) => {
@@ -585,8 +603,8 @@ export default {
      * 提交
      */
     handleSubmit() {
-        console.log("0000000:",this.queryParams.hospitalId)
-      if (this.queryParams.hospitalId==='') {
+      console.log('0000000:', this.queryParams.hospitalId)
+      if (this.queryParams.hospitalId === '') {
         this.$message.error('请选择上级机构')
         return
       }
@@ -630,15 +648,11 @@ export default {
       // } else {
       //   this.queryParams.imgUrl = this.fileList[0].response.data.url
       // }
-
-      if (this.fileList.length > 0) {
-        this.queryParams.imgUrl = this.fileList[0].response.data.url
+      if (this.fileList[0].response) {
+        this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
+      } else {
+        this.queryParams.imgUrl = this.fileList[0].url
       }
-
-      // if (!this.queryParams.introduction) {
-      //   this.$message.error('请编辑内容')
-      //   return
-      // }
 
       this.addHospital()
     },
