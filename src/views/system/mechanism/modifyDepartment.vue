@@ -38,11 +38,13 @@
         <span class="span-item-name" style="margin-top: 5px;"
           ><span style="color: red">*</span> 科室类型 :</span
         >
+
         <a-select style="min-width: 248px;margin-left:5px" v-model="queryParams.departmentType" allow-clear placeholder="请选择科室类型">
-          <a-select-option v-for="(item, index) in departmentTypeList" :key="index" :value="item.code">{{
-            item.name
-          }}</a-select-option>
-        </a-select>
+        <a-select-option v-for="(item, index) in departmentTypeList" :key="index" :value="item.code">{{
+          item.name
+        }}</a-select-option>
+      </a-select>
+
   
         <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
           ><span style="color: red">*</span> 科室位置 :</span
@@ -154,6 +156,7 @@
           isFullDisease: '',
           departmentIntroduce: '',
           departmentId: '',
+          departmentType:'',
         },
   
         labelCol: {

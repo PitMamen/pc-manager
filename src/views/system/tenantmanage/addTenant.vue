@@ -161,7 +161,7 @@
 
           <div class="rigth-content" style="margin-left: 20%; ">
 
-          <span  style="margin-left: 1px; font-size: 12px; color: #999999;margin-top: -30px;">
+          <span  style="margin-left: 1px; font-size: 12px; color: #999999;margin-top: -30px; width: 80%;">
             {{ item.remark }}</span
           >
 
@@ -410,7 +410,7 @@ export default {
   .rigth-content{
     display: flex;
     flex-direction: row;
-    width: 100%;
+    width: 80%;
   }
 
 

@@ -156,6 +156,7 @@ export default {
         isInternetHospital: '',
         isFullDisease: '',
         departmentIntroduce: '',
+        departmentType:'',
       },
 
       labelCol: {
