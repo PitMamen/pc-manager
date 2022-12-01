@@ -1003,15 +1003,16 @@ export default {
 
     .table-page-search-wrapper {
       padding-bottom: 20px;
+      margin-top: 10px;
       // margin-top: 1%;
       border-bottom: 1px solid #e8e8e8;
       .action-row {
-        margin-top: 20px;
+        margin-top: 10px;
         display: inline-block;
         vertical-align: middle;
       }
       .search-row {
-        margin-top: 20px;
+        margin-top: 10px;
         display: inline-block;
         vertical-align: middle;
         padding-right: 20px;

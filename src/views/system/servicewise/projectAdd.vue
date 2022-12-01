@@ -923,6 +923,7 @@ export default {
           { value: '6', description: '周六' },
           { value: '7', description: '周日' },
         ]
+        itemTask.timeQuantity = '1'
       } else if (itemTask.repeatTimeUnit == 3) {
         //造月里面的天数据
         itemTask.everyData = []
@@ -930,6 +931,7 @@ export default {
           let str = index + 1
           itemTask.everyData.push({ value: str + '', description: index + 1 + '号' })
         }
+        itemTask.timeQuantity = '1'
       }
 
       console.log('itemTask.everyData', itemTask.everyData)
@@ -1151,7 +1153,7 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            this.$bus.$emit("proEvent", '刷新数据-方案新增')
+            this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
