@@ -95,7 +95,7 @@
         <a-form-item label="应用描述" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
           <a-textarea
             :rows="4"
-            :maxLength="50"
+            :maxLength="200"
             placeholder="应用描述"
             style="min-height: 140px;"
             v-decorator="['remark', { rules: [{ required: true, message: '请输入应用描述！' }] }]"
