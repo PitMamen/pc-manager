@@ -7,24 +7,33 @@
           v-model="queryParams.name"
           allow-clear
           placeholder="人员姓名查询"
-          style="width: 120px;height: 28px;"
+          style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
       <div class="search-row">
         <span class="name">科室管理:</span>
-        <a-select  class="sitemore" style="min-width: 120px;height:28px; padding-bottom:0px" :title="queryParams.depts" :maxTagCount=1 allow-clear v-model="queryParams.depts" mode="multiple"  placeholder="请选择科室">
-          <a-select-option  v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
+        <a-select
+          class="sitemore"
+          style="min-width: 120px; height: 28px; padding-bottom: 0px"
+          :title="queryParams.depts"
+          :maxTagCount="1"
+          allow-clear
+          v-model="queryParams.depts"
+          mode="multiple"
+          placeholder="请选择科室"
+        >
+          <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
           }}</a-select-option>
         </a-select>
       </div>
 
-      <div class="action-row" >
+      <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
       </div>
 
@@ -44,13 +53,14 @@
       </span>
 
       <span style="inline-block" slot="action" slot-scope="text, record">
-        <a>健康档案</a>
+        <a @click="goFile(record)">健康档案</a>
         <a-divider type="vertical" />
         <a @click="$refs.visitManage.distribution(record)">随访管理</a>
       </span>
     </s-table>
 
     <visit-Manage ref="visitManage" @ok="handleOk" />
+    <follow-Model ref="followModel" @ok="handleOk" @cancel="handleCancel" />
   </a-card>
 </template>
 
@@ -61,11 +71,13 @@ import { STable } from '@/components'
 import { qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
+import followModel from '../servicewise/followModel'
 import Vue from 'vue'
 import { size } from 'lodash'
 export default {
   components: {
     STable,
+    followModel,
     visitManage,
   },
   data() {
@@ -97,68 +109,68 @@ export default {
           title: '序号',
           dataIndex: 'xh',
           width: 60,
-          size:12,
+          size: 12,
         },
         {
           title: '姓名',
           dataIndex: 'name',
           width: 80,
-          ellipsis:true,
-          size:12,
+          ellipsis: true,
+          size: 12,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
           width: 140,
-          ellipsis:true,
-          size:12,
+          ellipsis: true,
+          size: 12,
         },
         {
           title: '年龄',
           dataIndex: 'age',
           width: 60,
-          size:12,
+          size: 12,
         },
         {
           title: '性别',
           dataIndex: 'sex',
           width: 60,
-          size:12,
+          size: 12,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
           width: 120,
-          size:12,
+          size: 12,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
           width: 120,
-          ellipsis:true,
-          size:12,
+          ellipsis: true,
+          size: 12,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
           width: 120,
-          size:12,
+          size: 12,
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
           width: 100,
-          size:12,
+          size: 12,
         },
 
         {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
           width: 80,
-          size:12,
+          size: 12,
         },
         {
-          size:12,
+          size: 12,
           title: '操作',
           width: '180px',
           dataIndex: 'action',
@@ -231,6 +243,16 @@ export default {
       })
     },
 
+    /**
+     *档案详情
+     * @param {} record
+     */
+    goFile(record) {
+      this.$set(record,'userName',record.name)
+      this.$set(record,'userSex',record.sex)
+      this.$refs.followModel.doFile(record, true)
+    },
+
     onDepartmentChange(index) {
       console.log('index=' + index)
       if (index == undefined) {
@@ -270,10 +292,10 @@ export default {
 }
 </script>
 <style lang="less">
-  .ant-select-selection--multiple {
-    min-height: 28px;
-    cursor: text;
-    zoom: 1;
+.ant-select-selection--multiple {
+  min-height: 28px;
+  cursor: text;
+  zoom: 1;
 }
 
 .sitemore {
@@ -283,7 +305,7 @@ export default {
 
   margin-left: 5px;
   align-items: center;
-   .ant-select-selection--multiple {
+  .ant-select-selection--multiple {
     width: 100%;
     height: 28px;
     padding-bottom: 0px !important;
@@ -320,10 +342,6 @@ export default {
     }
   }
 }
-
-
-
-
 
 .div-divider {
   margin-top: 1%;
