@@ -102,11 +102,11 @@
           <a-select
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
-            :title="queryParams.hospitalType"
             :maxTagCount="1"
             allow-clear
-            v-model="queryParams.hospitalType"
+            v-model="hospitalTypeSelect"
             placeholder="请选择机构类型"
+            @select="selectTyple"
           >
             <a-select-option v-for="(item, index) in HospitalTypeList" :value="item.value" :key="index">{{
               item.description
@@ -123,11 +123,11 @@
           <a-select
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
-            :title="queryParams.level"
             :maxTagCount="1"
             allow-clear
-            v-model="queryParams.level"
+            v-model="Hospitallevel"
             placeholder="请选择机构等级"
+            @select="selectLevel"
           >
             <a-select-option v-for="(item, index) in HospitalLevelList" :value="item.value" :key="index">{{
               item.description
@@ -151,7 +151,7 @@
             v-model="queryParams.hisCode"
             allow-clear
             placeholder="请输入内容"
-            style="width: 200px; margin-top: 5px; margin-left: 5px"
+            style="width: 204px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -167,7 +167,7 @@
             v-model="queryParams.middleware"
             allow-clear
             placeholder="请输入内容"
-            style="width: 200px; margin-top: 5px; margin-left: 5px"
+            style="width: 199px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -175,7 +175,7 @@
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style="overflow-y: auto; height: 450px">
+      <div class="card-right-user" style=" height: 500px">
         <div class="div-title" style="margin-left: 10px; margin-top: 3px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
@@ -210,7 +210,7 @@
           </div>
         </div>
 
-        <div id="div2" ref="editorEl" style="margin-top: 15%"></div>
+        <div id="div2" ref="editorEl" style="margin-top: 15%;margin-left: 10px;"></div>
       </div>
     </div>
   </a-modal>
@@ -240,6 +240,8 @@ export default {
   },
   data() {
     return {
+      hospitalTypeSelect:'',//科室类型
+      Hospitallevel:'', //科室等级
       shoudata: '',
       bb: '1',
       userId: '',
@@ -304,6 +306,7 @@ export default {
       this.shoudata = record.hospitalName
       this.queryParams.pid = record.pid
       this.hospitalId = record.hospitalId
+    
       this.queryParams.hospitalId = record.hospitalId
       console.log('9999', record.pid, this.queryParams.hospitalId)
       this.getHospitalDetailOut()
@@ -404,6 +407,27 @@ export default {
       //   this.queryParams.appointItemName = this.chooseDeptItem.name
     },
 
+
+   /**
+    * 选择科室类型
+    */
+    selectTyple(selectTyple){
+      console.log('科室类型', selectTyple)
+      this.queryParams.hospitalType = selectTyple
+    },
+
+    /**
+     * 科室等级
+     */
+     selectLevel(selectLevel){
+      console.log('科室等级', selectLevel)
+      this.queryParams.level = selectLevel
+     },
+
+
+
+
+
     /**
      * 获取机构详情
      */
@@ -421,7 +445,14 @@ export default {
             this.queryParams.hisCode = res.data.hisCode
             this.queryParams.middleware = res.data.middleware
             this.queryParams.introduction = res.data.introduction
-            console.log('5555:', this.queryParams.orgType)
+            if(res.data.hospitalType!=null){
+              console.log('5555:', res.data.hospitalType.description)
+              this.hospitalTypeSelect =res.data.hospitalType.description
+            }
+            if(res.data.level!=null){
+              this.Hospitallevel =res.data.level.description
+            }
+
             this.$nextTick(() => {
               this.init(res.data.introduction)
             })
@@ -643,18 +674,13 @@ export default {
           return
         }
       }
-
-      //组装图片
-      //  if (this.fileList.length == 0) {
-      //   this.$message.error('请上传图片！')
-      //   return
-      // } else {
-      //   this.queryParams.imgUrl = this.fileList[0].response.data.url
-      // }
-      if (this.fileList[0].response) {
+      if (this.fileList.length>0&&this.fileList[0].response) {
         this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
       } else {
-        this.queryParams.imgUrl = this.fileList[0].url
+        if(this.fileList&&this.fileList[0]){
+          this.queryParams.imgUrl = this.fileList[0].url
+        }
+        this.queryParams.imgUrl = ""
       }
 
       this.addHospital()
