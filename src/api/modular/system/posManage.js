@@ -2579,3 +2579,15 @@ export function parent(data){
        }
 
 
+       /**
+        * 随访任务列表
+        */
+       export function followList(data){
+        return axios({
+          url:'/follow-api/tbFollowExecuteRecord/page',
+          method:'post',
+          data:data,
+        })
+       }
+
+
