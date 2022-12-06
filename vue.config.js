@@ -209,6 +209,15 @@ const vueConfig = {
           '^/api/follow-api': ''   
         }
       },
+      '/api/ehr-api': {
+        target: 'http://192.168.1.121/ehr-api',
+        ws: false,
+        changeOrigin: true,
+        logLevel: 'debug',
+        pathRewrite: {
+          '^/api/ehr-api': ''   
+        }
+      },
 
       '/api/manager-api': {
         target: 'http://192.168.1.121/manager-api',

@@ -10,12 +10,17 @@
         <div class="right-content">
           <div class="content-top">
             <span style="margin-left: 10px">住院时间：</span>
-            <div class="data-item" v-for="(itemData, indexData) in dataList" :key="indexData" :value="itemData.id">
+            <div
+              class="data-item"
+              v-for="(itemData, indexData) in historyList"
+              :key="indexData"
+              :value="itemData.docId"
+            >
               <span
                 @click="onFileItemClick(itemData, indexData)"
                 class="div-time"
                 :class="{ checked: itemData.isChecked }"
-                >{{ itemData.time }}</span
+                >{{ itemData.happenedTime.substring(0, 11) }}</span
               >
               <div v-if="indexData != dataList.length - 1" class="div-line"></div>
             </div>
@@ -34,7 +39,7 @@
                   </span>
                 </template>
                 <basic-info
-                  style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px;overflow: hidden;"
+                  style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px; overflow: hidden"
                   ref="basicInfo"
                   :jbxx="jbxx"
                 />
@@ -109,8 +114,11 @@
 
 
 <script>
-import { getSoundRecordingList } from '@/api/modular/system/posManage'
+import { getFileList, getFileDtail } from '@/api/modular/system/posManage'
 import basicInfo from './basicInfo'
+import { TRUE_USER } from '@/store/mutation-types'
+import { decodeRecord } from '@/utils/forgeUtils'
+import Vue from 'vue'
 export default {
   components: { basicInfo },
   props: {
@@ -121,6 +129,20 @@ export default {
       isDoubled: true,
       activeKey: '1',
       jbxx: { name: '李四' },
+      user: {},
+      historyList: [],
+      /**
+       * 			if (index === 0) {
+					recordType = 'all'
+				} else if (index === 1) {
+					recordType = 'zhuyuan'
+				} else if (index === 2) {
+					recordType = 'menzhen'
+				}
+       */
+      recordType: 'zhuyuan',
+      fileDetailData: {},
+      accountUserId: '', //登录用户的userId
       dataList: [
         { time: '2022-11-01', id: 1, isChecked: true },
         { time: '2022-11-02', id: 2, isChecked: false },
@@ -132,27 +154,66 @@ export default {
   created() {
     // debugger
     // this.dataList = [{ name: 'ff' }]
+    this.user = Vue.ls.get(TRUE_USER)
     console.log('this.dataList.length', this.dataList.length)
-    // followPlanPhoneHistory(this.record.userId).then((res) => {
-    //   if (res.code === 0) {
-    //     this.historyList = res.data
-    //     this.onHistoryItemClick(res.data[0].id)
-    //   } else {
-    //     this.$message.error(res.message)
-    //   }
-    // })
+    let param = {
+      // dataOwnerId: this.record.userId,
+      dataOwnerId: '1195',
+      dataUserId: this.user.userId,
+      recordType: this.recordType,
+      pastMonths: '60',
+    }
+    getFileList(param).then((res) => {
+      if (res.code === 0) {
+        this.historyList = res.data
+        for (let index = 0; index < this.historyList.length; index++) {
+          this.$set(this.historyList[index], 'isChecked', false)
+        }
+        this.$set(this.historyList[0], 'isChecked', true)
+        this.getDetailOut(0)
+        // this.onHistoryItemClick(res.data[0].id)
+      } else {
+        this.$message.error(res.message)
+      }
+    })
   },
   methods: {
     onFileItemClick(itemData, indexData) {
-      for (let index = 0; index < this.dataList.length; index++) {
-        this.$set(this.dataList[index], 'isChecked', false)
+      for (let index = 0; index < this.historyList.length; index++) {
+        this.$set(this.historyList[index], 'isChecked', false)
         if (indexData == index) {
-          this.$set(this.dataList[index], 'isChecked', true)
+          this.$set(this.historyList[index], 'isChecked', true)
         }
       }
-
+      this.getDetailOut(indexData)
       this.jbxx = { name: '王五' }
     },
+
+    getDetailOut(index) {
+      let param = {
+        // dataOwnerId: this.record.userId,
+        dataOwnerId: '1195',
+        dataUserId: this.user.userId,
+        recordType: this.recordType,
+        serialNumber: this.historyList[index].serialNumber,
+        hospitalCode: this.historyList[index].hospitalCode,
+      }
+      getFileDtail(param).then((res) => {
+        if (res.code === 0) {
+          this.fileDetailData = decodeRecord(res.encryptedRecord, res.wrappedDEK)
+          if (this.fileDetailData) {
+            console.log('this.fileDetailData', this.fileDetailData)
+            console.log('this.fileDetailDataStr', JSON.stringify(this.fileDetailData))
+          } else {
+            uni.$u.toast('解密失败')
+          }
+          // this.onHistoryItemClick(res.data[0].id)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
     goCancel() {
       console.log('hdh')
       this.$emit('handleCancel', '')
