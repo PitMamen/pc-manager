@@ -2,21 +2,21 @@
   <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
       <div class="search-row">
-        <span class="name">方案名称:</span>
+        <span class="name">查询条件:</span>
         <a-input
           v-model="queryParams.planName"
           allow-clear
-          placeholder="可输入方案名称"
+          placeholder="可输入姓名"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
       <div class="search-row">
-        <span class="name">执行科室:</span>
+        <span class="name">所属机构:</span>
         <a-select
           v-model="queryParams.departmentName"
-          placeholder="请选择科室"
+          placeholder="请选择机构"
           allow-clear
           style="width: 120px"
           @change="onDepartmentChange"
@@ -25,7 +25,7 @@
         </a-select>
       </div>
       <div class="search-row">
-        <span class="name">方案状态:</span>
+        <span class="name">状态:</span>
         <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
       </div>
 
@@ -38,7 +38,7 @@
     </div>
 
     <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addUser.addModel()">新增</a-button>
     </div>
 
     <s-table
@@ -51,6 +51,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
+      
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
 
@@ -65,8 +66,7 @@
       </span>
     </s-table>
 
-
-    <add-Name ref="addName" @ok="handleOk" />
+    <add-User ref="addUser" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -81,13 +81,13 @@ import {
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import addName from './addName'
+import addUser from './addUser'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addName,
+    addUser,
   },
   data() {
     return {
@@ -117,28 +117,40 @@ export default {
       // 表头
       columns: [
         {
-          title: '方案名称',
+          title: '姓名',
           dataIndex: 'planName',
         },
         {
-          title: '制定时间',
+          title: '性别',
+          dataIndex: '',
+        },
+        {
+          title: '出生日期',
           dataIndex: 'formulateTime',
         },
         {
-          title: '制定人员',
+          title: '联系电话',
+          dataIndex: '',
+        },
+        {
+          title: '人员类型',
           dataIndex: 'formulateUserName',
         },
         {
-          title: '执行科室',
+          title: '登录账号',
+          dataIndex: '',
+        },
+        {
+          title: '所属机构',
           dataIndex: 'executeDepartmentName',
         },
         {
-          title: '随访名单',
-          dataIndex: 'metaConfigureName',
+          title: '所属科室',
+          dataIndex: '',
         },
         {
-          title: '随访类型',
-          dataIndex: 'followType',
+          title: '所属病区',
+          dataIndex: '',
         },
         {
           title: '状态',
