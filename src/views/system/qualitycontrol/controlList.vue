@@ -1,9 +1,17 @@
 <template>
-  <a-card :bordered="false" class="sys-card">
+  <a-card :bordered="false" class="top-title">
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <a-select v-model="queryParams.executeDepartmentId" placeholder="请选择科室" allow-clear style="width: 120px">
+        <a-select
+          class="sitemore"
+          v-model="queryParams.executeDepartmentIds"
+          style="min-width: 120px; height: 28px; padding-bottom: 0px"
+          :maxTagCount="1"
+          mode="multiple"
+          placeholder="请选择科室"
+          allow-clear
+        >
           <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
           }}</a-select-option>
@@ -36,7 +44,7 @@
       <div class="search-row">
         <span class="name">患者查找:</span>
         <a-input
-          v-model="queryParams.planName"
+          v-model="queryParams.queryStr"
           allow-clear
           placeholder="输入患者姓名或手机号码"
           style="width: 120px; height: 28px"
@@ -60,6 +68,21 @@
           :class="{ 'checked-icon': queryParams.type == 1 }"
           src="~@/assets/icons/icon_wait.svg"
         /><span style="margin-left: 3px">待随访</span>
+
+        <a-dropdown>
+          <a class="ant-dropdown-link" @click="(e) => e.preventDefault()"> Hover me <a-icon type="down" /> </a>
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a href="javascript:;">全部</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a href="javascript:;">待核查</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a href="javascript:;">已核查</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 2 }" @click="onRadioClick(2)">
         <img
@@ -100,7 +123,9 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goCheck(record)">查看</a>
+        <a @click="goDetail(record)">详情</a>
+        <a-divider type="vertical" />
+        <a @click="goCheck(record)">审核</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)">转移</a>
       </span>
@@ -136,27 +161,18 @@ export default {
       originData: [],
       idArr: [],
       queryParams: {
-        // executeDepartmentId: -1, //科室id
-        // executeEndTime: '',
-        // executeStartTime: '',
-        // planName: '',
-        // status: -1,
-        // userNameOrTel: undefined,
-        // type: 1,
+        type: 1,
 
-        auditStatus: 0,
-        beginExecuteTime: '',
-        endExecuteTime: '',
-        execDoctorUserId: 0,
-        execStatus: 0,
+        // auditStatus: 1,
+        // beginExecuteTime: '',
+        // endExecuteTime: '',
+        // execDoctorUserId: 0,
+        // execStatus: 3,
         executeDepartmentIds: [],
-        messageOriginalId: '',
-        messageType: 0,
-        overdueStatus: 0,
-        pageNo: 0,
-        pageSize: 0,
         queryStr: '',
-        userIds: [],
+        // messageType: 0,
+        overdueStatus: 1,
+        //  taskBizStatus:2,
       },
       queryParamsOrigin: {
         executeDepartmentId: -1, //科室id
@@ -188,23 +204,23 @@ export default {
       columns: [
         {
           title: '随访方式',
-          dataIndex: 'userName',
+          dataIndex: 'flowType',
         },
         {
           title: '状态',
-          dataIndex: 'tel',
+          dataIndex: 'status',
         },
         {
           title: '随访患者',
-          dataIndex: 'executeDepartmentName',
+          dataIndex: 'userName',
         },
         {
           title: '性别',
-          dataIndex: 'planName',
+          dataIndex: 'sex',
         },
         {
           title: '年龄',
-          dataIndex: 'templateTitle',
+          dataIndex: 'age',
         },
         {
           title: '联系电话',
@@ -212,34 +228,34 @@ export default {
         },
         {
           title: '随访医生',
-          dataIndex: 'name',
-          scopedSlots: { customRender: 'status' },
+          dataIndex: 'doctorUserName',
+          //   scopedSlots: { customRender: 'status' },
         },
 
         {
           title: '计划日期',
-          dataIndex: 'planTime',
-        },
-
-        {
-          title: '执行日期',
           dataIndex: 'executeTime',
         },
 
         {
+          title: '执行日期',
+          dataIndex: 'actualExecTime',
+        },
+
+        {
           title: '随访问卷',
-          dataIndex: 'errorDesc',
+          dataIndex: 'questionnaireName',
         },
 
         {
           title: '审核',
-          dataIndex: 'errorDesc',
+          dataIndex: 'auditStatus',
         },
 
         {
           title: '操作',
           fixed: 'right',
-          width: '100px',
+          width: '150px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -247,29 +263,32 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        let param = JSON.parse(JSON.stringify(this.queryParams))
-        // param.messageType = parseInt(param.messageType)
-        if (param.status == -1) {
-          delete param.status
-        }
-        if (param.executeDepartmentId == -1) {
-          delete param.executeDepartmentId
-        }
-        console.log('fff', Object.assign(parameter, param))
-        return getSmsPushRecordHistory(Object.assign(parameter, param)).then((res) => {
+        // let param = JSON.parse(JSON.stringify(this.queryParams))
+        // // param.messageType = parseInt(param.messageType)
+        // if (param.status == -1) {
+        //   delete param.status
+        // }
+        // if (param.executeDepartmentId == -1) {
+        //   delete param.executeDepartmentId
+        // }
+        // console.log('fff', Object.assign(parameter, param))
+
+        return followList(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             var data = {
               pageNo: parameter.pageNo,
               pageSize: parameter.pageSize,
-              totalRows: res.data.total,
-              totalPage: res.data.total / parameter.pageSize,
-              rows: res.data.records,
+              totalRows: res.data.totalRows,
+              totalPage: res.data.totalPage / parameter.pageSize,
+              rows: res.data.rows,
             }
 
-            // //设置序号
-            // data.rows.forEach((item, index) => {
-            //   item.executeTime = item.executeTime.substring(0, 11)
-            // })
+            data.rows.forEach((item, index) => {
+              item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+              this.$set(item, 'flowType', item.messageType != null ? item.messageType.description : '')
+              this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
+              this.$set(item, 'status', item.status != null ? item.status.description : '')
+            })
           }
           return data
         })
@@ -344,10 +363,24 @@ export default {
       this.queryParams.executeEndTime = dateArr[1]
     },
 
+    /**
+     *
+     * @param {详情} record
+     */
+    goDetail(record) {},
+
+    /**
+     *
+     * @审核
+     */
     goCheck(record) {
       this.$refs.examine.process(record, 'xxx')
     },
 
+    /**
+     *
+     * @param {转移} record
+     */
     gotransfer(record) {
       this.$refs.transfer.transfer(record, 'xxx')
     },
@@ -356,7 +389,9 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      //   this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.queryParams.queryStr = ''
+      this.queryParams.executeDepartmentIds = []
 
       this.createValue = []
       this.$refs.table.refresh()
@@ -369,6 +404,57 @@ export default {
 }
 </script>
   <style lang="less" scoped>
+.sitemore {
+  .ant-select-selection.ant-select-selection--single {
+    height: 28px !important;
+  }
+
+  margin-left: 5px;
+  align-items: center;
+
+  .ant-select-selection--multiple {
+    width: 100%;
+    height: 28px;
+
+    .ant-select-selection__rendered {
+      height: 100%;
+      ul {
+        width: 100%;
+        height: 28px;
+        overflow-y: hidden;
+        display: -webkit-box;
+        &::-webkit-scrollbar {
+          width: 5px;
+          height: 5px;
+        }
+        &::-webkit-scrollbar-track {
+          background-color: #dedede;
+          -webkit-border-radius: 1em;
+          -moz-border-radius: 1em;
+          border-radius: 1em;
+        }
+        &::-webkit-scrollbar-thumb {
+          background-color: #bfbfbf;
+          -webkit-border-radius: 1em;
+          -moz-border-radius: 1em;
+          border-radius: 1em;
+        }
+        & li {
+          padding: 0px 10px 0px 5px;
+          box-sizing: border-box;
+          width: 75px;
+          float: unset;
+          margin-top: 1px !important;
+        }
+
+        /deep/.ant-select-selection__choice {
+          margin-top: 1px !important;
+        }
+      }
+    }
+  }
+}
+
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -447,6 +533,16 @@ export default {
   height: 1px;
 }
 </style>
+
+<style lang="less">
+.top-title {
+  .ant-select-selection__rendered {
+    li {
+      margin-top: 1px !important;
+    }
+  }
+}
+</style>
   
   <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
@@ -464,7 +560,7 @@ export default {
           .ant-spin-container {
             height: 100%;
             .ant-table {
-              height: calc(100% - 48px);
+              height: calc(100% - 68px);
               overflow-y: auto;
             }
           }
@@ -475,3 +571,4 @@ export default {
 }
 </style>
   
+
