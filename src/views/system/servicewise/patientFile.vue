@@ -232,6 +232,7 @@ export default {
         display: flex;
         align-items: center;
         flex-direction: row;
+        font-size: 12px;
         overflow: hidden;
 
         // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
