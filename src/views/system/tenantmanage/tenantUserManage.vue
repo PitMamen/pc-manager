@@ -14,15 +14,14 @@
       </div>
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-select
-          v-model="queryParams.departmentName"
-          placeholder="请选择机构"
-          allow-clear
-          style="width: 120px"
-          @change="onDepartmentChange"
+        <a-tree-select
+          v-model="queryParams.parentDisarmamentId"
+          style="min-width: 120px"
+          :tree-data="treeData"
+          placeholder="请选择"
+          
         >
-          <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
-        </a-select>
+        </a-tree-select>
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -75,7 +74,7 @@
 import { STable } from '@/components'
 
 import {
-  qryMetaConfigure,
+  queryHospitalList,
   getDeptsPersonal,
   getDepts,
   qryFollowPlan,
@@ -94,12 +93,13 @@ export default {
       user: {},
       keshiData: [],
       originData: [],
+      treeData: [],
       idArr: [],
       queryParams: {
         departmentName: '',
         planName: '',
         executeDepartment: '',
-
+        parentDisarmamentId:'',
         status: 1,
       },
       labelCol: {
@@ -230,6 +230,7 @@ export default {
         }
       })
     }
+    this.queryHospitalListOut()
   },
   methods: {
     refresh() {
@@ -245,7 +246,46 @@ export default {
         },
       })
     },
+    /**
+     * 所属机构接口
+     */
+    /**
+     *
+     * @param {}
+     */
+     queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalId)
+              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
 
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalId)
+                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 1 : 2
