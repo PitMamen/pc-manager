@@ -6,22 +6,13 @@
         <a-input
           v-model="queryParams.planName"
           allow-clear
-          placeholder="可输入姓名"
+          placeholder="可输入姓名、账号查询"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
-      <div class="search-row">
-        <span class="name">所属机构:</span>
-        <a-tree-select
-          v-model="queryParams.parentDisarmamentId"
-          style="min-width: 120px"
-          :tree-data="treeData"
-          placeholder="请选择"         
-        >
-        </a-tree-select>
-      </div>
+    
       <div class="search-row">
         <span class="name">状态:</span>
         <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
@@ -36,7 +27,7 @@
     </div>
 
     <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addUser.addModel()">新增</a-button>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addAccount.addModel()">新增</a-button>
     </div>
 
     <s-table
@@ -50,9 +41,13 @@
     >
       <span slot="action" slot-scope="text, record">
       
-        <a @click="editPlan(record)" >修改</a>
+        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
         <a @click="1" >关联科室</a>
+        <a-divider type="vertical" />
+        <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
+          <a>重置密码</a>
+        </a-popconfirm>
         
       </span>
       <span slot="statuas" slot-scope="text, record">
@@ -60,7 +55,7 @@
       </span>
     </s-table>
 
-    <add-User ref="addUser" @ok="handleOk" />
+    <add-Account ref="addAccount" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -75,13 +70,13 @@ import {
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import addUser from './addUser'
+import addAccount from './addAccount'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addUser,
+    addAccount,
   },
   data() {
     return {
@@ -112,50 +107,35 @@ export default {
       // 表头
       columns: [
         {
-          title: '姓名',
+          title: '登录账号',
           dataIndex: 'planName',
         },
         {
-          title: '性别',
+          title: '人员姓名',
           dataIndex: '',
         },
         {
-          title: '出生日期',
-          dataIndex: 'formulateTime',
-        },
-        {
-          title: '联系电话',
+          title: '联系方式',
           dataIndex: '',
         },
         {
-          title: '人员类型',
+          title: '角色',
           dataIndex: 'formulateUserName',
-        },
-        {
-          title: '登录账号',
-          dataIndex: '',
         },
         {
           title: '所属机构',
           dataIndex: 'executeDepartmentName',
         },
-        {
-          title: '所属科室',
-          dataIndex: '',
-        },
-        {
-          title: '所属病区',
-          dataIndex: '',
-        },
+       
         {
           title: '状态',
-          width: '80px',
+          width: 80,
           scopedSlots: { customRender: 'statuas' },
         },
         {
           title: '操作',
           fixed: 'right',
-          width: 123,
+          width: 190,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -176,15 +156,7 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route(to, from) {
-  //     console.log('watch----serviceList out', to, from)
-  //     if (to.path.indexOf('serviceList') > -1) {
-  //       console.log('watch----serviceList', to, from)
-  //       this.refresh()
-  //     }
-  //   },
-  // },
+
 
   mounted() { 
   //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
@@ -225,7 +197,7 @@ export default {
         }
       })
     }
-    this.queryHospitalListOut()
+   
   },
   methods: {
     refresh() {
@@ -241,46 +213,7 @@ export default {
         },
       })
     },
-    /**
-     * 所属机构接口
-     */
-    /**
-     *
-     * @param {}
-     */
-     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
-      this.confirmLoading = true
-      queryHospitalList(queryData)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'value', item.hospitalId)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'value', item1.hospitalId)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
-
-            this.treeData = res.data
-          } else {
-            this.treeData = res.data
-          }
-          return []
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
+    
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 1 : 2
