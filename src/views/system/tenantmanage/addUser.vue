@@ -114,7 +114,7 @@
           </div>
           <div class="div-content">
             <a-checkbox v-model="accountChecked"></a-checkbox>
-            <span class="span-item-name"><span style="color: red">*</span>创建账号:</span>
+            <span class="span-item-name">创建账号:</span>
             <a-input class="span-item-value" style="display: inline-block" readOnly placeholder="请输入内容" />
           </div>
         </div>
