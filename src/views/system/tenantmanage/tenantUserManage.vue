@@ -2,30 +2,28 @@
   <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
       <div class="search-row">
-        <span class="name">方案名称:</span>
+        <span class="name">查询条件:</span>
         <a-input
           v-model="queryParams.planName"
           allow-clear
-          placeholder="可输入方案名称"
+          placeholder="可输入姓名"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
       <div class="search-row">
-        <span class="name">执行科室:</span>
-        <a-select
-          v-model="queryParams.departmentName"
-          placeholder="请选择科室"
-          allow-clear
-          style="width: 120px"
-          @change="onDepartmentChange"
+        <span class="name">所属机构:</span>
+        <a-tree-select
+          v-model="queryParams.parentDisarmamentId"
+          style="min-width: 120px"
+          :tree-data="treeData"
+          placeholder="请选择"         
         >
-          <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
-        </a-select>
+        </a-tree-select>
       </div>
       <div class="search-row">
-        <span class="name">方案状态:</span>
+        <span class="name">状态:</span>
         <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
       </div>
 
@@ -38,7 +36,7 @@
     </div>
 
     <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addUser.addModel()">新增</a-button>
     </div>
 
     <s-table
@@ -51,22 +49,18 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
+      
+        <a @click="editPlan(record)" >修改</a>
         <a-divider type="vertical" />
-
-        <a-popconfirm
-          :title="upDateStatesText(record.status.value)"
-          ok-text="确定"
-          cancel-text="取消"
-          @confirm="Enable(record)"
-        >
-          <a>{{ record.status.value == 1 ? '停用' : '启用' }}</a>
-        </a-popconfirm>
+        <a @click="1" >关联科室</a>
+        
+      </span>
+      <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.enableStatus" />
       </span>
     </s-table>
 
-
-    <add-Name ref="addName" @ok="handleOk" />
+    <add-User ref="addUser" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -75,31 +69,32 @@
 import { STable } from '@/components'
 
 import {
-  qryMetaConfigure,
+  queryHospitalList,
   getDeptsPersonal,
   getDepts,
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import addName from './addName'
+import addUser from './addUser'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addName,
+    addUser,
   },
   data() {
     return {
       user: {},
       keshiData: [],
       originData: [],
+      treeData: [],
       idArr: [],
       queryParams: {
         departmentName: '',
         planName: '',
         executeDepartment: '',
-
+        parentDisarmamentId:'',
         status: 1,
       },
       labelCol: {
@@ -117,38 +112,50 @@ export default {
       // 表头
       columns: [
         {
-          title: '方案名称',
+          title: '姓名',
           dataIndex: 'planName',
         },
         {
-          title: '制定时间',
+          title: '性别',
+          dataIndex: '',
+        },
+        {
+          title: '出生日期',
           dataIndex: 'formulateTime',
         },
         {
-          title: '制定人员',
+          title: '联系电话',
+          dataIndex: '',
+        },
+        {
+          title: '人员类型',
           dataIndex: 'formulateUserName',
         },
         {
-          title: '执行科室',
+          title: '登录账号',
+          dataIndex: '',
+        },
+        {
+          title: '所属机构',
           dataIndex: 'executeDepartmentName',
         },
         {
-          title: '随访名单',
-          dataIndex: 'metaConfigureName',
+          title: '所属科室',
+          dataIndex: '',
         },
         {
-          title: '随访类型',
-          dataIndex: 'followType',
+          title: '所属病区',
+          dataIndex: '',
         },
         {
           title: '状态',
-          width: '60px',
-          dataIndex: 'statusText',
+          width: '80px',
+          scopedSlots: { customRender: 'statuas' },
         },
         {
           title: '操作',
           fixed: 'right',
-          width: '100px',
+          width: 123,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -218,6 +225,7 @@ export default {
         }
       })
     }
+    this.queryHospitalListOut()
   },
   methods: {
     refresh() {
@@ -233,7 +241,46 @@ export default {
         },
       })
     },
+    /**
+     * 所属机构接口
+     */
+    /**
+     *
+     * @param {}
+     */
+     queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalId)
+              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
 
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalId)
+                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 1 : 2

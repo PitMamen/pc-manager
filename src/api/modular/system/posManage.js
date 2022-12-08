@@ -2566,6 +2566,26 @@ export function parent(data){
       data:data,
     })
    }
+   /**
+    * 获取档案列表
+    */
+   export function getFileList(data){
+    return axios({
+      url:"/ehr-api/ehr/v1/list",
+      method:'post',
+      data:data,
+    })
+   }
+   /**
+    * 获取档案详情
+    */
+   export function getFileDtail(data){
+    return axios({
+      url:"/ehr-api/ehr/v1/getRecord",
+      method:'post',
+      data:data,
+    })
+   }
 
      /**
     * 修改科室

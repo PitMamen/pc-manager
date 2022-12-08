@@ -2,30 +2,19 @@
   <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
       <div class="search-row">
-        <span class="name">方案名称:</span>
+        <span class="name">查询条件:</span>
         <a-input
           v-model="queryParams.planName"
           allow-clear
-          placeholder="可输入方案名称"
+          placeholder="可输入姓名、账号查询"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
+    
       <div class="search-row">
-        <span class="name">执行科室:</span>
-        <a-select
-          v-model="queryParams.departmentName"
-          placeholder="请选择科室"
-          allow-clear
-          style="width: 120px"
-          @change="onDepartmentChange"
-        >
-          <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
-        </a-select>
-      </div>
-      <div class="search-row">
-        <span class="name">方案状态:</span>
+        <span class="name">状态:</span>
         <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
       </div>
 
@@ -38,7 +27,7 @@
     </div>
 
     <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addAccount.addModel()">新增</a-button>
     </div>
 
     <s-table
@@ -51,22 +40,22 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
+      
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
-
-        <a-popconfirm
-          :title="upDateStatesText(record.status.value)"
-          ok-text="确定"
-          cancel-text="取消"
-          @confirm="Enable(record)"
-        >
-          <a>{{ record.status.value == 1 ? '停用' : '启用' }}</a>
+        <a @click="1" >关联科室</a>
+        <a-divider type="vertical" />
+        <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
+          <a>重置密码</a>
         </a-popconfirm>
+        
+      </span>
+      <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.enableStatus" />
       </span>
     </s-table>
 
-
-    <add-Name ref="addName" @ok="handleOk" />
+    <add-Account ref="addAccount" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -75,31 +64,32 @@
 import { STable } from '@/components'
 
 import {
-  qryMetaConfigure,
+  queryHospitalList,
   getDeptsPersonal,
   getDepts,
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import addName from './addName'
+import addAccount from './addAccount'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addName,
+    addAccount,
   },
   data() {
     return {
       user: {},
       keshiData: [],
       originData: [],
+      treeData: [],
       idArr: [],
       queryParams: {
         departmentName: '',
         planName: '',
         executeDepartment: '',
-
+        parentDisarmamentId:'',
         status: 1,
       },
       labelCol: {
@@ -117,38 +107,35 @@ export default {
       // 表头
       columns: [
         {
-          title: '方案名称',
+          title: '登录账号',
           dataIndex: 'planName',
         },
         {
-          title: '制定时间',
-          dataIndex: 'formulateTime',
+          title: '人员姓名',
+          dataIndex: '',
         },
         {
-          title: '制定人员',
+          title: '联系方式',
+          dataIndex: '',
+        },
+        {
+          title: '角色',
           dataIndex: 'formulateUserName',
         },
         {
-          title: '执行科室',
+          title: '所属机构',
           dataIndex: 'executeDepartmentName',
         },
-        {
-          title: '随访名单',
-          dataIndex: 'metaConfigureName',
-        },
-        {
-          title: '随访类型',
-          dataIndex: 'followType',
-        },
+       
         {
           title: '状态',
-          width: '60px',
-          dataIndex: 'statusText',
+          width: 80,
+          scopedSlots: { customRender: 'statuas' },
         },
         {
           title: '操作',
           fixed: 'right',
-          width: '100px',
+          width: 190,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -169,15 +156,7 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route(to, from) {
-  //     console.log('watch----serviceList out', to, from)
-  //     if (to.path.indexOf('serviceList') > -1) {
-  //       console.log('watch----serviceList', to, from)
-  //       this.refresh()
-  //     }
-  //   },
-  // },
+
 
   mounted() { 
   //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
@@ -218,6 +197,7 @@ export default {
         }
       })
     }
+   
   },
   methods: {
     refresh() {
@@ -233,7 +213,7 @@ export default {
         },
       })
     },
-
+    
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 1 : 2
