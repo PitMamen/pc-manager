@@ -47,12 +47,14 @@ export default {
   },
   data() {
     return {
+      resultSuccess:[],
+      resultFail:[],
       rangeValue: 1,
       selectedRows:[],
       queryParams: {
         ids:[],  //随访集合 id 集合
         auditDesc:'',  //不通过描述原因 (不通过是必传)
-        auditStatus:'',  //审核状态  1 通过  2  不通过
+        auditStatus:1,  //审核状态  1 通过  2  不通过
 
       },
 
@@ -108,9 +110,15 @@ export default {
       this.confirmLoading = true
       audit(this.queryParams).then((res)=>{
         if(res.code==0){
-
+         var resultData={
+          succCount:res.data.succCount,
+          failCount:res.data.failCount,
+          totalCount:this.queryParams.ids.length,
+         }
+         this.$emit('ok', resultData)
         }
       }).finally((res)=>{
+        this.visible = false
         this.confirmLoading = false
       })
     },

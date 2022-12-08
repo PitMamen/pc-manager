@@ -89,10 +89,16 @@ export default {
       this.confirmLoading = true
       transfer(this.queryParams).then((res)=>{
         if(res.code==0){
-
+          var resultData={
+          succCount:res.data.succCount,
+          failCount:res.data.failCount,
+          totalCount:this.queryParams.ids.length,
+         }
+         this.$emit('ok', resultData)
         }
 
       }).finally((res) => {
+        this.visible = false
           this.confirmLoading = false
         })
     },

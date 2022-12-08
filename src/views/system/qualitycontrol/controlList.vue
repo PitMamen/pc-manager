@@ -116,7 +116,7 @@
         <a-dropdown>
           <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
           <a-menu slot="overlay">
-            <a-menu-item >
+            <a-menu-item>
               <a @click="all(7, 3)" href="javascript:;">全部</a>
             </a-menu-item>
             <a-menu-item>
@@ -161,13 +161,35 @@
       </a-button>
     </div>
 
+    <!-- 处理结果 小弹窗 -->
+    <a-modal :title="dealResultTitle" :visible="visible_updPwd" @ok="handleCancelUpdPwd" @cancel="handleCancelUpdPwd">
+
+      <template slot="footer">
+    <a-button @click="handleCancelUpdPwd">关闭</a-button>
+  </template>
+      <div class="display-item" style="margin-left: 45%; margin-top: 10px">
+        <span style="margin-top: 10px"> 总条数:</span>
+        <span style="margin-top: 10px;margin-left: 10px;"> {{ dealResultData.totalCount }}</span>
+      </div>
+
+      <div class="display-item" style="margin-left: 45%; margin-top: 10px">
+        <span style="margin-top: 10px"> 成功条数:</span>
+        <span style="margin-top: 10px;margin-left: 10px;"> {{ dealResultData.succCount }}</span>
+      </div>
+
+      <div class="display-item" style="margin-left: 45%; margin-top: 10px">
+        <span style="margin-top: 10px"> 失败条数:</span>
+        <span style="margin-top: 10px;margin-left: 10px;"> {{ dealResultData.failCount }}</span>
+      </div>
+    </a-modal>
+
     <s-table
       :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
       :data="loadData"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange,onSelectAll:onSelectAllChanage}"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, onSelectAll: onSelectAllChanage }"
       :alert="true"
       :rowKey="(record) => record.id"
     >
@@ -176,9 +198,8 @@
         <a-divider type="vertical" />
         <a @click="goCheck(record)">审核</a>
         <a-divider type="vertical" />
-        <a  @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
+        <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
-
     </s-table>
     <examine ref="examine" @ok="handleOk" />
     <transfer ref="transfer" @ok="handleOk" />
@@ -193,9 +214,9 @@ import examine from './examine'
 import transfer from './transfer'
 import followModel from '../servicewise/followModel'
 import {
-  getDeptsPersonal,  
+  getDeptsPersonal,
   getDepts,
-  followList,  //随访任务列表
+  followList, //随访任务列表
   questionnaires, //问卷列表
   getUsersByDeptIdsAndRoles, //随访医生
 } from '@/api/modular/system/posManage'
@@ -212,13 +233,16 @@ export default {
   },
   data() {
     return {
+      dealResultTitle:'处理结果',
+      dealResultData: {},
+      visible_updPwd: false,
       daisuif: '待随访',
       flowsuccess: '随访成功',
       flowfail: '随访失败',
       flowoverdue: '随访逾期',
       selectedRowKeys: [],
       selectedRows: [],
-    //   selectionRows:[],
+      //   selectionRows:[],
       user: {},
       keshiData: [],
       originData: [],
@@ -369,18 +393,20 @@ export default {
     this.getUsersByDeptIdsAndRolesOut()
   },
   methods: {
+    handleCancelUpdPwd() {
+      this.visible_updPwd = false
+    },
 
     /**
      * 是否可转移
      */
     checkDis(status) {
-        if(status==2||status==3){
-            return true
-        }else{
-            return false
-        }
+      if (status == 2 || status == 3) {
+        return true
+      } else {
+        return false
+      }
     },
-
 
     /**
      * 全选
@@ -392,15 +418,9 @@ export default {
       console.log('88888:', this.selectedRows)
     },
 
-    onSelectAllChanage(selected, selectedRows, changeRows){
-        console.log("ffff:",selected,selectedRows,changeRows)
+    onSelectAllChanage(selected, selectedRows, changeRows) {
+      console.log('ffff:', selected, selectedRows, changeRows)
     },
-
-
-
-
-
-
 
     /**
      * 随访医生列表 (先选中科室)
@@ -434,7 +454,7 @@ export default {
      * @单个查看详情
      */
     goDetail(record) {
-        this.$refs.followModel.doInfo(record)
+      this.$refs.followModel.doInfo(record)
     },
 
     /**
@@ -442,7 +462,7 @@ export default {
      * @单个审核
      */
     goCheck(record) {
-        if (this.selectedRows.length > 0) {
+      if (this.selectedRows.length > 0) {
         this.selectedRows = [] //转移单个时  先清空
       }
       this.selectedRows.push(record.id)
@@ -528,14 +548,13 @@ export default {
       })
     },
 
-
     /**
-     * 全部  stay=1 待随访  =2 随访成功  =3 随访失败    overdueStatus =2 随访逾期 
+     * 全部  stay=1 待随访  =2 随访成功  =3 随访失败    overdueStatus =2 随访逾期
      */
     all(e, stay) {
       if (stay == 1) {
-        this.queryParams.taskBizStatus =1
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 1
+        this.queryParams.overdueStatus = ''
         if (e == 1) {
           this.daisuif = '待随访(全部)'
           this.flowsuccess = '随访成功'
@@ -550,16 +569,16 @@ export default {
           this.flowoverdue = '随访逾期'
           this.queryParams.auditStatus = 1
         } else if (e == 3) {
-            console.log('待随访:已审查')
-            this.daisuif = '待随访(已审查)'
+          console.log('待随访:已审查')
+          this.daisuif = '待随访(已审查)'
           this.flowsuccess = '随访成功'
           this.flowfail = '随访失败'
           this.flowoverdue = '随访逾期'
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 2) {
-        this.queryParams.taskBizStatus =2
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 2
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 4) {
           this.flowsuccess = '随访成功(全部)'
@@ -580,8 +599,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 3) {
-        this.queryParams.taskBizStatus =3
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 3
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 7) {
           this.flowfail = '随访失败(全部)'
@@ -602,8 +621,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 4) {
-        this.queryParams.overdueStatus =2
-        this.queryParams.taskBizStatus =''
+        this.queryParams.overdueStatus = 2
+        this.queryParams.taskBizStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 10) {
           this.flowoverdue = '随访逾期(全部)'
@@ -637,8 +656,8 @@ export default {
     tobeCheck(e, stay) {
       console.log('111:', e)
       if (stay == 1) {
-        this.queryParams.taskBizStatus =1
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 1
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 1) {
           this.daisuif = '待随访(全部)'
@@ -659,8 +678,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 2) {
-        this.queryParams.taskBizStatus =2
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 2
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 4) {
           this.flowsuccess = '随访成功(全部)'
@@ -681,8 +700,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 3) {
-        this.queryParams.taskBizStatus =3
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 3
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 7) {
           this.flowfail = '随访失败(全部)'
@@ -703,8 +722,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 4) {
-        this.queryParams.overdueStatus =2
-        this.queryParams.taskBizStatus =''
+        this.queryParams.overdueStatus = 2
+        this.queryParams.taskBizStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 10) {
           this.flowoverdue = '随访逾期(全部)'
@@ -737,8 +756,8 @@ export default {
      */
     arleadyCheck(e, stay) {
       if (stay == 1) {
-        this.queryParams.taskBizStatus =1
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 1
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 1) {
           this.daisuif = '待随访(全部)'
@@ -759,8 +778,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 2) {
-        this.queryParams.taskBizStatus =2
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 2
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 4) {
           this.flowsuccess = '随访成功(全部)'
@@ -781,8 +800,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 3) {
-        this.queryParams.taskBizStatus =3
-        this.queryParams.overdueStatus=''
+        this.queryParams.taskBizStatus = 3
+        this.queryParams.overdueStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 7) {
           this.flowfail = '随访失败(全部)'
@@ -803,8 +822,8 @@ export default {
           this.queryParams.auditStatus = 2
         }
       } else if (stay == 4) {
-        this.queryParams.overdueStatus =2
-        this.queryParams.taskBizStatus =''
+        this.queryParams.overdueStatus = 2
+        this.queryParams.taskBizStatus = ''
         this.queryParams.auditStatus = ''
         if (e == 10) {
           this.flowoverdue = '随访逾期(全部)'
@@ -837,29 +856,28 @@ export default {
     },
     onRadioClick(type) {
       this.queryParams.type = type
-      if(type==1){
-          this.queryParams.taskBizStatus = 1
-          this.queryParams.overdueStatus = ''
-          this.queryParams.auditStatus = ''
-
-        }else if(type==2){
-          this.queryParams.taskBizStatus = 2
-          this.queryParams.overdueStatus = ''
-          this.queryParams.auditStatus = ''
-      }else if(type==3){
-          this.queryParams.taskBizStatus = 3
-          this.queryParams.overdueStatus = ''
-          this.queryParams.auditStatus = ''
-      }else if(type==4){
-          this.queryParams.taskBizStatus = ''
-          this.queryParams.auditStatus = ''
-          this.queryParams.overdueStatus = 2
+      if (type == 1) {
+        this.queryParams.taskBizStatus = 1
+        this.queryParams.overdueStatus = ''
+        this.queryParams.auditStatus = ''
+      } else if (type == 2) {
+        this.queryParams.taskBizStatus = 2
+        this.queryParams.overdueStatus = ''
+        this.queryParams.auditStatus = ''
+      } else if (type == 3) {
+        this.queryParams.taskBizStatus = 3
+        this.queryParams.overdueStatus = ''
+        this.queryParams.auditStatus = ''
+      } else if (type == 4) {
+        this.queryParams.taskBizStatus = ''
+        this.queryParams.auditStatus = ''
+        this.queryParams.overdueStatus = 2
       }
-      this.daisuif='待随访',
-      this.flowsuccess= '随访成功',
-      this.flowfail='随访失败',
-      this.flowoverdue='随访逾期',
-      this.$refs.table.refresh()
+      ;(this.daisuif = '待随访'),
+        (this.flowsuccess = '随访成功'),
+        (this.flowfail = '随访失败'),
+        (this.flowoverdue = '随访逾期'),
+        this.$refs.table.refresh()
     },
 
     onChange(momentArr, dateArr) {
@@ -876,18 +894,33 @@ export default {
       this.queryParams.executeDepartmentIds = []
       this.queryParams.messageOriginalld = ''
       this.queryParams.execDoctorUserId = ''
-
+      this.dealResultData = null
       this.createValue = []
       this.$refs.table.refresh()
     },
 
-    handleOk() {
+    handleOk(resultData) {
+      console.log('tttt:',resultData)
+      if(resultData){
+        this.visible_updPwd = true
+        this.dealResultData = resultData
+      }
       this.$refs.table.refresh()
     },
   },
 }
 </script>
   <style lang="less" scoped>
+.small-modal {
+  display: flex;
+  flex-direction: column;
+
+  .tital-t {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
 .sitemore {
   .ant-select-selection.ant-select-selection--single {
     height: 28px !important;

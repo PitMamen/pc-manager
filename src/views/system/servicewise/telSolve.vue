@@ -236,7 +236,7 @@ export default {
      this.user = Vue.ls.get(TRUE_USER)
    
     self = this
-    console.log('telSolve', this.record)
+    console.log('telSolve', this.record.userId)
     this.followPlanPhonePatientInfo(this.record.userId)
     this.followPlanPhoneCurrent(this.record.id)
     this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
