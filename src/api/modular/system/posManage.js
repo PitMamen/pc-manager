@@ -2591,3 +2591,39 @@ export function parent(data){
        }
 
 
+       /**
+        * 随访医生列表
+        */
+
+       export function getUsersByDeptIdsAndRoles(data){
+        return axios({
+          url:'/account-api/accountInfo/getUsersByDeptIdsAndRoles',
+          method:'post',
+          data:data,
+        })
+       }
+
+
+       /**
+        * 审核随访任务
+        */
+       export function audit(data){
+        return axios({
+          url:'/follow-api/tbFollowExecuteRecord/audit',
+          method:'post',
+          data:data,
+        })
+       }
+
+       /**
+        * 转移随访任务
+        */
+
+       export function transfer(data){
+        return axios({
+          url:'/follow-api/tbFollowExecuteRecord/transfer',
+          method:'post',
+          data:data,
+        })
+       }
+

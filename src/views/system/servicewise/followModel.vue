@@ -120,19 +120,21 @@ export default {
   methods: {
     //随访
     doDeal(record) {
+    
       this.modelType = 0
       this.init(record)
     },
 
     //详情
     doInfo(record) {
+      console.log("详情:",record)
       this.modelType = 1
       this.init(record)
     },
     init(record) {
       var strSex = ''
       if (record.sex) {
-        strSex = record.sex.description
+        strSex = record.sex.description||record.sex
       } else if (record.userSex) {
         strSex = record.userSex
       }

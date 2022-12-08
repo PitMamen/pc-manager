@@ -1,22 +1,20 @@
 <template>
   <a-modal
     :title="title"
-    :width="730"
+    :width="700"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
-    <div style="margin-top: 20px" class="div-total1" v-for="(item, index) in nameList" :key="index">
-      <a-radio-group name="radioGroup" :default-value="1">
-        <a-radio :value="item.id">
-          {{ item.name }}
-        </a-radio>
-        <a-radio :value="item.id">
-          {{ item.name }}
-        </a-radio>
-        <a-radio :value="item.id">
-          {{ item.name }}
+    <div style="margin-top: 20px; width: 550px" class="div-total1">
+      <a-radio-group
+        name="radioGroup"
+        style="margin-left: 158px"
+        v-decorator="['xm', { rules: [{ required: true, message: '请选择姓名！' }] }]"
+      >
+        <a-radio v-for="(item, index) in userInfos" :key="index" :value="item.userId" @click="checkName(item.userId)">
+          {{ item.userName }}
         </a-radio>
       </a-radio-group>
     </div>
@@ -25,8 +23,7 @@
   
           
   <script>
-import moment from 'moment'
-import { getApplicationlist, saveaddTenand, queryTenantDetail } from '@/api/modular/system/posManage'
+import { transfer, getUsersByDeptIdsAndRoles } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -38,21 +35,10 @@ export default {
   data() {
     return {
       rangeValue: 1,
-
-      queryParams: {},
-      nameList: [
-        { id: 1, name: '李三' },
-        { id: 2, name: '张氏' },
-        { id: 3, name: '里的' },
-        { id: 4, name: '散步' },
-        { id: 5, name: '物流' },
-        { id: 6, name: '七八' },
-        { id: 6, name: '酒哦' },
-      ],
-      queryParamsApp: {
-        applicationName: '',
-        applicationType: '', //1内部应用,2外部应用
-        status: 1, //1开启,2关闭
+      userInfos: [],
+      queryParams: {
+        doctorUserId: -1,
+        ids: [],
       },
 
       labelCol: {
@@ -70,23 +56,56 @@ export default {
     }
   },
 
-  watch: {
-    timeStr() {},
-  },
   methods: {
-    moment,
     //初始化方法
-    transfer(record) {
+    transfer(flowids, requestData) {
       this.visible = true
+      console.log('MMMM:', flowids, requestData)
+      this.queryParams.ids = flowids
+      this.getUsersByDeptIdsAndRolesOutB(requestData) //获取需 转移人的 集合
     },
 
-    radioChange(event) {
-      if (event.target.value == 1) {
-        rangeValue = 1
-      } else {
-        rangeValue = 2
-      }
+    /**
+     * 随访医生列表
+     */
+    getUsersByDeptIdsAndRolesOutB(requestData) {
+      this.confirmLoading = true
+      getUsersByDeptIdsAndRoles(requestData)
+        .then((res) => {
+          if (res.code == 0 && res.data.userInfos.length > 0) {
+            this.userInfos = res.data.userInfos
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
+
+
+    /***
+     * 提交 转移
+     */
+     transferOut(){
+      this.confirmLoading = true
+      transfer(this.queryParams).then((res)=>{
+        if(res.code==0){
+
+        }
+
+      }).finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+
+    /**
+     * 选中
+     */
+    checkName(docId) {
+      console.log('hahahah:', docId)
+      this.queryParams.doctorUserId = docId
+    },
+
 
     /**
      * 取消
@@ -98,7 +117,9 @@ export default {
     /**
      * 提交
      */
-    handleSubmit() {},
+    handleSubmit() {
+     this.transferOut()
+    },
   },
 }
 </script>
@@ -112,5 +133,25 @@ export default {
   align-items: center;
   /* // justify-content: center; */
   /* // margin-top: -20px; */
+}
+
+.ant-radio-wrapper {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5;
+  list-style: none;
+  -webkit-font-feature-settings: 'tnum';
+  font-feature-settings: 'tnum';
+  position: relative;
+  display: inline-block;
+  margin-right: 28px;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-bottom: 33px;
 }
 </style>

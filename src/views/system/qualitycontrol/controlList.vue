@@ -11,6 +11,7 @@
           mode="multiple"
           placeholder="请选择科室"
           allow-clear
+          @select="selectDepartment()"
         >
           <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
@@ -20,18 +21,18 @@
 
       <div class="search-row">
         <span class="name">随访问卷:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in statusData" :value="item.code" :key="index">{{
-            item.value
+        <a-select v-model="queryParams.messageOriginalld" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index">{{
+            item.questionnaireName
           }}</a-select-option>
         </a-select>
       </div>
 
       <div class="search-row">
         <span class="name">随访医生:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in statusData" :value="item.code" :key="index">{{
-            item.value
+        <a-select v-model="queryParams.execDoctorUserId" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="(item, index) in docList" :value="item.userId" :key="index">{{
+            item.userName
           }}</a-select-option>
         </a-select>
       </div>
@@ -67,19 +68,19 @@
           style="width: 13px; height: 13px"
           :class="{ 'checked-icon': queryParams.type == 1 }"
           src="~@/assets/icons/icon_wait.svg"
-        /><span style="margin-left: 3px">待随访</span>
+        /><span style="margin-left: 3px">{{ daisuif }}</span>
 
         <a-dropdown>
-          <a class="ant-dropdown-link" @click="(e) => e.preventDefault()"> Hover me <a-icon type="down" /> </a>
+          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
           <a-menu slot="overlay">
-            <a-menu-item>
-              <a href="javascript:;">全部</a>
+            <a-menu-item key="1">
+              <a @click="all(1, 1)" href="javascript:;">全部</a>
             </a-menu-item>
-            <a-menu-item>
-              <a href="javascript:;">待核查</a>
+            <a-menu-item key="2">
+              <a @click="tobeCheck(2, 1)" href="javascript:;">待核查</a>
             </a-menu-item>
-            <a-menu-item>
-              <a href="javascript:;">已核查</a>
+            <a-menu-item key="3">
+              <a @click="arleadyCheck(3, 1)" href="javascript:;">已核查</a>
             </a-menu-item>
           </a-menu>
         </a-dropdown>
@@ -89,28 +90,75 @@
           :class="{ 'checked-icon': queryParams.type == 2 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/icon_completed.svg"
-        /><span style="margin-left: 3px">随访成功</span>
+        /><span style="margin-left: 3px">{{ flowsuccess }} </span>
+
+        <a-dropdown>
+          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a @click="all(4, 2)" href="javascript:;">全部</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="tobeCheck(5, 2)" href="javascript:;">待核查</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="arleadyCheck(6, 2)" href="javascript:;">已核查</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 3 }" @click="onRadioClick(3)">
         <img
           :class="{ 'checked-icon': queryParams.type == 3 }"
           style="width: 13px; height: 13px"
-          src="~@/assets/icons/icon_completed.svg"
-        /><span style="margin-left: 3px">随访失败</span>
+          src="~@/assets/icons/sfsb.png"
+        /><span style="margin-left: 3px">{{ flowfail }}</span>
+        <a-dropdown>
+          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <a-menu slot="overlay">
+            <a-menu-item >
+              <a @click="all(7, 3)" href="javascript:;">全部</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="tobeCheck(8, 3)" href="javascript:;">待核查</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="arleadyCheck(9, 3)" href="javascript:;">已核查</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 4 }" @click="onRadioClick(4)">
         <img
           :class="{ 'checked-icon': queryParams.type == 4 }"
           style="width: 13px; height: 13px"
-          src="~@/assets/icons/icon_completed.svg"
-        /><span style="margin-left: 3px">随访逾期</span>
+          src="~@/assets/icons/sfyq.png"
+        /><span style="margin-left: 3px">{{ flowoverdue }}</span>
+        <a-dropdown>
+          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <a-menu slot="overlay">
+            <a-menu-item>
+              <a @click="all(10, 4)" href="javascript:;">全部</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="tobeCheck(11, 4)" href="javascript:;">待核查</a>
+            </a-menu-item>
+            <a-menu-item>
+              <a @click="arleadyCheck(12, 4)" href="javascript:;">已核查</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown>
       </div>
     </div>
 
     <div class="table-operator" style="overflow: hidden; margin-top: -30px; margin-bottom: 10px">
-      <a-button style="float: right;margin-left;: 0px" type="primary" ghost> 批量转移 </a-button>
-      <a-button style="float: right; margin-right: 20px" type="primary" ghost> 批量审核 </a-button>
+      <a-button style="float: right;margin-left;: 0px" type="primary" ghost @click="batchTransfer()">
+        批量转移
+      </a-button>
+      <a-button style="float: right; margin-right: 20px" type="primary" ghost @click="batchExamine()">
+        批量审核
+      </a-button>
     </div>
 
     <s-table
@@ -119,23 +167,22 @@
       size="default"
       :columns="columns"
       :data="loadData"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange,onSelectAll:onSelectAllChanage}"
       :alert="true"
-      :rowKey="(record) => record.code"
+      :rowKey="(record) => record.id"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
         <a-divider type="vertical" />
         <a @click="goCheck(record)">审核</a>
         <a-divider type="vertical" />
-        <a @click="gotransfer(record)">转移</a>
+        <a  @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
-      <span slot="status" slot-scope="text, record">
-        <span v-if="record.status == '发送成功'" style="color: green">{{ record.status }}</span>
-        <span v-if="record.status == '发送失败'" style="color: red">{{ record.status }}</span>
-      </span>
+
     </s-table>
     <examine ref="examine" @ok="handleOk" />
     <transfer ref="transfer" @ok="handleOk" />
+    <followModel ref="followModel" @ok="handleOk" />
   </a-card>
 </template>
   
@@ -144,54 +191,61 @@
 import { STable } from '@/components'
 import examine from './examine'
 import transfer from './transfer'
-import { getSmsPushRecordHistory, getDeptsPersonal, getDepts, followList } from '@/api/modular/system/posManage'
+import followModel from '../servicewise/followModel'
+import {
+  getDeptsPersonal,  
+  getDepts,
+  followList,  //随访任务列表
+  questionnaires, //问卷列表
+  getUsersByDeptIdsAndRoles, //随访医生
+} from '@/api/modular/system/posManage'
 
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import { template } from 'lodash'
 export default {
   components: {
     STable,
     examine,
     transfer,
+    followModel,
   },
   data() {
     return {
+      daisuif: '待随访',
+      flowsuccess: '随访成功',
+      flowfail: '随访失败',
+      flowoverdue: '随访逾期',
+      selectedRowKeys: [],
+      selectedRows: [],
+    //   selectionRows:[],
       user: {},
       keshiData: [],
       originData: [],
-      idArr: [],
+      roleIds: [],
+      quesData: [],
+      docList: [],
       queryParams: {
         type: 1,
 
-        // auditStatus: 1,
-        // beginExecuteTime: '',
-        // endExecuteTime: '',
         // execDoctorUserId: 0,
         // execStatus: 3,
+        beginExecuteTime: '',
+        endExecuteTime: '',
+        execDoctorUserId: '',
+        messageOriginalld: '',
         executeDepartmentIds: [],
         queryStr: '',
         // messageType: 0,
-        overdueStatus: 1,
-        //  taskBizStatus:2,
-      },
-      queryParamsOrigin: {
-        executeDepartmentId: -1, //科室id
-        executeEndTime: '',
-        executeStartTime: '',
-        planName: '',
-        status: -1,
-        userNameOrTel: undefined,
+        taskBizStatus: 1, // 1==待随访  2==随访成功  3=随访失败
+        overdueStatus: 2, // 随访逾期
+        auditStatus: 1, //  1 = 待核查  2 = 已核查
       },
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
       },
 
-      statusData: [
-        { code: -1, value: '全部' },
-        { code: 1, value: '发送成功' },
-        { code: 2, value: '发送失败' },
-      ],
       wrapperCol: {
         xs: { span: 24 },
         sm: { span: 15 },
@@ -208,7 +262,7 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'status',
+          dataIndex: 'statusShow',
         },
         {
           title: '随访患者',
@@ -229,7 +283,6 @@ export default {
         {
           title: '随访医生',
           dataIndex: 'doctorUserName',
-          //   scopedSlots: { customRender: 'status' },
         },
 
         {
@@ -263,16 +316,6 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        // let param = JSON.parse(JSON.stringify(this.queryParams))
-        // // param.messageType = parseInt(param.messageType)
-        // if (param.status == -1) {
-        //   delete param.status
-        // }
-        // if (param.executeDepartmentId == -1) {
-        //   delete param.executeDepartmentId
-        // }
-        // console.log('fff', Object.assign(parameter, param))
-
         return followList(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             var data = {
@@ -287,7 +330,9 @@ export default {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               this.$set(item, 'flowType', item.messageType != null ? item.messageType.description : '')
               this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
-              this.$set(item, 'status', item.status != null ? item.status.description : '')
+              this.$set(item, 'statusShow', item.status != null ? item.status.description : '')
+              this.$set(item, 'status', item.status.value)
+              this.$set(item, 'key', item.id)
             })
           }
           return data
@@ -296,18 +341,10 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route(to, from) {
-  //     console.log('watch----smsList out', to, from)
-  //     if (to.path.indexOf('smsList') > -1) {
-  //       console.log('watch----smsList', to, from)
-  //       this.refresh()
-  //     }
-  //   },
-  // },
-
   created() {
     this.user = Vue.ls.get(TRUE_USER)
+    this.roleIds.push(this.user.roleId)
+    console.log('666666:', this.roleIds)
     console.log(this.user)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
     if (this.user.roleId == 7 || this.user.roleName == 'admin') {
@@ -327,71 +364,518 @@ export default {
         }
       })
     }
+
+    this.questionnairesOut()
+    this.getUsersByDeptIdsAndRolesOut()
   },
   methods: {
-    refresh() {
+
+    /**
+     * 是否可转移
+     */
+    checkDis(status) {
+        if(status==2||status==3){
+            return true
+        }else{
+            return false
+        }
+    },
+
+
+    /**
+     * 全选
+     */
+    onSelectChange(selectedRowKeys, selectedRows) {
+      console.log('ssssss:', selectedRowKeys, selectedRows)
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+      console.log('88888:', this.selectedRows)
+    },
+
+    onSelectAllChanage(selected, selectedRows, changeRows){
+        console.log("ffff:",selected,selectedRows,changeRows)
+    },
+
+
+
+
+
+
+
+    /**
+     * 随访医生列表 (先选中科室)
+     */
+    getUsersByDeptIdsAndRolesOut() {
+      var requestData = {
+        deptIds: this.queryParams.executeDepartmentIds,
+        roleIds: this.roleIds,
+      }
+      getUsersByDeptIdsAndRoles(requestData)
+        .then((res) => {
+          if (res.code == 0 && res.data.userInfos.length > 0) {
+            this.docList = res.data.userInfos
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 选中执行科室的时候 需调用 随访医生接口
+     */
+    selectDepartment() {
+      console.log('00000', this.queryParams.executeDepartmentIds)
+      this.getUsersByDeptIdsAndRolesOut()
+    },
+
+    /**
+     *
+     * @单个查看详情
+     */
+    goDetail(record) {
+        this.$refs.followModel.doInfo(record)
+    },
+
+    /**
+     *
+     * @单个审核
+     */
+    goCheck(record) {
+        if (this.selectedRows.length > 0) {
+        this.selectedRows = [] //转移单个时  先清空
+      }
+      this.selectedRows.push(record.id)
+      var templateData = JSON.parse(JSON.stringify(this.selectedRows))
+      this.$refs.examine.process(templateData, 'xxx')
+    },
+
+    /**
+     *
+     * @单个转移
+     */
+    gotransfer(record) {
+      // 传给弹窗 请求转移人集合的
+      var flowDocData = {
+        deptIds: this.queryParams.executeDepartmentIds,
+        roleIds: this.roleIds,
+      }
+      if (this.selectedRows.length > 0) {
+        this.selectedRows = [] //转移单个时  先清空
+      }
+      this.selectedRows.push(record.id)
+      var templateData = JSON.parse(JSON.stringify(this.selectedRows))
+      this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
+    },
+
+    /**
+     * 批量转移
+     */
+    batchTransfer() {
+      if (this.selectedRows.length == 0) {
+        this.$message.error('请勾选内容!')
+        return
+      }
+      // 传给弹窗 请求转移人集合的
+      var flowDocData = {
+        deptIds: this.queryParams.executeDepartmentIds,
+        roleIds: this.roleIds,
+      }
+
+      var tempDataIds = []
+      for (let index = 0; index < this.selectedRows.length; index++) {
+        console.log('vvvvv111:', this.selectedRows[index].id)
+        tempDataIds.push(this.selectedRows[index].id) //只保留id
+      }
+      var templateData = JSON.parse(JSON.stringify(tempDataIds))
+      this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
+    },
+
+    /**
+     * 批量审核
+     */
+    batchExamine() {
+      if (this.selectedRows.length == 0) {
+        this.$message.error('请勾选内容!')
+        return
+      }
+      var tempDataIds = []
+      for (let index = 0; index < this.selectedRows.length; index++) {
+        console.log('vvvvv222:', this.selectedRows[index].id)
+        tempDataIds.push(this.selectedRows[index].id) //只保留id
+      }
+      var templateData = JSON.parse(JSON.stringify(tempDataIds))
+      this.$refs.examine.process(templateData, 'xxx')
+    },
+
+    /**
+     * 随访问卷列表
+     */
+    questionnairesOut() {
+      // questionnaires({ questionnaireName: '' }).then((res) => {
+      questionnaires({}).then((res) => {
+        if (res.code == 0) {
+          this.quesData = res.data
+          if (!this.quesData || this.quesData.length == 0) {
+            return
+          }
+          //   this.choseQues = JSON.parse(JSON.stringify(this.quesData[0]))
+          //   this.queryParams.messageContentId = this.choseQues.questionnaireId
+          //   this.$refs.table.refresh(true)
+
+          //   this.quesDataTemp = JSON.parse(JSON.stringify(this.quesData))
+        }
+      })
+    },
+
+
+    /**
+     * 全部  stay=1 待随访  =2 随访成功  =3 随访失败    overdueStatus =2 随访逾期 
+     */
+    all(e, stay) {
+      if (stay == 1) {
+        this.queryParams.taskBizStatus =1
+        this.queryParams.overdueStatus=''
+        if (e == 1) {
+          this.daisuif = '待随访(全部)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = ''
+        } else if (e == 2) {
+          console.log('待随访:待审查')
+          this.daisuif = '待随访(待审查)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 3) {
+            console.log('待随访:已审查')
+            this.daisuif = '待随访(已审查)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 2) {
+        this.queryParams.taskBizStatus =2
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 4) {
+          this.flowsuccess = '随访成功(全部)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 5) {
+          this.flowsuccess = '随访成功(待审查)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 6) {
+          this.flowsuccess = '随访成功(已审查)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 3) {
+        this.queryParams.taskBizStatus =3
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 7) {
+          this.flowfail = '随访失败(全部)'
+          this.daisuif = '待随访'
+          this.flowsuccess = '随访成功'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 8) {
+          this.flowfail = '随访失败(待审查)'
+          this.daisuif = '待随访'
+          this.flowsuccess = '随访成功'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 9) {
+          this.flowfail = '随访失败(已审查)'
+          this.daisuif = '待随访'
+          this.flowsuccess = '随访成功'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 4) {
+        this.queryParams.overdueStatus =2
+        this.queryParams.taskBizStatus =''
+        this.queryParams.auditStatus = ''
+        if (e == 10) {
+          this.flowoverdue = '随访逾期(全部)'
+          this.flowfail = '随访失败'
+          this.daisuif = '待随访'
+          this.flowsuccess = '随访成功'
+          this.queryParams.auditStatus = ''
+        } else if (e == 11) {
+          this.flowoverdue = '随访逾期(待审查)'
+          this.flowfail = '随访失败'
+          this.daisuif = '待随访'
+          this.flowsuccess = '随访成功'
+          this.queryParams.auditStatus = 1
+        } else if (e == 12) {
+          this.flowfail = '随访失败'
+          this.daisuif = '待随访'
+          this.flowsuccess = '随访成功'
+          this.flowoverdue = '随访逾期(已审查)'
+          this.queryParams.auditStatus = 2
+        }
+      }
+      this.selectedRows = [] //每次重新选择时 清空原有 选择的数据
+      this.selectedRowKeys = [] //每次重新选择时 清空原有 选择的数据
+      this.queryParams.type = stay
       this.$refs.table.refresh(true)
     },
 
-    onRadioClick(type) {
-      this.queryParams.type = type
-      //改变样式
-
-      if (this.queryParams.type == 1) {
-        // this.columns = JSON.parse(JSON.stringify(this.columnsWait))
-      } else {
-        // this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+    /**
+     * 待审查
+     */
+    tobeCheck(e, stay) {
+      console.log('111:', e)
+      if (stay == 1) {
+        this.queryParams.taskBizStatus =1
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 1) {
+          this.daisuif = '待随访(全部)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 2) {
+          this.daisuif = '待随访(待核查)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 3) {
+          this.daisuif = '待随访(已核查)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 2) {
+        this.queryParams.taskBizStatus =2
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 4) {
+          this.flowsuccess = '随访成功(全部)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 5) {
+          this.flowsuccess = '随访成功(待核查)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 6) {
+          this.flowsuccess = '随访成功(已核查)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 3) {
+        this.queryParams.taskBizStatus =3
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 7) {
+          this.flowfail = '随访失败(全部)'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 8) {
+          this.flowfail = '随访失败(待核查)'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 9) {
+          this.flowfail = '随访失败(已核查)'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 4) {
+        this.queryParams.overdueStatus =2
+        this.queryParams.taskBizStatus =''
+        this.queryParams.auditStatus = ''
+        if (e == 10) {
+          this.flowoverdue = '随访逾期(全部)'
+          this.flowfail = '随访失败'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.queryParams.auditStatus = ''
+        } else if (e == 11) {
+          this.flowfail = '随访失败'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期(待核查)'
+          this.queryParams.auditStatus = 1
+        } else if (e == 12) {
+          this.flowfail = '随访失败'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期(已核查)'
+          this.queryParams.auditStatus = 2
+        }
       }
-
-      //   this.goSearch()
+      this.selectedRows = [] //每次重新选择时 清空原有 选择的数据
+      this.selectedRowKeys = [] //每次重新选择时 清空原有 选择的数据
+      this.queryParams.type = stay
+      this.$refs.table.refresh(true)
     },
 
-    // this.$router.push({ path: '/servicewise/projectAdd' })
-    editPlan(record) {
-      this.$router.push({
-        name: 'project_edit',
-        // path: '/servicewise/projectEdit',
-        query: {
-          planId: record.id,
-        },
-      })
+    /**
+     * 已审查
+     */
+    arleadyCheck(e, stay) {
+      if (stay == 1) {
+        this.queryParams.taskBizStatus =1
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 1) {
+          this.daisuif = '待随访(全部)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 2) {
+          this.daisuif = '待随访(待核查)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 3) {
+          this.daisuif = '待随访(已核查)'
+          this.flowsuccess = '随访成功'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 2) {
+        this.queryParams.taskBizStatus =2
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 4) {
+          this.flowsuccess = '随访成功(全部)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 5) {
+          this.flowsuccess = '随访成功(待核查)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 6) {
+          this.flowsuccess = '随访成功(已核查)'
+          this.daisuif = '待随访'
+          this.flowfail = '随访失败'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 3) {
+        this.queryParams.taskBizStatus =3
+        this.queryParams.overdueStatus=''
+        this.queryParams.auditStatus = ''
+        if (e == 7) {
+          this.flowfail = '随访失败(全部)'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期'
+        } else if (e == 8) {
+          this.flowfail = '随访失败(待核查)'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 1
+        } else if (e == 9) {
+          this.flowfail = '随访失败(已核查)'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.flowoverdue = '随访逾期'
+          this.queryParams.auditStatus = 2
+        }
+      } else if (stay == 4) {
+        this.queryParams.overdueStatus =2
+        this.queryParams.taskBizStatus =''
+        this.queryParams.auditStatus = ''
+        if (e == 10) {
+          this.flowoverdue = '随访逾期(全部)'
+          this.flowfail = '随访失败'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.queryParams.auditStatus = ''
+        } else if (e == 11) {
+          this.flowoverdue = '随访逾期(待核查)'
+          this.flowfail = '随访失败'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.queryParams.auditStatus = 1
+        } else if (e == 12) {
+          this.flowoverdue = '随访逾期(已核查)'
+          this.flowfail = '随访失败'
+          this.flowsuccess = '随访成功'
+          this.daisuif = '待随访'
+          this.queryParams.auditStatus = 2
+        }
+      }
+      this.selectedRows = [] //每次重新选择时 清空原有 选择的数据
+      this.selectedRowKeys = [] //每次重新选择时 清空原有 选择的数据
+      this.queryParams.type = stay
+      this.$refs.table.refresh(true)
+    },
+
+    refresh() {
+      this.$refs.table.refresh(true)
+    },
+    onRadioClick(type) {
+      this.queryParams.type = type
+      if(type==1){
+          this.queryParams.taskBizStatus = 1
+          this.queryParams.overdueStatus = ''
+          this.queryParams.auditStatus = ''
+
+        }else if(type==2){
+          this.queryParams.taskBizStatus = 2
+          this.queryParams.overdueStatus = ''
+          this.queryParams.auditStatus = ''
+      }else if(type==3){
+          this.queryParams.taskBizStatus = 3
+          this.queryParams.overdueStatus = ''
+          this.queryParams.auditStatus = ''
+      }else if(type==4){
+          this.queryParams.taskBizStatus = ''
+          this.queryParams.auditStatus = ''
+          this.queryParams.overdueStatus = 2
+      }
+      this.daisuif='待随访',
+      this.flowsuccess= '随访成功',
+      this.flowfail='随访失败',
+      this.flowoverdue='随访逾期',
+      this.$refs.table.refresh()
     },
 
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
-      this.queryParams.executeStartTime = dateArr[0]
-      this.queryParams.executeEndTime = dateArr[1]
-    },
-
-    /**
-     *
-     * @param {详情} record
-     */
-    goDetail(record) {},
-
-    /**
-     *
-     * @审核
-     */
-    goCheck(record) {
-      this.$refs.examine.process(record, 'xxx')
-    },
-
-    /**
-     *
-     * @param {转移} record
-     */
-    gotransfer(record) {
-      this.$refs.transfer.transfer(record, 'xxx')
+      this.queryParams.beginExecuteTime = dateArr[0]
+      this.queryParams.endExecuteTime = dateArr[1]
     },
 
     /**
      * 重置
      */
     reset() {
-      //   this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
       this.queryParams.queryStr = ''
       this.queryParams.executeDepartmentIds = []
+      this.queryParams.messageOriginalld = ''
+      this.queryParams.execDoctorUserId = ''
 
       this.createValue = []
       this.$refs.table.refresh()

@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import axios from 'axios'
 import store from '@/store'
+import { SYS_APP_ID } from '@/store/mutation-types'
 import { message, Modal, notification } from 'ant-design-vue' ///es/notification
 import { VueAxios } from './axios'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
- 
+
 
 // 创建 axios 实例
 const service = axios.create({
@@ -39,9 +40,9 @@ const err = (error) => {
         console.log("准备退出")
         store.dispatch('Logout').then(() => {
           setTimeout(() => {
-          window.location.reload()
-        }, 1500)
-      })
+            window.location.reload()
+          }, 1500)
+        })
       }
     }
   }
@@ -51,10 +52,16 @@ const err = (error) => {
 // request interceptor
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
+  const appId = Vue.ls.get(SYS_APP_ID)
+  console.log("appId:",appId)
   console.log("请求预处理")
 
   if (token) {
-      config.headers['Authorization'] =   token
+    config.headers['Authorization'] = token
+  }
+
+  if (appId) {
+    config.headers['ApplicationId'] = appId
   }
 
   // var manangeApiFlag = config.url.lastIndexOf('health-api')> -1 || config.url.lastIndexOf('account-api')> -1 || config.url.lastIndexOf('content-api')> -1
@@ -74,12 +81,12 @@ service.interceptors.request.use(config => {
  */
 service.interceptors.response.use((response) => {
   if (response.request.responseType === 'blob') {
-  return response
+    return response
   }
   const code = response.data.code
-  console.log("response code",code)
+  console.log("response code", code)
   if (code == 401) {
-    console.log("response code in",code)
+    console.log("response code in", code)
     // this.$message.error('登录信息已失效，请重新登录')
     // alert('登录信息已失效，请重新登录')
     // this.$router.push({ name: 'login' })
@@ -89,10 +96,10 @@ service.interceptors.response.use((response) => {
       content: response.data.message,
       okText: '重新登录',
       onOk: () => {
-      Vue.ls.remove(ACCESS_TOKEN)
-      window.location.reload()
-    }
-  })
+        Vue.ls.remove(ACCESS_TOKEN)
+        window.location.reload()
+      }
+    })
   }
   if (code === 1011006 || code === 1011007 || code === 1011008 || code === 1011009) {
     Modal.error({
@@ -100,10 +107,10 @@ service.interceptors.response.use((response) => {
       content: response.data.message,
       okText: '重新登录',
       onOk: () => {
-      Vue.ls.remove(ACCESS_TOKEN)
-      window.location.reload()
-    }
-  })
+        Vue.ls.remove(ACCESS_TOKEN)
+        window.location.reload()
+      }
+    })
   } else if (code === 1013002 || code === 1016002 || code === 1015002) {
     message.error(response.data.message)
     return response.data

@@ -125,7 +125,7 @@ export default {
         },
         {
           title: '科室类型',
-          dataIndex: 'department_type',
+          dataIndex: 'departmenttype',
           width: 180,
         },
         {
@@ -151,6 +151,7 @@ export default {
         {
           title: '操作',
           width: '150px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -171,6 +172,24 @@ export default {
             data.rows.forEach((item, index) => {
               // this.$set(item, 'zt', item.status.description)
               this.$set(item, 'enableStatus', item.status != null ? item.status == 1 : 2)
+
+              var type = ''
+              if(item.department_type==1){
+                type = '门诊科室'
+              }else if(item.department_type==2){
+                type = '急诊科室'
+              }else if(item.department_type==3){
+                type = '住院科室'
+              }else if(item.department_type==4){
+                type = '医技科室'
+              }else if(item.department_type==5){
+                type = '药剂科室'
+              }else if(item.department_type==6){
+                type = '后勤物资'
+              }else if(item.department_type==7){
+                type = '机关科室'
+              }
+              this.$set(item, 'departmenttype', type)
             })
           }
 

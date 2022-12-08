@@ -19,6 +19,7 @@
         style="margin-top: 2%"
         :columns="columns"
         :data-source="loadData"
+        :rowSelection={rowSelection} 
         :alert="true"
         :rowKey="(record) => record.code"
       >
