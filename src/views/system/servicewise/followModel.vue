@@ -146,7 +146,13 @@ export default {
       } else if (record.sex) {
         strSex = record.sex.description
       }
-      var age = record.age || record.userAge
+      console.log('this.record', record)
+      var age
+      if (record.age == 0 || record.userAge == 0) {
+        age = '0'
+      } else {
+        age = record.age || record.userAge
+      }
       // this.title = record.userName + ' | ' + record.sex ? record.sex.description : '' + ' | ' + record.age + '岁'
       this.title = record.userName + ' | ' + strSex + ' | ' + age + '岁'
       if (this.isPatientManage) {
