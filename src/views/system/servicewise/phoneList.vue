@@ -825,12 +825,16 @@ export default {
       // 需要改变表格列表数据；
       if (this.queryParams.queryStatus == 1) {
         this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+        this.isDoubled = false
       } else if (this.queryParams.queryStatus == 2) {
         this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+        this.isDoubled = true
       } else if (this.queryParams.queryStatus == 3) {
         this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+        this.isDoubled = true
       } else if (this.queryParams.queryStatus == 4) {
         this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+        this.isDoubled = true
       }
 
       this.goSearch()
@@ -1143,7 +1147,7 @@ export default {
 
     /deep/ .table-wrapper {
       &.doubled {
-        height: calc(100% - 140px);
+        height: calc(100% - 133px);
       }
       // height: calc(100% - 38px);
     }

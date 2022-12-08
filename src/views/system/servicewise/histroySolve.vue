@@ -276,7 +276,9 @@ export default {
       if (res.code === 0) {
         this.historyList = res.data
 
-        this.onHistoryItemClick(res.data[0].id)
+        if (res.data&& res.data.length>0) {
+          this.onHistoryItemClick(res.data[0].id)
+        }
       } else {
         this.$message.error(res.message)
       }

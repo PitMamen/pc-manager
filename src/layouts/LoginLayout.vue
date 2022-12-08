@@ -96,6 +96,7 @@
 <script>
 import Vue from 'vue'
 import cryptoJs from 'crypto-js';
+import forge from 'node-forge';
 import RouteView from './RouteView'
 import { mixinDevice } from '@/utils/mixin'
 import { mapActions, mapGetters } from 'vuex'
@@ -178,6 +179,20 @@ export default {
       }
       this.flag = true
       Vue.ls.clear()
+
+      this.getRSAKey()
+      //获取保存的公私钥
+			// var keypairsSto=uni.getStorageSync('keypair')
+      var keypairsSto= Vue.ls.get('keypair')
+			console.log(keypairsSto)
+			//去掉前后格式和空格
+			var publicKey=keypairsSto.publicKey
+			publicKey = (publicKey.split('-----'))[2]
+			publicKey = publicKey.replace(/\n/g, "").replace(/\r/g, "").replace(/\t/g, "").replace(/\s*/g, "")
+				
+			// this.loginData.pubKey=publicKey;
+      this.$set(this.loginParams,'pubKey',publicKey)
+
       this.Login({...{}, ...this.loginParams, ...{
         password: this.encryptDes(this.loginParams.password)
       }}).then(res => {
@@ -199,6 +214,27 @@ export default {
         this.flag = false
       })
     },
+
+    getRSAKey(){
+				// var keypairsSto=uni.getStorageSync('keypair')
+				var keypairsSto= Vue.ls.get('keypair')
+        
+				if(keypairsSto){
+					console.log("RSA已存在")
+					return
+				}
+				
+				forge.options.usePureJavaScript = true;
+				var keypair = forge.rsa.generateKeyPair({bits: 2048, e: 0x10001});
+				console.log('keypair',keypair)
+				var pemPrivateKey =forge.pki.privateKeyToPem(keypair.privateKey)
+				var pemPublicKey =forge.pki.publicKeyToPem(keypair.publicKey)
+        console.log("pemPrivateKey",pemPrivateKey)
+        console.log("pemPublicKey",pemPublicKey)
+        Vue.ls.set('keypair',{publicKey:pemPublicKey,privateKey:pemPrivateKey})
+				// uni.setStorageSync('keypair', {publicKey:pemPublicKey,privateKey:pemPrivateKey}); //存数据
+			},
+
     handleLogout() {
       this.$confirm({
         title: '提示',
