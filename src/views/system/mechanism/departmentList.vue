@@ -168,11 +168,11 @@ export default {
             totalPage: res.data.total / parameter.size,
             rows: res.data.records,
           }
+
           if (res.code == 0 && res.data.records.length > 0) {
             data.rows.forEach((item, index) => {
               // this.$set(item, 'zt', item.status.description)
               this.$set(item, 'enableStatus', item.status != null ? item.status == 1 : 2)
-
               var type = ''
               if(item.department_type==1){
                 type = '门诊科室'

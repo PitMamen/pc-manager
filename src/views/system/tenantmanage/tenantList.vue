@@ -169,13 +169,13 @@ export default {
         {
           title: '租户名称',
           dataIndex: 'tenantName',
-          width: 150,
+          width: 170,
           ellipsis: true,
         },
         {
           title: '登录账号',
           dataIndex: 'adminAccount',
-          width: 100,
+          width: 140,
         },
         {
           title: '应用权限',
