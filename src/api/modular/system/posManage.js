@@ -2610,3 +2610,77 @@ export function parent(data){
        }
 
 
+       /**
+        * 随访任务列表
+        */
+       export function followList(data){
+        return axios({
+          url:'/follow-api/tbFollowExecuteRecord/page',
+          method:'post',
+          data:data,
+        })
+       }
+
+
+       /**
+        * 随访医生列表
+        */
+
+       export function getUsersByDeptIdsAndRoles(data){
+        return axios({
+          url:'/account-api/accountInfo/getUsersByDeptIdsAndRoles',
+          method:'post',
+          data:data,
+        })
+       }
+
+
+       /**
+        * 审核随访任务
+        */
+       export function audit(data){
+        return axios({
+          url:'/follow-api/tbFollowExecuteRecord/audit',
+          method:'post',
+          data:data,
+        })
+       }
+
+       /**
+        * 转移随访任务
+        */
+
+       export function transfer(data){
+        return axios({
+          url:'/follow-api/tbFollowExecuteRecord/transfer',
+          method:'post',
+          data:data,
+        })
+       }
+
+
+       /**
+        * 
+        * 查询
+        */
+       export function qryMetaConfigureDetailFilter(data){
+        return axios({
+          url:'/follow-api/followMetaConfigure/qryMetaConfigureDetailFilter',
+          method:'post',
+          data:data,
+        })
+       }
+
+
+       /**
+        * 名单分类查询接口
+        */
+
+       export function qryMetaByPage(data){
+        return axios({
+          url:'/follow-api/followMetaConfigureDetail/qryMetaDataByPage', 
+          method:'post',
+          data:data,
+        })
+       }
+

@@ -127,6 +127,7 @@ export default {
   methods: {
     //随访
     doDeal(record) {
+    
       this.modelType = 0
       this.showHangTag=record.hangStatus && record.hangStatus!=null && record.hangStatus.value && record.hangStatus.value == 1
       this.init(record)
@@ -140,16 +141,17 @@ export default {
 
     //详情
     doInfo(record) {
+      console.log("详情:",record)
       this.modelType = 1
       this.init(record)
     },
     init(record) {
       var strSex = ''
-      if (record.userSex) {
+      if (record.sex) {
+        strSex = record.sex.description||record.sex
+      } else if (record.userSex) {
         strSex = record.userSex
-      } else if (record.sex) {
-        strSex = record.sex.description
-      }
+      } 
       console.log('this.record', record)
       var age
       if (record.age == 0 || record.userAge == 0) {

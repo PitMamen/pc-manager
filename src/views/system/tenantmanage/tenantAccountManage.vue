@@ -43,7 +43,7 @@
       
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
-        <a @click="1" >关联科室</a>
+        <a @click="goAssDepartmanage(record)" >关联科室</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
           <a>重置密码</a>
@@ -56,6 +56,7 @@
     </s-table>
 
     <add-Account ref="addAccount" @ok="handleOk" />
+    <departmanage ref="departmanage" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -71,12 +72,14 @@ import {
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
 import addAccount from './addAccount'
+import departmanage from './departmanage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
     addAccount,
+    departmanage,
   },
   data() {
     return {
@@ -213,6 +216,20 @@ export default {
         },
       })
     },
+
+
+    /**
+     * 
+     * @param {关联科室} value 
+     */
+     goAssDepartmanage(record){
+      this.$refs.departmanage.assdepartmanage()
+     },
+
+    
+
+
+
     
     onSwitchChange(value) {
       console.log(value)

@@ -136,7 +136,7 @@
             v-model="queryParams.hisCode"
             allow-clear
             placeholder="请输入内容"
-            style="width: 200px; margin-top: 5px; margin-left: 5px"
+            style="width: 204px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -148,7 +148,7 @@
             v-model="queryParams.middleware"
             allow-clear
             placeholder="请输入内容"
-            style="width: 200px; margin-top: 5px; margin-left: 5px"
+            style="width: 199px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -156,7 +156,7 @@
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style="overflow-y: auto; height: 450px">
+      <div class="card-right-user" style=" height: 500px">
         <div class="div-title" style="margin-left: 10px; margin-top: 3px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
@@ -189,7 +189,7 @@
           </div>
         </div>
 
-        <div  id="div1" ref="editorEl" style="margin-top: 15%"></div>
+        <div  id="div1" ref="editorEl" style="margin-top: 15%;margin-left: 10px;"></div>
       </div>
     </div>
   </a-modal>
@@ -572,11 +572,11 @@ export default {
       }
       }
 
-     
-      if (this.fileList[0].response) {
+         console.log("999999:",this.fileList)
+      if (this.fileList.length>0&&this.fileList[0].response) {
         this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
       } else {
-        this.queryParams.imgUrl = this.fileList[0].url
+        // this.queryParams.imgUrl = this.fileList[0].url
       }
 
        //组装图片
@@ -588,10 +588,10 @@ export default {
       //   console.log("8888888:",this.queryParams.imgUrl,this.fileList[0].response.data.fileLinkUrl)
       // }
 
-      if (!this.queryParams.introduction) {
-        this.$message.error('请编辑内容')
-        return
-      }
+      // if (!this.queryParams.introduction) {
+      //   this.$message.error('请编辑内容')
+      //   return
+      // }
 
       this.addHospital()
     },

@@ -287,7 +287,7 @@ export default {
         this.$message.error(res.message)
       }
     })
-
+    console.log('telSolve111', this.record.userId)
     followPlanPhonePatientInfo(this.record.userId).then((res) => {
       if (res.code === 0) {
         res.data.forEach((element) => {

@@ -981,6 +981,11 @@ export default {
         flex-direction: row;
         &:hover {
           cursor: pointer;
+          color: #1890ff;
+          img {
+            filter: drop-shadow(#1890ff 600px 0);
+            transform: translateX(-600px);
+          }
         }
       }
 

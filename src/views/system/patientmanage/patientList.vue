@@ -159,8 +159,9 @@ export default {
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
-          width: 100,
-          size: 12,
+          width: 170,
+          size:12,
+          ellipsis:true,
         },
 
         {

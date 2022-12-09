@@ -2,14 +2,14 @@
   <a-modal
     :title="title"
     :width="1000"
-    :height="650"
+    :height="950"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="false"
   >
-    <a-card :bordered="false" class="card-top-pac">
-      <div class="table-page-wrapper" style="margin-top: -1%">
+    <a-card :bordered="false" class="card-top-pac1">
+      <div class="table-page-wrapper" style="margin-top: -1%;margin-left: 0px;">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
@@ -36,7 +36,7 @@
             @search="focus()"
           />
 
-          <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
+          <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 支持分类查询 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
           <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->
@@ -49,7 +49,7 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2%; overflow-y: auto; height: 500px"
+        style="margin-top: 2%; overflow-y: auto; height: 500px;width: 1000px;margin-right: 50px;"
         ref="table"
         size="default"
         :scroll="{ y: 400, x: 0 }"
@@ -73,7 +73,7 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 110px; margin-right: 20px"
+            style="display: inline-block; width: 90px; margin-right: 20px"
             allow-clear
             @blur="changeDes(record)"
           />
@@ -84,7 +84,7 @@
 
         <span slot="fileDes" slot-scope="text, record">
           <a-select
-            style="width: 110px; margin-right: 20px"
+            style="width: 90px; margin-right: 20px"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -97,6 +97,29 @@
             record.fieldArchives != null ? record.fieldArchives.description : ''
           }}</span>
         </span>
+
+
+       <!-- 显示序号 -->
+        <span slot="showIndex" slot-scope="text, record">
+          <a-input
+          v-if="record.defaultField != null && record.defaultField.value == 2"
+            v-model="record.showIndex"
+            class="span-item-value"
+            :maxLength="30"
+            style="display: inline-block; width:60px; margin-right: 20px;padding-right:0px"
+            allow-clear
+            @blur="inputIndex(record)"
+          />
+        </span>
+
+        <!-- 查询条件 -->
+        <span slot="queryCriteria" slot-scope="text, record">
+          <a-checkbox  v-if="record.defaultField != null && record.defaultField.value == 2" v-model="record.wysy" @change="isQuery(record)"></a-checkbox>
+        </span>
+
+        
+
+
       </a-table>
     </a-card>
   </a-modal>
@@ -106,6 +129,7 @@
 <script>
 import { checkDetail, updateMetaConfigure, saveMetaConfigure } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
+import { number } from 'yargs'
 export default {
   components: {
     STable,
@@ -148,7 +172,7 @@ export default {
         {
           title: '字段编码',
           dataIndex: 'zdbm',
-          // width: 100,
+          width: 100,
         },
         {
           title: '字段描述',
@@ -184,10 +208,23 @@ export default {
         },
 
         {
+          title: '显示序号',
+          scopedSlots: { customRender: 'showIndex' },
+          width: 100,
+        },
+
+
+        {
+          title: '查询条件',
+          scopedSlots: { customRender: 'queryCriteria' },
+          width: 80,
+        },
+
+        {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
-          width: 100,
+          width: 80,
         },
       ],
     }
@@ -275,6 +312,23 @@ export default {
       console.log('sss:', queryParam)
       // this.saveMetaConfigure(queryParam)
     },
+   
+    /**
+     * 显示序号
+     */
+     inputIndex(record){
+
+     },
+
+    /**
+     * 查询条件
+     */
+     isQuery(record){
+
+     },
+
+
+
 
     /**
      * 选择档案字段
@@ -344,16 +398,7 @@ export default {
      */
     Enable() {
       this.isOpen = !this.isOpen
-      // if (this.isOpen) {
-        // this.queryParams.status = 1
-      // } else {
-        // this.queryParams.status = 2
-      // }
-      var queryParamData = {
-        id: this.id,
-        status: this.isOpen ? 1 : 2,
-      }
-      // this.updateMetaConfigure(queryParamData)
+      console.log("是否支持：",this.isOpen)
     },
 
     handleCancel() {
@@ -392,12 +437,15 @@ export default {
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
         item.metaName = this.metaName //名单描述
+        item.showIndex = item.showIndex  //显示序号
+        item.isQryCondition = item.isQryCondition ? 1 : 0// 查询条件
       })
 
       let queryData = {
         status: this.isOpen ? 1 : 2, //状态
         databaseTableName: this.queryParam.databaseTableName,
         metaName: this.metaName,
+        qryFlag:  this.isOpen ? 1 : 0, //是否支持分类查询
         detail: detailListTemp,
       }
       if (this.repeatclickFun()) {
@@ -434,7 +482,13 @@ export default {
 </script>
 
 <style lang="less">
+ 
+
 .table-page-wrapper {
+  /deep/.ant-spin-nested-loading{
+    margin-right: 50px !important;
+  }
+
   .ant-form-inline {
     .ant-form-item {
       display: flex;
@@ -463,6 +517,13 @@ export default {
     display: block;
     margin-bottom: 24px;
     white-space: nowrap;
+  }
+}
+</style>
+<style lang="less">
+.card-top-pac1 {
+  .ant-spin-nested-loading {
+      margin-right: 55px !important;
   }
 }
 </style>
