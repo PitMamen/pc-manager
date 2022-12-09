@@ -10,6 +10,7 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
+        
         <div class="div-part-left">
           <div class="div-content">
             <span class="span-item-name">已选科室:</span>
@@ -55,6 +56,7 @@
       </span>
           </s-table>
         </div>
+        
       </div>
     </a-spin>
   </a-modal>
