@@ -39,8 +39,9 @@
                       基本信息
                     </span>
                   </template>
+                  <!-- style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px; overflow: hidden" -->
                   <basic-info
-                    style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px; overflow: hidden"
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicInfo"
                     :jbxx="fileDetailData"
                     :patientInfo="patientInfo"
@@ -76,6 +77,12 @@
                       医嘱
                     </span>
                   </template>
+                  <basic-medic
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
+                    ref="basicMedic"
+                    :jbxx="fileDetailData"
+                    :showData="showDataYizhu"
+                  />
                 </a-tab-pane>
                 <a-tab-pane key="4">
                   <template #tab>
@@ -127,12 +134,13 @@
 import { getFileList, getFileDtail, getBaseInfo } from '@/api/modular/system/posManage'
 import basicInfo from './basicInfo'
 import basicTech from './basicTech'
+import basicMedic from './basicMedic'
 import { TRUE_USER } from '@/store/mutation-types'
 import { decodeRecord } from '@/utils/forgeUtils'
 import { formatDateFull, formatDate } from '@/utils/util'
 import Vue from 'vue'
 export default {
-  components: { basicInfo, basicTech },
+  components: { basicInfo, basicTech, basicMedic },
   props: {
     record: Object,
   },
@@ -146,6 +154,7 @@ export default {
       user: {},
       patientInfo: {},
       showData: {},
+      showDataYizhu: {},
       historyList: [],
       /**
        * 			if (index === 0) {
@@ -170,7 +179,7 @@ export default {
       dataOwnerId: this.record.userId,
       // dataOwnerId: '1195',
       // dataOwnerId: '1239',
-      dataOwnerId: '1194',
+      // dataOwnerId: '1194',
       dataUserId: this.user.userId,
       recordType: this.recordType,
       pastMonths: '60',
@@ -221,7 +230,7 @@ export default {
         dataOwnerId: this.record.userId,
         // dataOwnerId: '1195',
         // dataOwnerId: '1239',
-        dataOwnerId: '1194',
+        // dataOwnerId: '1194',
         dataUserId: this.user.userId,
         recordType: this.recordType,
         serialNumber: this.historyList[index].serialNumber,
@@ -241,7 +250,7 @@ export default {
 
               //检查检验合并数组并排序
               let newArr = []
-              //检查
+              //处理检查数据
               if (this.fileDetailData.yqjc && this.fileDetailData.yqjc.length > 0) {
                 for (let index = 0; index < this.fileDetailData.yqjc.length; index++) {
                   newArr.push({
@@ -257,7 +266,7 @@ export default {
                 console.log('this.fileDetailData.yqjcStr 检查', JSON.stringify(this.fileDetailData.yqjc))
               }
 
-              //检验
+              //处理检验数据
               let length = newArr.length
               if (this.fileDetailData.sysjc && this.fileDetailData.sysjc.length > 0) {
                 for (let index = 0; index < this.fileDetailData.sysjc.length; index++) {
@@ -276,20 +285,71 @@ export default {
                 }
                 console.log('this.fileDetailData.sysjc 检验', JSON.stringify(this.fileDetailData.sysjc))
               }
-
               //排序处理
               newArr.sort((a, b) => {
                 return b.time - a.time
               })
-
               this.$set(this.fileDetailData, 'newArr', newArr)
               if (this.fileDetailData.newArr.length > 0) {
                 this.$set(this.fileDetailData.newArr[0], 'color', 'blue')
                 this.defaultShowType = this.fileDetailData.newArr[0].type
                 this.showData = this.fileDetailData.newArr[0].data
               }
-
               console.log('this.fileDetailData.newArrStr', JSON.stringify(this.fileDetailData.newArr))
+
+              //处理医嘱数据  需要按时间将一级数组封装成新的二级数组
+              for (let index = 0; index < this.fileDetailData.yzxx.length; index++) {
+                this.$set(
+                  this.fileDetailData.yzxx[index],
+                  'timeStr',
+                  formatDate(new Date(this.fileDetailData.yzxx[index].yzxdsj))
+                )
+                //组装发药数量
+                this.$set(
+                  this.fileDetailData.yzxx[index],
+                  'fysl',
+                  this.fileDetailData.yzxx[index].ypsl + this.fileDetailData.yzxx[index].ypdw
+                )
+                //组装每次剂量
+                this.$set(
+                  this.fileDetailData.yzxx[index],
+                  'mcjl',
+                  this.fileDetailData.yzxx[index].jl + this.fileDetailData.yzxx[index].dw
+                )
+                //组装每次数量
+                this.$set(
+                  this.fileDetailData.yzxx[index],
+                  'mcsl',
+                  this.fileDetailData.yzxx[index].mcsl + this.fileDetailData.yzxx[index].mcdw
+                )
+              }
+              let newYzxx = []
+              let dateArr = []
+              if (this.fileDetailData.yzxx.length > 0) {
+                for (let index = 0; index < this.fileDetailData.yzxx.length; index++) {
+                  dateArr.push(this.fileDetailData.yzxx[index].timeStr)
+                }
+                dateArr = dateArr.filter((item, index) => {
+                  //去重
+                  return dateArr.indexOf(item) === index // 因为indexOf 只能查找到第一个
+                })
+              }
+              console.log('dateArr', dateArr)
+              for (let index = 0; index < dateArr.length; index++) {
+                newYzxx.push({ color: 'gray', data: [], timeStr: dateArr[index] })
+                for (let indexIn = 0; indexIn < this.fileDetailData.yzxx.length; indexIn++) {
+                  if (dateArr[index] == this.fileDetailData.yzxx[indexIn].timeStr) {
+                    newYzxx[index].data.push(JSON.parse(JSON.stringify(this.fileDetailData.yzxx[indexIn])))
+                  }
+                }
+              }
+              this.$set(this.fileDetailData, 'yzxx', newYzxx)
+
+              if (this.fileDetailData.yzxx.length > 0) {
+                this.showDataYizhu = this.fileDetailData.yzxx[0]
+                this.$set(this.fileDetailData.yzxx[0], 'color', 'blue')
+              }
+
               console.log('this.fileDetailDataStr', JSON.stringify(this.fileDetailData))
             } else {
               uni.$u.toast('解密失败')
@@ -301,6 +361,7 @@ export default {
             // :showData="showData"
             this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
             this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
+            this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
             // this.onHistoryItemClick(res.data[0].id)
           } else {
             this.$message.error(res.message)
@@ -388,12 +449,22 @@ export default {
 
     .content-main {
       margin-top: 10px;
+      /deep/ .ant-tabs.ant-tabs-top.ant-tabs-line {
+        border-bottom: 1px solid #eee !important;
+      }
       .span-tab {
         display: flex;
         align-items: center;
         flex-direction: row;
         font-size: 12px;
         overflow: hidden;
+
+        &:hover {
+          img {
+            filter: drop-shadow(#1890ff 600px 0);
+            transform: translateX(-600px);
+          }
+        }
 
         // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
         .checked-icon {
