@@ -1,7 +1,7 @@
 <template>
   <a-modal
-    title="新增账号"
-    :width="460"
+    title="关联科室"
+    :width="484"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -11,70 +11,50 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
         <div class="div-part-left">
-          <div class="div-title"  style="margin-top: 0">
-            <div class="div-line-blue"></div>
-            <span class="span-title">账号信息</span>
-          </div>
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>登录账号:</span>
-            <a-input
-              class="span-item-value"
-              v-model="checkData.account"
-              style="display: inline-block"
+            <span class="span-item-name">已选科室:</span>
+            <a-select
+             v-model="selectedRowKeys"
               allow-clear
-              placeholder="请输入账号"
-            />
-          </div>
-          <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
-            <a-select show-search v-model="checkData.name" allow-clear placeholder="请选择人员类型">
-              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item">{{ item }}</a-select-option>
+              placeholder="请在表格中勾选科室"
+              dropdownClassName="select-tags-hidden"
+              :maxTagCount="3"
+              :collapse-tags="true"
+              mode="multiple"
+              style="height: 28px"
+              @change="ksSelectChange"
+            >
+              <a-select-option v-for="(item, index) in allDepartList" :key="index" :value="item.department_id">{{
+                item.department_name
+              }}</a-select-option>
             </a-select>
           </div>
-          <div class="div-content">
-            <span class="span-item-name">所属机构:</span>
+          <div class="div-content" style="margin-top: 20px">
+            <span class="span-item-name">查询条件:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.name"
+              v-model="queryParams.departmentName"
               style="display: inline-block"
               allow-clear
-              readOnly
-              placeholder=""
+              placeholder="可输入科室名称后回车查询"
+              @change="onInputChange"
             />
           </div>
-          <div class="div-content">
-            <span class="span-item-name">联系方式:</span>
-            <a-input
-              class="span-item-value"
-              v-model="checkData.name"
-              style="display: inline-block"
-              allow-clear
-              readOnly
-              placeholder=""
-            />
-          </div>
-          
-          <div class="div-title">
-            <div class="div-line-blue"></div>
-            <span class="span-title">服务权限</span>
-          </div>
-          <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>所属角色:</span>
-            <a-select v-model="checkData.role" allow-clear placeholder="请选择所属角色" :maxTagCount="3"
-          :collapse-tags="true" mode="multiple" style=" height: 28px">
-              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleRealName">{{ item.roleRealName }}</a-select-option>
-            </a-select>
-          </div>
-          
-         
-          <div class="div-content">
-            <a-checkbox v-model="accountChecked"></a-checkbox>
-            <span class="span-item-name">客服坐席:</span>
-            <a-input class="span-item-value" style="display: inline-block" :disabled="!accountChecked" placeholder="请输入客服坐席ID" />
-          </div>
-        </div>
 
-        
+          <s-table
+            ref="table"
+            size="default"
+            :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+            :columns="columnsDept"
+            :data="loadData"
+            :alert="true"
+            :rowKey="(record) => record.department_id"
+          >
+          <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.enableStatus" />
+      </span>
+          </s-table>
+        </div>
       </div>
     </a-spin>
   </a-modal>
@@ -82,19 +62,20 @@
 
 
 <script>
+import { STable } from '@/components'
 import {
   getRoleList,
-  queryHospitalList,
-  qryMetaConfigureDetail,
+  getDepts,
+  getDepartmentListForReq,
   addWxTemplate,
   getWxTemplateById,
   modifyWxTemplate,
 } from '@/api/modular/system/posManage'
-import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
+import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
-  components: {},
+  components: {STable},
   data() {
     return {
       visible: false,
@@ -104,20 +85,60 @@ export default {
       advanced: false,
       fileList: [],
       danandataList: [],
-      treeData:[],
+      treeData: [],
       checkData: {
         account: '', //登录账号
-        userId:'',//对应人员
-        name: '',    
+        userId: '', //对应人员
+        name: '',
         tel: '',
         role: undefined, //分配角色
-        zuoxi:'',//坐席
+        zuoxi: '', //坐席
       },
       accountChecked: false, //客服坐席
-     
+
       roleList: [], //角色列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
-      
+      selectedRowKeys: [],
+      // 表头
+      columnsDept: [
+        {
+          title: '科室名称',
+          dataIndex: 'department_name',
+        },
+
+        {
+          title: '科室类型',
+          dataIndex: 'department_type',
+        },
+        {
+          title: '默认',
+          width: 80,
+          scopedSlots: { customRender: 'statuas' },
+        },
+      ],
+      allDepartList:[],
+      queryParams: {
+        departmentName: '',
+       
+        parentDisarmamentId: '',
+        status: 1,
+      },
+        // 加载数据方法 必须为 Promise 对象
+        loadData: (parameter) => {
+        return getDepartmentListForReq(Object.assign(parameter, this.queryParams)).then((res) => {
+          if (res.code == 0) {
+            var data = {
+            pageNo: res.data.current,
+            pageSize: res.data.size,
+            totalRows: res.data.total,
+            totalPage: res.data.total / res.data.size,
+            rows: res.data.records,
+          }
+          return data
+          }
+          
+        })
+      },
     }
   },
   created() {},
@@ -129,10 +150,42 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
+      
+      if(this.$refs.table){
+        this.reset()
+      }
+      
+      getDepartmentListForReq({
+        departmentName: '',
+        pageNo: 1,
+        pageSize: 10000,
+        parentDisarmamentId: '',
+        status: 1,
+      }).then((res) => {
+        if (res.code == 0) {
+          
+          this.allDepartList = res.data.records
+        }
+      })
 
-
-      this.getRolesOut()
+    },
+    onSelectChange(selectedRowKeys) {
+      console.log('selectedRowKeys changed: ', selectedRowKeys);
+      this.selectedRowKeys = selectedRowKeys;
+     
+    },
+    ksSelectChange(values){
+      console.log(values)
+   
+      this.selectedRowKeys = values
+      this.updateSelect()
     
+    },
+    onInputChange() {
+      this.$refs.table.refresh(true)
+    },
+    updateSelect() {
+      this.$refs.table.updateSelect(this.selectedRowKeys, [])
     },
     //获取角色列表
     getRolesOut() {
@@ -153,78 +206,39 @@ export default {
         }
       })
     },
+ /**
+     * 重置
+     */
+     reset() {
+      this.queryParams={
+        departmentName: '',
+        parentDisarmamentId: '',
+        status: 1,
+      },
 
-
+      this.$refs.table.refresh(true)
+    },
     handleSubmit() {
-      console.log(this.checkData)
-
-
-      if (this.checkData.account.length==0) {
-        this.$message.error('请输入登录账号')
-        return
-      }
-      if (this.checkData.name.length==0) {
-        this.$message.error('请选择对应人员')
-        return
-      }
-    
-
-      if (this.checkData.tel.length==0) {
-        this.$message.error('请输入联系电话')
-        return
-      }
-
-      if (this.checkData.role.length == 0) {
-          this.$message.error('请分配角色')
-          return
-        }
       
 
-      if (this.accountChecked) {
-        //如果勾选了客服坐席
-       
-        if (this.checkData.zuoxi.length == 0) {
-          this.$message.error('请输入客服坐席ID')
-          return
-        } 
+      if (this.selectedRowKeys.length == 0) {
+        this.$message.error('请选择科室')
+        return
       }
-
-      var postData = {}
       this.confirmLoading = true
-      if (this.id) {
-        //修改
-        postData.id = this.id
-        this.modify(postData)
-      } else {
-        //新增
-        this.add(postData)
-      }
-    },
-
-    add(postData) {
       addWxTemplate(postData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('新增成功！')
+          this.$message.success('关联科室成功！')
           this.visible = false
-          this.$emit('ok', '')
+         
         } else {
           this.$message.error(res.message)
         }
         this.confirmLoading = false
       })
     },
-    modify(postData) {
-      modifyWxTemplate(postData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('修改成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
-    },
+
+    
 
     goBack() {
       window.history.back()
@@ -237,7 +251,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
@@ -263,7 +276,7 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 310px;
+  height: 475px;
   margin-top: 10px;
 
   .div-part-left {
@@ -286,12 +299,12 @@ export default {
     flex-direction: row;
     align-items: center;
     overflow: hidden;
-    /deep/.ant-select-selection--multiple{
-      li{
-    margin-top: 1px !important;
-  }
+    /deep/.ant-select-selection--multiple {
+      li {
+        margin-top: 1px !important;
+      }
     }
-  
+
     .span-item-name {
       display: inline-block;
       color: #4d4d4d;
@@ -299,11 +312,8 @@ export default {
       text-align: right;
       margin-right: 10px;
       width: 60px;
-
-
-
     }
- 
+
     .span-item-value {
       flex: 1;
       color: #4d4d4d;

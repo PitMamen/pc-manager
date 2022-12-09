@@ -173,7 +173,7 @@ export default {
               this.$set(item, 'enableStatus', item.status != null ? item.status == 1 : 2)
             })
           }
-
+          console.log(data)
           return data
         })
       },
