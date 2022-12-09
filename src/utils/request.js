@@ -61,7 +61,7 @@ service.interceptors.request.use(config => {
   }
 
   if (appId) {
-    config.headers['ApplicationId'] = appId
+    // config.headers['ApplicationId'] = appId
   }
 
   // var manangeApiFlag = config.url.lastIndexOf('health-api')> -1 || config.url.lastIndexOf('account-api')> -1 || config.url.lastIndexOf('content-api')> -1
