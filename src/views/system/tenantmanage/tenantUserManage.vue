@@ -52,7 +52,7 @@
       
         <a @click="editPlan(record)" >修改</a>
         <a-divider type="vertical" />
-        <a @click="1" >关联科室</a>
+        <a @click="$refs.assDepartment.addModel(record)" >关联科室</a>
         
       </span>
       <span slot="statuas" slot-scope="text, record">
@@ -61,6 +61,7 @@
     </s-table>
 
     <add-User ref="addUser" @ok="handleOk" />
+    <ass-Department ref="assDepartment" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -76,12 +77,14 @@ import {
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
 import addUser from './addUser'
+import assDepartment from './assDepartment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
     addUser,
+    assDepartment
   },
   data() {
     return {

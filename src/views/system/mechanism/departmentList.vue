@@ -192,7 +192,7 @@ export default {
               this.$set(item, 'departmenttype', type)
             })
           }
-
+          console.log(data)
           return data
         })
       },
