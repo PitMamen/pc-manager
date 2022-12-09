@@ -2204,6 +2204,17 @@ export function modifyFollowExecuteRecord(data) {
 }
 
 /**
+ * 挂起
+ */
+ export function hangExecuteRecord(data) {
+  return axios({
+    url: '/follow-api//followPlanPhone/hangExecuteRecord',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
  * /tbFollowExecuteRecord/qryPhoneFollowTask 查询电话随访任务
  */
 export function qryPhoneFollowTask(data) {

@@ -60,8 +60,10 @@
         <div class="span-mid-audio" v-show="audioShow">
           <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
         </div>
+       
       </a-tabs>
     </a-spin>
+    <img class="zanguaview" v-if="showHangTag"  src="~@/assets/icons/zanggua.png"  />
   </a-modal>
 </template>
 
@@ -98,6 +100,7 @@ export default {
       audioUrl: '',
       audioShow: false,
       callers: [],
+      showHangTag:false,//显示暂挂
     }
   },
   created() {
@@ -126,6 +129,7 @@ export default {
     doDeal(record) {
     
       this.modelType = 0
+      this.showHangTag=record.hangStatus && record.hangStatus!=null && record.hangStatus.value && record.hangStatus.value == 1
       this.init(record)
     },
     //档案   从档案管理页面进入不需要显示本次随访
@@ -334,11 +338,22 @@ export default {
 
   top: 0;
 
-  z-index: 10000;
+  z-index: 10001;
 }
 .icon {
   width: 17px;
   height: 18px;
   margin-bottom: 3px;
+}
+.zanguaview{
+  position: absolute;
+  right: 112px;
+
+top: 0;
+
+z-index: 10000;
+  width: 47px;
+height: 59px;
+
 }
 </style>
