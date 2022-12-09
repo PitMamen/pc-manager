@@ -242,6 +242,14 @@
       }
     },
     methods: {
+/**
+       * 触发调用查询条件的接口
+       */
+       refreshData(){
+        console.log("门诊")
+       },
+
+
       refresh() {
         this.$refs.table.refresh(true)
       },

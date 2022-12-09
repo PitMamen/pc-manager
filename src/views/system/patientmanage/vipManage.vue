@@ -1,6 +1,6 @@
 <template>
   <div class="wrap">
-    <a-tabs v-model="keyindex">
+    <a-tabs v-model="keyindex" @change="chanage">
       <a-tab-pane key="1" tab="出院患者名单">
         <chuyuan-list ref="chuyuanList" />
       </a-tab-pane>
@@ -13,11 +13,9 @@
         <tijian-list ref="tijianList" />
       </a-tab-pane>
 
-
       <a-tab-pane key="4" tab="死亡患者名单" force-render>
         <siwang-list ref="siwangList" />
       </a-tab-pane>
-
 
       <a-tab-pane key="5" tab="入院患者名单" force-render>
         <ruyuan-list ref="ruyuanList" />
@@ -53,14 +51,29 @@ export default {
     if (this.$route.query.keyindex) {
       this.keyindex = this.$route.query.keyindex
     }
+    this.$nextTick(() => {
+        
+        this.$refs.chuyuanList.refreshData() //默认第一页
+    })
   },
 
   methods: {
-    addwxtemplate() {
-    //   this.$router.push({ path: './addwxtemplate' })
+    chanage(key) {
+        console.log("111111111111:",key)
+      if (key === '1') {
+        this.$refs.chuyuanList.refreshData()
+      } else if (key === '2') {
+        this.$refs.menzhenList.refreshData()
+      } else if (key === '3') {
+        this.$refs.tijianList.refreshData()
+      } else if (key === '4') {
+        this.$refs.siwangList.refreshData()
+      } else if (key === '5') {
+        this.$refs.ruyuanList.refreshData()
+      }
     },
 
-    callback() {},
+    // callback() {},
     handleOk() {},
   },
 }

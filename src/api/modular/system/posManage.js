@@ -2647,3 +2647,29 @@ export function parent(data){
         })
        }
 
+
+       /**
+        * 
+        * 查询
+        */
+       export function qryMetaConfigureDetailFilter(data){
+        return axios({
+          url:'/follow-api/followMetaConfigure/qryMetaConfigureDetailFilter',
+          method:'post',
+          data:data,
+        })
+       }
+
+
+       /**
+        * 名单分类查询接口
+        */
+
+       export function qryMetaByPage(data){
+        return axios({
+          url:'/follow-api/followMetaConfigureDetail/qryMetaDataByPage', 
+          method:'post',
+          data:data,
+        })
+       }
+

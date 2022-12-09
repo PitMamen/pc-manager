@@ -242,6 +242,15 @@
       }
     },
     methods: {
+/**
+       * 触发调用查询条件的接口
+       */
+       refreshData(){
+        console.log("体检")
+       },
+
+
+
       refresh() {
         this.$refs.table.refresh(true)
       },
