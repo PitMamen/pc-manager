@@ -59,9 +59,9 @@
     <!-- :scroll="{ y: 700, x: 0 }"  -->
     <!--  style="overflow-y: auto" -->
     <s-table
-      class="table-hover-hidden"
+    
       :showPagination="false"
-      style="overflow-y: auto"
+      style="overflow-y: auto;width: 101%;"
       :scroll="{ y: 700,x: 0 }"
       bordered
       ref="tableStat"
@@ -85,6 +85,13 @@
       <span slot="action_overdue" slot-scope="text, record">
         <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
       </span>
+      
+      <span slot="action_number" slot-scope="text,record">
+        <a @click="$refs.statisitDetail.checkDetail(record, 5)">{{ record.undoTask }}</a>
+      </span>
+
+
+
 
       <template v-if="queryParamsStatisit.statType == 1" slot="titleNNN">按随访方案</template>
       <template v-if="queryParamsStatisit.statType == 2" slot="titleNNN">按执行科室</template>
@@ -222,6 +229,16 @@ export default {
           title: '逾期率',
           dataIndex: 'overdueRate',
         },
+
+        {
+          title: '待执行',
+          dataIndex: 'undoTask',
+          scopedSlots: { customRender: 'action_number' },
+        },
+        {
+          title: '待执行率',
+          dataIndex: 'undoTaskRate',
+        },
       ],
 
       user: {},
@@ -263,6 +280,7 @@ export default {
               this.$set(item, 'successRate', Math.round(item.successRate * 100) + '%')
               this.$set(item, 'failRate', Math.round(item.failRate * 100) + '%')
               this.$set(item, 'overdueRate', Math.round(item.overdueRate * 100) + '%')
+              this.$set(item, 'undoTaskRate', Math.round(item.undoTaskRate * 100) + '%')
               this.$set(item, 'statType', this.queryParamsStatisit.statType)
               this.$set(item, 'beginDate', this.queryParamsStatisit.beginDate)
               this.$set(item, 'endDate', this.queryParamsStatisit.endDate)
@@ -432,6 +450,7 @@ export default {
 
 
 .table-hover-hidden {
+  width: 101% !important;
   .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
     background-color: #ffffff !important;
   }
