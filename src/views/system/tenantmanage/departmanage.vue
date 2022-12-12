@@ -13,7 +13,7 @@
         <div class="div-part-left">
           <div class="left-content1" style="margin-bottom: 20px" v-for="(item, index) in appListOut" :key="index">
             <div class="div-content" style="margin-left:47px">
-              <a-checkbox style="margin-left:10px" v-model="item.isChecked" @change="checkBoxselectChange(item)" :disabled="item.id!=1"></a-checkbox>
+              <a-checkbox style="margin-left:10px" v-model="item.isChecked" @change="checkBoxselectChange(item)" :disabled="item.applicationId!=1"></a-checkbox>
               <span class="span-item-value" style="font-size: 14px; margin-top: 0px; margin-left: 10px; color: #4d4d4d"
                 >{{ item.applicationName }}
               </span>
@@ -22,21 +22,23 @@
             <div class="div-content" style="margin-left:47px">
               <span class="span-item-name" >已选科室:</span>
               <a-select
-              :disabled="item.id!=1"
-                v-model="selectedRowKeys"
-                allow-clear
+              allow-clear
+                :disabled="item.applicationId!=1"
+                :value="item.applicationId==1?selectedRowKeys:item.selectedRowKeyids"
                 placeholder="请在表格中勾选科室"
                 dropdownClassName="select-tags-hidden"
                 :maxTagCount="3"
                 :collapse-tags="true"
                 mode="multiple"
-                style="height: 28px;width: 190px;margin-left: 0px;"
+                style="height: 28px;width:170px;margin-left: 0px;"
                 @change="ksSelectChange"
               >
                 <a-select-option v-for="(item, index) in allDepartList" :key="index" :value="item.department_id">{{
                   item.department_name
                 }}</a-select-option>
               </a-select>
+
+
             </div>
           </div>
         </div>
@@ -93,6 +95,7 @@ export default {
   components: { STable },
   data() {
     return {
+      isChecked:false,
       visible: false,
       headers: {},
       appList: [],
@@ -121,7 +124,6 @@ export default {
       accountChecked: false, //客服坐席
 
       roleList: [], //角色列表
-      rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
       selectedRowKeys: [],
       // 表头
       columnsDept: [
@@ -134,11 +136,6 @@ export default {
           title: '科室类型',
           dataIndex: 'department_type',
         },
-        //   {
-        //     title: '默认',
-        //     width: 80,
-        //     scopedSlots: { customRender: 'statuas' },
-        //   },
       ],
       allDepartList: [],
       queryParams: {
@@ -177,7 +174,7 @@ export default {
       if (this.$refs.table) {
         this.reset()
       }
-      this.getApplicationlistOut()
+      // this.getApplicationlistOut()
       this.getManagerDeptsOut()
 
       getDepartmentListForReq({
@@ -197,21 +194,43 @@ export default {
 
 
 
+     modalChange(record,id){
+     if(id==1){
+      return this.selectedRowKeys
+     }else{
+      return record.selectedRowKeys
+     }
+     },
+
 
     getManagerDeptsOut(){
       getManagerDepts({accountId:458}).then((res)=>{
-
+        if (res.code==0) {
+          if(res.data.items){
+            this.appList = res.data.items
+            this.appListOut = JSON.parse(JSON.stringify(this.appList))
+            this.appListOut.forEach((item, index) => {
+              this.$set(item, 'isChecked', item.deptInfos?true:false)
+              this.$set(item, 'selectedRowKeyids', [])
+            })
+          }
+        }
       })
     },
 
 
     //checkbox 选择
     checkBoxselectChange(item){
-     
+     this.isChecked = item.isChecked
+    //  console.log("检查：",this.isChecked )
     },
 
 
     onSelectChange(selectedRowKeys) {
+      if (!this.isChecked&&selectedRowKeys.length>0) {
+        this.$message.error("请先勾选对应应用名!")
+        return
+      }
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
@@ -250,27 +269,22 @@ export default {
     /**
      * 查询对应app
      */
-    getApplicationlistOut() {
-      this.confirmLoading = true
-      getApplicationlist(this.queryParamsApp)
-        .then((res) => {
-          if (res.code == 0) {
-            this.appList = res.data
-            this.appListOut = JSON.parse(JSON.stringify(this.appList))
-            this.appListOut.forEach((item, index) => {
-              this.$set(item, 'isChecked', false)
-              // console.log('88888:', this.queryParams.applicationIds, item.id)
-              // if (this.queryParams.applicationIds.includes(item.id)) {
-              //   this.$set(item, 'isChecked', true)
-              // } else {
-              // }
-            })
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
+    // getApplicationlistOut() {
+    //   this.confirmLoading = true
+    //   getApplicationlist(this.queryParamsApp)
+    //     .then((res) => {
+    //       if (res.code == 0) {
+    //         this.appList = res.data
+    //         this.appListOut = JSON.parse(JSON.stringify(this.appList))
+    //         this.appListOut.forEach((item, index) => {
+    //           this.$set(item, 'isChecked', false)
+    //         })
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
     /**
      * 重置
      */
@@ -288,9 +302,21 @@ export default {
         return
       }
       this.confirmLoading = true
+      var arryData=[]
       let selectIds = JSON.parse(JSON.stringify(this.selectedRowKeys))
+      // selectIds.push({
+      //   applicationId:458
+      // })
+
+      arryData.push({
+        "applicationId":458
+      })
+      arryData.push(selectIds)
+      // selectIds.push("applicationId",1)
+
       var queryParamsData={
-        deptId:selectIds,
+        accountId:458,
+        items:arryData,
       }
       console.log("BBBB:",queryParamsData)
       updateManagerDepts(queryParamsData).then((res) => {
