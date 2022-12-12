@@ -13,69 +13,66 @@ export default {
   props: {
     ids: {
       type: String,
-      default: 'pies',
+      default: 'pies'
     },
     name: {
       type: String,
-      default: 'name',
+      default: 'name'
     },
     widths: {
       type: String,
-      default: 'auto',
+      default: 'auto'
     },
     heights: {
       type: String,
-      default: '400px',
-    },
+      default: '400px'
+    }
   },
   data() {
     return {
       chart: null,
-      // data: [],
       option: {
         tooltip: {
-          trigger: 'item',
+          trigger: 'item'
         },
         legend: {
-          type: 'scroll',
-          // type: 'plain',
-          orient: 'vertical',
-          // align: 'left',
-          x: 'left',
-          // right: 10,
-          // top: 20,
-          // bottom: 20,
-          data: [],
+          top: '5%',
+          left: 'center'
         },
         series: [
           {
             type: 'pie',
-            radius: '50%',
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)',
-              },
+            radius: ['40%', '70%'],
+            avoidLabelOverlap: false,
+            label: {
+              show: false,
+              position: 'center'
             },
-          },
-        ],
-      },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: '18',
+                fontWeight: 'bold'
+              }
+            },
+            labelLine: {
+              show: false
+            }
+          }
+        ]
+      }
     }
   },
   methods: {
     init(option) {
-      this.option.legend = JSON.parse(JSON.stringify(option.data))
-      this.data = JSON.parse(JSON.stringify(option.data))
-      console.log('init option', JSON.parse(JSON.stringify(option)))
       const options = JSON.parse(JSON.stringify(this.option))
       options.series[0] = { ...options.series[0], ...{ name: this.name }, ...option }
       this.hideLoading()
       this.getChart(true).setOption(options)
     },
     getChart(isNew) {
-      if (isNew) {
-        if (this.chart !== null) {
+      if (isNew){
+        if (this.chart !== null){
           this.chart.dispose()
           this.chart = null
         }
@@ -91,7 +88,7 @@ export default {
     },
     hideLoading() {
       this.getChart().hideLoading()
-    },
-  },
+    }
+  }
 }
 </script>
