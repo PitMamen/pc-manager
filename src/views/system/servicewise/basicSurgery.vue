@@ -1,100 +1,79 @@
 <template>
   <!-- <div style="height: 500px; width: 100%"> -->
   <div class="inner-wrap">
-    <div
-      class="div-yiji"
-      v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0"
-      style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
-    >
-      <div class="div-jancha" v-if="insideShowType == 'jiancha'">
-        <div class="div-line-wrap">
-          <div class="div-item-two">
-            检查名称：<span style="color: #333">{{ insideShowData.jcmc }}</span>
+    <div class="div-surgery" v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0">
+      <div class="div-jancha">
+        <div class="div-line-wrap" style="margin-top: 0">
+          <div class="div-item-three" style="color: red">
+            科室：<span style="color: #333">{{ insideShowData.jcmc }}</span>
           </div>
-          <div class="div-item-three">
-            检查类型：<span style="color: #333">{{ insideShowData.jclx }}</span>
+          <div class="div-item-three" style="color: red">
+            住院号：<span style="color: #333">{{ insideShowData.jclx }}</span>
           </div>
-          <div class="div-item-three">
-            检查部位与方法：<span style="color: #333">{{ insideShowData.jcbwff }}</span>
+          <div class="div-item-three" style="color: red">
+            床号：<span style="color: #333">{{ insideShowData.jcbwff }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-two">影响表现或检查所见：</div>
-        </div>
-        <div class="div-line-wrap">
-          <span style="color: #333">{{ insideShowData.yxbxjcsj }}</span>
-        </div>
-        <div class="div-line-wrap">
-          <div class="div-item-two">检查诊断或提示：</div>
-        </div>
-        <div class="div-line-wrap">
-          <span style="color: #333">{{ insideShowData.yxzdts }}</span>
+          <div class="div-item-leng">麻醉方式：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-two">备注或建议：</div>
-        </div>
-        <div class="div-line-wrap">
-          <span style="color: #333">{{ insideShowData.bzhjy }}</span>
+          <div class="div-item-leng">术前诊断：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-three">
-            检查日期：<span style="color: #333">{{ insideShowData.jcmc }}</span>
-          </div>
-          <div class="div-item-three">
-            报告日期：<span style="color: #333">{{ insideShowData.jclx }}</span>
-          </div>
+          <div class="div-item-leng">术后诊断：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
         </div>
-      </div>
 
-      <div class="div-janyan" v-if="insideShowType == 'jianyan'">
         <div class="div-line-wrap">
-          <div class="div-item-two">
-            项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
-          </div>
-          <div class="div-item-four">
-            标本名称：<span style="color: #333">{{ insideShowData.bbmc }}</span>
-          </div>
+          <div class="div-item-leng">手术名称：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
         </div>
 
-        <a-table
-          ref="table"
-          :pagination="false"
-          style="margin-top: 10px; margin-bottom: 10px"
-          size="default"
-          :scroll="{ x: true }"
-          bordered
-          :columns="columns"
-          :data-source="insideShowData.jyjgzb"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="wrong" slot-scope="text, record">
-            <span v-if="record.ycts == 1">正常</span>
-            <a-icon v-else-if="record.ycts == 3" style="color: red" type="arrow-up" />
-            <a-icon v-else-if="record.ycts == 4" style="color: red" type="arrow-down" />
-            <span v-else>-</span>
-            <!-- <a-icon type="arrow-down" /> -->
-          </span>
-        </a-table>
+        <div class="div-line-wrap">
+          <div class="div-item-leng" style="width: 88px">手术过程描述：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+        </div>
+
+        <div class="div-line-wrap">
+          <div class="div-item-leng" style="width: 88px">手术操作方法：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+        </div>
+
+        <div class="div-line-wrap">
+          <div class="div-item-leng">手术过程：</div>
+          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+        </div>
+
+        <div class="div-line-wrap">
+          <div style="width: 85%"></div>
+          <div style="width: 15%">手术医生姓名：{{ insideShowData.yxbxjcsj }}上唇上述</div>
+        </div>
+        <div class="div-line-wrap">
+          <div style="width: 85%"></div>
+          <div style="width: 15%">麻醉医师姓名：{{ insideShowData.yxbxjcsj }}</div>
+        </div>
       </div>
 
       <div class="div-shu" style="overflow-y: auto; height: 370px">
         <!-- <div class="div-shu"> -->
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
-            v-for="(item, index) in insideJbxx.newArr"
+            v-for="(item, index) in insideJbxx.yzxx"
             :color="item.color"
             :key="index"
             @click="onItemClick(item, index)"
           >
             <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
               {{ item.timeStr }}
-              <div class="div-name" :title="item.name">
+              <!-- <div class="div-name" :title="item.name">
                 {{ item.name }}
-              </div>
+              </div> -->
             </div></a-timeline-item
           >
         </a-timeline>
@@ -117,14 +96,11 @@ export default {
   components: {},
   props: {
     jbxx: Object,
-    showType: String,
     showData: Object,
   },
   data() {
     return {
-      // showType: '',
       insideJbxx: this.jbxx,
-      insideShowType: this.showType,
       insideShowData: this.showData,
       // insideShowType: 'jiancha',
 
@@ -201,38 +177,53 @@ export default {
   padding: 10px;
   width: 99%;
 
-  .div-yiji {
+  .div-surgery {
+    overflow-y: auto;
+    height: 380px;
+    padding-right: 10px;
+
+    padding-bottom: 10px;
     display: flex;
     flex-direction: row;
 
     .div-jancha {
       width: 87%;
+      border: 1px #eee solid;
+      padding: 10px;
       height: 100%;
-    }
 
-    .div-line-wrap {
-      width: 100%;
-      // margin-top: 10px;
-      display: flex;
-      align-items: center;
-      flex-direction: row;
+      .div-line-wrap {
+        font-size: 12px;
+        width: 100%;
+        margin-top: 12px;
+        display: flex;
+        font-weight: bold;
+        color: #333;
+        align-items: center;
+        flex-direction: row;
 
-      .div-item-four {
-        width: 25%;
+        .div-item-leng {
+          width: 62px;
+        }
+        .div-item-leng-con {
+          width: 600px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .div-item-four {
+          width: 25%;
+        }
+
+        .div-item-three {
+          width: 32%;
+        }
+
+        .div-item-two {
+          width: 50%;
+        }
       }
-
-      .div-item-three {
-        width: 32%;
-      }
-
-      .div-item-two {
-        width: 50%;
-      }
-    }
-
-    .div-janyan {
-      width: 87%;
-      height: 100%;
     }
 
     .div-shu {
