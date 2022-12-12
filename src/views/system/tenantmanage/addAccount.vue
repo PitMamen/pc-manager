@@ -29,7 +29,7 @@
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
-            <a-select show-search v-model="checkData.userId" allow-clear placeholder="请选择人员" @search="onUserSelectChange" >
+            <a-select show-search v-model="checkData.userId" allow-clear placeholder="请选择人员" @search="onUserSelectSearch" @change="onUserSelectChange">
               <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{ item.userName }}</a-select-option>
             </a-select>
           </div>
@@ -37,7 +37,7 @@
             <span class="span-item-name">所属机构:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.name"
+              v-model="checkData.hospitalName"
               style="display: inline-block"
               allow-clear
               readOnly
@@ -48,7 +48,7 @@
             <span class="span-item-name">联系方式:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.name"
+              v-model="checkData.phone"
               style="display: inline-block"
               allow-clear
               readOnly
@@ -87,7 +87,7 @@
 import {
   getRoleList,
   queryHospitalList,
-  qryMetaConfigureDetail,
+  getDoctorAccountDetail,
   createDoctorAccount,
   searchDoctorUser,
   modifyWxTemplate,
@@ -100,6 +100,7 @@ export default {
   data() {
     return {
       visible: false,
+      record:{},
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
@@ -110,11 +111,12 @@ export default {
       checkData: {
         loginName: '', //登录账号
         userId:'',//对应人员
-        userId: '',    
-        tel: '',
+        hospitalName: '',    
+        phone: '',
         role: undefined, //分配角色
         zuoxi:'',//坐席
       },
+    
       accountChecked: false, //客服坐席
      
       roleList: [], //角色列表
@@ -125,7 +127,17 @@ export default {
   },
   created() {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.checkData={
+        loginName: '', //登录账号
+        userId:'',//对应人员
+        hospitalName: '',    
+        phone: '',
+        role: [], //分配角色
+        zuoxi:'',//坐席
+      }
+      this.accountChecked= false
+    },
     //新增
     addModel() {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -138,6 +150,37 @@ export default {
       this.getUserList('')
     
     },
+//修改
+editModel(record) {
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+      this.clearData()
+      this.visible = true
+      this.confirmLoading = false
+      this.record=record
+
+      this.getRolesOut()
+      this.getUserList('')
+      this.getDoctorAccountDetailOut(record.accountId)
+    },
+     //用户详情
+     getDoctorAccountDetailOut(accountId){
+      getDoctorAccountDetail({
+        accountId: accountId,
+      }).then((res) => {
+        if (res.code == 0) {
+             
+          this.checkData=res.data
+          var roles=[]
+          res.data.roles.forEach(element => {
+            roles.push(element.roleId)
+          });
+          console.log( roles)
+          this.checkData.role=roles
+          this.getRolesOut()
+        }
+      })
+    },
+
     //获取角色列表
     getRolesOut() {
       getRoleList({
@@ -175,6 +218,13 @@ export default {
       })
     },
     onUserSelectChange(value){
+      console.log('onUserSelectChange',value)
+    var checkedUser = this.userList.find((item) => item.userId == value)
+      this.checkData.hospitalName=checkedUser.hospitalName
+      this.checkData.phone=checkedUser.phone
+     
+    },
+    onUserSelectSearch(value){
       console.log(value)
       this.getUserList(value)
     },
@@ -189,16 +239,12 @@ export default {
         this.$message.error('请输入登录账号')
         return
       }
-      if (this.checkData.name.length==0) {
+      if (this.checkData.userId.length==0) {
         this.$message.error('请选择对应人员')
         return
       }
     
 
-      if (this.checkData.tel.length==0) {
-        this.$message.error('请输入联系电话')
-        return
-      }
 
       if (this.checkData.role.length == 0) {
           this.$message.error('请分配角色')
@@ -217,7 +263,7 @@ export default {
 
       var postData = {
         loginName:this.checkData.loginName,
-        userId:111,
+        userId:this.checkData.userId,
         actorIds:this.checkData.role,
         
       }

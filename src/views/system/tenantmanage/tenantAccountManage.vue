@@ -41,7 +41,7 @@
     >
       <span slot="action" slot-scope="text, record">
       
-        <a @click="editPlan(record)" :disabled="record.accountStatus !== 0">修改</a>
+        <a  :disabled="record.accountStatus !== 0" @click="$refs.addAccount.editModel(record)">修改</a>
         <a-divider type="vertical" />
         <a @click="goAssDepartmanage(record)" :disabled="record.accountStatus !== 0">关联科室</a>
         <a-divider type="vertical" />
@@ -122,11 +122,11 @@ export default {
         },
         {
           title: '角色',
-          dataIndex: 'userTypeName',
+          dataIndex: 'roleNames',
         },
         {
           title: '所属机构',
-          dataIndex: 'hospitalCode',
+          dataIndex: 'hospitalName',
         },
        
         {

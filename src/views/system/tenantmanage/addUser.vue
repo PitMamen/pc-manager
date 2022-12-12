@@ -51,7 +51,7 @@
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>出生日期:</span>
-            <a-date-picker @change="onDatePickerChange" />
+            <a-date-picker :value="checkData.birthday?moment(checkData.birthday, 'YYYY-MM-DD'):undefined"  @change="onDatePickerChange" />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>身份证号:</span>
@@ -115,7 +115,7 @@
             <span class="span-title">账号信息</span>
           </div>
           <div class="div-content">
-            <a-checkbox v-model="accountChecked"></a-checkbox>
+            <a-checkbox v-model="accountChecked" :disabled="record.userId?true:false"></a-checkbox>
             <span class="span-item-name">创建账号:</span>
             <a-input
               v-model="checkData.phone"
@@ -135,7 +135,7 @@
           <div class="div-content">
             <div class="jueseview">
               <a-checkbox
-                :disabled="!accountChecked"
+                :disabled="!accountChecked || isDetailTag"
                 v-model="item.checked"
                 class="checkbox"
                 v-for="(item, index) in roleList"
@@ -152,23 +152,23 @@
           <div class="div-content" style="flex-wrap: wrap">
             <div class="checkview">
               <span class="span-check-title">图文咨询:</span>
-              <a-switch v-model="textNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="textNumChecked" :disabled="!accountChecked || isDetailTag" />
             </div>
             <div class="checkview">
               <span class="span-check-title">电话咨询:</span>
-              <a-switch v-model="telNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="telNumChecked" :disabled="!accountChecked ||isDetailTag" />
             </div>
             <div class="checkview" style="margin-right: 0">
               <span class="span-check-title">视频咨询:</span>
-              <a-switch v-model="videoNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="videoNumChecked" :disabled="!accountChecked || isDetailTag" />
             </div>
             <div class="checkview">
               <span class="span-check-title">复诊开方:</span>
-              <a-switch v-model="appointNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="appointNumChecked" :disabled="!accountChecked || isDetailTag" />
             </div>
             <div class="checkview">
               <span class="span-check-title">MDT会诊:</span>
-              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked || isDetailTag" />
             </div>
           </div>
 
@@ -214,6 +214,7 @@
 
 
 <script>
+import moment from 'moment';
 import {
   getRoleList,
   queryHospitalList,
@@ -226,12 +227,14 @@ import {
 import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
+import { check } from 'yargs';
 export default {
   components: {},
   data() {
     return {
       visible: false,
       record:{},
+      isDetailTag:false,
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
@@ -268,8 +271,10 @@ export default {
   },
   created() {},
   methods: {
+    moment,
     clearData() {
       this.record={}
+      this.isDetailTag=false
     this.checkData= {
         avatarUrl: '', //头像
         userName: '',
@@ -314,7 +319,9 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.record=record
+      this.isDetailTag=true
       
+     
       this.queryHospitalListOut()
       this.getAccountDictUserTypes()
       this.getProfessionalTitles()
@@ -327,14 +334,15 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           res.data.userSex= res.data.userSex=='男'?0:res.data.userSex=='女'?1:2
-          var birthday=res.data.birthday
-          var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6) 
-          res.data.birthday=birthday2
+          // var birthday=res.data.birthday
+          // var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6) 
+          // res.data.birthday=birthday2
           if(res.data.loginName){
             this.accountChecked=true
           }else{
             this.accountChecked=false
           }
+         
           this.checkData=res.data
           if(res.data.registerTypeOptions){
             if(res.data.registerTypeOptions.indexOf("textNum")>-1){
@@ -353,6 +361,7 @@ export default {
               this.MDTNumChecked=true
             }
           }
+         
          
 
           this.getRolesOut()
@@ -423,14 +432,14 @@ export default {
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
               this.$set(item, 'title', item.hospitalName)
               this.$set(item, 'children', item.hospitals)
 
               item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
                 this.$set(item1, 'title', item1.hospitalName)
               })
             })
@@ -457,6 +466,15 @@ export default {
         return false
       }
       return true
+    },
+   
+    momentfun(){
+     
+      if(this.checkData.birthday){
+        return moment(this.checkData.birthday, 'YYYYMMDD')
+      }else{
+        return undefined
+      }
     },
     handleChange(changeObj) {
       console.log(changeObj)
@@ -486,57 +504,57 @@ export default {
       console.log(this.checkData)
       
 
-      if (this.checkData.avatarUrl.length == 0) {
-        this.$message.error('请上传头像')
-        return
-      }
-      if (this.checkData.userName.length == 0) {
-        this.$message.error('请输入姓名')
-        return
-      }
-      if (this.checkData.birthday.length == 0) {
-        this.$message.error('请选择出生日期')
-        return
-      }
-      if (this.checkData.identificationNo.length == 0) {
-        this.$message.error('请输入身份证号码')
-        return
-      }
+      // if (this.checkData.avatarUrl.length == 0) {
+      //   this.$message.error('请上传头像')
+      //   return
+      // }
+      // if (this.checkData.userName.length == 0) {
+      //   this.$message.error('请输入姓名')
+      //   return
+      // }
+      // if (this.checkData.birthday.length == 0) {
+      //   this.$message.error('请选择出生日期')
+      //   return
+      // }
+      // if (this.checkData.identificationNo.length == 0) {
+      //   this.$message.error('请输入身份证号码')
+      //   return
+      // }
 
-      var idRes = idCardValidity(this.checkData.identificationNo)
-      console.log(idRes)
-      if (!idRes.result) {
-        this.$message.error('请输入正确的身份证号码')
-        return
-      }
+      // var idRes = idCardValidity(this.checkData.identificationNo)
+      // console.log(idRes)
+      // if (!idRes.result) {
+      //   this.$message.error('请输入正确的身份证号码')
+      //   return
+      // }
 
-      if (this.checkData.phone.length == 0) {
-        this.$message.error('请输入联系电话')
-        return
-      }
+      // if (this.checkData.phone.length == 0) {
+      //   this.$message.error('请输入联系电话')
+      //   return
+      // }
 
-      if (!phoneValidity(this.checkData.phone)) {
-        this.$message.error('请输入正确的联系电话')
-        return
-      }
+      // if (!phoneValidity(this.checkData.phone)) {
+      //   this.$message.error('请输入正确的联系电话')
+      //   return
+      // }
 
-      if (this.checkData.email.length == 0) {
-        this.$message.error('请输入邮箱地址')
-        return
-      }
-      if (!emailValidity(this.checkData.email)) {
-        this.$message.error('请输入正确的邮箱地址')
-        return
-      }
+      // if (this.checkData.email.length == 0) {
+      //   this.$message.error('请输入邮箱地址')
+      //   return
+      // }
+      // if (!emailValidity(this.checkData.email)) {
+      //   this.$message.error('请输入正确的邮箱地址')
+      //   return
+      // }
 
-      if (this.checkData.userType.length == 0) {
-        this.$message.error('请选择人员类型')
-        return
-      }
-      if (this.checkData.professionalTitle.length == 0) {
-        this.$message.error('请选择人员职称')
-        return
-      }
+      // if (this.checkData.userType.length == 0) {
+      //   this.$message.error('请选择人员类型')
+      //   return
+      // }
+      // if (this.checkData.professionalTitle.length == 0) {
+      //   this.$message.error('请选择人员职称')
+      //   return
+      // }
       if (this.checkData.hospitalCode.length == 0) {
         this.$message.error('请选择所属机构')
         return
