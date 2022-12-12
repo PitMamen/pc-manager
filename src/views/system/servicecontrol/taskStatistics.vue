@@ -59,7 +59,7 @@
     <!-- :scroll="{ y: 700, x: 0 }"  -->
     <!--  style="overflow-y: auto" -->
     <s-table
-    
+    class="table-hover-hidden"
       :showPagination="false"
       style="overflow-y: auto;width: 101%;"
       :scroll="{ y: 700,x: 0 }"
@@ -387,6 +387,7 @@ export default {
 </script>
   
   <style lang="less">
+ 
   .ant-select-selection--multiple {
     min-height: 28px;
     cursor: text;
@@ -450,10 +451,16 @@ export default {
 
 
 .table-hover-hidden {
-  width: 101% !important;
-  .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
-    background-color: #ffffff !important;
-  }
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: none !important;
+}
+  width: 100% !important;
+  .table-hover-hidden .ant-table-body {
+    //  overflow: auto ; 
+}
+  /deep/table tbody tr:hover>td {
+      background: #E7F1FF !important;
+}
   .ant-table-body .ant-table-row-hover {
     background: #e7f1ff;
   }
@@ -461,9 +468,6 @@ export default {
     background: #e7f1ff;
   }
 
-  .ant-table-body{
-    overflow: auto !important;
-  }
 }
 
 .table-page-search-wrapper {

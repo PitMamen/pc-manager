@@ -102,12 +102,15 @@
        <!-- 显示序号 -->
         <span slot="showIndex" slot-scope="text, record">
           <a-input
+           type="number"
+           :min="0"
+           :placeholder="请输入正整数"
+           :disabled="isDisable(record.show)"
           v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.showIndex"
             class="span-item-value"
             :maxLength="30"
             style="display: inline-block; width:60px; margin-right: 20px;padding-right:0px"
-            allow-clear
             @blur="inputIndex(record)"
           />
         </span>
@@ -279,6 +282,15 @@ export default {
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    // 显示序号 输入框是否禁用
+    isDisable(value){
+     if(value==1){
+      return false
+     }else{
+      return true
+     }
     },
 
     //失去焦点 查询

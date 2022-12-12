@@ -196,7 +196,7 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record)" :title="ssss" @click="goCheck(record)">{{getText(record.auditResultStatus.value)}}</a>
+        <a v-if="showOrHide(record)"  @click="goCheck(record)">{{getText(record.auditResultStatus.value)}}</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
@@ -274,8 +274,8 @@ export default {
         type: 1,
         // execDoctorUserId: 0,
         // execStatus: 3,
-        beginExecuteTime: '',
-        endExecuteTime: '',
+        beginExecuteTime: formatDate(new Date()),
+        endExecuteTime: this.formatDate(new Date()),
         execDoctorUserId: '',
         messageOriginalld: '',
         executeDepartmentIds: [],
@@ -370,8 +370,8 @@ export default {
               totalPage: res.data.totalPage / parameter.pageSize,
               rows: res.data.rows,
             }
-
-            data.rows.forEach((item, index) => {
+            if(data.rows){
+              data.rows.forEach((item, index) => {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               this.$set(item, 'flowType', item.messageType != null ? item.messageType.description : '')
               // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
@@ -380,6 +380,7 @@ export default {
               this.$set(item, 'status', item.status.value)
               this.$set(item, 'key', item.id)
             })
+            }
           }
           return data
         })
@@ -390,7 +391,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.roleIds.push(this.user.roleId)
-    console.log('666666:', this.roleIds)
+    // console.log('666666:', this.roleIds)
     console.log(this.user)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
     if (this.user.roleId == 7 || this.user.roleName == 'admin') {
@@ -482,7 +483,7 @@ export default {
      * 全选
      */
     onSelectChange(selectedRowKeys, selectedRows) {
-      console.log('ssssss:', selectedRowKeys, selectedRows)
+      // console.log('ssssss:', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
       console.log('88888:', this.selectedRows)
