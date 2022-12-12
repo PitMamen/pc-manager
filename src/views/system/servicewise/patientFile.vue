@@ -27,7 +27,7 @@
               </div>
             </div>
             <div class="content-main">
-              <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
+              <a-tabs v-model="activeKey" type="line" @change="tabChange" style="margin-top: -10px; position: relative">
                 <a-tab-pane key="1">
                   <template #tab>
                     <span class="span-tab">
@@ -95,6 +95,12 @@
                       手术
                     </span>
                   </template>
+                  <basic-surgery
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
+                    ref="basicSurgery"
+                    :jbxx="fileDetailData"
+                    :showData="showDataShoushu"
+                  />
                 </a-tab-pane>
                 <a-tab-pane key="5">
                   <template #tab>
@@ -107,6 +113,11 @@
                       费用
                     </span>
                   </template>
+                  <basic-fee
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
+                    ref="basicFee"
+                    :jbxx="fileDetailData"
+                  />
                 </a-tab-pane>
               </a-tabs>
             </div>
@@ -135,12 +146,14 @@ import { getFileList, getFileDtail, getBaseInfo } from '@/api/modular/system/pos
 import basicInfo from './basicInfo'
 import basicTech from './basicTech'
 import basicMedic from './basicMedic'
+import basicSurgery from './basicSurgery'
+import basicFee from './basicFee'
 import { TRUE_USER } from '@/store/mutation-types'
 import { decodeRecord } from '@/utils/forgeUtils'
 import { formatDateFull, formatDate } from '@/utils/util'
 import Vue from 'vue'
 export default {
-  components: { basicInfo, basicTech, basicMedic },
+  components: { basicInfo, basicTech, basicMedic, basicSurgery, basicFee },
   props: {
     record: Object,
   },
@@ -148,13 +161,14 @@ export default {
     return {
       isDoubled: true,
       confirmLoading: false,
-      defaultShowType: undefined,
+      defaultShowType: 'jiancha',
       activeKey: '1',
       jbxx: { name: '李四' },
       user: {},
       patientInfo: {},
       showData: {},
       showDataYizhu: {},
+      showDataShoushu: {},
       historyList: [],
       /**
        * 			if (index === 0) {
@@ -187,12 +201,13 @@ export default {
     getFileList(param).then((res) => {
       if (res.code === 0) {
         this.historyList = res.data
-        for (let index = 0; index < this.historyList.length; index++) {
-          this.$set(this.historyList[index], 'isChecked', false)
+        if (this.historyList.length > 0) {
+          for (let index = 0; index < this.historyList.length; index++) {
+            this.$set(this.historyList[index], 'isChecked', false)
+          }
+          this.$set(this.historyList[0], 'isChecked', true)
+          this.getDetailOut(0)
         }
-        this.$set(this.historyList[0], 'isChecked', true)
-        this.getDetailOut(0)
-        // this.onHistoryItemClick(res.data[0].id)
       } else {
         this.$message.error(res.message)
       }
@@ -208,7 +223,10 @@ export default {
           res.data.baseInfo.birthday =
             birthday.substring(0, 4) + '-' + birthday.substring(4, 6) + '-' + birthday.substring(6, 8)
           this.patientInfo = res.data
-          // this.subStringIdcardNo(this.patientInfo.identificationNo);
+          this.patientInfo.baseInfo.identificationNo = this.patientInfo.baseInfo.identificationNo.replace(
+            /^(.{6})(?:\d+)(.{4})$/,
+            '$1********$2'
+          )
         } else {
           this.$message.error(res.message)
         }
@@ -237,16 +255,42 @@ export default {
         hospitalCode: this.historyList[index].hospitalCode,
       }
       this.confirmLoading = true
+      let that = this
       getFileDtail(param)
         .then((res) => {
           this.confirmLoading = false
           if (res.code === 0) {
             this.fileDetailData = decodeRecord(res.encryptedRecord, res.wrappedDEK)
             if (this.fileDetailData) {
+              console.log('this.fileDetailDataStr ***', JSON.stringify(this.fileDetailData))
               //数据处理统一放在外层页面做
               this.fileDetailData.cismain.rysj = formatDate(new Date(this.fileDetailData.cismain.rysj))
               this.fileDetailData.cismain.cysj = formatDate(new Date(this.fileDetailData.cismain.cysj))
-              this.fileDetailData.zdxx.zdsj = formatDate(new Date(this.fileDetailData.zdxx.zdsj))
+
+              //脱敏处理
+              this.fileDetailData.cismain.lxdh = this.fileDetailData.cismain.lxdh.replace(
+                /(\d{3})\d{4}(\d{4})/,
+                '$1****$2'
+              )
+              this.fileDetailData.cismain.gzdwdh = this.fileDetailData.cismain.gzdwdh.replace(
+                /(\d{3})\d{4}(\d{4})/,
+                '$1****$2'
+              )
+              this.fileDetailData.cismain.lxrdh = this.fileDetailData.cismain.lxrdh.replace(
+                /(\d{3})\d{4}(\d{4})/,
+                '$1****$2'
+              )
+              if (this.fileDetailData.cismain && this.fileDetailData.cismain.csny) {
+                this.fileDetailData.cismain.csny =
+                  this.fileDetailData.cismain.csny.substring(0, 4) +
+                  '-' +
+                  this.fileDetailData.cismain.csny.substring(4, 6) +
+                  '-' +
+                  this.fileDetailData.cismain.csny.substring(6, 8)
+                this.fileDetailData.zdxx.forEach((item) => {
+                  item.zdsj = formatDate(new Date(item.zdsj))
+                })
+              }
 
               //检查检验合并数组并排序
               let newArr = []
@@ -350,19 +394,67 @@ export default {
                 this.$set(this.fileDetailData.yzxx[0], 'color', 'blue')
               }
 
+              //处理手术信息 需要按时间将一级数组封装成新的二级数组
+              for (let index = 0; index < this.fileDetailData.ssxx.length; index++) {
+                this.$set(
+                  this.fileDetailData.ssxx[index],
+                  'timeStr',
+                  formatDate(new Date(this.fileDetailData.ssxx[index].sskssj))
+                )
+                // //组装发药数量
+                // this.$set(
+                //   this.fileDetailData.ssxx[index],
+                //   'fysl',
+                //   this.fileDetailData.ssxx[index].ypsl + this.fileDetailData.ssxx[index].ypdw
+                // )
+              }
+              let newYzxxSX = []
+              let dateArrSX = []
+              if (this.fileDetailData.ssxx.length > 0) {
+                for (let index = 0; index < this.fileDetailData.ssxx.length; index++) {
+                  dateArrSX.push(this.fileDetailData.ssxx[index].timeStr)
+                }
+                dateArrSX = dateArrSX.filter((item, index) => {
+                  //去重
+                  return dateArrSX.indexOf(item) === index // 因为indexOf 只能查找到第一个
+                })
+              }
+              console.log('dateArrSS手术', dateArrSX)
+              for (let index = 0; index < dateArrSX.length; index++) {
+                newYzxxSX.push({ color: 'gray', data: [], timeStr: dateArrSX[index] })
+                for (let indexIn = 0; indexIn < this.fileDetailData.ssxx.length; indexIn++) {
+                  if (dateArrSX[index] == this.fileDetailData.ssxx[indexIn].timeStr) {
+                    newYzxxSX[index].data.push(JSON.parse(JSON.stringify(this.fileDetailData.ssxx[indexIn])))
+                  }
+                }
+              }
+              this.$set(this.fileDetailData, 'ssxx', newYzxxSX)
+
+              if (this.fileDetailData.ssxx.length > 0) {
+                this.showDataShoushu = this.fileDetailData.ssxx[0]
+                this.$set(this.fileDetailData.ssxx[0], 'color', 'blue')
+              }
+
               console.log('this.fileDetailDataStr', JSON.stringify(this.fileDetailData))
             } else {
               uni.$u.toast('解密失败')
             }
 
-            // insideJbxx, insideShowType, insideShowData
-            // :jbxx="fileDetailData"
-            // :showType="defaultShowType"
-            // :showData="showData"
+            // this.$nextTick(() => {
             this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
-            this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
-            this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
-            // this.onHistoryItemClick(res.data[0].id)
+            if (this.$refs.basicTech && this.fileDetailData.newArr.length > 0) {
+              this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
+            }
+            if (this.$refs.basicMedic && this.fileDetailData.yzxx.length > 0) {
+              this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
+            }
+
+            if (this.$refs.basicSurgery) {
+              this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu)
+            }
+            if (this.$refs.basicFee) {
+              this.$refs.basicFee.refreshData(JSON.parse(JSON.stringify(this.fileDetailData.sfxx)))
+            }
           } else {
             this.$message.error(res.message)
           }
@@ -370,6 +462,26 @@ export default {
         .finally(() => {
           this.confirmLoading = false
         })
+    },
+
+    tabChange(key) {
+      if (key == 1) {
+        this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
+      } else if (key == 2) {
+        if (this.fileDetailData.newArr.length > 0) {
+          this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
+        }
+      } else if (key == 3) {
+        if (this.fileDetailData.yzxx.length > 0) {
+          this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
+        }
+      } else if (key == 4) {
+        this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu)
+      } else if (key == 5) {
+        this.$nextTick(() => {
+          this.$refs.basicFee.refreshData(JSON.parse(JSON.stringify(this.fileDetailData.sfxx)))
+        })
+      }
     },
 
     goCancel() {

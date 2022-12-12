@@ -30,6 +30,7 @@ import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
 import Dialog from '@/components/Dialog'
 import Bars from '@/components/Charts/Bars'
+import Pies from '@/components/Charts/Pies'
 
 
 export {
@@ -63,5 +64,6 @@ export {
   StandardFormRow,
   ArticleListContent,
   Dialog,
-  Bars
+  Bars,
+  Pies
 }

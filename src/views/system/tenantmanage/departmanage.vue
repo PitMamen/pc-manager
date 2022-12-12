@@ -13,7 +13,7 @@
         <div class="div-part-left">
           <div class="left-content1" style="margin-bottom: 20px" v-for="(item, index) in appListOut" :key="index">
             <div class="div-content" style="margin-left:47px">
-              <a-checkbox style="margin-left:10px" v-model="item.isChecked" @change="selectChange(item)"></a-checkbox>
+              <a-checkbox style="margin-left:10px" v-model="item.isChecked" @change="checkBoxselectChange(item)" :disabled="item.id!=1"></a-checkbox>
               <span class="span-item-value" style="font-size: 14px; margin-top: 0px; margin-left: 10px; color: #4d4d4d"
                 >{{ item.applicationName }}
               </span>
@@ -22,6 +22,7 @@
             <div class="div-content" style="margin-left:47px">
               <span class="span-item-name" >已选科室:</span>
               <a-select
+              :disabled="item.id!=1"
                 v-model="selectedRowKeys"
                 allow-clear
                 placeholder="请在表格中勾选科室"
@@ -81,9 +82,9 @@ import {
   getRoleList,
   getDepts,
   getDepartmentListForReq,
-  addWxTemplate,
-  getWxTemplateById,
-  modifyWxTemplate,
+  getManagerDepts,
+  updateManagerDepts,
+
 } from '@/api/modular/system/posManage'
 import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -177,6 +178,7 @@ export default {
         this.reset()
       }
       this.getApplicationlistOut()
+      this.getManagerDeptsOut()
 
       getDepartmentListForReq({
         departmentName: '',
@@ -189,7 +191,26 @@ export default {
           this.allDepartList = res.data.records
         }
       })
+
     },
+
+
+
+
+
+    getManagerDeptsOut(){
+      getManagerDepts({accountId:458}).then((res)=>{
+
+      })
+    },
+
+
+    //checkbox 选择
+    checkBoxselectChange(item){
+     
+    },
+
+
     onSelectChange(selectedRowKeys) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
@@ -237,12 +258,12 @@ export default {
             this.appList = res.data
             this.appListOut = JSON.parse(JSON.stringify(this.appList))
             this.appListOut.forEach((item, index) => {
-              console.log('88888:', this.queryParams.applicationIds, item.id)
-              if (this.queryParams.applicationIds.includes(item.id)) {
-                this.$set(item, 'isChecked', true)
-              } else {
-                this.$set(item, 'isChecked', false)
-              }
+              this.$set(item, 'isChecked', false)
+              // console.log('88888:', this.queryParams.applicationIds, item.id)
+              // if (this.queryParams.applicationIds.includes(item.id)) {
+              //   this.$set(item, 'isChecked', true)
+              // } else {
+              // }
             })
           }
         })
@@ -254,7 +275,7 @@ export default {
      * 重置
      */
     reset() {
-      ;(this.queryParams = {
+      (this.queryParams = {
         departmentName: '',
         parentDisarmamentId: '',
         status: 1,
@@ -267,7 +288,12 @@ export default {
         return
       }
       this.confirmLoading = true
-      addWxTemplate(postData).then((res) => {
+      let selectIds = JSON.parse(JSON.stringify(this.selectedRowKeys))
+      var queryParamsData={
+        deptId:selectIds,
+      }
+      console.log("BBBB:",queryParamsData)
+      updateManagerDepts(queryParamsData).then((res) => {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
           this.visible = false

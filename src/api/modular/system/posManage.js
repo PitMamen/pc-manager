@@ -2626,6 +2626,7 @@ export function followList(data) {
  * 随访医生列表
  */
 
+
 export function getUsersByDeptIdsAndRoles(data) {
   return axios({
     url: '/account-api/accountInfo/getUsersByDeptIdsAndRoles',
@@ -2687,29 +2688,29 @@ export function qryMetaByPage(data) {
 /**
  * 医护人员类型[医生,护士,药剂师,医技人员,后勤人员
  */
- export function accountDictUserTypes() {
+export function accountDictUserTypes() {
   return axios({
     url: '/account-api/accountDict/userTypes',
     method: 'get',
-    
+
   })
 }
 
 /**
  * 创建医生、个案师和护士用户，根据参数选择性创建账号
  */
- export function professionalTitles() {
+export function professionalTitles() {
   return axios({
     url: '/account-api/accountDict/professionalTitles',
     method: 'get',
-    
+
   })
 }
 
 /**
  * 设置医生,个案师和护士用户状态信息
  */
- export function setDoctorUserStatus(data) {
+export function setDoctorUserStatus(data) {
   return axios({
     url: '/account-api/accountInfo/setDoctorUserStatus',
     method: 'post',
@@ -2720,7 +2721,7 @@ export function qryMetaByPage(data) {
 /**
  * 人员管理列表
  */
- export function searchDoctorUser(data) {
+export function searchDoctorUser(data) {
   return axios({
     url: '/account-api/accountInfo/searchDoctorUser',
     method: 'post',
@@ -2730,7 +2731,7 @@ export function qryMetaByPage(data) {
 /**
  * 账号管理列表
  */
- export function searchDoctorAccount(data) {
+export function searchDoctorAccount(data) {
   return axios({
     url: '/account-api/accountInfo/searchDoctorAccount',
     method: 'post',
@@ -2740,7 +2741,7 @@ export function qryMetaByPage(data) {
 /**
  * 查询用户归属科室
  */
- export function getBelongDepts(data) {
+export function getBelongDepts(data) {
   return axios({
     url: '/account-api/userInfo/getBelongDepts',
     method: 'get',
@@ -2750,7 +2751,7 @@ export function qryMetaByPage(data) {
 /**
  * 修改用户归属科室
  */
- export function updateBelongDepts(data) {
+export function updateBelongDepts(data) {
   return axios({
     url: '/account-api/userInfo/updateBelongDepts',
     method: 'post',
@@ -2760,7 +2761,7 @@ export function qryMetaByPage(data) {
 /**
  * 创建医生,个案师和护士账号并绑定已有用户
  */
- export function createDoctorAccount(data) {
+export function createDoctorAccount(data) {
   return axios({
     url: '/account-api/accountInfo/createDoctorAccount',
     method: 'post',
@@ -2771,7 +2772,7 @@ export function qryMetaByPage(data) {
 /**
  * 设置医生,个案师和护士账号状态信息
  */
- export function setDoctorAccountStatus(data) {
+export function setDoctorAccountStatus(data) {
   return axios({
     url: '/account-api/accountInfo/setDoctorAccountStatus',
     method: 'post',
@@ -2782,7 +2783,7 @@ export function qryMetaByPage(data) {
 /**
  * 获取用户详情
  */
- export function getDoctorUserDetail(data) {
+export function getDoctorUserDetail(data) {
   return axios({
     url: '/account-api/accountInfo/getDoctorUserDetail',
     method: 'get',
@@ -2793,7 +2794,7 @@ export function qryMetaByPage(data) {
 /**
  * 获取账号详情
  */
- export function getDoctorAccountDetail(data) {
+export function getDoctorAccountDetail(data) {
   return axios({
     url: '/account-api/accountInfo/getDoctorAccountDetail',
     method: 'get',
@@ -2803,10 +2804,35 @@ export function qryMetaByPage(data) {
 /**
  * 修改医生,个案师和护士用户信息
  */
- export function updateDoctorUser(data) {
+export function updateDoctorUser(data) {
   return axios({
     url: '/account-api/accountInfo/updateDoctorUser',
     method: 'post',
     data: data,
   })
 }
+
+
+/**
+ * 查询账号管理科室
+ */
+export function getManagerDepts(data) {
+  return axios({
+    url: '/account-api/accountInfo/getManagerDepts',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 修改账号管理科室
+ */
+export function updateManagerDepts(data) {
+  return axios({
+    url: '/account-api/accountInfo/updateManagerDepts',
+    method: 'post',
+    data: data,
+  })
+}
+
+
