@@ -16,7 +16,8 @@
             性别：<span style="text-decoration: underline">{{ jbxx.xbs }}</span>
           </div>
           <div class="div-item-four">
-            出生日期：<span style="text-decoration: underline">{{ patientInfo.baseInfo.birthday }}</span>
+            <!-- 出生日期：<span style="text-decoration: underline">{{ patientInfo.baseInfo.birthday }}</span> -->
+            出生日期：<span style="text-decoration: underline">{{ jbxx.cismain.csny }}</span>
           </div>
           <div class="div-item-four">
             年龄：<span style="text-decoration: underline">{{ jbxx.nl }}</span>
@@ -66,7 +67,7 @@
             职业：<span style="text-decoration: underline">{{ jbxx.cismain.zybm }}</span>
           </div>
           <div class="div-item-four">
-            婚姻：<span style="text-decoration: underline">{{ jbxx.cismain.hyzkmc }}</span>
+            婚姻：<span style="text-decoration: underline">{{ jbxx.hyzkmc }}</span>
           </div>
         </div>
 
@@ -137,13 +138,17 @@
             入院科别：<span style="text-decoration: underline">{{ jbxx.cismain.ryksmc }}</span>
           </div>
           <div class="div-item-four">
-            病房：<span style="text-decoration: underline">{{ jbxx.cismain.rybq }}</span>
+            病区：<span style="text-decoration: underline">{{ jbxx.cismain.rybq }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            转科：<span style="text-decoration: underline">{{ jbxx.zkmc || '-' }}</span>
+            转科：<span style="text-decoration: underline">{{ jbxx.cismain.zkksbm1 || '-' }}</span
+            ><span style="margin-left: 10px">转：</span
+            ><span style="text-decoration: underline">{{ jbxx.cismain.zkksbm2 || '-' }}</span>
+            <span style="margin-left: 10px">转：</span
+            ><span style="text-decoration: underline">{{ jbxx.cismain.zkksbm3 || '-' }}</span>
           </div>
           <div class="div-item-four"></div>
           <div class="div-item-four"></div>
@@ -161,7 +166,7 @@
             病房：<span style="text-decoration: underline">{{ jbxx.cismain.cybq }}</span>
           </div>
           <div class="div-item-four">
-            实际住院：<span style="text-decoration: underline">{{ jbxx.cismain.zyts }}</span
+            实际住院：<span style="text-decoration: underline">{{ jbxx.cismain.sjzyts }}</span
             >&nbsp;天
           </div>
         </div>
@@ -242,20 +247,7 @@ export default {
     }
   },
 
-  created() {
-    // followPlanPhoneHistory(this.record.userId).then((res) => {
-    //   if (res.code === 0) {
-    //     this.historyList = res.data
-    //     if (res.data && res.data.length > 0) {
-    //       this.onHistoryItemClick(res.data[0].id)
-    //     }
-    //   } else {
-    //     this.$message.error(res.message)
-    //   }
-    // })
-    // this.patientInfo.baseInfo.birthday =
-    //   birthday.substring(0, 4) + '-' + birthday.substring(4, 6) + '-' + birthday.substring(6, 8)
-  },
+  created() {},
   methods: {
     formatDate(date) {
       date = new Date(date)

@@ -29,7 +29,7 @@
         </a-table>
       </div>
 
-      <div class="div-shu" style="overflow-y: auto; height: 380px">
+      <div class="div-shu" style="overflow-y: auto; height: 370px">
         <!-- <div class="div-shu"> -->
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
