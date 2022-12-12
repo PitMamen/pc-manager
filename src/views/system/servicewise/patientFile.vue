@@ -99,7 +99,7 @@
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicSurgery"
                     :jbxx="fileDetailData"
-                    :showData="showData"
+                    :showData="showDataShoushu"
                   />
                 </a-tab-pane>
                 <a-tab-pane key="5">
@@ -113,6 +113,11 @@
                       费用
                     </span>
                   </template>
+                  <basic-fee
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
+                    ref="basicFee"
+                    :jbxx="fileDetailData"
+                  />
                 </a-tab-pane>
               </a-tabs>
             </div>
@@ -142,12 +147,13 @@ import basicInfo from './basicInfo'
 import basicTech from './basicTech'
 import basicMedic from './basicMedic'
 import basicSurgery from './basicSurgery'
+import basicFee from './basicFee'
 import { TRUE_USER } from '@/store/mutation-types'
 import { decodeRecord } from '@/utils/forgeUtils'
 import { formatDateFull, formatDate } from '@/utils/util'
 import Vue from 'vue'
 export default {
-  components: { basicInfo, basicTech, basicMedic, basicSurgery },
+  components: { basicInfo, basicTech, basicMedic, basicSurgery, basicFee },
   props: {
     record: Object,
   },
@@ -162,6 +168,7 @@ export default {
       patientInfo: {},
       showData: {},
       showDataYizhu: {},
+      showDataShoushu: {},
       historyList: [],
       /**
        * 			if (index === 0) {
@@ -194,12 +201,13 @@ export default {
     getFileList(param).then((res) => {
       if (res.code === 0) {
         this.historyList = res.data
-        for (let index = 0; index < this.historyList.length; index++) {
-          this.$set(this.historyList[index], 'isChecked', false)
+        if (this.historyList.length > 0) {
+          for (let index = 0; index < this.historyList.length; index++) {
+            this.$set(this.historyList[index], 'isChecked', false)
+          }
+          this.$set(this.historyList[0], 'isChecked', true)
+          this.getDetailOut(0)
         }
-        this.$set(this.historyList[0], 'isChecked', true)
-        this.getDetailOut(0)
-        // this.onHistoryItemClick(res.data[0].id)
       } else {
         this.$message.error(res.message)
       }
@@ -271,16 +279,17 @@ export default {
                 /(\d{3})\d{4}(\d{4})/,
                 '$1****$2'
               )
-
-              this.fileDetailData.cismain.csny =
-                this.fileDetailData.cismain.csny.substring(0, 4) +
-                '-' +
-                this.fileDetailData.cismain.csny.substring(4, 6) +
-                '-' +
-                this.fileDetailData.cismain.csny.substring(6, 8)
-              this.fileDetailData.zdxx.forEach((item) => {
-                item.zdsj = formatDate(new Date(item.zdsj))
-              })
+              if (this.fileDetailData.cismain && this.fileDetailData.cismain.csny) {
+                this.fileDetailData.cismain.csny =
+                  this.fileDetailData.cismain.csny.substring(0, 4) +
+                  '-' +
+                  this.fileDetailData.cismain.csny.substring(4, 6) +
+                  '-' +
+                  this.fileDetailData.cismain.csny.substring(6, 8)
+                this.fileDetailData.zdxx.forEach((item) => {
+                  item.zdsj = formatDate(new Date(item.zdsj))
+                })
+              }
 
               //检查检验合并数组并排序
               let newArr = []
@@ -384,21 +393,65 @@ export default {
                 this.$set(this.fileDetailData.yzxx[0], 'color', 'blue')
               }
 
-              //处理手术信息
+              //处理手术信息 需要按时间将一级数组封装成新的二级数组
+              for (let index = 0; index < this.fileDetailData.ssxx.length; index++) {
+                this.$set(
+                  this.fileDetailData.ssxx[index],
+                  'timeStr',
+                  formatDate(new Date(this.fileDetailData.ssxx[index].sskssj))
+                )
+                // //组装发药数量
+                // this.$set(
+                //   this.fileDetailData.ssxx[index],
+                //   'fysl',
+                //   this.fileDetailData.ssxx[index].ypsl + this.fileDetailData.ssxx[index].ypdw
+                // )
+              }
+              let newYzxxSX = []
+              let dateArrSX = []
+              if (this.fileDetailData.ssxx.length > 0) {
+                for (let index = 0; index < this.fileDetailData.ssxx.length; index++) {
+                  dateArrSX.push(this.fileDetailData.ssxx[index].timeStr)
+                }
+                dateArrSX = dateArrSX.filter((item, index) => {
+                  //去重
+                  return dateArrSX.indexOf(item) === index // 因为indexOf 只能查找到第一个
+                })
+              }
+              console.log('dateArrSS手术', dateArrSX)
+              for (let index = 0; index < dateArrSX.length; index++) {
+                newYzxxSX.push({ color: 'gray', data: [], timeStr: dateArrSX[index] })
+                for (let indexIn = 0; indexIn < this.fileDetailData.ssxx.length; indexIn++) {
+                  if (dateArrSX[index] == this.fileDetailData.ssxx[indexIn].timeStr) {
+                    newYzxxSX[index].data.push(JSON.parse(JSON.stringify(this.fileDetailData.ssxx[indexIn])))
+                  }
+                }
+              }
+              this.$set(this.fileDetailData, 'ssxx', newYzxxSX)
+
+              if (this.fileDetailData.ssxx.length > 0) {
+                this.showDataShoushu = this.fileDetailData.ssxx[0]
+                this.$set(this.fileDetailData.ssxx[0], 'color', 'blue')
+              }
 
               console.log('this.fileDetailDataStr', JSON.stringify(this.fileDetailData))
             } else {
               uni.$u.toast('解密失败')
             }
 
-            // insideJbxx, insideShowType, insideShowData
-            // :jbxx="fileDetailData"
-            // :showType="defaultShowType"
-            // :showData="showData"  zdsj
-            this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
-            this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
-            this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
-            this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showData)
+            // this.$nextTick(() => {
+              this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
+              if (this.fileDetailData.newArr.length > 0) {
+                this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
+              }
+              // if (this.fileDetailData.yzxx.length > 0) {
+              //   this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
+              // }
+
+              // this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu)
+              this.$refs.basicFee.refreshData(this.fileDetailData)
+            // })
+
             // this.onHistoryItemClick(res.data[0].id)
           } else {
             this.$message.error(res.message)

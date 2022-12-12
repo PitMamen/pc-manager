@@ -1,62 +1,66 @@
 <template>
   <!-- <div style="height: 500px; width: 100%"> -->
   <div class="inner-wrap">
-    <div class="div-surgery" v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0">
+    <div
+      class="div-surgery"
+      v-if="insideJbxx.ssxx && insideJbxx.ssxx.length > 0"
+      style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
+    >
       <div class="div-jancha">
         <div class="div-line-wrap" style="margin-top: 0">
           <div class="div-item-three" style="color: red">
-            科室：<span style="color: #333">{{ insideShowData.jcmc }}</span>
+            科室：<span>{{ insideShowData.data[0].ksmc }}</span>
           </div>
           <div class="div-item-three" style="color: red">
-            住院号：<span style="color: #333">{{ insideShowData.jclx }}</span>
+            住院号：<span>{{ insideShowData.data[0].zyh }}</span>
           </div>
           <div class="div-item-three" style="color: red">
-            床号：<span style="color: #333">{{ insideShowData.jcbwff }}</span>
+            床号：<span>{{ insideShowData.data[0].ch || '-' }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">麻醉方式：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].mzfsmc }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">术前诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssqzdmc }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">术后诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].sshzdmc }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">手术名称：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng" style="width: 88px">手术过程描述：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssgcms }}</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-leng" style="width: 88px">手术操作方法：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng" style="width: 99px">手术及操作方法：</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssjczff }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">手术过程：</div>
-          <div class="div-item-leng-con">{{ insideShowData.yxbxjcsj }}法国人个人</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssgc }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div style="width: 85%"></div>
-          <div style="width: 15%">手术医生姓名：{{ insideShowData.yxbxjcsj }}上唇上述</div>
+          <div style="width: 15%">手术医生姓名：{{ insideShowData.data[0].ssysxm }}</div>
         </div>
         <div class="div-line-wrap">
           <div style="width: 85%"></div>
-          <div style="width: 15%">麻醉医师姓名：{{ insideShowData.yxbxjcsj }}</div>
+          <div style="width: 15%">麻醉医师姓名：{{ insideShowData.data[0].mzysxm }}</div>
         </div>
       </div>
 
@@ -64,7 +68,7 @@
         <!-- <div class="div-shu"> -->
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
-            v-for="(item, index) in insideJbxx.yzxx"
+            v-for="(item, index) in insideJbxx.ssxx"
             :color="item.color"
             :key="index"
             @click="onItemClick(item, index)"
@@ -88,9 +92,6 @@
 
 
 <script>
-import { getSoundRecordingList } from '@/api/modular/system/posManage'
-//这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
-import { Timeline } from 'ant-design-vue'
 
 export default {
   components: {},
@@ -102,68 +103,26 @@ export default {
     return {
       insideJbxx: this.jbxx,
       insideShowData: this.showData,
-      // insideShowType: 'jiancha',
-
-      columns: [
-        {
-          title: '序号',
-          // innerHeight:20,
-          dataIndex: 'xh',
-        },
-        {
-          title: '代码',
-          dataIndex: 'jczbdm',
-          ellipsis: true,
-        },
-        {
-          title: '名称',
-          // innerHeight:20,
-          dataIndex: 'jczbmc',
-        },
-        {
-          title: '结果',
-          dataIndex: 'jybgjg',
-          ellipsis: true,
-        },
-        {
-          title: '异常提示',
-          // dataIndex: 'ycts',
-          scopedSlots: { customRender: 'wrong' },
-          // ellipsis: true,
-        },
-        {
-          title: '单位',
-          dataIndex: 'jldw',
-          ellipsis: true,
-        },
-        {
-          title: '参考范围',
-          dataIndex: 'ckz',
-          ellipsis: true,
-        },
-      ],
     }
   },
 
   created() {},
   methods: {
     onItemClick(itemOut, indexOut) {
-      for (let index = 0; index < this.insideJbxx.newArr.length; index++) {
-        this.insideJbxx.newArr[index].color = 'gray'
+      for (let index = 0; index < this.insideJbxx.ssxx.length; index++) {
+        this.insideJbxx.ssxx[index].color = 'gray'
         if (indexOut == index) {
-          this.insideJbxx.newArr[index].color = 'blue'
+          this.insideJbxx.ssxx[index].color = 'blue'
         }
       }
 
-      this.insideShowType = this.insideJbxx.newArr[indexOut].type
-
-      this.insideShowData = this.insideJbxx.newArr[indexOut].data
+      this.insideShowData = this.insideJbxx.ssxx[indexOut].data
       console.log('this.insideShowData', this.insideShowData)
     },
 
-    refreshData(insideJbxx, insideShowType, insideShowData) {
+    refreshData(insideJbxx, insideShowData) {
+      console.log('refreshDataShoushu', this.insideShowData)
       this.insideJbxx = insideJbxx
-      this.insideShowType = insideShowType
       this.insideShowData = insideShowData
     },
   },

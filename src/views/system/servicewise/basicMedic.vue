@@ -57,9 +57,6 @@
 
 
 <script>
-import { getSoundRecordingList } from '@/api/modular/system/posManage'
-//这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
-import { Timeline } from 'ant-design-vue'
 
 export default {
   components: {},
