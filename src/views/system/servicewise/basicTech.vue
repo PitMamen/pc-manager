@@ -81,7 +81,7 @@
         </a-table>
       </div>
 
-      <div class="div-shu" style="overflow-y: auto; height: 380px">
+      <div class="div-shu" style="overflow-y: auto; height: 370px">
         <!-- <div class="div-shu"> -->
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
@@ -109,10 +109,6 @@
 
 
 <script>
-import { getSoundRecordingList } from '@/api/modular/system/posManage'
-//这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
-import { Timeline } from 'ant-design-vue'
-
 export default {
   components: {},
   props: {
@@ -169,29 +165,8 @@ export default {
     }
   },
 
-  created() {
-    // followPlanPhoneHistory(this.record.userId).then((res) => {
-    //   if (res.code === 0) {
-    //     this.historyList = res.data
-    //     if (res.data && res.data.length > 0) {
-    //       this.onHistoryItemClick(res.data[0].id)
-    //     }
-    //   } else {
-    //     this.$message.error(res.message)
-    //   }
-    // })
-  },
+  created() {},
   methods: {
-    formatDate(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      return `${myyear}-${mymonth}-${myweekday}`
-    },
-
     onItemClick(itemOut, indexOut) {
       for (let index = 0; index < this.insideJbxx.newArr.length; index++) {
         this.insideJbxx.newArr[index].color = 'gray'
@@ -233,7 +208,7 @@ export default {
 
     .div-line-wrap {
       width: 100%;
-      margin-top: 10px;
+      // margin-top: 10px;
       display: flex;
       align-items: center;
       flex-direction: row;

@@ -60,8 +60,10 @@
         <div class="span-mid-audio" v-show="audioShow">
           <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
         </div>
+       
       </a-tabs>
     </a-spin>
+    <img class="zanguaview" v-if="showHangTag"  src="~@/assets/icons/zanggua.png"  />
   </a-modal>
 </template>
 
@@ -98,6 +100,7 @@ export default {
       audioUrl: '',
       audioShow: false,
       callers: [],
+      showHangTag:false,//显示暂挂
     }
   },
   created() {
@@ -124,7 +127,9 @@ export default {
   methods: {
     //随访
     doDeal(record) {
+    
       this.modelType = 0
+      this.showHangTag=record.hangStatus && record.hangStatus!=null && record.hangStatus.value && record.hangStatus.value == 1
       this.init(record)
     },
     //档案   从档案管理页面进入不需要显示本次随访
@@ -136,16 +141,17 @@ export default {
 
     //详情
     doInfo(record) {
+      console.log("详情:",record)
       this.modelType = 1
       this.init(record)
     },
     init(record) {
       var strSex = ''
-      if (record.userSex) {
+      if (record.sex) {
+        strSex = record.sex.description||record.sex
+      } else if (record.userSex) {
         strSex = record.userSex
-      } else if (record.sex) {
-        strSex = record.sex.description
-      }
+      } 
       console.log('this.record', record)
       var age
       if (record.age == 0 || record.userAge == 0) {
@@ -332,11 +338,22 @@ export default {
 
   top: 0;
 
-  z-index: 10000;
+  z-index: 10001;
 }
 .icon {
   width: 17px;
   height: 18px;
   margin-bottom: 3px;
+}
+.zanguaview{
+  position: absolute;
+  right: 112px;
+
+top: 0;
+
+z-index: 10000;
+  width: 47px;
+height: 59px;
+
 }
 </style>

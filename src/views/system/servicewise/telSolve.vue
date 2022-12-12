@@ -139,7 +139,9 @@
         </div>
       </div>
     </div>
+    
     <div style="margin-top: 12px; display: flex; flex-direction: row-reverse; align-items: center">
+     
       <a-button
         type="default"
         @click="goCancel"
@@ -147,7 +149,9 @@
       >
         关闭
       </a-button>
-      <a-button type="primary" :loading="isLoading"  @click="goConfirm" style="border: red; margin-right: 30px; width: 90px"> 提交 </a-button>
+      
+      <a-button type="primary" :loading="isLoading"  @click="goConfirm" style=" margin-right: 30px; width: 90px"> 提交 </a-button>
+      <a-button type="danger" :loading="isLoading"  @click="goZangua" style=" margin-right: 30px; width: 90px; "> 暂挂 </a-button>
     </div>
   </div>
 </template>
@@ -162,6 +166,7 @@ import {
   getUsersByDeptIdAndRole,
   getAccountParam,
   addTencentPhoneTape,
+  hangExecuteRecord
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
@@ -236,7 +241,7 @@ export default {
      this.user = Vue.ls.get(TRUE_USER)
    
     self = this
-    console.log('telSolve', this.record)
+    console.log('telSolve', this.record.userId)
     this.followPlanPhonePatientInfo(this.record.userId)
     this.followPlanPhoneCurrent(this.record.id)
     this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
@@ -432,6 +437,26 @@ export default {
           this.$emit('ok', '')
         } else {
           this.isLoading=false
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    //暂挂
+    goZangua(){
+      this.isLoading=true
+      var postdata={
+        hangStatus:1,
+        id: this.record.id,
+      }
+      hangExecuteRecord(postdata).then((res) => {
+        this.isLoading=false
+        if (res.code === 0) {
+          this.$message.success('暂挂成功！')
+         
+          this.$emit('ok', '')
+        } else {
+          
           this.$message.error(res.message)
         }
       })

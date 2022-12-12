@@ -6,12 +6,13 @@
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
+    :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <a-avatar :size="48" :src="checkData.avatorUrl" icon="user" style="margin-right: 21px" />
+            <a-avatar :size="48" :src="checkData.avatarUrl" icon="user" style="margin-right: 21px" />
             <div class="avator-right">
               <a-upload
                 name="file"
@@ -33,15 +34,16 @@
             <span class="span-item-name"><span style="color: red">*</span>姓名:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.name"
+              v-model="checkData.userName"
               style="display: inline-block"
               allow-clear
+              :maxLength="20"
               placeholder="请输入姓名"
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>性别:</span>
-            <a-radio-group name="radioGroup" v-model="checkData.sex">
+            <a-radio-group name="radioGroup" v-model="checkData.userSex">
               <a-radio :value="0"> 男 </a-radio>
               <a-radio :value="1" style="margin-left: 32px"> 女 </a-radio>
               <a-radio :value="2" style="margin-left: 32px"> 未知 </a-radio>
@@ -54,21 +56,24 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>身份证号:</span>
             <a-input
-              v-model="checkData.idNo"
+              v-model="checkData.identificationNo"
               class="span-item-value"
               style="display: inline-block"
               allow-clear
+              :maxLength="18"
               placeholder="请输入身份证号"
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>联系电话:</span>
             <a-input
-              v-model="checkData.tel"
+              v-model="checkData.phone"
               class="span-item-value"
               style="display: inline-block"
               allow-clear
+              :maxLength="11"
               placeholder="请输入联系电话"
+              @change="telInputChange"
             />
           </div>
           <div class="div-content">
@@ -88,25 +93,22 @@
 
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>人员类型:</span>
-            <a-select v-model="checkData.rylx" allow-clear placeholder="请选择人员类型">
-              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item">{{ item }}</a-select-option>
+            <a-select v-model="checkData.userType" allow-clear placeholder="请选择人员类型">
+              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>人员职称:</span>
-            <a-select v-model="checkData.ryzc" allow-clear placeholder="请选择人员职称">
-              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item">{{ item }}</a-select-option>
+            <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择人员职称">
+              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{ item.description }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-tree-select
-          v-model="checkData.ssjg"
-          style="min-width: 120px"
-          :tree-data="treeData"
-          placeholder="请选择"         
-        >
-        </a-tree-select>
+            <a-tree-select v-model="checkData.hospitalCode" style="min-width: 120px" :tree-data="treeData" placeholder="请选择">
+            </a-tree-select>
           </div>
           <div class="div-title">
             <div class="div-line-blue"></div>
@@ -115,7 +117,13 @@
           <div class="div-content">
             <a-checkbox v-model="accountChecked"></a-checkbox>
             <span class="span-item-name">创建账号:</span>
-            <a-input class="span-item-value" style="display: inline-block" readOnly placeholder="请输入内容" />
+            <a-input
+              v-model="checkData.phone"
+              class="span-item-value"
+              style="display: inline-block"
+              readOnly
+              placeholder="请输入内容"
+            />
           </div>
         </div>
 
@@ -148,19 +156,19 @@
             </div>
             <div class="checkview">
               <span class="span-check-title">电话咨询:</span>
-              <a-switch v-model="textTelChecked" :disabled="!accountChecked" />
+              <a-switch v-model="telNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview" style="margin-right: 0">
               <span class="span-check-title">视频咨询:</span>
-              <a-switch v-model="textVideoChecked" :disabled="!accountChecked" />
+              <a-switch v-model="videoNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">复诊开方:</span>
-              <a-switch v-model="textAppointNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="appointNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">MDT会诊:</span>
-              <a-switch v-model="textMDTNumChecked" :disabled="!accountChecked" />
+              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked" />
             </div>
           </div>
 
@@ -173,7 +181,7 @@
           </div>
           <div class="div-content">
             <a-textarea
-              v-model="checkData.scly"
+              v-model="checkData.expertInDisease"
               class="span-item-value"
               showCount
               :maxLength="30"
@@ -188,7 +196,7 @@
           </div>
           <div class="div-content">
             <a-textarea
-              v-model="checkData.xxjs"
+              v-model="checkData.doctorBrief"
               class="span-item-value"
               showCount
               :maxLength="100"
@@ -209,12 +217,13 @@
 import {
   getRoleList,
   queryHospitalList,
-  qryMetaConfigureDetail,
-  addWxTemplate,
-  getWxTemplateById,
-  modifyWxTemplate,
+  professionalTitles,
+  createDoctorUser,
+  accountDictUserTypes,
+  getDoctorUserDetail,
+  updateDoctorUser
 } from '@/api/modular/system/posManage'
-import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
+import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -222,55 +231,68 @@ export default {
   data() {
     return {
       visible: false,
+      record:{},
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
       fileList: [],
       danandataList: [],
-      treeData:[],
+      treeData: [],
       checkData: {
-        avatorUrl: '', //头像
-        name: '',
+        avatarUrl: '', //头像
+        userName: '',
 
-        sex: 0,
-        csrq: '', //出生日期
-        idNo: '',
-        tel: '',
+        userSex: 0,
+        birthday: '', //出生日期
+        identificationNo: '',
+        phone: '',
         email: '',
-        rylx: '', //人员类型
-        ryzc: '', //人员职称
-        ssjg: '', //所属机构
-        scly: '', //擅长领域
-        xxjs: '', //详细介绍
-        role: '', //分配角色
+        userType: '', //人员类型
+        professionalTitle: '', //人员职称
+        hospitalCode: '', //所属机构
+        expertInDisease: '', //擅长领域
+        doctorBrief: '', //详细介绍
+        roleIds: '', //分配角色
       },
       accountChecked: true, //创建账号
       textNumChecked: false,
-      textTelChecked: false,
-      textVideoChecked: false,
-      textAppointNumChecked: false,
-      textMDTNumChecked: false,
+      telNumChecked: false,
+      videoNumChecked: false,
+      appointNumChecked: false,
+      MDTNumChecked: false,
       roleList: [], //角色列表
-      rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
-      ryzcList: [
-        '正主任医生',
-        '副主任医生',
-        '主治医师',
-        '经治医师',
-        '正教授',
-        '副教授',
-        '讲师',
-        '主任护师',
-        '副主任护师',
-        '护师',
-        '护士',
-      ], //人员职称
+      rylxList: [], //人员类型
+      ryzcList: [], //人员职称
     }
   },
   created() {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.record={}
+    this.checkData= {
+        avatarUrl: '', //头像
+        userName: '',
+
+        userSex: 0,
+        birthday: '', //出生日期
+        identificationNo: '',
+        phone: '',
+        email: '',
+        userType: '', //人员类型
+        professionalTitle: '', //人员职称
+        hospitalCode: '', //所属机构
+        expertInDisease: '', //擅长领域
+        doctorBrief: '', //详细介绍
+        roleIds: '', //分配角色
+      }
+      this.accountChecked= true//创建账号
+      this.textNumChecked= false
+      this.telNumChecked=false
+      this.videoNumChecked= false
+      this.appointNumChecked= false
+      this.MDTNumChecked= false
+    },
     //新增
     addModel() {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -278,9 +300,81 @@ export default {
       this.visible = true
       this.confirmLoading = false
 
-
       this.getRolesOut()
       this.queryHospitalListOut()
+      this.getAccountDictUserTypes()
+      this.getProfessionalTitles()
+     
+    },
+//修改
+  editModel(record) {
+    console.log(record)
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+      this.clearData()
+      this.visible = true
+      this.confirmLoading = false
+      this.record=record
+      
+      this.queryHospitalListOut()
+      this.getAccountDictUserTypes()
+      this.getProfessionalTitles()
+      this.getDoctorUserDetailOut(record.userId)
+    },
+    //用户详情
+    getDoctorUserDetailOut(userId){
+      getDoctorUserDetail({
+        userId: userId,
+      }).then((res) => {
+        if (res.code == 0) {
+          res.data.userSex= res.data.userSex=='男'?0:res.data.userSex=='女'?1:2
+          var birthday=res.data.birthday
+          var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6) 
+          res.data.birthday=birthday2
+          if(res.data.loginName){
+            this.accountChecked=true
+          }else{
+            this.accountChecked=false
+          }
+          this.checkData=res.data
+          if(res.data.registerTypeOptions){
+            if(res.data.registerTypeOptions.indexOf("textNum")>-1){
+              this.textNumChecked=true
+            }
+            if(res.data.registerTypeOptions.indexOf("telNum")>-1){
+              this.telNumChecked=true
+            }
+            if(res.data.registerTypeOptions.indexOf("videoNum")>-1){
+              this.videoNumChecked=true
+            }
+            if(res.data.registerTypeOptions.indexOf("appointNum")>-1){
+              this.appointNumChecked=true
+            }
+            if(res.data.registerTypeOptions.indexOf("consult")>-1){
+              this.MDTNumChecked=true
+            }
+          }
+         
+
+          this.getRolesOut()
+        }
+      })
+    },
+
+    //人员类型
+    getAccountDictUserTypes() {
+      accountDictUserTypes().then((res) => {
+        if (res.code == 0) {
+          this.rylxList = res.data
+        }
+      })
+    },
+      //人员职称
+      getProfessionalTitles() {
+        professionalTitles().then((res) => {
+        if (res.code == 0) {
+          this.ryzcList = res.data
+        }
+      })
     },
     //获取角色列表
     getRolesOut() {
@@ -294,6 +388,15 @@ export default {
           var roleList = []
           for (let i = 0; i < res.data.length; i++) {
             if (res.data[i].state == 1) {
+              
+              if(this.record.userId){
+                //如果是详情 显示已勾选
+                this.checkData.roleIds.forEach(id=>{
+                  if(id == res.data[i].roleId){
+                    res.data[i].checked=true
+                  }
+                })
+              }
               roleList.push(res.data[i])
             }
           }
@@ -301,14 +404,15 @@ export default {
         }
       })
     },
-/**
+
+    /**
      * 所属机构接口
      */
     /**
      *
      * @param {}
      */
-     queryHospitalListOut() {
+    queryHospitalListOut() {
       let queryData = {
         tenantId: '',
         status: 1,
@@ -361,86 +465,90 @@ export default {
           this.$message.error(changeObj.file.response.message)
         } else {
           if (changeObj.fileList.length == 0) {
-            this.checkData.avatorUrl = ''
+            this.checkData.avatarUrl = ''
           } else {
-            this.checkData.avatorUrl = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
+            this.checkData.avatarUrl = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
           }
         }
       }
 
-      console.log('avatorUrl:' + this.checkData.avatorUrl)
+      console.log('avatarUrl:' + this.checkData.avatarUrl)
     },
-
+    telInputChange(e) {
+      console.log(e)
+    },
     onDatePickerChange(date, dateString) {
       console.log(date, dateString)
-      this.checkData.csrq = dateString
+      this.checkData.birthday = dateString
     },
 
     handleSubmit() {
       console.log(this.checkData)
+      
 
-      // if (this.checkData.avatorUrl.length==0) {
-      //   this.$message.error('请上传头像')
-      //   return
-      // }
-      // if (this.checkData.name.length==0) {
-      //   this.$message.error('请输入姓名')
-      //   return
-      // }
-      // if (this.checkData.csrq.length==0) {
-      //   this.$message.error('请选择出生日期')
-      //   return
-      // }
-      if (this.checkData.idNo.length==0) {
+      if (this.checkData.avatarUrl.length == 0) {
+        this.$message.error('请上传头像')
+        return
+      }
+      if (this.checkData.userName.length == 0) {
+        this.$message.error('请输入姓名')
+        return
+      }
+      if (this.checkData.birthday.length == 0) {
+        this.$message.error('请选择出生日期')
+        return
+      }
+      if (this.checkData.identificationNo.length == 0) {
         this.$message.error('请输入身份证号码')
         return
       }
 
-      var idRes= idCardValidity(this.checkData.idNo)
+      var idRes = idCardValidity(this.checkData.identificationNo)
       console.log(idRes)
-      if(!idRes.result){
+      if (!idRes.result) {
         this.$message.error('请输入正确的身份证号码')
         return
       }
 
-      if (this.checkData.tel.length==0) {
+      if (this.checkData.phone.length == 0) {
         this.$message.error('请输入联系电话')
         return
       }
 
-      if(!phoneValidity(this.checkData.tel)){
+      if (!phoneValidity(this.checkData.phone)) {
         this.$message.error('请输入正确的联系电话')
         return
       }
 
-      if (this.checkData.email.length==0) {
+      if (this.checkData.email.length == 0) {
         this.$message.error('请输入邮箱地址')
         return
       }
-      if(!emailValidity(this.checkData.email)){
+      if (!emailValidity(this.checkData.email)) {
         this.$message.error('请输入正确的邮箱地址')
         return
       }
 
-      if (this.checkData.rylx.length==0) {
+      if (this.checkData.userType.length == 0) {
         this.$message.error('请选择人员类型')
         return
       }
-      if (this.checkData.ryzc.length==0) {
+      if (this.checkData.professionalTitle.length == 0) {
         this.$message.error('请选择人员职称')
         return
       }
-      if (this.checkData.ssjg.length==0) {
+      if (this.checkData.hospitalCode.length == 0) {
         this.$message.error('请选择所属机构')
         return
       }
 
       if (this.accountChecked) {
         //如果勾选了创建账号
+        //角色
         var checkedRoleList = []
         this.roleList.forEach((item) => {
           if (item.checked) {
-            checkedRoleList.push(item)
+            checkedRoleList.push(item.roleId)
           }
         })
         console.log(checkedRoleList)
@@ -448,27 +556,101 @@ export default {
           this.$message.error('请分配角色')
           return
         } else {
-          this.checkData.role = checkedRoleList
+          this.checkData.roleIds = checkedRoleList
         }
+
+        //服务
+        /*
+         * 服务可选项,多个“,”分隔
+         * "telNum": //电话咨询
+         * "videoNum": //视频咨询
+         * "textNum": //图文咨询
+         * "appointNum": //复诊开方
+         * "consult": //MDT会诊
+         * "vipNum": //VIP号源
+         */
+         var  registerTypeOptions=''
+      if(this.textNumChecked){
+        registerTypeOptions='textNum'
+      }
+    
+      if(this.telNumChecked){
+        if(registerTypeOptions){
+          registerTypeOptions=registerTypeOptions+',telNum'
+        }else{
+          registerTypeOptions='telNum'
+        }
+      
+      }
+     
+      if(this.videoNumChecked){
+        if(registerTypeOptions){
+          registerTypeOptions=registerTypeOptions+',videoNum'
+        }else{
+          registerTypeOptions='videoNum'
+        }
+       
+      }
+      
+      if(this.appointNumChecked){
+        if(registerTypeOptions){
+          registerTypeOptions=registerTypeOptions+',appointNum'
+        }else{
+          registerTypeOptions='appointNum'
+        }
+     
+      }
+    
+      if(this.MDTNumChecked){
+        if(registerTypeOptions){
+          registerTypeOptions=registerTypeOptions+',consult'
+        }else{
+          registerTypeOptions='consult'
+        }
+      
+      }
+     
+    }
+   
+      var postData = {
+        identificationNo: this.checkData.identificationNo,
+        userName:this.checkData.userName,
+        userSex:this.checkData.userSex=='0'?'男':this.checkData.userSex=='1'?'女':'未知',
+        email: this.checkData.email,
+        phone: this.checkData.phone,
+        avatarUrl: this.checkData.avatarUrl,
+        birthday: this.checkData.birthday.split('-').join(''),
+        doctorBrief: this.checkData.doctorBrief,
+        expertInDisease: this.checkData.expertInDisease,
+        userType:this.checkData.userType, //人员类型
+        hospitalCode: this.checkData.hospitalCode,
+        professionalTitle: this.checkData.professionalTitle, //职称 
+      }
+      if (this.accountChecked) {
+        postData.loginName= this.checkData.phone //目前账号不准修改，默认就是电话号码
+        postData.roleIds= this.checkData.roleIds
+        postData.registerTypeOptions= registerTypeOptions //服务选项
       }
 
-      var postData = {}
+      console.log('postData',postData)
       this.confirmLoading = true
-      if (this.id) {
-        //修改
-        postData.id = this.id
-        this.modify(postData)
-      } else {
-        //新增
-        this.add(postData)
+      if(this.record.userId){
+      //修改
+      postData.userId=this.record.userId
+      this.editUser(postData)
+      }else{
+      //新增
+      this.addUser(postData)
       }
+
     },
 
-    add(postData) {
-      addWxTemplate(postData).then((res) => {
+    addUser(postData) {
+      createDoctorUser(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.visible = false
+         
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
@@ -476,11 +658,12 @@ export default {
         this.confirmLoading = false
       })
     },
-    modify(postData) {
-      modifyWxTemplate(postData).then((res) => {
+    editUser(postData) {
+      updateDoctorUser(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
           this.visible = false
+         
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)

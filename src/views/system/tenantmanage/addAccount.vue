@@ -6,6 +6,7 @@
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
+    :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
@@ -18,16 +19,18 @@
             <span class="span-item-name"><span style="color: red">*</span>登录账号:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.account"
+              v-model="checkData.loginName"
               style="display: inline-block"
               allow-clear
               placeholder="请输入账号"
+              @change="onAccountInputChange"
+             
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
-            <a-select v-model="checkData.name" allow-clear placeholder="请选择人员类型">
-              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item">{{ item }}</a-select-option>
+            <a-select show-search v-model="checkData.userId" allow-clear placeholder="请选择人员" @search="onUserSelectChange" >
+              <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{ item.userName }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
@@ -60,8 +63,8 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属角色:</span>
             <a-select v-model="checkData.role" allow-clear placeholder="请选择所属角色" :maxTagCount="3"
-          :collapse-tags="true" mode="multiple" style=" height: 28px">
-              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleRealName">{{ item.roleRealName }}</a-select-option>
+          :collapse-tags="true" mode="multiple" style=" height: 28px" >
+              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleId">{{ item.roleRealName }}</a-select-option>
             </a-select>
           </div>
           
@@ -85,11 +88,11 @@ import {
   getRoleList,
   queryHospitalList,
   qryMetaConfigureDetail,
-  addWxTemplate,
-  getWxTemplateById,
+  createDoctorAccount,
+  searchDoctorUser,
   modifyWxTemplate,
 } from '@/api/modular/system/posManage'
-import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
+
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -105,9 +108,9 @@ export default {
       danandataList: [],
       treeData:[],
       checkData: {
-        account: '', //登录账号
+        loginName: '', //登录账号
         userId:'',//对应人员
-        name: '',    
+        userId: '',    
         tel: '',
         role: undefined, //分配角色
         zuoxi:'',//坐席
@@ -116,6 +119,7 @@ export default {
      
       roleList: [], //角色列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
+      userList:[],
       
     }
   },
@@ -131,7 +135,8 @@ export default {
 
 
       this.getRolesOut()
-      this.queryHospitalListOut()
+      this.getUserList('')
+    
     },
     //获取角色列表
     getRolesOut() {
@@ -152,86 +157,35 @@ export default {
         }
       })
     },
-/**
-     * 所属机构接口
-     */
-    /**
-     *
-     * @param {}
-     */
-     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
-      this.confirmLoading = true
-      queryHospitalList(queryData)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'value', item.hospitalId)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'value', item1.hospitalId)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
-
-            this.treeData = res.data
-          } else {
-            this.treeData = res.data
-          }
-          return []
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-    beforeUpload(file) {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
-      if (!isJpgOrPng) {
-        this.$message.error('请选择正确的图片格式')
-        return false
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('图片大小不能超过2M')
-        return false
-      }
-      return true
-    },
-    handleChange(changeObj) {
-      console.log(changeObj)
-      if (changeObj.file.status == 'done') {
-        if (changeObj.file.response.code != 0) {
-          this.$message.error(changeObj.file.response.message)
-        } else {
-          if (changeObj.fileList.length == 0) {
-            this.checkData.avatorUrl = ''
-          } else {
-            this.checkData.avatorUrl = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
-          }
+    getUserList(queryText){
+      searchDoctorUser({
+        hospitalCode:'',//所属机构代码
+        notBoundOnly:true,//是否返回未绑定账号的用户
+        status: 0,//（0正常、1停用、2删除）
+        queryText: queryText,
+        pageNo: 1,
+        pageSize: 10000,
+       
+      }).then((res) => {
+        if (res.code == 0) {
+          this.userList = res.data.rows
+          this.$forceUpdate()
+          console.log(this.userList)
         }
-      }
-
-      console.log('avatorUrl:' + this.checkData.avatorUrl)
+      })
     },
-
-    onDatePickerChange(date, dateString) {
-      console.log(date, dateString)
-      this.checkData.csrq = dateString
+    onUserSelectChange(value){
+      console.log(value)
+      this.getUserList(value)
     },
-
+    onAccountInputChange(e){
+      console.log(e)
+    },
     handleSubmit() {
       console.log(this.checkData)
 
 
-      if (this.checkData.account.length==0) {
+      if (this.checkData.loginName.length==0) {
         this.$message.error('请输入登录账号')
         return
       }
@@ -261,20 +215,21 @@ export default {
         } 
       }
 
-      var postData = {}
-      this.confirmLoading = true
-      if (this.id) {
-        //修改
-        postData.id = this.id
-        this.modify(postData)
-      } else {
-        //新增
-        this.add(postData)
+      var postData = {
+        loginName:this.checkData.loginName,
+        userId:111,
+        actorIds:this.checkData.role,
+        
       }
+      if (this.accountChecked) {
+        postData.seatUser=this.checkData.zuoxi
+      }
+      this.confirmLoading = true
+      this.addAccount(postData)
     },
 
-    add(postData) {
-      addWxTemplate(postData).then((res) => {
+    addAccount(postData) {
+      createDoctorAccount(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.visible = false

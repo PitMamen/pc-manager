@@ -59,9 +59,9 @@
     <!-- :scroll="{ y: 700, x: 0 }"  -->
     <!--  style="overflow-y: auto" -->
     <s-table
-      class="table-hover-hidden"
+    class="table-hover-hidden"
       :showPagination="false"
-      style="overflow-y: auto"
+      style="overflow-y: auto;width: 101%;"
       :scroll="{ y: 700,x: 0 }"
       bordered
       ref="tableStat"
@@ -85,6 +85,13 @@
       <span slot="action_overdue" slot-scope="text, record">
         <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
       </span>
+      
+      <span slot="action_number" slot-scope="text,record">
+        <a @click="$refs.statisitDetail.checkDetail(record, 5)">{{ record.undoTask }}</a>
+      </span>
+
+
+
 
       <template v-if="queryParamsStatisit.statType == 1" slot="titleNNN">按随访方案</template>
       <template v-if="queryParamsStatisit.statType == 2" slot="titleNNN">按执行科室</template>
@@ -157,7 +164,7 @@ export default {
       originData: [],
       createValue: [],
       createValueBor: [],
-      titleName: '按随访方案',
+      titleName: '按问卷',
       /** 统计类别数据*/
       labelCol: {
         xs: { span: 24 },
@@ -174,7 +181,7 @@ export default {
         endDate: formatDate(new Date().getTime()),
         execDept: [],
         hospitalCode: '',
-        statType: 1,
+        statType: 3,
         tenantId: '',
       },
 
@@ -222,14 +229,24 @@ export default {
           title: '逾期率',
           dataIndex: 'overdueRate',
         },
+
+        {
+          title: '待执行',
+          dataIndex: 'undoTask',
+          scopedSlots: { customRender: 'action_number' },
+        },
+        {
+          title: '待执行率',
+          dataIndex: 'undoTaskRate',
+        },
       ],
 
       user: {},
 
       StatisticsMode: [
+        { code: 3, value: '按问卷' },
         { code: 1, value: '按随访方案' },
         { code: 2, value: '按执行科室' },
-        { code: 3, value: '按问卷' },
       ],
 
       dateFormat: 'YYYY-MM-DD',
@@ -263,6 +280,7 @@ export default {
               this.$set(item, 'successRate', Math.round(item.successRate * 100) + '%')
               this.$set(item, 'failRate', Math.round(item.failRate * 100) + '%')
               this.$set(item, 'overdueRate', Math.round(item.overdueRate * 100) + '%')
+              this.$set(item, 'undoTaskRate', Math.round(item.undoTaskRate * 100) + '%')
               this.$set(item, 'statType', this.queryParamsStatisit.statType)
               this.$set(item, 'beginDate', this.queryParamsStatisit.beginDate)
               this.$set(item, 'endDate', this.queryParamsStatisit.endDate)
@@ -369,6 +387,7 @@ export default {
 </script>
   
   <style lang="less">
+ 
   .ant-select-selection--multiple {
     min-height: 28px;
     cursor: text;
@@ -432,9 +451,16 @@ export default {
 
 
 .table-hover-hidden {
-  .ant-table-tbody > tr:hover:not(.ant-table-expanded-row) > td {
-    background-color: #ffffff !important;
-  }
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: none !important;
+}
+  width: 100% !important;
+  .table-hover-hidden .ant-table-body {
+    //  overflow: auto ; 
+}
+  /deep/table tbody tr:hover>td {
+      background: #E7F1FF !important;
+}
   .ant-table-body .ant-table-row-hover {
     background: #e7f1ff;
   }
@@ -442,9 +468,6 @@ export default {
     background: #e7f1ff;
   }
 
-  .ant-table-body{
-    overflow: auto !important;
-  }
 }
 
 .table-page-search-wrapper {

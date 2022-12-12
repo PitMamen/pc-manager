@@ -4,7 +4,7 @@
       <div class="search-row">
         <span class="name">查询条件:</span>
         <a-input
-          v-model="queryParams.planName"
+          v-model="queryParams.queryText"
           allow-clear
           placeholder="可输入姓名"
           style="width: 120px; height: 28px"
@@ -15,7 +15,7 @@
       <div class="search-row">
         <span class="name">所属机构:</span>
         <a-tree-select
-          v-model="queryParams.parentDisarmamentId"
+          v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"         
@@ -24,7 +24,7 @@
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
+        <a-switch :checked="queryParams.status == 0" @change="onSwitchChange" />
       </div>
 
       <div class="action-row">
@@ -50,17 +50,18 @@
     >
       <span slot="action" slot-scope="text, record">
       
-        <a @click="editPlan(record)" >修改</a>
+        <a @click="$refs.addUser.editModel(record)" :disabled="record.userStatus !== 0">修改</a>
         <a-divider type="vertical" />
-        <a @click="1" >关联科室</a>
+        <a @click="$refs.assDepartment.addModel(record)" :disabled="record.userStatus !== 0">关联科室</a>
         
       </span>
       <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.enableStatus" />
+        <a-switch  :checked="record.userStatus==0"  @change="Enable(record)"/>
       </span>
     </s-table>
 
     <add-User ref="addUser" @ok="handleOk" />
+    <ass-Department ref="assDepartment" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -72,16 +73,18 @@ import {
   queryHospitalList,
   getDeptsPersonal,
   getDepts,
-  qryFollowPlan,
-  updateFollowPlanStatus,
+  searchDoctorUser,
+  setDoctorUserStatus,
 } from '@/api/modular/system/posManage'
 import addUser from './addUser'
+import assDepartment from './assDepartment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
     addUser,
+    assDepartment
   },
   data() {
     return {
@@ -91,11 +94,10 @@ export default {
       treeData: [],
       idArr: [],
       queryParams: {
-        departmentName: '',
-        planName: '',
-        executeDepartment: '',
-        parentDisarmamentId:'',
-        status: 1,
+        hospitalCode:'',//所属机构代码
+        notBoundOnly:false,//是否返回未绑定账号的用户
+        status: 0,//（0正常、1停用、2删除）
+        queryText: ''
       },
       labelCol: {
         xs: { span: 24 },
@@ -113,39 +115,39 @@ export default {
       columns: [
         {
           title: '姓名',
-          dataIndex: 'planName',
+          dataIndex: 'userName',
         },
         {
           title: '性别',
-          dataIndex: '',
+          dataIndex: 'userSex',
         },
         {
           title: '出生日期',
-          dataIndex: 'formulateTime',
+          dataIndex: '',
         },
         {
           title: '联系电话',
-          dataIndex: '',
+          dataIndex: 'phone',
         },
         {
           title: '人员类型',
-          dataIndex: 'formulateUserName',
+          dataIndex: 'userTypeName',
         },
         {
           title: '登录账号',
-          dataIndex: '',
+          dataIndex: 'loginName',
         },
         {
           title: '所属机构',
-          dataIndex: 'executeDepartmentName',
+          dataIndex: 'hospitalName',
         },
         {
           title: '所属科室',
-          dataIndex: '',
+          dataIndex: 'departmentName',
         },
         {
           title: '所属病区',
-          dataIndex: '',
+          dataIndex: 'areaId',
         },
         {
           title: '状态',
@@ -163,11 +165,10 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryFollowPlan(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
+        return searchDoctorUser(Object.assign(parameter, this.queryParams)).then((res) => {
+          if (res.code == 0 &&  res.data.rows) {
             res.data.rows.forEach((element) => {
-              element.statusText = element.status.description
-              element.followType = element.followType.description
+             
             })
           }
           return res.data
@@ -283,7 +284,7 @@ export default {
     },
     onSwitchChange(value) {
       console.log(value)
-      this.queryParams.status = value ? 1 : 2
+      this.queryParams.status = value ? 0 : 1
 
       this.$refs.table.refresh(true)
     },
@@ -302,11 +303,9 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.status = 1
-      this.queryParams.planName = ''
-      this.queryParams.executeDepartment = ''
-      this.queryParams.departmentName = ''
-      this.queryParams.pageNo = 1
+      this.queryParams.hospitalCode = ''
+      this.queryParams.queryText = ''
+      this.queryParams.status = 0
 
       this.$refs.table.refresh(true)
     },
@@ -316,18 +315,16 @@ export default {
      */
     Enable(record) {
       this.confirmLoading = true
-      var _status = record.status.value == 1 ? 2 : 1
+      var _status = record.userStatus == 0 ? 1 : 0
       //更新接口调用
-      updateFollowPlanStatus({
-        id: record.id,
+      setDoctorUserStatus({
+        userId: record.userId,
         status: _status,
       }).then((res) => {
         this.confirmLoading = false
         if (res.success) {
           this.$message.success('操作成功！')
-          record.status.value = _status
-          record.status.description = _status == 1 ? '启用' : '停用'
-          record.statusText = _status == 1 ? '启用' : '停用'
+          record.userStatus = _status
           this.handleOk()
         } else {
           this.$message.error('编辑失败：' + res.message)

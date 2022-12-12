@@ -24,7 +24,7 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider1"></div>
+      <div class="div-divider1" style="margin-top:20px"></div>
       <div class="table-operator" style="overflow: hidden">
         <a-button icon="plus" style="float: right; margin-right: 0" @click="addTenant()"  @ok="handleOk">新增</a-button>
       </div>
@@ -169,13 +169,13 @@ export default {
         {
           title: '租户名称',
           dataIndex: 'tenantName',
-          width: 100,
+          width: 170,
           ellipsis: true,
         },
         {
           title: '登录账号',
           dataIndex: 'adminAccount',
-          width: 180,
+          width: 140,
         },
         {
           title: '应用权限',
@@ -210,6 +210,7 @@ export default {
         {
           title: '操作',
           width: '190px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
