@@ -3,7 +3,7 @@
   <div class="inner-wrap">
     <div
       class="div-fee"
-      v-if="insideJbxx.sfxx && insideJbxx.sfxx.length > 0"
+      v-if="sfxx && sfxx.length > 0"
       style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
     >
       <div class="chart">
@@ -32,88 +32,43 @@
 import { Pies } from '@/components'
 export default {
   components: { Pies },
-  props: {
-    jbxx: Object,
-  },
+  // props: {
+  //   jbxx: Object,
+  // },
   data() {
     return {
-      insideJbxx: this.jbxx,
+      // insideJbxx: this.jbxx,
       total: 0,
-      dazdList: [
-        { code: 1, name: '4r4rt', des: '555' },
-        { code: 2, name: 'gtrh', des: '555' },
-        { code: 3, name: 'hr', des: '555' },
-        { code: 4, name: 'hythyt', des: '555' },
-        { code: 5, name: 'hythty', des: '555' },
-        { code: 6, name: 'hty', des: '555' },
-        { code: 7, name: 'gtrh6', des: '555' },
-        { code: 8, name: 'fergtr', des: '555' },
-        { code: 8, name: 'fergtr', des: '555' },
-        { code: 8, name: 'fergtr', des: '555' },
-        { code: 8, name: 'fergtr', des: '555' },
-        { code: 8, name: 'fergtr', des: '555' },
-        { code: 8, name: 'fergtr', des: '555' },
-      ],
+      sfxx: [],
+      data: [],
     }
   },
 
   created() {
     this.$nextTick(() => {
-      // this.getChartPies()
     })
   },
   methods: {
-    getChartPies() {
-      this.$refs.pies.showLoading()
-      // getDiseaseStat().then((res) => {
-      //   this.initPies(res.data)
-      // })
-      let data = []
-      for (let index = 0; index < 8; index++) {
-        data.push({ diagnosis: 1 + index + '个国家', num: index + 1 })
-      }
-      console.log('getChartPies data', data)
-      this.initPies(data)
-    },
-    initPies(data) {
-      const option = this.genePiesOption(data)
-      console.log('option', option)
-      this.$refs.pies.init(option)
-    },
+    refreshData(sfxx) {
+      console.log('basicFee insideJbxx', this.sfxx)
+      this.sfxx = sfxx
 
-    genePiesOption(data = []) {
-      const option = {
-        data: [],
-      }
-      data.forEach((item) => {
-        option.data.push({
-          name: item.diagnosis,
-          value: item.num,
-        })
+      this.$nextTick(() => {
+        // this.$refs.pies.showLoading()
+        let option = { data: [] }
+
+        for (let index = 0; index < this.sfxx.length; index++) {
+          option.data.push({
+            name: this.sfxx[index].mxxmmc,
+            // name: this.insideJbxx.sfxx[index].mxxmmc,
+            value: this.sfxx[index].mxxmje,
+          })
+          this.total = this.total + this.sfxx[index].mxxmje
+        }
+        this.data = JSON.parse(JSON.stringify(option.data))
+
+        this.$refs.pies.init(option)
       })
-      return option
-    },
-
-    refreshData(insideJbxx) {
-      console.log('basicFee insideJbxx', this.insideJbxx)
-      this.insideJbxx = insideJbxx
-
-      // this.$nextTick(() => {
-      this.$refs.pies.showLoading()
-      let option = { data: [] }
-
-      for (let index = 0; index < this.insideJbxx.sfxx.length; index++) {
-        option.data.push({
-          name: this.insideJbxx.sfxx[index].mxxmmc,
-          // name: this.insideJbxx.sfxx[index].mxxmmc,
-          value: this.insideJbxx.sfxx[index].mxxmje,
-        })
-        this.total = this.total + this.insideJbxx.sfxx[index].mxxmje
-      }
-      this.data = JSON.parse(JSON.stringify(option.data))
-
-      this.$refs.pies.init(option)
-      // })
     },
   },
 }

@@ -103,7 +103,7 @@ export default {
       user: {},
       originData: [],
       chooseArr: [],
-      name: '黄',
+      name: '',
       depts: [],
       tableName:'tb_meta_cy_patient',
       queryData: {

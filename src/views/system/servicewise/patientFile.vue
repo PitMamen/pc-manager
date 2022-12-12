@@ -27,7 +27,7 @@
               </div>
             </div>
             <div class="content-main">
-              <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
+              <a-tabs v-model="activeKey" type="line" @change="tabChange" style="margin-top: -10px; position: relative">
                 <a-tab-pane key="1">
                   <template #tab>
                     <span class="span-tab">
@@ -255,6 +255,7 @@ export default {
         hospitalCode: this.historyList[index].hospitalCode,
       }
       this.confirmLoading = true
+      let that = this
       getFileDtail(param)
         .then((res) => {
           this.confirmLoading = false
@@ -440,19 +441,20 @@ export default {
             }
 
             // this.$nextTick(() => {
-              this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
-              if (this.fileDetailData.newArr.length > 0) {
-                this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
-              }
-              // if (this.fileDetailData.yzxx.length > 0) {
-              //   this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
-              // }
+            this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
+            if (this.$refs.basicTech && this.fileDetailData.newArr.length > 0) {
+              this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
+            }
+            if (this.$refs.basicMedic && this.fileDetailData.yzxx.length > 0) {
+              this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
+            }
 
-              // this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu)
-              this.$refs.basicFee.refreshData(this.fileDetailData)
-            // })
-
-            // this.onHistoryItemClick(res.data[0].id)
+            if (this.$refs.basicSurgery) {
+              this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu)
+            }
+            if (this.$refs.basicFee) {
+              this.$refs.basicFee.refreshData(JSON.parse(JSON.stringify(this.fileDetailData.sfxx)))
+            }
           } else {
             this.$message.error(res.message)
           }
@@ -460,6 +462,26 @@ export default {
         .finally(() => {
           this.confirmLoading = false
         })
+    },
+
+    tabChange(key) {
+      if (key == 1) {
+        this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
+      } else if (key == 2) {
+        if (this.fileDetailData.newArr.length > 0) {
+          this.$refs.basicTech.refreshData(this.fileDetailData, this.defaultShowType, this.showData)
+        }
+      } else if (key == 3) {
+        if (this.fileDetailData.yzxx.length > 0) {
+          this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu)
+        }
+      } else if (key == 4) {
+        this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu)
+      } else if (key == 5) {
+        this.$nextTick(() => {
+          this.$refs.basicFee.refreshData(JSON.parse(JSON.stringify(this.fileDetailData.sfxx)))
+        })
+      }
     },
 
     goCancel() {
