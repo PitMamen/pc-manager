@@ -164,7 +164,7 @@ export default {
       originData: [],
       createValue: [],
       createValueBor: [],
-      titleName: '按随访方案',
+      titleName: '按问卷',
       /** 统计类别数据*/
       labelCol: {
         xs: { span: 24 },
@@ -181,7 +181,7 @@ export default {
         endDate: formatDate(new Date().getTime()),
         execDept: [],
         hospitalCode: '',
-        statType: 1,
+        statType: 3,
         tenantId: '',
       },
 
@@ -244,9 +244,9 @@ export default {
       user: {},
 
       StatisticsMode: [
+        { code: 3, value: '按问卷' },
         { code: 1, value: '按随访方案' },
         { code: 2, value: '按执行科室' },
-        { code: 3, value: '按问卷' },
       ],
 
       dateFormat: 'YYYY-MM-DD',

@@ -2684,3 +2684,26 @@ export function parent(data){
         })
        }
 
+
+       /**
+        * 查询账号管理科室
+        */
+       export function getManagerDepts(data){
+        return axios({
+          url:'/account-api/accountInfo/getManagerDepts',
+          method:'get',
+          params:data,
+        })
+       }
+
+       /**
+        * 修改账号管理科室
+        */
+       export function updateManagerDepts(data){
+        return axios({
+          url:'/account-api/accountInfo/updateManagerDepts',
+          method:'post',
+          data:data,
+        })
+       }
+

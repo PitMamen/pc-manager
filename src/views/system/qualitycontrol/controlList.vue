@@ -68,10 +68,10 @@
           style="width: 13px; height: 13px"
           :class="{ 'checked-icon': queryParams.type == 1 }"
           src="~@/assets/icons/icon_wait.svg"
-        /><span style="margin-left: 3px">{{ daisuif }}</span>
+        /><span style="margin-left: 3px"></span>
 
         <a-dropdown>
-          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <span placement="bottomCenter"  ><a-icon style="padding-left=5px;"  />{{ daisuif }} </span>
           <a-menu slot="overlay">
             <a-menu-item key="1">
               <a @click="all(1, 1)" href="javascript:;">全部</a>
@@ -90,10 +90,10 @@
           :class="{ 'checked-icon': queryParams.type == 2 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/icon_completed.svg"
-        /><span style="margin-left: 3px">{{ flowsuccess }} </span>
+        /><span style="margin-left: 3px"> </span>
 
         <a-dropdown>
-          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <span placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px"  />{{ flowsuccess }} </span>
           <a-menu slot="overlay">
             <a-menu-item>
               <a @click="all(4, 2)" href="javascript:;">全部</a>
@@ -112,9 +112,9 @@
           :class="{ 'checked-icon': queryParams.type == 3 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfsb.png"
-        /><span style="margin-left: 3px">{{ flowfail }}</span>
+        /><span style="margin-left: 3px"></span>
         <a-dropdown>
-          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <span placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px"  /> {{ flowfail }}</span>
           <a-menu slot="overlay">
             <a-menu-item>
               <a @click="all(7, 3)" href="javascript:;">全部</a>
@@ -134,9 +134,9 @@
           :class="{ 'checked-icon': queryParams.type == 4 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
-        /><span style="margin-left: 3px">{{ flowoverdue }}</span>
+        /><span style="margin-left: 3px"></span>
         <a-dropdown>
-          <a placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px" type="down" /> </a>
+          <span placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px"  /> {{ flowoverdue }}</span>
           <a-menu slot="overlay">
             <a-menu-item>
               <a @click="all(10, 4)" href="javascript:;">全部</a>
@@ -169,17 +169,17 @@
   </template>
       <div class="display-item" style="margin-left: 45%; margin-top: 10px">
         <span style="margin-top: 10px"> 总条数:</span>
-        <span style="margin-top: 10px;margin-left: 10px;"> {{ dealResultData.totalCount }}</span>
+        <span style="margin-top: 10px;margin-left: 10px;"> {{totalCount }}</span>
       </div>
 
       <div class="display-item" style="margin-left: 45%; margin-top: 10px">
         <span style="margin-top: 10px"> 成功条数:</span>
-        <span style="margin-top: 10px;margin-left: 10px;"> {{ dealResultData.succCount }}</span>
+        <span style="margin-top: 10px;margin-left: 10px;"> {{successCount }}</span>
       </div>
 
       <div class="display-item" style="margin-left: 45%; margin-top: 10px">
         <span style="margin-top: 10px"> 失败条数:</span>
-        <span style="margin-top: 10px;margin-left: 10px;"> {{ dealResultData.failCount }}</span>
+        <span style="margin-top: 10px;margin-left: 10px;"> {{ failCount }}</span>
       </div>
     </a-modal>
 
@@ -195,15 +195,29 @@
     >
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
-        <a-divider type="vertical" />
-        <a @click="goCheck(record)">审核</a>
+        <a-divider v-if="showLine" type="vertical" />
+        <a v-if="showOrHide(record)" :title="ssss" @click="goCheck(record)">{{getText(record.auditResultStatus.value)}}</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
+
+
+     <span :title="showTitle(record)" slot="examine11" slot-scope="text,record" :class="getClass(record.auditResultStatus.value)">
+      {{record.auditResultStatus.description}}
+     </span>
+     
+     <!-- 计划日期 -->
+     <span slot="planTime" slot-scope="text,record" :class="getClass1(record.overdueStatus.value)">
+      {{record.actualExecTime}}
+     </span>
+
+
+
     </s-table>
     <examine ref="examine" @ok="handleOk" />
     <transfer ref="transfer" @ok="handleOk" />
     <followModel ref="followModel" @ok="handleOk" />
+    <check ref="check" @ok="handleOk" />
   </a-card>
 </template>
   
@@ -212,6 +226,7 @@
 import { STable } from '@/components'
 import examine from './examine'
 import transfer from './transfer'
+import check from './check'
 import followModel from '../servicewise/followModel'
 import {
   getDeptsPersonal,
@@ -220,8 +235,9 @@ import {
   questionnaires, //问卷列表
   getUsersByDeptIdsAndRoles, //随访医生
 } from '@/api/modular/system/posManage'
-
+import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
+import { formatDate, getDateNow, getlastMonthToday } from '@/utils/util'
 import Vue from 'vue'
 import { template } from 'lodash'
 export default {
@@ -230,13 +246,18 @@ export default {
     examine,
     transfer,
     followModel,
+    check,
   },
   data() {
     return {
+      showLine:true,
       dealResultTitle:'处理结果',
+      totalCount:0,
+      successCount:0,
+      failCount:0,
       dealResultData: {},
       visible_updPwd: false,
-      daisuif: '待随访',
+      daisuif: '待随访(全部)',
       flowsuccess: '随访成功',
       flowfail: '随访失败',
       flowoverdue: '随访逾期',
@@ -251,7 +272,6 @@ export default {
       docList: [],
       queryParams: {
         type: 1,
-
         // execDoctorUserId: 0,
         // execStatus: 3,
         beginExecuteTime: '',
@@ -262,8 +282,8 @@ export default {
         queryStr: '',
         // messageType: 0,
         taskBizStatus: 1, // 1==待随访  2==随访成功  3=随访失败
-        overdueStatus: 2, // 随访逾期
-        auditStatus: 1, //  1 = 待核查  2 = 已核查
+        overdueStatus: '', // 随访逾期
+        auditStatus: '', //  1 = 待核查  2 = 已核查
       },
       labelCol: {
         xs: { span: 24 },
@@ -277,7 +297,7 @@ export default {
       confirmLoading: false,
       createValue: [],
       form: this.$form.createForm(this),
-
+      dateFormat: 'YYYY-MM-DD',
       // 表头
       columns: [
         {
@@ -317,6 +337,7 @@ export default {
         {
           title: '执行日期',
           dataIndex: 'actualExecTime',
+          scopedSlots: { customRender: 'planTime' },
         },
 
         {
@@ -326,7 +347,7 @@ export default {
 
         {
           title: '审核',
-          dataIndex: 'auditStatus',
+          scopedSlots: { customRender: 'examine11' },
         },
 
         {
@@ -353,7 +374,8 @@ export default {
             data.rows.forEach((item, index) => {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               this.$set(item, 'flowType', item.messageType != null ? item.messageType.description : '')
-              this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
+              // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
+              // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
               this.$set(item, 'statusShow', item.status != null ? item.status.description : '')
               this.$set(item, 'status', item.status.value)
               this.$set(item, 'key', item.id)
@@ -388,11 +410,59 @@ export default {
         }
       })
     }
-
+    
+    this.createValue = [
+      moment(this.formatDate(new Date()), this.dateFormat),
+      moment(this.formatDate(new Date()), this.dateFormat),
+    ]
     this.questionnairesOut()
     this.getUsersByDeptIdsAndRolesOut()
   },
   methods: {
+
+    formatDate(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    getClass(status) {
+      // console.log("wwwww:",status)
+      if (status == 0) {
+        return 'span-gray'
+      } else if (status == 1) {
+        return 'span-green'
+      } else if (status == 2) {
+        return 'span-red'
+      } 
+    },
+
+
+    //显示审核不通过 原因
+    showTitle(record){
+     if(record.auditResultStatus.value==0||record.auditResultStatus.value==1){
+      return ''
+     }else{
+      return record.auditResultStatus.auditDesc
+     }
+    },
+
+
+    getClass1(status) {
+      // console.log("bbbb:",status)
+      if (status == 1) {
+        return 'span-gray'
+      } else if (status == 2) {
+        return 'span-red'
+      } 
+    },
+
+
+
     handleCancelUpdPwd() {
       this.visible_updPwd = false
     },
@@ -462,13 +532,47 @@ export default {
      * @单个审核
      */
     goCheck(record) {
-      if (this.selectedRows.length > 0) {
+      if(record.auditResultStatus.value==1){
+        this.$refs.check.checkDetail(record, 'xxx')
+      }else{
+        if (this.selectedRows.length > 0) {
         this.selectedRows = [] //转移单个时  先清空
       }
       this.selectedRows.push(record.id)
       var templateData = JSON.parse(JSON.stringify(this.selectedRows))
       this.$refs.examine.process(templateData, 'xxx')
+      }
+  
     },
+
+  
+     /**
+      * 审核 / 查看
+      */
+      getText(value){
+        if(value==1){
+          return "查看"
+        }else{
+          return "审核"
+        }
+      },
+
+  
+      /***
+       * 显示隐藏 审核按钮
+       */
+       showOrHide(record){
+         if(this.queryParams.type==1&&record.auditResultStatus.value!=1){
+           this.showLine = false
+           return false
+          }else{
+           this.showLine = true
+          return true
+         }
+       },
+
+
+
 
     /**
      *
@@ -504,7 +608,7 @@ export default {
 
       var tempDataIds = []
       for (let index = 0; index < this.selectedRows.length; index++) {
-        console.log('vvvvv111:', this.selectedRows[index].id)
+        // console.log('vvvvv111:', this.selectedRows[index].id)
         tempDataIds.push(this.selectedRows[index].id) //只保留id
       }
       var templateData = JSON.parse(JSON.stringify(tempDataIds))
@@ -521,7 +625,7 @@ export default {
       }
       var tempDataIds = []
       for (let index = 0; index < this.selectedRows.length; index++) {
-        console.log('vvvvv222:', this.selectedRows[index].id)
+        // console.log('vvvvv222:', this.selectedRows[index].id)
         tempDataIds.push(this.selectedRows[index].id) //只保留id
       }
       var templateData = JSON.parse(JSON.stringify(tempDataIds))
@@ -895,15 +999,20 @@ export default {
       this.queryParams.messageOriginalld = ''
       this.queryParams.execDoctorUserId = ''
       this.dealResultData = null
-      this.createValue = []
+      // this.createValue = []    时间不清空
       this.$refs.table.refresh()
     },
 
     handleOk(resultData) {
       console.log('tttt:',resultData)
-      if(resultData){
+      if(resultData&&resultData.totalCount>1){
         this.visible_updPwd = true
         this.dealResultData = resultData
+
+      this.totalCount = resultData.totalCount
+      this.successCount = resultData.succCount
+      this.failCount = resultData.failCount
+
       }
       this.$refs.table.refresh()
     },
@@ -911,6 +1020,34 @@ export default {
 }
 </script>
   <style lang="less" scoped>
+
+.span-blue {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: #3894ff;
+      // background-color: #3894ff;
+    }
+
+    .span-red {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: #f26161;;
+      // background-color: #f26161;
+    }
+   
+    .span-gray {
+      padding: 1% 2%;
+      font-size: 12px;
+      color:  #4D4D4D;
+      // background-color: #85888e;
+    }
+
+    .span-green {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: #69C07D;
+      // background-color: #85888e;
+    }
 .small-modal {
   display: flex;
   flex-direction: column;
@@ -920,6 +1057,10 @@ export default {
     flex-direction: row;
   }
 }
+
+// a {
+//   color: #333 !important;
+// }
 
 .sitemore {
   .ant-select-selection.ant-select-selection--single {
@@ -1033,6 +1174,11 @@ export default {
     background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
+  }
+
+  .text-color{
+    background-color: #eff7ff;
+    color: #1890ff;
   }
 
   // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
