@@ -927,7 +927,7 @@ export default {
     padding-bottom: 20px;
     margin-top: 10px;
     // margin-top: 1%;
-    // border-bottom: 1px solid #e8e8e8;
+    border-bottom: none !important;
     .action-row {
       margin-top: 10px;
       display: inline-block;
