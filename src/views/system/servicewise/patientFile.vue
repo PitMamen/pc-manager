@@ -198,6 +198,7 @@ export default {
       recordType: this.recordType,
       pastMonths: '60',
     }
+    this.confirmLoading = true
     getFileList(param).then((res) => {
       if (res.code === 0) {
         this.historyList = res.data
