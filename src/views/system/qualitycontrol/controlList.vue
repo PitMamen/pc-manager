@@ -194,7 +194,7 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, onSelectAll: onSelectAllChanage }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :alert="true"
       :rowKey="(record) => record.id"
     >
@@ -487,7 +487,6 @@ export default {
       this.selectedRows = selectedRows
     },
 
-    onSelectAllChanage(selected, selectedRows, changeRows) {},
 
     /**
      * 随访医生列表 (先选中科室)
@@ -532,11 +531,11 @@ export default {
       if (record.auditResultStatus.value == 1 || record.auditResultStatus.value == 2) {
         this.$refs.check.checkDetail(record, 'xxx')
       } else {
-        if (this.selectedRows.length > 0) {
-          this.selectedRows = [] //转移单个时  先清空
+        if (this.selectedRowKeys.length > 0) {
+          this.selectedRowKeys = [] //转移单个时  先清空
         }
-        this.selectedRows.push(record.id)
-        var templateData = JSON.parse(JSON.stringify(this.selectedRows))
+        this.selectedRowKeys.push(record.id)
+        var templateData = JSON.parse(JSON.stringify(this.selectedRowKeys))
         this.$refs.examine.process(templateData, 'xxx')
       }
     },
@@ -575,11 +574,11 @@ export default {
         deptIds: this.queryParams.executeDepartmentIds,
         roleIds: this.roleIds,
       }
-      if (this.selectedRows.length > 0) {
-        this.selectedRows = [] //转移单个时  先清空
+      if (this.selectedRowKeys.length > 0) {
+        this.selectedRowKeys = [] //转移单个时  先清空
       }
-      this.selectedRows.push(record.id)
-      var templateData = JSON.parse(JSON.stringify(this.selectedRows))
+      this.selectedRowKeys.push(record.id)
+      var templateData = JSON.parse(JSON.stringify(this.selectedRowKeys))
       this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
     },
 
@@ -587,7 +586,8 @@ export default {
      * 批量转移
      */
     batchTransfer() {
-      if (this.selectedRows.length == 0) {
+      // console.log("数据大小11:",this.selectedRowKeys)
+      if (this.selectedRowKeys.length == 0) {
         this.$message.error('请勾选内容!')
         return
       }
@@ -596,29 +596,28 @@ export default {
         deptIds: this.queryParams.executeDepartmentIds,
         roleIds: this.roleIds,
       }
-
-      var tempDataIds = []
-      for (let index = 0; index < this.selectedRows.length; index++) {
-        tempDataIds.push(this.selectedRows[index].id) //只保留id
-      }
-      var templateData = JSON.parse(JSON.stringify(tempDataIds))
-      this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
+      // var templateData = JSON.parse(JSON.stringify(tempDataIds))
+      // console.log("XXXX:",this.selectedRowKeys)
+      this.$refs.transfer.transfer(this.selectedRowKeys, flowDocData, 'xxx')
+      this.updateSelect()
     },
 
     /**
      * 批量审核
      */
     batchExamine() {
-      if (this.selectedRows.length == 0) {
+      // console.log("数据大小22:",this.selectedRowKeys)
+      if (this.selectedRowKeys.length == 0) {
         this.$message.error('请勾选内容!')
         return
       }
-      var tempDataIds = []
-      for (let index = 0; index < this.selectedRows.length; index++) {
-        tempDataIds.push(this.selectedRows[index].id) //只保留id
-      }
-      var templateData = JSON.parse(JSON.stringify(tempDataIds))
-      this.$refs.examine.process(templateData, 'xxx')
+      // var tempDataIds = []
+      // for (let index = 0; index < this.selectedRowKeys.length; index++) {
+      //   tempDataIds.push(this.selectedRowKeys[index].id) //只保留id
+      // }
+      // var templateData = JSON.parse(JSON.stringify(tempDataIds))
+      this.$refs.examine.process(this.selectedRowKeys, 'xxx')
+      this.updateSelect()
     },
 
     /**
@@ -1008,7 +1007,9 @@ export default {
 
     //更新选中
     updateSelect() {
-      // this.$refs.table.updateSelect(this.selectedRowKeys, [])
+      this.selectedRowKeys=[]
+      this.selectedRows=[]
+      this.$refs.table.updateSelect(this.selectedRowKeys, [])
       this.$refs.table.updateSelect(this.selectedRows, [])
     },
   },

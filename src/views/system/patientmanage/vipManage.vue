@@ -208,6 +208,13 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        if (this.depts.length>0) {
+          for (let deptsIndex = 0; deptsIndex < this.depts.length; deptsIndex++) {     //如果选中了全部 则不传值
+              if (this.depts.includes(-1)) {
+                this.depts=[]
+              }
+          }
+        }
         let param = { name: this.name, depts: this.depts, tableName: this.tableName }
         for (let index = 0; index < this.chooseArr.length; index++) {
           if (this.chooseArr[index].type == 1 || this.chooseArr[index].type == 3) {
@@ -261,6 +268,10 @@ export default {
     }
   },
   created() {
+
+    /***
+     * 查询table
+     */
     var requestDataCon = {
       qryFlag: 1,
     }
@@ -292,6 +303,7 @@ export default {
         }
       })
     }
+   
   },
   methods: {
     refresh() {
@@ -313,9 +325,9 @@ export default {
       qryMetaConfigureDetailFilter(this.queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
+            this.chooseArr = [] //每次切换的时候 清空一次
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
-              this.chooseArr = [] //每次切换的时候 清空一次
               for (let index = 0; index < detailData.length; index++) {
                 this.chooseArr.push({
                   type: detailData[index].fieldType.value,
@@ -436,8 +448,11 @@ export default {
 .sys-card2 {
   /deep/.ant-select-selection--multiple {
     .ant-select-selection__rendered {
-      margin-top: -1px !important;
+      margin-top: 0px !important;
     }
+  }
+  /deep/.ant-select-selection__choice{
+    margin-top: 1px !important;
   }
 }
 </style>
