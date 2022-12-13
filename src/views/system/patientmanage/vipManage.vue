@@ -64,7 +64,6 @@
       :scroll="{ x: true }"
       ref="table"
       size="default"
-
       :columns="tableClumns"
       :data="loadData"
       :alert="true"
@@ -114,12 +113,17 @@ export default {
       tableClumns: [],
       chooseArrOrigin: [],
       user: {},
+      tabDatas: [],
       originData: [],
       chooseArr: [],
       name: '',
       keyindex: '',
       depts: [],
       tableName: '',
+
+      /**
+       * 请求 查询条件的参数
+       */
       queryData: {
         databaseTableName: '',
         isQryCondition: 1,
@@ -128,7 +132,7 @@ export default {
       /**
        * 请求 表头的参数  showStatus 固定传1 显示的
        */
-      queryTableData:{
+      queryTableData: {
         databaseTableName: '',
         showStatus: 1,
       },
@@ -231,7 +235,6 @@ export default {
           if (this.chooseArr[index].type == 1 || this.chooseArr[index].type == 3) {
             this.$set(param, this.chooseArr[index].tableField, this.chooseArr[index].tempValue)
           } else if (this.chooseArr[index].type == 2) {
-            console.log('BBBB:', this.chooseArr[index].arrMoment)
             //如果是 时期的
             if (this.chooseArr[index].arrMoment && this.chooseArr[index].arrMoment.length > 0) {
               this.$set(
@@ -289,11 +292,17 @@ export default {
     var requestDataCon = {
       qryFlag: 1,
     }
+
+    // 获取table
     qryMetaConfigure(requestDataCon).then((res) => {
       if (res.code == 0) {
         if (res.data.rows) {
           this.keyindex = res.data.rows[0].databaseTableName
           this.tabDatas = res.data.rows
+          this.queryData.databaseTableName = res.data.rows[0].databaseTableName
+          this.queryTableData.databaseTableName = res.data.rows[0].databaseTableName
+          this.refreshData() //查询条件
+          this.getTableClumns() //表头
         }
       }
     })
@@ -317,8 +326,6 @@ export default {
         }
       })
     }
-
-    this.refreshData()
   },
   methods: {
     refresh() {
@@ -365,30 +372,35 @@ export default {
         })
     },
 
-
-  
     /**
      * 获取动态表头
      */
-      getTableClumns(){
-        this.confirmLoading = true
+    getTableClumns() {
+      this.confirmLoading = true
       qryMetaConfigureDetailFilter(this.queryTableData)
         .then((res) => {
-          this.tableClumns=[]
+          this.tableClumns = []
           if (res.code == 0 && res.data.length > 0) {
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
               for (let index = 0; index < detailData.length; index++) {
                 if (detailData[index].showStatus) {
-                  if (detailData[index].showStatus.value == 1) {   //
+                  if (detailData[index].showStatus.value == 1) {
                     this.tableClumns.push({
                       title: detailData[index].fieldComment,
                       dataIndex: detailData[index].tableField,
-                      width:120,
                     })
                   }
                 }
               }
+
+              this.tableClumns.push({
+                //操作
+                title: '操作',
+                width: 140,
+                fixed: 'right',
+                scopedSlots: { customRender: 'action' },
+              })
             }
           }
           this.refresh()
@@ -396,15 +408,14 @@ export default {
         .finally((res) => {
           this.confirmLoading = false
         })
-      },
-
-
+    },
 
     /**
      *档案详情
      * @param {} record
      */ goFile(record) {
       this.$set(record, 'userName', record.name)
+      this.$set(record, 'userId', record.user_id)
       this.$set(record, 'userSex', record.sex)
       this.$refs.followModel.doFile(record, true)
     },
