@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增人员"
+  :title="record.userId?'修改人员':'新增人员'"
     :width="800"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -224,10 +224,9 @@ import {
   getDoctorUserDetail,
   updateDoctorUser
 } from '@/api/modular/system/posManage'
-import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
+
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
-import { check } from 'yargs';
 export default {
   components: {},
   data() {

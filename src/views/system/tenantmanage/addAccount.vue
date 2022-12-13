@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新增账号"
+    :title="record.accountId ? '修改账号' : '新增账号'"
     :width="460"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -11,7 +11,7 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
         <div class="div-part-left">
-          <div class="div-title"  style="margin-top: 0">
+          <div class="div-title" style="margin-top: 0">
             <div class="div-line-blue"></div>
             <span class="span-title">账号信息</span>
           </div>
@@ -24,13 +24,24 @@
               allow-clear
               placeholder="请输入账号"
               @change="onAccountInputChange"
-             
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
-            <a-select show-search v-model="checkData.userId" allow-clear placeholder="请选择人员" @search="onUserSelectSearch" @change="onUserSelectChange">
-              <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{ item.userName }}</a-select-option>
+            <a-select
+              show-search
+              v-model="checkData.userId"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              placeholder="请选择人员"
+              @search="onUserSelectSearch"
+              @change="onUserSelectChange"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{
+                item.userName
+              }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
@@ -55,28 +66,40 @@
               placeholder=""
             />
           </div>
-          
+
           <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">服务权限</span>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属角色:</span>
-            <a-select v-model="checkData.role" allow-clear placeholder="请选择所属角色" :maxTagCount="3"
-          :collapse-tags="true" mode="multiple" style=" height: 28px" >
-              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleId">{{ item.roleRealName }}</a-select-option>
+            <a-select
+              v-model="checkData.role"
+              allow-clear
+              placeholder="请选择所属角色"
+              :maxTagCount="3"
+              :collapse-tags="true"
+              mode="multiple"
+              style="height: 28px"
+              @change="onRoleSelectChange"
+            >
+              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleId">{{
+                item.roleRealName
+              }}</a-select-option>
             </a-select>
           </div>
-          
-         
+
           <div class="div-content">
             <a-checkbox v-model="accountChecked"></a-checkbox>
             <span class="span-item-name">客服坐席:</span>
-            <a-input class="span-item-value" style="display: inline-block" :disabled="!accountChecked" placeholder="请输入客服坐席ID" />
+            <a-input
+              class="span-item-value"
+              style="display: inline-block"
+              :disabled="!accountChecked"
+              placeholder="请输入客服坐席ID"
+            />
           </div>
         </div>
-
-        
       </div>
     </a-spin>
   </a-modal>
@@ -89,8 +112,8 @@ import {
   queryHospitalList,
   getDoctorAccountDetail,
   createDoctorAccount,
-  searchDoctorUser,
-  modifyWxTemplate,
+  getUnbindAccountDoctorUser,
+  updateDoctorAccount,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -100,43 +123,45 @@ export default {
   data() {
     return {
       visible: false,
-      record:{},
+      record: {},
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
       fileList: [],
       danandataList: [],
-      treeData:[],
+      treeData: [],
       checkData: {
         loginName: '', //登录账号
-        userId:'',//对应人员
-        hospitalName: '',    
+        userId: '', //对应人员
+        hospitalName: '',
         phone: '',
         role: undefined, //分配角色
-        zuoxi:'',//坐席
+        zuoxi: '', //坐席
       },
-    
+      fetching: false,
       accountChecked: false, //客服坐席
-     
+
       roleList: [], //角色列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
-      userList:[],
-      
+      userList: [],
     }
   },
   created() {},
   methods: {
     clearData() {
-      this.checkData={
+      this.record = {}
+      this.checkData = {
         loginName: '', //登录账号
-        userId:'',//对应人员
-        hospitalName: '',    
+        userId: '', //对应人员
+        hospitalName: '',
         phone: '',
         role: [], //分配角色
-        zuoxi:'',//坐席
+        zuoxi: '', //坐席
       }
-      this.accountChecked= false
+      this.roleList=[]
+      this.userList=[]
+      this.accountChecked = false
     },
     //新增
     addModel() {
@@ -144,38 +169,41 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-
-
-      this.getRolesOut()
       this.getUserList('')
-    
+      this.getRolesOut()
     },
-//修改
-editModel(record) {
+    //修改
+    editModel(record) {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      this.record=record
+      this.record = record
 
       this.getRolesOut()
-      this.getUserList('')
+
       this.getDoctorAccountDetailOut(record.accountId)
     },
-     //用户详情
-     getDoctorAccountDetailOut(accountId){
+    //账号详情
+    getDoctorAccountDetailOut(accountId) {
       getDoctorAccountDetail({
         accountId: accountId,
       }).then((res) => {
         if (res.code == 0) {
-             
-          this.checkData=res.data
-          var roles=[]
-          res.data.roles.forEach(element => {
+          this.checkData = res.data
+          var roles = []
+          res.data.roles.forEach((element) => {
             roles.push(element.roleId)
-          });
-          console.log( roles)
-          this.checkData.role=roles
+          })
+          console.log(roles)
+          this.checkData.role = roles
+          this.userList.push({
+            ospitalCode: res.data.hospitalCode,
+            hospitalName: res.data.hospitalName,
+            phone: res.data.phone,
+            userId: res.data.userId,
+            userName: res.data.userName,
+          })
           this.getRolesOut()
         }
       })
@@ -200,16 +228,15 @@ editModel(record) {
         }
       })
     },
-    getUserList(queryText){
-      searchDoctorUser({
-        hospitalCode:'',//所属机构代码
-        notBoundOnly:true,//是否返回未绑定账号的用户
-        status: 0,//（0正常、1停用、2删除）
+    getUserList(queryText) {
+      this.fetching = true
+      getUnbindAccountDoctorUser({
+        status: 0, //（0正常、1停用、2删除）
         queryText: queryText,
         pageNo: 1,
         pageSize: 10000,
-       
       }).then((res) => {
+        this.fetching = false
         if (res.code == 0) {
           this.userList = res.data.rows
           this.$forceUpdate()
@@ -217,61 +244,71 @@ editModel(record) {
         }
       })
     },
-    onUserSelectChange(value){
-      console.log('onUserSelectChange',value)
-    var checkedUser = this.userList.find((item) => item.userId == value)
-      this.checkData.hospitalName=checkedUser.hospitalName
-      this.checkData.phone=checkedUser.phone
-     
+    onRoleSelectChange(value){
+      console.log(value)
+      this.checkData.role=value
+      this.$forceUpdate()
     },
-    onUserSelectSearch(value){
+    onUserSelectChange(value) {
+      console.log('onUserSelectChange', value)
+      var checkedUser = this.userList.find((item) => item.userId == value)
+      console.log('checkedUser', checkedUser)
+      if (checkedUser) {
+        this.checkData.hospitalName = checkedUser.hospitalName
+        this.checkData.phone = checkedUser.phone
+      }
+    },
+    onUserSelectSearch(value) {
       console.log(value)
       this.getUserList(value)
     },
-    onAccountInputChange(e){
+    onAccountInputChange(e) {
       console.log(e)
     },
     handleSubmit() {
       console.log(this.checkData)
 
-
-      if (this.checkData.loginName.length==0) {
+      if (this.checkData.loginName.length == 0) {
         this.$message.error('请输入登录账号')
         return
       }
-      if (this.checkData.userId.length==0) {
+      if (this.checkData.userId.length == 0) {
         this.$message.error('请选择对应人员')
         return
       }
-    
-
 
       if (this.checkData.role.length == 0) {
-          this.$message.error('请分配角色')
-          return
-        }
-      
+        this.$message.error('请分配角色')
+        return
+      }
 
       if (this.accountChecked) {
         //如果勾选了客服坐席
-       
+
         if (this.checkData.zuoxi.length == 0) {
           this.$message.error('请输入客服坐席ID')
           return
-        } 
+        }
       }
 
       var postData = {
-        loginName:this.checkData.loginName,
-        userId:this.checkData.userId,
-        actorIds:this.checkData.role,
-        
+        loginName: this.checkData.loginName,
+        userId: this.checkData.userId,
+        actorIds: this.checkData.role,
       }
       if (this.accountChecked) {
-        postData.seatUser=this.checkData.zuoxi
+        postData.seatUser = this.checkData.zuoxi
       }
       this.confirmLoading = true
-      this.addAccount(postData)
+
+      if (this.record.accountId) {
+        postData.accountId = this.record.accountId
+        //修改
+        this.editAccount(postData)
+      } else {
+        //新增
+        this.addAccount(postData)
+      }
     },
 
     addAccount(postData) {
@@ -286,8 +323,8 @@ editModel(record) {
         this.confirmLoading = false
       })
     },
-    modify(postData) {
-      modifyWxTemplate(postData).then((res) => {
+    editAccount(postData) {
+      updateDoctorAccount(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
           this.visible = false
@@ -310,7 +347,6 @@ editModel(record) {
 }
 </script>
 <style lang="less" scoped>
-
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
@@ -359,12 +395,12 @@ editModel(record) {
     flex-direction: row;
     align-items: center;
     overflow: hidden;
-    /deep/.ant-select-selection--multiple{
-      li{
-    margin-top: 1px !important;
-  }
+    /deep/.ant-select-selection--multiple {
+      li {
+        margin-top: 1px !important;
+      }
     }
-  
+
     .span-item-name {
       display: inline-block;
       color: #4d4d4d;
@@ -372,11 +408,8 @@ editModel(record) {
       text-align: right;
       margin-right: 10px;
       width: 60px;
-
-
-
     }
- 
+
     .span-item-value {
       flex: 1;
       color: #4d4d4d;

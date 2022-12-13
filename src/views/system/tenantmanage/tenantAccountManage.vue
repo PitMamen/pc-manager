@@ -65,7 +65,7 @@
 import { STable } from '@/components'
 
 import {
-  queryHospitalList,
+  resetPasswordByAdmin,
   getDeptsPersonal,
   getDepts,
   searchDoctorAccount,
@@ -250,10 +250,11 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.status = 1
-      this.queryParams.planName = ''
-      this.queryParams.executeDepartment = ''
-      this.queryParams.departmentName = ''
+     
+      this.queryParams.hospitalCode = ''
+      this.queryParams.queryText = ''
+      this.queryParams.status = 0
+   
       this.queryParams.pageNo = 1
 
       this.$refs.table.refresh(true)
@@ -283,7 +284,18 @@ export default {
     },
     //重置密码
     goResetPwd(record){
-
+      resetPasswordByAdmin({
+        accountId: record.accountId,
+      }).then((res) => {
+        this.confirmLoading = false
+        if (res.success) {
+          this.$message.success('操作成功！')
+         
+          this.handleOk()
+        } else {
+          this.$message.error('操作失败：' + res.message)
+        }
+      })
     },
     upDateStatesText(_status) {
       return _status == 1 ? '确定停用此方案吗？' : '确定启用用此方案吗？'
