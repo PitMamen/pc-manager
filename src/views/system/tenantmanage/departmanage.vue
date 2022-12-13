@@ -12,33 +12,36 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="left-content1" style="margin-bottom: 20px" v-for="(item, index) in appListOut" :key="index">
-            <div class="div-content" style="margin-left:47px">
-              <a-checkbox style="margin-left:10px" v-model="item.isChecked" @change="checkBoxselectChange(item)" :disabled="item.applicationId!=1"></a-checkbox>
+            <div class="div-content" style="margin-left: 47px">
+              <a-checkbox
+                style="margin-left: 10px"
+                v-model="item.isChecked"
+                @change="checkBoxselectChange(item)"
+                :disabled="item.applicationId != 1"
+              ></a-checkbox>
               <span class="span-item-value" style="font-size: 14px; margin-top: 0px; margin-left: 10px; color: #4d4d4d"
                 >{{ item.applicationName }}
               </span>
             </div>
 
-            <div class="div-content" style="margin-left:47px">
-              <span class="span-item-name" >已选科室:</span>
+            <div class="div-content" style="margin-left: 47px">
+              <span class="span-item-name">已选科室:</span>
               <a-select
-              allow-clear
-                :disabled="item.applicationId!=1"
-                :value="item.applicationId==1?selectedRowKeys:item.selectedRowKeyids"
+                allow-clear
+                :disabled="item.applicationId != 1"
+                :value="item.applicationId == 1 ? selectedRowKeys : item.selectedRowKeyids"
                 placeholder="请在表格中勾选科室"
                 dropdownClassName="select-tags-hidden"
-                :maxTagCount="3"
+                :maxTagCount="1"
                 :collapse-tags="true"
                 mode="multiple"
-                style="height: 28px;width:170px;margin-left: 0px;"
+                style="height: 28px; width: 170px; margin-left: 0px"
                 @change="ksSelectChange"
               >
                 <a-select-option v-for="(item, index) in allDepartList" :key="index" :value="item.department_id">{{
                   item.department_name
                 }}</a-select-option>
               </a-select>
-
-
             </div>
           </div>
         </div>
@@ -86,7 +89,6 @@ import {
   getDepartmentListForReq,
   getManagerDepts,
   updateManagerDepts,
-
 } from '@/api/modular/system/posManage'
 import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -95,7 +97,7 @@ export default {
   components: { STable },
   data() {
     return {
-      isChecked:false,
+      isChecked: false,
       visible: false,
       headers: {},
       appList: [],
@@ -188,50 +190,56 @@ export default {
           this.allDepartList = res.data.records
         }
       })
+    },
+
+
+    clearData(){
+     this.selectedRowKeyids=[]
+     this.selectedRowKeys = []
+     this.queryParams.departmentName =""
 
     },
 
 
+    modalChange(record, id) {
+      if (id == 1) {
+        return this.selectedRowKeys
+      } else {
+        return record.selectedRowKeys
+      }
+    },
 
-
-     modalChange(record,id){
-     if(id==1){
-      return this.selectedRowKeys
-     }else{
-      return record.selectedRowKeys
-     }
-     },
-
-
-    getManagerDeptsOut(){
-      getManagerDepts({accountId:458}).then((res)=>{
-        if (res.code==0) {
-          if(res.data.items){
+    getManagerDeptsOut() {
+      getManagerDepts({ accountId: 458 }).then((res) => {
+        if (res.code == 0) {
+          if (res.data.items) {
             this.appList = res.data.items
+
             this.appListOut = JSON.parse(JSON.stringify(this.appList))
             this.appListOut.forEach((item, index) => {
-              this.$set(item, 'isChecked', item.deptInfos?true:false)
+              this.$set(item, 'isChecked', item.deptInfos ? true : false)
               this.$set(item, 'selectedRowKeyids', [])
+              if(item.deptInfos){
+                item.deptInfos.forEach((item1, index1) =>{
+                 this.selectedRowKeys.push(item1.deptId)
+                 console.log("0000:",this.selectedRowKeys)
+                })
+              }
             })
+            this.updateSelect()
           }
+
         }
       })
     },
 
-
     //checkbox 选择
-    checkBoxselectChange(item){
-     this.isChecked = item.isChecked
-    //  console.log("检查：",this.isChecked )
+    checkBoxselectChange(item) {
+      this.isChecked = item.isChecked
+      //  console.log("检查：",this.isChecked )
     },
 
-
     onSelectChange(selectedRowKeys) {
-      if (!this.isChecked&&selectedRowKeys.length>0) {
-        this.$message.error("请先勾选对应应用名!")
-        return
-      }
-      console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
     },
     ksSelectChange(values) {
@@ -266,30 +274,8 @@ export default {
       })
     },
 
-    /**
-     * 查询对应app
-     */
-    // getApplicationlistOut() {
-    //   this.confirmLoading = true
-    //   getApplicationlist(this.queryParamsApp)
-    //     .then((res) => {
-    //       if (res.code == 0) {
-    //         this.appList = res.data
-    //         this.appListOut = JSON.parse(JSON.stringify(this.appList))
-    //         this.appListOut.forEach((item, index) => {
-    //           this.$set(item, 'isChecked', false)
-    //         })
-    //       }
-    //     })
-    //     .finally((res) => {
-    //       this.confirmLoading = false
-    //     })
-    // },
-    /**
-     * 重置
-     */
     reset() {
-      (this.queryParams = {
+      ;(this.queryParams = {
         departmentName: '',
         parentDisarmamentId: '',
         status: 1,
@@ -302,23 +288,18 @@ export default {
         return
       }
       this.confirmLoading = true
-      var arryData=[]
       let selectIds = JSON.parse(JSON.stringify(this.selectedRowKeys))
-      // selectIds.push({
-      //   applicationId:458
-      // })
-
-      arryData.push({
-        "applicationId":458
+      var items = []
+      items.push({
+        "applicationId": 1,
+        "deptIds": selectIds,
       })
-      arryData.push(selectIds)
-      // selectIds.push("applicationId",1)
 
-      var queryParamsData={
-        accountId:458,
-        items:arryData,
+      var queryParamsData = {
+        accountId: 458,
+        items: items,
       }
-      console.log("BBBB:",queryParamsData)
+      console.log('BBBB:', queryParamsData)
       updateManagerDepts(queryParamsData).then((res) => {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
@@ -412,7 +393,7 @@ export default {
       display: inline-block;
     }
     .ant-select {
-    //   flex: 1;
+      //   flex: 1;
       font-size: 12px !important;
     }
 
