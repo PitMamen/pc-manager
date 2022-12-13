@@ -248,7 +248,7 @@ export default {
         endDate: null,
         queryStatus: null,
         messageOriginalIds: null,
-        hangStatus:-1,
+        hangStatus: -1,
       },
       queryParamsOrigin: {
         userName: null,
@@ -261,7 +261,7 @@ export default {
         endDate: null,
         queryStatus: null,
         messageOriginalIds: null,
-        hangStatus:-1,
+        hangStatus: -1,
       },
 
       labelCol: {
@@ -657,8 +657,8 @@ export default {
           param.bizStatus = null
         }
 
-        if(param.hangStatus == -1){
-          param.hangStatus= null
+        if (param.hangStatus == -1) {
+          param.hangStatus = null
         }
 
         //后台需要null
@@ -689,44 +689,48 @@ export default {
         }
 
         this.confirmLoading = true
-        return qryPhoneFollowTask(Object.assign(parameter, param)).then((res) => {
-          /**
-           *用于屏蔽第一次刷新的loading，第一次系统自动加在数据的时候loading不隐藏
-           */
-          if (this.canHide) {
-            this.confirmLoading = false
-          }
-          if (res.code == 0) {
-            res.data.rows.forEach((item, index) => {
-              this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-              this.$set(item, 'messageTypeName', item.messageType.description)
-              if (item.overdueStatus.value == 1) {
-                this.$set(item, 'overdueStatusName', '否')
-              } else {
-                this.$set(item, 'overdueStatusName', '是')
-              }
-              if (item.hangStatus && item.hangStatus!=null && item.hangStatus.value && item.hangStatus.value == 1) {
-                this.$set(item, 'hangStatusName', '是')
-              } else {
-                this.$set(item, 'hangStatusName', '否')
-              }
+        return qryPhoneFollowTask(Object.assign(parameter, param))
+          .then((res) => {
+            /**
+             *用于屏蔽第一次刷新的loading，第一次系统自动加在数据的时候loading不隐藏
+             */
+            if (this.canHide) {
+              this.confirmLoading = false
+            }
+            if (res.code == 0) {
+              res.data.rows.forEach((item, index) => {
+                this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+                this.$set(item, 'messageTypeName', item.messageType.description)
+                if (item.overdueStatus.value == 1) {
+                  this.$set(item, 'overdueStatusName', '否')
+                } else {
+                  this.$set(item, 'overdueStatusName', '是')
+                }
+                if (item.hangStatus && item.hangStatus != null && item.hangStatus.value && item.hangStatus.value == 1) {
+                  this.$set(item, 'hangStatusName', '是')
+                } else {
+                  this.$set(item, 'hangStatusName', '否')
+                }
 
-              //任务状态;1:未执行2:成功3:失败
-              if (item.bizStatus.value == 1) {
-                this.$set(item, 'bizStatusName', '未执行')
-              } else if (item.bizStatus.value == 2) {
-                this.$set(item, 'bizStatusName', '成功')
-              } else if (item.bizStatus.value == 3) {
-                this.$set(item, 'bizStatusName', '失败')
-              }
-              if (item.execTime) {
-                this.$set(item, 'execTime', item.execTime.substring(0, 10))
-                this.$set(item, 'execTime', item.execTime.substring(0, 10))
-              }
-            })
-          }
-          return res.data
-        })
+                //任务状态;1:未执行2:成功3:失败
+                if (item.bizStatus.value == 1) {
+                  this.$set(item, 'bizStatusName', '未执行')
+                } else if (item.bizStatus.value == 2) {
+                  this.$set(item, 'bizStatusName', '成功')
+                } else if (item.bizStatus.value == 3) {
+                  this.$set(item, 'bizStatusName', '失败')
+                }
+                if (item.execTime) {
+                  this.$set(item, 'execTime', item.execTime.substring(0, 10))
+                  this.$set(item, 'execTime', item.execTime.substring(0, 10))
+                }
+              })
+            }
+            return res.data
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
       },
     }
   },
@@ -1008,11 +1012,11 @@ export default {
         return 'span-gray'
       }
     },
- //暂挂状态;1:暂挂
- getzgClass(status) {
+    //暂挂状态;1:暂挂
+    getzgClass(status) {
       if (status.value == 1) {
         return 'span-blue'
-      } else  {
+      } else {
         return 'span-gray'
       }
     },
@@ -1094,7 +1098,7 @@ export default {
 .span-blue {
   padding: 1% 2%;
   font-size: 12px;
-  color: #409EFF;
+  color: #409eff;
   // background-color: #f26161;
 }
 .span-gray {
