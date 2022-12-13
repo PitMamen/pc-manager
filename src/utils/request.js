@@ -53,15 +53,15 @@ const err = (error) => {
 service.interceptors.request.use(config => {
   const token = Vue.ls.get(ACCESS_TOKEN)
   const appId = Vue.ls.get(SYS_APP_ID)
-  console.log("appId:",appId)
-  console.log("请求预处理")
+  // console.log("appId:",appId)
+  // console.log("请求预处理")
 
   if (token) {
     config.headers['Authorization'] = token
   }
 
   if (appId) {
-    // config.headers['ApplicationId'] = appId
+    config.headers['ApplicationId'] = appId
   }
 
   // var manangeApiFlag = config.url.lastIndexOf('health-api')> -1 || config.url.lastIndexOf('account-api')> -1 || config.url.lastIndexOf('content-api')> -1

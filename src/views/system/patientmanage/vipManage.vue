@@ -59,19 +59,19 @@
         </span>
       </div>
     </div>
-
+    <!-- :columns="columns" -->
     <s-table
       :scroll="{ x: true }"
       ref="table"
       size="default"
-      :columns="columns"
+      :columns="tableClumns"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
     >
       <span style="inline-block" slot="acount" slot-scope="text, record">
-        <img v-if="record.openidFlag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
-        <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
+        <img v-if="record.openid_flag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
+        <img v-if="record.openid_flag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
       <span slot="action" slot-scope="text, record">
@@ -110,17 +110,31 @@ export default {
   },
   data() {
     return {
+      tableClumns: [],
       chooseArrOrigin: [],
       user: {},
+      tabDatas: [],
       originData: [],
       chooseArr: [],
       name: '',
       keyindex: '',
       depts: [],
       tableName: '',
+
+      /**
+       * 请求 查询条件的参数
+       */
       queryData: {
         databaseTableName: '',
         isQryCondition: 1,
+      },
+
+      /**
+       * 请求 表头的参数  showStatus 固定传1 显示的
+       */
+      queryTableData: {
+        databaseTableName: '',
+        showStatus: 1,
       },
 
       labelCol: {
@@ -208,11 +222,12 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.depts.length>0) {
-          for (let deptsIndex = 0; deptsIndex < this.depts.length; deptsIndex++) {     //如果选中了全部 则不传值
-              if (this.depts.includes(-1)) {
-                this.depts=[]
-              }
+        if (this.depts.length > 0) {
+          for (let deptsIndex = 0; deptsIndex < this.depts.length; deptsIndex++) {
+            //如果选中了全部 则不传值
+            if (this.depts.includes(-1)) {
+              this.depts = []
+            }
           }
         }
         let param = { name: this.name, depts: this.depts, tableName: this.tableName }
@@ -220,7 +235,6 @@ export default {
           if (this.chooseArr[index].type == 1 || this.chooseArr[index].type == 3) {
             this.$set(param, this.chooseArr[index].tableField, this.chooseArr[index].tempValue)
           } else if (this.chooseArr[index].type == 2) {
-            console.log('BBBB:', this.chooseArr[index].arrMoment)
             //如果是 时期的
             if (this.chooseArr[index].arrMoment && this.chooseArr[index].arrMoment.length > 0) {
               this.$set(
@@ -250,10 +264,17 @@ export default {
               }
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                if (!item.totalTask) {
+                if (!item.total_task) {
                   this.$set(item, 'sfrw', 0)
-                }else{
-                  this.$set(item, 'sfrw', item.successTotalTask?item.successTotalTask:0+"/"+item.totalTask?item.totalTask:0)
+                } else {
+                  var fenz
+                  if (!item.success_total_task) {
+                    //成功总数是空的  直接=0
+                    fenz = 0
+                  } else {
+                    fenz = item.success_total_task
+                  }
+                  this.$set(item, 'sfrw', fenz + '/' + item.total_task)
                 }
               })
             } else {
@@ -268,20 +289,26 @@ export default {
     }
   },
   created() {
-
     /***
      * 查询table
      */
     var requestDataCon = {
       qryFlag: 1,
     }
-    qryMetaConfigure(requestDataCon).then((res)=>{
-        if(res.code==0){
-          if (res.data.rows) {
-            this.keyindex = res.data.rows[0].databaseTableName
-            this.tabDatas = res.data.rows
-          }
+
+    // 获取table
+    qryMetaConfigure(requestDataCon).then((res) => {
+      if (res.code == 0) {
+        if (res.data.rows) {
+          this.keyindex = res.data.rows[0].databaseTableName
+          this.tabDatas = res.data.rows
+          this.tableName = res.data.rows[0].databaseTableName
+          this.queryData.databaseTableName = res.data.rows[0].databaseTableName
+          this.queryTableData.databaseTableName = res.data.rows[0].databaseTableName
+          this.refreshData() //查询条件
+          this.getTableClumns() //表头
         }
+      }
     })
 
     this.user = Vue.ls.get(TRUE_USER)
@@ -303,7 +330,6 @@ export default {
         }
       })
     }
-   
   },
   methods: {
     refresh() {
@@ -314,7 +340,9 @@ export default {
       // console.log("VVVV:",tableName)
       this.tableName = tableName
       this.queryData.databaseTableName = tableName
+      this.queryTableData.databaseTableName = tableName
       this.refreshData()
+      this.getTableClumns()
     },
 
     /**
@@ -328,6 +356,7 @@ export default {
             this.chooseArr = [] //每次切换的时候 清空一次
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
+
               for (let index = 0; index < detailData.length; index++) {
                 this.chooseArr.push({
                   type: detailData[index].fieldType.value,
@@ -348,10 +377,70 @@ export default {
     },
 
     /**
+     * 获取动态表头
+     */
+    getTableClumns() {
+      this.confirmLoading = true
+      qryMetaConfigureDetailFilter(this.queryTableData)
+        .then((res) => {
+          this.tableClumns = []
+          if (res.code == 0 && res.data.length > 0) {
+            if (res.data[0].detail.length > 0) {
+              var detailData = res.data[0].detail
+
+              /**
+               * 排序
+               */
+              if (detailData.length > 0) {
+                detailData.sort((a, b) => {
+                  return a.showIndex - b.showIndex
+                })
+              }
+
+              for (let index = 0; index < detailData.length; index++) {
+                console.log('排序：', detailData[index].showIndex)
+                if (detailData[index].showStatus) {
+                  if (detailData[index].showStatus.value == 1) {
+                    this.tableClumns.push({
+                      title: detailData[index].fieldComment,
+                      dataIndex: detailData[index].tableField,
+                    })
+                  }
+                }
+              }
+
+              this.tableClumns.push({
+                //操作
+                title: '操作',
+                width: 140,
+                fixed: 'right',
+                scopedSlots: { customRender: 'action' },
+              })
+
+              /**
+               * 添加2个固定的表头  账号信息  和 随访任务
+               */
+              this.tableClumns.unshift({
+                title: '账号信息',
+                dataIndex: 'openid_flag',
+                scopedSlots: { customRender: 'acount' },
+              })
+              this.tableClumns.unshift({ title: '随访任务', dataIndex: 'sfrw' })
+            }
+          }
+          this.refresh()
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
      *档案详情
      * @param {} record
      */ goFile(record) {
       this.$set(record, 'userName', record.name)
+      this.$set(record, 'userId', record.user_id)
       this.$set(record, 'userSex', record.sex)
       this.$refs.followModel.doFile(record, true)
     },
@@ -451,7 +540,7 @@ export default {
       margin-top: 0px !important;
     }
   }
-  /deep/.ant-select-selection__choice{
+  /deep/.ant-select-selection__choice {
     margin-top: 1px !important;
   }
 }

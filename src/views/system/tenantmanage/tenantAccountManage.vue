@@ -221,7 +221,7 @@ export default {
      * @param {关联科室} value 
      */
      goAssDepartmanage(record){
-      this.$refs.departmanage.assdepartmanage()
+      this.$refs.departmanage.assdepartmanage(record)
      },
 
     
