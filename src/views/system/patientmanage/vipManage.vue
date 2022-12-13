@@ -302,6 +302,7 @@ export default {
         if (res.data.rows) {
           this.keyindex = res.data.rows[0].databaseTableName
           this.tabDatas = res.data.rows
+          this.tableName = res.data.rows[0].databaseTableName
           this.queryData.databaseTableName = res.data.rows[0].databaseTableName
           this.queryTableData.databaseTableName = res.data.rows[0].databaseTableName
           this.refreshData() //查询条件
