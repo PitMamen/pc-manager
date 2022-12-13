@@ -503,57 +503,57 @@ export default {
       console.log(this.checkData)
       
 
-      // if (this.checkData.avatarUrl.length == 0) {
-      //   this.$message.error('请上传头像')
-      //   return
-      // }
-      // if (this.checkData.userName.length == 0) {
-      //   this.$message.error('请输入姓名')
-      //   return
-      // }
-      // if (this.checkData.birthday.length == 0) {
-      //   this.$message.error('请选择出生日期')
-      //   return
-      // }
-      // if (this.checkData.identificationNo.length == 0) {
-      //   this.$message.error('请输入身份证号码')
-      //   return
-      // }
+      if (this.checkData.avatarUrl.length == 0) {
+        this.$message.error('请上传头像')
+        return
+      }
+      if (this.checkData.userName.length == 0) {
+        this.$message.error('请输入姓名')
+        return
+      }
+      if (this.checkData.birthday.length == 0) {
+        this.$message.error('请选择出生日期')
+        return
+      }
+      if (this.checkData.identificationNo.length == 0) {
+        this.$message.error('请输入身份证号码')
+        return
+      }
 
-      // var idRes = idCardValidity(this.checkData.identificationNo)
-      // console.log(idRes)
-      // if (!idRes.result) {
-      //   this.$message.error('请输入正确的身份证号码')
-      //   return
-      // }
+      var idRes = idCardValidity(this.checkData.identificationNo)
+      console.log(idRes)
+      if (!idRes.result) {
+        this.$message.error('请输入正确的身份证号码')
+        return
+      }
 
-      // if (this.checkData.phone.length == 0) {
-      //   this.$message.error('请输入联系电话')
-      //   return
-      // }
+      if (this.checkData.phone.length == 0) {
+        this.$message.error('请输入联系电话')
+        return
+      }
 
-      // if (!phoneValidity(this.checkData.phone)) {
-      //   this.$message.error('请输入正确的联系电话')
-      //   return
-      // }
+      if (!phoneValidity(this.checkData.phone)) {
+        this.$message.error('请输入正确的联系电话')
+        return
+      }
 
-      // if (this.checkData.email.length == 0) {
-      //   this.$message.error('请输入邮箱地址')
-      //   return
-      // }
-      // if (!emailValidity(this.checkData.email)) {
-      //   this.$message.error('请输入正确的邮箱地址')
-      //   return
-      // }
+      if (this.checkData.email.length == 0) {
+        this.$message.error('请输入邮箱地址')
+        return
+      }
+      if (!emailValidity(this.checkData.email)) {
+        this.$message.error('请输入正确的邮箱地址')
+        return
+      }
 
-      // if (this.checkData.userType.length == 0) {
-      //   this.$message.error('请选择人员类型')
-      //   return
-      // }
-      // if (this.checkData.professionalTitle.length == 0) {
-      //   this.$message.error('请选择人员职称')
-      //   return
-      // }
+      if (this.checkData.userType.length == 0) {
+        this.$message.error('请选择人员类型')
+        return
+      }
+      if (this.checkData.professionalTitle.length == 0) {
+        this.$message.error('请选择人员职称')
+        return
+      }
       if (this.checkData.hospitalCode.length == 0) {
         this.$message.error('请选择所属机构')
         return
