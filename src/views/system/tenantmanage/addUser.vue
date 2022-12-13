@@ -226,6 +226,7 @@ import {
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
 import Vue from 'vue'
 export default {
   components: {},
