@@ -59,12 +59,13 @@
         </span>
       </div>
     </div>
-
+    <!-- :columns="columns" -->
     <s-table
       :scroll="{ x: true }"
       ref="table"
       size="default"
-      :columns="columns"
+
+      :columns="tableClumns"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
@@ -110,6 +111,7 @@ export default {
   },
   data() {
     return {
+      tableClumns: [],
       chooseArrOrigin: [],
       user: {},
       originData: [],
@@ -208,11 +210,12 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.depts.length>0) {
-          for (let deptsIndex = 0; deptsIndex < this.depts.length; deptsIndex++) {     //如果选中了全部 则不传值
-              if (this.depts.includes(-1)) {
-                this.depts=[]
-              }
+        if (this.depts.length > 0) {
+          for (let deptsIndex = 0; deptsIndex < this.depts.length; deptsIndex++) {
+            //如果选中了全部 则不传值
+            if (this.depts.includes(-1)) {
+              this.depts = []
+            }
           }
         }
         let param = { name: this.name, depts: this.depts, tableName: this.tableName }
@@ -252,8 +255,12 @@ export default {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 if (!item.totalTask) {
                   this.$set(item, 'sfrw', 0)
-                }else{
-                  this.$set(item, 'sfrw', item.successTotalTask?item.successTotalTask:0+"/"+item.totalTask?item.totalTask:0)
+                } else {
+                  this.$set(
+                    item,
+                    'sfrw',
+                    item.successTotalTask ? item.successTotalTask : 0 + '/' + item.totalTask ? item.totalTask : 0
+                  )
                 }
               })
             } else {
@@ -268,20 +275,19 @@ export default {
     }
   },
   created() {
-
     /***
      * 查询table
      */
     var requestDataCon = {
       qryFlag: 1,
     }
-    qryMetaConfigure(requestDataCon).then((res)=>{
-        if(res.code==0){
-          if (res.data.rows) {
-            this.keyindex = res.data.rows[0].databaseTableName
-            this.tabDatas = res.data.rows
-          }
+    qryMetaConfigure(requestDataCon).then((res) => {
+      if (res.code == 0) {
+        if (res.data.rows) {
+          this.keyindex = res.data.rows[0].databaseTableName
+          this.tabDatas = res.data.rows
         }
+      }
     })
 
     this.user = Vue.ls.get(TRUE_USER)
@@ -303,7 +309,8 @@ export default {
         }
       })
     }
-   
+
+    this.refreshData()
   },
   methods: {
     refresh() {
@@ -324,11 +331,21 @@ export default {
       this.confirmLoading = true
       qryMetaConfigureDetailFilter(this.queryData)
         .then((res) => {
+          this.tableClumns=[]
           if (res.code == 0 && res.data.length > 0) {
             this.chooseArr = [] //每次切换的时候 清空一次
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
+
               for (let index = 0; index < detailData.length; index++) {
+                if (detailData[index].showStatus) {
+                  if (detailData[index].showStatus.value == 1) {   //
+                    this.tableClumns.push({
+                      title: detailData[index].fieldComment,
+                      dataIndex: detailData[index].tableField,
+                    })
+                  }
+                }
                 this.chooseArr.push({
                   type: detailData[index].fieldType.value,
                   fieldComment: detailData[index].fieldComment,
@@ -451,7 +468,7 @@ export default {
       margin-top: 0px !important;
     }
   }
-  /deep/.ant-select-selection__choice{
+  /deep/.ant-select-selection__choice {
     margin-top: 1px !important;
   }
 }
