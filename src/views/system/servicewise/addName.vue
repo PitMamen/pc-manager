@@ -111,7 +111,6 @@
             class="span-item-value"
             :maxLength="30"
             style="display: inline-block; width:60px; margin-right: 20px;padding-right:0px"
-            @blur="inputIndex(record)"
           />
         </span>
 

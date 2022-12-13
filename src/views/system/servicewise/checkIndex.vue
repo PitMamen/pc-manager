@@ -90,8 +90,9 @@
 
         <!-- 显示序号 -->
         <span slot="showIndex" slot-scope="text, record">
-          <a-input
-           :min="0"
+          <a-input-number
+           :min=0
+           :precision=0
            :placeholder="请输入正整数"
            :disabled="isDisable(record.show)"
             v-if="record.defaultField != null && record.defaultField.value == 2"
@@ -430,6 +431,7 @@ export default {
         item.fieldType = item.fieldType != null ? item.fieldType.value : '' //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
+        console.log("item.showIndex:",item.showIndex)
         item.showIndex = item.showIndex //显示序号
         item.isQryCondition = item.isQryC ? 1 : 0 // 查询条件
       })

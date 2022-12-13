@@ -2846,6 +2846,7 @@ export function updateManagerDepts(data) {
   })
 }
 
+
 /**
  * 查询未绑定账号医生列表
  */
@@ -2867,3 +2868,4 @@ export function resetPasswordByAdmin(data) {
     data: data,
   })
 }
+

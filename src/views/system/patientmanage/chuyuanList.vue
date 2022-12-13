@@ -313,6 +313,7 @@ export default {
 
     handleOk() {
       this.$refs.table.refresh()
+      
     },
   },
 }

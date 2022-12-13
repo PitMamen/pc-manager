@@ -1,63 +1,7 @@
 <template>
   <a-spin :spinning="confirmLoading">
     <div class="div-service-control">
-      <div class="div-service-left-control">
-        <div class="left-control">
-          <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
-          <!-- 分割线 -->
-          <!-- <div class="div-divider"></div> -->
-
-          <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
-          <div class="div-text-auto">
-            <a-auto-complete
-              class="global-search"
-              size="large"
-              style="width: 93%; font-size: 12px"
-              placeholder="请输入名称查询"
-              option-label-prop="title"
-              @select="onSelect"
-              @search="handleSearch"
-            >
-              <template slot="dataSource">
-                <a-select-option
-                  v-for="item in quesDataTemp"
-                  :key="item.questionnaireId + ''"
-                  :title="item.questionnaireName"
-                >
-                  {{ item.questionnaireName }}
-                </a-select-option>
-              </template>
-            </a-auto-complete>
-          </div>
-
-          <div class="div-wrap-control" style="margin-top: 2%">
-            <div
-              class="div-part"
-              :class="{ checked: item.isChecked }"
-              v-for="(item, index) in quesData"
-              @click="onItemClick(item, index)"
-              :value="item.departmentName"
-              :key="index"
-            >
-              <span class="span-name" @click="onPartChoose(index)">
-                {{ item.questionnaireName }}
-              </span>
-              <div class="div-rate">
-                <span style="width: 30px; text-align: center">
-                  {{ item.checkPercentage }}
-                </span>
-                <span style="margin-left: 5px; width: 30px; text-align: center">
-                  {{ item.passCheckPercentage }}
-                </span>
-              </div>
-              <!-- 分割线 -->
-              <!-- <div class="div-divider"></div> -->
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <a-card :bordered="false" class="card-right-control">
+      <a-card :bordered="false">
         <!-- <a-radio-group v-model="queryParams.type" default-value="1" @change="onClickChange" button-style="solid">
           <a-radio-button value="1"> 待抽查 </a-radio-button>
           <a-radio-button value="2"> 已抽查 </a-radio-button>
@@ -158,42 +102,105 @@
           </div>
         </div>
         <!-- </div> -->
+        <div class="div-down">
+          <div class="div-service-left-control">
+            <div class="left-control">
+              <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
+              <!-- 分割线 -->
+              <!-- <div class="div-divider"></div> -->
 
-        <!-- 去掉勾选框 -->
-        <s-table
-          ref="table"
-          size="default"
-          :columns="columns"
-          :scroll="{ x: true }"
-          :isShowLoading="false"
-          :data="loadData"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="action" slot-scope="text, record">
-            <!-- 跳转详情 -->
-            <a @click="goDetai(record)">详情</a>
-            <!-- 跳转抽查 -->
-            <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)">{{
-              queryParams.type == 1 ? '抽查' : '详情'
-            }}</a>
-            <!-- 跳转抽查结果 -->
-            <a style="margin-left: 6%" v-if="queryParams.type == 2" @click="goAction(record)">抽查结果</a>
-          </span>
-          <span slot="result" slot-scope="text, record">
-            <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
-            <!-- <a-divider type="vertical" /> -->
-          </span>
-          <span slot="operition" slot-scope="text, record">
-            <span
-              :title="record.followDate"
-              :class="{ 'span-red': record.overdueStatus && record.overdueStatus.value == 2 }"
-              >{{ record.followDate }}</span
-            >
-            <!-- <a-divider type="vertical" /> -->
-          </span>
-        </s-table>
+              <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
+              <div class="div-text-auto">
+                <a-auto-complete
+                  class="global-search"
+                  size="large"
+                  style="width: 99%; font-size: 12px"
+                  placeholder="请输入名称查询"
+                  option-label-prop="title"
+                  @select="onSelect"
+                  @search="handleSearch"
+                >
+                  <template slot="dataSource">
+                    <a-select-option
+                      v-for="item in quesDataTemp"
+                      :key="item.questionnaireId + ''"
+                      :title="item.questionnaireName"
+                    >
+                      {{ item.questionnaireName }}
+                    </a-select-option>
+                  </template>
+                </a-auto-complete>
+              </div>
 
+              <div class="div-wrap-control" style="margin-top: 2%">
+                <div v-if="quesData && quesData.length > 0">
+                  <div
+                    class="div-part"
+                    :class="{ checked: item.isChecked }"
+                    v-for="(item, index) in quesData"
+                    @click="onItemClick(item, index)"
+                    :value="item.departmentName"
+                    :key="index"
+                  >
+                    <span class="span-name" @click="onPartChoose(index)">
+                      {{ item.questionnaireName }}
+                    </span>
+                    <div class="div-rate">
+                      <span style="width: 30px; text-align: center">
+                        {{ item.checkPercentage }}
+                      </span>
+                      <span style="margin-left: 5px; width: 30px; text-align: center">
+                        {{ item.passCheckPercentage }}
+                      </span>
+                    </div>
+                    <!-- 分割线 -->
+                    <!-- <div class="div-divider"></div> -->
+                  </div>
+                </div>
+                <div v-else class="no-data">
+                  <img src="~@/assets/icons/no_data.jpg" />
+                  <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div></div> -->
+          <!-- 去掉勾选框 -->
+          <s-table
+            ref="table"
+            size="default"
+            class="card-right-control"
+            :columns="columns"
+            :scroll="{ x: true }"
+            :isShowLoading="false"
+            :data="loadData"
+            :alert="true"
+            :rowKey="(record) => record.code"
+          >
+            <span slot="action" slot-scope="text, record">
+              <!-- 跳转详情 -->
+              <a @click="goDetai(record)">详情</a>
+              <!-- 跳转抽查 -->
+              <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)">{{
+                queryParams.type == 1 ? '抽查' : '详情'
+              }}</a>
+              <!-- 跳转抽查结果 -->
+              <a style="margin-left: 6%" v-if="queryParams.type == 2" @click="goAction(record)">抽查结果</a>
+            </span>
+            <span slot="result" slot-scope="text, record">
+              <span :class="getClass(record.checkStatus)">{{ record.checkStatusName }}</span>
+              <!-- <a-divider type="vertical" /> -->
+            </span>
+            <span slot="operition" slot-scope="text, record">
+              <span
+                :title="record.followDate"
+                :class="{ 'span-red': record.overdueStatus && record.overdueStatus.value == 2 }"
+                >{{ record.followDate }}</span
+              >
+              <!-- <a-divider type="vertical" /> -->
+            </span>
+          </s-table>
+        </div>
         <add-form ref="addForm" @ok="handleOk" />
         <edit-form ref="editForm" @ok="handleOk" />
         <check-model ref="checkModel" @ok="handleOk" />
@@ -613,6 +620,7 @@ export default {
 
     goSearch() {
       this.$refs.table.refresh(true)
+      this.questionnairesOut()
     },
 
     reset() {
@@ -698,8 +706,39 @@ export default {
     },
 
     questionnairesOut() {
+      let param = JSON.parse(JSON.stringify(this.queryParams))
+      if (param.executeDepartmentId == '-1') {
+        delete param.executeDepartmentId
+      }
+
+      // //非管理员和随访管理员要单独处理
+      // if (!(this.user.roleId == 7 || this.user.roleName == 'admin')) {
+      //   this.$set(param, 'executeDepartmentId', this.originData[0].departmentId)
+      // }
+
+      if (param.taskBizStatus == '-1') {
+        delete param.taskBizStatus
+      }
+      if (param.actualDoctorUserId == '-1') {
+        delete param.actualDoctorUserId
+      }
+      if (param.messageType == '-1') {
+        delete param.messageType
+      }
+
+      //待抽查不需要抽出时间
+      if (param.type == '1') {
+        delete param.endCheckTime
+        delete param.beginCheckTime
+      }
+
+      //已抽查不需要抽出时间 姓名
+      if (param.type == '2') {
+        delete param.queryStr
+      }
+
       // questionnaires({ questionnaireName: '' }).then((res) => {
-      questionnaires({}).then((res) => {
+      questionnaires(param).then((res) => {
         this.quesGot = true
         if (res.code == 0) {
           this.quesData = res.data
@@ -849,6 +888,222 @@ export default {
   overflow: hidden;
   height: 100%;
 
+  .div-radio {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    .radio-item {
+      display: flex;
+      // color: white;
+      overflow: hidden;
+      padding: 10px 20px;
+      align-items: center;
+      flex-direction: row;
+      &:hover {
+        cursor: pointer;
+        color: #1890ff;
+        img {
+          filter: drop-shadow(#1890ff 600px 0);
+          transform: translateX(-600px);
+        }
+      }
+    }
+
+    .checked-btn {
+      background-color: #eff7ff;
+      color: #1890ff;
+      border-bottom: #1890ff 2px solid;
+    }
+
+    // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
+    .checked-icon {
+      filter: drop-shadow(#1890ff 200px 0);
+      transform: translateX(-200px);
+    }
+  }
+
+  .table-page-search-wrapper {
+    padding-bottom: 20px;
+    margin-top: 10px;
+    // margin-top: 1%;
+    // border-bottom: 1px solid #e8e8e8;
+    .action-row {
+      margin-top: 10px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .search-row {
+      margin-top: 10px;
+      display: inline-block;
+      vertical-align: middle;
+      padding-right: 20px;
+      .name {
+        margin-right: 10px;
+      }
+    }
+
+    .ant-input-affix-wrapper {
+      width: auto;
+    }
+  }
+
+  .div-down {
+    .div-service-left-control {
+      background-color: white;
+      // padding: 20px 0 20px 20px;
+      float: left;
+      height: 100%;
+      min-height: 300px;
+      // border-right: 1px dashed #e6e6e6;
+      // border: 1px solid #e6e6e6;
+      width: 17.5%;
+      overflow: hidden;
+
+      .left-control {
+        display: flex;
+        // padding: 20px 0 20px 20px;
+        padding: 10px;
+        border: 1px solid #e6e6e6;
+        flex-direction: column;
+        // width: 100%;
+        // // height: 100%;
+        // min-height: 100%;
+      }
+
+      .div-divider {
+        width: 100%;
+        background-color: #e6e6e6;
+        height: 1px;
+      }
+
+      .span-current-ques {
+        //限制一行
+        overflow: hidden; //溢出隐藏
+        text-overflow: ellipsis; //超出省略号显示
+        white-space: nowrap; //文字不换行
+
+        height: 20px;
+        width: 80%;
+        display: inline-block;
+        font-size: 12px;
+        border-bottom: #1890ff solid 1px;
+        text-align: left;
+        color: #1890ff;
+        font-weight: bold;
+      }
+
+      .div-text-auto {
+        width: 100%;
+        display: inline-block;
+        margin-top: 3%;
+        .ant-input {
+          height: 30px;
+        }
+      }
+
+      .div-wrap-control {
+        max-height: 420px;
+        overflow-y: auto !important;
+        .checked {
+          color: #1890ff !important;
+        }
+
+        .no-data {
+          height: 300px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .div-part {
+          overflow: hidden;
+          width: 95%;
+          display: flex;
+          align-items: center;
+          flex-direction: row;
+          // padding-left: 5%;
+          border-bottom: #e6e6e6 1px solid;
+          height: 26px;
+
+          &:hover {
+            cursor: pointer;
+          }
+
+          .span-name {
+            // margin-top: 3.5%;
+            // display: inline-block;
+            flex: 1;
+            height: 85%;
+            width: 60%;
+            overflow: hidden; //溢出隐藏
+            text-overflow: ellipsis; //超出省略号显示
+            white-space: nowrap; //文字不换行
+
+            // padding-left: 1%;
+            // color: #000;
+            margin-top: 1%;
+            font-size: 12px;
+            text-align: left|center;
+          }
+
+          .div-rate {
+            display: flex;
+            width: 30%;
+            font-size: 12px;
+            align-items: center;
+            flex-direction: row;
+            margin-right: 3%;
+          }
+        }
+      }
+    }
+
+    .card-right-control {
+      overflow: hidden;
+      // border-left: #eee solid 1px;
+      border: #eee solid 1px;
+      float: right;
+      width: 81%;
+
+      /deep/ .ant-card-body {
+        padding: 0px 20px !important;
+      }
+
+      .span-red {
+        font-size: 12px;
+        color: #f26161 !important;
+        // background-color: #f26161;
+      }
+
+      .span-gray {
+        padding: 1% 2%;
+        font-size: 12px;
+        color: #69c07d !important;
+        // background-color: #85888e;
+      }
+
+      .ant-select {
+        width: 90px;
+      }
+
+      .table-operator {
+        margin-bottom: 18px;
+      }
+      button {
+        margin-right: 8px;
+      }
+
+      .title {
+        background: #fff;
+        font-size: 18px;
+        font-weight: bold;
+        color: #000;
+      }
+    }
+  }
+
   span {
     font-size: 12px;
   }
@@ -858,209 +1113,6 @@ export default {
     width: 100%;
     background-color: #e6e6e6;
     height: 1px;
-  }
-
-  .div-service-left-control {
-    background-color: white;
-    padding: 20px 0 20px 20px;
-    float: left;
-    height: 100%;
-    min-height: 300px;
-    // border-right: 1px dashed #e6e6e6;
-    // border: 1px solid #e6e6e6;
-    width: 19%;
-    overflow: hidden;
-
-    .left-control {
-      display: flex;
-      padding: 20px 0 20px 20px;
-      border: 1px solid #e6e6e6;
-      flex-direction: column;
-      // width: 100%;
-      // // height: 100%;
-      // min-height: 100%;
-    }
-
-    .div-divider {
-      width: 100%;
-      background-color: #e6e6e6;
-      height: 1px;
-    }
-
-    .span-current-ques {
-      //限制一行
-      overflow: hidden; //溢出隐藏
-      text-overflow: ellipsis; //超出省略号显示
-      white-space: nowrap; //文字不换行
-
-      height: 20px;
-      width: 80%;
-      display: inline-block;
-      font-size: 12px;
-      border-bottom: #1890ff solid 1px;
-      text-align: left;
-      color: #1890ff;
-      font-weight: bold;
-    }
-
-    .div-text-auto {
-      width: 100%;
-      display: inline-block;
-      margin-top: 3%;
-      .ant-input {
-        height: 30px;
-      }
-    }
-
-    .div-wrap-control {
-      max-height: 420px;
-      overflow-y: auto !important;
-      .checked {
-        color: #1890ff !important;
-      }
-
-      .div-part {
-        overflow: hidden;
-        width: 95%;
-        display: flex;
-        align-items: center;
-        flex-direction: row;
-        // padding-left: 5%;
-        border-bottom: #e6e6e6 1px solid;
-        height: 26px;
-
-        &:hover {
-          cursor: pointer;
-        }
-
-        .span-name {
-          // margin-top: 3.5%;
-          // display: inline-block;
-          flex: 1;
-          height: 85%;
-          width: 60%;
-          overflow: hidden; //溢出隐藏
-          text-overflow: ellipsis; //超出省略号显示
-          white-space: nowrap; //文字不换行
-
-          // padding-left: 1%;
-          // color: #000;
-          margin-top: 1%;
-          font-size: 12px;
-          text-align: left|center;
-        }
-
-        .div-rate {
-          display: flex;
-          width: 30%;
-          font-size: 12px;
-          align-items: center;
-          flex-direction: row;
-          margin-right: 3%;
-        }
-      }
-    }
-  }
-
-  .card-right-control {
-    overflow: hidden;
-    float: right;
-    width: 81%;
-
-    .div-radio {
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      flex-direction: row;
-      .radio-item {
-        display: flex;
-        // color: white;
-        overflow: hidden;
-        padding: 10px 20px;
-        align-items: center;
-        flex-direction: row;
-        &:hover {
-          cursor: pointer;
-          color: #1890ff;
-          img {
-            filter: drop-shadow(#1890ff 600px 0);
-            transform: translateX(-600px);
-          }
-        }
-      }
-
-      .checked-btn {
-        background-color: #eff7ff;
-        color: #1890ff;
-        border-bottom: #1890ff 2px solid;
-      }
-
-      // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
-      .checked-icon {
-        filter: drop-shadow(#1890ff 200px 0);
-        transform: translateX(-200px);
-      }
-    }
-
-    /deep/ .ant-card-body {
-      padding: 0px 20px !important;
-    }
-
-    .table-page-search-wrapper {
-      padding-bottom: 20px;
-      margin-top: 10px;
-      // margin-top: 1%;
-      border-bottom: 1px solid #e8e8e8;
-      .action-row {
-        margin-top: 10px;
-        display: inline-block;
-        vertical-align: middle;
-      }
-      .search-row {
-        margin-top: 10px;
-        display: inline-block;
-        vertical-align: middle;
-        padding-right: 20px;
-        .name {
-          margin-right: 10px;
-        }
-      }
-
-      .ant-input-affix-wrapper {
-        width: auto;
-      }
-    }
-
-    .span-red {
-      font-size: 12px;
-      color: #f26161 !important;
-      // background-color: #f26161;
-    }
-
-    .span-gray {
-      padding: 1% 2%;
-      font-size: 12px;
-      color: #69c07d !important;
-      // background-color: #85888e;
-    }
-
-    .ant-select {
-      width: 90px;
-    }
-
-    .table-operator {
-      margin-bottom: 18px;
-    }
-    button {
-      margin-right: 8px;
-    }
-
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-    }
   }
 }
 </style>

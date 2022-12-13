@@ -71,7 +71,7 @@
         /><span style="margin-left: 3px"></span>
 
         <a-dropdown>
-          <span placement="bottomCenter"  ><a-icon style="padding-left=5px;"  />{{ daisuif }} </span>
+          <span placement="bottomCenter"><a-icon style="padding-left=5px;" />{{ daisuif }} </span>
           <a-menu slot="overlay">
             <a-menu-item key="1">
               <a @click="all(1, 1)" href="javascript:;">全部</a>
@@ -93,7 +93,9 @@
         /><span style="margin-left: 3px"> </span>
 
         <a-dropdown>
-          <span placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px"  />{{ flowsuccess }} </span>
+          <span placement="bottomCenter" class="ant-dropdown-link"
+            ><a-icon style="padding-left=5px" />{{ flowsuccess }}
+          </span>
           <a-menu slot="overlay">
             <a-menu-item>
               <a @click="all(4, 2)" href="javascript:;">全部</a>
@@ -114,7 +116,9 @@
           src="~@/assets/icons/sfsb.png"
         /><span style="margin-left: 3px"></span>
         <a-dropdown>
-          <span placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px"  /> {{ flowfail }}</span>
+          <span placement="bottomCenter" class="ant-dropdown-link"
+            ><a-icon style="padding-left=5px" /> {{ flowfail }}</span
+          >
           <a-menu slot="overlay">
             <a-menu-item>
               <a @click="all(7, 3)" href="javascript:;">全部</a>
@@ -136,7 +140,9 @@
           src="~@/assets/icons/sfyq.png"
         /><span style="margin-left: 3px"></span>
         <a-dropdown>
-          <span placement="bottomCenter" class="ant-dropdown-link"><a-icon style="padding-left=5px"  /> {{ flowoverdue }}</span>
+          <span placement="bottomCenter" class="ant-dropdown-link"
+            ><a-icon style="padding-left=5px" /> {{ flowoverdue }}</span
+          >
           <a-menu slot="overlay">
             <a-menu-item>
               <a @click="all(10, 4)" href="javascript:;">全部</a>
@@ -163,23 +169,22 @@
 
     <!-- 处理结果 小弹窗 -->
     <a-modal :title="dealResultTitle" :visible="visible_updPwd" @ok="handleCancelUpdPwd" @cancel="handleCancelUpdPwd">
-
       <template slot="footer">
-    <a-button @click="handleCancelUpdPwd">关闭</a-button>
-  </template>
+        <a-button @click="handleCancelUpdPwd">关闭</a-button>
+      </template>
       <div class="display-item" style="margin-left: 45%; margin-top: 10px">
         <span style="margin-top: 10px"> 总条数:</span>
-        <span style="margin-top: 10px;margin-left: 10px;"> {{totalCount }}</span>
+        <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span>
       </div>
 
       <div class="display-item" style="margin-left: 45%; margin-top: 10px">
         <span style="margin-top: 10px"> 成功条数:</span>
-        <span style="margin-top: 10px;margin-left: 10px;"> {{successCount }}</span>
+        <span style="margin-top: 10px; margin-left: 10px"> {{ successCount }}</span>
       </div>
 
       <div class="display-item" style="margin-left: 45%; margin-top: 10px">
         <span style="margin-top: 10px"> 失败条数:</span>
-        <span style="margin-top: 10px;margin-left: 10px;"> {{ failCount }}</span>
+        <span style="margin-top: 10px; margin-left: 10px"> {{ failCount }}</span>
       </div>
     </a-modal>
 
@@ -189,30 +194,32 @@
       size="default"
       :columns="columns"
       :data="loadData"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, onSelectAll: onSelectAllChanage }"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       :alert="true"
       :rowKey="(record) => record.id"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record)"  @click="goCheck(record)">{{getText(record.auditResultStatus.value)}}</a>
+        <a v-if="showOrHide(record)" @click="goCheck(record)">{{ getText(record.auditResultStatus.value) }}</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
 
+      <!-- 审核   只显示审核不通过的  未审核  审核通过不显示  v-if="record.auditResultStatus.value == 2" -->
+      <span
+        :title="showTitle(record)"
+        slot="examine11"
+        slot-scope="text, record"
+        :class="getClass(record.auditResultStatus.value)"
+      >
+        {{ record.auditResultStatus.description }}
+      </span>
 
-     <span :title="showTitle(record)" slot="examine11" slot-scope="text,record" :class="getClass(record.auditResultStatus.value)">
-      {{record.auditResultStatus.description}}
-     </span>
-     
-     <!-- 计划日期 -->
-     <span slot="planTime" slot-scope="text,record" :class="getClass1(record.overdueStatus.value)">
-      {{record.actualExecTime}}
-     </span>
-
-
-
+      <!-- 计划日期 -->
+      <span slot="planTime" slot-scope="text, record" :class="getClass1(record.overdueStatus.value)">
+        {{ record.actualExecTime }}
+      </span>
     </s-table>
     <examine ref="examine" @ok="handleOk" />
     <transfer ref="transfer" @ok="handleOk" />
@@ -250,11 +257,11 @@ export default {
   },
   data() {
     return {
-      showLine:true,
-      dealResultTitle:'处理结果',
-      totalCount:0,
-      successCount:0,
-      failCount:0,
+      showLine: true,
+      dealResultTitle: '处理结果',
+      totalCount: 0,
+      successCount: 0,
+      failCount: 0,
       dealResultData: {},
       visible_updPwd: false,
       daisuif: '待随访(全部)',
@@ -267,7 +274,7 @@ export default {
       user: {},
       keshiData: [],
       originData: [],
-      roleIds: [],
+      roleIds: [3, 5, 7, 8],
       quesData: [],
       docList: [],
       queryParams: {
@@ -275,9 +282,9 @@ export default {
         // execDoctorUserId: 0,
         // execStatus: 3,
         beginExecuteTime: formatDate(new Date()),
-        endExecuteTime: this.formatDate(new Date()),
+        endExecuteTime: formatDate(new Date()),
         execDoctorUserId: '',
-        messageOriginalld: '',
+        messageOriginalId: '',
         executeDepartmentIds: [],
         queryStr: '',
         // messageType: 0,
@@ -347,6 +354,7 @@ export default {
 
         {
           title: '审核',
+          hideInTable: true,
           scopedSlots: { customRender: 'examine11' },
         },
 
@@ -370,16 +378,16 @@ export default {
               totalPage: res.data.totalPage / parameter.pageSize,
               rows: res.data.rows,
             }
-            if(data.rows){
+            if (data.rows) {
               data.rows.forEach((item, index) => {
-              item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-              this.$set(item, 'flowType', item.messageType != null ? item.messageType.description : '')
-              // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
-              // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
-              this.$set(item, 'statusShow', item.status != null ? item.status.description : '')
-              this.$set(item, 'status', item.status.value)
-              this.$set(item, 'key', item.id)
-            })
+                item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+                this.$set(item, 'flowType', item.messageType != null ? item.messageType.description : '')
+                // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
+                // this.$set(item, 'auditStatus', item.auditStatus != null ? item.auditStatus.description : '')
+                this.$set(item, 'statusShow', item.status != null ? item.status.description : '')
+                this.$set(item, 'status', item.status.value)
+                this.$set(item, 'key', item.id)
+              })
             }
           }
           return data
@@ -390,9 +398,6 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.roleIds.push(this.user.roleId)
-    // console.log('666666:', this.roleIds)
-    console.log(this.user)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
     if (this.user.roleId == 7 || this.user.roleName == 'admin') {
       getDepts().then((res) => {
@@ -411,7 +416,7 @@ export default {
         }
       })
     }
-    
+
     this.createValue = [
       moment(this.formatDate(new Date()), this.dateFormat),
       moment(this.formatDate(new Date()), this.dateFormat),
@@ -420,7 +425,6 @@ export default {
     this.getUsersByDeptIdsAndRolesOut()
   },
   methods: {
-
     formatDate(date) {
       date = new Date(date)
       let myyear = date.getFullYear()
@@ -439,19 +443,17 @@ export default {
         return 'span-green'
       } else if (status == 2) {
         return 'span-red'
-      } 
+      }
     },
-
 
     //显示审核不通过 原因
-    showTitle(record){
-     if(record.auditResultStatus.value==0||record.auditResultStatus.value==1){
-      return ''
-     }else{
-      return record.auditResultStatus.auditDesc
-     }
+    showTitle(record) {
+      if (record.auditResultStatus.value == 0 || record.auditResultStatus.value == 1) {
+        return ''
+      } else {
+        return record.auditResultStatus.auditDesc
+      }
     },
-
 
     getClass1(status) {
       // console.log("bbbb:",status)
@@ -459,10 +461,8 @@ export default {
         return 'span-gray'
       } else if (status == 2) {
         return 'span-red'
-      } 
+      }
     },
-
-
 
     handleCancelUpdPwd() {
       this.visible_updPwd = false
@@ -483,15 +483,10 @@ export default {
      * 全选
      */
     onSelectChange(selectedRowKeys, selectedRows) {
-      // console.log('ssssss:', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-      console.log('88888:', this.selectedRows)
     },
 
-    onSelectAllChanage(selected, selectedRows, changeRows) {
-      console.log('ffff:', selected, selectedRows, changeRows)
-    },
 
     /**
      * 随访医生列表 (先选中科室)
@@ -533,47 +528,41 @@ export default {
      * @单个审核
      */
     goCheck(record) {
-      if(record.auditResultStatus.value==1){
+      if (record.auditResultStatus.value == 1 || record.auditResultStatus.value == 2) {
         this.$refs.check.checkDetail(record, 'xxx')
-      }else{
-        if (this.selectedRows.length > 0) {
-        this.selectedRows = [] //转移单个时  先清空
+      } else {
+        if (this.selectedRowKeys.length > 0) {
+          this.selectedRowKeys = [] //转移单个时  先清空
+        }
+        this.selectedRowKeys.push(record.id)
+        var templateData = JSON.parse(JSON.stringify(this.selectedRowKeys))
+        this.$refs.examine.process(templateData, 'xxx')
       }
-      this.selectedRows.push(record.id)
-      var templateData = JSON.parse(JSON.stringify(this.selectedRows))
-      this.$refs.examine.process(templateData, 'xxx')
-      }
-  
     },
 
-  
-     /**
-      * 审核 / 查看
-      */
-      getText(value){
-        if(value==1){
-          return "查看"
-        }else{
-          return "审核"
-        }
-      },
+    /**
+     * 审核 / 查看
+     */
+    getText(value) {
+      if (value == 1 || value == 2) {
+        return '查看'
+      } else {
+        return '审核'
+      }
+    },
 
-  
-      /***
-       * 显示隐藏 审核按钮
-       */
-       showOrHide(record){
-         if(this.queryParams.type==1&&record.auditResultStatus.value!=1){
-           this.showLine = false
-           return false
-          }else{
-           this.showLine = true
-          return true
-         }
-       },
-
-
-
+    /***
+     * 显示隐藏 审核按钮
+     */
+    showOrHide(record) {
+      if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
+        this.showLine = false
+        return false
+      } else {
+        this.showLine = true
+        return true
+      }
+    },
 
     /**
      *
@@ -585,11 +574,11 @@ export default {
         deptIds: this.queryParams.executeDepartmentIds,
         roleIds: this.roleIds,
       }
-      if (this.selectedRows.length > 0) {
-        this.selectedRows = [] //转移单个时  先清空
+      if (this.selectedRowKeys.length > 0) {
+        this.selectedRowKeys = [] //转移单个时  先清空
       }
-      this.selectedRows.push(record.id)
-      var templateData = JSON.parse(JSON.stringify(this.selectedRows))
+      this.selectedRowKeys.push(record.id)
+      var templateData = JSON.parse(JSON.stringify(this.selectedRowKeys))
       this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
     },
 
@@ -597,7 +586,8 @@ export default {
      * 批量转移
      */
     batchTransfer() {
-      if (this.selectedRows.length == 0) {
+      // console.log("数据大小11:",this.selectedRowKeys)
+      if (this.selectedRowKeys.length == 0) {
         this.$message.error('请勾选内容!')
         return
       }
@@ -606,31 +596,28 @@ export default {
         deptIds: this.queryParams.executeDepartmentIds,
         roleIds: this.roleIds,
       }
-
-      var tempDataIds = []
-      for (let index = 0; index < this.selectedRows.length; index++) {
-        // console.log('vvvvv111:', this.selectedRows[index].id)
-        tempDataIds.push(this.selectedRows[index].id) //只保留id
-      }
-      var templateData = JSON.parse(JSON.stringify(tempDataIds))
-      this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
+      // var templateData = JSON.parse(JSON.stringify(tempDataIds))
+      // console.log("XXXX:",this.selectedRowKeys)
+      this.$refs.transfer.transfer(this.selectedRowKeys, flowDocData, 'xxx')
+      this.updateSelect()
     },
 
     /**
      * 批量审核
      */
     batchExamine() {
-      if (this.selectedRows.length == 0) {
+      // console.log("数据大小22:",this.selectedRowKeys)
+      if (this.selectedRowKeys.length == 0) {
         this.$message.error('请勾选内容!')
         return
       }
-      var tempDataIds = []
-      for (let index = 0; index < this.selectedRows.length; index++) {
-        // console.log('vvvvv222:', this.selectedRows[index].id)
-        tempDataIds.push(this.selectedRows[index].id) //只保留id
-      }
-      var templateData = JSON.parse(JSON.stringify(tempDataIds))
-      this.$refs.examine.process(templateData, 'xxx')
+      // var tempDataIds = []
+      // for (let index = 0; index < this.selectedRowKeys.length; index++) {
+      //   tempDataIds.push(this.selectedRowKeys[index].id) //只保留id
+      // }
+      // var templateData = JSON.parse(JSON.stringify(tempDataIds))
+      this.$refs.examine.process(this.selectedRowKeys, 'xxx')
+      this.updateSelect()
     },
 
     /**
@@ -978,11 +965,12 @@ export default {
         this.queryParams.auditStatus = ''
         this.queryParams.overdueStatus = 2
       }
-      ;(this.daisuif = '待随访'),
-        (this.flowsuccess = '随访成功'),
-        (this.flowfail = '随访失败'),
-        (this.flowoverdue = '随访逾期'),
+        this.daisuif = '待随访',
+        this.flowsuccess = '随访成功',
+        this.flowfail = '随访失败',
+        this.flowoverdue = '随访逾期',
         this.$refs.table.refresh()
+        this.updateSelect()
     },
 
     onChange(momentArr, dateArr) {
@@ -1000,55 +988,61 @@ export default {
       this.queryParams.messageOriginalld = ''
       this.queryParams.execDoctorUserId = ''
       this.dealResultData = null
-      // this.createValue = []    时间不清空
       this.$refs.table.refresh()
     },
 
     handleOk(resultData) {
-      console.log('tttt:',resultData)
-      if(resultData&&resultData.totalCount>1){
+      console.log('tttt:', resultData)
+      if (resultData && resultData.totalCount > 1) {
         this.visible_updPwd = true
         this.dealResultData = resultData
 
-      this.totalCount = resultData.totalCount
-      this.successCount = resultData.succCount
-      this.failCount = resultData.failCount
-
+        this.totalCount = resultData.totalCount
+        this.successCount = resultData.succCount
+        this.failCount = resultData.failCount
       }
+      this.updateSelect()
       this.$refs.table.refresh()
+    },
+
+    //更新选中
+    updateSelect() {
+      this.selectedRowKeys=[]
+      this.selectedRows=[]
+      this.$refs.table.updateSelect(this.selectedRowKeys, [])
+      this.$refs.table.updateSelect(this.selectedRows, [])
     },
   },
 }
 </script>
   <style lang="less" scoped>
-
 .span-blue {
-      padding: 1% 2%;
-      font-size: 12px;
-      color: #3894ff;
-      // background-color: #3894ff;
-    }
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #3894ff;
+  // background-color: #3894ff;
+}
 
-    .span-red {
-      padding: 1% 2%;
-      font-size: 12px;
-      color: #f26161;;
-      // background-color: #f26161;
-    }
-   
-    .span-gray {
-      padding: 1% 2%;
-      font-size: 12px;
-      color:  #4D4D4D;
-      // background-color: #85888e;
-    }
+.span-red {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #f26161;
+  // background-color: #f26161;
+}
 
-    .span-green {
-      padding: 1% 2%;
-      font-size: 12px;
-      color: #69C07D;
-      // background-color: #85888e;
-    }
+.span-gray {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #4d4d4d;
+  // background-color: #85888e;
+}
+
+.span-green {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #69c07d;
+  // background-color: #85888e;
+}
 .small-modal {
   display: flex;
   flex-direction: column;
@@ -1177,7 +1171,7 @@ export default {
     border-bottom: #1890ff 2px solid;
   }
 
-  .text-color{
+  .text-color {
     background-color: #eff7ff;
     color: #1890ff;
   }
