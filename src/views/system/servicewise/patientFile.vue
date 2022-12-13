@@ -435,6 +435,44 @@ export default {
                 this.$set(this.fileDetailData.ssxx[0], 'color', 'blue')
               }
 
+              //组装收费信息 数组根据收费名称封装成二级数组，计算二级数组的总和
+              let newYzxxSF = []
+              let dateArrSF = []
+              if (this.fileDetailData.sfxx.length > 0) {
+                for (let index = 0; index < this.fileDetailData.sfxx.length; index++) {
+                  dateArrSF.push(this.fileDetailData.sfxx[index].mxfylbmc)
+                }
+                dateArrSF = dateArrSF.filter((item, index) => {
+                  //去重
+                  return dateArrSF.indexOf(item) === index // 因为indexOf 只能查找到第一个
+                })
+              }
+              console.log('dateArrSS收费', dateArrSF)
+              for (let index = 0; index < dateArrSF.length; index++) {
+                newYzxxSF.push({ color: 'gray', data: [], mxfylbmc: dateArrSF[index] })
+                for (let indexIn = 0; indexIn < this.fileDetailData.sfxx.length; indexIn++) {
+                  if (dateArrSF[index] == this.fileDetailData.sfxx[indexIn].mxfylbmc) {
+                    newYzxxSF[index].data.push(JSON.parse(JSON.stringify(this.fileDetailData.sfxx[indexIn])))
+                  }
+                }
+              }
+
+              //增加总数
+              for (let index = 0; index < newYzxxSF.length; index++) {
+                let itemTotal = 0
+                for (let indexIn = 0; indexIn < newYzxxSF[index].data.length; indexIn++) {
+                  itemTotal = itemTotal + newYzxxSF[index].data[indexIn].mxxmje
+                }
+
+                this.$set(newYzxxSF[index], 'mxxmje', itemTotal > 0 ? itemTotal.toFixed(2) : 0)
+
+                this.$set(newYzxxSF[index], 'mxxmmc', newYzxxSF[index].mxfylbmc)
+              }
+
+              // mxxmje 收费金额   mxfylbmc 收费名称
+              this.$set(this.fileDetailData, 'sfxx', newYzxxSF)
+              console.log('newYzxxSF', JSON.stringify(newYzxxSF))
+
               console.log('this.fileDetailDataStr', JSON.stringify(this.fileDetailData))
             } else {
               uni.$u.toast('解密失败')

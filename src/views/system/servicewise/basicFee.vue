@@ -16,7 +16,7 @@
           </div>
         </div>
         <div style="font-weight: bold; margin-top: 12px; color: #333">
-          总费用：<span>{{ total.toFixed(2) }}</span>
+          总费用：<span>{{ total }}</span>
         </div>
       </div>
     </div>
@@ -45,11 +45,11 @@ export default {
   },
 
   created() {
-    this.$nextTick(() => {
-    })
+    this.$nextTick(() => {})
   },
   methods: {
     refreshData(sfxx) {
+      this.total = 0
       console.log('basicFee insideJbxx', this.sfxx)
       this.sfxx = sfxx
 
@@ -63,8 +63,10 @@ export default {
             // name: this.insideJbxx.sfxx[index].mxxmmc,
             value: this.sfxx[index].mxxmje,
           })
-          this.total = this.total + this.sfxx[index].mxxmje
+          this.total = this.total + parseInt(this.sfxx[index].mxxmje)
         }
+        console.log('this.total', this.total)
+        this.total = this.total > 0 ? this.total.toFixed(2) : 0
         this.data = JSON.parse(JSON.stringify(option.data))
 
         this.$refs.pies.init(option)

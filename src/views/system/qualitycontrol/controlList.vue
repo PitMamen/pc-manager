@@ -21,7 +21,7 @@
 
       <div class="search-row">
         <span class="name">随访问卷:</span>
-        <a-select v-model="queryParams.messageOriginalld" placeholder="请选择" allow-clear style="width: 120px">
+        <a-select v-model="queryParams.messageOriginalId" placeholder="请选择" allow-clear style="width: 120px">
           <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index">{{
             item.questionnaireName
           }}</a-select-option>
@@ -201,16 +201,16 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record)" @click="goCheck(record)">{{ getText(record.auditResultStatus.value) }}</a>
+        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)">{{ getText(record.auditResultStatus.value) }}</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
 
       <!-- 审核   只显示审核不通过的  未审核  审核通过不显示  v-if="record.auditResultStatus.value == 2" -->
       <span
+        slot-scope="text, record"
         :title="showTitle(record)"
         slot="examine11"
-        slot-scope="text, record"
         :class="getClass(record.auditResultStatus.value)"
       >
         {{ record.auditResultStatus.description }}
@@ -279,15 +279,12 @@ export default {
       docList: [],
       queryParams: {
         type: 1,
-        // execDoctorUserId: 0,
-        // execStatus: 3,
         beginExecuteTime: formatDate(new Date()),
         endExecuteTime: formatDate(new Date()),
         execDoctorUserId: '',
         messageOriginalId: '',
         executeDepartmentIds: [],
         queryStr: '',
-        // messageType: 0,
         taskBizStatus: 1, // 1==待随访  2==随访成功  3=随访失败
         overdueStatus: '', // 随访逾期
         auditStatus: '', //  1 = 待核查  2 = 已核查
@@ -451,12 +448,11 @@ export default {
       if (record.auditResultStatus.value == 0 || record.auditResultStatus.value == 1) {
         return ''
       } else {
-        return record.auditResultStatus.auditDesc
+        return record.auditDesc
       }
     },
 
     getClass1(status) {
-      // console.log("bbbb:",status)
       if (status == 1) {
         return 'span-gray'
       } else if (status == 2) {
@@ -552,10 +548,13 @@ export default {
     },
 
     /***
-     * 显示隐藏 审核按钮
+     * 显示隐藏 审核按钮  （待随访的  不显示审核 和 查看 操作）
      */
-    showOrHide(record) {
-      if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
+    showOrHide(record,type) {
+      console.log("999999:",record.auditResultStatus.value)
+      
+      // if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
+      if (this.queryParams.type == 1) {
         this.showLine = false
         return false
       } else {
@@ -985,7 +984,7 @@ export default {
     reset() {
       this.queryParams.queryStr = ''
       this.queryParams.executeDepartmentIds = []
-      this.queryParams.messageOriginalld = ''
+      this.queryParams.messageOriginalId = ''
       this.queryParams.execDoctorUserId = ''
       this.dealResultData = null
       this.$refs.table.refresh()
