@@ -97,6 +97,7 @@ export default {
   components: { STable },
   data() {
     return {
+      accountId:'',
       isChecked: false,
       visible: false,
       headers: {},
@@ -167,9 +168,10 @@ export default {
   methods: {
     clearData() {},
     //科室管理
-    assdepartmanage() {
+    assdepartmanage(record) {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
+      this.accountId = record.accountId
       this.visible = true
       this.confirmLoading = false
 
@@ -210,7 +212,7 @@ export default {
     },
 
     getManagerDeptsOut() {
-      getManagerDepts({ accountId: 458 }).then((res) => {
+      getManagerDepts({ accountId: this.accountId }).then((res) => {
         if (res.code == 0) {
           if (res.data.items) {
             this.appList = res.data.items
@@ -296,7 +298,8 @@ export default {
       })
 
       var queryParamsData = {
-        accountId: 458,
+        // accountId: this.accountId,
+        accountId: this.accountId,
         items: items,
       }
       console.log('BBBB:', queryParamsData)
