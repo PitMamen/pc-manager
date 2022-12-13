@@ -2835,6 +2835,37 @@ export function updateManagerDepts(data) {
   })
 }
 
+/**
+ * 修改医生,个案师和护士账号信息
+ */
+ export function updateDoctorAccount(data) {
+  return axios({
+    url: '/account-api/accountInfo/updateDoctorAccount',
+    method: 'post',
+    data: data,
+  })
+}
 
 
+/**
+ * 查询未绑定账号医生列表
+ */
+export function getUnbindAccountDoctorUser(data) {
+  return axios({
+    url: '/account-api/accountInfo/getUnbindAccountDoctorUser',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 重置密码
+ */
+export function resetPasswordByAdmin(data) {
+  return axios({
+    url: '/account-api/accountInfo/resetPasswordByAdmin',
+    method: 'post',
+    data: data,
+  })
+}
 
