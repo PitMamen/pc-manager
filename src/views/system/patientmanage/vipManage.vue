@@ -302,6 +302,7 @@ export default {
         if (res.data.rows) {
           this.keyindex = res.data.rows[0].databaseTableName
           this.tabDatas = res.data.rows
+          this.tableName = res.data.rows[0].databaseTableName
           this.queryData.databaseTableName = res.data.rows[0].databaseTableName
           this.queryTableData.databaseTableName = res.data.rows[0].databaseTableName
           this.refreshData() //查询条件
@@ -387,7 +388,17 @@ export default {
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
 
+              /**
+               * 排序
+               */
+              if (detailData.length > 0) {
+                detailData.sort((a, b) => {
+                  return a.showIndex - b.showIndex
+                })
+              }
+
               for (let index = 0; index < detailData.length; index++) {
+                console.log('排序：', detailData[index].showIndex)
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
                     this.tableClumns.push({
@@ -405,7 +416,6 @@ export default {
                 fixed: 'right',
                 scopedSlots: { customRender: 'action' },
               })
-
 
               /**
                * 添加2个固定的表头  账号信息  和 随访任务

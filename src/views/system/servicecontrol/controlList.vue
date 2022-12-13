@@ -619,7 +619,7 @@ export default {
     },
 
     goSearch() {
-      this.$refs.table.refresh(true)
+      // this.$refs.table.refresh(true)
       this.questionnairesOut()
     },
 
@@ -748,12 +748,24 @@ export default {
           for (let index = 0; index < this.quesData.length; index++) {
             this.$set(this.quesData[index], 'isChecked', false)
           }
-          this.$set(this.quesData[0], 'isChecked', true)
-          this.choseQues = JSON.parse(JSON.stringify(this.quesData[0]))
+          //记住选中的问卷
+          console.log('before', JSON.stringify(this.choseQues))
+          if (this.choseQues.questionnaireId) {
+            for (let index = 0; index < this.quesData.length; index++) {
+              if (this.quesData[index].questionnaireId == this.choseQues.questionnaireId) {
+                this.$set(this.quesData[index], 'isChecked', true)
+                this.choseQues = JSON.parse(JSON.stringify(this.quesData[index]))
+                console.log('in', JSON.stringify(this.choseQues))
+              }
+            }
+          } else {
+            this.$set(this.quesData[0], 'isChecked', true)
+            this.choseQues = JSON.parse(JSON.stringify(this.quesData[0]))
+          }
+          console.log('after', JSON.stringify(this.choseQues))
           this.queryParams.messageContentId = this.choseQues.questionnaireId
-          this.$refs.table.refresh(true)
-
           this.quesDataTemp = JSON.parse(JSON.stringify(this.quesData))
+          this.$refs.table.refresh(true)
         }
       })
     },
@@ -789,12 +801,12 @@ export default {
       return myIndex
     },
 
-    onItemClick(item, index) {
+    onItemClick(item, indexClick) {
       for (let index = 0; index < this.quesData.length; index++) {
         this.$set(this.quesData[index], 'isChecked', false)
       }
-      this.$set(this.quesData[index], 'isChecked', true)
-      this.choseQues = JSON.parse(JSON.stringify(this.quesData[index]))
+      this.$set(this.quesData[indexClick], 'isChecked', true)
+      this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
       this.queryParams.messageContentId = this.choseQues.questionnaireId
       this.$refs.table.refresh(true)
     },
@@ -876,7 +888,7 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      this.goSearch()
     },
   },
 }
@@ -927,7 +939,7 @@ export default {
     padding-bottom: 20px;
     margin-top: 10px;
     // margin-top: 1%;
-    // border-bottom: 1px solid #e8e8e8;
+    border-bottom: none !important;
     .action-row {
       margin-top: 10px;
       display: inline-block;

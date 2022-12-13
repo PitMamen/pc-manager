@@ -2869,3 +2869,98 @@ export function resetPasswordByAdmin(data) {
   })
 }
 
+/**
+ * 文章分类列表
+ */
+export function getArticleCategoryList(data) {
+  return axios({
+    url: '/health-api/articleCategory/getArticleCategoryList',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 文章分类添加
+ */
+export function addArticleCategory(data) {
+  return axios({
+    url: '/health-api/articleCategory/addArticleCategory',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 文章分类删除
+ */
+export function deleteArticleCategory(id) {
+  return axios({
+    url: '/health-api/articleCategory/deleteArticleCategory/'+id,
+    method: 'post',
+   
+  })
+}
+/**
+ * 文章分类修改
+ */
+export function modifyArticleCategory(data) {
+  return axios({
+    url: '/health-api/articleCategory/modifyArticleCategory',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 文章列表
+ */
+export function getArticleList(data) {
+  return axios({
+    url: '/health-api/article/getArticleList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 新增文章信息
+ *
+ */
+export function addArticle(parameter) {
+  return axios({
+    url: '/health-api/article/addArticle',
+    method: 'post',
+    data: parameter
+  })
+}
+/**
+ * 修改文章信息
+ *
+ */
+export function modifyArticle(parameter) {
+  return axios({
+    url: '/health-api/article/modifyArticle',
+    method: 'post',
+    data: parameter
+  })
+}
+/**
+ * 删除文章信息
+ *
+ */
+export function deleteArticle(id) {
+  return axios({
+    url: '/health-api/article/deleteArticle/'+id,
+    method: 'post',
+
+  })
+}
+/**
+ * 文章信息
+ *
+ */
+export function getArticleByIdNew(id) {
+  return axios({
+    url: '/health-api/article/getArticleById/'+id,
+    method: 'post',
+
+  })
+}
