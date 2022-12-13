@@ -125,6 +125,14 @@ export default {
         isQryCondition: 1,
       },
 
+      /**
+       * 请求 表头的参数  showStatus 固定传1 显示的
+       */
+      queryTableData:{
+        databaseTableName: '',
+        showStatus: 1,
+      },
+
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -321,7 +329,9 @@ export default {
       // console.log("VVVV:",tableName)
       this.tableName = tableName
       this.queryData.databaseTableName = tableName
+      this.queryTableData.databaseTableName = tableName
       this.refreshData()
+      this.getTableClumns()
     },
 
     /**
@@ -331,21 +341,12 @@ export default {
       this.confirmLoading = true
       qryMetaConfigureDetailFilter(this.queryData)
         .then((res) => {
-          this.tableClumns=[]
           if (res.code == 0 && res.data.length > 0) {
             this.chooseArr = [] //每次切换的时候 清空一次
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
 
               for (let index = 0; index < detailData.length; index++) {
-                if (detailData[index].showStatus) {
-                  if (detailData[index].showStatus.value == 1) {   //
-                    this.tableClumns.push({
-                      title: detailData[index].fieldComment,
-                      dataIndex: detailData[index].tableField,
-                    })
-                  }
-                }
                 this.chooseArr.push({
                   type: detailData[index].fieldType.value,
                   fieldComment: detailData[index].fieldComment,
@@ -363,6 +364,41 @@ export default {
           this.confirmLoading = false
         })
     },
+
+
+  
+    /**
+     * 获取动态表头
+     */
+      getTableClumns(){
+        this.confirmLoading = true
+      qryMetaConfigureDetailFilter(this.queryTableData)
+        .then((res) => {
+          this.tableClumns=[]
+          if (res.code == 0 && res.data.length > 0) {
+            if (res.data[0].detail.length > 0) {
+              var detailData = res.data[0].detail
+              for (let index = 0; index < detailData.length; index++) {
+                if (detailData[index].showStatus) {
+                  if (detailData[index].showStatus.value == 1) {   //
+                    this.tableClumns.push({
+                      title: detailData[index].fieldComment,
+                      dataIndex: detailData[index].tableField,
+                      width:120,
+                    })
+                  }
+                }
+              }
+            }
+          }
+          this.refresh()
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+      },
+
+
 
     /**
      *档案详情

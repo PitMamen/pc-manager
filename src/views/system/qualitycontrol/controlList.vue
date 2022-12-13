@@ -201,7 +201,7 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record)" @click="goCheck(record)">{{ getText(record.auditResultStatus.value) }}</a>
+        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)">{{ getText(record.auditResultStatus.value) }}</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
@@ -279,15 +279,12 @@ export default {
       docList: [],
       queryParams: {
         type: 1,
-        // execDoctorUserId: 0,
-        // execStatus: 3,
         beginExecuteTime: formatDate(new Date()),
         endExecuteTime: formatDate(new Date()),
         execDoctorUserId: '',
         messageOriginalId: '',
         executeDepartmentIds: [],
         queryStr: '',
-        // messageType: 0,
         taskBizStatus: 1, // 1==待随访  2==随访成功  3=随访失败
         overdueStatus: '', // 随访逾期
         auditStatus: '', //  1 = 待核查  2 = 已核查
@@ -551,10 +548,13 @@ export default {
     },
 
     /***
-     * 显示隐藏 审核按钮
+     * 显示隐藏 审核按钮  （待随访的  不显示审核 和 查看 操作）
      */
-    showOrHide(record) {
-      if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
+    showOrHide(record,type) {
+      console.log("999999:",record.auditResultStatus.value)
+      
+      // if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
+      if (this.queryParams.type == 1) {
         this.showLine = false
         return false
       } else {
