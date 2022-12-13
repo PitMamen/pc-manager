@@ -137,7 +137,7 @@
                 </div>
               </div>
               <div class="item type2">
-                <table-form />
+                <table-form :queryParam="queryParam" />
               </div>
             </div>
           </div>
@@ -206,6 +206,10 @@ export default {
   created() {
     this.queryParam = {...this.queryParam, ...this.$route.query}
   },
+  mounted() {
+    this.initPies()
+    this.initBars()
+  },
   methods: {
     search() {},
     initParams() {},
@@ -230,6 +234,139 @@ export default {
       }
     },
     onChange(value) {
+    },
+    initEvent() {
+      window.addEventListener('resize', e => {
+        this.resizeCharts()
+      })
+    },
+    resizeCharts() {
+      this.$refs.pies.getChart().resize()
+      this.$refs.bars.getChart().resize()
+    },
+    initPies(data) {
+      const option = this.genePiesOption(data)
+      this.$refs.pies.init2(option)
+    },
+    initBars(data) {
+      const option = this.geneBarsOption(data)
+      this.$refs.bars.init(option)
+    },
+    genePiesOption(data) {
+      const option = {
+        color: ['#5087EC', '#68BBC4', '#58A55C'],
+        title: {
+          text: '随访方式分布',
+          left: 'center',
+          textStyle: {
+            fontSize: 14,
+            lineHeight: 16,
+            color: '#4D4D4D',
+            fontWeight: '400'
+          }
+        },
+        tooltip: {
+          trigger: 'item'
+        },
+        legend: {
+          top: '30%',
+          left: 'right',
+          orient: 'vertical'
+        },
+        series: [
+          {
+            name: '随访方式分布',
+            type: 'pie',
+            center: ['40%', '55%'],
+            radius: ['50%', '70%'],
+            avoidLabelOverlap: false,
+            data: [
+              { value: 735, name: '微信' },
+              { value: 580, name: '电话' },
+              { value: 300, name: '短信' }
+            ],
+            label: {
+              show: true,
+              position: 'outside',
+              fontSize: 12,
+              lineHeight: 16,
+              color: '#4D4D4D',
+              textAlign: 'left',
+              formatter(item) {
+                return item.name +'\n'+ item.value
+              }
+            },
+            labelLine: {
+              show: true
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontSize: 12,
+                fontWeight: 'bold'
+              },
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)'
+              }
+            }
+          }
+        ]
+      }
+      return option
+    },
+    geneBarsOption(data) {
+      const option = {
+        color: ['#409EFF'],
+        title: {
+          text: '失败原因Top5',
+          left: 'center',
+          textStyle: {
+            fontSize: 14,
+            lineHeight: 16,
+            color: '#4D4D4D',
+            fontWeight: '400'
+          }
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {},
+        grid: {
+          top: '25px',
+          left: '5px',
+          right: '20px',
+          bottom: '10px',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value',
+          axisLabel: {
+            color: '#4D4D4D',
+            fontSize: 12
+          }
+        },
+        yAxis: {
+          type: 'category',
+          axisLabel: {
+            color: '#4D4D4D',
+            fontSize: 12
+          },
+          data: ['患者迁出', '患者死亡', '患者拒绝随访', '电话无人接听', '电话号码有误']
+        },
+        series: [
+          {
+            type: 'bar',
+            barWidth: '50%',
+            data: [182, 234, 970, 744, 9999]
+          }
+        ]
+      }
+      return option
     },
   }
 }
@@ -345,6 +482,16 @@ button {
         padding: 14px;
         overflow-y: auto;
         background: #F6F6F6;
+        &::-webkit-scrollbar {
+          width: 7px;
+        }
+        &::-webkit-scrollbar-thumb {
+          background: #DEDEDE;
+          border-radius: 4px;
+        }
+        &::-webkit-scrollbar-track {
+          background: #F6F6F6;
+        }
         .item {
           margin-bottom: 14px;
           &:last-child {

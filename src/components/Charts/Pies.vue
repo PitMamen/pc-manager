@@ -4,11 +4,12 @@
 
 <script>
 import * as echarts from 'echarts/core'
-import { TooltipComponent, LegendComponent } from 'echarts/components'
+import { TitleComponent, TooltipComponent, LegendComponent } from 'echarts/components'
 import { PieChart } from 'echarts/charts'
+import { LabelLayout } from 'echarts/features'
 import { CanvasRenderer } from 'echarts/renderers'
 
-echarts.use([TooltipComponent, LegendComponent, PieChart, CanvasRenderer])
+echarts.use([TitleComponent, TooltipComponent, LegendComponent, PieChart, CanvasRenderer, LabelLayout])
 export default {
   props: {
     ids: {
@@ -67,6 +68,14 @@ export default {
     init(option) {
       const options = JSON.parse(JSON.stringify(this.option))
       options.series[0] = { ...options.series[0], ...{ name: this.name }, ...option }
+      this.hideLoading()
+      this.getChart(true).setOption(options)
+    },
+    init2(option) {
+      const options = {
+        ...this.option,
+        ...option
+      }
       this.hideLoading()
       this.getChart(true).setOption(options)
     },
