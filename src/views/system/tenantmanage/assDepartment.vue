@@ -10,12 +10,11 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
-        
         <div class="div-part-left">
           <div class="div-content">
             <span class="span-item-name">已选科室:</span>
             <a-select
-             v-model="selectedRowKeys"
+              v-model="selectedRowKeys"
               allow-clear
               placeholder="请在表格中勾选科室"
               dropdownClassName="select-tags-hidden"
@@ -51,12 +50,11 @@
             :alert="true"
             :rowKey="(record) => record.department_id"
           >
-          <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.enableStatus" />
-      </span>
+            <span slot="statuas" slot-scope="text, record">
+              <a-switch :checked="record.department_id == defaultId" @change="onDefaultIdChange(record)" />
+            </span>
           </s-table>
         </div>
-        
       </div>
     </a-spin>
   </a-modal>
@@ -69,15 +67,15 @@ import {
   getRoleList,
   getDepts,
   getDepartmentListForReq,
-  addWxTemplate,
-  getWxTemplateById,
+  updateBelongDepts,
+  getBelongDepts,
   modifyWxTemplate,
 } from '@/api/modular/system/posManage'
 import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
-  components: {STable},
+  components: { STable },
   data() {
     return {
       visible: false,
@@ -97,7 +95,8 @@ export default {
         zuoxi: '', //坐席
       },
       accountChecked: false, //客服坐席
-
+      record: {},
+      defaultId: '',
       roleList: [], //角色列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
       selectedRowKeys: [],
@@ -118,45 +117,49 @@ export default {
           scopedSlots: { customRender: 'statuas' },
         },
       ],
-      allDepartList:[],
+      allDepartList: [],
       queryParams: {
         departmentName: '',
-       
+
         parentDisarmamentId: '',
         status: 1,
       },
-        // 加载数据方法 必须为 Promise 对象
-        loadData: (parameter) => {
+      // 加载数据方法 必须为 Promise 对象
+      loadData: (parameter) => {
         return getDepartmentListForReq(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             var data = {
-            pageNo: res.data.current,
-            pageSize: res.data.size,
-            totalRows: res.data.total,
-            totalPage: res.data.total / res.data.size,
-            rows: res.data.records,
+              pageNo: res.data.current,
+              pageSize: res.data.size,
+              totalRows: res.data.total,
+              totalPage: res.data.total / res.data.size,
+              rows: res.data.records,
+            }
+
+            return data
           }
-          return data
-          }
-          
         })
       },
     }
   },
   created() {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.selectedRowKeys = []
+      this.defaultId = ''
+    },
     //新增
-    addModel() {
+    addModel(record) {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
+      this.record = record
       this.confirmLoading = false
-      
-      if(this.$refs.table){
+
+      if (this.$refs.table) {
         this.reset()
       }
-      
+
       getDepartmentListForReq({
         departmentName: '',
         pageNo: 1,
@@ -165,24 +168,58 @@ export default {
         status: 1,
       }).then((res) => {
         if (res.code == 0) {
-          
           this.allDepartList = res.data.records
         }
       })
 
+      getBelongDepts({
+        userId: this.record.userId,
+      }).then((res) => {
+        if (res.code == 0) {
+          res.data.depts.forEach((element) => {
+            this.selectedRowKeys.push(element.deptId)
+            if (element.isDefault == 1) {
+              this.defaultId = element.deptId
+            }
+          })
+          this.updateSelect()
+        }
+      })
+    },
+    //默认科室
+    onDefaultIdChange(record) {
+      if (this.defaultId == record.department_id) {
+        return
+      }
+      let id = this.selectedRowKeys.find((item) => item == record.department_id)
+      if (id != record.department_id) {
+        this.selectedRowKeys.push(record.department_id)
+      }
+      this.defaultId = record.department_id
     },
     onSelectChange(selectedRowKeys) {
-      console.log('selectedRowKeys changed: ', selectedRowKeys);
-      this.selectedRowKeys = selectedRowKeys;
-     
+      console.log('selectedRowKeys changed: ', selectedRowKeys)
+     this.saveSelectedRowkeys(selectedRowKeys)
     },
-    ksSelectChange(values){
+    ksSelectChange(values) {
       console.log(values)
-   
-      this.selectedRowKeys = values
+
+      this.saveSelectedRowkeys(values)
       this.updateSelect()
-    
     },
+
+    saveSelectedRowkeys(selectedRowKeys){
+      this.selectedRowKeys = selectedRowKeys
+      if (this.selectedRowKeys.length == 1) {
+        this.defaultId = this.selectedRowKeys[0]
+      } else {
+        let id = this.selectedRowKeys.find((item) => item == this.defaultId)
+        if (!id) {
+          this.defaultId = ''
+        }
+      }
+    },
+
     onInputChange() {
       this.$refs.table.refresh(true)
     },
@@ -208,39 +245,50 @@ export default {
         }
       })
     },
- /**
+    /**
      * 重置
      */
-     reset() {
-      this.queryParams={
+    reset() {
+      ;(this.queryParams = {
         departmentName: '',
         parentDisarmamentId: '',
         status: 1,
-      },
-
-      this.$refs.table.refresh(true)
+      }),
+        this.$refs.table.refresh(true)
     },
     handleSubmit() {
-      
-
       if (this.selectedRowKeys.length == 0) {
         this.$message.error('请选择科室')
         return
       }
+      if (!this.defaultId) {
+        this.$message.error('请选择默认科室')
+        return
+      }
       this.confirmLoading = true
-      addWxTemplate(postData).then((res) => {
+
+      var items = []
+      this.selectedRowKeys.forEach((el) => {
+        var item = {
+          deptId: el,
+          isDefault: el == this.defaultId ? 1 : 0,
+        }
+        items.push(item)
+      })
+      var postData = {
+        items: items,
+        userId: this.record.userId,
+      }
+      updateBelongDepts(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
           this.visible = false
-         
         } else {
           this.$message.error(res.message)
         }
         this.confirmLoading = false
       })
     },
-
-    
 
     goBack() {
       window.history.back()

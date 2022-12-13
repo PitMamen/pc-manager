@@ -4,7 +4,7 @@
       <div class="search-row">
         <span class="name">查询条件:</span>
         <a-input
-          v-model="queryParams.planName"
+          v-model="queryParams.queryText"
           allow-clear
           placeholder="可输入姓名、账号查询"
           style="width: 120px; height: 28px"
@@ -15,7 +15,7 @@
     
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
+        <a-switch :checked="queryParams.status === 0" @change="onSwitchChange" />
       </div>
 
       <div class="action-row">
@@ -41,17 +41,17 @@
     >
       <span slot="action" slot-scope="text, record">
       
-        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
+        <a  :disabled="record.accountStatus !== 0" @click="$refs.addAccount.editModel(record)">修改</a>
         <a-divider type="vertical" />
-        <a @click="goAssDepartmanage(record)" >关联科室</a>
+        <a @click="goAssDepartmanage(record)" :disabled="record.accountStatus !== 0">关联科室</a>
         <a-divider type="vertical" />
-        <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
-          <a>重置密码</a>
+        <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goResetPwd(record)">
+          <a :disabled="record.accountStatus !== 0">重置密码</a>
         </a-popconfirm>
         
       </span>
       <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.enableStatus" />
+        <a-switch  :checked="record.accountStatus==0"  @change="Enable(record)"/>
       </span>
     </s-table>
 
@@ -68,8 +68,8 @@ import {
   queryHospitalList,
   getDeptsPersonal,
   getDepts,
-  qryFollowPlan,
-  updateFollowPlanStatus,
+  searchDoctorAccount,
+  setDoctorAccountStatus,
 } from '@/api/modular/system/posManage'
 import addAccount from './addAccount'
 import departmanage from './departmanage'
@@ -89,11 +89,10 @@ export default {
       treeData: [],
       idArr: [],
       queryParams: {
-        departmentName: '',
-        planName: '',
-        executeDepartment: '',
-        parentDisarmamentId:'',
-        status: 1,
+        hospitalCode: '',
+        notBoundOnly: false,
+        queryText: '',
+        status: 0,
       },
       labelCol: {
         xs: { span: 24 },
@@ -111,23 +110,23 @@ export default {
       columns: [
         {
           title: '登录账号',
-          dataIndex: 'planName',
+          dataIndex: 'loginName',
         },
         {
           title: '人员姓名',
-          dataIndex: '',
+          dataIndex: 'userName',
         },
         {
           title: '联系方式',
-          dataIndex: '',
+          dataIndex: 'phone',
         },
         {
           title: '角色',
-          dataIndex: 'formulateUserName',
+          dataIndex: 'roleNames',
         },
         {
           title: '所属机构',
-          dataIndex: 'executeDepartmentName',
+          dataIndex: 'hospitalName',
         },
        
         {
@@ -146,11 +145,10 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryFollowPlan(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
+        return searchDoctorAccount(Object.assign(parameter, this.queryParams)).then((res) => {
+          if (res.code == 0 &&  res.data.rows) {
             res.data.rows.forEach((element) => {
-              element.statusText = element.status.description
-              element.followType = element.followType.description
+              
             })
           }
           return res.data
@@ -233,7 +231,7 @@ export default {
     
     onSwitchChange(value) {
       console.log(value)
-      this.queryParams.status = value ? 1 : 2
+      this.queryParams.status = value ? 0 : 1
 
       this.$refs.table.refresh(true)
     },
@@ -266,23 +264,26 @@ export default {
      */
     Enable(record) {
       this.confirmLoading = true
-      var _status = record.status.value == 1 ? 2 : 1
+      var _status = record.accountStatus == 0 ? 1 : 0
       //更新接口调用
-      updateFollowPlanStatus({
-        id: record.id,
+      setDoctorAccountStatus({
+        accountId: record.accountId,
         status: _status,
       }).then((res) => {
         this.confirmLoading = false
         if (res.success) {
           this.$message.success('操作成功！')
-          record.status.value = _status
-          record.status.description = _status == 1 ? '启用' : '停用'
-          record.statusText = _status == 1 ? '启用' : '停用'
+          record.accountStatus = _status
+         
           this.handleOk()
         } else {
           this.$message.error('编辑失败：' + res.message)
         }
       })
+    },
+    //重置密码
+    goResetPwd(record){
+
     },
     upDateStatesText(_status) {
       return _status == 1 ? '确定停用此方案吗？' : '确定启用用此方案吗？'

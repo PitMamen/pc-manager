@@ -2206,9 +2206,9 @@ export function modifyFollowExecuteRecord(data) {
 /**
  * 挂起
  */
- export function hangExecuteRecord(data) {
+export function hangExecuteRecord(data) {
   return axios({
-    url: '/follow-api//followPlanPhone/hangExecuteRecord',
+    url: '/follow-api/followPlanPhone/hangExecuteRecord',
     method: 'post',
     data: data,
   })
@@ -2382,9 +2382,9 @@ export function getWxPushRecordHistory(data) {
  */
 export function getApplicationlist(data) {
   return axios({
-    url:'/uam-api/application/list',
-    method:'post',
-    data:data,
+    url: '/uam-api/application/list',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -2441,7 +2441,7 @@ export function queryinitProgress(data) {
 /**
  * /pushRecordHistory/historySmsPushDetail/{id} 短信推送日志详情
  */
- export function historySmsPushDetail(data) {
+export function historySmsPushDetail(data) {
   return axios({
     url: '/follow-api/pushRecordHistory/historySmsPushDetail/' + data,
     method: 'post',
@@ -2452,7 +2452,7 @@ export function queryinitProgress(data) {
 /**
  * /pushRecordHistory/historySmsPushDetail/{id} 随访历史记录详情(页面中间部分)
  */
- export function historyWxPushDetail(data) {
+export function historyWxPushDetail(data) {
   return axios({
     url: '/follow-api/pushRecordHistory/historyWxPushDetail/' + data,
     method: 'post',
@@ -2463,249 +2463,378 @@ export function queryinitProgress(data) {
 /*
  * 租户初始化操作接口
  */
- export function tenantInit(data){
+export function tenantInit(data) {
   return axios({
-    url:'/uam-api/tenant/init',
-    method:'get',
-    params:data,
-  })
- }
-
-
- /**
-  * 重置管理员密码
-  */
- export function resetTenantPwd(data){
-  return axios({
-    url:'/uam-api/tenant/resetPwd',
-    method:'post',
-    data:data,
-  })
- }
-
- /**
-  * 机构列表
-  */
- export function queryHospitalList(data){
-  return axios({
-    url:'/uam-api/hospital/list',
-    method:'post',
-    data:data,
-  })
- }
-
-
- /**
-  * 机构类型
-  */
- export function queryHospitalType(data){
-  return axios({
-    url:'/uam-api/hospital/hospitalType',
-    method:'get',
-    params:data,
-  })
- }
-
-
-
- /**
-  * 机构等级
-  */
- export function queryHospitalLevel(data){
-  return axios({
-    url:'/uam-api/hospital/hospitalLevel',
-    method:'get',
-    params:data,
-  })
- }
-
- /***
-  * 上级机构
-  */
-export function parent(data){
-  return axios({
-    url:'/uam-api/hospital/parent',
-    method:'get',
-    params:data,
+    url: '/uam-api/tenant/init',
+    method: 'get',
+    params: data,
   })
 }
 
 
- /**
-  * 新增机构
-  */
-  export function save(data){
-    return axios({
-      url:'/uam-api/hospital/save',
-      method:'post',
-      data:data,
-    })
-   } 
+/**
+ * 重置管理员密码
+ */
+export function resetTenantPwd(data) {
+  return axios({
+    url: '/uam-api/tenant/resetPwd',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 机构列表
+ */
+export function queryHospitalList(data) {
+  return axios({
+    url: '/uam-api/hospital/list',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-   /**
-    * 机构详情
-    */
-
-   export function queryHospitaldetail(data){
-    return axios({
-      url:'/uam-api/hospital/detail',
-      method:'get',
-      params:data,
-    })
-   }
-
-
-   /**
-    * 科室列表
-    */
-   export function getDepartmentListForReq(data){
-    return axios({
-      url:'/follow-api/departmentManger/getDepartmentListForReq',
-      method:'post',
-      data:data,
-    })
-   }
-
-   /**
-    * 添加科室
-    */
-   export function addDepartmentForReq(data){
-    return axios({
-      url:"/follow-api/departmentManger/addDepartmentForReq",
-      method:'post',
-      data:data,
-    })
-   }
-   /**
-    * 获取档案列表
-    */
-   export function getFileList(data){
-    return axios({
-      url:"/ehr-api/ehr/v1/list",
-      method:'post',
-      data:data,
-    })
-   }
-   /**
-    * 获取档案详情
-    */
-   export function getFileDtail(data){
-    return axios({
-      url:"/ehr-api/ehr/v1/getRecord",
-      method:'post',
-      data:data,
-    })
-   }
-
-     /**
-    * 修改科室
-    */
-      export function modifyDepartmentForReq(data){
-        return axios({
-          url:"/follow-api/departmentManger/modifyDepartmentForReq",
-          method:'post',
-          data:data,
-        })
-       }
+/**
+ * 机构类型
+ */
+export function queryHospitalType(data) {
+  return axios({
+    url: '/uam-api/hospital/hospitalType',
+    method: 'get',
+    params: data,
+  })
+}
 
 
-       /**
+
+/**
+ * 机构等级
+ */
+export function queryHospitalLevel(data) {
+  return axios({
+    url: '/uam-api/hospital/hospitalLevel',
+    method: 'get',
+    params: data,
+  })
+}
+
+/***
+ * 上级机构
+ */
+export function parent(data) {
+  return axios({
+    url: '/uam-api/hospital/parent',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+/**
+ * 新增机构
+ */
+export function save(data) {
+  return axios({
+    url: '/uam-api/hospital/save',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 机构详情
+ */
+
+export function queryHospitaldetail(data) {
+  return axios({
+    url: '/uam-api/hospital/detail',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+/**
+ * 科室列表
+ */
+export function getDepartmentListForReq(data) {
+  return axios({
+    url: '/follow-api/departmentManger/getDepartmentListForReq',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 添加科室
+ */
+export function addDepartmentForReq(data) {
+  return axios({
+    url: "/follow-api/departmentManger/addDepartmentForReq",
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 获取档案列表
+ */
+export function getFileList(data) {
+  return axios({
+    url: "/ehr-api/ehr/v1/list",
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 获取档案详情
+ */
+export function getFileDtail(data) {
+  return axios({
+    url: "/ehr-api/ehr/v1/getRecord",
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+* 修改科室
+*/
+export function modifyDepartmentForReq(data) {
+  return axios({
+    url: "/follow-api/departmentManger/modifyDepartmentForReq",
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
         * 随访任务列表
-        */
-       export function followList(data){
-        return axios({
-          url:'/follow-api/tbFollowExecuteRecord/page',
-          method:'post',
-          data:data,
-        })
-       }
+ */
+export function followList(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/page',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-       /**
-        * 随访医生列表
-        */
-
-       export function getUsersByDeptIdsAndRoles(data){
-        return axios({
-          url:'/account-api/accountInfo/getUsersByDeptIdsAndRoles',
-          method:'post',
-          data:data,
-        })
-       }
+/**
+ * 随访医生列表
+ */
 
 
-       /**
-        * 审核随访任务
-        */
-       export function audit(data){
-        return axios({
-          url:'/follow-api/tbFollowExecuteRecord/audit',
-          method:'post',
-          data:data,
-        })
-       }
-
-       /**
-        * 转移随访任务
-        */
-
-       export function transfer(data){
-        return axios({
-          url:'/follow-api/tbFollowExecuteRecord/transfer',
-          method:'post',
-          data:data,
-        })
-       }
+export function getUsersByDeptIdsAndRoles(data) {
+  return axios({
+    url: '/account-api/accountInfo/getUsersByDeptIdsAndRoles',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-       /**
-        * 
-        * 查询
-        */
-       export function qryMetaConfigureDetailFilter(data){
-        return axios({
-          url:'/follow-api/followMetaConfigure/qryMetaConfigureDetailFilter',
-          method:'post',
-          data:data,
-        })
-       }
+/**
+ * 审核随访任务
+ */
+export function audit(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/audit',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 转移随访任务
+ */
+
+export function transfer(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/transfer',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-       /**
-        * 名单分类查询接口
-        */
+/**
+ * 
+ * 查询
+ */
+export function qryMetaConfigureDetailFilter(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/qryMetaConfigureDetailFilter',
+    method: 'post',
+    data: data,
+  })
+}
 
-       export function qryMetaByPage(data){
-        return axios({
-          url:'/follow-api/followMetaConfigureDetail/qryMetaDataByPage', 
-          method:'post',
-          data:data,
-        })
-       }
+
+/**
+ * 名单分类查询接口
+ */
+
+export function qryMetaByPage(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigureDetail/qryMetaDataByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 医护人员类型[医生,护士,药剂师,医技人员,后勤人员
+ */
+export function accountDictUserTypes() {
+  return axios({
+    url: '/account-api/accountDict/userTypes',
+    method: 'get',
+
+  })
+}
+
+/**
+ * 创建医生、个案师和护士用户，根据参数选择性创建账号
+ */
+export function professionalTitles() {
+  return axios({
+    url: '/account-api/accountDict/professionalTitles',
+    method: 'get',
+
+  })
+}
+
+/**
+ * 设置医生,个案师和护士用户状态信息
+ */
+export function setDoctorUserStatus(data) {
+  return axios({
+    url: '/account-api/accountInfo/setDoctorUserStatus',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 人员管理列表
+ */
+export function searchDoctorUser(data) {
+  return axios({
+    url: '/account-api/accountInfo/searchDoctorUser',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 账号管理列表
+ */
+export function searchDoctorAccount(data) {
+  return axios({
+    url: '/account-api/accountInfo/searchDoctorAccount',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 查询用户归属科室
+ */
+export function getBelongDepts(data) {
+  return axios({
+    url: '/account-api/userInfo/getBelongDepts',
+    method: 'get',
+    params: data,
+  })
+}
+/**
+ * 修改用户归属科室
+ */
+export function updateBelongDepts(data) {
+  return axios({
+    url: '/account-api/userInfo/updateBelongDepts',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 创建医生,个案师和护士账号并绑定已有用户
+ */
+export function createDoctorAccount(data) {
+  return axios({
+    url: '/account-api/accountInfo/createDoctorAccount',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 设置医生,个案师和护士账号状态信息
+ */
+export function setDoctorAccountStatus(data) {
+  return axios({
+    url: '/account-api/accountInfo/setDoctorAccountStatus',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 获取用户详情
+ */
+export function getDoctorUserDetail(data) {
+  return axios({
+    url: '/account-api/accountInfo/getDoctorUserDetail',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * 获取账号详情
+ */
+export function getDoctorAccountDetail(data) {
+  return axios({
+    url: '/account-api/accountInfo/getDoctorAccountDetail',
+    method: 'get',
+    params: data,
+  })
+}
+/**
+ * 修改医生,个案师和护士用户信息
+ */
+export function updateDoctorUser(data) {
+  return axios({
+    url: '/account-api/accountInfo/updateDoctorUser',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-       /**
-        * 查询账号管理科室
-        */
-       export function getManagerDepts(data){
-        return axios({
-          url:'/account-api/accountInfo/getManagerDepts',
-          method:'get',
-          params:data,
-        })
-       }
+/**
+ * 查询账号管理科室
+ */
+export function getManagerDepts(data) {
+  return axios({
+    url: '/account-api/accountInfo/getManagerDepts',
+    method: 'get',
+    params: data,
+  })
+}
 
-       /**
-        * 修改账号管理科室
-        */
-       export function updateManagerDepts(data){
-        return axios({
-          url:'/account-api/accountInfo/updateManagerDepts',
-          method:'post',
-          data:data,
-        })
-       }
+/**
+ * 修改账号管理科室
+ */
+export function updateManagerDepts(data) {
+  return axios({
+    url: '/account-api/accountInfo/updateManagerDepts',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 

@@ -19,23 +19,25 @@
             <span class="span-item-name"><span style="color: red">*</span>登录账号:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.account"
+              v-model="checkData.loginName"
               style="display: inline-block"
               allow-clear
               placeholder="请输入账号"
+              @change="onAccountInputChange"
+             
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
-            <a-select show-search v-model="checkData.name" allow-clear placeholder="请选择人员类型">
-              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item">{{ item }}</a-select-option>
+            <a-select show-search v-model="checkData.userId" allow-clear placeholder="请选择人员" @search="onUserSelectSearch" @change="onUserSelectChange">
+              <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{ item.userName }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
             <span class="span-item-name">所属机构:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.name"
+              v-model="checkData.hospitalName"
               style="display: inline-block"
               allow-clear
               readOnly
@@ -46,7 +48,7 @@
             <span class="span-item-name">联系方式:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.name"
+              v-model="checkData.phone"
               style="display: inline-block"
               allow-clear
               readOnly
@@ -61,8 +63,8 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属角色:</span>
             <a-select v-model="checkData.role" allow-clear placeholder="请选择所属角色" :maxTagCount="3"
-          :collapse-tags="true" mode="multiple" style=" height: 28px">
-              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleRealName">{{ item.roleRealName }}</a-select-option>
+          :collapse-tags="true" mode="multiple" style=" height: 28px" >
+              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleId">{{ item.roleRealName }}</a-select-option>
             </a-select>
           </div>
           
@@ -85,12 +87,12 @@
 import {
   getRoleList,
   queryHospitalList,
-  qryMetaConfigureDetail,
-  addWxTemplate,
-  getWxTemplateById,
+  getDoctorAccountDetail,
+  createDoctorAccount,
+  searchDoctorUser,
   modifyWxTemplate,
 } from '@/api/modular/system/posManage'
-import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
+
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -98,6 +100,7 @@ export default {
   data() {
     return {
       visible: false,
+      record:{},
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
@@ -106,23 +109,35 @@ export default {
       danandataList: [],
       treeData:[],
       checkData: {
-        account: '', //登录账号
+        loginName: '', //登录账号
         userId:'',//对应人员
-        name: '',    
-        tel: '',
+        hospitalName: '',    
+        phone: '',
         role: undefined, //分配角色
         zuoxi:'',//坐席
       },
+    
       accountChecked: false, //客服坐席
      
       roleList: [], //角色列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
+      userList:[],
       
     }
   },
   created() {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.checkData={
+        loginName: '', //登录账号
+        userId:'',//对应人员
+        hospitalName: '',    
+        phone: '',
+        role: [], //分配角色
+        zuoxi:'',//坐席
+      }
+      this.accountChecked= false
+    },
     //新增
     addModel() {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -132,8 +147,40 @@ export default {
 
 
       this.getRolesOut()
+      this.getUserList('')
     
     },
+//修改
+editModel(record) {
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+      this.clearData()
+      this.visible = true
+      this.confirmLoading = false
+      this.record=record
+
+      this.getRolesOut()
+      this.getUserList('')
+      this.getDoctorAccountDetailOut(record.accountId)
+    },
+     //用户详情
+     getDoctorAccountDetailOut(accountId){
+      getDoctorAccountDetail({
+        accountId: accountId,
+      }).then((res) => {
+        if (res.code == 0) {
+             
+          this.checkData=res.data
+          var roles=[]
+          res.data.roles.forEach(element => {
+            roles.push(element.roleId)
+          });
+          console.log( roles)
+          this.checkData.role=roles
+          this.getRolesOut()
+        }
+      })
+    },
+
     //获取角色列表
     getRolesOut() {
       getRoleList({
@@ -153,26 +200,51 @@ export default {
         }
       })
     },
-
-
+    getUserList(queryText){
+      searchDoctorUser({
+        hospitalCode:'',//所属机构代码
+        notBoundOnly:true,//是否返回未绑定账号的用户
+        status: 0,//（0正常、1停用、2删除）
+        queryText: queryText,
+        pageNo: 1,
+        pageSize: 10000,
+       
+      }).then((res) => {
+        if (res.code == 0) {
+          this.userList = res.data.rows
+          this.$forceUpdate()
+          console.log(this.userList)
+        }
+      })
+    },
+    onUserSelectChange(value){
+      console.log('onUserSelectChange',value)
+    var checkedUser = this.userList.find((item) => item.userId == value)
+      this.checkData.hospitalName=checkedUser.hospitalName
+      this.checkData.phone=checkedUser.phone
+     
+    },
+    onUserSelectSearch(value){
+      console.log(value)
+      this.getUserList(value)
+    },
+    onAccountInputChange(e){
+      console.log(e)
+    },
     handleSubmit() {
       console.log(this.checkData)
 
 
-      if (this.checkData.account.length==0) {
+      if (this.checkData.loginName.length==0) {
         this.$message.error('请输入登录账号')
         return
       }
-      if (this.checkData.name.length==0) {
+      if (this.checkData.userId.length==0) {
         this.$message.error('请选择对应人员')
         return
       }
     
 
-      if (this.checkData.tel.length==0) {
-        this.$message.error('请输入联系电话')
-        return
-      }
 
       if (this.checkData.role.length == 0) {
           this.$message.error('请分配角色')
@@ -189,20 +261,21 @@ export default {
         } 
       }
 
-      var postData = {}
-      this.confirmLoading = true
-      if (this.id) {
-        //修改
-        postData.id = this.id
-        this.modify(postData)
-      } else {
-        //新增
-        this.add(postData)
+      var postData = {
+        loginName:this.checkData.loginName,
+        userId:this.checkData.userId,
+        actorIds:this.checkData.role,
+        
       }
+      if (this.accountChecked) {
+        postData.seatUser=this.checkData.zuoxi
+      }
+      this.confirmLoading = true
+      this.addAccount(postData)
     },
 
-    add(postData) {
-      addWxTemplate(postData).then((res) => {
+    addAccount(postData) {
+      createDoctorAccount(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.visible = false
