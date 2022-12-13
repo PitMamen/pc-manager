@@ -192,8 +192,8 @@ export default {
 
         {
           title: '操作',
-          width: 180,
           fixed: 'right',
+          width: 180,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -505,7 +505,7 @@ export default {
     height: 100%;
     min-height: 300px;
     flex-shrink: 0;
-    width: 170px;
+    width: 200px;
     overflow: hidden;
 
     border: 1px solid #e6e6e6;
