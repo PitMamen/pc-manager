@@ -70,8 +70,8 @@
       :rowKey="(record) => record.code"
     >
       <span style="inline-block" slot="acount" slot-scope="text, record">
-        <img v-if="record.openidFlag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
-        <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
+        <img v-if="record.openid_flag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
+        <img v-if="record.openid_flag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
       <span slot="action" slot-scope="text, record">
@@ -264,14 +264,17 @@ export default {
               }
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                if (!item.totalTask) {
+                if (!item.total_task) {
                   this.$set(item, 'sfrw', 0)
                 } else {
-                  this.$set(
-                    item,
-                    'sfrw',
-                    item.successTotalTask ? item.successTotalTask : 0 + '/' + item.totalTask ? item.totalTask : 0
-                  )
+                  var fenz
+                  if (!item.success_total_task) {
+                    //成功总数是空的  直接=0
+                    fenz = 0
+                  } else {
+                    fenz = item.success_total_task
+                  }
+                  this.$set(item, 'sfrw', fenz + '/' + item.total_task)
                 }
               })
             } else {
@@ -383,6 +386,7 @@ export default {
           if (res.code == 0 && res.data.length > 0) {
             if (res.data[0].detail.length > 0) {
               var detailData = res.data[0].detail
+
               for (let index = 0; index < detailData.length; index++) {
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
@@ -401,6 +405,17 @@ export default {
                 fixed: 'right',
                 scopedSlots: { customRender: 'action' },
               })
+
+
+              /**
+               * 添加2个固定的表头  账号信息  和 随访任务
+               */
+              this.tableClumns.unshift({
+                title: '账号信息',
+                dataIndex: 'openid_flag',
+                scopedSlots: { customRender: 'acount' },
+              })
+              this.tableClumns.unshift({ title: '随访任务', dataIndex: 'sfrw' })
             }
           }
           this.refresh()
