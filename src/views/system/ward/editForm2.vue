@@ -104,7 +104,8 @@ export default {
         return list(Object.assign({
           pageNo: 1,
           pageSize: 9999,
-          departmentType: 3
+          departmentType: 3,
+          parentDisarmamentId: this.item.parent_disarmament_id
         }, this.queryParam)).then(res => {
           if (res.code === 0){
             return {
@@ -116,6 +117,7 @@ export default {
           }
         })
       },
+      item: {},
       lists: [],
       selectedRowKeys: [],
       selectedRows: []
@@ -125,7 +127,8 @@ export default {
     // 初始化方法
     edit(item) {
       this.visible = true
-      this.getLists()
+      this.item = item
+      this.getLists(item)
       setTimeout(() => {
         this.getInfo({
           wardId: item.id
@@ -147,11 +150,12 @@ export default {
         this.confirmLoading = false
       })
     },
-    getLists() {
+    getLists(item) {
       list({
         pageNo: 1,
         pageSize: 9999,
-        departmentType: 3
+        departmentType: 3,
+        parentDisarmamentId: item.parent_disarmament_id
       }).then(res => {
         if (res.code === 0){
           this.lists = res.data.records || []
