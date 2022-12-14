@@ -94,7 +94,7 @@
             >
               <div v-if="fileList.length < 1">
                 <a-icon type="plus" />
-                <div class="ant-upload-text">上传图片</div>
+                <div class="ant-upload-text">上传封面图片</div>
               </div>
             </a-upload>
             
