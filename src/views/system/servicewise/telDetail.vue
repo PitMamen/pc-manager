@@ -161,8 +161,8 @@
           <span class="span-title">基本信息</span>
         </div>
         <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-          <span class="span-item-name">{{ item.fieldComment }} :</span>
-          <span class="span-item-value">{{ item.fieldValue }} </span>
+          <span class="span-item-name-info" >{{ item.fieldComment }} :</span>
+          <span class="span-item-value-info">{{ item.fieldValue }} </span>
         </div>
       </div>
     </div>
@@ -488,6 +488,21 @@ export default {
     }
     .ant-select {
       width: 65% !important;
+    }
+    .span-item-name-info {
+      
+      display: inline-block;
+      color: #000;
+      font-size: 12px;
+      text-align: left;
+      margin-right: 5px;
+    }
+    .span-item-value-info {
+     
+      color: #333;
+      text-align: left;
+      font-size: 12px;
+      display: inline-block;
     }
   }
 
