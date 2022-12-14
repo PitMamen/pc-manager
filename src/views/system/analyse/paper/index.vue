@@ -92,7 +92,7 @@
           <div class="middle">
             <a-empty :image="simpleImage" v-if="false" />
             <div class="list">
-              <div class="item type1">
+              <div class="item">
                 <div class="title">
                   <span class="red">*</span>
                   <span class="name">1.您是否了解孕产康复？(单选题)</span>
@@ -114,7 +114,7 @@
                   </div>
                 </div>
               </div>
-              <div class="item type1">
+              <div class="item">
                 <div class="title">
                   <span class="red">*</span>
                   <span class="name">1.您是否了解孕产康复？(单选题)</span>
@@ -136,7 +136,11 @@
                   </div>
                 </div>
               </div>
-              <div class="item type2">
+              <div class="item">
+                <div class="title">
+                  <span class="red">*</span>
+                  <span class="name">1.您是否了解孕产康复？(填空题)</span>
+                </div>
                 <table-form :queryParam="queryParam" />
               </div>
             </div>
@@ -207,11 +211,35 @@ export default {
     this.queryParam = {...this.queryParam, ...this.$route.query}
   },
   mounted() {
-    this.initPies()
-    this.initBars()
+    this.initEvent()
+    this.initCharts()
   },
   methods: {
     search() {},
+    initEvent() {
+      window.addEventListener('resize', e => {
+        this.resizeCharts()
+      })
+    },
+    initPies(data) {
+      const option = this.genePiesOption(data)
+      this.$refs.pies.init2(option)
+    },
+    initBars(data) {
+      const option = this.geneBarsOption(data)
+      this.$refs.bars.init(option)
+    },
+    initCharts(data1, data2) {
+      this.initPies(data1)
+      this.initBars(data2)
+      setTimeout(() => {
+        this.resizeCharts()
+      })
+    },
+    resizeCharts() {
+      this.$refs.pies.getChart().resize()
+      this.$refs.bars.getChart().resize()
+    },
     initParams() {},
     getParams() {},
     getLists2() {
@@ -234,23 +262,6 @@ export default {
       }
     },
     onChange(value) {
-    },
-    initEvent() {
-      window.addEventListener('resize', e => {
-        this.resizeCharts()
-      })
-    },
-    resizeCharts() {
-      this.$refs.pies.getChart().resize()
-      this.$refs.bars.getChart().resize()
-    },
-    initPies(data) {
-      const option = this.genePiesOption(data)
-      this.$refs.pies.init2(option)
-    },
-    initBars(data) {
-      const option = this.geneBarsOption(data)
-      this.$refs.bars.init(option)
     },
     genePiesOption(data) {
       const option = {
@@ -497,7 +508,6 @@ button {
           &:last-child {
             margin-bottom: 0px;
           }
-          &.type2 {}
           .title {
             margin-bottom: 14px;
             font-size: 14px;
@@ -565,10 +575,11 @@ button {
       justify-content: space-between;
       .item1 {
         display: flex;
+        width: 185px;
         height: 181px;
         flex-direction: column;
         justify-content: space-between;
-        flex: 1;
+        // flex: 1;
         .analyse {
           font-size: 14px;
           font-weight: 400;
@@ -590,15 +601,17 @@ button {
         }
       }
       .item2 {
-        width: 37.16%;
+        width: 346px;
         height: 181px;
         margin-left: 14px;
+        flex: 1;
         border: 1px solid #D7D9DE;
       }
       .item3 {
-        width: 37.16%;
+        width: 346px;
         height: 181px;
         margin-left: 14px;
+        flex: 1;
         border: 1px solid #D7D9DE;
       }
     }

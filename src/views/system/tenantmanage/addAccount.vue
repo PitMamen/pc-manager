@@ -93,6 +93,7 @@
             <a-checkbox v-model="accountChecked"></a-checkbox>
             <span class="span-item-name">客服坐席:</span>
             <a-input
+            v-model="checkData.seatUser"
               class="span-item-value"
               style="display: inline-block"
               :disabled="!accountChecked"
@@ -137,7 +138,7 @@ export default {
         hospitalName: '',
         phone: '',
         role: undefined, //分配角色
-        zuoxi: '', //坐席
+        seatUser: '', //坐席
       },
       fetching: false,
       accountChecked: false, //客服坐席
@@ -157,7 +158,7 @@ export default {
         hospitalName: '',
         phone: '',
         role: [], //分配角色
-        zuoxi: '', //坐席
+        seatUser: '', //坐席
       }
       this.roleList=[]
       this.userList=[]
@@ -191,6 +192,7 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           this.checkData = res.data
+          this.accountChecked=res.data.seatUser?true:false
           var roles = []
           res.data.roles.forEach((element) => {
             roles.push(element.roleId)
@@ -285,7 +287,7 @@ export default {
       if (this.accountChecked) {
         //如果勾选了客服坐席
 
-        if (this.checkData.zuoxi.length == 0) {
+        if (this.checkData.seatUser.length == 0) {
           this.$message.error('请输入客服坐席ID')
           return
         }
@@ -297,7 +299,9 @@ export default {
         actorIds: this.checkData.role,
       }
       if (this.accountChecked) {
-        postData.seatUser = this.checkData.zuoxi
+        postData.seatUser = this.checkData.seatUser
+      }else{
+        postData.seatUser=''
       }
       this.confirmLoading = true
 

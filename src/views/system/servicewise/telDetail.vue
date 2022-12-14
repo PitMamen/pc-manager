@@ -155,7 +155,7 @@
 
       <div class="midline"></div>
 
-      <div class="div-span-content-right">
+      <div class="div-span-content-right" style="overflow-y: auto !important; max-height: 100%">
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">基本信息</span>
