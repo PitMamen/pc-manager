@@ -9,12 +9,12 @@
     :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-part">
+      <div class="div-part" style="margin-top:0px">
         <div class="div-part-left">
           <div class="left-content1" style="margin-bottom: 20px" v-for="(item, index) in appListOut" :key="index">
-            <div class="div-content" style="margin-left: 47px">
+            <div class="div-content" style="margin-left: 0px">
               <a-checkbox
-                style="margin-left: 10px"
+                style="margin-left: 0px"
                 v-model="item.isChecked"
                 @change="checkBoxselectChange(item)"
                 :disabled="item.applicationId != 1"
@@ -24,8 +24,8 @@
               </span>
             </div>
 
-            <div class="div-content" style="margin-left: 47px">
-              <span class="span-item-name">已选科室:</span>
+            <div class="div-content" style="margin-left: -10px">
+              <span class="span-item-name" style="margin-left:-5px">已选科室:</span>
               <a-select
                 allow-clear
                 :disabled="item.applicationId != 1"
@@ -35,7 +35,7 @@
                 :maxTagCount="1"
                 :collapse-tags="true"
                 mode="multiple"
-                style="height: 28px; width: 170px; margin-left: 0px"
+                style="height: 28px; width: 230px; margin-left: 0px"
                 @change="ksSelectChange"
               >
                 <a-select-option v-for="(item, index) in allDepartList" :key="index" :value="item.department_id">{{
@@ -97,6 +97,7 @@ export default {
   components: { STable },
   data() {
     return {
+      hospitalCode:'',
       accountId:'',
       isChecked: false,
       visible: false,
@@ -143,7 +144,7 @@ export default {
       allDepartList: [],
       queryParams: {
         departmentName: '',
-
+        hospitalCode:'',
         parentDisarmamentId: '',
         status: 1,
       },
@@ -172,6 +173,8 @@ export default {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.accountId = record.accountId
+      this.queryParams.hospitalCode = record.hospitalCode
+      this.hospitalCode = record.hospitalCode
       this.visible = true
       this.confirmLoading = false
 
@@ -187,6 +190,7 @@ export default {
         pageSize: 10000,
         parentDisarmamentId: '',
         status: 1,
+        hospitalCode:this.hospitalCode,
       }).then((res) => {
         if (res.code == 0) {
           this.allDepartList = res.data.records
@@ -277,11 +281,6 @@ export default {
     },
 
     reset() {
-      ;(this.queryParams = {
-        departmentName: '',
-        parentDisarmamentId: '',
-        status: 1,
-      }),
         this.$refs.table.refresh(true)
     },
     handleSubmit() {
@@ -302,7 +301,6 @@ export default {
         accountId: this.accountId,
         items: items,
       }
-      console.log('BBBB:', queryParamsData)
       updateManagerDepts(queryParamsData).then((res) => {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
