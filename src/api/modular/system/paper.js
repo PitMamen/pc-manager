@@ -6,8 +6,8 @@ import { axios } from '@/utils/request'
 export function list1 (parameter) {
   return axios({
     url: '/follow-api/questionnaireStatistics/getQuestionnaireList',
-    method: 'post',
-    data: parameter
+    method: 'get',
+    params: parameter
   })
 }
 

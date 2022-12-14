@@ -84,7 +84,7 @@
                   v-if="item.type === 'INPUT'"
                 />
                 <div class="rows" v-else>
-                  <div class="row" v-for="(subItem, subIndex) in item.data" :key="subIndex">
+                  <div class="row" v-for="(subItem, subIndex) in item.data" :key="index +'-'+ subIndex">
                     <div class="name" :title="subItem.valueStr">{{ subItem.valueStr }}</div>
                     <div class="percent">
                       <a-progress :percent="subItem.rate" status="active" />
@@ -235,9 +235,9 @@ export default {
         ]
       }
     },
-    getQuerys() {
+    getQuerys(key = 'id') {
       const query = {
-        messageOriginalId: this.currentPaper.id,
+        messageOriginalId: this.currentPaper[key],
         messageType: this.queryParam.messageType,
         executeDepartmentId: this.queryParam.executeDepartmentId
       }
@@ -278,7 +278,7 @@ export default {
     },
     getList2() {
       this.confirmLoading_right = true
-      list2(this.getQuerys()).then(res => {
+      list2(this.getQuerys('key')).then(res => {
         if (res.code === 0){
           this.list2 = res.data || []
         }else {
@@ -351,7 +351,7 @@ export default {
             name: '随访方式分布',
             type: 'pie',
             center: ['40%', '55%'],
-            radius: ['50%', '70%'],
+            radius: ['35%', '55%'],
             avoidLabelOverlap: false,
             data: data.map(item => {
               return {
@@ -367,7 +367,7 @@ export default {
               color: '#4D4D4D',
               textAlign: 'left',
               formatter(item) {
-                return item.name +'\n'+ item.value
+                return item.name +' '+ item.value
               }
             },
             labelLine: {

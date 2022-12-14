@@ -105,7 +105,7 @@ export default {
           pageNo: 1,
           pageSize: 9999,
           departmentType: 3,
-          parentDisarmamentId: this.item.parent_disarmament_id
+          hospitalCode: this.item.hospital_code
         }, this.queryParam)).then(res => {
           if (res.code === 0){
             return {
@@ -155,7 +155,7 @@ export default {
         pageNo: 1,
         pageSize: 9999,
         departmentType: 3,
-        parentDisarmamentId: item.parent_disarmament_id
+        hospitalCode: item.hospital_code
       }).then(res => {
         if (res.code === 0){
           this.lists = res.data.records || []

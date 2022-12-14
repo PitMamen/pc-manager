@@ -9,7 +9,7 @@
     :rowKey="record => record.id"
   >
     <span slot="value_str" slot-scope="text">
-      <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
+      <ellipsis :length="40" tooltip>{{ text }}</ellipsis>
     </span>
   </s-table>
 </template>
@@ -34,11 +34,13 @@ export default {
       columns: [
         {
           title: '姓名',
+          width: '33%',
           dataIndex: 'userName',
           scopedSlots: { customRender: 'userName' }
         },
         {
           title: '电话',
+          width: '33%',
           dataIndex: 'phone',
           scopedSlots: { customRender: 'phone' }
         },
