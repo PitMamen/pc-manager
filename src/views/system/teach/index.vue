@@ -570,6 +570,7 @@ export default {
   }
   .div-service-right-control {
     flex: 1;
+    width: calc(100% - 220px);
   }
 }
 
