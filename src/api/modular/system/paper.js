@@ -1,55 +1,66 @@
 import { axios } from '@/utils/request'
 
 /**
- * 列表
+ * 获取问卷列表
  */
-export function list (parameter) {
+export function list1 (parameter) {
   return axios({
-    url: '/follow-api/ward/getWardPageList',
+    url: '/follow-api/questionnaireStatistics/getQuestionnaireList',
     method: 'post',
     data: parameter
   })
 }
 
 /**
- * 查询
+ * 统计问卷每一项的填写情况
  */
- export function info2 (parameter) {
+ export function list2 (parameter) {
   return axios({
-    url: `/follow-api/ward/getWardDepartmentMapping/${parameter.wardId}`,
+    url: '/follow-api/questionnaireStatistics/statisticsRadioAndCheckboxAndInput',
     method: 'post',
     data: parameter
   })
 }
 
 /**
- * 添加
+ * 分页获取input类型的问卷数据
  */
- export function add (parameter) {
+ export function list3 (parameter) {
   return axios({
-    url: '/follow-api/ward/addWard',
+    url: '/follow-api/questionnaireStatistics/statisticsInputRecordInfo',
     method: 'post',
     data: parameter
   })
 }
 
 /**
- * 修改
+ * 问卷总览情况统计
  */
- export function update (parameter) {
+ export function overview (parameter) {
   return axios({
-    url: '/follow-api/ward/modifyWard',
+    url: '/follow-api/questionnaireStatistics/followOverviewStatistics',
     method: 'post',
     data: parameter
   })
 }
 
 /**
- * 修改2
+ * 随访方式分布
  */
- export function update2 (parameter) {
+ export function pie (parameter) {
   return axios({
-    url: '/follow-api/ward/saveWardDepartmentMapping',
+    url: '/follow-api/questionnaireStatistics/followMessageTypeStatistics',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * 失败原因top5
+ */
+ export function bar (parameter) {
+  return axios({
+    url: '/follow-api/questionnaireStatistics/followFailReasonStatistics',
     method: 'post',
     data: parameter
   })
