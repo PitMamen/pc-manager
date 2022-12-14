@@ -75,7 +75,7 @@
       </span>
 
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.visitManage.distribution(record)">随访</a>
+        <a @click="goPlan(record)">随访</a>
         <a-divider type="vertical" />
         <a @click="goFile(record)">健康档案</a>
       </span>
@@ -398,7 +398,6 @@ export default {
               }
 
               for (let index = 0; index < detailData.length; index++) {
-                console.log('排序：', detailData[index].showIndex)
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
                     this.tableClumns.push({
@@ -444,6 +443,16 @@ export default {
       this.$set(record, 'userSex', record.sex)
       this.$refs.followModel.doFile(record, true)
     },
+
+   /**
+    * 随访
+    */
+   goPlan(record){
+    this.$set(record, 'userId', record.user_id)
+    this.$refs.visitManage.distribution(record)
+   },
+
+
     /**
      * 重置
      */

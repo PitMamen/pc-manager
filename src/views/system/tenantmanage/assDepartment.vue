@@ -18,7 +18,7 @@
               allow-clear
               placeholder="请在表格中勾选科室"
               dropdownClassName="select-tags-hidden"
-              :maxTagCount="3"
+              :maxTagCount="2"
               :collapse-tags="true"
               mode="multiple"
               style="height: 28px"
@@ -120,7 +120,7 @@ export default {
       allDepartList: [],
       queryParams: {
         departmentName: '',
-
+        hospitalCode:'',
         parentDisarmamentId: '',
         status: 1,
       },
@@ -156,18 +156,21 @@ export default {
       this.record = record
       this.confirmLoading = false
 
+      this.queryParams.hospitalCode=this.record.hospitalCode
       if (this.$refs.table) {
         this.reset()
       }
 
       getDepartmentListForReq({
         departmentName: '',
+        hospitalCode:this.record.hospitalCode,
         pageNo: 1,
         pageSize: 10000,
         parentDisarmamentId: '',
         status: 1,
       }).then((res) => {
         if (res.code == 0) {
+          console.log("allDepartList",res.data.records)
           this.allDepartList = res.data.records
         }
       })
@@ -249,11 +252,7 @@ export default {
      * 重置
      */
     reset() {
-      ;(this.queryParams = {
-        departmentName: '',
-        parentDisarmamentId: '',
-        status: 1,
-      }),
+      
         this.$refs.table.refresh(true)
     },
     handleSubmit() {
@@ -268,6 +267,7 @@ export default {
       this.confirmLoading = true
 
       var items = []
+    
       this.selectedRowKeys.forEach((el) => {
         var item = {
           deptId: el,
@@ -282,6 +282,7 @@ export default {
       updateBelongDepts(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
+          this.$emit('ok', '')
           this.visible = false
         } else {
           this.$message.error(res.message)
