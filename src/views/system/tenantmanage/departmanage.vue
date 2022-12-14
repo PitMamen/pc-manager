@@ -305,6 +305,7 @@ export default {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
           this.visible = false
+          this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
         }

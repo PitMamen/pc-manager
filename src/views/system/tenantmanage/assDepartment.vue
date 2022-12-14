@@ -282,6 +282,7 @@ export default {
       updateBelongDepts(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('关联科室成功！')
+          this.$emit('ok', '')
           this.visible = false
         } else {
           this.$message.error(res.message)
