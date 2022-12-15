@@ -277,6 +277,7 @@ export default {
       })
     },
     getList2() {
+      this.list2 = []
       this.confirmLoading_right = true
       list2(this.getQuerys('key')).then(res => {
         if (res.code === 0){
