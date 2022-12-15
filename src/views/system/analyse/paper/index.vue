@@ -7,38 +7,21 @@
             <a-input-search
               style="width: 100%;height: 28px;"
               placeholder="请输入名称查询"
+              v-model="paperName"
               @change="onChange"
               allow-clear
             />
           </div>
-          <a-empty :image="simpleImage" v-if="false" />
-          <div class="list">
-            <div class="item" :class="{active: true}" @click="itemClick()">
-              <span class="name">产科出院随访问卷  </span>
-              <a-icon type="check" class="icon" />
-            </div>
-            <div class="item">
-              <span class="name">产科出院随访问卷  </span>
-              <a-icon type="check" class="icon" />
-            </div>
-            <div class="item">
-              <span class="name">产科出院随访问卷  </span>
-              <a-icon type="check" class="icon" />
-            </div>
-            <div class="item">
-              <span class="name">产科出院随访问卷  </span>
-              <a-icon type="check" class="icon" />
-            </div>
-            <div class="item">
-              <span class="name">产科出院随访问卷  </span>
-              <a-icon type="check" class="icon" />
-            </div>
-            <div class="item">
-              <span class="name">产科出院随访问卷  </span>
-              <a-icon type="check" class="icon" />
-            </div>
-            <div class="item">
-              <span class="name">产科出院随访问卷  </span>
+          <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1.length === 0" />
+          <div class="list" v-else>
+            <div
+              v-for="item in list1"
+              :key="item.id"
+              class="item"
+              :class="{active: item.id===currentPaper.id}"
+              @click="paperClick(item)"
+            >
+              <span class="name" :title="item.name">{{ item.name }}</span>
               <a-icon type="check" class="icon" />
             </div>
           </div>
@@ -52,10 +35,10 @@
               <a-select
                 style="width: 120px;height: 28px;"
                 placeholder="全部科室"
-                v-model="queryParam.wardName"
+                v-model="queryParam.executeDepartmentId"
                 allow-clear
               >
-                <a-select-option v-for="item in lists2" :key="item.department_id" :value="item.department_id">
+                <a-select-option v-for="item in params1" :key="item.department_id" :value="item.department_id">
                   {{ item.department_name }}
                 </a-select-option>
               </a-select>
@@ -65,10 +48,10 @@
               <a-select
                 style="width: 120px;height: 28px;"
                 placeholder="全部"
-                v-model="queryParam.status"
+                v-model="queryParam.messageType"
                 allow-clear
               >
-                <a-select-option v-for="item in lists3" :key="item.id" :value="item.id">
+                <a-select-option v-for="item in params2" :key="item.id" :value="item.id">
                   {{ item.name }}
                 </a-select-option>
               </a-select>
@@ -79,78 +62,45 @@
                 style="width: 208px;height: 28px;"
                 :format="format"
                 v-model="queryParam.times"
-                @change="change"
               />
             </div>
             <div class="action-row">
               <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
                 <a-button type="primary" icon="search" @click="search()">查询</a-button>
-                <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="() => (queryParam = {times: []})">重置</a-button>
+                <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="initQuerys()">重置</a-button>
               </span>
             </div>
           </div>
           <div class="middle">
-            <a-empty :image="simpleImage" v-if="false" />
-            <div class="list">
-              <div class="item">
-                <div class="title">
+            <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list2.length === 0" />
+            <div class="list" v-else>
+              <div class="item" v-for="(item, index) in list2" :key="index">
+                <div class="title" :title="item.title">
                   <span class="red">*</span>
-                  <span class="name">1.您是否了解孕产康复？(单选题)</span>
+                  <span class="name">{{ index+1 }}.{{ item.title }}</span>
                 </div>
-                <div class="rows">
-                  <div class="row">
-                    <div class="name">是</div>
+                <table-form
+                  :queryParam="{title: item.data[0].valueStr,keyStr: item.data[0].keyStr}"
+                  v-if="item.type === 'INPUT'"
+                />
+                <div class="rows" v-else>
+                  <div class="row" v-for="(subItem, subIndex) in item.data" :key="index +'-'+ subIndex">
+                    <div class="name" :title="subItem.valueStr">{{ subItem.valueStr }}</div>
                     <div class="percent">
-                      <a-progress :percent="100" status="active" />
+                      <a-progress :percent="subItem.rate" status="active" />
                     </div>
-                    <div class="num">1次</div>
-                  </div>
-                  <div class="row">
-                    <div class="name">是</div>
-                    <div class="percent">
-                      <a-progress :percent="88.88" status="active" />
-                    </div>
-                    <div class="num">1次</div>
+                    <div class="num">{{ subItem.co }}次</div>
                   </div>
                 </div>
-              </div>
-              <div class="item">
-                <div class="title">
-                  <span class="red">*</span>
-                  <span class="name">1.您是否了解孕产康复？(单选题)</span>
-                </div>
-                <div class="rows">
-                  <div class="row">
-                    <div class="name">是</div>
-                    <div class="percent">
-                      <a-progress :percent="70" status="active" />
-                    </div>
-                    <div class="num">1次</div>
-                  </div>
-                  <div class="row">
-                    <div class="name">是</div>
-                    <div class="percent">
-                      <a-progress :percent="60" status="active" />
-                    </div>
-                    <div class="num">1次</div>
-                  </div>
-                </div>
-              </div>
-              <div class="item">
-                <div class="title">
-                  <span class="red">*</span>
-                  <span class="name">1.您是否了解孕产康复？(填空题)</span>
-                </div>
-                <table-form :queryParam="queryParam" />
               </div>
             </div>
           </div>
           <div class="bottom">
             <div class="item1">
-              <div class="analyse analyse1">发放数：1000</div>
-              <div class="analyse analyse2">回收数：800</div>
-              <div class="analyse analyse3">逾期数：200</div>
-              <div class="analyse analyse4">抽查合格率：80%</div>
+              <div class="analyse analyse1">发放数：{{ overviewItem1.co || 0 }}</div>
+              <div class="analyse analyse2">回收数：{{ overviewItem2.co || 0 }}</div>
+              <div class="analyse analyse3">逾期数：{{ overviewItem3.co || 0 }}</div>
+              <div class="analyse analyse4">抽查合格率：{{ overviewItem4.co || '0%' }}</div>
             </div>
             <div class="item2">
               <pies ref="pies" name="name" widths="100%" heights="180px"></pies>
@@ -166,8 +116,8 @@
 </template>
 
 <script>
-import { getDepartmentListForReq as lists2 } from '@/api/modular/system/posManage'
-import { info2 } from '@/api/modular/system/paper'
+import { getDepartmentListForReq as params1 } from '@/api/modular/system/posManage'
+import { list1, list2, overview, pie, bar } from '@/api/modular/system/paper'
 import { Ellipsis, Pies, Bars } from '@/components'
 import { Empty } from 'ant-design-vue'
 import tableForm from './tableForm'
@@ -188,38 +138,71 @@ export default {
       queryParam: {
         times: []
       },
+      paperName: '',
       format: 'YYYY-MM-DD',
-      lists: [],
-      lists1: [],
-      lists2: [],
-      lists3: [
+      currentPaper: {},
+      params1: [],
+      params2: [
         {
           id: 1,
-          name: '启用'
+          name: '电话'
         },
         {
           id: 2,
-          name: '停用'
+          name: '微信'
+        },
+        {
+          id: 3,
+          name: '短信'
         }
-      ]
+      ],
+      list1: [],
+      list2: [],
+      overview: [],
+      pie: [],
+      bar: []
+    }
+  },
+  computed: {
+    overviewItem1() {
+      const result = this.overview.find(item => {
+        return item.item === '发放数'
+      }) || {}
+      return result
+    },
+    overviewItem2() {
+      const result = this.overview.find(item => {
+        return item.item === '回收数'
+      }) || {}
+      return result
+    },
+    overviewItem3() {
+      const result = this.overview.find(item => {
+        return item.item === '逾期数'
+      }) || {}
+      return result
+    },
+    overviewItem4() {
+      const result = this.overview.find(item => {
+        return item.item === '抽查合格率'
+      }) || {}
+      return result
     }
   },
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.queryParam = {...this.queryParam, ...this.$route.query}
+    this.getParams1()
   },
   mounted() {
-    this.initEvent()
-    this.initCharts()
+    this.init()
   },
   methods: {
-    search() {},
-    initEvent() {
-      window.addEventListener('resize', e => {
-        this.resizeCharts()
-      })
+    init() {
+      this.getList1()
+      this.initEvent()
+      this.initQuerys()
     },
     initPies(data) {
       const option = this.genePiesOption(data)
@@ -229,10 +212,8 @@ export default {
       const option = this.geneBarsOption(data)
       this.$refs.bars.init(option)
     },
-    initCharts(data1, data2) {
-      this.initPies(data1)
-      this.initBars(data2)
-      setTimeout(() => {
+    initEvent() {
+      window.addEventListener('resize', e => {
         this.resizeCharts()
       })
     },
@@ -240,28 +221,110 @@ export default {
       this.$refs.pies.getChart().resize()
       this.$refs.bars.getChart().resize()
     },
-    initParams() {},
-    getParams() {},
-    getLists2() {
-      lists2({
+    search() {
+      this.getList2()
+      this.getOverview()
+      this.getPie()
+      this.getBar()
+    },
+    initQuerys() {
+      this.queryParam = {
+        times: [
+          moment().startOf('month'),
+          moment().endOf('month')
+        ]
+      }
+    },
+    getQuerys(key = 'id') {
+      const query = {
+        messageOriginalId: this.currentPaper[key],
+        messageType: this.queryParam.messageType,
+        executeDepartmentId: this.queryParam.executeDepartmentId
+      }
+      if (this.queryParam.times && this.queryParam.times.length>0){
+        query.executeTimeStart = this.queryParam.times[0].format(this.format)
+        query.executeTimeEnd = this.queryParam.times[1].format(this.format)
+      }
+      return query
+    },
+    getParams1() {
+      params1({
         pageNo: 1,
         pageSize: 9999
       }).then(res => {
         if (res.code === 0){
-          this.lists2 = res.data.records || []
+          this.params1 = res.data.records || []
         }else {
           this.$message.error(res.message)
         }
       })
     },
-    itemClick(item) {},
-    change(dates) {
-      if (!dates || dates.length === 0) {
-        this.$message.warning('请选择查询时间！')
-        return
-      }
+    getList1(name) {
+      this.confirmLoading_left = true
+      list1({
+        questionnaireName: name || undefined
+      }).then(res => {
+        if (res.code === 0){
+          this.list1 = res.data || []
+          if (this.list1.length > 0){
+            this.paperClick(this.list1[0])
+          }
+        }else {
+          this.$message.error(res.message)
+        }
+      }).finally(() => {
+        this.confirmLoading_left = false
+      })
     },
-    onChange(value) {
+    getList2() {
+      this.list2 = []
+      this.confirmLoading_right = true
+      list2(this.getQuerys('key')).then(res => {
+        if (res.code === 0){
+          this.list2 = res.data || []
+        }else {
+          this.$message.error(res.message)
+        }
+      }).finally(() => {
+        this.confirmLoading_right = false
+      })
+    },
+    getOverview() {
+      overview(this.getQuerys()).then(res => {
+        if (res.code === 0){
+          this.overview = res.data || []
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    getPie() {
+      pie(this.getQuerys()).then(res => {
+        if (res.code === 0){
+          this.pie = res.data || []
+          this.initPies(this.pie)
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    getBar() {
+      bar(this.getQuerys()).then(res => {
+        if (res.code === 0){
+          this.bar = res.data || []
+          this.initBars(this.bar)
+        }else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+    paperClick(paper) {
+      this.currentPaper = paper
+      this.initQuerys()
+      this.search()
+    },
+    onChange(event) {
+      this.getList1(this.paperName)
     },
     genePiesOption(data) {
       const option = {
@@ -289,13 +352,14 @@ export default {
             name: '随访方式分布',
             type: 'pie',
             center: ['40%', '55%'],
-            radius: ['50%', '70%'],
+            radius: ['35%', '55%'],
             avoidLabelOverlap: false,
-            data: [
-              { value: 735, name: '微信' },
-              { value: 580, name: '电话' },
-              { value: 300, name: '短信' }
-            ],
+            data: data.map(item => {
+              return {
+                name: item.messageType,
+                value: item.co
+              }
+            }),
             label: {
               show: true,
               position: 'outside',
@@ -304,7 +368,7 @@ export default {
               color: '#4D4D4D',
               textAlign: 'left',
               formatter(item) {
-                return item.name +'\n'+ item.value
+                return item.name +' '+ item.value
               }
             },
             labelLine: {
@@ -367,13 +431,17 @@ export default {
             color: '#4D4D4D',
             fontSize: 12
           },
-          data: ['患者迁出', '患者死亡', '患者拒绝随访', '电话无人接听', '电话号码有误']
+          data: data.map(item => {
+            return item.failReason
+          })
         },
         series: [
           {
             type: 'bar',
             barWidth: '50%',
-            data: [182, 234, 970, 744, 9999]
+            data: data.map(item => {
+              return item.co
+            })
           }
         ]
       }

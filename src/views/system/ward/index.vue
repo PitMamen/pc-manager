@@ -8,7 +8,7 @@
       <div class="search-row">
         <span class="name">所属机构:</span>
         <a-tree-select
-          v-model="queryParam.parentDisarmamentId"
+          v-model="queryParam.selectHospitalCode"
           tree-default-expand-all
           :tree-data="treeData"
           placeholder="请选择所属机构"
@@ -211,15 +211,15 @@ export default {
         if (res.code === 0){
           this.treeData = (res.data || []).map(item => {
             const tree = {
-              key: item.hospitalId,
-              value: item.hospitalId,
+              key: item.hospitalCode,
+              value: item.hospitalCode,
               title: item.hospitalName
             }
             if (item.hospitals && item.hospitals.length>0){
               tree.children = item.hospitals.map(item_ => {
                 return {
-                  key: item_.hospitalId,
-                  value: item_.hospitalId,
+                  key: item_.hospitalCode,
+                  value: item_.hospitalCode,
                   title: item_.hospitalName
                 }
               })

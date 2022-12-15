@@ -8,14 +8,14 @@
     :pageSize="5"
     :rowKey="record => record.id"
   >
-    <span slot="ccc" slot-scope="text">
-      <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
+    <span slot="value_str" slot-scope="text">
+      <ellipsis :length="40" tooltip>{{ text }}</ellipsis>
     </span>
   </s-table>
 </template>
 
 <script>
-import { list } from '@/api/modular/system/paper'
+import { list3 as list } from '@/api/modular/system/paper'
 import { STable, Ellipsis } from '@/components'
 export default {
   components: {
@@ -34,18 +34,20 @@ export default {
       columns: [
         {
           title: '姓名',
-          dataIndex: 'aaa',
-          scopedSlots: { customRender: 'aaa' }
+          width: '33%',
+          dataIndex: 'userName',
+          scopedSlots: { customRender: 'userName' }
         },
         {
           title: '电话',
-          dataIndex: 'bbb',
-          scopedSlots: { customRender: 'bbb' }
+          width: '33%',
+          dataIndex: 'phone',
+          scopedSlots: { customRender: 'phone' }
         },
         {
           title: '内容',
-          dataIndex: 'ccc',
-          scopedSlots: { customRender: 'ccc' }
+          dataIndex: 'value_str',
+          scopedSlots: { customRender: 'value_str' }
         }
       ],
       // 加载数据方法 必须为 Promise 对象

@@ -20,7 +20,7 @@
                 :tree-data="treeData"
                 placeholder="所属机构"
                 style="width: 100%;"
-                v-decorator="['parentDisarmamentId', { rules: [{ required: true, message: '请选择所属机构！' }] }]"
+                v-decorator="['selectHospitalCode', { rules: [{ required: true, message: '请选择所属机构！' }] }]"
               >
               </a-tree-select>
             </a-form-item>
@@ -137,7 +137,7 @@ export default {
       setTimeout(() => {
         this.form.setFieldsValue({
           id: item.id,
-          parentDisarmamentId: item.parent_disarmament_id,
+          selectHospitalCode: item.hospital_code,
           wardName: item.ward_name,
           wardOrder: item.ward_order,
           bedQuantity: item.bed_quantity,
@@ -157,15 +157,15 @@ export default {
         if (res.code === 0){
           this.treeData = (res.data || []).map(item => {
             const tree = {
-              key: item.hospitalId,
-              value: item.hospitalId,
+              key: item.hospitalCode,
+              value: item.hospitalCode,
               title: item.hospitalName
             }
             if (item.hospitals && item.hospitals.length>0){
               tree.children = item.hospitals.map(item_ => {
                 return {
-                  key: item_.hospitalId,
-                  value: item_.hospitalId,
+                  key: item_.hospitalCode,
+                  value: item_.hospitalCode,
                   title: item_.hospitalName
                 }
               })
@@ -183,14 +183,14 @@ export default {
     geneSubmitData(values) {
       for (let x=0; x<this.treeData.length; x++){
         const tree = this.treeData[x]
-        if (tree.value === values.parentDisarmamentId){
+        if (tree.value === values.selectHospitalCode){
           values.parentDisarmamentName = tree.title
           return values
         }
         if (tree.children && tree.children.length>0){
           for (let y=0; y<tree.children.length; y++){
             const tree_ = tree.children[y]
-            if (tree_.value === values.parentDisarmamentId){
+            if (tree_.value === values.selectHospitalCode){
               values.parentDisarmamentName = tree_.title
               return values
             }
