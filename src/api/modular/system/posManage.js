@@ -47,7 +47,7 @@ export function getAllArticles(parameter) {
   delete newPara.start
   delete newPara.pageNo
   return axios({
-    url: '/health-api/health/patient/allArticlesPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source,
+    url: '/health-api/health/patient/allArticlesNewPage?start=' + parameter.start + '&pageSize=' + parameter.pageSize + '&type=' + parameter.source,
     method: 'get',
 
     data: newPara
@@ -60,7 +60,7 @@ export function getAllArticles(parameter) {
  */
 export function getAllArticlesNew(parameter) {
   return axios({
-    url: '/health-api/health/patient/allArticlesPage',
+    url: '/health-api/health/patient/allArticlesNewPage',
     method: 'get',
     params: {
       start: parameter.pageNo,
@@ -76,7 +76,7 @@ export function getAllArticlesNew(parameter) {
  */
 export function getAllArticlesTeach(parameter) {
   return axios({
-    url: '/health-api/health/patient/allArticlesPage',
+    url: '/health-api/health/patient/allArticlesNewPage',
     method: 'get',
     params: {
       start: parameter.pageNo,
