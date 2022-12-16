@@ -9,7 +9,7 @@
     :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-part" style="margin-top:0px">
+      <div class="div-part" style="margin-top: 0px">
         <div class="div-part-left">
           <div class="left-content1" style="margin-bottom: 20px" v-for="(item, index) in appListOut" :key="index">
             <div class="div-content" style="margin-left: 0px">
@@ -25,7 +25,7 @@
             </div>
 
             <div class="div-content" style="margin-left: -10px">
-              <span class="span-item-name" style="margin-left:-5px">已选科室:</span>
+              <span class="span-item-name" style="margin-left: -5px">已选科室:</span>
               <a-select
                 allow-clear
                 :disabled="item.applicationId != 1"
@@ -97,8 +97,8 @@ export default {
   components: { STable },
   data() {
     return {
-      hospitalCode:'',
-      accountId:'',
+      hospitalCode: '',
+      accountId: '',
       isChecked: false,
       visible: false,
       headers: {},
@@ -144,7 +144,7 @@ export default {
       allDepartList: [],
       queryParams: {
         departmentName: '',
-        hospitalCode:'',
+        hospitalCode: '',
         parentDisarmamentId: '',
         status: 1,
       },
@@ -190,7 +190,7 @@ export default {
         pageSize: 10000,
         parentDisarmamentId: '',
         status: 1,
-        hospitalCode:this.hospitalCode,
+        hospitalCode: this.hospitalCode,
       }).then((res) => {
         if (res.code == 0) {
           this.allDepartList = res.data.records
@@ -198,14 +198,11 @@ export default {
       })
     },
 
-
-    clearData(){
-     this.selectedRowKeyids=[]
-     this.selectedRowKeys = []
-     this.queryParams.departmentName =""
-
+    clearData() {
+      this.selectedRowKeyids = []
+      this.selectedRowKeys = []
+      this.queryParams.departmentName = ''
     },
-
 
     modalChange(record, id) {
       if (id == 1) {
@@ -225,16 +222,19 @@ export default {
             this.appListOut.forEach((item, index) => {
               this.$set(item, 'isChecked', item.deptInfos ? true : false)
               this.$set(item, 'selectedRowKeyids', [])
-              if(item.deptInfos){
-                item.deptInfos.forEach((item1, index1) =>{
-                 this.selectedRowKeys.push(item1.deptId)
-                 console.log("0000:",this.selectedRowKeys)
-                })
+              if (item.deptInfos) {
+                if (item.applicationId == 1) {
+                  //只添加 全病程管理的应用
+                  var departList = item.deptInfos
+                  var tempList = this.removeDuplicate(departList)
+                  tempList.forEach((item1, index1) => {
+                    this.selectedRowKeys.push(item1.deptId)
+                  })
+                }
               }
             })
             this.updateSelect()
           }
-
         }
       })
     },
@@ -280,20 +280,35 @@ export default {
       })
     },
 
+    //数组元素去重
+    removeDuplicate(arry) {
+      const newArry = []
+      if (arry != null && arry.length > 0) {
+        arry.forEach((item) => {
+          if (!newArry.includes(item)) {
+            newArry.push(item)
+          }
+        })
+      }
+      return newArry
+    },
+
     reset() {
-        this.$refs.table.refresh(true)
+      this.$refs.table.refresh(true)
     },
     handleSubmit() {
       if (this.selectedRowKeys.length == 0) {
         this.$message.error('请选择科室')
         return
       }
+
+      var temparray = this.removeDuplicate(this.selectedRowKeys)
       this.confirmLoading = true
-      let selectIds = JSON.parse(JSON.stringify(this.selectedRowKeys))
+      let selectIds = JSON.parse(JSON.stringify(temparray))
       var items = []
       items.push({
-        "applicationId": 1,
-        "deptIds": selectIds,
+        applicationId: 1,
+        deptIds: selectIds,
       })
 
       var queryParamsData = {
