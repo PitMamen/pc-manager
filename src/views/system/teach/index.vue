@@ -49,7 +49,7 @@
           </div>
           <div class="search-row">
             <span class="name">上架:</span>
-            <a-switch :checked="queryParam.status == '2'" @change="onSwitchChange" />
+            <a-switch :checked="queryParam.isVisible" @change="onSwitchChange" />
           </div>
 
           <div class="action-row">
@@ -88,8 +88,8 @@
               <a>删除</a>
             </a-popconfirm>
           </span>
-          <span slot="statuas" slot-scope="text, record">
-            <a-switch :checked="record.status == '2'" :disabled="true" />
+          <span slot="isVisible" slot-scope="text, record">
+            <a-switch :checked="record.isVisible" :disabled="record.status != '2'" @click="goShangjia(record)"/>
           </span>
         </s-table>
       </div>
@@ -150,7 +150,7 @@ export default {
         categoryId: '',
         departmentId: '',
         title: '',
-        status: '2',
+        isVisible: true,
       },
 
       // 表头
@@ -187,7 +187,7 @@ export default {
         {
           title: '上架',
           width: 80,
-          scopedSlots: { customRender: 'statuas' },
+          scopedSlots: { customRender: 'isVisible' },
         },
 
         {
@@ -290,7 +290,7 @@ export default {
   methods: {
     reset() {
       this.queryParam.title = ''
-      this.queryParam.status = '2'
+      this.queryParam.isVisible = true
       this.queryParam.categoryId = ''
       this.queryParam.departmentId = ''
 
@@ -400,7 +400,7 @@ export default {
     },
     onSwitchChange(value) {
       console.log(value)
-      this.queryParam.status = value ? '2' : '0'
+      this.queryParam.isVisible = value 
 
       this.$refs.table.refresh(true)
     },
@@ -417,6 +417,7 @@ export default {
       console.log(record)
       this.$router.push({ name: 'article_teach_edit', query: { recordStr: JSON.stringify(record) } })
     },
+    //发布
     goPush(record) {
       this.confirmLoading = true
       modifyArticle({ id: record.articleId,status:'2' }).then((res) => {
@@ -426,6 +427,22 @@ export default {
           this.handleOk()
         } else {
           this.$message.error('发布失败：' + res.message)
+        }
+      })
+    },
+    //上架
+    goShangjia(record){
+      this.confirmLoading = true
+      var _isVisible=!record.isVisible
+      modifyArticle({ id: record.articleId,isVisible:_isVisible }).then((res) => {
+        this.confirmLoading = false
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          // this.handleOk()
+          record.isVisible=_isVisible
+        } else {
+          this.$message.error('操作失败：' + res.message)
+          record.isVisible=!_isVisible
         }
       })
     },

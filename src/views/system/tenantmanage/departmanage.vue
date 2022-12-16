@@ -138,7 +138,7 @@ export default {
 
         {
           title: '科室类型',
-          dataIndex: 'department_type',
+          dataIndex: 'department_type_cn',
         },
       ],
       allDepartList: [],
