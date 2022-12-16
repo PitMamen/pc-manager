@@ -220,7 +220,8 @@ export default {
 
             this.appListOut = JSON.parse(JSON.stringify(this.appList))
             this.appListOut.forEach((item, index) => {
-              this.$set(item, 'isChecked', item.deptInfos ? true : false)
+              // this.$set(item, 'isChecked', item.deptInfos ? true : false)  //根据条件判断
+              this.$set(item, 'isChecked', true )   // 这里默认进来的时候 就是选中状态 ，到时候其他应用放开的时候 再根据条件判断
               this.$set(item, 'selectedRowKeyids', [])
               if (item.deptInfos) {
                 if (item.applicationId == 1) {
@@ -250,7 +251,6 @@ export default {
     },
     ksSelectChange(values) {
       console.log(values)
-
       this.selectedRowKeys = values
       this.updateSelect()
     },
