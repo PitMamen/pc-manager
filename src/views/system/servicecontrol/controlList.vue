@@ -901,7 +901,7 @@ export default {
   height: 100%;
 
   .div-radio {
-    margin-top: 20px;
+    // margin-top: 20px;
     display: flex;
     align-items: center;
     flex-direction: row;
