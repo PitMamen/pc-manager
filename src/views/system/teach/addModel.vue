@@ -83,12 +83,13 @@
           <div  style="position: absolute;right: 120px;top: 10px;">
             
             <a-upload
-              
               :action="actionUrlCover"
               :multiple="true"
               list-type="picture-card"
               :file-list="fileList"
               :headers="headers"
+              accept="image/jpeg,image/png,image/jpg,"
+              :before-upload="beforeUpload"
               @preview="handlePreview"
               @change="handleChange"
             >
@@ -336,7 +337,20 @@ export default {
 
       
     },
-
+    beforeUpload(file) {
+      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      if (!isJpgOrPng) {
+        this.$message.error('请选择正确的图片格式')
+        this.fileList = []
+        return false
+      }
+      const isLt2M = file.size / 1024 / 1024 < 2
+      if (!isLt2M) {
+        this.$message.error('图片大小不能超过2M')
+        return false
+      }
+      return true
+    },
   
 
     getDiseasesOut(departmentId) {
