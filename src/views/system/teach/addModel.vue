@@ -88,7 +88,7 @@
               list-type="picture-card"
               :file-list="fileList"
               :headers="headers"
-              accept="image/jpeg,image/png,image/jpg,"
+              accept="image/jpeg,image/png,image/jpg"
               :before-upload="beforeUpload"
               @preview="handlePreview"
               @change="handleChange"
@@ -542,8 +542,8 @@ export default {
 
       // 配置 server 接口地址
       editor.config.uploadFileName = 'file'
-      // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
-      editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
+      editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
+      // editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
 
       // editor.config.showLinkVideo = false
 
