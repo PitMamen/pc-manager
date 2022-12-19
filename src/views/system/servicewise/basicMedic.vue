@@ -4,9 +4,27 @@
     <div
       class="div-yizhu"
       v-if="insideJbxx.yzxx && insideJbxx.yzxx.length > 0"
-      style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
+      style="padding-right: 10px; padding-bottom: 10px"
     >
-      <div class="div-janyan">
+      <div class="div-shu" style="overflow-y: auto; height: 370px">
+        <!-- <div class="div-shu"> -->
+        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
+          <a-timeline-item
+            v-for="(item, index) in insideJbxx.yzxx"
+            :color="item.color"
+            :key="index"
+            @click="onItemClick(item, index)"
+          >
+            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
+              {{ item.timeStr }}
+              <!-- <div class="div-name" :title="item.name">
+                {{ item.name }}
+              </div> -->
+            </div></a-timeline-item
+          >
+        </a-timeline>
+      </div>
+      <div class="div-janyan" style="overflow-y: auto; height: 370px">
         <a-table
           ref="table"
           :pagination="false"
@@ -28,25 +46,6 @@
           </span>
         </a-table>
       </div>
-
-      <div class="div-shu" style="overflow-y: auto; height: 370px">
-        <!-- <div class="div-shu"> -->
-        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
-          <a-timeline-item
-            v-for="(item, index) in insideJbxx.yzxx"
-            :color="item.color"
-            :key="index"
-            @click="onItemClick(item, index)"
-          >
-            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
-              {{ item.timeStr }}
-              <!-- <div class="div-name" :title="item.name">
-                {{ item.name }}
-              </div> -->
-            </div></a-timeline-item
-          >
-        </a-timeline>
-      </div>
     </div>
 
     <div v-else class="nodata">
@@ -57,7 +56,6 @@
 
 
 <script>
-
 export default {
   components: {},
   props: {

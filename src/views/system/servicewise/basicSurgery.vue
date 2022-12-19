@@ -4,9 +4,28 @@
     <div
       class="div-surgery"
       v-if="insideJbxx.ssxx && insideJbxx.ssxx.length > 0"
-      style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
+      style="padding-right: 10px; padding-bottom: 10px"
     >
-      <div class="div-jancha">
+      <div class="div-shu" style="overflow-y: auto; height: 370px">
+        <!-- <div class="div-shu"> -->
+        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
+          <a-timeline-item
+            v-for="(item, index) in insideJbxx.ssxx"
+            :color="item.color"
+            :key="index"
+            @click="onItemClick(item, index)"
+          >
+            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
+              {{ item.timeStr }}
+              <!-- <div class="div-name" :title="item.name">
+                {{ item.name }}
+              </div> -->
+            </div></a-timeline-item
+          >
+        </a-timeline>
+      </div>
+
+      <div class="div-jancha" style="overflow-y: auto; height: 370px">
         <div class="div-line-wrap" style="margin-top: 0">
           <div class="div-item-three" style="color: red">
             科室：<span>{{ insideShowData.data[0].ksmc }}</span>
@@ -63,25 +82,6 @@
           <div style="width: 15%">麻醉医师姓名：{{ insideShowData.data[0].mzysxm }}</div>
         </div>
       </div>
-
-      <div class="div-shu" style="overflow-y: auto; height: 370px">
-        <!-- <div class="div-shu"> -->
-        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
-          <a-timeline-item
-            v-for="(item, index) in insideJbxx.ssxx"
-            :color="item.color"
-            :key="index"
-            @click="onItemClick(item, index)"
-          >
-            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
-              {{ item.timeStr }}
-              <!-- <div class="div-name" :title="item.name">
-                {{ item.name }}
-              </div> -->
-            </div></a-timeline-item
-          >
-        </a-timeline>
-      </div>
     </div>
 
     <div v-else class="nodata">
@@ -92,7 +92,6 @@
 
 
 <script>
-
 export default {
   components: {},
   props: {
