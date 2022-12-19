@@ -199,20 +199,27 @@ export default {
       pastMonths: '60',
     }
     this.confirmLoading = true
-    getFileList(param).then((res) => {
-      if (res.code === 0) {
-        this.historyList = res.data
-        if (this.historyList.length > 0) {
-          for (let index = 0; index < this.historyList.length; index++) {
-            this.$set(this.historyList[index], 'isChecked', false)
+    getFileList(param)
+      .then((res) => {
+        if (res.code === 0) {
+          this.historyList = res.data
+          if (this.historyList.length > 0) {
+            for (let index = 0; index < this.historyList.length; index++) {
+              this.$set(this.historyList[index], 'isChecked', false)
+            }
+            this.$set(this.historyList[0], 'isChecked', true)
+            this.getDetailOut(0)
+          } else {
+            this.confirmLoading = false
           }
-          this.$set(this.historyList[0], 'isChecked', true)
-          this.getDetailOut(0)
+        } else {
+          this.$message.error(res.message)
+          this.confirmLoading = false
         }
-      } else {
-        this.$message.error(res.message)
-      }
-    })
+      })
+      .finally(() => {
+        this.confirmLoading = false
+      })
 
     this.getPatientBaseInfo()
   },
@@ -256,7 +263,6 @@ export default {
         hospitalCode: this.historyList[index].hospitalCode,
       }
       this.confirmLoading = true
-      let that = this
       getFileDtail(param)
         .then((res) => {
           this.confirmLoading = false

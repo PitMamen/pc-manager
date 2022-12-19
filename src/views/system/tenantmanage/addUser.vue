@@ -19,6 +19,7 @@
                 action="/api/content-api/fileUpload/uploadImgFile"
                 :headers="headers"
                 :before-upload="beforeUpload"
+                accept="image/jpeg,image/png,image/jpg"
                 @change="handleChange"
                 :showUploadList="false"
               >

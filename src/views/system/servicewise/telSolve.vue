@@ -194,6 +194,7 @@ export default {
         '主动放弃随访',
         '患者拒绝随访',
         '电话占线',
+        '电话停机',
         '电话关机',
         '患者已死亡',
         '患者已迁出',
@@ -402,7 +403,7 @@ export default {
           return
         }
 
-        if (this.failureRadioTyPe === 8) {
+        if (this.failureRadioTyPe === 9) {
           if (this.handleResult.length === 0) {
             this.$message.info('请填写备注')
             return
