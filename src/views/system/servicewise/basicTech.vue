@@ -4,9 +4,27 @@
     <div
       class="div-yiji"
       v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0"
-      style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
+      style="padding-right: 10px; padding-bottom: 10px"
     >
-      <div class="div-jancha" v-if="insideShowType == 'jiancha'">
+      <div class="div-shu" style="overflow-y: auto; height: 370px">
+        <!-- <div class="div-shu"> -->
+        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
+          <a-timeline-item
+            v-for="(item, index) in insideJbxx.newArr"
+            :color="item.color"
+            :key="index"
+            @click="onItemClick(item, index)"
+          >
+            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
+              {{ item.timeStr }}
+              <div class="div-name" :title="item.name">
+                {{ item.name }}
+              </div>
+            </div></a-timeline-item
+          >
+        </a-timeline>
+      </div>
+      <div class="div-jancha" style="overflow-y: auto; height: 370px" v-if="insideShowType == 'jiancha'">
         <div class="div-line-wrap">
           <div class="div-item-two">
             检查名称：<span style="color: #333">{{ insideShowData.jcmc }}</span>
@@ -49,7 +67,7 @@
         </div>
       </div>
 
-      <div class="div-janyan" v-if="insideShowType == 'jianyan'">
+      <div class="div-janyan" style="overflow-y: auto; height: 370px" v-if="insideShowType == 'jianyan'">
         <div class="div-line-wrap">
           <div class="div-item-two">
             项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
@@ -79,25 +97,6 @@
             <!-- <a-icon type="arrow-down" /> -->
           </span>
         </a-table>
-      </div>
-
-      <div class="div-shu" style="overflow-y: auto; height: 370px">
-        <!-- <div class="div-shu"> -->
-        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
-          <a-timeline-item
-            v-for="(item, index) in insideJbxx.newArr"
-            :color="item.color"
-            :key="index"
-            @click="onItemClick(item, index)"
-          >
-            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
-              {{ item.timeStr }}
-              <div class="div-name" :title="item.name">
-                {{ item.name }}
-              </div>
-            </div></a-timeline-item
-          >
-        </a-timeline>
       </div>
     </div>
 
@@ -233,6 +232,7 @@ export default {
 
     .div-shu {
       font-size: 12px;
+      margin-right: 1%;
       width: 12%;
 
       /deep/ .ant-timeline-item {

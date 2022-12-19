@@ -43,7 +43,7 @@
       
         <a  :disabled="record.accountStatus !== 0" @click="$refs.addAccount.editModel(record)">修改</a>
         <a-divider type="vertical" />
-        <a @click="goAssDepartmanage(record)" :disabled="record.accountStatus !== 0">关联科室</a>
+        <a @click="goAssDepartmanage(record)" :disabled="record.accountStatus !== 0">管理科室</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goResetPwd(record)">
           <a :disabled="record.accountStatus !== 0">重置密码</a>

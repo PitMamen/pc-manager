@@ -220,15 +220,7 @@ export default {
           title: '失败率',
           dataIndex: 'failRate',
         },
-        {
-          title: '逾期数',
-          dataIndex: 'overdue',
-          scopedSlots: { customRender: 'action_overdue' },
-        },
-        {
-          title: '逾期率',
-          dataIndex: 'overdueRate',
-        },
+
 
         {
           title: '待执行',
@@ -239,6 +231,19 @@ export default {
           title: '待执行率',
           dataIndex: 'undoTaskRate',
         },
+
+
+        {
+          title: '逾期数',
+          dataIndex: 'overdue',
+          scopedSlots: { customRender: 'action_overdue' },
+        },
+        {
+          title: '逾期率',
+          dataIndex: 'overdueRate',
+        },
+
+     
       ],
 
       user: {},
