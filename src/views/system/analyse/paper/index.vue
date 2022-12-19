@@ -38,8 +38,8 @@
                 v-model="queryParam.executeDepartmentId"
                 allow-clear
               >
-                <a-select-option v-for="item in params1" :key="item.department_id" :value="item.department_id">
-                  {{ item.department_name }}
+                <a-select-option v-for="item in params1" :key="item.departmentId" :value="item.departmentId">
+                  {{ item.departmentName }}
                 </a-select-option>
               </a-select>
             </div>
