@@ -116,12 +116,17 @@
 </template>
 
 <script>
-import { getDepartmentListForReq as params1 } from '@/api/modular/system/posManage'
+import {
+  getDepts,
+  getDeptsPersonal,
+} from '@/api/modular/system/posManage'
 import { list1, list2, overview, pie, bar } from '@/api/modular/system/paper'
 import { Ellipsis, Pies, Bars } from '@/components'
+import { TRUE_USER } from '@/store/mutation-types'
 import { Empty } from 'ant-design-vue'
 import tableForm from './tableForm'
 import moment from 'moment'
+import Vue from 'vue'
 export default {
   components: {
     Pies,
@@ -141,6 +146,7 @@ export default {
       paperName: '',
       format: 'YYYY-MM-DD',
       currentPaper: {},
+      user: {},
       params1: [],
       params2: [
         {
@@ -193,6 +199,7 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
+    this.user = Vue.ls.get(TRUE_USER)
     this.getParams1()
   },
   mounted() {
@@ -248,16 +255,20 @@ export default {
       return query
     },
     getParams1() {
-      params1({
-        pageNo: 1,
-        pageSize: 9999
-      }).then(res => {
-        if (res.code === 0){
-          this.params1 = res.data.records || []
-        }else {
-          this.$message.error(res.message)
-        }
-      })
+      //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+        getDepts().then((res) => {
+          if (res.code == 0) {
+            this.params1 = res.data || []
+          }
+        })
+      } else {
+        getDeptsPersonal().then((res) => {
+          if (res.code == 0) {
+            this.params1 = res.data || []
+          }
+        })
+      }
     },
     getList1(name) {
       this.confirmLoading_left = true
