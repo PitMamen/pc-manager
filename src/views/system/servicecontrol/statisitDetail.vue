@@ -149,6 +149,8 @@ export default {
        status =  '成功'
       }else if(type==3){
        status =  '失败'
+      }else if(type==5){
+        status =  '待执行'
       }
      if(record.planName==null){
       record.planName=""

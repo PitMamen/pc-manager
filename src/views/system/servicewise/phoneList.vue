@@ -102,6 +102,14 @@
               }}</a-select-option>
             </a-select>
           </div>
+          <div class="search-row" v-if="queryParams.queryStatus != 4">
+            <span class="name">是否暂挂:</span>
+            <a-select allow-clear v-model="queryParams.hangStatus" placeholder="请选择暂挂状态">
+              <a-select-option v-for="(item, index) in hangData" :key="index" :value="item.code">{{
+                item.name
+              }}</a-select-option>
+            </a-select>
+          </div>
           <div class="search-row" v-if="queryParams.queryStatus == 3 || queryParams.queryStatus == 4">
             <span class="name">状态:</span>
             <a-select allow-clear v-model="queryParams.bizStatus" placeholder="请选择状态">
@@ -143,6 +151,9 @@
         >
           <span slot="status-overdue" slot-scope="text, record" :class="getClass(record.overdueStatus)">
             {{ record.overdueStatusName }}
+          </span>
+          <span slot="status-hang" slot-scope="text, record" :class="getzgClass(record.hangStatus)">
+            {{ record.hangStatusName }}
           </span>
 
           <span slot="action" slot-scope="text, record">
@@ -211,6 +222,12 @@ export default {
         { code: 1, name: '未逾期' },
         { code: 2, name: '已逾期' },
       ],
+      //是否挂起
+      hangData: [
+        { code: -1, name: '全部' },
+        { code: 1, name: '是' },
+        { code: 0, name: '否' },
+      ],
       //任务状态;1:未执行2:成功3:失败
       statusData: [
         { code: -1, name: '全部' },
@@ -229,8 +246,9 @@ export default {
         bizStatus: -1,
         startDate: null,
         endDate: null,
-        queryStatus: null,
+        queryStatus: 1,
         messageOriginalIds: null,
+        hangStatus: -1,
       },
       queryParamsOrigin: {
         userName: null,
@@ -241,8 +259,9 @@ export default {
         bizStatus: -1,
         startDate: null,
         endDate: null,
-        queryStatus: null,
+        queryStatus: 1,
         messageOriginalIds: null,
+        hangStatus: -1,
       },
 
       labelCol: {
@@ -319,6 +338,11 @@ export default {
           ellipsis: true,
         },
         {
+          title: '是否暂挂',
+          scopedSlots: { customRender: 'status-hang' },
+          width: 80,
+        },
+        {
           title: '操作',
           width: '100px',
           fixed: 'right',
@@ -381,6 +405,11 @@ export default {
           dataIndex: 'followPlanContent',
           width: 80,
           ellipsis: true,
+        },
+        {
+          title: '是否暂挂',
+          scopedSlots: { customRender: 'status-hang' },
+          width: 80,
         },
         {
           title: '操作',
@@ -453,6 +482,11 @@ export default {
           width: 80,
         },
         {
+          title: '是否暂挂',
+          scopedSlots: { customRender: 'status-hang' },
+          width: 80,
+        },
+        {
           title: '操作',
           width: '100px',
           fixed: 'right',
@@ -521,6 +555,11 @@ export default {
           dataIndex: 'bizStatusName',
           width: 80,
           // scopedSlots: { customRender: 'status-overdue' },
+        },
+        {
+          title: '是否暂挂',
+          scopedSlots: { customRender: 'status-hang' },
+          width: 80,
         },
         {
           title: '操作',
@@ -618,6 +657,10 @@ export default {
           param.bizStatus = null
         }
 
+        if (param.hangStatus == -1) {
+          param.hangStatus = null
+        }
+
         //后台需要null
         if (!param.messageOriginalIds || param.messageOriginalIds.length == 0) {
           param.messageOriginalIds == null
@@ -646,39 +689,48 @@ export default {
         }
 
         this.confirmLoading = true
-        return qryPhoneFollowTask(Object.assign(parameter, param)).then((res) => {
-          /**
-           *用于屏蔽第一次刷新的loading，第一次系统自动加在数据的时候loading不隐藏
-           */
-          if (this.canHide) {
-            this.confirmLoading = false
-          }
-          if (res.code == 0) {
-            res.data.rows.forEach((item, index) => {
-              this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
-              this.$set(item, 'messageTypeName', item.messageType.description)
-              if (item.overdueStatus.value == 1) {
-                this.$set(item, 'overdueStatusName', '否')
-              } else {
-                this.$set(item, 'overdueStatusName', '是')
-              }
+        return qryPhoneFollowTask(Object.assign(parameter, param))
+          .then((res) => {
+            /**
+             *用于屏蔽第一次刷新的loading，第一次系统自动加在数据的时候loading不隐藏
+             */
+            if (this.canHide) {
+              this.confirmLoading = false
+            }
+            if (res.code == 0) {
+              res.data.rows.forEach((item, index) => {
+                this.$set(item, 'xh', index + 1 + (res.data.pageNo - 1) * res.data.pageSize)
+                this.$set(item, 'messageTypeName', item.messageType.description)
+                if (item.overdueStatus.value == 1) {
+                  this.$set(item, 'overdueStatusName', '否')
+                } else {
+                  this.$set(item, 'overdueStatusName', '是')
+                }
+                if (item.hangStatus && item.hangStatus != null && item.hangStatus.value && item.hangStatus.value == 1) {
+                  this.$set(item, 'hangStatusName', '是')
+                } else {
+                  this.$set(item, 'hangStatusName', '否')
+                }
 
-              //任务状态;1:未执行2:成功3:失败
-              if (item.bizStatus.value == 1) {
-                this.$set(item, 'bizStatusName', '未执行')
-              } else if (item.bizStatus.value == 2) {
-                this.$set(item, 'bizStatusName', '成功')
-              } else if (item.bizStatus.value == 3) {
-                this.$set(item, 'bizStatusName', '失败')
-              }
-              if (item.execTime) {
-                this.$set(item, 'execTime', item.execTime.substring(0, 10))
-                this.$set(item, 'execTime', item.execTime.substring(0, 10))
-              }
-            })
-          }
-          return res.data
-        })
+                //任务状态;1:未执行2:成功3:失败
+                if (item.bizStatus.value == 1) {
+                  this.$set(item, 'bizStatusName', '未执行')
+                } else if (item.bizStatus.value == 2) {
+                  this.$set(item, 'bizStatusName', '成功')
+                } else if (item.bizStatus.value == 3) {
+                  this.$set(item, 'bizStatusName', '失败')
+                }
+                if (item.execTime) {
+                  this.$set(item, 'execTime', item.execTime.substring(0, 10))
+                  this.$set(item, 'execTime', item.execTime.substring(0, 10))
+                }
+              })
+            }
+            return res.data
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
       },
     }
   },
@@ -825,12 +877,16 @@ export default {
       // 需要改变表格列表数据；
       if (this.queryParams.queryStatus == 1) {
         this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+        this.isDoubled = false
       } else if (this.queryParams.queryStatus == 2) {
         this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+        this.isDoubled = true
       } else if (this.queryParams.queryStatus == 3) {
         this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+        this.isDoubled = true
       } else if (this.queryParams.queryStatus == 4) {
         this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+        this.isDoubled = true
       }
 
       this.goSearch()
@@ -956,7 +1012,14 @@ export default {
         return 'span-gray'
       }
     },
-
+    //暂挂状态;1:暂挂
+    getzgClass(status) {
+      if (status.value == 1) {
+        return 'span-blue'
+      } else {
+        return 'span-gray'
+      }
+    },
     /**
      * 重置
      */
@@ -1032,7 +1095,12 @@ export default {
   color: #f26161;
   // background-color: #f26161;
 }
-
+.span-blue {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #409eff;
+  // background-color: #f26161;
+}
 .span-gray {
   padding: 1% 2%;
   font-size: 12px;
@@ -1143,7 +1211,7 @@ export default {
 
     /deep/ .table-wrapper {
       &.doubled {
-        height: calc(100% - 140px);
+        height: calc(100% - 133px);
       }
       // height: calc(100% - 38px);
     }

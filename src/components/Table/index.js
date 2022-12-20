@@ -113,7 +113,7 @@ export default {
       current: localPageNum,
       pageSize: this.pageSize,
       showSizeChanger: this.showSizeChanger,
-      pageSizeOptions: ['10', '15', '20', '25', '30', '40', '50'],
+      pageSizeOptions: ['5', '10', '15', '20', '25', '30', '40', '50'],
       showTotal: (total, range) => {
         // return range[0] + '-' + range[1] + '共' + total + '条'
         return '共 ' + total + ' 条'

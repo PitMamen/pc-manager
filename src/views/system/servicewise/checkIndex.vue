@@ -2,13 +2,13 @@
   <a-modal
     :title="title"
     :width="1000"
-    :height="650"
+    :height="950"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="false"
   >
-    <a-card :bordered="false" class="card-top-pac">
+    <a-card :bordered="false" class="card-top-pac1">
       <div class="table-page-wrapper" style="margin-top: -2%">
         <div class="div-line-wrap">
           <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
@@ -32,17 +32,17 @@
             allow-clear
           />
 
-          <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 状态 :</span>
+          <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 支持分类查询 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
           <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->
         </div>
       </div>
       <a-table
-        style="margin-top: 2% ;overflow-y:auto;height:500px;"
+        style="margin-top: 2%; overflow-y: auto; height: 500px;width: 1000px;margin-right: 50px;"
         ref="table"
         size="default"
-        :scroll="{ y:400,x:0 }"
+        :scroll="{ y: 400, x: 0 }"
         :pagination="false"
         :data-source="loadData"
         :columns="columns"
@@ -63,7 +63,7 @@
             v-if="record.defaultField != null && record.defaultField.value == 2"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 120px; margin-right: 1%;"
+            style="display: inline-block; width: 90px; margin-right: 1%"
             allow-clear
             @blur="changeDes(record)"
           />
@@ -74,7 +74,7 @@
 
         <span slot="fileDes" style="display: inline-block" slot-scope="text, record">
           <a-select
-            style="width: 110px;margin-right: 1%;"
+            style="width: 90px; margin-right: 1%"
             v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.fieldArchives.description"
             @select="selectDes(record)"
@@ -86,6 +86,31 @@
           <span v-if="record.defaultField != null && record.defaultField.value == 1">{{
             record.fieldArchives != null ? record.fieldArchives.description : ''
           }}</span>
+        </span>
+
+        <!-- 显示序号 -->
+        <span slot="showIndex" slot-scope="text, record">
+          <a-input-number
+           :min=0
+           :precision=0
+           :placeholder="请输入正整数"
+           :disabled="isDisable(record.show)"
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            type="number"
+            v-model="record.showIndex"
+            class="span-item-value"
+            :maxLength="30"
+            style="display: inline-block; width: 60px; margin-right: 20px; padding-right: 0px"
+          />
+        </span>
+
+        <!-- 查询条件 -->
+        <span slot="queryCriteria" slot-scope="text, record">
+          <a-checkbox
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            v-model="record.isQryC"
+            @change="isQuery(record)"
+          ></a-checkbox>
         </span>
       </a-table>
     </a-card>
@@ -138,7 +163,7 @@ export default {
         {
           title: '字段编码',
           dataIndex: 'zdbm',
-          // width: 100,
+          width: 100,
         },
         {
           title: '字段描述',
@@ -175,10 +200,22 @@ export default {
         },
 
         {
+          title: '显示序号',
+          scopedSlots: { customRender: 'showIndex' },
+          width: 100,
+        },
+
+        {
+          title: '查询条件',
+          scopedSlots: { customRender: 'queryCriteria' },
+          width: 80,
+        },
+
+        {
           title: '唯一索引',
           dataIndex: 'index',
           scopedSlots: { customRender: 'index' },
-          width: 90,
+          width: 80,
         },
       ],
     }
@@ -190,17 +227,22 @@ export default {
       this.record = record
       this.metaName = record.metaName
       this.id = record.id
-      this.isOpen = record.status.value == 1
+      if( !record.qryFlag){
+        this.isOpen = 0
+      }else{
+        this.isOpen = record.qryFlag.value==1
+      }
+
       this.queryParams.databaseTableName = record.databaseTableName
       // this.queryParams.metaName = record.metaName
 
-      // console.log('PPPPPPP:', record)
+      console.log('PPPPPPP:', this.isOpen )
       checkDetail(this.queryParams).then((res) => {
         if (res.code == 0 && res.data.length > 0) {
           var dataItem = res.data[0]
-          dataItem.detail = dataItem.detail.filter(function(item){
-              return  item.tableField!='id'
-            })
+          dataItem.detail = dataItem.detail.filter(function (item) {
+            return item.tableField != 'id'
+          })
           dataItem.detail.forEach((item, index) => {
             this.$set(item, 'zdbm', item.tableField)
             this.$set(item, 'zdlx', item.fieldType != null ? item.fieldType.description : '')
@@ -209,11 +251,12 @@ export default {
             }
             this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
             this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
+            this.$set(item, 'isQryC', item.isQryCondition != null && item.isQryCondition.value == 1)
           })
           // return dataItem.detail
           this.detailList = dataItem.detail
           this.loadData = dataItem.detail
-        }else{
+        } else {
           //重置数据
           this.detailList = null
           this.loadData = null
@@ -222,6 +265,18 @@ export default {
         return []
       })
     },
+
+
+
+    isDisable(value){
+     if(value==1){
+      return false
+     }else{
+      return true
+     }
+    },
+
+
 
     //失去焦点
     focus(record) {
@@ -319,20 +374,27 @@ export default {
       }
     },
 
+
+    isQuery(record){
+
+    },
+
+
+
     /**
      *
      * 状态开关  这里每操作一次 调用一次接口
      */
     Enable() {
       this.isOpen = !this.isOpen
-      if (this.isOpen) {
-        this.queryParams.status = 1
-      } else {
-        this.queryParams.status = 2
-      }
+      // if (this.isOpen) {
+      //   this.queryParams.qryFlag = 1
+      // } else {
+      //   this.queryParams.qryFlag = 0
+      // }
       var queryParamData = {
         id: this.id,
-        status: this.isOpen ? 1 : 2,
+        qryFlag: this.isOpen ? 1 : 0,
       }
       this.updateMetaConfigure(queryParamData)
     },
@@ -369,6 +431,9 @@ export default {
         item.fieldType = item.fieldType != null ? item.fieldType.value : '' //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
+        console.log("item.showIndex:",item.showIndex)
+        item.showIndex = item.showIndex //显示序号
+        item.isQryCondition = item.isQryC ? 1 : 0 // 查询条件
       })
 
       let queryData = {
@@ -433,6 +498,14 @@ export default {
     display: block;
     margin-bottom: 24px;
     white-space: nowrap;
+  }
+}
+</style>
+
+<style lang="less">
+.card-top-pac1 {
+  .ant-spin-nested-loading {
+    margin-right: 55px !important;
   }
 }
 </style>

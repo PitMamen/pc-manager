@@ -223,6 +223,7 @@ export default {
         '主动放弃随访',
         '患者拒绝随访',
         '电话占线',
+        '电话停机',
         '电话关机',
         '患者已死亡',
         '患者已迁出',
@@ -276,7 +277,9 @@ export default {
       if (res.code === 0) {
         this.historyList = res.data
 
-        this.onHistoryItemClick(res.data[0].id)
+        if (res.data&& res.data.length>0) {
+          this.onHistoryItemClick(res.data[0].id)
+        }
       } else {
         this.$message.error(res.message)
       }

@@ -10,9 +10,9 @@
   >
     <div class="div-service-user">
       <!-- 左边 -->
-      <div class="div-totalleft" style="margin-top:-12px">
+      <div class="div-totalleft" style="margin-top:0px">
         <div class="display-item" style="margin-left: 10px">
-          <span style="margin-top: 5px"> <span style="color: red">*</span> 租户编码:</span>
+          <span style="margin-top: 7px"> <span style="color: red">*</span> 租户编码:</span>
           <a-input
             v-model="queryParams.tenantCode"
             allow-clear
@@ -161,7 +161,7 @@
 
           <div class="rigth-content" style="margin-left: 20%; ">
 
-          <span  style="margin-left: 1px; font-size: 12px; color: #999999;margin-top: -30px;">
+          <span  style="margin-left: 1px; font-size: 12px; color: #999999;margin-top: -30px;width: 80%;">
             {{ item.remark }}</span
           >
 

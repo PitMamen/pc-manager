@@ -1,5 +1,7 @@
 // chart
 import Bar from '@/components/Charts/Bar'
+import Bars from '@/components/Charts/Bars'
+import Pies from '@/components/Charts/Pies'
 import ChartCard from '@/components/Charts/ChartCard'
 import Liquid from '@/components/Charts/Liquid'
 import MiniArea from '@/components/Charts/MiniArea'
@@ -29,12 +31,12 @@ import ExceptionPage from '@/components/Exception'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
 import Dialog from '@/components/Dialog'
-import Bars from '@/components/Charts/Bars'
-
 
 export {
   AvatarList,
   Bar,
+  Bars,
+  Pies,
   ChartCard,
   Liquid,
   MiniArea,
@@ -62,6 +64,5 @@ export {
   TagSelect,
   StandardFormRow,
   ArticleListContent,
-  Dialog,
-  Bars
+  Dialog
 }

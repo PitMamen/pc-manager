@@ -155,14 +155,14 @@
 
       <div class="midline"></div>
 
-      <div class="div-span-content-right">
+      <div class="div-span-content-right" style="overflow-y: auto !important; max-height: 100%">
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">基本信息</span>
         </div>
         <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-          <span class="span-item-name">{{ item.fieldComment }} :</span>
-          <span class="span-item-value">{{ item.fieldValue }} </span>
+          <span class="span-item-name-info" >{{ item.fieldComment }} :</span>
+          <span class="span-item-value-info">{{ item.fieldValue }} </span>
         </div>
       </div>
     </div>
@@ -212,6 +212,7 @@ export default {
         '主动放弃随访',
         '患者拒绝随访',
         '电话占线',
+        '电话停机',
         '电话关机',
         '患者已死亡',
         '患者已迁出',
@@ -287,7 +288,7 @@ export default {
         this.$message.error(res.message)
       }
     })
-
+    console.log('telSolve111', this.record.userId)
     followPlanPhonePatientInfo(this.record.userId).then((res) => {
       if (res.code === 0) {
         res.data.forEach((element) => {
@@ -488,6 +489,21 @@ export default {
     }
     .ant-select {
       width: 65% !important;
+    }
+    .span-item-name-info {
+      
+      display: inline-block;
+      color: #000;
+      font-size: 12px;
+      text-align: left;
+      margin-right: 5px;
+    }
+    .span-item-value-info {
+     
+      color: #333;
+      text-align: left;
+      font-size: 12px;
+      display: inline-block;
     }
   }
 

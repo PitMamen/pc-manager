@@ -410,10 +410,10 @@ export default {
         return
       }
 
-      if (!this.queryParams.departmentIntroduce) {
-        this.$message.error('请编辑科室简介')
-        return
-      }
+      // if (!this.queryParams.departmentIntroduce) {
+      //   this.$message.error('请编辑科室简介')
+      //   return
+      // }
 
       this.addDepartmentForReqOut()
     },

@@ -51,7 +51,6 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <!-- <a @click="$refs.checkIndex.check(record)">修改</a> -->
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
 
@@ -66,7 +65,7 @@
       </span>
     </s-table>
 
-    <check-Index ref="checkIndex" @ok="handleOk" />
+
     <add-Name ref="addName" @ok="handleOk" />
   </a-card>
 </template>
@@ -82,14 +81,12 @@ import {
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import checkIndex from './checkIndex'
 import addName from './addName'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    checkIndex,
     addName,
   },
   data() {

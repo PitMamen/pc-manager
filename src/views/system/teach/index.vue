@@ -1,90 +1,141 @@
 <template>
   <a-card :bordered="false">
-    <!-- <a-button type="primary" @click="goAdd()">新增文章</a-button> -->
+    <a-spin :spinning="confirmLoading">
+    <div class="div-service-control">
+      <div class="div-service-left-control">
+        <div class="toptab">
+          <div :class="tabKey == 1 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 1">文章类型</div>
+          <div :class="tabKey == 2 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 2">科室</div>
+        </div>
+        <div class="left-content" v-if="tabKey == 1">
+          <div class="typeadd" @click="$refs.addCategory.addModel()">
+            新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
+          </div>
+          <div class="ksview" v-for="(item, index) in typeData" :key="index">
+            <div
+              :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
+              class="left-lb-title"
+              @click="onCategoryChange(item)"
+            >
+              {{ item.categoryName }}
+            </div>
+            <div class="content-right">
+              <a style="color: #409eff; margin-right: 10px" @click="$refs.addCategory.editModel(item)">修改</a>
+              <a-popconfirm title="确定此类别吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
+                <a>删除</a>
+              </a-popconfirm>
+            </div>
+          </div>
+        </div>
+        <div class="left-content" v-if="tabKey == 2">
+          <div class="ksview" v-for="(item, index) in originData" :key="index" @click="onDepartmentChange(item)">
+            <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.departmentName }}</div>
+            <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
+          </div>
+        </div>
+      </div>
+      <div class="div-service-right-control">
+        <div class="table-page-search-wrapper">
+          <div class="search-row">
+            <span class="name">文章名称:</span>
+            <a-input
+              v-model="queryParam.title"
+              allow-clear
+              placeholder="输入文章名称查询"
+              style="width: 120px; height: 28px"
+              @keyup.enter="$refs.table.refresh(true)"
+              @search="$refs.table.refresh(true)"
+            />
+          </div>
+          <div class="search-row">
+            <span class="name">上架:</span>
+            <a-switch :checked="queryParam.isVisible" @change="onSwitchChange" />
+          </div>
 
-    <div class="table-page-search-wrapper">
-      <div class="search-row">
-        <span class="name">科室:</span>
-        <a-select
-          :maxTagCount="1"
-          :collapse-tags="true"
-          allow-clear
-          v-model="idArr"
-          mode="multiple"
-          placeholder="请选择科室"
-          style="min-width: 120px; height: 28px"
+          <div class="action-row">
+            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+              <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+            </span>
+          </div>
+        </div>
+
+        <div class="table-operator" style="overflow: hidden">
+          <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addModel.addModel()"
+            >新增</a-button
+          >
+        </div>
+
+        <!-- 去掉勾选框 -->
+        <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
+        <s-table
+          :scroll="{ x: true }"
+          ref="table"
+          size="default"
+          :columns="columns"
+          :data="loadData"
+          :alert="true"
+          :rowKey="(record) => record.code"
         >
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-            item.departmentName
-          }}</a-select-option>
-        </a-select>
-      </div>
-
-      <div class="action-row">
-        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
-        </span>
+          <span slot="action" slot-scope="text, record">
+            <a @click="$refs.checkModel.init(record.articleId)">查看</a>
+            <a-divider type="vertical" />
+            <a @click="$refs.addModel.editModel(record.articleId)">修改</a>
+            <a-divider type="vertical" />
+            <a @click="goPush(record)" :disabled="record.status == '2'">发布</a>
+            <a-divider type="vertical" />
+            <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="articleDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
+          </span>
+          <span slot="isVisible" slot-scope="text, record">
+            <a-switch :checked="record.isVisible" :disabled="record.status != '2'" @click="goShangjia(record)"/>
+          </span>
+        </s-table>
       </div>
     </div>
-
-    <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="goAdd()">新增</a-button>
-    </div>
-
-    <!-- 去掉勾选框 -->
-    <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-    <s-table
-      :scroll="{ x:   true }"
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="action" slot-scope="text, record">
-        <a @click="goPush(record)" v-show="record.status != '2'">发布</a>
-        <a-divider type="vertical" v-show="record.status != '2'" />
-        <a @click="goCheck(record)">查看</a>
-        <a-divider type="vertical" />
-        <a @click="goChange(record)">修改</a>
-        <a-divider type="vertical" />
-        <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(record)">
-          <a>删除</a>
-        </a-popconfirm>
-      </span>
-    </s-table>
-    <!-- 
-    <add-form ref="addForm" @ok="handleOk" />
-    <edit-form ref="editForm" @ok="handleOk" /> -->
+    <add-category ref="addCategory" @ok="handleOk" />
+    <add-model ref="addModel" @ok="handleOk" />
+    <check-model ref="checkModel" @ok="handleOk" />
+  </a-spin>
   </a-card>
 </template>
 
 <script>
 import { STable } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
+import addCategory from './addCategory'
+import addModel from './addModel'
+import checkModel from './checkModel'
 import Vue from 'vue'
 import {
   pushArticle,
-  getAllArticlesTeach,
+  modifyArticle,
   delArticle,
   getDepts,
   getDeptsPersonal,
+  getArticleCategoryList,
+  getArticleList,
+  deleteArticleCategory,
+  deleteArticle,
 } from '@/api/modular/system/posManage'
 
 export default {
   components: {
     STable,
-    // addForm,
-    // editForm,
+    addCategory,
+    addModel,
+    checkModel,
   },
 
   data() {
     return {
       // 高级搜索 展开/关闭
+      tabKey: 1,
       advanced: false,
       originData: [],
+      typeData: ['类型1', '类型2'],
+      confirmLoading: false,
       idArr: [],
       labelCol: {
         xs: { span: 24 },
@@ -95,56 +146,54 @@ export default {
         xs: { span: 24 },
         sm: { span: 11 },
       },
-      queryParam: { source: 'weixin', deptCode: '' },
-      queryParamOrigin: { source: 'weixin', deptCode: '' },
+      queryParam: {
+        categoryId: '',
+        departmentId: '',
+        title: '',
+        isVisible: true,
+      },
+
       // 表头
       columns: [
         {
-          title: '序号',
-          dataIndex: 'xh',
-        },
-        {
           title: '文章名称',
           dataIndex: 'title',
-          // width: '200px',
-        },
-        {
-          title: '科室',
-          dataIndex: 'categoryName',
-          // width: '150px',
-        },
-        {
-          title: '专病',
-          dataIndex: 'articleType',
-          // width: '150px',
         },
         {
           title: '摘要说明',
           dataIndex: 'brief',
-          // width: '200px',
         },
         {
-          title: '状态',
-          dataIndex: 'statusName',
+          title: '创建人',
+          dataIndex: 'creatorName',
         },
         {
           title: '阅读次数',
           dataIndex: 'clickNum',
         },
         {
-          title: '发布时间',
-          dataIndex: 'updateTime',
-          // width: '160px',
+          title: '创建时间',
+          dataIndex: 'createdTime',
         },
         {
-          title: '创建时间',
-          dataIndex: 'createTime',
-          // width: '160px',
+          title: '更新时间',
+          dataIndex: 'updatedTime',
         },
+
+        {
+          title: '状态',
+          dataIndex: 'statusName',
+        },
+        {
+          title: '上架',
+          width: 80,
+          scopedSlots: { customRender: 'isVisible' },
+        },
+
         {
           title: '操作',
-          width: 180,
           fixed: 'right',
+          width: 180,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -178,7 +227,7 @@ export default {
             }
           })
         }
-        return getAllArticlesTeach(Object.assign(parameter, params)).then((res) => {
+        return getArticleList(Object.assign(parameter, params)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
 
@@ -188,7 +237,7 @@ export default {
             pageSize: parameter.pageSize,
             totalRows: res.data.total,
             totalPage: res.data.total / parameter.pageSize,
-            rows: res.data.list,
+            rows: res.data.records,
           }
 
           //设置序号
@@ -215,20 +264,14 @@ export default {
 
   watch: {
     $route(to, from) {
-        
-        if(to.path.path == this.$router.path ){
-          if(from.path =='/teach/editArticle' || from.path =='/teach/addArticle' ){
-            console.log("watch----",'去刷新')
-            this.handleOk()
-          }
-         
-          
+      if (to.path.path == this.$router.path) {
+        if (from.path == '/teach/editArticle' || from.path == '/teach/addArticle') {
+          console.log('watch----', '去刷新')
+          this.handleOk()
         }
-
-       
-      },
-    
+      }
     },
+  },
 
   created() {
     /** 计划分配方法*/
@@ -240,41 +283,127 @@ export default {
     //   }
     // })
 
-    this.user = Vue.ls.get(TRUE_USER)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.$refs.table.refresh()
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          //非全量的，给科室数组重写
-          if (this.originData.length > 0) {
-            this.originData.forEach((item, index) => {
-              this.idArr.push(item.departmentId)
-            })
-          } else {
-            this.isNoDepart = true
-            this.idArr = []
-          }
-          this.$refs.table.refresh()
-        }
-      })
-    }
+    this.getArticleCategoryListOut()
+    this.getDeptsOut()
   },
 
   methods: {
     reset() {
-      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.queryParam.title = ''
+      this.queryParam.isVisible = true
+      this.queryParam.categoryId = ''
+      this.queryParam.departmentId = ''
+
+      this.getArticleCategoryListOut()
+      this.getDeptsOut()
       this.idArr = []
       this.$refs.table.refresh()
     },
 
+    getDeptsOut() {
+      this.user = Vue.ls.get(TRUE_USER)
+      //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+        getDepts().then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              item.checked = false
+            })
+            res.data.unshift({
+              departmentName: '全院',
+              departmentId: -1,
+              checked: true,
+            })
+            this.originData = res.data
+
+            this.$refs.table.refresh()
+          }
+        })
+      } else {
+        getDeptsPersonal().then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              item.checked = false
+            })
+            res.data.unshift({
+              departmentName: '全院',
+              departmentId: -1,
+              checked: true,
+            })
+            this.originData = res.data
+
+            //非全量的，给科室数组重写
+            if (this.originData.length > 0) {
+              this.originData.forEach((item, index) => {
+                this.idArr.push(item.departmentId)
+              })
+            } else {
+              this.isNoDepart = true
+              this.idArr = []
+            }
+            this.$refs.table.refresh()
+          }
+        })
+      }
+    },
+
+    onTabChange(key) {
+      console.log(key)
+    },
+    onDepartmentChange(item) {
+      console.log(item)
+      item.checked = !item.checked
+      var depts = ''
+      if (item.departmentId == -1) {
+        this.originData.forEach((e) => {
+        
+          if (e.departmentId != -1) {
+            e.checked = false
+            
+          }
+        
+      })
+      
+      }else{
+        this.originData.forEach((e) => {
+        if (e.checked) {
+          if (e.departmentId != -1) {
+            this.originData[0].checked = false
+            if (depts) {
+              depts = depts + ',' + e.departmentId
+            } else {
+              depts = e.departmentId + ''
+            }
+          }
+        }
+      })
+      }
+     
+     
+     
+      console.log('depts', depts)
+      this.queryParam.departmentId = depts
+      this.$refs.table.refresh()
+    },
+    onCategoryChange(item) {
+      console.log(item)
+      this.typeData.forEach((e) => {
+        if (e.id == item.id) {
+          e.checked = true
+          this.queryParam.categoryId = e.id
+        } else {
+          e.checked = false
+        }
+      })
+      console.log(this.typeData)
+      this.$refs.table.refresh()
+    },
+    onSwitchChange(value) {
+      console.log(value)
+      this.queryParam.isVisible = value 
+
+      this.$refs.table.refresh(true)
+    },
     //新建文章
     goAdd() {
       this.$router.push({ name: 'article_teach_add', params: null })
@@ -288,8 +417,11 @@ export default {
       console.log(record)
       this.$router.push({ name: 'article_teach_edit', query: { recordStr: JSON.stringify(record) } })
     },
+    //发布
     goPush(record) {
-      pushArticle({ articleId: record.articleId }).then((res) => {
+      this.confirmLoading = true
+      modifyArticle({ id: record.articleId,status:'2' }).then((res) => {
+        this.confirmLoading = false
         if (res.code == 0) {
           this.$message.success('发布成功')
           this.handleOk()
@@ -298,10 +430,28 @@ export default {
         }
       })
     },
+    //上架
+    goShangjia(record){
+      this.confirmLoading = true
+      var _isVisible=!record.isVisible
+      modifyArticle({ id: record.articleId,isVisible:_isVisible }).then((res) => {
+        this.confirmLoading = false
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          // this.handleOk()
+          record.isVisible=_isVisible
+        } else {
+          this.$message.error('操作失败：' + res.message)
+          record.isVisible=!_isVisible
+        }
+      })
+    },
 
     //删除文章
-    goDelete(record) {
-      delArticle(record.articleId).then((res) => {
+    articleDelete(record) {
+      this.confirmLoading = true
+      deleteArticle(record.articleId).then((res) => {
+        this.confirmLoading = false
         if (res.code == 0) {
           this.$message.success('删除成功')
           this.handleOk()
@@ -310,9 +460,35 @@ export default {
         }
       })
     },
-
+    //删除类别
+    goDelete(item) {
+      this.confirmLoading = true
+      deleteArticleCategory(item.id).then((res) => {
+        this.confirmLoading = false
+        if (res.code == 0) {
+          this.$message.success('删除成功')
+          this.handleOk()
+        } else {
+          this.$message.error('删除失败：' + res.message)
+        }
+      })
+    },
+    //分类列表
+    getArticleCategoryListOut() {
+      getArticleCategoryList({ pageNo: 1, pageSize: 10000 }).then((res) => {
+        if (res.code == 0) {
+          res.data.records.forEach((item) => {
+            item.checked = false
+          })
+          this.typeData = res.data.records
+        } else {
+          this.$message.error('获取失败：' + res.message)
+        }
+      })
+    },
     handleOk() {
       this.$refs.table.refresh()
+      this.getArticleCategoryListOut()
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -323,7 +499,99 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.ant-table-body{
+.div-service-control {
+  width: 100%;
+  overflow: hidden;
+  height: 85vh;
+  display: flex;
+  flex-direction: row;
+
+  span {
+    font-size: 12px;
+  }
+
+  .div-divider {
+    margin: 0% 0% 0% 1%;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
+
+  .div-service-left-control {
+    margin-right: 20px;
+    height: 100%;
+    min-height: 300px;
+    flex-shrink: 0;
+    width: 200px;
+    overflow: hidden;
+
+    border: 1px solid #e6e6e6;
+
+    .left-lb-title {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      width: 85px;
+    }
+
+    .toptab {
+      display: flex;
+      flex-direction: row;
+      height: 30px;
+
+      font-size: 12px;
+      font-weight: bold;
+      color: #4d4d4d;
+    }
+    .toptab-no {
+      flex: 1;
+      line-height: 30px;
+      text-align: center;
+    }
+    .toptab-yes {
+      flex: 1;
+      text-align: center;
+      line-height: 30px;
+      background: #eff7ff;
+      border-bottom: 2px solid #409eff;
+    }
+
+    .left-content {
+      height: 100%;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .content-right {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+    .typeadd {
+      display: flex;
+      flex-direction: row-reverse;
+      align-items: center;
+      margin-bottom: 10px;
+      color: #409eff;
+    }
+    .ksview {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      height: 30px;
+      font-size: 12px;
+      align-items: center;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .div-service-right-control {
+    flex: 1;
+    width: calc(100% - 220px);
+  }
+}
+
+.ant-table-body {
   overflow-x: auto !important;
 }
 .table-wrapper {
@@ -348,7 +616,7 @@ export default {
   }
 
   .search-row {
-    /deep/.ant-select-selection__rendered{
+    /deep/.ant-select-selection__rendered {
       margin-top: -2px !important;
     }
 
@@ -362,7 +630,7 @@ export default {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px!important;
+  margin-bottom: 10px !important;
 }
 .div-divider {
   margin-top: 1%;

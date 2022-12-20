@@ -10,16 +10,16 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
-        <!-- <a-tab-pane key="1">
+        <a-tab-pane key="1">
           <template #tab>
             <span>
-              <img v-show="activeKey!='1'" src="~@/assets/icons/jkda.png"  class="icon"/>
-              <img v-show="activeKey=='1'" src="~@/assets/icons/jkda1.png"  class="icon"/>
+              <img v-show="activeKey != '1'" src="~@/assets/icons/jkda.png" class="icon" />
+              <img v-show="activeKey == '1'" src="~@/assets/icons/jkda1.png" class="icon" />
               健康档案
             </span>
           </template>
-          健康档案
-        </a-tab-pane> -->
+          <patient-file ref="patientFile " :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
+        </a-tab-pane>
         <a-tab-pane key="2">
           <template #tab>
             <span>
@@ -30,7 +30,7 @@
           </template>
           <histroy-solve ref="histroySolve" :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
         </a-tab-pane>
-        <a-tab-pane key="3">
+        <a-tab-pane key="3" v-if="!isPatientManage">
           <template #tab>
             <span>
               <img v-show="activeKey != '3'" src="~@/assets/icons/bcsf.png" class="icon" />
@@ -60,14 +60,17 @@
         <div class="span-mid-audio" v-show="audioShow">
           <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
         </div>
+       
       </a-tabs>
     </a-spin>
+    <img class="zanguaview" v-if="showHangTag"  src="~@/assets/icons/zanggua.png"  />
   </a-modal>
 </template>
 
 
 <script>
 import telSolve from './telSolve'
+import patientFile from './patientFile'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import { createSdkLoginToken, addTencentPhoneTape, getAccountParam } from '@/api/modular/system/posManage'
@@ -75,6 +78,7 @@ import { canCall } from '@/utils/util'
 export default {
   components: {
     telSolve,
+    patientFile,
     histroySolve,
     telDetail,
   },
@@ -91,9 +95,12 @@ export default {
       recordId: '',
       phone: '',
       isSDKReady: false,
+      // 从档案管理页面进入不需要显示本次随访
+      isPatientManage: false,
       audioUrl: '',
       audioShow: false,
       callers: [],
+      showHangTag:false,//显示暂挂
     }
   },
   created() {
@@ -120,26 +127,45 @@ export default {
   methods: {
     //随访
     doDeal(record) {
+    
+      this.modelType = 0
+      this.showHangTag=record.hangStatus && record.hangStatus!=null && record.hangStatus.value && record.hangStatus.value == 1
+      this.init(record)
+    },
+    //档案   从档案管理页面进入不需要显示本次随访
+    doFile(record, isPatientManage) {
+      this.isPatientManage = isPatientManage
       this.modelType = 0
       this.init(record)
     },
 
     //详情
     doInfo(record) {
+      console.log("详情:",record)
       this.modelType = 1
       this.init(record)
     },
     init(record) {
       var strSex = ''
       if (record.sex) {
-        strSex = record.sex.description
+        strSex = record.sex.description||record.sex
       } else if (record.userSex) {
         strSex = record.userSex
+      } 
+      console.log('this.record', record)
+      var age
+      if (record.age == 0 || record.userAge == 0) {
+        age = '0'
+      } else {
+        age = record.age || record.userAge
       }
-      var age = record.age || record.userAge
       // this.title = record.userName + ' | ' + record.sex ? record.sex.description : '' + ' | ' + record.age + '岁'
       this.title = record.userName + ' | ' + strSex + ' | ' + age + '岁'
-      this.activeKey = '3'
+      if (this.isPatientManage) {
+        this.activeKey = '1'
+      } else {
+        this.activeKey = '3'
+      }
       this.visible = true
       this.record = record
     },
@@ -312,11 +338,22 @@ export default {
 
   top: 0;
 
-  z-index: 10000;
+  z-index: 10001;
 }
 .icon {
   width: 17px;
   height: 18px;
   margin-bottom: 3px;
+}
+.zanguaview{
+  position: absolute;
+  right: 112px;
+
+top: 0;
+
+z-index: 10000;
+  width: 47px;
+height: 59px;
+
 }
 </style>

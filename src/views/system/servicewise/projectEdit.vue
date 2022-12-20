@@ -235,7 +235,8 @@
             <span class="span-titl" style="margin-left: 1%">后</span>
 
             <!-- 选择间隔 1，隐藏 everyData 选择框，显示数量单位 ;选择每周2每月3显示 everyData 选择框，隐藏数量和单位 -->
-            <!-- repeatTimeUnit 1间隔 2每周 3每月 -->
+            <!-- repeatTimeUnit 1间隔 2每周 3每月 4每天 -->
+            <!-- 针对【重复周期】是每天的选项，不需要配置【数量】和【单位】 -->
             <a-select
               class="mid-select-two"
               v-if="itemTask.taskExecType == 2"
@@ -249,11 +250,11 @@
               }}</a-select-option>
             </a-select>
 
-            <!-- 长期任务要显示；每周每月要显示 -->
+            <!-- 长期任务要显示；每周每月要显示；长期任务中每天不显示 -->
             <!-- taskExecType 1 临时 2长期 -->
             <a-select
               class="mid-select-two"
-              v-if="itemTask.taskExecType == 2 && itemTask.repeatTimeUnit != 1"
+              v-if="itemTask.taskExecType == 2 && itemTask.repeatTimeUnit != 1 && itemTask.repeatTimeUnit != 4"
               v-model="itemTask.timeQuantity"
               allow-clear
               placeholder="请选择"
@@ -1254,14 +1255,20 @@ export default {
 
         item.stopTaskDetailDtos = JSON.parse(JSON.stringify(arr))
 
-        if (item.taskExecType && item.taskExecType == 1 && !item.timeUnit) {
-          this.$message.error('请选择第' + (index + 1) + '条任务时间单位')
-          return
-        }
+        //repeatTimeUnit ==4时不需要  任务时间单位 任务时间数量
+        if (item.repeatTimeUnit == 4) {
+          delete item.timeUnit
+          delete item.timeQuantity
+        } else {
+          if (item.taskExecType && item.taskExecType == 1 && !item.timeUnit) {
+            this.$message.error('请选择第' + (index + 1) + '条任务时间单位')
+            return
+          }
 
-        if (item.taskExecType && item.taskExecType == 2 && !item.timeQuantity) {
-          this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
-          return
+          if (item.taskExecType && item.taskExecType == 2 && !item.timeQuantity) {
+            this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
+            return
+          }
         }
         if (item.messageType == 2 || item.messageType == 3) {
           item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
