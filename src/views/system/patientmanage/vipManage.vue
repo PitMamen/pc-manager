@@ -18,7 +18,7 @@
         />
       </div>
       <div class="search-row">
-        <span class="name">执行科室:</span>
+        <span class="name">管理科室:</span>
         <a-select
           :maxTagCount="1"
           mode="multiple"
@@ -408,6 +408,17 @@ export default {
                 }
               }
 
+                 /**
+               * 添加2个固定的表头  账号信息  和 随访任务
+               */
+               this.tableClumns.push({
+                width: 100,
+                title: '账号信息',
+                dataIndex: 'openid_flag',
+                scopedSlots: { customRender: 'acount' },
+              })
+              this.tableClumns.push({ width: 100, title: '随访任务', dataIndex: 'sfrw' })
+
               this.tableClumns.push({
                 //操作
                 title: '操作',
@@ -416,15 +427,7 @@ export default {
                 scopedSlots: { customRender: 'action' },
               })
 
-              /**
-               * 添加2个固定的表头  账号信息  和 随访任务
-               */
-              this.tableClumns.unshift({
-                title: '账号信息',
-                dataIndex: 'openid_flag',
-                scopedSlots: { customRender: 'acount' },
-              })
-              this.tableClumns.unshift({ title: '随访任务', dataIndex: 'sfrw' })
+           
             }
           }
           this.refresh()
@@ -444,14 +447,13 @@ export default {
       this.$refs.followModel.doFile(record, true)
     },
 
-   /**
-    * 随访
-    */
-   goPlan(record){
-    this.$set(record, 'userId', record.user_id)
-    this.$refs.visitManage.distribution(record)
-   },
-
+    /**
+     * 随访
+     */
+    goPlan(record) {
+      this.$set(record, 'userId', record.user_id)
+      this.$refs.visitManage.distribution(record)
+    },
 
     /**
      * 重置

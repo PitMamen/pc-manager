@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="title"
-    :width="1000"
+    :width="900"
     :height="650"
     :visible="visible"
     @ok="handleSubmit"
@@ -12,11 +12,16 @@
   <template slot="footer">
     <a-button @click="handleCancel">关闭</a-button>
   </template>
-    <div class="div-service-user">
+    <div class="div-service-user" style="margin-left: 30px;">
       <!-- 左边 -->
       <div class="div-totalleft">
-        <div class="div-totaltopleft">
+        <!-- <div class="div-totaltopleft">
           <span class="span-item-name" style="margin-left: 20px; width: 30%;display: inline-block; margin-top: 3px;"> 添加任务</span>
+        </div> -->
+
+        <div class="div-title" style="margin-top:-10px;margin-left: 10px;">
+          <div class="div-line-blue"></div>
+          <span class="span-title">添加任务</span>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -82,18 +87,66 @@
         </div>
 
         <div class="display-item" style="margin-top: 20px; margin-left: 10px">
-          <a-button style="margin-left: 1%" type="primary" @click="commit()">提交</a-button>
-          <a-button style="margin-left: 20px" type="default" @click="reset()">重置</a-button>
+          <a-button style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
+          <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button>
         </div>
       </div>
 
       <!-- ri -->
       <div class="card-right-user" style="overflow-y: auto; height: 400px">
-        <div class="div-totaltop">
-          <span class="span-item-name" style="margin-left: 20px;display: flex; margin-top: -2px;"> 随访历史任务</span>
+        <div class="div-title" style="margin-top:8px;margin-left: 10px;width: 80%;">
+          <div class="div-line-blue"></div>
+          <span class="span-title">历史任务</span>
         </div>
 
-        <div style="margin-top:20px" class="div-total1" v-for="(item, index) in recordList" :key="index">
+
+        <div class="div-wrap-control"  style="margin-top: 2%;overflow-y: auto;">
+                <div   v-if="recordList && recordList.length > 0">
+                  <div
+                    class="div-part"
+                    :class="{ checked: item.isChecked }"
+                    style="margin-bottom:10px"
+                    v-for="(item, index) in recordList"
+                    :value="item.templateTitle"
+                    :key="index"
+                  >
+                    <!-- <span class="span-name">
+                    </span> -->
+                    <div class="div-rate" style="margin-left:20px;font-size: 14px;">
+                      <!-- 1 电话  2微信  3短信 -->
+                      <img v-if="item.messageType.value== 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin_icon.png" />  
+                      <img v-if="item.messageType.value== 2" style="width: 22px; height: 22px" src="~@/assets/icons/weixin_icon.png" />
+                      <img v-if="item.messageType.value== 3" style="width: 22px; height: 22px" src="~@/assets/icons/weixin_icon.png" />
+                      <span style="width: 30px; margin-left: 10px;text-align: center">
+                        {{ item.executeTime }}
+                      </span>
+
+
+                      <span style=" margin-left: 10px;text-align: center">
+                        {{ item.templateTitle }}
+                      </span>
+                     
+
+                      <span style="margin-left: 10px; width: 30px; text-align: center">
+                        {{ item.taskBizStatus.description  }}
+                      </span>
+                    </div>
+                    <!-- 分割线 -->
+                    <!-- <div class="div-divider"></div> -->
+                  </div>
+                </div>
+                <div v-else class="no-data">
+                  <img src="~@/assets/icons/no_data.jpg" />
+                  <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+                </div>
+              </div>
+
+
+
+
+
+
+        <!-- <div style="margin-top:20px" class="div-total1" v-for="(item, index) in recordList" :key="index">
           <div class="div-line-wrap" style="margin-left: 30px">
             <span class="span-item-name"> 随访方式 :</span>
             <span class="span-item-value" 
@@ -107,7 +160,6 @@
             }}</span>
           </div>
 
-          <!--  -->
           <div class="div-line-wrap" style="margin-left: 30px; margin-top: 5px">
             <span class="span-item-name"> 随访内容 :</span>
             <span :title="item.templateTitle" class="span-item-value1" style="margin-left: 0px; width: 25%"
@@ -128,7 +180,6 @@
             >
           </div>
 
-          <!--  -->
           <div class="div-line-wrap" style="margin-left: 30px; margin-top: 5px">
             <span class="span-item-name"> 计划日期 :</span>
             <span class="span-item-value" style="width: 30%"
@@ -140,8 +191,8 @@
             <span class="span-item-value" style="width: 25%">{{
               item.taskType.value == 1 ? item.userFollowTime : item.actualExecTime
             }}</span>
-          </div>
-        </div>
+          </div> -->
+        <!-- </div> -->
       </div>
     </div>
   </a-modal>
@@ -233,7 +284,7 @@ export default {
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()
       this.getWxTemplateListForJumpTypeOut()
-      this.title = "添加任务【"+record.name+"  |   "+record.sex+"    |    "+record.age+"】"
+      this.title = record.name+"  |   "+record.sex+"    |    "+record.age
       // let user = Vue.ls.get(TRUE_USER)
       // console.log('user:', user)
     },
@@ -521,7 +572,7 @@ export default {
     margin-left: 10px;
     //   background-color: #f0f0f2;
     background-color: #ffffff;
-    border: 1px solid #e6e6e6;
+    // border: 1px solid #e6e6e6;
     border-radius: 5px;
     padding: 2% 0;
     overflow: hidden;

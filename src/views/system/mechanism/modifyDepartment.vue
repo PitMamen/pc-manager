@@ -89,8 +89,17 @@
   
       <div class="display-item" style="margin-left: 5px; margin-top: 10px;">
         <span style="margin-top: 10px"> 科室类型 :</span>
+
+        
+      <a-checkbox style="margin-left:10px" v-model="internetType"  @change="radioChange1"
+        >互联网医院科室</a-checkbox
+      >
+
+      <a-checkbox  v-model="isFullDiseaseType" @change="radioChange2"
+        >全病程科室</a-checkbox
+      >
   
-        <a-radio-group
+        <!-- <a-radio-group
           name="radioGroup"
           v-model="rangeValue"
           @change="radioChange"
@@ -99,7 +108,7 @@
         >
           <a-radio :value=1 style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 互联网医院科室 </a-radio>
           <a-radio :value=2 style="font-size: 8px; margin-top: 10px"> 全病程科室 </a-radio>
-        </a-radio-group>
+        </a-radio-group> -->
       </div>
   
       <div class="div-service-user" style="margin-top: 10px;margin-left: 7px;">
@@ -137,7 +146,8 @@
         userId: '',
         timeStr: '',
         originData: [],
-        rangeValue: 2,
+        internetType: false,
+        isFullDiseaseType: false,
         previewVisible: false,
         HospitalLevelList: [],
         HospitalTypeList: [],
@@ -205,18 +215,45 @@
         this.queryParams.departmentOrder = record.department_order
         this.queryParams.departmentType = record.department_type
         this.queryParams.departmentId = record.department_id
-        if(record.is_internet_hospital==1){
-            console.log("111111111111111")
-            this.rangeValue=1
-        }else if(record.is_full_disease==1){
-            console.log("2222222222222")
-            this.rangeValue=2
-
-        }
+        this.internetType = record.is_internet_hospital==1
+        this.isFullDiseaseType = record.is_full_disease==1
         // this.getParentList()
         this.queryHospitalListOut()
       },
   
+
+      /**
+     *   互联网医院科室
+     */
+    radioChange1(event) {
+      // console.log("tt00:",event.target.checked )
+      if (event.target.checked) {
+        this.queryParams.isInternetHospital = 1
+      } else  {
+        this.queryParams.isInternetHospital = 2
+      }
+    },
+
+     /**
+     *   全病程科室
+     */
+     radioChange2(event) {
+      // console.log("tt11:",event.target.checked )
+      if (event.target.checked) {
+        this.queryParams.isFullDisease = 1
+      } else  {
+        this.queryParams.isFullDisease = 2
+      }
+    },
+
+
+
+
+
+
+
+
+
       onSelect(hospitalId) {
       //选择类别
       console.log('99999:', hospitalId)

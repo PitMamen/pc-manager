@@ -37,7 +37,7 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider1"style="margin-top:20px"></div>
+      <div class="div-divider1" style="margin-top:20px"></div>
       <div class="table-operator" style="overflow: hidden">
         <a-button icon="plus" style="float: right; margin-right: 0" @click="addDepartment()" @ok="handleOk"
           >新增</a-button
@@ -58,7 +58,7 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch :disabled="true" :checked="record.enableStatus" />
+        <a-switch  :checked="record.enableStatus" @click="statusCheck(record)"  />
       </span>
     </s-table>
 
@@ -70,7 +70,7 @@
     
     <script>
 import { STable } from '@/components'
-import { getDepartmentListForReq, queryHospitalType, queryHospitalList } from '@/api/modular/system/posManage'
+import { getDepartmentListForReq, queryHospitalType, queryHospitalList,modifyDepartmentForReq } from '@/api/modular/system/posManage'
 import addDepartment from './addDepartment'
 import modifyDepartment from './modifyDepartment'
 export default {
@@ -109,7 +109,7 @@ export default {
         {
           title: '所属机构',
           dataIndex: 'parent_disarmament_name',
-          width: 100,
+          width: 130,
           ellipsis: true,
         },
         {
@@ -135,17 +135,18 @@ export default {
         },
 
         {
-          title: '状态',
-          dataIndex: 'status',
-          width: 70,
-          scopedSlots: { customRender: 'statuas' },
-        },
-
-        {
           title: '备注',
           dataIndex: 'department_introduce',
           width: 180,
           ellipsis: true,
+        },
+
+
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 70,
+          scopedSlots: { customRender: 'statuas' },
         },
 
         {
@@ -228,6 +229,11 @@ export default {
       console.log('onChange ', value, arguments)
       this.setState({ value })
     },
+
+
+
+
+
     /**
      * 机构类型
      */
@@ -325,6 +331,35 @@ export default {
       }
       this.handleOk()
     },
+
+
+   /**
+    * 开关
+    */
+    statusCheck(record){
+     var state = ! record.enableStatus
+     let queryParam ={
+      departmentId:record.department_id,
+      status:state?1:2
+     }
+     console.log("Ssss：",queryParam)
+     this.confirmLoading = true
+     modifyDepartmentForReq(queryParams)
+     .then((res) => {
+       if (res.code == 0 && res.success) {
+         record.enableStatus = state
+         this.$message.success('操作成功')
+            } else {
+              this.$message.error('操作失败:' + res.message)
+            }
+            this.handleOk()
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
+
+    },
+
   },
 }
 </script>
