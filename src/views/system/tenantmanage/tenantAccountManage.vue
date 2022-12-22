@@ -159,14 +159,6 @@ export default {
 
 
 
-  mounted() { 
-  //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
-    this.$bus.$on("proEvent", (data) => {
-      console.log('proEvent Refres',data)
-      // this.objct = data;
-      this.refresh()
-    })
-  },
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)

@@ -6,27 +6,18 @@
         <a-input
           v-model="queryParams.queryText"
           allow-clear
-          placeholder="可输入姓名"
+          placeholder="请输入字典名称或编码"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
       <div class="search-row">
-        <span class="name">所属机构:</span>
-        <a-tree-select
-          v-model="queryParams.hospitalCode"
-          style="min-width: 120px"
-          :tree-data="treeData"
-          placeholder="请选择"         
-        >
-        </a-tree-select>
+        <span class="name">应用类型:</span>
+        <a-select v-model="queryParams.applicationId" placeholder="请选择" allow-clear style="width: 120px;">
+          <a-select-option v-for="item in appList" :key="item.id" :value="item.id">{{ item.applicationName }}</a-select-option>
+        </a-select>
       </div>
-      <div class="search-row">
-        <span class="name">状态:</span>
-        <a-switch :checked="queryParams.status == 0" @change="onSwitchChange" />
-      </div>
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -35,32 +26,61 @@
       </div>
     </div>
 
-    <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addUser.addModel()">新增</a-button>
-    </div>
+    <a-row class="rowcontent" :gutter="40">
+      <a-col :span="16" style="height: 100%">
+        <div class="table-operator" style="overflow: hidden">
+          <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addType.add()">新增</a-button>
+        </div>
+        <s-table
+          :scroll="{ x: true }"
+          ref="table"
+          size="default"
+          :columns="columns"
+          :data="loadData"
+          :alert="true"
+          :rowKey="(record) => record.code"
+          :customRow='onRowClick'
+          :rowClassName='rowClassNameFun'
+        >
+          <span slot="action" slot-scope="text, record">
+            <a @click="$refs.addType.edit(record)">修改</a>
+            <a-divider type="vertical" />
+            <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goTypeDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
+          </span>
+        </s-table>
+      </a-col>
+      <a-col :span="8">
+        <div class="table-operator" style="overflow: hidden">
+          <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addField.add(checkedRecord)"
+            >新增</a-button
+          >
+        </div>
+        <a-table
+          :scroll="{ x: true }"
+          ref="table2"
+          size="default"
+          :pagination="false"
+          :columns="columns2"
+          :data-source="loadData2"
+          :alert="true"
+          :rowKey="(record) => record.code"
+        >
+          <span slot="action" slot-scope="text, record">
+            <a @click="$refs.addField.edit(record)">修改</a>
+            <a-divider type="vertical" />
 
-    <s-table
-    :scroll="{ x: true }"
-      ref="table"
-      size="default"
-      :columns="columns"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="action" slot-scope="text, record">
-      
-        <a @click="$refs.addUser.editModel(record)" :disabled="record.userStatus !== 0">修改</a>
-        <a-divider type="vertical" />
-        <a @click="$refs.assDepartment.addModel(record)" :disabled="record.userStatus !== 0">关联科室</a>
-        
-      </span>
-      <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.userStatus==0"  @change="Enable(record)"/>
-      </span>
-    </s-table>
+            <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDataDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
+          </span>
+        </a-table>
+      </a-col>
+    </a-row>
 
-    <add-User ref="addUser" @ok="handleOk" />
+    <add-Type ref="addType" @ok="handleOk" />
+    <add-Field ref="addField" @ok="handleOkRight" />
     <ass-Department ref="assDepartment" @ok="handleOk" />
   </a-card>
 </template>
@@ -68,23 +88,28 @@
 
 <script>
 import { STable } from '@/components'
-
+import { list } from '@/api/modular/system/sysapp'
 import {
   queryHospitalList,
   getDeptsPersonal,
+  sysDictDataLsit,
   getDepts,
-  searchDoctorUser,
+  sysDictTypePage,
   setDoctorUserStatus,
+  sysDictTypeDelete,
+  sysDictDataDelete,
 } from '@/api/modular/system/posManage'
-import addUser from './addUser'
-import assDepartment from './assDepartment'
+import addType from './addType'
+import addField from './addField'
+import assDepartment from '../tenantmanage/assDepartment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addUser,
-    assDepartment
+    addType,
+    addField,
+    assDepartment,
   },
   data() {
     return {
@@ -94,18 +119,11 @@ export default {
       treeData: [],
       idArr: [],
       queryParams: {
-        hospitalCode:'',//所属机构代码
-        notBoundOnly:false,//是否返回未绑定账号的用户
-        status: 0,//（0正常、1停用、2删除）
-        queryText: ''
+        applicationId: '', //应用ID
+        queryText: '',
       },
-      labelCol: {
-        xs: { span: 24 },
-        sm: { span: 5 },
-      },
-      wrapperCol: {
-        xs: { span: 24 },
-        sm: { span: 15 },
+      queryParams2: {
+        typeId: undefined,
       },
       visible: false,
       confirmLoading: false,
@@ -114,107 +132,87 @@ export default {
       // 表头
       columns: [
         {
-          title: '姓名',
-          dataIndex: 'userName',
+          title: '字典类型',
+          dataIndex: 'typeDesc',
         },
         {
-          title: '性别',
-          dataIndex: 'userSex',
+          title: '所属应用',
+          dataIndex: 'applicationName',
         },
         {
-          title: '出生日期',
-          dataIndex: 'birthday',
+          title: '字典名称',
+          dataIndex: 'name',
         },
         {
-          title: '联系电话',
-          dataIndex: 'phone',
+          title: '字典编码',
+          dataIndex: 'code',
         },
-        {
-          title: '人员类型',
-          dataIndex: 'userTypeName',
-        },
-        {
-          title: '登录账号',
-          dataIndex: 'loginName',
-        },
-        {
-          title: '所属机构',
-          dataIndex: 'hospitalName',
-        },
-        {
-          title: '所属科室',
-          dataIndex: 'departmentName',
-        },
-        {
-          title: '所属病区',
-          dataIndex: 'areaId',
-        },
-        {
-          title: '状态',
-          width: '80px',
-          scopedSlots: { customRender: 'statuas' },
-        },
+
         {
           title: '操作',
           fixed: 'right',
-          width: 123,
+          width: 100,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
       ],
 
+      // 表头2
+      columns2: [
+        {
+          title: '排序',
+          dataIndex: 'sort',
+        },
+        {
+          title: '项目键值',
+          dataIndex: 'code',
+        },
+        {
+          title: '项目名称',
+          dataIndex: 'value',
+        },
+        {
+          title: '操作',
+          fixed: 'right',
+          width: 100,
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return searchDoctorUser(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0 &&  res.data.rows) {
-            res.data.rows.forEach((element) => {
-              if(element.birthday){
-               
-          var birthday2= element.birthday.substring(0, 4) + '-' +element.birthday.substring(4, 6) + '-'+element.birthday.substring(6) 
-          element.birthday=birthday2
-              }
-  
-            })
+        return sysDictTypePage(Object.assign(parameter, this.queryParams)).then((res) => {
+          var data = {
+            pageNo: parameter.current,
+            pageSize: parameter.size,
+            totalRows: res.data.total,
+            totalPage: res.data.total / parameter.size,
+            rows: res.data.records,
           }
-          return res.data
+
+          if (res.data.records.length > 0) {
+            console.log('刷新了：',res.data.records[0])
+            this.checkedRecord = res.data.records[0]
+            console.log('刷新了：',this.checkedRecord)
+            this.checkedIndex=0
+            this.getSysDictDataLsit()
+          }
+
+          return data
         })
       },
+      loadData2: [],
+      checkedRecord: {},
+      checkedIndex:0,
+      appList:[]
     }
   },
-
-
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.$refs.table.refresh(true)
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          var departmentIds = []
 
-          res.data.forEach((item, index) => {
-            departmentIds = departmentIds + item.departmentId
-
-            if (index < res.data.length - 1) {
-              departmentIds = departmentIds + ','
-            }
-          })
-          console.log(departmentIds)
-          this.queryParams.executeDepartment = departmentIds
-          this.$refs.table.refresh(true)
-        }
-      })
-    }
-    this.queryHospitalListOut()
+    this.getAppList()
   },
   methods: {
     refresh() {
@@ -230,46 +228,51 @@ export default {
         },
       })
     },
-    /**
-     * 所属机构接口
-     */
-    /**
-     *
-     * @param {}
-     */
-     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
+    getAppList() {
+      list({
         status: 1,
-        hospitalName: '',
-      }
-      this.confirmLoading = true
-      queryHospitalList(queryData)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
-
-            this.treeData = res.data
-          } else {
-            this.treeData = res.data
-          }
-          return []
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
+      }).then((res) => {
+        if (res.code === 0) {
+          res.data.unshift({
+            applicationName: '全局',
+            id: 0,
+          })
+          this.appList = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
     },
+    //点击后状态背景修改
+    rowClassNameFun(record, index){
+      
+        if (index == this.checkedIndex){
+         
+          return 'table-back'
+        }
+            
+    },
+    //点击左边条目
+    onRowClick(record, index) {
+      return {
+        on: {
+          click: () => {
+            console.log(record, index)
+            this.checkedRecord = record
+            this.checkedIndex=index
+            this.getSysDictDataLsit()
+          }
+        }
+      }
+
+	},
+    getSysDictDataLsit() {
+      sysDictDataLsit({ typeId: this.checkedRecord.id }).then((res) => {
+        this.loadData2 = res.data
+      })
+    },
+
+  
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 0 : 1
@@ -287,14 +290,40 @@ export default {
         this.queryParams.departmentName = this.originData[index].departmentName
       }
     },
+
+    //左边类型删除
+    goTypeDelete(record) {
+      this.confirmLoading = true
+      sysDictTypeDelete({ id: record.id }).then((res) => {
+        this.confirmLoading = false
+        if (res.success) {
+          this.$message.success('操作成功！')
+          this.handleOk()
+        } else {
+          this.$message.error('编辑失败：' + res.message)
+        }
+      })
+    },
+    //右边数据删除
+    goDataDelete(record) {
+      this.confirmLoading = true
+      sysDictDataDelete({ id: record.id }).then((res) => {
+        this.confirmLoading = false
+        if (res.success) {
+          this.$message.success('操作成功！')
+          this.handleOkRight()
+        } else {
+          this.$message.error('编辑失败：' + res.message)
+        }
+      })
+    },
     /**
      * 重置
      */
     reset() {
-      this.queryParams.hospitalCode = ''
+      this.queryParams.applicationId = ''
       this.queryParams.queryText = ''
-      this.queryParams.status = 0
-
+    
       this.$refs.table.refresh(true)
     },
 
@@ -334,7 +363,9 @@ export default {
     handleOk() {
       this.$refs.table.refresh()
     },
-
+    handleOkRight() {
+      this.getSysDictDataLsit()
+    },
     // addPlan() {
     //   this.$message.info('clicked')
     // },
@@ -374,6 +405,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+
+  /deep/.table-back {
+     background-color: #E6F7FF;
+   }
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -408,7 +443,7 @@ export default {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px!important;
+  margin-bottom: 10px !important;
 }
 .div-divider {
   margin-top: 1%;
@@ -416,6 +451,9 @@ export default {
   width: 100%;
   background-color: #e6e6e6;
   height: 1px;
+}
+.rowcontent {
+  height: calc(100% - 18px);
 }
 </style>
 
@@ -435,7 +473,7 @@ export default {
           .ant-spin-container {
             height: 100%;
             .ant-table {
-              height: calc(100% - 48px);
+              height: calc(100% - 28px);
               overflow-y: auto;
             }
           }

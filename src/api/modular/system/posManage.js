@@ -2964,3 +2964,127 @@ export function getArticleByIdNew(id) {
 
   })
 }
+
+/**
+ * 分页查询系统字典类型
+ */
+export function sysDictTypePage(data) {
+  return axios({
+    url: '/info-api/sysDictType/page',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 某个字典类型下所有的字典
+ */
+export function sysDictDataLsit(data) {
+  return axios({
+    url: '/info-api/sysDictData/list',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 添加系统字典类型
+ */
+export function sysDictTypeAdd(data) {
+  return axios({
+    url: '/info-api/sysDictType/add',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 编辑系统字典类型
+ */
+export function sysDictTypeEdit(data) {
+  return axios({
+    url: '/info-api/sysDictType/edit',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 删除系统字典类型
+ */
+export function sysDictTypeDelete(data) {
+  return axios({
+    url: '/info-api/sysDictType/delete',
+    method: 'get',
+    params: data
+  })
+}
+/**
+ * 查看系统字典类型
+ */
+export function sysDictTypeDetail(data) {
+  return axios({
+    url: '/info-api/sysDictType/detail',
+    method: 'get',
+    params: data
+  })
+}
+/**
+ * 获取字典类型列表
+ */
+export function sysDictTypeList(data) {
+  return axios({
+    url: '/info-api/sysDictType/list',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 字典类型字典
+ */
+export function sysDictTypeTypes(data) {
+  return axios({
+    url: '/info-api/sysDictType/types',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 添加系统字典值
+ */
+export function sysDictDataAdd(data) {
+  return axios({
+    url: '/info-api/sysDictData/add',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 编辑系统字典值
+ */
+export function sysDictDataEdit(data) {
+  return axios({
+    url: '/info-api/sysDictData/edit',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 删除系统字典值
+ */
+export function sysDictDataDelete(data) {
+  return axios({
+    url: '/info-api/sysDictData/delete',
+    method: 'get',
+    params: data
+  })
+}
+/**
+ * 查看系统字典值
+ */
+export function sysDictDataDetail(data) {
+  return axios({
+    url: '/info-api/sysDictData/detail',
+    method: 'get',
+    params: data
+  })
+}

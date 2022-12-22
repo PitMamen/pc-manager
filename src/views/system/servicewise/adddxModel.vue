@@ -279,8 +279,8 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      //获取公众号列表
-      getSmsConfigureList({}).then((res) => {
+      //获取短线平台列表
+      getSmsConfigureList({"pageNo": 1,"pageSize": 10000}).then((res) => {
         if (res.code == 0) {
           this.wxgzhData = res.data
         }
