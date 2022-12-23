@@ -735,6 +735,8 @@ export function getDeptsPersonal() {
   })
 }
 
+
+
 export function getDiseasesNew(parameter) {
   return axios({
     // url: '/account-api/businessManagement/getDiseaseList',//重构接口
