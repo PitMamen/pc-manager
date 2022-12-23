@@ -6,8 +6,8 @@
         <a-input
           v-model="queryParams.userNameOrTel"
           allow-clear
-          placeholder="输入姓名或手机号"
-          style="width: 140px; height: 28px"
+          placeholder="姓名或手机号"
+          style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
