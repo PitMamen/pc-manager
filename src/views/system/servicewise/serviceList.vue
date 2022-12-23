@@ -24,7 +24,7 @@
           <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
         </a-select> -->
         <a-select
-          style="width: 150px"
+          class="deptselect"
           show-search
           v-model="queryParams.executeDepartment"
           :filter-option="false"
@@ -34,8 +34,8 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-            item.departmentName
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+            item.department_name
           }}</a-select-option>
         </a-select>
       </div>
@@ -97,7 +97,7 @@
 import { STable } from '@/components'
 
 import {
-  qryMetaConfigure,
+  getDepartmentListForSelect,
   getDeptsPersonal,
   getDepts,
   qryFollowPlan,
@@ -220,7 +220,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-    this.getDepartmentListAuto('')
+    this.getDepartmentSelectList('')
   },
   methods: {
     refresh() {
@@ -237,19 +237,19 @@ export default {
       })
     },
 
-    //获取管理的科室
-    getDepartmentListAuto(qrytxt) {
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
       this.fetching = true
-      getDepts().then((res) => {
+      getDepartmentListForSelect(departmentName).then((res) => {
         this.fetching = false
         if (res.code == 0) {
-          this.originData = res.data
+          this.originData = res.data.records
         }
       })
     },
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.getDepartmentListAuto(value)
+      this.getDepartmentSelectList(value)
     },
 
     onSwitchChange(value) {
