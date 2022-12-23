@@ -1,7 +1,7 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs v-model="keyindex" @change="chanage" style="margin-top:-12px"   >
-      <a-tab-pane  v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName" >
+    <a-tabs  v-model="keyindex" @change="chanage" style="margin-top:-20px;"   >
+      <a-tab-pane class="ant-tabs-tab-active"  v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName" >
         <div style="height: 1px"></div>
       </a-tab-pane>
     </a-tabs>
@@ -264,18 +264,21 @@ export default {
               }
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+                var total
+                var success_total
                 if (!item.total_task) {
-                  this.$set(item, 'sfrw', 0)
+                  total = 0
                 } else {
-                  var fenz
-                  if (!item.success_total_task) {
-                    //成功总数是空的  直接=0
-                    fenz = 0
-                  } else {
-                    fenz = item.success_total_task
-                  }
-                  this.$set(item, 'sfrw', fenz + '/' + item.total_task)
+                  total = item.total_task
                 }
+
+                if (!item.success_total_task) {
+                  success_total = 0
+                }else{
+                  success_total = item.success_total_task
+                }
+
+                this.$set(item, 'sfrw', success_total + '/' + total)
               })
             } else {
               data = null
@@ -461,9 +464,10 @@ export default {
     reset() {
       this.name = ''
       this.depts = []
-      this.chooseArr = JSON.parse(JSON.stringify(this.chooseArrOrigin))
+      this.refreshData()
+      // this.chooseArr = JSON.parse(JSON.stringify(this.chooseArrOrigin))
 
-      this.$refs.table.refresh()
+      this.handleOk()
     },
 
     handleOk() {
@@ -473,12 +477,7 @@ export default {
 }
 </script>
   <style lang="less" scoped>
-
-.checked-btn {
-    background-color: #eff7ff;
-    color: #1890ff;
-    border-bottom: #1890ff 2px solid;
-  }
+  
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -491,6 +490,10 @@ export default {
   //   right: 32px;
   //   bottom: 20px;
   // }
+}
+
+/deep/.ant-tabs-tab-active {
+ background:#EFF7FF;
 }
 .table-page-search-wrapper {
   padding-bottom: 10px !important;
@@ -525,7 +528,7 @@ export default {
   <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 0px);
+  height: calc(100% - 60px);
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;

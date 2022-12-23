@@ -95,7 +95,7 @@ export default {
         {
           title: '名单描述',
           dataIndex: 'metaName',
-          width: 100,
+          ellipsis:true,
         },
         {
           title: '数据库表名',
@@ -161,6 +161,7 @@ export default {
       if (this.queryParams.metaName != '') {
         this.queryParams.metaName = ''
       }
+      this.handleOk()
     },
 
     /**

@@ -97,7 +97,7 @@ export default {
       treeData: [],
       HospitalTypeList: [],
       queryParams: {
-        parentDisarmamentId: '',
+        parentDisarmamentId: undefined,
         status: 1,
         departmentName: '',
       },
