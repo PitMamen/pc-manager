@@ -14,7 +14,7 @@
       </div>
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <a-select
+        <!-- <a-select
           v-model="queryParams.departmentName"
           placeholder="请选择科室"
           allow-clear
@@ -22,6 +22,21 @@
           @change="onDepartmentChange"
         >
           <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
+        </a-select> -->
+        <a-select
+          style="width: 150px"
+          show-search
+          v-model="queryParams.executeDepartment"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请选择科室"
+          @search="onDepartmentSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
+            item.departmentName
+          }}</a-select-option>
         </a-select>
       </div>
       <div class="search-row">
@@ -42,7 +57,7 @@
     </div>
 
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -63,18 +78,15 @@
           <a>{{ record.status.value == 1 ? '停用' : '启用' }}</a>
         </a-popconfirm> -->
 
-
         <!-- <span slot="statuas" slot-scope="text, record">
         <a-switch  :checked="record.enableStatus" @click="Enable(record)"  />
       </span> -->
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.status.value==1" @click="Enable(record)"  />
+        <a-switch :checked="record.status.value == 1" @click="Enable(record)" />
       </span>
     </s-table>
-
-   
 
     <add-Name ref="addName" @ok="handleOk" />
   </a-card>
@@ -106,9 +118,9 @@ export default {
       originData: [],
       idArr: [],
       queryParams: {
-        departmentName: '',
+        departmentName: undefined,
         planName: '',
-        executeDepartment: '',
+        executeDepartment: undefined,
 
         status: 1,
       },
@@ -123,7 +135,7 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-
+      fetching: false,
       // 表头
       columns: [
         {
@@ -196,10 +208,10 @@ export default {
   //   },
   // },
 
-  mounted() { 
-  //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
-    this.$bus.$on("proEvent", (data) => {
-      console.log('proEvent Refres',data)
+  mounted() {
+    //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
+    this.$bus.$on('proEvent', (data) => {
+      console.log('proEvent Refres', data)
       // this.objct = data;
       this.refresh()
     })
@@ -208,33 +220,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.$refs.table.refresh(true)
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          var departmentIds = []
-
-          res.data.forEach((item, index) => {
-            departmentIds = departmentIds + item.departmentId
-
-            if (index < res.data.length - 1) {
-              departmentIds = departmentIds + ','
-            }
-          })
-          console.log(departmentIds)
-          this.queryParams.executeDepartment = departmentIds
-          this.$refs.table.refresh(true)
-        }
-      })
-    }
+    this.getDepartmentListAuto('')
   },
   methods: {
     refresh() {
@@ -251,6 +237,21 @@ export default {
       })
     },
 
+    //获取管理的科室
+    getDepartmentListAuto(qrytxt) {
+      this.fetching = true
+      getDepts().then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.getDepartmentListAuto(value)
+    },
+
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 1 : 2
@@ -260,22 +261,23 @@ export default {
     onDepartmentChange(index) {
       console.log('index=' + index)
       if (index == undefined) {
-        this.queryParams.executeDepartment = ''
-        this.queryParams.departmentName = ''
+        this.queryParams.executeDepartment = undefined
+        this.queryParams.departmentName = undefined
       } else {
         console.log(this.originData[index])
         this.queryParams.executeDepartment = this.originData[index].departmentId
         this.queryParams.departmentName = this.originData[index].departmentName
       }
     },
+
     /**
      * 重置
      */
     reset() {
       this.queryParams.status = 1
       this.queryParams.planName = ''
-      this.queryParams.executeDepartment = ''
-      this.queryParams.departmentName = ''
+      this.queryParams.executeDepartment = undefined
+      this.queryParams.departmentName = undefined
       this.queryParams.pageNo = 1
 
       this.$refs.table.refresh(true)
@@ -394,7 +396,7 @@ export default {
 }
 .table-operator {
   margin-top: 10px;
-  margin-bottom: 10px!important;
+  margin-bottom: 10px !important;
 }
 .div-divider {
   margin-top: 1%;
