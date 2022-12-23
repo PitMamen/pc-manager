@@ -23,12 +23,13 @@
               style="display: inline-block"
               allow-clear
               placeholder="请输入账号"
-              @change="onAccountInputChange"
+           
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
             <a-select
+            style=" margin-top: 1px;"
               show-search
               v-model="checkData.userId"
               :filter-option="false"
@@ -246,6 +247,18 @@ export default {
         }
       })
     },
+         //不能输入非汉字效验  效验不能输入非空字符串
+	  validateNoChinese : ( value, callback) => {
+	    let reg = /^[^\u4e00-\u9fa5]+$/g;
+	    let regEmpty = /^\s*$/g;
+	    if (value && !reg.test(value)) {
+	      callback('书写格式错误');
+	    } else if(value && regEmpty.test(value)) {
+	      callback('不能为空');
+	    } else {
+	      callback();
+	    }
+	  },
     onRoleSelectChange(value){
       console.log(value)
       this.checkData.role=value
@@ -264,8 +277,18 @@ export default {
       console.log(value)
       this.getUserList(value)
     },
-    onAccountInputChange(e) {
-      console.log(e)
+    checkAccountName() {
+      console.log(this.checkData.loginName)
+      var value=this.checkData.loginName
+      let reg = /^[^\u4e00-\u9fa5]+$/g;
+	    let regEmpty = /^\s*$/g;
+	    if (value && !reg.test(value)) {
+	     
+        this.$message.error('账号不能输入中文')
+        return false
+	    }else {
+        return true
+      } 
     },
     handleSubmit() {
       console.log(this.checkData)
@@ -274,6 +297,11 @@ export default {
         this.$message.error('请输入登录账号')
         return
       }
+      if(!this.checkAccountName()){
+        return
+      }
+
+
       if (this.checkData.userId.length == 0) {
         this.$message.error('请选择对应人员')
         return
@@ -404,7 +432,7 @@ export default {
         margin-top: 1px !important;
       }
     }
-
+ 
     .span-item-name {
       display: inline-block;
       color: #4d4d4d;

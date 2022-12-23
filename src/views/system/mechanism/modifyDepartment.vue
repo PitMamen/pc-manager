@@ -12,11 +12,10 @@
           ><span style="color: red">*</span> 上级机构 :</span
         >
         <a-tree-select
-        v-model="queryParams.parentDisarmamentId"
+        v-model="queryParams.hospitalCode"
         style="min-width: 248px;margin-left: 5px"
         :tree-data="treeData"
         placeholder="请选择"
-        @select="onSelect"
         tree-default-expand-all
       >
       </a-tree-select>
@@ -157,8 +156,7 @@
         treeData:[],
         queryParams: {
           departmentName: '',
-          parentDisarmamentId: '',
-          parentDisarmamentName: '',
+          hospitalCode: '',
           hisId: '',
           departmentAddr: '',
           departmentOrder: 0,
@@ -205,8 +203,9 @@
         this.reset()
 
         this.queryParams.departmentName = record.department_name
-        this.queryParams.parentDisarmamentId = record.parent_disarmament_id
-        this.queryParams.parentDisarmamentName = record.parent_disarmament_name
+        this.queryParams.hospitalCode = record.hospital_code
+        // this.queryParams.parentDisarmamentId = record.parent_disarmament_id
+        // this.queryParams.parentDisarmamentName = record.parent_disarmament_name
         this.queryParams.hisId = record.his_id
         this.queryParams.departmentAddr = record.department_addr
         this.queryParams.isFullDisease = record.is_full_disease
@@ -274,10 +273,7 @@
 
       this.queryParams.parentDisarmamentName = this.findItemData.hospitalName
 
-    //   console.log("7777:", this.findItemData)
-      //   let chooseDeptItem = JSON.parse(JSON.stringify(this.treeData.find((item) => item.value == this.queryParams.parentDisarmamentId)))
-      //   this.queryParams.parentDisarmamentName = chooseDeptItem.hospitalName
-      //   console.log("sssss:",this.queryParams.parentDisarmamentName)
+
     },
   
   
@@ -300,14 +296,14 @@
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
               this.$set(item, 'title', item.hospitalName)
               this.$set(item, 'children', item.hospitals)
 
               item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'key', item1.hospitalCode)
+              this.$set(item1, 'value', item1.hospitalCode)
                 this.$set(item1, 'title', item1.hospitalName)
               })
             })
@@ -423,9 +419,8 @@
        * 重置
        */
       reset() {
-        this.queryParams.parentDisarmamentId = ''
+        this.queryParams.hospitalCode = ''
         this.queryParams.departmentName = ''
-        this.queryParams.parentDisarmamentName = ''
         this.queryParams.departmentAddr = ''
         this.queryParams.departmentOrder = ''
         this.queryParams.isInternetHospital = ''
@@ -446,7 +441,7 @@
        * 提交
        */
       handleSubmit() {
-        if (!this.queryParams.parentDisarmamentId) {
+        if (!this.queryParams.hospitalCode) {
           this.$message.error('请选择上级机构')
           return
         }

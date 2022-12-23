@@ -50,6 +50,7 @@
       </div>
 
     <s-table
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -117,37 +118,37 @@ export default {
       columns: [
         {
           title: '所属机构',
-          dataIndex: 'parent_disarmament_name',
-          width: 130,
+          dataIndex: 'hospitalName',
           ellipsis: true,
         },
         {
           title: '科室名称',
           dataIndex: 'department_name',
-          width: 180,
+        
         },
         {
           title: 'His编码',
           dataIndex: 'his_id',
-          width: 180,
+         
           ellipsis: true,
         },
         {
           title: '科室类型',
           dataIndex: 'departmenttype',
-          width: 180,
+      
         },
         {
           title: '排序',
           dataIndex: 'department_order',
-          width: 180,
+         
         },
+
 
         {
           title: '备注',
           dataIndex: 'department_introduce',
-          width: 180,
-          ellipsis: true,
+        
+         
         },
 
         {
@@ -159,7 +160,7 @@ export default {
 
         {
           title: '操作',
-          width: '150px',
+          width: 70,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
