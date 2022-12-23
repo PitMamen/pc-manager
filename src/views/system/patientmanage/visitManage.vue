@@ -2,7 +2,7 @@
   <a-modal
     :title="title"
     :width="900"
-    :height="650"
+    :height="700"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
@@ -12,7 +12,7 @@
   <template slot="footer">
     <a-button @click="handleCancel">关闭</a-button>
   </template>
-    <div class="div-service-user" style="margin-left: 30px;">
+    <div class="div-service-user" >
       <!-- 左边 -->
       <div class="div-totalleft">
         <!-- <div class="div-totaltopleft">
@@ -92,15 +92,15 @@
         </div>
       </div>
 
-      <!-- ri -->
-      <div class="card-right-user" style="overflow-y: auto; height: 400px">
-        <div class="div-title" style="margin-top:8px;margin-left: 10px;width: 80%;">
+      <!-- ri -->   
+      <div class="card-right-user" style="overflow-y: auto; height: 400px">  
+        <div class="div-title" style="margin-top:8px;margin-left: 10px;width: 96%;">
           <div class="div-line-blue"></div>
           <span class="span-title">历史任务</span>
         </div>
 
 
-        <div class="div-wrap-control"  style="margin-top: 2%;overflow-y: auto;">
+        <div class="div-wrap-control"  style="margin-top: 2%;overflow-y: auto;width: 100%;">   
                 <div   v-if="recordList && recordList.length > 0">
                   <div
                     class="div-part"
@@ -614,7 +614,7 @@ export default {
   .div-totalleft {
     height: 100%;
     width: 50%;
-    margin-left: 10px;
+    // margin-left: 10px;
     //   background-color: #f0f0f2;
     background-color: #ffffff;
     // border: 1px solid #e6e6e6;

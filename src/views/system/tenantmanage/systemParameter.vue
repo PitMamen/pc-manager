@@ -25,7 +25,7 @@
 
       <div class="search-row">
         <span class="name"> 所属租户:</span>
-        <a-select v-model="queryParamsData.tenantId" placeholder="请选择所属租户" allow-clear style="width: 120px">
+        <a-select v-model="queryParamsData.tenantId" placeholder="请选择租户" allow-clear style="width: 120px">
           <a-select-option v-for="item in tenantListOut" :key="item.tenantId" :value="item.tenantId">{{
             item.tenantName
           }}</a-select-option>
@@ -38,17 +38,10 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-     
     </div>
     <div class="table-operator" style="overflow: hidden">
-        <a-button
-          icon="plus"
-          style="float: right; margin-right: 0"
-          @click="addParameter()"
-          @ok="handleOk"
-          >新增</a-button
-        >
-      </div>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="addParameter()" @ok="handleOk">新增</a-button>
+    </div>
 
     <s-table
       ref="table"
@@ -103,9 +96,9 @@ export default {
       },
 
       queryParamsData: {
-        applicationId: '',
+        applicationId: undefined,
         queryText: '',
-        tenantId: '',
+        tenantId: undefined,
       },
 
       queryParamsApp: {
@@ -171,7 +164,7 @@ export default {
 
         {
           title: '操作',
-          width: '150px',
+          width: '60px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -243,16 +236,16 @@ export default {
      * 重置
      */
     reset() {
-      ;(this.queryParamsData.queryText = ''),
-        (this.queryParamsData.tenantId = ''),
-        (this.queryParamsData.applicationId = ''),
-        this.handleOk()
+      this.queryParamsData.queryText = ''
+      this.queryParamsData.tenantId = undefined
+      this.queryParamsData.applicationId = undefined
+      this.handleOk()
     },
 
     /**
      * 新增
      */
-     addParameter() {
+    addParameter() {
       this.$refs.addParameter.add()
     },
 
@@ -316,10 +309,30 @@ export default {
 }
 </script>
       
-      <style lang="less">
+      <style lang="less" scoped>
 .ant-select-selection {
   .ant-select-selection-single {
     width: 128px !important;
+  }
+}
+
+.card-right-pac {
+  overflow: hidden;
+  width: 100%;
+
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
+  }
+  button {
+    margin-right: 8px;
+  }
+
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
   }
 }
 

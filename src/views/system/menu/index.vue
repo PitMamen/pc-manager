@@ -58,6 +58,8 @@
           </span>
         </div>
 
+        <div class="div-divider"></div>
+
         <div class="table-operator" style="overflow: hidden" v-if="hasPerm('sysMenu:add')">
           <a-button
             v-if="hasPerm('sysMenu:add')"
@@ -279,6 +281,12 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+ .div-divider {
+    margin-top: 20px;
+    width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
 .table-operator {
   margin-bottom: 18px;
 }
