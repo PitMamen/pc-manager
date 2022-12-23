@@ -63,6 +63,7 @@
               @blur="goSearch"
               @keyup.enter="goSearch"
               @search="goSearch"
+              style="width: 120px;"
             />
           </div>
           <div class="search-row">
@@ -73,11 +74,12 @@
               placeholder="请输入手机号"
               @keyup.enter="goSearch"
               @search="goSearch"
+              style="width: 120px;"
             />
           </div>
           <div class="search-row">
             <span class="name">执行科室:</span>
-            <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室">
+            <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室" style="width: 120px;">
               <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
                 item.departmentName
               }}</a-select-option>
@@ -88,7 +90,7 @@
             v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
           >
             <span class="name">随访方式:</span>
-            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px;">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -96,7 +98,7 @@
           </div>
           <div class="search-row" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
             <span class="name">是否逾期:</span>
-            <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态">
+            <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态" style="width: 120px;">
               <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
                 item.name
               }}</a-select-option>
@@ -104,7 +106,7 @@
           </div>
           <div class="search-row" v-if="queryParams.queryStatus != 4">
             <span class="name">是否暂挂:</span>
-            <a-select allow-clear v-model="queryParams.hangStatus" placeholder="请选择暂挂状态">
+            <a-select allow-clear v-model="queryParams.hangStatus" placeholder="请选择暂挂状态" style="width: 120px;">
               <a-select-option v-for="(item, index) in hangData" :key="index" :value="item.code">{{
                 item.name
               }}</a-select-option>
@@ -240,8 +242,8 @@ export default {
       queryParams: {
         userName: null,
         phone: null,
-        executeDepartmentId: null,
-        messageType: null,
+        executeDepartmentId: undefined,
+        messageType: undefined,
         overdueStatus: -1,
         bizStatus: -1,
         startDate: null,
@@ -253,8 +255,8 @@ export default {
       queryParamsOrigin: {
         userName: null,
         phone: null,
-        executeDepartmentId: null,
-        messageType: null,
+        executeDepartmentId: undefined,
+        messageType: undefined,
         overdueStatus: -1,
         bizStatus: -1,
         startDate: null,

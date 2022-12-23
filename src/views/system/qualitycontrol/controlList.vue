@@ -281,8 +281,8 @@ export default {
         type: 1,
         beginExecuteTime: formatDate(new Date()),
         endExecuteTime: formatDate(new Date()),
-        execDoctorUserId: '',
-        messageOriginalId: '',
+        execDoctorUserId: undefined,
+        messageOriginalId: undefined,
         executeDepartmentIds: [],
         queryStr: '',
         taskBizStatus: 1, // 1==待随访  2==随访成功  3=随访失败
@@ -341,6 +341,7 @@ export default {
         {
           title: '执行日期',
           dataIndex: 'actualExecTime',
+          width: '120px',
           scopedSlots: { customRender: 'planTime' },
         },
 
@@ -352,13 +353,14 @@ export default {
         {
           title: '审核',
           hideInTable: true,
+          width: '70px',
           scopedSlots: { customRender: 'examine11' },
         },
 
         {
           title: '操作',
           fixed: 'right',
-          width: '150px',
+          width: '100px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -984,8 +986,8 @@ export default {
     reset() {
       this.queryParams.queryStr = ''
       this.queryParams.executeDepartmentIds = []
-      this.queryParams.messageOriginalId = ''
-      this.queryParams.execDoctorUserId = ''
+      this.queryParams.messageOriginalId = undefined
+      this.queryParams.execDoctorUserId = undefined
       this.dealResultData = null
       this.$refs.table.refresh()
     },
@@ -1204,12 +1206,12 @@ export default {
   <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 0px);
+  height: calc(100% - 40px);
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 78px);
+      height: calc(100% - 138px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
@@ -1217,7 +1219,7 @@ export default {
           .ant-spin-container {
             height: 100%;
             .ant-table {
-              height: calc(100% - 68px);
+              height: calc(100% - 48px);
               overflow-y: auto;
             }
           }

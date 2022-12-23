@@ -31,7 +31,7 @@
           <div class="search-row">
             <span class="name">执行科室:</span>
             <a-select
-              style="width: 110px"
+              style="width: 120px"
               allow-clear
               @select="onDeptSelect"
               v-model="queryParams.executeDepartmentId"
@@ -45,7 +45,7 @@
 
           <div class="search-row">
             <span class="name">执行结果:</span>
-            <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择">
+            <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择" style="width: 120px;">
               <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -54,7 +54,7 @@
 
           <div class="search-row">
             <span class="name">随访医生:</span>
-            <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择">
+            <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择" style="width: 120px;">
               <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
                 item.userName
               }}</a-select-option>
@@ -63,7 +63,7 @@
 
           <div class="search-row">
             <span class="name">随访方式:</span>
-            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式">
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px;">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -84,10 +84,11 @@
             <a-input
               v-model="queryParams.queryStr"
               allow-clear
-              placeholder="请输入患者姓名或手机号"
+              placeholder="姓名或手机号"
               @blur="goSearch"
               @keyup.enter="goSearch"
               @search="goSearch"
+              style="width: 120px;"
             />
           </div>
 
@@ -895,13 +896,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 .div-service-control {
   width: 100%;
   overflow: hidden;
   height: 100%;
 
   .div-radio {
-    // margin-top: 20px;
+    margin-top: -20px;
     display: flex;
     align-items: center;
     flex-direction: row;
