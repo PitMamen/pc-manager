@@ -114,10 +114,10 @@
                     </span> -->
                     <div class="div-rate" style="margin-left:20px;font-size: 14px;">
                       <!-- 1 电话  2微信  3短信 -->
-                      <img v-if="item.messageType.value== 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin_icon.png" />  
-                      <img v-if="item.messageType.value== 2" style="width: 22px; height: 22px" src="~@/assets/icons/weixin_icon.png" />
-                      <img v-if="item.messageType.value== 3" style="width: 22px; height: 22px" src="~@/assets/icons/weixin_icon.png" />
-                      <span style="width: 30px; margin-left: 10px;text-align: center">
+                      <img v-if="item.messageType.value== 1" style="width: 15px; height: 15px" src="~@/assets/icons/dh_icon.png" />  
+                      <img v-if="item.messageType.value== 2" style="width: 15px; height: 15px" src="~@/assets/icons/weixin_icon.png" />
+                      <img v-if="item.messageType.value== 3" style="width: 18px; height: 13px" src="~@/assets/icons/dx_icon.png" />
+                      <span ellipsis:true :class="getClassTime(item.overdueStatus.value)" style="width: 30px; margin-left: 10px;text-align: center">
                         {{ item.executeTime }}
                       </span>
 
@@ -127,7 +127,7 @@
                       </span>
                      
 
-                      <span style="margin-left: 10px; width: 30px; text-align: center">
+                      <span  :class="getClass(item.taskBizStatus.value)" style="margin-left: 10px; width: 30px; text-align: center">
                         {{ item.taskBizStatus.description  }}
                       </span>
                     </div>
@@ -426,6 +426,29 @@ export default {
       }
     },
 
+
+    getClass(status) {
+      console.log("VVV:",status)
+      if (status == 1) {
+        return 'span-gray'
+      } else if (status == 2) {
+        return 'span-green'
+      } else if (status == 3) {
+        return 'span-red'
+      } 
+    },
+
+
+    getClassTime(status) {
+      if (status == 2) {
+        return 'span-red'
+      }else{
+        return 'span-gray'
+      }
+    },
+
+
+
     /**
      * 提交
      */
@@ -503,6 +526,28 @@ export default {
 </script>
   
   <style lang="less">
+.span-red {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #f26161;
+  // background-color: #f26161;
+}
+
+.span-gray {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #4d4d4d;
+  // background-color: #85888e;
+}
+
+.span-green {
+  padding: 1% 2%;
+  font-size: 12px;
+  color: #69c07d;
+  // background-color: #85888e;
+}
+
+
 .table-page-wrapper {
   .ant-form-inline {
     .ant-form-item {

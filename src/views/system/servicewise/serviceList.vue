@@ -54,17 +54,27 @@
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
         <a-divider type="vertical" />
 
-        <a-popconfirm
+        <!-- <a-popconfirm
           :title="upDateStatesText(record.status.value)"
           ok-text="确定"
           cancel-text="取消"
           @confirm="Enable(record)"
         >
           <a>{{ record.status.value == 1 ? '停用' : '启用' }}</a>
-        </a-popconfirm>
+        </a-popconfirm> -->
+
+
+        <!-- <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.enableStatus" @click="Enable(record)"  />
+      </span> -->
+      </span>
+
+      <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.status.value==1" @click="Enable(record)"  />
       </span>
     </s-table>
 
+   
 
     <add-Name ref="addName" @ok="handleOk" />
   </a-card>
@@ -140,10 +150,17 @@ export default {
           title: '随访类型',
           dataIndex: 'followType',
         },
+        // {
+        //   title: '状态',
+        //   width: '60px',
+        //   dataIndex: 'statusText',
+        // },
+
         {
           title: '状态',
-          width: '60px',
-          dataIndex: 'statusText',
+          dataIndex: 'statuas',
+          width: 70,
+          scopedSlots: { customRender: 'statuas' },
         },
         {
           title: '操作',
@@ -279,9 +296,10 @@ export default {
         if (res.success) {
           this.$message.success('操作成功！')
           record.status.value = _status
-          record.status.description = _status == 1 ? '启用' : '停用'
-          record.statusText = _status == 1 ? '启用' : '停用'
-          this.handleOk()
+
+          setTimeout(() => {
+            this.handleOk()
+          }, 1000)
         } else {
           this.$message.error('编辑失败：' + res.message)
         }

@@ -1,7 +1,7 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs v-model="keyindex" @change="chanage">
-      <a-tab-pane v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName">
+    <a-tabs v-model="keyindex" @change="chanage"   >
+      <a-tab-pane  v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName" >
         <div style="height: 1px"></div>
       </a-tab-pane>
     </a-tabs>
@@ -473,6 +473,12 @@ export default {
 }
 </script>
   <style lang="less" scoped>
+
+.checked-btn {
+    background-color: #eff7ff;
+    color: #1890ff;
+    border-bottom: #1890ff 2px solid;
+  }
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;

@@ -1,46 +1,65 @@
 <template>
-  <div class="div-service">
-    <a-card :bordered="false" class="card-right">
-      <div class="table-page-search-wrapper">
-        <a-form layout="inline">
-          <a-row :gutter="48">
-            <a-col :md="3" :sm="24">
-              <a-button type="primary" @click="$refs.addForm.add()">新增角色</a-button>
-            </a-col>
-          </a-row>
-        </a-form>
+  <a-card :bordered="false" class="card-right-pac">
+    <div class="table-page-search-wrapper">
+      <div class="search-row">
+        <span class="name">查询条件:</span>
+        <a-input
+          v-model="queryParam.queryText"
+          allow-clear
+          placeholder="可输入角色名称查询"
+          style="width: 120px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-switch :checked="isOpen" @click="goOpen" />
       </div>
 
-      <!-- style="width: 60%; -->
-      <a-table
-        ref="tableDept"
-        :pagination="false"
-        size="default"
-        style="margin-top: 2%"
-        :columns="columns"
-        :data-source="loadData"
-        :rowSelection={rowSelection} 
-        :alert="true"
-        :rowKey="(record) => record.code"
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
+        </span>
+      </div>
+    </div>
+    <div class="table-operator" style="overflow: hidden">
+      <a-button
+        type="primary"
+        icon="plus"
+        style="float: right; margin-right: 0; margin-top: 10px"
+        @click="$refs.addForm.add()"
+        >新增</a-button
       >
-        <span slot="action" slot-scope="text, record">
-          <a @click="$refs.editForm.edit(record)">编辑</a>
-          <a-divider type="vertical" v-show="false" />
-          <a-popconfirm v-show="false" placement="topRight" title="确认删除？" @confirm="() => delDeptOut(record)">
-            <a>删除</a>
-          </a-popconfirm>
-        </span>
-        <span slot="ifSuggest" slot-scope="text, record">
-          <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
-            <a-switch :checked="record.isSuggest" />
-          </a-popconfirm>
-        </span>
-      </a-table>
+    </div>
 
-      <add-form ref="addForm" @ok="handleOk" />
-      <edit-form ref="editForm" @ok="handleOk" />
-    </a-card>
-  </div>
+    <s-table
+      ref="table"
+      size="default"
+      style="margin-top: 2%"
+      :columns="columns"
+      :data="loadData"
+      :alert="true"
+      :rowKey="(record) => record.code"
+    >
+      <span slot="action" slot-scope="text, record">
+        <a @click="$refs.editForm.edit(record)">修改</a>
+        <a-divider type="vertical" v-show="false" />
+        <a-popconfirm v-show="false" placement="topRight" title="确认删除？" @confirm="() => delDeptOut(record)">
+          <a>删除</a>
+        </a-popconfirm>
+      </span>
+      <span slot="ifSuggest" slot-scope="text, record">
+        <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
+          <a-switch :checked="record.isSuggest" />
+        </a-popconfirm>
+      </span>
+    </s-table>
+
+    <add-form ref="addForm" @ok="handleOk" />
+    <edit-form ref="editForm" @ok="handleOk" />
+  </a-card>
 </template>
 
 <script>
@@ -76,6 +95,7 @@ export default {
 
   data() {
     return {
+      isOpen: true,
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
@@ -96,12 +116,11 @@ export default {
       partChoose: '',
       roleTree: [],
 
-      queryParams: {
-
-        belong: undefined,
-        status: undefined,
-        topFlag: undefined,
-        keyWords: undefined,
+      queryParam: {
+        pageNo: 0,
+        pageSize: 10,
+        status: 1,
+        queryText: '',
         // isRegister: '1',
       },
       // 表头
@@ -131,12 +150,38 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
-      loadData: [],
+      // loadData: [],
+
+      loadData: (parameter) => {
+        return getRoleList(Object.assign(parameter, this.queryParam)).then((res) => {
+          var data = {
+            pageNo: parameter.current,
+            pageSize: parameter.size,
+            totalRows: res.data.total,
+            totalPage: res.data.total / parameter.size,
+            rows: res.data.records,
+          }
+
+
+          if (res.code == 0 && res.data) {
+            for (let i = 0; i < data.rows.length; i++) {
+              this.$set(data.rows[i], 'xh', i + 1)
+              if (data.rows[i].state == 1) {
+                this.$set(data.rows[i], 'isSuggest', true)
+                this.$set(data.rows[i], 'isSuggestText', '确定关闭？')
+              } else {
+                this.$set(data.rows[i], 'isSuggest', false)
+                this.$set(data.rows[i], 'isSuggestText', '确定开启？')
+              }
+            }
+          }
+          return data
+        })
+      },
     }
   },
 
   created() {
-    this.getRolesOut()
 
     getMenuTree({}).then((res) => {
       if (res.code == 0) {
@@ -148,24 +193,20 @@ export default {
   },
 
   methods: {
-    getRolesOut() {
-      getRoleList(this.queryParam).then((res) => {
-        if (res.code == 0) {
-          for (let i = 0; i < res.data.length; i++) {
-            this.$set(res.data[i], 'xh', i + 1)
-            if (res.data[i].state == 1) {
-              this.$set(res.data[i], 'isSuggest', true)
-              this.$set(res.data[i], 'isSuggestText', '确定关闭？')
-            } else {
-              this.$set(res.data[i], 'isSuggest', false)
-              this.$set(res.data[i], 'isSuggestText', '确定开启？')
-            }
-          }
-          this.loadData = res.data
-        } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
-        }
-      })
+
+    reset() {
+      this.queryParam.queryText = ''
+      this.handleOk()
+    },
+
+    goOpen() {
+      this.isOpen = !this.isOpen
+      if (this.isOpen) {
+        this.queryParam.status = 1
+      } else {
+        this.queryParam.status = 0
+      }
+      this.handleOk()
     },
 
     goSuggest(record) {
@@ -222,34 +263,72 @@ export default {
     },
 
     handleOk() {
-      this.getRolesOut()
+      this.$refs.table.refresh()
     },
   },
 }
 </script>
 
 <style lang="less">
-.div-service {
-  width: 100%;
+.table-page-search-wrapper {
+  padding-bottom: 20px !important;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+  }
+}
+.card-right-pac {
   overflow: hidden;
-  height: 100%;
+  width: 100%;
 
-  .card-right {
-    overflow: hidden;
-    width: 100%!important;
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
+  }
+  button {
+    margin-right: 8px;
+  }
 
-    .table-operator {
-      margin-bottom: 18px;
-    }
-    button {
-      margin-right: 8px;
-    }
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+  }
+}
+</style>
 
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
+<style lang="less" scoped>
+// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
+.ant-card {
+  height: calc(100% - 40px);
+  /deep/ .ant-card-body {
+    height: 100%;
+    padding-bottom: 10px !important;
+    .table-wrapper {
+      height: calc(100% - 96px);
+      .ant-table-wrapper {
+        height: 100%;
+        .ant-spin-nested-loading {
+          height: 100%;
+          .ant-spin-container {
+            height: 100%;
+            .ant-table {
+              height: calc(100% - 78px);
+              overflow-y: auto;
+            }
+          }
+        }
+      }
     }
   }
 }
