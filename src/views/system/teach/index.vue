@@ -525,7 +525,7 @@ export default {
     width: 200px;
     overflow: hidden;
 
-    border: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
 
     .left-lb-title {
       overflow: hidden;
