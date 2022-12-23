@@ -3139,3 +3139,34 @@ export function sysDictDataDetail(data) {
     params: data
   })
 }
+
+/**
+ * 添加短信网关
+ */
+export function addSmsConfigure(data) {
+  return axios({
+    url: '/follow-api/smsConfigure/addSmsConfigure',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 修改短信网关
+ */
+export function modifySmsConfigure(data) {
+  return axios({
+    url: '/follow-api/smsConfigure/modifySmsConfigure',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 删除短信网关
+ */
+export function deleteSmsConfigure(id) {
+  return axios({
+    url: '/follow-api/smsConfigure/deleteSmsConfigure/'+id,
+    method: 'post',
+ 
+  })
+}
