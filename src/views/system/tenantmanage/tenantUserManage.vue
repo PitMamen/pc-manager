@@ -94,7 +94,7 @@ export default {
       treeData: [],
       idArr: [],
       queryParams: {
-        hospitalCode:'',//所属机构代码
+        hospitalCode:undefined,//所属机构代码
         notBoundOnly:false,//是否返回未绑定账号的用户
         status: 0,//（0正常、1停用、2删除）
         queryText: ''
@@ -291,7 +291,7 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.hospitalCode = ''
+      this.queryParams.hospitalCode = undefined
       this.queryParams.queryText = ''
       this.queryParams.status = 0
 

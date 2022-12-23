@@ -252,9 +252,9 @@ export default {
         identificationNo: '',
         phone: '',
         email: '',
-        userType: '', //人员类型
-        professionalTitle: '', //人员职称
-        hospitalCode: '', //所属机构
+        userType: undefined, //人员类型
+        professionalTitle: undefined, //人员职称
+        hospitalCode: undefined, //所属机构
         expertInDisease: '', //擅长领域
         doctorBrief: '', //详细介绍
         roleIds: '', //分配角色
@@ -285,9 +285,9 @@ export default {
         identificationNo: '',
         phone: '',
         email: '',
-        userType: '', //人员类型
-        professionalTitle: '', //人员职称
-        hospitalCode: '', //所属机构
+        userType: undefined, //人员类型
+        professionalTitle: undefined, //人员职称
+        hospitalCode: undefined, //所属机构
         expertInDisease: '', //擅长领域
         doctorBrief: '', //详细介绍
         roleIds: '', //分配角色

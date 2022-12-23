@@ -260,6 +260,9 @@ export default {
     },
 
     handleCancel() {
+      if(!this.isAdd){
+        this.clearDatas()
+      }
       this.visible = false
     },
     clearDatas() {

@@ -119,7 +119,7 @@ export default {
       treeData: [],
       idArr: [],
       queryParams: {
-        applicationId: '', //应用ID
+        applicationId: undefined, //应用ID
         queryText: '',
       },
       queryParams2: {
@@ -191,9 +191,9 @@ export default {
           }
 
           if (res.data.records.length > 0) {
-            console.log('刷新了：',res.data.records[0])
+          
             this.checkedRecord = res.data.records[0]
-            console.log('刷新了：',this.checkedRecord)
+       
             this.checkedIndex=0
             this.getSysDictDataLsit()
           }
@@ -321,7 +321,7 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.applicationId = ''
+      this.queryParams.applicationId = undefined
       this.queryParams.queryText = ''
     
       this.$refs.table.refresh(true)
