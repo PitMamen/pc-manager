@@ -52,7 +52,7 @@
     >
       <span slot="action" slot-scope="text, record">
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
-        <a-divider type="vertical" />
+        <!-- <a-divider type="vertical" /> -->
 
         <!-- <a-popconfirm
           :title="upDateStatesText(record.status.value)"
@@ -165,7 +165,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '100px',
+          width: '60px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
