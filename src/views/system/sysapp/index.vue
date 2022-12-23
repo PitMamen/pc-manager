@@ -23,7 +23,7 @@
       </div>
     </div>
     <div class="table-operator" style="overflow: hidden;">
-      <a-button icon="plus" style="float: right;margin-right: 0;" @click="$refs.addForm.add()">新增</a-button>
+      <a-button  icon="plus" style="float: right;margin-right: 0;" @click="$refs.addForm.add()">新增</a-button>
     </div>
     <s-table
       ref="table"
