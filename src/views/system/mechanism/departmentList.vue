@@ -6,14 +6,13 @@
         <a-input
           allow-clear
           v-model="queryParams.departmentName"
-          placeholder="可输入科室名称名称查询"
+          placeholder="可输入科室名称查询"
           style="width: 120px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
-<!--  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }" -->
       <div class="search-row">
         <span class="name"> 所属机构:</span>
         <a-tree-select
@@ -37,13 +36,18 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider1"style="margin-top:20px"></div>
-      <div class="table-operator" style="overflow: hidden">
-        <a-button icon="plus" style="float: right; margin-right: 0" @click="addDepartment()" @ok="handleOk"
+    </div>
+
+    <div class="table-operator" style="overflow: hidden">
+        <a-button
+          type="primary"
+          icon="plus"
+          style="float: right; margin-right: 0; margin-top: 10px"
+          @click="addDepartment()"
+          @ok="handleOk"
           >新增</a-button
         >
       </div>
-    </div>
 
     <s-table
     :scroll="{ x: true }"
@@ -59,7 +63,7 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch :disabled="true" :checked="record.enableStatus" />
+        <a-switch :checked="record.enableStatus" @click="statusCheck(record)" />
       </span>
     </s-table>
 
@@ -71,7 +75,12 @@
     
     <script>
 import { STable } from '@/components'
-import { getDepartmentListForReq, queryHospitalType, queryHospitalList } from '@/api/modular/system/posManage'
+import {
+  getDepartmentListForReq,
+  queryHospitalType,
+  queryHospitalList,
+  modifyDepartmentForReq,
+} from '@/api/modular/system/posManage'
 import addDepartment from './addDepartment'
 import modifyDepartment from './modifyDepartment'
 export default {
@@ -110,7 +119,6 @@ export default {
         {
           title: '所属机构',
           dataIndex: 'hospitalName',
-       
           ellipsis: true,
         },
         {
@@ -135,18 +143,19 @@ export default {
          
         },
 
-        {
-          title: '状态',
-          dataIndex: 'status',
-        
-          scopedSlots: { customRender: 'statuas' },
-        },
 
         {
           title: '备注',
           dataIndex: 'department_introduce',
         
          
+        },
+
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 70,
+          scopedSlots: { customRender: 'statuas' },
         },
 
         {
@@ -173,21 +182,21 @@ export default {
           if (res.code == 0 && res.data.records.length > 0) {
             data.rows.forEach((item, index) => {
               // this.$set(item, 'zt', item.status.description)
-              this.$set(item, 'enableStatus', item.status != null ? item.status == 1 : 2)
+              this.$set(item, 'enableStatus', item.status == 1)
               var type = ''
-              if(item.department_type==1){
+              if (item.department_type == 1) {
                 type = '门诊科室'
-              }else if(item.department_type==2){
+              } else if (item.department_type == 2) {
                 type = '急诊科室'
-              }else if(item.department_type==3){
+              } else if (item.department_type == 3) {
                 type = '住院科室'
-              }else if(item.department_type==4){
+              } else if (item.department_type == 4) {
                 type = '医技科室'
-              }else if(item.department_type==5){
+              } else if (item.department_type == 5) {
                 type = '药剂科室'
-              }else if(item.department_type==6){
+              } else if (item.department_type == 6) {
                 type = '后勤物资'
-              }else if(item.department_type==7){
+              } else if (item.department_type == 7) {
                 type = '机关科室'
               }
               this.$set(item, 'departmenttype', type)
@@ -229,6 +238,7 @@ export default {
       console.log('onChange ', value, arguments)
       this.setState({ value })
     },
+
     /**
      * 机构类型
      */
@@ -326,28 +336,47 @@ export default {
       }
       this.handleOk()
     },
+
+    /**
+     * 开关
+     */
+    statusCheck(record) {
+      var state = !record.enableStatus
+      let queryParam = {
+        departmentId: record.department_id,
+        status: state ? 1 : 2,
+      }
+      this.confirmLoading = true
+      modifyDepartmentForReq(queryParam)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            //  this.$set(record, 'enableStatus', state)
+            record.enableStatus = state
+            this.$message.success('操作成功')
+          } else {
+            this.$message.error('操作失败:' + res.message)
+          }
+          setTimeout(() => {
+            this.handleOk()
+          }, 500)
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
   },
 }
 </script>
     
     <style lang="less">
-.ant-select-selection{
-    .ant-select-selection-single{
-        width: 128px !important;
-    }
-}
-
-
-.div-divider1 {
-  margin-bottom: 0.5%;
-  margin-top: 0.5%;
-  width: 100%;
-  background-color: #e6e6e6;
-  height: 1px;
+.ant-select-selection {
+  .ant-select-selection-single {
+    width: 128px !important;
+  }
 }
 
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -360,6 +389,25 @@ export default {
     .name {
       margin-right: 10px;
     }
+  }
+}
+.card-right-pac {
+  overflow: hidden;
+  width: 100%;
+
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
+  }
+  button {
+    margin-right: 8px;
+  }
+
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
   }
 }
 </style>

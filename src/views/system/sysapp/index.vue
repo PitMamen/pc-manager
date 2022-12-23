@@ -12,10 +12,8 @@
         </a-select>
       </div>
       <div class="search-row">
-        <span class="name">应用状态:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择应用状态" allow-clear style="width: 120px;height: 28px;">
-          <a-select-option v-for="item in selects2" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+        <span class="name">状态:</span>
+        <a-switch :checked="isOpen" @click="goOpen" />
       </div>
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -68,6 +66,7 @@ export default {
   data() {
     return {
       // 高级搜索 展开/关闭
+      isOpen:true,
       advanced: false,
       // 查询参数
       queryParam: {
@@ -186,7 +185,19 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-    }
+    },
+
+
+    
+    goOpen() {
+      this.isOpen = !this.isOpen
+      if (this.isOpen) {
+        this.queryParam.status = 1
+      } else {
+        this.queryParam.status = 2
+      }
+      this.handleOk()
+    },
   }
 }
 </script>

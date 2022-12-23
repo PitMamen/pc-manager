@@ -9,6 +9,11 @@
                 @keyup.enter="$refs.table.refresh(true)"
                 @search="$refs.table.refresh(true)"/>
       </div>
+
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-switch :checked="isOpen" @click="goOpen" />
+      </div>
      
 
       <div class="action-row">
@@ -33,8 +38,12 @@
     >
       <span slot="action" slot-scope="text, record">
         <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
-        <a-divider type="vertical" />
-        <a @click="Enable(record)">{{ record.enableStatus }}</a>
+        <!-- <a-divider type="vertical" /> -->
+        <!-- <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
+      </span>
+
+      <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.templateStatus==1" @click="Enable(record)"  />
       </span>
     </s-table>
     <addwx-Model ref="addwxModel" @ok="handleOk" @cancel="handleCancel" />
@@ -52,10 +61,12 @@ export default {
   },
   data() {
     return {
+      isOpen:true,
       datas: [],
       keshiData: [],
       queryParams: {
         templateTitle: '',
+        templateStatus:1,
       },
       labelCol: {
         xs: { span: 24 },
@@ -88,8 +99,9 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'zt',
-          width:80,
+          dataIndex: 'statuas',
+          width: 70,
+          scopedSlots: { customRender: 'statuas' },
         },
         {
           title: '操作',
@@ -148,11 +160,24 @@ export default {
         if (res.success) {
           this.confirmLoading = false
           this.$message.success('操作成功!')
-          this.handleOk()
+          setTimeout(() => {
+            this.handleOk()
+          }, 1000)
         } else {
           this.$message.error('编辑失败：' + res.message)
         }
       })
+    },
+
+
+    goOpen() {
+      this.isOpen = !this.isOpen
+      if (this.isOpen) {
+        this.queryParams.templateStatus = 1
+      } else {
+        this.queryParams.templateStatus = 2
+      }
+      this.handleOk()
     },
 
     /**

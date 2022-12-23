@@ -6,7 +6,7 @@
         <a-input
           allow-clear
           v-model="queryParams.hospitalName"
-          placeholder="可输入用户名称名称查询"
+          placeholder="可输入机构名称查询"
           style="width: 120px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
@@ -24,15 +24,18 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider1" style="margin-top:20px"></div>
-      <div class="table-operator" style="overflow: hidden">
-        <a-button icon="plus" style="float: right; margin-right: 0" @click="addMechanism()" @ok="handleOk"
-          >新增</a-button
-        >
-      </div>
+    </div>
+    <div class="table-operator" style="overflow: hidden">
+      <a-button
+        type="primary"
+        icon="plus"
+        style="float: right; margin-right: 0; margin-top: 10px"
+        @click="addMechanism()"
+        @ok="handleOk"
+        >新增</a-button
+      >
     </div>
 
-    <!-- :expanded-row-keys.sync="hospitals" -->
     <a-table
       ref="table"
       size="default"
@@ -41,7 +44,6 @@
       :data-source="loadData"
       :expandedRowsChange="expandedRowKeys"
       :alert="true"
-      
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
@@ -51,7 +53,7 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch :disabled="true" :checked="record.enableStatus" />
+        <a-switch :checked="record.enableStatus" @click="statusCheck(record)" />
       </span>
     </a-table>
 
@@ -63,7 +65,7 @@
     
     <script>
 import { STable } from '@/components'
-import { tenantInit,  queryHospitalList } from '@/api/modular/system/posManage'
+import { tenantInit, queryHospitalList, updateStatus } from '@/api/modular/system/posManage'
 import addMechanism from './addMechanism'
 import modify from './modify'
 // import initRecord from './initRecord'
@@ -141,17 +143,17 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
-       rowSelection:{
+      rowSelection: {
         onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows)
+        },
+        onSelect: (record, selected, selectedRows) => {
+          console.log(record, selected, selectedRows)
+        },
+        onSelectAll: (selected, selectedRows, changeRows) => {
+          console.log(selected, selectedRows, changeRows)
+        },
       },
-      onSelect: (record, selected, selectedRows) => {
-        console.log(record, selected, selectedRows)
-      },
-      onSelectAll: (selected, selectedRows, changeRows) => {
-        console.log(selected, selectedRows, changeRows)
-      },
-      }
     }
   },
 
@@ -174,6 +176,34 @@ export default {
     },
 
     /**
+     * 开关
+     */
+    statusCheck(record) {
+      var state = !record.enableStatus
+      let queryParam = {
+        hospitalId: record.hospitalId,
+        status: state ? 1 : 2,
+      }
+      this.confirmLoading = true
+      updateStatus(queryParam)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            record.enableStatus = state
+            //  this.$set(record, 'enableStatus', state)
+            this.$message.success('操作成功')
+          } else {
+            this.$message.error('操作失败:' + res.message)
+          }
+          setTimeout(() => {
+            this.handleOk()
+          }, 500)
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
      *
      * @param {} queryParams
      */
@@ -187,17 +217,17 @@ export default {
               this.$set(item, 'enableStatus', item.status != null ? item.status.value == 1 : 2)
               this.$set(item, 'children', item.hospitals)
 
-              item.hospitals.forEach((item1,index1)=>{
+              item.hospitals.forEach((item1, index1) => {
                 this.$set(item1, 'key', item1.hospitalId)
-              this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
-              // this.$set(item1, 'children', item.hospitals)
+                this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
+                // this.$set(item1, 'children', item.hospitals)
               })
             })
             // this.$set(item, 'children', item.hospitals)
 
             this.loadData = res.data
             this.hospitals = res.data
-          }else{
+          } else {
             this.loadData = res.data
             this.hospitals = res.data
           }
@@ -207,7 +237,6 @@ export default {
           this.confirmLoading = false
         })
     },
-
 
     /**
      * 初始化操作
@@ -262,16 +291,8 @@ export default {
 </script>
     
     <style lang="less">
-.div-divider1 {
-  margin-bottom: 0.5%;
-  margin-top: 0.5%;
-  width: 100%;
-  background-color: #e6e6e6;
-  height: 1px;
-}
-
 .table-page-search-wrapper {
-  padding-bottom: 10px;
+  padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -284,6 +305,25 @@ export default {
     .name {
       margin-right: 10px;
     }
+  }
+}
+.card-right-pac {
+  overflow: hidden;
+  width: 100%;
+
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
+  }
+  button {
+    margin-right: 8px;
+  }
+
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
   }
 }
 </style>

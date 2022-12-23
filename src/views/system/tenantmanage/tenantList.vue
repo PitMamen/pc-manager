@@ -104,7 +104,7 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch :disabled="true" :checked="record.enableStatus" />
+        <a-switch  :checked="record.enableStatus" @click="statusCheck(record)"/>
       </span>
     </s-table>
 
@@ -117,7 +117,7 @@
   
   <script>
 import { STable } from '@/components'
-import { getTenantList, tenantInit, resetTenantPwd } from '@/api/modular/system/posManage'
+import { getTenantList, tenantInit, resetTenantPwd,updateTenantStatus } from '@/api/modular/system/posManage'
 // import checkIndex from './checkIndex'
 import addTenant from './addTenant'
 import modify from './modify'
@@ -259,6 +259,34 @@ export default {
       this.visible_updPwd = true
       this.tenantId = record.tenantId
       this.titleResetPwd = "重置  "+record.tenantName+"  管理员密码"
+    },
+
+      /**
+    * 开关
+    */
+    statusCheck(record){
+     var state = ! record.enableStatus
+     let queryParam ={
+      tenantId:record.tenantId,
+      status:state?1:2
+     }
+     this.confirmLoading = true
+     updateTenantStatus(queryParam)
+     .then((res) => {
+       if (res.code == 0 && res.success) {
+         record.enableStatus = state
+         this.$message.success('操作成功')
+            } else {
+              this.$message.error('操作失败:' + res.message)
+            }
+            setTimeout(() => {
+            this.handleOk()
+          }, 500)
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
+
     },
 
     /**

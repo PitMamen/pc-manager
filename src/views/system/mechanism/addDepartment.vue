@@ -7,10 +7,8 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
-    <div class="div-service-user" >
-      <span class="span-item-name" style="margin-top: 5px;"
-        ><span style="color: red">*</span> 上级机构 :</span
-      >
+    <div class="div-service-user">
+      <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 上级机构 :</span>
       <a-tree-select
       v-model="queryParams.hospitalCode"
       style="min-width: 248px;margin-left: 5px"
@@ -27,17 +25,20 @@
         class="span-item-value"
         v-model="queryParams.departmentName"
         :maxLength="30"
-        style="display: inline-block; width: 248px;margin-left: 5px;"
+        style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
         placeholder="请输入科室名称 "
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px;">
-      <span class="span-item-name" style="margin-top: 5px;"
-        ><span style="color: red">*</span> 科室类型 :</span
+    <div class="div-service-user" style="margin-top: 20px">
+      <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 科室类型 :</span>
+      <a-select
+        style="min-width: 248px; margin-left: 5px"
+        v-model="queryParams.departmentType"
+        allow-clear
+        placeholder="请选择科室类型"
       >
-      <a-select style="min-width: 248px;margin-left:5px" v-model="queryParams.departmentType" allow-clear placeholder="请选择科室类型">
         <a-select-option v-for="(item, index) in departmentTypeList" :key="index" :value="item.code">{{
           item.name
         }}</a-select-option>
@@ -50,22 +51,20 @@
         class="span-item-value"
         v-model="queryParams.departmentAddr"
         :maxLength="30"
-        style="display: inline-block; width: 248px;margin-left: 5px;"
+        style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
         placeholder="请输入科室位置 "
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px;">
-      <span class="span-item-name" style="margin-top: 5px; "
-        ><span style="color: red">*</span> HIS编码  :</span
-      >
+    <div class="div-service-user" style="margin-top: 20px">
+      <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> HIS编码 :</span>
       <a-input
         type="number"
         class="span-item-value"
         v-model="queryParams.hisId"
         :maxLength="30"
-        style="display: inline-block; width: 248px;margin-left: 8px;"
+        style="display: inline-block; width: 248px; margin-left: 8px"
         allow-clear
         placeholder="请输入HIS编码 "
       />
@@ -77,37 +76,34 @@
       <a-input
         v-model="queryParams.departmentOrder"
         :disabled="true"
-        :defaultValue=0
+        :defaultValue="0"
         allow-clear
         style="width: 190px; margin-left: 5px; text-align: center"
       />
       <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
     </div>
 
-    <div class="display-item" style="margin-left: 5px; margin-top: 10px;">
+    <div class="display-item" style="margin-left: 5px; margin-top: 10px">
       <span style="margin-top: 10px"> 科室类型 :</span>
 
-      <a-radio-group
-        name="radioGroup"
-        @change="radioChange"
-        defaultValue="2"
-        v-decorator="['roleId', { rules: [{ required: true, message: '请选择科室类型！' }] }]"
+      <a-checkbox style="margin-left:10px" @change="radioChange1"
+        >互联网医院科室</a-checkbox
       >
-        <a-radio :value=1 style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 互联网医院科室 </a-radio>
-        <a-radio :value=2 style="font-size: 8px; margin-top: 10px"> 全病程科室 </a-radio>
-      </a-radio-group>
+
+      <a-checkbox @change="radioChange2"
+        >全病程科室</a-checkbox
+      >
     </div>
 
-    <div class="div-service-user" style="margin-top: 10px;margin-left: 7px;">
-      <span style="margin-top: 10px;width: 90px;"> 科室简介 :</span>
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 7px">
+      <span style="margin-top: 10px; width: 90px"> 科室简介 :</span>
       <a-textarea
-      style="height: 80px; min-height: 80px; margin-top: 10px;margin-left: -28px;width: 87%;"
-      v-model="queryParams.departmentIntroduce"
-      placeholder="请输入科室简介"
-      v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
-    />
+        style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: -28px; width: 87%"
+        v-model="queryParams.departmentIntroduce"
+        placeholder="请输入科室简介"
+        v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
+      />
     </div>
-
   </a-modal>
 </template>
         
@@ -154,7 +150,7 @@ export default {
         isInternetHospital: '',
         isFullDisease: '',
         departmentIntroduce: '',
-        departmentType:'',
+        departmentType: '',
       },
 
       labelCol: {
@@ -340,19 +336,26 @@ export default {
     },
 
     /**
-     *   机构选择
+     *   互联网医院科室
      */
-    radioChange(event) {
-      //立即发送
-      if (event.target.value == 1) {
-        this.rangeValue = '1'
+    radioChange1(event) {
+      // console.log("tt00:",event.target.checked )
+      if (event.target.checked) {
         this.queryParams.isInternetHospital = 1
-        this.queryParams.isFullDisease = 2
-        //延时发送
-      } else if (event.target.value == 2) {
-        this.rangeValue = '2'
-        this.queryParams.isFullDisease = 1
+      } else  {
         this.queryParams.isInternetHospital = 2
+      }
+    },
+
+     /**
+     *   全病程科室
+     */
+     radioChange2(event) {
+      // console.log("tt11:",event.target.checked )
+      if (event.target.checked) {
+        this.queryParams.isFullDisease = 1
+      } else  {
+        this.queryParams.isFullDisease = 2
       }
     },
 
@@ -416,21 +419,19 @@ export default {
 </script>
 
         <style lang="less">
-
 /deep/.ant-col-sm-15 {
-    /* display: block; */
-    /* -webkit-box-sizing: border-box; */
-    /* box-sizing: border-box; */
-    width: 69.5%;
+  /* display: block; */
+  /* -webkit-box-sizing: border-box; */
+  /* box-sizing: border-box; */
+  width: 69.5%;
 }
 
-/deep/.ant-form-item-control{
+/deep/.ant-form-item-control {
   position: relative;
-    width: 111%;
-    line-height: 40px;
-    zoom: 1;
+  width: 111%;
+  line-height: 40px;
+  zoom: 1;
 }
-
 
 .dddd-r {
   display: flex;

@@ -765,11 +765,11 @@ export function getDoctorList(parameter) {
 /**
  * 获取角色列表
  */
-export function getRoleList(parameter) {
+export function getRoleList(data) {
   return axios({
-    url: '/account-api/getRoleList',
-    method: 'get',
-    params: parameter
+    url: '/account-api/page',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -2496,6 +2496,33 @@ export function queryHospitalList(data) {
 
 
 /**
+ * 修改机构状态
+ */
+export function updateStatus(data){
+  return axios({
+    url:'/uam-api/hospital/updateStatus',
+    method:'post',
+    data:data,
+  })
+}
+
+/**
+ * 
+ * 修改租户状态
+ */
+
+export function updateTenantStatus(data){
+  return axios({
+    url:'/uam-api/tenant/updateStatus',
+    method:'post',
+    data:data,
+  })
+}
+
+
+
+
+/**
  * 机构类型
  */
 export function queryHospitalType(data) {
@@ -2962,6 +2989,30 @@ export function getArticleByIdNew(id) {
     url: '/health-api/article/getArticleById/'+id,
     method: 'post',
 
+  })
+}
+
+
+/**
+ * 分页查询参数列表
+ */
+export function sysConfigDatapage(data){
+  return axios({
+    url:'/info-api/sysConfigData/page',
+    method:'post',
+    data:data,
+  })
+}
+
+
+/**
+ * 保存参数配置
+ */
+export function saveSysConfigData(data){
+  return axios({
+    url:'/info-api/sysConfigData/save',
+    method:'post',
+    data:data,
   })
 }
 

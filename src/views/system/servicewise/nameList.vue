@@ -23,34 +23,6 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-     
-    
-
-      <!-- <a-form layout="inline">
-        <a-row :gutter="48">
-          <a-col :md="6" :sm="24">
-            <a-form-item label="查询条件">
-              <a-input
-                v-model="queryParams.metaName"
-                allow-clear
-                placeholder="可输入应用名称查询"
-                @keyup.enter="$refs.table.refresh(true)"
-                @search="$refs.table.refresh(true)"
-              />
-            </a-form-item>
-          </a-col>
-
-          <a-col :md="10" :sm="24">
-            <a-form-item label="状态:">
-              <a-switch :checked="isOpen" @click="goOpen" />
-              <a-button style="margin-left: 20%" type="primary" @click="$refs.table.refresh(true)" icon="search">查询</a-button>
-              <a-button style="margin-left: 10%" type="primary" @click="reset()" icon="reload">重置</a-button>
-            </a-form-item>
-          </a-col>
-        </a-row>
-      </a-form>
-      <div class="div-divider"></div> -->
-      <!-- <a-button style="margin-left: 90%;margin-bottom: 1%;" type="primary" @click="addName()" icon="plus">新增</a-button> -->
     </div>
     <div class="table-operator" style="overflow: hidden;">
       <a-button icon="plus" style="float: right;margin-right: 0;" @click="addName()">新增</a-button>
@@ -65,8 +37,12 @@
     >
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.checkIndex.check(record)">查看</a>
-        <a-divider type="vertical" />
-        <a @click="Enable(record)">{{ record.enableStatus }}</a>
+        <!-- <a-divider type="vertical" /> -->
+        <!-- <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
+      </span>
+
+      <span slot="statuas" slot-scope="text, record">
+        <a-switch  :checked="record.status.value==1" @click="Enable(record)"  />
       </span>
 
     </s-table>
@@ -131,23 +107,13 @@ export default {
           dataIndex: 'databaseTableFieldName',
           ellipsis:true,
           maxWidth:180,
-          // onCell:()=>{
-          //   return {
-          //     style:{
-          //       maxWidth:120,
-          //       overflow:'hidden',
-          //       textOverflow:'ellipsis',
-              
-          //     }
-          //   }
-          // }
-      
         },
 
         {
           title: '状态',
-          dataIndex: 'zt',
-          width: 80,
+          dataIndex: 'statuas',
+          width: 70,
+          scopedSlots: { customRender: 'statuas' },
         },
         {
           title: '操作',
@@ -212,7 +178,9 @@ export default {
       updateMetaConfigure(queryParamData).then((res) => {
         if (res.success) {
           this.$message.success('操作成功!')
-          this.handleOk()
+          setTimeout(() => {
+            this.handleOk()
+          }, 1000)
         } else {
           this.$message.error('操作失败!')
         }
