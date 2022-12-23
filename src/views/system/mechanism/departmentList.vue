@@ -40,9 +40,8 @@
 
     <div class="table-operator" style="overflow: hidden">
         <a-button
-          type="primary"
           icon="plus"
-          style="float: right; margin-right: 0; margin-top: 10px"
+          style="float: right; margin-right: 0; margin-top: 0px"
           @click="addDepartment()"
           @ok="handleOk"
           >新增</a-button

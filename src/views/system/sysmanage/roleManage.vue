@@ -24,20 +24,17 @@
         </span>
       </div>
     </div>
+
     <div class="table-operator" style="overflow: hidden">
-      <a-button
-        type="primary"
-        icon="plus"
-        style="float: right; margin-right: 0; margin-top: 10px"
-        @click="$refs.addForm.add()"
+      <a-button icon="plus" style="float: right; margin-right: 0; margin-top: 0px" @click="$refs.addForm.add()"
         >新增</a-button
       >
     </div>
 
+
     <s-table
       ref="table"
       size="default"
-      style="margin-top: 2%"
       :columns="columns"
       :data="loadData"
       :alert="true"
@@ -162,7 +159,6 @@ export default {
             rows: res.data.records,
           }
 
-
           if (res.code == 0 && res.data) {
             for (let i = 0; i < data.rows.length; i++) {
               this.$set(data.rows[i], 'xh', i + 1)
@@ -182,7 +178,6 @@ export default {
   },
 
   created() {
-
     getMenuTree({}).then((res) => {
       if (res.code == 0) {
         this.roleTree = res.data
@@ -193,7 +188,6 @@ export default {
   },
 
   methods: {
-
     reset() {
       this.queryParam.queryText = ''
       this.handleOk()

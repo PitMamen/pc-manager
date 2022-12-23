@@ -61,7 +61,6 @@
         <div class="table-operator" style="overflow: hidden" v-if="hasPerm('sysMenu:add')">
           <a-button
             v-if="hasPerm('sysMenu:add')"
-            type="primary"
             icon="plus"
             style="float: right; margin-right: 0; margin-top: 10px"
             @click="$refs.addForm.add(undefined, currentItem)"

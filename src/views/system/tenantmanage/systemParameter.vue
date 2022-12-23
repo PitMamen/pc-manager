@@ -30,20 +30,7 @@
             item.tenantName
           }}</a-select-option>
         </a-select>
-        <!-- <a-tree-select
-          v-model="queryParamsData.tenantId"
-          style="min-width: 120px"
-          :tree-data="treeData"
-          placeholder="请选择"
-          tree-default-expand-all
-        >
-        </a-tree-select> -->
       </div>
-
-      <!-- <div class="search-row">
-        <span class="name">状态:</span>
-        <a-switch :checked="isOpen" @click="goOpen" />
-      </div> -->
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -51,10 +38,10 @@
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
-      <div class="div-divider1" style="margin-top: 20px"></div>
-      <div class="table-operator" style="overflow: hidden">
+     
+    </div>
+    <div class="table-operator" style="overflow: hidden">
         <a-button
-          type="primary"
           icon="plus"
           style="float: right; margin-right: 0"
           @click="addParameter()"
@@ -62,7 +49,6 @@
           >新增</a-button
         >
       </div>
-    </div>
 
     <s-table
       ref="table"
