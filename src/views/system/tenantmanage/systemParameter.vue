@@ -40,7 +40,7 @@
       </div>
      
     </div>
-    <div class="table-operator" style="overflow: hidden">
+     <div class="table-operator" style="overflow: hidden">
         <a-button
           icon="plus"
           style="float: right; margin-right: 0"
@@ -316,7 +316,7 @@ export default {
 }
 </script>
       
-      <style lang="less">
+      <style lang="less" scoped>
 .ant-select-selection {
   .ant-select-selection-single {
     width: 128px !important;

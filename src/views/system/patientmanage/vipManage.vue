@@ -1,6 +1,6 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs v-model="keyindex" @change="chanage"   >
+    <a-tabs v-model="keyindex" @change="chanage" style="margin-top:-12px"   >
       <a-tab-pane  v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName" >
         <div style="height: 1px"></div>
       </a-tab-pane>
