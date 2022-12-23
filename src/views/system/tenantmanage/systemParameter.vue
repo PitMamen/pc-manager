@@ -316,6 +316,26 @@ export default {
   }
 }
 
+.card-right-pac {
+  overflow: hidden;
+  width: 100%;
+
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
+  }
+  button {
+    margin-right: 8px;
+  }
+
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+  }
+}
+
 .div-divider1 {
   margin-bottom: 0.5%;
   margin-top: 0.5%;
