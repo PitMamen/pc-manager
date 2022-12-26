@@ -14,7 +14,7 @@
   </template>
     <div class="div-service-user" >
       <!-- 左边 -->
-      <div class="div-totalleft">
+      <div class="div-totalleft" style="width:75%">
         <!-- <div class="div-totaltopleft">
           <span class="span-item-name" style="margin-left: 20px; width: 30%;display: inline-block; margin-top: 3px;"> 添加任务</span>
         </div> -->
@@ -58,7 +58,7 @@
           <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
           <a-radio-group
             name="radioGroup"
-            style="width: 50%; margin-top: 10px"
+            style=" margin-top: 10px;margin-left: -20px;"
             @change="radioChange"
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
           >
@@ -229,14 +229,14 @@ export default {
       id: '', //表名ID
       rangeValue: '2',
       record: {},
-      messageContentType: '',
+      messageContentType: undefined,
       queryParams: {
         execDoctorUserId: '',
         executeDepartmentId: '',
         userId: '',
         tenantId: '',
-        messageType: '',
-        messageContentType: '',
+        messageType: undefined,
+        messageContentType: undefined,
         messageContentId: '',
         hospitalCode: '',
         executeTime: '2022-11-01',
@@ -274,7 +274,6 @@ export default {
     //初始化方法
     distribution(record) {
       this.visible = true
-      console.log("记录啊：",record)
       this.reset()
       this.confirmLoading = true
       this.recordList = []
@@ -284,9 +283,9 @@ export default {
       this.getmessageTypes()
       this.getSmsTemplateListForJumpTypeOut()
       this.getWxTemplateListForJumpTypeOut()
-      this.title = record.name+"  |   "+record.sex+"    |    "+record.age
-      // let user = Vue.ls.get(TRUE_USER)
-      // console.log('user:', user)
+      // this.title = record.name+'\xa0' | '+record.sex+' | '+record.age
+
+       this.title = record.name+'\xa0'+'\xa0'+" |   "+record.sex+"    |  "+'\xa0'+record.age
     },
 
     /**
@@ -500,11 +499,11 @@ export default {
      * 重置
      */
     reset() {
-      this.messageContentType = ''
+      this.messageContentType = undefined
       this.queryParams.executeTime = ''
       this.timeStr = ''
-      this.queryParams.messageType = ''
-      this.queryParams.messageContentType = ''
+      this.queryParams.messageType = undefined
+      this.queryParams.messageContentType = undefined
       this.queryParams.messageContentId = ''
     },
 
