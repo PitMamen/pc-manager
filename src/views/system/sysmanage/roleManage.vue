@@ -142,7 +142,7 @@ export default {
 
         {
           title: '操作',
-          width: '150px',
+          width: '80px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -214,7 +214,7 @@ export default {
         if (res.code == 0) {
           this.$message.success('操作成功')
           record.isSuggest = !record.isSuggest
-
+          this.handleOk()
           setTimeout(() => {
             record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
           }, 200)
