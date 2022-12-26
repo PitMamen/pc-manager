@@ -14,23 +14,16 @@
       </div>
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <!-- <a-select
-          v-model="queryParams.departmentName"
-          placeholder="请选择科室"
-          allow-clear
-          style="width: 120px"
-          @change="onDepartmentChange"
-        >
-          <a-select-option v-for="(item, index) in originData" :key="index">{{ item.departmentName }}</a-select-option>
-        </a-select> -->
+
         <a-select
-          class="deptselect"
+          class="deptselect-single"
           show-search
           v-model="queryParams.executeDepartment"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
           placeholder="请选择科室"
+          @change="onDepartmentSelectChange"
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
@@ -113,6 +106,7 @@ export default {
   },
   data() {
     return {
+      fetching: false,
       user: {},
       keshiData: [],
       originData: [],
@@ -135,7 +129,7 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-      fetching: false,
+      
       // 表头
       columns: [
         {
@@ -198,15 +192,7 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route(to, from) {
-  //     console.log('watch----serviceList out', to, from)
-  //     if (to.path.indexOf('serviceList') > -1) {
-  //       console.log('watch----serviceList', to, from)
-  //       this.refresh()
-  //     }
-  //   },
-  // },
+
 
   mounted() {
     //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
@@ -220,7 +206,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-    this.getDepartmentSelectList('')
+    this.getDepartmentSelectList(undefined)
   },
   methods: {
     refresh() {
@@ -249,7 +235,16 @@ export default {
     },
     //科室搜索
     onDepartmentSelectSearch(value) {
+      this.originData = []
       this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+      this.$refs.table.refresh(true)
     },
 
     onSwitchChange(value) {

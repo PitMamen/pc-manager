@@ -63,7 +63,7 @@
               @blur="goSearch"
               @keyup.enter="goSearch"
               @search="goSearch"
-              style="width: 120px;"
+              style="width: 120px"
             />
           </div>
           <div class="search-row">
@@ -74,14 +74,26 @@
               placeholder="请输入手机号"
               @keyup.enter="goSearch"
               @search="goSearch"
-              style="width: 120px;"
+              style="width: 120px"
             />
           </div>
           <div class="search-row">
             <span class="name">执行科室:</span>
-            <a-select allow-clear v-model="queryParams.executeDepartmentId" placeholder="请选择科室" style="width: 120px;">
-              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                item.departmentName
+
+            <a-select
+              style="width: 150px;"
+              show-search
+              v-model="queryParams.executeDepartmentId"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              placeholder="请选择科室"
+              @change="onDepartmentSelectChange"
+              @search="onDepartmentSelectSearch"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+                item.department_name
               }}</a-select-option>
             </a-select>
           </div>
@@ -90,7 +102,7 @@
             v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
           >
             <span class="name">随访方式:</span>
-            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px;">
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -98,7 +110,7 @@
           </div>
           <div class="search-row" v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 4">
             <span class="name">是否逾期:</span>
-            <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态" style="width: 120px;">
+            <a-select allow-clear v-model="queryParams.overdueStatus" placeholder="请选择逾期状态" style="width: 120px">
               <a-select-option v-for="(item, index) in overdueData" :key="index" :value="item.code">{{
                 item.name
               }}</a-select-option>
@@ -106,7 +118,7 @@
           </div>
           <div class="search-row" v-if="queryParams.queryStatus != 4">
             <span class="name">是否暂挂:</span>
-            <a-select allow-clear v-model="queryParams.hangStatus" placeholder="请选择暂挂状态" style="width: 120px;">
+            <a-select allow-clear v-model="queryParams.hangStatus" placeholder="请选择暂挂状态" style="width: 120px">
               <a-select-option v-for="(item, index) in hangData" :key="index" :value="item.code">{{
                 item.name
               }}</a-select-option>
@@ -192,6 +204,7 @@ import followModel from './followModel'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import {
+  getDepartmentListForSelect,
   qryPhoneFollowTaskStatistics,
   qryPhoneFollowTask,
   messageTypes,
@@ -205,6 +218,7 @@ export default {
   },
   data() {
     return {
+      fetching: false,
       isOpen: true,
       childrenDrawer: true,
       isDoubled: false,
@@ -745,7 +759,8 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.getDeptsOut()
+    this.getDepartmentSelectList(undefined)
+    // this.getDeptsOut()
     this.initData(true)
     messageTypes().then((res) => {
       if (res.code == 0) {
@@ -1005,7 +1020,30 @@ export default {
         })
       }
     },
-
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      console.log('onDepartmentSelectChange', value)
+      if (value === undefined) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+      this.$refs.table.refresh(true)
+    },
     //随访任务逾期状态;1:未逾期2:已逾期
     getClass(status) {
       if (status.value == 2) {
@@ -1065,6 +1103,7 @@ export default {
 }
 </script>
     <style lang="less" scoped>
+ 
 .div-divider {
   margin-top: 1%;
   margin-bottom: 1%;

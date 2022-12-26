@@ -3,7 +3,7 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <a-select
+        <!-- <a-select
           class="sitemore"
           v-model="queryParams.executeDepartmentIds"
           style="min-width: 120px; height: 28px; padding-bottom: 0px"
@@ -15,6 +15,25 @@
         >
           <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
+          }}</a-select-option>
+        </a-select> -->
+        <a-select
+          class="deptselect-mult"
+          :maxTagCount="1"
+          :collapse-tags="true"
+          show-search
+          v-model="queryParams.executeDepartmentIds"
+          mode="multiple"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请选择科室"
+          @change="onDepartmentSelectChange"
+          @search="onDepartmentSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+            item.department_name
           }}</a-select-option>
         </a-select>
       </div>
@@ -201,7 +220,9 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)">详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)">{{ getText(record.auditResultStatus.value) }}</a>
+        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)">{{
+          getText(record.auditResultStatus.value)
+        }}</a>
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
       </span>
@@ -236,7 +257,7 @@ import transfer from './transfer'
 import check from './check'
 import followModel from '../servicewise/followModel'
 import {
-  getDeptsPersonal,
+  getDepartmentListForSelect,
   getDepts,
   followList, //随访任务列表
   questionnaires, //问卷列表
@@ -257,6 +278,7 @@ export default {
   },
   data() {
     return {
+      fetching: false,
       showLine: true,
       dealResultTitle: '处理结果',
       totalCount: 0,
@@ -398,23 +420,25 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-          this.$refs.table.refresh(true)
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-          this.$refs.table.refresh(true)
-        }
-      })
-    }
+    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //   getDepts().then((res) => {
+    //     if (res.code == 0) {
+    //       this.originData = res.data
+    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
+    //       this.$refs.table.refresh(true)
+    //     }
+    //   })
+    // } else {
+    //   getDeptsPersonal().then((res) => {
+    //     if (res.code == 0) {
+    //       this.originData = res.data
+    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
+    //       this.$refs.table.refresh(true)
+    //     }
+    //   })
+    // }
+
+    this.getDepartmentSelectList(undefined)
 
     this.createValue = [
       moment(this.formatDate(new Date()), this.dateFormat),
@@ -485,7 +509,6 @@ export default {
       this.selectedRows = selectedRows
     },
 
-
     /**
      * 随访医生列表 (先选中科室)
      */
@@ -512,7 +535,29 @@ export default {
       console.log('00000', this.queryParams.executeDepartmentIds)
       this.getUsersByDeptIdsAndRolesOut()
     },
-
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined || value.length == 0) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+      this.getUsersByDeptIdsAndRolesOut()
+    },
     /**
      *
      * @单个查看详情
@@ -552,9 +597,9 @@ export default {
     /***
      * 显示隐藏 审核按钮  （待随访的  不显示审核 和 查看 操作）
      */
-    showOrHide(record,type) {
-      console.log("999999:",record.auditResultStatus.value)
-      
+    showOrHide(record, type) {
+      console.log('999999:', record.auditResultStatus.value)
+
       // if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
       if (this.queryParams.type == 1) {
         this.showLine = false
@@ -966,12 +1011,12 @@ export default {
         this.queryParams.auditStatus = ''
         this.queryParams.overdueStatus = 2
       }
-        this.daisuif = '待随访',
-        this.flowsuccess = '随访成功',
-        this.flowfail = '随访失败',
-        this.flowoverdue = '随访逾期',
+      ;(this.daisuif = '待随访'),
+        (this.flowsuccess = '随访成功'),
+        (this.flowfail = '随访失败'),
+        (this.flowoverdue = '随访逾期'),
         this.$refs.table.refresh()
-        this.updateSelect()
+      this.updateSelect()
     },
 
     onChange(momentArr, dateArr) {
@@ -1008,8 +1053,8 @@ export default {
 
     //更新选中
     updateSelect() {
-      this.selectedRowKeys=[]
-      this.selectedRows=[]
+      this.selectedRowKeys = []
+      this.selectedRows = []
       this.$refs.table.updateSelect(this.selectedRowKeys, [])
       this.$refs.table.updateSelect(this.selectedRows, [])
     },

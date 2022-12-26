@@ -30,22 +30,28 @@
         <div class="table-page-search-wrapper">
           <div class="search-row">
             <span class="name">执行科室:</span>
+
             <a-select
-              style="width: 120px"
-              allow-clear
-              @select="onDeptSelect"
+              class="deptselect-single"
+              show-search
               v-model="queryParams.executeDepartmentId"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
               placeholder="请选择科室"
+              @change="onDepartmentSelectChange"
+              @search="onDepartmentSelectSearch"
             >
-              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentId">{{
-                item.departmentName
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+                item.department_name
               }}</a-select-option>
             </a-select>
           </div>
 
           <div class="search-row">
             <span class="name">执行结果:</span>
-            <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择" style="width: 120px;">
+            <a-select allow-clear v-model="queryParams.taskBizStatus" placeholder="请选择" style="width: 120px">
               <a-select-option v-for="(item, index) in taskBizStatusData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -54,7 +60,13 @@
 
           <div class="search-row">
             <span class="name">随访医生:</span>
-            <a-select @focus="getFocus" allow-clear v-model="queryParams.actualDoctorUserId" placeholder="请选择" style="width: 120px;">
+            <a-select
+              @focus="getFocus"
+              allow-clear
+              v-model="queryParams.actualDoctorUserId"
+              placeholder="请选择"
+              style="width: 120px"
+            >
               <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
                 item.userName
               }}</a-select-option>
@@ -63,7 +75,7 @@
 
           <div class="search-row">
             <span class="name">随访方式:</span>
-            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px;">
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -88,7 +100,7 @@
               @blur="goSearch"
               @keyup.enter="goSearch"
               @search="goSearch"
-              style="width: 120px;"
+              style="width: 120px"
             />
           </div>
 
@@ -215,6 +227,7 @@
 <script>
 import { STable } from '@/components'
 import {
+  getDepartmentListForSelect,
   questionnaires,
   getDepts,
   getDeptsPersonal,
@@ -243,6 +256,7 @@ export default {
 
   data() {
     return {
+      fetching: false,
       selectedRowKeys: [], // Check here to configure the default column
       // 高级搜索 展开/关闭
       advanced: false,
@@ -552,41 +566,43 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          res.data.unshift({ departmentName: '全部', departmentId: -1 })
-          for (let i = 0; i < res.data.length; i++) {
-            // this.$set(res.data[i], 'xh', i + 1)
-            if (i == 0) {
-              this.$set(res.data[i], 'isChecked', true)
-            } else {
-              this.$set(res.data[i], 'isChecked', false)
-            }
-          }
-          // this.keshiData = res.data
-          // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-          this.originData = JSON.parse(JSON.stringify(res.data))
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          res.data.unshift({ departmentName: '全部', departmentId: -1 })
-          for (let i = 0; i < res.data.length; i++) {
-            // this.$set(res.data[i], 'xh', i + 1)
-            if (i == 0) {
-              this.$set(res.data[i], 'isChecked', true)
-            } else {
-              this.$set(res.data[i], 'isChecked', false)
-            }
-          }
-          // this.keshiData = res.data
-          // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
-          this.originData = JSON.parse(JSON.stringify(res.data))
-        }
-      })
-    }
+    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //   getDepts().then((res) => {
+    //     if (res.code == 0) {
+    //       res.data.unshift({ departmentName: '全部', departmentId: -1 })
+    //       for (let i = 0; i < res.data.length; i++) {
+    //         // this.$set(res.data[i], 'xh', i + 1)
+    //         if (i == 0) {
+    //           this.$set(res.data[i], 'isChecked', true)
+    //         } else {
+    //           this.$set(res.data[i], 'isChecked', false)
+    //         }
+    //       }
+    //       // this.keshiData = res.data
+    //       // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+    //       this.originData = JSON.parse(JSON.stringify(res.data))
+    //     }
+    //   })
+    // } else {
+    //   getDeptsPersonal().then((res) => {
+    //     if (res.code == 0) {
+    //       res.data.unshift({ departmentName: '全部', departmentId: -1 })
+    //       for (let i = 0; i < res.data.length; i++) {
+    //         // this.$set(res.data[i], 'xh', i + 1)
+    //         if (i == 0) {
+    //           this.$set(res.data[i], 'isChecked', true)
+    //         } else {
+    //           this.$set(res.data[i], 'isChecked', false)
+    //         }
+    //       }
+    //       // this.keshiData = res.data
+    //       // this.keshiDataTemp = JSON.parse(JSON.stringify(this.keshiData))
+    //       this.originData = JSON.parse(JSON.stringify(res.data))
+    //     }
+    //   })
+    // }
+
+    this.getDepartmentSelectList(undefined)
 
     taskBizStatus().then((res) => {
       if (res.code == 0) {
@@ -684,6 +700,35 @@ export default {
       this.getDeptAllQues()
     },
 
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (departmentName === undefined) {
+          res.data.records.unshift({ department_name: '全部', department_id: -1 })
+        }
+
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      console.log('onDepartmentSelectChange', value)
+      if (value === undefined) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+      this.getUsersByDeptIdAndRoleOut()
+      // this.$refs.table.refresh(true)
+    },
     /**
      * 选名单过滤前先选名单来源
      */
@@ -896,7 +941,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .div-service-control {
   width: 100%;
   overflow: hidden;
