@@ -5,17 +5,25 @@
         <div class="table-page-search-wrapper">
           <div class="search-row">
             <span class="name">科室:</span>
+
+
             <a-select
+              class="deptselect-mult"
               :maxTagCount="1"
               :collapse-tags="true"
-              allow-clear
+              show-search
               v-model="idArr"
               mode="multiple"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
               placeholder="请选择科室"
-              style="min-width: 120px; align-items: center;margin-top: -2px;"
+              @change="onDepartmentSelectChange"
+              @search="onDepartmentSelectSearch"
             >
-              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.departmentName">{{
-                item.departmentName
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_name">{{
+                item.department_name
               }}</a-select-option>
             </a-select>
           </div>
@@ -54,17 +62,24 @@
         <div class="table-page-search-wrapper">
           <div class="search-row">
             <span class="name">科室:</span>
+
             <a-select
+              class="deptselect-mult"
               :maxTagCount="1"
               :collapse-tags="true"
-              allow-clear
+              show-search
               v-model="idArrStat"
               mode="multiple"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
               placeholder="请选择科室"
-              style="min-width: 120px"
+              @change="onDepartmentSelectChange2"
+              @search="onDepartmentSelectSearch2"
             >
-              <a-select-option v-for="(item, index) in originDataStat" :key="index" :value="item.departmentName">{{
-                item.departmentName
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in originDataStat" :key="index" :value="item.department_name">{{
+                item.department_name
               }}</a-select-option>
             </a-select>
           </div>
@@ -102,7 +117,13 @@
 
 <script>
 import { STable } from '@/components'
-import { getAllQuestions, getDepts, getDeptsPersonal, getAllQuestionsStat } from '@/api/modular/system/posManage'
+import {
+  getAllQuestions,
+  getDepts,
+  getDeptsPersonal,
+  getAllQuestionsStat,
+  getDepartmentListForSelect,
+} from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addForm from './addForm'
@@ -117,6 +138,7 @@ export default {
 
   data() {
     return {
+      fetching: false,
       // 高级搜索 展开/关闭
       advanced: false,
       hosData: [{ code: '444885559', value: '湘雅附二医院' }],
@@ -228,18 +250,7 @@ export default {
           params.typeName = '-1'
         }
 
-        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
 
-        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
-          this.originData.forEach((item, index) => {
-            if (index != this.originData.length - 1) {
-              params.typeName = params.typeName + item.departmentName + ','
-            } else {
-              params.typeName = params.typeName + item.departmentName
-            }
-          })
-        }
-        // params.typeName = '123'
         console.log('params', parameter)
         return getAllQuestions(Object.assign(parameter, params)).then((res) => {
           if (res.code == 0) {
@@ -288,18 +299,7 @@ export default {
           params.typeName = '-1'
         }
 
-        //非超管和随访管理员时，清空了查科室随访员管理的所有科室
-        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArrStat.length == 0) {
-          this.originDataStat.forEach((item, index) => {
-            if (index != this.idArrStat.length - 1) {
-              params.typeName = params.typeName + item.departmentName + ','
-            } else {
-              params.typeName = params.typeName + item.departmentName
-            }
-          })
-        }
 
-        // params.typeName = '123'
         console.log('paramsStat', parameter)
         console.log('paramsStatAs', Object.assign(parameter, params))
         return getAllQuestionsStat(Object.assign(parameter, params)).then((res) => {
@@ -342,45 +342,66 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.originDataStat = JSON.parse(JSON.stringify(res.data))
-          this.$refs.table.refresh()
-          this.$refs.tableStat.refresh()
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.originDataStat = JSON.parse(JSON.stringify(res.data))
-          //非全量的，给科室数组重写
-          if (this.originData.length > 0) {
-            this.originData.forEach((item, index) => {
-              this.idArr.push(item.departmentName)
-            })
+  
 
-            this.idArrStat = JSON.parse(JSON.stringify(this.idArr))
-          } else {
-            this.isNoDepart = true
-            this.idArr = []
-            this.idArrStat = []
-          }
-          this.$refs.table.refresh()
-          this.$refs.tableStat.refresh()
-        }
-      })
-    }
+    //问卷列表科室  
+    this.getDepartmentSelectList(undefined) 
+    //问卷统计科室
+    this.getDepartmentSelectList2(undefined) 
   },
 
   methods: {
     toggleAdvanced() {
       this.advanced = !this.advanced
     },
-
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined || value.length==0) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+        this.$refs.table.refresh(true)
+      }
+    },
+    //获取管理的科室 可首拼
+    getDepartmentSelectList2(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originDataStat = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch2(value) {
+      this.originData = []
+      this.getDepartmentSelectList2(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange2(value) {
+      console.log('onDepartmentSelectChange2', value)
+      if (value === undefined || value.length==0) {
+        this.originData = []
+        this.getDepartmentSelectList2(undefined)
+        this.$refs.tableStat.refresh(true)
+      }
+  
+    },
     handleStatus(record) {
       record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
       changeStatus(record)
@@ -470,7 +491,7 @@ button {
     vertical-align: middle;
   }
   .search-row {
-    /deep/.ant-select-selection__rendered{
+    /deep/.ant-select-selection__rendered {
       margin-top: -2px !important;
     }
 
@@ -480,8 +501,6 @@ button {
     .name {
       margin-right: 10px;
     }
-   
-
   }
 }
 .table-operator {

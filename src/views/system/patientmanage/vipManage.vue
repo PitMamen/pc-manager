@@ -19,7 +19,7 @@
       </div>
       <div class="search-row">
         <span class="name">管理科室:</span>
-        <a-select
+        <!-- <a-select
           :maxTagCount="1"
           mode="multiple"
           v-model="depts"
@@ -29,6 +29,25 @@
         >
           <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
+          }}</a-select-option>
+        </a-select> -->
+        <a-select       
+        style="min-width: 150px; height: 28px;"
+          :maxTagCount="1"
+          :collapse-tags="true"
+          show-search
+          v-model="depts"
+          mode="multiple"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请选择科室"
+          @change="onDepartmentSelectChange"
+          @search="onDepartmentSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id" >{{
+            item.department_name
           }}</a-select-option>
         </a-select>
       </div>
@@ -91,6 +110,7 @@ import { STable } from '@/components'
 import followModel from '../servicewise/followModel'
 import visitManage from './visitManage'
 import {
+  getDepartmentListForSelect,
   getDeptsPersonal,
   getDepts,
   qryMetaConfigureDetailFilter,
@@ -110,6 +130,7 @@ export default {
   },
   data() {
     return {
+      fetching: false,
       tableClumns: [],
       chooseArrOrigin: [],
       user: {},
@@ -214,7 +235,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '140px',
+          width: '120px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -316,29 +337,54 @@ export default {
 
     this.user = Vue.ls.get(TRUE_USER)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-          this.$refs.table.refresh(true)
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-          this.$refs.table.refresh(true)
-        }
-      })
-    }
+    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //   getDepts().then((res) => {
+    //     if (res.code == 0) {
+    //       this.originData = res.data
+    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
+    //       this.$refs.table.refresh(true)
+    //     }
+    //   })
+    // } else {
+    //   getDeptsPersonal().then((res) => {
+    //     if (res.code == 0) {
+    //       this.originData = res.data
+    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
+    //       this.$refs.table.refresh(true)
+    //     }
+    //   })
+    // }
+    this.getDepartmentSelectList(undefined)
   },
   methods: {
     refresh() {
       this.$refs.table.refresh(true)
     },
-
+   //获取管理的科室 可首拼
+   getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          if(departmentName === undefined){
+            res.data.records.unshift({ department_name: '全部', department_id: -1 })
+          }
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined || value.length == 0) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+    },
     chanage(tableName) {
       // console.log("VVVV:",tableName)
       this.tableName = tableName

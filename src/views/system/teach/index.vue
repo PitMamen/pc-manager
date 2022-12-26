@@ -29,7 +29,7 @@
         </div>
         <div class="left-content" v-if="tabKey == 2">
           <div class="ksview" v-for="(item, index) in originData" :key="index" @click="onDepartmentChange(item)">
-            <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.departmentName }}</div>
+            <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.department_name }}</div>
             <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
           </div>
         </div>
@@ -111,6 +111,7 @@ import Vue from 'vue'
 import {
   pushArticle,
   modifyArticle,
+  getDepartmentListForSelect,
   delArticle,
   getDepts,
   getDeptsPersonal,
@@ -218,15 +219,15 @@ export default {
 
         //非超管和随访管理员时，清空了查科室随访员管理的所有科室
 
-        if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
-          this.originData.forEach((item, index) => {
-            if (index != this.idArr.length - 1) {
-              params.deptCode = params.deptCode + item.departmentId + ','
-            } else {
-              params.deptCode = params.deptCode + item.departmentId
-            }
-          })
-        }
+        // if (!(this.user.roleId == 7 || this.user.roleName == 'admin') && this.idArr.length == 0) {
+        //   this.originData.forEach((item, index) => {
+        //     if (index != this.idArr.length - 1) {
+        //       params.deptCode = params.deptCode + item.departmentId + ','
+        //     } else {
+        //       params.deptCode = params.deptCode + item.departmentId
+        //     }
+        //   })
+        // }
         return getArticleList(Object.assign(parameter, params)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
@@ -284,7 +285,7 @@ export default {
     // })
 
     this.getArticleCategoryListOut()
-    this.getDeptsOut()
+    this.getDepartmentSelectList()
   },
 
   methods: {
@@ -295,11 +296,28 @@ export default {
       this.queryParam.departmentId = ''
 
       this.getArticleCategoryListOut()
-      this.getDeptsOut()
+      this.getDepartmentSelectList()
       this.idArr = []
       this.$refs.table.refresh()
     },
-
+//获取管理的科室 可首拼
+getDepartmentSelectList(departmentName) {
+      
+      getDepartmentListForSelect(departmentName).then((res) => {
+       
+        if (res.code == 0) {
+          res.data.records.forEach((item) => {
+              item.checked = false
+            })
+            res.data.records.unshift({
+              department_name: '全院',
+              department_id: -1,
+              checked: true,
+            })
+          this.originData = res.data.records
+        }
+      })
+    },
     getDeptsOut() {
       this.user = Vue.ls.get(TRUE_USER)
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
@@ -354,10 +372,10 @@ export default {
       console.log(item)
       item.checked = !item.checked
       var depts = ''
-      if (item.departmentId == -1) {
+      if (item.department_id == -1) {
         this.originData.forEach((e) => {
         
-          if (e.departmentId != -1) {
+          if (e.department_id != -1) {
             e.checked = false
             
           }
@@ -367,12 +385,12 @@ export default {
       }else{
         this.originData.forEach((e) => {
         if (e.checked) {
-          if (e.departmentId != -1) {
+          if (e.department_id != -1) {
             this.originData[0].checked = false
             if (depts) {
-              depts = depts + ',' + e.departmentId
+              depts = depts + ',' + e.department_id
             } else {
-              depts = e.departmentId + ''
+              depts = e.department_id + ''
             }
           }
         }

@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false" class="card-right-pac" :confirmLoading="confirmLoading">
+  <a-card :bordered="false" class="sys-card" :confirmLoading="confirmLoading">
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">姓名:</span>
@@ -13,8 +13,8 @@
         />
       </div>
       <div class="search-row">
-        <span class="name">科室管理:</span>
-        <a-select
+        <span class="name">管理科室:</span>
+        <!-- <a-select
           class="sitemore"
           style="min-width: 120px; height: 28px; padding-bottom: 0px"
           :title="queryParams.depts"
@@ -26,6 +26,25 @@
         >
           <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
             item.departmentName
+          }}</a-select-option>
+        </a-select> -->
+        <a-select       
+        style="min-width: 150px; height: 28px;"
+          :maxTagCount="1"
+          :collapse-tags="true"
+          show-search
+          v-model="queryParams.depts"
+          mode="multiple"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请选择科室"
+          @change="onDepartmentSelectChange"
+          @search="onDepartmentSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id" >{{
+            item.department_name
           }}</a-select-option>
         </a-select>
       </div>
@@ -40,6 +59,7 @@
       <!-- <div class="div-divider"></div> -->
     </div>
     <s-table
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -68,7 +88,7 @@
 <script>
 import { STable } from '@/components'
 
-import { qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
+import { getDepartmentListForSelect, qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
 import followModel from '../servicewise/followModel'
@@ -82,6 +102,7 @@ export default {
   },
   data() {
     return {
+      fetching: false,
       user: {},
       keshiData: [],
       originData: [],
@@ -108,58 +129,58 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-          width: 60,
+        
           size: 12,
         },
         {
           title: '姓名',
           dataIndex: 'name',
-          width: 80,
+         
           ellipsis: true,
           size: 12,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
-          width: 140,
+         
           ellipsis: true,
           size: 12,
         },
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 60,
+         
           size: 12,
         },
         {
           title: '性别',
           dataIndex: 'sex',
-          width: 60,
+         
           size: 12,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
-          width: 120,
+        
           size: 12,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
-          width: 120,
+         
           ellipsis: true,
           size: 12,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
-          width: 120,
+        
           size: 12,
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
-          width: 170,
+         
           size:12,
           ellipsis:true,
         },
@@ -167,13 +188,13 @@ export default {
         {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
-          width: 80,
+         
           size: 12,
         },
         {
           size: 12,
           title: '操作',
-          width: '180px',
+          width: '150px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -211,29 +232,22 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-        }
-      })
-    } else {
-      getDeptsPersonal().then((res) => {
-        if (res.code == 0) {
-          this.originData = res.data
-          // var departmentIds = []
-          // res.data.forEach((item, index) => {
-          //   departmentIds = departmentIds + item.departmentId
-          //   if (index < res.data.length - 1) {
-          //     departmentIds.push(item.departmentId)
-          //   }
-          // })
-          // console.log(departmentIds)
-          // this.queryParams.depts= departmentIds
-          this.$refs.table.refresh(true)
-        }
-      })
-    }
+    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //   getDepts().then((res) => {
+    //     if (res.code == 0) {
+    //       this.originData = res.data
+    //     }
+    //   })
+    // } else {
+    //   getDeptsPersonal().then((res) => {
+    //     if (res.code == 0) {
+    //       this.originData = res.data
+
+    //       this.$refs.table.refresh(true)
+    //     }
+    //   })
+    // }
+    this.getDepartmentSelectList(undefined)
   },
   methods: {
     editPlan(record) {
@@ -268,6 +282,28 @@ export default {
         // console.log("ssss:",this.queryParams.depts)
       }
     },
+     //获取管理的科室 可首拼
+     getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined || value.length == 0) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+    },
     /**
      * 重置
      */
@@ -293,7 +329,13 @@ export default {
   },
 }
 </script>
-<style lang="less">
+<style lang="less" scoped>
+ /deep/.ant-select-selection__rendered {
+      margin-top: -2px !important;
+    }
+    /deep/.ant-select-selection__placeholder{
+      margin-top: -8px !important;
+    }
 .ant-select-selection--multiple {
   min-height: 28px;
   cursor: text;
@@ -310,7 +352,7 @@ export default {
   .ant-select-selection--multiple {
     width: 100%;
     height: 28px;
-    padding-bottom: 0px !important;
+    padding-bottom: 2px !important;
     /deep/ .ant-select-selection__rendered {
       height: 100%;
       ul {
@@ -361,9 +403,12 @@ export default {
     vertical-align: middle;
   }
   .search-row {
+   
+
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
+    
     .name {
       margin-right: 10px;
     }

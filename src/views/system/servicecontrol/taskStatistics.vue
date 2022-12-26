@@ -23,7 +23,7 @@
 
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <a-select
+        <!-- <a-select
           class="sitemore"
           :maxTagCount="1"
           :collapse-tags="true"
@@ -40,15 +40,35 @@
             :key="index"
             >{{ item.departmentName }}</a-select-option
           >
+        </a-select> -->
+        <a-select
+          class="sitemore"
+          style="min-width: 150px; height: 28px"
+          :maxTagCount="1"
+          :collapse-tags="true"
+          show-search
+          v-model="queryParamsStatisit.execDept"
+          mode="multiple"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请选择科室"
+          @change="onDepartmentSelectChange"
+          @search="onDepartmentSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+            item.department_name
+          }}</a-select-option>
         </a-select>
       </div>
 
-      <div class="search-row" style="margin-left: 15px;padding-bottom: 0%;">
+      <div class="search-row" style="margin-left: 15px; padding-bottom: 0%">
         <span class="name">时间:</span>
-        <a-range-picker :value="createValue" @change="onChange" style="height:28px !important"  />
+        <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important" />
       </div>
 
-      <div class="action-row" >
+      <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.tableStat.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
@@ -59,10 +79,10 @@
     <!-- :scroll="{ y: 700, x: 0 }"  -->
     <!--  style="overflow-y: auto" -->
     <s-table
-    class="table-hover-hidden"
+      class="table-hover-hidden"
       :showPagination="false"
-      style="overflow-y: auto;width: 101%;"
-      :scroll="{ y: 700,x: 0 }"
+      style="overflow-y: auto; width: 101%"
+      :scroll="{ y: 700, x: 0 }"
       bordered
       ref="tableStat"
       size="default"
@@ -85,13 +105,10 @@
       <span slot="action_overdue" slot-scope="text, record">
         <a @click="$refs.statisitDetail.checkDetail(record, 4)">{{ record.overdue }}</a>
       </span>
-      
-      <span slot="action_number" slot-scope="text,record">
+
+      <span slot="action_number" slot-scope="text, record">
         <a @click="$refs.statisitDetail.checkDetail(record, 5)">{{ record.undoTask }}</a>
       </span>
-
-
-
 
       <template v-if="queryParamsStatisit.statType == 1" slot="titleNNN">按随访方案</template>
       <template v-if="queryParamsStatisit.statType == 2" slot="titleNNN">按执行科室</template>
@@ -105,7 +122,12 @@
   <script>
 import moment from 'moment'
 import { STable } from '@/components'
-import { getDepts, getDeptsPersonal, statExecuteRecord } from '@/api/modular/system/posManage'
+import {
+  getDepartmentListForSelect,
+  getDepts,
+  getDeptsPersonal,
+  statExecuteRecord,
+} from '@/api/modular/system/posManage'
 import statisitDetail from './statisitDetail'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -221,7 +243,6 @@ export default {
           dataIndex: 'failRate',
         },
 
-
         {
           title: '待执行',
           dataIndex: 'undoTask',
@@ -232,7 +253,6 @@ export default {
           dataIndex: 'undoTaskRate',
         },
 
-
         {
           title: '逾期数',
           dataIndex: 'overdue',
@@ -242,12 +262,10 @@ export default {
           title: '逾期率',
           dataIndex: 'overdueRate',
         },
-
-     
       ],
 
       user: {},
-
+      fetching: false,
       StatisticsMode: [
         { code: 3, value: '按问卷' },
         { code: 1, value: '按随访方案' },
@@ -304,47 +322,49 @@ export default {
     console.log('csscsc:', this.user)
     this.confirmLoading = true
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-      getDepts()
-        .then((res) => {
-          if (res.code == 0) {
-            this.originData = res.data
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    } else {
-      getDeptsPersonal()
-        .then((res) => {
-          if (res.code == 0) {
-            this.originData = res.data
-            if (res.data.length == 0) {
-              this.queryParamsStatisit.execDept = ['暂无科室']
-            } else {
-              var departmentIds = []
-              res.data.forEach((item, index) => {
-                departmentIds.push(item.departmentId)
-              })
-              this.queryParamsStatisit.execDept = departmentIds
-            }
-            this.$refs.tableStat.refresh(true)
-            // var departmentIds = []
-            // res.data.forEach((item, index) => {
-            //   departmentIds = departmentIds + item.departmentId
-            //   if (index < res.data.length - 1) {
-            //     departmentIds.push(item.departmentId)
-            //   }
-            // })
-            // console.log(departmentIds)
-            // this.queryParams.depts= departmentIds
-            // this.$refs.table.refresh(true)
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    }
+    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //   getDepts()
+    //     .then((res) => {
+    //       if (res.code == 0) {
+    //         this.originData = res.data
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // } else {
+    //   getDeptsPersonal()
+    //     .then((res) => {
+    //       if (res.code == 0) {
+    //         this.originData = res.data
+    //         if (res.data.length == 0) {
+    //           this.queryParamsStatisit.execDept = ['暂无科室']
+    //         } else {
+    //           var departmentIds = []
+    //           res.data.forEach((item, index) => {
+    //             departmentIds.push(item.departmentId)
+    //           })
+    //           this.queryParamsStatisit.execDept = departmentIds
+    //         }
+    //         this.$refs.tableStat.refresh(true)
+    //         // var departmentIds = []
+    //         // res.data.forEach((item, index) => {
+    //         //   departmentIds = departmentIds + item.departmentId
+    //         //   if (index < res.data.length - 1) {
+    //         //     departmentIds.push(item.departmentId)
+    //         //   }
+    //         // })
+    //         // console.log(departmentIds)
+    //         // this.queryParams.depts= departmentIds
+    //         // this.$refs.table.refresh(true)
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // }
+
+    this.getDepartmentSelectList(undefined)
 
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
@@ -361,7 +381,28 @@ export default {
       this.queryParamsStatisit.beginDate = dateArr[0]
       this.queryParamsStatisit.endDate = dateArr[1]
     },
-
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined || value.length == 0) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+    },
     onSelected(ssks) {
       console.log('---------:', ssks)
       if (ssks == 1) {
@@ -390,13 +431,14 @@ export default {
   },
 }
 </script>
-  
-  <style lang="less">
- 
-  .ant-select-selection--multiple {
-    min-height: 28px;
-    cursor: text;
-    zoom: 1;
+
+
+  <style lang="less" >
+
+.ant-select-selection--multiple {
+  min-height: 28px;
+  cursor: text;
+  zoom: 1;
 }
 .sitemore {
   align-items: center;
@@ -405,8 +447,7 @@ export default {
     align-items: center;
   }
 
-  li{
-
+  li {
     height: 24px;
     margin-top: 1px !important;
     line-height: 22px;
@@ -414,65 +455,38 @@ export default {
 
   margin-left: 5px;
   align-items: center;
-   .ant-select-selection--multiple {
+  .ant-select-selection--multiple {
     width: 100%;
     height: 28px;
     margin-top: 1px !important;
     padding-bottom: 0px !important;
-    /deep/ .ant-select-selection__rendered {
-      height: 100%;
-      ul {
-        width: 100%;
-        height: 28px;
-        margin-top: 1px !important;
-        overflow-y: hidden;
-        display: -webkit-box;
-        &::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-        }
-        &::-webkit-scrollbar-track {
-          background-color: #dedede;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: #bfbfbf;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        & li {
-          padding: 0px 10px 0px 5px;
-          box-sizing: border-box;
-          width: 75px;
-          float: unset;
-        }
-      }
+    /deep/.ant-select-selection__rendered {
+      margin-top: -2px !important;
     }
+    /deep/.ant-select-selection__placeholder{
+      margin-top: -8px !important;
+    }
+
   }
 }
-
 
 .table-hover-hidden {
   .ant-table-tbody > tr.ant-table-row:hover > td {
     background: none !important;
-}
+  }
   width: 100% !important;
   .table-hover-hidden .ant-table-body {
-    //  overflow: auto ; 
-}
-  /deep/table tbody tr:hover>td {
-      background: #E7F1FF !important;
-}
+    //  overflow: auto ;
+  }
+  /deep/table tbody tr:hover > td {
+    background: #e7f1ff !important;
+  }
   .ant-table-body .ant-table-row-hover {
     background: #e7f1ff;
   }
   .ant-table-body .ant-table-row-hover > td {
     background: #e7f1ff;
   }
-
 }
 
 .table-page-search-wrapper {
@@ -489,16 +503,15 @@ export default {
     .name {
       margin-right: 10px;
     }
-  
 
     .ant-input {
-            width: 100%;
-            height: 28px !important;
-            padding: 4px 11px;
-            color: rgba(0, 0, 0, 0.65);
-            font-size: 12px !important;
-            line-height: 1.5;
-          }
+      width: 100%;
+      height: 28px !important;
+      padding: 4px 11px;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 12px !important;
+      line-height: 1.5;
+    }
   }
 }
 .div-service {
@@ -663,8 +676,6 @@ export default {
 
         .item-stat-name {
           font-size: 20px;
-
-        
         }
       }
     }

@@ -5,7 +5,7 @@
         <a-spin :spinning="confirmLoading_left">
           <div class="search">
             <a-input-search
-              style="width: 100%;height: 28px;"
+              style="width: 100%; height: 28px"
               placeholder="请输入名称查询"
               v-model="paperName"
               @change="onChange"
@@ -18,7 +18,7 @@
               v-for="item in list1"
               :key="item.id"
               class="item"
-              :class="{active: item.id===currentPaper.id}"
+              :class="{ active: item.id === currentPaper.id }"
               @click="paperClick(item)"
             >
               <span class="name" :title="item.name">{{ item.name }}</span>
@@ -32,7 +32,7 @@
           <div class="table-page-search-wrapper top">
             <div class="search-row">
               <span class="name">执行科室:</span>
-              <a-select
+              <!-- <a-select
                 style="width: 120px;height: 28px;"
                 placeholder="全部科室"
                 v-model="queryParam.executeDepartmentId"
@@ -41,12 +41,28 @@
                 <a-select-option v-for="item in params1" :key="item.departmentId" :value="item.departmentId">
                   {{ item.departmentName }}
                 </a-select-option>
+              </a-select> -->
+              <a-select
+                class="deptselect-single"
+                show-search
+                v-model="queryParam.executeDepartmentId"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="全部科室"
+                @change="onDepartmentSelectChange"
+                @search="onDepartmentSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in params1" :key="index" :value="item.department_id">{{
+                  item.department_name
+                }}</a-select-option>
               </a-select>
             </div>
             <div class="search-row">
               <span class="name">随访方式:</span>
               <a-select
-                style="width: 120px;height: 28px;"
+                style="width: 120px; height: 28px"
                 placeholder="全部"
                 v-model="queryParam.messageType"
                 allow-clear
@@ -58,16 +74,12 @@
             </div>
             <div class="search-row">
               <span class="name">执行时间:</span>
-              <a-range-picker
-                style="width: 208px;height: 28px;"
-                :format="format"
-                v-model="queryParam.times"
-              />
+              <a-range-picker style="width: 208px; height: 28px" :format="format" v-model="queryParam.times" />
             </div>
             <div class="action-row">
               <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
                 <a-button type="primary" icon="search" @click="search()">查询</a-button>
-                <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="initQuerys()">重置</a-button>
+                <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="initQuerys()">重置</a-button>
               </span>
             </div>
           </div>
@@ -77,14 +89,14 @@
               <div class="item" v-for="(item, index) in list2" :key="index">
                 <div class="title" :title="item.title">
                   <span class="red">*</span>
-                  <span class="name">{{ index+1 }}.{{ item.title }}</span>
+                  <span class="name">{{ index + 1 }}.{{ item.title }}</span>
                 </div>
                 <table-form
-                  :queryParam="{title: item.data[0].valueStr,keyStr: item.data[0].keyStr}"
+                  :queryParam="{ title: item.data[0].valueStr, keyStr: item.data[0].keyStr }"
                   v-if="item.type === 'INPUT'"
                 />
                 <div class="rows" v-else>
-                  <div class="row" v-for="(subItem, subIndex) in item.data" :key="index +'-'+ subIndex">
+                  <div class="row" v-for="(subItem, subIndex) in item.data" :key="index + '-' + subIndex">
                     <div class="name" :title="subItem.valueStr">{{ subItem.valueStr }}</div>
                     <div class="percent">
                       <a-progress :percent="subItem.rate" status="active" />
@@ -116,10 +128,7 @@
 </template>
 
 <script>
-import {
-  getDepts,
-  getDeptsPersonal,
-} from '@/api/modular/system/posManage'
+import { getDepts, getDeptsPersonal, getDepartmentListForSelect } from '@/api/modular/system/posManage'
 import { list1, list2, overview, pie, bar } from '@/api/modular/system/paper'
 import { Ellipsis, Pies, Bars } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -132,16 +141,17 @@ export default {
     Pies,
     Bars,
     Ellipsis,
-    tableForm
+    tableForm,
   },
   data() {
     return {
+      fetching: false,
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       confirmLoading_left: false,
       confirmLoading_right: false,
       // 查询参数
       queryParam: {
-        times: []
+        times: [],
       },
       paperName: '',
       format: 'YYYY-MM-DD',
@@ -151,56 +161,61 @@ export default {
       params2: [
         {
           id: 1,
-          name: '电话'
+          name: '电话',
         },
         {
           id: 2,
-          name: '微信'
+          name: '微信',
         },
         {
           id: 3,
-          name: '短信'
-        }
+          name: '短信',
+        },
       ],
       list1: [],
       list2: [],
       overview: [],
       pie: [],
-      bar: []
+      bar: [],
     }
   },
   computed: {
     overviewItem1() {
-      const result = this.overview.find(item => {
-        return item.item === '发放数'
-      }) || {}
+      const result =
+        this.overview.find((item) => {
+          return item.item === '发放数'
+        }) || {}
       return result
     },
     overviewItem2() {
-      const result = this.overview.find(item => {
-        return item.item === '回收数'
-      }) || {}
+      const result =
+        this.overview.find((item) => {
+          return item.item === '回收数'
+        }) || {}
       return result
     },
     overviewItem3() {
-      const result = this.overview.find(item => {
-        return item.item === '逾期数'
-      }) || {}
+      const result =
+        this.overview.find((item) => {
+          return item.item === '逾期数'
+        }) || {}
       return result
     },
     overviewItem4() {
-      const result = this.overview.find(item => {
-        return item.item === '抽查合格率'
-      }) || {}
+      const result =
+        this.overview.find((item) => {
+          return item.item === '抽查合格率'
+        }) || {}
       return result
-    }
+    },
   },
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.getParams1()
+    // this.getParams1()
+    this.getDepartmentSelectList(undefined)
   },
   mounted() {
     this.init()
@@ -220,7 +235,7 @@ export default {
       this.$refs.bars.init(option)
     },
     initEvent() {
-      window.addEventListener('resize', e => {
+      window.addEventListener('resize', (e) => {
         this.resizeCharts()
       })
     },
@@ -236,23 +251,42 @@ export default {
     },
     initQuerys() {
       this.queryParam = {
-        times: [
-          moment().startOf('month'),
-          moment().endOf('month')
-        ]
+        times: [moment().startOf('month'), moment().endOf('month')],
       }
     },
     getQuerys(key = 'id') {
       const query = {
         messageOriginalId: this.currentPaper[key],
         messageType: this.queryParam.messageType,
-        executeDepartmentId: this.queryParam.executeDepartmentId
+        executeDepartmentId: this.queryParam.executeDepartmentId,
       }
-      if (this.queryParam.times && this.queryParam.times.length>0){
+      if (this.queryParam.times && this.queryParam.times.length > 0) {
         query.executeTimeStart = this.queryParam.times[0].format(this.format)
         query.executeTimeEnd = this.queryParam.times[1].format(this.format)
       }
       return query
+    },
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      getDepartmentListForSelect(departmentName).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.params1 = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.params1 = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.params1 = []
+        this.getDepartmentSelectList(undefined)
+      }
     },
     getParams1() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
@@ -273,58 +307,62 @@ export default {
     getList1(name) {
       this.confirmLoading_left = true
       list1({
-        questionnaireName: name || undefined
-      }).then(res => {
-        if (res.code === 0){
-          this.list1 = res.data || []
-          if (this.list1.length > 0){
-            this.paperClick(this.list1[0])
-          }
-        }else {
-          this.$message.error(res.message)
-        }
-      }).finally(() => {
-        this.confirmLoading_left = false
+        questionnaireName: name || undefined,
       })
+        .then((res) => {
+          if (res.code === 0) {
+            this.list1 = res.data || []
+            if (this.list1.length > 0) {
+              this.paperClick(this.list1[0])
+            }
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally(() => {
+          this.confirmLoading_left = false
+        })
     },
     getList2() {
       this.list2 = []
       this.confirmLoading_right = true
-      list2(this.getQuerys('key')).then(res => {
-        if (res.code === 0){
-          this.list2 = res.data || []
-        }else {
-          this.$message.error(res.message)
-        }
-      }).finally(() => {
-        this.confirmLoading_right = false
-      })
+      list2(this.getQuerys('key'))
+        .then((res) => {
+          if (res.code === 0) {
+            this.list2 = res.data || []
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally(() => {
+          this.confirmLoading_right = false
+        })
     },
     getOverview() {
-      overview(this.getQuerys()).then(res => {
-        if (res.code === 0){
+      overview(this.getQuerys()).then((res) => {
+        if (res.code === 0) {
           this.overview = res.data || []
-        }else {
+        } else {
           this.$message.error(res.message)
         }
       })
     },
     getPie() {
-      pie(this.getQuerys()).then(res => {
-        if (res.code === 0){
+      pie(this.getQuerys()).then((res) => {
+        if (res.code === 0) {
           this.pie = res.data || []
           this.initPies(this.pie)
-        }else {
+        } else {
           this.$message.error(res.message)
         }
       })
     },
     getBar() {
-      bar(this.getQuerys()).then(res => {
-        if (res.code === 0){
+      bar(this.getQuerys()).then((res) => {
+        if (res.code === 0) {
           this.bar = res.data || []
           this.initBars(this.bar)
-        }else {
+        } else {
           this.$message.error(res.message)
         }
       })
@@ -347,16 +385,16 @@ export default {
             fontSize: 14,
             lineHeight: 16,
             color: '#4D4D4D',
-            fontWeight: '400'
-          }
+            fontWeight: '400',
+          },
         },
         tooltip: {
-          trigger: 'item'
+          trigger: 'item',
         },
         legend: {
           top: '30%',
           left: 'right',
-          orient: 'vertical'
+          orient: 'vertical',
         },
         series: [
           {
@@ -365,10 +403,10 @@ export default {
             center: ['40%', '55%'],
             radius: ['35%', '55%'],
             avoidLabelOverlap: false,
-            data: data.map(item => {
+            data: data.map((item) => {
               return {
                 name: item.messageType,
-                value: item.co
+                value: item.co,
               }
             }),
             label: {
@@ -379,26 +417,26 @@ export default {
               color: '#4D4D4D',
               textAlign: 'left',
               formatter(item) {
-                return item.name +' '+ item.value
-              }
+                return item.name + ' ' + item.value
+              },
             },
             labelLine: {
-              show: true
+              show: true,
             },
             emphasis: {
               label: {
                 show: true,
                 fontSize: 12,
-                fontWeight: 'bold'
+                fontWeight: 'bold',
               },
               itemStyle: {
                 shadowBlur: 10,
                 shadowOffsetX: 0,
-                shadowColor: 'rgba(0, 0, 0, 0.5)'
-              }
-            }
-          }
-        ]
+                shadowColor: 'rgba(0, 0, 0, 0.5)',
+              },
+            },
+          },
+        ],
       }
       return option
     },
@@ -412,14 +450,14 @@ export default {
             fontSize: 14,
             lineHeight: 16,
             color: '#4D4D4D',
-            fontWeight: '400'
-          }
+            fontWeight: '400',
+          },
         },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'shadow'
-          }
+            type: 'shadow',
+          },
         },
         legend: {},
         grid: {
@@ -427,38 +465,38 @@ export default {
           left: '5px',
           right: '20px',
           bottom: '10px',
-          containLabel: true
+          containLabel: true,
         },
         xAxis: {
           type: 'value',
           axisLabel: {
             color: '#4D4D4D',
-            fontSize: 12
-          }
+            fontSize: 12,
+          },
         },
         yAxis: {
           type: 'category',
           axisLabel: {
             color: '#4D4D4D',
-            fontSize: 12
+            fontSize: 12,
           },
-          data: data.map(item => {
+          data: data.map((item) => {
             return item.failReason
-          })
+          }),
         },
         series: [
           {
             type: 'bar',
             barWidth: '50%',
-            data: data.map(item => {
+            data: data.map((item) => {
               return item.co
-            })
-          }
-        ]
+            }),
+          },
+        ],
       }
       return option
     },
-  }
+  },
 }
 </script>
 
@@ -515,7 +553,7 @@ button {
     height: 100%;
     height: calc(100vh - 151px);
     padding-top: 15px;
-    border: 1px solid #E6E6E6;
+    border: 1px solid #e6e6e6;
     .search {
       padding: 0px 14px;
     }
@@ -527,15 +565,15 @@ button {
         font-size: 12px;
         font-weight: 400;
         line-height: 32px;
-        color: #4D4D4D;
+        color: #4d4d4d;
         cursor: pointer;
         overflow: hidden;
-        border-bottom: 1px solid #E6E6E6;
+        border-bottom: 1px solid #e6e6e6;
         &:last-child {
           border-bottom: none;
         }
         &.active {
-          color: #409EFF;
+          color: #409eff;
           .icon {
             display: block;
           }
@@ -566,21 +604,21 @@ button {
     .middle {
       height: calc(100vh - 390px);
       margin-bottom: 14px;
-      border: 1px solid #D7D9DE;
+      border: 1px solid #d7d9de;
       .list {
         height: 100%;
         padding: 14px;
         overflow-y: auto;
-        background: #F6F6F6;
+        background: #f6f6f6;
         &::-webkit-scrollbar {
           width: 7px;
         }
         &::-webkit-scrollbar-thumb {
-          background: #DEDEDE;
+          background: #dedede;
           border-radius: 4px;
         }
         &::-webkit-scrollbar-track {
-          background: #F6F6F6;
+          background: #f6f6f6;
         }
         .item {
           margin-bottom: 14px;
@@ -593,10 +631,10 @@ button {
             font-weight: 400;
             line-height: 14px;
             .red {
-              color: #FF4E00;
+              color: #ff4e00;
             }
             .name {
-              color: #4D4D4D;
+              color: #4d4d4d;
             }
           }
           .rows {
@@ -604,11 +642,11 @@ button {
               display: flex;
               padding: 4.5px 14px;
               justify-content: space-between;
-              border-top: 1px solid #D7D9DE;
-              border-left: 1px solid #D7D9DE;
-              border-right: 1px solid #D7D9DE;
+              border-top: 1px solid #d7d9de;
+              border-left: 1px solid #d7d9de;
+              border-right: 1px solid #d7d9de;
               &:last-child {
-                border-bottom: 1px solid #D7D9DE;
+                border-bottom: 1px solid #d7d9de;
               }
               .name {
                 width: 280px;
@@ -625,7 +663,7 @@ button {
                 flex: 1;
                 padding-right: 40px;
                 /deep/ .ant-progress-inner {
-                  background: #E8EBF4;
+                  background: #e8ebf4;
                 }
                 /deep/ .ant-progress-text {
                   font-size: 12px;
@@ -663,19 +701,19 @@ button {
           font-size: 14px;
           font-weight: 400;
           line-height: 34px;
-          color: #FFFFFF;
+          color: #ffffff;
           text-align: center;
           &.analyse1 {
-            background: #489FE2;
+            background: #489fe2;
           }
           &.analyse2 {
-            background: #5F839E;
+            background: #5f839e;
           }
           &.analyse3 {
-            background: #E57F48;
+            background: #e57f48;
           }
           &.analyse4 {
-            background: #78C459;
+            background: #78c459;
           }
         }
       }
@@ -684,14 +722,14 @@ button {
         height: 181px;
         margin-left: 14px;
         flex: 1;
-        border: 1px solid #D7D9DE;
+        border: 1px solid #d7d9de;
       }
       .item3 {
         width: 346px;
         height: 181px;
         margin-left: 14px;
         flex: 1;
-        border: 1px solid #D7D9DE;
+        border: 1px solid #d7d9de;
       }
     }
   }
