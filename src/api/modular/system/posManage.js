@@ -2595,7 +2595,21 @@ export function getDepartmentListForReq(data) {
     data: data,
   })
 }
-
+/**
+ * 科室列表 科室选择用
+ */
+export function getDepartmentListForSelect(departmentName) {
+  return axios({
+    url: '/follow-api/departmentManger/getDepartmentListForReq',
+    method: 'post',
+    data: {
+      departmentName:departmentName,
+      status:1,//1开启
+      pageNo:1,
+      pageSize:9999
+    },
+  })
+}
 /**
  * 添加科室
  */
