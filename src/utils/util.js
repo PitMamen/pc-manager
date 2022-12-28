@@ -207,3 +207,31 @@ export function getStartAndEndDateOfMonth(date) {
 
   return { startDate, endDate }
 }
+
+/**
+ * 判断对象是空
+ * @param {} obj 
+ * @returns 
+ */
+export function isObjectEmpty(obj) {
+
+  return obj == undefined || obj == null || JSON.stringify(obj) == "{}"
+}
+
+/**
+ * 判断字符串是空
+ * @param {} str 
+ * @returns 
+ */
+export function isStringEmpty(str) {
+  return str == undefined || str == null || str.length <= 0
+}
+
+/**
+ * 判断数组是空
+ * @param {} arr 
+ * @returns 
+ */
+export function isArrayEmpty(arr) {
+  return arr == undefined || arr == null || arr.length <= 0
+}

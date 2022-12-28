@@ -6,7 +6,7 @@
         <a-input
           allow-clear
           v-model="queryParamsData.queryText"
-          placeholder="可输入科室名称名称查询"
+          placeholder="参数名称查询"
           style="width: 120px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
@@ -26,7 +26,7 @@
       <div class="search-row">
         <span class="name"> 所属租户:</span>
         <a-select v-model="queryParamsData.tenantId" placeholder="请选择租户" allow-clear style="width: 120px">
-          <a-select-option v-for="item in tenantListOut" :key="item.tenantId" :value="item.tenantId">{{
+          <a-select-option v-for="item in tenantListOut" :key="item.tenantCode" :value="item.tenantCode">{{
             item.tenantName
           }}</a-select-option>
         </a-select>

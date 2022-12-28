@@ -303,7 +303,8 @@ export default {
 //获取管理的科室 可首拼
 getDepartmentSelectList(departmentName) {
       
-      getDepartmentListForSelect(departmentName).then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
+      getDepartmentListForSelect(departmentName,undefined).then((res) => {
        
         if (res.code == 0) {
           res.data.records.forEach((item) => {

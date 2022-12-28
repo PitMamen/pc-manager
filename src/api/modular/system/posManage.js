@@ -2598,12 +2598,13 @@ export function getDepartmentListForReq(data) {
 /**
  * 科室列表 科室选择用
  */
-export function getDepartmentListForSelect(departmentName) {
+export function getDepartmentListForSelect(departmentName,source) {
   return axios({
     url: '/follow-api/departmentManger/getDepartmentListForReq',
     method: 'post',
     data: {
-      departmentName:departmentName,
+      departmentName:departmentName,//搜索输入
+      source:source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
       status:1,//1开启
       pageNo:1,
       pageSize:9999

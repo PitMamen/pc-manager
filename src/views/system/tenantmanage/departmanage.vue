@@ -83,14 +83,10 @@
   <script>
 import { STable } from '@/components'
 import {
-  getApplicationlist,
-  getRoleList,
-  getDepts,
   getDepartmentListForReq,
   getManagerDepts,
   updateManagerDepts,
 } from '@/api/modular/system/posManage'
-import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -260,25 +256,7 @@ export default {
     updateSelect() {
       this.$refs.table.updateSelect(this.selectedRowKeys, [])
     },
-    //获取角色列表
-    getRolesOut() {
-      getRoleList({
-        belong: undefined,
-        status: 1,
-        topFlag: undefined,
-        keyWords: undefined,
-      }).then((res) => {
-        if (res.code == 0) {
-          var roleList = []
-          for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].state == 1) {
-              roleList.push(res.data[i])
-            }
-          }
-          this.roleList = roleList
-        }
-      })
-    },
+  
 
     //数组元素去重
     removeDuplicate(arry) {
