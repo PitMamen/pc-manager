@@ -14,9 +14,21 @@
         />
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">状态:</span>
         <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
+
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select
+          v-model="queryParams.templateStatus"
+          placeholder="请选择状态"
+          allow-clear
+          style="width: 120px; height: 28px"
+        >
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="action-row">
@@ -46,8 +58,18 @@
           <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
       </span>
 
-      <span slot="statuas" slot-scope="text, record">
+      <!-- <span slot="statuas" slot-scope="text, record">
         <a-switch :checked="record.templateStatus == 1" @click="Enable(record)" />
+      </span> -->
+
+      <span slot="statuas" slot-scope="text, record">
+        <a-popconfirm
+          placement="topRight"
+          :title="record.templateStatus === 1 ? '确认停用？' : '确认启用？'"
+          @confirm="Enable(record)"
+        >
+          <a-switch :checked="record.templateStatus == 1" />
+        </a-popconfirm>
       </span>
     </s-table>
     <adddx-Model ref="adddxModel" @ok="handleOk" @cancel="handleCancel" />
@@ -72,6 +94,7 @@ export default {
       keshiData: [],
       queryParams: {
         templateTitle: '',
+        templateStatus: 1,
       },
       labelCol: {
         xs: { span: 24 },
@@ -108,6 +131,7 @@ export default {
         {
           title: '状态',
           dataIndex: 'statuas',
+          fixed: 'right',
           width: 70,
           scopedSlots: { customRender: 'statuas' },
         },
@@ -141,6 +165,16 @@ export default {
           return data
         })
       },
+      selects: [
+        {
+          id: 1,
+          name: '启用',
+        },
+        {
+          id: 2,
+          name: '停用',
+        },
+      ],
     }
   },
   methods: {
@@ -148,9 +182,11 @@ export default {
      * 重置
      */
     reset() {
-      if (this.queryParams.templateTitle != '') {
-        this.queryParams.templateTitle = ''
-      }
+      // if (this.queryParams.templateTitle != '') {
+      this.queryParams.templateTitle = ''
+      this.queryParams.templateStatus = 1
+      this.$refs.table.refresh()
+      // }
     },
 
     goOpen() {

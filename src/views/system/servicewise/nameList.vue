@@ -12,9 +12,16 @@
           @search="$refs.table.refresh(true)"
         />
       </div>
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">状态:</span>
         <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
+
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="action-row">
@@ -41,8 +48,18 @@
         <!-- <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
       </span>
 
-      <span slot="statuas" slot-scope="text, record">
+      <!-- <span slot="statuas" slot-scope="text, record">
         <a-switch  :checked="record.status.value==1" @click="Enable(record)"  />
+      </span> -->
+
+      <span slot="status" slot-scope="text, record">
+        <a-popconfirm
+          placement="topRight"
+          :title="record.status.value === 1 ? '确认停用？' : '确认启用？'"
+          @confirm="Enable(record)"
+        >
+          <a-switch :checked="record.status.value == 1" />
+        </a-popconfirm>
       </span>
 
     </s-table>
@@ -111,9 +128,9 @@ export default {
 
         {
           title: '状态',
-          dataIndex: 'statuas',
+          fixed: 'right',
           width: 70,
-          scopedSlots: { customRender: 'statuas' },
+          scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
@@ -146,6 +163,17 @@ export default {
           return res.data
         })
       },
+
+      selects: [
+        {
+          id: 1,
+          name: '启用',
+        },
+        {
+          id: 2,
+          name: '停用',
+        },
+      ],
     }
   },
   methods: {
@@ -169,11 +197,11 @@ export default {
      */
     Enable(record) {
       console.log('ddd', record)
-      record.status.value = record.status.value == 1 ? 2 : 1
+      let statusTe  = record.status.value == 1 ? 2 : 1
       record.enableStatus = record.status.value == 1 ? '停用' : '启用'
       var queryParamData = {
         id: record.id,
-        status: record.status.value,
+        status: statusTe,
       }
       //更新接口调用
       updateMetaConfigure(queryParamData).then((res) => {

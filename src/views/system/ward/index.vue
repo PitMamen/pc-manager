@@ -142,13 +142,15 @@ export default {
         {
           title: '状态',
           width: '60px',
-          dataIndex: 'status',
+          fixed: 'right',
+          // dataIndex: 'status',
           scopedSlots: { customRender: 'status' }
         },
         {
           title: '操作',
           width: '150px',
-          dataIndex: 'action',
+          fixed: 'right',
+          // dataIndex: 'action',
           scopedSlots: { customRender: 'action' }
         }
       ],
