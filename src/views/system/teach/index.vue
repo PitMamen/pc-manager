@@ -113,7 +113,7 @@
               <a-popconfirm
                 placement="topRight"
                 :disabled="record.status != '2'"
-                :title="record.isVisible ? '确认上架？' : '确认下架？'"
+                :title="record.isVisible ? '确认下架？' : '确认上架？'"
                 @confirm="goShangjia(record)"
               >
                 <a-switch :checked="record.isVisible" />
