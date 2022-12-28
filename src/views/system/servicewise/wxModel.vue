@@ -67,7 +67,7 @@
           :title="record.templateStatus === 1 ? '确认停用？' : '确认启用？'"
           @confirm="Enable(record)"
         >
-          <a-switch :checked="record.templateStatus == 1" />
+          <a-switch size="small" :checked="record.templateStatus == 1" />
         </a-popconfirm>
       </span>
     </s-table>

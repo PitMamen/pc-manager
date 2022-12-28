@@ -31,8 +31,8 @@
         </span>
       </div>
     </div>
-    <div class="table-operator" style="overflow: hidden;">
-      <a-button icon="plus" style="float: right;margin-right: 0;" @click="addName()">新增</a-button>
+    <div class="table-operator" style="overflow: hidden">
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
     </div>
     <s-table
       ref="table"
@@ -58,16 +58,13 @@
           :title="record.status.value === 1 ? '确认停用？' : '确认启用？'"
           @confirm="Enable(record)"
         >
-          <a-switch :checked="record.status.value == 1" />
+          <a-switch size="small" :checked="record.status.value == 1" />
         </a-popconfirm>
       </span>
-
     </s-table>
 
     <check-Index ref="checkIndex" @ok="handleOk" />
     <add-Name ref="addName" @ok="handleOk" />
-
-   
   </a-card>
 </template>
 
@@ -112,7 +109,7 @@ export default {
         {
           title: '名单描述',
           dataIndex: 'metaName',
-          ellipsis:true,
+          ellipsis: true,
         },
         {
           title: '数据库表名',
@@ -122,8 +119,8 @@ export default {
         {
           title: '数据库字段',
           dataIndex: 'databaseTableFieldName',
-          ellipsis:true,
-          maxWidth:180,
+          ellipsis: true,
+          maxWidth: 180,
         },
 
         {
@@ -197,7 +194,7 @@ export default {
      */
     Enable(record) {
       console.log('ddd', record)
-      let statusTe  = record.status.value == 1 ? 2 : 1
+      let statusTe = record.status.value == 1 ? 2 : 1
       record.enableStatus = record.status.value == 1 ? '停用' : '启用'
       var queryParamData = {
         id: record.id,

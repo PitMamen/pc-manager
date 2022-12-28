@@ -116,7 +116,7 @@
                 :title="record.isVisible ? '确认下架？' : '确认上架？'"
                 @confirm="goShangjia(record)"
               >
-                <a-switch :checked="record.isVisible" />
+                <a-switch size="small" :checked="record.isVisible" />
               </a-popconfirm>
             </span>
           </s-table>

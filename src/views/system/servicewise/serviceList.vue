@@ -74,7 +74,7 @@
           :title="record.status.value === 1 ? '确认停用？' : '确认启用？'"
           @confirm="Enable(record)"
         >
-          <a-switch :checked="record.status.value == 1" />
+          <a-switch size="small" :checked="record.status.value == 1" />
         </a-popconfirm>
       </span>
     </s-table>
