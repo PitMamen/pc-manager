@@ -1,34 +1,49 @@
 <template>
-
-    <a-card :bordered="false" class="sys-card" :confirmLoading="confirmLoading">
+  <a-card :bordered="false" class="sys-card" :confirmLoading="confirmLoading">
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">查询条件:</span>
-        <a-input v-model="queryParams.templateTitle" allow-clear placeholder="可输入模板名称查询" style="width: 120px;" 
-        @blur="$refs.table.refresh(true)"
-                @keyup.enter="$refs.table.refresh(true)"
-                @search="$refs.table.refresh(true)"/>
+        <a-input
+          v-model="queryParams.templateTitle"
+          allow-clear
+          placeholder="可输入模板名称查询"
+          style="width: 120px"
+          @blur="$refs.table.refresh(true)"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
       </div>
+
+      <!-- <div class="search-row">
+        <span class="name">状态:</span>
+        <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
 
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-switch :checked="isOpen" @click="goOpen" />
+        <a-select
+          v-model="queryParams.templateStatus"
+          placeholder="请选择状态"
+          allow-clear
+          style="width: 120px; height: 28px"
+        >
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
-     
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
       </div>
     </div>
-  
-    <div class="table-operator" style="overflow: hidden;">
-      <a-button icon="plus" style="float: right;margin-right: 0;" @click="addModel()">新增</a-button>
+
+    <div class="table-operator" style="overflow: hidden">
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="addModel()">新增</a-button>
     </div>
     <s-table
-      :scroll="{ x:   true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -37,13 +52,23 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus==2">修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus == 2">修改</a>
         <!-- <a-divider type="vertical" /> -->
         <!-- <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
       </span>
 
-      <span slot="statuas" slot-scope="text, record">
+      <!-- <span slot="statuas" slot-scope="text, record">
         <a-switch  :checked="record.templateStatus==1" @click="Enable(record)"  />
+      </span> -->
+
+      <span slot="statuas" slot-scope="text, record">
+        <a-popconfirm
+          placement="topRight"
+          :title="record.templateStatus === 1 ? '确认停用？' : '确认启用？'"
+          @confirm="Enable(record)"
+        >
+          <a-switch size="small" :checked="record.templateStatus == 1" />
+        </a-popconfirm>
       </span>
     </s-table>
     <addwx-Model ref="addwxModel" @ok="handleOk" @cancel="handleCancel" />
@@ -57,16 +82,17 @@ import addwxModel from './addwxModel'
 import { getWxTemplateList, changeStatusWxTemplate } from '@/api/modular/system/posManage'
 export default {
   components: {
-    STable,addwxModel
+    STable,
+    addwxModel,
   },
   data() {
     return {
-      isOpen:true,
+      isOpen: true,
       datas: [],
       keshiData: [],
       queryParams: {
         templateTitle: '',
-        templateStatus:1,
+        templateStatus: 1,
       },
       labelCol: {
         xs: { span: 24 },
@@ -89,18 +115,19 @@ export default {
         {
           title: '内部编码',
           dataIndex: 'templateId',
-          ellipsis:true,
+          ellipsis: true,
         },
-       
+
         {
           title: '模板内容',
           dataIndex: 'templateContent',
-          ellipsis:true,
+          ellipsis: true,
         },
         {
           title: '状态',
           dataIndex: 'statuas',
           width: 70,
+          fixed: 'right',
           scopedSlots: { customRender: 'statuas' },
         },
         {
@@ -124,7 +151,7 @@ export default {
             rows: res.data.records,
           }
           data.rows.forEach((item, index) => {
-            console.log("vvvv:",item.templateStatus)
+            console.log('vvvv:', item.templateStatus)
             this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
             this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
           })
@@ -132,6 +159,17 @@ export default {
           return data
         })
       },
+
+      selects: [
+        {
+          id: 1,
+          name: '启用',
+        },
+        {
+          id: 2,
+          name: '停用',
+        },
+      ],
     }
   },
   methods: {
@@ -139,20 +177,22 @@ export default {
      * 重置
      */
     reset() {
-      if (this.queryParams.templateTitle != '') {
-        this.queryParams.templateTitle = ''
-      }
+      // if (this.queryParams.templateTitle != '') {
+      this.queryParams.templateTitle = ''
+      this.queryParams.templateStatus = 1
+      this.$refs.table.refresh()
+      // }
     },
 
     /**
      * 启用/停用
      */
     Enable(record) {
-      record.templateStatus = record.templateStatus == 1 ? 2 : 1
+      let status = record.templateStatus == 1 ? 2 : 1
       record.enableStatus = record.templateStatus == 1 ? '停用' : '启用'
       var queryParamData = {
         id: record.id,
-        templateStatus: record.templateStatus,
+        templateStatus: status,
       }
       this.confirmLoading = true
       //更新接口调用
@@ -168,7 +208,6 @@ export default {
         }
       })
     },
-
 
     goOpen() {
       this.isOpen = !this.isOpen
@@ -188,7 +227,7 @@ export default {
       // this.$router.push({
       //   name: 'sys_wxtemplate_add',
       //   query: {
-          
+
       //   },
       // })
       this.$refs.addwxModel.addModel()
@@ -253,12 +292,12 @@ export default {
   margin-bottom: 10px !important;
 }
 .div-divider {
-    margin-top: 1%;
-    margin-bottom: 1%;
-    width: 100%;
-    background-color: #e6e6e6;
-    height: 1px;
-  }
+  margin-top: 1%;
+  margin-bottom: 1%;
+  width: 100%;
+  background-color: #e6e6e6;
+  height: 1px;
+}
 </style>
 
 <style lang="less" scoped>

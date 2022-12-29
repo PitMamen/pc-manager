@@ -32,9 +32,16 @@
           }}</a-select-option>
         </a-select>
       </div>
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">方案状态:</span>
         <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
+      </div> -->
+
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="action-row">
@@ -60,24 +67,15 @@
     >
       <span slot="action" slot-scope="text, record">
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
-        <!-- <a-divider type="vertical" /> -->
-
-        <!-- <a-popconfirm
-          :title="upDateStatesText(record.status.value)"
-          ok-text="确定"
-          cancel-text="取消"
+      </span>
+      <span slot="status" slot-scope="text, record">
+        <a-popconfirm
+          placement="topRight"
+          :title="record.status.value === 1 ? '确认停用？' : '确认启用？'"
           @confirm="Enable(record)"
         >
-          <a>{{ record.status.value == 1 ? '停用' : '启用' }}</a>
-        </a-popconfirm> -->
-
-        <!-- <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.enableStatus" @click="Enable(record)"  />
-      </span> -->
-      </span>
-
-      <span slot="statuas" slot-scope="text, record">
-        <a-switch :checked="record.status.value == 1" @click="Enable(record)" />
+          <a-switch size="small" :checked="record.status.value == 1" />
+        </a-popconfirm>
       </span>
     </s-table>
 
@@ -129,7 +127,7 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-      
+
       // 表头
       columns: [
         {
@@ -156,17 +154,12 @@ export default {
           title: '随访类型',
           dataIndex: 'followType',
         },
-        // {
-        //   title: '状态',
-        //   width: '60px',
-        //   dataIndex: 'statusText',
-        // },
 
         {
           title: '状态',
-          dataIndex: 'statuas',
           width: 70,
-          scopedSlots: { customRender: 'statuas' },
+          fixed: 'right',
+          scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
@@ -189,10 +182,19 @@ export default {
           return res.data
         })
       },
+
+      selects: [
+        {
+          id: 1,
+          name: '启用',
+        },
+        {
+          id: 2,
+          name: '停用',
+        },
+      ],
     }
   },
-
-
 
   mounted() {
     //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
@@ -248,12 +250,12 @@ export default {
       this.$refs.table.refresh(true)
     },
 
-    onSwitchChange(value) {
-      console.log(value)
-      this.queryParams.status = value ? 1 : 2
+    // onSwitchChange(value) {
+    //   console.log(value)
+    //   this.queryParams.status = value ? 1 : 2
 
-      this.$refs.table.refresh(true)
-    },
+    //   this.$refs.table.refresh(true)
+    // },
     onDepartmentChange(index) {
       console.log('index=' + index)
       if (index == undefined) {

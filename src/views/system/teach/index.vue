@@ -1,103 +1,131 @@
 <template>
   <a-card :bordered="false">
     <a-spin :spinning="confirmLoading">
-    <div class="div-service-control">
-      <div class="div-service-left-control">
-        <div class="toptab">
-          <div :class="tabKey == 1 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 1">文章类型</div>
-          <div :class="tabKey == 2 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 2">科室</div>
-        </div>
-        <div class="left-content" v-if="tabKey == 1">
-          <div class="typeadd" @click="$refs.addCategory.addModel()">
-            新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
+      <div class="div-service-control">
+        <div class="div-service-left-control">
+          <div class="toptab">
+            <div :class="tabKey == 1 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 1">文章类型</div>
+            <div :class="tabKey == 2 ? 'toptab-yes' : 'toptab-no'" @click="tabKey = 2">科室</div>
           </div>
-          <div class="ksview" v-for="(item, index) in typeData" :key="index">
-            <div
-              :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
-              class="left-lb-title"
-              @click="onCategoryChange(item)"
-            >
-              {{ item.categoryName }}
+          <div class="left-content" v-if="tabKey == 1">
+            <div class="typeadd" @click="$refs.addCategory.addModel()">
+              新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
-            <div class="content-right">
-              <a style="color: #409eff; margin-right: 10px" @click="$refs.addCategory.editModel(item)">修改</a>
-              <a-popconfirm title="确定此类别吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
-                <a>删除</a>
-              </a-popconfirm>
+            <div class="ksview" v-for="(item, index) in typeData" :key="index">
+              <div
+                :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
+                class="left-lb-title"
+                @click="onCategoryChange(item)"
+              >
+                {{ item.categoryName }}
+              </div>
+              <div class="content-right">
+                <a style="color: #409eff; margin-right: 10px" @click="$refs.addCategory.editModel(item)">修改</a>
+                <a-popconfirm title="确定此类别吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </div>
+            </div>
+          </div>
+          <div class="left-content" v-if="tabKey == 2">
+            <div class="ksview" v-for="(item, index) in originData" :key="index" @click="onDepartmentChange(item)">
+              <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.department_name }}</div>
+              <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
             </div>
           </div>
         </div>
-        <div class="left-content" v-if="tabKey == 2">
-          <div class="ksview" v-for="(item, index) in originData" :key="index" @click="onDepartmentChange(item)">
-            <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.department_name }}</div>
-            <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
-          </div>
-        </div>
-      </div>
-      <div class="div-service-right-control">
-        <div class="table-page-search-wrapper">
-          <div class="search-row">
-            <span class="name">文章名称:</span>
-            <a-input
-              v-model="queryParam.title"
-              allow-clear
-              placeholder="输入文章名称查询"
-              style="width: 120px; height: 28px"
-              @keyup.enter="$refs.table.refresh(true)"
-              @search="$refs.table.refresh(true)"
-            />
-          </div>
-          <div class="search-row">
+        <div class="div-service-right-control">
+          <div class="table-page-search-wrapper">
+            <div class="search-row">
+              <span class="name">文章名称:</span>
+              <a-input
+                v-model="queryParam.title"
+                allow-clear
+                placeholder="输入文章名称查询"
+                style="width: 120px; height: 28px"
+                @keyup.enter="$refs.table.refresh(true)"
+                @search="$refs.table.refresh(true)"
+              />
+            </div>
+            <!-- <div class="search-row">
             <span class="name">上架:</span>
             <a-switch :checked="queryParam.isVisible" @change="onSwitchChange" />
+          </div> -->
+
+            <div class="search-row">
+              <span class="name">上架状态:</span>
+              <!-- v-model="queryParams.isVisible" -->
+              <a-select
+                placeholder="请选择状态"
+                v-model="statusOut"
+                @select="onStatusSelect"
+                @change="onStatusChange"
+                allow-clear
+                style="width: 120px; height: 28px"
+              >
+                <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{
+                  item.name
+                }}</a-select-option>
+              </a-select>
+            </div>
+
+            <div class="action-row">
+              <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+                <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+              </span>
+            </div>
           </div>
 
-          <div class="action-row">
-            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-              <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
-            </span>
+          <div class="table-operator" style="overflow: hidden">
+            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addModel.addModel()"
+              >新增</a-button
+            >
           </div>
-        </div>
 
-        <div class="table-operator" style="overflow: hidden">
-          <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addModel.addModel()"
-            >新增</a-button
+          <!-- 去掉勾选框 -->
+          <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
+          <s-table
+            :scroll="{ x: true }"
+            ref="table"
+            size="default"
+            :columns="columns"
+            :data="loadData"
+            :alert="true"
+            :rowKey="(record) => record.code"
           >
-        </div>
-
-        <!-- 去掉勾选框 -->
-        <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
-        <s-table
-          :scroll="{ x: true }"
-          ref="table"
-          size="default"
-          :columns="columns"
-          :data="loadData"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="action" slot-scope="text, record">
-            <a @click="$refs.checkModel.init(record.articleId)">查看</a>
-            <a-divider type="vertical" />
-            <a @click="$refs.addModel.editModel(record.articleId)">修改</a>
-            <a-divider type="vertical" />
-            <a @click="goPush(record)" :disabled="record.status == '2'">发布</a>
-            <a-divider type="vertical" />
-            <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="articleDelete(record)">
-              <a>删除</a>
-            </a-popconfirm>
-          </span>
-          <span slot="isVisible" slot-scope="text, record">
+            <span slot="action" slot-scope="text, record">
+              <a @click="$refs.checkModel.init(record.articleId)">查看</a>
+              <a-divider type="vertical" />
+              <a @click="$refs.addModel.editModel(record.articleId)">修改</a>
+              <a-divider type="vertical" />
+              <a @click="goPush(record)" :disabled="record.status == '2'">发布</a>
+              <a-divider type="vertical" />
+              <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="articleDelete(record)">
+                <a>删除</a>
+              </a-popconfirm>
+            </span>
+            <!-- <span slot="isVisible" slot-scope="text, record">
             <a-switch :checked="record.isVisible" :disabled="record.status != '2'" @click="goShangjia(record)"/>
-          </span>
-        </s-table>
+          </span> -->
+
+            <span slot="isVisible" slot-scope="text, record">
+              <a-popconfirm
+                placement="topRight"
+                :disabled="record.status != '2'"
+                :title="record.isVisible ? '确认下架？' : '确认上架？'"
+                @confirm="goShangjia(record)"
+              >
+                <a-switch size="small" :checked="record.isVisible" />
+              </a-popconfirm>
+            </span>
+          </s-table>
+        </div>
       </div>
-    </div>
-    <add-category ref="addCategory" @ok="handleOk" />
-    <add-model ref="addModel" @ok="handleOk" />
-    <check-model ref="checkModel" @ok="handleOk" />
-  </a-spin>
+      <add-category ref="addCategory" @ok="handleOk" />
+      <add-model ref="addModel" @ok="handleOk" />
+      <check-model ref="checkModel" @ok="handleOk" />
+    </a-spin>
   </a-card>
 </template>
 
@@ -153,6 +181,7 @@ export default {
         title: '',
         isVisible: true,
       },
+      statusOut: 1,
 
       // 表头
       columns: [
@@ -188,6 +217,7 @@ export default {
         {
           title: '上架',
           width: 80,
+          fixed: 'right',
           scopedSlots: { customRender: 'isVisible' },
         },
 
@@ -197,6 +227,17 @@ export default {
           width: 180,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      selects: [
+        {
+          id: 1,
+          name: '上架',
+        },
+        {
+          id: 2,
+          name: '下架',
         },
       ],
 
@@ -289,32 +330,44 @@ export default {
   },
 
   methods: {
+    onStatusSelect(id) {
+      console.log('ddd********', id)
+      this.statusOut = id
+      this.queryParam.isVisible = id == 1 ? true : false
+    },
+
+    onStatusChange(id) {
+      console.log('fff********', id)
+      if (!id) {
+        delete this.queryParam.isVisible
+      }
+    },
+
     reset() {
       this.queryParam.title = ''
       this.queryParam.isVisible = true
       this.queryParam.categoryId = ''
       this.queryParam.departmentId = ''
+      this.statusOut = 1
 
       this.getArticleCategoryListOut()
       this.getDepartmentSelectList()
       this.idArr = []
       this.$refs.table.refresh()
     },
-//获取管理的科室 可首拼
-getDepartmentSelectList(departmentName) {
-      
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,undefined).then((res) => {
-       
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, undefined).then((res) => {
         if (res.code == 0) {
           res.data.records.forEach((item) => {
-              item.checked = false
-            })
-            res.data.records.unshift({
-              department_name: '全院',
-              department_id: -1,
-              checked: true,
-            })
+            item.checked = false
+          })
+          res.data.records.unshift({
+            department_name: '全院',
+            department_id: -1,
+            checked: true,
+          })
           this.originData = res.data.records
         }
       })
@@ -375,31 +428,25 @@ getDepartmentSelectList(departmentName) {
       var depts = ''
       if (item.department_id == -1) {
         this.originData.forEach((e) => {
-        
           if (e.department_id != -1) {
             e.checked = false
-            
           }
-        
-      })
-      
-      }else{
+        })
+      } else {
         this.originData.forEach((e) => {
-        if (e.checked) {
-          if (e.department_id != -1) {
-            this.originData[0].checked = false
-            if (depts) {
-              depts = depts + ',' + e.department_id
-            } else {
-              depts = e.department_id + ''
+          if (e.checked) {
+            if (e.department_id != -1) {
+              this.originData[0].checked = false
+              if (depts) {
+                depts = depts + ',' + e.department_id
+              } else {
+                depts = e.department_id + ''
+              }
             }
           }
-        }
-      })
+        })
       }
-     
-     
-     
+
       console.log('depts', depts)
       this.queryParam.departmentId = depts
       this.$refs.table.refresh()
@@ -419,7 +466,7 @@ getDepartmentSelectList(departmentName) {
     },
     onSwitchChange(value) {
       console.log(value)
-      this.queryParam.isVisible = value 
+      this.queryParam.isVisible = value
 
       this.$refs.table.refresh(true)
     },
@@ -439,7 +486,7 @@ getDepartmentSelectList(departmentName) {
     //发布
     goPush(record) {
       this.confirmLoading = true
-      modifyArticle({ id: record.articleId,status:'2' }).then((res) => {
+      modifyArticle({ id: record.articleId, status: '2' }).then((res) => {
         this.confirmLoading = false
         if (res.code == 0) {
           this.$message.success('发布成功')
@@ -450,18 +497,18 @@ getDepartmentSelectList(departmentName) {
       })
     },
     //上架
-    goShangjia(record){
+    goShangjia(record) {
       this.confirmLoading = true
-      var _isVisible=!record.isVisible
-      modifyArticle({ id: record.articleId,isVisible:_isVisible }).then((res) => {
+      var _isVisible = !record.isVisible
+      modifyArticle({ id: record.articleId, isVisible: _isVisible }).then((res) => {
         this.confirmLoading = false
         if (res.code == 0) {
           this.$message.success('操作成功')
           // this.handleOk()
-          record.isVisible=_isVisible
+          record.isVisible = _isVisible
         } else {
           this.$message.error('操作失败：' + res.message)
-          record.isVisible=!_isVisible
+          record.isVisible = !_isVisible
         }
       })
     },
