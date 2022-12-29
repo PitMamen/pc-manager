@@ -12,11 +12,16 @@
           @search="$refs.table.refresh(true)"
         />
       </div>
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">状态:</span>
         <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
@@ -49,7 +54,7 @@
       </span>
       <span slot="ifSuggest" slot-scope="text, record">
         <a-popconfirm :title="record.isSuggestText" ok-text="确定" cancel-text="取消" @confirm="goSuggest(record)">
-          <a-switch :checked="record.isSuggest" />
+          <a-switch size="small" :checked="record.isSuggest" />
         </a-popconfirm>
       </span>
     </s-table>
@@ -99,6 +104,16 @@ export default {
       isSuggestText: '确定开启？',
       isOnlineText: '',
       keshiData: [],
+      selects: [
+        {
+          id: 1,
+          name: '启用'
+        },
+        {
+          id: 0,
+          name: '停用'
+        }
+      ],
       //（1：正常 2：待上架 3 ：下架）
       onlineData: [
         { code: 1, value: '正常' },
@@ -190,6 +205,7 @@ export default {
   methods: {
     reset() {
       this.queryParam.queryText = ''
+      this.queryParam.status=1
       this.handleOk()
     },
 
@@ -215,9 +231,10 @@ export default {
           this.$message.success('操作成功')
           record.isSuggest = !record.isSuggest
 
-          setTimeout(() => {
-            record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
-          }, 200)
+          // setTimeout(() => {
+          //   record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
+          // }, 200)
+          this.handleOk()
         } else {
           this.$message.error(res.message)
         }

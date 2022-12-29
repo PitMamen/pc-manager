@@ -22,11 +22,13 @@
         >
         </a-tree-select>
       </div>
+    
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-switch :checked="queryParams.status == 0" @change="onSwitchChange" />
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -56,7 +58,12 @@
         
       </span>
       <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.userStatus==0"  @change="Enable(record)"/>
+        <!-- <a-switch  :checked="record.userStatus==0"  @change="Enable(record)"/> -->
+        <template v-if="true">
+          <a-popconfirm placement="topRight" :title="record.userStatus===0 ? '确认停用？' : '确认启用？'" @confirm="() => update(record)">
+            <a-switch size="small" :checked="record.userStatus === 0" />
+          </a-popconfirm>
+        </template>
       </span>
     </s-table>
 
@@ -99,6 +106,16 @@ export default {
         status: 0,//（0正常、1停用、2删除）
         queryText: ''
       },
+      selects: [
+        {
+          id: 0,
+          name: '启用'
+        },
+        {
+          id: 1,
+          name: '停用'
+        }
+      ],
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -151,7 +168,8 @@ export default {
         },
         {
           title: '状态',
-          width: '80px',
+          width: '60px',
+          fixed: 'right',
           scopedSlots: { customRender: 'statuas' },
         },
         {
@@ -301,9 +319,10 @@ export default {
     /**
      * 启用/停用
      */
-    Enable(record) {
+    update(record) {
       this.confirmLoading = true
       var _status = record.userStatus == 0 ? 1 : 0
+      record.userStatus = _status
       //更新接口调用
       setDoctorUserStatus({
         userId: record.userId,
@@ -312,10 +331,11 @@ export default {
         this.confirmLoading = false
         if (res.success) {
           this.$message.success('操作成功！')
-          record.userStatus = _status
+          
           this.handleOk()
         } else {
           this.$message.error('编辑失败：' + res.message)
+          record.userStatus = _status == 0 ? 1 : 0
         }
       })
     },

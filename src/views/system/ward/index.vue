@@ -25,7 +25,7 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="() => (queryParam = {})">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
         </span>
       </div>
     </div>
@@ -33,6 +33,7 @@
       <a-button icon="plus" style="float: right;margin-right: 0;" @click="$refs.addForm.add()">新增</a-button>
     </div>
     <s-table
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -96,7 +97,7 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParam: {status:1},
       // 表头
       columns: [
         {
@@ -142,12 +143,14 @@ export default {
         {
           title: '状态',
           width: '60px',
+          fixed: 'right',
           dataIndex: 'status',
           scopedSlots: { customRender: 'status' }
         },
         {
           title: '操作',
           width: '150px',
+          fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' }
         }
@@ -234,6 +237,15 @@ export default {
 
     toggleAdvanced() {
       this.advanced = !this.advanced
+    },
+      /**
+     * 重置
+     */
+     reset() {
+      this.queryParam={}
+      this.queryParam.status=1
+
+      this.handleOk()
     },
     handleOk() {
       this.$refs.table.refresh()

@@ -6,6 +6,7 @@
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
+    :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-check2">
@@ -282,7 +283,7 @@ export default {
       //获取短线平台列表
       getSmsConfigureList({"pageNo": 1,"pageSize": 10000}).then((res) => {
         if (res.code == 0) {
-          this.wxgzhData = res.data
+          this.wxgzhData = res.data.records
         }
       })
 
@@ -312,7 +313,7 @@ export default {
       //获取公众号列表
       getSmsConfigureList({}).then((res) => {
         if (res.code == 0) {
-          this.wxgzhData = res.data
+          this.wxgzhData = res.data.records
 
           //查询详情
 

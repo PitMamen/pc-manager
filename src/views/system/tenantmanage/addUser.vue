@@ -46,8 +46,8 @@
             <span class="span-item-name"><span style="color: red">*</span>性别:</span>
             <a-radio-group name="radioGroup" v-model="checkData.userSex">
               <a-radio :value="0"> 男 </a-radio>
-              <a-radio :value="1" style="margin-left: 32px"> 女 </a-radio>
-              <a-radio :value="2" style="margin-left: 32px"> 未知 </a-radio>
+              <a-radio :value="1" style="margin-left: 15px"> 女 </a-radio>
+              <a-radio :value="2" style="margin-left: 15px"> 未知 </a-radio>
             </a-radio-group>
           </div>
           <div class="div-content">

@@ -154,7 +154,9 @@ export default {
       this.queryHospitalListOut()
 
       console.log(item)
-      this.form.setFieldsValue({
+     
+      setTimeout(() => {
+        this.form.setFieldsValue({
         id: item.id,
         hospitalCode: item.hospitalCode,
         supplierType: item.supplierType,
@@ -162,6 +164,7 @@ export default {
         accessKeySecret: item.accessKeySecret,
         paramJson: item.paramJson,
       })
+          })
     },
 
     /**

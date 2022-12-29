@@ -27,9 +27,11 @@
 
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-switch :checked="isOpen" @click="goOpen" />
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
-
+     
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -62,7 +64,12 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch :checked="record.enableStatus" @click="statusCheck(record)" />
+        <!-- <a-switch :checked="record.enableStatus" @click="statusCheck(record)" /> -->
+        <template v-if="true">
+          <a-popconfirm placement="topRight" :title="record.enableStatus ? '确认停用？' : '确认启用？'" @confirm="() => statusCheck(record)">
+            <a-switch size="small" :checked="record.enableStatus" />
+          </a-popconfirm>
+        </template>
       </span>
     </s-table>
 
@@ -112,7 +119,16 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-
+      selects: [
+        {
+          id: 1,
+          name: '启用'
+        },
+        {
+          id: 2,
+          name: '停用'
+        }
+      ],
       // 表头
       columns: [
         {
@@ -153,7 +169,8 @@ export default {
         {
           title: '状态',
           dataIndex: 'status',
-          width: 70,
+          width: 60,
+          fixed: 'right',
           scopedSlots: { customRender: 'statuas' },
         },
 
@@ -221,7 +238,9 @@ export default {
       if (this.queryParams.metaName != '') {
         this.queryParams.metaName = ''
       }
+      this.queryParams.departmentName=undefined
       this.queryParams.parentDisarmamentId = undefined
+      this.queryParams.status=1
 
       this.handleOk()
     },

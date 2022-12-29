@@ -171,7 +171,7 @@ export default {
       this.tenantName = record.tenantName
 
       this.getApplicationlistOut()
-      // this.getTenantListOut()
+  
     },
 
     /**

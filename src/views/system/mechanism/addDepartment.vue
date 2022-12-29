@@ -44,8 +44,7 @@
         }}</a-select-option>
       </a-select>
 
-      <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
-        ><span style="color: red">*</span> 科室位置 :</span
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 48px"> 科室位置 :</span
       >
       <a-input
         class="span-item-value"
@@ -394,10 +393,10 @@ export default {
         this.$message.error('请输入科室名称')
         return
       }
-      if (!this.queryParams.departmentAddr) {
-        this.$message.error('请输入科室地址')
-        return
-      }
+      // if (!this.queryParams.departmentAddr) {
+      //   this.$message.error('请输入科室地址')
+      //   return
+      // }
       if (!this.queryParams.departmentOrder) {
         this.$message.error('请选择科室排序')
         return
