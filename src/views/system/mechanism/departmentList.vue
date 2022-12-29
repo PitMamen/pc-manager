@@ -60,6 +60,8 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
+        <a @click="$refs.deptCode.add(record)">随访二维码</a>
+        <a-divider type="vertical" />
         <a @click="$refs.modifyDepartment.modifyDepartment(record)">修改</a>
       </span>
 
@@ -72,7 +74,7 @@
         </template>
       </span>
     </s-table>
-
+    <dept-code ref="deptCode" @ok="handleOk" />
     <add-Department ref="addDepartment" @ok="handleOk" />
     <modify-Department ref="modifyDepartment" @ok="handleOk" />
   </a-card>
@@ -89,9 +91,11 @@ import {
 } from '@/api/modular/system/posManage'
 import addDepartment from './addDepartment'
 import modifyDepartment from './modifyDepartment'
+import deptCode from './deptCode'
 export default {
   components: {
     STable,
+    deptCode,
     modifyDepartment,
     addDepartment,
   },
@@ -176,7 +180,7 @@ export default {
 
         {
           title: '操作',
-          width: 70,
+          width: 135,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
