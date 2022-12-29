@@ -6,6 +6,7 @@
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
+    :maskClosable="false"
   >
     <div class="div-service-user" style="margin-left: 15px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 所属租户 : </span>
@@ -15,7 +16,8 @@
       }}</span>
 
       <span class="span-item-name" style="margin-top: 5px; margin-left: 80px"
-        ><span style="color: red">*</span> 所属应用 :</span>
+        ><span style="color: red">*</span> 所属应用 :</span
+      >
 
       <a-select
         v-model="queryParamsData.applicationId"
@@ -68,14 +70,16 @@
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 10px; margin-left: 18px">
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 18px; position: relative">
       <span style="margin-top: 10px; width: 85px; margin-left: 2px"> 参数描述 :</span>
       <a-textarea
         style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: -21px; width: 83%"
         v-model="queryParamsData.remark"
+        :maxLength="30"
         placeholder="请输入参数描述"
         v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入参数描述！' }] }]"
       />
+      <span class="m-count">{{ queryParamsData.remark?queryParamsData.remark.length : 0 }}/30</span>
     </div>
   </a-modal>
 </template>
@@ -154,7 +158,6 @@ export default {
       this.reset()
 
       this.getApplicationlistOut()
-    
     },
 
     /**
@@ -276,7 +279,7 @@ export default {
 }
 </script>
           
-          <style lang="less">
+          <style lang="less" scoped>
 .dddd-r {
   display: flex;
   flex-direction: row;
@@ -340,9 +343,10 @@ export default {
     margin-bottom: 24px;
     white-space: nowrap;
   }
+
 }
 </style>
-        <style lang="less">
+        <style lang="less" scoped>
 .div-service-user {
   display: flex;
   flex-direction: row;
@@ -350,4 +354,10 @@ export default {
   overflow: hidden;
   height: 100%;
 }
+.m-count {
+    position: absolute;
+    font-size: 12px;
+    bottom: 2px;
+    right: 50px;
+  }
 </style>

@@ -49,7 +49,7 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
-      :rowKey="(record) => record.code"
+      :rowKey="(record) => record.id"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.modifyParameter.modify(record)">修改</a>

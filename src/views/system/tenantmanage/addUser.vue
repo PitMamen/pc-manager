@@ -180,7 +180,7 @@
           <div class="div-content">
             <span class="span-item-name" style="text-align: left">擅长领域:</span>
           </div>
-          <div class="div-content">
+          <div class="div-content" style="position: relative">
             <a-textarea
               v-model="checkData.expertInDisease"
               class="span-item-value"
@@ -191,8 +191,9 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
+            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/30</span>
           </div>
-          <div class="div-content">
+          <div class="div-content" style="position: relative">
             <span class="span-item-name" style="text-align: left">详细介绍:</span>
           </div>
           <div class="div-content">
@@ -206,6 +207,7 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
+            <span class="m-count2">{{ checkData.doctorBrief?checkData.doctorBrief.length : 0 }}/100</span>
           </div>
         </div>
       </div>
@@ -704,6 +706,18 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.m-count {
+    position: absolute;
+    font-size: 12px;
+    bottom: 2px;
+    right: 10px;
+  }
+  .m-count2 {
+    position: absolute;
+    font-size: 12px;
+    bottom: 13px;
+    right: 10px;
+  }
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;

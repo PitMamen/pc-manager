@@ -71,7 +71,7 @@
         <a-form-item label="参数JSON" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
           <a-textarea
             :rows="4"
-            :maxLength="500"
+            :maxLength="1000"
             placeholder="请输入JSON格式的内容"
             style="min-height: 140px"
             v-decorator="[
