@@ -216,7 +216,7 @@ export default {
         },
         {
           title: '上架',
-          width: 80,
+          width: 60,
           fixed: 'right',
           scopedSlots: { customRender: 'isVisible' },
         },
