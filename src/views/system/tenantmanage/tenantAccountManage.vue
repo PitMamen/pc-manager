@@ -116,6 +116,10 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       selects: [
+      {
+          id: '',
+          name: '全部'
+        },
         {
           id: 0,
           name: '启用'

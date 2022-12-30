@@ -107,6 +107,10 @@ export default {
         queryText: ''
       },
       selects: [
+      {
+          id: '',
+          name: '全部'
+        },
         {
           id: 0,
           name: '启用'

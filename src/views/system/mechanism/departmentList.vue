@@ -125,6 +125,10 @@ export default {
       form: this.$form.createForm(this),
       selects: [
         {
+          id: '',
+          name: '全部'
+        },
+        {
           id: 1,
           name: '启用'
         },

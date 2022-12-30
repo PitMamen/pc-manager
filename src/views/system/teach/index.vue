@@ -231,6 +231,7 @@ export default {
       ],
 
       selects: [
+        
         {
           id: 1,
           name: '上架',

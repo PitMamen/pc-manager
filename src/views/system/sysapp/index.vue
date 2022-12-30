@@ -86,6 +86,10 @@ export default {
         status: 1,
       },
       statusSelects: [
+      {
+          id: '',
+          name: '全部'
+        },
         {
           id: 1,
           name: '启用',
@@ -157,6 +161,7 @@ export default {
       },
 
       selects: [
+
         {
           id: 1,
           name: '内部应用',
@@ -167,6 +172,10 @@ export default {
         },
       ],
       selects2: [
+      {
+          id: '',
+          name: '全部'
+        },
         {
           id: 1,
           name: '启用',
