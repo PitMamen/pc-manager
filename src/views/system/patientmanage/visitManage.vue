@@ -19,7 +19,7 @@
           <span class="span-item-name" style="margin-left: 20px; width: 30%;display: inline-block; margin-top: 3px;"> 添加任务</span>
         </div> -->
 
-        <div class="div-title" style="margin-top:-10px;margin-left: 10px;">
+        <div class="div-title" style="margin-top:-10px;margin-left: 10px;width: 95%;">
           <div class="div-line-blue"></div>
           <span class="span-title">添加任务</span>
         </div>
@@ -28,7 +28,7 @@
           <span style="margin-top: 10px"> 随访方式:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select
-              style="width: 240px"
+              style="width: 322px"
               allow-clear
               v-model="queryParams.messageType"
               @select="onTypeSelect(queryParams.messageType)"
@@ -45,7 +45,7 @@
         <div class="display-item" style="margin-top: 10px; margin-left: 10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-            <a-select style="width: 240px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
+            <a-select style="width: 322px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
                 item.templateTitle
               }}</a-select-option>
@@ -67,10 +67,10 @@
           </a-radio-group>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%;font-size:12px">
+        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%;font-size:12px;margin-left: 60px;">
           <!-- <a-form-item> -->
           <a-date-picker
-          style="margin-top: 27px; margin-left: 10px;height: 28px;width: 128px;"
+          style="margin-top: 27px; margin-left: 10px;height: 28px;width: 150px;"
             v-model="queryParams.executeTime"
             format="YYYY-MM-DD"
           />
@@ -78,7 +78,7 @@
 
           <!-- <div class="display-item;" style="margin-top: 5px"> -->
           <a-time-picker
-            style="margin-left: 2%;margin-left:10px width: 50%; margin: 20px;height:28px;font-size:12px"
+            style="margin-left: 10px; width: 150px; margin: 20px;height:28px;font-size:12px"
             @change="timeChangeStart"
             :default-value="moment('00:00', 'HH:mm')"
             format="HH:mm"
@@ -86,7 +86,7 @@
           <!-- </div> -->
         </div>
 
-        <div class="display-item" style="margin-top: 20px; margin-left: 10px">
+        <div class="display-item" style="margin-top: 20px; margin-left: 65px">
           <a-button style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
           <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button>
         </div>
@@ -127,7 +127,7 @@
                       </span>
                      
 
-                      <span  :class="getClass(item.taskBizStatus.value)" style="margin-left: 10px; width: 30px; text-align: center">
+                      <span  :class="getClass(item.taskBizStatus.value)" style="margin-left: 40px; width: 30px; text-align: center">
                         {{ item.taskBizStatus.description  }}
                       </span>
                     </div>
@@ -140,59 +140,6 @@
                   <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
                 </div>
               </div>
-
-
-
-
-
-
-        <!-- <div style="margin-top:20px" class="div-total1" v-for="(item, index) in recordList" :key="index">
-          <div class="div-line-wrap" style="margin-left: 30px">
-            <span class="span-item-name"> 随访方式 :</span>
-            <span class="span-item-value" 
-              >{{ item.messageType != null ? item.messageType.description : '' }}
-            </span>
-
-            <span class="span-item-name" style="margin-left: 5%"> 状态 :&nbsp;</span>
-
-            <span class="span-item-value" style="margin-left: 3%">{{
-              item.taskBizStatus != null ? item.taskBizStatus.description : '-'
-            }}</span>
-          </div>
-
-          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 5px">
-            <span class="span-item-name"> 随访内容 :</span>
-            <span :title="item.templateTitle" class="span-item-value1" style="margin-left: 0px; width: 25%"
-              >{{ item.templateTitle != null ? item.templateTitle : '-' }}
-            </span>
-
-            <span class="span-item-name" style="margin-left: 0%"> 是否逾期 :</span>
-
-            <span v-if="item.taskType.value == 1" class="span-item-value" style="margin-left: 3%">{{
-              item.overdueStatus != null ? item.overdueStatus.description : ' '
-            }}</span>
-
-            <span
-              v-if="item.taskType.value == 2 || item.taskType.value == 3"
-              class="span-item-value"
-              style="margin-left: 3%"
-              >&nbsp;&nbsp;&nbsp;{{ '-' }}</span
-            >
-          </div>
-
-          <div class="div-line-wrap" style="margin-left: 30px; margin-top: 5px">
-            <span class="span-item-name"> 计划日期 :</span>
-            <span class="span-item-value" style="width: 30%"
-              >{{ item.executeTime != null ? item.executeTime : '' }}
-            </span>
-
-            <span class="span-item-name" style="margin-left: -5%; width: 12%"> 完成日期 :</span>
-
-            <span class="span-item-value" style="width: 25%">{{
-              item.taskType.value == 1 ? item.userFollowTime : item.actualExecTime
-            }}</span>
-          </div> -->
-        <!-- </div> -->
       </div>
     </div>
   </a-modal>
