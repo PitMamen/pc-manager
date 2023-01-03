@@ -6,6 +6,7 @@
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
+    :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
       <a-form :form="form">
@@ -92,7 +93,7 @@
             v-decorator="['indexUrl', { rules: [{ required: true, message: '请输入应用路径！' }] }]"
           />
         </a-form-item>
-        <a-form-item label="应用描述" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
+        <a-form-item label="应用描述" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback style="position: relative">
           <a-textarea
             :rows="4"
             :maxLength="200"
@@ -100,6 +101,7 @@
             style="min-height: 140px;"
             v-decorator="['remark', { rules: [{ required: true, message: '请输入应用描述！' }] }]"
           ></a-textarea>
+          <span class="m-count">{{ textLength() }}/200 </span>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -193,7 +195,14 @@ export default {
         })
       })
     },
-
+    //字数统计
+    textLength() {
+      if (this.form) {
+        return (this.form.getFieldValue('remark') || '').length
+      } else {
+        return 0
+      }
+    },
     geneSubmitData(values) {
       return values
     },
@@ -244,5 +253,11 @@ export default {
 }
 /deep/ .ant-col-21 {
   width: calc(87.5% + 16.4px);
+}
+.m-count {
+  position: absolute;
+  font-size: 12px;
+  bottom: -11px;
+  right: 26px;
 }
 </style>

@@ -39,7 +39,10 @@
             <a-form-item label="键值" class="row-bottom-0" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
               <a-input
                 placeholder="请输入键值"
-                v-decorator="['code', { rules: [{ required: true, message: '请输入键值！' },{validator:validateNoChinese}] }]"
+                v-decorator="[
+                  'code',
+                  { rules: [{ required: true, message: '请输入键值！' }, { validator: validateNoChinese }] },
+                ]"
               />
             </a-form-item>
           </a-col>
@@ -63,14 +66,23 @@
           </a-col>
         </a-row>
 
-        <a-form-item label="备注" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
+        <a-form-item
+          label="备注"
+          class="remark"
+          :labelCol="labelCol3"
+          :wrapperCol="wrapperCol3"
+          has-feedback
+          style="position: relative"
+        >
           <a-textarea
             :rows="4"
             :maxLength="30"
             placeholder="请输入备注"
             style="min-height: 140px"
             v-decorator="['remark']"
-          ></a-textarea>
+          >
+          </a-textarea>
+          <span class="m-count">{{ textLength() }}/30 </span>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -119,18 +131,18 @@ export default {
     }
   },
   methods: {
-         //不能输入非汉字效验  效验不能输入非空字符串
-	  validateNoChinese : (rule, value, callback) => {
-	    let reg = /^[^\u4e00-\u9fa5]+$/g;
-	    let regEmpty = /^\s*$/g;
-	    if (value && !reg.test(value)) {
-	      callback('书写格式错误');
-	    } else if(value && regEmpty.test(value)) {
-	      callback('不能为空');
-	    } else {
-	      callback();
-	    }
-	  },
+    //不能输入非汉字效验  效验不能输入非空字符串
+    validateNoChinese: (rule, value, callback) => {
+      let reg = /^[^\u4e00-\u9fa5]+$/g
+      let regEmpty = /^\s*$/g
+      if (value && !reg.test(value)) {
+        callback('书写格式错误')
+      } else if (value && regEmpty.test(value)) {
+        callback('不能为空')
+      } else {
+        callback()
+      }
+    },
     // 初始化方法
     add(record) {
       this.isAdd = true
@@ -170,6 +182,14 @@ export default {
         })
     },
 
+    //字数统计
+    textLength() {
+      if (this.form) {
+        return (this.form.getFieldValue('remark') || '').length
+      } else {
+        return 0
+      }
+    },
     geneSubmitData(values) {
       values.typeId = this.typeId
       return values
@@ -232,7 +252,7 @@ export default {
     },
 
     handleCancel() {
-      if(!this.isAdd){
+      if (!this.isAdd) {
         this.clearDatas()
       }
       this.visible = false
@@ -255,5 +275,12 @@ export default {
 }
 /deep/ .ant-col-21 {
   width: calc(87.5% + 16.4px);
+}
+
+.m-count {
+  position: absolute;
+  font-size: 12px;
+  bottom: -11px;
+  right: 26px;
 }
 </style>

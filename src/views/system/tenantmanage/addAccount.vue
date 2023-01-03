@@ -119,6 +119,7 @@ import {
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import {isObjectEmpty,isStringEmpty,isArrayEmpty} from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -222,9 +223,10 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           var roleList = []
-          for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].state == 1) {
-              roleList.push(res.data[i])
+          
+          for (let i = 0; i < res.data.records.length; i++) {
+            if (res.data.records[i].state == 1) {
+              roleList.push(res.data.records[i])
             }
           }
           this.roleList = roleList
@@ -293,7 +295,7 @@ export default {
     handleSubmit() {
       console.log(this.checkData)
 
-      if (this.checkData.loginName.length == 0) {
+      if (isStringEmpty(this.checkData.loginName)) {
         this.$message.error('请输入登录账号')
         return
       }
@@ -302,12 +304,12 @@ export default {
       }
 
 
-      if (this.checkData.userId.length == 0) {
+      if (isStringEmpty(this.checkData.userId)) {
         this.$message.error('请选择对应人员')
         return
       }
 
-      if (this.checkData.role.length == 0) {
+      if (isArrayEmpty(this.checkData.role)) {
         this.$message.error('请分配角色')
         return
       }
@@ -315,7 +317,7 @@ export default {
       if (this.accountChecked) {
         //如果勾选了客服坐席
 
-        if (this.checkData.seatUser.length == 0) {
+        if (isStringEmpty(this.checkData.seatUser)) {
           this.$message.error('请输入客服坐席ID')
           return
         }

@@ -6,6 +6,7 @@
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
+    :maskClosable="false"
   >
     <div class="div-service-user">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 上级机构 :</span>
@@ -44,8 +45,7 @@
         }}</a-select-option>
       </a-select>
 
-      <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
-        ><span style="color: red">*</span> 科室位置 :</span
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 48px"> 科室位置 :</span
       >
       <a-input
         class="span-item-value"
@@ -95,14 +95,16 @@
       >
     </div>
 
-    <div class="div-service-user" style="margin-top: 10px; margin-left: 7px">
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 7px; position: relative">
       <span style="margin-top: 10px; width: 90px"> 科室简介 :</span>
       <a-textarea
         style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: -28px; width: 87%"
         v-model="queryParams.departmentIntroduce"
+        :maxLength="30"
         placeholder="请输入科室简介"
         v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
       />
+      <span class="m-count">{{ queryParams.departmentIntroduce?queryParams.departmentIntroduce.length : 0 }}/30</span>
     </div>
   </a-modal>
 </template>
@@ -394,10 +396,10 @@ export default {
         this.$message.error('请输入科室名称')
         return
       }
-      if (!this.queryParams.departmentAddr) {
-        this.$message.error('请输入科室地址')
-        return
-      }
+      // if (!this.queryParams.departmentAddr) {
+      //   this.$message.error('请输入科室地址')
+      //   return
+      // }
       if (!this.queryParams.departmentOrder) {
         this.$message.error('请选择科室排序')
         return
@@ -498,7 +500,7 @@ export default {
   }
 }
 </style>
-      <style lang="less">
+      <style lang="less" scoped>
 .div-service-user {
   display: flex;
   flex-direction: row;
@@ -506,4 +508,10 @@ export default {
   overflow: hidden;
   height: 100%;
 }
+.m-count {
+    position: absolute;
+    font-size: 12px;
+    bottom: 2px;
+    right: 40px;
+  }
 </style>

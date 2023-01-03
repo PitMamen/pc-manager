@@ -68,7 +68,7 @@
           </a-col>
         </a-row>
 
-        <a-form-item label="字典描述" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
+        <a-form-item label="字典描述" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback  style="position: relative">
           <a-textarea
             :rows="4"
             :maxLength="30"
@@ -76,6 +76,7 @@
             style="min-height: 140px"
             v-decorator="['remark']"
           ></a-textarea>
+          <span class="m-count">{{ textLength() }}/30 </span>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -258,7 +259,14 @@ export default {
           this.confirmLoading = false
         })
     },
-
+  //字数统计
+  textLength() {
+      if (this.form) {
+        return (this.form.getFieldValue('remark') || '').length
+      } else {
+        return 0
+      }
+    },
     handleCancel() {
       if(!this.isAdd){
         this.clearDatas()
@@ -283,5 +291,11 @@ export default {
 }
 /deep/ .ant-col-21 {
   width: calc(87.5% + 16.4px);
+}
+.m-count {
+  position: absolute;
+  font-size: 12px;
+  bottom: -11px;
+  right: 26px;
 }
 </style>

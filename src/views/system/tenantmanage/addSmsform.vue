@@ -71,7 +71,7 @@
         <a-form-item label="参数JSON" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback>
           <a-textarea
             :rows="4"
-            :maxLength="500"
+            :maxLength="1000"
             placeholder="请输入JSON格式的内容"
             style="min-height: 140px"
             v-decorator="[
@@ -154,7 +154,9 @@ export default {
       this.queryHospitalListOut()
 
       console.log(item)
-      this.form.setFieldsValue({
+     
+      setTimeout(() => {
+        this.form.setFieldsValue({
         id: item.id,
         hospitalCode: item.hospitalCode,
         supplierType: item.supplierType,
@@ -162,6 +164,7 @@ export default {
         accessKeySecret: item.accessKeySecret,
         paramJson: item.paramJson,
       })
+          })
     },
 
     /**

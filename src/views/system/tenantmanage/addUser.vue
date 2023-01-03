@@ -46,8 +46,8 @@
             <span class="span-item-name"><span style="color: red">*</span>性别:</span>
             <a-radio-group name="radioGroup" v-model="checkData.userSex">
               <a-radio :value="0"> 男 </a-radio>
-              <a-radio :value="1" style="margin-left: 32px"> 女 </a-radio>
-              <a-radio :value="2" style="margin-left: 32px"> 未知 </a-radio>
+              <a-radio :value="1" style="margin-left: 15px"> 女 </a-radio>
+              <a-radio :value="2" style="margin-left: 15px"> 未知 </a-radio>
             </a-radio-group>
           </div>
           <div class="div-content">
@@ -153,23 +153,23 @@
           <div class="div-content" style="flex-wrap: wrap">
             <div class="checkview">
               <span class="span-check-title">图文咨询:</span>
-              <a-switch v-model="textNumChecked" :disabled="!accountChecked || isDetailTag" />
+              <a-switch v-model="textNumChecked" :disabled="!accountChecked " />
             </div>
             <div class="checkview">
               <span class="span-check-title">电话咨询:</span>
-              <a-switch v-model="telNumChecked" :disabled="!accountChecked ||isDetailTag" />
+              <a-switch v-model="telNumChecked" :disabled="!accountChecked " />
             </div>
             <div class="checkview" style="margin-right: 0">
               <span class="span-check-title">视频咨询:</span>
-              <a-switch v-model="videoNumChecked" :disabled="!accountChecked || isDetailTag" />
+              <a-switch v-model="videoNumChecked" :disabled="!accountChecked " />
             </div>
             <div class="checkview">
               <span class="span-check-title">复诊开方:</span>
-              <a-switch v-model="appointNumChecked" :disabled="!accountChecked || isDetailTag" />
+              <a-switch v-model="appointNumChecked" :disabled="!accountChecked " />
             </div>
             <div class="checkview">
               <span class="span-check-title">MDT会诊:</span>
-              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked || isDetailTag" />
+              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked " />
             </div>
           </div>
 
@@ -180,7 +180,7 @@
           <div class="div-content">
             <span class="span-item-name" style="text-align: left">擅长领域:</span>
           </div>
-          <div class="div-content">
+          <div class="div-content" style="position: relative">
             <a-textarea
               v-model="checkData.expertInDisease"
               class="span-item-value"
@@ -191,8 +191,9 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
+            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/30</span>
           </div>
-          <div class="div-content">
+          <div class="div-content" style="position: relative">
             <span class="span-item-name" style="text-align: left">详细介绍:</span>
           </div>
           <div class="div-content">
@@ -206,6 +207,7 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
+            <span class="m-count2">{{ checkData.doctorBrief?checkData.doctorBrief.length : 0 }}/100</span>
           </div>
         </div>
       </div>
@@ -228,6 +230,7 @@ import {
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
+import {isObjectEmpty,isStringEmpty} from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -396,18 +399,19 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           var roleList = []
-          for (let i = 0; i < res.data.length; i++) {
-            if (res.data[i].state == 1) {
+          var resdata=res.data.records
+          for (let i = 0; i <resdata.length; i++) {
+            if (resdata[i].state == 1) {
               
-              if(this.record.userId){
+              if(this.record.userId && this.checkData.roleIds){
                 //如果是详情 显示已勾选
                 this.checkData.roleIds.forEach(id=>{
-                  if(id == res.data[i].roleId){
-                    res.data[i].checked=true
+                  if(id == resdata[i].roleId){
+                    resdata[i].checked=true
                   }
                 })
               }
-              roleList.push(res.data[i])
+              roleList.push(resdata[i])
             }
           }
           this.roleList = roleList
@@ -505,19 +509,19 @@ export default {
       console.log(this.checkData)
       
 
-      if (this.checkData.avatarUrl.length == 0) {
+      if (isStringEmpty(this.checkData.avatarUrl)) {
         this.$message.error('请上传头像')
         return
       }
-      if (this.checkData.userName.length == 0) {
+      if (isStringEmpty(this.checkData.userName)) {
         this.$message.error('请输入姓名')
         return
       }
-      if (this.checkData.birthday.length == 0) {
+      if (isStringEmpty(this.checkData.birthday)) {
         this.$message.error('请选择出生日期')
         return
       }
-      if (this.checkData.identificationNo.length == 0) {
+      if (isStringEmpty(this.checkData.identificationNo)) {
         this.$message.error('请输入身份证号码')
         return
       }
@@ -529,7 +533,7 @@ export default {
         return
       }
 
-      if (this.checkData.phone.length == 0) {
+      if (isStringEmpty(this.checkData.phone)) {
         this.$message.error('请输入联系电话')
         return
       }
@@ -539,7 +543,7 @@ export default {
         return
       }
 
-      if (this.checkData.email.length == 0) {
+      if (isStringEmpty(this.checkData.email)) {
         this.$message.error('请输入邮箱地址')
         return
       }
@@ -548,15 +552,15 @@ export default {
         return
       }
 
-      if (this.checkData.userType.length == 0) {
+      if (isStringEmpty(this.checkData.userType)) {
         this.$message.error('请选择人员类型')
         return
       }
-      if (this.checkData.professionalTitle.length == 0) {
+      if (isStringEmpty(this.checkData.professionalTitle)) {
         this.$message.error('请选择人员职称')
         return
       }
-      if (this.checkData.hospitalCode.length == 0) {
+      if (isStringEmpty(this.checkData.hospitalCode)) {
         this.$message.error('请选择所属机构')
         return
       }
@@ -702,6 +706,18 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.m-count {
+    position: absolute;
+    font-size: 12px;
+    bottom: 2px;
+    right: 10px;
+  }
+  .m-count2 {
+    position: absolute;
+    font-size: 12px;
+    bottom: 13px;
+    right: 10px;
+  }
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;

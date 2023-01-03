@@ -13,11 +13,16 @@
           @search="$refs.table.refresh(true)"
         />
       </div>
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">状态:</span>
         <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -87,6 +92,7 @@
     </a-modal>
 
     <s-table
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -105,7 +111,12 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch  :checked="record.enableStatus" @click="statusCheck(record)"/>
+        <!-- <a-switch  :checked="record.enableStatus" @click="statusCheck(record)"/> -->
+        <template v-if="true">
+          <a-popconfirm placement="topRight" :title="record.enableStatus ? '确认停用？' : '确认启用？'" @confirm="() => statusCheck(record)">
+            <a-switch size="small" :checked="record.enableStatus" />
+          </a-popconfirm>
+        </template>
       </span>
     </s-table>
 
@@ -149,9 +160,21 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
-        // pageNo: 1,
-        // pageSize: 10,
       },
+      selects: [
+      {
+          id: '',
+          name: '全部'
+        },
+        {
+          id: 1,
+          name: '启用'
+        },
+        {
+          id: 2,
+          name: '停用'
+        }
+      ],
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -170,41 +193,42 @@ export default {
         {
           title: '租户名称',
           dataIndex: 'tenantName',
-          width: 170,
+          
           ellipsis: true,
         },
         {
           title: '登录账号',
           dataIndex: 'adminAccount',
-          width: 140,
+         
         },
         {
           title: '应用权限',
           dataIndex: 'applicationNames',
-          width: 180,
+         
           ellipsis: true,
         },
         {
           title: '手机号码',
           dataIndex: 'phone',
-          width: 180,
+         
         },
         {
           title: '到期日期',
           dataIndex: 'expireDate',
-          width: 180,
+          
         },
 
         {
           title: '访问地址',
           dataIndex: 'indexUrl',
-          width: 180,
+          
         },
 
         {
           title: '状态',
           dataIndex: 'status',
-          width: 70,
+          fixed: 'right',
+          width: 60,
           scopedSlots: { customRender: 'statuas' },
         },
 
@@ -248,6 +272,7 @@ export default {
      */
     reset() {
         this.queryParams.tenantName = ''
+        this.queryParams.status=1
         this.handleOk()
     },
 

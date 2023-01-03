@@ -13,14 +13,19 @@
           @search="$refs.table.refresh(true)"
         />
       </div>
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">状态:</span>
         <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
       </div>
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
@@ -36,6 +41,7 @@
     </div>
 
     <a-table
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :pagination="false"
@@ -43,7 +49,7 @@
       :data-source="loadData"
       :expandedRowsChange="expandedRowKeys"
       :alert="true"
-      :rowKey="(record) => record.code"
+      :rowKey="(record) => record.hospitalId"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.addMechanism.add(record)">新增</a>
@@ -52,7 +58,12 @@
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        <a-switch :checked="record.enableStatus" @click="statusCheck(record)" />
+        
+        <template v-if="true">
+          <a-popconfirm placement="topRight" :title="record.enableStatus ? '确认停用？' : '确认启用？'" @confirm="() => statusCheck(record)">
+            <a-switch size="small" :checked="record.enableStatus" />
+          </a-popconfirm>
+        </template>
       </span>
     </a-table>
 
@@ -86,7 +97,6 @@ export default {
       datas: [],
       keshiData: [],
       queryParams: {
-        tenantId: '',
         status: 1,
         hospitalName: '',
       },
@@ -101,42 +111,60 @@ export default {
       visible: false,
       confirmLoading: false,
       form: this.$form.createForm(this),
-
+      selects: [
+      {
+          id: '',
+          name: '全部'
+        },
+        {
+          id: 1,
+          name: '启用'
+        },
+        {
+          id: 2,
+          name: '停用'
+        }
+      ],
       // 表头
       columns: [
         {
           title: '机构名称',
           dataIndex: 'hospitalName',
-          width: 100,
+          
           ellipsis: true,
         },
         {
           title: '机构代码',
           dataIndex: 'hospitalCode',
-          width: 180,
+         
         },
         {
           title: '中间件地址',
           dataIndex: 'middleware',
-          width: 180,
+         
           ellipsis: true,
         },
         {
           title: '排序',
           dataIndex: 'sortedNo',
-          width: 180,
+         
         },
 
         {
           title: '状态',
           dataIndex: 'status',
-          width: 70,
+          width: 60,
+          fixed: 'right',
           scopedSlots: { customRender: 'statuas' },
         },
 
         {
           title: '操作',
+<<<<<<< HEAD
           width: '110px',
+=======
+          width: '100px',
+>>>>>>> 61fc6f0a7b287e46aa938b7d7a478f29ddcae6c9
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -169,9 +197,9 @@ export default {
      * 重置
      */
     reset() {
-      if (this.queryParams.metaName != '') {
-        this.queryParams.metaName = ''
-      }
+      this.queryParams.hospitalName=''
+      this.queryParams.status=1
+      this.queryHospitalListOut(this.queryParams)
     },
 
     /**
@@ -215,25 +243,26 @@ export default {
               this.$set(item, 'key', item.hospitalId)
               this.$set(item, 'enableStatus', item.status != null ? item.status.value == 1 : 2)
               this.$set(item, 'children', item.hospitals)
-
+              
               item.hospitals.forEach((item1, index1) => {
                 this.$set(item1, 'key', item1.hospitalId)
                 this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
-                // this.$set(item1, 'children', item.hospitals)
+               
               })
             })
-            // this.$set(item, 'children', item.hospitals)
+            
 
             this.loadData = res.data
-            this.hospitals = res.data
+           
           } else {
             this.loadData = res.data
-            this.hospitals = res.data
+           
           }
           return []
         })
         .finally((res) => {
           this.confirmLoading = false
+          
         })
     },
 
