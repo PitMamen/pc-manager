@@ -15,9 +15,6 @@
     <div class="div-service-user" >
       <!-- 左边 -->
       <div class="div-totalleft" style="width:75%">
-        <!-- <div class="div-totaltopleft">
-          <span class="span-item-name" style="margin-left: 20px; width: 30%;display: inline-block; margin-top: 3px;"> 添加任务</span>
-        </div> -->
 
         <div class="div-title" style="margin-top:-10px;margin-left: 10px;width: 95%;">
           <div class="div-line-blue"></div>
@@ -86,11 +83,13 @@
           <!-- </div> -->
         </div>
 
-        <div class="display-item" style="margin-top: 20px; margin-left: 65px">
+        <div class="display-item" style="margin-top: 20px; margin-left: 7px">
           <a-button style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
           <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button>
         </div>
       </div>
+
+      <div class="line-row"></div>
 
       <!-- ri -->   
       <div class="card-right-user" style="overflow-y: auto; height: 400px">  
@@ -112,11 +111,11 @@
                   >
                     <!-- <span class="span-name">
                     </span> -->
-                    <div class="div-rate" style="margin-left:20px;font-size: 14px;">
+                    <div class="div-rate" style="margin-left:10px;font-size: 14px;">
                       <!-- 1 电话  2微信  3短信 -->
-                      <img v-if="item.messageType.value== 1" style="width: 15px; height: 15px" src="~@/assets/icons/dh_icon.png" />  
-                      <img v-if="item.messageType.value== 2" style="width: 15px; height: 15px" src="~@/assets/icons/weixin_icon.png" />
-                      <img v-if="item.messageType.value== 3" style="width: 15px; height: 15px" src="~@/assets/icons/dx_icon.png" />
+                      <img v-if="item.messageType.value== 1" style="width: 11px; height: 11px" src="~@/assets/icons/dh_icon.png" />  
+                      <img v-if="item.messageType.value== 2" style="width: 14px; height: 11px" src="~@/assets/icons/weixin_icon.png" />
+                      <img v-if="item.messageType.value== 3" style="width: 14px; height: 11px" src="~@/assets/icons/dx_icon.png" />
                       <span ellipsis:true :class="getClassTime(item.overdueStatus.value)" style="width: 30px; margin-left: 10px;text-align: center">
                         {{ item.executeTime }}
                       </span>
@@ -127,7 +126,7 @@
                       </span>
                      
 
-                      <span  :class="getClass(item.taskBizStatus.value)" style="margin-left: 40px; width: 30px; text-align: center">
+                      <span  :class="getClass(item.taskBizStatus.value)" style="margin-left: 50px; width: 30px; text-align: center">
                         {{ item.taskBizStatus.description  }}
                       </span>
                     </div>
@@ -136,7 +135,7 @@
                   </div>
                 </div>
                 <div v-else class="no-data">
-                  <img src="~@/assets/icons/no_data.jpg" />
+                  <img src="~@/assets/icons/no_data.jpg" style="margin-left:5px"/>
                   <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
                 </div>
               </div>
@@ -472,6 +471,14 @@ export default {
 </script>
   
   <style lang="less">
+
+.line-row{
+  width: 1px;
+height: 425px;
+background: #CCCCCC;
+}
+
+
 .span-red {
   padding: 1% 2%;
   font-size: 12px;
