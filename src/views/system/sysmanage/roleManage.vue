@@ -234,18 +234,11 @@ export default {
         if (res.code == 0) {
           this.$message.success('操作成功')
           record.isSuggest = !record.isSuggest
-<<<<<<< HEAD
-          this.handleOk()
-          setTimeout(() => {
-            record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
-          }, 200)
-=======
 
           // setTimeout(() => {
           //   record.isSuggestText = record.isSuggest ? '确定关闭？' : '确定开启？'
           // }, 200)
           this.handleOk()
->>>>>>> 61fc6f0a7b287e46aa938b7d7a478f29ddcae6c9
         } else {
           this.$message.error(res.message)
         }

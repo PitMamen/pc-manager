@@ -160,11 +160,7 @@ export default {
 
         {
           title: '操作',
-<<<<<<< HEAD
-          width: '110px',
-=======
           width: '100px',
->>>>>>> 61fc6f0a7b287e46aa938b7d7a478f29ddcae6c9
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

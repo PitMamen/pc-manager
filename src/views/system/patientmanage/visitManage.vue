@@ -28,7 +28,7 @@
           <span style="margin-top: 10px"> 随访方式:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
             <a-select
-              style="width: 120px"
+              style="width: 240px"
               allow-clear
               v-model="queryParams.messageType"
               @select="onTypeSelect(queryParams.messageType)"
@@ -45,7 +45,7 @@
         <div class="display-item" style="margin-top: 10px; margin-left: 10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-            <a-select style="width: 120px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
+            <a-select style="width: 240px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
                 item.templateTitle
               }}</a-select-option>
@@ -116,13 +116,13 @@
                       <!-- 1 电话  2微信  3短信 -->
                       <img v-if="item.messageType.value== 1" style="width: 15px; height: 15px" src="~@/assets/icons/dh_icon.png" />  
                       <img v-if="item.messageType.value== 2" style="width: 15px; height: 15px" src="~@/assets/icons/weixin_icon.png" />
-                      <img v-if="item.messageType.value== 3" style="width: 18px; height: 13px" src="~@/assets/icons/dx_icon.png" />
+                      <img v-if="item.messageType.value== 3" style="width: 15px; height: 15px" src="~@/assets/icons/dx_icon.png" />
                       <span ellipsis:true :class="getClassTime(item.overdueStatus.value)" style="width: 30px; margin-left: 10px;text-align: center">
                         {{ item.executeTime }}
                       </span>
 
 
-                      <span style=" margin-left: 10px;text-align: center">
+                      <span style=" margin-left: 0px;text-align: center;width: 150px;text-overflow: ellipsis;display: inline-block;text-align: left">
                         {{ item.templateTitle }}
                       </span>
                      
