@@ -8,15 +8,13 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
-
-  <template slot="footer">
-    <a-button @click="handleCancel">关闭</a-button>
-  </template>
-    <div class="div-service-user" >
+    <template slot="footer">
+      <a-button @click="handleCancel">关闭</a-button>
+    </template>
+    <div class="div-service-user">
       <!-- 左边 -->
-      <div class="div-totalleft" style="width:75%">
-
-        <div class="div-title" style="margin-top:-10px;margin-left: 10px;width: 95%;">
+      <div class="div-totalleft" style="width: 75%">
+        <div class="div-title" style="margin-top: -10px; margin-left: 10px; width: 95%">
           <div class="div-line-blue"></div>
           <span class="span-title">添加任务</span>
         </div>
@@ -55,19 +53,23 @@
           <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
           <a-radio-group
             name="radioGroup"
-            style=" margin-top: 10px;margin-left: -20px;"
+            style="margin-top: 10px; margin-left: -20px"
             @change="radioChange"
             v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
           >
-            <a-radio class="btn-add-plan" :value="1" style="font-size:12px"> 立即发送 </a-radio>
-            <a-radio :value="2"  style="font-size:12px"> 延时发送 </a-radio>
+            <a-radio class="btn-add-plan" :value="1" style="font-size: 12px"> 立即发送 </a-radio>
+            <a-radio :value="2" style="font-size: 12px"> 延时发送 </a-radio>
           </a-radio-group>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item;" style="margin-top: 2px; width: 100%;font-size:12px;margin-left: 60px;">
+        <div
+          v-if="rangeValue == '2'"
+          class="display-item;"
+          style="margin-top: 2px; width: 100%; font-size: 12px; margin-left: 60px"
+        >
           <!-- <a-form-item> -->
           <a-date-picker
-          style="margin-top: 27px; margin-left: 10px;height: 28px;width: 150px;"
+            style="margin-top: 27px; margin-left: 10px; height: 28px; width: 150px"
             v-model="queryParams.executeTime"
             format="YYYY-MM-DD"
           />
@@ -75,7 +77,7 @@
 
           <!-- <div class="display-item;" style="margin-top: 5px"> -->
           <a-time-picker
-            style="margin-left: 10px; width: 150px; margin: 20px;height:28px;font-size:12px"
+            style="margin-left: 10px; width: 150px; margin: 20px; height: 28px; font-size: 12px"
             @change="timeChangeStart"
             :default-value="moment('00:00', 'HH:mm')"
             format="HH:mm"
@@ -91,54 +93,79 @@
 
       <div class="line-row"></div>
 
-      <!-- ri -->   
-      <div class="card-right-user" style="overflow-y: auto; height: 400px">  
-        <div class="div-title" style="margin-top:8px;margin-left: 10px;width: 96%;">
+      <!-- ri -->
+      <div class="card-right-user" style="overflow-y: auto; height: 400px">
+        <div class="div-title" style="margin-top: 8px; margin-left: 10px; width: 96%">
           <div class="div-line-blue"></div>
           <span class="span-title">历史任务</span>
         </div>
 
-
-        <div class="div-wrap-control"  style="margin-top: 2%;overflow-y: auto;width: 100%;">   
-                <div   v-if="recordList && recordList.length > 0">
-                  <div
-                    class="div-part"
-                    :class="{ checked: item.isChecked }"
-                    style="margin-bottom:10px"
-                    v-for="(item, index) in recordList"
-                    :value="item.templateTitle"
-                    :key="index"
-                  >
-                    <!-- <span class="span-name">
+        <div class="div-wrap-control" style="margin-top: 2%; overflow-y: auto; width: 100%">
+          <div v-if="recordList && recordList.length > 0">
+            <div
+              class="div-part"
+              :class="{ checked: item.isChecked }"
+              style="margin-bottom: 10px"
+              v-for="(item, index) in recordList"
+              :value="item.templateTitle"
+              :key="index"
+            >
+              <!-- <span class="span-name">
                     </span> -->
-                    <div class="div-rate" style="margin-left:10px;font-size: 14px;">
-                      <!-- 1 电话  2微信  3短信 -->
-                      <img v-if="item.messageType.value== 1" style="width: 11px; height: 11px" src="~@/assets/icons/dh_icon.png" />  
-                      <img v-if="item.messageType.value== 2" style="width: 14px; height: 11px" src="~@/assets/icons/weixin_icon.png" />
-                      <img v-if="item.messageType.value== 3" style="width: 14px; height: 11px" src="~@/assets/icons/dx_icon.png" />
-                      <span ellipsis:true :class="getClassTime(item.overdueStatus.value)" style="width: 30px; margin-left: 10px;text-align: center">
-                        {{ item.executeTime }}
-                      </span>
+              <div class="div-rate" style="margin-left: 10px; font-size: 14px">
+                <!-- 1 电话  2微信  3短信 -->
+                <img
+                  v-if="item.messageType.value == 1"
+                  style="width: 11px; height: 11px"
+                  src="~@/assets/icons/dh_icon.png"
+                />
+                <img
+                  v-if="item.messageType.value == 2"
+                  style="width: 12px; height: 10px"
+                  src="~@/assets/icons/weixin_icon.png"
+                />
+                <img
+                  v-if="item.messageType.value == 3"
+                  style="width: 11px; height: 10px"
+                  src="~@/assets/icons/dx_icon.png"
+                />
+                <span
+                  ellipsis:true
+                  :class="getClassTime(item.overdueStatus.value)"
+                  style="width: 30px; margin-left: 7px; text-align: center"
+                >
+                  {{ item.executeTime }}
+                </span>
 
+                <span
+                  style="
+                    margin-left: 0px;
+                    text-align: center;
+                    width: 150px;
+                    text-overflow: ellipsis;
+                    display: inline-block;
+                    text-align: left;
+                  "
+                >
+                  {{ item.templateTitle }}
+                </span>
 
-                      <span style=" margin-left: 0px;text-align: center;width: 150px;text-overflow: ellipsis;display: inline-block;text-align: left">
-                        {{ item.templateTitle }}
-                      </span>
-                     
-
-                      <span  :class="getClass(item.taskBizStatus.value)" style="margin-left: 50px; width: 30px; text-align: center">
-                        {{ item.taskBizStatus.description  }}
-                      </span>
-                    </div>
-                    <!-- 分割线 -->
-                    <!-- <div class="div-divider"></div> -->
-                  </div>
-                </div>
-                <div v-else class="no-data">
-                  <img src="~@/assets/icons/no_data.jpg" style="margin-left:5px"/>
-                  <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
-                </div>
+                <span
+                  :class="getClass(item.taskBizStatus.value)"
+                  style="margin-left: 60px; width: 60px; text-align: end;display: inline-block;"
+                >
+                  {{ item.taskBizStatus.description }}
+                </span>
               </div>
+              <!-- 分割线 -->
+              <!-- <div class="div-divider"></div> -->
+            </div>
+          </div>
+          <div v-else class="no-data">
+            <img src="~@/assets/icons/no_data.jpg" style="margin-left: 5px" />
+            <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+          </div>
+        </div>
       </div>
     </div>
   </a-modal>
@@ -231,7 +258,7 @@ export default {
       this.getWxTemplateListForJumpTypeOut()
       // this.title = record.name+'\xa0' | '+record.sex+' | '+record.age
 
-       this.title = record.name+'\xa0'+'\xa0'+" |   "+record.sex+"    |  "+'\xa0'+record.age
+      this.title = record.name + '\xa0' + '\xa0' + ' |   ' + record.sex + '    |  ' + '\xa0' + record.age
     },
 
     /**
@@ -354,7 +381,7 @@ export default {
     },
 
     timeChangeStart(moment, time) {
-      console.log("00000:",time)
+      console.log('00000:', time)
       this.timeStr = time
     },
 
@@ -371,28 +398,24 @@ export default {
       }
     },
 
-
     getClass(status) {
-      console.log("VVV:",status)
+      console.log('VVV:', status)
       if (status == 1) {
         return 'span-gray'
       } else if (status == 2) {
         return 'span-green'
       } else if (status == 3) {
         return 'span-red'
-      } 
+      }
     },
-
 
     getClassTime(status) {
       if (status == 2) {
         return 'span-red'
-      }else{
+      } else {
         return 'span-gray'
       }
     },
-
-
 
     /**
      * 提交
@@ -415,8 +438,8 @@ export default {
       } else {
         //延时发送的
         // console.log("延时发送时间：",this.timeStr)
-        if(!this.timeStr){
-          this.timeStr = "00:00"
+        if (!this.timeStr) {
+          this.timeStr = '00:00'
         }
         let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr
         this.queryParams.executeTime = dateStr
@@ -471,13 +494,19 @@ export default {
 </script>
   
   <style lang="less">
-
-.line-row{
-  width: 1px;
-height: 425px;
-background: #CCCCCC;
+.no-data {
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
+.line-row {
+  width: 1px;
+  height: 425px;
+  background: #cccccc;
+}
 
 .span-red {
   padding: 1% 2%;
@@ -499,7 +528,6 @@ background: #CCCCCC;
   color: #69c07d;
   // background-color: #85888e;
 }
-
 
 .table-page-wrapper {
   .ant-form-inline {
@@ -639,7 +667,7 @@ background: #CCCCCC;
     .span-item-name {
       width: 15%;
       display: inline-block;
-      color: #4D4D4D;
+      color: #4d4d4d;
       font-size: 12px;
       text-align: left;
     }
@@ -647,7 +675,7 @@ background: #CCCCCC;
     .span-item-value {
       width: 20%;
       // overflow: hidden;
-      color: #4D4D4D;
+      color: #4d4d4d;
       text-align: left;
       font-size: 12px;
       display: inline-block;
@@ -657,7 +685,7 @@ background: #CCCCCC;
     .span-item-value1 {
       width: 10%;
       margin-bottom: -4px;
-      color: #4D4D4D;
+      color: #4d4d4d;
       text-align: left;
       font-size: 12px;
       display: inline-block;

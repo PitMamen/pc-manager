@@ -31,7 +31,7 @@
       </a-select>
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px; margin-left: 15px">
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 15px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 参数编码 :</span>
 
       <a-input
@@ -56,24 +56,24 @@
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px; margin-left: 15px">
-      <span class="span-item-name" style="margin-top: 5px; margin-left: 1px"
-        ><span style="color: red">*</span> 参 数 值 :</span
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 15px">
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 11px"
+        ><span style="color: red">*</span> 参数值 :</span
       >
       <a-input
         class="span-item-value"
         v-model="queryParamsData.value"
         :maxLength="30"
-        style="display: inline-block; width: 180px; margin-left: 8px"
+        style="display: inline-block; width: 180px; margin-left: 6px"
         allow-clear
         placeholder="请输入参数值 "
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 10px; margin-left: 18px; position: relative">
+    <div class="div-service-user" style="margin-top: 2px; margin-left: 21px; position: relative">
       <span style="margin-top: 10px; width: 85px; margin-left: 2px"> 参数描述 :</span>
       <a-textarea
-        style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: -21px; width: 83%"
+        style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: -23px; width: 83%"
         v-model="queryParamsData.remark"
         :maxLength="30"
         placeholder="请输入参数描述"
