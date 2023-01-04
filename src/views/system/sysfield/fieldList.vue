@@ -13,9 +13,11 @@
         />
       </div>
       <div class="search-row">
-        <span class="name">应用类型:</span>
-        <a-select v-model="queryParams.applicationId" placeholder="请选择" allow-clear style="width: 120px;">
-          <a-select-option v-for="item in appList" :key="item.id" :value="item.id">{{ item.applicationName }}</a-select-option>
+        <span class="name">所属应用:</span>
+        <a-select v-model="queryParams.applicationId" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="item in appList" :key="item.id" :value="item.id">{{
+            item.applicationName
+          }}</a-select-option>
         </a-select>
       </div>
       <div class="action-row">
@@ -39,8 +41,8 @@
           :data="loadData"
           :alert="true"
           :rowKey="(record) => record.code"
-          :customRow='onRowClick'
-          :rowClassName='rowClassNameFun'
+          :customRow="onRowClick"
+          :rowClassName="rowClassNameFun"
         >
           <span slot="action" slot-scope="text, record">
             <a @click="$refs.addType.edit(record)">修改</a>
@@ -191,10 +193,9 @@ export default {
           }
 
           if (res.data.records.length > 0) {
-          
             this.checkedRecord = res.data.records[0]
-       
-            this.checkedIndex=0
+
+            this.checkedIndex = 0
             this.getSysDictDataLsit()
           }
 
@@ -203,8 +204,8 @@ export default {
       },
       loadData2: [],
       checkedRecord: {},
-      checkedIndex:0,
-      appList:[]
+      checkedIndex: 0,
+      appList: [],
     }
   },
 
@@ -244,13 +245,10 @@ export default {
       })
     },
     //点击后状态背景修改
-    rowClassNameFun(record, index){
-      
-        if (index == this.checkedIndex){
-         
-          return 'table-back'
-        }
-            
+    rowClassNameFun(record, index) {
+      if (index == this.checkedIndex) {
+        return 'table-back'
+      }
     },
     //点击左边条目
     onRowClick(record, index) {
@@ -259,20 +257,18 @@ export default {
           click: () => {
             console.log(record, index)
             this.checkedRecord = record
-            this.checkedIndex=index
+            this.checkedIndex = index
             this.getSysDictDataLsit()
-          }
-        }
+          },
+        },
       }
-
-	},
+    },
     getSysDictDataLsit() {
       sysDictDataLsit({ typeId: this.checkedRecord.id }).then((res) => {
         this.loadData2 = res.data
       })
     },
 
-  
     onSwitchChange(value) {
       console.log(value)
       this.queryParams.status = value ? 0 : 1
@@ -323,7 +319,7 @@ export default {
     reset() {
       this.queryParams.applicationId = undefined
       this.queryParams.queryText = ''
-    
+
       this.$refs.table.refresh(true)
     },
 
@@ -405,10 +401,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
-  /deep/.table-back {
-     background-color: #E6F7FF;
-   }
+/deep/.table-back {
+  background-color: #e6f7ff;
+}
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -454,6 +449,11 @@ export default {
 }
 .rowcontent {
   height: calc(100% - 18px);
+}
+/deep/ .ant-table-tbody > tr:hover:not(.ant-table-expanded-row):not(.ant-table-row-selected) > td {
+  //自定义table行hover上去的背景颜色，这里不要改背景色故注释
+  // background: #bae7ff;
+  cursor: pointer;
 }
 </style>
 

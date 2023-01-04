@@ -16,7 +16,10 @@
         <a-row>
           <a-col :span="12">
             <a-form-item label="字典类型" class="row-bottom-0" :labelCol="labelCol" :wrapperCol="wrapperCol">
-              <a-radio-group v-decorator="['type', { rules: [{ required: true, message: '请选择字典类型！' }] }]">
+              <a-radio-group
+                @change="onChange"
+                v-decorator="['type', { rules: [{ required: true, message: '请选择字典类型！' }] }]"
+              >
                 <a-radio value="1">全局</a-radio>
                 <a-radio value="2">应用自有</a-radio>
               </a-radio-group>
@@ -26,6 +29,8 @@
             <a-form-item label="所属应用" class="row-bottom-0" :labelCol="labelCol2" :wrapperCol="wrapperCol">
               <a-select
                 style="width: 100%"
+                :disabled="chooseDisable"
+                @select="onSelect"
                 placeholder="请选择应用"
                 v-decorator="['applicationId', { rules: [{ required: true, message: '请选择应用！' }] }]"
               >
@@ -44,11 +49,13 @@
               :labelCol="labelCol"
               :wrapperCol="wrapperCol"
               has-feedback
-             
             >
               <a-input
                 placeholder="字典编码"
-                v-decorator="['code', { rules: [{ required: true, message: '请输入字典编码！' },{validator:validateNoChinese}] }]"
+                v-decorator="[
+                  'code',
+                  { rules: [{ required: true, message: '请输入字典编码！' }, { validator: validateNoChinese }] },
+                ]"
               />
             </a-form-item>
           </a-col>
@@ -68,7 +75,14 @@
           </a-col>
         </a-row>
 
-        <a-form-item label="字典描述" class="remark" :labelCol="labelCol3" :wrapperCol="wrapperCol3" has-feedback  style="position: relative">
+        <a-form-item
+          label="字典描述"
+          class="remark"
+          :labelCol="labelCol3"
+          :wrapperCol="wrapperCol3"
+          has-feedback
+          style="position: relative"
+        >
           <a-textarea
             :rows="4"
             :maxLength="30"
@@ -115,6 +129,7 @@ export default {
       },
       visible: false,
       confirmLoading: false,
+      chooseDisable: false,
 
       statusModel: true,
       form: this.$form.createForm(this),
@@ -124,18 +139,43 @@ export default {
     }
   },
   methods: {
-      //不能输入非汉字效验  效验不能输入非空字符串
-	  validateNoChinese : (rule, value, callback) => {
-	    let reg = /^[^\u4e00-\u9fa5]+$/g;
-	    let regEmpty = /^\s*$/g;
-	    if (value && !reg.test(value)) {
-	      callback('书写格式错误');
-	    } else if(value && regEmpty.test(value)) {
-	      callback('不能为空');
-	    } else {
-	      callback();
-	    }
-	  },
+    //不能输入非汉字效验  效验不能输入非空字符串
+    validateNoChinese: (rule, value, callback) => {
+      let reg = /^[^\u4e00-\u9fa5]+$/g
+      let regEmpty = /^\s*$/g
+      if (value && !reg.test(value)) {
+        callback('书写格式错误')
+      } else if (value && regEmpty.test(value)) {
+        callback('不能为空')
+      } else {
+        callback()
+      }
+    },
+
+    onChange(event) {
+      console.log('s1', event)
+      if (event.target.value == '1') {
+        //全局
+        this.form.setFieldsValue({
+          applicationId: 0,
+        })
+        this.chooseDisable = true
+      } else {
+        //应用自有
+        this.form.setFieldsValue({
+          applicationId: undefined,
+        })
+        this.chooseDisable = false
+      }
+    },
+
+    onSelect(applicationId) {
+      //联动
+      this.form.setFieldsValue({
+        type: applicationId == 0 ? '1' : '2',
+      })
+      this.chooseDisable = applicationId == 0 ? true : false
+    },
 
     // 初始化方法
     add() {
@@ -143,7 +183,6 @@ export default {
       this.visible = true
       this.statusModel = true
       this.getAppList()
-     
     },
     // 初始化方法
     edit(item) {
@@ -151,7 +190,6 @@ export default {
       this.visible = true
       this.confirmLoading = true
       this.getAppList()
-   
 
       sysDictTypeDetail({
         id: item.id,
@@ -168,6 +206,12 @@ export default {
             })
           } else {
             this.$message.error(res.message)
+          }
+
+          if (res.data.applicationId == 0) {
+            this.chooseDisable = true
+          } else {
+            this.chooseDisable = false
           }
         })
         .finally(() => {
@@ -259,8 +303,8 @@ export default {
           this.confirmLoading = false
         })
     },
-  //字数统计
-  textLength() {
+    //字数统计
+    textLength() {
       if (this.form) {
         return (this.form.getFieldValue('remark') || '').length
       } else {
@@ -268,7 +312,7 @@ export default {
       }
     },
     handleCancel() {
-      if(!this.isAdd){
+      if (!this.isAdd) {
         this.clearDatas()
       }
       this.visible = false
