@@ -15,7 +15,7 @@
       </div>
 
       <div class="search-row">
-        <span class="name">应用类型:</span>
+        <span class="name">所属应用:</span>
         <a-select v-model="queryParamsData.applicationId" placeholder="请选择应用类型" allow-clear style="width: 120px">
           <a-select-option v-for="item in appListOut" :key="item.id" :value="item.id">{{
             item.applicationName
