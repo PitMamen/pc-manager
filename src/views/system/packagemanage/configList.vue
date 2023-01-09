@@ -1,20 +1,9 @@
 <template>
   <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
-      <div class="search-row">
-        <span class="name">方案名称:</span>
-        <a-input
-          v-model="queryParams.planName"
-          allow-clear
-          placeholder="可输入方案名称"
-          style="width: 120px; height: 28px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
-      </div>
-      <div class="search-row">
-        <span class="name">执行科室:</span>
 
+      <div class="search-row">
+        <span class="name">所属机构:</span>
         <a-select
           class="deptselect-single"
           show-search
@@ -32,17 +21,43 @@
           }}</a-select-option>
         </a-select>
       </div>
+
+      <div class="search-row">
+        <span class="name">查询条件:</span>
+        <a-input
+          v-model="queryParams.planName"
+          allow-clear
+          placeholder="可输入方案名称"
+          style="width: 120px; height: 28px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
+      <div class="search-row">
+        <span class="name">套餐分类:</span>
+        <a-select
+          class="deptselect-single"
+          show-search
+          v-model="queryParams.executeDepartment"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请选择科室"
+          @change="onDepartmentSelectChange"
+          @search="onDepartmentSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+            item.department_name
+          }}</a-select-option>
+        </a-select>
+      </div>
+
       <!-- <div class="search-row">
         <span class="name">方案状态:</span>
         <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
       </div> -->
-
-      <div class="search-row">
-        <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
-      </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -66,19 +81,11 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
+        <a-icon type="edit" style="color:#1890ff;margin-right: 3px;"/>
+        <a @click="editPlan(record)" :disabled="record.status.value != 1">规格配置</a>
       </span>
-      <span slot="status" slot-scope="text, record">
-        <a-popconfirm
-          placement="topRight"
-          :title="record.status.value === 1 ? '确认停用？' : '确认启用？'"
-          @confirm="Enable(record)"
-        >
-          <a-switch size="small" :checked="record.status.value == 1" />
-        </a-popconfirm>
-      </span>
-    </s-table>
 
+    </s-table>
   </a-card>
 </template>
 
@@ -129,41 +136,49 @@ export default {
       // 表头
       columns: [
         {
-          title: '方案名称',
-          dataIndex: 'planName',
-        },
-        {
-          title: '制定时间',
+          title: '套餐分类',
           dataIndex: 'formulateTime',
         },
         {
-          title: '制定人员',
+          title: '套餐名称',
           dataIndex: 'formulateUserName',
         },
         {
-          title: '执行科室',
+          title: '关联学科',
           dataIndex: 'executeDepartmentName',
         },
         {
-          title: '随访名单',
-          dataIndex: 'metaConfigureName',
+          title: '健康服务团队',
+          dataIndex: 'followType',
         },
         {
-          title: '随访类型',
-          dataIndex: 'followType',
+          title: '可选医生',
+          dataIndex: 'metaConfigfureName',
+        },
+        {
+          title: '可选护士',
+          dataIndex: 'metaConfgigureName',
         },
 
         {
-          title: '状态',
-          width: 70,
-          fixed: 'right',
-          scopedSlots: { customRender: 'status' },
+          title: '必选项数量',
+          dataIndex: 'metaCfonfgigureName',
         },
+
+        {
+          title: '可选项数量',
+          dataIndex: 'metaConfgiguhtreName',
+        },
+
+        {
+          title: '套餐起价',
+          dataIndex: 'metaConfgigghtureName',
+        },
+
+
         {
           title: '操作',
           fixed: 'right',
-          width: '60px',
-          dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
       ],
@@ -182,17 +197,17 @@ export default {
       },
 
       selects: [
-      {
+        {
           id: '',
-          name: '全部'
+          name: '全部',
         },
         {
           id: 1,
-          name: '启用',
+          name: '上架',
         },
         {
           id: 2,
-          name: '停用',
+          name: '下架',
         },
       ],
     }
@@ -228,8 +243,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,undefined).then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, undefined).then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
@@ -313,13 +328,7 @@ export default {
      */
     addName() {
       // this.$router.push({ path: '/servicewise/projectAdd' })
-      // this.$router.push({ path: '/packagemanage/packageAdd' })
-      this.$router.push({
-        name: 'package_config_edit',
-        // query: {
-        //   planId: record.id,
-        // },
-      })
+      this.$router.push({ path: '/packagemanage/packageAdd' })
     },
 
     handleOk() {

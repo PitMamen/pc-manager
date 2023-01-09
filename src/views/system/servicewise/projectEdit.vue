@@ -1410,6 +1410,7 @@ export default {
 
     .div-up-content {
       width: 100%;
+      padding-left: 8px;
       display: flex;
       flex-direction: row;
     }
