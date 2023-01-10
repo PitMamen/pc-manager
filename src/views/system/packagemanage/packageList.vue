@@ -2,51 +2,23 @@
   <a-card :bordered="false" class="sys-card">
     <div class="table-page-search-wrapper">
       <div class="search-row">
-        <span class="name">所属租户:</span>
-
-        <a-select
-          class="deptselect-single"
-          show-search
-          v-model="queryParams.executeDepartment"
-          :filter-option="false"
-          :not-found-content="fetching ? undefined : null"
-          allow-clear
-          placeholder="请选择科室"
-          @change="onDepartmentSelectChange"
-          @search="onDepartmentSelectSearch"
-        >
-          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
-          }}</a-select-option>
-        </a-select>
-      </div>
-      <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-select
-          class="deptselect-single"
-          show-search
-          v-model="queryParams.executeDepartment"
-          :filter-option="false"
-          :not-found-content="fetching ? undefined : null"
-          allow-clear
-          placeholder="请选择科室"
-          @change="onDepartmentSelectChange"
-          @search="onDepartmentSelectSearch"
+        <a-tree-select
+          v-model="queryParams.hospitalCode"
+          style="min-width: 120px"
+          :tree-data="treeData"
+          placeholder="请选择"
+          tree-default-expand-all
         >
-          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
-          }}</a-select-option>
-        </a-select>
+        </a-tree-select>
       </div>
 
       <div class="search-row">
         <span class="name">查询条件:</span>
         <a-input
-          v-model="queryParams.planName"
+          v-model="queryParams.queryCondition"
           allow-clear
-          placeholder="可输入方案名称"
+          placeholder="可输入查询条件"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
@@ -58,13 +30,11 @@
         <a-select
           class="deptselect-single"
           show-search
-          v-model="queryParams.executeDepartment"
+          v-model="queryParams.packageClassifyId"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
-          placeholder="请选择科室"
-          @change="onDepartmentSelectChange"
-          @search="onDepartmentSelectSearch"
+          placeholder="请选择套餐分类"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
           <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
@@ -73,14 +43,9 @@
         </a-select>
       </div>
 
-      <!-- <div class="search-row">
-        <span class="name">方案状态:</span>
-        <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
-      </div> -->
-
       <div class="search-row">
-        <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+        <span class="name">上架状态:</span>
+        <a-select v-model="queryParams.saleStatus" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
@@ -107,7 +72,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a-icon type="edit" style="color:#1890ff;margin-right: 3px;"/>
+        <a-icon type="edit" style="color: #1890ff; margin-right: 3px" />
         <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
       </span>
       <span slot="cover" slot-scope="text, record">
@@ -131,9 +96,10 @@
 import { STable } from '@/components'
 
 import {
+  queryHospitalList,
+  getPkgList,
   getDepartmentListForSelect,
   getDeptsPersonal,
-  getDepts,
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
@@ -152,12 +118,13 @@ export default {
       originData: [],
       idArr: [],
       queryParams: {
-        departmentName: undefined,
-        planName: '',
-        executeDepartment: undefined,
+        hospitalCode: undefined,
+        packageClassifyId: undefined,
+        queryCondition: undefined,
 
-        status: 1,
+        saleStatus: undefined, //上架状态：1未上架2已上架
       },
+      treeData: [],
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -233,7 +200,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryFollowPlan(Object.assign(parameter, this.queryParams)).then((res) => {
+        return getPkgList(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             res.data.rows.forEach((element) => {
               element.statusText = element.status.description
@@ -251,11 +218,11 @@ export default {
         },
         {
           id: 1,
-          name: '上架',
+          name: '未上架',
         },
         {
           id: 2,
-          name: '下架',
+          name: '已上架',
         },
       ],
     }
@@ -273,9 +240,43 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-    this.getDepartmentSelectList(undefined)
+    this.queryHospitalListOut()
   },
   methods: {
+    queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
+
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
     refresh() {
       this.$refs.table.refresh(true)
     },
@@ -286,49 +287,6 @@ export default {
           planId: record.id,
         },
       })
-    },
-
-    //获取管理的科室 可首拼
-    getDepartmentSelectList(departmentName) {
-      this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, undefined).then((res) => {
-        this.fetching = false
-        if (res.code == 0) {
-          this.originData = res.data.records
-        }
-      })
-    },
-    //科室搜索
-    onDepartmentSelectSearch(value) {
-      this.originData = []
-      this.getDepartmentSelectList(value)
-    },
-    //科室选择变化
-    onDepartmentSelectChange(value) {
-      if (value === undefined) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
-      }
-      this.$refs.table.refresh(true)
-    },
-
-    // onSwitchChange(value) {
-    //   console.log(value)
-    //   this.queryParams.status = value ? 1 : 2
-
-    //   this.$refs.table.refresh(true)
-    // },
-    onDepartmentChange(index) {
-      console.log('index=' + index)
-      if (index == undefined) {
-        this.queryParams.executeDepartment = undefined
-        this.queryParams.departmentName = undefined
-      } else {
-        console.log(this.originData[index])
-        this.queryParams.executeDepartment = this.originData[index].departmentId
-        this.queryParams.departmentName = this.originData[index].departmentName
-      }
     },
 
     /**
@@ -462,3 +420,4 @@ export default {
   }
 }
 </style>
+<style>

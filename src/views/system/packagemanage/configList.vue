@@ -67,10 +67,6 @@
       </div>
     </div>
 
-    <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
-    </div>
-
     <s-table
       :scroll="{ x: true }"
       ref="table"
@@ -322,13 +318,6 @@ export default {
     },
     upDateStatesText(_status) {
       return _status == 1 ? '确定停用此方案吗？' : '确定启用用此方案吗？'
-    },
-    /**
-     * 新增
-     */
-    addName() {
-      // this.$router.push({ path: '/servicewise/projectAdd' })
-      this.$router.push({ path: '/packagemanage/packageAdd' })
     },
 
     handleOk() {
