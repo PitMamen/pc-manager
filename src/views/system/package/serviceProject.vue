@@ -1,460 +1,392 @@
 <template>
-    <a-card :bordered="false" class="card-right-pac">
-      <div class="table-page-search-wrapper">
-        <!-- <div class="search-row">
-          <span class="name">机构:</span>
-          <a-tree-select
-            v-model="queryParams.hospitalCode"
-            style="min-width: 120px"
-            :tree-data="treeData"
-            placeholder="请选择"
-            tree-default-expand-all
-          >
-          </a-tree-select>
-        </div> -->
-        <div class="search-row">
-          <span class="name"> 查询条件:</span>
-          <a-input
-            allow-clear
-            v-model="queryParams.menuName"
-            placeholder="可输入项目名称查询"
-            style="width: 120px"
-            @blur="$refs.table.refresh(true)"
-            @keyup.enter="$refs.table.refresh(true)"
-            @search="$refs.table.refresh(true)"
-          />
-        </div>
-
-
-        <div class="search-row">
-          <span class="name">项目类型:</span>
-          <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-          </a-select>
-        </div>
-
-
-  
-        <div class="search-row">
-          <span class="name">状态:</span>
-          <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-            <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-          </a-select>
-        </div>
-  
-        <div class="action-row">
-          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-            <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-            <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
-          </span>
-        </div>
+  <a-card :bordered="false" class="card-right-pac">
+    <div class="table-page-search-wrapper">
+      <div class="search-row">
+        <span class="name"> 查询条件:</span>
+        <a-input
+          allow-clear
+          v-model="queryParams.projectName"
+          placeholder="可输入项目名称查询"
+          style="width: 120px"
+          @blur="$refs.table.refresh(true)"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
       </div>
-  
-      <div class="table-operator" style="overflow: hidden">
-        <a-button icon="plus" style="float: right; margin-right: 0; margin-top: 0px" @click="addModel()" @ok="handleOk"
-          >新增</a-button
-        >
+
+      <div class="search-row">
+        <span class="name">项目类型:</span>
+        <a-select v-model="queryParams.projectType" placeholder="请选择类型" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in projectTypeData" :key="item.code" :value="item.code">{{ item.value }}</a-select-option>
+        </a-select>
       </div>
-  
-      <s-table
-        :scroll="{ x: true }"
-        ref="table"
-        size="default"
-        :columns="columns"
-        :data="loadData"
-        :alert="true"
-        :rowKey="(record) => record.code"
+
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
+        </span>
+      </div>
+    </div>
+
+    <div class="table-operator" style="overflow: hidden">
+      <a-button icon="plus" style="float: right; margin-right: 0; margin-top: 0px" @click="addModel()" @ok="handleOk"
+        >新增</a-button
       >
-        <span slot="action" slot-scope="text, record">
-          <!-- <a @click="$refs.modifyMenu.modifymenu(record)"><a-icon type="edit" style="margin-right: 0" />修改</a> -->
-          <!-- <a-divider type="vertical" /> -->
-        </span>
-  
-        <span slot="statuas" slot-scope="text, record">
-          <template v-if="true">
-            <a-popconfirm
-              placement="topRight"
-              :title="record.enableStatus ? '确认停用？' : '确认启用？'"
-              @confirm="() => statusCheck(record)"
-            >
-              <a-switch size="small" :checked="record.enableStatus" />
-            </a-popconfirm>
-          </template>
-        </span>
-  
-  
-       <span slot="tubiao" slot-scope="text, record">
-         <img style="width:30px;height:30px" :src="record.icon" />
-  
-       </span>
-  
-  
-  
-  
-  
-      </s-table>
-  
-      <add-Project ref="addProject" @ok="handleOk" />
-      <!-- <modify-menu ref="modifyMenu" @ok="handleOk" /> -->
-    </a-card>
-  </template>
+    </div>
+
+    <s-table
+      :scroll="{ x: true }"
+      ref="table"
+      size="default"
+      :columns="columns"
+      :data="loadData"
+      :alert="true"
+      :rowKey="(record) => record.code"
+    >
+      <span slot="action" slot-scope="text, record">
+        <a @click="$refs.modifyProject.modifyModel(record)"><a-icon type="edit" style="margin-right: 0" />修改</a>
+        <!-- <a-divider type="vertical" /> -->
+      </span>
+
+      <span slot="statuas" slot-scope="text, record">
+        <template v-if="true">
+          <a-popconfirm
+            placement="topRight"
+            :title="record.enableStatus ? '确认停用？' : '确认启用？'"
+            @confirm="() => statusCheck(record)"
+          >
+            <a-switch size="small" :checked="record.enableStatus" />
+          </a-popconfirm>
+        </template>
+      </span>
+
+      <span slot="tubiao" slot-scope="text, record">
+        <img style="width: 30px; height: 30px" :src="record.projectImg" />
+      </span>
+    </s-table>
+
+    <add-Project ref="addProject" @ok="handleOk" />
+    <modify-Project ref="modifyProject" @ok="handleOk" />
+  </a-card>
+</template>
         
         
         <script>
-  import { STable } from '@/components'
-  import {
-    queryHospitalList,
-    modifyDepartmentForReq,
-    getListTdShopmallMainpageMenu,
-    modifyTdShopmallMainpageMenu,
-  } from '@/api/modular/system/posManage'
-  import addProject from './addProject'
-//   import modifyMenu from './modifyMenu'
-  export default {
-    components: {
-      STable,
-      //   deptCode,
-      //   modifyDepartment,
-      addProject,
-    //   modifyMenu,
-    },
-    data() {
-      return {
-        isOpen: true,
-        titleResetPwd: '',
-        tenantId: '',
-        datas: [],
-        treeData: [],
-        HospitalTypeList: [],
-        queryParams: {
-          hospitalCode: undefined,
-          status: 1,
-          menuName: '',
+import { STable } from '@/components'
+import {
+  getListTdShopmallMainpageMenu,
+  modifyTdShopmallMainpageMenu,
+  getDictDataForCode,
+  qryServiceItemList,
+  saveServiceItem,
+} from '@/api/modular/system/posManage'
+import addProject from './addProject'
+  import modifyProject from './modifyProject'
+export default {
+  components: {
+    STable,
+    addProject,
+    modifyProject,
+  },
+  data() {
+    return {
+      isOpen: true,
+      titleResetPwd: '',
+      tenantId: '',
+      datas: [],
+      HospitalTypeList: [],
+      projectTypeData: [],
+      queryParams: {
+        projectName: '',
+        projectType: undefined,
+        status: 1,
+      },
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 5 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 15 },
+      },
+      visible: false,
+      confirmLoading: false,
+      form: this.$form.createForm(this),
+      selects: [
+        {
+          id: '',
+          name: '全部',
         },
-        labelCol: {
-          xs: { span: 24 },
-          sm: { span: 5 },
+        {
+          id: 1,
+          name: '启用',
         },
-        wrapperCol: {
-          xs: { span: 24 },
-          sm: { span: 15 },
+        {
+          id: 0,
+          name: '停用',
         },
-        visible: false,
-        confirmLoading: false,
-        form: this.$form.createForm(this),
-        selects: [
-          {
-            id: '',
-            name: '全部',
-          },
-          {
-            id: 1,
-            name: '启用',
-          },
-          {
-            id: 2,
-            name: '停用',
-          },
-        ],
-        // 表头
-        columns: [
-          {
-            title: '项目名称',
-            dataIndex: 'hospitalName',
-            ellipsis: true,
-          },
-          {
-            title: '缩略图',
-            dataIndex: 'sysApplicationName',
-          },
-          {
-            title: '项目类型',
-            // dataIndex: 'tubiao',
-            scopedSlots: { customRender: 'tubiao' },
-          },
-          {
-            title: '规格型号',
-            dataIndex: 'menuName',
-          },
-          {
-            title: '生产厂商',
-            dataIndex: 'menuTypeShow',
-          },
-  
-          {
-            title: '单位',
-            dataIndex: 'jumpTypeShow',
-          },
-  
-          {
-            title: '建议价格',
-            dataIndex: 'jumpUrl',
-          },
+      ],
+      // 表头
+      columns: [
+        {
+          title: '项目名称',
+          dataIndex: 'projectName',
+          ellipsis: true,
+        },
+        {
+          title: '缩略图',
+          scopedSlots: { customRender: 'tubiao' },
+        },
+        {
+          title: '项目类型',
+          dataIndex: 'projectTypeName',
+        },
+        {
+          title: '规格型号',
+          dataIndex: 'normsModel',
+        },
+        {
+          title: '生产厂商',
+          dataIndex: 'factoryName',
+        },
 
-          {
-            title: '备注说明',
-            dataIndex: 'remark',
-          },
-  
-          {
-            title: '状态',
-            dataIndex: 'status',
-            width: 60,
-            fixed: 'right',
-            scopedSlots: { customRender: 'statuas' },
-          },
-  
-          {
-            title: '操作',
-            width: 80,
-            fixed: 'right',
-            dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
-          },
-        ],
-  
-        // 加载数据方法 必须为 Promise 对象
-        loadData: (parameter) => {
-          return getListTdShopmallMainpageMenu(Object.assign(parameter, this.queryParams)).then((res) => {
-            console.log('请求结果:', res.message)
-            var data = {
-              pageNo: parameter.current,
-              pageSize: parameter.size,
-              totalRows: res.data.total,
-              totalPage: res.data.total / parameter.size,
-              rows: res.data.records,
-            }
-  
-            if (res.code == 0 && res.data.records.length > 0) {
-              data.rows.forEach((item, index) => {
-                this.$set(item, 'enableStatus', item.status == 1)
-                this.$set(item, 'tubiao', item.icon)
-                this.$set(item, 'menuTypeShow', item.menuType==1?"置顶菜单":"常规菜单")
-                this.$set(item, 'jumpTypeShow', this.getType(item.jumpType))
-                // this.$set(item, 'jumpType', this.getType(item.jumpType))
-                // this.$set(item, 'departmenttype', type)
-              })
-            }
-            console.log(data)
-            return data
-          })
+        {
+          title: '单位',
+          dataIndex: 'unit',
         },
+
+        {
+          title: '建议价格',
+          dataIndex: 'suggestPrice',
+        },
+
+        {
+          title: '备注说明',
+          dataIndex: 'remark',
+        },
+
+        {
+          title: '状态',
+          dataIndex: 'status',
+          width: 60,
+          fixed: 'right',
+          scopedSlots: { customRender: 'statuas' },
+        },
+
+        {
+          title: '操作',
+          width: 80,
+          fixed: 'right',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+      // 加载数据方法 必须为 Promise 对象
+      loadData: (parameter) => {
+        return qryServiceItemList(Object.assign(parameter, this.queryParams)).then((res) => {
+          console.log('请求结果:', res.message)
+          var data = {
+            pageNo: parameter.current,
+            pageSize: parameter.size,
+            totalRows: res.data.totalPage,
+            totalPage: res.data.totalPage / parameter.size,
+            rows: res.data.rows,
+          }
+
+          if (res.code == 0 && res.data.rows.length > 0) {
+            data.rows.forEach((item, index) => {
+              this.$set(item, 'enableStatus', item.status == 1)
+              this.$set(item, 'tubiao', item.projectImg)
+            })
+          }
+          console.log(data)
+          return data
+        })
+      },
+    }
+  },
+
+  created() {
+    this.getDictDataForCodeOut()
+    // this.addTdShopmallMainpageMenuOut()
+  },
+
+  methods: {
+
+    /**
+     * 重置
+     */
+    reset() {
+      if (this.queryParams.projectName != '') {
+        this.queryParams.projectName = ''
       }
+      this.queryParams.projectType = undefined
+      this.queryParams.status = 1
+
+      this.handleOk()
     },
-  
-    created() {
-      this.queryHospitalListOut()
-      // this.addTdShopmallMainpageMenuOut()
+
+    /**
+     * 新增
+     */
+    addModel() {
+      this.$refs.addProject.addModel()
     },
-  
-    methods: {
-  
-      getType(type){
-        if(type==1){
-          return "小程序内"
-        }else if(type==2){
-          return "第三方小程序"
-        }else if(type==3){
-          return "第三方链接"
-        }
-      },
-  
-  
-      /**
-       * 重置
-       */
-      reset() {
-        if (this.queryParams.menuName != '') {
-          this.queryParams.menuName = ''
-        }
-        this.queryParams.hospitalCode = undefined
-        this.queryParams.status = 1
-  
-        this.handleOk()
-      },
-  
-      /**
-       * 新增
-       */
-       addModel() {
-        this.$refs.addProject.addModel()
-      },
-  
-      onChange(value) {
-        console.log('onChange ', value, arguments)
-        this.setState({ value })
-      },
-  
-      /**
-       * 所属机构接口
-       */
-      /**
-       *
-       * @param {}
-       */
-      queryHospitalListOut() {
-        let queryData = {
-          tenantId: '',
-          status: 1,
-          hospitalName: '',
-        }
-        this.confirmLoading = true
-        queryHospitalList(queryData)
-          .then((res) => {
-            if (res.code == 0 && res.data.length > 0) {
-              res.data.forEach((item, index) => {
-                this.$set(item, 'key', item.hospitalId)
-                this.$set(item, 'value', item.hospitalId)
-                this.$set(item, 'title', item.hospitalName)
-                this.$set(item, 'children', item.hospitals)
-  
-                item.hospitals.forEach((item1, index1) => {
-                  this.$set(item1, 'key', item1.hospitalId)
-                  this.$set(item1, 'value', item1.hospitalId)
-                  this.$set(item1, 'title', item1.hospitalName)
-                })
-              })
-  
-              this.treeData = res.data
-            } else {
-              this.treeData = res.data
-            }
-            return []
-          })
-          .finally((res) => {
-            this.confirmLoading = false
-          })
-      },
-  
-  
-      /**
-       * 新增
-       */
-      addTenant() {
-        this.$refs.addTenant.add()
-      },
-  
-      handleOk() {
-        this.$refs.table.refresh()
-      },
-  
-      handleCancel() {
-        this.form.resetFields()
-        this.visible = false
-      },
-  
-      /**
-       * 状态开关
-       */
-      // goOpen() {
-      //   this.isOpen = !this.isOpen
-      //   if (this.isOpen) {
-      //     this.queryParams.status = 1
-      //   } else {
-      //     this.queryParams.status = 2
-      //   }
-      //   this.handleOk()
-      // },
-  
-      /**
-       * 开关
-       */
-      statusCheck(record) {
-        var state = !record.enableStatus
-        let queryParam = {
-          id: record.id,
-          status: state ? 1 : 2,
-        }
-        this.confirmLoading = true
-        modifyTdShopmallMainpageMenu(queryParam)
-          .then((res) => {
-            if (res.code == 0 && res.success) {
-              //  this.$set(record, 'enableStatus', state)
-              record.enableStatus = state
-              this.$message.success('操作成功')
-            } else {
-              this.$message.error('操作失败:' + res.message)
-            }
-            setTimeout(() => {
-              this.handleOk()
-            }, 500)
-          })
-          .finally((res) => {
-            this.confirmLoading = false
-          })
-      },
+
+    onChange(value) {
+      console.log('onChange ', value, arguments)
+      this.setState({ value })
     },
-  }
-  </script>
+
+    /**
+     * 项目类型接口
+     */
+    /**
+     *
+     * @param {}
+     */
+    getDictDataForCodeOut() {
+      this.confirmLoading = true
+      getDictDataForCode()
+        .then((res) => {
+          console.log('UUU:', res)
+          if (res.code == 0 && res.data.length > 0) {
+            this.projectTypeData = res.data
+          } else {
+            this.projectTypeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 新增
+     */
+    addTenant() {
+      this.$refs.addTenant.add()
+    },
+
+    handleOk() {
+      this.$refs.table.refresh()
+    },
+
+    handleCancel() {
+      this.form.resetFields()
+      this.visible = false
+    },
+
+
+    /**
+     * 开关
+     */
+    statusCheck(record) {
+      var state = !record.enableStatus
+      let queryParam = {
+        id: record.id,
+        status: state ? 1 : 0,
+      }
+      this.confirmLoading = true
+      saveServiceItem(queryParam)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            //  this.$set(record, 'enableStatus', state)
+            record.enableStatus = state
+            this.$message.success('操作成功')
+          } else {
+            this.$message.error('操作失败:' + res.message)
+          }
+          setTimeout(() => {
+            this.handleOk()
+          }, 500)
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+  },
+}
+</script>
         
         <style lang="less">
-  .ant-select-selection {
-    .ant-select-selection-single {
-      width: 128px !important;
+.ant-select-selection {
+  .ant-select-selection-single {
+    width: 128px !important;
+  }
+}
+
+.table-page-search-wrapper {
+  padding-bottom: 20px !important;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
     }
   }
-  
-  .table-page-search-wrapper {
-    padding-bottom: 20px !important;
-    border-bottom: 1px solid #e8e8e8;
-    .action-row {
-      display: inline-block;
-      vertical-align: middle;
-    }
-    .search-row {
-      display: inline-block;
-      vertical-align: middle;
-      padding-right: 20px;
-      .name {
-        margin-right: 10px;
-      }
-    }
+}
+.card-right-pac {
+  overflow: hidden;
+  width: 100%;
+
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
   }
-  .card-right-pac {
-    overflow: hidden;
-    width: 100%;
-  
-    .table-operator {
-      margin-top: 10px;
-      margin-bottom: 10px !important;
-    }
-    button {
-      margin-right: 8px;
-    }
-  
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-    }
+  button {
+    margin-right: 8px;
   }
-  </style>
+
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+  }
+}
+</style>
     
     <style lang="less" scoped>
-  // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-  .ant-card {
-    height: calc(100% - 40px);
-    /deep/ .ant-card-body {
-      height: 100%;
-      padding-bottom: 10px !important;
-      .table-wrapper {
-        height: calc(100% - 96px);
-        .ant-table-wrapper {
+// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
+.ant-card {
+  height: calc(100% - 40px);
+  /deep/ .ant-card-body {
+    height: 100%;
+    padding-bottom: 10px !important;
+    .table-wrapper {
+      height: calc(100% - 96px);
+      .ant-table-wrapper {
+        height: 100%;
+        .ant-spin-nested-loading {
           height: 100%;
-          .ant-spin-nested-loading {
+          .ant-spin-container {
             height: 100%;
-            .ant-spin-container {
-              height: 100%;
-              .ant-table {
-                height: calc(100% - 48px);
-                overflow-y: auto;
-              }
+            .ant-table {
+              height: calc(100% - 48px);
+              overflow-y: auto;
             }
           }
         }
       }
     }
   }
-  </style>
+}
+</style>
     

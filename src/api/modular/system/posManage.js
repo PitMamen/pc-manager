@@ -3237,12 +3237,36 @@ export function qryServiceItemList(data){
 
 
 /**
- * 
+ * 项目类型
  */
  export function getDictDataForCode(data){
   return axios({
-    url:'/feign/sysdictdata/getDictDataForCode/'+{data},
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/SERVICE_ITEM_TYPE',
     method:'get',
     params: data,
+  })
+ }
+
+
+ /**
+  * 修改、保存 服务项目
+  */
+ export function saveServiceItem(data){
+  return axios({
+    url:'/medical-api/commodityConfig/saveServiceItem',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 厂商信息查询
+  */
+ export function qryFactoryList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryFactoryList',
+    method:'post',
+    data:data,
   })
  }
