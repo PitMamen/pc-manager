@@ -37,15 +37,20 @@
           placeholder="请选择套餐分类"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
+          <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
+            item.classifyName
           }}</a-select-option>
         </a-select>
       </div>
 
       <div class="search-row">
         <span class="name">上架状态:</span>
-        <a-select v-model="queryParams.saleStatus" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+        <a-select
+          v-model="queryParams.saleStatus"
+          placeholder="请选择状态"
+          allow-clear
+          style="width: 120px; height: 28px"
+        >
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
@@ -73,18 +78,48 @@
     >
       <span slot="action" slot-scope="text, record">
         <a-icon type="edit" style="color: #1890ff; margin-right: 3px" />
-        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
+        <a @click="editPlan(record)">修改</a>
       </span>
       <span slot="cover" slot-scope="text, record">
         <img src="~@/assets/icons/weixin_icon.png" />
+        <!-- <img :src="record.frontImg" /> -->
       </span>
-      <span slot="status" slot-scope="text, record">
+      <!-- 
+        1关2开
+        "recommendStatus": 2,
+        "stopStatus": 1,
+        "saleStatus": 1
+
+        //修改参数
+        statusValue 1关2开
+        updateType	integer($int32)
+        修改状态类型：0上架1推荐2停用
+      -->
+      <span slot="up-status" slot-scope="text, record">
         <a-popconfirm
           placement="topRight"
-          :title="record.status.value === 1 ? '确认停用？' : '确认启用？'"
-          @confirm="Enable(record)"
+          :title="record.saleStatus === 1 ? '确认上架？' : '确认下架？'"
+          @confirm="updatePkgStatusOut(record.commodityId, record.saleStatus, 0)"
         >
-          <a-switch size="small" :checked="record.status.value == 1" />
+          <a-switch size="small" :checked="record.saleStatus == 2" />
+        </a-popconfirm>
+      </span>
+      <span slot="suggest-status" slot-scope="text, record">
+        <a-popconfirm
+          placement="topRight"
+          :title="record.recommendStatus === 1 ? '确认推荐？' : '确认不推荐？'"
+          @confirm="updatePkgStatusOut(record.commodityId, record.recommendStatus, 1)"
+        >
+          <a-switch size="small" :checked="record.recommendStatus == 2" />
+        </a-popconfirm>
+      </span>
+      <span slot="use-status" slot-scope="text, record">
+        <a-popconfirm
+          placement="topRight"
+          :title="record.stopStatus === 1 ? '确认启用？' : '确认停用？'"
+          @confirm="updatePkgStatusOut(record.commodityId, record.stopStatus, 2)"
+        >
+          <a-switch size="small" :checked="record.stopStatus == 2" />
         </a-popconfirm>
       </span>
     </s-table>
@@ -98,12 +133,9 @@ import { STable } from '@/components'
 import {
   queryHospitalList,
   getPkgList,
-  getDepartmentListForSelect,
-  getDeptsPersonal,
-  qryFollowPlan,
-  updateFollowPlanStatus,
+  updatePkgStatus,
+  getCommodityClassify,
 } from '@/api/modular/system/posManage'
-// import addName from './addName'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -114,10 +146,14 @@ export default {
     return {
       fetching: false,
       user: {},
-      keshiData: [],
-      originData: [],
-      idArr: [],
       queryParams: {
+        hospitalCode: undefined,
+        packageClassifyId: undefined,
+        queryCondition: undefined,
+
+        saleStatus: undefined, //上架状态：1未上架2已上架
+      },
+      queryParamsOrigin: {
         hospitalCode: undefined,
         packageClassifyId: undefined,
         queryCondition: undefined,
@@ -137,6 +173,8 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
+      classData: [],
+
       // 表头
       columns: [
         {
@@ -146,50 +184,50 @@ export default {
         },
         {
           title: '套餐分类',
-          dataIndex: 'formulateTime',
+          dataIndex: 'packageClassifyName',
         },
         {
           title: '套餐名称',
-          dataIndex: 'formulateUserName',
+          dataIndex: 'packageName',
         },
         {
           title: '关联学科',
-          dataIndex: 'executeDepartmentName',
+          dataIndex: 'subjectClassifyName',
         },
         {
           title: '所属机构',
-          dataIndex: 'metaConfigurefName',
+          dataIndex: 'hospitalName',
         },
         {
           title: '可选医生',
-          dataIndex: 'metaConfigfureName',
+          dataIndex: 'doctorNames',
         },
         {
           title: '可选护士',
-          dataIndex: 'metaConfgigureName',
+          dataIndex: 'nurseNames',
         },
         {
           title: '健康服务团队',
-          dataIndex: 'followType',
+          dataIndex: 'healthServicesNames',
         },
 
         {
           title: '上架',
           width: 70,
           fixed: 'right',
-          scopedSlots: { customRender: 'status' },
+          scopedSlots: { customRender: 'up-status' },
         },
         {
           title: '推荐',
           width: 70,
           fixed: 'right',
-          scopedSlots: { customRender: 'status' },
+          scopedSlots: { customRender: 'suggest-status' },
         },
         {
           title: '停用',
           width: 70,
           fixed: 'right',
-          scopedSlots: { customRender: 'status' },
+          scopedSlots: { customRender: 'use-status' },
         },
         {
           title: '操作',
@@ -202,12 +240,23 @@ export default {
       loadData: (parameter) => {
         return getPkgList(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
-            res.data.rows.forEach((element) => {
-              element.statusText = element.status.description
-              element.followType = element.followType.description
+            //组装控件需要的数据结构
+            var data = {
+              pageNo: parameter.pageNo,
+              pageSize: parameter.pageSize,
+              totalRows: res.data.total,
+              totalPage: res.data.total / parameter.pageSize,
+              rows: res.data.records,
+            }
+
+            //设置序号
+            data.rows.forEach((item, index) => {
+              item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+              item.nameDes = item.name
+              // item.createTimeDes = item.createTime.substring(0,11)
             })
           }
-          return res.data
+          return data
         })
       },
 
@@ -230,8 +279,8 @@ export default {
 
   mounted() {
     //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
-    this.$bus.$on('proEvent', (data) => {
-      console.log('proEvent Refres', data)
+    this.$bus.$on('pkgEvent', (data) => {
+      console.log('pkgEvent Refres', data)
       // this.objct = data;
       this.refresh()
     })
@@ -241,6 +290,13 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
     this.queryHospitalListOut()
+    getCommodityClassify({}).then((res) => {
+      if (res.code == 0) {
+        this.classData = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
   },
   methods: {
     queryHospitalListOut() {
@@ -277,6 +333,34 @@ export default {
         })
     },
 
+    /**
+      * 
+      * statusValue	integer($int32)
+        状态值：1关2开
+
+        updateType	integer($int32)
+        修改状态类型：0上架1推荐2停用
+      * 
+      * @param {*} id 
+      * @param {*} statusValue statusValue  传过来的是当前的状态
+      * @param {*} updateType 
+      */
+    updatePkgStatusOut(id, statusValue, updateType) {
+      let data = {
+        id: id,
+        statusValue: statusValue == 1 ? 2 : 1,
+        updateType: updateType,
+      }
+      updatePkgStatus(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          this.refresh()
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+
     refresh() {
       this.$refs.table.refresh(true)
     },
@@ -293,57 +377,16 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.status = 1
-      this.queryParams.planName = ''
-      this.queryParams.executeDepartment = undefined
-      this.queryParams.departmentName = undefined
-      this.queryParams.pageNo = 1
-
-      this.$refs.table.refresh(true)
+      this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.refresh()
     },
 
-    /**
-     * 启用/停用
-     */
-    Enable(record) {
-      this.confirmLoading = true
-      var _status = record.status.value == 1 ? 2 : 1
-      //更新接口调用
-      updateFollowPlanStatus({
-        id: record.id,
-        status: _status,
-      }).then((res) => {
-        this.confirmLoading = false
-        if (res.success) {
-          this.$message.success('操作成功！')
-          record.status.value = _status
-
-          setTimeout(() => {
-            this.handleOk()
-          }, 1000)
-        } else {
-          this.$message.error('编辑失败：' + res.message)
-        }
-      })
-    },
-    upDateStatesText(_status) {
-      return _status == 1 ? '确定停用此方案吗？' : '确定启用用此方案吗？'
-    },
     /**
      * 新增
      */
     addName() {
       // this.$router.push({ path: '/servicewise/projectAdd' })
       this.$router.push({ path: '/packagemanage/packageAdd' })
-    },
-
-    handleOk() {
-      this.$refs.table.refresh()
-    },
-
-    handleCancel() {
-      this.form.resetFields()
-      this.visible = false
     },
   },
 }
@@ -392,9 +435,7 @@ export default {
   background-color: #e6e6e6;
   height: 1px;
 }
-</style>
 
-<style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 40px);
@@ -420,4 +461,11 @@ export default {
   }
 }
 </style>
+
+<!-- tree-select限制高度 -->
 <style>
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+}
+</style>
+

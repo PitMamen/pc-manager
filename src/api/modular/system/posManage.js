@@ -3197,3 +3197,23 @@ export function getPkgList(data) {
     data: data,
   })
 }
+/**
+ * /pkg/updateStatus 套餐修改状态接口
+ */
+export function updatePkgStatus(data) {
+  return axios({
+    url: '/medical-api/pkg/updateStatus',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * /pkg/getCommodityClassify 套餐分类接口
+ */
+export function getCommodityClassify(data) {
+  return axios({
+    url: '/medical-api/pkg/getCommodityClassify',
+    method: 'post',
+    data: data,
+  })
+}
