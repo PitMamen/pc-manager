@@ -288,14 +288,14 @@ export default {
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
               this.$set(item, 'title', item.hospitalName)
               this.$set(item, 'children', item.hospitals)
 
               item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
                 this.$set(item1, 'title', item1.hospitalName)
               })
             })

@@ -86,8 +86,8 @@
 
 
             <!-- 长图标 -->
-            <span v-if="queryParams.menuType==2"  style="margin-top: 5px;margin-left: 34px;"><span style="color: red">*</span> 长图标 :</span>
-            <div v-if="queryParams.menuType==2" class="avator-right">
+            <span v-if="queryParams.menuType==1"  style="margin-top: 5px;margin-left: 34px;"><span style="color: red">*</span> 长图标 :</span>
+            <div v-if="queryParams.menuType==1" class="avator-right">
               <a-upload
                 name="file"
                 action="/api/content-api/fileUpload/uploadImgFile"
@@ -208,8 +208,8 @@
         title: '修改菜单',
   
         departmentTypeList: [
-            { code: 1, name: '常规菜单' },
-            { code: 2, name: '置顶菜单' },
+            { code: 1, name: '置顶菜单' },
+            { code: 2, name: '常规菜单' },
         ],
       }
     },
@@ -235,6 +235,7 @@
         this.queryParams.menuType = record.menuType
         this.queryParams.sysApplicationId = record.sysApplicationId
         this.queryParams.id = record.id
+        this.queryParams.appId = record.appId
 
         this.queryHospitalListOut()
         this.getApplicationlistOut()
@@ -453,7 +454,7 @@
           return
         }
 
-        if(this.queryParams.menuType==2){
+        if(this.queryParams.menuType==1){
           if(!this.queryParams.iconLong){
             this.$message.error('请选择上传长图标')
             return

@@ -3221,3 +3221,28 @@ export function getListTdShopmallMainpageMenu(data) {
     data: data,
   })
 }
+
+
+/**
+ * 
+ * 服务项目列表
+ */
+export function qryServiceItemList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryServiceItemList',
+    method:'post',
+    data:data,
+  })
+}
+
+
+/**
+ * 
+ */
+ export function getDictDataForCode(data){
+  return axios({
+    url:'/feign/sysdictdata/getDictDataForCode/'+{data},
+    method:'get',
+    params: data,
+  })
+ }
