@@ -34,7 +34,6 @@
             <a-select
               v-model="projectData.basePlan.metaConfigureId"
               @select="onSourceSelect"
-              disabled
               allow-clear
               placeholder="请选择来源名单"
             >
@@ -50,7 +49,6 @@
             <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
             <a-select
               v-model="projectData.basePlan.executeDepartment"
-              disabled
               @select="onDeptSelect"
               allow-clear
               placeholder="请选择执行科室"
@@ -82,9 +80,12 @@
         </div>
 
         <div class="div-rules">
-          <!-- 修改名单过滤不能动，也不能增删 -->
-          <!-- v-if="projectData.filterRules.length == 0" -->
-          <div class="end-btn" style="margin-left: 2%; margin-top: 1%" v-if="false" @click="addRule()">
+          <div
+            class="end-btn"
+            style="margin-left: 2%; margin-top: 1%"
+            v-if="projectData.filterRules.length == 0"
+            @click="addRule()"
+          >
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_rule.png" />
 
             <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
@@ -100,7 +101,6 @@
               <a-select
                 class="mid-select-one"
                 @focus="getFocus"
-                disabled
                 v-model="itemRule.metaConfigureDetailId"
                 @select="onFieldSelect(itemRule, indexRule)"
                 allow-clear
@@ -111,13 +111,7 @@
                 }}</a-select-option>
               </a-select>
 
-              <a-select
-                disabled
-                class="mid-select-two"
-                v-model="itemRule.condition"
-                allow-clear
-                placeholder="请选择操作"
-              >
+              <a-select class="mid-select-two" v-model="itemRule.condition" allow-clear placeholder="请选择操作">
                 <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value">{{
                   item.description
                 }}</a-select-option>
@@ -125,7 +119,6 @@
 
               <a-date-picker
                 style="margin-left: 1%"
-                disabled
                 v-if="itemRule.fieldType == 2"
                 format="YYYY-MM-DD"
                 v-model="itemRule.queryValue"
@@ -135,7 +128,6 @@
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
                 :maxLength="30"
-                disabled
                 style="display: inline-block"
                 v-if="itemRule.fieldType == 1"
                 allow-clear
@@ -143,14 +135,13 @@
               />
             </div>
 
-            <div class="div-rule-right" v-if="false">
-              <div class="end-btn" style="margin-left: 10%" @click="delRule(indexRule, itemRule)">
+            <div class="div-rule-right">
+              <div class="end-btn" style="margin-left: 15%" @click="delRule(indexRule, itemRule)">
                 <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_delete.jpg" />
 
-                <span style="width: 50px; color: #1890ff; margin-left: 15%">删除</span>
+                <span style="width: 50px; color: #1890ff; margin-left: 8%">删除</span>
               </div>
 
-              <!-- v-if="indexRule == projectData.filterRules.length - 1" -->
               <div
                 class="end-btn"
                 style="margin-left: 2%"
@@ -164,8 +155,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addRule()">新增</a-button> -->
       </div>
 
       <div class="div-pro-mission">
@@ -276,6 +265,7 @@
               placeholder="请输入数量"
             />
 
+            <!-- 临时任务要显示；间隔要显示 -->
             <a-select
               class="mid-select-two"
               style="width: 8% !important"
@@ -340,14 +330,16 @@
               </a-select>
               <!-- @change="onChange" -->
 
-              <span v-if="itemTask.isChecked || itemTask.messageType == 1" style="margin-left: 2%; width: 60px"
+              <span
+                v-if="itemTask.isChecked || itemTask.messageType == 1"
+                class="span-titl"
+                style="margin-left: 2%; width: 60px"
                 >执行人员:</span
               >
               <span
                 v-if="itemTask.isChecked || itemTask.messageType == 1"
                 class="span-titl"
                 style="
-                  /* width: 200px; */
                   max-width: 200px;
                   margin-left: 1%;
                   overflow: hidden;
@@ -369,7 +361,8 @@
                 <span style="width: 50px; color: #1890ff; margin-left: 2%">添加人员</span>
               </div>
 
-              <span v-if="itemTask.taskType == 1" class="span-titl" style="margin-left: 2%">设置逾期时间（小时）:</span>
+              <!-- v-if="itemTask.messageType == 1 || ((itemTask.messageType == 2 || itemTask.messageType == 3)&&itemTask.)" -->
+              <span class="span-titl" v-if="itemTask.taskType == 1" style="margin-left: 2%">设置逾期时间（小时）:</span>
               <a-input-number
                 v-if="itemTask.taskType == 1"
                 style="display: inline-block; margin-left: 1%; width: 50px"
@@ -380,15 +373,6 @@
                 allow-clear
                 placeholder="请输入数量"
               />
-
-              <!-- <a-button
-                v-if="itemTask.isChecked || itemTask.messageType == 1"
-                class="span-add-item"
-                type="primary"
-                style="margin-left: 1%"
-                @click="addPerson(indexTask)"
-                >添加人员</a-button
-              > -->
             </div>
 
             <div class="end-btn-task" style="width: 20%">
@@ -401,22 +385,17 @@
                 >新增任务</span
               >
             </div>
+
             <!-- <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
               >刪除任务</a-button> -->
           </div>
         </div>
-
-        <!-- <a-button style="margin-top: 1%; margin-left: 92%" type="primary" @click="addMission()">新增任务</a-button> -->
       </div>
 
       <div class="div-pro-btn">
         <a-button style="margin-left: 79.5%; float: right" type="primary" @click="submitData()">提交</a-button>
         <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
       </div>
-
-      <!-- <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
-        <a-button style="margin-left: 2%; float: right" type="primary" @click="submitData()">提交</a-button>
-      </div> -->
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
       <add-stop ref="addStop" @ok="handleAddStop" />
@@ -445,16 +424,14 @@ import {
   saveFollow,
   getSmsTemplateListForJumpType,
   getWxTemplateListForJumpType,
-  getDetail,
   getAllQuestions,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
-import { formatDate, formatDateFull } from '@/utils/util'
-import { parseString } from 'loader-utils'
 import addStop from './addStop'
+import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
   components: {
@@ -465,7 +442,6 @@ export default {
   data() {
     return {
       user: {},
-      planId: '',
       keshiData: {},
       deptUsers: {},
 
@@ -520,31 +496,20 @@ export default {
     }
   },
 
-  watch: {
-    $route(to, from) {
-      console.log('watch----project_edit out', to, from)
-      if (to.path.indexOf('projectEdit') > -1) {
-        console.log('watch----project_edit', to, from)
-        this.init()
-      }
-    },
-  },
-
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.init()
+    this.getDeptsOut()
 
+    this.confirmLoading = true
     followTypes()
       .then((res) => {
-        // this.confirmLoading = false
+        this.confirmLoading = false
         if (res.code == 0) {
           this.typeData = res.data
-        } else {
-          this.confirmLoading = false
         }
       })
       .finally((res) => {
-        // this.confirmLoading = false
+        this.confirmLoading = false
       })
 
     tables().then((res) => {
@@ -600,18 +565,44 @@ export default {
       }
     })
 
-    // this.getDeptAllQues()
-    // this.getWxTemplateListForJumpTypeOut()
+    //全部的微信模板
+    getWxTemplateListForJumpType(0).then((res) => {
+      if (res.code == 0) {
+        res.data.forEach((item) => {
+          this.$set(item, 'messageContentType', 4)
+        })
+        this.templateListWX = res.data
+      }
+    })
+
+    //全部的短信模板
+    getSmsTemplateListForJumpType(0).then((res) => {
+      if (res.code == 0) {
+        res.data.forEach((item) => {
+          this.$set(item, 'messageContentType', 3)
+          this.$set(item, 'templateName', item.templateTitle)
+        })
+        this.templateListSMS = res.data
+      }
+    })
+
+    //全部的问卷模板
+    // getWxTemplateListForJumpType(1).then((res) => {
+    //   if (res.code == 0) {
+    //     res.data.forEach((item) => {
+    //       this.$set(item, 'messageContentType', 4)
+    //     })
+    //     this.templateListQues = res.data
+    //     this.getSmsTemplateListForJumpTypeOut()
+    //     console.log('getWxTemplateListForJumpType', res.data.length)
+    //   }
+    // })
+
+    this.getDeptAllQues()
   },
 
   methods: {
     moment,
-
-    init() {
-      this.confirmLoading = true
-      this.planId = this.$route.query.planId
-      this.getDeptsOut()
-    },
 
     getDeptsOut() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
@@ -619,200 +610,15 @@ export default {
         getDepts().then((res) => {
           if (res.code == 0) {
             this.keshiData = res.data
-            this.getDetailOut()
           }
         })
       } else {
         getDeptsPersonal().then((res) => {
           if (res.code == 0) {
             this.keshiData = res.data
-            this.getDetailOut()
           }
         })
       }
-    },
-
-    getWxTemplateListForJumpTypeOut() {
-      //全部的微信模板
-      getWxTemplateListForJumpType(0).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 4)
-          })
-          this.templateListWX = res.data
-        }
-        this.getSmsTemplateListForJumpTypeOut()
-      })
-    },
-    getSmsTemplateListForJumpTypeOut() {
-      //全部的短信模板
-      getSmsTemplateListForJumpType(0).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 3)
-            this.$set(item, 'templateName', item.templateTitle)
-          })
-          this.templateListSMS = res.data
-        }
-
-        this.confirmLoading = false
-
-        //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
-        // this.getDeptAllQues()
-        this.getDeptAllQues()
-      })
-    },
-
-    /**
-     * 时序问题多，先获取详情再根据详情获取科室列表；再获取模版问卷列表添加到每条数据去
-     */
-    getDetailOut() {
-      getDetail({ planId: this.planId }).then((res) => {
-        if (res.code == 0) {
-          this.projectData = res.data
-
-          this.processData()
-        } else {
-          this.$message.error('请求数据失败')
-        }
-      })
-    },
-
-    processData() {
-      this.fieldsOut()
-      this.dateFieldsOut()
-      // this.getDeptsOut()
-      this.getUsersByDeptIdAndRoleOut()
-
-      this.projectData.basePlan.followType = parseString(this.projectData.basePlan.followType)
-      this.projectData.basePlan.metaConfigureId = parseString(this.projectData.basePlan.metaConfigureId)
-      this.projectData.basePlan.executeDepartment = parseInt(this.projectData.basePlan.executeDepartment)
-
-      if (this.projectData.filterRules && this.projectData.filterRules.length > 0) {
-        this.projectData.filterRules.forEach((item) => {
-          item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
-          if (item.fieldType == 2) {
-            item.queryValue = moment(item.queryValue, 'YYYY-MM-DD')
-          }
-        })
-      }
-
-      this.projectData.tasks.forEach((item) => {
-        // console.log('tasks item', item)
-        item.messageType = parseString(item.messageType)
-        item.messageContentId = parseInt(item.messageContentId)
-        item.taskType = parseString(item.taskType)
-        item.taskExecType = parseString(item.taskExecType)
-
-        item.metaConfigureDetailId = parseString(item.metaConfigureDetailId)
-        item.taskExecType = parseString(item.taskExecType)
-        item.timeUnit = parseString(item.timeUnit)
-        item.personnelAssignmentType = parseString(item.personnelAssignmentType)
-        item.repeatTimeUnit = parseString(item.repeatTimeUnit)
-        item.timeQuantity = parseString(item.timeQuantity)
-
-        //处理每周每月选择的集合
-        if (item.repeatTimeUnit == 2) {
-          item.everyData = []
-          //造周数据
-          item.everyData = [
-            { value: '1', description: '周一' },
-            { value: '2', description: '周二' },
-            { value: '3', description: '周三' },
-            { value: '4', description: '周四' },
-            { value: '5', description: '周五' },
-            { value: '6', description: '周六' },
-            { value: '7', description: '周日' },
-          ]
-        } else if (item.repeatTimeUnit == 3) {
-          //造月里面的天数据
-          item.everyData = []
-          for (let index = 0; index < 31; index++) {
-            let str = index + 1
-            item.everyData.push({ value: str + '', description: index + 1 + '号' })
-          }
-        }
-
-        //处理微信短信是否显示电话跟进
-        this.$set(item, 'isChecked', true)
-        if ((item.messageType == 2 || item.messageType == 3) && (!item.assignments || item.assignments.length == 0)) {
-          this.$set(item, 'isChecked', false)
-        } else {
-          this.$set(item, 'isChecked', true)
-        }
-
-        //处理电话跟进用户名
-        if (item.assignments && item.assignments.length > 0) {
-          let nameStr = ''
-          console.log('item.assignments', item.assignments)
-          item.assignments.forEach((itemUser, index) => {
-            if (index != item.assignments.length - 1) {
-              nameStr = nameStr + itemUser.userName + ','
-            } else {
-              nameStr = nameStr + itemUser.userName
-            }
-          })
-          // debugger
-          console.log('nameStr', nameStr)
-          this.$set(item, 'nameStr', nameStr)
-        }
-
-        //处理时间字段 微信短信消息需要时间
-        if (item.messageType == 2 || item.messageType == 3) {
-          let date = formatDate(new Date()) + ' ' + item.pushTimePoint + ':00'
-          item.pushTimePoint = moment(date, 'YYYY-MM-DD HH:mm:ss')
-        } else {
-          //微信短信消息需要时间,电话给个默认值
-          let date = formatDate(new Date()) + ' 08:00:00'
-          let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
-          // console.log('mom', mom)
-          item.pushTimePoint = mom
-        }
-        console.log('pushTimePoint ddd', item.pushTimePoint)
-        console.log('item processData', item)
-
-        this.getWxTemplateListForJumpTypeOut()
-      })
-    },
-
-    getDeptAllQues() {
-      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
-
-      let param = {
-        pageNo: 1,
-        pageSize: 100,
-        typeName: '', //获取全量问卷，不根据科室获取
-        // typeName: chooseDept.departmentName,
-        // typeName: this.projectData.basePlan.executeDepartment,
-      }
-      getAllQuestions(param).then((res) => {
-        if (res.code == 0) {
-          res.data.list.forEach((item) => {
-            this.$set(item, 'templateTitle', item.name)
-            //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
-            this.$set(item, 'messageContentType', 1)
-          })
-          this.templateListQues = res.data.list
-
-          //所有问卷请求下来之后，再每条任务赋值模板和问卷列表数据
-          this.projectData.tasks.forEach((item) => {
-            // item.messageContentId = parseInt(item.messageContentId)
-            if (item.messageType == 1) {
-              this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
-            } else if (item.messageType == 2) {
-              //查所有微信模版
-              this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
-            } else if (item.messageType == 3) {
-              //查所有短信模版
-              this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
-            }
-
-            this.confirmLoading = false
-          })
-        } else {
-          // return {}
-        }
-      })
     },
 
     /**
@@ -859,10 +665,7 @@ export default {
      * } itemTask 
      */
     goCheck(indexTask) {
-      // debugger
-      console.log('isChecked be', this.projectData.tasks[indexTask].isChecked)
       this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
-      console.log('isChecked af', this.projectData.tasks[indexTask].isChecked)
 
       // //1 电话 2 微信 3 短信
       // if (this.projectData.tasks[indexTask].messageType == 1) {
@@ -879,7 +682,6 @@ export default {
     },
 
     addRule() {
-      // this.projectData.filterRules.push({})
       this.projectData.filterRules.push({ fieldType: 1 })
     },
 
@@ -904,7 +706,6 @@ export default {
       }
 
       console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
-
       if (!this.deptUsers[0].users || this.deptUsers[0].users.length == 0) {
         this.$message.warn('所选执行科室没有可选人员')
         return
@@ -931,19 +732,10 @@ export default {
       }
 
       let newData = this.sourceData.filter((item) => item.value != this.projectData.basePlan.metaConfigureId)
-      let arr = []
-      this.projectData.tasks[indexMisson].stopTaskDetailDtos.forEach((item) => {
-        if (item.stopType.value) {
-          arr.push({ stopType: item.stopType.value, conditionValue: item.conditionValue })
-        } else {
-          arr.push({ stopType: item.stopType, conditionValue: item.conditionValue })
-        }
-      })
 
       this.$refs.addStop.add(
         indexMisson,
-        // this.projectData.tasks[indexMisson].stopTaskDetailDtos,
-        arr,
+        this.projectData.tasks[indexMisson].stopTaskDetailDtos,
         newData,
         this.projectData.tasks[indexMisson].taskExecType
       )
@@ -999,7 +791,8 @@ export default {
         console.log('date', date)
         let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
         console.log('mom', mom)
-        itemTask.pushTimePoint = mom
+        this.$set(itemTask, 'pushTimePoint', mom)
+        // itemTask.pushTimePoint = mom
         console.log('pushTimePoint add', itemTask.pushTimePoint)
       }
 
@@ -1017,10 +810,45 @@ export default {
         itemTask.isChecked = false
       }
 
-      //TODO 修改随访方式时，如果id不存在，给它的模版或者问卷置空
-
+      //TODO
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
+
+    getDeptAllQues() {
+      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
+
+      let param = {
+        pageNo: 1,
+        pageSize: 100,
+        typeName: '', //获取全量问卷，不根据科室获取
+        // typeName: chooseDept.departmentName,
+        // typeName: this.projectData.basePlan.executeDepartment,
+      }
+      getAllQuestions(param).then((res) => {
+        if (res.code == 0) {
+          res.data.list.forEach((item) => {
+            this.$set(item, 'templateTitle', item.name)
+            //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
+            this.$set(item, 'messageContentType', 1)
+          })
+          this.templateListQues = res.data.list
+        } else {
+          // return {}
+        }
+      })
+    },
+
+    // getSmsTemplateListForJumpTypeOut() {
+    //   getSmsTemplateListForJumpType(1).then((res) => {
+    //     if (res.code == 0) {
+    //       res.data.forEach((item) => {
+    //         this.$set(item, 'messageContentType', 3)
+    //         this.$set(item, 'templateName', item.templateTitle)
+    //       })
+    //       this.templateListQues = this.templateListQues.concat(res.data)
+    //     }
+    //   })
+    // },
 
     /**
      * 随访方式,随访模版选择后需要自动选择任务类型
@@ -1034,6 +862,7 @@ export default {
      * "data":[{"value":"1","description":"问卷收集"},{"value":"2","description":"健康宣教"},{"value":"3","description":"消息提醒"}]}
      */
     onTemSelect(indexTask, itemTask) {
+      // let chooseOne = this.templateList.find((item) => {
       let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
@@ -1052,6 +881,9 @@ export default {
           itemTask.taskType = '3'
         }
       }
+      //TODO 选任务类型
+      console.log('onTemSelect indexTask', indexTask)
+      console.log('onTemSelect itemTask', itemTask)
     },
 
     onFieldSelect(itemRule, indexRule) {
@@ -1103,6 +935,8 @@ export default {
         }
         itemTask.timeQuantity = '1'
       }
+
+      console.log('itemTask.everyData', itemTask.everyData)
     },
 
     // /**
@@ -1162,7 +996,6 @@ export default {
     // },
 
     getUsersByDeptIdAndRoleOut() {
-      // getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: 5 }).then((res) => {
       getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
         (res) => {
           if (res.code == 0) {
@@ -1191,15 +1024,23 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
+      // if (!tempData.basePlan.remark) {
+      //   this.$message.error('请输入补充说明')
+      //   return
+      // }
+
+      // if (tempData.filterRules.length == 0) {
+      //   this.$message.error('请添加名单过滤')
+      //   return
+      // }
 
       if (tempData.tasks.length == 0) {
         this.$message.error('请添加任务')
         return
       }
 
-      if (tempData.filterRules && tempData.filterRules.length > 0) {
+      if (tempData.filterRules.length > 0) {
         for (let indexRule = 0; indexRule < tempData.filterRules.length; indexRule++) {
-          // debugger
           let itemRule = tempData.filterRules[indexRule]
           if (!itemRule.metaConfigureDetailId) {
             this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤字段')
@@ -1223,6 +1064,8 @@ export default {
 
       for (let index = 0; index < tempData.tasks.length; index++) {
         let item = tempData.tasks[index]
+        // console.log('aaa item', item)
+        // console.log('aaa index', index)
         if (!item.messageType) {
           this.$message.error('请选择第' + (index + 1) + '条任务随访方式')
           return
@@ -1231,7 +1074,7 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
           return
         }
-        if (!item.taskExecType) {
+        if (!item.taskExecType) {//1临时  2长期
           this.$message.error('请选择第' + (index + 1) + '条任务执行周期')
           return
         }
@@ -1239,21 +1082,6 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务日期类别')
           return
         }
-
-        //筛选出来是否修改的数据 详情和上报接口给的数据不一样
-        //不是修改的条目和点击修改后的条目数据处理不一样，点击修改后数据提交的时候不用变，没点击修改的需要改变
-        let arr = []
-        item.stopTaskDetailDtos.forEach((itemDto) => {
-          if (itemDto.stopType.value) {
-            //不是修改的条目
-            // itemDto = JSON.parse(JSON.stringify({ stopType: itemDto.stopType.value, conditionValue: itemDto.conditionValue }))
-            arr.push({ stopType: itemDto.stopType.value, conditionValue: itemDto.conditionValue })
-          } else {
-            arr.push(JSON.parse(JSON.stringify(itemDto)))
-          }
-        })
-
-        item.stopTaskDetailDtos = JSON.parse(JSON.stringify(arr))
 
         //repeatTimeUnit ==4时不需要  任务时间单位 任务时间数量
         if (item.repeatTimeUnit == 4) {
@@ -1270,11 +1098,16 @@ export default {
             return
           }
         }
+
         if (item.messageType == 2 || item.messageType == 3) {
           item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
         } else {
           delete item.pushTimePoint
         }
+        // console.log('pushTimePoint before', item.pushTimePoint)
+        // item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
+        // console.log('pushTimePoint after', item.pushTimePoint)
+
         // //时间配置
         // if (item.messageType == 2 || item.messageType == 3) {
         //   delete item.assignments
@@ -1322,7 +1155,7 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            this.$bus.$emit('proEvent', '刷新数据-方案修改')
+            this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
@@ -1370,6 +1203,7 @@ export default {
       background-color: #1890ff;
     }
     .span-title {
+      font-size: 12px;
       margin-left: 10px;
       font-weight: bold;
       color: #333;
@@ -1389,6 +1223,7 @@ export default {
     .span-item-name {
       display: inline-block;
       color: #000;
+      font-size: 12px;
       text-align: left;
     }
     .span-item-value {
@@ -1396,6 +1231,7 @@ export default {
       color: #333;
       text-align: left;
       padding-left: 1.5%;
+      font-size: 12px;
       display: inline-block;
     }
 
@@ -1410,7 +1246,6 @@ export default {
 
     .div-up-content {
       width: 100%;
-      padding-left: 8px;
       display: flex;
       flex-direction: row;
     }
