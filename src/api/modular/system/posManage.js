@@ -3217,3 +3217,39 @@ export function getCommodityClassify(data) {
     data: data,
   })
 }
+
+
+/**
+ * 套餐分类 分页查询(健康商城应用)
+ */
+export function qryCommodityClassifyList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryCommodityClassifyList',
+    method:'post',
+    data:data,
+  })
+}
+
+
+/**
+ * 修改套餐分类 接口
+ */
+export function saveCommodityClassify(data){
+  return axios({
+    url:'/medical-api/commodityConfig/saveCommodityClassify',
+    method:'post',
+    data:data,
+  })
+}
+
+
+/**
+ * 所属大类接口  
+ */
+ export function getDictDataForCodeBorad(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/CLASSIFY_BROAD_CLASS',
+    method:'get',
+    data:data,
+  })
+ }
