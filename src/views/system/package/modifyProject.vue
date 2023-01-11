@@ -312,6 +312,7 @@
        * 修改服务项目
        */
       saveServiceItemOut() {
+        this.confirmLoading = true
           saveServiceItem(this.checkData).then((res) => {
           if (res.code == 0) {
             this.$message.success('修改成功！')
