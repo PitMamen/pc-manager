@@ -12,7 +12,7 @@
             <span class="span-item-name"><span style="color: red">*</span> 套餐名称 :</span>
             <a-input
               class="span-item-value"
-              v-model="projectData.basePlan.planName"
+              v-model="packageData.packageName"
               :maxLength="30"
               style="display: inline-block; width: 60%"
               allow-clear
@@ -22,7 +22,7 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 套餐类型 :</span>
-            <a-select v-model="projectData.basePlan.followType" allow-clear placeholder="请选择随访类型">
+            <a-select v-model="packageData.packageClassifyId" allow-clear placeholder="请选择随访类型">
               <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -31,7 +31,7 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="projectData.basePlan.metaConfigureId" allow-clear placeholder="请选择来源名单">
+            <a-select v-model="packageData.subjectClassifyName" allow-clear placeholder="请选择来源名单">
               <a-select-option v-for="(item, index) in sourceData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -42,19 +42,16 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-input
-              class="span-item-value"
-              v-model="projectData.basePlan.planName"
-              :maxLength="30"
-              style="display: inline-block; width: 60%"
-              allow-clear
-              placeholder="请输入方案名称 "
-            />
+            <a-select v-model="packageData.tenantId" allow-clear placeholder="请选择来源名单">
+              <a-select-option v-for="(item, index) in sourceData" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
+            </a-select>
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
-            <a-select v-model="projectData.basePlan.followType" allow-clear placeholder="请选择随访类型">
+            <a-select v-model="packageData.hospitalCode" allow-clear placeholder="请选择随访类型">
               <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -109,7 +106,7 @@
               @preview="handlePreviewBanner"
               @change="handleChangeBanner"
             >
-              <div v-if="fileListBanner.length < 5">
+              <div v-if="fileListBanner.length < 4">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
               </div>
@@ -132,7 +129,7 @@
               @preview="handlePreviewDetail"
               @change="handleChangeDetail"
             >
-              <div v-if="fileListDetail.length < 50">
+              <div v-if="fileListDetail.length < 8">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
               </div>
@@ -170,6 +167,7 @@
 
           <span style="margin-left: 2%; width: 60px">主治医生:</span>
           <span
+            class="span-names"
             style="
               max-width: 200px;
               margin-left: 1%;
@@ -319,7 +317,7 @@
 <script>
 import { getDeptsPersonal, getDepts, getUsersByDeptIdAndRole, saveFollow } from '@/api/modular/system/posManage'
 import moment from 'moment'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
 import { formatDate, formatDateFull } from '@/utils/util'
@@ -333,7 +331,7 @@ export default {
     return {
       actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       headers: {
-        authorization: 'authorization-text',
+        Authorization: 'authorization-text',
       },
 
       previewVisible: false,
@@ -359,29 +357,26 @@ export default {
 
       /**
        *
-       * 6-1、当【执行周期】为长期执行时，选择天数时，新增【周期】选项（下拉单选：间隔、每周、每月）。时间单位字段规则：1）如果【周期】选择【间隔】，
-       * 则其选项为天、周、月（下拉单选），需要输入数字字段，选择周的话，发送时间点为该周第一天，选择月的话，发送时间点为该月第一天。2）如果【周期】选择
-       * 【每周】，则其选项为星期一、星期二、星期三、星期四、星期五、星期六、星期天。不用输入数字字段。3）如果【周期】选择【每月】，单位只能下拉选择数字，
-       * 数字范围是1~31。不用输入数字字段。[]
-       *
-       * 6-2、当【执行周期】为临时执行时，只有单位的选择，时间单位为：天、周、月。选择周的话，发送时间点为该周第一天，
-       * 选择月的话，发送时间点为该月第一天。
-       *
-       * filterRules item的 messageContentId 是模版id； messageContentType 也要传，页面上没有内容
-       *
        */
-      projectData: {
-        basePlan: {
-          planName: undefined,
-          followType: undefined, //随访类型；1:关怀型随访2:管理型随访3:科研型随访
-          metaConfigureId: undefined,
-          executeDepartment: undefined, //执行科室
-          remark: undefined, //补充说明
-        },
-        filterRules: [],
-        tasks: [],
-        // tasks: [{ assignments: [] }, {}],
-        // metaConfigureId: '',
+      packageData: {
+        bannerImgs: ['string'],
+        commodityFollowPlanIds: [0],
+        commodityId: 0,
+        commodityPkgId: 0,
+        commodityPkgManageReqs: [
+          {
+            achievementRatio: 0,
+            objectId: 'string',
+            weight: 0,
+          },
+        ],
+        detailImgs: ['string'],
+        frontImgs: ['string'],
+        hospitalCode: 'string',
+        packageClassifyId: 0,
+        packageName: 'string',
+        subjectClassifyId: 0,
+        tenantId: 'string',
       },
     }
   },
@@ -389,7 +384,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.getDeptsOut()
-
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     // this.confirmLoading = true
   },
 
@@ -489,16 +484,16 @@ export default {
     },
 
     addPerson() {
-      this.$refs.addPeople.add(0, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
+      this.$refs.addPeople.add(0, this.deptUsers, this.packageData.tasks[indexMisson].assignments, true)
     },
 
     handleAddPeople(indexTask, proccesedAssignments) {
-      this.projectData.tasks[indexTask].assignments = proccesedAssignments
+      this.packageData.tasks[indexTask].assignments = proccesedAssignments
       let nameStr = ''
       // debugger
-      if (this.projectData.tasks[indexTask].assignments.length > 0) {
-        this.projectData.tasks[indexTask].assignments.forEach((item, index) => {
-          if (index != this.projectData.tasks[indexTask].assignments.length - 1) {
+      if (this.packageData.tasks[indexTask].assignments.length > 0) {
+        this.packageData.tasks[indexTask].assignments.forEach((item, index) => {
+          if (index != this.packageData.tasks[indexTask].assignments.length - 1) {
             nameStr = nameStr + item.userName + ','
           } else {
             nameStr = nameStr + item.userName
@@ -506,12 +501,12 @@ export default {
         })
         // debugger
         console.log('nameStr', nameStr)
-        this.$set(this.projectData.tasks[indexTask], 'nameStr', nameStr)
+        this.$set(this.packageData.tasks[indexTask], 'nameStr', nameStr)
       }
     },
 
     getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
+      getUsersByDeptIdAndRole({ departmentId: this.packageData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
         (res) => {
           if (res.code == 0) {
             this.deptUsers = res.data.deptUsers
@@ -521,7 +516,7 @@ export default {
     },
 
     submitData() {
-      let tempData = JSON.parse(JSON.stringify(this.projectData))
+      let tempData = JSON.parse(JSON.stringify(this.packageData))
 
       if (!tempData.basePlan.planName) {
         this.$message.error('请输入方案名称')
@@ -539,16 +534,6 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
-      // if (!tempData.basePlan.remark) {
-      //   this.$message.error('请输入补充说明')
-      //   return
-      // }
-
-      // if (tempData.filterRules.length == 0) {
-      //   this.$message.error('请添加名单过滤')
-      //   return
-      // }
-
       if (tempData.tasks.length == 0) {
         this.$message.error('请添加任务')
         return
