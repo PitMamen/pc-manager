@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="添加人员"
-    :width="900"
+    :width="1100"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -29,18 +29,18 @@
             <span><span style="color: red">*</span> 选择人员</span>
 
             <span style="margin-left: 50%"
-              >已选人数<span style="color: #1890ff">{{ choseNum }}/{{ deptUsers[0].users.length }}</span> 人</span
+              >已选人数<span style="color: #1890ff">{{ choseNum }}/{{ deptUsers.users.length }}</span> 人</span
             >
           </div>
 
           <div class="left-num-des">
-            <span style="margin-left: 9%; margin-top: 1%">{{ deptUsers[0].deptName }}</span>
+            <span style="margin-left: 9%; margin-top: 1%">{{ deptUsers.deptName }}</span>
             <a-icon style="margin-left: 62%" class="checked" :type="iconType" @click="allClicked" />
             <!-- plus -->
             <!-- <a-icon v-if="!isAllChecked" style="margin-left: 2%" :class="{ checked: isAllChecked }" type="minus" @click="allClickedMi" /> -->
           </div>
 
-          <div class="item-person" v-for="(item, index) in deptUsers[0].users" :key="index" :value="item.id">
+          <div class="item-person" v-for="(item, index) in deptUsers.users" :key="index" :value="item.id">
             <span style="margin-left: 15%; margin-top: 1%; flex: 1" :class="{ checked: item.isChecked }">{{
               item.userName
             }}</span>
@@ -88,6 +88,19 @@
                 placeholder="请输入数量"
               />
             </span>
+            <span slot="act_rate" slot-scope="text, record">
+              <a-input-number
+                style="display: inline-block; margin-left: 1%; width: 50px"
+                v-model="record.achievementRatio"
+                @change="countTotal"
+                :disabled="isSingle"
+                :min="0"
+                :max="100"
+                :maxLength="30"
+                allow-clear
+                placeholder="请输入数量"
+              />
+            </span>
           </a-table>
           <div class="right-bottom">
             <div class="right-bottom-left">
@@ -108,7 +121,7 @@ export default {
   data() {
     return {
       index: -1,
-      chooseName: '',//
+      chooseName: '', //
       confirmLoading: false,
       isAverage: false,
       isSingle: false,
@@ -116,7 +129,7 @@ export default {
       iconType: 'plus',
       choseNum: 0,
       totolAverage: 0,
-      deptUsers: [{ deptName: '', users: [] }],
+      deptUsers: { deptName: '', users: [] },
       choseUsers: [],
       autoUsers: [],
       visible: false,
@@ -136,6 +149,10 @@ export default {
         {
           title: '分配权重',
           scopedSlots: { customRender: 'act_num' },
+        },
+        {
+          title: '绩效比例',
+          scopedSlots: { customRender: 'act_rate' },
         },
         {
           title: '操作',
@@ -174,7 +191,7 @@ export default {
       this.visible = true
       this.isAverage = false
 
-      if (assignments && assignments.length > 0 && deptUsers[0].users.length == assignments.length) {
+      if (assignments && assignments.length > 0 && deptUsers.users.length == assignments.length) {
         this.iconType = 'minus'
       } else {
         this.iconType = 'plus'
@@ -185,7 +202,7 @@ export default {
       this.choseUsers = []
 
       console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
-      this.deptUsers[0].users.forEach((item) => {
+      this.deptUsers.users.forEach((item) => {
         this.$set(item, 'isChecked', false)
         this.$set(item, 'canAdd', true)
         if (assignments && assignments.length > 0) {
@@ -197,6 +214,7 @@ export default {
               //组装已添加用户
               let tempItem = JSON.parse(JSON.stringify(item))
               this.$set(tempItem, 'weight', itemAss.weight)
+              this.$set(tempItem, 'achievementRatio', itemAss.achievementRatio)
               this.choseUsers.push(tempItem)
             }
           })
@@ -205,7 +223,7 @@ export default {
       })
       this.sortChoseUsers()
       this.choseNum = this.choseUsers.length
-      this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers[0].users))
+      this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers.users))
       // debugger
       this.countTotal()
       // console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
@@ -223,7 +241,7 @@ export default {
         this.iconType = 'minus'
 
         this.choseUsers = []
-        this.deptUsers[0].users.forEach((item) => {
+        this.deptUsers.users.forEach((item) => {
           item.isChecked = true
           item.canAdd = false
           let tempItem = JSON.parse(JSON.stringify(item))
@@ -233,7 +251,7 @@ export default {
       } else {
         this.iconType = 'plus'
         this.choseUsers = []
-        this.deptUsers[0].users.forEach((item) => {
+        this.deptUsers.users.forEach((item) => {
           item.isChecked = false
           item.canAdd = true
         })
@@ -258,9 +276,9 @@ export default {
 
     handleSearch(inputName) {
       if (inputName) {
-        this.autoUsers = this.deptUsers[0].users.filter((item) => item.userName.indexOf(inputName) != -1)
+        this.autoUsers = this.deptUsers.users.filter((item) => item.userName.indexOf(inputName) != -1)
       } else {
-        this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers[0].users))
+        this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers.users))
         // this.chooseDeptItem = { departmentName: '', departmentId: '' }
       }
     },
@@ -268,7 +286,7 @@ export default {
     onSelect(userId) {
       console.log('userId', userId)
       // console.log('s2', s2) s2为系统参数
-      this.deptUsers[0].users.forEach((item, index) => {
+      this.deptUsers.users.forEach((item, index) => {
         if (item.userId == userId) {
           this.addPerson(item, index)
         }
@@ -295,18 +313,19 @@ export default {
       item.canAdd = false
       let tempItem = JSON.parse(JSON.stringify(item))
       this.$set(tempItem, 'weight', 0)
+      this.$set(tempItem, 'achievementRatio', 0)
       this.choseUsers.push(tempItem)
       this.sortChoseUsers()
       this.choseNum = this.choseUsers.length
       if (this.isSingle) {
         this.totolAverage = 100
-        this.choseUsers[0].weight = 100
+        this.choseUsers.weight = 100
       }
     },
 
     deleteChoosed(record) {
       this.choseUsers.splice(this.choseUsers.indexOf(record), 1)
-      this.deptUsers[0].users.forEach((item) => {
+      this.deptUsers.users.forEach((item) => {
         if (item.userId == record.userId) {
           // debugger
           item.isChecked = false
@@ -356,16 +375,19 @@ export default {
           return
         }
       }
-      console.log('this.choseUsers', this.choseUsers)
+      console.log('this.choseUsers', JSON.stringify(this.choseUsers))
       let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
+      let commodityPkgManageReqs = []
       proccesedAssignments.forEach((item, index) => {
-        delete item.canAdd
-        delete item.isChecked
-        // delete item.userName
-        delete item.xh
+        commodityPkgManageReqs.push({
+          achievementRatio: item.achievementRatio,
+          objectId: item.userId,
+          weight: item.weight,
+          userName: item.userName,
+        })
       })
-      console.log('this.proccesedAssignments', proccesedAssignments)
-      this.$emit('ok', this.index, proccesedAssignments)
+      console.log('this.commodityPkgManageReqs', JSON.stringify(commodityPkgManageReqs))
+      this.$emit('ok', this.index, commodityPkgManageReqs)
       this.visible = false
     },
     handleCancel() {

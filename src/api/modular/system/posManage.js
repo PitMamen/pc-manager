@@ -3217,16 +3217,50 @@ export function getCommodityClassify(data) {
     data: data,
   })
 }
+/**
+ * /accountInfo/getTreeUsersByDeptIdsAndRoles 根据科室与角色查询用户树列表
+ */
+export function getTreeUsersByDeptIdsAndRoles(data) {
+  return axios({
+    url: '/account-api/accountInfo/getTreeUsersByDeptIdsAndRoles',
+    method: 'post',
+    data: data,
+  })
+}
 
+/**
+ *  /tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy 获取健康管理团队配置
+ * 
+ * 参数  teamNameOrAbbr
+ */
+
+export function getHealthyTeamUserRoleGroupBy(data) {
+  return axios({
+    url: '/uam-api/tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/plan/qryFollowPlanByFollowType 随访方案列表查询
+ */
+export function qryFollowPlanByFollowType(data) {
+  return axios({
+    url: "/follow-api/follow/plan/qryFollowPlanByFollowType",
+    method: 'post',
+    data: data,
+  })
+}
 
 /**
  * 套餐分类 分页查询(健康商城应用)
  */
-export function qryCommodityClassifyList(data){
+export function qryCommodityClassifyList(data) {
   return axios({
-    url:'/medical-api/commodityConfig/qryCommodityClassifyList',
-    method:'post',
-    data:data,
+    url: '/medical-api/commodityConfig/qryCommodityClassifyList',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -3234,11 +3268,11 @@ export function qryCommodityClassifyList(data){
 /**
  * 修改套餐分类 接口
  */
-export function saveCommodityClassify(data){
+export function saveCommodityClassify(data) {
   return axios({
-    url:'/medical-api/commodityConfig/saveCommodityClassify',
-    method:'post',
-    data:data,
+    url: '/medical-api/commodityConfig/saveCommodityClassify',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -3246,10 +3280,10 @@ export function saveCommodityClassify(data){
 /**
  * 所属大类接口  
  */
- export function getDictDataForCodeBorad(data){
+export function getDictDataForCodeBorad(data) {
   return axios({
-    url:'/info-api/feign/sysdictdata/getDictDataForCode/CLASSIFY_BROAD_CLASS',
-    method:'get',
-    data:data,
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/CLASSIFY_BROAD_CLASS',
+    method: 'get',
+    data: data,
   })
- }
+}
