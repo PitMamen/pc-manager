@@ -52,6 +52,8 @@
       :rowKey="(record) => record.hospitalId"
     >
       <span slot="action" slot-scope="text, record">
+        <a @click="$refs.manageCode.add(record)">随访二维码</a>
+        <a-divider type="vertical" />
         <a @click="$refs.addMechanism.add(record)">新增</a>
         <a-divider type="vertical" />
         <a @click="$refs.modify.modify(record)">修改</a>
@@ -66,7 +68,7 @@
         </template>
       </span>
     </a-table>
-
+    <manage-code ref="manageCode" @ok="handleOk" />
     <modify ref="modify" @ok="handleOk" />
     <add-Mechanism ref="addMechanism" @ok="handleOk" />
   </a-card>
@@ -78,12 +80,14 @@ import { STable } from '@/components'
 import { tenantInit, queryHospitalList, updateStatus } from '@/api/modular/system/posManage'
 import addMechanism from './addMechanism'
 import modify from './modify'
+import manageCode from './manageCode'
 // import initRecord from './initRecord'
 export default {
   components: {
     STable,
     modify,
     addMechanism,
+    manageCode
   },
   data() {
     return {
@@ -160,7 +164,7 @@ export default {
 
         {
           title: '操作',
-          width: '100px',
+          width: '175px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

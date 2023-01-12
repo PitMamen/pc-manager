@@ -23,7 +23,7 @@
             <div class="div-left" style="padding-left: 20px">
               <span class="span-item-name">模 板 I D :</span>
               <a-select v-model="checkData.templateId" allow-clear placeholder="请选择" @change="onTemplateChange">
-                <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.id">{{
+                <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.smsTemplateCode">{{
                   item.smsTemplateTitle
                 }}</a-select-option>
               </a-select>
@@ -320,7 +320,7 @@ export default {
           getSmsTemplateById(this.id).then((res) => {
             if (res.code == 0) {
               this.checkData = res.data
-              this.checkData.templateId = Number(res.data.templateId)
+              this.checkData.templateId = res.data.templateInsideCode
               this.templateContent.smsConfigureId = res.data.smsConfigureId
               this.templateContent.smsTemplateContent = res.data.templateContent
               this.templateContent.smsTemplateCode = res.data.templateInsideCode
@@ -415,7 +415,7 @@ export default {
         return
       }
       this.templateData.forEach((item) => {
-        if (item.id === value) {
+        if (item.smsTemplateCode === value) {
           this.templateContent = item
 
           this.fieldList = []
@@ -547,7 +547,7 @@ export default {
 
       var postData = {
         smsConfigureId: this.checkData.smsConfigureId,
-        templateId: this.checkData.templateId,
+        templateId: '',
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
         templateContent: this.templateContent.smsTemplateContent,
