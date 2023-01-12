@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="随访二维码"
+    :title="title"
     :width="500"
     :visible="visible"
     :footer="null"
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       extraImage: '',
-
+      title:'',
       confirmLoading: false,
       visible: false,
       record: {},
@@ -48,6 +48,7 @@ export default {
     add(record) {
       this.record = {}
       this.record = record
+      this.title=record.department_name+' - 随访二维码'
       this.visible = true
       getQrUrl({ ks: record.department_id, bq: 0 }).then((res) => {
         if (res.code == 0) {

@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="随访二维码"
+    :title="title"
     :width="500"
     :visible="visible"
     :footer="null"
@@ -24,7 +24,7 @@ export default {
   data() {
     return {
       extraImage: '',
-
+      title:'',
       confirmLoading: false,
       visible: false,
       record: {},
@@ -49,6 +49,7 @@ export default {
       console.log(record)
       this.record = {}
       this.record = record
+      this.title=record.hospitalName+' - 随访二维码'
       this.visible = true
       getHospitalQrCode({ hospitalCode: record.hospitalCode }).then((res) => {
         if (res.code == 0) {
