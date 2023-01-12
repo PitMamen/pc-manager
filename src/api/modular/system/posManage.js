@@ -2511,11 +2511,11 @@ export function queryHospitalList(data) {
 /**
  * 修改机构状态
  */
-export function updateStatus(data){
+export function updateStatus(data) {
   return axios({
-    url:'/uam-api/hospital/updateStatus',
-    method:'post',
-    data:data,
+    url: '/uam-api/hospital/updateStatus',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -2524,11 +2524,11 @@ export function updateStatus(data){
  * 修改租户状态
  */
 
-export function updateTenantStatus(data){
+export function updateTenantStatus(data) {
   return axios({
-    url:'/uam-api/tenant/updateStatus',
-    method:'post',
-    data:data,
+    url: '/uam-api/tenant/updateStatus',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -2609,16 +2609,16 @@ export function getDepartmentListForReq(data) {
 /**
  * 科室列表 科室选择用
  */
-export function getDepartmentListForSelect(departmentName,source) {
+export function getDepartmentListForSelect(departmentName, source) {
   return axios({
     url: '/follow-api/departmentManger/getDepartmentListForReq',
     method: 'post',
     data: {
-      departmentName:departmentName,//搜索输入
-      source:source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
-      status:1,//1开启
-      pageNo:1,
-      pageSize:9999
+      departmentName: departmentName,//搜索输入
+      source: source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
+      status: 1,//1开启
+      pageNo: 1,
+      pageSize: 9999
     },
   })
 }
@@ -2893,7 +2893,7 @@ export function updateManagerDepts(data) {
 /**
  * 修改医生,个案师和护士账号信息
  */
- export function updateDoctorAccount(data) {
+export function updateDoctorAccount(data) {
   return axios({
     url: '/account-api/accountInfo/updateDoctorAccount',
     method: 'post',
@@ -2949,9 +2949,9 @@ export function addArticleCategory(data) {
  */
 export function deleteArticleCategory(id) {
   return axios({
-    url: '/health-api/articleCategory/deleteArticleCategory/'+id,
+    url: '/health-api/articleCategory/deleteArticleCategory/' + id,
     method: 'post',
-   
+
   })
 }
 /**
@@ -3003,7 +3003,7 @@ export function modifyArticle(parameter) {
  */
 export function deleteArticle(id) {
   return axios({
-    url: '/health-api/article/deleteArticle/'+id,
+    url: '/health-api/article/deleteArticle/' + id,
     method: 'post',
 
   })
@@ -3014,7 +3014,7 @@ export function deleteArticle(id) {
  */
 export function getArticleByIdNew(id) {
   return axios({
-    url: '/health-api/article/getArticleById/'+id,
+    url: '/health-api/article/getArticleById/' + id,
     method: 'post',
 
   })
@@ -3024,11 +3024,11 @@ export function getArticleByIdNew(id) {
 /**
  * 分页查询参数列表
  */
-export function sysConfigDatapage(data){
+export function sysConfigDatapage(data) {
   return axios({
-    url:'/info-api/sysConfigData/page',
-    method:'post',
-    data:data,
+    url: '/info-api/sysConfigData/page',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -3036,11 +3036,11 @@ export function sysConfigDatapage(data){
 /**
  * 保存参数配置
  */
-export function saveSysConfigData(data){
+export function saveSysConfigData(data) {
   return axios({
-    url:'/info-api/sysConfigData/save',
-    method:'post',
-    data:data,
+    url: '/info-api/sysConfigData/save',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -3193,8 +3193,91 @@ export function modifySmsConfigure(data) {
  */
 export function deleteSmsConfigure(id) {
   return axios({
-    url: '/follow-api/smsConfigure/deleteSmsConfigure/'+id,
+    url: '/follow-api/smsConfigure/deleteSmsConfigure/' + id,
     method: 'post',
- 
+
   })
 }
+
+
+/**
+ * 健康商城首页 添加 
+ */
+export function addTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/addTdShopmallMainpageMenu',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 健康商城首页 修改 
+ */
+export function modifyTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/modifyTdShopmallMainpageMenu',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 健康商城首页 列表 
+ */
+export function getListTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/getTdShopmallMainpageMenuPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
+ * 
+ * 服务项目列表
+ */
+export function qryServiceItemList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryServiceItemList',
+    method:'post',
+    data:data,
+  })
+}
+
+
+/**
+ * 项目类型
+ */
+ export function getDictDataForCode(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/SERVICE_ITEM_TYPE',
+    method:'get',
+    params: data,
+  })
+ }
+
+
+ /**
+  * 修改、保存 服务项目
+  */
+ export function saveServiceItem(data){
+  return axios({
+    url:'/medical-api/commodityConfig/saveServiceItem',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 厂商信息查询
+  */
+ export function qryFactoryList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryFactoryList',
+    method:'post',
+    data:data,
+  })
+ }
