@@ -97,9 +97,7 @@
             </a-modal>
           </div>
 
-          <span class="title-des-pic"
-            ><span style="color: red">*</span> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span
-          >
+          <span class="title-des-pic" style="margin-left: 8px">banner图片 （最多允许上传4张，建议尺寸比例7：4）</span>
           <div class="clearfix" style="margin-top: 20px">
             <a-upload
               :action="actionUrl"
@@ -446,9 +444,15 @@ export default {
     console.log('this.$route.query', this.$route.query)
     this.commodityPkgId = this.$route.query.commodityPkgId
     // 获取详情
+    this.confirmLoading = true
     getPkgDetail(this.commodityPkgId).then((res) => {
       if (res.code == 0) {
         this.packageData = res.data
+        //这个可以提前处理，不放在processData里面
+        if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
+          this.needPlan = true
+        }
+        this.getTreeUsersDoc(true)
       } else {
         // this.$message.error('获取计划列表失败：' + res.message)
       }
@@ -495,8 +499,159 @@ export default {
           return []
         })
         .finally((res) => {
-          this.confirmLoading = false
+          // this.confirmLoading = false
         })
+    },
+
+    processData() {
+      //处理详情的图片
+      this.packageData.frontImgs.forEach((item) => {
+        this.fileList.push({
+          uid: '-1',
+          name: '封面' + 1,
+          status: 'done',
+          url: item,
+        })
+      })
+
+      this.packageData.bannerImgs.forEach((item, index) => {
+        this.fileListBanner.push({
+          uid: 0 - index + '',
+          name: 'Banner' + index,
+          status: 'done',
+          url: item,
+        })
+      })
+
+      this.packageData.detailImgs.forEach((item, index) => {
+        this.fileListDetail.push({
+          uid: 0 - index + '',
+          name: '详情' + index,
+          status: 'done',
+          url: item,
+        })
+      })
+
+      /**配合后台处理数据 */
+      this.$set(
+        this.packageData,
+        'commodityPkgManageReqs',
+        JSON.parse(JSON.stringify(this.packageData.commodityPkgManageRsps))
+      )
+      delete this.packageData.commodityPkgManageRsps
+
+      this.packageData.commodityPkgManageReqs.forEach((item) => {
+        this.$set(item, 'commodityPkgManageItemReqs', JSON.parse(JSON.stringify(item.commodityPkgManageItemRsps)))
+        delete item.commodityPkgManageItemRsps
+      })
+
+      //处理详情的团队
+      let newRsps = []
+      //医生
+      let docItem = undefined
+      // let docItemIndex = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 1) {
+          docItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+          // docItemIndex = index
+        }
+      }
+      if (docItem) {
+        this.isDoctor = true
+        this.allocationTypeDoc = docItem.allocationType.value
+        docItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          if (index != docItem.commodityPkgManageItemReqs.length - 1) {
+            this.nameDoc = this.nameDoc + item.name + ','
+          } else {
+            this.nameDoc = this.nameDoc + item.name
+          }
+        })
+
+        docItem.allocationType = docItem.allocationType.value
+        docItem.teamType = docItem.teamType.value
+        newRsps.push(docItem)
+      } else {
+        newRsps.push({
+          allocationType: undefined,
+          commodityPkgManageItemReqs: [],
+          teamType: undefined,
+        })
+      }
+
+      //护士
+      let nurseItem = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 2) {
+          nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+        }
+      }
+      if (nurseItem) {
+        this.isNurse = true
+        this.allocationTypeNurse = nurseItem.allocationType.value
+        nurseItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          if (index != nurseItem.commodityPkgManageItemReqs.length - 1) {
+            this.nameNurse = this.nameNurse + item.name + ','
+          } else {
+            this.nameNurse = this.nameNurse + item.name
+          }
+        })
+
+        nurseItem.allocationType = nurseItem.allocationType.value
+        nurseItem.teamType = nurseItem.teamType.value
+        newRsps.push(nurseItem)
+      } else {
+        newRsps.push({
+          allocationType: undefined,
+          commodityPkgManageItemReqs: [],
+          teamType: undefined,
+        })
+      }
+
+      //团队
+      let teamItem = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 3) {
+          teamItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+        }
+      }
+      if (teamItem) {
+        this.isTeam = true
+        this.allocationTypeTeam = teamItem.allocationType.value
+        teamItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          if (index != teamItem.commodityPkgManageItemReqs.length - 1) {
+            this.nameTeam = this.nameTeam + item.name + ','
+          } else {
+            this.nameTeam = this.nameTeam + item.name
+          }
+        })
+
+        teamItem.allocationType = teamItem.allocationType.value
+        teamItem.teamType = teamItem.teamType.value
+        newRsps.push(teamItem)
+      } else {
+        newRsps.push({
+          allocationType: undefined,
+          commodityPkgManageItemReqs: [],
+          teamType: undefined,
+        })
+      }
+
+      //处理第4条数据，角色
+      //团队
+      let roleItem = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 4) {
+          roleItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+        }
+      }
+      if (roleItem) {
+        roleItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          this.roleIds.push(parseInt(item.objectId))
+        })
+      }
+
+      this.packageData.commodityPkgManageReqs = newRsps
+      this.confirmLoading = false
     },
 
     /**
@@ -515,27 +670,7 @@ export default {
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
-    /**
-     * 随访方案列表
-     */
-    qryFollowPlanByFollowTypeOut() {
-      // this.confirmLoading = true
-      qryFollowPlanByFollowType({
-        tenantId: this.packageData.tenantId,
-        hospitalCode: this.packageData.hospitalCode,
-        followType: 4,
-      })
-        .then((res) => {
-          if (res.code == 0) {
-            this.plans = res.data
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
+          // this.confirmLoading = false
         })
     },
 
@@ -633,9 +768,9 @@ export default {
       // console.log('onSelectChange type', type)
       console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
-        this.getTreeUsersDoc()
-        this.getTreeUsersNurse()
-        this.qryFollowPlanByFollowTypeOut()
+        this.getTreeUsersDoc(false)
+        this.getTreeUsersNurse(false)
+        this.qryFollowPlanByFollowTypeOut(false)
       }
     },
 
@@ -643,13 +778,13 @@ export default {
       console.log('code', code)
       this.packageData.hospitalCode = code
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
-        this.getTreeUsersDoc()
-        this.getTreeUsersNurse()
-        this.qryFollowPlanByFollowTypeOut()
+        this.getTreeUsersDoc(false)
+        this.getTreeUsersNurse(false)
+        this.qryFollowPlanByFollowTypeOut(false)
       }
     },
 
-    getTreeUsersDoc() {
+    getTreeUsersDoc(isInit) {
       getTreeUsersByDeptIdsAndRoles({
         hospitalCode: this.packageData.hospitalCode,
         tenantId: this.packageData.tenantId,
@@ -657,10 +792,13 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           this.deptUsersDoc = res.data
+          if (isInit) {
+            this.getTreeUsersNurse(isInit)
+          }
         }
       })
     },
-    getTreeUsersNurse() {
+    getTreeUsersNurse(isInit) {
       getTreeUsersByDeptIdsAndRoles({
         hospitalCode: this.packageData.hospitalCode,
         tenantId: this.packageData.tenantId,
@@ -668,8 +806,34 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           this.deptUsersNurse = res.data
+          if (isInit) {
+            this.qryFollowPlanByFollowTypeOut(isInit)
+          }
         }
       })
+    },
+
+    /**
+     * 随访方案列表
+     */
+    qryFollowPlanByFollowTypeOut(isInit) {
+      // this.confirmLoading = true
+      qryFollowPlanByFollowType({
+        tenantId: this.packageData.tenantId,
+        hospitalCode: this.packageData.hospitalCode,
+        followType: 4,
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.plans = res.data
+            if (isInit) {
+              this.processData()
+            }
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
     },
 
     /**
@@ -840,13 +1004,21 @@ export default {
         this.$message.error('请上传封面图片！')
         return
       } else {
-        tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
+        if (this.fileList[0].response) {
+          tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
+        } else {
+          tempData.frontImgs.push(this.fileList[0].url)
+        }
       }
 
-      //banner 选填
       if (this.fileListBanner.length > 0) {
+        //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
         for (let index = 0; index < this.fileListBanner.length; index++) {
-          tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
+          if (this.fileListBanner[index].response) {
+            tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
+          } else {
+            tempData.bannerImgs.push(this.fileListBanner[index].url)
+          }
         }
       }
 
@@ -854,8 +1026,13 @@ export default {
         this.$message.error('请上传详情图片！')
         return
       } else {
+        //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
         for (let index = 0; index < this.fileListDetail.length; index++) {
-          tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
+          if (this.fileListDetail[index].response) {
+            tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
+          } else {
+            tempData.detailImgs.push(this.fileListDetail[index].url)
+          }
         }
       }
 

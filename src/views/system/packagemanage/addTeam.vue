@@ -140,11 +140,11 @@ export default {
   },
   methods: {
     // 初始化方法
-    edit(commodityPkgManageItemReqs) {
+    edit(commodityPkgManageItemRsps) {
       this.visible = true
       this.selectedRowKeys = []
-      if (commodityPkgManageItemReqs.length > 0) {
-        commodityPkgManageItemReqs.forEach((item) => {
+      if (commodityPkgManageItemRsps.length > 0) {
+        commodityPkgManageItemRsps.forEach((item) => {
           this.selectedRowKeys.push(item.objectId)
         })
       }
@@ -211,16 +211,16 @@ export default {
         this.$message.warn('请选择团队')
         return
       }
-      let commodityPkgManageItemReqs = []
+      let commodityPkgManageItemRsps = []
       this.selectedRowKeys.forEach((itemId) => {
         let findItem = this.lists.find((item) => item.id == itemId)
-        commodityPkgManageItemReqs.push({
+        commodityPkgManageItemRsps.push({
           objectId: findItem.id,
           userName: findItem.teamName,
         })
       })
-      console.log('this.commodityPkgManageItemReqs Team', JSON.stringify(commodityPkgManageItemReqs))
-      this.$emit('ok', commodityPkgManageItemReqs)
+      console.log('this.commodityPkgManageItemRsps Team', JSON.stringify(commodityPkgManageItemRsps))
+      this.$emit('ok', commodityPkgManageItemRsps)
       this.visible = false
     },
     handleCancel() {

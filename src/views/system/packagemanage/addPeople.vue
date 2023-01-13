@@ -363,6 +363,7 @@ export default {
 
       if (this.totolAverage < 98) {
         this.$message.error('总权重过小')
+        
         return
       }
 
@@ -377,19 +378,20 @@ export default {
           return
         }
       }
+      
       console.log('this.choseUsers', JSON.stringify(this.choseUsers))
       let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
-      let commodityPkgManageItemReqs = []
+      let commodityPkgManageItemRsps = []
       proccesedAssignments.forEach((item, index) => {
-        commodityPkgManageItemReqs.push({
+        commodityPkgManageItemRsps.push({
           achievementRatio: item.achievementRatio,
           objectId: item.userId,
           weight: item.weight,
           userName: item.userName,
         })
       })
-      console.log('this.commodityPkgManageItemReqs', JSON.stringify(commodityPkgManageItemReqs))
-      this.$emit('ok', this.index, commodityPkgManageItemReqs)
+      console.log('this.commodityPkgManageItemRsps', JSON.stringify(commodityPkgManageItemRsps))
+      this.$emit('ok', this.index, commodityPkgManageItemRsps)
       this.visible = false
     },
     handleCancel() {

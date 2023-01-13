@@ -97,9 +97,7 @@
             </a-modal>
           </div>
 
-          <span class="title-des-pic"
-            ><span style="color: red">*</span> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span
-          >
+          <span class="title-des-pic" style="margin-left: 8px"> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span>
           <div class="clearfix" style="margin-top: 20px">
             <a-upload
               :action="actionUrl"
@@ -395,24 +393,12 @@ export default {
         commodityPkgManageReqs: [
           {
             allocationType: undefined,
-            commodityPkgManageItemReqs: [
-              // {
-              //   achievementRatio: 0,
-              //   objectId: undefined,
-              //   weight: 0,
-              // },
-            ],
+            commodityPkgManageItemReqs: [],
             teamType: undefined,
           },
           {
             allocationType: undefined,
-            commodityPkgManageItemReqs: [
-              // {
-              //   achievementRatio: 0,
-              //   objectId: undefined,
-              //   weight: 0,
-              // },
-            ],
+            commodityPkgManageItemReqs: [],
             teamType: undefined,
           },
           {
