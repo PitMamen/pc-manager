@@ -3287,3 +3287,12 @@ export function getDictDataForCodeBorad(data) {
     data: data,
   })
 }
+
+//医疗学科列表
+export function getTdMedicalSubjectPageList(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/getTdMedicalSubjectPageList',
+    method: 'get',
+    params: data,
+  })
+}
