@@ -59,18 +59,18 @@
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span> <span style="color: red">*</span> 显示顺序:</span>
-          <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
+          <a-button style="margin-left: 5px;width: 30px;" icon="plus" size="small" @click="addNum()" />
           <!-- <a-icon type="plus" /> -->
           <a-input
             v-model="queryParams.sortedNo"
             disabled
             allow-clear
-            style="width: 90px; margin-left: 8px; text-align: center"
+            style="width: 127px; margin-left: 0px; text-align: center"
           />
-          <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
+          <a-button style="margin-left: 5px;width: 30px;" size="small" icon="minus" @click="duleNum()" />
         </div>
 
-        <div class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <!-- <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构类型:</span>
 
           <a-radio-group
@@ -83,14 +83,33 @@
             <a-radio :value="1" style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 管理机构 </a-radio>
             <a-radio :value="2" style="font-size: 8px; margin-top: 10px"> 医疗机构 </a-radio>
           </a-radio-group>
+        </div> -->
+
+        <div class="display-item" style="margin-left: 10px; margin-top: 10px">
+          <span style="margin-top: 5px"> <span style="color: red">*</span> 组织类型:</span>
+          <a-select
+            class="sitemore"
+            style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
+            :title="queryParams.orgType"
+            :maxTagCount="1"
+            allow-clear
+            v-model="queryParams.orgType"
+            placeholder="请选择组织类型"
+          >
+            <a-select-option v-for="item in orgTypeData" :value="item.code" :key="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
         </div>
 
-        <div v-if="rangeValue == '2'" class="div-title">
+
+
+        <div v-if="queryParams.orgType==2" class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">医疗机构属性</span>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div v-if="queryParams.orgType==2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构类型:</span>
           <a-select
             class="sitemore"
@@ -107,7 +126,7 @@
           </a-select>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div v-if="queryParams.orgType==2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构等级:</span>
           <a-select
             class="sitemore"
@@ -124,12 +143,12 @@
           </a-select>
         </div>
 
-        <div v-if="rangeValue == '2'" class="div-title">
+        <div v-if="queryParams.orgType==2" class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">接口配置</span>
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div v-if="queryParams.orgType==2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
           <a-input
             type="number"
@@ -142,7 +161,7 @@
           />
         </div>
 
-        <div v-if="rangeValue == '2'" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div v-if="queryParams.orgType==2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 服务地址:</span>
           <a-input
             v-model="queryParams.middleware"
@@ -199,7 +218,7 @@
       
       <script>
 import moment from 'moment'
-import { save, queryHospitalLevel, queryHospitalType,parent } from '@/api/modular/system/posManage'
+import { save, queryHospitalLevel, queryHospitalType,parent,getDictDataForCodeorgType } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
@@ -234,11 +253,13 @@ export default {
         introduction: '',
         level: '',
         middleware: '',
-        orgType: 0,
+        orgType: undefined,
         pid: 0,
         sortedNo: 1,
         tenantId: 0,
       },
+
+      orgTypeData:[],
 
 
       labelCol: {
@@ -274,10 +295,37 @@ export default {
       this.getHospitalLevel()
       this.getHospitalType()
       this.getParentList()
+      this.getDictDataForCodeorgTypeOut()
       this.$nextTick(() => {
         this.init()
       })
     },
+
+
+  /**
+     * 组织类型接口
+     */
+     getDictDataForCodeorgTypeOut() {
+      this.confirmLoading = true
+      getDictDataForCodeorgType()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.orgTypeData = res.data
+            for (let index = 0; index < this.orgTypeData.length; index++) {
+                this.orgTypeData[index].code = Number(this.orgTypeData[index].code)
+               }
+          } else {
+            this.orgTypeData = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+
+
+
 
     init() {
       var editor = new E('#div1')
@@ -485,20 +533,20 @@ export default {
       return newArry
     },
 
-    /**
-     *   机构选择
-     */
-    radioChange(event) {
-      //立即发送
-      if (event.target.value == 1) {
-        this.rangeValue = '1'
-        this.queryParams.orgType =1
-        //延时发送
-      } else if (event.target.value == 2) {
-        this.rangeValue = '2'
-        this.queryParams.orgType =2
-      }
-    },
+    // /**
+    //  *   机构选择
+    //  */
+    // radioChange(event) {
+    //   //立即发送
+    //   if (event.target.value == 1) {
+    //     this.rangeValue = '1'
+    //     this.queryParams.orgType =1
+    //     //延时发送
+    //   } else if (event.target.value == 2) {
+    //     this.rangeValue = '2'
+    //     this.queryParams.orgType =2
+    //   }
+    // },
 
     /**
      * 重置
@@ -512,10 +560,10 @@ export default {
       this.queryParams.introduction = ''
       this.queryParams.level = ''
       this.queryParams.middleware = ''
-      this.queryParams.orgType = ''
       this.queryParams.pid = ''
       this.queryParams.sortedNo = 1
       this.queryParams.tenantId = ''
+      this.queryParams.orgType = undefined
     },
 
     /**
@@ -545,11 +593,11 @@ export default {
         return
       }
       if (!this.queryParams.orgType) {
-        this.$message.error('请选择机构类型')
+        this.$message.error('请选择组织类型')
         return
       }
 
-      if(this.queryParams.orgType!=1){
+      if(this.queryParams.orgType==2){
         if (!this.queryParams.hospitalType) {
         this.$message.error('请选择机构类型')
         return
@@ -561,7 +609,7 @@ export default {
       }
 
 
-      if(this.queryParams.orgType!=1){
+      if(this.queryParams.orgType==2){
         if (!this.queryParams.hisCode) {
         this.$message.error('请输入HIS编码')
         return

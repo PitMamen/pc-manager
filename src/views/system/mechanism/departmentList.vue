@@ -62,7 +62,7 @@
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.deptCode.add(record)">随访二维码</a>
         <a-divider type="vertical" />
-        <a @click="$refs.modifyDepartment.modifyDepartment(record)">修改</a>
+        <a @click="$refs.modifyDepartment.modifyDepartment(record)"><a-icon type="edit"></a-icon>修改</a>
       </span>
 
       <span slot="statuas" slot-scope="text, record">
@@ -184,7 +184,7 @@ export default {
 
         {
           title: '操作',
-          width: 135,
+          width: 150,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

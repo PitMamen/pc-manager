@@ -3253,3 +3253,74 @@ export function saveCommodityClassify(data){
     data:data,
   })
  }
+
+
+
+ /**
+ * 租户类型  
+ */
+ export function getDictDataForCodeTenatType(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/TENANT_TYPE',
+    method:'get',
+    params:data,
+  })
+ }
+
+
+ /**
+  * 组织类型 
+  */
+ export function getDictDataForCodeorgType(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/ORG_TYPE',
+    method:'get',
+    params:data,
+  })
+ }
+
+  /**
+  * 科室类型 
+  */
+  export function getDictDataForCodeDepartType(data){
+    return axios({
+      url:'/info-api/feign/sysdictdata/getDictDataForCode/DEPARTMENT_TYPE',
+      method:'get',
+      params:data,
+    })
+   }
+
+   /**
+  * 人员类型 
+  */
+  export function getDictDataForCodeUserType(data){
+    return axios({
+      url:'/info-api/feign/sysdictdata/getDictDataForCode/USER_TYPE',
+      method:'get',
+      params:data,
+    })
+   }
+
+
+   /**
+    * 服务商商下拉框列表
+    */
+   export function getServiceFactoryList(data){
+    return axios({
+      url:'/uam-api/hospital/getServiceFactoryList',
+      method:'post',
+      data:data,
+    })
+   }
+
+
+   /**
+    * 服务商列表
+    */
+   export function getDepartmentForDepartmentType(data){
+    return axios({
+      url:'/info-api/feign/departments/getDepartmentForDepartmentType',
+      method:'post',
+      data:data,
+    })
+   }

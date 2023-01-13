@@ -41,7 +41,7 @@
         placeholder="请选择科室类型"
       >
         <a-select-option v-for="(item, index) in departmentTypeList" :key="index" :value="item.code">{{
-          item.name
+          item.value
         }}</a-select-option>
       </a-select>
 
@@ -117,6 +117,7 @@ import {
   queryHospitalType,
   parent,
   queryHospitalList,
+  getDictDataForCodeDepartType,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
@@ -152,7 +153,7 @@ export default {
         isInternetHospital: '',
         isFullDisease: '',
         departmentIntroduce: '',
-        departmentType: '',
+        departmentType: undefined,
       },
 
       labelCol: {
@@ -172,13 +173,13 @@ export default {
       title: '新增科室',
 
       departmentTypeList: [
-        { code: 1, name: '门诊科室' },
-        { code: 2, name: '急诊科室' },
-        { code: 3, name: '住院科室' },
-        { code: 4, name: '医技科室' },
-        { code: 5, name: '药剂科室' },
-        { code: 6, name: '后勤物资' },
-        { code: 7, name: '机关科室' },
+        // { code: 1, name: '门诊科室' },
+        // { code: 2, name: '急诊科室' },
+        // { code: 3, name: '住院科室' },
+        // { code: 4, name: '医技科室' },
+        // { code: 5, name: '药剂科室' },
+        // { code: 6, name: '后勤物资' },
+        // { code: 7, name: '机关科室' },
       ],
     }
   },
@@ -193,6 +194,30 @@ export default {
       // this.getHospitalType()
       //   this.getParentList()
       this.queryHospitalListOut()
+      this.getDictDataForCodeorgDepartTypeOut()
+    },
+
+
+
+     /**
+     * 组织类型接口
+     */
+     getDictDataForCodeorgDepartTypeOut() {
+      this.confirmLoading = true
+      getDictDataForCodeDepartType()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.departmentTypeList = res.data
+            for (let index = 0; index < this.departmentTypeList.length; index++) {
+                this.departmentTypeList[index].code = Number(this.departmentTypeList[index].code)
+               }
+          } else {
+            this.departmentTypeList = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     onSelect(hospitalId) {
@@ -373,6 +398,7 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
+      this.queryParams.departmentType = undefined
     },
 
     /**
@@ -406,6 +432,11 @@ export default {
       }
       if (!this.queryParams.hisId) {
         this.$message.error('请输入His编码')
+        return
+      }
+
+      if(!queryParams.departmentType){
+        this.$message.error('请选择科室类型')
         return
       }
 
@@ -444,6 +475,48 @@ export default {
     flex-direction: column;
   }
 }
+
+
+.div-line-wrap {
+    width: 120%;
+    overflow: hidden;
+
+    .span-item-name {
+      width: 80%;
+      display: inline-block;
+      color: #4d4d4d;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .span-item-value {
+      width: 20%;
+      // overflow: hidden;
+      color: #4d4d4d;
+      text-align: left;
+      font-size: 12px;
+      display: inline-block;
+      text-overflow: ellipsis;
+    }
+
+    .span-item-value1 {
+      width: 10%;
+      margin-bottom: -4px;
+      color: #4d4d4d;
+      text-align: left;
+      font-size: 12px;
+      display: inline-block;
+      white-space: nowrap;
+      -webkit-line-clamp: 1;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  }
+
+
+
+
 
 .div-title {
   margin-top: 10px;
