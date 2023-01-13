@@ -12,28 +12,28 @@
             <span class="span-item-name"><span style="color: red">*</span> 套餐名称 :</span>
             <a-input
               class="span-item-value"
-              v-model="projectData.basePlan.planName"
+              v-model="packageData.packageName"
               :maxLength="30"
               style="display: inline-block; width: 60%"
               allow-clear
-              placeholder="请输入方案名称 "
+              placeholder="请输入 "
             />
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 套餐类型 :</span>
-            <a-select v-model="projectData.basePlan.followType" allow-clear placeholder="请选择随访类型">
-              <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
-                item.description
+            <a-select v-model="packageData.packageClassifyId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
+                item.classifyName
               }}</a-select-option>
             </a-select>
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="projectData.basePlan.metaConfigureId" allow-clear placeholder="请选择来源名单">
-              <a-select-option v-for="(item, index) in sourceData" :key="index" :value="item.value">{{
-                item.description
+            <a-select v-model="packageData.subjectClassifyId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
+                item.classifyName
               }}</a-select-option>
             </a-select>
           </div>
@@ -42,23 +42,24 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-input
-              class="span-item-value"
-              v-model="projectData.basePlan.planName"
-              :maxLength="30"
-              style="display: inline-block; width: 60%"
-              allow-clear
-              placeholder="请输入方案名称 "
-            />
+            <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
+                item.tenantName
+              }}</a-select-option>
+            </a-select>
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
-            <a-select v-model="projectData.basePlan.followType" allow-clear placeholder="请选择随访类型">
-              <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
-                item.description
-              }}</a-select-option>
-            </a-select>
+            <a-tree-select
+              v-model="packageData.hospitalCode"
+              style="min-width: 120px"
+              @select="onSelectChangeCode"
+              :tree-data="treeData"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
           </div>
 
           <div class="div-pro-line"></div>
@@ -109,7 +110,7 @@
               @preview="handlePreviewBanner"
               @change="handleChangeBanner"
             >
-              <div v-if="fileListBanner.length < 5">
+              <div v-if="fileListBanner.length < 4">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
               </div>
@@ -132,7 +133,7 @@
               @preview="handlePreviewDetail"
               @change="handleChangeDetail"
             >
-              <div v-if="fileListDetail.length < 50">
+              <div v-if="fileListDetail.length < 8">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
               </div>
@@ -154,14 +155,20 @@
           <!-- :checked="itemTask.isChecked" -->
 
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)" />
             <span style="margin-left: 8px">医生参与</span>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            placeholder="请选择"
+            v-model="allocationTypeDoc"
+            :disabled="!isDoctor"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -169,22 +176,14 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">主治医生:</span>
-          <span
-            style="
-              max-width: 200px;
-              margin-left: 1%;
-              overflow: hidden;
-              font-size: 12px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-            >{{}}李二、王五</span
-          >
+          <span class="span-names">{{ nameDoc }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson()">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%">医生配置</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
+              >医生配置</span
+            >
           </div>
         </div>
 
@@ -192,14 +191,20 @@
           <!-- @click="goCheck(indexTask)" -->
           <!-- :checked="itemTask.isChecked" -->
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="isNurse" @click="goCheck(2)" />
             <span style="margin-left: 8px">护士参与</span>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            v-model="allocationTypeNurse"
+            placeholder="请选择"
+            :disabled="!isNurse"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -207,22 +212,14 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">参与护士:</span>
-          <span
-            style="
-              max-width: 200px;
-              margin-left: 1%;
-              overflow: hidden;
-              font-size: 12px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-            >{{}}李二、王五</span
-          >
+          <span class="span-names">{{ nameNurse }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson()">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onPersonFocus" @click="addPerson(2)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%">护士配置</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
+              >护士配置</span
+            >
           </div>
         </div>
 
@@ -231,14 +228,20 @@
           <!-- :checked="itemTask.isChecked" -->
 
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" />
             <span style="margin-left: 8px">健康团队参与</span>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            v-model="allocationTypeTeam"
+            placeholder="请选择"
+            :disabled="!isTeam"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -246,22 +249,14 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">参与团队:</span>
-          <span
-            style="
-              max-width: 200px;
-              margin-left: 1%;
-              overflow: hidden;
-              font-size: 12px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-            >{{}}李二、王五</span
-          >
+          <span class="span-names">{{ nameTeam }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson()">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addTeam()">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%">团队配置</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTeam }"
+              >团队配置</span
+            >
           </div>
         </div>
 
@@ -274,7 +269,7 @@
           <span style="margin-left: 1%">参与角色</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select class="mid-select-two" allow-clear placeholder="请选择" :disabled="!isTeam">
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -293,13 +288,21 @@
           <!-- :checked="itemTask.isChecked" -->
 
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="needPlan" @click="handlePlan" />
             <span style="margin-left: 8px">随访方案</span>
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
-            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
-              item.description
+          <a-select
+            class="mid-select-two"
+            mode="multiple"
+            :disabled="!needPlan"
+            allow-clear
+            @focus="onPersonFocus"
+            v-model="packageData.commodityFollowPlanIds"
+            placeholder="请选择"
+          >
+            <a-select-option v-for="(item, index) in plans" :key="index" :value="item.id">{{
+              item.planName
             }}</a-select-option>
           </a-select>
           <!-- @change="onChange" -->
@@ -312,28 +315,41 @@
       </div>
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
+      <add-team ref="addTeam" @ok="handleAddTeam" />
     </div>
   </a-spin>
 </template>
 
 <script>
-import { getDeptsPersonal, getDepts, getUsersByDeptIdAndRole, saveFollow } from '@/api/modular/system/posManage'
+import {
+  getDeptsPersonal,
+  getDepts,
+  getUsersByDeptIdAndRole,
+  saveFollow,
+  getTreeUsersByDeptIdsAndRoles,
+  getCommodityClassify,
+  queryHospitalList,
+  getTenantList,
+  qryFollowPlanByFollowType,
+} from '@/api/modular/system/posManage'
 import moment from 'moment'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
+import addTeam from './addTeam'
 import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
   components: {
     addPeople,
+    addTeam,
   },
 
   data() {
     return {
       actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       headers: {
-        authorization: 'authorization-text',
+        Authorization: 'authorization-text',
       },
 
       previewVisible: false,
@@ -350,38 +366,60 @@ export default {
 
       user: {},
       keshiData: {},
-      deptUsers: {},
+      deptUsersDoc: { users: [] },
+      deptUsersNurse: { users: [] },
+      //用户指定与随机分配
       assignmentTypes: [
-        { value: 1, description: '随机' },
-        { value: 1, description: '指定' },
+        { value: 1, description: '用户指定' },
+        { value: 2, description: '随机分配' },
       ],
       confirmLoading: false,
+      isDoctor: false,
+      isNurse: false,
+      isTeam: false,
+      needPlan: false,
+      treeData: [],
+
+      classData: [],
+      tenantList: [],
+      plans: [],
+      nameDoc: '',
+      nameNurse: '',
+      nameTeam: '',
+      allocationTypeDoc: undefined,
+      allocationTypeNurse: undefined,
+      allocationTypeTeam: undefined,
 
       /**
        *
-       * 6-1、当【执行周期】为长期执行时，选择天数时，新增【周期】选项（下拉单选：间隔、每周、每月）。时间单位字段规则：1）如果【周期】选择【间隔】，
-       * 则其选项为天、周、月（下拉单选），需要输入数字字段，选择周的话，发送时间点为该周第一天，选择月的话，发送时间点为该月第一天。2）如果【周期】选择
-       * 【每周】，则其选项为星期一、星期二、星期三、星期四、星期五、星期六、星期天。不用输入数字字段。3）如果【周期】选择【每月】，单位只能下拉选择数字，
-       * 数字范围是1~31。不用输入数字字段。[]
-       *
-       * 6-2、当【执行周期】为临时执行时，只有单位的选择，时间单位为：天、周、月。选择周的话，发送时间点为该周第一天，
-       * 选择月的话，发送时间点为该月第一天。
-       *
-       * filterRules item的 messageContentId 是模版id； messageContentType 也要传，页面上没有内容
-       *
        */
-      projectData: {
-        basePlan: {
-          planName: undefined,
-          followType: undefined, //随访类型；1:关怀型随访2:管理型随访3:科研型随访
-          metaConfigureId: undefined,
-          executeDepartment: undefined, //执行科室
-          remark: undefined, //补充说明
-        },
-        filterRules: [],
-        tasks: [],
-        // tasks: [{ assignments: [] }, {}],
-        // metaConfigureId: '',
+      packageData: {
+        bannerImgs: [],
+        detailImgs: [],
+        frontImgs: [],
+        commodityFollowPlanIds: [],
+        commodityId: 0,
+        commodityPkgId: 0,
+
+        //这里设计了4条数据，参与角色是与其他三条同级的数据；teamType值为1 2 3 4
+        commodityPkgManageReqs: [
+          {
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [
+              {
+                achievementRatio: 0,
+                objectId: undefined,
+                weight: 0,
+              },
+            ],
+            teamType: undefined,
+          },
+        ],
+        hospitalCode: undefined,
+        packageClassifyId: undefined,
+        packageName: undefined,
+        subjectClassifyId: undefined,
+        tenantId: undefined,
       },
     }
   },
@@ -389,12 +427,94 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.getDeptsOut()
-
+    this.queryHospitalListOut()
+    this.getTenantListOut()
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+    getCommodityClassify({}).then((res) => {
+      if (res.code == 0) {
+        this.classData = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
     // this.confirmLoading = true
   },
 
   methods: {
     moment,
+    queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
+
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 租户列表
+     */
+    getTenantListOut() {
+      this.confirmLoading = true
+      getTenantList({
+        metaName: '',
+        status: 1,
+        tenantName: '',
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.tenantList = res.data.records
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 随访方案列表
+     */
+    qryFollowPlanByFollowTypeOut() {
+      this.confirmLoading = true
+      qryFollowPlanByFollowType({
+        tenantId: this.packageData.tenantId,
+        hospitalCode: this.packageData.hospitalCode,
+        followType: 4,
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.plans = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     handleCancel() {
       this.previewVisible = false
@@ -488,40 +608,180 @@ export default {
       }
     },
 
-    addPerson() {
-      this.$refs.addPeople.add(0, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
-    },
-
-    handleAddPeople(indexTask, proccesedAssignments) {
-      this.projectData.tasks[indexTask].assignments = proccesedAssignments
-      let nameStr = ''
-      // debugger
-      if (this.projectData.tasks[indexTask].assignments.length > 0) {
-        this.projectData.tasks[indexTask].assignments.forEach((item, index) => {
-          if (index != this.projectData.tasks[indexTask].assignments.length - 1) {
-            nameStr = nameStr + item.userName + ','
-          } else {
-            nameStr = nameStr + item.userName
-          }
-        })
-        // debugger
-        console.log('nameStr', nameStr)
-        this.$set(this.projectData.tasks[indexTask], 'nameStr', nameStr)
+    onPersonFocus() {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属机构')
+        return
       }
     },
 
-    getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
-        (res) => {
-          if (res.code == 0) {
-            this.deptUsers = res.data.deptUsers
-          }
+    /**
+     *
+     * @param {*} type   1 租户选择回调  2机构选择回调
+     */
+    onSelectChange() {
+      // console.log('onSelectChange type', type)
+      console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
+      if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.getTreeUsersDoc()
+        this.getTreeUsersNurse()
+        this.qryFollowPlanByFollowTypeOut()
+      }
+    },
+
+    onSelectChangeCode(code) {
+      console.log('code', code)
+      this.packageData.hospitalCode = code
+      if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.getTreeUsersDoc()
+        this.getTreeUsersNurse()
+        this.qryFollowPlanByFollowTypeOut()
+      }
+    },
+
+    getTreeUsersDoc() {
+      getTreeUsersByDeptIdsAndRoles({
+        hospitalCode: this.packageData.hospitalCode,
+        tenantId: this.packageData.tenantId,
+        roleIds: ['doctor'],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsersDoc = res.data
         }
-      )
+      })
+    },
+    getTreeUsersNurse() {
+      getTreeUsersByDeptIdsAndRoles({
+        hospitalCode: this.packageData.hospitalCode,
+        tenantId: this.packageData.tenantId,
+        roleIds: ['nurse'],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsersNurse = res.data
+        }
+      })
+    },
+
+    /**
+     *
+     * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队
+     */
+    goCheck(type) {
+      if (type == 1) {
+        this.isDoctor = true
+        this.isNurse = false
+        this.isTeam = false
+        this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.nameTeam = ''
+      } else if (type == 2) {
+        this.isDoctor = false
+        this.isNurse = true
+        this.isTeam = false
+        this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.nameTeam = ''
+      } else {
+        this.isDoctor = false
+        this.isNurse = false
+        this.isTeam = true
+        this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.nameTeam = ''
+      }
+    },
+
+    handlePlan() {
+      this.needPlan = !this.needPlan
+      if (!this.needPlan) {
+        this.packageData.commodityFollowPlanIds = []
+      }
+    },
+
+    /**
+     *
+     * @param {*} index 1 医生  2 护士
+     */
+    addPerson(index) {
+      if (index == 1) {
+        if (!this.isDoctor) {
+          return
+        }
+        if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
+          this.$message.warn('请先选择所属租户或所属机构')
+          return
+        }
+        this.$refs.addPeople.add(
+          index,
+          this.deptUsersDoc,
+          this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs,
+          false
+        )
+      } else {
+        if (!this.isNurse) {
+          return
+        }
+        if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
+          this.$message.warn('请先选择所属租户或所属机构')
+          return
+        }
+        this.$refs.addPeople.add(
+          index,
+          this.deptUsersNurse,
+          this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs,
+          false
+        )
+      }
+    },
+
+    handleAddPeople(index, commodityPkgManageItemReqs) {
+      this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs = commodityPkgManageItemReqs
+      if (index == 1) {
+        this.nameDoc = ''
+        commodityPkgManageItemReqs.forEach((item, indexReqs) => {
+          if (indexReqs != commodityPkgManageItemReqs.length - 1) {
+            this.nameDoc = this.nameDoc + item.userName + ','
+          } else {
+            this.nameDoc = this.nameDoc + item.userName
+          }
+        })
+      } else {
+        this.nameNurse = ''
+        commodityPkgManageItemReqs.forEach((item, indexReqs) => {
+          if (indexReqs != commodityPkgManageItemReqs.length - 1) {
+            this.nameNurse = this.nameNurse + item.userName + ','
+          } else {
+            this.nameNurse = this.nameNurse + item.userName
+          }
+        })
+      }
+    },
+
+    addTeam() {
+      this.$refs.addTeam.edit()
+    },
+
+    handleAddTeam(commodityPkgManageReqs) {
+      this.packageData.commodityPkgManageReqs = commodityPkgManageReqs
+      this.nameTeam = ''
+      commodityPkgManageReqs.forEach((item, indexReqs) => {
+        if (indexReqs != commodityPkgManageReqs.length - 1) {
+          this.nameTeam = this.nameTeam + item.userName + ','
+        } else {
+          this.nameTeam = this.nameTeam + item.userName
+        }
+      })
     },
 
     submitData() {
-      let tempData = JSON.parse(JSON.stringify(this.projectData))
+      let tempData = JSON.parse(JSON.stringify(this.packageData))
 
       if (!tempData.basePlan.planName) {
         this.$message.error('请输入方案名称')
@@ -539,16 +799,6 @@ export default {
         this.$message.error('请选择执行科室')
         return
       }
-      // if (!tempData.basePlan.remark) {
-      //   this.$message.error('请输入补充说明')
-      //   return
-      // }
-
-      // if (tempData.filterRules.length == 0) {
-      //   this.$message.error('请添加名单过滤')
-      //   return
-      // }
-
       if (tempData.tasks.length == 0) {
         this.$message.error('请添加任务')
         return
@@ -810,6 +1060,14 @@ export default {
       flex-direction: row;
       align-items: center;
 
+      .span-names {
+        max-width: 200px;
+        margin-left: 1%;
+        overflow: hidden;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       .item-left {
         display: inline-block;
         width: 100px;
@@ -821,7 +1079,7 @@ export default {
         margin-left: 1% !important;
       }
       .mid-select-two.ant-select {
-        width: 120px !important;
+        min-width: 120px !important;
         margin-left: 1% !important;
       }
 
@@ -829,7 +1087,9 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
-
+        .checked-btn {
+          color: #999 !important;
+        }
         &:hover {
           cursor: pointer;
         }
@@ -859,6 +1119,16 @@ export default {
     align-items: center;
 
     margin-top: 3%;
+  }
+
+  /deep/ .ant-select-selection--multiple {
+    height: auto !important;
+  }
+  /deep/ .ant-select-selection__rendered > ul > li {
+    margin-top: 3px;
+  }
+  /deep/ .ant-select-selection__placeholder {
+    line-height: 24px;
   }
 }
 </style>
