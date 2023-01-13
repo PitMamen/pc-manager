@@ -130,12 +130,7 @@
 <script>
 import { STable } from '@/components'
 
-import {
-  queryHospitalList,
-  getPkgList,
-  updatePkgStatus,
-  getCommodityClassify,
-} from '@/api/modular/system/posManage'
+import { queryHospitalList, getPkgList, updatePkgStatus, getCommodityClassify } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -365,10 +360,11 @@ export default {
       this.$refs.table.refresh(true)
     },
     editPlan(record) {
+      console.log('editPlan', JSON.stringify(record))
       this.$router.push({
         name: 'package_manage_edit',
         query: {
-          planId: record.id,
+          commodityPkgId: record.commodityPkgId,
         },
       })
     },

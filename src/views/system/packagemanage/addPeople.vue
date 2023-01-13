@@ -202,12 +202,13 @@ export default {
       this.choseUsers = []
 
       console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
+      console.log('assignments', JSON.parse(JSON.stringify(assignments)))
       this.deptUsers.users.forEach((item) => {
         this.$set(item, 'isChecked', false)
         this.$set(item, 'canAdd', true)
         if (assignments && assignments.length > 0) {
           assignments.forEach((itemAss) => {
-            if (itemAss.userId == item.userId) {
+            if (itemAss.objectId == item.userId) {
               //组装可以添加的用户
               this.$set(item, 'canAdd', false)
 
@@ -246,6 +247,7 @@ export default {
           item.canAdd = false
           let tempItem = JSON.parse(JSON.stringify(item))
           this.$set(tempItem, 'weight', 0)
+          this.$set(tempItem, 'achievementRatio', 0)
           this.choseUsers.push(tempItem)
         })
       } else {
@@ -377,17 +379,17 @@ export default {
       }
       console.log('this.choseUsers', JSON.stringify(this.choseUsers))
       let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
-      let commodityPkgManageReqs = []
+      let commodityPkgManageItemReqs = []
       proccesedAssignments.forEach((item, index) => {
-        commodityPkgManageReqs.push({
+        commodityPkgManageItemReqs.push({
           achievementRatio: item.achievementRatio,
           objectId: item.userId,
           weight: item.weight,
           userName: item.userName,
         })
       })
-      console.log('this.commodityPkgManageReqs', JSON.stringify(commodityPkgManageReqs))
-      this.$emit('ok', this.index, commodityPkgManageReqs)
+      console.log('this.commodityPkgManageItemReqs', JSON.stringify(commodityPkgManageItemReqs))
+      this.$emit('ok', this.index, commodityPkgManageItemReqs)
       this.visible = false
     },
     handleCancel() {

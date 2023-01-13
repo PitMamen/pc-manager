@@ -12,28 +12,28 @@
             <span class="span-item-name"><span style="color: red">*</span> 套餐名称 :</span>
             <a-input
               class="span-item-value"
-              v-model="projectData.basePlan.planName"
+              v-model="packageData.packageName"
               :maxLength="30"
               style="display: inline-block; width: 60%"
               allow-clear
-              placeholder="请输入方案名称 "
+              placeholder="请输入 "
             />
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 套餐类型 :</span>
-            <a-select v-model="projectData.basePlan.followType" allow-clear placeholder="请选择随访类型">
-              <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
-                item.description
+            <a-select v-model="packageData.packageClassifyId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
+                item.classifyName
               }}</a-select-option>
             </a-select>
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="projectData.basePlan.metaConfigureId" allow-clear placeholder="请选择来源名单">
-              <a-select-option v-for="(item, index) in sourceData" :key="index" :value="item.value">{{
-                item.description
+            <a-select v-model="packageData.subjectClassifyId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
+                item.classifyName
               }}</a-select-option>
             </a-select>
           </div>
@@ -42,23 +42,24 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-input
-              class="span-item-value"
-              v-model="projectData.basePlan.planName"
-              :maxLength="30"
-              style="display: inline-block; width: 60%"
-              allow-clear
-              placeholder="请输入方案名称 "
-            />
+            <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
+                item.tenantName
+              }}</a-select-option>
+            </a-select>
           </div>
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
-            <a-select v-model="projectData.basePlan.followType" allow-clear placeholder="请选择随访类型">
-              <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
-                item.description
-              }}</a-select-option>
-            </a-select>
+            <a-tree-select
+              v-model="packageData.hospitalCode"
+              style="min-width: 120px"
+              @select="onSelectChangeCode"
+              :tree-data="treeData"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
           </div>
 
           <div class="div-pro-line"></div>
@@ -109,7 +110,7 @@
               @preview="handlePreviewBanner"
               @change="handleChangeBanner"
             >
-              <div v-if="fileListBanner.length < 5">
+              <div v-if="fileListBanner.length < 4">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
               </div>
@@ -132,7 +133,7 @@
               @preview="handlePreviewDetail"
               @change="handleChangeDetail"
             >
-              <div v-if="fileListDetail.length < 50">
+              <div v-if="fileListDetail.length < 8">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
               </div>
@@ -150,18 +151,21 @@
           <span class="span-title">管理团队</span>
         </div>
         <div class="manage-item">
-          <!-- @click="goCheck(indexTask)" -->
-          <!-- :checked="itemTask.isChecked" -->
-
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)" />
             <span style="margin-left: 8px">医生参与</span>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            placeholder="请选择"
+            v-model="allocationTypeDoc"
+            :disabled="!isDoctor"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -169,37 +173,33 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">主治医生:</span>
-          <span
-            style="
-              max-width: 200px;
-              margin-left: 1%;
-              overflow: hidden;
-              font-size: 12px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-            >{{}}李二、王五</span
-          >
+          <span class="span-names">{{ nameDoc }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson()">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson(0)" @focus="onAddPersonFocus(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%">医生配置</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
+              >医生配置</span
+            >
           </div>
         </div>
 
         <div class="manage-item">
-          <!-- @click="goCheck(indexTask)" -->
-          <!-- :checked="itemTask.isChecked" -->
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="isNurse" @click="goCheck(2)" />
             <span style="margin-left: 8px">护士参与</span>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            v-model="allocationTypeNurse"
+            placeholder="请选择"
+            :disabled="!isNurse"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -207,38 +207,33 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">参与护士:</span>
-          <span
-            style="
-              max-width: 200px;
-              margin-left: 1%;
-              overflow: hidden;
-              font-size: 12px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-            >{{}}李二、王五</span
-          >
+          <span class="span-names">{{ nameNurse }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson()">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(2)" @click="addPerson(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%">护士配置</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
+              >护士配置</span
+            >
           </div>
         </div>
 
         <div class="manage-item">
-          <!-- @click="goCheck(indexTask)" -->
-          <!-- :checked="itemTask.isChecked" -->
-
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" />
             <span style="margin-left: 8px">健康团队参与</span>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            v-model="allocationTypeTeam"
+            placeholder="请选择"
+            :disabled="!isTeam"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -246,35 +241,31 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">参与团队:</span>
-          <span
-            style="
-              max-width: 200px;
-              margin-left: 1%;
-              overflow: hidden;
-              font-size: 12px;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
-            >{{}}李二、王五</span
-          >
+          <span class="span-names">{{ nameTeam }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson()">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addTeam()">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%">团队配置</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTeam }"
+              >团队配置</span
+            >
           </div>
         </div>
 
         <div class="manage-item">
-          <!-- @click="goCheck(indexTask)" -->
-          <!-- :checked="itemTask.isChecked" -->
-
           <div class="item-left"></div>
 
           <span style="margin-left: 1%">参与角色</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
+          <a-select
+            class="mid-select-two"
+            mode="multiple"
+            v-model="roleIds"
+            allow-clear
+            placeholder="请选择"
+            :disabled="!isTeam"
+          >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -289,17 +280,22 @@
         </div>
 
         <div class="manage-item">
-          <!-- @click="goCheck(indexTask)" -->
-          <!-- :checked="itemTask.isChecked" -->
-
           <div class="item-left">
-            <a-checkbox />
+            <a-checkbox :checked="needPlan" @click="handlePlan" />
             <span style="margin-left: 8px">随访方案</span>
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select class="mid-select-two" allow-clear placeholder="请选择">
-            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
-              item.description
+          <a-select
+            class="mid-select-two"
+            mode="multiple"
+            :disabled="!needPlan"
+            allow-clear
+            @focus="onPersonFocus"
+            v-model="packageData.commodityFollowPlanIds"
+            placeholder="请选择"
+          >
+            <a-select-option v-for="(item, index) in plans" :key="index" :value="item.id">{{
+              item.planName
             }}</a-select-option>
           </a-select>
           <!-- @change="onChange" -->
@@ -312,28 +308,38 @@
       </div>
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
+      <add-team ref="addTeam" @ok="handleAddTeam" />
     </div>
   </a-spin>
 </template>
 
 <script>
-import { getDeptsPersonal, getDepts, getUsersByDeptIdAndRole, saveFollow } from '@/api/modular/system/posManage'
+import {
+  getPkgDetail,
+  getTreeUsersByDeptIdsAndRoles,
+  getCommodityClassify,
+  queryHospitalList,
+  getTenantList,
+  qryFollowPlanByFollowType,
+  saveOrUpdate,
+} from '@/api/modular/system/posManage'
 import moment from 'moment'
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
-import { formatDate, formatDateFull } from '@/utils/util'
+import addTeam from './addTeam'
 
 export default {
   components: {
     addPeople,
+    addTeam,
   },
 
   data() {
     return {
       actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       headers: {
-        authorization: 'authorization-text',
+        Authorization: 'authorization-text',
       },
 
       previewVisible: false,
@@ -349,52 +355,189 @@ export default {
       fileListDetail: [],
 
       user: {},
-      keshiData: {},
-      deptUsers: {},
+      deptUsersDoc: { users: [] },
+      deptUsersNurse: { users: [] },
+      //用户指定与随机分配
       assignmentTypes: [
-        { value: 1, description: '随机' },
-        { value: 1, description: '指定' },
+        { value: 1, description: '用户指定' },
+        { value: 2, description: '随机分配' },
       ],
       confirmLoading: false,
+      isDoctor: false,
+      isNurse: false,
+      isTeam: false,
+      needPlan: false,
+      treeData: [],
+
+      classData: [],
+      tenantList: [],
+      plans: [],
+      roleIds: [],
+      nameDoc: '',
+      nameNurse: '',
+      nameTeam: '',
+      commodityPkgId: undefined,
+      allocationTypeDoc: undefined,
+      allocationTypeNurse: undefined,
+      allocationTypeTeam: undefined,
 
       /**
        *
-       * 6-1、当【执行周期】为长期执行时，选择天数时，新增【周期】选项（下拉单选：间隔、每周、每月）。时间单位字段规则：1）如果【周期】选择【间隔】，
-       * 则其选项为天、周、月（下拉单选），需要输入数字字段，选择周的话，发送时间点为该周第一天，选择月的话，发送时间点为该月第一天。2）如果【周期】选择
-       * 【每周】，则其选项为星期一、星期二、星期三、星期四、星期五、星期六、星期天。不用输入数字字段。3）如果【周期】选择【每月】，单位只能下拉选择数字，
-       * 数字范围是1~31。不用输入数字字段。[]
-       *
-       * 6-2、当【执行周期】为临时执行时，只有单位的选择，时间单位为：天、周、月。选择周的话，发送时间点为该周第一天，
-       * 选择月的话，发送时间点为该月第一天。
-       *
-       * filterRules item的 messageContentId 是模版id； messageContentType 也要传，页面上没有内容
-       *
        */
-      projectData: {
-        basePlan: {
-          planName: undefined,
-          followType: undefined, //随访类型；1:关怀型随访2:管理型随访3:科研型随访
-          metaConfigureId: undefined,
-          executeDepartment: undefined, //执行科室
-          remark: undefined, //补充说明
-        },
-        filterRules: [],
-        tasks: [],
-        // tasks: [{ assignments: [] }, {}],
-        // metaConfigureId: '',
+      packageData: {
+        bannerImgs: [],
+        detailImgs: [],
+        frontImgs: [],
+        commodityFollowPlanIds: [],
+        //新增没有这两个
+        // commodityId: 0,
+        // commodityPkgId: 0,
+
+        //这里设计了4条数据，参与角色是与其他三条同级的数据；teamType值为1 2 3 4
+        commodityPkgManageReqs: [
+          {
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [
+              // {
+              //   achievementRatio: 0,
+              //   objectId: undefined,
+              //   weight: 0,
+              // },
+            ],
+            teamType: undefined,
+          },
+          {
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [
+              // {
+              //   achievementRatio: 0,
+              //   objectId: undefined,
+              //   weight: 0,
+              // },
+            ],
+            teamType: undefined,
+          },
+          {
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [
+              // {
+              //   achievementRatio: 0,
+              //   objectId: undefined,
+              //   weight: 0,
+              // },
+            ],
+            teamType: undefined,
+          },
+        ],
+        hospitalCode: undefined,
+        packageClassifyId: undefined,
+        packageName: undefined,
+        subjectClassifyId: undefined,
+        tenantId: undefined,
       },
     }
   },
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.getDeptsOut()
-
+    this.queryHospitalListOut()
+    this.getTenantListOut()
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+    console.log('this.$route.query', this.$route.query)
+    this.commodityPkgId = this.$route.query.commodityPkgId
+    // 获取详情
+    getPkgDetail(this.commodityPkgId).then((res) => {
+      if (res.code == 0) {
+        this.packageData = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
+    getCommodityClassify({}).then((res) => {
+      if (res.code == 0) {
+        this.classData = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
     // this.confirmLoading = true
   },
 
   methods: {
     moment,
+    queryHospitalListOut() {
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      queryHospitalList(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
+
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 租户列表
+     */
+    getTenantListOut() {
+      this.confirmLoading = true
+      getTenantList({
+        metaName: '',
+        status: 1,
+        tenantName: '',
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.tenantList = res.data.records
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 随访方案列表
+     */
+    qryFollowPlanByFollowTypeOut() {
+      // this.confirmLoading = true
+      qryFollowPlanByFollowType({
+        tenantId: this.packageData.tenantId,
+        hospitalCode: this.packageData.hospitalCode,
+        followType: 4,
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.plans = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     handleCancel() {
       this.previewVisible = false
@@ -471,207 +614,333 @@ export default {
       }
     },
 
-    getDeptsOut() {
-      //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-        getDepts().then((res) => {
-          if (res.code == 0) {
-            this.keshiData = res.data
+    onPersonFocus() {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属机构')
+        return
+      }
+    },
+
+    /**
+     *
+     * @param {*} type   1 租户选择回调  2机构选择回调
+     */
+    onSelectChange() {
+      // console.log('onSelectChange type', type)
+      console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
+      if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.getTreeUsersDoc()
+        this.getTreeUsersNurse()
+        this.qryFollowPlanByFollowTypeOut()
+      }
+    },
+
+    onSelectChangeCode(code) {
+      console.log('code', code)
+      this.packageData.hospitalCode = code
+      if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.getTreeUsersDoc()
+        this.getTreeUsersNurse()
+        this.qryFollowPlanByFollowTypeOut()
+      }
+    },
+
+    getTreeUsersDoc() {
+      getTreeUsersByDeptIdsAndRoles({
+        hospitalCode: this.packageData.hospitalCode,
+        tenantId: this.packageData.tenantId,
+        roleIds: ['doctor'],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsersDoc = res.data
+        }
+      })
+    },
+    getTreeUsersNurse() {
+      getTreeUsersByDeptIdsAndRoles({
+        hospitalCode: this.packageData.hospitalCode,
+        tenantId: this.packageData.tenantId,
+        roleIds: ['nurse'],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsersNurse = res.data
+        }
+      })
+    },
+
+    /**
+     *
+     * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队
+     */
+    goCheck(type) {
+      if (type == 1) {
+        this.isDoctor = !this.isDoctor
+      } else if (type == 2) {
+        this.isNurse = !this.isNurse
+      } else {
+        this.isTeam = !this.isTeam
+        // this.isNurse = false
+        // this.isTeam = true
+        // this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs = []
+        // this.nameDoc = ''
+        // this.nameNurse = ''
+        // this.nameTeam = ''
+      }
+    },
+
+    handlePlan() {
+      this.needPlan = !this.needPlan
+      if (!this.needPlan) {
+        this.packageData.commodityFollowPlanIds = []
+      }
+    },
+
+    onAddPersonFocus(type) {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属机构')
+        return
+      }
+      if (type == 1 && !this.allocationTypeDoc) {
+        this.$message.warn('请先选择医生参与分配方式')
+        return
+      }
+
+      if (type == 2 && !this.allocationTypeNurse) {
+        this.$message.warn('请先选择护士参与分配方式')
+        return
+      }
+    },
+
+    /**
+     *
+     * @param {*} index 0 医生  1 护士
+     */
+    addPerson(index) {
+      if (index == 0) {
+        if (!this.isDoctor) {
+          return
+        }
+        if (!this.allocationTypeDoc) {
+          this.$message.warn('请先选择医生参与分配方式')
+          return
+        }
+        if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
+          this.$message.warn('请先选择所属租户或所属机构')
+          return
+        }
+        this.$refs.addPeople.add(
+          index,
+          this.deptUsersDoc,
+          this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+          false
+        )
+      } else {
+        if (!this.isNurse) {
+          return
+        }
+        if (!this.allocationTypeNurse) {
+          this.$message.warn('请先选择护士参与分配方式')
+          return
+        }
+        if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
+          this.$message.warn('请先选择所属租户或所属机构')
+          return
+        }
+        this.$refs.addPeople.add(
+          index,
+          this.deptUsersNurse,
+          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          false
+        )
+      }
+    },
+
+    /**
+     *
+     * @param {*} index 0 医生  1 护士
+     * @param {*} commodityPkgManageItemReqs
+     */
+    handleAddPeople(index, commodityPkgManageItemReqs) {
+      this.packageData.commodityPkgManageReqs[index].commodityPkgManageItemReqs = commodityPkgManageItemReqs
+      if (index == 0) {
+        this.nameDoc = ''
+        commodityPkgManageItemReqs.forEach((item, indexReqs) => {
+          if (indexReqs != commodityPkgManageItemReqs.length - 1) {
+            this.nameDoc = this.nameDoc + item.userName + ','
+          } else {
+            this.nameDoc = this.nameDoc + item.userName
           }
         })
       } else {
-        getDeptsPersonal().then((res) => {
-          if (res.code == 0) {
-            this.keshiData = res.data
-          }
-        })
-      }
-    },
-
-    addPerson() {
-      this.$refs.addPeople.add(0, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
-    },
-
-    handleAddPeople(indexTask, proccesedAssignments) {
-      this.projectData.tasks[indexTask].assignments = proccesedAssignments
-      let nameStr = ''
-      // debugger
-      if (this.projectData.tasks[indexTask].assignments.length > 0) {
-        this.projectData.tasks[indexTask].assignments.forEach((item, index) => {
-          if (index != this.projectData.tasks[indexTask].assignments.length - 1) {
-            nameStr = nameStr + item.userName + ','
+        this.nameNurse = ''
+        commodityPkgManageItemReqs.forEach((item, indexReqs) => {
+          if (indexReqs != commodityPkgManageItemReqs.length - 1) {
+            this.nameNurse = this.nameNurse + item.userName + ','
           } else {
-            nameStr = nameStr + item.userName
+            this.nameNurse = this.nameNurse + item.userName
           }
         })
-        // debugger
-        console.log('nameStr', nameStr)
-        this.$set(this.projectData.tasks[indexTask], 'nameStr', nameStr)
       }
     },
 
-    getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
-        (res) => {
-          if (res.code == 0) {
-            this.deptUsers = res.data.deptUsers
-          }
+    addTeam() {
+      if (!this.allocationTypeTeam) {
+        this.$message.warn('请先选择团队参与分配方式')
+        return
+      }
+      this.$refs.addTeam.edit(this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs)
+    },
+
+    handleAddTeam(commodityPkgManageItemReqs) {
+      this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs = commodityPkgManageItemReqs
+      this.nameTeam = ''
+      commodityPkgManageItemReqs.forEach((item, indexReqs) => {
+        if (indexReqs != commodityPkgManageItemReqs.length - 1) {
+          this.nameTeam = this.nameTeam + item.userName + ','
+        } else {
+          this.nameTeam = this.nameTeam + item.userName
         }
-      )
+      })
     },
 
     submitData() {
-      let tempData = JSON.parse(JSON.stringify(this.projectData))
+      let tempData = JSON.parse(JSON.stringify(this.packageData))
 
-      if (!tempData.basePlan.planName) {
-        this.$message.error('请输入方案名称')
+      if (!tempData.packageName) {
+        this.$message.error('请输入套餐名称')
         return
       }
-      if (!tempData.basePlan.followType) {
-        this.$message.error('请选择随访类型')
+      if (!tempData.packageClassifyId) {
+        this.$message.error('请选择套餐类型')
         return
       }
-      if (!tempData.basePlan.metaConfigureId) {
-        this.$message.error('请选择来源名单')
+      if (!tempData.subjectClassifyId) {
+        this.$message.error('请选择关联学科')
         return
       }
-      if (!tempData.basePlan.executeDepartment) {
-        this.$message.error('请选择执行科室')
+      if (!tempData.tenantId) {
+        this.$message.error('请选择所属租户')
         return
       }
-      // if (!tempData.basePlan.remark) {
-      //   this.$message.error('请输入补充说明')
-      //   return
-      // }
-
-      // if (tempData.filterRules.length == 0) {
-      //   this.$message.error('请添加名单过滤')
-      //   return
-      // }
-
-      if (tempData.tasks.length == 0) {
-        this.$message.error('请添加任务')
+      if (!tempData.hospitalCode) {
+        this.$message.error('请选择所属机构')
         return
       }
 
-      if (tempData.filterRules.length > 0) {
-        for (let indexRule = 0; indexRule < tempData.filterRules.length; indexRule++) {
-          let itemRule = tempData.filterRules[indexRule]
-          if (!itemRule.metaConfigureDetailId) {
-            this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤字段')
-            return
-          }
-          if (!itemRule.condition) {
-            this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
-            return
-          }
-          if (!itemRule.queryValue) {
-            this.$message.error('请选择第' + (indexRule + 1) + '条名单过滤操作')
-            return
-          }
+      //组装图片
+      if (this.fileList.length == 0) {
+        this.$message.error('请上传封面图片！')
+        return
+      } else {
+        tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
+      }
 
-          if (itemRule.fieldType == 2) {
-            itemRule.queryValue = moment(itemRule.queryValue).format('YYYY-MM-DD')
-          }
-          console.log('itemRule.queryValue', itemRule.queryValue)
+      //banner 选填
+      if (this.fileListBanner.length > 0) {
+        for (let index = 0; index < this.fileListBanner.length; index++) {
+          tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
         }
       }
 
-      for (let index = 0; index < tempData.tasks.length; index++) {
-        let item = tempData.tasks[index]
-        // console.log('aaa item', item)
-        // console.log('aaa index', index)
-        if (!item.messageType) {
-          this.$message.error('请选择第' + (index + 1) + '条任务随访方式')
+      if (this.fileListDetail.length == 0) {
+        this.$message.error('请上传详情图片！')
+        return
+      } else {
+        for (let index = 0; index < this.fileListDetail.length; index++) {
+          tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
+        }
+      }
+
+      //组装团队
+      let commodityNew = []
+      if (this.isDoctor) {
+        if (tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.length == 0) {
+          this.$message.error('请选择医生！')
           return
-        }
-        if (!item.messageContentId) {
-          this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
-          return
-        }
-        if (!item.taskExecType) {
-          //1临时  2长期
-          this.$message.error('请选择第' + (index + 1) + '条任务执行周期')
-          return
-        }
-        if (!item.metaConfigureDetailId) {
-          this.$message.error('请选择第' + (index + 1) + '条任务日期类别')
-          return
-        }
-
-        //repeatTimeUnit ==4时不需要  任务时间单位 任务时间数量
-        if (item.repeatTimeUnit == 4) {
-          delete item.timeUnit
-          delete item.timeQuantity
         } else {
-          if (item.taskExecType && item.taskExecType == 1 && !item.timeUnit) {
-            this.$message.error('请选择第' + (index + 1) + '条任务时间单位')
-            return
-          }
-
-          if (item.taskExecType && item.taskExecType == 2 && !item.timeQuantity) {
-            this.$message.error('请输入第' + (index + 1) + '条任务时间数量')
-            return
-          }
+          tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.forEach((item) => {
+            delete item.userName
+          })
         }
 
-        if (item.messageType == 2 || item.messageType == 3) {
-          item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
-        } else {
-          delete item.pushTimePoint
-        }
-        // console.log('pushTimePoint before', item.pushTimePoint)
-        // item.pushTimePoint = formatDateFull(item.pushTimePoint).substring(11, 16)
-        // console.log('pushTimePoint after', item.pushTimePoint)
-
-        // //时间配置
-        // if (item.messageType == 2 || item.messageType == 3) {
-        //   delete item.assignments
-        // }
-
-        // 1 电话 2 微信 3 短信
-        /**
-         *    9-1、当【消息类别】为电话回访时，任务中增加【人员分配方案】字段，其为下拉单项选择，选择项有：首次随机分配、每次随机分配、指定人员，同时需
-         *        要显示具体执行人员和添加人员按钮。
-              9-2、当任务中的【消息类别】为微信消息和短信消息时，任务中增加勾选项-电话跟进：，勾选后，显示【人员分配方案】、【执行人员】和添加人员按钮。
-                  只有勾选了电话跟进，才需要设置【人员分配方案】和【执行人员】。
-         * 
-
-         如果是短信微信又没勾选，删掉跟进人员字段
-         */
-        if ((item.messageType == 2 || item.messageType == 3) && !item.isChecked) {
-          delete item.assignments
-        }
-
-        //微信和短信消息时勾选了加人，以及电话随访时需要添加人员
-        if (((item.messageType == 2 || item.messageType == 3) && item.isChecked) || item.messageType == 1) {
-          if (!item.assignments || item.assignments.length == 0) {
-            this.$message.error('请添加人员分配')
-            return
-          }
-        }
-
-        //后期加的  如果是微信或者电话随访，勾选了这个字段就传1
-        if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
-          this.$set(item, 'overdueFollowType', 1)
-        }
-
-        //处理逾期时间
-        if (item.taskType != 1) {
-          item.overdueTimeUnit
-        }
-
-        delete item.everyData
-        delete item.nameStr
+        tempData.commodityPkgManageReqs[0].allocationType = this.allocationTypeDoc
+        tempData.commodityPkgManageReqs[0].teamType = 1
+        commodityNew.push(tempData.commodityPkgManageReqs[0])
       }
+
+      if (this.isNurse) {
+        if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
+          this.$message.error('请选择护士！')
+          return
+        } else {
+          tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.forEach((item) => {
+            delete item.userName
+          })
+        }
+
+        tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeNurse
+        tempData.commodityPkgManageReqs[1].teamType = 2
+        commodityNew.push(tempData.commodityPkgManageReqs[1])
+      }
+
+      if (this.isTeam) {
+        if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
+          this.$message.error('请选择团队！')
+          return
+        } else {
+          tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.forEach((item) => {
+            delete item.userName
+          })
+        }
+
+        if (this.roleIds.length == 0) {
+          this.$message.error('请选择角色！')
+          return
+        }
+        tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTeam
+        tempData.commodityPkgManageReqs[2].teamType = 3
+        commodityNew.push(tempData.commodityPkgManageReqs[2])
+        let reqs = []
+        this.roleIds.forEach((item1) => {
+          reqs.push({
+            objectId: item1,
+          })
+        })
+        //新增一条角色参数
+        commodityNew.push({
+          commodityPkgManageItemReqs: reqs,
+          teamType: 4,
+        })
+      }
+
+      if (commodityNew.length == 0) {
+        this.$message.warn('请至少选择一种管理团队！')
+        return
+      }
+
+      if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
+        this.$message.warn('请选择随访！')
+        return
+      }
+
+      tempData.commodityPkgManageReqs = commodityNew
+      console.log('tempData sub', JSON.stringify(tempData))
 
       this.confirmLoading = true
-      saveFollow(tempData)
+      saveOrUpdate(tempData)
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            this.$bus.$emit('proEvent', '刷新数据-方案新增')
+            this.$bus.$emit('pkgEvent', '刷新数据-方案新增')
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
@@ -810,6 +1079,14 @@ export default {
       flex-direction: row;
       align-items: center;
 
+      .span-names {
+        max-width: 200px;
+        margin-left: 1%;
+        overflow: hidden;
+        font-size: 12px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
       .item-left {
         display: inline-block;
         width: 100px;
@@ -821,7 +1098,7 @@ export default {
         margin-left: 1% !important;
       }
       .mid-select-two.ant-select {
-        width: 120px !important;
+        min-width: 120px !important;
         margin-left: 1% !important;
       }
 
@@ -829,7 +1106,9 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
-
+        .checked-btn {
+          color: #999 !important;
+        }
         &:hover {
           cursor: pointer;
         }
@@ -859,6 +1138,16 @@ export default {
     align-items: center;
 
     margin-top: 3%;
+  }
+
+  /deep/ .ant-select-selection--multiple {
+    height: auto !important;
+  }
+  /deep/ .ant-select-selection__rendered > ul > li {
+    margin-top: 3px;
+  }
+  /deep/ .ant-select-selection__placeholder {
+    line-height: 24px;
   }
 }
 </style>
