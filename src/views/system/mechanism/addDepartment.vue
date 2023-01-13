@@ -78,7 +78,7 @@
         :disabled="true"
         :defaultValue="0"
         allow-clear
-        style="width: 190px; margin-left: 5px; text-align: center"
+        style="width: 190px; margin-left: 4px; text-align: center"
       />
       <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
     </div>

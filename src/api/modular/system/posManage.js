@@ -3286,7 +3286,6 @@ export function getDictDataForCodeBorad(data) {
     method: 'get',
     data: data,
   })
-<<<<<<< HEAD
  }
 
 
@@ -3359,6 +3358,31 @@ export function getDictDataForCodeBorad(data) {
       data:data,
     })
    }
-=======
-}
->>>>>>> 8fd572c73dab9a2d156f73eab7a973170470a347
+
+
+    /**
+     * 关联服务商
+     */
+     export function saveServiceFactoryHospitalMapping(data){
+      return axios({
+        url:'/uam-api/tdHealthyTeamUserMapping/saveServiceFactoryHospitalMapping',
+        method:'post',
+        data:data,
+      })
+     }
+
+     /**
+      * 获取已勾选的 机构
+      */
+      export function getServiceFactoryForHospitalCode(data){
+        return axios({
+          url:'/uam-api/tdHealthyTeamUserMapping/getServiceFactoryForHospitalCode',
+          method:'get',
+          params:data,
+        })
+      }
+
+
+
+
+
