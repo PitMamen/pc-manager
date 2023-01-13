@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="关联科室"
+    title="团队配置"
     :width="600"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -13,18 +13,18 @@
           <a-form-item v-show="false">
             <a-input v-decorator="['wardId']" />
           </a-form-item>
-          <a-form-item label="已选科室" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
+          <a-form-item label="已选团队" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback>
             <a-select
               mode="multiple"
               style="width: 100%"
               :token-separators="[',']"
-              placeholder="请在表格中勾选科室"
+              placeholder="请在表格中勾选团队"
               dropdownClassName="select-tags-hidden"
               v-model="selectedRowKeys"
               @change="onChange"
             >
-              <a-select-option v-for="item in lists" :key="item.department_id" :value="item.department_id">
-                {{ item.department_name }}
+              <a-select-option v-for="item in lists" :key="item.id" :value="item.id">
+                {{ item.teamName }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -33,9 +33,9 @@
       <div style="margin: 10px 0">
         <span style="margin-left: 9px; color: rgba(0, 0, 0, 0.85)">查询条件:</span>
         <a-input
-          v-model="queryParam.departmentName"
+          v-model="queryParam.teamNameOrAbbr"
           allow-clear
-          placeholder="可输入科室名称后回车查询"
+          placeholder="可输入团队名称或首拼后回车查询"
           style="margin-left: 10px; width: calc(100% - 70px)"
           @change="onInputChange"
         />
@@ -48,7 +48,7 @@
           :columns="columns"
           :data="loadData"
           :alert="true"
-          :rowKey="(record) => record.department_id"
+          :rowKey="(record) => record.id"
           :showPagination="false"
           :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
         >
@@ -85,37 +85,47 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       // 查询参数
-      queryParam: {},
+      queryParam: { teamNameOrAbbr: '' },
       // 表头
       columns: [
         {
           title: '团队名称',
-          dataIndex: 'department_name',
-          scopedSlots: { customRender: 'department_name' },
+          dataIndex: 'teamName',
+          // scopedSlots: { customRender: 'teamName' },
         },
         {
           title: '团队配置',
-          dataIndex: 'department_type',
-          scopedSlots: { customRender: 'department_type' },
+          dataIndex: 'teamConfig',
+          // scopedSlots: { customRender: 'department_type' },
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return list(
-          Object.assign(
-            {
-              pageNo: 1,
-              pageSize: 9999,
-              departmentType: 3,
-              hospitalCode: this.item.hospital_code,
-            },
-            this.queryParam
-          )
-        ).then((res) => {
+        return getHealthyTeamUserRoleGroupBy(this.queryParam).then((res) => {
+          // Object.assign(
+          //   {
+          //     pageNo: 1,
+          //     pageSize: 9999,
+          //     departmentType: 3,
+          //     hospitalCode: this.item.hospital_code,
+          //   },
+          //   this.queryParam
+          // )
           if (res.code === 0) {
+            res.data.forEach((item, index) => {
+              let name = ''
+              item.listUserRoleCount.forEach((itemIn, indexIn) => {
+                if (indexIn != item.listUserRoleCount.length - 1) {
+                  name = name + itemIn.team_role + '*' + itemIn.co + ','
+                } else {
+                  name = name + itemIn.team_role + '*' + itemIn.co
+                }
+              })
+              this.$set(item, 'teamConfig', name)
+            })
             return {
-              totalRows: res.data.total,
-              rows: res.data.records || [],
+              totalRows: res.data.length,
+              rows: res.data || [],
             }
           } else {
             this.$message.error(res.message)
@@ -130,9 +140,16 @@ export default {
   },
   methods: {
     // 初始化方法
-    edit() {
+    edit(commodityPkgManageItemReqs) {
       this.visible = true
-      this.item = item
+      this.selectedRowKeys = []
+      if (commodityPkgManageItemReqs.length > 0) {
+        commodityPkgManageItemReqs.forEach((item) => {
+          this.selectedRowKeys.push(item.objectId)
+        })
+      }
+
+      // this.item = item
       this.getLists()
       // setTimeout(() => {
       //   this.getInfo({
@@ -161,7 +178,8 @@ export default {
     getLists() {
       getHealthyTeamUserRoleGroupBy().then((res) => {
         if (res.code === 0) {
-          this.lists = res.data.records || []
+          this.lists = res.data || []
+          console.log('getLists', this.lists)
         }
       })
     },
@@ -177,6 +195,7 @@ export default {
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
+      console.log('onSelectChange', this.selectedRowKeys)
       // this.selectedRows = selectedRows
     },
     updateSelect() {
@@ -188,30 +207,21 @@ export default {
       return values
     },
     handleSubmit() {
-      const {
-        form: { validateFields },
-      } = this
-      this.confirmLoading = true
-      validateFields((errors, values) => {
-        if (!errors) {
-          update(this.geneSubmitData(values))
-            .then((res) => {
-              if (res.code === 0) {
-                this.$message.success('关联成功')
-                this.$emit('ok', values)
-                this.handleCancel()
-                this.clearDatas()
-              } else {
-                this.$message.error(res.message)
-              }
-            })
-            .finally(() => {
-              this.confirmLoading = false
-            })
-        } else {
-          this.confirmLoading = false
-        }
+      if (!this.selectedRowKeys || this.selectedRowKeys.length == 0) {
+        this.$message.warn('请选择团队')
+        return
+      }
+      let commodityPkgManageItemReqs = []
+      this.selectedRowKeys.forEach((itemId) => {
+        let findItem = this.lists.find((item) => item.id == itemId)
+        commodityPkgManageItemReqs.push({
+          objectId: findItem.id,
+          userName: findItem.teamName,
+        })
       })
+      console.log('this.commodityPkgManageItemReqs Team', JSON.stringify(commodityPkgManageItemReqs))
+      this.$emit('ok', commodityPkgManageItemReqs)
+      this.visible = false
     },
     handleCancel() {
       this.visible = false

@@ -3217,6 +3217,29 @@ export function getCommodityClassify(data) {
     data: data,
   })
 }
+
+/**
+ * /pkg/saveOrUpdate 套餐新增、修改接口
+ */
+export function saveOrUpdate(data) {
+  return axios({
+    url: '/medical-api/pkg/saveOrUpdate',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /pkg/detail/{commodityPkgId}  套餐详情接口
+ */
+export function getPkgDetail(commodityPkgId) {
+  return axios({
+    url: '/medical-api/pkg/detail/' + commodityPkgId,
+    method: 'get',
+    // data: data,
+  })
+}
+
 /**
  * /accountInfo/getTreeUsersByDeptIdsAndRoles 根据科室与角色查询用户树列表
  */
