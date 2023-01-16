@@ -166,7 +166,7 @@
             allow-clear
             placeholder="请选择"
             v-model="allocationTypeDoc"
-            :disabled="!isDoctor"
+            :disabled="!isDoctor || broadClassify == 1"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -200,7 +200,7 @@
             allow-clear
             v-model="allocationTypeNurse"
             placeholder="请选择"
-            :disabled="!isNurse"
+            :disabled="!isNurse || broadClassify == 1"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -222,7 +222,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTeam" @click="goCheck(3)" />
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" />
             <span style="margin-left: 8px">健康团队参与</span>
           </div>
 
@@ -741,7 +741,7 @@ export default {
 
         this.packageData.commodityPkgManageReqs = newRsps
         this.confirmLoading = false
-      }else{
+      } else {
         this.confirmLoading = false
       }
     },
@@ -867,7 +867,9 @@ export default {
      */
     onTypeSelect() {
       let findItem = this.classData.find((item) => item.id == this.packageData.packageClassifyId)
-      this.broadClassify = findItem.broadClassify
+      if (findItem) {
+        this.broadClassify = findItem.broadClassify
+      }
       console.log('this.broadClassify', this.broadClassify)
       debugger
       switch (this.broadClassify) {
@@ -879,9 +881,13 @@ export default {
           this.allocationTypeNurse = 2
 
           this.canConfigTeam = true
+          this.onSelectChange()
+          this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
+          this.getNewRsp()
+          this.onSelectChange()
           break
         case 3:
           this.canConfigTeam = false
@@ -890,6 +896,25 @@ export default {
         // default:
         //   break;
       }
+    },
+
+    getNewRsp() {
+      this.$set(this.packageData, 'commodityPkgManageReqs', [])
+      this.packageData.commodityPkgManageReqs.push({
+        allocationType: undefined,
+        commodityPkgManageItemReqs: [],
+        teamType: undefined,
+      })
+      this.packageData.commodityPkgManageReqs.push({
+        allocationType: undefined,
+        commodityPkgManageItemReqs: [],
+        teamType: undefined,
+      })
+      this.packageData.commodityPkgManageReqs.push({
+        allocationType: undefined,
+        commodityPkgManageItemReqs: [],
+        teamType: undefined,
+      })
     },
 
     /**
@@ -1048,12 +1073,22 @@ export default {
           this.$message.warn('请先选择所属租户或所属机构')
           return
         }
-        this.$refs.addPeople.add(
-          index,
-          this.deptUsersDoc,
-          this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-          false
-        )
+
+        if (this.broadClassify == 1) {
+          this.$refs.addPeople.add(
+            index,
+            this.deptUsersDoc,
+            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+            true
+          )
+        } else {
+          this.$refs.addPeople.add(
+            index,
+            this.deptUsersDoc,
+            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+            false
+          )
+        }
       } else {
         if (!this.isNurse) {
           return
@@ -1066,12 +1101,28 @@ export default {
           this.$message.warn('请先选择所属租户或所属机构')
           return
         }
-        this.$refs.addPeople.add(
-          index,
-          this.deptUsersNurse,
-          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-          false
-        )
+
+        if (this.broadClassify == 1) {
+          this.$refs.addPeople.add(
+            index,
+            this.deptUsersDoc,
+            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+            true
+          )
+        } else {
+          this.$refs.addPeople.add(
+            index,
+            this.deptUsersDoc,
+            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+            false
+          )
+        }
+        // this.$refs.addPeople.add(
+        //   index,
+        //   this.deptUsersNurse,
+        //   this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+        //   false
+        // )
       }
     },
 
@@ -1167,9 +1218,10 @@ export default {
         }
       }
 
+      debugger
+      tempData.bannerImgs = []
       if (this.fileListBanner.length > 0) {
         //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
-        tempData.bannerImgs = []
         for (let index = 0; index < this.fileListBanner.length; index++) {
           if (this.fileListBanner[index].response) {
             tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
@@ -1265,6 +1317,8 @@ export default {
         if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
           this.$message.warn('请选择随访！')
           return
+        } else {
+          delete tempData.commodityFollowPlanIds
         }
 
         tempData.commodityPkgManageReqs = commodityNew
