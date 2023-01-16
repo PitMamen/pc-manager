@@ -3207,6 +3207,7 @@ export function updatePkgStatus(data) {
     data: data,
   })
 }
+
 /**
  * /pkg/getCommodityClassify 套餐分类接口
  */
@@ -3217,6 +3218,18 @@ export function getCommodityClassify(data) {
     data: data,
   })
 }
+
+/**
+ * /commodityConfig/getCommodityPkgDetailByid 查询套餐规格详情
+ */
+export function getCommodityPkgDetailByid(data) {
+  return axios({
+    url: '/medical-api/commodityConfig/getCommodityPkgDetailByid',
+    method: 'get',
+    params: data,
+  })
+}
+
 
 /**
  * /pkg/saveOrUpdate 套餐新增、修改接口
@@ -3293,8 +3306,8 @@ export function getTreeUsersByDeptIdsAndRoles(data) {
 export function getHealthyTeamUserRoleGroupBy(data) {
   return axios({
     url: '/uam-api/tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy',
-    method: 'get',
-    params: data,
+    method: 'post',
+    data: data,
   })
 }
 
@@ -3572,3 +3585,30 @@ export function qryServiceItemList(data){
   }
 
 
+/**
+ * 获取字典
+ */
+export function getDictData(param) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/' + param,
+    method: 'get',
+  })
+}
+
+//医疗学科列表
+export function getTdMedicalSubjectPageList(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/getTdMedicalSubjectPageList',
+    method: 'get',
+    params: data,
+  })
+}
+
+//医疗学科列表
+export function treeMedicalSubjects(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/treeMedicalSubjects',
+    method: 'get',
+    params: data,
+  })
+}

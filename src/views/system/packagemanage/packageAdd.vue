@@ -31,11 +31,15 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="packageData.subjectClassifyId" allow-clear placeholder="请选择">
-              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
-                item.classifyName
-              }}</a-select-option>
-            </a-select>
+            <!-- @select="onSelectChangeCode" -->
+            <a-tree-select
+              v-model="packageData.subjectClassifyId"
+              style="min-width: 120px"
+              :tree-data="treeDataSubject"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
           </div>
         </div>
 
@@ -52,6 +56,7 @@
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
             <a-tree-select
+              @focus="onComFocus"
               v-model="packageData.hospitalCode"
               style="min-width: 120px"
               @select="onSelectChangeCode"
@@ -97,9 +102,7 @@
             </a-modal>
           </div>
 
-          <span class="title-des-pic"
-            ><span style="color: red">*</span> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span
-          >
+          <span class="title-des-pic" style="margin-left: 8px"> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span>
           <div class="clearfix" style="margin-top: 20px">
             <a-upload
               :action="actionUrl"
@@ -266,8 +269,8 @@
             placeholder="请选择"
             :disabled="!isTeam"
           >
-            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
-              item.description
+            <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.code">{{
+              item.value
             }}</a-select-option>
           </a-select>
         </div>
@@ -320,6 +323,8 @@ import {
   queryHospitalList,
   getTenantList,
   qryFollowPlanByFollowType,
+  getDictData,
+  treeMedicalSubjects,
   saveOrUpdate,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
@@ -367,6 +372,8 @@ export default {
       isTeam: false,
       needPlan: false,
       treeData: [],
+      treeDataSubject: [],
+      roleList: [],
 
       classData: [],
       tenantList: [],
@@ -395,24 +402,12 @@ export default {
         commodityPkgManageReqs: [
           {
             allocationType: undefined,
-            commodityPkgManageItemReqs: [
-              // {
-              //   achievementRatio: 0,
-              //   objectId: undefined,
-              //   weight: 0,
-              // },
-            ],
+            commodityPkgManageItemReqs: [],
             teamType: undefined,
           },
           {
             allocationType: undefined,
-            commodityPkgManageItemReqs: [
-              // {
-              //   achievementRatio: 0,
-              //   objectId: undefined,
-              //   weight: 0,
-              // },
-            ],
+            commodityPkgManageItemReqs: [],
             teamType: undefined,
           },
           {
@@ -438,8 +433,10 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.queryHospitalListOut()
+    // this.queryHospitalListOut()
     this.getTenantListOut()
+    this.getDictDataOut()
+    this.treeMedicalSubjectsOut()
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getCommodityClassify({}).then((res) => {
       if (res.code == 0) {
@@ -455,7 +452,7 @@ export default {
     moment,
     queryHospitalListOut() {
       let queryData = {
-        tenantId: '',
+        tenantId: this.packageData.tenantId,
         status: 1,
         hospitalName: '',
       }
@@ -500,6 +497,49 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.tenantList = res.data.records
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取学科二级树
+     */
+    treeMedicalSubjectsOut() {
+      treeMedicalSubjects()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.subjectClassifyId)
+              this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'children', item.children)
+
+              item.children.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.subjectClassifyId)
+                this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'title', item1.subjectClassifyName)
+              })
+            })
+
+            this.treeDataSubject = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取字典接口   角色列表
+     */
+    getDictDataOut() {
+      getDictData('TEAMROLE')
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.roleList = res.data
           }
         })
         .finally((res) => {
@@ -613,6 +653,13 @@ export default {
       }
     },
 
+    onComFocus() {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+    },
+
     /**
      *
      * @param {*} type   1 租户选择回调  2机构选择回调
@@ -621,9 +668,18 @@ export default {
       // console.log('onSelectChange type', type)
       console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
+        this.packageData.commodityFollowPlanIds = []
         this.getTreeUsersDoc()
         this.getTreeUsersNurse()
         this.qryFollowPlanByFollowTypeOut()
+      }
+      if (this.packageData.tenantId) {
+        this.queryHospitalListOut()
       }
     },
 
@@ -631,6 +687,11 @@ export default {
       console.log('code', code)
       this.packageData.hospitalCode = code
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
         this.getTreeUsersDoc()
         this.getTreeUsersNurse()
         this.qryFollowPlanByFollowTypeOut()
@@ -780,11 +841,21 @@ export default {
     },
 
     addTeam() {
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属租户和机构')
+        return
+      }
+      if (!this.isTeam) {
+        return
+      }
       if (!this.allocationTypeTeam) {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
-      this.$refs.addTeam.edit(this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs)
+      this.$refs.addTeam.edit(
+        this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
+        this.packageData.hospitalCode
+      )
     },
 
     handleAddTeam(commodityPkgManageItemReqs) {
@@ -828,11 +899,13 @@ export default {
         this.$message.error('请上传封面图片！')
         return
       } else {
+        tempData.frontImgs = []
         tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
       }
 
       //banner 选填
       if (this.fileListBanner.length > 0) {
+        tempData.bannerImgs = []
         for (let index = 0; index < this.fileListBanner.length; index++) {
           tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
         }
@@ -842,6 +915,7 @@ export default {
         this.$message.error('请上传详情图片！')
         return
       } else {
+        tempData.detailImgs = []
         for (let index = 0; index < this.fileListDetail.length; index++) {
           tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
         }

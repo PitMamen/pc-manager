@@ -11,24 +11,30 @@
           <div class="div-up-left">
             <span class="span-item-name"> 套餐名称 :</span>
             <span class="span-item-value" style="max-width: 180px; font-weight: bold; font-size: 16px" :title="ggg">
-              白血re非个人各认购人人格如果病</span
+              {{ record.packageName }}</span
             >
 
             <span class="span-item-name"> 套餐分类 :</span>
-            <span class="span-item-value" style="max-width: 100px" :title="ggg"> 不适类</span>
+            <span class="span-item-value" style="max-width: 100px" :title="ggg"> {{ record.packageClassifyName }}</span>
 
             <span class="span-item-name"> 所属学科 :</span>
-            <span class="span-item-value" style="max-width: 100px" :title="ggg"> 心脏</span>
+            <span class="span-item-value" style="max-width: 100px" :title="ggg"> {{ record.subjectClassifyName }}</span>
 
-            <span class="span-item-name"> 参与医生 :</span>
-            <span class="span-item-value" style="max-width: 180px; font-weight: bold; font-size: 16px"> 王五</span>
+            <span class="span-item-name" v-if="record.doctorNames && record.doctorNames.length > 0"> 参与医生 :</span>
+            <span class="span-item-value" style="max-width: 180px; font-weight: bold; font-size: 16px">
+              {{ record.doctorNames }}</span
+            >
 
-            <span class="span-item-name"> 参与护士 :</span>
-            <span class="span-item-value" style="max-width: 180px; font-weight: bold; font-size: 16px"> 李二</span>
+            <span class="span-item-name" v-if="record.nurseNames && record.nurseNames.length > 0"> 参与护士 :</span>
+            <span class="span-item-value" style="max-width: 180px; font-weight: bold; font-size: 16px">
+              {{ record.nurseNames }}</span
+            >
           </div>
           <div class="div-up-right">
             <span class="span-item-name" style="font-weight: bold"> 套餐起价 :</span>
-            <span class="span-item-value" style="font-weight: bold; font-size: 16px"> 20￥</span>
+            <span class="span-item-value" style="font-weight: bold; font-size: 16px">
+              {{ record.startPrice || 0 + '元' }}</span
+            >
           </div>
         </div>
       </div>
@@ -283,7 +289,7 @@
 </template>
 
 <script>
-import { saveFollow } from '@/api/modular/system/posManage'
+import { saveFollow, getCommodityPkgDetailByid, qryServiceItemList } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -302,6 +308,9 @@ export default {
       user: {},
       keshiData: {},
       deptUsers: {},
+      record: undefined,
+      commodityPkgId: undefined,
+      serviceData: [],
 
       typeData: [],
       sourceData: [],
@@ -328,16 +337,6 @@ export default {
 
       /**
        *
-       * 6-1、当【执行周期】为长期执行时，选择天数时，新增【周期】选项（下拉单选：间隔、每周、每月）。时间单位字段规则：1）如果【周期】选择【间隔】，
-       * 则其选项为天、周、月（下拉单选），需要输入数字字段，选择周的话，发送时间点为该周第一天，选择月的话，发送时间点为该月第一天。2）如果【周期】选择
-       * 【每周】，则其选项为星期一、星期二、星期三、星期四、星期五、星期六、星期天。不用输入数字字段。3）如果【周期】选择【每月】，单位只能下拉选择数字，
-       * 数字范围是1~31。不用输入数字字段。[]
-       *
-       * 6-2、当【执行周期】为临时执行时，只有单位的选择，时间单位为：天、周、月。选择周的话，发送时间点为该周第一天，
-       * 选择月的话，发送时间点为该月第一天。
-       *
-       * filterRules item的 messageContentId 是模版id； messageContentType 也要传，页面上没有内容
-       *
        */
       configData: {
         basePlan: {
@@ -358,12 +357,47 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-
+    this.record = JSON.parse(this.$route.query.recordStr)
+    console.log('record', this.record)
+    this.confirmLoading = true
+    this.qryServiceItemListOut()
+    getCommodityPkgDetailByid({ pkgId: this.record.commodityPkgId })
+      .then((res) => {
+        this.confirmLoading = false
+        if (res.code == 0) {
+          this.configDataNew = res.data
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+      .finally((res) => {
+        this.confirmLoading = false
+      })
     // this.confirmLoading = true
   },
 
   methods: {
     moment,
+
+    /**
+     * 服务项目列表
+     */
+    qryServiceItemListOut() {
+      this.confirmLoading = true
+      qryServiceItemList({
+        pageNo: 1,
+        pageSize: 9999,
+        status: 1,
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.serviceData = res.data.rows
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
 
     submitData() {
       this.confirmLoading = true
