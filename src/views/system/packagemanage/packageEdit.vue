@@ -22,7 +22,7 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 套餐类型 :</span>
-            <a-select v-model="packageData.packageClassifyId" allow-clear placeholder="请选择">
+            <a-select @select="onTypeSelect" v-model="packageData.packageClassifyId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
                 item.classifyName
               }}</a-select-option>
@@ -147,7 +147,7 @@
         </div>
       </div>
 
-      <div class="div-manage-team">
+      <div class="div-manage-team" v-if="canConfigTeam">
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">管理团队</span>
@@ -371,6 +371,8 @@ export default {
       isNurse: false,
       isTeam: false,
       needPlan: false,
+      canConfigTeam: true,
+      broadClassify: '',
       treeData: [],
       treeDataSubject: [],
       roleList: [],
@@ -484,6 +486,10 @@ export default {
           } else {
             this.packageData.commodityFollowPlanIds = [] //这句是后台返回null时，处理页面显示bug
           }
+
+          //处理套餐类别
+          this.onTypeSelect()
+
           //机构要根据租户获取
           this.queryHospitalListOut()
           this.getTreeUsersDoc(true)
@@ -618,118 +624,126 @@ export default {
       )
       delete this.packageData.commodityPkgManageRsps
 
-      this.packageData.commodityPkgManageReqs.forEach((item) => {
-        this.$set(item, 'commodityPkgManageItemReqs', JSON.parse(JSON.stringify(item.commodityPkgManageItemRsps)))
-        delete item.commodityPkgManageItemRsps
-      })
+      if (this.packageData.commodityPkgManageReqs) {
+        this.packageData.commodityPkgManageReqs.forEach((item) => {
+          this.$set(item, 'commodityPkgManageItemReqs', JSON.parse(JSON.stringify(item.commodityPkgManageItemRsps)))
+          delete item.commodityPkgManageItemRsps
+        })
 
-      //处理详情的团队
-      let newRsps = []
-      //医生
-      let docItem = undefined
-      // let docItemIndex = undefined
-      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 1) {
-          docItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
-          // docItemIndex = index
-        }
-      }
-      if (docItem) {
-        this.isDoctor = true
-        this.allocationTypeDoc = docItem.allocationType.value
-        docItem.commodityPkgManageItemReqs.forEach((item, index) => {
-          if (index != docItem.commodityPkgManageItemReqs.length - 1) {
-            this.nameDoc = this.nameDoc + item.name + ','
-          } else {
-            this.nameDoc = this.nameDoc + item.name
+        //处理详情的团队
+        let newRsps = []
+        //医生
+        let docItem = undefined
+        // let docItemIndex = undefined
+        for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 1) {
+            docItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+            // docItemIndex = index
           }
-        })
-
-        docItem.allocationType = docItem.allocationType.value
-        docItem.teamType = docItem.teamType.value
-        newRsps.push(docItem)
-      } else {
-        newRsps.push({
-          allocationType: undefined,
-          commodityPkgManageItemReqs: [],
-          teamType: undefined,
-        })
-      }
-
-      //护士
-      let nurseItem = undefined
-      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 2) {
-          nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
         }
-      }
-      if (nurseItem) {
-        this.isNurse = true
-        this.allocationTypeNurse = nurseItem.allocationType.value
-        nurseItem.commodityPkgManageItemReqs.forEach((item, index) => {
-          if (index != nurseItem.commodityPkgManageItemReqs.length - 1) {
-            this.nameNurse = this.nameNurse + item.name + ','
-          } else {
-            this.nameNurse = this.nameNurse + item.name
+        if (docItem) {
+          this.isDoctor = true
+          this.allocationTypeDoc = docItem.allocationType.value
+          this.nameDoc = ''
+          docItem.commodityPkgManageItemReqs.forEach((item, index) => {
+            if (index != docItem.commodityPkgManageItemReqs.length - 1) {
+              this.nameDoc = this.nameDoc + item.name + ','
+            } else {
+              this.nameDoc = this.nameDoc + item.name
+            }
+          })
+
+          docItem.allocationType = docItem.allocationType.value
+          docItem.teamType = docItem.teamType.value
+          newRsps.push(docItem)
+        } else {
+          newRsps.push({
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [],
+            teamType: undefined,
+          })
+        }
+
+        //护士
+        let nurseItem = undefined
+        for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 2) {
+            nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
-        })
-
-        nurseItem.allocationType = nurseItem.allocationType.value
-        nurseItem.teamType = nurseItem.teamType.value
-        newRsps.push(nurseItem)
-      } else {
-        newRsps.push({
-          allocationType: undefined,
-          commodityPkgManageItemReqs: [],
-          teamType: undefined,
-        })
-      }
-
-      //团队
-      let teamItem = undefined
-      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 3) {
-          teamItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
         }
-      }
-      if (teamItem) {
-        this.isTeam = true
-        this.allocationTypeTeam = teamItem.allocationType.value
-        teamItem.commodityPkgManageItemReqs.forEach((item, index) => {
-          if (index != teamItem.commodityPkgManageItemReqs.length - 1) {
-            this.nameTeam = this.nameTeam + item.name + ','
-          } else {
-            this.nameTeam = this.nameTeam + item.name
+        if (nurseItem) {
+          this.isNurse = true
+          this.allocationTypeNurse = nurseItem.allocationType.value
+          this.nameNurse = ''
+          nurseItem.commodityPkgManageItemReqs.forEach((item, index) => {
+            if (index != nurseItem.commodityPkgManageItemReqs.length - 1) {
+              this.nameNurse = this.nameNurse + item.name + ','
+            } else {
+              this.nameNurse = this.nameNurse + item.name
+            }
+          })
+
+          nurseItem.allocationType = nurseItem.allocationType.value
+          nurseItem.teamType = nurseItem.teamType.value
+          newRsps.push(nurseItem)
+        } else {
+          newRsps.push({
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [],
+            teamType: undefined,
+          })
+        }
+
+        //团队
+        let teamItem = undefined
+        for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 3) {
+            teamItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
-        })
-
-        teamItem.allocationType = teamItem.allocationType.value
-        teamItem.teamType = teamItem.teamType.value
-        newRsps.push(teamItem)
-      } else {
-        newRsps.push({
-          allocationType: undefined,
-          commodityPkgManageItemReqs: [],
-          teamType: undefined,
-        })
-      }
-
-      //处理第4条数据，角色
-      //团队
-      let roleItem = undefined
-      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 4) {
-          roleItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
         }
-      }
-      if (roleItem) {
-        roleItem.commodityPkgManageItemReqs.forEach((item, index) => {
-          this.roleIds.push(item.objectId)
-        })
-      }
+        if (teamItem) {
+          this.isTeam = true
+          this.allocationTypeTeam = teamItem.allocationType.value
+          this.nameTeam = ''
+          teamItem.commodityPkgManageItemReqs.forEach((item, index) => {
+            if (index != teamItem.commodityPkgManageItemReqs.length - 1) {
+              this.nameTeam = this.nameTeam + item.name + ','
+            } else {
+              this.nameTeam = this.nameTeam + item.name
+            }
+          })
 
-      this.packageData.commodityPkgManageReqs = newRsps
-      this.confirmLoading = false
+          teamItem.allocationType = teamItem.allocationType.value
+          teamItem.teamType = teamItem.teamType.value
+          newRsps.push(teamItem)
+        } else {
+          newRsps.push({
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [],
+            teamType: undefined,
+          })
+        }
+
+        //处理第4条数据，角色
+        //团队
+        let roleItem = undefined
+        for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 4) {
+            roleItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+          }
+        }
+        if (roleItem) {
+          this.roleIds = []
+          roleItem.commodityPkgManageItemReqs.forEach((item, index) => {
+            this.roleIds.push(item.objectId)
+          })
+        }
+
+        this.packageData.commodityPkgManageReqs = newRsps
+        this.confirmLoading = false
+      }else{
+        this.confirmLoading = false
+      }
     },
 
     /**
@@ -846,6 +860,39 @@ export default {
     },
 
     /**
+     * 1 咨询服务   2 服务套餐   3 健康商品
+     * 根据用户配置的套餐类型，如果选择的套餐类型对应的大类是咨询服务类，那么仅可配置咨询医生或咨询护士，不可配置健管团队，且分配方式为随机分配，医生也只能选1位；
+     * 如果选择的套餐类型对应的大类是服务套餐，那么都可任意配置咨询医生与咨询护士和健康团队;
+     * 如果选择的套餐类型对应的大类是健康商品，那么不可配置咨询医生、咨询护士与健管团队；
+     */
+    onTypeSelect() {
+      let findItem = this.classData.find((item) => item.id == this.packageData.packageClassifyId)
+      this.broadClassify = findItem.broadClassify
+      console.log('this.broadClassify', this.broadClassify)
+      debugger
+      switch (this.broadClassify) {
+        case 1:
+          this.isTeam = false
+          this.nameTeam = ''
+
+          this.allocationTypeDoc = 2
+          this.allocationTypeNurse = 2
+
+          this.canConfigTeam = true
+          break
+        case 2:
+          this.canConfigTeam = true
+          break
+        case 3:
+          this.canConfigTeam = false
+          break
+
+        // default:
+        //   break;
+      }
+    },
+
+    /**
      *
      * @param {*} type   1 租户选择回调  2机构选择回调
      */
@@ -944,6 +991,9 @@ export default {
       } else if (type == 2) {
         this.isNurse = !this.isNurse
       } else {
+        if (this.broadClassify == 1) {
+          return
+        }
         this.isTeam = !this.isTeam
         // this.isNurse = false
         // this.isTeam = true
@@ -1144,79 +1194,83 @@ export default {
         }
       }
 
-      //组装团队
-      let commodityNew = []
-      if (this.isDoctor) {
-        if (tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.length == 0) {
-          this.$message.error('请选择医生！')
-          return
-        } else {
-          tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.forEach((item) => {
-            delete item.userName
+      if (this.canConfigTeam) {
+        //组装团队
+        let commodityNew = []
+        if (this.isDoctor) {
+          if (tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.length == 0) {
+            this.$message.error('请选择医生！')
+            return
+          } else {
+            tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.forEach((item) => {
+              delete item.userName
+            })
+          }
+
+          tempData.commodityPkgManageReqs[0].allocationType = this.allocationTypeDoc
+          tempData.commodityPkgManageReqs[0].teamType = 1
+          commodityNew.push(tempData.commodityPkgManageReqs[0])
+        }
+
+        if (this.isNurse) {
+          if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
+            this.$message.error('请选择护士！')
+            return
+          } else {
+            tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.forEach((item) => {
+              delete item.userName
+            })
+          }
+
+          tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeNurse
+          tempData.commodityPkgManageReqs[1].teamType = 2
+          commodityNew.push(tempData.commodityPkgManageReqs[1])
+        }
+
+        if (this.isTeam) {
+          if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
+            this.$message.error('请选择团队！')
+            return
+          } else {
+            tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.forEach((item) => {
+              delete item.userName
+            })
+          }
+
+          if (this.roleIds.length == 0) {
+            this.$message.error('请选择角色！')
+            return
+          }
+          tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTeam
+          tempData.commodityPkgManageReqs[2].teamType = 3
+          commodityNew.push(tempData.commodityPkgManageReqs[2])
+          let reqs = []
+          this.roleIds.forEach((item1) => {
+            reqs.push({
+              objectId: item1,
+            })
+          })
+          //新增一条角色参数
+          commodityNew.push({
+            commodityPkgManageItemReqs: reqs,
+            teamType: 4,
           })
         }
 
-        tempData.commodityPkgManageReqs[0].allocationType = this.allocationTypeDoc
-        tempData.commodityPkgManageReqs[0].teamType = 1
-        commodityNew.push(tempData.commodityPkgManageReqs[0])
-      }
-
-      if (this.isNurse) {
-        if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
-          this.$message.error('请选择护士！')
-          return
-        } else {
-          tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.forEach((item) => {
-            delete item.userName
-          })
-        }
-
-        tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeNurse
-        tempData.commodityPkgManageReqs[1].teamType = 2
-        commodityNew.push(tempData.commodityPkgManageReqs[1])
-      }
-
-      if (this.isTeam) {
-        if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
-          this.$message.error('请选择团队！')
-          return
-        } else {
-          tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.forEach((item) => {
-            delete item.userName
-          })
-        }
-
-        if (this.roleIds.length == 0) {
-          this.$message.error('请选择角色！')
+        if (commodityNew.length == 0) {
+          this.$message.warn('请至少选择一种管理团队！')
           return
         }
-        tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTeam
-        tempData.commodityPkgManageReqs[2].teamType = 3
-        commodityNew.push(tempData.commodityPkgManageReqs[2])
-        let reqs = []
-        this.roleIds.forEach((item1) => {
-          reqs.push({
-            objectId: item1,
-          })
-        })
-        //新增一条角色参数
-        commodityNew.push({
-          commodityPkgManageItemReqs: reqs,
-          teamType: 4,
-        })
-      }
 
-      if (commodityNew.length == 0) {
-        this.$message.warn('请至少选择一种管理团队！')
-        return
-      }
+        if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
+          this.$message.warn('请选择随访！')
+          return
+        }
 
-      if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
-        this.$message.warn('请选择随访！')
-        return
+        tempData.commodityPkgManageReqs = commodityNew
+      } else {
+        tempData.commodityPkgManageReqs = []
       }
-
-      tempData.commodityPkgManageReqs = commodityNew
       console.log('tempData sub', JSON.stringify(tempData))
 
       this.confirmLoading = true
