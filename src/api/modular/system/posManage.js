@@ -3225,10 +3225,43 @@ export function saveOrUpdate(data) {
   return axios({
     url: '/medical-api/pkg/saveOrUpdate',
     method: 'post',
+
+  })
+}
+
+
+/**
+ * 健康商城首页 添加 
+ */
+export function addTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/addTdShopmallMainpageMenu',
+    method: 'post',
     data: data,
   })
 }
 
+/**
+ * 健康商城首页 修改 
+ */
+export function modifyTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/modifyTdShopmallMainpageMenu',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 健康商城首页 列表 
+ */
+export function getListTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/getTdShopmallMainpageMenuPageList',
+    method: 'post',
+    data: data,
+  })
+}
 /**
  * /pkg/detail/{commodityPkgId}  套餐详情接口
  */
@@ -3406,6 +3439,136 @@ export function getDictDataForCodeBorad(data) {
       }
 
 
+/**
+ * 
+ * 服务项目列表
+ */
+export function qryServiceItemList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryServiceItemList',
+    method:'post',
+    data:data,
+  })
+}
 
+
+/**
+ * 项目类型
+ */
+ export function getDictDataForCode(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/SERVICE_ITEM_TYPE',
+    method:'get',
+    params: data,
+  })
+ }
+
+
+ /**
+  * 修改、保存 服务项目
+  */
+ export function saveServiceItem(data){
+  return axios({
+    url:'/medical-api/commodityConfig/saveServiceItem',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 厂商信息查询
+  */
+ export function qryFactoryList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryFactoryList',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 健康管理团队分页列表(左侧分页列表)
+  */
+ export function getTdHealthyTeamPageList(data){
+  return axios({
+    url:'/uam-api/tdHealthyTeam/getTdHealthyTeamPageList',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 健康团队成员 分页列表(右侧 )
+  */
+ export function getTdHealthyTeamUserPageList(data){
+  return axios({
+    url:'/uam-api/tdHealthyTeamUserMapping/getTdHealthyTeamUserPageList',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 健康管理团队成员下拉列表
+  */
+  export function getHealthyTeamUserList(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeamUserMapping/getHealthyTeamUserList',
+      method:'get',
+      params:data,
+    })
+  }
+
+
+  /**
+   * 添加管理团队
+   */
+  export function addTdHealthyTeam(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeam/addTdHealthyTeam',
+      method:'post',
+      data:data,
+    })
+  }
+
+  /**
+   * 修改管理团队
+   */
+  export function modifyTdHealthyTeam(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeam/modifyTdHealthyTeam',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+   /**
+   * 删除管理团队
+   */
+   export function deleteTdHealthyTeam(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeam/deleteTdHealthyTeam/'+data,
+      method:'get',
+      // params:data,
+    })
+  }
+
+
+
+   /**
+   * 健康管理团队删除人员
+   */
+   export function deleteTdHealthyTeamUser(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeamUserMapping/deleteTdHealthyTeamUser',
+      method:'get',
+      params:data,
+    })
+  }
 
 

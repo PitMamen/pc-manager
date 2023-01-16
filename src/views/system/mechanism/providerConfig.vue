@@ -61,7 +61,7 @@
           :alert="true"
           :rowKey="(record) => record.departmentId"
           :showPagination="false"
-          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+          :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange,columnTitle: ' '}"
         >
         </a-table>
       </div>
@@ -129,6 +129,8 @@ export default {
     edit(item) {
       this.visible = true
       this.item = item
+      console.log("sssss:",this.item.hospitalCode)
+      this.selectedRowKeys = []
       this.queryParam.hospitalCode = undefined
       // this.getLists(item)
       this.getDepartmentForDepartmentTypeOut()
@@ -258,7 +260,7 @@ export default {
     handleSubmit() {
       this.confirmLoading = true
       var requesData = {
-        hospitalCode: this.queryParam.hospitalCode,
+        hospitalCode: this.item.hospitalCode,
         serviceFactoryIds: this.selectedRowKeys,
       }
       saveServiceFactoryHospitalMapping(requesData)

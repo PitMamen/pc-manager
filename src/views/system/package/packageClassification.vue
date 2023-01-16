@@ -146,7 +146,7 @@
           },
           {
             title: '所属大类',
-            dataIndex: 'broadClassify',
+            dataIndex: 'broadClassifyName',
            
           },
   

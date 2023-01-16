@@ -52,11 +52,11 @@
       :rowKey="(record) => record.hospitalId"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.addMechanism.add(record)"><a-icon type="plus"></a-icon>新增</a>
+        <a @click="$refs.addMechanism.add(record)"><a-icon type="plus-circle" style="margin-right:5px"></a-icon>新增</a>
         <a-divider type="vertical" />
-        <a @click="$refs.modify.modify(record)"><a-icon type="edit"></a-icon>修改</a>
-        <a-divider type="vertical" />
-          <a @click="$refs.providerConfig.edit(record)"><a-icon type="apartment" style="margin-right: 0" />服务商配置</a>
+        <a @click="$refs.modify.modify(record)"><a-icon type="edit" style="margin-right:5px"></a-icon>修改</a>
+        <a-divider type="vertical"  />
+          <a :disabled="record.orgType==1||record.orgType==2" @click="$refs.providerConfig.edit(record)"><a-icon type="apartment" style="margin-right: 5px" />服务商配置</a>
       </span>
 
       <span slot="statuas" slot-scope="text, record">
@@ -165,7 +165,7 @@ export default {
 
         {
           title: '操作',
-          width: '220px',
+          width: '240px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
