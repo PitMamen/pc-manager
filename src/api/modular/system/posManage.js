@@ -3319,3 +3319,49 @@ export function getTdMedicalSubjectPageList(data) {
     params: data,
   })
 }
+//增加医疗学科
+export function addTdMedicalSubject(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/addTdMedicalSubject',
+    method: 'post',
+    data: data,
+  })
+}
+//修改医疗学科
+export function modifyTdMedicalSubject(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/modifyTdMedicalSubject',
+    method: 'post',
+    data: data,
+  })
+}
+//删除医疗学科
+export function deleteTdMedicalSubject(id) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/deleteTdMedicalSubject/'+id,
+    method: 'get',
+  })
+}
+
+/**
+ * 获取随访文章统计数据
+ */
+
+export function getFollowArticleData(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/getFollowArticleData',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 获取随访文章人员数据
+ */
+
+export function getFollowArticleUserData(data) {
+  return axios({
+    url: '/follow-api/followPlanPhone/getFollowArticleUserData',
+    method: 'post',
+    data: data,
+  })
+}
