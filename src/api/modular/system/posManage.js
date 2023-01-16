@@ -3207,6 +3207,7 @@ export function updatePkgStatus(data) {
     data: data,
   })
 }
+
 /**
  * /pkg/getCommodityClassify 套餐分类接口
  */
@@ -3219,16 +3220,61 @@ export function getCommodityClassify(data) {
 }
 
 /**
+ * /commodityConfig/getCommodityPkgDetailByid 查询套餐规格详情
+ */
+export function getCommodityPkgDetailByid(data) {
+  return axios({
+    url: '/medical-api/commodityConfig/getCommodityPkgDetailByid',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+/**
  * /pkg/saveOrUpdate 套餐新增、修改接口
  */
 export function saveOrUpdate(data) {
   return axios({
     url: '/medical-api/pkg/saveOrUpdate',
     method: 'post',
+
+  })
+}
+
+
+/**
+ * 健康商城首页 添加 
+ */
+export function addTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/addTdShopmallMainpageMenu',
+    method: 'post',
     data: data,
   })
 }
 
+/**
+ * 健康商城首页 修改 
+ */
+export function modifyTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/modifyTdShopmallMainpageMenu',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 健康商城首页 列表 
+ */
+export function getListTdShopmallMainpageMenu(data) {
+  return axios({
+    url: '/uam-api/tdShopmallMainpageMenu/getTdShopmallMainpageMenuPageList',
+    method: 'post',
+    data: data,
+  })
+}
 /**
  * /pkg/detail/{commodityPkgId}  套餐详情接口
  */
@@ -3260,8 +3306,8 @@ export function getTreeUsersByDeptIdsAndRoles(data) {
 export function getHealthyTeamUserRoleGroupBy(data) {
   return axios({
     url: '/uam-api/tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy',
-    method: 'get',
-    params: data,
+    method: 'post',
+    data: data,
   })
 }
 
@@ -3308,6 +3354,244 @@ export function getDictDataForCodeBorad(data) {
     url: '/info-api/feign/sysdictdata/getDictDataForCode/CLASSIFY_BROAD_CLASS',
     method: 'get',
     data: data,
+  })
+ }
+
+
+
+ /**
+ * 租户类型  
+ */
+ export function getDictDataForCodeTenatType(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/TENANT_TYPE',
+    method:'get',
+    params:data,
+  })
+ }
+
+
+ /**
+  * 组织类型 
+  */
+ export function getDictDataForCodeorgType(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/ORG_TYPE',
+    method:'get',
+    params:data,
+  })
+ }
+
+  /**
+  * 科室类型 
+  */
+  export function getDictDataForCodeDepartType(data){
+    return axios({
+      url:'/info-api/feign/sysdictdata/getDictDataForCode/DEPARTMENT_TYPE',
+      method:'get',
+      params:data,
+    })
+   }
+
+   /**
+  * 人员类型 
+  */
+  export function getDictDataForCodeUserType(data){
+    return axios({
+      url:'/info-api/feign/sysdictdata/getDictDataForCode/USER_TYPE',
+      method:'get',
+      params:data,
+    })
+   }
+
+
+   /**
+    * 服务商商下拉框列表
+    */
+   export function getServiceFactoryList(data){
+    return axios({
+      url:'/uam-api/hospital/getServiceFactoryList',
+      method:'post',
+      data:data,
+    })
+   }
+
+
+   /**
+    * 服务商列表
+    */
+   export function getDepartmentForDepartmentType(data){
+    return axios({
+      url:'/info-api/feign/departments/getDepartmentForDepartmentType',
+      method:'post',
+      data:data,
+    })
+   }
+
+
+    /**
+     * 关联服务商
+     */
+     export function saveServiceFactoryHospitalMapping(data){
+      return axios({
+        url:'/uam-api/tdHealthyTeamUserMapping/saveServiceFactoryHospitalMapping',
+        method:'post',
+        data:data,
+      })
+     }
+
+     /**
+      * 获取已勾选的 机构
+      */
+      export function getServiceFactoryForHospitalCode(data){
+        return axios({
+          url:'/uam-api/tdHealthyTeamUserMapping/getServiceFactoryForHospitalCode',
+          method:'get',
+          params:data,
+        })
+      }
+
+
+/**
+ * 
+ * 服务项目列表
+ */
+export function qryServiceItemList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryServiceItemList',
+    method:'post',
+    data:data,
+  })
+}
+
+
+/**
+ * 项目类型
+ */
+ export function getDictDataForCode(data){
+  return axios({
+    url:'/info-api/feign/sysdictdata/getDictDataForCode/SERVICE_ITEM_TYPE',
+    method:'get',
+    params: data,
+  })
+ }
+
+
+ /**
+  * 修改、保存 服务项目
+  */
+ export function saveServiceItem(data){
+  return axios({
+    url:'/medical-api/commodityConfig/saveServiceItem',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 厂商信息查询
+  */
+ export function qryFactoryList(data){
+  return axios({
+    url:'/medical-api/commodityConfig/qryFactoryList',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 健康管理团队分页列表(左侧分页列表)
+  */
+ export function getTdHealthyTeamPageList(data){
+  return axios({
+    url:'/uam-api/tdHealthyTeam/getTdHealthyTeamPageList',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 健康团队成员 分页列表(右侧 )
+  */
+ export function getTdHealthyTeamUserPageList(data){
+  return axios({
+    url:'/uam-api/tdHealthyTeamUserMapping/getTdHealthyTeamUserPageList',
+    method:'post',
+    data:data,
+  })
+ }
+
+
+ /**
+  * 健康管理团队成员下拉列表
+  */
+  export function getHealthyTeamUserList(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeamUserMapping/getHealthyTeamUserList',
+      method:'get',
+      params:data,
+    })
+  }
+
+
+  /**
+   * 添加管理团队
+   */
+  export function addTdHealthyTeam(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeam/addTdHealthyTeam',
+      method:'post',
+      data:data,
+    })
+  }
+
+  /**
+   * 修改管理团队
+   */
+  export function modifyTdHealthyTeam(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeam/modifyTdHealthyTeam',
+      method:'post',
+      data:data,
+    })
+  }
+
+
+   /**
+   * 删除管理团队
+   */
+   export function deleteTdHealthyTeam(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeam/deleteTdHealthyTeam/'+data,
+      method:'get',
+      // params:data,
+    })
+  }
+
+
+
+   /**
+   * 健康管理团队删除人员
+   */
+   export function deleteTdHealthyTeamUser(data){
+    return axios({
+      url:'/uam-api/tdHealthyTeamUserMapping/deleteTdHealthyTeamUser',
+      method:'get',
+      params:data,
+    })
+  }
+
+
+/**
+ * 获取字典
+ */
+export function getDictData(param) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/' + param,
+    method: 'get',
   })
 }
 
@@ -3365,3 +3649,14 @@ export function getFollowArticleUserData(data) {
     data: data,
   })
 }
+
+
+//医疗学科列表
+export function treeMedicalSubjects(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/treeMedicalSubjects',
+    method: 'get',
+    params: data,
+  })
+}
+

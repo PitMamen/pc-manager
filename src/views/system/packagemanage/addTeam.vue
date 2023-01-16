@@ -83,9 +83,10 @@ export default {
       },
       visible: false,
       confirmLoading: false,
+      hospitalCode: '',
       form: this.$form.createForm(this),
       // 查询参数
-      queryParam: { teamNameOrAbbr: '' },
+      queryParam: { teamNameOrAbbr: '', hospitalCode: '' },
       // 表头
       columns: [
         {
@@ -101,7 +102,10 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getHealthyTeamUserRoleGroupBy(this.queryParam).then((res) => {
+        return getHealthyTeamUserRoleGroupBy({
+          teamNameOrAbbr: this.queryParam.teamNameOrAbbr,
+          hospitalCode: this.hospitalCode,
+        }).then((res) => {
           // Object.assign(
           //   {
           //     pageNo: 1,
@@ -140,11 +144,12 @@ export default {
   },
   methods: {
     // 初始化方法
-    edit(commodityPkgManageItemReqs) {
+    edit(commodityPkgManageItemRsps, hospitalCode) {
       this.visible = true
+      this.hospitalCode = hospitalCode
       this.selectedRowKeys = []
-      if (commodityPkgManageItemReqs.length > 0) {
-        commodityPkgManageItemReqs.forEach((item) => {
+      if (commodityPkgManageItemRsps.length > 0) {
+        commodityPkgManageItemRsps.forEach((item) => {
           this.selectedRowKeys.push(item.objectId)
         })
       }
@@ -176,7 +181,7 @@ export default {
         })
     },
     getLists() {
-      getHealthyTeamUserRoleGroupBy().then((res) => {
+      getHealthyTeamUserRoleGroupBy({ hospitalCode: this.hospitalCode }).then((res) => {
         if (res.code === 0) {
           this.lists = res.data || []
           console.log('getLists', this.lists)
@@ -211,16 +216,16 @@ export default {
         this.$message.warn('请选择团队')
         return
       }
-      let commodityPkgManageItemReqs = []
+      let commodityPkgManageItemRsps = []
       this.selectedRowKeys.forEach((itemId) => {
         let findItem = this.lists.find((item) => item.id == itemId)
-        commodityPkgManageItemReqs.push({
+        commodityPkgManageItemRsps.push({
           objectId: findItem.id,
           userName: findItem.teamName,
         })
       })
-      console.log('this.commodityPkgManageItemReqs Team', JSON.stringify(commodityPkgManageItemReqs))
-      this.$emit('ok', commodityPkgManageItemReqs)
+      console.log('this.commodityPkgManageItemRsps Team', JSON.stringify(commodityPkgManageItemRsps))
+      this.$emit('ok', commodityPkgManageItemRsps)
       this.visible = false
     },
     handleCancel() {

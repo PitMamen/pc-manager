@@ -11,6 +11,18 @@
     <div class="div-service-user">
       <!-- 左边 -->
       <div class="div-totalleft" style="margin-top:0px">
+
+        <div class="display-item" style="margin-left: 10px;margin-top: -13px;margin-bottom: 15px">
+          <span style="margin-bottom;: 7px;margin-top:7px"> <span style="color: red">*</span> 租户类型:</span>
+          <a-select style="width:200px;margin-left: 5px" v-model="queryParams.tenantType" allow-clear placeholder="请选择租户类型">
+              <a-select-option v-for="item in tenatTypeData" :key="item.code" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+
+
         <div class="display-item" style="margin-left: 10px">
           <span style="margin-top: 7px"> <span style="color: red">*</span> 租户编码:</span>
           <a-input
@@ -177,7 +189,7 @@
     
     <script>
 import moment from 'moment'
-import { getApplicationlist, saveaddTenand } from '@/api/modular/system/posManage'
+import { getApplicationlist, saveaddTenand,getDictDataForCodeTenatType } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -204,13 +216,15 @@ export default {
         email: '',
         expireDate: '',
         hospitalName: '',
-        hospitalCode: '',
         phone: '',
         tenantName: '',
         tenantCode: '',
         hospitalCode: '',
         applicationIds: [], //应用ID集合
+        tenantType:undefined,
       },
+
+      tenatTypeData:[],
 
       queryParamsApp: {
         applicationName: '',
@@ -248,6 +262,28 @@ export default {
       this.visible = true
       this.reset()
       this.getApplicationlistOut()
+      this.getDictDataForCodeTenatTypeOut()
+    },
+
+     /**
+     * 租户类型接口
+     */
+     getDictDataForCodeTenatTypeOut() {
+      this.confirmLoading = true
+      getDictDataForCodeTenatType()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.tenatTypeData = res.data
+            for (let index = 0; index < this.tenatTypeData.length; index++) {
+                this.tenatTypeData[index].code = Number(this.tenatTypeData[index].code)
+               }
+          } else {
+            this.tenatTypeData = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     /**
@@ -340,6 +376,7 @@ export default {
       this.queryParams.tenantName = ''
       this.queryParams.tenantCode = ''
       this.queryParams.applicationIds = []
+      this.queryParams.tenantType = undefined
     },
 
     /**
@@ -353,6 +390,13 @@ export default {
      * 提交
      */
     handleSubmit() {
+       if(! this.queryParams.tenantType){
+        this.$message.$error('请选择租户类型')
+        return
+       }
+
+
+
       if (!this.queryParams.adminAccount) {
         this.$message.$error('请输入管理员账号')
         return

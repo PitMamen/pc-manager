@@ -18,7 +18,7 @@
         <a-input
           v-model="queryParams.queryCondition"
           allow-clear
-          placeholder="可输入查询条件"
+          placeholder="请输入"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
@@ -26,7 +26,7 @@
       </div>
 
       <div class="search-row">
-        <span class="name">套餐分类:</span>
+        <span class="name">套餐类型:</span>
         <a-select
           class="deptselect-single"
           show-search
@@ -34,7 +34,7 @@
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
-          placeholder="请选择套餐分类"
+          placeholder="请选择"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
           <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
@@ -128,7 +128,7 @@ export default {
       columns: [
         {
           title: '套餐分类',
-          dataIndex: 'formulateTime',
+          dataIndex: 'packageClassifyName',
         },
         {
           title: '套餐名称',
@@ -136,34 +136,34 @@ export default {
         },
         {
           title: '关联学科',
-          dataIndex: 'executeDepartmentName',
+          dataIndex: 'subjectClassifyName',
         },
         {
           title: '健康服务团队',
-          dataIndex: 'followType',
+          dataIndex: 'healthServicesNames',
         },
         {
           title: '可选医生',
-          dataIndex: 'metaConfigfureName',
+          dataIndex: 'doctorNames',
         },
         {
           title: '可选护士',
-          dataIndex: 'metaConfgigureName',
+          dataIndex: 'nurseNames',
         },
 
         {
           title: '必选项数量',
-          dataIndex: 'metaCfonfgigureName',
+          dataIndex: 'requiredQuantity',
         },
 
         {
           title: '可选项数量',
-          dataIndex: 'metaConfgiguhtreName',
+          dataIndex: 'optionalQuantity',
         },
 
         {
           title: '套餐起价',
-          dataIndex: 'metaConfgigghtureName',
+          dataIndex: 'startPrice',
         },
 
         {
@@ -306,7 +306,7 @@ export default {
       this.$router.push({
         name: 'package_config_edit',
         query: {
-          planId: record.id,
+          recordStr: JSON.stringify(record),
         },
       })
     },
@@ -319,13 +319,6 @@ export default {
       this.refresh()
     },
 
-    /**
-     * 新增
-     */
-    addName() {
-      // this.$router.push({ path: '/servicewise/projectAdd' })
-      this.$router.push({ path: '/packagemanage/packageAdd' })
-    },
   },
 }
 </script>

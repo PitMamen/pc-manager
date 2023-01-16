@@ -31,11 +31,14 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="packageData.subjectClassifyId" allow-clear placeholder="请选择">
-              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
-                item.classifyName
-              }}</a-select-option>
-            </a-select>
+            <a-tree-select
+              v-model="packageData.subjectClassifyId"
+              style="min-width: 120px"
+              :tree-data="treeDataSubject"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
           </div>
         </div>
 
@@ -54,6 +57,7 @@
             <a-tree-select
               v-model="packageData.hospitalCode"
               style="min-width: 120px"
+              @focus="onComFocus"
               @select="onSelectChangeCode"
               :tree-data="treeData"
               placeholder="请选择"
@@ -97,9 +101,7 @@
             </a-modal>
           </div>
 
-          <span class="title-des-pic"
-            ><span style="color: red">*</span> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span
-          >
+          <span class="title-des-pic" style="margin-left: 8px">banner图片 （最多允许上传4张，建议尺寸比例7：4）</span>
           <div class="clearfix" style="margin-top: 20px">
             <a-upload
               :action="actionUrl"
@@ -266,8 +268,8 @@
             placeholder="请选择"
             :disabled="!isTeam"
           >
-            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
-              item.description
+            <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.code">{{
+              item.value
             }}</a-select-option>
           </a-select>
         </div>
@@ -321,6 +323,8 @@ import {
   queryHospitalList,
   getTenantList,
   qryFollowPlanByFollowType,
+  getDictData,
+  treeMedicalSubjects,
   saveOrUpdate,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
@@ -368,6 +372,8 @@ export default {
       isTeam: false,
       needPlan: false,
       treeData: [],
+      treeDataSubject: [],
+      roleList: [],
 
       classData: [],
       tenantList: [],
@@ -440,34 +446,64 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.queryHospitalListOut()
-    this.getTenantListOut()
+
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    console.log('this.$route.query', this.$route.query)
     this.commodityPkgId = this.$route.query.commodityPkgId
+    console.log('this.commodityPkgId', this.commodityPkgId)
+    this.init()
     // 获取详情
-    getPkgDetail(this.commodityPkgId).then((res) => {
-      if (res.code == 0) {
-        this.packageData = res.data
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
+    this.confirmLoading = true
+  },
+
+  watch: {
+    $route(to, from) {
+      console.log('watch----package_manage_edit out', to, from)
+      if (to.path.indexOf('packageEdit') > -1) {
+        console.log('watch----package_manage_edit', to, from)
+        this.init()
       }
-    })
-    getCommodityClassify({}).then((res) => {
-      if (res.code == 0) {
-        this.classData = res.data
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
-    // this.confirmLoading = true
+    },
   },
 
   methods: {
     moment,
+    async init() {
+      this.commodityPkgId = this.$route.query.commodityPkgId
+      //await 都是获取常量的方法
+      // await this.queryHospitalListOut()
+      await this.getTenantListOut()
+      await this.getDictDataOut()
+      await this.getCommodityClassifyOut()
+      await this.treeMedicalSubjectsOut()
+      getPkgDetail(this.commodityPkgId).then((res) => {
+        if (res.code == 0) {
+          this.packageData = res.data
+          //这个可以提前处理，不放在processData里面
+          if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
+            this.needPlan = true
+          } else {
+            this.packageData.commodityFollowPlanIds = [] //这句是后台返回null时，处理页面显示bug
+          }
+          //机构要根据租户获取
+          this.queryHospitalListOut()
+          this.getTreeUsersDoc(true)
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+    getCommodityClassifyOut() {
+      getCommodityClassify({}).then((res) => {
+        if (res.code == 0) {
+          this.classData = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
     queryHospitalListOut() {
       let queryData = {
-        tenantId: '',
+        tenantId: this.packageData.tenantId,
         status: 1,
         hospitalName: '',
       }
@@ -495,8 +531,205 @@ export default {
           return []
         })
         .finally((res) => {
-          this.confirmLoading = false
+          // this.confirmLoading = false
         })
+    },
+
+    /**
+     * 获取学科二级树
+     */
+    treeMedicalSubjectsOut() {
+      treeMedicalSubjects()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.subjectClassifyId)
+              this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'children', item.children)
+
+              item.children.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.subjectClassifyId)
+                this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'title', item1.subjectClassifyName)
+              })
+            })
+
+            this.treeDataSubject = res.data
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取字典接口   角色列表
+     */
+    getDictDataOut() {
+      getDictData('TEAMROLE')
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.roleList = res.data
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    processData() {
+      //处理详情的图片
+      this.fileList = []
+      this.packageData.frontImgs.forEach((item) => {
+        this.fileList.push({
+          uid: '1',
+          name: '封面' + 1,
+          status: 'done',
+          url: item,
+        })
+      })
+
+      this.fileListBanner = []
+      this.packageData.bannerImgs.forEach((item, index) => {
+        this.fileListBanner.push({
+          uid: 0 - index + '',
+          name: 'Banner' + index,
+          status: 'done',
+          url: item,
+        })
+      })
+
+      this.fileListDetail = []
+      this.packageData.detailImgs.forEach((item, index) => {
+        this.fileListDetail.push({
+          uid: 0 - index + '',
+          name: '详情' + index,
+          status: 'done',
+          url: item,
+        })
+      })
+
+      /**配合后台处理数据 */
+      this.$set(
+        this.packageData,
+        'commodityPkgManageReqs',
+        JSON.parse(JSON.stringify(this.packageData.commodityPkgManageRsps))
+      )
+      delete this.packageData.commodityPkgManageRsps
+
+      this.packageData.commodityPkgManageReqs.forEach((item) => {
+        this.$set(item, 'commodityPkgManageItemReqs', JSON.parse(JSON.stringify(item.commodityPkgManageItemRsps)))
+        delete item.commodityPkgManageItemRsps
+      })
+
+      //处理详情的团队
+      let newRsps = []
+      //医生
+      let docItem = undefined
+      // let docItemIndex = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 1) {
+          docItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+          // docItemIndex = index
+        }
+      }
+      if (docItem) {
+        this.isDoctor = true
+        this.allocationTypeDoc = docItem.allocationType.value
+        docItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          if (index != docItem.commodityPkgManageItemReqs.length - 1) {
+            this.nameDoc = this.nameDoc + item.name + ','
+          } else {
+            this.nameDoc = this.nameDoc + item.name
+          }
+        })
+
+        docItem.allocationType = docItem.allocationType.value
+        docItem.teamType = docItem.teamType.value
+        newRsps.push(docItem)
+      } else {
+        newRsps.push({
+          allocationType: undefined,
+          commodityPkgManageItemReqs: [],
+          teamType: undefined,
+        })
+      }
+
+      //护士
+      let nurseItem = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 2) {
+          nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+        }
+      }
+      if (nurseItem) {
+        this.isNurse = true
+        this.allocationTypeNurse = nurseItem.allocationType.value
+        nurseItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          if (index != nurseItem.commodityPkgManageItemReqs.length - 1) {
+            this.nameNurse = this.nameNurse + item.name + ','
+          } else {
+            this.nameNurse = this.nameNurse + item.name
+          }
+        })
+
+        nurseItem.allocationType = nurseItem.allocationType.value
+        nurseItem.teamType = nurseItem.teamType.value
+        newRsps.push(nurseItem)
+      } else {
+        newRsps.push({
+          allocationType: undefined,
+          commodityPkgManageItemReqs: [],
+          teamType: undefined,
+        })
+      }
+
+      //团队
+      let teamItem = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 3) {
+          teamItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+        }
+      }
+      if (teamItem) {
+        this.isTeam = true
+        this.allocationTypeTeam = teamItem.allocationType.value
+        teamItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          if (index != teamItem.commodityPkgManageItemReqs.length - 1) {
+            this.nameTeam = this.nameTeam + item.name + ','
+          } else {
+            this.nameTeam = this.nameTeam + item.name
+          }
+        })
+
+        teamItem.allocationType = teamItem.allocationType.value
+        teamItem.teamType = teamItem.teamType.value
+        newRsps.push(teamItem)
+      } else {
+        newRsps.push({
+          allocationType: undefined,
+          commodityPkgManageItemReqs: [],
+          teamType: undefined,
+        })
+      }
+
+      //处理第4条数据，角色
+      //团队
+      let roleItem = undefined
+      for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+        if (this.packageData.commodityPkgManageReqs[index].teamType.value == 4) {
+          roleItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+        }
+      }
+      if (roleItem) {
+        roleItem.commodityPkgManageItemReqs.forEach((item, index) => {
+          this.roleIds.push(item.objectId)
+        })
+      }
+
+      this.packageData.commodityPkgManageReqs = newRsps
+      this.confirmLoading = false
     },
 
     /**
@@ -515,27 +748,7 @@ export default {
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
-    /**
-     * 随访方案列表
-     */
-    qryFollowPlanByFollowTypeOut() {
-      // this.confirmLoading = true
-      qryFollowPlanByFollowType({
-        tenantId: this.packageData.tenantId,
-        hospitalCode: this.packageData.hospitalCode,
-        followType: 4,
-      })
-        .then((res) => {
-          if (res.code == 0) {
-            this.plans = res.data
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
+          // this.confirmLoading = false
         })
     },
 
@@ -625,6 +838,13 @@ export default {
       }
     },
 
+    onComFocus() {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+    },
+
     /**
      *
      * @param {*} type   1 租户选择回调  2机构选择回调
@@ -633,9 +853,17 @@ export default {
       // console.log('onSelectChange type', type)
       console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
-        this.getTreeUsersDoc()
-        this.getTreeUsersNurse()
-        this.qryFollowPlanByFollowTypeOut()
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
+        this.getTreeUsersDoc(false)
+        this.getTreeUsersNurse(false)
+        this.qryFollowPlanByFollowTypeOut(false)
+      }
+      if (this.packageData.tenantId) {
+        this.queryHospitalListOut()
       }
     },
 
@@ -643,13 +871,18 @@ export default {
       console.log('code', code)
       this.packageData.hospitalCode = code
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
-        this.getTreeUsersDoc()
-        this.getTreeUsersNurse()
-        this.qryFollowPlanByFollowTypeOut()
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
+        this.getTreeUsersDoc(false)
+        this.getTreeUsersNurse(false)
+        this.qryFollowPlanByFollowTypeOut(false)
       }
     },
 
-    getTreeUsersDoc() {
+    getTreeUsersDoc(isInit) {
       getTreeUsersByDeptIdsAndRoles({
         hospitalCode: this.packageData.hospitalCode,
         tenantId: this.packageData.tenantId,
@@ -657,10 +890,13 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           this.deptUsersDoc = res.data
+          if (isInit) {
+            this.getTreeUsersNurse(isInit)
+          }
         }
       })
     },
-    getTreeUsersNurse() {
+    getTreeUsersNurse(isInit) {
       getTreeUsersByDeptIdsAndRoles({
         hospitalCode: this.packageData.hospitalCode,
         tenantId: this.packageData.tenantId,
@@ -668,8 +904,34 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           this.deptUsersNurse = res.data
+          if (isInit) {
+            this.qryFollowPlanByFollowTypeOut(isInit)
+          }
         }
       })
+    },
+
+    /**
+     * 随访方案列表
+     */
+    qryFollowPlanByFollowTypeOut(isInit) {
+      // this.confirmLoading = true
+      qryFollowPlanByFollowType({
+        tenantId: this.packageData.tenantId,
+        hospitalCode: this.packageData.hospitalCode,
+        followType: 4,
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            this.plans = res.data
+            if (isInit) {
+              this.processData()
+            }
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
     },
 
     /**
@@ -792,6 +1054,13 @@ export default {
     },
 
     addTeam() {
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属租户和机构')
+        return
+      }
+      if (!this.isTeam) {
+        return
+      }
       if (!this.allocationTypeTeam) {
         this.$message.warn('请先选择团队参与分配方式')
         return
@@ -840,13 +1109,23 @@ export default {
         this.$message.error('请上传封面图片！')
         return
       } else {
-        tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
+        tempData.frontImgs = []
+        if (this.fileList[0].response) {
+          tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
+        } else {
+          tempData.frontImgs.push(this.fileList[0].url)
+        }
       }
 
-      //banner 选填
       if (this.fileListBanner.length > 0) {
+        //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
+        tempData.bannerImgs = []
         for (let index = 0; index < this.fileListBanner.length; index++) {
-          tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
+          if (this.fileListBanner[index].response) {
+            tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
+          } else {
+            tempData.bannerImgs.push(this.fileListBanner[index].url)
+          }
         }
       }
 
@@ -854,8 +1133,14 @@ export default {
         this.$message.error('请上传详情图片！')
         return
       } else {
+        //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
+        tempData.detailImgs = []
         for (let index = 0; index < this.fileListDetail.length; index++) {
-          tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
+          if (this.fileListDetail[index].response) {
+            tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
+          } else {
+            tempData.detailImgs.push(this.fileListDetail[index].url)
+          }
         }
       }
 

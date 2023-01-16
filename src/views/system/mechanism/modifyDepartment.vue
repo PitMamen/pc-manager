@@ -41,7 +41,7 @@
 
         <a-select style="min-width: 248px;margin-left:5px" v-model="queryParams.departmentType" allow-clear placeholder="请选择科室类型">
         <a-select-option v-for="(item, index) in departmentTypeList" :key="index" :value="item.code">{{
-          item.name
+          item.value
         }}</a-select-option>
       </a-select>
 
@@ -82,7 +82,7 @@
           :disabled="true"
           :defaultValue=0
           allow-clear
-          style="width: 190px; margin-left: 5px; text-align: center"
+          style="width: 190px; margin-left: 4px; text-align: center"
         />
         <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
       </div>
@@ -130,7 +130,7 @@
           
           <script>
   import moment from 'moment'
-  import { modifyDepartmentForReq, queryHospitalLevel, queryHospitalType, parent,queryHospitalList } from '@/api/modular/system/posManage'
+  import { modifyDepartmentForReq, queryHospitalLevel, queryHospitalType, parent,queryHospitalList,getDictDataForCodeDepartType } from '@/api/modular/system/posManage'
   import { STable } from '@/components'
   import { formatDate, formatDateFull } from '@/utils/util'
   import E from 'wangeditor'
@@ -187,13 +187,6 @@
         title: '修改科室',
   
         departmentTypeList: [
-          { code: 1, name: '门诊科室' },
-          { code: 2, name: '急诊科室' },
-          { code: 3, name: '住院科室' },
-          { code: 4, name: '医技科室' },
-          { code: 5, name: '药剂科室' },
-          { code: 6, name: '后勤物资' },
-          { code: 7, name: '机关科室' },
         ],
       }
     },
@@ -202,6 +195,7 @@
       moment,
       //初始化方法
       modifyDepartment(record) {
+        // console.log("IIII:",record)
         this.visible = true
         this.reset()
 
@@ -221,7 +215,30 @@
         this.isFullDiseaseType = record.is_full_disease==1
         // this.getParentList()
         this.queryHospitalListOut()
+        this.getDictDataForCodeorgDepartTypeOut()
       },
+
+
+       /**
+     * 组织类型接口
+     */
+     getDictDataForCodeorgDepartTypeOut() {
+      this.confirmLoading = true
+      getDictDataForCodeDepartType()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.departmentTypeList = res.data
+            for (let index = 0; index < this.departmentTypeList.length; index++) {
+                this.departmentTypeList[index].code = Number(this.departmentTypeList[index].code)
+               }
+          } else {
+            this.departmentTypeList = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
   
 
       /**
@@ -430,6 +447,7 @@
         this.queryParams.isFullDisease = ''
         this.queryParams.departmentIntroduce = ''
         this.queryParams.hisId = ''
+        this.queryParams.departmentType = undefined
       },
   
       /**
@@ -453,6 +471,13 @@
           this.$message.error('请输入科室名称')
           return
         }
+
+        if(!this.queryParams.departmentType){
+          this.$message.error('请选择科室类型')
+          return
+        }
+
+
         if (!this.queryParams.departmentAddr) {
           this.$message.error('请输入科室地址')
           return
