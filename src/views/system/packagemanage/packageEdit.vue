@@ -31,11 +31,14 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="packageData.subjectClassifyId" allow-clear placeholder="请选择">
-              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
-                item.classifyName
-              }}</a-select-option>
-            </a-select>
+            <a-tree-select
+              v-model="packageData.subjectClassifyId"
+              style="min-width: 120px"
+              :tree-data="treeDataSubject"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
           </div>
         </div>
 
@@ -320,6 +323,7 @@ import {
   getTenantList,
   qryFollowPlanByFollowType,
   getDictData,
+  treeMedicalSubjects,
   saveOrUpdate,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
@@ -367,6 +371,8 @@ export default {
       isTeam: false,
       needPlan: false,
       treeData: [],
+      treeDataSubject: [],
+      roleList: [],
 
       classData: [],
       tenantList: [],
@@ -437,65 +443,37 @@ export default {
     }
   },
 
-  /**
-   * // 初始化表单数据方法
-// 使用async 和 await 关键字保证该方法体内容能按顺序执行
-async init(id) {
-	await this.getDealStageListInfo()
-	await this.getFormInfo(id)
-},
-// 获取节点下拉数据方法
-getDealStageListInfo () {
-   getNodeListByDealType().then(res => {
-     if (res.code === 200) {
-       this.dealStageOptions = res.rows
-     }
-   })
-},
-// 获取表单数据方法
-getFormInfo(id) {
-	getDealBase(id).then( response => {
-		if(response.code === 200) {
-	  		this.form = response.data
-		}
-	})
-},
-   */
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    // this.queryHospitalListOut()
-    // this.getTenantListOut()
-    // this.getDictDataOut()
+
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    console.log('this.$route.query', this.$route.query)
     this.commodityPkgId = this.$route.query.commodityPkgId
-    this.init(this.commodityPkgId)
+    console.log('this.commodityPkgId', this.commodityPkgId)
+    this.init()
     // 获取详情
     this.confirmLoading = true
-    // getPkgDetail(this.commodityPkgId).then((res) => {
-    //   if (res.code == 0) {
-    //     this.packageData = res.data
-    //     //这个可以提前处理，不放在processData里面
-    //     if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
-    //       this.needPlan = true
-    //     }
-    //     this.getTreeUsersDoc(true)
-    //   } else {
-    //     // this.$message.error('获取计划列表失败：' + res.message)
-    //   }
-    // })
+  },
 
-    // this.confirmLoading = true
+  watch: {
+    $route(to, from) {
+      console.log('watch----package_manage_edit out', to, from)
+      if (to.path.indexOf('packageEdit') > -1) {
+        console.log('watch----package_manage_edit', to, from)
+        this.init()
+      }
+    },
   },
 
   methods: {
     moment,
-    async init(id) {
+    async init() {
+      this.commodityPkgId = this.$route.query.commodityPkgId
       //await 都是获取常量的方法
       await this.queryHospitalListOut()
       await this.getTenantListOut()
       await this.getDictDataOut()
       await this.getCommodityClassifyOut()
+      await this.treeMedicalSubjectsOut()
       getPkgDetail(this.commodityPkgId).then((res) => {
         if (res.code == 0) {
           this.packageData = res.data
@@ -555,6 +533,34 @@ getFormInfo(id) {
     },
 
     /**
+     * 获取学科二级树
+     */
+    treeMedicalSubjectsOut() {
+      treeMedicalSubjects()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.subjectClassifyId)
+              this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'children', item.children)
+
+              item.children.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.subjectClassifyId)
+                this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'title', item1.subjectClassifyName)
+              })
+            })
+
+            this.treeDataSubject = res.data
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    /**
      * 获取字典接口   角色列表
      */
     getDictDataOut() {
@@ -571,15 +577,17 @@ getFormInfo(id) {
 
     processData() {
       //处理详情的图片
+      this.fileList = []
       this.packageData.frontImgs.forEach((item) => {
         this.fileList.push({
-          uid: '-1',
+          uid: '1',
           name: '封面' + 1,
           status: 'done',
           url: item,
         })
       })
 
+      this.fileListBanner = []
       this.packageData.bannerImgs.forEach((item, index) => {
         this.fileListBanner.push({
           uid: 0 - index + '',
@@ -589,6 +597,7 @@ getFormInfo(id) {
         })
       })
 
+      this.fileListDetail = []
       this.packageData.detailImgs.forEach((item, index) => {
         this.fileListDetail.push({
           uid: 0 - index + '',
@@ -834,6 +843,11 @@ getFormInfo(id) {
       // console.log('onSelectChange type', type)
       console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
         this.getTreeUsersDoc(false)
         this.getTreeUsersNurse(false)
         this.qryFollowPlanByFollowTypeOut(false)
@@ -844,6 +858,11 @@ getFormInfo(id) {
       console.log('code', code)
       this.packageData.hospitalCode = code
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
         this.getTreeUsersDoc(false)
         this.getTreeUsersNurse(false)
         this.qryFollowPlanByFollowTypeOut(false)

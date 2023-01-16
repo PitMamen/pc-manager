@@ -3329,3 +3329,12 @@ export function getTdMedicalSubjectPageList(data) {
     params: data,
   })
 }
+
+//医疗学科列表
+export function treeMedicalSubjects(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/treeMedicalSubjects',
+    method: 'get',
+    params: data,
+  })
+}

@@ -31,11 +31,15 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-select v-model="packageData.subjectClassifyId" allow-clear placeholder="请选择">
-              <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
-                item.classifyName
-              }}</a-select-option>
-            </a-select>
+            <!-- @select="onSelectChangeCode" -->
+            <a-tree-select
+              v-model="packageData.subjectClassifyId"
+              style="min-width: 120px"
+              :tree-data="treeDataSubject"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
           </div>
         </div>
 
@@ -319,6 +323,7 @@ import {
   getTenantList,
   qryFollowPlanByFollowType,
   getDictData,
+  treeMedicalSubjects,
   saveOrUpdate,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
@@ -366,6 +371,8 @@ export default {
       isTeam: false,
       needPlan: false,
       treeData: [],
+      treeDataSubject: [],
+      roleList: [],
 
       classData: [],
       tenantList: [],
@@ -428,6 +435,7 @@ export default {
     this.queryHospitalListOut()
     this.getTenantListOut()
     this.getDictDataOut()
+    this.treeMedicalSubjectsOut()
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getCommodityClassify({}).then((res) => {
       if (res.code == 0) {
@@ -488,6 +496,34 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.tenantList = res.data.records
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取学科二级树
+     */
+    treeMedicalSubjectsOut() {
+      treeMedicalSubjects()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.subjectClassifyId)
+              this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'children', item.children)
+
+              item.children.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.subjectClassifyId)
+                this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'title', item1.subjectClassifyName)
+              })
+            })
+
+            this.treeDataSubject = res.data
           }
         })
         .finally((res) => {
@@ -624,6 +660,12 @@ export default {
       // console.log('onSelectChange type', type)
       console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
+        this.packageData.commodityFollowPlanIds = []
         this.getTreeUsersDoc()
         this.getTreeUsersNurse()
         this.qryFollowPlanByFollowTypeOut()
@@ -634,6 +676,11 @@ export default {
       console.log('code', code)
       this.packageData.hospitalCode = code
       if (this.packageData.tenantId && this.packageData.hospitalCode) {
+        this.deptUsersDoc = []
+        this.deptUsersNurse = []
+        this.nameDoc = ''
+        this.nameNurse = ''
+        this.plans = []
         this.getTreeUsersDoc()
         this.getTreeUsersNurse()
         this.qryFollowPlanByFollowTypeOut()
