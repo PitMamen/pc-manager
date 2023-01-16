@@ -3311,6 +3311,16 @@ export function getDictDataForCodeBorad(data) {
   })
 }
 
+/**
+ * 获取字典
+ */
+export function getDictData(param) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/' + param,
+    method: 'get',
+  })
+}
+
 //医疗学科列表
 export function getTdMedicalSubjectPageList(data) {
   return axios({

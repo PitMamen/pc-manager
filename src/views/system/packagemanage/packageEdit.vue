@@ -264,8 +264,8 @@
             placeholder="请选择"
             :disabled="!isTeam"
           >
-            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
-              item.description
+            <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.code">{{
+              item.value
             }}</a-select-option>
           </a-select>
         </div>
@@ -319,6 +319,7 @@ import {
   queryHospitalList,
   getTenantList,
   qryFollowPlanByFollowType,
+  getDictData,
   saveOrUpdate,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
@@ -436,39 +437,89 @@ export default {
     }
   },
 
+  /**
+   * // 初始化表单数据方法
+// 使用async 和 await 关键字保证该方法体内容能按顺序执行
+async init(id) {
+	await this.getDealStageListInfo()
+	await this.getFormInfo(id)
+},
+// 获取节点下拉数据方法
+getDealStageListInfo () {
+   getNodeListByDealType().then(res => {
+     if (res.code === 200) {
+       this.dealStageOptions = res.rows
+     }
+   })
+},
+// 获取表单数据方法
+getFormInfo(id) {
+	getDealBase(id).then( response => {
+		if(response.code === 200) {
+	  		this.form = response.data
+		}
+	})
+},
+   */
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.queryHospitalListOut()
-    this.getTenantListOut()
+    // this.queryHospitalListOut()
+    // this.getTenantListOut()
+    // this.getDictDataOut()
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     console.log('this.$route.query', this.$route.query)
     this.commodityPkgId = this.$route.query.commodityPkgId
+    this.init(this.commodityPkgId)
     // 获取详情
     this.confirmLoading = true
-    getPkgDetail(this.commodityPkgId).then((res) => {
-      if (res.code == 0) {
-        this.packageData = res.data
-        //这个可以提前处理，不放在processData里面
-        if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
-          this.needPlan = true
-        }
-        this.getTreeUsersDoc(true)
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
-    getCommodityClassify({}).then((res) => {
-      if (res.code == 0) {
-        this.classData = res.data
-      } else {
-        // this.$message.error('获取计划列表失败：' + res.message)
-      }
-    })
+    // getPkgDetail(this.commodityPkgId).then((res) => {
+    //   if (res.code == 0) {
+    //     this.packageData = res.data
+    //     //这个可以提前处理，不放在processData里面
+    //     if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
+    //       this.needPlan = true
+    //     }
+    //     this.getTreeUsersDoc(true)
+    //   } else {
+    //     // this.$message.error('获取计划列表失败：' + res.message)
+    //   }
+    // })
+
     // this.confirmLoading = true
   },
 
   methods: {
     moment,
+    async init(id) {
+      //await 都是获取常量的方法
+      await this.queryHospitalListOut()
+      await this.getTenantListOut()
+      await this.getDictDataOut()
+      await this.getCommodityClassifyOut()
+      getPkgDetail(this.commodityPkgId).then((res) => {
+        if (res.code == 0) {
+          this.packageData = res.data
+          //这个可以提前处理，不放在processData里面
+          if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
+            this.needPlan = true
+          } else {
+            this.packageData.commodityFollowPlanIds = [] //这句是后台返回null时，处理页面显示bug
+          }
+          this.getTreeUsersDoc(true)
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
+    getCommodityClassifyOut() {
+      getCommodityClassify({}).then((res) => {
+        if (res.code == 0) {
+          this.classData = res.data
+        } else {
+          // this.$message.error('获取计划列表失败：' + res.message)
+        }
+      })
+    },
     queryHospitalListOut() {
       let queryData = {
         tenantId: '',
@@ -497,6 +548,21 @@ export default {
             this.treeData = res.data
           }
           return []
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取字典接口   角色列表
+     */
+    getDictDataOut() {
+      getDictData('TEAMROLE')
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.roleList = res.data
+          }
         })
         .finally((res) => {
           // this.confirmLoading = false
@@ -646,7 +712,7 @@ export default {
       }
       if (roleItem) {
         roleItem.commodityPkgManageItemReqs.forEach((item, index) => {
-          this.roleIds.push(parseInt(item.objectId))
+          this.roleIds.push(item.objectId)
         })
       }
 

@@ -264,8 +264,8 @@
             placeholder="请选择"
             :disabled="!isTeam"
           >
-            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
-              item.description
+            <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.code">{{
+              item.value
             }}</a-select-option>
           </a-select>
         </div>
@@ -318,6 +318,7 @@ import {
   queryHospitalList,
   getTenantList,
   qryFollowPlanByFollowType,
+  getDictData,
   saveOrUpdate,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
@@ -426,6 +427,7 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
     this.queryHospitalListOut()
     this.getTenantListOut()
+    this.getDictDataOut()
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     getCommodityClassify({}).then((res) => {
       if (res.code == 0) {
@@ -486,6 +488,21 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.tenantList = res.data.records
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 获取字典接口   角色列表
+     */
+    getDictDataOut() {
+      getDictData('TEAMROLE')
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.roleList = res.data
           }
         })
         .finally((res) => {
