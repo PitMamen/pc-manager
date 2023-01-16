@@ -1089,6 +1089,7 @@ export default {
         this.$message.error('请上传封面图片！')
         return
       } else {
+        tempData.frontImgs = []
         if (this.fileList[0].response) {
           tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
         } else {
@@ -1098,6 +1099,7 @@ export default {
 
       if (this.fileListBanner.length > 0) {
         //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
+        tempData.bannerImgs = []
         for (let index = 0; index < this.fileListBanner.length; index++) {
           if (this.fileListBanner[index].response) {
             tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
@@ -1112,6 +1114,7 @@ export default {
         return
       } else {
         //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
+        tempData.detailImgs = []
         for (let index = 0; index < this.fileListDetail.length; index++) {
           if (this.fileListDetail[index].response) {
             tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)

@@ -878,11 +878,13 @@ export default {
         this.$message.error('请上传封面图片！')
         return
       } else {
+        tempData.frontImgs = []
         tempData.frontImgs.push(this.fileList[0].response.data.fileLinkUrl)
       }
 
       //banner 选填
       if (this.fileListBanner.length > 0) {
+        tempData.bannerImgs = []
         for (let index = 0; index < this.fileListBanner.length; index++) {
           tempData.bannerImgs.push(this.fileListBanner[index].response.data.fileLinkUrl)
         }
@@ -892,6 +894,7 @@ export default {
         this.$message.error('请上传详情图片！')
         return
       } else {
+        tempData.detailImgs = []
         for (let index = 0; index < this.fileListDetail.length; index++) {
           tempData.detailImgs.push(this.fileListDetail[index].response.data.fileLinkUrl)
         }

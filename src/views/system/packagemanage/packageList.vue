@@ -18,7 +18,7 @@
         <a-input
           v-model="queryParams.queryCondition"
           allow-clear
-          placeholder="可输入查询条件"
+          placeholder="请输入"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
@@ -34,7 +34,7 @@
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
-          placeholder="请选择套餐分类"
+          placeholder="请选择"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
           <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
@@ -81,8 +81,8 @@
         <a @click="editPlan(record)">修改</a>
       </span>
       <span slot="cover" slot-scope="text, record">
-        <img src="~@/assets/icons/weixin_icon.png" />
-        <!-- <img :src="record.frontImg" /> -->
+        <!-- <img src="~@/assets/icons/weixin_icon.png" /> -->
+        <img style="height:40px;width:50px" :src="record.frontImg" />
       </span>
       <!-- 
         1关2开

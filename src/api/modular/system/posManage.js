@@ -3207,12 +3207,35 @@ export function updatePkgStatus(data) {
     data: data,
   })
 }
+
 /**
  * /pkg/getCommodityClassify 套餐分类接口
  */
 export function getCommodityClassify(data) {
   return axios({
     url: '/medical-api/pkg/getCommodityClassify',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /commodityConfig/getCommodityPkgDetailByid 查询套餐规格详情
+ */
+export function getCommodityPkgDetailByid(data) {
+  return axios({
+    url: '/medical-api/commodityConfig/getCommodityPkgDetailByid',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /commodityConfig/qryServiceItemList 服务项目列表分页查询
+ */
+export function qryServiceItemList(data) {
+  return axios({
+    url: '/medical-api/commodityConfig/qryServiceItemList',
     method: 'post',
     data: data,
   })
