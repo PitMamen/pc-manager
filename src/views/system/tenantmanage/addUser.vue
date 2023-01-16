@@ -95,8 +95,8 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>人员类型:</span>
             <a-select v-model="checkData.userType" allow-clear placeholder="请选择人员类型">
-              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.value">{{
-                item.description
+              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.code">{{
+                item.value
               }}</a-select-option>
             </a-select>
           </div>
@@ -223,9 +223,9 @@ import {
   queryHospitalList,
   professionalTitles,
   createDoctorUser,
-  accountDictUserTypes,
   getDoctorUserDetail,
-  updateDoctorUser
+  updateDoctorUser,
+  getDictDataForCodeUserType,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -311,7 +311,7 @@ export default {
 
       this.getRolesOut()
       this.queryHospitalListOut()
-      this.getAccountDictUserTypes()
+      this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
      
     },
@@ -327,7 +327,7 @@ export default {
       
      
       this.queryHospitalListOut()
-      this.getAccountDictUserTypes()
+      this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
     },
@@ -373,14 +373,34 @@ export default {
       })
     },
 
-    //人员类型
-    getAccountDictUserTypes() {
-      accountDictUserTypes().then((res) => {
-        if (res.code == 0) {
-          this.rylxList = res.data
-        }
-      })
+
+    /**
+     * 人员类型
+     */
+     getDictDataForCodeUserTypeOut() {
+      this.confirmLoading = true
+      getDictDataForCodeUserType()
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.rylxList = res.data
+            // for (let index = 0; index < this.rylxList.length; index++) {
+            //     this.rylxList[index].code = Number(this.rylxList[index].code)
+            //    }
+          } else {
+            this.rylxList = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
+
+
+
+
+
+
+
       //人员职称
       getProfessionalTitles() {
         professionalTitles().then((res) => {

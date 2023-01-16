@@ -1,7 +1,8 @@
 <template>
   <a-modal
-    :title="record.id ? '编辑学科' : '新增学科'"
-    :width="500"
+  class="ant-pxk-footer"
+    :title="title"
+    :width="400"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -12,9 +13,8 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <a-avatar shape="square" :size="48" :src="checkData.icon" style="margin-right: 10px; margin-left: 12px">
-            </a-avatar>
-
+            <!--  <a-avatar -->
+            <img :src="checkData.projectImg" style="margin-right: 21px; width: 60px; height: 60px" />
             <div class="avator-right">
               <a-upload
                 name="file"
@@ -27,95 +27,146 @@
               >
                 <a-button>
                   <a-icon type="upload" />
-                  上传图标
+                  上传文件
                 </a-button>
               </a-upload>
               <span style="font-size: 12px; color: #999999; margin-top: 6px">支持扩展名：.png .jpge .jpg</span>
             </div>
           </div>
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>上级学科:</span>
-            <a-select v-model="checkData.pid" allow-clear placeholder="请选择上级学科">
-              <a-select-option v-for="(item, index) in xkList" :key="index" :value="item.id">{{
-                item.subjectName
-              }}</a-select-option>
-            </a-select>
-          </div>
-          <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>学科名称:</span>
+            <span class="span-item-name"><span style="color: red">*</span>项目名称:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.subjectName"
+              v-model="checkData.projectName"
               style="display: inline-block"
               allow-clear
               :maxLength="20"
-              placeholder="请输入学科名称"
+              placeholder="请输入内容"
+            />
+          </div>
+          <div class="div-content">
+            <span class="span-item-name"><span style="color: red">*</span>项目规格:</span>
+            <a-input
+              v-model="checkData.normsModel"
+              class="span-item-value"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="18"
+              placeholder="请输入项目规格"
             />
           </div>
 
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>显示序号:</span>
-            <a-input-number
+            <span class="span-item-name">项目类型:</span>
+            <a-select v-model="checkData.projectType" allow-clear placeholder="请选择项目类型">
+              <a-select-option v-for="item in projectTypeData" :key="item.code" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+          <div class="div-content">
+            <span class="span-item-name">生产厂商:</span>
+            <a-select v-model="checkData.factoryId" allow-clear placeholder="请选择生产厂商">
+              <a-select-option v-for="(item, index) in factoryListData" :key="index" :value="item.id">{{
+                item.factoryName
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+          <div class="div-content">
+            <span class="span-item-name">建议售价:</span>
+            <a-input
+              v-model="checkData.suggestPrice"
               class="span-item-value"
-              :min="0"
-              :max="9999"
-              :precision="0"
-              v-model="checkData.subjectOrder"
+              style="display: inline-block; width: 102px"
+              allow-clear
+              :maxLength="18"
+              placeholder="请输入建议价格"
+            />
+
+            <span class="span-item-name"> <span style="color: red">*</span>生产单位:</span>
+            <a-input
+              v-model="checkData.unit"
+              class="span-item-value"
               style="display: inline-block"
               allow-clear
-              placeholder="请输入显示序号"
+              :maxLength="18"
+              placeholder="请输入生产单位"
             />
           </div>
 
-          <div class="div-content" style="align-items: flex-start">
-            <span class="span-item-name">备注说明:</span>
-            <a-textarea
-              v-model="checkData.description"
-              class="span-item-value"
-              showCount
-              :maxLength="50"
-              style="height: 120px !important; display: inline-block"
-              allow-clear
-              :auto-size="false"
-              placeholder="请输入内容 "
-            />
-            <span class="m-count2">{{ checkData.description ? checkData.description.length : 0 }}/50</span>
-          </div>
+          <!-- 备注说明 -->
+          <span style="margin-top: 10px; margin-left: 10px; width: 90px"> 备注说明:</span>
+          <a-textarea
+            style="
+              height: 80px;
+              min-height: 100px;
+              margin-top: -17px;
+              margin-left: 70px;
+              margin-bottom: 30px;
+              width: 80%;
+            "
+            v-model="checkData.remark"
+            :maxLength="120"
+            placeholder="请输入备注说明"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入备注说明' }] }]"
+          />
+          <!-- <span class="m-count"
+            >{{ checkData.departmentIntroduce ? queryParams.departmentIntroduce.length : 0 }}/30</span
+          > -->
         </div>
       </div>
     </a-spin>
   </a-modal>
 </template>
-
-
-<script>
+  
+  
+  <script>
 import moment from 'moment'
 import {
-  getTdMedicalSubjectPageList,
-  addTdMedicalSubject,
-  modifyTdMedicalSubject,
+  getDictDataForCode,
+  saveServiceItem,
+  qryFactoryList,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
 import { isObjectEmpty, isStringEmpty } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
   data() {
     return {
+      title: '新增项目',
       visible: false,
       record: {},
-
       headers: {},
       confirmLoading: false,
+      projectTypeData: [],
+      factoryListData: [],
+      // 高级搜索 展开/关闭
+      advanced: false,
+      fileList: [],
+      danandataList: [],
       checkData: {
-        icon: '', //头像
-        pid: '', //上级学科
-        subjectName: '', //学科名称
-        subjectOrder: '', //学科序号
-        description: '', //详细介绍
+        projectImg: '',
+        projectName: '',
+        normsModel: '',
+        factoryId: undefined,
+        projectType: '',
+        unit: '',
+        suggestPrice: '',
+        remark: '',
+        status:1,
       },
-      xkList: [], //上级学科列表
+
+      factoryquery: {
+        // address: '',
+        // contactName: '',
+        // contactTel: '',
+        // pyCode: '',
+      },
     }
   },
   created() {},
@@ -123,74 +174,56 @@ export default {
     moment,
     clearData() {
       this.record = {}
-      this.xkList = []
-      this.checkData = {
-        icon: '', //头像
-        pid: '', //上级学科
-        subjectName: '', //学科名称
-        subjectOrder: '', //学科序号
-        description: '', //详细介绍
-      }
+      this.checkData = {}
     },
     //新增
-    addModel(pid) {
+    addModel() {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      this.checkData.pid = pid
 
-      this.getTdMedicalSubjectPageListOut()
-    },
-    //修改
-    editModel(record) {
-      console.log(record)
-      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-      this.clearData()
-      this.visible = true
-      this.confirmLoading = false
-      this.record = record
-
-      this.checkData = {
-        id: record.id,
-        icon: record.icon, //头像
-        pid: record.pid, //上级学科
-        subjectName: record.subjectName, //学科名称
-        subjectOrder: record.subjectOrder, //学科序号
-        description: record.description, //详细介绍
-      }
-
-      this.getTdMedicalSubjectPageListOut()
+      this.getDictDataForCodeOut()
+      this.qryFactoryListOut()
     },
 
     /**
-     *上级学科
+     * 项目类型接口
      */
-    getTdMedicalSubjectPageListOut() {
+    /**
+     *
+     * @param {}
+     */
+    getDictDataForCodeOut() {
       this.confirmLoading = true
-      getTdMedicalSubjectPageList()
+      getDictDataForCode()
         .then((res) => {
+          console.log('UUU:', res)
           if (res.code == 0 && res.data.length > 0) {
-            var arrData = [
-              {
-                id: 0,
-                subjectName: '全部',
-              },
-            ]
-            if (this.record.id && this.record.pid == 0) {
-              //编辑二级学科时 只能选全部
-            } else {
-              res.data.forEach((item, index) => {
-                if (item.pid == 0) {
-                  arrData.push(item)
-                }
-              })
-            }
-
-            this.xkList = arrData
+            this.projectTypeData = res.data
           } else {
-            this.xkList = []
+            this.projectTypeData = res.data
           }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     *
+     * 生产厂商信息查询
+     */
+    qryFactoryListOut() {
+      qryFactoryList(this.factoryquery)
+        .then((res) => {
+          if (res.code == 0 && res.data.rows > 0) {
+            this.factoryListData = res.data.rows
+          } else {
+            this.factoryListData = res.data.rows
+          }
+          return []
         })
         .finally((res) => {
           this.confirmLoading = false
@@ -211,84 +244,56 @@ export default {
       return true
     },
 
-    momentfun() {
-      if (this.checkData.birthday) {
-        return moment(this.checkData.birthday, 'YYYYMMDD')
-      } else {
-        return undefined
-      }
-    },
     handleChange(changeObj) {
-      console.log(changeObj)
+      console.log("JJJ",changeObj)
       if (changeObj.file.status == 'done') {
         if (changeObj.file.response.code != 0) {
           this.$message.error(changeObj.file.response.message)
         } else {
           if (changeObj.fileList.length == 0) {
-            this.checkData.icon = ''
+            this.checkData.projectImg = ''
           } else {
-            this.checkData.icon = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
+            this.checkData.projectImg = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
+            this.$message.success("图片上传成功!")
           }
         }
       }
 
-      console.log('icon:' + this.checkData.icon)
-    },
-    telInputChange(e) {
-      console.log(e)
-    },
-    onDatePickerChange(date, dateString) {
-      console.log(date, dateString)
-      this.checkData.birthday = dateString
+      console.log('projectImg:' + this.checkData.projectImg)
     },
 
+
+    /**
+     * 提交
+     */
     handleSubmit() {
       console.log(this.checkData)
 
-      if (isStringEmpty(this.checkData.icon)) {
-        this.$message.error('请上传图标')
+      if (isStringEmpty(this.checkData.projectName)) {
+        this.$message.error('请输入项目名称')
         return
       }
-      if (isStringEmpty(this.checkData.pid)) {
-        this.$message.error('请选择上级学科')
-        return
-      }
-      if (isStringEmpty(this.checkData.subjectName)) {
-        this.$message.error('请输入学科名称')
-        return
-      }
-      if (isStringEmpty(this.checkData.subjectOrder)) {
-        this.$message.error('请输入显示序号')
+      if (isStringEmpty(this.checkData.normsModel)) {
+        this.$message.error('请输入项目规格')
         return
       }
 
-      this.confirmLoading = true
-      if (this.record.id) {
-        //修改
-        this.editDisc(this.checkData)
-      } else {
-        //新增
-        this.addDisc(this.checkData)
+      if (isStringEmpty(this.checkData.unit)) {
+        this.$message.error('请输入生产单位')
+        return
       }
+
+       this.saveServiceItemOut()
+
     },
 
-    addDisc(postData) {
-      addTdMedicalSubject(postData).then((res) => {
+    /**
+     * 新增服务项目
+     */
+    saveServiceItemOut() {
+        saveServiceItem(this.checkData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
-          this.visible = false
-
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
-    },
-    editDisc(postData) {
-      modifyTdMedicalSubject(postData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('修改成功！')
           this.visible = false
 
           this.$emit('ok', '')
@@ -309,12 +314,22 @@ export default {
   },
 }
 </script>
-<style lang="less" scoped>
+  <style lang="less" scoped>
+
+
+
+
+.m-count {
+  position: absolute;
+  font-size: 12px;
+  bottom: 2px;
+  right: 10px;
+}
 .m-count2 {
   position: absolute;
   font-size: 12px;
-  bottom: 10px;
-  right: 13px;
+  bottom: 13px;
+  right: 10px;
 }
 .div-title {
   background-color: #f7f7f7;
@@ -341,14 +356,15 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 304px;
+  // height: 530px;
   margin-top: 10px;
 
   .div-part-left {
     float: left;
-    width: 460px;
+    width: 353px;
     overflow: hidden;
     height: 100%;
+
   }
   .div-part-right {
     float: right;
@@ -356,6 +372,7 @@ export default {
     overflow: hidden;
     height: 100%;
   }
+
 
   .div-content {
     margin-bottom: 10px;
@@ -443,5 +460,16 @@ export default {
   .ant-switch {
     width: 40px !important;
   }
+}
+</style>
+  
+
+<style lang="less" >
+
+.ant-pxk-footer{
+    .ant-modal-footer {
+    padding: 10px 16px !important;
+    border-top: none ;
+}
 }
 </style>
