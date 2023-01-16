@@ -57,6 +57,7 @@
             <a-tree-select
               v-model="packageData.hospitalCode"
               style="min-width: 120px"
+              @focus="onComFocus"
               @select="onSelectChangeCode"
               :tree-data="treeData"
               placeholder="请选择"
@@ -469,7 +470,7 @@ export default {
     async init() {
       this.commodityPkgId = this.$route.query.commodityPkgId
       //await 都是获取常量的方法
-      await this.queryHospitalListOut()
+      // await this.queryHospitalListOut()
       await this.getTenantListOut()
       await this.getDictDataOut()
       await this.getCommodityClassifyOut()
@@ -483,6 +484,8 @@ export default {
           } else {
             this.packageData.commodityFollowPlanIds = [] //这句是后台返回null时，处理页面显示bug
           }
+          //机构要根据租户获取
+          this.queryHospitalListOut()
           this.getTreeUsersDoc(true)
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
@@ -500,7 +503,7 @@ export default {
     },
     queryHospitalListOut() {
       let queryData = {
-        tenantId: '',
+        tenantId: this.packageData.tenantId,
         status: 1,
         hospitalName: '',
       }
@@ -835,6 +838,13 @@ export default {
       }
     },
 
+    onComFocus() {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+    },
+
     /**
      *
      * @param {*} type   1 租户选择回调  2机构选择回调
@@ -851,6 +861,9 @@ export default {
         this.getTreeUsersDoc(false)
         this.getTreeUsersNurse(false)
         this.qryFollowPlanByFollowTypeOut(false)
+      }
+      if (this.packageData.tenantId) {
+        this.queryHospitalListOut()
       }
     },
 
@@ -1041,6 +1054,13 @@ export default {
     },
 
     addTeam() {
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属租户和机构')
+        return
+      }
+      if (!this.isTeam) {
+        return
+      }
       if (!this.allocationTypeTeam) {
         this.$message.warn('请先选择团队参与分配方式')
         return

@@ -83,9 +83,10 @@ export default {
       },
       visible: false,
       confirmLoading: false,
+      hospitalCode: '',
       form: this.$form.createForm(this),
       // 查询参数
-      queryParam: { teamNameOrAbbr: '' },
+      queryParam: { teamNameOrAbbr: '', hospitalCode: '' },
       // 表头
       columns: [
         {
@@ -101,7 +102,10 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getHealthyTeamUserRoleGroupBy(this.queryParam).then((res) => {
+        return getHealthyTeamUserRoleGroupBy({
+          teamNameOrAbbr: this.queryParam.teamNameOrAbbr,
+          hospitalCode: this.hospitalCode,
+        }).then((res) => {
           // Object.assign(
           //   {
           //     pageNo: 1,
@@ -140,8 +144,9 @@ export default {
   },
   methods: {
     // 初始化方法
-    edit(commodityPkgManageItemRsps) {
+    edit(commodityPkgManageItemRsps, hospitalCode) {
       this.visible = true
+      this.hospitalCode = hospitalCode
       this.selectedRowKeys = []
       if (commodityPkgManageItemRsps.length > 0) {
         commodityPkgManageItemRsps.forEach((item) => {
@@ -176,7 +181,7 @@ export default {
         })
     },
     getLists() {
-      getHealthyTeamUserRoleGroupBy().then((res) => {
+      getHealthyTeamUserRoleGroupBy({ hospitalCode: this.hospitalCode }).then((res) => {
         if (res.code === 0) {
           this.lists = res.data || []
           console.log('getLists', this.lists)

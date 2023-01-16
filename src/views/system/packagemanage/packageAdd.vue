@@ -56,6 +56,7 @@
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
             <a-tree-select
+              @focus="onComFocus"
               v-model="packageData.hospitalCode"
               style="min-width: 120px"
               @select="onSelectChangeCode"
@@ -432,7 +433,7 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.queryHospitalListOut()
+    // this.queryHospitalListOut()
     this.getTenantListOut()
     this.getDictDataOut()
     this.treeMedicalSubjectsOut()
@@ -451,7 +452,7 @@ export default {
     moment,
     queryHospitalListOut() {
       let queryData = {
-        tenantId: '',
+        tenantId: this.packageData.tenantId,
         status: 1,
         hospitalName: '',
       }
@@ -652,6 +653,13 @@ export default {
       }
     },
 
+    onComFocus() {
+      if (!this.packageData.tenantId) {
+        this.$message.warn('请先选择所属租户')
+        return
+      }
+    },
+
     /**
      *
      * @param {*} type   1 租户选择回调  2机构选择回调
@@ -669,6 +677,9 @@ export default {
         this.getTreeUsersDoc()
         this.getTreeUsersNurse()
         this.qryFollowPlanByFollowTypeOut()
+      }
+      if (this.packageData.tenantId) {
+        this.queryHospitalListOut()
       }
     },
 
@@ -830,11 +841,21 @@ export default {
     },
 
     addTeam() {
+      if (!this.packageData.hospitalCode) {
+        this.$message.warn('请先选择所属租户和机构')
+        return
+      }
+      if (!this.isTeam) {
+        return
+      }
       if (!this.allocationTypeTeam) {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
-      this.$refs.addTeam.edit(this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs)
+      this.$refs.addTeam.edit(
+        this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
+        this.packageData.hospitalCode
+      )
     },
 
     handleAddTeam(commodityPkgManageItemReqs) {

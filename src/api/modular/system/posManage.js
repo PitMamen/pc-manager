@@ -3283,8 +3283,8 @@ export function getTreeUsersByDeptIdsAndRoles(data) {
 export function getHealthyTeamUserRoleGroupBy(data) {
   return axios({
     url: '/uam-api/tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy',
-    method: 'get',
-    params: data,
+    method: 'post',
+    data: data,
   })
 }
 
