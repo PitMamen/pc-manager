@@ -206,9 +206,9 @@ export default {
     /**
      * 获取已经选中的
      */
-    getInfo(params) {
+    getInfo() {
       this.confirmLoading = true
-      getServiceFactoryForHospitalCode(params)
+      getServiceFactoryForHospitalCode({hospitalCode:this.item.hospitalCode})
         .then((res) => {
           console.log('0000:', res)
           this.selectedRowKeys =

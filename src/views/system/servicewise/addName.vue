@@ -116,7 +116,7 @@
 
         <!-- 查询条件 -->
         <span slot="queryCriteria" slot-scope="text, record">
-          <a-checkbox  v-if="record.defaultField != null && record.defaultField.value == 2" v-model="record.wysy" @change="isQuery(record)"></a-checkbox>
+          <a-checkbox  v-if="record.defaultField != null && record.defaultField.value == 2" v-model="record.isQryC" @change="isQuery(record)"></a-checkbox>
         </span>
 
         
@@ -266,6 +266,7 @@ export default {
               this.$set(item, 'show', item.showStatus != null && item.showStatus.value == 1)
               this.$set(item, 'wysy', item.uniqueIndexStatus != null && item.uniqueIndexStatus.value == 1)
               this.$set(item, 'DefaultValue', item.fieldDefaultValue != null ? item.fieldDefaultValue : '')
+              this.$set(item, 'isQryC', item.isQryCondition != null && item.isQryCondition.value == 1)
             })
             this.detailList = dataItem.detail
             this.loadData = dataItem.detail
@@ -449,7 +450,7 @@ export default {
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
         item.metaName = this.metaName //名单描述
         item.showIndex = item.showIndex  //显示序号
-        item.isQryCondition = item.isQryCondition ? 1 : 0// 查询条件
+        item.isQryCondition = item.isQryC ? 1 : 0// 查询条件
       })
 
       let queryData = {

@@ -16,8 +16,15 @@
 
       <div class="search-row">
         <span class="name">项目类型:</span>
-        <a-select v-model="queryParams.projectType" placeholder="请选择类型" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in projectTypeData" :key="item.code" :value="item.code">{{ item.value }}</a-select-option>
+        <a-select
+          v-model="queryParams.projectType"
+          placeholder="请选择类型"
+          allow-clear
+          style="width: 120px; height: 28px"
+        >
+          <a-select-option v-for="item in projectTypeData" :key="item.code" :value="item.code">{{
+            item.value
+          }}</a-select-option>
         </a-select>
       </div>
 
@@ -89,7 +96,7 @@ import {
   saveServiceItem,
 } from '@/api/modular/system/posManage'
 import addProject from './addProject'
-  import modifyProject from './modifyProject'
+import modifyProject from './modifyProject'
 export default {
   components: {
     STable,
@@ -195,10 +202,10 @@ export default {
         return qryServiceItemList(Object.assign(parameter, this.queryParams)).then((res) => {
           console.log('请求结果:', res.message)
           var data = {
-            pageNo: parameter.current,
-            pageSize: parameter.size,
-            totalRows: res.data.totalPage,
-            totalPage: res.data.totalPage / parameter.size,
+            pageNo: parameter.pageNo,
+            pageSize: parameter.pageSize,
+            totalRows: res.data.totalRows,
+            totalPage: res.data.totalRows / parameter.pageSize,
             rows: res.data.rows,
           }
 
@@ -221,7 +228,6 @@ export default {
   },
 
   methods: {
-
     /**
      * 重置
      */
@@ -286,7 +292,6 @@ export default {
       this.form.resetFields()
       this.visible = false
     },
-
 
     /**
      * 开关

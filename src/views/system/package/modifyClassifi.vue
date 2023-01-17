@@ -87,26 +87,20 @@
               </a-select>
             </div>
   
-  
-            <!-- 备注说明 -->
-            <span style="margin-top: 10px; margin-left: 10px; width: 90px"> 备注说明:</span>
+
+
+            <div class="div-service-user" style="margin-top: -7px; margin-left: 0px; position: relative; height: 52%;margin-bottom: 10px;">
+            <span style="margin-top: 10px; width: 60px; margin-left: 9px;"> 备注说明:</span>
             <a-textarea
-              style="
-                height: 80px;
-                min-height: 100px;
-                margin-top: -17px;
-                margin-left: 70px;
-                margin-bottom: 30px;
-                width: 80%;
-              "
+              style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: 0px; width: 80%"
               v-model="checkData.remark"
               :maxLength="120"
               placeholder="请输入备注说明"
-              v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入备注说明' }] }]"
+              v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入备注说明！' }] }]"
             />
-            <!-- <span class="m-count-dd" style="position:bottom"
-                >{{ checkData.departmentIntroduce ? queryParams.departmentIntroduce.length : 0 }}/30</span -->
-            <!-- > -->
+            <span class="m-count-pxk">{{ checkData.remark ? checkData.remark.length : 0 }}/120</span>
+          </div>
+  
           </div>
         </div>
       </a-spin>
@@ -306,6 +300,21 @@
   </script>
   
   <style lang="less" scoped>
+
+.div-service-user {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
+}
+.m-count-pxk {
+  position: absolute;
+  font-size: 12px;
+  bottom: 2px;
+  right: 18px;
+}
+
   .m-count-dd {
     font-size: 12px;
     bottom: 2px;
