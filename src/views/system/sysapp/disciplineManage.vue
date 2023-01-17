@@ -15,17 +15,20 @@
       :defaultExpandAllRows="true"
     >
       <span slot="action" slot-scope="text, record">
-        <a v-if="record.key!==2 " @click="$refs.addDisc.addModel(record)">新增</a>
+        <a v-if="record.key!==2 " @click="$refs.addDisc.addModel(record.id)">新增</a>
         <a-divider v-if="record.key==1 " type="vertical" />
-        <a v-if="record.key!==0 " @click="$refs.modify.modify(record)">编辑</a>
+        <a v-if="record.key!==0 " @click="$refs.addDisc.editModel(record)">编辑</a>
         <a-divider v-if="record.key!==0 " type="vertical" />
-        <a v-if="record.key!==0 " @click="$refs.modify.modify(record)">删除</a>
+       
+        <a-popconfirm v-if="record.key!==0 " title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDataDelete(record)">
+              <a >删除</a>
+            </a-popconfirm>
       </span>
 
       <span v-if="record.key!==0 " slot="statuas" slot-scope="text, record">
         
-        <template v-if="true">
-          <a-popconfirm placement="topRight" :title="record.status.value==1 ? '确认停用？' : '确认启用？'" @confirm="() => statusCheck(record)">
+        <template v-if="record.key!==0 ">
+          <a-popconfirm placement="topRight" :title="record.status.value==1 ? '取消推荐？' : '确定推荐？'" @confirm="() => statusCheck(record)">
             <a-switch size="small" :checked="record.status.value==1" />
           </a-popconfirm>
         </template>
@@ -36,7 +39,7 @@
 
      </span>
     </a-table>
-    <modify ref="modify" @ok="handleOk" />
+    
     <add-Disc ref="addDisc" @ok="handleOk" />
   </a-card>
 </template>
@@ -44,14 +47,13 @@
     
     <script>
 import { STable } from '@/components'
-import { tenantInit, getTdMedicalSubjectPageList, updateStatus } from '@/api/modular/system/posManage'
+import { tenantInit, getTdMedicalSubjectPageList, updateStatus,deleteTdMedicalSubject,modifyTdMedicalSubject } from '@/api/modular/system/posManage'
 import addDisc from './addDisc'
-import modify from '../mechanism/modify'
+
 // import initRecord from './initRecord'
 export default {
   components: {
     STable,
-    modify,
     addDisc,
   },
   data() {
@@ -161,31 +163,31 @@ export default {
      */
     reset() {
      
-      this.getTdMedicalSubjectPageListOut(this.queryParams)
+      
     },
 
     /**
      * 开关
      */
     statusCheck(record) {
-      var state = !record.enableStatus
+      var state = record.status.value==1?2:1
       let queryParam = {
-        hospitalId: record.hospitalId,
-        status: state ? 1 : 2,
+        id: record.id,
+        status:state,
       }
       this.confirmLoading = true
-      updateStatus(queryParam)
+      modifyTdMedicalSubject(queryParam)
         .then((res) => {
-          if (res.code == 0 && res.success) {
-            record.enableStatus = state
-            //  this.$set(record, 'enableStatus', state)
+          if (res.code == 0 ) {
+            record.status.value = state
+           
             this.$message.success('操作成功')
           } else {
             this.$message.error('操作失败:' + res.message)
           }
-          setTimeout(() => {
-            this.handleOk()
-          }, 500)
+          // setTimeout(() => {
+          //   this.handleOk()
+          // }, 500)
         })
         .finally((res) => {
           this.confirmLoading = false
@@ -260,7 +262,23 @@ export default {
           this.confirmLoading = false
         })
     },
-
+    //删除
+    goDataDelete(record) {
+      if(record.children && record.children.length>0){
+        this.$message.error('该学科尚有子学科，无法删除')
+        return
+      }
+      this.confirmLoading = true
+      deleteTdMedicalSubject( record.id ).then((res) => {
+        this.confirmLoading = false
+        if (res.success) {
+          this.$message.success('删除成功！')
+          this.handleOk()
+        } else {
+          this.$message.error('删除失败：' + res.message)
+        }
+      })
+    },
     /**
      * 新增
      */
@@ -271,7 +289,7 @@ export default {
     handleOk() {
       // console.log("收到消息------")
       // this.$refs.table.refresh()
-      this.queryHospitalListOut(this.queryParams)
+      this.getTdMedicalSubjectPageListOut(this.queryParams)
     },
 
     handleCancel() {

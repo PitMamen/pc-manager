@@ -65,7 +65,7 @@
 
       <div class="search-row" style="margin-left: 15px; padding-bottom: 0%">
         <span class="name">时间:</span>
-        <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important" />
+        <a-range-picker   :value="createValue" @change="onChange" style="height: 28px !important;width: 185px" />
       </div>
 
       <div class="action-row">

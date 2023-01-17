@@ -232,7 +232,7 @@ export default {
 
     allClicked() {
       if (this.isSingle) {
-        this.$message.error('指定人员仅需添加一个')
+        this.$message.error('仅限添加一个')
         return
       }
 
@@ -307,14 +307,18 @@ export default {
       }
 
       if (this.isSingle && this.choseUsers.length == 1) {
-        this.$message.error('指定人员仅需添加一个')
+        this.$message.error('仅限添加一个')
         return
       }
 
       item.isChecked = true
       item.canAdd = false
       let tempItem = JSON.parse(JSON.stringify(item))
-      this.$set(tempItem, 'weight', 0)
+      if (this.isSingle) {
+        this.$set(tempItem, 'weight', 100)
+      }else{
+        this.$set(tempItem, 'weight', 0)
+      }
       this.$set(tempItem, 'achievementRatio', 0)
       this.choseUsers.push(tempItem)
       this.sortChoseUsers()

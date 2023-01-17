@@ -74,7 +74,7 @@
             </div>
             <div class="search-row">
               <span class="name">执行时间:</span>
-              <a-range-picker style="width: 208px; height: 28px" :format="format" v-model="queryParam.times" />
+              <a-range-picker style="width: 185px; height: 28px" :format="format" v-model="queryParam.times" />
             </div>
             <div class="action-row">
               <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">

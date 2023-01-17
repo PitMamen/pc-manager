@@ -48,7 +48,7 @@
 
       <div class="search-row">
         <span class="name">发送时间:</span>
-        <a-range-picker :value="createValue" @change="onChange" />
+        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
       </div>
 
       <div class="search-row">
