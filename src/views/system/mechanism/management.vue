@@ -19,7 +19,7 @@
       </div> -->
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
@@ -41,7 +41,7 @@
     </div>
 
     <a-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :pagination="false"
@@ -52,17 +52,24 @@
       :rowKey="(record) => record.hospitalId"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.addMechanism.add(record)"><a-icon type="plus-circle" style="margin-right:5px"></a-icon>新增</a>
+        <a @click="$refs.addMechanism.add(record)"
+          ><a-icon type="plus-circle" style="margin-right: 5px"></a-icon>新增</a
+        >
         <a-divider type="vertical" />
-        <a @click="$refs.modify.modify(record)"><a-icon type="edit" style="margin-right:5px"></a-icon>修改</a>
-        <a-divider type="vertical"  />
-          <a :disabled="record.orgType==1||record.orgType==2" @click="$refs.providerConfig.edit(record)"><a-icon type="apartment" style="margin-right: 5px" />服务商配置</a>
+        <a @click="$refs.modify.modify(record)"><a-icon type="edit" style="margin-right: 5px"></a-icon>修改</a>
+        <a-divider type="vertical" />
+        <a :disabled="record.orgType == 1 || record.orgType == 2" @click="$refs.providerConfig.edit(record)"
+          ><a-icon type="apartment" style="margin-right: 5px" />服务商配置</a
+        >
       </span>
 
       <span slot="statuas" slot-scope="text, record">
-        
         <template v-if="true">
-          <a-popconfirm placement="topRight" :title="record.enableStatus ? '确认停用？' : '确认启用？'" @confirm="() => statusCheck(record)">
+          <a-popconfirm
+            placement="topRight"
+            :title="record.enableStatus ? '确认停用？' : '确认启用？'"
+            @confirm="() => statusCheck(record)"
+          >
             <a-switch size="small" :checked="record.enableStatus" />
           </a-popconfirm>
         </template>
@@ -117,42 +124,40 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
       selects: [
-      {
+        {
           id: '',
-          name: '全部'
+          name: '全部',
         },
         {
           id: 1,
-          name: '启用'
+          name: '启用',
         },
         {
           id: 2,
-          name: '停用'
-        }
+          name: '停用',
+        },
       ],
       // 表头
       columns: [
         {
           title: '机构名称',
           dataIndex: 'hospitalName',
-          
+
           ellipsis: true,
         },
         {
           title: '机构代码',
           dataIndex: 'hospitalCode',
-         
         },
         {
           title: '中间件地址',
           dataIndex: 'middleware',
-         
+
           ellipsis: true,
         },
         {
           title: '排序',
           dataIndex: 'sortedNo',
-         
         },
 
         {
@@ -198,8 +203,8 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.hospitalName=''
-      this.queryParams.status=1
+      this.queryParams.hospitalName = ''
+      this.queryParams.status = 1
       this.queryHospitalListOut(this.queryParams)
     },
 
@@ -243,27 +248,24 @@ export default {
             res.data.forEach((item, index) => {
               this.$set(item, 'key', item.hospitalId)
               this.$set(item, 'enableStatus', item.status != null ? item.status.value == 1 : 2)
-              this.$set(item, 'children', item.hospitals)
-              
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
-               
-              })
+              if (item.hospitals && item.hospitals.length > 0) {
+                this.$set(item, 'children', item.hospitals)
+
+                item.hospitals.forEach((item1, index1) => {
+                  this.$set(item1, 'key', item1.hospitalId)
+                  this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
+                })
+              }
             })
-            
 
             this.loadData = res.data
-           
           } else {
             this.loadData = res.data
-           
           }
           return []
         })
         .finally((res) => {
           this.confirmLoading = false
-          
         })
     },
 
