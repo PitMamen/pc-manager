@@ -54,7 +54,7 @@
           </div>
 
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>显示序号:</span>
+            <span class="span-item-name">显示序号:</span>
             <a-input-number
               class="span-item-value"
               :min="0"
@@ -245,10 +245,10 @@ export default {
     handleSubmit() {
       console.log(this.checkData)
 
-      if (isStringEmpty(this.checkData.icon)) {
-        this.$message.error('请上传图标')
-        return
-      }
+      // if (isStringEmpty(this.checkData.icon)) {
+      //   this.$message.error('请上传图标')
+      //   return
+      // }
       if (isStringEmpty(this.checkData.pid)) {
         this.$message.error('请选择上级学科')
         return
@@ -257,10 +257,10 @@ export default {
         this.$message.error('请输入学科名称')
         return
       }
-      if (isStringEmpty(this.checkData.subjectOrder)) {
-        this.$message.error('请输入显示序号')
-        return
-      }
+      // if (isStringEmpty(this.checkData.subjectOrder)) {
+      //   this.$message.error('请输入显示序号')
+      //   return
+      // }
 
       this.confirmLoading = true
       if (this.record.id) {
