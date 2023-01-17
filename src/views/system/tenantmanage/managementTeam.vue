@@ -61,34 +61,14 @@
               <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteUser(record)">
                 <a><a-icon style="margin-right: 5px" type="delete"></a-icon>移除</a>
               </a-popconfirm>
-              <!-- <a-divider type="vertical" />
-                <a @click="$refs.addModel.editModel(record.articleId)">修改</a>
-                <a-divider type="vertical" />
-                <a @click="goPush(record)" :disabled="record.status == '2'">发布</a>
-                <a-divider type="vertical" />
-                <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="articleDelete(record)">
-                  <a>删除</a>
-                </a-popconfirm> -->
             </span>
 
-            <!-- <span slot="isVisible" slot-scope="text, record">
-              <a-popconfirm
-                placement="topRight"
-                :disabled="record.status != '2'"
-                :title="record.isVisible ? '确认下架？' : '确认上架？'"
-                @confirm="goShangjia(record)"
-              > -->
-            <!-- <a-switch size="small" :checked="record.isVisible" /> -->
-            <!-- </a-popconfirm>
-            </span> -->
           </s-table>
         </div>
       </div>
       <modify-Team ref="modifyTeam" @ok="handleOk" />
       <add-Team ref="addTeam" @ok="handleOk" />
       <add-TeamUser ref="addTeamUser" @ok="handleOk" />
-      <!-- <add-category ref="addCategory" @ok="handleOk" />
-        <check-model ref="checkModel" @ok="handleOk" /> -->
     </a-spin>
   </a-card>
 </template>
@@ -99,11 +79,8 @@ import { TRUE_USER } from '@/store/mutation-types'
 import modifyTeam from './modifyTeam'
 import addTeam from './addTeam'
 import addTeamUser from './addTeamUser'
-//   import checkModel from './checkModel'
 import Vue from 'vue'
 import {
-  modifyArticle,
-  deleteArticle,
   getTdHealthyTeamUserPageList,
   getTdHealthyTeamPageList,
   queryHospitalList,
@@ -122,13 +99,8 @@ export default {
   data() {
     return {
       // 高级搜索 展开/关闭
-      tabKey: 1,
-      advanced: false,
-      originData: [],
-      typeData: ['类型1', '类型2'],
       leftListData: [],
       confirmLoading: false,
-      idArr: [],
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -149,9 +121,6 @@ export default {
       params: {
         id: '',
       },
-
-      statusOut: 1,
-
       // 表头
       columns: [
         {
@@ -238,7 +207,6 @@ export default {
   methods: {
     onStatusSelect(id) {
       console.log('ddd********', id)
-      this.statusOut = id
       this.queryParam.isVisible = id == 1 ? true : false
     },
 
@@ -254,9 +222,7 @@ export default {
       this.queryParam.isVisible = true
       this.queryParam.categoryId = ''
       this.queryParam.departmentId = ''
-      this.statusOut = 1
 
-      this.idArr = []
       this.$refs.table.refresh()
     },
 

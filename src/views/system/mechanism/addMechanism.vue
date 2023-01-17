@@ -65,9 +65,9 @@
             v-model="queryParams.sortedNo"
             disabled
             allow-clear
-            style="width: 127px; margin-left: 0px; text-align: center"
+            style="width: 127px; margin-left: 7px; text-align: center"
           />
-          <a-button style="margin-left: 5px;width: 30px;" size="small" icon="minus" @click="duleNum()" />
+          <a-button style="margin-left: 7px;width: 30px;" size="small" icon="minus" @click="duleNum()" />
         </div>
 
         <!-- <div class="display-item" style="margin-left: 10px; margin-top: 10px">

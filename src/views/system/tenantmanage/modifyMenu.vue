@@ -34,7 +34,7 @@
         </a-select>
       </div>
   
-      <div class="div-service-user" style="margin-top: 20px">
+      <div class="div-service-user" style="margin-top: 10px">
         <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 菜单名称 :</span>
         <a-input
           class="span-item-value"
@@ -62,7 +62,7 @@
   
 
 
-      <div class="div-service-user" style="margin-top:20px">
+      <div class="div-service-user" style="margin-top:10px">
 
         <span  style="margin-top: 5px;margin-left: 23px;"><span style="color: red">*</span> 图标 :</span>
             <div class="avator-right">
