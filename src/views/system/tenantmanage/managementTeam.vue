@@ -192,7 +192,6 @@ export default {
     $route(to, from) {
       if (to.path.path == this.$router.path) {
         if (from.path == '/teach/editArticle' || from.path == '/teach/addArticle') {
-          console.log('watch----', '去刷新')
           this.handleOk()
         }
       }
@@ -206,12 +205,10 @@ export default {
 
   methods: {
     onStatusSelect(id) {
-      console.log('ddd********', id)
       this.queryParam.isVisible = id == 1 ? true : false
     },
 
     onStatusChange(id) {
-      console.log('fff********', id)
       if (!id) {
         delete this.queryParam.isVisible
       }
@@ -230,7 +227,6 @@ export default {
      * 下拉框选中
      */
     selectChange(data) {
-      console.log('ssss:', data)
       this.queryParam.hospitalCode = data
       this.getTdHealthyTeamPageListOut()
     },

@@ -92,7 +92,6 @@ export default {
     },
     //新增
     addUser(tdHealthyTeamId) {
-      console.log('UUUUU:', tdHealthyTeamId)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true

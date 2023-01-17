@@ -247,7 +247,7 @@
   
       onSelect(hospitalId) {
         //选择类别
-        console.log('选择类别:', hospitalId)
+        // console.log('选择类别:', hospitalId)
         for (let index = 0; index < this.treeData.length; index++) {
           if (hospitalId == this.treeData[index].hospitalId) {
             this.findItemData = JSON.parse(JSON.stringify(this.treeData[index]))
@@ -284,7 +284,7 @@
      * 短图标 
      */
     handleChangeSort(changeObj) {
-      console.log("MMM000",changeObj)
+      // console.log("MMM000",changeObj)
       if (changeObj.file.status == 'done') {
         if (changeObj.file.response.code != 0) {
           this.$message.error(changeObj.file.response.message)
@@ -298,7 +298,7 @@
         }
       }
 
-      console.log('icon:' + this.queryParams.icon)
+      // console.log('icon:' + this.queryParams.icon)
     },
 
 
@@ -307,7 +307,7 @@
      * 长图标
      */
      handleChangeLong(changeObj){
-      console.log("MMM111",changeObj)
+      // console.log("MMM111",changeObj)
       if (changeObj.file.status == 'done') {
         if (changeObj.file.response.code != 0) {
           this.$message.error(changeObj.file.response.message)
@@ -321,7 +321,7 @@
         }
       }
 
-      console.log('iconLong:' + this.queryParams.iconLong)
+      // console.log('iconLong:' + this.queryParams.iconLong)
     },
 
   
@@ -372,7 +372,7 @@
        */
        addTdShopmallMainpageMenuOut() {
         this.confirmLoading = true
-        console.log("bbb:",this.queryParams)
+        // console.log("bbb:",this.queryParams)
         addTdShopmallMainpageMenu(this.queryParams)
           .then((res) => {
             if (res.code == 0 && res.success) {
