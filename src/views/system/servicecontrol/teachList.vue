@@ -76,9 +76,10 @@
               v-for="(item, index) in articleList"
               :key="index"
               @click="handleChange(item.message_original_id)"
+              :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
             >
-              <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.articleName }}</div>
-              <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
+              {{ item.articleName }}
+             
             </div>
           </div>
         </a-spin>
@@ -346,13 +347,17 @@ export default {
     handleChange(value) {
       console.log(value)
       this.queryParam.articleId = value
-      if (this.queryParam.articleId) {
-        this.articleList.forEach((item) => {
+      this.articleList.forEach((item) => {
           item.checked = item.message_original_id == this.queryParam.articleId
+          if(item.message_original_id == this.queryParam.articleId){
+            this.queryParam.articleName = item.articleName
+          }
         })
-      } else {
+      if (!this.queryParam.articleId) {
         this.articleList[0].checked = true
-      }
+        this.queryParam.articleId =   this.articleList[0].message_original_id
+        this.queryParam.articleName =   this.articleList[0].articleName
+      } 
 
       this.articleListTemp = this.articleList
       this.$refs.table.refresh()
@@ -394,7 +399,7 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
-  height: 85vh;
+  height: 78vh;
   display: flex;
   flex-direction: row;
 
@@ -411,7 +416,7 @@ export default {
 
   .div-service-left-control {
     margin-right: 20px;
-    height: calc(100% - 86px);
+    height: calc(100% - 20px);
     min-height: 300px;
     flex-shrink: 0;
     width: 200px;
@@ -469,12 +474,19 @@ export default {
       color: #409eff;
     }
     .ksview {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+   
       height: 30px;
       font-size: 12px;
-      align-items: center;
+     
+width:179px;
+
+    
+
+white-space:nowrap;       
+
+overflow:hidden;           
+
+text-overflow:ellipsis;    
     }
     &:hover {
       cursor: pointer;
@@ -482,7 +494,7 @@ export default {
   }
   .div-service-right-control {
     flex: 1;
-    width: calc(100% - 220px);
+    width: calc(100% - 20px);
   }
 }
 
@@ -559,7 +571,7 @@ button {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 96px);
+      height: calc(100% - 40px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
