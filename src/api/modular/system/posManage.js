@@ -3578,11 +3578,35 @@ export function qryServiceItemList(data){
    */
    export function deleteTdHealthyTeamUser(data){
     return axios({
-      url:'/uam-api/tdHealthyTeamUserMapping/deleteTdHealthyTeamUser',
+      url:'/uam-api/tdHealthyTeamUserMapping/deleteTdHealthyTeamUser/'+data,
+      method:'get',
+      // params:data,
+    })
+  }
+
+
+    /**
+  * 管理团队添加人员 
+  */
+    export function addTdHealthyTeamUser(data){
+      return axios({
+        url:'/uam-api/tdHealthyTeamUserMapping/addTdHealthyTeamUser',
+        method:'post',
+        data:data,
+      })
+     }
+
+
+   /**
+  * 角色类型 
+  */
+   export function getDictDataForCodeTeamType(data){
+    return axios({
+      url:'/info-api/feign/sysdictdata/getDictDataForCode/TEAMROLE',
       method:'get',
       params:data,
     })
-  }
+   }
 
 
 /**

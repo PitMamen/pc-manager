@@ -13,9 +13,9 @@
           >
           </a-tree-select>
 
-          <div class="left-content">
-            <div class="typeadd" @click="$refs.addCategory.addModel()">
-              新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 10px;" />
+          <div class="left-content" style="margin-right: 10px">
+            <div class="typeadd" @click="$refs.addTeam.addTeam()">
+              新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
             <div class="ksview" v-for="(item, index) in leftListData" :key="index">
               <div
@@ -42,14 +42,12 @@
         <div class="div-service-right-control">
           <div class="table-page-search-wrapper">
             <div class="table-operator" style="overflow: hidden; margin-top: 0px; margin-bottom: 0px">
-              <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addModel.addModel()"
+              <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addTeamUser.addUser(params.id)"
                 >新增成员</a-button
               >
             </div>
           </div>
 
-          <!-- 去掉勾选框 -->
-          <!-- :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }" -->
           <s-table
             :scroll="{ x: true }"
             ref="table"
@@ -60,7 +58,9 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a><a-icon style="margin-right: 5px" type="delete"></a-icon>移除</a>
+              <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteUser(record)">
+                <a><a-icon style="margin-right: 5px" type="delete"></a-icon>移除</a>
+              </a-popconfirm>
               <!-- <a-divider type="vertical" />
                 <a @click="$refs.addModel.editModel(record.articleId)">修改</a>
                 <a-divider type="vertical" />
@@ -85,6 +85,8 @@
         </div>
       </div>
       <modify-Team ref="modifyTeam" @ok="handleOk" />
+      <add-Team ref="addTeam" @ok="handleOk" />
+      <add-TeamUser ref="addTeamUser" @ok="handleOk" />
       <!-- <add-category ref="addCategory" @ok="handleOk" />
         <check-model ref="checkModel" @ok="handleOk" /> -->
     </a-spin>
@@ -95,7 +97,8 @@
 import { STable } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
 import modifyTeam from './modifyTeam'
-//   import addModel from './addModel'
+import addTeam from './addTeam'
+import addTeamUser from './addTeamUser'
 //   import checkModel from './checkModel'
 import Vue from 'vue'
 import {
@@ -105,15 +108,15 @@ import {
   getTdHealthyTeamPageList,
   queryHospitalList,
   deleteTdHealthyTeam,
+  deleteTdHealthyTeamUser,
 } from '@/api/modular/system/posManage'
 
 export default {
   components: {
     STable,
     modifyTeam,
-    //   addCategory,
-    //   addModel,
-    //   checkModel,
+    addTeam,
+    addTeamUser,
   },
 
   data() {
@@ -203,7 +206,7 @@ export default {
           }
           if (res.code == 0 && res.data.records.length > 0) {
             data.rows.forEach((item, index) => {
-              this.$set(item, 'teamRoleValue', item.teamRole.description)
+              this.$set(item, 'teamRoleValue', item.teamRole ? item.teamRole.description : '')
             })
           }
 
@@ -228,16 +231,6 @@ export default {
   },
 
   created() {
-    /** 计划分配方法*/
-    // getDepts().then((res) => {
-    //   if (res.code == 0) {
-    //     this.originData = res.data
-    //   } else {
-    //     // this.$message.error('获取计划列表失败：' + res.message)
-    //   }
-    // })
-
-    //   this.getArticleCategoryListOut()
     this.getTdHealthyTeamPageListOut()
     this.queryHospitalListOut()
   },
@@ -321,19 +314,24 @@ export default {
     getTdHealthyTeamPageListOut() {
       getTdHealthyTeamPageList(this.queryParam).then((res) => {
         if (res.code == 0) {
-          res.data.records.forEach((item) => {
-            item.checked = false
-          })
-          this.leftListData = res.data.records
+          if (res.data.records && res.data.records.length > 0) {
+            res.data.records.forEach((item) => {
+              item.checked = false
+            })
+            this.leftListData = res.data.records
+            this.params.id = this.leftListData[0].id //默认第一个 id
+          } else {
+            this.leftListData=[]
+            this.params.id = -1 //默认第一个 id
+          }
+          this.$refs.table.refresh()
         } else {
           this.$message.error('获取失败：' + res.message)
         }
       })
     },
 
-    onTabChange(key) {
-      console.log(key)
-    },
+    //选中团队
     onCategoryChange(item) {
       console.log(item)
       this.leftListData.forEach((e) => {
@@ -347,46 +345,7 @@ export default {
       })
       this.$refs.table.refresh()
     },
-    //新建文章
-    goAdd() {
-      this.$router.push({ name: 'article_teach_add', params: null })
-    },
-    //查看文章
-    goCheck(record) {
-      this.$router.push({ name: 'article_teach_check', query: { recordStr: JSON.stringify(record) } })
-    },
-    //修改文章
-    goChange(record) {
-      console.log(record)
-      this.$router.push({ name: 'article_teach_edit', query: { recordStr: JSON.stringify(record) } })
-    },
-    //发布
-    goPush(record) {
-      this.confirmLoading = true
-      modifyArticle({ id: record.articleId, status: '2' }).then((res) => {
-        this.confirmLoading = false
-        if (res.code == 0) {
-          this.$message.success('发布成功')
-          this.handleOk()
-        } else {
-          this.$message.error('发布失败：' + res.message)
-        }
-      })
-    },
 
-    //删除文章
-    articleDelete(record) {
-      this.confirmLoading = true
-      deleteArticle(record.articleId).then((res) => {
-        this.confirmLoading = false
-        if (res.code == 0) {
-          this.$message.success('删除成功')
-          this.handleOk()
-        } else {
-          this.$message.error('删除失败：' + res.message)
-        }
-      })
-    },
     //删除团队
     goDelete(item) {
       this.confirmLoading = true
@@ -402,10 +361,28 @@ export default {
       })
     },
 
+    /**
+     * 删除成员
+     */
+    deleteUser(record) {
+      this.confirmLoading = true
+      deleteTdHealthyTeamUser(record.id)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('删除成功')
+            this.handleOk()
+          } else {
+            this.$message.error('删除失败：' + res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
     handleOk() {
       this.getTdHealthyTeamPageListOut() //刷新健康团队列表 (左侧)
       this.$refs.table.refresh()
-      //   this.getHealthyTeamUserListOut()
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
