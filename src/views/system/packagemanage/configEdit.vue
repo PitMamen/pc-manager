@@ -95,8 +95,8 @@
                 <a-input-number
                   style="display: inline-block; margin-left: 1%; width: 60px"
                   v-model="itemTask.saleAmount"
-                  :min="1"
-                  :max="99999"
+                  :min="0"
+                  :max="999999"
                   :maxLength="30"
                   allow-clear
                   placeholder=""
@@ -301,8 +301,8 @@
               <a-input-number
                 style="display: inline-block; margin-left: 1%; width: 60px"
                 v-model="itemTask.saleAmount"
-                :min="1"
-                :max="99999"
+                :min="0"
+                :max="999999"
                 :maxLength="30"
                 allow-clear
                 placeholder=""
@@ -374,10 +374,7 @@
             </div>
 
             <!-- itemImg -->
-            <a-checkbox
-              style="margin-left: 1%"
-              :checked="itemTask.isHeadImg"
-              @click="goHeadImg(indexOut, indexTask, itemTask)"
+            <a-checkbox style="margin-left: 1%" :checked="itemTask.isHeadImg" @click="goHeadImgBi(indexTask, itemTask)"
               >项目图片</a-checkbox
             >
           </div>
@@ -420,7 +417,7 @@
                 title="确定删除吗？"
                 ok-text="确定"
                 cancel-text="取消"
-                @confirm="delItemsBi(indexBi, itemBi)"
+                @confirm="delItemsBi(indexTask, itemTask)"
               >
                 <span class="span-end" style="margin-left: 2%; width: 92px">刪除项目</span>
               </a-popconfirm>
@@ -441,7 +438,6 @@
         <a-button style="margin-left: 79.5%; float: right" type="primary" @click="submitData()">提交</a-button>
         <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
       </div>
-
     </div>
   </a-spin>
 </template>
@@ -454,8 +450,7 @@ import Vue from 'vue'
 import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
-  components: {
-  },
+  components: {},
 
   data() {
     return {
@@ -601,9 +596,17 @@ export default {
     moment,
     goCheckServicePeriod(itemTask) {
       debugger
+      if (!itemTask.serviceItemId) {
+        this.$message.warn('请先选择项目')
+        return
+      }
       itemTask.needServicePeriod = !itemTask.needServicePeriod
     },
     goCheckChatNum(itemTask) {
+      if (!itemTask.serviceItemId) {
+        this.$message.warn('请先选择项目')
+        return
+      }
       itemTask.needChatNum = !itemTask.needChatNum
     },
     delItemsKe(indexOut, indexTask, itemTask) {
@@ -630,12 +633,13 @@ export default {
       this.configData.tasksKe.splice(indexOut, 1)
     },
 
-    delItemsBi(indexBi, itemBi) {
-      if (this.configData.tasksBi[indexBi].length == 1) {
+    delItemsBi(indexTask, itemTask) {
+      debugger
+      if (this.configData.tasksBi[indexTask].length == 1) {
         this.$message.warn('至少需要一条必选项目')
         return
       }
-      this.configData.tasksBi.splice(indexBi, 1)
+      this.configData.tasksBi.splice(indexTask, 1)
     },
 
     addItemsBi() {
@@ -736,8 +740,33 @@ export default {
       }
     },
 
+    //每个条目只勾选一个
     goHeadImg(indexOut, indexTask, itemTask) {
-      itemTask.isHeadImg = !itemTask.isHeadImg
+      if (!itemTask.serviceItemId) {
+        this.$message.warn('请先选择项目')
+        return
+      }
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+          this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg = false
+        }
+      }
+
+      this.configData.tasksKe[indexOut].itemsKe[indexTask].isHeadImg = true
+    },
+
+    //每个条目只勾选一个
+    goHeadImgBi(indexTask, itemTask) {
+      if (!itemTask.serviceItemId) {
+        this.$message.warn('请先选择项目')
+        return
+      }
+      // itemTask.isHeadImg = !itemTask.isHeadImg
+      // debugger
+      for (let index = 0; index < this.configData.tasksBi.length; index++) {
+        this.configData.tasksBi[index].isHeadImg = false
+      }
+      this.configData.tasksBi[indexTask].isHeadImg = true
     },
 
     /**
@@ -932,11 +961,11 @@ export default {
 
           .mid-select-one.ant-select {
             width: 10% !important;
-            margin-left: 5px !important;
+            margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
             width: 10% !important;
-            margin-left: 5px !important;
+            margin-left: 1% !important;
           }
 
           .end-btn-stop {
@@ -1001,11 +1030,11 @@ export default {
 
           .mid-select-one.ant-select {
             width: 12% !important;
-            margin-left: 5px !important;
+            margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
             width: 80px !important;
-            margin-left: 5px !important;
+            margin-left: 1% !important;
           }
         }
       }
@@ -1101,11 +1130,11 @@ export default {
 
           .mid-select-one.ant-select {
             width: 12% !important;
-            margin-left: 5px !important;
+            margin-left: 1% !important;
           }
           .mid-select-two.ant-select {
             width: 80px !important;
-            margin-left: 5px !important;
+            margin-left: 1% !important;
           }
         }
       }
