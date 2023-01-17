@@ -58,7 +58,7 @@
 
       <div class="search-row">
         <span class="name">执行时间:</span>
-        <a-range-picker :value="createValue" @change="onChange" />
+        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
       </div>
 
       <div class="search-row">

@@ -45,9 +45,7 @@
           <!-- v-model="queryParams.isVisible" -->
           <a-select
             placeholder="请选择状态"
-            v-model="statusOut"
-            @select="onStatusSelect"
-            @change="onStatusChange"
+            v-model="queryParam.readStatus"
             allow-clear
             style="width: 120px; height: 28px"
           >
@@ -56,28 +54,36 @@
         </div>
         <div class="search-row">
           <span class="name">发送时间:</span>
-          <a-range-picker :value="createValue" @change="onChange" />
+          <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
         </div>
         <div class="action-row">
           <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-            <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+            <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
             <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
           </span>
         </div>
       </div>
       <div class="div-service-control">
+        
         <div class="div-service-left-control">
           <div class="toptab">
             <div>文章列表</div>
           </div>
-
+          <a-spin :spinning="confirmLoading2">
           <div class="left-content">
-            <div class="ksview" v-for="(item, index) in articleList" :key="index" @click="handleChange(item.message_original_id) ">
+            <div
+              class="ksview"
+              v-for="(item, index) in articleList"
+              :key="index"
+              @click="handleChange(item.message_original_id)"
+            >
               <div :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'">{{ item.articleName }}</div>
               <a-icon v-if="item.checked" type="check" :style="{ color: '#409EFF' }" />
             </div>
           </div>
+        </a-spin>
         </div>
+      
         <div class="div-service-right-control">
           <s-table
             :scroll="{ x: true }"
@@ -89,9 +95,13 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="articleDelete(record)">
-                <a>重新发送</a>
+              <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="send(record)">
+                <a :disabled="record.readStatus.value == 2">重新发送</a>
               </a-popconfirm>
+            </span>
+            <span slot="status" slot-scope="text, record">
+              <span v-if="record.readStatus.value == 2" style="color: green">{{ record.readStatus.description }}</span>
+              <span v-if="record.readStatus.value == 1" style="color: red">{{ record.readStatus.description }}</span>
             </span>
           </s-table>
         </div>
@@ -115,11 +125,6 @@ import {
   modifyArticle,
   getDepartmentListForSelect,
   getFollowArticleUserData,
-  getDepts,
-  getDeptsPersonal,
-  getArticleCategoryList,
-  getArticleList,
-  deleteArticleCategory,
   deleteArticle,
 } from '@/api/modular/system/posManage'
 
@@ -143,6 +148,7 @@ export default {
       createValue: [],
       typeData: ['类型1', '类型2'],
       confirmLoading: false,
+      confirmLoading2:false,
       idArr: [],
       labelCol: {
         xs: { span: 24 },
@@ -159,8 +165,7 @@ export default {
         departmentId: undefined,
         startTime: '',
         endTime: '',
-        title: '',
-        isVisible: true,
+        readStatus: undefined,
       },
       statusOut: 1,
 
@@ -168,35 +173,35 @@ export default {
       columns: [
         {
           title: '文章名称',
-          dataIndex: 'title',
+          dataIndex: 'articleName',
         },
 
         {
           title: '姓名',
-          dataIndex: 'creatorName',
+          dataIndex: 'userName',
         },
         {
           title: '执行科室',
-          dataIndex: 'clickNum',
+          dataIndex: 'executeDepartmentName',
         },
         {
           title: '随访方案',
-          dataIndex: 'createdTime',
+          dataIndex: 'planName',
         },
         {
           title: '发送方式',
-          dataIndex: 'updatedTime',
+          dataIndex: 'messageTypeValue',
         },
         {
           title: '发送时间',
-          dataIndex: '',
+          dataIndex: 'actualExecTime',
         },
 
         {
           title: '阅读状态',
-          dataIndex: 'statusName',
+          // dataIndex: 'status',
+          scopedSlots: { customRender: 'status' },
         },
-
         {
           title: '操作',
           fixed: 'right',
@@ -213,40 +218,29 @@ export default {
         },
         {
           id: 1,
-          name: '已读',
+          name: '未读',
         },
         {
           id: 2,
-          name: '未读',
+          name: '已读',
         },
       ],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-  
-
         return getFollowArticleUserData(Object.assign(parameter, this.queryParam)).then((res) => {
-        
           //组装控件需要的数据结构
           var data = {
             pageNo: parameter.pageNo,
             pageSize: parameter.pageSize,
             totalRows: res.data.total,
-            totalPage: res.data.total / parameter.pageSize,
+            totalPage: res.data.pages,
             rows: res.data.records,
           }
 
           //设置序号
           data.rows.forEach((item, index) => {
-            item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-            if (!item.clickNum) {
-              item.clickNum = 0
-            }
-            if (item.status == '2') {
-              this.$set(item, 'statusName', '已发布')
-            } else {
-              this.$set(item, 'statusName', '暂存')
-            }
+            item.messageTypeValue = item.messageType.description
           })
 
           return data
@@ -264,30 +258,21 @@ export default {
   },
 
   methods: {
-    onStatusSelect(id) {
-      console.log('ddd********', id)
-      this.statusOut = id
-      this.queryParam.isVisible = id == 1 ? true : false
-    },
 
-    onStatusChange(id) {
-      console.log('fff********', id)
-      if (!id) {
-        delete this.queryParam.isVisible
-      }
+    queryAgain(){
+     
+      this.getFollowArticleDataOut()
     },
-
     reset() {
-      this.queryParam.title = ''
-      this.queryParam.isVisible = true
+      this.queryParam.departmentId = undefined
+      this.queryParam.startTime = ''
+      this.queryParam.endTime = ''
+      this.queryParam.readStatus = undefined
+      this.queryParam.articleId =undefined
+        this.queryParam.articleName =undefined
 
-      this.queryParam.departmentId = ''
-      this.statusOut = 1
 
-      this.getArticleCategoryListOut()
-      this.getDepartmentSelectList()
-      this.idArr = []
-      this.$refs.table.refresh()
+      this.getFollowArticleDataOut()
     },
 
     onTabChange(key) {
@@ -295,6 +280,7 @@ export default {
     },
     //获取文章列表
     getFollowArticleDataOut() {
+      this.confirmLoading2=true
       var postData = {
         departmentId: this.queryParam.departmentId,
         startTime: this.queryParam.startTime,
@@ -306,20 +292,23 @@ export default {
             res.data.forEach((item) => {
               item.checked = item.message_original_id == this.queryParam.articleId
             })
-          }else{
-            res.data[0].checked=true
-            this.queryParam.articleId= res.data[0].message_original_id
+          } else {
+            res.data[0].checked = true
+            this.queryParam.articleId = res.data[0].message_original_id
+            this.queryParam.articleName = res.data[0].articleName
           }
 
           this.articleList = res.data
           this.articleListTemp = res.data
           this.$refs.table.refresh()
         } else {
-          this.queryParam.articleId= undefined
+          this.queryParam.articleId = undefined
           this.articleList = []
           this.articleListTemp = []
           this.$refs.table.refresh()
         }
+      }).finally(()=>{
+        this.confirmLoading2=false
       })
     },
     //获取管理的科室 可首拼
@@ -345,7 +334,7 @@ export default {
         this.originData = []
         this.getDepartmentSelectList(undefined)
       }
-      this.$refs.table.refresh(true)
+      // this.$refs.table.refresh(true)
     },
     handleSearch(inputName) {
       if (inputName) {
@@ -356,95 +345,47 @@ export default {
     },
     handleChange(value) {
       console.log(value)
-      this.queryParam.articleId=value
+      this.queryParam.articleId = value
       if (this.queryParam.articleId) {
         this.articleList.forEach((item) => {
-              item.checked = item.message_original_id == this.queryParam.articleId
-            })
-          }else{
-            this.articleList[0].checked=true
-          }
+          item.checked = item.message_original_id == this.queryParam.articleId
+        })
+      } else {
+        this.articleList[0].checked = true
+      }
 
-          
-          this.articleListTemp = this.articleList
+      this.articleListTemp = this.articleList
+      this.$refs.table.refresh()
     },
-    
+
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
       this.queryParam.startTime = dateArr[0]
       this.queryParam.endTime = dateArr[1]
     },
-    onSwitchChange(value) {
-      console.log(value)
-      this.queryParam.isVisible = value
+   
+    //重新发送
+    send(record) {
+      this.$message.success('该功能待开发')
+      // this.confirmLoading = true
+      // modifyArticle({ id: record.articleId, status: '2' }).then((res) => {
+      //   this.confirmLoading = false
+      //   if (res.code == 0) {
+      //     this.$message.success('发送成功')
+      //     this.handleOk()
+      //   } else {
+      //     this.$message.error('发送失败：' + res.message)
+      //   }
+      // })
+    },
+   
 
-      this.$refs.table.refresh(true)
-    },
-    //新建文章
-    goAdd() {
-      this.$router.push({ name: 'article_teach_add', params: null })
-    },
-    //查看文章
-    goCheck(record) {
-      this.$router.push({ name: 'article_teach_check', query: { recordStr: JSON.stringify(record) } })
-    },
-    //修改文章
-    goChange(record) {
-      console.log(record)
-      this.$router.push({ name: 'article_teach_edit', query: { recordStr: JSON.stringify(record) } })
-    },
-    //发布
-    goPush(record) {
-      this.confirmLoading = true
-      modifyArticle({ id: record.articleId, status: '2' }).then((res) => {
-        this.confirmLoading = false
-        if (res.code == 0) {
-          this.$message.success('发布成功')
-          this.handleOk()
-        } else {
-          this.$message.error('发布失败：' + res.message)
-        }
-      })
-    },
-    //上架
-    goShangjia(record) {
-      this.confirmLoading = true
-      var _isVisible = !record.isVisible
-      modifyArticle({ id: record.articleId, isVisible: _isVisible }).then((res) => {
-        this.confirmLoading = false
-        if (res.code == 0) {
-          this.$message.success('操作成功')
-          // this.handleOk()
-          record.isVisible = _isVisible
-        } else {
-          this.$message.error('操作失败：' + res.message)
-          record.isVisible = !_isVisible
-        }
-      })
-    },
-
-    //删除文章
-    articleDelete(record) {
-      this.confirmLoading = true
-      deleteArticle(record.articleId).then((res) => {
-        this.confirmLoading = false
-        if (res.code == 0) {
-          this.$message.success('删除成功')
-          this.handleOk()
-        } else {
-          this.$message.error('删除失败：' + res.message)
-        }
-      })
-    },
+ 
 
     handleOk() {
       this.$refs.table.refresh()
-      this.getArticleCategoryListOut()
     },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
-    },
+  
   },
 }
 </script>

@@ -84,12 +84,12 @@
 
           <div class="search-row">
             <span class="name">执行日期:</span>
-            <a-range-picker :value="createValue" @change="onChange" />
+            <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
           </div>
 
           <div class="search-row" v-if="queryParams.type == 2">
             <span class="name">抽查日期:</span>
-            <a-range-picker :value="createValueCheck" @change="onChangeCheck" />
+            <a-range-picker style="width: 185px" :value="createValueCheck" @change="onChangeCheck" />
           </div>
           <div class="search-row" v-if="queryParams.type == 1">
             <span class="name">患者查找:</span>

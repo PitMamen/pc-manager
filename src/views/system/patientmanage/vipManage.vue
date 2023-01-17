@@ -67,7 +67,7 @@
 
         <div class="search-row" v-if="item.type == 2">
           <span class="name">{{ item.fieldComment }}:</span>
-          <a-range-picker :value="createValue" v-model="item.arrMoment" />
+          <a-range-picker style="width: 185px" :value="createValue" v-model="item.arrMoment" />
         </div>
       </div>
 
