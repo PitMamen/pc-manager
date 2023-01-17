@@ -65,20 +65,23 @@
                   }}</a-select-option>
                 </a-select>
 
-                <!-- @focus="onTemFocus(indexTask, itemTask)"
-                @select="onTemSelect(indexTask, itemTask)" -->
-                <a-select
-                  class="mid-select-two"
-                  v-model="itemTask.serviceItemId"
-                  allow-clear
-                  @select="onTypeSelect(indexOut, indexTask, itemTask)"
+                <a-auto-complete
+                  class="global-search"
+                  size="large"
+                  style="font-size: 12px; margin-left: 1%"
                   placeholder="请选择项目"
+                  v-model="itemTask.serviceItemId"
+                  option-label-prop="title"
+                  @select="onSelect(itemTask)"
+                  @search="handleSearch"
                 >
-                  <!-- <a-select-option v-for="(item, index) in itemTask.itemTemplateList" :key="index" :value="item.id">{{ -->
-                  <a-select-option v-for="(item, index) in serviceData" :key="index" :value="item.id">{{
-                    item.projectName
-                  }}</a-select-option>
-                </a-select>
+                  <template slot="dataSource">
+                    <a-select-option v-for="item in serviceData" :key="item.id + ''" :title="item.projectName">
+                      {{ item.projectName }}
+                    </a-select-option>
+                  </template>
+                </a-auto-complete>
+
                 <span style="margin-left: 1%">*</span>
 
                 <a-input-number
@@ -271,20 +274,23 @@
                 }}</a-select-option>
               </a-select>
 
-              <!-- @focus="onTemFocus(indexTask, itemTask)"
-                @select="onTemSelect(indexTask, itemTask)" -->
-              <a-select
-                class="mid-select-two"
-                v-model="itemTask.serviceItemId"
-                allow-clear
-                @select="onTypeSelectBi(indexTask, itemTask)"
+              <a-auto-complete
+                class="global-search"
+                size="large"
+                style="font-size: 12px; margin-left: 1%"
                 placeholder="请选择项目"
+                v-model="itemTask.serviceItemId"
+                option-label-prop="title"
+                @select="onSelect(itemTask)"
+                @search="handleSearch"
               >
-                <!-- <a-select-option v-for="(item, index) in itemTask.itemTemplateList" :key="index" :value="item.id">{{ -->
-                <a-select-option v-for="(item, index) in serviceData" :key="index" :value="item.id">{{
-                  item.projectName
-                }}</a-select-option>
-              </a-select>
+                <template slot="dataSource">
+                  <a-select-option v-for="item in serviceData" :key="item.id + ''" :title="item.projectName">
+                    {{ item.projectName }}
+                  </a-select-option>
+                </template>
+              </a-auto-complete>
+
               <span style="margin-left: 1%">*</span>
 
               <a-input-number
@@ -586,7 +592,7 @@ export default {
     this.record = JSON.parse(this.$route.query.recordStr)
     console.log('record', this.record)
     this.confirmLoading = true
-    this.qryServiceItemListOut()
+    this.qryServiceItemListOut('', true)
     this.getDictDataOut()
 
     // this.confirmLoading = true
@@ -645,65 +651,21 @@ export default {
     addItemsBi() {
       this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined })
     },
-
+ 
     /**
-     *
-     * 类型选择了自动选择第一项
-     * @param {*} indexOut
-     * @param {*} indexTask
-     * @param {*} itemTask
-     *
-     * typeCode  1 图文咨询 2 视频咨询 3 电话咨询 4 普通商品
+     *autoComplete回调，本地模拟的数据处理
      */
-    onTypeSelect(indexOut, indexTask, itemTask) {
-      console.log('selectType ke', itemTask.serviceItemId)
-      let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
-      debugger
-      itemTask.typeCode = findItem.projectType + ''
-
-      //构造属性，用于前端显示，后台不需要，包括 typeCode 字段
-      this.$set(itemTask, 'normsModel', findItem.normsModel)
-      this.$set(itemTask, 'suggestPrice', findItem.suggestPrice)
-      this.$set(itemTask, 'factoryName', findItem.factoryName)
-      console.log('selectType findItem', JSON.stringify(findItem))
-      console.log('selectType typeCode', findItem.projectType)
-
-      //2 视频咨询 3 电话咨询 特有服务时长
-
-      //1 图文咨询 特有 限制条数
-      // 构造参数 serviceTime(服务时长) chatNum(限制条数)前端用，保存的时候要用来组装itemAttr数据结构
-      if (itemTask.typeCode == 2 || itemTask.typeCode == 3) {
-        this.$set(itemTask, 'serviceTime', undefined)
-      }
-      if (itemTask.typeCode == 1) {
-        this.$set(itemTask, 'chatNum', undefined)
-        this.$set(itemTask, 'needChatNum', false)
-      }
-
-      //服务时效都有
-      this.$set(itemTask, 'servicePeriod', undefined)
-      this.$set(itemTask, 'needServicePeriod', false)
-      this.$set(itemTask, 'servicePeriodUnit', 1)
-
-      this.$set(itemTask, 'isHeadImg', false)
-
-      //处理findItem的可配置项
-      for (let index = 0; index < findItem.itemAttr.length; index++) {
-        findItem.itemAttr[index]
-      }
+    handleSearch(inputName) {
+      console.log('handleSearch ', inputName)
+      this.qryServiceItemListOut(inputName, false)
     },
 
     /**
-     *
-     * 类型选择了自动选择第一项
-     * @param {*} indexOut
-     * @param {*} indexTask
+     *  typeCode  1 图文咨询 2 视频咨询 3 电话咨询 4 普通商品
      * @param {*} itemTask
-     *
-     * typeCode  1 图文咨询 2 视频咨询 3 电话咨询 4 普通商品
      */
-    onTypeSelectBi(indexTask, itemTask) {
-      console.log('selectType ke', itemTask.serviceItemId)
+    onSelect(itemTask) {
+      console.log('itemTask ', itemTask)
       let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
       debugger
       itemTask.typeCode = findItem.projectType + ''
@@ -787,22 +749,28 @@ export default {
     /**
      * 服务项目列表
      */
-    qryServiceItemListOut() {
-      this.confirmLoading = true
+    qryServiceItemListOut(name, isFirst) {
+      if (isFirst) {
+        this.confirmLoading = true
+      }
       qryServiceItemList({
         pageNo: 1,
         pageSize: 9999,
         status: 1,
+        projectName: name,
       })
         .then((res) => {
           if (res.code == 0) {
             this.serviceData = res.data.rows
-            this.getDetailData()
+            if (isFirst) {
+              this.getDetailData()
+            }
+            if (!isFirst) {
+              this.confirmLoading = false
+            }
           }
         })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
+        .finally((res) => {})
     },
 
     getDetailData() {
