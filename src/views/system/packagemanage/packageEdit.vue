@@ -480,6 +480,7 @@ export default {
       getPkgDetail(this.commodityPkgId).then((res) => {
         if (res.code == 0) {
           this.packageData = res.data
+          console.log('packageData Detail', this.packageData)
           //这个可以提前处理，不放在processData里面
           if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
             this.needPlan = true
@@ -1325,7 +1326,8 @@ export default {
       } else {
         tempData.commodityPkgManageReqs = []
       }
-      console.log('tempData sub', JSON.stringify(tempData))
+      debugger
+      console.log('tempData modify', JSON.stringify(tempData))
 
       this.confirmLoading = true
       saveOrUpdate(tempData)

@@ -701,7 +701,6 @@ export default {
       }
     },
 
-    
     getNewRsp() {
       this.$set(this.packageData, 'commodityPkgManageReqs', [])
       this.packageData.commodityPkgManageReqs.push({
@@ -1080,8 +1079,7 @@ export default {
       } else {
         tempData.commodityPkgManageReqs = []
       }
-
-      console.log('tempData sub', JSON.stringify(tempData))
+      console.log('tempData add', JSON.stringify(tempData))
 
       this.confirmLoading = true
       saveOrUpdate(tempData)
