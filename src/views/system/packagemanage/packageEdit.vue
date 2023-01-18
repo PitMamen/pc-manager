@@ -596,16 +596,18 @@ export default {
           url: item,
         })
       })
-
+      debugger
       this.fileListBanner = []
-      this.packageData.bannerImgs.forEach((item, index) => {
-        this.fileListBanner.push({
-          uid: 0 - index + '',
-          name: 'Banner' + index,
-          status: 'done',
-          url: item,
+      if (this.packageData.bannerImgs && this.packageData.bannerImgs.length > 0) {
+        this.packageData.bannerImgs.forEach((item, index) => {
+          this.fileListBanner.push({
+            uid: 0 - index + '',
+            name: 'Banner' + index,
+            status: 'done',
+            url: item,
+          })
         })
-      })
+      }
 
       this.fileListDetail = []
       this.packageData.detailImgs.forEach((item, index) => {
