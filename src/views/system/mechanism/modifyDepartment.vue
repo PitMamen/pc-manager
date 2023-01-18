@@ -34,7 +34,7 @@
         />
       </div>
   
-      <div class="div-service-user" style="margin-top: 20px;">
+      <div class="div-service-user" style="margin-top: 10px;">
         <span class="span-item-name" style="margin-top: 5px;"
           ><span style="color: red">*</span> 科室类型 :</span
         >
@@ -50,6 +50,7 @@
           ><span style="color: red">*</span> 科室位置 :</span
         >
         <a-input
+        :disabled="queryParams.departmentType==8"
           class="span-item-value"
           v-model="queryParams.departmentAddr"
           :maxLength="30"
@@ -59,11 +60,12 @@
         />
       </div>
   
-      <div class="div-service-user" style="margin-top: 20px;">
+      <div class="div-service-user" style="margin-top: 10px;">
         <span class="span-item-name" style="margin-top: 5px; "
           ><span style="color: red">*</span> HIS编码  :</span
         >
         <a-input
+        :disabled="queryParams.departmentType==8"
           type="number"
           class="span-item-value"
           v-model="queryParams.hisId"
@@ -88,14 +90,14 @@
       </div>
   
       <div class="display-item" style="margin-left: 5px; margin-top: 10px;">
-        <span style="margin-top: 10px"> 科室类型 :</span>
+        <span style="margin-top: 10px"> 科室属性 :</span>
 
         
-      <a-checkbox style="margin-left:10px" v-model="internetType"  @change="radioChange1"
+      <a-checkbox style="margin-left:10px" v-model="internetType"  @change="radioChange1"   :disabled="queryParams.departmentType==8"
         >互联网医院科室</a-checkbox
       >
 
-      <a-checkbox  v-model="isFullDiseaseType" @change="radioChange2"
+      <a-checkbox  v-model="isFullDiseaseType" @change="radioChange2"   :disabled="queryParams.departmentType==8"
         >全病程科室</a-checkbox
       >
   
@@ -111,7 +113,7 @@
         </a-radio-group> -->
       </div>
   
-      <div class="div-service-user" style="margin-top: 10px;margin-left: 7px; position: relative">
+      <div class="div-service-user" style="margin-top: 5px;margin-left: 7px; position: relative">
       <span style="margin-top: 10px;width: 90px;"> 科室简介 :</span>
       <a-textarea
       style="height: 80px; min-height: 80px; margin-top: 10px;margin-left: -28px;width: 87%;"
@@ -167,7 +169,7 @@
           isFullDisease: '',
           departmentIntroduce: '',
           departmentId: '',
-          departmentType:'',
+          departmentType:undefined,
         },
   
         labelCol: {
@@ -490,11 +492,18 @@
           this.$message.error('请输入His编码')
           return
         }
-  
-        // if (!this.queryParams.departmentIntroduce) {
-        //   this.$message.error('请编辑科室简介')
-        //   return
-        // }
+
+
+        /**
+         * 如果选中的是企业部门 则不传 科室编码、科室位置、科室属性参数
+         */
+       if(this.queryParams.departmentType==8){
+        this.queryParams.hisId = ''
+        this.queryParams.departmentAddr = ''
+        this.internetType = false
+        this.isFullDiseaseType = false
+       }
+
   
         this.modifyDepartmentForReqOut()
       },

@@ -11,13 +11,13 @@
     <div class="div-service-user">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 上级机构 :</span>
       <a-tree-select
-      v-model="queryParams.hospitalCode"
-      style="min-width: 248px;margin-left: 5px"
-      :tree-data="treeData"
-      placeholder="请选择"
-      tree-default-expand-all
-    >
-    </a-tree-select>
+        v-model="queryParams.hospitalCode"
+        style="min-width: 248px; margin-left: 5px"
+        :tree-data="treeData"
+        placeholder="请选择"
+        tree-default-expand-all
+      >
+      </a-tree-select>
 
       <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
         ><span style="color: red">*</span> 科室名称 :</span
@@ -32,7 +32,7 @@
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px">
+    <div class="div-service-user" style="margin-top: 10px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 科室类型 :</span>
       <a-select
         style="min-width: 248px; margin-left: 5px"
@@ -45,11 +45,11 @@
         }}</a-select-option>
       </a-select>
 
-      <span class="span-item-name" style="margin-top: 5px; margin-left: 48px"> 科室位置 :</span
-      >
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 48px"> 科室位置 :</span>
       <a-input
         class="span-item-value"
         v-model="queryParams.departmentAddr"
+        :disabled="queryParams.departmentType == 8"
         :maxLength="30"
         style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
@@ -57,12 +57,13 @@
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px">
+    <div class="div-service-user" style="margin-top: 10px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> HIS编码 :</span>
       <a-input
         type="number"
         class="span-item-value"
         v-model="queryParams.hisId"
+        :disabled="queryParams.departmentType == 8"
         :maxLength="30"
         style="display: inline-block; width: 248px; margin-left: 8px"
         allow-clear
@@ -84,18 +85,16 @@
     </div>
 
     <div class="display-item" style="margin-left: 5px; margin-top: 10px">
-      <span style="margin-top: 10px"> 科室类型 :</span>
+      <span style="margin-top: 10px"> 科室属性 :</span>
 
-      <a-checkbox style="margin-left:10px" @change="radioChange1"
+      <a-checkbox style="margin-left: 10px" @change="radioChange1" :disabled="queryParams.departmentType == 8"
         >互联网医院科室</a-checkbox
       >
 
-      <a-checkbox @change="radioChange2"
-        >全病程科室</a-checkbox
-      >
+      <a-checkbox @change="radioChange2" :disabled="queryParams.departmentType == 8">全病程科室</a-checkbox>
     </div>
 
-    <div class="div-service-user" style="margin-top: 10px; margin-left: 7px; position: relative">
+    <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
       <span style="margin-top: 10px; width: 90px"> 科室简介 :</span>
       <a-textarea
         style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: -28px; width: 87%"
@@ -104,7 +103,7 @@
         placeholder="请输入科室简介"
         v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
       />
-      <span class="m-count">{{ queryParams.departmentIntroduce?queryParams.departmentIntroduce.length : 0 }}/30</span>
+      <span class="m-count">{{ queryParams.departmentIntroduce ? queryParams.departmentIntroduce.length : 0 }}/30</span>
     </div>
   </a-modal>
 </template>
@@ -197,20 +196,18 @@ export default {
       this.getDictDataForCodeorgDepartTypeOut()
     },
 
-
-
-     /**
+    /**
      * 组织类型接口
      */
-     getDictDataForCodeorgDepartTypeOut() {
+    getDictDataForCodeorgDepartTypeOut() {
       this.confirmLoading = true
       getDictDataForCodeDepartType()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             this.departmentTypeList = res.data
             for (let index = 0; index < this.departmentTypeList.length; index++) {
-                this.departmentTypeList[index].code = Number(this.departmentTypeList[index].code)
-               }
+              this.departmentTypeList[index].code = Number(this.departmentTypeList[index].code)
+            }
           } else {
             this.departmentTypeList = res.data
           }
@@ -239,8 +236,6 @@ export default {
       }
 
       this.queryParams.parentDisarmamentName = this.findItemData.hospitalName
-
-
     },
 
     /**
@@ -311,7 +306,7 @@ export default {
 
               item.hospitals.forEach((item1, index1) => {
                 this.$set(item1, 'key', item1.hospitalCode)
-              this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
                 this.$set(item1, 'title', item1.hospitalName)
               })
             })
@@ -369,19 +364,19 @@ export default {
       // console.log("tt00:",event.target.checked )
       if (event.target.checked) {
         this.queryParams.isInternetHospital = 1
-      } else  {
+      } else {
         this.queryParams.isInternetHospital = 2
       }
     },
 
-     /**
+    /**
      *   全病程科室
      */
-     radioChange2(event) {
+    radioChange2(event) {
       // console.log("tt11:",event.target.checked )
       if (event.target.checked) {
         this.queryParams.isFullDisease = 1
-      } else  {
+      } else {
         this.queryParams.isFullDisease = 2
       }
     },
@@ -422,10 +417,6 @@ export default {
         this.$message.error('请输入科室名称')
         return
       }
-      // if (!this.queryParams.departmentAddr) {
-      //   this.$message.error('请输入科室地址')
-      //   return
-      // }
       if (!this.queryParams.departmentOrder) {
         this.$message.error('请选择科室排序')
         return
@@ -435,16 +426,20 @@ export default {
         return
       }
 
-      if(!queryParams.departmentType){
+      if (!queryParams.departmentType) {
         this.$message.error('请选择科室类型')
         return
       }
 
-      // if (!this.queryParams.departmentIntroduce) {
-      //   this.$message.error('请编辑科室简介')
-      //   return
-      // }
-
+      /**
+       * 如果选中的是企业部门 则不传 科室编码、科室位置、科室属性参数
+       */
+      if (this.queryParams.departmentType == 8) {
+        this.queryParams.hisId = ''
+        this.queryParams.departmentAddr = ''
+        this.internetType = false
+        this.isFullDiseaseType = false
+      }
       this.addDepartmentForReqOut()
     },
   },
@@ -476,47 +471,42 @@ export default {
   }
 }
 
-
 .div-line-wrap {
-    width: 120%;
-    overflow: hidden;
+  width: 120%;
+  overflow: hidden;
 
-    .span-item-name {
-      width: 80%;
-      display: inline-block;
-      color: #4d4d4d;
-      font-size: 12px;
-      text-align: left;
-    }
-
-    .span-item-value {
-      width: 20%;
-      // overflow: hidden;
-      color: #4d4d4d;
-      text-align: left;
-      font-size: 12px;
-      display: inline-block;
-      text-overflow: ellipsis;
-    }
-
-    .span-item-value1 {
-      width: 10%;
-      margin-bottom: -4px;
-      color: #4d4d4d;
-      text-align: left;
-      font-size: 12px;
-      display: inline-block;
-      white-space: nowrap;
-      -webkit-line-clamp: 1;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
+  .span-item-name {
+    width: 80%;
+    display: inline-block;
+    color: #4d4d4d;
+    font-size: 12px;
+    text-align: left;
   }
 
+  .span-item-value {
+    width: 20%;
+    // overflow: hidden;
+    color: #4d4d4d;
+    text-align: left;
+    font-size: 12px;
+    display: inline-block;
+    text-overflow: ellipsis;
+  }
 
-
-
+  .span-item-value1 {
+    width: 10%;
+    margin-bottom: -4px;
+    color: #4d4d4d;
+    text-align: left;
+    font-size: 12px;
+    display: inline-block;
+    white-space: nowrap;
+    -webkit-line-clamp: 1;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
 
 .div-title {
   margin-top: 10px;
@@ -582,9 +572,9 @@ export default {
   height: 100%;
 }
 .m-count {
-    position: absolute;
-    font-size: 12px;
-    bottom: 2px;
-    right: 40px;
-  }
+  position: absolute;
+  font-size: 12px;
+  bottom: 2px;
+  right: 40px;
+}
 </style>

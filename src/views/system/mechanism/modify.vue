@@ -59,7 +59,7 @@
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span> <span style="color: red">*</span> 显示顺序:</span>
-          <a-button style="margin-left: 5px;width: 30px;" icon="plus" size="small" @click="addNum()" />
+          <a-button style="margin-left: 5px; width: 30px" icon="plus" size="small" @click="addNum()" />
           <!-- <a-icon type="plus" /> -->
           <a-input
             v-model="queryParams.sortedNo"
@@ -68,7 +68,7 @@
             allow-clear
             style="width: 127px; margin-left: 7px; text-align: center"
           />
-          <a-button style="margin-left: 7px;width: 30px;" size="small" icon="minus" @click="duleNum()" />
+          <a-button style="margin-left: 7px; width: 30px" size="small" icon="minus" @click="duleNum()" />
         </div>
 
         <!-- <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -85,7 +85,6 @@
             <a-radio :value="2" style="font-size: 8px; margin-top: 10px"> 医疗机构 </a-radio>
           </a-radio-group>
         </div> -->
-
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 5px"> <span style="color: red">*</span> 组织类型:</span>
@@ -104,21 +103,12 @@
           </a-select>
         </div>
 
-
-
-
-
-
-        <div v-if="queryParams.orgType==2" class="div-title">
+        <div v-if="queryParams.orgType == 2" class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">医疗机构属性</span>
         </div>
 
-        <div
-          v-if="queryParams.orgType==2"
-          class="display-item"
-          style="margin-left: 10px; margin-top: 10px"
-        >
+        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构类型:</span>
           <a-select
             class="sitemore"
@@ -135,11 +125,7 @@
           </a-select>
         </div>
 
-        <div
-          v-if="queryParams.orgType==2"
-          class="display-item"
-          style="margin-left: 10px; margin-top: 10px"
-        >
+        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构等级:</span>
           <a-select
             class="sitemore"
@@ -156,16 +142,12 @@
           </a-select>
         </div>
 
-        <div v-if="queryParams.orgType==2" class="div-title">
+        <div v-if="queryParams.orgType == 2" class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">接口配置</span>
         </div>
 
-        <div
-          v-if="queryParams.orgType==2"
-          class="display-item"
-          style="margin-left: 10px; margin-top: 10px"
-        >
+        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
           <a-input
             type="number"
@@ -178,11 +160,7 @@
           />
         </div>
 
-        <div
-          v-if="queryParams.orgType==2"
-          class="display-item"
-          style="margin-left: 10px; margin-top: 10px"
-        >
+        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 服务地址:</span>
           <a-input
             v-model="queryParams.middleware"
@@ -196,7 +174,7 @@
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style=" height: 500px">
+      <div class="card-right-user" style="height: 500px">
         <div class="div-title" style="margin-left: 10px; margin-top: 3px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
@@ -213,10 +191,10 @@
             @preview="handlePreview"
             @change="handleChange"
           >
-          <div v-if="fileList.length < 1">
-            <a-icon type="plus" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
+            <div v-if="fileList.length < 1">
+              <a-icon type="plus" />
+              <div class="ant-upload-text">Upload</div>
+            </div>
           </a-upload>
 
           <div class="domw-r">
@@ -231,7 +209,7 @@
           </div>
         </div>
 
-        <div id="div2" ref="editorEl" style="margin-top: 15%;margin-left: 10px;"></div>
+        <div id="div2" ref="editorEl" style="margin-top: 15%; margin-left: 10px"></div>
       </div>
     </div>
   </a-modal>
@@ -262,8 +240,8 @@ export default {
   },
   data() {
     return {
-      hospitalTypeSelect:'',//科室类型
-      Hospitallevel:'', //科室等级
+      hospitalTypeSelect: '', //科室类型
+      Hospitallevel: '', //科室等级
       shoudata: '',
       bb: '1',
       userId: '',
@@ -292,7 +270,7 @@ export default {
         sortedNo: 0,
         tenantId: 0,
       },
-      orgTypeData:[],
+      orgTypeData: [],
 
       labelCol: {
         xs: { span: 24 },
@@ -329,7 +307,7 @@ export default {
       this.shoudata = record.hospitalName
       this.queryParams.pid = record.pid
       this.hospitalId = record.hospitalId
-    
+
       this.queryParams.hospitalId = record.hospitalId
       console.log('9999', record.pid, this.queryParams.hospitalId)
       this.getHospitalDetailOut()
@@ -339,20 +317,18 @@ export default {
       this.getDictDataForCodeorgTypeOut()
     },
 
-
-
     /**
      * 组织类型接口
      */
-     getDictDataForCodeorgTypeOut() {
+    getDictDataForCodeorgTypeOut() {
       this.confirmLoading = true
       getDictDataForCodeorgType()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             this.orgTypeData = res.data
             for (let index = 0; index < this.orgTypeData.length; index++) {
-                this.orgTypeData[index].code = Number(this.orgTypeData[index].code)
-               }
+              this.orgTypeData[index].code = Number(this.orgTypeData[index].code)
+            }
           } else {
             this.orgTypeData = res.data
           }
@@ -454,11 +430,10 @@ export default {
       //   this.queryParams.appointItemName = this.chooseDeptItem.name
     },
 
-
-   /**
-    * 选择科室类型
-    */
-    selectTyple(selectTyple){
+    /**
+     * 选择科室类型
+     */
+    selectTyple(selectTyple) {
       console.log('科室类型', selectTyple)
       this.queryParams.hospitalType = selectTyple
     },
@@ -466,14 +441,10 @@ export default {
     /**
      * 科室等级
      */
-     selectLevel(selectLevel){
+    selectLevel(selectLevel) {
       console.log('科室等级', selectLevel)
       this.queryParams.level = selectLevel
-     },
-
-
-
-
+    },
 
     /**
      * 获取机构详情
@@ -493,12 +464,12 @@ export default {
             this.queryParams.middleware = res.data.middleware
             this.queryParams.introduction = res.data.introduction
             this.queryParams.orgType = res.data.orgType.value
-            if(res.data.hospitalType!=null){
+            if (res.data.hospitalType != null) {
               console.log('5555:', res.data.hospitalType.description)
-              this.hospitalTypeSelect =res.data.hospitalType.description
+              this.hospitalTypeSelect = res.data.hospitalType.description
             }
-            if(res.data.level!=null){
-              this.Hospitallevel =res.data.level.description
+            if (res.data.level != null) {
+              this.Hospitallevel = res.data.level.description
             }
 
             this.$nextTick(() => {
@@ -721,14 +692,22 @@ export default {
           this.$message.error('请输入服务地址')
           return
         }
+      } else {
+        /**
+         * 如果 选中的 组织类型不是 医疗机构  则不传医疗机构属性、接口配置等参数
+         */
+        this.queryParams.hospitalType = ''
+        this.queryParams.level = ''
+        this.queryParams.hisCode = ''
+        this.queryParams.middleware = ''
       }
-      if (this.fileList.length>0&&this.fileList[0].response) {
+      if (this.fileList.length > 0 && this.fileList[0].response) {
         this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
       } else {
-        if(this.fileList&&this.fileList[0]){
+        if (this.fileList && this.fileList[0]) {
           this.queryParams.imgUrl = this.fileList[0].url
         }
-        this.queryParams.imgUrl = ""
+        this.queryParams.imgUrl = ''
       }
 
       this.addHospital()

@@ -40,7 +40,7 @@
               v-model="checkData.classifyCode"
               style="display: inline-block"
               allow-clear
-              :maxLength="20"
+              :maxLength="12"
               placeholder="请输入分类编码"
             />
           </div>
@@ -51,7 +51,7 @@
               class="span-item-value"
               style="display: inline-block"
               allow-clear
-              :maxLength="18"
+              :maxLength="32"
               placeholder="请输入分类名称"
             />
           </div>

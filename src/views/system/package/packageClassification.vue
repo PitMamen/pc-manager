@@ -16,7 +16,7 @@
 
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 80px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>

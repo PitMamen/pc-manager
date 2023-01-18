@@ -19,7 +19,7 @@
       </div> -->
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 80px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
@@ -58,7 +58,7 @@
         <a-divider type="vertical" />
         <a @click="$refs.modify.modify(record)"><a-icon type="edit" style="margin-right: 5px"></a-icon>修改</a>
         <a-divider type="vertical" />
-        <a :disabled="record.orgType == 1 || record.orgType == 2" @click="$refs.providerConfig.edit(record)"
+        <a :disabled="record.orgType&&record.orgType.value == 2" @click="$refs.providerConfig.edit(record)"
           ><a-icon type="apartment" style="margin-right: 5px" />服务商配置</a
         >
       </span>

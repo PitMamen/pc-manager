@@ -620,6 +620,19 @@ export default {
       }
       }
 
+
+         /**
+          * 如果 选中的 组织类型不是 医疗机构  则不传医疗机构属性、接口配置等参数
+          */
+         if(this.queryParams.orgType!=2){
+          this.queryParams.hospitalType = ''
+          this.queryParams.level = ''
+          this.queryParams.hisCode = ''
+          this.queryParams.middleware = ''
+         }
+
+
+
          console.log("999999:",this.fileList)
       if (this.fileList.length>0&&this.fileList[0].response) {
         this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl

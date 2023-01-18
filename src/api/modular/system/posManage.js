@@ -3420,13 +3420,15 @@ export function getServiceFactoryList(data) {
 /**
  * 服务商列表
  */
-export function getDepartmentForDepartmentType(data) {
+export function getHospitalForTenantId(data) { 
   return axios({
-    url: '/info-api/feign/departments/getDepartmentForDepartmentType',
-    method: 'post',
-    data: data,
+    url: '/uam-api/hospital/getHospitalForTenantId',
+    method: 'get',
+    params: data,
   })
 }
+
+
 
 
 /**

@@ -23,8 +23,8 @@
               v-model="selectedRowKeys"
               @change="onChange"
             >
-              <a-select-option v-for="item in loadDataTemp" :key="item.departmentId" :value="item.departmentId">
-                {{ item.departmentName }}
+              <a-select-option v-for="item in loadData" :key="item.hospitalCode" :value="item.hospitalCode">
+                {{ item.hospitalName }}
               </a-select-option>
             </a-select>
           </a-form-item>
@@ -36,15 +36,16 @@
         <a-select
           class="sitemore"
           style="width: 490px; height: 28px; margin-left: 5px; margin-top: 5px"
-          :title="queryParam.hospitalCode"
+          :title="queryParam.tenantId"
           allow-clear
-          v-model="queryParam.hospitalCode"
+          v-model="queryParam.tenantId"
           @select="onSelected"
+          @change="onChange111"
           placeholder="请选择服务商"
         >
           <!-- <a-select-option v-for="(item,index) in providerData"  :key="index">{{ -->
-          <a-select-option v-for="item in providerData" :key="item.hospitalCode">{{
-            item.hospitalName
+          <a-select-option v-for="item in providerData" :key="item.tenantId">{{
+            item.tenantName
           }}</a-select-option>
         </a-select>
       </div>
@@ -59,7 +60,7 @@
           :data-source="loadData"
           :expandedRowsChange="expandedRowKeys"
           :alert="true"
-          :rowKey="(record) => record.departmentId"
+          :rowKey="(record) => record.hospitalCode"
           :showPagination="false"
           :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange,columnTitle: ' '}"
         >
@@ -72,7 +73,7 @@
   <script>
 import {
   getServiceFactoryList,
-  getDepartmentForDepartmentType,
+  getHospitalForTenantId,
   getServiceFactoryForHospitalCode,
   saveServiceFactoryHospitalMapping,
   getDepartmentListForReq as list,
@@ -101,6 +102,7 @@ export default {
       // 查询参数
       queryParam: {
         hospitalCode: undefined,
+        tenantId: '',
       },
       providerData: [],
       loadData: [],
@@ -131,9 +133,10 @@ export default {
       this.item = item
       console.log("sssss:",this.item.hospitalCode)
       this.selectedRowKeys = []
+      this.queryParam.tenantId =undefined
       this.queryParam.hospitalCode = undefined
       // this.getLists(item)
-      this.getDepartmentForDepartmentTypeOut()
+      this.getHospitalForTenantIdOut()
       this.getServiceFactoryListOut()
 
       setTimeout(() => {
@@ -150,29 +153,13 @@ export default {
     /**
      * 服务商列表
      */
-    getDepartmentForDepartmentTypeOut() {
-      var requestData = {
-        pageNo: 1,
-        pageSize: 9999,
-        departmentType: 8,
-        hospitalCode: this.queryParam.hospitalCode,
-      }
-      getDepartmentForDepartmentType(requestData).then((res) => {
+     getHospitalForTenantIdOut() {
+      getHospitalForTenantId({tenantId:this.queryParam.tenantId}).then((res) => {
         if (res.code === 0 && res.data.length > 0) {
-          res.data.forEach((item, index) => {
-            // this.$set(item, 'key', Number(item.departmentId))
-            this.$set(item, 'hospitalName', item.hospitalName)
-            this.$set(item, 'children', item.departmentList)
-            this.$set(item, 'departmentId', item.hospitalCode)  //add
-            // console.log('Sss:', this.loadDataTemp)
-
-            item.departmentList.forEach((item1, index1) => {
-              this.$set(item1, 'key', Number(item1.departmentId))
-              this.$set(item1, 'hospitalName', item1.departmentName)
-              this.$set(item1, 'manufacturer', '健康服务厂商')
-              this.loadDataTemp.push(item1)
-            })
-          })
+          for (let index = 0; index < res.data.length; index++) {
+            // res.data[index].hospitalCode = Number(res.data[index].hospitalCode)
+            this.$set(res.data[index], 'manufacturer', '健康服务厂商')
+            }
         }
         this.loadData = res.data
       })
@@ -182,9 +169,16 @@ export default {
      * 服务商选中
      */
     onSelected(values) {
-      console.log('UUUU:', values)
       this.queryParam.hospitalCode = values
-      this.getDepartmentForDepartmentTypeOut() //选中之后 更新列表
+      this.getHospitalForTenantIdOut() //选中之后 更新列表
+    },
+
+
+    onChange111(data){
+      if(data==undefined||data==null){
+        this.queryParam.hospitalCode = ''
+        this.getHospitalForTenantIdOut() //选中之后 更新列表
+      }
     },
 
     /**
@@ -213,8 +207,7 @@ export default {
           console.log('0000:', res)
           this.selectedRowKeys =
             (res.data || []).map((item) => {
-              console.log("JJJJJJ:",Number(item.serviceFactoryId))
-              return Number(item.serviceFactoryId)
+              return item.serviceFactoryId
             }) || []
 
           this.$nextTick(() => {
@@ -225,18 +218,6 @@ export default {
           this.confirmLoading = false
         })
     },
-    // getLists(item) {
-    //   list({
-    //     pageNo: 1,
-    //     pageSize: 9999,
-    //     departmentType: 3,
-    //     hospitalCode: item.hospital_code,
-    //   }).then((res) => {
-    //     if (res.code === 0) {
-    //       this.lists = res.data.records || []
-    //     }
-    //   })
-    // },
     handleOk() {
       this.$refs.table.refresh()
     },
@@ -245,6 +226,9 @@ export default {
       // this.updateSelect()
       
     },
+
+    
+
     onInputChange() {
       this.handleOk()
     },

@@ -305,7 +305,8 @@ export default {
             this.queryParams.hospitalCode = res.data.hospitalCode
             this.queryParams.hospitalName = res.data.tenantName
             this.queryParams.tenantId = this.tenantId
-            this.queryParams.tenantType = res.data.tenantType
+            console.log("MMMM:",res.data.tenantType.description)
+            this.queryParams.tenantType = res.data.tenantType.description
             this.getApplicationlistOut()
           }
         })
