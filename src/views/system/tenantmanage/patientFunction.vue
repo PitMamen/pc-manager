@@ -74,7 +74,7 @@
 
 
      <span slot="tubiao" slot-scope="text, record">
-       <img style="width:30px;height:30px" :src="record.icon" />
+       <img style="width:20px;height:20px" :src="record.icon" />
 
      </span>
 

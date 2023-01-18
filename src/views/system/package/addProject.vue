@@ -13,8 +13,9 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <!--  <a-avatar -->
-            <img :src="checkData.projectImg" style="margin-right: 21px; width: 60px; height: 60px" />
+            <a-avatar shape="square" :size="48" :src="checkData.projectImg" style="margin-right: 10px; margin-left: 12px">
+            </a-avatar>
+            <!-- <img :src="checkData.projectImg" style="margin-right: 21px; width: 60px; height: 60px" /> -->
             <div class="avator-right">
               <a-upload
                 name="file"
@@ -85,7 +86,7 @@
               placeholder="请输入建议价格"
             />
 
-            <span class="span-item-name"> <span style="color: red">*</span>生产单位:</span>
+            <span class="span-item-name"> <span style="color: red">*</span>单位:</span>
             <a-input
               v-model="checkData.unit"
               class="span-item-value"

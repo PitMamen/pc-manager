@@ -13,7 +13,16 @@
         <div class="div-part-left">
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-select
+            <a-tree-select
+              v-model="checkData.hospitalCode"
+              style="min-width: 180px; height: 28px"
+              :tree-data="treeData"
+              placeholder="请选择机构"
+              tree-default-expand-all
+              @select="selectChange"
+            >
+            </a-tree-select>
+            <!-- <a-select
               style="margin-top: 1px"
               show-search
               v-model="checkData.hospitalCode"
@@ -24,7 +33,7 @@
               <a-select-option v-for="(item, index) in treeData" :key="item.hospitalCode" :value="item.hospitalCode">{{
                 item.hospitalName
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>团队名称:</span>
@@ -148,6 +157,11 @@ export default {
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+
+    selectChange(value){
+
     },
 
     handleSubmit() {

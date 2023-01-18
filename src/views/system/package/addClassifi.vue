@@ -13,8 +13,9 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <!--  <a-avatar -->
-            <img :src="checkData.classifyIcon" style="margin-right: 21px; width: 60px; height: 60px" />
+            <a-avatar shape="square" :size="48" :src="checkData.classifyIcon" style="margin-right: 10px; margin-left: 12px">
+            </a-avatar>
+            <!-- <img :src="checkData.classifyIcon" style="margin-right: 21px; width: 60px; height: 60px" /> -->
             <div class="avator-right">
               <a-upload
                 name="file"
@@ -70,7 +71,7 @@
             <a-button style="margin-left: 0px;width: 30px;" icon="plus" size="small" @click="addNum()" />
           <a-input
             v-model="checkData.sort"
-            :disabled="true"
+            :disabled="false"
             :defaultValue="1"
             allow-clear
             style="width: 212px; margin-left: 6px; text-align: center"
@@ -247,6 +248,10 @@ export default {
         this.$message.error('请选择所属大类')
         return
       }
+      if( this.checkData.sort<0){
+          this.$message.error('显示序号不能小于0!')
+          return
+         }
 
       this.saveCommodityClassifyOut()
     },

@@ -7,7 +7,7 @@
           allow-clear
           v-model="queryParams.projectName"
           placeholder="可输入项目名称查询"
-          style="width: 120px"
+          style="width: 150px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
@@ -146,38 +146,52 @@ export default {
         {
           title: '项目名称',
           dataIndex: 'projectName',
+          width: 180,
           ellipsis: true,
         },
         {
           title: '缩略图',
           scopedSlots: { customRender: 'tubiao' },
+          width: 70,
         },
         {
           title: '项目类型',
           dataIndex: 'projectTypeName',
+          width: 120,
+          ellipsis: true,
         },
         {
           title: '规格型号',
           dataIndex: 'normsModel',
+          width: 150,
+          ellipsis: true,
         },
         {
           title: '生产厂商',
           dataIndex: 'factoryName',
+          width: 180,
+          ellipsis: true,
         },
 
         {
           title: '单位',
           dataIndex: 'unit',
+          width: 90,
+          ellipsis: true,
         },
 
         {
           title: '建议价格',
           dataIndex: 'suggestPrice',
+          width: 90,
+          ellipsis: true,
         },
 
         {
           title: '备注说明',
           dataIndex: 'remark',
+          width: 90,
+          ellipsis: true,
         },
 
         {

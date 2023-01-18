@@ -7,7 +7,7 @@
           allow-clear
           v-model="queryParams.classifyName"
           placeholder="请输入分类名称"
-          style="width: 120px"
+          style="width: 128px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"

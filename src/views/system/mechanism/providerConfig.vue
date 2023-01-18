@@ -31,11 +31,10 @@
         </a-form>
       </div>
 
-      <div style="margin: 10px; width: 100%">
+      <div style="margin: 10px; width: 100%;margin-bottom: 25px;">
         <span style="margin-left: -9px; color: rgba(0, 0, 0, 0.85)">选择服务商:</span>
         <a-select
-          class="sitemore"
-          style="width: 490px; height: 28px; margin-left: 5px; margin-top: 5px"
+          style="width: 490px;  margin-left: 5px; margin-top: 5px;line-height: 20px;"
           :title="queryParam.tenantId"
           allow-clear
           v-model="queryParam.tenantId"
@@ -274,6 +273,9 @@ export default {
 </script>
   
   <style lang="less" scoped>
+  /deep/.ant-select-selection__placeholder {
+    line-height: 20px !important;
+}
 /deep/ .ant-pagination {
   display: none;
 }
