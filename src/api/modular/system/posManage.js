@@ -3287,6 +3287,17 @@ export function getPkgDetail(commodityPkgId) {
 }
 
 /**
+ * /commodityConfig/saveCommodityPkgCollection 修改套餐规格配置
+ */
+export function saveCommodityPkgCollection(data) {
+  return axios({
+    url: '/commodityConfig/saveCommodityPkgCollection',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
  * /accountInfo/getTreeUsersByDeptIdsAndRoles 根据科室与角色查询用户树列表
  */
 export function getTreeUsersByDeptIdsAndRoles(data) {
@@ -3573,40 +3584,40 @@ export function deleteTdHealthyTeam(data) {
 
 
 
-   /**
-   * 健康管理团队删除人员
-   */
-   export function deleteTdHealthyTeamUser(data){
-    return axios({
-      url:'/uam-api/tdHealthyTeamUserMapping/deleteTdHealthyTeamUser/'+data,
-      method:'get',
-      // params:data,
-    })
-  }
+/**
+* 健康管理团队删除人员
+*/
+export function deleteTdHealthyTeamUser(data) {
+  return axios({
+    url: '/uam-api/tdHealthyTeamUserMapping/deleteTdHealthyTeamUser/' + data,
+    method: 'get',
+    // params:data,
+  })
+}
 
 
-    /**
-  * 管理团队添加人员 
-  */
-    export function addTdHealthyTeamUser(data){
-      return axios({
-        url:'/uam-api/tdHealthyTeamUserMapping/addTdHealthyTeamUser',
-        method:'post',
-        data:data,
-      })
-     }
+/**
+* 管理团队添加人员 
+*/
+export function addTdHealthyTeamUser(data) {
+  return axios({
+    url: '/uam-api/tdHealthyTeamUserMapping/addTdHealthyTeamUser',
+    method: 'post',
+    data: data,
+  })
+}
 
 
-   /**
-  * 角色类型 
-  */
-   export function getDictDataForCodeTeamType(data){
-    return axios({
-      url:'/info-api/feign/sysdictdata/getDictDataForCode/TEAMROLE',
-      method:'get',
-      params:data,
-    })
-   }
+/**
+* 角色类型 
+*/
+export function getDictDataForCodeTeamType(data) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/TEAMROLE',
+    method: 'get',
+    params: data,
+  })
+}
 
 
 /**

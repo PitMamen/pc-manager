@@ -449,7 +449,12 @@
 </template>
 
 <script>
-import { saveFollow, getCommodityPkgDetailByid, qryServiceItemList, getDictData } from '@/api/modular/system/posManage'
+import {
+  getCommodityPkgDetailByid,
+  qryServiceItemList,
+  getDictData,
+  saveCommodityPkgCollection,
+} from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -651,7 +656,7 @@ export default {
     addItemsBi() {
       this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined })
     },
- 
+
     /**
      *autoComplete回调，本地模拟的数据处理
      */
@@ -799,22 +804,26 @@ export default {
 
     submitData() {
       console.log('submitData', JSON.stringify(this.configData))
+      let tempData = JSON.parse(JSON.stringify(this.configData))
+
+      
+
       // this.confirmLoading = true
-      // saveFollow(tempData)
-      //   .then((res) => {
-      //     this.confirmLoading = false
-      //     if (res.code == 0) {
-      //       this.$message.success('保存成功')
-      //       this.$bus.$emit('proEvent', '刷新数据-方案新增')
-      //       this.$router.go(-1)
-      //       // this.$router.push({ path: './serviceWise?keyindex=1' })
-      //     } else {
-      //       this.$message.error(res.message)
-      //     }
-      //   })
-      //   .finally((res) => {
-      //     this.confirmLoading = false
-      //   })
+      saveCommodityPkgCollection(tempData)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.$message.success('保存成功')
+            // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+            this.$router.go(-1)
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     cancel() {
