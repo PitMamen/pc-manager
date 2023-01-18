@@ -21,7 +21,7 @@
           </div>
 
           <div class="div-pro-line">
-            <span class="span-item-name"><span style="color: red">*</span> 套餐类型 :</span>
+            <span class="span-item-name"><span style="color: red">*</span> 套餐分类 :</span>
             <a-select @select="onTypeSelect" v-model="packageData.packageClassifyId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
                 item.classifyName

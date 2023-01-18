@@ -3291,7 +3291,7 @@ export function getPkgDetail(commodityPkgId) {
  */
 export function saveCommodityPkgCollection(data) {
   return axios({
-    url: '/commodityConfig/saveCommodityPkgCollection',
+    url: '/medical-api/commodityConfig/saveCommodityPkgCollection',
     method: 'post',
     data: data,
   })
