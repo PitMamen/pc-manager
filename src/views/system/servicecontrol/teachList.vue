@@ -64,27 +64,29 @@
         </div>
       </div>
       <div class="div-service-control">
-        
         <div class="div-service-left-control">
           <div class="toptab">
             <div>文章列表</div>
           </div>
           <a-spin :spinning="confirmLoading2">
-          <div class="left-content">
-            <div
-              class="ksview"
-              v-for="(item, index) in articleList"
-              :key="index"
-              @click="handleChange(item.message_original_id)"
-              :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
-            >
-              {{ item.articleName }}
-             
+            <div class="left-content">
+              <div
+                class="ksviewaper"
+                v-for="(item, index) in articleList"
+                :key="index"
+                @click="handleChange(item.message_original_id)"
+                :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
+              >
+                <div class="ksview">
+                  {{ item.articleName }}
+                </div>
+                {{ item.count }}/{{ item.readCount }}/{{ item.rate }}
+                             
+              </div>
             </div>
-          </div>
-        </a-spin>
+          </a-spin>
         </div>
-      
+
         <div class="div-service-right-control">
           <s-table
             :scroll="{ x: true }"
@@ -149,7 +151,7 @@ export default {
       createValue: [],
       typeData: ['类型1', '类型2'],
       confirmLoading: false,
-      confirmLoading2:false,
+      confirmLoading2: false,
       idArr: [],
       labelCol: {
         xs: { span: 24 },
@@ -259,9 +261,7 @@ export default {
   },
 
   methods: {
-
-    queryAgain(){
-     
+    queryAgain() {
       this.getFollowArticleDataOut()
     },
     reset() {
@@ -269,9 +269,8 @@ export default {
       this.queryParam.startTime = ''
       this.queryParam.endTime = ''
       this.queryParam.readStatus = undefined
-      this.queryParam.articleId =undefined
-        this.queryParam.articleName =undefined
-
+      this.queryParam.articleId = undefined
+      this.queryParam.articleName = undefined
 
       this.getFollowArticleDataOut()
     },
@@ -281,36 +280,38 @@ export default {
     },
     //获取文章列表
     getFollowArticleDataOut() {
-      this.confirmLoading2=true
+      this.confirmLoading2 = true
       var postData = {
         departmentId: this.queryParam.departmentId,
         startTime: this.queryParam.startTime,
         endTime: this.queryParam.endTime,
       }
-      getFollowArticleData(postData).then((res) => {
-        if (res.code == 0 && res.data.length > 0) {
-          if (this.queryParam.articleId) {
-            res.data.forEach((item) => {
-              item.checked = item.message_original_id == this.queryParam.articleId
-            })
-          } else {
-            res.data[0].checked = true
-            this.queryParam.articleId = res.data[0].message_original_id
-            this.queryParam.articleName = res.data[0].articleName
-          }
+      getFollowArticleData(postData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            if (this.queryParam.articleId) {
+              res.data.forEach((item) => {
+                item.checked = item.message_original_id == this.queryParam.articleId
+              })
+            } else {
+              res.data[0].checked = true
+              this.queryParam.articleId = res.data[0].message_original_id
+              this.queryParam.articleName = res.data[0].articleName
+            }
 
-          this.articleList = res.data
-          this.articleListTemp = res.data
-          this.$refs.table.refresh()
-        } else {
-          this.queryParam.articleId = undefined
-          this.articleList = []
-          this.articleListTemp = []
-          this.$refs.table.refresh()
-        }
-      }).finally(()=>{
-        this.confirmLoading2=false
-      })
+            this.articleList = res.data
+            this.articleListTemp = res.data
+            this.$refs.table.refresh()
+          } else {
+            this.queryParam.articleId = undefined
+            this.articleList = []
+            this.articleListTemp = []
+            this.$refs.table.refresh()
+          }
+        })
+        .finally(() => {
+          this.confirmLoading2 = false
+        })
     },
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
@@ -348,16 +349,16 @@ export default {
       console.log(value)
       this.queryParam.articleId = value
       this.articleList.forEach((item) => {
-          item.checked = item.message_original_id == this.queryParam.articleId
-          if(item.message_original_id == this.queryParam.articleId){
-            this.queryParam.articleName = item.articleName
-          }
-        })
+        item.checked = item.message_original_id == this.queryParam.articleId
+        if (item.message_original_id == this.queryParam.articleId) {
+          this.queryParam.articleName = item.articleName
+        }
+      })
       if (!this.queryParam.articleId) {
         this.articleList[0].checked = true
-        this.queryParam.articleId =   this.articleList[0].message_original_id
-        this.queryParam.articleName =   this.articleList[0].articleName
-      } 
+        this.queryParam.articleId = this.articleList[0].message_original_id
+        this.queryParam.articleName = this.articleList[0].articleName
+      }
 
       this.articleListTemp = this.articleList
       this.$refs.table.refresh()
@@ -368,7 +369,7 @@ export default {
       this.queryParam.startTime = dateArr[0]
       this.queryParam.endTime = dateArr[1]
     },
-   
+
     //重新发送
     send(record) {
       this.$message.success('该功能待开发')
@@ -383,14 +384,10 @@ export default {
       //   }
       // })
     },
-   
-
- 
 
     handleOk() {
       this.$refs.table.refresh()
     },
-  
   },
 }
 </script>
@@ -473,20 +470,23 @@ export default {
       margin-bottom: 10px;
       color: #409eff;
     }
-    .ksview {
-   
+    .ksviewaper {
+      display: flex;
+      flex-direction: row;
       height: 30px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .ksview {
+      
       font-size: 12px;
-     
-width:179px;
+      width: 120px;
+      
+      white-space: nowrap;
 
-    
+      overflow: hidden;
 
-white-space:nowrap;       
-
-overflow:hidden;           
-
-text-overflow:ellipsis;    
+      text-overflow: ellipsis;
     }
     &:hover {
       cursor: pointer;
