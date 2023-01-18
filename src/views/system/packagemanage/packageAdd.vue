@@ -788,8 +788,16 @@ export default {
     goCheck(type) {
       if (type == 1) {
         this.isDoctor = !this.isDoctor
+        if (this.broadClassify == 1 && this.isDoctor) {
+          this.isNurse = false
+          this.nameNurse = ''
+        }
       } else if (type == 2) {
         this.isNurse = !this.isNurse
+        if (this.broadClassify == 1 && this.isNurse) {
+          this.isDoctor = false
+          this.nameDoc = ''
+        }
       } else {
         if (this.broadClassify == 1) {
           return

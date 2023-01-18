@@ -215,12 +215,12 @@ export default {
   },
 
   mounted() {
-    //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
-    // this.$bus.$on('pkgEvent', (data) => {
-    //   console.log('pkgEvent Refres', data)
-    //   // this.objct = data;
-    //   this.refresh()
-    // })
+    // 用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
+    this.$bus.$on('configEvent', (data) => {
+      console.log('configEvent Refres', data)
+      // this.objct = data;
+      this.refresh()
+    })
   },
 
   created() {
@@ -318,7 +318,6 @@ export default {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
       this.refresh()
     },
-
   },
 }
 </script>
@@ -374,7 +373,7 @@ export default {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 96px);
+      height: calc(100% - 47px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
