@@ -58,7 +58,7 @@
         <a-divider type="vertical" />
         <a @click="$refs.modify.modify(record)"><a-icon type="edit" style="margin-right: 5px"></a-icon>修改</a>
         <a-divider type="vertical" />
-        <a :disabled="record.orgType&&record.orgType.value == 2" @click="$refs.providerConfig.edit(record)"
+        <a :disabled="record.orgType&&record.orgType.value != 2" @click="$refs.providerConfig.edit(record)"
           ><a-icon type="apartment" style="margin-right: 5px" />服务商配置</a
         >
       </span>

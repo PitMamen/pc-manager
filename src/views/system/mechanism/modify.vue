@@ -103,14 +103,15 @@
           </a-select>
         </div>
 
-        <div v-if="queryParams.orgType == 2" class="div-title">
+        <div  class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">医疗机构属性</span>
         </div>
 
-        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div  class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构类型:</span>
           <a-select
+          :disabled="!queryParams.orgType||queryParams.orgType!=2"
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
             :maxTagCount="1"
@@ -125,9 +126,10 @@
           </a-select>
         </div>
 
-        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div  class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构等级:</span>
           <a-select
+          :disabled="!queryParams.orgType||queryParams.orgType!=2"
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
             :maxTagCount="1"
@@ -142,31 +144,33 @@
           </a-select>
         </div>
 
-        <div v-if="queryParams.orgType == 2" class="div-title">
+        <div  class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">接口配置</span>
         </div>
 
-        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div  class="display-item" style="margin-left: 12px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
           <a-input
             type="number"
+            :disabled="!queryParams.orgType||queryParams.orgType!=2"
             v-model="queryParams.hisCode"
             allow-clear
             placeholder="请输入内容"
-            style="width: 204px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 7px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
         </div>
 
-        <div v-if="queryParams.orgType == 2" class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 10px"> <span style="color: red">*</span> 服务地址:</span>
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
+          <span style="margin-top: 10px;margin-left: -5px;"> <span style="color: red">*</span> 服务地址:</span>
           <a-input
+          :disabled="!queryParams.orgType||queryParams.orgType!=2"
             v-model="queryParams.middleware"
             allow-clear
             placeholder="请输入内容"
-            style="width: 199px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 7px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />

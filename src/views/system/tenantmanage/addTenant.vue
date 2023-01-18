@@ -73,13 +73,13 @@
           />
         </div>
 
-        <div class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div class="display-item" style="margin-left: -2px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 管理员姓名:</span>
           <a-input
             v-model="queryParams.adminName"
             allow-clear
             placeholder="请输入内容"
-            style="width: 188px; margin-top: 5px; margin-left: 5px"
+            style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />

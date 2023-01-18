@@ -16,7 +16,7 @@
       <div class="search-row">
         <span class="name"> 所属机构:</span>
         <a-tree-select
-          v-model="queryParams.parentDisarmamentId"
+          v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"
@@ -108,7 +108,7 @@ export default {
       treeData: [],
       HospitalTypeList: [],
       queryParams: {
-        parentDisarmamentId: undefined,
+        hospitalCode: undefined,
         status: 1,
         departmentName: '',
       },
@@ -247,7 +247,7 @@ export default {
         this.queryParams.metaName = ''
       }
       this.queryParams.departmentName=undefined
-      this.queryParams.parentDisarmamentId = undefined
+      this.queryParams.hospitalCode = undefined
       this.queryParams.status=1
 
       this.handleOk()
@@ -298,14 +298,14 @@ export default {
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'value', item.hospitalId)
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
               this.$set(item, 'title', item.hospitalName)
               this.$set(item, 'children', item.hospitals)
 
               item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalId)
-                this.$set(item1, 'value', item1.hospitalId)
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
                 this.$set(item1, 'title', item1.hospitalName)
               })
             })

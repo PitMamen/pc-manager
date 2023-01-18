@@ -426,7 +426,7 @@ export default {
         return
       }
 
-      if (!queryParams.departmentType) {
+      if (!this.queryParams.departmentType) {
         this.$message.error('请选择科室类型')
         return
       }
