@@ -85,6 +85,7 @@
                 <span style="margin-left: 1%">*</span>
 
                 <a-input-number
+                  :disabled="record.classifyCode == 101 || (record.classifyCode == 102 && record.classifyCode == 103)"
                   style="display: inline-block; margin-left: 1%; width: 60px"
                   v-model="itemTask.quantity"
                   :min="1"
@@ -106,9 +107,11 @@
                 />
                 <span style="margin-left: 5px">元</span>
 
-                <span style="margin-left: 1%" v-show="itemTask.typeCode == 2 || itemTask.typeCode == 3">服务时长</span>
+                <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
+                  >服务时长</span
+                >
                 <a-input-number
-                  v-show="itemTask.typeCode == 2 || itemTask.typeCode == 3"
+                  v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
                   style="display: inline-block; margin-left: 5px; width: 60px"
                   v-model="itemTask.serviceTime"
                   :min="1"
@@ -117,17 +120,19 @@
                   allow-clear
                   placeholder=""
                 />
-                <span style="margin-left: 5px" v-show="itemTask.typeCode == 2 || itemTask.typeCode == 3">分钟</span>
+                <span style="margin-left: 5px" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">分钟</span>
 
                 <a-checkbox
                   @click="goCheckChatNum(itemTask)"
-                  v-show="itemTask.typeCode != 4 && itemTask.typeCode == 1"
+                  v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
                   :checked="itemTask.needChatNum"
                   style="margin-left: 1%"
                 />
-                <span style="margin-left: 5px" v-show="itemTask.typeCode != 4 && itemTask.typeCode == 1">限制条数</span>
+                <span style="margin-left: 5px" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
+                  >限制条数</span
+                >
                 <a-input-number
-                  v-show="itemTask.typeCode != 4 && itemTask.typeCode == 1"
+                  v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
                   style="display: inline-block; margin-left: 5px; width: 60px"
                   v-model="itemTask.chatNum"
                   :min="1"
@@ -139,15 +144,15 @@
 
                 <a-checkbox
                   @click="goCheckServicePeriod(itemTask)"
-                  v-show="itemTask.typeCode != 4"
+                  v-show="itemTask.typeCode != 104"
                   :checked="itemTask.needServicePeriod"
                   style="margin-left: 1%"
                 />
-                <span style="margin-left: 5px" v-show="itemTask.typeCode != 4">服务时效</span>
+                <span style="margin-left: 5px" v-show="itemTask.typeCode != 104">服务时效</span>
                 <a-input-number
                   style="display: inline-block; margin-left: 5px; width: 60px"
                   v-model="itemTask.timeQuantity"
-                  v-show="itemTask.typeCode != 4"
+                  v-show="itemTask.typeCode != 104"
                   :min="1"
                   :max="1000"
                   :maxLength="30"
@@ -158,7 +163,7 @@
                 <a-select
                   class="mid-select-two"
                   style="margin-left: 5px"
-                  v-show="itemTask.typeCode != 4"
+                  v-show="itemTask.typeCode != 104"
                   v-model="itemTask.servicePeriodUnit"
                   @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
                   allow-clear
@@ -222,8 +227,14 @@
                   <span class="span-end" style="margin-left: 2%; width: 92px">刪除项目</span>
                 </a-popconfirm>
 
+                <!-- v-show="record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103" -->
                 <span
-                  v-show="indexTask == configData.tasksKe[indexOut].itemsKe.length - 1"
+                  v-show="
+                    indexTask == configData.tasksKe[indexOut].itemsKe.length - 1 &&
+                    record.classifyCode != 101 &&
+                    record.classifyCode != 102 &&
+                    record.classifyCode != 103
+                  "
                   class="span-end"
                   style="margin-left: 10%; width: 92px"
                   @click="addItemsKe(indexOut)"
@@ -252,9 +263,21 @@
             </div>
           </div>
         </div>
+        <div v-if="configData.tasksKe.length == 0">
+          <span
+            class="span-end"
+            v-show="indexOut == configData.tasksKe.length - 1"
+            style="margin-left: 10%; width: 92px"
+            @click="addTasksKe()"
+            >新增选择</span
+          >
+        </div>
       </div>
 
-      <div class="div-pro-middle">
+      <div
+        class="div-pro-middle"
+        v-show="record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103"
+      >
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">必选项目</span>
@@ -315,9 +338,11 @@
               />
               <span style="margin-left: 5px">元</span>
 
-              <span style="margin-left: 1%" v-show="itemTask.typeCode == 2 || itemTask.typeCode == 3">服务时长</span>
+              <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
+                >服务时长</span
+              >
               <a-input-number
-                v-show="itemTask.typeCode == 2 || itemTask.typeCode == 3"
+                v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
                 style="display: inline-block; margin-left: 5px; width: 60px"
                 v-model="itemTask.serviceTime"
                 :min="1"
@@ -326,17 +351,19 @@
                 allow-clear
                 placeholder=""
               />
-              <span style="margin-left: 5px" v-show="itemTask.typeCode == 2 || itemTask.typeCode == 3">分钟</span>
+              <span style="margin-left: 5px" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">分钟</span>
 
               <a-checkbox
                 @click="goCheckChatNum(itemTask)"
-                v-show="itemTask.typeCode != 4 && itemTask.typeCode == 1"
+                v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
                 :checked="itemTask.needChatNum"
                 style="margin-left: 1%"
               />
-              <span style="margin-left: 5px" v-show="itemTask.typeCode != 4 && itemTask.typeCode == 1">限制条数</span>
+              <span style="margin-left: 5px" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
+                >限制条数</span
+              >
               <a-input-number
-                v-show="itemTask.typeCode != 4 && itemTask.typeCode == 1"
+                v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
                 style="display: inline-block; margin-left: 5px; width: 60px"
                 v-model="itemTask.chatNum"
                 :min="1"
@@ -348,15 +375,15 @@
 
               <a-checkbox
                 @click="goCheckServicePeriod(itemTask)"
-                v-show="itemTask.typeCode != 4"
+                v-show="itemTask.typeCode != 104"
                 :checked="itemTask.needServicePeriod"
                 style="margin-left: 1%"
               />
-              <span style="margin-left: 5px" v-show="itemTask.typeCode != 4">服务时效</span>
+              <span style="margin-left: 5px" v-show="itemTask.typeCode != 104">服务时效</span>
               <a-input-number
                 style="display: inline-block; margin-left: 5px; width: 60px"
                 v-model="itemTask.timeQuantity"
-                v-show="itemTask.typeCode != 4"
+                v-show="itemTask.typeCode != 104"
                 :min="1"
                 :max="1000"
                 :maxLength="30"
@@ -367,7 +394,7 @@
               <a-select
                 class="mid-select-two"
                 style="margin-left: 5px"
-                v-show="itemTask.typeCode != 4"
+                v-show="itemTask.typeCode != 104"
                 v-model="itemTask.servicePeriodUnit"
                 @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
                 allow-clear
@@ -438,6 +465,16 @@
             </div>
           </div>
         </div>
+
+        <div v-if="configData.tasksBi.length == 0">
+          <span
+            class="span-end"
+            v-show="indexOut == configData.tasksKe.length - 1"
+            style="margin-left: 10%; width: 92px"
+            @click="addItemsBi()"
+            >新增项目</span
+          >
+        </div>
       </div>
 
       <div class="div-pro-btn">
@@ -497,44 +534,52 @@ export default {
         { value: '2', description: '周二' },
       ], //每周第、每月第、每年第切换时改变的集合
       confirmLoading: false,
+      hasHeadImg: false,
+      hasHeadImgBi: false,
       ggg: '反而个人或过热或认同和',
 
       //上传到后台和获取配置详情的数据结构不一样，
       // configData 上传到后台的数据，也就是前端页面的数据
       //     获取到的详情数据也要转换成前端要的 configData
+      // configData: {
+      //   id: 0,
+      //   pkgs: [
+      //     {
+      //       id: 0,
+      //       itemType: {
+      //         description: 'string',
+      //         value: 0,
+      //       },
+      //       items: [
+      //         {
+      //           id: 0,
+      //           itemImg: 0,
+      //           itemsAttr: [
+      //             {
+      //               id: 0,
+      //               ruleType: 'string',
+      //               ruleTypeName: 'string',
+      //               serviceValue: 'string',
+      //               unit: 'string',
+      //             },
+      //           ],
+      //           quantity: 0,
+      //           rightsType: 0,
+      //           saleAmount: 0,
+      //           serviceItemId: 0,
+      //           serviceItemName: 'string',
+      //           unit: 'string',
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
+
       configData: {
-        id: 0,
-        pkgs: [
-          {
-            id: 0,
-            itemType: {
-              description: 'string',
-              value: 0,
-            },
-            items: [
-              {
-                id: 0,
-                itemImg: 0,
-                itemsAttr: [
-                  {
-                    id: 0,
-                    ruleType: 'string',
-                    ruleTypeName: 'string',
-                    serviceValue: 'string',
-                    unit: 'string',
-                  },
-                ],
-                quantity: 0,
-                rightsType: 0,
-                saleAmount: 0,
-                serviceItemId: 0,
-                serviceItemName: 'string',
-                unit: 'string',
-              },
-            ],
-          },
-        ],
+        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
+        tasksBi: [{ quantity: 1, saleAmount: undefined }],
       },
+
       /**
        * tasksKe的itemsKe中的item跟tasksBi中的item是 一个数据结构
        *
@@ -542,7 +587,7 @@ export default {
        */
       configDataOrigin: {
         tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
-        tasksBi: [{}],
+        tasksBi: [{ quantity: 1, saleAmount: undefined }],
       },
 
       dataItem: {
@@ -588,9 +633,12 @@ export default {
    * 普通商品项目包括：服务次数（大于0整数）、服务价格（大于等于0的整数）。
    *
    * （3）每个可选项目和必选项目中，用户必选唯一一个明细商品项缩略图片作为该项目的展示图片用于手机端展示。
+   *
+   * 这一条 record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103 实现
    * （4）当用户选择的套餐类型为图文咨询、视频咨询与电话咨询三类医患咨询类服务时，不要显示必选项，并且可选项目对应的项目也需要
    * 与套餐类型一致，即图文咨询类套餐中仅可添加和选择图文咨询类明细项目，明细项目数据源需要随着套餐类型变化而动态调整，可选项数
    * 量为1且不可修改【置灰】，每个可选项也只能包含一个商品。
+   *     解释：每个可选项也只能包含一个商品。意思是可以有多个大框，但是每个大框只能有一个条目。
    */
   created() {
     this.user = Vue.ls.get(TRUE_USER)
@@ -621,33 +669,34 @@ export default {
       itemTask.needChatNum = !itemTask.needChatNum
     },
     delItemsKe(indexOut, indexTask, itemTask) {
-      if (this.configData.tasksKe[indexOut].itemsKe.length == 1) {
+      if (!this.hasTotal()) {
         this.$message.warn('至少需要一条项目')
         return
       }
       this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+      if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
+        this.delTasksKe(indexOut)
+      }
     },
     addItemsKe(indexout) {
       this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined })
     },
 
     addTasksKe() {
-      this.configData.tasksKe.push({ itemsKe: [{}] })
+      this.configData.tasksKe.push({ itemsKe: [{ quantity: 1, saleAmount: undefined }] })
     },
 
     delTasksKe(indexOut) {
-      debugger
-      if (this.configData.tasksKe.length == 1) {
-        this.$message.warn('至少需要选择一条可选项目')
+      if (!this.hasTotal()) {
+        this.$message.warn('至少需要一条项目')
         return
       }
       this.configData.tasksKe.splice(indexOut, 1)
     },
 
     delItemsBi(indexTask, itemTask) {
-      debugger
-      if (this.configData.tasksBi[indexTask].length == 1) {
-        this.$message.warn('至少需要一条必选项目')
+      if (!this.hasTotal()) {
+        this.$message.warn('至少需要一条项目')
         return
       }
       this.configData.tasksBi.splice(indexTask, 1)
@@ -666,7 +715,7 @@ export default {
     },
 
     /**
-     *  typeCode  1 图文咨询 2 视频咨询 3 电话咨询 4 普通商品
+     *  typeCode  101 图文咨询 102 电话咨询  103 视频咨询 104 普通商品
      * @param {*} itemTask
      */
     onSelect(itemTask) {
@@ -674,6 +723,8 @@ export default {
       let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
       debugger
       itemTask.typeCode = findItem.projectType + ''
+
+      this.$set(itemTask, 'serviceItemName', findItem.serviceItemName)
 
       //构造属性，用于前端显示，后台不需要，包括 typeCode 字段
       this.$set(itemTask, 'normsModel', findItem.normsModel)
@@ -686,10 +737,10 @@ export default {
 
       //1 图文咨询 特有 限制条数
       // 构造参数 serviceTime(服务时长) chatNum(限制条数)前端用，保存的时候要用来组装itemAttr数据结构
-      if (itemTask.typeCode == 2 || itemTask.typeCode == 3) {
+      if (itemTask.typeCode == 102 || itemTask.typeCode == 103) {
         this.$set(itemTask, 'serviceTime', undefined)
       }
-      if (itemTask.typeCode == 1) {
+      if (itemTask.typeCode == 101) {
         this.$set(itemTask, 'chatNum', undefined)
         this.$set(itemTask, 'needChatNum', false)
       }
@@ -720,6 +771,7 @@ export default {
       }
 
       this.configData.tasksKe[indexOut].itemsKe[indexTask].isHeadImg = true
+      this.hasHeadImg = true
     },
 
     //每个条目只勾选一个
@@ -734,6 +786,7 @@ export default {
         this.configData.tasksBi[index].isHeadImg = false
       }
       this.configData.tasksBi[indexTask].isHeadImg = true
+      this.hasHeadImgBi = true
     },
 
     /**
@@ -758,11 +811,18 @@ export default {
       if (isFirst) {
         this.confirmLoading = true
       }
+      let projectType = ''
+      //101 图文咨询  102 电话咨询  103 视频咨询
+      if (this.record.classifyCode == 101 || this.record.classifyCode == 102 || this.record.classifyCode == 103) {
+        //图文咨询
+        projectType = this.record.classifyCode
+      }
       qryServiceItemList({
         pageNo: 1,
         pageSize: 9999,
         status: 1,
         projectName: name,
+        projectType: projectType,
       })
         .then((res) => {
           if (res.code == 0) {
@@ -783,9 +843,9 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
-            this.configData = res.data
+            // this.configData = res.data
             //区分新增和修改
-            if (this.configData.optionalPkgs.length == 0 && this.configData.compulsoryPkgs.length == 0) {
+            if (res.data.optionalPkgs.length == 0 && res.data.compulsoryPkgs.length == 0) {
               console.log('itemType 新增')
               this.configData = JSON.parse(JSON.stringify(this.configDataOrigin))
               // this.configData.id = this.record.commodityPkgId
@@ -802,14 +862,228 @@ export default {
         })
     },
 
+    hasTotal() {
+      //总量约束，必须有一条
+      let itemTotal = 0
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+      }
+      itemTotal = itemTotal + this.configData.tasksBi.length
+      return itemTotal > 0 ? true : false
+    },
+
+    /**
+     * 先提醒必填字段，再组装成接口要的数据提交
+     */
     submitData() {
       console.log('submitData', JSON.stringify(this.configData))
       let tempData = JSON.parse(JSON.stringify(this.configData))
 
-      
+      //校验可选
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+          let itemTask = this.configData.tasksKe[index].itemsKe[indexIn]
+          if (!itemTask.serviceItemId) {
+            this.$message.error('请选择可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【项目类型】')
+            return
+          }
+
+          if (!itemTask.saleAmount) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务价格】')
+            return
+          }
+
+          //服务时长 视频咨询和电话咨询特有
+          if ((itemTask.typeCode == 102 || itemTask.typeCode == 103) && !itemTask.serviceTime) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时长】')
+            return
+          }
+
+          //限制条数 图文咨询特有  且需要勾选
+          if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【限制条数】')
+            return
+          }
+
+          if (itemTask.needServicePeriod && !itemTask.timeQuantity) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时效】')
+            return
+          }
+
+          if (itemTask.needServicePeriod && !itemTask.servicePeriodUnit) {
+            this.$message.error('请选择可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【时效单位】')
+            return
+          }
+        }
+      }
+
+      //校验可选的项目图片
+      if (this.configData.tasksKe.length > 0 && !this.hasHeadImg) {
+        this.$message.error('请勾选可选项目图片')
+        return
+      }
+
+      //校验必选
+      for (let index = 0; index < this.configData.tasksBi.length; index++) {
+        let itemTask = this.configData.tasksBi[index]
+        if (!itemTask.serviceItemId) {
+          this.$message.error('请选择必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【项目类型】')
+          return
+        }
+
+        if (!itemTask.saleAmount) {
+          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务价格】')
+          return
+        }
+
+        //服务时长 视频咨询和电话咨询特有
+        if ((itemTask.typeCode == 102 || itemTask.typeCode == 103) && !itemTask.serviceTime) {
+          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时长】')
+          return
+        }
+
+        //限制条数 图文咨询特有  且需要勾选
+        if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
+          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【限制条数】')
+          return
+        }
+
+        //服务时效 都有  需要勾选
+        if (itemTask.needServicePeriod && !itemTask.timeQuantity) {
+          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时效】')
+          return
+        }
+        //时效单位 都有  需要勾选
+        if (itemTask.needServicePeriod && !itemTask.servicePeriodUnit) {
+          this.$message.error('请选择必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【时效单位】')
+          return
+        }
+      }
+
+      //校验必选的项目图片
+      if (this.configData.tasksBi.length > 0 && !this.hasHeadImgBi) {
+        this.$message.error('请勾选必选项目图片')
+        return
+      }
+
+      //总量约束，必须有一条
+      let itemTotal = 0
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+      }
+      itemTotal = itemTotal + this.configData.tasksBi.length
+      //时效单位 都有  需要勾选
+      if (itemTotal == 0) {
+        this.$message.error('总项目必须至少添加一个')
+        return
+      }
+
+      //处理成接口需要的数据结构 项目类型：1可选2必选
+      //组装可选
+      let uploadData = { pkgs: [], id: this.record.commodityPkgId }
+      this.configData.tasksKe.forEach((item, indexItem) => {
+        uploadData.pkgs.push({ itemType: 1, items: [] })
+        item.itemsKe.forEach((element, indexElement) => {
+          uploadData.pkgs[indexItem].items.push({
+            quantity: element.quantity,
+            saleAmount: element.saleAmount,
+            serviceItemId: element.serviceItemId,
+            serviceItemName: element.serviceItemName,
+            itemImg: item.isHeadImg ? 1 : 0,
+            itemsAttr: [],
+          })
+
+          //普通商品不需要 itemsAttr,只要传空的itemsAttr
+          if (element.typeCode != 104) {
+            debugger
+            //服务时长 视频咨询和电话咨询特有
+            if (element.typeCode == 102 || element.typeCode == 103) {
+              uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                ruleType: 'ITEM_ATTR_TIMES',
+                ruleTypeName: '服务时长',
+                serviceValue: element.serviceTime,
+                unit: '分钟',
+              })
+            }
+
+            //限制条数 图文咨询特有  且需要勾选
+            debugger
+            if (element.needChatNum && element.typeCode == 101) {
+              uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                ruleType: 'ITEM_ATTR_LIMITNUMS',
+                ruleTypeName: '限制条数',
+                serviceValue: element.chatNum,
+                unit: '条',
+              })
+            }
+
+            //服务时效 都有  需要勾选
+            if (element.needServicePeriod) {
+              let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
+              uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                ruleType: 'ITEM_ATTR_EXPIRE',
+                ruleTypeName: '服务时效',
+                serviceValue: element.timeQuantity,
+                unit: unitStr,
+              })
+            }
+          }
+        })
+      })
+
+      let pkgsLength = uploadData.pkgs.length
+
+      //组装必选
+      this.configData.tasksBi.forEach((item, indexItem) => {
+        uploadData.pkgs.push({ itemType: 2, items: [] })
+        uploadData.pkgs[indexItem + pkgsLength].items.push({
+          quantity: item.quantity,
+          saleAmount: item.saleAmount,
+          serviceItemId: item.serviceItemId,
+          serviceItemName: item.serviceItemName,
+          itemImg: item.isHeadImg ? 1 : 0,
+          itemsAttr: [],
+        })
+
+        //普通商品不需要 itemsAttr,只要传空的itemsAttr
+        if (item.typeCode != 104) {
+          //服务时长 视频咨询和电话咨询特有
+          if (item.typeCode == 102 || item.typeCode == 103) {
+            uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+              ruleType: 'ITEM_ATTR_TIMES',
+              ruleTypeName: '服务时长',
+              serviceValue: item.serviceTime,
+              unit: '分钟',
+            })
+          }
+
+          //限制条数 图文咨询特有  且需要勾选
+          if (item.needChatNum && item.typeCode == 101) {
+            uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+              ruleType: 'ITEM_ATTR_LIMITNUMS',
+              ruleTypeName: '限制条数',
+              serviceValue: item.chatNum,
+              unit: '条',
+            })
+          }
+
+          //服务时效 都有  需要勾选
+          if (item.needServicePeriod) {
+            let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
+            uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+              ruleType: 'ITEM_ATTR_EXPIRE',
+              ruleTypeName: '服务时效',
+              serviceValue: item.timeQuantity,
+              unit: unitStr,
+            })
+          }
+        }
+      })
+
+      console.log('saveCommodityPkgCollection Data', JSON.stringify(uploadData))
 
       // this.confirmLoading = true
-      saveCommodityPkgCollection(tempData)
+      saveCommodityPkgCollection(uploadData)
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {

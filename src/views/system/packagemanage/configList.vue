@@ -26,7 +26,7 @@
       </div>
 
       <div class="search-row">
-        <span class="name">套餐类型:</span>
+        <span class="name">套餐分类:</span>
         <a-select
           class="deptselect-single"
           show-search

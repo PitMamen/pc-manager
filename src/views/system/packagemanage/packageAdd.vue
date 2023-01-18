@@ -21,7 +21,7 @@
           </div>
 
           <div class="div-pro-line">
-            <span class="span-item-name"><span style="color: red">*</span> 套餐类型 :</span>
+            <span class="span-item-name"><span style="color: red">*</span> 套餐分类 :</span>
             <a-select @select="onTypeSelect" v-model="packageData.packageClassifyId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in classData" :key="index" :value="item.id">{{
                 item.classifyName
@@ -663,7 +663,7 @@ export default {
     },
 
     /**
-     * 1 咨询服务   2 服务套餐   3 健康商品
+     * broadClassify 套餐分类 值为 1 咨询服务   2 服务套餐   3 健康商品
      * 根据用户配置的套餐类型，如果选择的套餐类型对应的大类是咨询服务类，那么仅可配置咨询医生或咨询护士，不可配置健管团队，且分配方式为随机分配，医生也只能选1位；
      * 如果选择的套餐类型对应的大类是服务套餐，那么都可任意配置咨询医生与咨询护士和健康团队;
      * 如果选择的套餐类型对应的大类是健康商品，那么不可配置咨询医生、咨询护士与健管团队；
