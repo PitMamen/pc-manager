@@ -388,7 +388,7 @@ export default {
       allocationTypeDoc: undefined,
       allocationTypeNurse: undefined,
       allocationTypeTeam: undefined,
-      isRefresh:false,
+      isRefresh: false,
       /**
        *
        */
@@ -462,7 +462,7 @@ export default {
       console.log('watch----package_manage_edit out', to, from)
       if (to.path.indexOf('packageEdit') > -1) {
         console.log('watch----package_manage_edit', to, from)
-        this.isRefresh=true
+        this.isRefresh = true
         this.init()
       }
     },
@@ -933,19 +933,20 @@ export default {
 
       //选择租户后 清空机构 清空所有需要租户和机构入参的请求数据
       console.log('onSelectChang选择租户')
-      if(this.isRefresh){
-        this.isRefresh=false
-      }else{
+      if (this.isRefresh) {
+        this.isRefresh = false
+      } else {
         this.packageData.hospitalCode = undefined
+        this.packageData.commodityFollowPlanIds = []
       }
-     
+
       this.treeData = []
       this.deptUsersDoc = []
       this.deptUsersNurse = []
       this.nameDoc = ''
       this.nameNurse = ''
       this.plans = []
-      this.packageData.commodityFollowPlanIds = []
+
 
       if (this.packageData.tenantId) {
         this.queryHospitalListOut()
@@ -1082,12 +1083,11 @@ export default {
      * @param {*} index 0 医生  1 护士
      */
     addPerson(index) {
-
-      if( !this.packageData.tenantId ){
+      if (!this.packageData.tenantId) {
         this.$message.warn('请先选择租户')
         return
       }
-      if( !this.packageData.hospitalCode ){
+      if (!this.packageData.hospitalCode) {
         this.$message.warn('请先选择机构')
         return
       }
@@ -1344,11 +1344,10 @@ export default {
           return
         }
 
+        debugger
         if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
           this.$message.warn('请选择随访！')
           return
-        } else {
-          delete tempData.commodityFollowPlanIds
         }
 
         tempData.commodityPkgManageReqs = commodityNew

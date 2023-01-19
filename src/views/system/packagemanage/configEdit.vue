@@ -917,8 +917,8 @@ export default {
 
     processData(data) {
       //修改的时候已经保存了项目图片，直接置成true
-      this.hasHeadImg = true
-      this.hasHeadImgBi = true
+      // this.hasHeadImg = true
+      // this.hasHeadImgBi = true
       this.configData = {}
       //处理可选项
       if (data.optionalPkgs.length > 0) {
@@ -1128,7 +1128,17 @@ export default {
         }
       }
 
-      //校验可选的项目图片
+      // 校验可选的项目图片
+      debugger
+      if (this.configData.tasksKe.length > 0) {
+        for (let index = 0; index < this.configData.tasksKe.length; index++) {
+          for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+            if (this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg) {
+              this.hasHeadImg = true
+            }
+          }
+        }
+      }
       if (this.configData.tasksKe.length > 0 && !this.hasHeadImg) {
         this.$message.error('请勾选可选项目图片')
         return
@@ -1175,6 +1185,12 @@ export default {
       }
 
       //校验必选的项目图片  咨询三类不需要校验必选图片
+      debugger
+      for (let indexIn = 0; indexIn < this.configData.tasksBi.length; indexIn++) {
+        if (this.configData.tasksBi[indexIn].isHeadImg) {
+          this.hasHeadImgBi = true
+        }
+      }
       if (
         this.record.classifyCode != 101 &&
         this.record.classifyCode != 102 &&
