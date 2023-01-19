@@ -45,7 +45,7 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+            <a-select @change="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
                 item.tenantName
               }}</a-select-option>
@@ -538,7 +538,7 @@ export default {
           return []
         })
         .finally((res) => {
-          // this.confirmLoading = false
+          this.confirmLoading = false
         })
     },
 
@@ -926,17 +926,19 @@ export default {
      */
     onSelectChange() {
       // console.log('onSelectChange type', type)
-      console.log('onSelectChange this.packageData.hospitalCode', this.packageData.hospitalCode)
-      if (this.packageData.tenantId && this.packageData.hospitalCode) {
-        this.deptUsersDoc = []
-        this.deptUsersNurse = []
-        this.nameDoc = ''
-        this.nameNurse = ''
-        this.plans = []
-        this.getTreeUsersDoc(false)
-        this.getTreeUsersNurse(false)
-        this.qryFollowPlanByFollowTypeOut(false)
-      }
+  
+      //选择租户后 清空机构 清空所有需要租户和机构入参的请求数据
+      console.log('onSelectChang选择租户')
+
+      this.packageData.hospitalCode = undefined
+      this.treeData = []
+      this.deptUsersDoc = []
+      this.deptUsersNurse = []
+      this.nameDoc = ''
+      this.nameNurse = ''
+      this.plans = []
+      this.packageData.commodityFollowPlanIds = []
+
       if (this.packageData.tenantId) {
         this.queryHospitalListOut()
       }
