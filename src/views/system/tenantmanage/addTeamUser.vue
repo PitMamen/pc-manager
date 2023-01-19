@@ -175,6 +175,11 @@ export default {
         return
       }
 
+      if (isStringEmpty(this.checkData.teamRole)) {
+        this.$message.error('请选择团队角色')
+        return
+      }
+
       this.addTdHealthyTeamUserOut()
     },
 

@@ -35,7 +35,7 @@
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构代码:</span>
           <a-input
-           type="number"
+            type="number"
             v-model="queryParams.hospitalCode"
             allow-clear
             placeholder="请输入内容"
@@ -59,15 +59,14 @@
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span> <span style="color: red">*</span> 显示顺序:</span>
-          <a-button style="margin-left: 5px;width: 30px;" icon="plus" size="small" @click="addNum()" />
+          <a-button style="margin-left: 5px; width: 30px" icon="plus" size="small" @click="addNum()" />
           <!-- <a-icon type="plus" /> -->
           <a-input
             v-model="queryParams.sortedNo"
-            disabled
             allow-clear
             style="width: 127px; margin-left: 7px; text-align: center"
           />
-          <a-button style="margin-left: 7px;width: 30px;" size="small" icon="minus" @click="duleNum()" />
+          <a-button style="margin-left: 7px; width: 30px" size="small" icon="minus" @click="duleNum()" />
         </div>
 
         <!-- <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -102,22 +101,21 @@
           </a-select>
         </div>
 
-
-
-        <div  class="div-title">
+        <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">医疗机构属性</span>
         </div>
 
-        <div  class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构类型:</span>
           <a-select
-          class="sitemore"
-          style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
-          :title="queryParams.hospitalType"
-          :maxTagCount="1"
-          allow-clear
-          :disabled="!queryParams.orgType||queryParams.orgType!=2"
+            class="sitemore"
+            style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
+            :title="queryParams.hospitalType"
+            v-model="queryParams.hospitalType"
+            :maxTagCount="1"
+            allow-clear
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
             placeholder="请选择机构类型"
           >
             <a-select-option v-for="(item, index) in HospitalTypeList" :value="item.value" :key="index">{{
@@ -126,10 +124,10 @@
           </a-select>
         </div>
 
-        <div  class="display-item" style="margin-left: 10px; margin-top: 10px">
+        <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构等级:</span>
           <a-select
-          :disabled="!queryParams.orgType||queryParams.orgType!=2"
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
             :title="queryParams.level"
@@ -144,16 +142,16 @@
           </a-select>
         </div>
 
-        <div  class="div-title">
+        <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">接口配置</span>
         </div>
 
-        <div  class="display-item" style="margin-left: 12px; margin-top: 10px">
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
           <a-input
             type="number"
-            :disabled="!queryParams.orgType||queryParams.orgType!=2"
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
             v-model="queryParams.hisCode"
             allow-clear
             placeholder="请输入内容"
@@ -163,10 +161,10 @@
           />
         </div>
 
-        <div  class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px;margin-left: -5px;"> <span style="color: red">*</span> 服务地址:</span>
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 服务地址:</span>
           <a-input
-          :disabled="!queryParams.orgType||queryParams.orgType!=2"
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
             v-model="queryParams.middleware"
             allow-clear
             placeholder="请输入内容"
@@ -178,7 +176,7 @@
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style=" height: 500px">
+      <div class="card-right-user" style="height: 500px">
         <div class="div-title" style="margin-left: 10px; margin-top: 3px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
@@ -199,7 +197,7 @@
             <div class="ant-upload-text">upload</div>
           </a-upload>
 
-          <div  class="domw-r">
+          <div class="domw-r">
             <!-- <a-button
               class=""
               icon="vertical-align-top"
@@ -211,7 +209,7 @@
           </div>
         </div>
 
-        <div  id="div1" ref="editorEl" style="margin-top: 15%;margin-left: 10px;"></div>
+        <div id="div1" ref="editorEl" style="margin-top: 15%; margin-left: 10px"></div>
       </div>
     </div>
   </a-modal>
@@ -221,7 +219,13 @@
       
       <script>
 import moment from 'moment'
-import { save, queryHospitalLevel, queryHospitalType,parent,getDictDataForCodeorgType } from '@/api/modular/system/posManage'
+import {
+  save,
+  queryHospitalLevel,
+  queryHospitalType,
+  parent,
+  getDictDataForCodeorgType,
+} from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
@@ -244,17 +248,17 @@ export default {
       previewVisible: false,
       HospitalLevelList: [],
       HospitalTypeList: [],
-      ParentList:[],
+      ParentList: [],
       record: {},
       queryParams: {
         hisCode: '',
         hospitalCode: '',
         hospitalId: '',
         hospitalName: '',
-        hospitalType: '',
+        hospitalType: undefined,
         imgUrl: '',
         introduction: '',
-        level: '',
+        level: undefined,
         middleware: '',
         orgType: undefined,
         pid: 0,
@@ -262,8 +266,7 @@ export default {
         tenantId: 0,
       },
 
-      orgTypeData:[],
-
+      orgTypeData: [],
 
       labelCol: {
         xs: { span: 24 },
@@ -304,19 +307,18 @@ export default {
       })
     },
 
-
-  /**
+    /**
      * 组织类型接口
      */
-     getDictDataForCodeorgTypeOut() {
+    getDictDataForCodeorgTypeOut() {
       this.confirmLoading = true
       getDictDataForCodeorgType()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             this.orgTypeData = res.data
             for (let index = 0; index < this.orgTypeData.length; index++) {
-                this.orgTypeData[index].code = Number(this.orgTypeData[index].code)
-               }
+              this.orgTypeData[index].code = Number(this.orgTypeData[index].code)
+            }
           } else {
             this.orgTypeData = res.data
           }
@@ -326,19 +328,15 @@ export default {
         })
     },
 
-
-
-
-
     init() {
       var editor = new E('#div1')
       editor.config.height = 600
       editor.config.pasteFilterStyle = false
       editor.config.onchange = (html) => {
-        console.log("editor addMe:",html)
+        console.log('editor addMe:', html)
 
         this.queryParams.introduction = html
-        console.log('init',JSON.parse(JSON.stringify(this.queryParams)))
+        console.log('init', JSON.parse(JSON.stringify(this.queryParams)))
       }
       // 默认情况下，显示所有菜单
       editor.config.menus = [
@@ -389,38 +387,33 @@ export default {
       editor.create()
     },
 
-
     /**
      * 增加序号
      */
-    addNum(){
+    addNum() {
       this.queryParams.sortedNo++
     },
-    
+
     /**
      * 减序号
      */
-    duleNum(){
+    duleNum() {
       this.queryParams.sortedNo--
-      if(this.queryParams.sortedNo<=0){
-        this.queryParams.sortedNo=0
+      if (this.queryParams.sortedNo <= 0) {
+        this.queryParams.sortedNo = 0
       }
     },
-
-
-
-
 
     /**
      * 上级机构
      */
-     getParentList(){
-      parent().then((res)=>{
-        if(res.code==0){
-         this.ParentList = res.data
+    getParentList() {
+      parent().then((res) => {
+        if (res.code == 0) {
+          this.ParentList = res.data
         }
       })
-     },
+    },
 
     /***
      * 机构等级接口
@@ -457,7 +450,7 @@ export default {
      */
     uploadFile() {
       this.handlePreview()
-       this.handleChange()
+      this.handleChange()
     },
 
     /**
@@ -491,7 +484,6 @@ export default {
         reader.onerror = (error) => reject(error)
       })
     },
-
 
     /***
      * 新增租户接口调用
@@ -558,10 +550,10 @@ export default {
       this.queryParams.hospitalCode = ''
       this.queryParams.hospitalName = ''
       this.queryParams.hospitalId = ''
-      this.queryParams.hospitalType = ''
+      this.queryParams.hospitalType = undefined
       this.queryParams.imgUrl = ''
       this.queryParams.introduction = ''
-      this.queryParams.level = ''
+      this.queryParams.level = undefined
       this.queryParams.middleware = ''
       this.queryParams.pid = ''
       this.queryParams.sortedNo = 1
@@ -581,7 +573,7 @@ export default {
      * 提交
      */
     handleSubmit() {
-      console.log('handleSubmit',JSON.parse(JSON.stringify(this.queryParams)))
+      console.log('handleSubmit', JSON.parse(JSON.stringify(this.queryParams)))
       if (!this.queryParams.pid) {
         this.$message.error('请选择上级机构')
         return
@@ -600,50 +592,50 @@ export default {
         return
       }
 
-      if(this.queryParams.orgType==2){
+      if (this.queryParams.orgType == 2) {
         if (!this.queryParams.hospitalType) {
-        this.$message.error('请选择机构类型')
-        return
-      }
-      if (!this.queryParams.level) {
-        this.$message.error('请选择机构等级')
-        return
-      }
+          this.$message.error('请选择机构类型')
+          return
+        }
+        if (!this.queryParams.level) {
+          this.$message.error('请选择机构等级')
+          return
+        }
       }
 
-
-      if(this.queryParams.orgType==2){
+      if (this.queryParams.orgType == 2) {
         if (!this.queryParams.hisCode) {
-        this.$message.error('请输入HIS编码')
-        return
+          this.$message.error('请输入HIS编码')
+          return
+        }
+        if (!this.queryParams.middleware) {
+          this.$message.error('请输入服务地址')
+          return
+        }
       }
-      if (!this.queryParams.middleware) {
-        this.$message.error('请输入服务地址')
-        return
+
+      /**
+       * 如果 选中的 组织类型不是 医疗机构  则不传医疗机构属性、接口配置等参数
+       */
+      if (this.queryParams.orgType != 2) {
+        this.queryParams.hospitalType = ''
+        this.queryParams.level = ''
+        this.queryParams.hisCode = ''
+        this.queryParams.middleware = ''
       }
-      }
 
-
-         /**
-          * 如果 选中的 组织类型不是 医疗机构  则不传医疗机构属性、接口配置等参数
-          */
-         if(this.queryParams.orgType!=2){
-          this.queryParams.hospitalType = ''
-          this.queryParams.level = ''
-          this.queryParams.hisCode = ''
-          this.queryParams.middleware = ''
-         }
-
-
-
-         console.log("999999:",this.fileList)
-      if (this.fileList.length>0&&this.fileList[0].response) {
+      if (this.fileList.length > 0 && this.fileList[0].response) {
         this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
       } else {
         // this.queryParams.imgUrl = this.fileList[0].url
       }
 
-       //组装图片
+      if (this.queryParams.sortedNo < 0) {
+        this.$message.error('显示序号不能小于0!')
+        return
+      }
+
+      //组装图片
       //  if (this.fileList.length == 0) {
       //   this.$message.error('请上传图片！')
       //   return

@@ -63,7 +63,6 @@
           <!-- <a-icon type="plus" /> -->
           <a-input
             v-model="queryParams.sortedNo"
-            :disabled="true"
             :defaultValue="1"
             allow-clear
             style="width: 127px; margin-left: 7px; text-align: center"
@@ -712,6 +711,11 @@ export default {
           this.queryParams.imgUrl = this.fileList[0].url
         }
         this.queryParams.imgUrl = ''
+      }
+
+      if (this.queryParams.sortedNo < 0) {
+        this.$message.error('显示序号不能小于0!')
+        return
       }
 
       this.addHospital()
