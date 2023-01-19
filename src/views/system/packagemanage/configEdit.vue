@@ -678,7 +678,13 @@ export default {
         this.$message.warn('至少需要一条项目')
         return
       }
-      this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+
+      if (itemTask.idIn) {
+        this.delCollectionItemByidOut(indexOut, indexTask, itemTask.idIn)
+      } else {
+        this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+      }
+
       if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
         this.configData.tasksKe.splice(indexOut, 1)
       }
@@ -697,7 +703,11 @@ export default {
         this.$message.warn('至少需要一条项目')
         return
       }
-      this.configData.tasksKe.splice(indexOut, 1)
+      if (this.configData.tasksKe[indexOut].selectId) {
+        this.delCommodityPkgCollectionByidOut(1, indexOut, this.configData.tasksKe[indexOut].selectId)
+      } else {
+        this.configData.tasksKe.splice(indexOut, 1)
+      }
     },
 
     delItemsBi(indexTask, itemTask) {
@@ -705,7 +715,11 @@ export default {
         this.$message.warn('至少需要一条项目')
         return
       }
-      this.configData.tasksBi.splice(indexTask, 1)
+      if (itemTask.idOut) {
+        this.delCommodityPkgCollectionByidOut(2, indexTask, itemTask.idOut)
+      } else {
+        this.configData.tasksBi.splice(indexTask, 1)
+      }
     },
 
     addItemsBi() {
@@ -808,12 +822,13 @@ export default {
         })
     },
 
-    delCollectionItemByidOut(itemId) {
+    delCollectionItemByidOut(indexOut, indexTask, itemId) {
       this.confirmLoading = true
       delCollectionItemByid({ itemId: itemId })
         .then((res) => {
           this.confirmLoading = false
-          if (res.code == 0 && res.data.length > 0) {
+          if (res.code == 0) {
+            this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
             this.$message.success('刪除成功')
           }
         })
@@ -822,13 +837,18 @@ export default {
         })
     },
 
-    delCommodityPkgCollectionByidOut(collectionId) {
+    delCommodityPkgCollectionByidOut(flag, indexTask, collectionId) {
       this.confirmLoading = true
       delCommodityPkgCollectionByid({ collectionId: collectionId })
         .then((res) => {
           this.confirmLoading = false
-          if (res.code == 0 && res.data.length > 0) {
+          if (res.code == 0) {
             this.$message.success('刪除成功')
+            if (flag == 1) {
+              this.configData.tasksKe.splice(indexTask, 1)
+            } else {
+              this.configData.tasksBi.splice(indexTask, 1)
+            }
           }
         })
         .finally((res) => {
@@ -921,6 +941,7 @@ export default {
 
             this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'idOut', itemOut.id)
             this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'idIn', itemIn.id)
+            this.$set(this.configData.tasksKe[indexOut], 'selectId', itemOut.id) //selectId为界面上可选外层的id
 
             console.log('process optionalPkgs itemOut.id', itemOut.id)
             console.log('process optionalPkgs itemIn.id', itemIn.id)
@@ -972,9 +993,12 @@ export default {
             }
           })
         })
+      } else {
+        this.$set(this.configData, 'tasksKe', [])
       }
 
       //处理必选项
+      // let pkgsLength = uploadData.pkgs.length
       if (data.compulsoryPkgs.length > 0) {
         this.$set(this.configData, 'tasksBi', [])
         data.compulsoryPkgs.forEach((itemOut, indexOut) => {
@@ -1004,7 +1028,7 @@ export default {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_TIMES')
                 if (findItem) {
                   this.$set(this.configData.tasksBi[indexOut], 'serviceTime', findItem.serviceValue)
-                  this.$set(this.configData.tasksKe[indexOut], 'attrIdServiceTime', findItem.id)
+                  this.$set(this.configData.tasksBi[indexOut], 'attrIdServiceTime', findItem.id)
                 }
               }
 
@@ -1014,7 +1038,7 @@ export default {
                 if (findItem) {
                   this.$set(this.configData.tasksBi[indexOut], 'chatNum', findItem.serviceValue)
                   this.$set(this.configData.tasksBi[indexOut], 'needChatNum', true)
-                  this.$set(this.configData.tasksKe[indexOut], 'attrIdChatNum', findItem.id)
+                  this.$set(this.configData.tasksBi[indexOut], 'attrIdChatNum', findItem.id)
                 } else {
                   this.$set(this.configData.tasksBi[indexOut], 'chatNum', undefined)
                   this.$set(this.configData.tasksBi[indexOut], 'needChatNum', false)
@@ -1030,7 +1054,7 @@ export default {
               if (findItem) {
                 this.$set(this.configData.tasksBi[indexOut], 'timeQuantity', findItem.serviceValue)
                 this.$set(this.configData.tasksBi[indexOut], 'needServicePeriod', true)
-                this.$set(this.configData.tasksKe[indexOut], 'attrIdTimeQuantity', findItem.id)
+                this.$set(this.configData.tasksBi[indexOut], 'attrIdTimeQuantity', findItem.id)
                 this.$set(this.configData.tasksBi[indexOut], 'servicePeriodUnit', findItem.unit == '天' ? 1 : 2)
               } else {
                 this.$set(this.configData.tasksBi[indexOut], 'timeQuantity', undefined)
@@ -1040,6 +1064,8 @@ export default {
             }
           })
         })
+      } else {
+        this.$set(this.configData, 'tasksBi', [])
       }
       console.log('processed configData', JSON.stringify(this.configData))
       this.confirmLoading = false
@@ -1302,10 +1328,10 @@ export default {
 
           debugger
           if (item.idIn) {
-            this.$set(uploadData.pkgs[indexItem].items[0], 'id', item.idIn)
+            this.$set(uploadData.pkgs[indexItem + pkgsLength].items[0], 'id', item.idIn)
           }
           if (item.idOut) {
-            this.$set(uploadData.pkgs[indexItem], 'id', item.idOut)
+            this.$set(uploadData.pkgs[indexItem + pkgsLength], 'id', item.idOut)
           }
 
           debugger
@@ -1313,42 +1339,74 @@ export default {
           if (item.typeCode != 104) {
             //服务时长 视频咨询和电话咨询特有
             if (item.typeCode == 102 || item.typeCode == 103) {
+              if (item.attrIdServiceTime) {
+                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_TIMES',
+                  ruleTypeName: '服务时长',
+                  serviceValue: item.serviceTime,
+                  unit: '分钟',
+                  id: item.attrIdServiceTime,
+                })
+              } else {
+                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_TIMES',
+                  ruleTypeName: '服务时长',
+                  serviceValue: item.serviceTime,
+                  unit: '分钟',
+                })
+              }
+
               console.log('uploadData indexItem', indexItem)
               console.log('uploadData items[indexItem]', uploadData.pkgs[indexItem + pkgsLength].items[0])
-              uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
-                ruleType: 'ITEM_ATTR_TIMES',
-                ruleTypeName: '服务时长',
-                serviceValue: item.serviceTime,
-                unit: '分钟',
-              })
             }
 
             //限制条数 图文咨询特有  且需要勾选
             if (item.needChatNum && item.typeCode == 101) {
-              uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
-                ruleType: 'ITEM_ATTR_LIMITNUMS',
-                ruleTypeName: '限制条数',
-                serviceValue: item.chatNum,
-                unit: '条',
-              })
+              if (item.attrIdChatNum) {
+                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_LIMITNUMS',
+                  ruleTypeName: '限制条数',
+                  serviceValue: item.chatNum,
+                  unit: '条',
+                  id: item.attrIdChatNum,
+                })
+              } else {
+                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_LIMITNUMS',
+                  ruleTypeName: '限制条数',
+                  serviceValue: item.chatNum,
+                  unit: '条',
+                })
+              }
             }
 
             //服务时效 都有  需要勾选
             if (item.needServicePeriod) {
               let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
-              uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
-                ruleType: 'ITEM_ATTR_EXPIRE',
-                ruleTypeName: '服务时效',
-                serviceValue: item.timeQuantity,
-                unit: unitStr,
-              })
+
+              if (item.attrIdTimeQuantity) {
+                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_EXPIRE',
+                  ruleTypeName: '服务时效',
+                  serviceValue: item.timeQuantity,
+                  unit: unitStr,
+                  id: item.attrIdTimeQuantity,
+                })
+              } else {
+                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_EXPIRE',
+                  ruleTypeName: '服务时效',
+                  serviceValue: item.timeQuantity,
+                  unit: unitStr,
+                })
+              }
             }
           }
         })
       }
 
       console.log('saveCommodityPkgCollection Data', JSON.stringify(uploadData))
-
+      // return
       this.confirmLoading = true
       saveCommodityPkgCollection(uploadData)
         .then((res) => {
