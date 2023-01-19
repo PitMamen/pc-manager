@@ -46,7 +46,7 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-select @change="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+            <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
                 item.tenantName
               }}</a-select-option>

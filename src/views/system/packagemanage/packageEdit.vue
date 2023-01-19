@@ -45,7 +45,7 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-select @change="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+            <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
                 item.tenantName
               }}</a-select-option>
@@ -388,7 +388,7 @@ export default {
       allocationTypeDoc: undefined,
       allocationTypeNurse: undefined,
       allocationTypeTeam: undefined,
-
+      isRefresh:false,
       /**
        *
        */
@@ -462,6 +462,7 @@ export default {
       console.log('watch----package_manage_edit out', to, from)
       if (to.path.indexOf('packageEdit') > -1) {
         console.log('watch----package_manage_edit', to, from)
+        this.isRefresh=true
         this.init()
       }
     },
@@ -479,8 +480,9 @@ export default {
       await this.treeMedicalSubjectsOut()
       getPkgDetail(this.commodityPkgId).then((res) => {
         if (res.code == 0) {
+          console.log('packageData Detail 1', res.data)
           this.packageData = res.data
-          console.log('packageData Detail', this.packageData)
+          console.log('packageData Detail 2', this.packageData)
           //这个可以提前处理，不放在processData里面
           if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
             this.needPlan = true
@@ -596,7 +598,7 @@ export default {
           url: item,
         })
       })
-      debugger
+
       this.fileListBanner = []
       if (this.packageData.bannerImgs && this.packageData.bannerImgs.length > 0) {
         this.packageData.bannerImgs.forEach((item, index) => {
@@ -758,8 +760,8 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
-        pageNo:1,
-        pageSize:9999
+        pageNo: 1,
+        pageSize: 9999,
       })
         .then((res) => {
           if (res.code == 0) {
@@ -876,7 +878,7 @@ export default {
         this.broadClassify = findItem.broadClassify
       }
       console.log('this.broadClassify', this.broadClassify)
-      debugger
+
       switch (this.broadClassify) {
         case 1:
           this.isTeam = false
@@ -928,11 +930,15 @@ export default {
      */
     onSelectChange() {
       // console.log('onSelectChange type', type)
-  
+
       //选择租户后 清空机构 清空所有需要租户和机构入参的请求数据
       console.log('onSelectChang选择租户')
-
-      this.packageData.hospitalCode = undefined
+      if(this.isRefresh){
+        this.isRefresh=false
+      }else{
+        this.packageData.hospitalCode = undefined
+      }
+     
       this.treeData = []
       this.deptUsersDoc = []
       this.deptUsersNurse = []
@@ -1233,7 +1239,6 @@ export default {
         }
       }
 
-      debugger
       tempData.bannerImgs = []
       if (this.fileListBanner.length > 0) {
         //后台返回的bannerList为字符串，提交的时候先删除此属性，再将此字段做成数组
@@ -1340,7 +1345,7 @@ export default {
       } else {
         tempData.commodityPkgManageReqs = []
       }
-      debugger
+
       console.log('tempData modify', JSON.stringify(tempData))
 
       this.confirmLoading = true
