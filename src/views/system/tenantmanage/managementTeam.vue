@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="card-right-pac">
     <a-spin :spinning="confirmLoading">
       <div class="div-service-control">
         <div class="div-service-left-control">
@@ -355,6 +355,27 @@ export default {
 </script>
   
   <style lang="less" scoped>
+.card-right-pac {
+  overflow: hidden;
+  width: 100%;
+
+  .table-operator {
+    margin-top: 10px;
+    margin-bottom: 10px !important;
+  }
+  button {
+    margin-right: 8px;
+  }
+
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
+  }
+}
+
+
 .no-data {
   height: 300px;
   display: flex;
@@ -519,12 +540,12 @@ button {
   <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 40px);
+  height: calc(100% - 50px);
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 96px);
+      height: calc(100% - 55px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
@@ -532,7 +553,7 @@ button {
           .ant-spin-container {
             height: 100%;
             .ant-table {
-              height: calc(100% - 48px);
+              height: calc(100% - 46px);
               overflow-y: auto;
             }
           }
