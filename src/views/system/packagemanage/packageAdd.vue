@@ -495,6 +495,8 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
+        pageNo:1,
+        pageSize:9999
       })
         .then((res) => {
           if (res.code == 0) {
