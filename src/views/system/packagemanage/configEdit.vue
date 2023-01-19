@@ -263,14 +263,8 @@
             </div>
           </div>
         </div>
-        <div v-if="configData.tasksKe.length == 0">
-          <span
-            class="span-end"
-            v-show="indexOut == configData.tasksKe.length - 1"
-            style="margin-left: 10%; width: 92px"
-            @click="addTasksKe()"
-            >新增选择</span
-          >
+        <div class="div-add-empty" v-if="configData.tasksKe.length == 0">
+          <span class="span-empty" style="width: 92px" @click="addTasksKe()">新增选择</span>
         </div>
       </div>
 
@@ -466,14 +460,8 @@
           </div>
         </div>
 
-        <div v-if="configData.tasksBi.length == 0">
-          <span
-            class="span-end"
-            v-show="indexOut == configData.tasksKe.length - 1"
-            style="margin-left: 10%; width: 92px"
-            @click="addItemsBi()"
-            >新增项目</span
-          >
+        <div class="div-add-empty" v-if="configData.tasksBi.length == 0">
+          <span class="span-empty" style="width: 92px" @click="addItemsBi()">新增项目</span>
         </div>
       </div>
 
@@ -489,6 +477,8 @@
 import {
   getCommodityPkgDetailByid,
   qryServiceItemList,
+  delCollectionItemByid,
+  delCommodityPkgCollectionByid,
   getDictData,
   saveCommodityPkgCollection,
 } from '@/api/modular/system/posManage'
@@ -669,14 +659,15 @@ export default {
       itemTask.needChatNum = !itemTask.needChatNum
     },
     delItemsKe(indexOut, indexTask, itemTask) {
-      if (!this.hasTotal()) {
+      if (!this.canDel()) {
         this.$message.warn('至少需要一条项目')
         return
       }
       this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
       if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
-        this.delTasksKe(indexOut)
+        this.configData.tasksKe.splice(indexOut, 1)
       }
+      console.log('delItemsKe tasksKe.length', this.configData.tasksKe.length)
     },
     addItemsKe(indexout) {
       this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined })
@@ -687,7 +678,8 @@ export default {
     },
 
     delTasksKe(indexOut) {
-      if (!this.hasTotal()) {
+      debugger
+      if (!this.canDel()) {
         this.$message.warn('至少需要一条项目')
         return
       }
@@ -695,7 +687,7 @@ export default {
     },
 
     delItemsBi(indexTask, itemTask) {
-      if (!this.hasTotal()) {
+      if (!this.canDel()) {
         this.$message.warn('至少需要一条项目')
         return
       }
@@ -804,6 +796,34 @@ export default {
         })
     },
 
+    delCollectionItemByidOut(itemId) {
+      this.confirmLoading = true
+      delCollectionItemByid({ itemId: itemId })
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0 && res.data.length > 0) {
+            this.$message.success('刪除成功')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    delCommodityPkgCollectionByidOut(collectionId) {
+      this.confirmLoading = true
+      delCommodityPkgCollectionByid({ collectionId: collectionId })
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0 && res.data.length > 0) {
+            this.$message.success('刪除成功')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
     /**
      * 服务项目列表
      */
@@ -839,6 +859,7 @@ export default {
     },
 
     getDetailData() {
+      debugger
       getCommodityPkgDetailByid({ pkgId: this.record.commodityPkgId })
         .then((res) => {
           this.confirmLoading = false
@@ -851,6 +872,7 @@ export default {
               // this.configData.id = this.record.commodityPkgId
             } else {
               //将详情数据转换成前端要的数据
+              // this.processData(res.data)
               console.log('itemType 修改')
             }
           } else {
@@ -862,14 +884,95 @@ export default {
         })
     },
 
-    hasTotal() {
+    processData(data) {
+      // configData: {
+      //   tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
+      //   tasksBi: [{ quantity: 1, saleAmount: undefined }],
+      // },
+      this.configData = {}
+      //处理可选项
+      if (data.optionalPkgs.length > 0) {
+        this.$set(this.configData, 'tasksKe', [])
+        data.optionalPkgs.forEach((itemOut, outIndex) => {
+          this.configData.tasksKe.push({ itemsKe: [] })
+          itemOut.items.forEach((itemIn, indexIn) => {
+            this.configData.tasksKe[indexOut].itemsKe.push({
+              quantity: itemIn.quantity,
+              serviceItemId: itemIn.serviceItemId,
+              isHeadImg: itemIn.itemImg == 1,
+              saleAmount: itemIn.saleAmount,
+
+              normsModel: '258', //规格
+              suggestPrice: '78.85', //价格
+              factoryName: '网数科技', //产地
+
+              typeCode: '104', //单独处理，后台再给
+
+              //TODO 这些参数都需要特殊处理
+              serviceTime: false, //单独处理    服务时长
+              needChatNum: 1, //单独处理        限制条数
+              chatNum: 1, //单独处理
+              needServicePeriod: 1, //单独处理  服务时效
+              servicePeriodUnit: 1, //单独处理
+              timeQuantity: 1, //单独处理
+
+              //TODO 还需要处理两级id
+            })
+
+            // //普通商品不需要 itemsAttr,只要传空的itemsAttr
+            // if (item.typeCode != 104) {
+            //   //服务时长 视频咨询和电话咨询特有
+            //   if (item.typeCode == 102 || item.typeCode == 103) {
+            //     uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+            //       ruleType: 'ITEM_ATTR_TIMES',
+            //       ruleTypeName: '服务时长',
+            //       serviceValue: item.serviceTime,
+            //       unit: '分钟',
+            //     })
+            //   }
+
+            //   //限制条数 图文咨询特有  且需要勾选
+            //   if (item.needChatNum && item.typeCode == 101) {
+            //     uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+            //       ruleType: 'ITEM_ATTR_LIMITNUMS',
+            //       ruleTypeName: '限制条数',
+            //       serviceValue: item.chatNum,
+            //       unit: '条',
+            //     })
+            //   }
+
+            //   //服务时效 都有  需要勾选
+            //   if (item.needServicePeriod) {
+            //     let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
+            //     uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+            //       ruleType: 'ITEM_ATTR_EXPIRE',
+            //       ruleTypeName: '服务时效',
+            //       serviceValue: item.timeQuantity,
+            //       unit: unitStr,
+            //     })
+            //   }
+            // }
+          })
+        })
+      }
+
+      //处理必选项
+      if (data.compulsoryPkgs.length > 0) {
+        this.$set(this.configData, 'tasksBi', [])
+        data.compulsoryPkgs.forEach((element) => {})
+      }
+    },
+
+    canDel() {
       //总量约束，必须有一条
       let itemTotal = 0
       for (let index = 0; index < this.configData.tasksKe.length; index++) {
         itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
       }
+      console.log('itemTotal tasksKe', itemTotal)
       itemTotal = itemTotal + this.configData.tasksBi.length
-      return itemTotal > 0 ? true : false
+      console.log('itemTotal all', itemTotal)
+      return itemTotal > 1 ? true : false
     },
 
     /**
@@ -923,59 +1026,83 @@ export default {
         return
       }
 
-      //校验必选
-      for (let index = 0; index < this.configData.tasksBi.length; index++) {
-        let itemTask = this.configData.tasksBi[index]
-        if (!itemTask.serviceItemId) {
-          this.$message.error('请选择必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【项目类型】')
-          return
-        }
+      //咨询类的三种 不需要必选项目
+      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+        //校验必选
+        for (let index = 0; index < this.configData.tasksBi.length; index++) {
+          let itemTask = this.configData.tasksBi[index]
+          if (!itemTask.serviceItemId) {
+            debugger
+            this.$message.error('请选择必选项目第' + (index + 1) + '个项目的【项目类型】')
+            return
+          }
 
-        if (!itemTask.saleAmount) {
-          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务价格】')
-          return
-        }
+          if (!itemTask.saleAmount) {
+            this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【服务价格】')
+            return
+          }
 
-        //服务时长 视频咨询和电话咨询特有
-        if ((itemTask.typeCode == 102 || itemTask.typeCode == 103) && !itemTask.serviceTime) {
-          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时长】')
-          return
-        }
+          //服务时长 视频咨询和电话咨询特有
+          if ((itemTask.typeCode == 102 || itemTask.typeCode == 103) && !itemTask.serviceTime) {
+            this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【服务时长】')
+            return
+          }
 
-        //限制条数 图文咨询特有  且需要勾选
-        if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
-          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【限制条数】')
-          return
-        }
+          //限制条数 图文咨询特有  且需要勾选
+          if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
+            this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【限制条数】')
+            return
+          }
 
-        //服务时效 都有  需要勾选
-        if (itemTask.needServicePeriod && !itemTask.timeQuantity) {
-          this.$message.error('请输入必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时效】')
-          return
-        }
-        //时效单位 都有  需要勾选
-        if (itemTask.needServicePeriod && !itemTask.servicePeriodUnit) {
-          this.$message.error('请选择必选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【时效单位】')
-          return
+          //服务时效 都有  需要勾选
+          if (itemTask.needServicePeriod && !itemTask.timeQuantity) {
+            this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【服务时效】')
+            return
+          }
+          //时效单位 都有  需要勾选
+          if (itemTask.needServicePeriod && !itemTask.servicePeriodUnit) {
+            this.$message.error('请选择必选项目第' + (index + 1) + '个项目的【时效单位】')
+            return
+          }
         }
       }
 
-      //校验必选的项目图片
-      if (this.configData.tasksBi.length > 0 && !this.hasHeadImgBi) {
+      //校验必选的项目图片  咨询三类不需要校验必选图片
+      if (
+        this.record.classifyCode != 101 &&
+        this.record.classifyCode != 102 &&
+        this.record.classifyCode != 103 &&
+        this.configData.tasksBi.length > 0 &&
+        !this.hasHeadImgBi
+      ) {
         this.$message.error('请勾选必选项目图片')
         return
       }
 
-      //总量约束，必须有一条
-      let itemTotal = 0
-      for (let index = 0; index < this.configData.tasksKe.length; index++) {
-        itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
-      }
-      itemTotal = itemTotal + this.configData.tasksBi.length
-      //时效单位 都有  需要勾选
-      if (itemTotal == 0) {
-        this.$message.error('总项目必须至少添加一个')
-        return
+      //咨询类三种单独处理
+      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+        //总量约束，必须有一条
+        let itemTotal = 0
+        for (let index = 0; index < this.configData.tasksKe.length; index++) {
+          itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+        }
+        itemTotal = itemTotal + this.configData.tasksBi.length
+        //时效单位 都有  需要勾选
+        if (itemTotal == 0) {
+          this.$message.error('总项目必须至少添加一个')
+          return
+        }
+      } else {
+        //总量约束，必须有一条
+        let itemTotal = 0
+        for (let index = 0; index < this.configData.tasksKe.length; index++) {
+          itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+        }
+        //时效单位 都有  需要勾选
+        if (itemTotal == 0) {
+          this.$message.error('总项目必须至少添加一个')
+          return
+        }
       }
 
       //处理成接口需要的数据结构 项目类型：1可选2必选
@@ -989,7 +1116,7 @@ export default {
             saleAmount: element.saleAmount,
             serviceItemId: element.serviceItemId,
             serviceItemName: element.serviceItemName,
-            itemImg: item.isHeadImg ? 1 : 0,
+            itemImg: element.isHeadImg ? 1 : 0,
             itemsAttr: [],
           })
 
@@ -1033,62 +1160,65 @@ export default {
 
       let pkgsLength = uploadData.pkgs.length
 
-      //组装必选
-      this.configData.tasksBi.forEach((item, indexItem) => {
-        uploadData.pkgs.push({ itemType: 2, items: [] })
-        uploadData.pkgs[indexItem + pkgsLength].items.push({
-          quantity: item.quantity,
-          saleAmount: item.saleAmount,
-          serviceItemId: item.serviceItemId,
-          serviceItemName: item.serviceItemName,
-          itemImg: item.isHeadImg ? 1 : 0,
-          itemsAttr: [],
+      //咨询类三种单独处理
+      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+        //组装必选
+        this.configData.tasksBi.forEach((item, indexItem) => {
+          uploadData.pkgs.push({ itemType: 2, items: [] })
+          uploadData.pkgs[indexItem + pkgsLength].items.push({
+            quantity: item.quantity,
+            saleAmount: item.saleAmount,
+            serviceItemId: item.serviceItemId,
+            serviceItemName: item.serviceItemName,
+            itemImg: item.isHeadImg ? 1 : 0,
+            itemsAttr: [],
+          })
+
+          //普通商品不需要 itemsAttr,只要传空的itemsAttr
+          if (item.typeCode != 104) {
+            //服务时长 视频咨询和电话咨询特有
+            if (item.typeCode == 102 || item.typeCode == 103) {
+              uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+                ruleType: 'ITEM_ATTR_TIMES',
+                ruleTypeName: '服务时长',
+                serviceValue: item.serviceTime,
+                unit: '分钟',
+              })
+            }
+
+            //限制条数 图文咨询特有  且需要勾选
+            if (item.needChatNum && item.typeCode == 101) {
+              uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+                ruleType: 'ITEM_ATTR_LIMITNUMS',
+                ruleTypeName: '限制条数',
+                serviceValue: item.chatNum,
+                unit: '条',
+              })
+            }
+
+            //服务时效 都有  需要勾选
+            if (item.needServicePeriod) {
+              let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
+              uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
+                ruleType: 'ITEM_ATTR_EXPIRE',
+                ruleTypeName: '服务时效',
+                serviceValue: item.timeQuantity,
+                unit: unitStr,
+              })
+            }
+          }
         })
-
-        //普通商品不需要 itemsAttr,只要传空的itemsAttr
-        if (item.typeCode != 104) {
-          //服务时长 视频咨询和电话咨询特有
-          if (item.typeCode == 102 || item.typeCode == 103) {
-            uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
-              ruleType: 'ITEM_ATTR_TIMES',
-              ruleTypeName: '服务时长',
-              serviceValue: item.serviceTime,
-              unit: '分钟',
-            })
-          }
-
-          //限制条数 图文咨询特有  且需要勾选
-          if (item.needChatNum && item.typeCode == 101) {
-            uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
-              ruleType: 'ITEM_ATTR_LIMITNUMS',
-              ruleTypeName: '限制条数',
-              serviceValue: item.chatNum,
-              unit: '条',
-            })
-          }
-
-          //服务时效 都有  需要勾选
-          if (item.needServicePeriod) {
-            let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
-            uploadData.pkgs[indexItem + pkgsLength].items[indexItem].itemsAttr.push({
-              ruleType: 'ITEM_ATTR_EXPIRE',
-              ruleTypeName: '服务时效',
-              serviceValue: item.timeQuantity,
-              unit: unitStr,
-            })
-          }
-        }
-      })
+      }
 
       console.log('saveCommodityPkgCollection Data', JSON.stringify(uploadData))
 
-      // this.confirmLoading = true
+      this.confirmLoading = true
       saveCommodityPkgCollection(uploadData)
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+            this.$bus.$emit('configEvent', '刷新数据-方案新增')
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
@@ -1118,6 +1248,27 @@ export default {
 
   span {
     font-size: 12px;
+  }
+
+  .div-add-empty {
+    width: 100%;
+    margin-top: 18px;
+    .span-empty {
+      padding: 4px 15px;
+      // background-color: yellow;
+      // width: 100px;
+      display: inline-block;
+      color: #1890ff;
+      border: 1px solid #1890ff;
+      // border: 2px solid #1890ff;
+      // border: 2px solid #01AFF4;
+      // border-radius: 8px;
+      margin-left: 30px;
+
+      &:hover {
+        cursor: pointer;
+      }
+    }
   }
 
   .div-title {

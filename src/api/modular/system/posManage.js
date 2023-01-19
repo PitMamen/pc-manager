@@ -3230,6 +3230,28 @@ export function getCommodityPkgDetailByid(data) {
   })
 }
 
+/**
+ * /commodityConfig/delCollectionItemByid 删除套餐规格包明细项目
+ */
+export function delCollectionItemByid(data) {
+  return axios({
+    url: '/medical-api/commodityConfig/delCollectionItemByid',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /commodityConfig/delCommodityPkgCollectionByid 删除套餐规格包
+ */
+export function delCommodityPkgCollectionByid(data) {
+  return axios({
+    url: '/medical-api/commodityConfig/delCommodityPkgCollectionByid',
+    method: 'get',
+    params: data,
+  })
+}
+
 
 /**
  * /pkg/saveOrUpdate 套餐新增、修改接口
@@ -3431,7 +3453,7 @@ export function getServiceFactoryList(data) {
 /**
  * 服务商列表
  */
-export function getHospitalForTenantId(data) { 
+export function getHospitalForTenantId(data) {
   return axios({
     url: '/uam-api/hospital/getHospitalForTenantId',
     method: 'get',

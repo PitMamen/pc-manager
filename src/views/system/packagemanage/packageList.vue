@@ -82,7 +82,7 @@
       </span>
       <span slot="cover" slot-scope="text, record">
         <!-- <img src="~@/assets/icons/weixin_icon.png" /> -->
-        <img style="height:40px;width:50px" :src="record.frontImg" />
+        <img style="height:20px;width:25px" :src="record.frontImg" />
       </span>
       <!-- 
         1关2开
