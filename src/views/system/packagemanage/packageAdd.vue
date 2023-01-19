@@ -46,7 +46,7 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
-            <a-select @change="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+            <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
                 item.tenantName
               }}</a-select-option>
@@ -495,6 +495,8 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
+        pageNo:1,
+        pageSize:9999
       })
         .then((res) => {
           if (res.code == 0) {
@@ -844,6 +846,16 @@ export default {
      * @param {*} index 0 医生  1 护士
      */
     addPerson(index) {
+     
+      if( !this.packageData.tenantId ){
+        this.$message.warn('请先选择租户')
+        return
+      }
+      if( !this.packageData.hospitalCode ){
+        this.$message.warn('请先选择机构')
+        return
+      }
+
       if (index == 0) {
         if (!this.isDoctor) {
           return
@@ -853,7 +865,7 @@ export default {
           return
         }
         if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
-          this.$message.warn('请先选择所属租户或所属机构')
+          this.$message.warn('该机构没有可选医生')
           return
         }
         if (this.broadClassify == 1) {
@@ -880,20 +892,20 @@ export default {
           return
         }
         if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
-          this.$message.warn('请先选择所属租户或所属机构')
+          this.$message.warn('该机构没有可选护士')
           return
         }
         if (this.broadClassify == 1) {
           this.$refs.addPeople.add(
             index,
-            this.deptUsersDoc,
+            this.deptUsersNurse,
             this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
             true
           )
         } else {
           this.$refs.addPeople.add(
             index,
-            this.deptUsersDoc,
+            this.deptUsersNurse,
             this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
             false
           )
