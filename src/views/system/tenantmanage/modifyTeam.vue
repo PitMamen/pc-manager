@@ -38,7 +38,7 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>团队名称:</span>
             <a-input
-              :maxLength="30"
+              :maxLength="20"
               class="span-item-value"
               v-model="checkData.teamName"
               style="display: inline-block"

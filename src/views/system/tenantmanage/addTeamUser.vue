@@ -14,13 +14,17 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>选择成员:</span>
             <a-select
+              show-search
               style="margin-top: 1px"
               v-model="checkData.userId"
+              :not-found-content="fetching ? undefined : null"
               :filter-option="false"
               allow-clear
+              @search="onUserSelectSearch"
               placeholder="请选择成员"
             >
-              <a-select-option v-for="(item, index) in UserListData" :key="item.userId" :value="item.userId">{{
+            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in UserListDataTemp" :key="item.userId" :value="item.userId">{{
                 item.userName
               }}</a-select-option>
             </a-select>
@@ -54,7 +58,6 @@
     
     <script>
 import {
-  modifyTdHealthyTeam,
   getHealthyTeamUserList,
   getDictDataForCodeTeamType,
   addTdHealthyTeamUser,
@@ -69,12 +72,14 @@ export default {
     return {
       visible: false,
       headers: {},
+      fetching: false,
       confirmLoading: false,
       // 高级搜索 展开/关闭
       UserListData: [],
       danandataList: [],
+      UserListDataTemp:[],
       checkData: {
-        tdHealthyTeamId: 0,
+        teamId: 0,
         teamRole: undefined,
         userId: undefined,
       },
@@ -89,6 +94,7 @@ export default {
         teamRole: undefined,
         userId: undefined,
       }
+     this.UserListDataTemp=[]
     },
     //新增
     addUser(tdHealthyTeamId) {
@@ -97,9 +103,19 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.checkData.tdHealthyTeamId = tdHealthyTeamId
-
+       console.log("MMM2:",tdHealthyTeamId)
       this.getHealthyTeamUserListOut()
       this.getDictDataForCodeTeamTypeOut()
+    },
+
+
+    onUserSelectSearch(inputName) {
+      console.log("ssss",inputName)
+      if (inputName) {
+        this.UserListDataTemp = this.UserListData.filter((item) => item.userName.indexOf(inputName) != -1)
+      } else {
+        this.UserListDataTemp = this.UserListData
+      }
     },
 
     /**
@@ -159,30 +175,25 @@ export default {
         return
       }
 
+      if (isStringEmpty(this.checkData.teamRole)) {
+        this.$message.error('请选择团队角色')
+        return
+      }
+
       this.addTdHealthyTeamUserOut()
     },
 
-    //修改团队
-    modifyTeam(postData) {
-      modifyTdHealthyTeam(postData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('修改成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
-    },
 
     /**
      * 成员列表下拉列表
      */
     getHealthyTeamUserListOut() {
-      getHealthyTeamUserList().then((res) => {
+      this.fetching = true
+      getHealthyTeamUserList({teamId:this.checkData.tdHealthyTeamId}).then((res) => {
         if (res.code == 0) {
+          this.fetching = false
           this.UserListData = res.data
+          this.UserListDataTemp = res.data
         }
       })
     },

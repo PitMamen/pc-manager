@@ -125,7 +125,7 @@ export default {
       form: this.$form.createForm(this),
       selects: [
         {
-          id: '',
+          id: 0,
           name: '全部'
         },
         {
