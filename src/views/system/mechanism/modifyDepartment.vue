@@ -81,7 +81,6 @@
         <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
         <a-input
           v-model="queryParams.departmentOrder"
-          :disabled="true"
           :defaultValue=0
           allow-clear
           style="width: 190px; margin-left: 4px; text-align: center"
@@ -277,7 +276,6 @@
 
       onSelect(hospitalId) {
       //选择类别
-      console.log('99999:', hospitalId)
       for (let index = 0; index < this.treeData.length; index++) {
         if (hospitalId == this.treeData[index].hospitalId) {
           this.findItemData = JSON.parse(JSON.stringify(this.treeData[index]))
@@ -492,6 +490,11 @@
           this.$message.error('请输入His编码')
           return
         }
+
+        if(this.queryParams.departmentOrder<0){
+        this.$message.error('显示序号不能小于0!')
+        return
+      }
 
 
         /**

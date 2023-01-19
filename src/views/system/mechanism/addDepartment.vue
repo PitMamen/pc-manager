@@ -76,7 +76,6 @@
       <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
       <a-input
         v-model="queryParams.departmentOrder"
-        :disabled="true"
         :defaultValue="0"
         allow-clear
         style="width: 190px; margin-left: 4px; text-align: center"
@@ -428,6 +427,11 @@ export default {
 
       if (!this.queryParams.departmentType) {
         this.$message.error('请选择科室类型')
+        return
+      }
+
+      if(this.queryParams.departmentOrder<0){
+        this.$message.error('显示序号不能小于0!')
         return
       }
 
