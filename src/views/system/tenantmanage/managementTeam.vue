@@ -40,9 +40,9 @@
           </div>
         </div>
         <div class="div-service-right-control">
-          <div class="table-page-search-wrapper">
+          <div class="table-page-search-wrapper" style="margin-bottom:-20px">
             <div class="table-operator" style="overflow: hidden; margin-top: 0px; margin-bottom: 0px">
-              <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addTeamUser.addUser(params.id)"
+              <a-button :disabled="!leftListData || leftListData.length == 0" icon="plus" style="float: right; margin-right: 0" @click="$refs.addTeamUser.addUser(params.id)"
                 >新增成员</a-button
               >
             </div>
@@ -66,8 +66,8 @@
           </s-table>
         </div>
       </div>
-      <modify-Team ref="modifyTeam" @ok="handleOk" />
-      <add-Team ref="addTeam" @ok="handleOk" />
+      <modify-Team ref="modifyTeam" @ok="refreshLeftList" />
+      <add-Team ref="addTeam" @ok="refreshLeftList" />
       <add-TeamUser ref="addTeamUser" @ok="handleOk" />
     </a-spin>
   </a-card>
@@ -119,7 +119,7 @@ export default {
       },
 
       params: {
-        id: '',
+        id: -1,
       },
       // 表头
       columns: [
@@ -188,15 +188,6 @@ export default {
     }
   },
 
-  watch: {
-    $route(to, from) {
-      if (to.path.path == this.$router.path) {
-        if (from.path == '/teach/editArticle' || from.path == '/teach/addArticle') {
-          this.handleOk()
-        }
-      }
-    },
-  },
 
   created() {
     this.getTdHealthyTeamPageListOut()
@@ -282,6 +273,7 @@ export default {
             })
             this.leftListData = res.data.records
             this.params.id = this.leftListData[0].id //默认第一个 id
+            this.leftListData[0].checked = true
           } else {
             this.leftListData=[]
             this.params.id = -1 //默认第一个 id
@@ -343,9 +335,17 @@ export default {
     },
 
     handleOk() {
-      this.getTdHealthyTeamPageListOut() //刷新健康团队列表 (左侧)
+      console.log("77777777777777")
       this.$refs.table.refresh()
     },
+
+ 
+    refreshLeftList(){
+      console.log("88888888888")
+      this.getTdHealthyTeamPageListOut() //刷新健康团队列表 (左侧)
+    },
+
+
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
