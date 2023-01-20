@@ -68,6 +68,7 @@
       ref="table"
       size="default"
       :columns="columns"
+      :isShowLoading="false"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"

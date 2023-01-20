@@ -101,7 +101,7 @@
                 <span style="margin-left: 1%">*</span>
 
                 <a-input-number
-                  :disabled="record.classifyCode == 101 || (record.classifyCode == 102 && record.classifyCode == 103)"
+                  :disabled="record.classifyCode == 101 || record.classifyCode == 102 || record.classifyCode == 103"
                   style="display: inline-block; margin-left: 1%; width: 60px"
                   v-model="itemTask.quantity"
                   :min="1"
