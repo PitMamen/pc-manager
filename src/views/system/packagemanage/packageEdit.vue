@@ -154,8 +154,8 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isDoctor" @click="goCheck(1)" />
-            <span style="margin-left: 8px">医生参与</span>
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)" >医生参与</a-checkbox>
+            <!-- <span style="margin-left: 8px">医生参与</span> -->
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -188,8 +188,8 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)" />
-            <span style="margin-left: 8px">护士参与</span>
+            <a-checkbox :checked="isNurse" @click="goCheck(2)" >护士参与</a-checkbox>
+            <!-- <span style="margin-left: 8px">护士参与</span> -->
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -222,8 +222,8 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" />
-            <span style="margin-left: 8px">健康团队参与</span>
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" >健康团队参与</a-checkbox>
+            <!-- <span style="margin-left: 8px">健康团队参与</span> -->
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -283,13 +283,14 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="needPlan" @click="handlePlan" />
-            <span style="margin-left: 8px">随访方案</span>
+            <a-checkbox :checked="needPlan" @click="handlePlan" >随访方案</a-checkbox>
+            <!-- <span style="margin-left: 8px">随访方案</span> -->
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
           <a-select
             class="mid-select-two"
             mode="multiple"
+            style="min-width: 370px !important;"
             :disabled="!needPlan"
             allow-clear
             @focus="onPersonFocus"
@@ -884,6 +885,12 @@ export default {
           this.isTeam = false
           this.nameTeam = ''
 
+          if(this.isNurse && this.isDoctor){
+            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型 
+            this.isNurse = false
+            this.nameNurse = ''
+          }
+
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
 
@@ -1383,6 +1390,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+/deep/ .ant-checkbox-wrapper{
+  font-size: 12px !important;
+}
+
 .div-package-add {
   background-color: white;
   width: 100%;
@@ -1512,7 +1524,7 @@ export default {
       }
       .item-left {
         display: inline-block;
-        width: 100px;
+        width: 105px;
         margin-left: 8px;
       }
 

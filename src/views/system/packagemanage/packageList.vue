@@ -235,7 +235,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getPkgList(Object.assign(parameter, this.queryParams)).then((res) => {
-          debugger
+          
           let data = {}
           if (res.code == 0 && res.data && res.data.records.length > 0) {
             //组装控件需要的数据结构
