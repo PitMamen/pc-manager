@@ -9,7 +9,7 @@
 
         <div class="div-up-content">
           <div class="div-up-left">
-            <span class="span-item-name"> 套餐名称 :</span>
+            <span class="span-item-name" style="margin-left: 0px"> 套餐名称 :</span>
             <span
               class="span-item-value"
               :title="record.packageName"
@@ -88,7 +88,7 @@
                   placeholder="请选择项目"
                   v-model="itemTask.serviceItemId"
                   option-label-prop="title"
-                  @select="onSelect(itemTask)"
+                  @select="onSelect(indexOut, itemTask)"
                   @search="handleSearch"
                 >
                   <template slot="dataSource">
@@ -115,6 +115,7 @@
                 <a-input-number
                   style="display: inline-block; margin-left: 1%; width: 60px"
                   v-model="itemTask.saleAmount"
+                  @blur="countMinPrice"
                   :min="0"
                   :max="999999"
                   :maxLength="30"
@@ -192,12 +193,11 @@
               </div>
 
               <!-- itemImg -->
-              <a-checkbox
-                style="margin-left: 1%"
-                :checked="itemTask.isHeadImg"
-                @click="goHeadImg(indexOut, indexTask, itemTask)"
-                >项目图片</a-checkbox
-              >
+              <div class="div-img" @click="goHeadImg(indexOut, indexTask, itemTask)">
+                <img v-if="itemTask.isHeadImg" src="@/assets/icons/icon-checked.png" />
+                <img v-else src="@/assets/icons/icon-checked-not.png" />
+                <span style="margin-left: 3px">项目图片</span>
+              </div>
             </div>
 
             <!-- 分割线 -->
@@ -314,7 +314,7 @@
                 placeholder="请选择项目"
                 v-model="itemTask.serviceItemId"
                 option-label-prop="title"
-                @select="onSelect(itemTask)"
+                @select="onSelectBi(itemTask)"
                 @search="handleSearch"
               >
                 <template slot="dataSource">
@@ -340,6 +340,7 @@
               <a-input-number
                 style="display: inline-block; margin-left: 1%; width: 60px"
                 v-model="itemTask.saleAmount"
+                @blur="countMinPrice"
                 :min="0"
                 :max="999999"
                 :maxLength="30"
@@ -417,9 +418,11 @@
             </div>
 
             <!-- itemImg -->
-            <a-checkbox style="margin-left: 1%" :checked="itemTask.isHeadImg" @click="goHeadImgBi(indexTask, itemTask)"
-              >项目图片</a-checkbox
-            >
+            <div class="div-img" @click="goHeadImgBi(indexTask, itemTask)">
+              <img v-if="itemTask.isHeadImg" src="@/assets/icons/icon-checked.png" />
+              <img v-else src="@/assets/icons/icon-checked-not.png" />
+              <span style="margin-left: 3px">项目图片</span>
+            </div>
           </div>
 
           <!-- 分割线 -->
@@ -582,8 +585,8 @@ export default {
       // },
 
       configData: {
-        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
-        tasksBi: [{ quantity: 1, saleAmount: undefined }],
+        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }] }],
+        tasksBi: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }],
       },
 
       /**
@@ -592,8 +595,8 @@ export default {
        * item 结构为 dataItem
        */
       configDataOrigin: {
-        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
-        tasksBi: [{ quantity: 1, saleAmount: undefined }],
+        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }] }],
+        tasksBi: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }],
       },
 
       dataItem: {
@@ -702,11 +705,15 @@ export default {
       console.log('delItemsKe tasksKe.length', this.configData.tasksKe.length)
     },
     addItemsKe(indexout) {
-      this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined })
+      if (this.configData.tasksKe[indexout].itemsKe.length == 0) {
+        this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined, isHeadImg: true })
+      } else {
+        this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined })
+      }
     },
 
     addTasksKe() {
-      this.configData.tasksKe.push({ itemsKe: [{ quantity: 1, saleAmount: undefined }] })
+      this.configData.tasksKe.push({ itemsKe: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }] })
     },
 
     delTasksKe(indexOut) {
@@ -734,7 +741,39 @@ export default {
     },
 
     addItemsBi() {
-      this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined })
+      if (this.configData.tasksBi.length == 0) {
+        this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined, isHeadImg: true })
+      } else {
+        this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined })
+      }
+    },
+
+    countMinPrice() {
+      let addKe = []
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        let keTotal = 0
+        for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+          if (this.configData.tasksKe[index].itemsKe[indexIn].saleAmount) {
+            keTotal = keTotal + this.configData.tasksKe[index].itemsKe[indexIn].saleAmount
+          }
+        }
+        addKe.push(keTotal)
+      }
+      console.log('addKe', addKe)
+
+      let newKe = addKe.sort((a, b) => a - b)
+      // newKe[newKe.length - 1] // 获取最大值：100
+      // newKe[0] // 获取最小值： -1
+
+      debugger
+      let biTotal = 0
+      for (let indexBi = 0; indexBi < this.configData.tasksBi.length; indexBi++) {
+        if (this.configData.tasksBi[indexBi].saleAmount) {
+          biTotal = biTotal + this.configData.tasksBi[indexBi].saleAmount
+        }
+      }
+      console.log('biTotal', biTotal)
+      this.record.startPrice = biTotal + newKe[0] + '元'
     },
 
     /**
@@ -749,7 +788,7 @@ export default {
      *  typeCode  101 图文咨询 102 电话咨询  103 视频咨询 104 普通商品
      * @param {*} itemTask
      */
-    onSelect(itemTask) {
+    onSelect(indexOut, itemTask) {
       console.log('itemTask ', itemTask)
       let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
       itemTask.typeCode = findItem.projectType + ''
@@ -780,7 +819,57 @@ export default {
       this.$set(itemTask, 'needServicePeriod', false)
       this.$set(itemTask, 'servicePeriodUnit', 1)
 
-      this.$set(itemTask, 'isHeadImg', false)
+      // this.$set(itemTask, 'isHeadImg', false)
+      debugger
+      if (this.configData.tasksKe[indexOut].itemsKe.length == 1 || itemTask.isHeadImg) {
+        this.$set(itemTask, 'isHeadImg', true)
+      } else {
+        this.$set(itemTask, 'isHeadImg', false)
+      }
+
+      //处理findItem的可配置项
+      for (let index = 0; index < findItem.itemAttr.length; index++) {
+        findItem.itemAttr[index]
+      }
+    },
+
+    onSelectBi(itemTask) {
+      console.log('itemTask ', itemTask)
+      let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
+      itemTask.typeCode = findItem.projectType + ''
+
+      this.$set(itemTask, 'serviceItemName', findItem.serviceItemName)
+
+      //构造属性，用于前端显示，后台不需要，包括 typeCode 字段
+      this.$set(itemTask, 'normsModel', findItem.normsModel)
+      this.$set(itemTask, 'suggestPrice', findItem.suggestPrice)
+      this.$set(itemTask, 'factoryName', findItem.factoryName)
+      console.log('selectType findItem', JSON.stringify(findItem))
+      console.log('selectType typeCode', findItem.projectType)
+
+      //2 视频咨询 3 电话咨询 特有服务时长
+
+      //1 图文咨询 特有 限制条数
+      // 构造参数 serviceTime(服务时长) chatNum(限制条数)前端用，保存的时候要用来组装itemAttr数据结构
+      if (itemTask.typeCode == 102 || itemTask.typeCode == 103) {
+        this.$set(itemTask, 'serviceTime', undefined)
+      }
+      if (itemTask.typeCode == 101) {
+        this.$set(itemTask, 'chatNum', undefined)
+        this.$set(itemTask, 'needChatNum', false)
+      }
+
+      //服务时效都有
+      this.$set(itemTask, 'servicePeriod', undefined)
+      this.$set(itemTask, 'needServicePeriod', false)
+      this.$set(itemTask, 'servicePeriodUnit', 1)
+
+      debugger
+      if (this.configData.tasksBi.length == 1 || itemTask.isHeadImg) {
+        this.$set(itemTask, 'isHeadImg', true)
+      } else {
+        this.$set(itemTask, 'isHeadImg', false)
+      }
 
       //处理findItem的可配置项
       for (let index = 0; index < findItem.itemAttr.length; index++) {
@@ -794,14 +883,18 @@ export default {
         this.$message.warn('请先选择项目')
         return
       }
-      for (let index = 0; index < this.configData.tasksKe.length; index++) {
-        for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
-          this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg = false
-        }
+      // for (let index = 0; index < this.configData.tasksKe.length; index++) {
+      //   for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+      //     this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg = false
+      //   }
+      // }
+
+      for (let indexIn = 0; indexIn < this.configData.tasksKe[indexOut].itemsKe.length; indexIn++) {
+        this.configData.tasksKe[indexOut].itemsKe[indexIn].isHeadImg = false
       }
 
       this.configData.tasksKe[indexOut].itemsKe[indexTask].isHeadImg = true
-      this.hasHeadImg = true
+      // this.hasHeadImg = true
     },
 
     //每个条目只勾选一个
@@ -1143,17 +1236,22 @@ export default {
       debugger
       if (this.configData.tasksKe.length > 0) {
         for (let index = 0; index < this.configData.tasksKe.length; index++) {
+          let thisCircle = false
           for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
             if (this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg) {
-              this.hasHeadImg = true
+              thisCircle = true
             }
+          }
+          if (!thisCircle) {
+            this.$message.error('请勾选' + (index + 1) + '个可选项目图片')
+            return
           }
         }
       }
-      if (this.configData.tasksKe.length > 0 && !this.hasHeadImg) {
-        this.$message.error('请勾选可选项目图片')
-        return
-      }
+      // if (this.configData.tasksKe.length > 0 && !this.hasHeadImg) {
+      //   this.$message.error('请勾选可选项目图片')
+      //   return
+      // }
 
       //咨询类的三种 不需要必选项目
       if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
@@ -1574,6 +1672,16 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        .div-img {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-right: 15px;
+          &:hover {
+            cursor: pointer;
+          }
+        }
         .mission-top-left {
           display: flex;
           flex-direction: row;
