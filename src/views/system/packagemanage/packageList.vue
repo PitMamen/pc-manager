@@ -371,7 +371,7 @@ export default {
             record.stopStatus = data.statusValue
           }
         } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
+          this.$message.error('操作失败：' + res.message)
         }
       })
     },
