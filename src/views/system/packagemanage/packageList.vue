@@ -67,11 +67,11 @@
       <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
     </div>
 
+    <!-- :isShowLoading="false" -->
     <s-table
       :scroll="{ x: true }"
       ref="table"
       size="default"
-      :isShowLoading="false"
       :columns="columns"
       :data="loadData"
       :alert="true"
@@ -235,9 +235,11 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getPkgList(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
+          debugger
+          let data = {}
+          if (res.code == 0 && res.data && res.data.records.length > 0) {
             //组装控件需要的数据结构
-            var data = {
+            data = {
               pageNo: parameter.pageNo,
               pageSize: parameter.pageSize,
               totalRows: res.data.total,
@@ -251,7 +253,6 @@ export default {
               item.nameDes = item.name
               // item.createTimeDes = item.createTime.substring(0,11)
             })
-            this.confirmLoading = false
           }
           return data
         })
@@ -281,6 +282,16 @@ export default {
       // this.objct = data;
       this.refresh()
     })
+  },
+
+  watch: {
+    $route(to, from) {
+      console.log('watch----packageList out', to, from)
+      if (to.path.indexOf('packageList') > -1) {
+        console.log('watch----packageList', to, from)
+        this.refresh()
+      }
+    },
   },
 
   created() {

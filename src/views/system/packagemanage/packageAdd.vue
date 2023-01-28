@@ -345,6 +345,7 @@ export default {
       headers: {
         Authorization: 'authorization-text',
       },
+      user: {},
 
       previewVisible: false,
       previewVisibleBanner: false,
@@ -358,7 +359,6 @@ export default {
       fileListBanner: [],
       fileListDetail: [],
 
-      user: {},
       deptUsersDoc: { users: [] },
       deptUsersNurse: { users: [] },
       //用户指定与随机分配
@@ -391,7 +391,7 @@ export default {
       /**
        *
        */
-      packageData: {
+      packageDataOrigin: {
         bannerImgs: [],
         detailImgs: [],
         frontImgs: [],
@@ -430,11 +430,23 @@ export default {
         subjectClassifyId: undefined,
         tenantId: undefined,
       },
+      packageData: {},
     }
   },
 
+  // watch: {
+  //   $route(to, from) {
+  //     console.log('watch----packageAdd out', to, from)
+  //     if (to.path.indexOf('packageAdd') > -1) {
+  //       console.log('watch----packageAdd', to, from)
+  //       // this.refresh()
+  //     }
+  //   },
+  // },
+
   created() {
     this.user = Vue.ls.get(TRUE_USER)
+    this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
     // this.queryHospitalListOut()
     this.getTenantListOut()
     this.getDictDataOut()
@@ -452,6 +464,27 @@ export default {
 
   methods: {
     moment,
+    resetData() {
+      this.needPlan = false
+      this.canConfigTeam = true
+      this.broadClassify = ''
+      this.deptUsersDoc = { users: [] }
+      this.deptUsersNurse = { users: [] }
+      this.fileList = []
+      this.fileListBanner = []
+      this.fileListDetail = []
+      this.nameDoc = ''
+      this.nameNurse = ''
+      this.nameTeam = ''
+      this.isDoctor = false
+      this.isNurse = false
+      this.isTeam = false
+      this.allocationTypeDoc = undefined
+      this.allocationTypeNurse = undefined
+      this.allocationTypeTeam = undefined
+      this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
+    },
+
     queryHospitalListOut() {
       let queryData = {
         tenantId: this.packageData.tenantId,
@@ -495,8 +528,8 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
-        pageNo:1,
-        pageSize:9999
+        pageNo: 1,
+        pageSize: 9999,
       })
         .then((res) => {
           if (res.code == 0) {
@@ -846,12 +879,11 @@ export default {
      * @param {*} index 0 医生  1 护士
      */
     addPerson(index) {
-     
-      if( !this.packageData.tenantId ){
+      if (!this.packageData.tenantId) {
         this.$message.warn('请先选择租户')
         return
       }
-      if( !this.packageData.hospitalCode ){
+      if (!this.packageData.hospitalCode) {
         this.$message.warn('请先选择机构')
         return
       }
@@ -1108,6 +1140,7 @@ export default {
           if (res.code == 0) {
             this.$message.success('保存成功')
             this.$bus.$emit('pkgEvent', '刷新数据-方案新增')
+            this.resetData()
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {

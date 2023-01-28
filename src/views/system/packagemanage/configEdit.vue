@@ -657,6 +657,17 @@ export default {
     // this.confirmLoading = true
   },
 
+  watch: {
+    $route(to, from) {
+      console.log('watch----configEdit out', to, from)
+      if (to.path.indexOf('configEdit') > -1) {
+        console.log('watch----configEdit', to, from)
+        this.record = JSON.parse(this.$route.query.recordStr)
+        this.qryServiceItemListOut('', true)
+      }
+    },
+  },
+
   methods: {
     moment,
     goCheckServicePeriod(itemTask) {
