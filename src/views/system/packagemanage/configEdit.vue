@@ -720,7 +720,7 @@ export default {
         return
       }
       if (this.configData.tasksKe[indexOut].selectId) {
-        this.delCommodityPkgCollectionByidOut(1, indexOut, this.configData.tasksKe[indexOut].selectId)
+        this.delCommodityPkgCollectionByidOut(indexOut, this.configData.tasksKe[indexOut].selectId)
       } else {
         this.configData.tasksKe.splice(indexOut, 1)
       }
@@ -732,7 +732,8 @@ export default {
         return
       }
       if (itemTask.idOut) {
-        this.delCommodityPkgCollectionByidOut(2, indexTask, itemTask.idOut)
+        // this.delCommodityPkgCollectionByidOut(2, indexTask, itemTask.idOut)
+        this.delCollectionItemByidBiOut(indexTask, itemTask.idIn)
       } else {
         this.configData.tasksBi.splice(indexTask, 1)
       }
@@ -932,6 +933,9 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+            if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
+              this.configData.tasksKe.splice(indexOut, 1)
+            }
             this.$message.success('刪除成功')
           }
         })
@@ -940,18 +944,33 @@ export default {
         })
     },
 
-    delCommodityPkgCollectionByidOut(flag, indexTask, collectionId) {
+    delCollectionItemByidBiOut(indexTask, itemId) {
+      this.confirmLoading = true
+      delCollectionItemByid({ itemId: itemId })
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.configData.tasksBi.splice(indexTask, 1)
+            this.$message.success('刪除成功')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    delCommodityPkgCollectionByidOut(indexTask, collectionId) {
       this.confirmLoading = true
       delCommodityPkgCollectionByid({ collectionId: collectionId })
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('刪除成功')
-            if (flag == 1) {
-              this.configData.tasksKe.splice(indexTask, 1)
-            } else {
-              this.configData.tasksBi.splice(indexTask, 1)
-            }
+            // if (flag == 1) {
+            this.configData.tasksKe.splice(indexTask, 1)
+            // } else {
+            //   this.configData.tasksBi.splice(indexTask, 1)
+            // }
           }
         })
         .finally((res) => {
