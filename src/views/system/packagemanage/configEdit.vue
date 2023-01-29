@@ -897,6 +897,7 @@ export default {
 
     //每个条目只勾选一个
     goHeadImgBi(indexTask, itemTask) {
+      debugger
       if (!itemTask.serviceItemId) {
         this.$message.warn('请先选择项目')
         return
@@ -1025,6 +1026,11 @@ export default {
       //处理可选项
       if (data.optionalPkgs.length > 0) {
         this.$set(this.configData, 'tasksKe', [])
+
+        //去掉空数据
+        data.optionalPkgs = data.optionalPkgs.filter((ele) => ele.items.length != 0)
+        console.log('处理过的optionalPkgs', data.optionalPkgs)
+
         data.optionalPkgs.forEach((itemOut, indexOut) => {
           this.configData.tasksKe.push({ itemsKe: [] })
           itemOut.items.forEach((itemIn, indexIn) => {
@@ -1293,9 +1299,10 @@ export default {
       }
 
       //校验必选的项目图片  咨询三类不需要校验必选图片
-      debugger
-      for (let indexIn = 0; indexIn < this.configData.tasksBi.length; indexIn++) {
-        if (this.configData.tasksBi[indexIn].isHeadImg) {
+      this.hasHeadImgBi = false
+      for (let indexInBi = 0; indexInBi < this.configData.tasksBi.length; indexInBi++) {
+        debugger
+        if (this.configData.tasksBi[indexInBi].isHeadImg) {
           this.hasHeadImgBi = true
         }
       }

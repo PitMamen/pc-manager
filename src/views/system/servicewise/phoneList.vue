@@ -1292,7 +1292,7 @@ export default {
     // 这里不同显示器的电脑反应不一样，采取双行三个table头都是-133px,将原来的doubled样式注释
     .table-wrapper {
       // height: calc(100% - 93px);
-      height: calc(100% - 133px);
+      height: calc(100% - 161px);
 
       // &.doubled {
       //   height: calc(100% - 133px);
