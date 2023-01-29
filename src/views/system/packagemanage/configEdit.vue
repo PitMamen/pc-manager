@@ -182,7 +182,6 @@
                   style="margin-left: 5px"
                   v-show="itemTask.typeCode != 104"
                   v-model="itemTask.servicePeriodUnit"
-                  @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
                   allow-clear
                   placeholder="请选择"
                 >
@@ -407,7 +406,6 @@
                 style="margin-left: 5px"
                 v-show="itemTask.typeCode != 104"
                 v-model="itemTask.servicePeriodUnit"
-                @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
                 allow-clear
                 placeholder="请选择"
               >
@@ -1061,7 +1059,7 @@ export default {
                 }
               }
 
-              //服务时长 视频咨询和电话咨询特有
+              //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
                 if (findItem) {
@@ -1120,8 +1118,8 @@ export default {
               typeCode: itemIn.itemInfo.projectType + '', //单独处理，后台再给
             })
 
-            this.$set(this.configData.tasksBi[indexOut], 'idOut', itemOut.id)
-            this.$set(this.configData.tasksBi[indexOut], 'idIn', itemIn.id)
+            this.$set(this.configData.tasksBi[indexIn], 'idOut', itemOut.id)
+            this.$set(this.configData.tasksBi[indexIn], 'idIn', itemIn.id)
             console.log('process compulsoryPkgs itemOut.id', itemOut.id)
             console.log('process compulsoryPkgs itemIn.id', itemIn.id)
 
@@ -1131,21 +1129,22 @@ export default {
               if (itemIn.itemInfo.projectType == 102 || itemIn.itemInfo.projectType == 103) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_TIMES')
                 if (findItem) {
-                  this.$set(this.configData.tasksBi[indexOut], 'serviceTime', findItem.serviceValue)
-                  this.$set(this.configData.tasksBi[indexOut], 'attrIdServiceTime', findItem.id)
+                  this.$set(this.configData.tasksBi[indexIn], 'serviceTime', findItem.serviceValue)
+                  this.$set(this.configData.tasksBi[indexIn], 'attrIdServiceTime', findItem.id)
                 }
               }
 
-              //服务时长 视频咨询和电话咨询特有
+              debugger
+              //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
                 if (findItem) {
-                  this.$set(this.configData.tasksBi[indexOut], 'chatNum', findItem.serviceValue)
-                  this.$set(this.configData.tasksBi[indexOut], 'needChatNum', true)
-                  this.$set(this.configData.tasksBi[indexOut], 'attrIdChatNum', findItem.id)
+                  this.$set(this.configData.tasksBi[indexIn], 'chatNum', findItem.serviceValue)
+                  this.$set(this.configData.tasksBi[indexIn], 'needChatNum', true)
+                  this.$set(this.configData.tasksBi[indexIn], 'attrIdChatNum', findItem.id)
                 } else {
-                  this.$set(this.configData.tasksBi[indexOut], 'chatNum', undefined)
-                  this.$set(this.configData.tasksBi[indexOut], 'needChatNum', false)
+                  this.$set(this.configData.tasksBi[indexIn], 'chatNum', undefined)
+                  this.$set(this.configData.tasksBi[indexIn], 'needChatNum', false)
                 }
               }
 
@@ -1156,14 +1155,14 @@ export default {
 
               let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_EXPIRE')
               if (findItem) {
-                this.$set(this.configData.tasksBi[indexOut], 'timeQuantity', findItem.serviceValue)
-                this.$set(this.configData.tasksBi[indexOut], 'needServicePeriod', true)
-                this.$set(this.configData.tasksBi[indexOut], 'attrIdTimeQuantity', findItem.id)
-                this.$set(this.configData.tasksBi[indexOut], 'servicePeriodUnit', findItem.unit == '天' ? 1 : 2)
+                this.$set(this.configData.tasksBi[indexIn], 'timeQuantity', findItem.serviceValue)
+                this.$set(this.configData.tasksBi[indexIn], 'needServicePeriod', true)
+                this.$set(this.configData.tasksBi[indexIn], 'attrIdTimeQuantity', findItem.id)
+                this.$set(this.configData.tasksBi[indexIn], 'servicePeriodUnit', findItem.unit == '天' ? 1 : 2)
               } else {
-                this.$set(this.configData.tasksBi[indexOut], 'timeQuantity', undefined)
-                this.$set(this.configData.tasksBi[indexOut], 'needServicePeriod', false)
-                this.$set(this.configData.tasksBi[indexOut], 'servicePeriodUnit', 1)
+                this.$set(this.configData.tasksBi[indexIn], 'timeQuantity', undefined)
+                this.$set(this.configData.tasksBi[indexIn], 'needServicePeriod', false)
+                this.$set(this.configData.tasksBi[indexIn], 'servicePeriodUnit', 1)
               }
             }
           })
@@ -1436,10 +1435,10 @@ export default {
       //咨询类三种单独处理
       if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
         //组装必选
+        uploadData.pkgs.push({ itemType: 2, items: [] })
         this.configData.tasksBi.forEach((item, indexItem) => {
-          uploadData.pkgs.push({ itemType: 2, items: [] })
           debugger
-          uploadData.pkgs[indexItem + pkgsLength].items.push({
+          uploadData.pkgs[pkgsLength].items.push({
             quantity: item.quantity,
             saleAmount: item.saleAmount,
             serviceItemId: item.serviceItemId,
@@ -1453,10 +1452,10 @@ export default {
 
           debugger
           if (item.idIn) {
-            this.$set(uploadData.pkgs[indexItem + pkgsLength].items[0], 'id', item.idIn)
+            this.$set(uploadData.pkgs[pkgsLength].items[indexItem], 'id', item.idIn)
           }
           if (item.idOut) {
-            this.$set(uploadData.pkgs[indexItem + pkgsLength], 'id', item.idOut)
+            this.$set(uploadData.pkgs[pkgsLength], 'id', item.idOut)
           }
 
           debugger
@@ -1465,7 +1464,7 @@ export default {
             //服务时长 视频咨询和电话咨询特有
             if (item.typeCode == 102 || item.typeCode == 103) {
               if (item.attrIdServiceTime) {
-                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_TIMES',
                   ruleTypeName: '服务时长',
                   serviceValue: item.serviceTime,
@@ -1473,7 +1472,7 @@ export default {
                   id: item.attrIdServiceTime,
                 })
               } else {
-                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_TIMES',
                   ruleTypeName: '服务时长',
                   serviceValue: item.serviceTime,
@@ -1488,7 +1487,7 @@ export default {
             //限制条数 图文咨询特有  且需要勾选
             if (item.needChatNum && item.typeCode == 101) {
               if (item.attrIdChatNum) {
-                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_LIMITNUMS',
                   ruleTypeName: '限制条数',
                   serviceValue: item.chatNum,
@@ -1496,7 +1495,7 @@ export default {
                   id: item.attrIdChatNum,
                 })
               } else {
-                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_LIMITNUMS',
                   ruleTypeName: '限制条数',
                   serviceValue: item.chatNum,
@@ -1510,7 +1509,7 @@ export default {
               let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
 
               if (item.attrIdTimeQuantity) {
-                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_EXPIRE',
                   ruleTypeName: '服务时效',
                   serviceValue: item.timeQuantity,
@@ -1518,7 +1517,7 @@ export default {
                   id: item.attrIdTimeQuantity,
                 })
               } else {
-                uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_EXPIRE',
                   ruleTypeName: '服务时效',
                   serviceValue: item.timeQuantity,

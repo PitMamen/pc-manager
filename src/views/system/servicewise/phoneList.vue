@@ -81,7 +81,7 @@
             <span class="name">执行科室:</span>
 
             <a-select
-              style="width: 150px;"
+              style="width: 150px"
               show-search
               v-model="queryParams.executeDepartmentId"
               :filter-option="false"
@@ -1023,8 +1023,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
@@ -1103,8 +1103,7 @@ export default {
   },
 }
 </script>
-    <style lang="less" scoped>
- 
+<style lang="less" scoped>
 .div-divider {
   margin-top: 1%;
   margin-bottom: 1%;
@@ -1251,13 +1250,6 @@ export default {
       padding: 0px 20px !important;
     }
 
-    /deep/ .table-wrapper {
-      &.doubled {
-        height: calc(100% - 133px);
-      }
-      // height: calc(100% - 38px);
-    }
-
     .table-page-search-wrapper {
       padding-bottom: 20px;
       margin-top: 10px;
@@ -1287,12 +1279,6 @@ export default {
     }
   }
 }
-
-// /deep/ svg {
-//   width: 0 !important;
-//   height: 0 !important;
-//   display: none;
-// }
 </style>
 
 <style lang="less" scoped>
@@ -1302,8 +1288,15 @@ export default {
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
+
+    // 这里不同显示器的电脑反应不一样，采取双行三个table头都是-133px,将原来的doubled样式注释
     .table-wrapper {
-      height: calc(100% - 93px);
+      // height: calc(100% - 93px);
+      height: calc(100% - 133px);
+
+      // &.doubled {
+      //   height: calc(100% - 133px);
+      // }
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {

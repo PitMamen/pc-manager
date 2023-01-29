@@ -58,7 +58,7 @@ export default {
   .ant-tabs {
     height: 100%;
     /deep/ .ant-tabs-content {
-      height: calc(100% - 44px);
+      height: calc(100% - 14px);
       .ant-tabs-tabpane {
         height: 100%;
       }
