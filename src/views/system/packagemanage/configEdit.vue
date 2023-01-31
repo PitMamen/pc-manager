@@ -772,7 +772,8 @@ export default {
         }
       }
       console.log('biTotal', biTotal)
-      this.record.startPrice = biTotal + newKe[0] + '元'
+      // let totalFinal = (biTotal + newKe[0]).toFixed(2)
+      this.record.startPrice = (biTotal + newKe[0]).toFixed(2) + '元'
     },
 
     /**
