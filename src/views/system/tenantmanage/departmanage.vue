@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="管理科室"
-    :width="700"
+    :width="760"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -25,7 +25,7 @@
             </div>
 
             <div class="div-content" style="margin-left: -10px">
-              <span class="span-item-name" style="margin-left: -5px">已选科室:</span>
+              <span class="span-item-name" style="margin-left: -5px; margin-top: 10px">已选科室:</span>
               <a-select
                 allow-clear
                 :disabled="item.applicationId != 1"
@@ -35,7 +35,7 @@
                 :maxTagCount="1"
                 :collapse-tags="true"
                 mode="multiple"
-                style="height: 28px; width: 230px; margin-left: 0px"
+                style="height: 28px; width: 250px; margin-left: 0px; margin-top: 10px"
                 @change="ksSelectChange"
               >
                 <a-select-option v-for="(item, index) in allDepartList" :key="index" :value="item.department_id">{{
@@ -82,11 +82,7 @@
   
   <script>
 import { STable } from '@/components'
-import {
-  getDepartmentListForReq,
-  getManagerDepts,
-  updateManagerDepts,
-} from '@/api/modular/system/posManage'
+import { getDepartmentListForReq, getManagerDepts, updateManagerDepts } from '@/api/modular/system/posManage'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -217,7 +213,7 @@ export default {
             this.appListOut = JSON.parse(JSON.stringify(this.appList))
             this.appListOut.forEach((item, index) => {
               // this.$set(item, 'isChecked', item.deptInfos ? true : false)  //根据条件判断
-              this.$set(item, 'isChecked', true )   // 这里默认进来的时候 就是选中状态 ，到时候其他应用放开的时候 再根据条件判断
+              this.$set(item, 'isChecked', true) // 这里默认进来的时候 就是选中状态 ，到时候其他应用放开的时候 再根据条件判断
               this.$set(item, 'selectedRowKeyids', [])
               if (item.deptInfos) {
                 if (item.applicationId == 1) {
@@ -256,7 +252,6 @@ export default {
     updateSelect() {
       this.$refs.table.updateSelect(this.selectedRowKeys, [])
     },
-  
 
     //数组元素去重
     removeDuplicate(arry) {
@@ -316,7 +311,9 @@ export default {
   },
 }
 </script>
+
   <style lang="less" scoped>
+
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
