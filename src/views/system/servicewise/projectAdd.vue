@@ -127,7 +127,7 @@
               <a-input
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
-                :maxLength="300"
+                :maxLength="120"
                 style="display: inline-block"
                 v-if="itemRule.fieldType == 1"
                 allow-clear
@@ -781,7 +781,7 @@ export default {
     onTypeSelect(indexTask, itemTask) {
       // this.getWxTemplateListOut()
       console.log('onTypeSelect', itemTask)
-      
+
       if (itemTask.messageType == 1) {
         //电话消息不需要时间
         console.log('pushTimePoint delete', itemTask.pushTimePoint)
