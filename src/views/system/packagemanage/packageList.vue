@@ -67,6 +67,7 @@
       <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
     </div>
 
+    <!-- :isShowLoading="false" -->
     <s-table
       :scroll="{ x: true }"
       ref="table"
@@ -82,7 +83,7 @@
       </span>
       <span slot="cover" slot-scope="text, record">
         <!-- <img src="~@/assets/icons/weixin_icon.png" /> -->
-        <img style="height:20px;width:25px" :src="record.frontImg" />
+        <img style="height: 20px; width: 25px" :src="record.frontImg" />
       </span>
       <!-- 
         1关2开
@@ -99,7 +100,7 @@
         <a-popconfirm
           placement="topRight"
           :title="record.saleStatus === 1 ? '确认上架？' : '确认下架？'"
-          @confirm="updatePkgStatusOut(record,record.commodityId, record.saleStatus, 0)"
+          @confirm="updatePkgStatusOut(record, record.commodityId, record.saleStatus, 0)"
         >
           <a-switch size="small" :checked="record.saleStatus == 2" />
         </a-popconfirm>
@@ -108,7 +109,7 @@
         <a-popconfirm
           placement="topRight"
           :title="record.recommendStatus === 1 ? '确认推荐？' : '确认不推荐？'"
-          @confirm="updatePkgStatusOut(record,record.commodityId, record.recommendStatus, 1)"
+          @confirm="updatePkgStatusOut(record, record.commodityId, record.recommendStatus, 1)"
         >
           <a-switch size="small" :checked="record.recommendStatus == 2" />
         </a-popconfirm>
@@ -117,7 +118,7 @@
         <a-popconfirm
           placement="topRight"
           :title="record.stopStatus === 1 ? '确认启用？' : '确认停用？'"
-          @confirm="updatePkgStatusOut(record,record.commodityId, record.stopStatus, 2)"
+          @confirm="updatePkgStatusOut(record, record.commodityId, record.stopStatus, 2)"
         >
           <a-switch size="small" :checked="record.stopStatus == 2" />
         </a-popconfirm>
@@ -234,9 +235,11 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getPkgList(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
+          
+          let data = {}
+          if (res.code == 0 && res.data && res.data.records.length > 0) {
             //组装控件需要的数据结构
-            var data = {
+            data = {
               pageNo: parameter.pageNo,
               pageSize: parameter.pageSize,
               totalRows: res.data.total,
@@ -279,6 +282,16 @@ export default {
       // this.objct = data;
       this.refresh()
     })
+  },
+
+  watch: {
+    $route(to, from) {
+      console.log('watch----packageList out', to, from)
+      if (to.path.indexOf('packageList') > -1) {
+        console.log('watch----packageList', to, from)
+        this.refresh()
+      }
+    },
   },
 
   created() {
@@ -340,7 +353,7 @@ export default {
       * @param {*} statusValue statusValue  传过来的是当前的状态
       * @param {*} updateType 
       */
-    updatePkgStatusOut(record,id, statusValue, updateType) {
+    updatePkgStatusOut(record, id, statusValue, updateType) {
       let data = {
         id: id,
         statusValue: statusValue == 1 ? 2 : 1,
@@ -350,15 +363,15 @@ export default {
         if (res.code == 0) {
           this.$message.success('操作成功')
           // this.refresh()
-          if(updateType==0){
-            record.saleStatus=data.statusValue
-          }else if(updateType==1){
-            record.recommendStatus=data.statusValue
-          } else if(updateType==2){
-            record.stopStatus=data.statusValue
-          } 
+          if (updateType == 0) {
+            record.saleStatus = data.statusValue
+          } else if (updateType == 1) {
+            record.recommendStatus = data.statusValue
+          } else if (updateType == 2) {
+            record.stopStatus = data.statusValue
+          }
         } else {
-          // this.$message.error('获取计划列表失败：' + res.message)
+          this.$message.error('操作失败：' + res.message)
         }
       })
     },

@@ -1008,6 +1008,7 @@ export default {
   }
 
   .div-down {
+    height: 100%;
     .div-service-left-control {
       background-color: white;
       // padding: 20px 0 20px 20px;
@@ -1184,7 +1185,7 @@ export default {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 188px);
+      height: calc(100% - 89px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {

@@ -243,7 +243,18 @@ export function getQrUrl(param) {
 
   })
 }
+/**
+ * 获取二维码链接  机构的随访二维码
+ *
+ */
+export function getHospitalQrCode(param) {
+  return axios({
+    url: '/wx-api/wx/qrcode/' + appId + '/getHospitalQrCode',
+    method: 'get',
+    params: param,
 
+  })
+}
 /**
  * 获取二维码链接   科室的套餐二维码
  *

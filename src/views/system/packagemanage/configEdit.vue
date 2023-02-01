@@ -9,7 +9,7 @@
 
         <div class="div-up-content">
           <div class="div-up-left">
-            <span class="span-item-name"> 套餐名称 :</span>
+            <span class="span-item-name" style="margin-left: 0px"> 套餐名称 :</span>
             <span
               class="span-item-value"
               :title="record.packageName"
@@ -88,7 +88,7 @@
                   placeholder="请选择项目"
                   v-model="itemTask.serviceItemId"
                   option-label-prop="title"
-                  @select="onSelect(itemTask)"
+                  @select="onSelect(indexOut, itemTask)"
                   @search="handleSearch"
                 >
                   <template slot="dataSource">
@@ -101,7 +101,7 @@
                 <span style="margin-left: 1%">*</span>
 
                 <a-input-number
-                  :disabled="record.classifyCode == 101 || (record.classifyCode == 102 && record.classifyCode == 103)"
+                  :disabled="record.classifyCode == 101 || record.classifyCode == 102 || record.classifyCode == 103"
                   style="display: inline-block; margin-left: 1%; width: 60px"
                   v-model="itemTask.quantity"
                   :min="1"
@@ -115,6 +115,7 @@
                 <a-input-number
                   style="display: inline-block; margin-left: 1%; width: 60px"
                   v-model="itemTask.saleAmount"
+                  @blur="countMinPrice"
                   :min="0"
                   :max="999999"
                   :maxLength="30"
@@ -181,7 +182,6 @@
                   style="margin-left: 5px"
                   v-show="itemTask.typeCode != 104"
                   v-model="itemTask.servicePeriodUnit"
-                  @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
                   allow-clear
                   placeholder="请选择"
                 >
@@ -192,12 +192,11 @@
               </div>
 
               <!-- itemImg -->
-              <a-checkbox
-                style="margin-left: 1%"
-                :checked="itemTask.isHeadImg"
-                @click="goHeadImg(indexOut, indexTask, itemTask)"
-                >项目图片</a-checkbox
-              >
+              <div class="div-img" @click="goHeadImg(indexOut, indexTask, itemTask)">
+                <img v-if="itemTask.isHeadImg" src="@/assets/icons/icon-checked.png" />
+                <img v-else src="@/assets/icons/icon-checked-not.png" />
+                <span style="margin-left: 3px">项目图片</span>
+              </div>
             </div>
 
             <!-- 分割线 -->
@@ -314,7 +313,7 @@
                 placeholder="请选择项目"
                 v-model="itemTask.serviceItemId"
                 option-label-prop="title"
-                @select="onSelect(itemTask)"
+                @select="onSelectBi(itemTask)"
                 @search="handleSearch"
               >
                 <template slot="dataSource">
@@ -340,6 +339,7 @@
               <a-input-number
                 style="display: inline-block; margin-left: 1%; width: 60px"
                 v-model="itemTask.saleAmount"
+                @blur="countMinPrice"
                 :min="0"
                 :max="999999"
                 :maxLength="30"
@@ -406,7 +406,6 @@
                 style="margin-left: 5px"
                 v-show="itemTask.typeCode != 104"
                 v-model="itemTask.servicePeriodUnit"
-                @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
                 allow-clear
                 placeholder="请选择"
               >
@@ -417,9 +416,11 @@
             </div>
 
             <!-- itemImg -->
-            <a-checkbox style="margin-left: 1%" :checked="itemTask.isHeadImg" @click="goHeadImgBi(indexTask, itemTask)"
-              >项目图片</a-checkbox
-            >
+            <div class="div-img" @click="goHeadImgBi(indexTask, itemTask)">
+              <img v-if="itemTask.isHeadImg" src="@/assets/icons/icon-checked.png" />
+              <img v-else src="@/assets/icons/icon-checked-not.png" />
+              <span style="margin-left: 3px">项目图片</span>
+            </div>
           </div>
 
           <!-- 分割线 -->
@@ -582,8 +583,8 @@ export default {
       // },
 
       configData: {
-        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
-        tasksBi: [{ quantity: 1, saleAmount: undefined }],
+        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }] }],
+        tasksBi: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }],
       },
 
       /**
@@ -592,8 +593,8 @@ export default {
        * item 结构为 dataItem
        */
       configDataOrigin: {
-        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined }] }],
-        tasksBi: [{ quantity: 1, saleAmount: undefined }],
+        tasksKe: [{ itemsKe: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }] }],
+        tasksBi: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }],
       },
 
       dataItem: {
@@ -657,6 +658,17 @@ export default {
     // this.confirmLoading = true
   },
 
+  watch: {
+    $route(to, from) {
+      console.log('watch----configEdit out', to, from)
+      if (to.path.indexOf('configEdit') > -1) {
+        console.log('watch----configEdit', to, from)
+        this.record = JSON.parse(this.$route.query.recordStr)
+        this.qryServiceItemListOut('', true)
+      }
+    },
+  },
+
   methods: {
     moment,
     goCheckServicePeriod(itemTask) {
@@ -678,18 +690,28 @@ export default {
         this.$message.warn('至少需要一条项目')
         return
       }
-      this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+
+      if (itemTask.idIn) {
+        this.delCollectionItemByidOut(indexOut, indexTask, itemTask.idIn)
+      } else {
+        this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+      }
+
       if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
         this.configData.tasksKe.splice(indexOut, 1)
       }
       console.log('delItemsKe tasksKe.length', this.configData.tasksKe.length)
     },
     addItemsKe(indexout) {
-      this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined })
+      if (this.configData.tasksKe[indexout].itemsKe.length == 0) {
+        this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined, isHeadImg: true })
+      } else {
+        this.configData.tasksKe[indexout].itemsKe.push({ quantity: 1, saleAmount: undefined })
+      }
     },
 
     addTasksKe() {
-      this.configData.tasksKe.push({ itemsKe: [{ quantity: 1, saleAmount: undefined }] })
+      this.configData.tasksKe.push({ itemsKe: [{ quantity: 1, saleAmount: undefined, isHeadImg: true }] })
     },
 
     delTasksKe(indexOut) {
@@ -697,7 +719,11 @@ export default {
         this.$message.warn('至少需要一条项目')
         return
       }
-      this.configData.tasksKe.splice(indexOut, 1)
+      if (this.configData.tasksKe[indexOut].selectId) {
+        this.delCommodityPkgCollectionByidOut(indexOut, this.configData.tasksKe[indexOut].selectId)
+      } else {
+        this.configData.tasksKe.splice(indexOut, 1)
+      }
     },
 
     delItemsBi(indexTask, itemTask) {
@@ -705,11 +731,49 @@ export default {
         this.$message.warn('至少需要一条项目')
         return
       }
-      this.configData.tasksBi.splice(indexTask, 1)
+      if (itemTask.idOut) {
+        // this.delCommodityPkgCollectionByidOut(2, indexTask, itemTask.idOut)
+        this.delCollectionItemByidBiOut(indexTask, itemTask.idIn)
+      } else {
+        this.configData.tasksBi.splice(indexTask, 1)
+      }
     },
 
     addItemsBi() {
-      this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined })
+      if (this.configData.tasksBi.length == 0) {
+        this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined, isHeadImg: true })
+      } else {
+        this.configData.tasksBi.push({ quantity: 1, saleAmount: undefined })
+      }
+    },
+
+    countMinPrice() {
+      let addKe = []
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        let keTotal = 0
+        for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+          if (this.configData.tasksKe[index].itemsKe[indexIn].saleAmount) {
+            keTotal = keTotal + this.configData.tasksKe[index].itemsKe[indexIn].saleAmount
+          }
+        }
+        addKe.push(keTotal)
+      }
+      console.log('addKe', addKe)
+
+      let newKe = addKe.sort((a, b) => a - b)
+      // newKe[newKe.length - 1] // 获取最大值：100
+      // newKe[0] // 获取最小值： -1
+
+      debugger
+      let biTotal = 0
+      for (let indexBi = 0; indexBi < this.configData.tasksBi.length; indexBi++) {
+        if (this.configData.tasksBi[indexBi].saleAmount) {
+          biTotal = biTotal + this.configData.tasksBi[indexBi].saleAmount
+        }
+      }
+      console.log('biTotal', biTotal)
+      // let totalFinal = (biTotal + newKe[0]).toFixed(2)
+      this.record.startPrice = (biTotal + newKe[0]).toFixed(2) + '元'
     },
 
     /**
@@ -724,7 +788,7 @@ export default {
      *  typeCode  101 图文咨询 102 电话咨询  103 视频咨询 104 普通商品
      * @param {*} itemTask
      */
-    onSelect(itemTask) {
+    onSelect(indexOut, itemTask) {
       console.log('itemTask ', itemTask)
       let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
       itemTask.typeCode = findItem.projectType + ''
@@ -755,7 +819,57 @@ export default {
       this.$set(itemTask, 'needServicePeriod', false)
       this.$set(itemTask, 'servicePeriodUnit', 1)
 
-      this.$set(itemTask, 'isHeadImg', false)
+      // this.$set(itemTask, 'isHeadImg', false)
+      debugger
+      if (this.configData.tasksKe[indexOut].itemsKe.length == 1 || itemTask.isHeadImg) {
+        this.$set(itemTask, 'isHeadImg', true)
+      } else {
+        this.$set(itemTask, 'isHeadImg', false)
+      }
+
+      //处理findItem的可配置项
+      for (let index = 0; index < findItem.itemAttr.length; index++) {
+        findItem.itemAttr[index]
+      }
+    },
+
+    onSelectBi(itemTask) {
+      console.log('itemTask ', itemTask)
+      let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
+      itemTask.typeCode = findItem.projectType + ''
+
+      this.$set(itemTask, 'serviceItemName', findItem.serviceItemName)
+
+      //构造属性，用于前端显示，后台不需要，包括 typeCode 字段
+      this.$set(itemTask, 'normsModel', findItem.normsModel)
+      this.$set(itemTask, 'suggestPrice', findItem.suggestPrice)
+      this.$set(itemTask, 'factoryName', findItem.factoryName)
+      console.log('selectType findItem', JSON.stringify(findItem))
+      console.log('selectType typeCode', findItem.projectType)
+
+      //2 视频咨询 3 电话咨询 特有服务时长
+
+      //1 图文咨询 特有 限制条数
+      // 构造参数 serviceTime(服务时长) chatNum(限制条数)前端用，保存的时候要用来组装itemAttr数据结构
+      if (itemTask.typeCode == 102 || itemTask.typeCode == 103) {
+        this.$set(itemTask, 'serviceTime', undefined)
+      }
+      if (itemTask.typeCode == 101) {
+        this.$set(itemTask, 'chatNum', undefined)
+        this.$set(itemTask, 'needChatNum', false)
+      }
+
+      //服务时效都有
+      this.$set(itemTask, 'servicePeriod', undefined)
+      this.$set(itemTask, 'needServicePeriod', false)
+      this.$set(itemTask, 'servicePeriodUnit', 1)
+
+      debugger
+      if (this.configData.tasksBi.length == 1 || itemTask.isHeadImg) {
+        this.$set(itemTask, 'isHeadImg', true)
+      } else {
+        this.$set(itemTask, 'isHeadImg', false)
+      }
 
       //处理findItem的可配置项
       for (let index = 0; index < findItem.itemAttr.length; index++) {
@@ -769,18 +883,23 @@ export default {
         this.$message.warn('请先选择项目')
         return
       }
-      for (let index = 0; index < this.configData.tasksKe.length; index++) {
-        for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
-          this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg = false
-        }
+      // for (let index = 0; index < this.configData.tasksKe.length; index++) {
+      //   for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+      //     this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg = false
+      //   }
+      // }
+
+      for (let indexIn = 0; indexIn < this.configData.tasksKe[indexOut].itemsKe.length; indexIn++) {
+        this.configData.tasksKe[indexOut].itemsKe[indexIn].isHeadImg = false
       }
 
       this.configData.tasksKe[indexOut].itemsKe[indexTask].isHeadImg = true
-      this.hasHeadImg = true
+      // this.hasHeadImg = true
     },
 
     //每个条目只勾选一个
     goHeadImgBi(indexTask, itemTask) {
+      debugger
       if (!itemTask.serviceItemId) {
         this.$message.warn('请先选择项目')
         return
@@ -808,12 +927,16 @@ export default {
         })
     },
 
-    delCollectionItemByidOut(itemId) {
+    delCollectionItemByidOut(indexOut, indexTask, itemId) {
       this.confirmLoading = true
       delCollectionItemByid({ itemId: itemId })
         .then((res) => {
           this.confirmLoading = false
-          if (res.code == 0 && res.data.length > 0) {
+          if (res.code == 0) {
+            this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+            if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
+              this.configData.tasksKe.splice(indexOut, 1)
+            }
             this.$message.success('刪除成功')
           }
         })
@@ -822,13 +945,33 @@ export default {
         })
     },
 
-    delCommodityPkgCollectionByidOut(collectionId) {
+    delCollectionItemByidBiOut(indexTask, itemId) {
+      this.confirmLoading = true
+      delCollectionItemByid({ itemId: itemId })
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.configData.tasksBi.splice(indexTask, 1)
+            this.$message.success('刪除成功')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    delCommodityPkgCollectionByidOut(indexTask, collectionId) {
       this.confirmLoading = true
       delCommodityPkgCollectionByid({ collectionId: collectionId })
         .then((res) => {
           this.confirmLoading = false
-          if (res.code == 0 && res.data.length > 0) {
+          if (res.code == 0) {
             this.$message.success('刪除成功')
+            // if (flag == 1) {
+            this.configData.tasksKe.splice(indexTask, 1)
+            // } else {
+            //   this.configData.tasksBi.splice(indexTask, 1)
+            // }
           }
         })
         .finally((res) => {
@@ -897,12 +1040,17 @@ export default {
 
     processData(data) {
       //修改的时候已经保存了项目图片，直接置成true
-      this.hasHeadImg = true
-      this.hasHeadImgBi = true
+      // this.hasHeadImg = true
+      // this.hasHeadImgBi = true
       this.configData = {}
       //处理可选项
       if (data.optionalPkgs.length > 0) {
         this.$set(this.configData, 'tasksKe', [])
+
+        //去掉空数据
+        data.optionalPkgs = data.optionalPkgs.filter((ele) => ele.items.length != 0)
+        console.log('处理过的optionalPkgs', data.optionalPkgs)
+
         data.optionalPkgs.forEach((itemOut, indexOut) => {
           this.configData.tasksKe.push({ itemsKe: [] })
           itemOut.items.forEach((itemIn, indexIn) => {
@@ -921,6 +1069,7 @@ export default {
 
             this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'idOut', itemOut.id)
             this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'idIn', itemIn.id)
+            this.$set(this.configData.tasksKe[indexOut], 'selectId', itemOut.id) //selectId为界面上可选外层的id
 
             console.log('process optionalPkgs itemOut.id', itemOut.id)
             console.log('process optionalPkgs itemIn.id', itemIn.id)
@@ -936,7 +1085,7 @@ export default {
                 }
               }
 
-              //服务时长 视频咨询和电话咨询特有
+              //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
                 if (findItem) {
@@ -972,9 +1121,12 @@ export default {
             }
           })
         })
+      } else {
+        this.$set(this.configData, 'tasksKe', [])
       }
 
       //处理必选项
+      // let pkgsLength = uploadData.pkgs.length
       if (data.compulsoryPkgs.length > 0) {
         this.$set(this.configData, 'tasksBi', [])
         data.compulsoryPkgs.forEach((itemOut, indexOut) => {
@@ -992,8 +1144,8 @@ export default {
               typeCode: itemIn.itemInfo.projectType + '', //单独处理，后台再给
             })
 
-            this.$set(this.configData.tasksBi[indexOut], 'idOut', itemOut.id)
-            this.$set(this.configData.tasksBi[indexOut], 'idIn', itemIn.id)
+            this.$set(this.configData.tasksBi[indexIn], 'idOut', itemOut.id)
+            this.$set(this.configData.tasksBi[indexIn], 'idIn', itemIn.id)
             console.log('process compulsoryPkgs itemOut.id', itemOut.id)
             console.log('process compulsoryPkgs itemIn.id', itemIn.id)
 
@@ -1003,21 +1155,22 @@ export default {
               if (itemIn.itemInfo.projectType == 102 || itemIn.itemInfo.projectType == 103) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_TIMES')
                 if (findItem) {
-                  this.$set(this.configData.tasksBi[indexOut], 'serviceTime', findItem.serviceValue)
-                  this.$set(this.configData.tasksKe[indexOut], 'attrIdServiceTime', findItem.id)
+                  this.$set(this.configData.tasksBi[indexIn], 'serviceTime', findItem.serviceValue)
+                  this.$set(this.configData.tasksBi[indexIn], 'attrIdServiceTime', findItem.id)
                 }
               }
 
-              //服务时长 视频咨询和电话咨询特有
+              debugger
+              //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
                 if (findItem) {
-                  this.$set(this.configData.tasksBi[indexOut], 'chatNum', findItem.serviceValue)
-                  this.$set(this.configData.tasksBi[indexOut], 'needChatNum', true)
-                  this.$set(this.configData.tasksKe[indexOut], 'attrIdChatNum', findItem.id)
+                  this.$set(this.configData.tasksBi[indexIn], 'chatNum', findItem.serviceValue)
+                  this.$set(this.configData.tasksBi[indexIn], 'needChatNum', true)
+                  this.$set(this.configData.tasksBi[indexIn], 'attrIdChatNum', findItem.id)
                 } else {
-                  this.$set(this.configData.tasksBi[indexOut], 'chatNum', undefined)
-                  this.$set(this.configData.tasksBi[indexOut], 'needChatNum', false)
+                  this.$set(this.configData.tasksBi[indexIn], 'chatNum', undefined)
+                  this.$set(this.configData.tasksBi[indexIn], 'needChatNum', false)
                 }
               }
 
@@ -1028,18 +1181,20 @@ export default {
 
               let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_EXPIRE')
               if (findItem) {
-                this.$set(this.configData.tasksBi[indexOut], 'timeQuantity', findItem.serviceValue)
-                this.$set(this.configData.tasksBi[indexOut], 'needServicePeriod', true)
-                this.$set(this.configData.tasksKe[indexOut], 'attrIdTimeQuantity', findItem.id)
-                this.$set(this.configData.tasksBi[indexOut], 'servicePeriodUnit', findItem.unit == '天' ? 1 : 2)
+                this.$set(this.configData.tasksBi[indexIn], 'timeQuantity', findItem.serviceValue)
+                this.$set(this.configData.tasksBi[indexIn], 'needServicePeriod', true)
+                this.$set(this.configData.tasksBi[indexIn], 'attrIdTimeQuantity', findItem.id)
+                this.$set(this.configData.tasksBi[indexIn], 'servicePeriodUnit', findItem.unit == '天' ? 1 : 2)
               } else {
-                this.$set(this.configData.tasksBi[indexOut], 'timeQuantity', undefined)
-                this.$set(this.configData.tasksBi[indexOut], 'needServicePeriod', false)
-                this.$set(this.configData.tasksBi[indexOut], 'servicePeriodUnit', 1)
+                this.$set(this.configData.tasksBi[indexIn], 'timeQuantity', undefined)
+                this.$set(this.configData.tasksBi[indexIn], 'needServicePeriod', false)
+                this.$set(this.configData.tasksBi[indexIn], 'servicePeriodUnit', 1)
               }
             }
           })
         })
+      } else {
+        this.$set(this.configData, 'tasksBi', [])
       }
       console.log('processed configData', JSON.stringify(this.configData))
       this.confirmLoading = false
@@ -1102,11 +1257,26 @@ export default {
         }
       }
 
-      //校验可选的项目图片
-      if (this.configData.tasksKe.length > 0 && !this.hasHeadImg) {
-        this.$message.error('请勾选可选项目图片')
-        return
+      // 校验可选的项目图片
+      debugger
+      if (this.configData.tasksKe.length > 0) {
+        for (let index = 0; index < this.configData.tasksKe.length; index++) {
+          let thisCircle = false
+          for (let indexIn = 0; indexIn < this.configData.tasksKe[index].itemsKe.length; indexIn++) {
+            if (this.configData.tasksKe[index].itemsKe[indexIn].isHeadImg) {
+              thisCircle = true
+            }
+          }
+          if (!thisCircle) {
+            this.$message.error('请勾选' + (index + 1) + '个可选项目图片')
+            return
+          }
+        }
       }
+      // if (this.configData.tasksKe.length > 0 && !this.hasHeadImg) {
+      //   this.$message.error('请勾选可选项目图片')
+      //   return
+      // }
 
       //咨询类的三种 不需要必选项目
       if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
@@ -1149,6 +1319,13 @@ export default {
       }
 
       //校验必选的项目图片  咨询三类不需要校验必选图片
+      this.hasHeadImgBi = false
+      for (let indexInBi = 0; indexInBi < this.configData.tasksBi.length; indexInBi++) {
+        debugger
+        if (this.configData.tasksBi[indexInBi].isHeadImg) {
+          this.hasHeadImgBi = true
+        }
+      }
       if (
         this.record.classifyCode != 101 &&
         this.record.classifyCode != 102 &&
@@ -1285,10 +1462,10 @@ export default {
       //咨询类三种单独处理
       if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
         //组装必选
+        uploadData.pkgs.push({ itemType: 2, items: [] })
         this.configData.tasksBi.forEach((item, indexItem) => {
-          uploadData.pkgs.push({ itemType: 2, items: [] })
           debugger
-          uploadData.pkgs[indexItem + pkgsLength].items.push({
+          uploadData.pkgs[pkgsLength].items.push({
             quantity: item.quantity,
             saleAmount: item.saleAmount,
             serviceItemId: item.serviceItemId,
@@ -1302,10 +1479,10 @@ export default {
 
           debugger
           if (item.idIn) {
-            this.$set(uploadData.pkgs[indexItem].items[0], 'id', item.idIn)
+            this.$set(uploadData.pkgs[pkgsLength].items[indexItem], 'id', item.idIn)
           }
           if (item.idOut) {
-            this.$set(uploadData.pkgs[indexItem], 'id', item.idOut)
+            this.$set(uploadData.pkgs[pkgsLength], 'id', item.idOut)
           }
 
           debugger
@@ -1313,42 +1490,74 @@ export default {
           if (item.typeCode != 104) {
             //服务时长 视频咨询和电话咨询特有
             if (item.typeCode == 102 || item.typeCode == 103) {
+              if (item.attrIdServiceTime) {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_TIMES',
+                  ruleTypeName: '服务时长',
+                  serviceValue: item.serviceTime,
+                  unit: '分钟',
+                  id: item.attrIdServiceTime,
+                })
+              } else {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_TIMES',
+                  ruleTypeName: '服务时长',
+                  serviceValue: item.serviceTime,
+                  unit: '分钟',
+                })
+              }
+
               console.log('uploadData indexItem', indexItem)
               console.log('uploadData items[indexItem]', uploadData.pkgs[indexItem + pkgsLength].items[0])
-              uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
-                ruleType: 'ITEM_ATTR_TIMES',
-                ruleTypeName: '服务时长',
-                serviceValue: item.serviceTime,
-                unit: '分钟',
-              })
             }
 
             //限制条数 图文咨询特有  且需要勾选
             if (item.needChatNum && item.typeCode == 101) {
-              uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
-                ruleType: 'ITEM_ATTR_LIMITNUMS',
-                ruleTypeName: '限制条数',
-                serviceValue: item.chatNum,
-                unit: '条',
-              })
+              if (item.attrIdChatNum) {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_LIMITNUMS',
+                  ruleTypeName: '限制条数',
+                  serviceValue: item.chatNum,
+                  unit: '条',
+                  id: item.attrIdChatNum,
+                })
+              } else {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_LIMITNUMS',
+                  ruleTypeName: '限制条数',
+                  serviceValue: item.chatNum,
+                  unit: '条',
+                })
+              }
             }
 
             //服务时效 都有  需要勾选
             if (item.needServicePeriod) {
               let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
-              uploadData.pkgs[indexItem + pkgsLength].items[0].itemsAttr.push({
-                ruleType: 'ITEM_ATTR_EXPIRE',
-                ruleTypeName: '服务时效',
-                serviceValue: item.timeQuantity,
-                unit: unitStr,
-              })
+
+              if (item.attrIdTimeQuantity) {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_EXPIRE',
+                  ruleTypeName: '服务时效',
+                  serviceValue: item.timeQuantity,
+                  unit: unitStr,
+                  id: item.attrIdTimeQuantity,
+                })
+              } else {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_EXPIRE',
+                  ruleTypeName: '服务时效',
+                  serviceValue: item.timeQuantity,
+                  unit: unitStr,
+                })
+              }
             }
           }
         })
       }
 
       console.log('saveCommodityPkgCollection Data', JSON.stringify(uploadData))
-
+      // return
       this.confirmLoading = true
       saveCommodityPkgCollection(uploadData)
         .then((res) => {
@@ -1489,6 +1698,16 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
+        .div-img {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-right: 15px;
+          &:hover {
+            cursor: pointer;
+          }
+        }
         .mission-top-left {
           display: flex;
           flex-direction: row;

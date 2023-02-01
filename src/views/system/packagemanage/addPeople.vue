@@ -316,7 +316,7 @@ export default {
       let tempItem = JSON.parse(JSON.stringify(item))
       if (this.isSingle) {
         this.$set(tempItem, 'weight', 100)
-      }else{
+      } else {
         this.$set(tempItem, 'weight', 0)
       }
       this.$set(tempItem, 'achievementRatio', 0)
@@ -367,7 +367,7 @@ export default {
 
       if (this.totolAverage < 98) {
         this.$message.error('总权重过小')
-        
+
         return
       }
 
@@ -382,7 +382,7 @@ export default {
           return
         }
       }
-      
+
       console.log('this.choseUsers', JSON.stringify(this.choseUsers))
       let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
       let commodityPkgManageItemRsps = []
@@ -414,6 +414,10 @@ export default {
   height: 500px;
   display: flex;
   flex-direction: row;
+
+  /deep/ .ant-table-tbody > tr > td {
+    padding: 0px !important;
+  }
 
   .add-wrap-left {
     width: 45%;

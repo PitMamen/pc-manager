@@ -176,9 +176,10 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getPkgList(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
+          let data = {}
+          if (res.code == 0 && res.data && res.data.records.length > 0) {
             //组装控件需要的数据结构
-            var data = {
+            data = {
               pageNo: parameter.pageNo,
               pageSize: parameter.pageSize,
               totalRows: res.data.total,
@@ -221,6 +222,16 @@ export default {
       // this.objct = data;
       this.refresh()
     })
+  },
+
+  watch: {
+    $route(to, from) {
+      console.log('watch----configList out', to, from)
+      if (to.path.indexOf('configList') > -1) {
+        console.log('watch----configList', to, from)
+        this.refresh()
+      }
+    },
   },
 
   created() {

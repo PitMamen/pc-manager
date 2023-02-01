@@ -385,6 +385,10 @@ export default {
   display: flex;
   flex-direction: row;
 
+  /deep/ .ant-table-tbody > tr > td {
+    padding: 0px !important;
+  }
+
   .add-wrap-left {
     width: 45%;
     display: flex;

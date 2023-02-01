@@ -154,8 +154,8 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isDoctor" @click="goCheck(1)" />
-            <span style="margin-left: 8px">医生参与</span>
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)" >医生参与</a-checkbox>
+            <!-- <span style="margin-left: 8px">医生参与</span> -->
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -188,8 +188,8 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)" />
-            <span style="margin-left: 8px">护士参与</span>
+            <a-checkbox :checked="isNurse" @click="goCheck(2)" >护士参与</a-checkbox>
+            <!-- <span style="margin-left: 8px">护士参与</span> -->
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -222,8 +222,8 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" />
-            <span style="margin-left: 8px">健康团队参与</span>
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" >健康团队参与</a-checkbox>
+            <!-- <span style="margin-left: 8px">健康团队参与</span> -->
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -283,13 +283,14 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="needPlan" @click="handlePlan" />
-            <span style="margin-left: 8px">随访方案</span>
+            <a-checkbox :checked="needPlan" @click="handlePlan" >随访方案</a-checkbox>
+            <!-- <span style="margin-left: 8px">随访方案</span> -->
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
           <a-select
             class="mid-select-two"
             mode="multiple"
+            style="min-width: 370px !important;"
             :disabled="!needPlan"
             allow-clear
             @focus="onPersonFocus"
@@ -388,7 +389,7 @@ export default {
       allocationTypeDoc: undefined,
       allocationTypeNurse: undefined,
       allocationTypeTeam: undefined,
-      isRefresh:false,
+      isRefresh: false,
       /**
        *
        */
@@ -462,7 +463,7 @@ export default {
       console.log('watch----package_manage_edit out', to, from)
       if (to.path.indexOf('packageEdit') > -1) {
         console.log('watch----package_manage_edit', to, from)
-        this.isRefresh=true
+        this.isRefresh = true
         this.init()
       }
     },
@@ -884,6 +885,12 @@ export default {
           this.isTeam = false
           this.nameTeam = ''
 
+          if(this.isNurse && this.isDoctor){
+            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型 
+            this.isNurse = false
+            this.nameNurse = ''
+          }
+
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
 
@@ -933,19 +940,20 @@ export default {
 
       //选择租户后 清空机构 清空所有需要租户和机构入参的请求数据
       console.log('onSelectChang选择租户')
-      if(this.isRefresh){
-        this.isRefresh=false
-      }else{
+      if (this.isRefresh) {
+        this.isRefresh = false
+      } else {
         this.packageData.hospitalCode = undefined
+        this.packageData.commodityFollowPlanIds = []
       }
-     
+
       this.treeData = []
       this.deptUsersDoc = []
       this.deptUsersNurse = []
       this.nameDoc = ''
       this.nameNurse = ''
       this.plans = []
-      this.packageData.commodityFollowPlanIds = []
+
 
       if (this.packageData.tenantId) {
         this.queryHospitalListOut()
@@ -1082,12 +1090,11 @@ export default {
      * @param {*} index 0 医生  1 护士
      */
     addPerson(index) {
-
-      if( !this.packageData.tenantId ){
+      if (!this.packageData.tenantId) {
         this.$message.warn('请先选择租户')
         return
       }
-      if( !this.packageData.hospitalCode ){
+      if (!this.packageData.hospitalCode) {
         this.$message.warn('请先选择机构')
         return
       }
@@ -1344,11 +1351,10 @@ export default {
           return
         }
 
+        debugger
         if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
           this.$message.warn('请选择随访！')
           return
-        } else {
-          delete tempData.commodityFollowPlanIds
         }
 
         tempData.commodityPkgManageReqs = commodityNew
@@ -1384,6 +1390,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+/deep/ .ant-checkbox-wrapper{
+  font-size: 12px !important;
+}
+
 .div-package-add {
   background-color: white;
   width: 100%;
@@ -1513,7 +1524,7 @@ export default {
       }
       .item-left {
         display: inline-block;
-        width: 100px;
+        width: 105px;
         margin-left: 8px;
       }
 

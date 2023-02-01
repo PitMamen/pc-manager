@@ -76,16 +76,17 @@
         />
   
         <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
-          ><span style="color: red">*</span> 显示序号 :</span
+          ><span style="color: red">*</span> 科室编码 :</span
         >
-        <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
         <a-input
-          v-model="queryParams.departmentOrder"
-          :defaultValue=0
+          class="span-item-value"
+          v-model="queryParams.departmentId"
+          :maxLength="30"
+          style="display: inline-block; width: 248px;margin-left: 5px;"
           allow-clear
-          style="width: 190px; margin-left: 4px; text-align: center"
+          readOnly
+          placeholder="科室编码 "
         />
-        <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
       </div>
   
       <div class="display-item" style="margin-left: 5px; margin-top: 10px;">
@@ -100,16 +101,17 @@
         >全病程科室</a-checkbox
       >
   
-        <!-- <a-radio-group
-          name="radioGroup"
-          v-model="rangeValue"
-          @change="radioChange"
-          defaultValue="2"
-          v-decorator="['roleId', { rules: [{ required: true, message: '请选择科室类型！' }] }]"
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 46px"
+          ><span style="color: red">*</span> 显示序号 :</span
         >
-          <a-radio :value=1 style="font-size: 8px; margin-left: 10px; margin-top: 10px"> 互联网医院科室 </a-radio>
-          <a-radio :value=2 style="font-size: 8px; margin-top: 10px"> 全病程科室 </a-radio>
-        </a-radio-group> -->
+        <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
+        <a-input
+          v-model="queryParams.departmentOrder"
+          :defaultValue=0
+          allow-clear
+          style="width: 192px; margin-left: 4px; text-align: center"
+        />
+        <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
       </div>
   
       <div class="div-service-user" style="margin-top: 5px;margin-left: 7px; position: relative">

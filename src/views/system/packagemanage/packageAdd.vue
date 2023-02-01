@@ -155,8 +155,7 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isDoctor" @click="goCheck(1)" />
-            <span style="margin-left: 8px">医生参与</span>
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)" >医生参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -189,8 +188,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)" />
-            <span style="margin-left: 8px">护士参与</span>
+            <a-checkbox :checked="isNurse" @click="goCheck(2)" >护士参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -223,8 +221,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" />
-            <span style="margin-left: 8px">健康团队参与</span>
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" >健康团队参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -284,12 +281,12 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="needPlan" @click="handlePlan" />
-            <span style="margin-left: 8px">随访方案</span>
+            <a-checkbox :checked="needPlan" @click="handlePlan" >随访方案</a-checkbox>
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
           <a-select
             class="mid-select-two"
+            style="min-width: 370px !important;"
             mode="multiple"
             :disabled="!needPlan"
             allow-clear
@@ -345,6 +342,7 @@ export default {
       headers: {
         Authorization: 'authorization-text',
       },
+      user: {},
 
       previewVisible: false,
       previewVisibleBanner: false,
@@ -358,7 +356,6 @@ export default {
       fileListBanner: [],
       fileListDetail: [],
 
-      user: {},
       deptUsersDoc: { users: [] },
       deptUsersNurse: { users: [] },
       //用户指定与随机分配
@@ -391,7 +388,7 @@ export default {
       /**
        *
        */
-      packageData: {
+      packageDataOrigin: {
         bannerImgs: [],
         detailImgs: [],
         frontImgs: [],
@@ -430,11 +427,23 @@ export default {
         subjectClassifyId: undefined,
         tenantId: undefined,
       },
+      packageData: {},
     }
   },
 
+  // watch: {
+  //   $route(to, from) {
+  //     console.log('watch----packageAdd out', to, from)
+  //     if (to.path.indexOf('packageAdd') > -1) {
+  //       console.log('watch----packageAdd', to, from)
+  //       // this.refresh()
+  //     }
+  //   },
+  // },
+
   created() {
     this.user = Vue.ls.get(TRUE_USER)
+    this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
     // this.queryHospitalListOut()
     this.getTenantListOut()
     this.getDictDataOut()
@@ -452,6 +461,27 @@ export default {
 
   methods: {
     moment,
+    resetData() {
+      this.needPlan = false
+      this.canConfigTeam = true
+      this.broadClassify = ''
+      this.deptUsersDoc = { users: [] }
+      this.deptUsersNurse = { users: [] }
+      this.fileList = []
+      this.fileListBanner = []
+      this.fileListDetail = []
+      this.nameDoc = ''
+      this.nameNurse = ''
+      this.nameTeam = ''
+      this.isDoctor = false
+      this.isNurse = false
+      this.isTeam = false
+      this.allocationTypeDoc = undefined
+      this.allocationTypeNurse = undefined
+      this.allocationTypeTeam = undefined
+      this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
+    },
+
     queryHospitalListOut() {
       let queryData = {
         tenantId: this.packageData.tenantId,
@@ -495,8 +525,8 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
-        pageNo:1,
-        pageSize:9999
+        pageNo: 1,
+        pageSize: 9999,
       })
         .then((res) => {
           if (res.code == 0) {
@@ -676,11 +706,18 @@ export default {
         this.broadClassify = findItem.broadClassify
       }
       console.log('this.broadClassify', this.broadClassify)
-      debugger
+      
       switch (this.broadClassify) {
         case 1:
           this.isTeam = false
           this.nameTeam = ''
+
+          if(this.isNurse && this.isDoctor){
+            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型 
+            this.isNurse = false
+            this.nameNurse = ''
+          }
+
 
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
@@ -788,6 +825,7 @@ export default {
      * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队
      */
     goCheck(type) {
+      console.log("goCheck:"+type)
       if (type == 1) {
         this.isDoctor = !this.isDoctor
         if (this.broadClassify == 1 && this.isDoctor) {
@@ -846,12 +884,11 @@ export default {
      * @param {*} index 0 医生  1 护士
      */
     addPerson(index) {
-     
-      if( !this.packageData.tenantId ){
+      if (!this.packageData.tenantId) {
         this.$message.warn('请先选择租户')
         return
       }
-      if( !this.packageData.hospitalCode ){
+      if (!this.packageData.hospitalCode) {
         this.$message.warn('请先选择机构')
         return
       }
@@ -1108,6 +1145,7 @@ export default {
           if (res.code == 0) {
             this.$message.success('保存成功')
             this.$bus.$emit('pkgEvent', '刷新数据-方案新增')
+            this.resetData()
             this.$router.go(-1)
             // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
@@ -1127,6 +1165,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+/deep/ .ant-checkbox-wrapper{
+  font-size: 12px !important;
+}
 .div-package-add {
   background-color: white;
   width: 100%;
@@ -1256,7 +1297,7 @@ export default {
       }
       .item-left {
         display: inline-block;
-        width: 100px;
+        width: 105px;
         margin-left: 8px;
       }
 

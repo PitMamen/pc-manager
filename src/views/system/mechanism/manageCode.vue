@@ -19,7 +19,7 @@
 
 
 <script>
-import { newDept, getQrUrl } from '@/api/modular/system/posManage'
+import { newDept, getHospitalQrCode } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
@@ -46,11 +46,12 @@ export default {
   methods: {
     //初始化方法
     add(record) {
+      console.log(record)
       this.record = {}
       this.record = record
-      this.title=record.department_name+' - 随访二维码'
+      this.title=record.hospitalName+' - 随访二维码'
       this.visible = true
-      getQrUrl({ ks: record.department_id, bq: 0 }).then((res) => {
+      getHospitalQrCode({ hospitalCode: record.hospitalCode }).then((res) => {
         if (res.code == 0) {
           // this.data = res.data
           this.extraImage = res.data
