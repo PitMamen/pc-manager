@@ -764,7 +764,6 @@ export default {
       // newKe[newKe.length - 1] // 获取最大值：100
       // newKe[0] // 获取最小值： -1
 
-      debugger
       let biTotal = 0
       for (let indexBi = 0; indexBi < this.configData.tasksBi.length; indexBi++) {
         if (this.configData.tasksBi[indexBi].saleAmount) {
@@ -820,7 +819,6 @@ export default {
       this.$set(itemTask, 'servicePeriodUnit', 1)
 
       // this.$set(itemTask, 'isHeadImg', false)
-      debugger
       if (this.configData.tasksKe[indexOut].itemsKe.length == 1 || itemTask.isHeadImg) {
         this.$set(itemTask, 'isHeadImg', true)
       } else {
@@ -864,7 +862,6 @@ export default {
       this.$set(itemTask, 'needServicePeriod', false)
       this.$set(itemTask, 'servicePeriodUnit', 1)
 
-      debugger
       if (this.configData.tasksBi.length == 1 || itemTask.isHeadImg) {
         this.$set(itemTask, 'isHeadImg', true)
       } else {
@@ -899,7 +896,6 @@ export default {
 
     //每个条目只勾选一个
     goHeadImgBi(indexTask, itemTask) {
-      debugger
       if (!itemTask.serviceItemId) {
         this.$message.warn('请先选择项目')
         return
@@ -1160,7 +1156,6 @@ export default {
                 }
               }
 
-              debugger
               //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
@@ -1258,7 +1253,6 @@ export default {
       }
 
       // 校验可选的项目图片
-      debugger
       if (this.configData.tasksKe.length > 0) {
         for (let index = 0; index < this.configData.tasksKe.length; index++) {
           let thisCircle = false
@@ -1321,7 +1315,6 @@ export default {
       //校验必选的项目图片  咨询三类不需要校验必选图片
       this.hasHeadImgBi = false
       for (let indexInBi = 0; indexInBi < this.configData.tasksBi.length; indexInBi++) {
-        debugger
         if (this.configData.tasksBi[indexInBi].isHeadImg) {
           this.hasHeadImgBi = true
         }
@@ -1432,7 +1425,7 @@ export default {
 
             //服务时效 都有  需要勾选
             if (element.needServicePeriod) {
-              let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
+              let unitStr = element.servicePeriodUnit == 1 ? '天' : '小时'
               if (element.attrIdTimeQuantity) {
                 uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
                   ruleType: 'ITEM_ATTR_EXPIRE',
@@ -1464,7 +1457,6 @@ export default {
         //组装必选
         uploadData.pkgs.push({ itemType: 2, items: [] })
         this.configData.tasksBi.forEach((item, indexItem) => {
-          debugger
           uploadData.pkgs[pkgsLength].items.push({
             quantity: item.quantity,
             saleAmount: item.saleAmount,
@@ -1474,10 +1466,9 @@ export default {
             itemsAttr: [],
           })
 
-          console.log('uploadData indexItem + pkgsLength', indexItem + pkgsLength)
-          console.log('uploadData.pkgs[indexItem + pkgsLength]', uploadData.pkgs[indexItem + pkgsLength])
+          // console.log('uploadData indexItem + pkgsLength', indexItem + pkgsLength)
+          // console.log('uploadData.pkgs[indexItem + pkgsLength]', uploadData.pkgs[indexItem + pkgsLength])
 
-          debugger
           if (item.idIn) {
             this.$set(uploadData.pkgs[pkgsLength].items[indexItem], 'id', item.idIn)
           }
@@ -1485,7 +1476,6 @@ export default {
             this.$set(uploadData.pkgs[pkgsLength], 'id', item.idOut)
           }
 
-          debugger
           //普通商品不需要 itemsAttr,只要传空的itemsAttr
           if (item.typeCode != 104) {
             //服务时长 视频咨询和电话咨询特有
@@ -1507,8 +1497,8 @@ export default {
                 })
               }
 
-              console.log('uploadData indexItem', indexItem)
-              console.log('uploadData items[indexItem]', uploadData.pkgs[indexItem + pkgsLength].items[0])
+              // console.log('uploadData indexItem', indexItem)
+              // console.log('uploadData items[indexItem]', uploadData.pkgs[indexItem + pkgsLength].items[0])
             }
 
             //限制条数 图文咨询特有  且需要勾选
