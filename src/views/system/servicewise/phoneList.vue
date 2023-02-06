@@ -78,12 +78,12 @@
             />
           </div>
           <div class="search-row">
-            <span class="name">执行科室:</span>
+            <span class="name">所属科室:</span>
 
             <a-select
               style="width: 150px"
               show-search
-              v-model="queryParams.executeDepartmentId"
+              v-model="queryParams.ascriptionDepartmentId"
               :filter-option="false"
               :not-found-content="fetching ? undefined : null"
               allow-clear
@@ -256,7 +256,7 @@ export default {
       queryParams: {
         userName: null,
         phone: null,
-        executeDepartmentId: undefined,
+        ascriptionDepartmentId: undefined,
         messageType: undefined,
         overdueStatus: -1,
         bizStatus: -1,
@@ -269,7 +269,7 @@ export default {
       queryParamsOrigin: {
         userName: null,
         phone: null,
-        executeDepartmentId: undefined,
+        ascriptionDepartmentId: undefined,
         messageType: undefined,
         overdueStatus: -1,
         bizStatus: -1,
@@ -335,11 +335,17 @@ export default {
           width: 80,
           ellipsis: true,
         },
+        // {
+        //   title: '执行科室',
+        //   dataIndex: 'executeDepartmentName',
+        //   width: 90,
+        //   ellipsis: true,
+        // },
         {
-          title: '执行科室',
-          dataIndex: 'executeDepartmentName',
-          width: 90,
+          title: '所属科室',
+          dataIndex: 'ascriptionDepartmentName',
           ellipsis: true,
+          width: 90,
         },
         {
           title: '随访方案',
@@ -403,11 +409,17 @@ export default {
           width: 80,
           ellipsis: true,
         },
+        // {
+        //   title: '执行科室',
+        //   dataIndex: 'executeDepartmentName',
+        //   width: 80,
+        //   ellipsis: true,
+        // },
         {
-          title: '执行科室',
-          dataIndex: 'executeDepartmentName',
-          width: 80,
+          title: '所属科室',
+          dataIndex: 'ascriptionDepartmentName',
           ellipsis: true,
+          width: 90,
         },
         {
           title: '随访方案',
@@ -472,9 +484,15 @@ export default {
           ellipsis: true,
           width: 80,
         },
+        // {
+        //   title: '执行科室',
+        //   dataIndex: 'executeDepartmentName',
+        //   ellipsis: true,
+        //   width: 90,
+        // },
         {
-          title: '执行科室',
-          dataIndex: 'executeDepartmentName',
+          title: '所属科室',
+          dataIndex: 'ascriptionDepartmentName',
           ellipsis: true,
           width: 90,
         },
@@ -548,9 +566,15 @@ export default {
           ellipsis: true,
           width: 80,
         },
+        // {
+        //   title: '执行科室',
+        //   dataIndex: 'executeDepartmentName',
+        //   ellipsis: true,
+        //   width: 90,
+        // },
         {
-          title: '执行科室',
-          dataIndex: 'executeDepartmentName',
+          title: '所属科室',
+          dataIndex: 'ascriptionDepartmentName',
           ellipsis: true,
           width: 90,
         },
@@ -624,10 +648,16 @@ export default {
           ellipsis: true,
           width: 80,
         },
+        // {
+        //   title: '执行科室',
+        //   ellipsis: true,
+        //   dataIndex: 'executeDepartmentName',
+        //   width: 90,
+        // },
         {
-          title: '执行科室',
+          title: '所属科室',
+          dataIndex: 'ascriptionDepartmentName',
           ellipsis: true,
-          dataIndex: 'executeDepartmentName',
           width: 90,
         },
         {
@@ -1004,22 +1034,22 @@ export default {
       this.$refs.table.refresh(true)
     },
 
-    getDeptsOut() {
-      //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-      if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-        getDepts().then((res) => {
-          if (res.code == 0) {
-            this.originData = res.data
-          }
-        })
-      } else {
-        getDeptsPersonal().then((res) => {
-          if (res.code == 0) {
-            this.originData = res.data
-          }
-        })
-      }
-    },
+    // getDeptsOut() {
+    //   //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
+    //   if (this.user.roleId == 7 || this.user.roleName == 'admin') {
+    //     getDepts().then((res) => {
+    //       if (res.code == 0) {
+    //         this.originData = res.data
+    //       }
+    //     })
+    //   } else {
+    //     getDeptsPersonal().then((res) => {
+    //       if (res.code == 0) {
+    //         this.originData = res.data
+    //       }
+    //     })
+    //   }
+    // },
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true

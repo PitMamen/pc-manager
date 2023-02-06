@@ -81,7 +81,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goCheck(record)">查看</a>
+        <a @click="goCheck(record)"><a-icon style="margin-right:5px" type="eye"></a-icon>查看</a>
       </span>
 
       <span slot="status" slot-scope="text, record">

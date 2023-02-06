@@ -192,9 +192,9 @@
           >
             <span slot="action" slot-scope="text, record">
               <!-- 跳转详情 -->
-              <a @click="goDetai(record)">详情</a>
+              <a @click="goDetai(record)"><a-icon style="margin-right:5px" type="hdd"></a-icon>详情</a>
               <!-- 跳转抽查 -->
-              <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)">{{
+              <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)"><a-icon style="margin-right:2px" type="search"></a-icon>{{
                 queryParams.type == 1 ? '抽查' : '详情'
               }}</a>
               <!-- 跳转抽查结果 -->
@@ -365,7 +365,7 @@ export default {
 
         {
           title: '操作',
-          width: '100px',
+          width: '120px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -420,7 +420,7 @@ export default {
 
         {
           title: '操作',
-          width: '100px',
+          width: '120px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

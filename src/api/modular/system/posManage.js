@@ -3730,3 +3730,23 @@ export function treeMedicalSubjects(data) {
   })
 }
 
+
+//问卷管理中的问卷列表接口
+export function getQuestionnaireList(data){
+  return axios({
+    url:'/follow-api/questionnaireStatistics/getQuestionnaireList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//问卷免登陆 跳转
+ export function createNoLogin(data){
+  return axios({
+    url:'/follow-api/questionnaireStatistics/createQuestionnaireNoLogin',
+    method:'get',
+    params:data,
+  })
+ }
+

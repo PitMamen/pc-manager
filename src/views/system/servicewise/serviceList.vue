@@ -66,7 +66,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="editPlan(record)" :disabled="record.status.value != 1">修改</a>
+        <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a>
       </span>
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
@@ -164,7 +164,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '60px',
+          width: '100px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

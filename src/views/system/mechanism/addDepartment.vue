@@ -118,7 +118,6 @@ import {
   getDictDataForCodeDepartType,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
-import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'

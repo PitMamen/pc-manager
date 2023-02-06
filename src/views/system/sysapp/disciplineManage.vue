@@ -35,7 +35,7 @@
       </span>
 
       <span v-if="record.key!==0 " slot="icon" slot-scope="text, record">
-       <img style="width:30px;height:30px" :src="record.icon" />
+       <img style="width:20px;height:20px" :src="record.icon" />
 
      </span>
     </a-table>

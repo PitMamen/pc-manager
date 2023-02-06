@@ -73,9 +73,9 @@
       </span>
 
       <span style="inline-block" slot="action" slot-scope="text, record">
-        <a @click="goFile(record)">健康档案</a>
+        <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
         <a-divider type="vertical" />
-        <a @click="$refs.visitManage.distribution(record)">随访管理</a>
+        <a @click="$refs.visitManage.distribution(record)"><a-icon type="folder"></a-icon>随访管理</a>
       </span>
     </s-table>
 
@@ -194,7 +194,7 @@ export default {
         {
           size: 12,
           title: '操作',
-          width: '150px',
+          width: '180px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

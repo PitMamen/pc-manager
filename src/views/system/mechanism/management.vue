@@ -53,16 +53,16 @@
     >
       <span slot="action" slot-scope="text, record">
 
-        <a @click="$refs.manageCode.add(record)">随访二维码</a>
+        <a @click="$refs.manageCode.add(record)"><a-icon type="wechat"></a-icon>随访二维码</a>
         <a-divider type="vertical" />
-        <a @click="$refs.addMechanism.add(record)">新增</a>
+        <a @click="$refs.addMechanism.add(record)"><a-icon type="plus"></a-icon>新增</a>
 
         <a-divider type="vertical" />
-        <a @click="$refs.modify.modify(record)">修改</a>
+        <a @click="$refs.modify.modify(record)"><a-icon type="edit"></a-icon>修改</a>
         <!-- <a @click="$refs.modify.modify(record)"><a-icon type="edit" style="margin-right: 5px"></a-icon>修改</a> -->
         <a-divider type="vertical" />
         <a :disabled="record.orgType&&record.orgType.value != 2" @click="$refs.providerConfig.edit(record)"
-          >服务商配置</a
+          ><a-icon type="apartment"></a-icon>服务商配置</a
         >
       </span>
 

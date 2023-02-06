@@ -45,10 +45,10 @@
           :rowClassName="rowClassNameFun"
         >
           <span slot="action" slot-scope="text, record">
-            <a @click="$refs.addType.edit(record)">修改</a>
+            <a @click="$refs.addType.edit(record)"><a-icon type="edit"></a-icon>修改</a>
             <a-divider type="vertical" />
             <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goTypeDelete(record)">
-              <a>删除</a>
+              <a><a-icon type="delete"></a-icon>删除</a>
             </a-popconfirm>
           </span>
         </s-table>
@@ -70,11 +70,11 @@
           :rowKey="(record) => record.code"
         >
           <span slot="action" slot-scope="text, record">
-            <a @click="$refs.addField.edit(record)">修改</a>
+            <a @click="$refs.addField.edit(record)"><a-icon type="edit"></a-icon>修改</a>
             <a-divider type="vertical" />
 
             <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDataDelete(record)">
-              <a>删除</a>
+              <a><a-icon type="delete"></a-icon>删除</a>
             </a-popconfirm>
           </span>
         </a-table>
@@ -153,7 +153,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 100,
+          width: 140,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -176,7 +176,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 100,
+          width: 140,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

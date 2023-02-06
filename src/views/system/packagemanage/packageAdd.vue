@@ -67,7 +67,40 @@
             </a-tree-select>
           </div>
 
-          <div class="div-pro-line"></div>
+          <div class="div-pro-line">
+            <span class="span-item-name"><span style="color: red">*</span> 套餐效期 :</span>
+            <a-input
+              class="span-item-value"
+              v-model="packageData.validate"
+              :maxLength="30"
+              style="display: inline-block; width: 50%"
+              allow-clear
+              placeholder="请输入 "
+            />
+            <!-- <a-dropdown>
+          <span placement="bottomCenter"><a-icon style="padding-left=5px;" /> </span>
+          <a-menu slot="overlay">
+            <a-menu-item key="1">
+              <a  href="javascript:;">全部</a>
+            </a-menu-item>
+            <a-menu-item key="2">
+              <a href="javascript:;">待核查</a>
+            </a-menu-item>
+            <a-menu-item key="3">
+              <a  href="javascript:;">已核查</a>
+            </a-menu-item>
+          </a-menu>
+        </a-dropdown> -->
+
+            <!-- <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
+                item.tenantName
+              }}</a-select-option>
+            </a-select> -->
+          </div>
+
+         
+
         </div>
       </div>
 

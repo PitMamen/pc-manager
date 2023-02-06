@@ -43,7 +43,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.checkIndex.check(record)">查看</a>
+        <a @click="$refs.checkIndex.check(record)"><a-icon style="margin-right:5px" type="eye"></a-icon>查看</a>
         <!-- <a-divider type="vertical" /> -->
         <!-- <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
       </span>
@@ -131,7 +131,7 @@ export default {
         },
         {
           title: '操作',
-          width: 60,
+          width: 100,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

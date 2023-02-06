@@ -95,7 +95,7 @@
 
           <span slot="action" slot-scope="text, record">
             <template>
-              <a v-if="hasPerm('sysMenu:edit')" @click="$refs.editForm.edit(record, currentItem)">编辑</a>
+              <a v-if="hasPerm('sysMenu:edit')" @click="$refs.editForm.edit(record, currentItem)"><a-icon type="edit"></a-icon>编辑</a>
               <a-divider type="vertical" v-if="hasPerm('sysMenu:edit') & hasPerm('sysMenu:delete')" />
               <a-popconfirm
                 v-if="hasPerm('sysMenu:delete')"
@@ -103,7 +103,7 @@
                 title="删除本菜单与下级？"
                 @confirm="() => handleDel(record)"
               >
-                <a>删除</a>
+                <a><a-icon type="delete"></a-icon>删除</a>
               </a-popconfirm>
             </template>
           </span>
@@ -141,11 +141,11 @@ export default {
           dataIndex: 'name',
           width: '20%',
         },
-        {
-          title: '菜单类型',
-          dataIndex: 'type',
-          scopedSlots: { customRender: 'type' },
-        },
+        // {
+        //   title: '菜单类型',
+        //   dataIndex: 'type',
+        //   scopedSlots: { customRender: 'type' },
+        // },
         {
           title: '图标',
           dataIndex: 'icon',
@@ -181,7 +181,7 @@ export default {
       this.columns.push({
         title: '操作',
         dataIndex: 'action',
-        width: '150px',
+        width: '130px',
         scopedSlots: { customRender: 'action' },
       })
     }

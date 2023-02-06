@@ -52,7 +52,7 @@
       :rowKey="(record) => record.id"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.modifyParameter.modify(record)">修改</a>
+        <a @click="$refs.modifyParameter.modify(record)"><a-icon type="edit"></a-icon>修改</a>
       </span>
 
       <!-- <span slot="statuas" slot-scope="text, record">
@@ -164,7 +164,7 @@ export default {
 
         {
           title: '操作',
-          width: '60px',
+          width: '80px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

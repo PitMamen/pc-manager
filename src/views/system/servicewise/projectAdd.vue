@@ -127,7 +127,6 @@
               <a-input
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
-                :maxLength="120"
                 style="display: inline-block"
                 v-if="itemRule.fieldType == 1"
                 allow-clear

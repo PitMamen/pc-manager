@@ -3,20 +3,6 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">执行科室:</span>
-        <!-- <a-select
-          class="sitemore"
-          v-model="queryParams.executeDepartmentIds"
-          style="min-width: 120px; height: 28px; padding-bottom: 0px"
-          :maxTagCount="1"
-          mode="multiple"
-          placeholder="请选择科室"
-          allow-clear
-          @select="selectDepartment()"
-        >
-          <a-select-option v-for="(item, index) in originData" :value="item.departmentId" :key="index">{{
-            item.departmentName
-          }}</a-select-option>
-        </a-select> -->
         <a-select
           class="deptselect-mult"
           :maxTagCount="1"
@@ -218,13 +204,13 @@
       :rowKey="(record) => record.id"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goDetail(record)">详情</a>
+        <a @click="goDetail(record)"><a-icon style="margin-right:5px" type="hdd"></a-icon>详情</a>
         <a-divider v-if="showLine" type="vertical" />
         <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)">{{
           getText(record.auditResultStatus.value)
         }}</a>
         <a-divider type="vertical" />
-        <a @click="gotransfer(record)" :disabled="checkDis(record.status)">转移</a>
+        <a @click="gotransfer(record)" :disabled="checkDis(record.status)"><a-icon style="margin-right:5px" type="swap"></a-icon>转移</a>
       </span>
 
       <!-- 审核   只显示审核不通过的  未审核  审核通过不显示  v-if="record.auditResultStatus.value == 2" -->

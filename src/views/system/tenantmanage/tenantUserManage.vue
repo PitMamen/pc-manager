@@ -52,9 +52,9 @@
     >
       <span slot="action" slot-scope="text, record">
       
-        <a @click="$refs.addUser.editModel(record)" :disabled="record.userStatus !== 0">修改</a>
+        <a @click="$refs.addUser.editModel(record)" :disabled="record.userStatus !== 0"><a-icon type="edit"></a-icon>修改</a>
         <a-divider type="vertical" />
-        <a @click="$refs.assDepartment.addModel(record)" :disabled="record.userStatus !== 0">关联科室</a>
+        <a @click="$refs.assDepartment.addModel(record)" :disabled="record.userStatus !== 0"><a-icon type="apartment"></a-icon>关联科室</a>
         
       </span>
       <span slot="statuas" slot-scope="text, record">
@@ -179,7 +179,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 123,
+          width: 150,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

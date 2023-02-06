@@ -52,7 +52,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus == 2">修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus == 2"><a-icon type="edit"></a-icon>修改</a>
         <!-- <a-divider type="vertical" /> -->
         <!-- <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
       </span>
@@ -132,7 +132,7 @@ export default {
         },
         {
           title: '操作',
-          width: 60,
+          width: 90,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

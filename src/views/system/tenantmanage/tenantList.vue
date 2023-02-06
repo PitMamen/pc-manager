@@ -101,12 +101,12 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.modify.modify(record)">修改</a>
+        <a @click="$refs.modify.modify(record)"><a-icon type="edit"></a-icon>修改</a>
         <a-divider type="vertical" />
-        <a @click="resetPwsd(record)">重置密码</a>
+        <a @click="resetPwsd(record)"><a-icon type="undo"></a-icon>重置密码</a>
         <a-divider type="vertical" />
         <a
-          @click="record.initStatuas == 3||record.initStatuas == 4 ? $refs.initRecord.initrecord(record) : initTenant(record)">初始化</a
+          @click="record.initStatuas == 3||record.initStatuas == 4 ? $refs.initRecord.initrecord(record) : initTenant(record)"><a-icon style="margin-right:2px" type="history"></a-icon>初始化</a
         >
       </span>
 
@@ -234,7 +234,7 @@ export default {
 
         {
           title: '操作',
-          width: '190px',
+          width: 230,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

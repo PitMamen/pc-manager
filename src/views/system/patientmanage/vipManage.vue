@@ -94,9 +94,9 @@
       </span>
 
       <span slot="action" slot-scope="text, record">
-        <a @click="goPlan(record)">随访</a>
-        <a-divider type="vertical" />
-        <a @click="goFile(record)">健康档案</a>
+        <a @click="goPlan(record)"><a-icon type="solution"></a-icon>随访</a>
+        <a-divider style="margin-left:5px;margin-right:5px" type="vertical" />
+        <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
       </span>
     </s-table>
     <visit-Manage ref="visitManage" @ok="handleOk" />
@@ -235,7 +235,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '120px',
+          width: 180,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

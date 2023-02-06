@@ -46,7 +46,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.editForm.edit(record)">修改</a>
+        <a @click="$refs.editForm.edit(record)"><a-icon type="edit"></a-icon>修改</a>
         <a-divider type="vertical" v-show="false" />
         <a-popconfirm v-show="false" placement="topRight" title="确认删除？" @confirm="() => delDeptOut(record)">
           <a>删除</a>

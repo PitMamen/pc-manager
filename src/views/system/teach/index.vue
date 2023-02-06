@@ -95,14 +95,14 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a @click="$refs.checkModel.init(record.articleId)">查看</a>
+              <a @click="$refs.checkModel.init(record.articleId)"><a-icon style="margin-right:5px" type="eye"></a-icon>查看</a>
               <a-divider type="vertical" />
-              <a @click="$refs.addModel.editModel(record.articleId)">修改</a>
+              <a @click="$refs.addModel.editModel(record.articleId)"><a-icon type="edit"></a-icon>修改</a>
               <a-divider type="vertical" />
-              <a @click="goPush(record)" :disabled="record.status == '2'">发布</a>
+              <a @click="goPush(record)" :disabled="record.status == '2'"><a-icon type="pushpin"></a-icon>发布</a>
               <a-divider type="vertical" />
               <a-popconfirm title="确定删除文章吗？" ok-text="确定" cancel-text="取消" @confirm="articleDelete(record)">
-                <a>删除</a>
+                <a><a-icon type="delete"></a-icon>删除</a>
               </a-popconfirm>
             </span>
             <!-- <span slot="isVisible" slot-scope="text, record">
@@ -224,7 +224,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 180,
+          width: 280,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

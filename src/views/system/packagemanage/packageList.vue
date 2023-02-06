@@ -187,6 +187,11 @@ export default {
           dataIndex: 'packageName',
         },
         {
+          title: '效期',
+          dataIndex: 'packageName',
+        },
+
+        {
           title: '关联学科',
           dataIndex: 'subjectClassifyName',
         },

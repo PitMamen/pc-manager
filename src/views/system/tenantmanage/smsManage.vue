@@ -40,10 +40,10 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.addSmsform.edit(record)">编辑</a>
+        <a @click="$refs.addSmsform.edit(record)"><a-icon type="edit"></a-icon>编辑</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定要删除吗？" ok-text="确定" cancel-text="取消" @confirm="godelete(record)">
-          <a>删除</a>
+          <a><a-icon type="delete"></a-icon>删除</a>
         </a-popconfirm>
       </span>
     </s-table>

@@ -46,12 +46,12 @@
     >
       <span slot="action" slot-scope="text, record">
       
-        <a  :disabled="record.accountStatus !== 0" @click="$refs.addAccount.editModel(record)">修改</a>
+        <a  :disabled="record.accountStatus !== 0" @click="$refs.addAccount.editModel(record)"><a-icon type="edit"></a-icon>修改</a>
         <a-divider type="vertical" />
-        <a @click="goAssDepartmanage(record)" :disabled="record.accountStatus !== 0">管理科室</a>
+        <a @click="goAssDepartmanage(record)" :disabled="record.accountStatus !== 0"><a-icon type="apartment"></a-icon>管理科室</a>
         <a-divider type="vertical" />
         <a-popconfirm title="确定重置密码吗？" ok-text="确定" cancel-text="取消" @confirm="goResetPwd(record)">
-          <a :disabled="record.accountStatus !== 0">重置密码</a>
+          <a :disabled="record.accountStatus !== 0"><a-icon type="undo"></a-icon>重置密码</a>
         </a-popconfirm>
         
       </span>
@@ -161,7 +161,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 190,
+          width: 230,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
