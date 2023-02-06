@@ -1351,7 +1351,6 @@ export default {
           return
         }
 
-        debugger
         if (this.needPlan && tempData.commodityFollowPlanIds.length == 0) {
           this.$message.warn('请选择随访！')
           return
