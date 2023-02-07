@@ -188,7 +188,7 @@ export default {
         },
         {
           title: '效期',
-          dataIndex: 'packageName',
+          dataIndex: 'pkgValidNum',
         },
 
         {
@@ -256,6 +256,13 @@ export default {
             data.rows.forEach((item, index) => {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               item.nameDes = item.name
+              if(item.pkgValidNum&&item.pkgValidUnit){
+                this.$set(item, 'pkgValidNum', item.pkgValidNum+item.pkgValidUnit.description)
+              }else{
+                this.$set(item, 'pkgValidNum', '')
+
+              }
+
               // item.createTimeDes = item.createTime.substring(0,11)
             })
           }

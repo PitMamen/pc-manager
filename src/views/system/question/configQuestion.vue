@@ -1,6 +1,6 @@
 <template>
-  <a-card :bordered="false" class="sys-card" style="height:100%">
-    <div style=" margin-top: 15px;height: 100%">
+  <a-card :bordered="false" class="sys-card" style="height: 100%">
+    <div style="margin-top: 15px; height: 100%">
       <iframe
         defer="true"
         :src="questionUrl"
@@ -24,6 +24,7 @@ import addForm from './addForm'
 import editForm from './editForm'
 import modifyquestion from './modifyquestion'
 import addquestion from './addquestion'
+import { type } from 'os'
 
 export default {
   components: {
@@ -41,12 +42,11 @@ export default {
     }
   },
 
-  
   watch: {
     $route(to, from) {
       console.log('接收参数:', this.$route.query)
       var jumpData = this.$route.query
-      console.log("NNN:",jumpData)
+      console.log('NNN:', jumpData)
       this.init(jumpData)
     },
   },
@@ -55,18 +55,35 @@ export default {
     this.init(undefined)
   },
 
-
   methods: {
-
-    init(jumpData){
+    init(jumpData) {
+        console.log("KKK:",jumpData.type)
+      if (jumpData.type == 2) {
         this.questionUrl =
-        'http://192.168.1.121/project/form?key=' +
-        jumpData.key +
-        '&departmentId=' +
-        jumpData.departmentId +
-        '&hospitalCode=' +
-        jumpData.hospitalCode
-        console.log("地址：", this.questionUrl)
+          jumpData.url +
+          '/project/form?key=' +
+          jumpData.key +
+          '&departmentId=' +
+          jumpData.departmentId +
+          '&hospitalCode=' +
+          jumpData.hospitalCode +
+          '&title=' +
+          jumpData.title
+      }else if(jumpData.type==1){
+        // http://192.168.1.121/project/form/editor?key=1a8dd857616943e9a1ffd66aa1c0dc21&active=editor&departmentId=11&hospitalCode=2222&title=sssss
+        this.questionUrl =
+          jumpData.url +
+          '/project/form/editor?key=' +
+          jumpData.key +
+          '&active=editor&departmentId='+
+          jumpData.departmentId +
+          '&hospitalCode='+
+          jumpData.hospitalCode +
+          '&title=' +
+          jumpData.title
+
+      }
+      console.log('地址：', this.questionUrl)
     },
   },
 }

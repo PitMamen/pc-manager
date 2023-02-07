@@ -3741,6 +3741,38 @@ export function getQuestionnaireList(data){
 }
 
 
+//删除问卷
+export function deleteQuestion(data){
+  return axios({
+    url:'/follow-api/questionnaireStatistics/deleteQuestion',  
+    method: 'get',
+    params: data,
+  })
+}
+
+
+ export function updateDeptAndHospCodeForKey(data){
+  return axios({
+    url:'/follow-api/questionnaireStatistics/updateDeptAndHospCodeForKey',
+    method: 'get',
+    params: data,
+  })
+ }
+
+
+
+
+
+//修改问卷状态
+export function updateQuestionStatus(data){
+  return axios({
+    url:'/follow-api/questionnaireStatistics/updateQuestionStatus',
+    method: 'get',
+    params: data,
+  })
+}
+
+
 //问卷免登陆 跳转
  export function createNoLogin(data){
   return axios({
@@ -3749,4 +3781,23 @@ export function getQuestionnaireList(data){
     params:data,
   })
  }
+
+
+//订单分组
+export function getOrderStatusGroupByData(data){
+  return axios({
+    url:'/medical-api/admorder/getOrderStatusGroupByData',
+    method:'post',
+    data:data,
+  })
+}
+
+//订单列表
+export function orderList(data){
+  return axios({
+    url:'/medical-api/admorder/list',
+    method:'post',
+    data:data,
+  })
+}
 

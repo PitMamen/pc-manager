@@ -206,7 +206,7 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)"><a-icon style="margin-right:5px" type="hdd"></a-icon>详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)">{{
+        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)"><a-icon style="margin-right:5px" type="idcard"></a-icon>{{
           getText(record.auditResultStatus.value)
         }}</a>
         <a-divider type="vertical" />
@@ -215,9 +215,9 @@
 
       <!-- 审核   只显示审核不通过的  未审核  审核通过不显示  v-if="record.auditResultStatus.value == 2" -->
       <span
+      slot="examine11"
         slot-scope="text, record"
         :title="showTitle(record)"
-        slot="examine11"
         :class="getClass(record.auditResultStatus.value)"
       >
         {{ record.auditResultStatus.description }}
@@ -368,7 +368,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '140px',
+          width: '190px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

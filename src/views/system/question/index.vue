@@ -1,99 +1,119 @@
 <template>
   <a-card :bordered="false" class="sys-card">
     <!-- <a-tabs default-active-key="1" @change="callback" style="margin-top: -17px"> -->
-      <!-- <a-tab-pane key="1" tab="问卷列表"> -->
-        <div class="table-page-search-wrapper">
-          <div class="search-row">
-            <span class="name">机构:</span>
-            <a-tree-select
-              v-model="queryParam.hospitalCode"
-              style="min-width: 120px"
-              :tree-data="treeData"
-              placeholder="请选择"
-              tree-default-expand-all
-            >
-            </a-tree-select>
-          </div>
-
-          <div class="search-row">
-         <span class="name">标题:</span>
-         <a-input
-           v-model="queryParam.title"
-           allow-clear
-           placeholder="可输入问卷名称查询"
-           style="width: 120px; height: 28px"
-           @keyup.enter="$refs.table.refresh(true)"
-           @search="$refs.table.refresh(true)"
-         />
-       </div>
-
-       <div class="search-row">
-         <span class="name">状态:</span>
-         <a-select v-model="queryParam.status" placeholder="请选择" allow-clear style="width: 120px">
-           <a-select-option v-for="(item, index) in statusList" :value="item.code" :key="index">{{
-             item.value
-           }}</a-select-option>
-         </a-select>
-       </div>
-
-
-
-       <div class="search-row">
-         <span class="name">更新时间:</span>
-         <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
-       </div>
-
-
-
-
-
-
-
-          <div class="action-row">
-            <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-              <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-              <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
-            </span>
-          </div>
-        </div>
-
-        <div class="table-operator" style="overflow: hidden">
-          <a 
-            ><a-button @click="$refs.addquestion.addquestion()" icon="plus" style="float: right; margin-right: 0">新增</a-button></a
-          >
-        </div>
-        <s-table
-          ref="table"
-          size="default"
-          :columns="columns"
-          :data="loadData"
-          :alert="true"
-          :rowKey="(record) => record.code"
+    <!-- <a-tab-pane key="1" tab="问卷列表"> -->
+    <div class="table-page-search-wrapper">
+      <div class="search-row">
+        <span class="name">机构:</span>
+        <a-tree-select
+          v-model="queryParam.hospitalCode"
+          style="min-width: 120px"
+          :tree-data="treeData"
+          placeholder="请选择"
+          tree-default-expand-all
         >
-        <span slot="action" slot-scope="text, record">
-        <a @click="$refs.modifyquestion.modifyQuestion(record)"><a-icon style="margin-right:2px" type="edit"></a-icon>修改</a>
-        <a-divider style="margin-left:2px;margin-right:2px"  type="vertical" />
-        <a @click="goConfigQuestion(record)" ><a-icon style="margin-right:2px" type="setting"></a-icon>配置问卷</a>
-        <a-divider v-if="record.status_show==1||record.status_show==3" style="margin-left:2px;margin-right:2px" type="vertical" />
+        </a-tree-select>
+      </div>
+
+      <div class="search-row">
+        <span class="name">标题:</span>
+        <a-input
+          v-model="queryParam.title"
+          allow-clear
+          placeholder="可输入问卷名称查询"
+          style="width: 120px; height: 28px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
+      <div class="search-row">
+        <span class="name">状态:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="(item, index) in statusList" :value="item.code" :key="index">{{
+            item.value
+          }}</a-select-option>
+        </a-select>
+      </div>
+
+      <div class="search-row">
+        <span class="name">更新时间:</span>
+        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+      </div>
+
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+        </span>
+      </div>
+    </div>
+
+    <div class="table-operator" style="overflow: hidden">
+      <a
+        ><a-button @click="$refs.addquestion.addquestion()" icon="plus" style="float: right; margin-right: 0"
+          >新增</a-button
+        ></a
+      >
+    </div>
+    <s-table
+      ref="table"
+      size="default"
+      :columns="columns"
+      :data="loadData"
+      :alert="true"
+      :rowKey="(record) => record.code"
+    >
+      <span slot="action" slot-scope="text, record">
+        <a @click="$refs.modifyquestion.modifyQuestion(record)"
+          ><a-icon style="margin-right: 2px" type="edit"></a-icon>修改</a
+        >
+        <a-divider style="margin-left: 2px; margin-right: 2px" type="vertical" />
+        <a @click="goConfigQuestion(record)"><a-icon style="margin-right: 2px" type="setting"></a-icon>配置问卷</a>
+        <a-divider
+          v-if="record.status_show == 1 || record.status_show == 3"
+          style="margin-left: 2px; margin-right: 2px"
+          type="vertical"
+        />
 
         <a-popconfirm title="确定要删除吗？" ok-text="确定" cancel-text="取消" @confirm="godelete(record)">
-          <a v-if="record.status_show==1||record.status_show==3"><a-icon type="delete" style="margin-right:2px" ></a-icon>删除</a>
+          <a v-if="record.status_show == 1 || record.status_show == 3"
+            ><a-icon type="delete" style="margin-right: 2px"></a-icon>删除</a
+          >
         </a-popconfirm>
         <!-- <a v-if="record.status_show==1||record.status_show==3" ><a-icon style="margin-right:2px" type="delete"></a-icon>删除</a> -->
-        <a-divider v-if="record.status_show==2||record.status_show==3" style="margin-left:2px;margin-right:2px" type="vertical" />
-        <a v-if="record.status_show==2||record.status_show==3" @click="jumpStatisc()" ><a-icon style="margin-right:2px" type="rise"></a-icon>统计</a>
-        <a-divider  v-if="record.status_show==2" style="margin-left:2px;margin-right:2px" type="vertical" />
-        <a-popconfirm title="确定要停止吗？" ok-text="确定" cancel-text="取消" @confirm="goStop(record)">
+        <a-divider
+          v-if="record.status_show == 2 || record.status_show == 3"
+          style="margin-left: 2px; margin-right: 2px"
+          type="vertical"
+        />
+        <a v-if="record.status_show == 2 || record.status_show == 3" @click="jumpStatisc()"
+          ><a-icon style="margin-right: 2px" type="rise"></a-icon>统计</a
+        >
+        <!-- <a-divider v-if="record.status_show == 2" style="margin-left: 2px; margin-right: 2px" type="vertical" /> -->
+        <!-- <a-popconfirm title="确定要停止吗？" ok-text="确定" cancel-text="取消" @confirm="goStop(record)">
           <a v-if="record.status_show==2"><a-icon type="delete" style="margin-right:2px" ></a-icon>停止</a>
-        </a-popconfirm>
+        </a-popconfirm> -->
         <!-- <a v-if="record.status_show==2" ><a-icon style="margin-right:2px" type="pause"></a-icon>停止</a> -->
       </span>
-        </s-table>
 
-        <modifyquestion ref="modifyquestion" @ok="handleOk" />
-        <addquestion ref="addquestion" @ok="handleOk" />
-        <edit-form ref="editForm" @ok="handleOk" />
-      <!-- </a-tab-pane> -->
+      <span slot="stop" slot-scope="text, record">
+        <a-popconfirm
+          :disabled="record.status_show == 1"
+          placement="topRight"
+          :title="record.status_show == 3 ? '确定要停止吗?' : '确定收集吗?'"
+          ok-text="确定"
+          cancel-text="取消"
+          @confirm="goStop(record)"
+        >
+          <a-switch :disabled="record.status_show == 1" size="small" :checked="record.status_show == 3" />
+        </a-popconfirm>
+      </span>
+    </s-table>
+    <modifyquestion ref="modifyquestion" @ok="handleOk" />
+    <addquestion ref="addquestion" @ok="handleOk" />
+    <edit-form ref="editForm" @ok="handleOk" />
+    <!-- </a-tab-pane> -->
 
     <!-- </a-tabs> -->
   </a-card>
@@ -108,6 +128,8 @@ import {
   getDepartmentListForSelect,
   getQuestionnaireList,
   queryHospitalList,
+  deleteQuestion,
+  updateQuestionStatus,
 } from '@/api/modular/system/posManage'
 import { formatDate, getDateNow, getlastMonthToday } from '@/utils/util'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -130,10 +152,10 @@ export default {
     return {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
-      statusList:[
-        {code:1,value:'已发布'},
-        {code:2,value:'收集中'},
-        {code:3,value:'已结束'},
+      statusList: [
+        { code: 1, value: '已发布' },
+        { code: 2, value: '收集中' },
+        { code: 3, value: '已结束' },
       ],
       treeData: [],
       fetching: false,
@@ -172,9 +194,8 @@ export default {
           dataIndex: 'hospital_name',
         },
         {
-          //暂时注销此两个字段，目前没有
           title: '标题',
-          dataIndex: 'name',
+          dataIndex: 'title',
         },
         {
           title: '科室',
@@ -192,6 +213,11 @@ export default {
         {
           title: '更新时间',
           dataIndex: 'update_time',
+        },
+        {
+          title: '开启',
+          dataIndex: 'stop',
+          scopedSlots: { customRender: 'stop' },
         },
         {
           title: '操作',
@@ -223,9 +249,10 @@ export default {
             //设置序号
             data.rows.forEach((item, index) => {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-              item.create_time = item.create_time.substring(0,11)
-              item.update_time = item.update_time.substring(0,11)
+              item.create_time = item.create_time.substring(0, 11)
+              item.update_time = item.update_time.substring(0, 11)
               this.$set(item, 'status_show', item.status)
+              this.$set(item, 'stop', item.status)
               item.status = this.getType(item.status)
               // item.nameDes = item.name
             })
@@ -250,7 +277,7 @@ export default {
       moment(this.formatDate(new Date()), this.dateFormat),
       moment(this.formatDate(new Date()), this.dateFormat),
     ]
-    
+
     //问卷列表科室
     this.getDepartmentSelectList(undefined)
     //问卷统计科室
@@ -258,63 +285,90 @@ export default {
   },
 
   methods: {
+    //跳转配置问卷
+    goConfigQuestion(record) {
+      this.$router.push({
+        path: '/question/configQuestion',
+        query: {
+          departmentId: record.department_id,
+          hospitalCode: record.hospital_code,
+          key: record.key,
+          title: record.title,
+          url: record.server_path,
+          type: 1,
+        },
+      })
+    },
 
-      //跳转配置问卷
-      goConfigQuestion(record){
-        console.log("000000000")
-        this.$router.push({
-           path: '/question/configQuestion',
-           query:{departmentId:record.department_id,hospitalCode: record.hospital_code,key:record.key}
-           })
-     },
+    //跳转问卷统计界面
+    jumpStatisc() {
+      this.$router.push({ path: '/analyse/paper' })
+    },
 
-   //跳转问卷统计界面
-   jumpStatisc(){
-    this.$router.push({ path: '/analyse/paper' })
-   },
+    //删除问卷
+    godelete(record) {
+      this.confirmLoading = true
+      console.log('删除问卷!!!!')
+      deleteQuestion({ id: record.id })
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('删除成功!')
+            this.handleOk()
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
-   //删除问卷
-   godelete(record){
-    console.log("删除问卷!!!!")
-  },
-  
-  //停止问卷
-  goStop(record){
-     console.log("停止问卷!!!!")
+    //停止问卷
+    goStop(record) {
+      this.confirmLoading = true
+      console.log('停止问卷!!!!')
+      var value = 3
+      if (record.status_show == 2) {
+        value = 3
+      } else if (record.status_show == 3) {
+        value = 2
+      }
+      updateQuestionStatus({ id: record.id, status: value })
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功!')
+            this.handleOk()
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
-   },
-
-
-
-    getType(type){
-      if(type==1){
-       return '未发布'
-      }else if(type==2){
+    getType(type) {
+      if (type == 1) {
+        return '未发布'
+      } else if (type == 2) {
         return '收集中'
-      }else if(type==3){
+      } else if (type == 3) {
         return '已结束'
       }
     },
 
-    
-
-
     formatDate(date) {
-       date = new Date(date)
-       let myyear = date.getFullYear()
-       let mymonth = date.getMonth() + 1
-       let myweekday = date.getDate()
-       mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-       myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-       return `${myyear}-${mymonth}-${myweekday}`
-     },
- 
-     onChange(momentArr, dateArr) {
-      console.log("MMM:",dateArr)
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    onChange(momentArr, dateArr) {
+      console.log('MMM:', dateArr)
       this.createValue = momentArr
-       this.queryParam.startTime = dateArr[0]
-       this.queryParam.endTime = dateArr[1]
-     },
+      this.queryParam.startTime = dateArr[0]
+      this.queryParam.endTime = dateArr[1]
+    },
     //机构列表
     queryHospitalListOut() {
       let queryData = {
@@ -419,12 +473,12 @@ export default {
     },
     //全院
     reset() {
-      this.queryParam.endTime= '',
-      this.queryParam.hospitalCode = undefined,
-      this.queryParam.startTime='',
-      this.queryParam.status=1,
-      this.queryParam.title='',
-      this.$refs.table.refresh()
+      ;(this.queryParam.endTime = ''),
+        (this.queryParam.hospitalCode = undefined),
+        (this.queryParam.startTime = ''),
+        (this.queryParam.status = 1),
+        (this.queryParam.title = ''),
+        this.$refs.table.refresh()
     },
 
     handleOk() {

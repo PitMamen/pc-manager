@@ -66,7 +66,31 @@
             </a-tree-select>
           </div>
 
-          <div class="div-pro-line"></div>
+          <div class="div-pro-line">
+            <span class="span-item-name"><span style="color: red">*</span> 套餐效期 :</span>
+            <a-input
+              class="span-item-value"
+              v-model="packageData.pkgValidNum"
+              :maxLength="30"
+              style="display: inline-block; width: 40%"
+              allow-clear
+              placeholder="请输入 "
+            />
+
+            <a-select
+                v-model="packageData.pkgValidUnit"
+                style="margin-left: 5px;width: 80px !important;"
+                allow-clear
+                placeholder="请选择"
+              >
+                <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
+                  item.value
+                }}</a-select-option>
+              </a-select>
+
+          </div>
+
+          <!-- <div class="div-pro-line"></div> -->
         </div>
       </div>
 
@@ -346,7 +370,7 @@ export default {
       headers: {
         Authorization: 'authorization-text',
       },
-
+      validateList:[{code:1,value:'天'},{code:2,value:'月'}],
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
@@ -398,6 +422,8 @@ export default {
         detailImgs: [],
         frontImgs: [],
         commodityFollowPlanIds: [],
+        pkgValidUnit:undefined,
+        pkgValidNum:1,
         //新增没有这两个
         // commodityId: 0,
         // commodityPkgId: 0,
@@ -483,6 +509,7 @@ export default {
         if (res.code == 0) {
           console.log('packageData Detail 1', res.data)
           this.packageData = res.data
+          this.packageData.pkgValidUnit = res.data.pkgValidUnit.value
           console.log('packageData Detail 2', this.packageData)
           //这个可以提前处理，不放在processData里面
           if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {

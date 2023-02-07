@@ -1,14 +1,39 @@
 <template>
   <a-modal
     :title="title"
-    :width="730"
+    :width="500"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
     :maskClosable="false"
   >
-    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 150px">
+  <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px">
+      <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 问卷名称 :</span>
+      <a-input
+        class="span-item-value"
+        v-model="queryParams.title"
+        style="display: inline-block; width: 248px;margin-left: 5px;"
+        allow-clear
+        placeholder="请输入问卷名称 "
+      />
+    </div>
+
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px;margin-left: -16px;">
+    <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
+        ><span style="color: red">*</span> 机构 :</span
+      >
+      <a-tree-select
+        v-model="queryParams.hospitalCode"
+        style="min-width: 248px; height: 34px; margin-left: 5px"
+        :tree-data="treeData"
+        placeholder="请选择机构"
+        tree-default-expand-all
+      >
+      </a-tree-select>
+    </div>
+
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px;margin-left: 24px;">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 科室 :</span>
 
       <a-select
@@ -28,18 +53,10 @@
         }}</a-select-option>
       </a-select>
 
-      <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
-        ><span style="color: red">*</span> 机构 :</span
-      >
-      <a-tree-select
-        v-model="queryParams.hospitalCode"
-        style="min-width: 248px; height: 34px; margin-left: 5px"
-        :tree-data="treeData"
-        placeholder="请选择"
-        tree-default-expand-all
-      >
-      </a-tree-select>
+     
     </div>
+
+  
   </a-modal>
 </template>
           
@@ -47,7 +64,7 @@
           
           <script>
 import moment from 'moment'
-import { modifyDepartmentForReq, getDepartmentListForSelect, queryHospitalList } from '@/api/modular/system/posManage'
+import {  getDepartmentListForSelect, queryHospitalList,updateDeptAndHospCodeForKey } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
@@ -71,6 +88,8 @@ export default {
       queryParams: {
         departmentId: undefined,
         hospitalCode: undefined,
+        title:'',
+        id:'',
       },
 
       labelCol: {
@@ -98,8 +117,14 @@ export default {
     //初始化方法
     modifyQuestion(record) {
       // console.log('IIII:', record)
+
       this.visible = true
       this.reset()
+      this.queryParams.title = record.title
+      this.queryParams.departmentId = Number(record.department_id)
+      this.queryParams.hospitalCode = record.hospital_code
+      this.queryParams.id = record.id
+      console.log("KKK:",this.queryParams)
 
       this.queryHospitalListOut()
       this.getDepartmentSelectList()
@@ -167,11 +192,11 @@ export default {
     },
 
     /***
-     * 修改科室接口调用
+     * 修改问卷
      */
-    modifyDepartmentForReqOut() {
+     updateDeptAndHospCodeForKeyOut() {
       this.confirmLoading = true
-      modifyDepartmentForReq(this.queryParams)
+      updateDeptAndHospCodeForKey({id:this.queryParams.id,departmentId:this.queryParams.departmentId,title:this.queryParams.title,hospitalCode:this.queryParams.hospitalCode})
         .then((res) => {
           if (res.code == 0 && res.success) {
             this.visible = false
@@ -192,6 +217,9 @@ export default {
     reset() {
       this.queryParams.hospitalCode = undefined
       this.queryParams.departmentId = undefined
+      this.queryParams.title = ''
+      this.queryParams.jumpData = undefined
+      this.queryParams.id = ''
     },
 
 
@@ -200,7 +228,8 @@ export default {
      */
      handleSubmit(){
       //提交接口
-      this.$emit('ok')
+       console.log("MMMMMMMMMM")
+      this.updateDeptAndHospCodeForKeyOut()
      },
 
 

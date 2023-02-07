@@ -71,36 +71,26 @@
             <span class="span-item-name"><span style="color: red">*</span> 套餐效期 :</span>
             <a-input
               class="span-item-value"
-              v-model="packageData.validate"
+              v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 50%"
+              style="display: inline-block; width: 40%"
               allow-clear
               placeholder="请输入 "
             />
-            <!-- <a-dropdown>
-          <span placement="bottomCenter"><a-icon style="padding-left=5px;" /> </span>
-          <a-menu slot="overlay">
-            <a-menu-item key="1">
-              <a  href="javascript:;">全部</a>
-            </a-menu-item>
-            <a-menu-item key="2">
-              <a href="javascript:;">待核查</a>
-            </a-menu-item>
-            <a-menu-item key="3">
-              <a  href="javascript:;">已核查</a>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown> -->
 
-            <!-- <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
-              <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
-                item.tenantName
-              }}</a-select-option>
-            </a-select> -->
+            <a-select
+                v-model="packageData.pkgValidUnit"
+                style="margin-left: 5px;width: 80px !important;"
+                allow-clear
+                placeholder="请选择"
+              >
+                <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
+                  item.value
+                }}</a-select-option>
+              </a-select>
+
           </div>
-
          
-
         </div>
       </div>
 
@@ -188,7 +178,7 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isDoctor" @click="goCheck(1)" >医生参与</a-checkbox>
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -221,7 +211,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)" >护士参与</a-checkbox>
+            <a-checkbox :checked="isNurse" @click="goCheck(2)">护士参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -254,7 +244,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" >健康团队参与</a-checkbox>
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1">健康团队参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -314,12 +304,12 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="needPlan" @click="handlePlan" >随访方案</a-checkbox>
+            <a-checkbox :checked="needPlan" @click="handlePlan">随访方案</a-checkbox>
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
           <a-select
             class="mid-select-two"
-            style="min-width: 370px !important;"
+            style="min-width: 370px !important"
             mode="multiple"
             :disabled="!needPlan"
             allow-clear
@@ -376,7 +366,7 @@ export default {
         Authorization: 'authorization-text',
       },
       user: {},
-
+      validateList:[{code:1,value:'天'},{code:2,value:'月'}],
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
@@ -422,6 +412,8 @@ export default {
        *
        */
       packageDataOrigin: {
+        pkgValidUnit:undefined,
+        pkgValidNum:1,
         bannerImgs: [],
         detailImgs: [],
         frontImgs: [],
@@ -739,18 +731,17 @@ export default {
         this.broadClassify = findItem.broadClassify
       }
       console.log('this.broadClassify', this.broadClassify)
-      
+
       switch (this.broadClassify) {
         case 1:
           this.isTeam = false
           this.nameTeam = ''
 
-          if(this.isNurse && this.isDoctor){
-            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型 
+          if (this.isNurse && this.isDoctor) {
+            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型
             this.isNurse = false
             this.nameNurse = ''
           }
-
 
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
@@ -858,7 +849,7 @@ export default {
      * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队
      */
     goCheck(type) {
-      console.log("goCheck:"+type)
+      console.log('goCheck:' + type)
       if (type == 1) {
         this.isDoctor = !this.isDoctor
         if (this.broadClassify == 1 && this.isDoctor) {
@@ -1198,9 +1189,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/ .ant-checkbox-wrapper{
+/deep/ .ant-checkbox-wrapper {
   font-size: 12px !important;
 }
+
+.mid-select-two.ant-select {
+            width: 10% !important;
+            margin-left: 1% !important;
+          }
 .div-package-add {
   background-color: white;
   width: 100%;
