@@ -3734,7 +3734,7 @@ export function treeMedicalSubjects(data) {
 //问卷管理中的问卷列表接口
 export function getQuestionnaireList(data){
   return axios({
-    url:'/follow-api/questionnaireStatistics/getQuestionnaireList',
+    url:'/follow-api/questionnaireStatistics/getQuestionnaireListForHospital',
     method: 'post',
     data: data,
   })

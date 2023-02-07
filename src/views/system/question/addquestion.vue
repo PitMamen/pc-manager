@@ -12,17 +12,15 @@
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 问卷名称 :</span>
       <a-input
         class="span-item-value"
-        v-model="queryParams.questionName"
-        style="display: inline-block; width: 248px;margin-left: 5px;"
+        v-model="queryParams.title"
+        style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
         placeholder="请输入问卷名称 "
       />
     </div>
 
-
-
-    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px;margin-left: -16px;">
-    <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px; margin-left: -16px">
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
         ><span style="color: red">*</span> 机构 :</span
       >
       <a-tree-select
@@ -31,13 +29,12 @@
         :tree-data="treeData"
         placeholder="请选择机构"
         tree-default-expand-all
+        @change="changeSelect"
       >
       </a-tree-select>
     </div>
 
-
-
-    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px;margin-left: 24px;">
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px; margin-left: 24px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 科室 :</span>
 
       <a-select
@@ -56,11 +53,7 @@
           item.department_name
         }}</a-select-option>
       </a-select>
-
-     
     </div>
-
-  
   </a-modal>
 </template>
             
@@ -68,6 +61,7 @@
 import moment from 'moment'
 import {
   modifyDepartmentForReq,
+  getDepartmentListForReq,
   getDepartmentListForSelect,
   queryHospitalList,
   createNoLogin,
@@ -96,7 +90,7 @@ export default {
       queryParams: {
         hospitalCode: undefined,
         departmentId: undefined,
-        questionName:"",
+        title: '',
       },
 
       labelCol: {
@@ -179,18 +173,28 @@ export default {
       this.getDepartmentSelectList(value)
     },
 
+    //选择机构时调用 查询科室
+    changeSelect(data) {
+      this.queryParams.hospitalCode = data
+      this.getDepartmentSelectList()
+    },
+
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
+      var requestData = {
+        hospitalCode: this.queryParams.hospitalCode,
+        status: 1,
+        departmentName: departmentName,
+      }
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
+      getDepartmentListForReq(requestData).then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
         }
       })
     },
-
 
     /**
      * 重置
@@ -206,24 +210,40 @@ export default {
      */
     handleSubmit() {
       this.confirmLoading = true
-          this.createNoLoginOut()
+      if(!this.queryParams.title){
+        this.$message.error('请输入问卷标题!')
+        return
+      }
+
+      if(!this.queryParams.hospitalCode){
+        this.$message.error('请选择机构!')
+        return
+      }
+
+      if(!this.queryParams.departmentId){
+        this.$message.error('请选择科室!')
+        return
+      }
+      this.createNoLoginOut()
     },
 
-
     //新增之后 跳转问卷 配置界面
-    createNoLoginOut(){
-      createNoLogin()
+    createNoLoginOut() {
+      createNoLogin({departmentId:this.queryParams.departmentId,hospitalCode: this.queryParams.hospitalCode,title: this.queryParams.title})
         .then((res) => {
           if (res.data.code == 200 && res.data.data) {
+            var dataTemp={
+                departmentId: this.queryParams.departmentId,
+                hospitalCode: this.queryParams.hospitalCode,
+                title: this.queryParams.title,
+                key: res.data.data,
+                url: res.data.server_path,
+                type: 2,
+              }
             this.$router.push({
               path: '/question/configQuestion',
               query: {
-                departmentId: this.queryParams.departmentId,
-                hospitalCode: this.queryParams.hospitalCode,
-                title: this.queryParams.questionName,
-                key: res.data.data,
-                url:res.data.server_path,
-                type:2,
+                data:JSON.stringify(dataTemp)
               },
             })
             this.visible = false
@@ -233,14 +253,6 @@ export default {
           this.confirmLoading = false
         })
     },
-
-
-
-
-
-
-
-
 
     /**
      * 取消

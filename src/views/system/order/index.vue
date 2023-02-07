@@ -364,7 +364,13 @@ export default {
   methods: {
     //详情
     goDetail(record) {
-      this.$refs.orderDetail.detail(record)
+      // this.$refs.orderDetail.orderDetail(record)
+      this.$router.push({
+        path: '/order/orderDetail',
+        query: {
+          recordData:record,
+        },
+      })
     },
 
     getType(record) {

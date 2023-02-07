@@ -44,20 +44,25 @@ export default {
 
   watch: {
     $route(to, from) {
-      console.log('接收参数:', this.$route.query)
-      var jumpData = this.$route.query
-      console.log('NNN:', jumpData)
-      this.init(jumpData)
+      console.log('KKK:',this.$route.query.data)
+      if(to.path.indexOf('configQuestion')>-1){   //判断是否为当前页面
+        if(this.$route.query.data){
+          var jumpData =JSON.parse(this.$route.query.data)
+          this.init(jumpData)
+        }
+        }
+       
     },
   },
 
   created() {
-    this.init(undefined)
+    console.log('执行222222')
+    // this.init(undefined)
+    
   },
 
   methods: {
     init(jumpData) {
-        console.log("KKK:",jumpData)
       if (jumpData.type == 2) {
         this.questionUrl =
           jumpData.url +

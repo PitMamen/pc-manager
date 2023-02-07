@@ -287,15 +287,18 @@ export default {
   methods: {
     //跳转配置问卷
     goConfigQuestion(record) {
+      var dataTemp = {
+        departmentId:  record.department_id,
+        hospitalCode: record.hospital_code,
+        title:record.title,
+        key: record.key,
+        url: record.server_path,
+        type: 1,
+      }
       this.$router.push({
         path: '/question/configQuestion',
         query: {
-          departmentId: record.department_id,
-          hospitalCode: record.hospital_code,
-          key: record.key,
-          title: record.title,
-          url: record.server_path,
-          type: 1,
+          data:JSON.stringify(dataTemp)
         },
       })
     },

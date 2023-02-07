@@ -29,6 +29,7 @@
         :tree-data="treeData"
         placeholder="请选择机构"
         tree-default-expand-all
+        @change="changeSelect"
       >
       </a-tree-select>
     </div>
@@ -64,7 +65,7 @@
           
           <script>
 import moment from 'moment'
-import {  getDepartmentListForSelect, queryHospitalList,updateDeptAndHospCodeForKey } from '@/api/modular/system/posManage'
+import {   queryHospitalList,updateDeptAndHospCodeForKey,getDepartmentListForReq } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
@@ -179,11 +180,22 @@ export default {
       this.getDepartmentSelectList(value)
     },
 
+     //选择机构时调用 查询科室
+     changeSelect(data) {
+      this.queryParams.hospitalCode = data
+      this.getDepartmentSelectList()
+    },
+
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
+      var requestData = {
+        hospitalCode: this.queryParams.hospitalCode,
+        status: 1,
+        departmentName: departmentName,
+      }
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
+      getDepartmentListForReq(requestData).then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
@@ -228,7 +240,20 @@ export default {
      */
      handleSubmit(){
       //提交接口
-       console.log("MMMMMMMMMM")
+       if(!this.queryParams.title){
+        this.$message.error('请输入问卷标题!')
+        return
+      }
+
+      if(!this.queryParams.hospitalCode){
+        this.$message.error('请选择机构!')
+        return
+      }
+
+      if(!this.queryParams.departmentId){
+        this.$message.error('请选择科室!')
+        return
+      }
       this.updateDeptAndHospCodeForKeyOut()
      },
 
