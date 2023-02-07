@@ -57,7 +57,7 @@ export default {
 
   methods: {
     init(jumpData) {
-        console.log("KKK:",jumpData.type)
+        console.log("KKK:",jumpData)
       if (jumpData.type == 2) {
         this.questionUrl =
           jumpData.url +

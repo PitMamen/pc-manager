@@ -198,6 +198,7 @@ export default {
     reset() {
       this.queryParams.hospitalCode = undefined
       this.queryParams.departmentId = undefined
+      this.queryParams.title = ''
     },
 
     /**

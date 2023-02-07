@@ -174,6 +174,7 @@
     <transfer ref="transfer" @ok="handleOk" />
     <followModel ref="followModel" @ok="handleOk" />
     <check ref="check" @ok="handleOk" /> -->
+    <orderDetail ref="orderDetail" @ok="handleOk" /> 
   </a-card>
 </template>
  
@@ -183,11 +184,13 @@ import moment from 'moment'
 import { orderList, queryHospitalList, getOrderStatusGroupByData } from '@/api/modular/system/posManage'
 import { formatDate, getDateNow, getlastMonthToday } from '@/utils/util'
 import addForm from './addForm'
+import orderDetail from './orderDetail'
 
 export default {
   components: {
     STable,
     addForm,
+    orderDetail,
     // editForm,
   },
 
@@ -360,7 +363,9 @@ export default {
 
   methods: {
     //详情
-    goDetail(record) {},
+    goDetail(record) {
+      this.$refs.orderDetail.detail(record)
+    },
 
     getType(record) {
       if (record.status == 1) {
