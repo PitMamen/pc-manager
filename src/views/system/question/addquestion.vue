@@ -192,6 +192,7 @@ export default {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
+          // console.log("CCC:",this.originData)
         }
       })
     },
@@ -224,7 +225,19 @@ export default {
         this.$message.error('请选择科室!')
         return
       }
-      this.createNoLoginOut()
+
+      var checkedDepartmentId = this.originData.find((item) => item.department_id == this.queryParams.departmentId)
+      // console.log("VVVVV:",checkedDepartmentId)
+      if(checkedDepartmentId){
+
+        this.createNoLoginOut()
+      }else{
+        this.confirmLoading = false
+        this.$message.error("机构与科室不匹配!")
+        return
+      }
+
+
     },
 
     //新增之后 跳转问卷 配置界面

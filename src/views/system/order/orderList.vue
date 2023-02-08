@@ -35,17 +35,12 @@
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
-        <!-- <a-select v-model="queryParams.execDoctorUserId" placeholder="请选择" allow-clear style="width: 120px">
-           <a-select-option v-for="(item, index) in docList" :value="item.userId" :key="index">{{
-             item.userName
-           }}</a-select-option>
-         </a-select> -->
       </div>
 
       <div class="search-row">
         <span class="name">套餐类型:</span>
         <a-select v-model="queryParams.projectType" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in packgeList" :value="item.id" :key="index">{{
+          <a-select-option v-for="(item, index) in packgeList" :value="item.id" :key="index">{{  
             item.name
           }}</a-select-option>
         </a-select>
@@ -159,21 +154,19 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
-      :rowKey="(record) => record.id"
+      :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
       </span>
 
       <!-- 状态 -->
-      <span slot="status" slot-scope="text, record">
+      <span slot="orderStatus" slot-scope="text, record">
         <span style="color:darkseagreen">{{ getType(record) }}</span>
       </span>
+
+      
     </s-table>
-    <!-- <examine ref="examine" @ok="handleOk" />
-    <transfer ref="transfer" @ok="handleOk" />
-    <followModel ref="followModel" @ok="handleOk" />
-    <check ref="check" @ok="handleOk" /> -->
     <orderDetail ref="orderDetail" @ok="handleOk" /> 
   </a-card>
 </template>
@@ -225,7 +218,7 @@ export default {
         hospitalCode:undefined,
         orderEndTime: '',
         orderStartTime: '',
-        projectType: 0,
+        projectType: undefined,
       },
       queryParams: {
         combinedCondition: undefined,
@@ -242,6 +235,7 @@ export default {
         {
           title: '订单号',
           dataIndex: 'orderId',
+          ellipsis: true,
         },
         {
           title: '用户姓名',
@@ -254,6 +248,7 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
+          with: 180,
         },
         {
           title: '医院名称',
@@ -280,6 +275,7 @@ export default {
         {
           title: '下单时间',
           dataIndex: 'orderTime',
+          with: 180,
         },
         {
           title: '支付方式',
@@ -287,12 +283,11 @@ export default {
         },
         {
           title: '状态',
-          dataIndex: 'status',
-          scopedSlots: { customRender: 'status' },
+          dataIndex: 'orderStatus',
+          scopedSlots: { customRender: 'orderStatus' },
         },
         {
           title: '操作',
-          width: '150px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

@@ -42,7 +42,18 @@ export default {
     }
   },
 
-  watch: {
+
+  activated() {
+    // if(to.path.indexOf('configQuestion')>-1){   //判断是否为当前页面
+        if(this.$route.query.data){
+          var jumpData =JSON.parse(this.$route.query.data)
+          this.init(jumpData)
+        }
+        // }
+  },
+
+
+  watch1: {
     deep:true,
     immediate:true,
     $route(to, from) {

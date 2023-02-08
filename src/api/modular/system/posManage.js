@@ -3811,3 +3811,13 @@ export function getOrderDetail(data){
   })
 }
 
+
+//取消订单
+export function cancelOrder(data){
+   return axios({
+    url:'/medical-api/admorder/cancel',
+    method:'post',
+    data:data,
+   })
+}
+
