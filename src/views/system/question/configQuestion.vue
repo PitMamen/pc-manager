@@ -45,6 +45,7 @@ export default {
 
   activated() {
     // if(to.path.indexOf('configQuestion')>-1){   //判断是否为当前页面
+      console.log('KKK:',this.$route.query.data)
         if(this.$route.query.data){
           var jumpData =JSON.parse(this.$route.query.data)
           this.init(jumpData)
@@ -53,20 +54,20 @@ export default {
   },
 
 
-  watch1: {
-    deep:true,
-    immediate:true,
-    $route(to, from) {
-      console.log('KKK:',this.$route.query.data)
-      if(to.path.indexOf('configQuestion')>-1){   //判断是否为当前页面
-        if(this.$route.query.data){
-          var jumpData =JSON.parse(this.$route.query.data)
-          this.init(jumpData)
-        }
-        }
+  // watch1: {
+  //   deep:true,
+  //   immediate:true,
+  //   $route(to, from) {
+  //     console.log('KKK:',this.$route.query.data)
+  //     if(to.path.indexOf('configQuestion')>-1){   //判断是否为当前页面
+  //       if(this.$route.query.data){
+  //         var jumpData =JSON.parse(this.$route.query.data)
+  //         this.init(jumpData)
+  //       }
+  //       }
        
-    },
-  },
+  //   },
+  // },
 
   created() {
     console.log('执行222222')

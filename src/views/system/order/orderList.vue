@@ -248,7 +248,7 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
-          with: 180,
+          ellipsis: true,
         },
         {
           title: '医院名称',
@@ -269,13 +269,13 @@ export default {
         {
           title: '服务时间',
           dataIndex: 'serveTime',
-          with: 180,
+          ellipsis: true,
         },
 
         {
           title: '下单时间',
           dataIndex: 'orderTime',
-          with: 180,
+          ellipsis: true,
         },
         {
           title: '支付方式',
@@ -288,6 +288,7 @@ export default {
         },
         {
           title: '操作',
+          with: 90,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -364,6 +365,7 @@ export default {
         path: '/order/orderDetail',
         query: {
           orderId:record.orderId,
+          // orderId:1623236088379908098,
         },
       })
     },

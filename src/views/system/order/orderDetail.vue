@@ -11,6 +11,7 @@
         style="margin-left: 15px"
         v-show="showHide(orderDetailDataList.status.value)"
         @click="clickType(orderDetailDataList.status.value)"
+        @ok="handleOk"
         >{{ getType(orderDetailDataList.status.value) }}</a-button
       >
 
@@ -218,17 +219,9 @@
         <span style="margin-top: 10px"> 确定取消订单吗?</span>
         <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
       </div>
-
-      <!-- <div class="display-item" style="margin-left: 45%; margin-top: 10px">
-        <span style="margin-top: 10px"> 成功条数:</span>
-        <span style="margin-top: 10px; margin-left: 10px"> {{ successCount }}</span>
-      </div>
-
-      <div class="display-item" style="margin-left: 45%; margin-top: 10px">
-        <span style="margin-top: 10px"> 失败条数:</span>
-        <span style="margin-top: 10px; margin-left: 10px"> {{ failCount }}</span>
-      </div> -->
     </a-modal>
+
+    <order-Refund ref="orderRefund" @ok="handleOk" />
   </a-spin>
 </template>
   
@@ -238,10 +231,15 @@ import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { formatDate, formatDateFull } from '@/utils/util'
+import orderRefund from './orderRefund'
 import { json } from 'body-parser'
+import { STable } from '@/components'
 
 export default {
-  components: {},
+  components: {
+    STable,
+    orderRefund,
+  },
 
   data() {
     return {
@@ -256,6 +254,7 @@ export default {
       confirmLoading: false,
       smallLoading: false,
       orderId: '',
+      payMode: '',
 
       goodsItemsDataColumns: [
         {
@@ -340,15 +339,14 @@ export default {
   },
 
   activated() {
-    if (to.path.indexOf('orderDetail') > -1) {
-        if (this.$route.query.orderId) {
-      console.log('BBBBBBBBB')
+    // if (to.path.indexOf('orderDetail') > -1) {
+    if (this.$route.query.orderId) {
+      console.log('BBBBBBBBB',this.$route.query.orderId)
       var orderId = this.$route.query.orderId
       //   var jumpData =JSON.parse(this.$route.query.data)
       this.init(orderId)
     }
-    }
- 
+    // }
   },
 
   watch1: {
@@ -375,11 +373,20 @@ export default {
     //入口
     init(orderId) {
       this.orderId = orderId
-      getOrderDetail({ orderId: orderId }).then((res) => {
+      this.getOrderDetailOut(this.orderId)
+    },
+
+    handleOk() {
+      this.getOrderDetailOut(this.orderId)
+    },
+
+    getOrderDetailOut(orderID) {
+      getOrderDetail({ orderId: orderID }).then((res) => {
         if (res.code == 0) {
           var reponseDataList = res.data
           this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
-        //   this.orderDetailDataList.status.value = 1
+          //   this.orderDetailDataList.status.value = 1
+          this.payMode = this.orderDetailDataList.payMode
           this.goodsItemsData = res.data.goodsItems
           this.rightItemsData = res.data.rightItems
         }
@@ -417,6 +424,8 @@ export default {
         this.visible_model = true //取消订单
       } else {
         // 申请退款
+        console.log('XXXXXXXX',this.orderId,this.payMode)
+        this.$refs.orderRefund.refund(this.orderId, this.payMode)
       }
     },
 
@@ -433,10 +442,9 @@ export default {
           if (res.code == 0) {
             console.log('NNNNNNNNNNNNNNNN')
             this.$message.success('取消成功!')
-          }else{
+          } else {
             this.$message.error(res.message)
           }
-
         })
         .finally((res) => {
           this.smallLoading = false

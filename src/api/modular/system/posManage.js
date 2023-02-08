@@ -3821,3 +3821,23 @@ export function cancelOrder(data){
    })
 }
 
+
+//订单可退款明细
+export function canRefundItems(data){
+  return axios({
+   url:'/medical-api/admorder/canRefundItems',
+   method:'get',
+   params:data,
+  })
+}
+
+
+//申请退款
+export function applyRefund(data){
+  return axios({
+   url:'/medical-api/admorder/applyRefund',
+   method:'post',
+   data:data,
+  })
+}
+
