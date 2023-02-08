@@ -43,6 +43,8 @@ export default {
   },
 
   watch: {
+    deep:true,
+    immediate:true,
     $route(to, from) {
       console.log('KKK:',this.$route.query.data)
       if(to.path.indexOf('configQuestion')>-1){   //判断是否为当前页面

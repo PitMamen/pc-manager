@@ -101,12 +101,12 @@
         <a-popconfirm
           :disabled="record.status_show == 1"
           placement="topRight"
-          :title="record.status_show == 3 ? '确定要停止吗?' : '确定收集吗?'"
+          :title="record.status_show == 2 ? '确定要停止吗?' : '确定收集吗?'"
           ok-text="确定"
           cancel-text="取消"
           @confirm="goStop(record)"
         >
-          <a-switch :disabled="record.status_show == 1" size="small" :checked="record.status_show == 3" />
+          <a-switch :disabled="record.status_show == 1" size="small" :checked="record.status_show == 2" />
         </a-popconfirm>
       </span>
     </s-table>
@@ -153,7 +153,7 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
       statusList: [
-        { code: 1, value: '已发布' },
+        { code: 1, value: '未发布' },
         { code: 2, value: '收集中' },
         { code: 3, value: '已结束' },
       ],
@@ -161,12 +161,11 @@ export default {
       fetching: false,
       // 高级搜索 展开/关闭
       advanced: false,
-      hosData: [{ code: '444885559', value: '湘雅附二医院' }],
       // 查询参数
       queryParam: {
-        endTime: '',
+        endTime:  formatDate(new Date()),
         hospitalCode: undefined,
-        startTime: '',
+        startTime: formatDate(new Date()),
         status: undefined,
         title: '',
       },

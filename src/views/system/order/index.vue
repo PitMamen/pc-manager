@@ -368,7 +368,7 @@ export default {
       this.$router.push({
         path: '/order/orderDetail',
         query: {
-          recordData:record,
+          orderId:record.orderId,
         },
       })
     },

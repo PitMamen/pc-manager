@@ -3801,3 +3801,13 @@ export function orderList(data){
   })
 }
 
+
+//订单详情
+export function getOrderDetail(data){
+  return axios({
+    url:'/medical-api/admorder/detail',
+    method:'get',
+    params:data,
+  })
+}
+
