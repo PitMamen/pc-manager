@@ -31,7 +31,6 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <!-- @select="onSelectChangeCode" -->
             <a-tree-select
               v-model="packageData.subjectClassifyId"
               style="min-width: 120px"
@@ -79,18 +78,16 @@
             />
 
             <a-select
-                v-model="packageData.pkgValidUnit"
-                style="margin-left: 5px;width: 80px !important;"
-                allow-clear
-                placeholder="请选择"
-              >
-                <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
-              </a-select>
-
+              v-model="packageData.pkgValidUnit"
+              style="margin-left: 5px; width: 80px !important"
+              allow-clear
+              placeholder="请选择"
+            >
+              <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
           </div>
-         
         </div>
       </div>
 
@@ -366,7 +363,10 @@ export default {
         Authorization: 'authorization-text',
       },
       user: {},
-      validateList:[{code:1,value:'天'},{code:2,value:'月'}],
+      validateList: [
+        { code: 1, value: '天' },
+        { code: 2, value: '月' },
+      ],
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
@@ -401,6 +401,8 @@ export default {
       tenantList: [],
       plans: [],
       roleIds: [],
+      docDepartmentId: undefined,
+      nurseDepartmentId: undefined,
       nameDoc: '',
       nameNurse: '',
       nameTeam: '',
@@ -412,8 +414,8 @@ export default {
        *
        */
       packageDataOrigin: {
-        pkgValidUnit:undefined,
-        pkgValidNum:1,
+        pkgValidUnit: undefined,
+        pkgValidNum: 1,
         bannerImgs: [],
         detailImgs: [],
         frontImgs: [],
@@ -815,34 +817,34 @@ export default {
         this.nameDoc = ''
         this.nameNurse = ''
         this.plans = []
-        this.getTreeUsersDoc()
-        this.getTreeUsersNurse()
+        // this.getTreeUsersDoc()
+        // this.getTreeUsersNurse()
         this.qryFollowPlanByFollowTypeOut()
       }
     },
 
-    getTreeUsersDoc() {
-      getTreeUsersByDeptIdsAndRoles({
-        hospitalCode: this.packageData.hospitalCode,
-        tenantId: this.packageData.tenantId,
-        roleIds: ['doctor'],
-      }).then((res) => {
-        if (res.code == 0) {
-          this.deptUsersDoc = res.data
-        }
-      })
-    },
-    getTreeUsersNurse() {
-      getTreeUsersByDeptIdsAndRoles({
-        hospitalCode: this.packageData.hospitalCode,
-        tenantId: this.packageData.tenantId,
-        roleIds: ['nurse'],
-      }).then((res) => {
-        if (res.code == 0) {
-          this.deptUsersNurse = res.data
-        }
-      })
-    },
+    // getTreeUsersDoc() {
+    //   getTreeUsersByDeptIdsAndRoles({
+    //     hospitalCode: this.packageData.hospitalCode,
+    //     tenantId: this.packageData.tenantId,
+    //     roleIds: ['doctor'],
+    //   }).then((res) => {
+    //     if (res.code == 0) {
+    //       this.deptUsersDoc = res.data
+    //     }
+    //   })
+    // },
+    // getTreeUsersNurse() {
+    //   getTreeUsersByDeptIdsAndRoles({
+    //     hospitalCode: this.packageData.hospitalCode,
+    //     tenantId: this.packageData.tenantId,
+    //     roleIds: ['nurse'],
+    //   }).then((res) => {
+    //     if (res.code == 0) {
+    //       this.deptUsersNurse = res.data
+    //     }
+    //   })
+    // },
 
     /**
      *
@@ -925,25 +927,42 @@ export default {
           this.$message.warn('请先选择医生参与分配方式')
           return
         }
-        if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
-          this.$message.warn('该机构没有可选医生')
-          return
-        }
-        if (this.broadClassify == 1) {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersDoc,
-            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-            true
-          )
-        } else {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersDoc,
-            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-            false
-          )
-        }
+        // if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
+        //   this.$message.warn('该机构没有可选医生')
+        //   return
+        // }
+
+        this.$refs.addPeople.add(
+          index,
+          'doctor',
+          this.packageData.tenantId,
+          this.packageData.hospitalCode,
+          this.docDepartmentId,
+          this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+          this.broadClassify == 1 ? true : false
+        )
+
+        // if (this.broadClassify == 1) {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     'doctor',
+        //     this.packageData.tenantId,
+        //     this.packageData.hospitalCode,
+        //     this.docDepartmentId,
+        //     this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+        //     true
+        //   )
+        // } else {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     'doctor',
+        //     this.packageData.tenantId,
+        //     this.packageData.hospitalCode,
+        //     this.docDepartmentId,
+        //     this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+        //     false
+        //   )
+        // }
       } else {
         if (!this.isNurse) {
           return
@@ -952,25 +971,42 @@ export default {
           this.$message.warn('请先选择护士参与分配方式')
           return
         }
-        if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
-          this.$message.warn('该机构没有可选护士')
-          return
-        }
-        if (this.broadClassify == 1) {
-          this.$refs.addPeople.add(
+        // if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
+        //   this.$message.warn('该机构没有可选护士')
+        //   return
+        // }
+
+        this.$refs.addPeople.add(
             index,
-            this.deptUsersNurse,
+            'nurse',
+            this.packageData.tenantId,
+            this.packageData.hospitalCode,
+            this.nurseDepartmentId,
             this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-            true
+            this.broadClassify == 1 ? true : false
           )
-        } else {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersNurse,
-            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-            false
-          )
-        }
+
+        // if (this.broadClassify == 1) {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     'nurse',
+        //     this.packageData.tenantId,
+        //     this.packageData.hospitalCode,
+        //     this.nurseDepartmentId,
+        //     this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+        //     true
+        //   )
+        // } else {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     'nurse',
+        //     this.packageData.tenantId,
+        //     this.packageData.hospitalCode,
+        //     this.nurseDepartmentId,
+        //     this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+        //     false
+        //   )
+        // }
       }
     },
 
@@ -979,7 +1015,7 @@ export default {
      * @param {*} index 0 医生  1 护士
      * @param {*} commodityPkgManageItemReqs
      */
-    handleAddPeople(index, commodityPkgManageItemReqs) {
+    handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
       this.packageData.commodityPkgManageReqs[index].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       if (index == 0) {
         this.nameDoc = ''
@@ -990,6 +1026,7 @@ export default {
             this.nameDoc = this.nameDoc + item.userName
           }
         })
+        this.docDepartmentId = departmentId
       } else {
         this.nameNurse = ''
         commodityPkgManageItemReqs.forEach((item, indexReqs) => {
@@ -999,6 +1036,7 @@ export default {
             this.nameNurse = this.nameNurse + item.userName
           }
         })
+        this.nurseDepartmentId = departmentId
       }
     },
 
@@ -1098,6 +1136,7 @@ export default {
 
           tempData.commodityPkgManageReqs[0].allocationType = this.allocationTypeDoc
           tempData.commodityPkgManageReqs[0].teamType = 1
+          tempData.commodityPkgManageReqs[0].departmentId = this.docDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[0])
         }
 
@@ -1113,6 +1152,7 @@ export default {
 
           tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeNurse
           tempData.commodityPkgManageReqs[1].teamType = 2
+          tempData.commodityPkgManageReqs[1].departmentId = this.nurseDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[1])
         }
 
@@ -1194,9 +1234,9 @@ export default {
 }
 
 .mid-select-two.ant-select {
-            width: 10% !important;
-            margin-left: 1% !important;
-          }
+  width: 10% !important;
+  margin-left: 1% !important;
+}
 .div-package-add {
   background-color: white;
   width: 100%;

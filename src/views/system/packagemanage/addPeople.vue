@@ -10,6 +10,14 @@
     <a-spin :spinning="confirmLoading">
       <div class="add-wrap">
         <div class="add-wrap-left">
+          <div class="div-choose-dept">
+            <span>请选择配置科室：</span>
+            <a-select @select="onDeptSelect" v-model="choseDepartmentId" allow-clear placeholder="请选择">
+              <a-select-option v-for="(item, index) in departmentLst" :key="index" :value="item.department_id">{{
+                item.department_name
+              }}</a-select-option>
+            </a-select>
+          </div>
           <!-- size="large" -->
           <a-auto-complete
             style="width: 100%; font-size: 14px"
@@ -50,6 +58,9 @@
               type="plus"
               @click="addPerson(item, index)"
             />
+          </div>
+          <div v-if="deptUsers.users.length == 0" style="margin-top: 60px; margin-left: 45%">
+            <img src="~@/assets/icons/img_nodata.png" />
           </div>
         </div>
 
@@ -116,7 +127,8 @@
 
 
 <script>
-import { getPlatTypeList } from '@/api/modular/system/posManage'
+import { getMyDepartments, getTreeUsersByDeptIdsAndRoles } from '@/api/modular/system/posManage'
+import DepartmentList from '../mechanism/departmentList.vue'
 export default {
   data() {
     return {
@@ -124,6 +136,12 @@ export default {
       chooseName: '', //
       confirmLoading: false,
       isAverage: false,
+      choseDepartmentId: undefined,
+      departmentLst: [],
+      assignments: [],
+      type: '',
+      tenantId: '',
+      hospitalCode: '',
       isSingle: false,
       isAllChecked: false,
       iconType: 'plus',
@@ -186,48 +204,136 @@ export default {
      * @param {*} index 
      * @param {*} deptUsers 
      */
-    add(index, deptUsers, assignments, isSingle) {
-      this.index = index
+    add(index, type, tenantId, hospitalCode, departmentId, assignments, isSingle) {
       this.visible = true
+      this.index = index
+      this.type = type
+      this.tenantId = tenantId
+      this.hospitalCode = hospitalCode
+      this.choseDepartmentId = departmentId
+      console.log('add**departmentId',departmentId)
       this.isAverage = false
-
-      if (assignments && assignments.length > 0 && deptUsers.users.length == assignments.length) {
-        this.iconType = 'minus'
-      } else {
-        this.iconType = 'plus'
-      }
-
-      this.deptUsers = deptUsers
+      this.assignments = assignments
       this.isSingle = isSingle
-      this.choseUsers = []
 
-      console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
-      console.log('assignments', JSON.parse(JSON.stringify(assignments)))
-      this.deptUsers.users.forEach((item) => {
-        this.$set(item, 'isChecked', false)
-        this.$set(item, 'canAdd', true)
-        if (assignments && assignments.length > 0) {
-          assignments.forEach((itemAss) => {
-            if (itemAss.objectId == item.userId) {
-              //组装可以添加的用户
-              this.$set(item, 'canAdd', false)
+      this.getDepartmentSelectList()
 
-              //组装已添加用户
-              let tempItem = JSON.parse(JSON.stringify(item))
-              this.$set(tempItem, 'weight', itemAss.weight)
-              this.$set(tempItem, 'achievementRatio', itemAss.achievementRatio)
-              this.choseUsers.push(tempItem)
+      // if (assignments && assignments.length > 0 && deptUsers.users.length == assignments.length) {
+      //   this.iconType = 'minus'
+      // } else {
+      //   this.iconType = 'plus'
+      // }
+
+      // this.deptUsers = deptUsers
+      // this.isSingle = isSingle
+      // this.choseUsers = []
+
+      // console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
+      // console.log('assignments', JSON.parse(JSON.stringify(assignments)))
+      // this.deptUsers.users.forEach((item) => {
+      //   this.$set(item, 'isChecked', false)
+      //   this.$set(item, 'canAdd', true)
+      //   if (assignments && assignments.length > 0) {
+      //     assignments.forEach((itemAss) => {
+      //       if (itemAss.objectId == item.userId) {
+      //         //组装可以添加的用户
+      //         this.$set(item, 'canAdd', false)
+
+      //         //组装已添加用户
+      //         let tempItem = JSON.parse(JSON.stringify(item))
+      //         this.$set(tempItem, 'weight', itemAss.weight)
+      //         this.$set(tempItem, 'achievementRatio', itemAss.achievementRatio)
+      //         this.choseUsers.push(tempItem)
+      //       }
+      //     })
+      //   }
+      // })
+      // this.sortChoseUsers()
+      // this.choseNum = this.choseUsers.length
+      // this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers.users))
+      // this.countTotal()
+      // console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
+    },
+
+    //获取科室列表
+    getDepartmentSelectList() {
+      let data = {
+        hospitalCode: this.hospitalCode, //搜索输入
+        status: 1, //1开启
+        pageNo: 1,
+        pageSize: 9999,
+      }
+      getMyDepartments(data).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.departmentLst = res.data.records
+          if (!this.choseDepartmentId) {
+            this.choseDepartmentId = res.data.records[0].department_id
+          }
+          this.getTreeUsers()
+        }
+      })
+    },
+
+    onDeptSelect() {
+      this.assignments = []
+      this.getTreeUsers()
+    },
+
+    getTreeUsers() {
+      this.deptUsers = { deptName: '', users: [] }
+      getTreeUsersByDeptIdsAndRoles({
+        hospitalCode: this.hospitalCode,
+        tenantId: this.tenantId,
+        roleIds: [this.type],
+        departmentIds: [this.choseDepartmentId],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.deptUsers = res.data[0]
+          if (this.deptUsers.users == null) {
+            this.deptUsers.users = []
+          }
+
+          if (
+            this.assignments &&
+            this.assignments.length > 0 &&
+            this.deptUsers.users.length == this.assignments.length
+          ) {
+            this.iconType = 'minus'
+          } else {
+            this.iconType = 'plus'
+          }
+
+          this.choseUsers = []
+
+          console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
+          console.log('assignments', JSON.parse(JSON.stringify(this.assignments)))
+          this.deptUsers.users.forEach((item) => {
+            this.$set(item, 'isChecked', false)
+            this.$set(item, 'canAdd', true)
+            if (this.assignments && this.assignments.length > 0) {
+              this.assignments.forEach((itemAss) => {
+                if (itemAss.objectId == item.userId) {
+                  //组装可以添加的用户
+                  this.$set(item, 'canAdd', false)
+                  this.$set(item, 'isChecked', true)
+
+                  //组装已添加用户
+                  let tempItem = JSON.parse(JSON.stringify(item))
+                  this.$set(tempItem, 'weight', itemAss.weight)
+                  this.$set(tempItem, 'achievementRatio', itemAss.achievementRatio)
+                  this.choseUsers.push(tempItem)
+                }
+              })
             }
           })
+          this.sortChoseUsers()
+          this.choseNum = this.choseUsers.length
+          this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers.users))
+          this.countTotal()
+          console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
         }
-        // this.$set(item, 'weight', 0)
       })
-      this.sortChoseUsers()
-      this.choseNum = this.choseUsers.length
-      this.autoUsers = JSON.parse(JSON.stringify(this.deptUsers.users))
-      // debugger
-      this.countTotal()
-      // console.log('after', JSON.parse(JSON.stringify(this.deptUsers)))
     },
 
     allClicked() {
@@ -327,6 +433,10 @@ export default {
         this.totolAverage = 100
         this.choseUsers.weight = 100
       }
+
+      if (this.deptUsers.users.length == this.choseUsers.length) {
+        this.iconType = 'minus'
+      }
     },
 
     deleteChoosed(record) {
@@ -395,7 +505,8 @@ export default {
         })
       })
       console.log('this.commodityPkgManageItemRsps', JSON.stringify(commodityPkgManageItemRsps))
-      this.$emit('ok', this.index, commodityPkgManageItemRsps)
+      console.log('this.choseDepartmentId', this.choseDepartmentId)
+      this.$emit('ok', this.index, commodityPkgManageItemRsps, this.choseDepartmentId)
       this.visible = false
     },
     handleCancel() {
@@ -424,6 +535,14 @@ export default {
     display: flex;
 
     flex-direction: column;
+
+    .div-choose-dept {
+      display: flex;
+      color: #333;
+      align-items: center;
+      padding: 10px 20px 20px 0;
+      flex-direction: row;
+    }
 
     .left-num-des {
       display: flex;

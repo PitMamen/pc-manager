@@ -78,16 +78,15 @@
             />
 
             <a-select
-                v-model="packageData.pkgValidUnit"
-                style="margin-left: 5px;width: 80px !important;"
-                allow-clear
-                placeholder="请选择"
-              >
-                <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
-              </a-select>
-
+              v-model="packageData.pkgValidUnit"
+              style="margin-left: 5px; width: 80px !important"
+              allow-clear
+              placeholder="请选择"
+            >
+              <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
           </div>
 
           <!-- <div class="div-pro-line"></div> -->
@@ -178,7 +177,7 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isDoctor" @click="goCheck(1)" >医生参与</a-checkbox>
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
             <!-- <span style="margin-left: 8px">医生参与</span> -->
           </div>
 
@@ -212,7 +211,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)" >护士参与</a-checkbox>
+            <a-checkbox :checked="isNurse" @click="goCheck(2)">护士参与</a-checkbox>
             <!-- <span style="margin-left: 8px">护士参与</span> -->
           </div>
 
@@ -246,7 +245,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1" >健康团队参与</a-checkbox>
+            <a-checkbox :checked="isTeam" @click="goCheck(3)" :disabled="broadClassify == 1">健康团队参与</a-checkbox>
             <!-- <span style="margin-left: 8px">健康团队参与</span> -->
           </div>
 
@@ -307,14 +306,14 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="needPlan" @click="handlePlan" >随访方案</a-checkbox>
+            <a-checkbox :checked="needPlan" @click="handlePlan">随访方案</a-checkbox>
             <!-- <span style="margin-left: 8px">随访方案</span> -->
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
           <a-select
             class="mid-select-two"
             mode="multiple"
-            style="min-width: 370px !important;"
+            style="min-width: 370px !important"
             :disabled="!needPlan"
             allow-clear
             @focus="onPersonFocus"
@@ -370,7 +369,10 @@ export default {
       headers: {
         Authorization: 'authorization-text',
       },
-      validateList:[{code:1,value:'天'},{code:2,value:'月'}],
+      validateList: [
+        { code: 1, value: '天' },
+        { code: 2, value: '月' },
+      ],
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
@@ -406,6 +408,8 @@ export default {
       tenantList: [],
       plans: [],
       roleIds: [],
+      docDepartmentId: undefined,
+      nurseDepartmentId: undefined,
       nameDoc: '',
       nameNurse: '',
       nameTeam: '',
@@ -422,8 +426,8 @@ export default {
         detailImgs: [],
         frontImgs: [],
         commodityFollowPlanIds: [],
-        pkgValidUnit:undefined,
-        pkgValidNum:1,
+        pkgValidUnit: undefined,
+        pkgValidNum: 1,
         //新增没有这两个
         // commodityId: 0,
         // commodityPkgId: 0,
@@ -521,9 +525,8 @@ export default {
           //处理套餐类别
           this.onTypeSelect()
 
-          //机构要根据租户获取
-          this.queryHospitalListOut()
-          this.getTreeUsersDoc(true)
+          // this.getTreeUsersDoc(true)
+          this.qryFollowPlanByFollowTypeOut(true)
         } else {
           // this.$message.error('获取计划列表失败：' + res.message)
         }
@@ -777,6 +780,9 @@ export default {
       } else {
         this.confirmLoading = false
       }
+
+      //机构要根据租户获取
+      this.queryHospitalListOut()
     },
 
     /**
@@ -912,8 +918,8 @@ export default {
           this.isTeam = false
           this.nameTeam = ''
 
-          if(this.isNurse && this.isDoctor){
-            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型 
+          if (this.isNurse && this.isDoctor) {
+            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型
             this.isNurse = false
             this.nameNurse = ''
           }
@@ -981,7 +987,6 @@ export default {
       this.nameNurse = ''
       this.plans = []
 
-
       if (this.packageData.tenantId) {
         this.queryHospitalListOut()
       }
@@ -996,40 +1001,40 @@ export default {
         this.nameDoc = ''
         this.nameNurse = ''
         this.plans = []
-        this.getTreeUsersDoc(false)
-        this.getTreeUsersNurse(false)
+        // this.getTreeUsersDoc(false)
+        // this.getTreeUsersNurse(false)
         this.qryFollowPlanByFollowTypeOut(false)
       }
     },
 
-    getTreeUsersDoc(isInit) {
-      getTreeUsersByDeptIdsAndRoles({
-        hospitalCode: this.packageData.hospitalCode,
-        tenantId: this.packageData.tenantId,
-        roleIds: ['doctor'],
-      }).then((res) => {
-        if (res.code == 0) {
-          this.deptUsersDoc = res.data
-          if (isInit) {
-            this.getTreeUsersNurse(isInit)
-          }
-        }
-      })
-    },
-    getTreeUsersNurse(isInit) {
-      getTreeUsersByDeptIdsAndRoles({
-        hospitalCode: this.packageData.hospitalCode,
-        tenantId: this.packageData.tenantId,
-        roleIds: ['nurse'],
-      }).then((res) => {
-        if (res.code == 0) {
-          this.deptUsersNurse = res.data
-          if (isInit) {
-            this.qryFollowPlanByFollowTypeOut(isInit)
-          }
-        }
-      })
-    },
+    // getTreeUsersDoc(isInit) {
+    //   getTreeUsersByDeptIdsAndRoles({
+    //     hospitalCode: this.packageData.hospitalCode,
+    //     tenantId: this.packageData.tenantId,
+    //     roleIds: ['doctor'],
+    //   }).then((res) => {
+    //     if (res.code == 0) {
+    //       this.deptUsersDoc = res.data
+    //       if (isInit) {
+    //         this.getTreeUsersNurse(isInit)
+    //       }
+    //     }
+    //   })
+    // },
+    // getTreeUsersNurse(isInit) {
+    //   getTreeUsersByDeptIdsAndRoles({
+    //     hospitalCode: this.packageData.hospitalCode,
+    //     tenantId: this.packageData.tenantId,
+    //     roleIds: ['nurse'],
+    //   }).then((res) => {
+    //     if (res.code == 0) {
+    //       this.deptUsersNurse = res.data
+    //       if (isInit) {
+    //         this.qryFollowPlanByFollowTypeOut(isInit)
+    //       }
+    //     }
+    //   })
+    // },
 
     /**
      * 随访方案列表
@@ -1134,26 +1139,42 @@ export default {
           this.$message.warn('请先选择医生参与分配方式')
           return
         }
-        if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
-          this.$message.warn('该机构没有可选医生')
-          return
-        }
+        // if (!this.deptUsersDoc || !this.deptUsersDoc.users || this.deptUsersDoc.users.length == 0) {
+        //   this.$message.warn('该机构没有可选医生')
+        //   return
+        // }
 
-        if (this.broadClassify == 1) {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersDoc,
-            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-            true
-          )
-        } else {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersDoc,
-            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-            false
-          )
-        }
+        this.$refs.addPeople.add(
+          index,
+          'doctor',
+          this.packageData.tenantId,
+          this.packageData.hospitalCode,
+          this.docDepartmentId,
+          this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+          this.broadClassify == 1 ? true : false
+        )
+
+        // if (this.broadClassify == 1) {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     'doctor',
+        //     this.packageData.tenantId,
+        //     this.packageData.hospitalCode,
+        //     this.docDepartmentId,
+        //     this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+        //     true
+        //   )
+        // } else {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     'doctor',
+        //     this.packageData.tenantId,
+        //     this.packageData.hospitalCode,
+        //     this.docDepartmentId,
+        //     this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
+        //     false
+        //   )
+        // }
       } else {
         if (!this.isNurse) {
           return
@@ -1167,27 +1188,31 @@ export default {
           return
         }
 
-        if (this.broadClassify == 1) {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersNurse,
-            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-            true
-          )
-        } else {
-          this.$refs.addPeople.add(
-            index,
-            this.deptUsersNurse,
-            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-            false
-          )
-        }
-        // this.$refs.addPeople.add(
-        //   index,
-        //   this.deptUsersNurse,
-        //   this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-        //   false
-        // )
+        this.$refs.addPeople.add(
+          index,
+          'nurse',
+          this.packageData.tenantId,
+          this.packageData.hospitalCode,
+          this.nurseDepartmentId,
+          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          this.broadClassify == 1 ? true : false
+        )
+
+        // if (this.broadClassify == 1) {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     this.deptUsersNurse,
+        //     this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+        //     true
+        //   )
+        // } else {
+        //   this.$refs.addPeople.add(
+        //     index,
+        //     this.deptUsersNurse,
+        //     this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+        //     false
+        //   )
+        // }
       }
     },
 
@@ -1196,7 +1221,7 @@ export default {
      * @param {*} index 0 医生  1 护士
      * @param {*} commodityPkgManageItemReqs
      */
-    handleAddPeople(index, commodityPkgManageItemReqs) {
+    handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
       this.packageData.commodityPkgManageReqs[index].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       if (index == 0) {
         this.nameDoc = ''
@@ -1207,6 +1232,7 @@ export default {
             this.nameDoc = this.nameDoc + item.userName
           }
         })
+        this.docDepartmentId = departmentId
       } else {
         this.nameNurse = ''
         commodityPkgManageItemReqs.forEach((item, indexReqs) => {
@@ -1216,6 +1242,7 @@ export default {
             this.nameNurse = this.nameNurse + item.userName
           }
         })
+        this.nurseDepartmentId = departmentId
       }
     },
 
@@ -1325,6 +1352,7 @@ export default {
 
           tempData.commodityPkgManageReqs[0].allocationType = this.allocationTypeDoc
           tempData.commodityPkgManageReqs[0].teamType = 1
+          tempData.commodityPkgManageReqs[0].departmentId = this.docDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[0])
         }
 
@@ -1340,6 +1368,7 @@ export default {
 
           tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeNurse
           tempData.commodityPkgManageReqs[1].teamType = 2
+          tempData.commodityPkgManageReqs[1].departmentId = this.nurseDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[1])
         }
 
@@ -1416,8 +1445,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
-/deep/ .ant-checkbox-wrapper{
+/deep/ .ant-checkbox-wrapper {
   font-size: 12px !important;
 }
 

@@ -2623,6 +2623,16 @@ export function getDepartmentListForSelect(departmentName, source) {
   })
 }
 /**
+ * 科室列表 科室选择用
+ */
+export function getMyDepartments(data) {
+  return axios({
+    url: '/follow-api/departmentManger/getDepartmentListForReq',
+    method: 'post',
+    data: data,
+  })
+}
+/**
  * 添加科室
  */
 export function addDepartmentForReq(data) {
@@ -3732,9 +3742,9 @@ export function treeMedicalSubjects(data) {
 
 
 //问卷管理中的问卷列表接口
-export function getQuestionnaireList(data){
+export function getQuestionnaireList(data) {
   return axios({
-    url:'/follow-api/questionnaireStatistics/getQuestionnaireListForHospital',
+    url: '/follow-api/questionnaireStatistics/getQuestionnaireListForHospital',
     method: 'post',
     data: data,
   })
@@ -3742,31 +3752,31 @@ export function getQuestionnaireList(data){
 
 
 //删除问卷
-export function deleteQuestion(data){
+export function deleteQuestion(data) {
   return axios({
-    url:'/follow-api/questionnaireStatistics/deleteQuestion',  
+    url: '/follow-api/questionnaireStatistics/deleteQuestion',
     method: 'get',
     params: data,
   })
 }
 
 
- export function updateDeptAndHospCodeForKey(data){
+export function updateDeptAndHospCodeForKey(data) {
   return axios({
-    url:'/follow-api/questionnaireStatistics/updateDeptAndHospCodeForKey',
+    url: '/follow-api/questionnaireStatistics/updateDeptAndHospCodeForKey',
     method: 'get',
     params: data,
   })
- }
+}
 
 
 
 
 
 //修改问卷状态
-export function updateQuestionStatus(data){
+export function updateQuestionStatus(data) {
   return axios({
-    url:'/follow-api/questionnaireStatistics/updateQuestionStatus',
+    url: '/follow-api/questionnaireStatistics/updateQuestionStatus',
     method: 'get',
     params: data,
   })
@@ -3774,70 +3784,70 @@ export function updateQuestionStatus(data){
 
 
 //问卷免登陆 跳转
- export function createNoLogin(data){
+export function createNoLogin(data) {
   return axios({
-    url:'/follow-api/questionnaireStatistics/createQuestionnaireNoLogin',
-    method:'get',
-    params:data,
+    url: '/follow-api/questionnaireStatistics/createQuestionnaireNoLogin',
+    method: 'get',
+    params: data,
   })
- }
+}
 
 
 //订单分组
-export function getOrderStatusGroupByData(data){
+export function getOrderStatusGroupByData(data) {
   return axios({
-    url:'/medical-api/admorder/getOrderStatusGroupByData',
-    method:'post',
-    data:data,
+    url: '/medical-api/admorder/getOrderStatusGroupByData',
+    method: 'post',
+    data: data,
   })
 }
 
 //订单列表
-export function orderList(data){
+export function orderList(data) {
   return axios({
-    url:'/medical-api/admorder/list',
-    method:'post',
-    data:data,
+    url: '/medical-api/admorder/list',
+    method: 'post',
+    data: data,
   })
 }
 
 
 //订单详情
-export function getOrderDetail(data){
+export function getOrderDetail(data) {
   return axios({
-    url:'/medical-api/admorder/detail',
-    method:'get',
-    params:data,
+    url: '/medical-api/admorder/detail',
+    method: 'get',
+    params: data,
   })
 }
 
 
 //取消订单
-export function cancelOrder(data){
-   return axios({
-    url:'/medical-api/admorder/cancel',
-    method:'post',
-    data:data,
-   })
+export function cancelOrder(data) {
+  return axios({
+    url: '/medical-api/admorder/cancel',
+    method: 'post',
+    data: data,
+  })
 }
 
 
 //订单可退款明细
-export function canRefundItems(data){
+export function canRefundItems(data) {
   return axios({
-   url:'/medical-api/admorder/canRefundItems',
-   method:'get',
-   params:data,
+    url: '/medical-api/admorder/canRefundItems',
+    method: 'get',
+    params: data,
   })
 }
 
 
 //申请退款
-export function applyRefund(data){
+export function applyRefund(data) {
   return axios({
-   url:'/medical-api/admorder/applyRefund',
-   method:'post',
-   data:data,
+    url: '/medical-api/admorder/applyRefund',
+    method: 'post',
+    data: data,
   })
 }
 
