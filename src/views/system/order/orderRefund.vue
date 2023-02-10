@@ -99,44 +99,78 @@ export default {
     STable,
   },
   data() {
-    var spanArr = []
-    var position = 0
-    //列合并
-    const renderContent = (value, row, index) => {
-      const obj = {
-        children: value,
-        attrs: {},
-      }
-      const _row = spanArr[index]
-      const _col = _row > 0 ? 1 : 0
-      obj.attrs = {
-        rowSpan: _row,
-        colSpan: _col,
-      }
 
-      return obj
-    }
+    //  const bbb = (text, record, index) => {
+    //       const obj = {
+    //         children: text,
+    //         props: {},
+    //       };
+
+    //       // 如果上面有相同的数据，如商品ID 222, 则rowSpan = 0
+    //       if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
+    //         obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')   
+    //     } else {
+    //         obj.props.rowSpan = 0;
+    //     }
+
+    //       return obj;
+    //     }
+
+
+    // var spanArr = []
+    // var position = 0
+    // //列合并
+    // const renderContent = (value, row, index) => {
+    //   const obj = {
+    //     children: value,
+    //     attrs: {},
+    //   }
+    //   const _row = spanArr[index]
+    //   const _col = _row > 0 ? 1 : 0
+    //   obj.attrs = {
+    //     rowSpan: _row,
+    //     colSpan: _col,
+    //   }
+
+    //   return obj
+    // }
 
     //计算合并
-    const rowspan = (userData) => {
-      var spanArr = []
-      var position = 0
-      userData.forEach((item, index) => {
-        if (index === 0) {
-          spanArr.push(1)
-          position = 0
-        } else {
-          //需要合并的地方判断
-          if (userData[index].planName === userData[index - 1].planName) {
-            spanArr[position] += 1
-            spanArr.push(0)
-          } else {
-            spanArr.push(1)
-            position = index
+    // const rowspan = (userData) => {
+    //   var spanArr = []
+    //   var position = 0
+    //   userData.forEach((item, index) => {
+    //     if (index === 0) {
+    //       spanArr.push(1)
+    //       position = 0
+    //     } else {
+    //       //需要合并的地方判断
+    //       if (userData[index].planName === userData[index - 1].planName) {
+    //         spanArr[position] += 1
+    //         spanArr.push(0)
+    //       } else {
+    //         spanArr.push(1)
+    //         position = index
+    //       }
+    //     }
+    //   })
+    // }
+
+    const mergeCells = (text, array, columns) => {
+      const temp = {}; // 当前重复的值,支持多列
+      console.log("LLLLL:",text,columns)
+      let i = 0;
+      if (text != temp[columns]) {
+        temp[columns] = text;
+        
+        array.forEach((item) => {
+          if (item[columns] == temp[columns]) {
+            i += 1;
           }
-        }
-      })
-    }
+        });
+      }
+      return i;
+    };
 
     return {
       orderId: '',
@@ -160,37 +194,77 @@ export default {
       form: this.$form.createForm(this),
       title: '订单退款',
       TempcanRefundAmount: '',
+      countnum:0,
+
 
       cancelItemColumns: [
         {
           title: '项目',
           dataIndex: 'rightsItemName',
+          key:'rightsItemName',
         },
         {
           title: '应付金额',
           dataIndex: 'saleAmount',
+          key:'saleAmount',
         },
         {
           title: '实收金额',
           dataIndex: 'payTotal',
-          //   customRender: renderContent,
+          key:'payTotal',
+          customRender: (text, record, index) => {
+          const obj = {
+            children: text,
+            props: {},
+          };
+
+          if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
+            obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')   
+        } else {
+            obj.props.rowSpan = 0;
+        }
+
+          return obj;
+        },
+
+
+
+        //     customRender: (text, record, index) => {
+        //         console.log("mmmmm:",text,record,index)
+        //     const obj = {
+        //       children: this.countnum,
+        //       attrs: {},
+        //     }
+        //     if ( index == 0) {
+        //       obj.attrs.rowSpan = this.cancelItemsData.length
+        //     } 
+        //     if(index>1){
+        //         obj.attrs.rowSpan = 0
+        //     }
+
+        //     return obj
+        //   },
         },
         {
           title: '剩余数',
           dataIndex: 'surplusQuantity',
+          key: 'surplusQuantity',
         },
         {
           title: '应退金额',
           dataIndex: 'yingtuiAmount',
+          key: 'yingtuiAmount',
         },
         {
           title: '减扣金额',
           dataIndex: 'jiankouAmount',
+          key: 'jiankouAmount',
           scopedSlots: { customRender: 'jiankaction' },
         },
         {
           title: '实退金额',
           dataIndex: 'canRefundAmount',
+          key: 'canRefundAmount',
           scopedSlots: { customRender: 'shikaction' },
         },
       ],
@@ -220,16 +294,12 @@ export default {
       record.canRefundAmount = record.yingtuiAmount - record.jiankouAmount
       let com = 0
       for (let index = 0; index < this.cancelItemsData.length; index++) {
-        console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
+        // console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
         com += this.cancelItemsData[index].canRefundAmount
       }
 
       this.canRefundDataList.canRefundTotal = com
     },
-
-
-
-
 
     //实退金额改变
     changeshituiAmount(record) {
@@ -238,16 +308,16 @@ export default {
         this.$message.error('减扣金额不能大于应退金额!')
         return
       }
-    //   record.jiankouAmount = record.yingtuiAmount - record.canRefundAmount
+      record.jiankouAmount = record.yingtuiAmount - record.canRefundAmount
 
-    //   let number = 0
-    //   for (let index = 0; index < this.cancelItemsData.length; index++) {
-    //     console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
-    //     number += this.cancelItemsData[index].canRefundAmount
-    //   }
-    //   console.log('dddddd:', number)
+      let number = 0
+      for (let index = 0; index < this.cancelItemsData.length; index++) {
+        // console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
+        number += Number(this.cancelItemsData[index].canRefundAmount)
+      }
+      //   console.log('dddddd:', number)
 
-    //   this.canRefundDataList.canRefundTotal = number
+      this.canRefundDataList.canRefundTotal = number
     },
 
     //订单可退款明细
@@ -263,6 +333,7 @@ export default {
               this.$set(item, 'yingtuiAmount', item.canRefundAmount)
               this.$set(item, 'TempcanRefundAmount', item.canRefundAmount)
               this.$set(item, 'jiankouAmount', 0)
+              this.$set(item, 'key', index)
             })
             // this.rowspan(this.cancelItemsData)
             // this.rowspan(this.cancelItemsData)
