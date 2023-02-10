@@ -39,9 +39,9 @@
 
       <div class="search-row">
         <span class="name">套餐类型:</span>
-        <a-select v-model="queryParams.projectType" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in packgeList" :value="item.id" :key="index">{{  
-            item.name
+        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
+            item.classifyName
           }}</a-select-option>
         </a-select>
       </div>
@@ -142,7 +142,7 @@
         <img
           :class="{ 'checked-icon': queryParams.orderStatus == 5 }"
           style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
+          src="~@/assets/icons/bcsf.png"
         /><span style="margin-left: 3px">已取消({{ numberData.yiquxiao }})</span>
       </div>
     </div>
@@ -162,7 +162,7 @@
 
       <!-- 状态 -->
       <span slot="orderStatus" slot-scope="text, record">
-        <span style="color:darkseagreen">{{ getType(record) }}</span>
+        <span style="color:#0E9B0B">{{ getType(record) }}</span>
       </span>
 
       
@@ -174,8 +174,8 @@
  <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { orderList, queryHospitalList, getOrderStatusGroupByData } from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getlastMonthToday } from '@/utils/util'
+import { orderList, queryHospitalList, getOrderStatusGroupByData ,getCommodityClassify} from '@/api/modular/system/posManage'
+import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 
@@ -193,13 +193,7 @@ export default {
       createValue: [],
       treeData: [],
       gropListData: [],
-      packgeList: [
-        { id: 101, name: '图文咨询' },
-        { id: 102, name: '电话咨询' },
-        { id: 103, name: '视频咨询' },
-        // { id: 3, name: '普通商品' },
-      ],
-
+      packgeList:[],
       numberData: {
         quanbu: 0,
         daifukuan: 0,
@@ -216,18 +210,18 @@ export default {
         commodityName: '',
         doctorName: '',
         hospitalCode:undefined,
-        orderEndTime: '',
-        orderStartTime: '',
-        projectType: undefined,
+        orderEndTime: getCurrentMonthLast(),
+        orderStartTime:  getDateNow(),
+        classifyId: undefined,
       },
       queryParams: {
         combinedCondition: undefined,
         commodityName: '',
         doctorName: '',
         hospitalCode: undefined,
-        orderEndTime: '',
-        orderStartTime: '',
-        projectType: undefined,
+        orderEndTime: getCurrentMonthLast(),
+        orderStartTime:  getDateNow(),
+        classifyId: undefined,
         orderStatus: '',
       },
       // 表头
@@ -332,6 +326,7 @@ export default {
               //设置序号
               data.rows.forEach((item, index) => {
                 this.$set(item, 'serveTime', item.startTime)
+                // this.$set(item, 'status', 1)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
               })
@@ -351,10 +346,22 @@ export default {
   created() {
     this.queryHospitalListOut()
     this.createValue = [
-      moment(this.formatDate(new Date()), this.dateFormat),
-      moment(this.formatDate(new Date()), this.dateFormat),
+
+    // moment(getlastMonthToday(), this.dateFormat),
+    //   moment(formatDate(new Date().getTime()), this.dateFormat),
+
+      moment(getDateNow(), this.dateFormat),
+      moment(getCurrentMonthLast(), this.dateFormat),
     ]
     this.getOrderStatusGroupByDataOut()
+
+    getCommodityClassify({}).then((res) => {
+      if (res.code == 0) {
+        this.packgeList = res.data
+      } else {
+        // this.$message.error('获取计划列表失败：' + res.message)
+      }
+    })
   },
 
   methods: {
@@ -371,28 +378,56 @@ export default {
     },
 
     getType(record) {
-      if (record.status == 1) {
+      if (record.orderStatus == 1) {
         return '待付款'
-      } else if (record.status == 2) {
+      } else if (record.orderStatus == 2) {
         return '已完成'
-      } else if (record.status == 3) {
+      } else if (record.orderStatus == 3) {
         return '支付中'
-      } else if (record.status == 4) {
+      } else if (record.orderStatus == 4) {
         return '待收货'
-      } else if (record.status == 5) {
+      } else if (record.orderStatus == 5) {
         return '已取消'
-      } else if (record.status == 6) {
+      } else if (record.orderStatus == 6) {
         return '未配送'
-      } else if (record.status == 7) {
+      } else if (record.orderStatus == 7) {
         return '已配送'
-      } else if (record.status == 8) {
+      } else if (record.orderStatus == 8) {
         return '待发货'
-      } else if (record.status == 9) {
+      } else if (record.orderStatus == 9) {
         return '使用中'
-      } else if (record.status == 10) {
+      } else if (record.orderStatus == 10) {
         return '退款中'
       }
     },
+
+    getColor(record){
+      if (record.orderStatus == 1) {
+        return '#0E9B0B'
+      } else if (record.orderStatus == 2) {
+        return '#4D4D4D'
+      } else if (record.orderStatus == 3) {
+        return '#4D4D4D'
+      } else if (record.orderStatus == 4) {
+        return '#409EFF'
+      } else if (record.orderStatus == 5) {
+        return '#4D4D4D'
+      } else if (record.orderStatus == 6) {
+        return '#4D4D4D'
+      } else if (record.orderStatus == 7) {
+        return '#4D4D4D'
+      } else if (record.orderStatus == 8) {
+        return '#409EFF'
+      } else if (record.orderStatus == 9) {
+        return '#409EFF'
+      } else if (record.orderStatus == 10) {
+        return '#F40E0E'
+      }
+
+
+    },
+
+
 
     queryHospitalListOut() {
       let queryData = {
@@ -429,13 +464,15 @@ export default {
     },
 
     reset() {
-      combinedCondition = ''
-      commodityName = ''
-      doctorName = ''
-      hospitalCode = undefined
-      orderEndTime = ''
-      orderStartTime = ''
-      projectType = ''
+      this.queryParams.combinedCondition = ''
+      this.queryParams.commodityName = ''
+      this.queryParams.doctorName = ''
+      this.queryParams.hospitalCode = undefined
+      this.queryParams.orderEndTime = ''
+      this.queryParams.orderStartTime = ''
+      this.queryParams.classifyId = ''
+      this.getOrderStatusGroupByDataOut()
+      this.handleOk()
     },
 
     //订单分组

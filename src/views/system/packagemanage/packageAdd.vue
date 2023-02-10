@@ -66,18 +66,22 @@
             </a-tree-select>
           </div>
 
-          <div class="div-pro-line">
-            <span class="span-item-name"><span style="color: red">*</span> 套餐效期 :</span>
+          <div class="div-pro-line" style="margin-left: -25px !important">
+            <a-checkbox @change="changeData"   class="span-item-name" style="margin-left: 8px"
+              >套餐效期 :</a-checkbox
+            >
             <a-input
+            :disabled="disabledValue"
               class="span-item-value"
               v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 40%"
+              style="display: inline-block; width: 40%;margin-left: -7px;"
               allow-clear
               placeholder="请输入 "
             />
 
             <a-select
+            :disabled="disabledValue"
               v-model="packageData.pkgValidUnit"
               style="margin-left: 5px; width: 80px !important"
               allow-clear
@@ -370,7 +374,7 @@ export default {
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
-
+      disabledValue:false,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',
@@ -541,6 +545,19 @@ export default {
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+
+
+    changeData(value) {
+      console.log('tttt:', value.target.checked)
+      if(value.target.checked){
+       this. disabledValue = false
+      }else{
+       this. disabledValue = true
+       this.packageData.pkgValidNum = null
+       this.packageData.pkgValidUnit = null
+      }
     },
 
     /**
@@ -1093,6 +1110,10 @@ export default {
         this.$message.error('请选择所属机构')
         return
       }
+
+
+ 
+
 
       //组装图片
       if (this.fileList.length == 0) {

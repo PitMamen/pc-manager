@@ -5,7 +5,7 @@
           orderDetailDataList.status.value != 102 -->
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
-      <a-button @click="goBack()">返回</a-button>
+      <a-button type="primary" ghost @click="goBack()">返回</a-button>
       <a-button
         :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
         style="margin-left: 15px"
@@ -15,7 +15,7 @@
         >{{ getType(orderDetailDataList.status.value) }}</a-button
       >
 
-      <a-button style="margin-left: 82.5%; float: right">日志</a-button>
+      <a-button type="primary" ghost style="margin-left: 82.5%; float: right">日志</a-button>
     </div>
 
     <div class="big-kuang">
@@ -52,7 +52,7 @@
 
         <div class="div-pro-line">
           <span class="span-item-name"> 订单状态 :</span>
-          <span class="span-item-value">{{
+          <span style="color: #409eff" class="span-item-value">{{
             orderDetailDataList.status ? orderDetailDataList.status.description : '-'
           }}</span>
         </div>
@@ -151,11 +151,12 @@
 
         <div class="div-pro-line">
           <span class="span-item-name">备注说明 :</span>
+          <span style="color: #409eff" class="span-item-value">请输入</span>
         </div>
       </div>
     </div>
 
-    <div style="margin-top: 20px; height: 300px !important" class="big-kuang">
+    <div style="margin-top: 20px;height: 200px !important" class="big-kuang">
       <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">产品清单</div>
       <div class="line"></div>
       <a-table
@@ -171,9 +172,9 @@
       </a-table>
     </div>
 
-    <div style="margin-top: 20px; height: 300px !important" class="big-kuang">
+    <div style="margin-top: 20px; height: 200px !important" class="big-kuang">
       <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">
-        <a-button style="margin-left: 82.5%; float: right; margin-top: -4px">使用情况</a-button>权益清单
+        <a-button type="primary" ghost style="margin-left: 82.5%; float: right; margin-top: -4px">使用情况</a-button>权益清单
       </div>
 
       <div class="line"></div>
@@ -203,9 +204,9 @@
     </div>
 
     <a-modal
+      class="ant-modal"
       :confirmLoading="smallLoading"
-      style="margin-top: 90px"
-      :width="900"
+      style="margin-top: 90px; width: 488px !important; height: 218px"
       :title="dealResultTitle"
       :visible="visible_model"
       @ok="handleComf"
@@ -215,7 +216,7 @@
         <a-button type="primary" @click="handleComf">确定</a-button>
         <a-button @click="handleCancelUpdPwd">关闭</a-button>
       </template>
-      <div class="display-item" style="margin-left: 45%; margin-top: 10px">
+      <div class="display-item" style="margin-left: 42%; margin-top: 40px;margin-bottom: 40px;">
         <span style="margin-top: 10px"> 确定取消订单吗?</span>
         <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
       </div>
@@ -341,7 +342,7 @@ export default {
   activated() {
     // if (to.path.indexOf('orderDetail') > -1) {
     if (this.$route.query.orderId) {
-      console.log('BBBBBBBBB',this.$route.query.orderId)
+    //   console.log('BBBBBBBBB', this.$route.query.orderId)
       var orderId = this.$route.query.orderId
       //   var jumpData =JSON.parse(this.$route.query.data)
       this.init(orderId)
@@ -377,6 +378,7 @@ export default {
     },
 
     handleOk() {
+        console.log("刷新数据----",this.orderId)
       this.getOrderDetailOut(this.orderId)
     },
 
@@ -411,7 +413,7 @@ export default {
 
     //按钮显示与隐藏
     showHide(value) {
-      if (value == 2 || value == 5 || value == 102) {
+      if (value == 2 || value == 5 || value == 102) {   //已完成 已取消  退款中 不显示可操作的按钮
         return false
       } else {
         return true
@@ -420,11 +422,11 @@ export default {
 
     //点击
     clickType(value) {
-      if (value == 1) {
-        this.visible_model = true //取消订单
+      if (value == 1) {  //取消订单
+        this.visible_model = true //显示 弹框
       } else {
         // 申请退款
-        console.log('XXXXXXXX',this.orderId,this.payMode)
+        // console.log('XXXXXXXX',this.orderId,this.payMode)
         this.$refs.orderRefund.refund(this.orderId, this.payMode)
       }
     },
@@ -447,6 +449,7 @@ export default {
           }
         })
         .finally((res) => {
+          this.visible_model = false
           this.smallLoading = false
         })
     },
@@ -459,15 +462,59 @@ export default {
 }
 </script>
 
+
+
 <style lang="less" scoped>
 /deep/.ant-table-small {
   border-radius: 2px;
   border-bottom: 1px #e6e6e6 solid !important;
 }
+
+
+
+
+
+
+/deep/.ant-modal-root {
+    /deep/.ant-modal {
+    margin-top: 90px;
+    width: 488px !important;
+    height: 218px;
+  }
+
+  /deep/.ant-modal-content {
+    height: 318px;
+  }
+
+  /deep/.ant-modal-body {
+    margin-left: 41%;
+    margin-top: 43px;
+    margin-bottom: 30px;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 </style>
 
   
   <style lang="less" scoped>
+
+
+/deep/.ant-modal-body {
+  margin-left: 41% !important;
+  margin-top: 43px;
+  margin-bottom: 30px;
+}
+
 .topButton {
   margin: 10px;
   width: 100%;

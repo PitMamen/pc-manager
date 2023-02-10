@@ -93,29 +93,13 @@
 import moment from 'moment'
 import { canRefundItems, applyRefund } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
+import { ColumnProps } from 'ant-design-vue/es/table/interface'
 
 export default {
   components: {
     STable,
   },
   data() {
-
-    //  const bbb = (text, record, index) => {
-    //       const obj = {
-    //         children: text,
-    //         props: {},
-    //       };
-
-    //       // 如果上面有相同的数据，如商品ID 222, 则rowSpan = 0
-    //       if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
-    //         obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')   
-    //     } else {
-    //         obj.props.rowSpan = 0;
-    //     }
-
-    //       return obj;
-    //     }
-
 
     // var spanArr = []
     // var position = 0
@@ -157,20 +141,20 @@ export default {
     // }
 
     const mergeCells = (text, array, columns) => {
-      const temp = {}; // 当前重复的值,支持多列
-      console.log("LLLLL:",text,columns)
-      let i = 0;
+      const temp = {} // 当前重复的值,支持多列
+      console.log('LLLLL:', text, columns)
+      let i = 0
       if (text != temp[columns]) {
-        temp[columns] = text;
-        
+        temp[columns] = text
+
         array.forEach((item) => {
           if (item[columns] == temp[columns]) {
-            i += 1;
+            i += 1
           }
-        });
+        })
       }
-      return i;
-    };
+      return i
+    }
 
     return {
       orderId: '',
@@ -194,77 +178,60 @@ export default {
       form: this.$form.createForm(this),
       title: '订单退款',
       TempcanRefundAmount: '',
-      countnum:0,
-
+      countnum: 0,
 
       cancelItemColumns: [
         {
           title: '项目',
           dataIndex: 'rightsItemName',
-          key:'rightsItemName',
+          key: '0',
         },
         {
           title: '应付金额',
           dataIndex: 'saleAmount',
-          key:'saleAmount',
+          key: '1',
         },
         {
           title: '实收金额',
           dataIndex: 'payTotal',
-          key:'payTotal',
+          key: '2',
           customRender: (text, record, index) => {
-          const obj = {
-            children: text,
-            props: {},
-          };
+            const obj = {
+              children: text,
+              props: {},
+            }
 
-          if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
-            obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')   
-        } else {
-            obj.props.rowSpan = 0;
-        }
+            if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
+              obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
+            //   obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, record.payTotal)
+            } else {
+              obj.props.rowSpan = 0
+            }
 
-          return obj;
-        },
+            return obj
+          },
 
-
-
-        //     customRender: (text, record, index) => {
-        //         console.log("mmmmm:",text,record,index)
-        //     const obj = {
-        //       children: this.countnum,
-        //       attrs: {},
-        //     }
-        //     if ( index == 0) {
-        //       obj.attrs.rowSpan = this.cancelItemsData.length
-        //     } 
-        //     if(index>1){
-        //         obj.attrs.rowSpan = 0
-        //     }
-
-        //     return obj
-        //   },
         },
         {
           title: '剩余数',
           dataIndex: 'surplusQuantity',
-          key: 'surplusQuantity',
+          key: '3',
         },
         {
           title: '应退金额',
           dataIndex: 'yingtuiAmount',
-          key: 'yingtuiAmount',
+          key: '4',
         },
         {
           title: '减扣金额',
           dataIndex: 'jiankouAmount',
-          key: 'jiankouAmount',
+          key: '5',
           scopedSlots: { customRender: 'jiankaction' },
         },
         {
           title: '实退金额',
           dataIndex: 'canRefundAmount',
-          key: 'canRefundAmount',
+          key: '6',
           scopedSlots: { customRender: 'shikaction' },
         },
       ],
