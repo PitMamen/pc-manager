@@ -101,57 +101,39 @@ export default {
   },
   data() {
 
-    // var spanArr = []
-    // var position = 0
-    // //列合并
-    // const renderContent = (value, row, index) => {
-    //   const obj = {
-    //     children: value,
-    //     attrs: {},
-    //   }
-    //   const _row = spanArr[index]
-    //   const _col = _row > 0 ? 1 : 0
-    //   obj.attrs = {
-    //     rowSpan: _row,
-    //     colSpan: _col,
-    //   }
+    // const mergeCells = (text, array, columns) => {
+    //   const temp = {} // 当前重复的值,支持多列
+    //   let i = 0
+    //   if (text !== temp[columns]) {
+    //     temp[columns] = text
 
-    //   return obj
-    // }
+    //     array.forEach((item) => {
+    //       console.log('LLLLL:', item[columns], temp[columns])
 
-    //计算合并
-    // const rowspan = (userData) => {
-    //   var spanArr = []
-    //   var position = 0
-    //   userData.forEach((item, index) => {
-    //     if (index === 0) {
-    //       spanArr.push(1)
-    //       position = 0
-    //     } else {
-    //       //需要合并的地方判断
-    //       if (userData[index].planName === userData[index - 1].planName) {
-    //         spanArr[position] += 1
-    //         spanArr.push(0)
-    //       } else {
-    //         spanArr.push(1)
-    //         position = index
+    //       if (item[columns] === temp[columns]) {
+    //         i += 1
     //       }
-    //     }
-    //   })
+    //     })
+    //   }
+    //   return i
     // }
 
     const mergeCells = (text, array, columns) => {
-      const temp = {} // 当前重复的值,支持多列
-      console.log('LLLLL:', text, columns)
+        const temp = {} // 当前重复的值,支持多列
+        console.log("GGGG:",text, array, columns)
       let i = 0
-      if (text != temp[columns]) {
+      let isContinuous = false // 判断是否连续
+      if (text !== temp[columns]) {
         temp[columns] = text
-
-        array.forEach((item) => {
-          if (item[columns] == temp[columns]) {
+        for (let j = 0; j < array.length; j++) {
+          let item = array[j]
+          if (item[columns] === temp[columns]) {
             i += 1
+            // isContinuous = true
+          } else {
+            // if (isContinuous) break
           }
-        })
+        }
       }
       return i
     }
@@ -193,25 +175,38 @@ export default {
         },
         {
           title: '实收金额',
-          dataIndex: 'payTotal',
-          key: '2',
-          customRender: (text, record, index) => {
-            const obj = {
-              children: text,
-              props: {},
-            }
+            dataIndex: 'payTotal',
 
-            if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
-              obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
-            //   obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, record.payTotal)
-            } else {
-              obj.props.rowSpan = 0
-            }
+            customRender: (text, row) => {
+              if (text != '') {
+                const obj = {
+                  children: text.payTotal,
+                  attrs: {},
+                };
+                obj.attrs.rowSpan = mergeCells(row.payTotal, this.cancelItemsData, 'payTotal');
+                return obj;
+              }
+            },
 
-            return obj
-          },
+        //   customRender: (text, record, index) => {
+        //     const obj = {
+        //       children: text,
+        //       props: {},
+        //     }
 
+        //     if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
+        //       obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
+        //     } else {
+        //       obj.props.rowSpan = 0
+        //     }
+
+        //     return obj
+        //   },
         },
+
+
+
+
         {
           title: '剩余数',
           dataIndex: 'surplusQuantity',

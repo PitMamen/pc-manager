@@ -374,7 +374,7 @@ export default {
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
-      disabledValue:false,
+      disabledValue:true,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',

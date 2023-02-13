@@ -91,9 +91,9 @@
           src="~@/assets/icons/icon_wait.svg"
         /><span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 7 }" @click="onRadioClick(7)">
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 1 }" @click="onRadioClick(1)">
         <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 7 }"
+          :class="{ 'checked-icon': queryParams.orderStatus == 1 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/icon_completed.svg"
         /><span style="margin-left: 3px">待付款({{ numberData.daifukuan }}) </span>
@@ -130,9 +130,9 @@
         /><span style="margin-left: 3px">已完成({{ numberData.yiwancheng }})</span>
       </div>
 
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 10 }" @click="onRadioClick(10)">
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 102 }" @click="onRadioClick(102)">
         <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 10 }"
+          :class="{ 'checked-icon': queryParams.orderStatus == 102 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
         /><span style="margin-left: 3px">退款中({{ numberData.tuikuanzhong }})</span>

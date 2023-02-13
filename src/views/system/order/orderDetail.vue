@@ -407,6 +407,7 @@ export default {
     },
 
     getOrderDetailOut(orderID) {
+        this.confirmLoading = true
       getOrderDetail({ orderId: orderID }).then((res) => {
         if (res.code == 0) {
           var reponseDataList = res.data
@@ -416,7 +417,9 @@ export default {
           this.goodsItemsData = res.data.goodsItems
           this.rightItemsData = res.data.rightItems
         }
-      })
+      }).finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     //返回
