@@ -397,7 +397,7 @@ export default {
         return '待发货'
       } else if (record.orderStatus == 9) {
         return '使用中'
-      } else if (record.orderStatus == 10) {
+      } else if (record.orderStatus == 102) {
         return '退款中'
       }
     },
@@ -421,7 +421,7 @@ export default {
         return '#409EFF'
       } else if (record.orderStatus == 9) {
         return '#409EFF'
-      } else if (record.orderStatus == 10) {
+      } else if (record.orderStatus == 102) {
         return '#F40E0E'
       }
 
@@ -492,7 +492,7 @@ export default {
                 this.numberData.shiyongzhong  = res.data[index].co
               }else if(res.data[index].code == 2){ //已完成
                 this.numberData.yiwancheng  = res.data[index].co
-              }else if(res.data[index].code == 10){ //退款中
+              }else if(res.data[index].code == 102){ //退款中
                 this.numberData.tuikuanzhong  = res.data[index].co
               }else if(res.data[index].code == 5){  //已取消
                 this.numberData.yiquxiao  = res.data[index].co

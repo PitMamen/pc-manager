@@ -100,16 +100,32 @@ export default {
     STable,
   },
   data() {
+    const mergeCells = (text, array, columns) => {
+      const temp = [] // 当前重复的值,支持多列
+      let i = 0
+      if (text !== temp[columns]) {
+        temp[columns] = text
+
+        array.forEach((item) => {
+          console.log('LLLLL:', item[columns], temp[columns])
+
+          if (item[columns] === temp[columns]) {
+            i += 1
+          }
+        })
+      }
+      return i
+    }
 
     // const mergeCells = (text, array, columns) => {
     //   const temp = {} // 当前重复的值,支持多列
+    //   console.log('GGGG:', text, array, columns)
     //   let i = 0
+    //   let isContinuous = false // 判断是否连续
     //   if (text !== temp[columns]) {
     //     temp[columns] = text
-
     //     array.forEach((item) => {
     //       console.log('LLLLL:', item[columns], temp[columns])
-
     //       if (item[columns] === temp[columns]) {
     //         i += 1
     //       }
@@ -117,26 +133,6 @@ export default {
     //   }
     //   return i
     // }
-
-    const mergeCells = (text, array, columns) => {
-        const temp = {} // 当前重复的值,支持多列
-        console.log("GGGG:",text, array, columns)
-      let i = 0
-      let isContinuous = false // 判断是否连续
-      if (text !== temp[columns]) {
-        temp[columns] = text
-        for (let j = 0; j < array.length; j++) {
-          let item = array[j]
-          if (item[columns] === temp[columns]) {
-            i += 1
-            // isContinuous = true
-          } else {
-            // if (isContinuous) break
-          }
-        }
-      }
-      return i
-    }
 
     return {
       orderId: '',
@@ -175,37 +171,38 @@ export default {
         },
         {
           title: '实收金额',
-            dataIndex: 'payTotal',
+          dataIndex: 'payTotal',
 
-            customRender: (text, row) => {
-              if (text != '') {
-                const obj = {
-                  children: text.payTotal,
-                  attrs: {},
-                };
-                obj.attrs.rowSpan = mergeCells(row.payTotal, this.cancelItemsData, 'payTotal');
-                return obj;
-              }
-            },
-
-        //   customRender: (text, record, index) => {
-        //     const obj = {
-        //       children: text,
-        //       props: {},
+        //   customRender: (text, row) => {
+        //     console.log("OOO:",text,row)
+        //     if (text != '') {
+        //       const obj = {
+        //         children: text,
+        //         attrs: {},
+        //       }
+        //       obj.attrs.rowSpan = mergeCells(row.payTotal, this.cancelItemsData, 'payTotal')
+        //       return obj
         //     }
 
-        //     if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
-        //       obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
-        //     } else {
-        //       obj.props.rowSpan = 0
-        //     }
-
-        //     return obj
         //   },
+
+            customRender: (text, record, index) => {
+                console.log("OOO:",text,record,index)
+              const obj = {
+                children: text,
+                props: {},
+              }
+
+            //   obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
+              if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
+                obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
+              } else {
+                obj.props.rowSpan = 0
+              }
+
+              return obj
+            },
         },
-
-
-
 
         {
           title: '剩余数',
@@ -246,7 +243,6 @@ export default {
 
     //减扣金额改变
     changeAmount(record) {
-      console.log('ffff:', record.jiankouAmount, record.yingtuiAmount)
       if (record.canRefundAmount > record.yingtuiAmount) {
         record.canRefundAmount = 0
         this.$message.error('实退金额不能大于应退金额!')
@@ -297,6 +293,8 @@ export default {
               this.$set(item, 'jiankouAmount', 0)
               this.$set(item, 'key', index)
             })
+
+            console.log('AAA:', this.cancelItemsData)
             // this.rowspan(this.cancelItemsData)
             // this.rowspan(this.cancelItemsData)
           }
@@ -358,7 +356,6 @@ export default {
         refundItems: refundItemsData,
       }
 
-      console.log('KKKK:', requestData)
       applyRefund(requestData).then((res) => {
         if (res.code == 0) {
           this.visible = false
