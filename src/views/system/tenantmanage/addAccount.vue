@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="record.accountId ? '修改账号' : '新增账号'"
-    :width="460"
+    :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -90,13 +90,12 @@
             </a-select>
           </div>
 
-          <div class="div-content">
-            <a-checkbox v-model="accountChecked"></a-checkbox>
-            <span class="span-item-name">客服坐席:</span>
+          <div class="div-content" style="margin-left: 1px;width: 433px;">
+            <a-checkbox  v-model="accountChecked">客服坐席:</a-checkbox>
             <a-input
             v-model="checkData.seatUser"
               class="span-item-value"
-              style="display: inline-block"
+              style="display: inline-block;"
               :disabled="!accountChecked"
               placeholder="请输入客服坐席ID"
             />
@@ -381,16 +380,20 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+/deep/ .ant-checkbox-wrapper {
+  font-size: 12px !important;
+}
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
-  width: 100%;
+  width: 420px;
   display: flex;
   align-items: center;
   flex-direction: row;
   height: 26px;
   margin-top: 20px;
   margin-bottom: 10px;
+  margin-left: 14px;
 
   .div-line-blue {
     width: 5px;
@@ -424,11 +427,12 @@ export default {
 
   .div-content {
     margin-bottom: 10px;
-    width: 100%;
+    width: 420px;
     display: flex;
     flex-direction: row;
     align-items: center;
     overflow: hidden;
+    margin-left: 14px;
     /deep/.ant-select-selection--multiple {
       li {
         margin-top: 1px !important;
