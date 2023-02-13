@@ -162,7 +162,7 @@
 
       <!-- 状态 -->
       <span slot="orderStatus" slot-scope="text, record">
-        <span style="color:#0E9B0B">{{ getType(record) }}</span>
+        <span :style="{color:getColor(record)}">{{ getType(record) }}</span>
       </span>
 
       
@@ -282,7 +282,7 @@ export default {
         },
         {
           title: '操作',
-          with: 90,
+          with: 130,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
