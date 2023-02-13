@@ -196,14 +196,34 @@
     </div>
 
     <div style="width: 100%; display: flex; flex-direction: row">
-      <div style="margin-top: 20px; height: 200px !important" class="half-kuang">
+      <div style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">收货地址</div>
         <div class="line"></div>
+
+        <div class="div-pro-line"  style="margin-left:20px">
+          <span class="span-item-name">发货方式 :</span>
+          <span class="span-item-value">到院自提</span>
+        </div>
+
+        <div class="div-pro-line"  style="margin-left:20px">
+          <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
+          <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+        </div>
       </div>
 
-      <div style="margin-top: 20px; height: 200px !important" class="half-kuang">
+      <div style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">物流信息</div>
         <div class="line"></div>
+
+        <div class="div-pro-line" style="margin-left:20px">
+          <span class="span-item-name">发货方式 :</span>
+          <span class="span-item-value">到院自提</span>
+        </div>
+
+        <div class="div-pro-line"  style="margin-left:20px">
+          <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
+          <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+        </div>
       </div>
     </div>
 
@@ -619,10 +639,9 @@ export default {
 }
 
 .half-kuang {
-  width: 48%;
   height: 350px;
   margin-left: 20px;
-  margin-right: 91px;
+  margin-right: 25px;
   margin-top: -30px;
   background: #ffffff;
   border: 1px solid #e6e6e6;
