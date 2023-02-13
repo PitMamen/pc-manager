@@ -567,10 +567,10 @@ export default {
       //   this.$message.error('请输入邮箱地址')
       //   return
       // }
-      if (!emailValidity(this.checkData.email)) {
-        this.$message.error('请输入正确的邮箱地址')
-        return
-      }
+      // if (!emailValidity(this.checkData.email)) {
+      //   this.$message.error('请输入正确的邮箱地址')
+      //   return
+      // }
 
       if (isStringEmpty(this.checkData.userType)) {
         this.$message.error('请选择人员类型')
