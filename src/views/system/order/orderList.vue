@@ -282,6 +282,7 @@ export default {
         },
         {
           title: '操作',
+          fixed: 'right',
           with: 130,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

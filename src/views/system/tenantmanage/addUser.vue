@@ -78,7 +78,7 @@
             />
           </div>
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>邮箱地址:</span>
+            <span class="span-item-name">邮箱地址:</span>
             <a-input
               v-model="checkData.email"
               class="span-item-value"
@@ -529,10 +529,10 @@ export default {
       console.log(this.checkData)
       
 
-      if (isStringEmpty(this.checkData.avatarUrl)) {
-        this.$message.error('请上传头像')
-        return
-      }
+      // if (isStringEmpty(this.checkData.avatarUrl)) {
+      //   this.$message.error('请上传头像')
+      //   return
+      // }
       if (isStringEmpty(this.checkData.userName)) {
         this.$message.error('请输入姓名')
         return
@@ -563,10 +563,10 @@ export default {
         return
       }
 
-      if (isStringEmpty(this.checkData.email)) {
-        this.$message.error('请输入邮箱地址')
-        return
-      }
+      // if (isStringEmpty(this.checkData.email)) {
+      //   this.$message.error('请输入邮箱地址')
+      //   return
+      // }
       if (!emailValidity(this.checkData.email)) {
         this.$message.error('请输入正确的邮箱地址')
         return

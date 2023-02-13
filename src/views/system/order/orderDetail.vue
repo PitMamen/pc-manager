@@ -15,7 +15,11 @@
         >{{ getType(orderDetailDataList.status.value) }}</a-button
       >
 
-      <a-button type="primary" ghost style="margin-left: 82.5%; float: right">日志</a-button>
+      <div style="overflow: hidden;; float:right;width: 100%;margin-right: 45px;">
+          <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
+
+      </div>
+
     </div>
 
     <div class="big-kuang">
@@ -173,7 +177,7 @@
     </div>
 
     <div style="margin-top: 20px; height: 260px !important" class="big-kuang">
-      <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">
+      <div style="font-weight: bold; margin: 10px; margin-left: 57px !important;">
         <a-button type="primary" ghost style="margin-left: 82.5%; float: right; margin-top: -4px">使用情况</a-button>权益清单
       </div>
 
