@@ -77,7 +77,7 @@
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
       </div>
@@ -472,7 +472,6 @@ export default {
       this.queryParams.orderEndTime = ''
       this.queryParams.orderStartTime = ''
       this.queryParams.classifyId = ''
-      this.getOrderStatusGroupByDataOut()
       this.handleOk()
     },
 
@@ -533,25 +532,9 @@ export default {
       this.queryParams.orderEndTime = dateArr[1]
     },
 
-    //  downloadfile(res) {
-    //    var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
-    //    var contentDisposition = res.headers['content-disposition']
-    //    var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
-    //    var result = patt.exec(contentDisposition)
-    //    var filename = result[1]
-    //    var downloadElement = document.createElement('a')
-    //    var href = window.URL.createObjectURL(blob) // 创建下载的链接
-    //    var reg = /^["](.*)["]$/g
-    //    downloadElement.style.display = 'none'
-    //    downloadElement.href = href
-    //    downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
-    //    document.body.appendChild(downloadElement)
-    //    downloadElement.click() // 点击下载
-    //    document.body.removeChild(downloadElement) // 下载完成移除元素
-    //    window.URL.revokeObjectURL(href)
-    //  },
 
     handleOk() {
+      this.getOrderStatusGroupByDataOut()
       this.$refs.table.refresh()
     },
   },

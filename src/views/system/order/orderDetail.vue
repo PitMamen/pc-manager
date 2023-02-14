@@ -412,7 +412,6 @@ export default {
         if (res.code == 0) {
           var reponseDataList = res.data
           this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
-          //   this.orderDetailDataList.status.value = 1
           this.payMode = this.orderDetailDataList.payMode
           this.goodsItemsData = res.data.goodsItems
           this.rightItemsData = res.data.rightItems

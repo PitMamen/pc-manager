@@ -173,35 +173,51 @@ export default {
           title: '实收金额',
           dataIndex: 'payTotal',
 
-        //   customRender: (text, row) => {
-        //     console.log("OOO:",text,row)
-        //     if (text != '') {
-        //       const obj = {
-        //         children: text,
-        //         attrs: {},
-        //       }
-        //       obj.attrs.rowSpan = mergeCells(row.payTotal, this.cancelItemsData, 'payTotal')
-        //       return obj
-        //     }
+          customRender: (value, row, index) => {
+            console.log(value, row, index)
+            const obj = {
+            //   children: this.cancelItemsData.length,
+              children: row.payTotal,
+              attrs: {},
+            }
+            if (index === 0) {
+              // 第一行数据开始，跨行合并的长度为数据data的长度
+              obj.attrs.rowSpan = this.cancelItemsData.length
+            }
+            if (index >= 1) {
+              // 从第一行往后的所有行表格均合并
+              obj.attrs.rowSpan = 0
+            }
+            return obj
+          },
 
-        //   },
+          //   customRender: (text, row) => {
+          //     console.log("OOO:",text,row)
+          //     if (text != '') {
+          //       const obj = {
+          //         children: text,
+          //         attrs: {},
+          //       }
+          //       obj.attrs.rowSpan = mergeCells(row.payTotal, this.cancelItemsData, 'payTotal')
+          //       return obj
+          //     }
 
-            customRender: (text, record, index) => {
-                console.log("OOO:",text,record,index)
-              const obj = {
-                children: text,
-                props: {},
-              }
+          //   },
 
-            //   obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
-              if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
-                obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
-              } else {
-                obj.props.rowSpan = 0
-              }
+          // customRender: (text, record, index) => {
+          //     console.log("OOO:",text,record,index)
+          //   const obj = {
+          //     children: text,
+          //     props: {},
+          //   }
+          //   if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
+          //     obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
+          //   } else {
+          //     obj.props.rowSpan = 0
+          //   }
 
-              return obj
-            },
+          //   return obj
+          // },
         },
 
         {
