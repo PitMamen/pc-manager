@@ -272,7 +272,7 @@ export default {
         com += this.cancelItemsData[index].canRefundAmount
       }
 
-      this.canRefundDataList.canRefundTotal = com
+      this.canRefundDataList.canRefundTotal =parseFloat(com).toFixed(2)  
     },
 
     //实退金额改变
@@ -291,7 +291,7 @@ export default {
       }
       //   console.log('dddddd:', number)
 
-      this.canRefundDataList.canRefundTotal = number
+      this.canRefundDataList.canRefundTotal =parseFloat(number).toFixed(2) 
     },
 
     //订单可退款明细

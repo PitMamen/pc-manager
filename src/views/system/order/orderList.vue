@@ -202,15 +202,15 @@ export default {
         yiquxiao: 0,
       },
 
-      queryParamGrop: {
-        combinedCondition: '',
-        commodityName: '',
-        doctorName: '',
-        hospitalCode:undefined,
-        orderEndTime: getCurrentMonthLast(),
-        orderStartTime:  getDateNow(),
-        classifyId: undefined,
-      },
+      // queryParamGrop: {
+      //   combinedCondition: '',
+      //   commodityName: '',
+      //   doctorName: '',
+      //   hospitalCode:undefined,
+      //   orderEndTime: getCurrentMonthLast(),
+      //   orderStartTime:  getDateNow(),
+      //   classifyId: undefined,
+      // },
       queryParams: {
         combinedCondition: undefined,
         commodityName: '',
@@ -472,7 +472,7 @@ export default {
 
     //订单分组
     getOrderStatusGroupByDataOut() {
-      getOrderStatusGroupByData(this.queryParamGrop)
+      getOrderStatusGroupByData(this.queryParams)
         .then((res) => {
           if (res.code == 0) {
             for (let index = 0; index < res.data.length; index++) {
@@ -505,12 +505,9 @@ export default {
 
     onRadioClick(type) {
        //如果在加载中  不让点击
-       console.log("0000000000000:",this.confirmLoading)
        if(this.confirmLoading){
         return
        }
-
-
       this.queryParams.orderStatus = type
       this.handleOk()
     },
