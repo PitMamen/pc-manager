@@ -2,7 +2,7 @@
   <!-- 1：待付款（待支付） 2：已完成 3：支付中 4：待收货 5：已取消 6：已退款 7：已配送 8待发货 101使用中 102退款中 -->
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
-      <a-button type="primary" ghost @click="goBack()">返回</a-button>
+      <a-button type="primary" ghost @click="goBack()"  >返回</a-button>
       <a-button
         :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
         style="margin-left: 15px"
@@ -421,6 +421,7 @@ export default {
 
     //返回
     goBack() {
+      this.$bus.$emit('orderRefresh', '刷新数据')
       this.$router.go(-1)
       // this.$router.back()
     },

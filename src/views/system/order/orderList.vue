@@ -341,6 +341,20 @@ export default {
     }
   },
 
+
+
+ 
+
+
+  mounted() {
+    // 用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
+    this.$Bus.$on('orderRefresh', (data) => {
+      // console.log('orderRefresh Refres', data)
+      // this.objct = data;
+      this.handleOk()
+    })
+  },
+
   created() {
     this.queryHospitalListOut()
     this.createValue = [
@@ -363,6 +377,7 @@ export default {
   },
 
   methods: {
+
     //详情
     goDetail(record) {
       // this.$refs.orderDetail.orderDetail(record)
@@ -530,6 +545,7 @@ export default {
 
 
     handleOk() {
+      console.log("666666666666")
       this.getOrderStatusGroupByDataOut()
       this.$refs.table.refresh()
     },
