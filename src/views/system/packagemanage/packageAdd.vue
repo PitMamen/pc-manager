@@ -75,7 +75,7 @@
               class="span-item-value"
               v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 40%;margin-left: -7px;"
+              style="display: inline-block; width: 42%;margin-left: -7px;"
               allow-clear
               placeholder="请输入 "
             />
@@ -375,6 +375,7 @@ export default {
       previewVisibleBanner: false,
       previewVisibleDetail: false,
       disabledValue:true,
+      isChecked:false,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',
@@ -419,7 +420,7 @@ export default {
        */
       packageDataOrigin: {
         pkgValidUnit: undefined,
-        pkgValidNum: 1,
+        pkgValidNum: '',
         bannerImgs: [],
         detailImgs: [],
         frontImgs: [],
@@ -551,6 +552,7 @@ export default {
 
     changeData(value) {
       console.log('tttt:', value.target.checked)
+      this.isChecked = value.target.checked
       if(value.target.checked){
        this. disabledValue = false
       }else{
@@ -1110,6 +1112,20 @@ export default {
         this.$message.error('请选择所属机构')
         return
       }
+
+      
+      if(this.isChecked){
+        if(!tempData.pkgValidNum){
+          this.$message.error('请选择有效期')
+          return
+        }
+
+        if(!tempData.pkgValidUnit){
+          this.$message.error('请选择有效期单位')
+          return
+        }
+      }
+
 
 
  

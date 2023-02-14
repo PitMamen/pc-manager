@@ -1,8 +1,5 @@
 <template>
   <!-- 1：待付款（待支付） 2：已完成 3：支付中 4：待收货 5：已取消 6：已退款 7：已配送 8待发货 101使用中 102退款中 -->
-  <!-- orderDetailDataList.status.value != 2 ||
-          orderDetailDataList.status.value != 5 ||
-          orderDetailDataList.status.value != 102 -->
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
@@ -23,7 +20,7 @@
     </div>
 
     <div class="big-kuang">
-      <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">基本信息</div>
+      <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">基本信息</div>
       <div class="line"></div>
       <div class="div-up-content">
         <div class="div-pro-line">
@@ -161,7 +158,7 @@
     </div>
 
     <div style="margin-top: 20px;height: 260px !important" class="big-kuang">
-      <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">产品清单</div>
+      <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">产品清单</div>
       <div class="line"></div>
       <a-table
         style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
@@ -177,9 +174,10 @@
     </div>
 
     <div style="margin-top: 20px; height: 260px !important" class="big-kuang">
-      <div style="font-weight: bold; margin: 10px; margin-left: 57px !important;">
-        <a-button type="primary" ghost style="margin-left: 82.5%; float: right; margin-top: -4px">使用情况</a-button>权益清单
+      <div style="font-weight: bold; margin: 10px; margin-left: 18px !important;">
+        权益清单
       </div>
+      <span style="margin-left: 82.5%; float: right; margin-top: -30px;color: #409EFF;margin-right: 20px;">使用情况</span>
 
       <div class="line"></div>
       <a-table
@@ -197,7 +195,7 @@
 
     <div style="width: 100%; display: flex; flex-direction: row">
       <div style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
-        <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">收货地址</div>
+        <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">收货地址</div>
         <div class="line"></div>
 
         <div class="div-pro-line"  style="margin-left:20px">
@@ -212,7 +210,7 @@
       </div>
 
       <div style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
-        <div style="font-weight: bold; margin: 10px; margin-left: 57px !important">物流信息</div>
+        <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
         <div class="line"></div>
 
         <div class="div-pro-line" style="margin-left:20px">
@@ -469,6 +467,7 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             console.log('NNNNNNNNNNNNNNNN')
+            this.handleOk()
             this.$message.success('取消成功!')
           } else {
             this.$message.error(res.message)
@@ -619,7 +618,7 @@ export default {
     }
     .span-item-name {
       display: inline-block;
-      margin-left: 50px;
+      margin-left: 15px;
       color: #000;
       font-size: 12px;
       text-align: left;

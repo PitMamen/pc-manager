@@ -63,17 +63,6 @@
         <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
       </div>
 
-      <!-- <div class="search-row">
-         <span class="name">患者查找:</span>
-         <a-input
-           v-model="queryParams.queryStr"
-           allow-clear
-           placeholder="输入患者姓名或手机号码"
-           style="width: 120px; height: 28px"
-           @keyup.enter="$refs.table.refresh(true)"
-           @search="$refs.table.refresh(true)"
-         />
-       </div> -->
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -85,65 +74,73 @@
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == '' }" @click="onRadioClick('')">
-        <img
+        <!-- <img
           style="width: 13px; height: 13px"
           :class="{ 'checked-icon': queryParams.orderStatus == '' }"
           src="~@/assets/icons/icon_wait.svg"
-        /><span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
+        /> -->
+        <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 1 }" @click="onRadioClick(1)">
-        <img
+        <!-- <img
           :class="{ 'checked-icon': queryParams.orderStatus == 1 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/icon_completed.svg"
-        /><span style="margin-left: 3px">待付款({{ numberData.daifukuan }}) </span>
+        /> -->
+        <span style="margin-left: 3px">待付款({{ numberData.daifukuan }}) </span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 8 }" @click="onRadioClick(8)">
-        <img
+        <!-- <img
           :class="{ 'checked-icon': queryParams.orderStatus == 8 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfsb.png"
-        /><span style="margin-left: 3px">待发货({{ numberData.daifahuo  }})</span>
+        /> -->
+        <span style="margin-left: 3px">待发货({{ numberData.daifahuo  }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 4 }" @click="onRadioClick(4)">
-        <img
+        <!-- <img
           :class="{ 'checked-icon': queryParams.orderStatus == 4 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
-        /><span style="margin-left: 3px">待收货({{ numberData.daishouhuo  }})</span>
+        /> -->
+        <span style="margin-left: 3px">待收货({{ numberData.daishouhuo  }})</span>
       </div>
 
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 9 }" @click="onRadioClick(9)">
-        <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 9 }"
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 101 }" @click="onRadioClick(101)">
+        <!-- <img
+          :class="{ 'checked-icon': queryParams.orderStatus == 101 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
-        /><span style="margin-left: 3px">使用中({{numberData.shiyongzhong }})</span>
+        /> -->
+        <span style="margin-left: 3px">使用中({{numberData.shiyongzhong }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 2 }" @click="onRadioClick(2)">
-        <img
+        <!-- <img
           :class="{ 'checked-icon': queryParams.orderStatus == 2 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
-        /><span style="margin-left: 3px">已完成({{ numberData.yiwancheng }})</span>
+        /> -->
+        <span style="margin-left: 3px">已完成({{ numberData.yiwancheng }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 102 }" @click="onRadioClick(102)">
-        <img
+        <!-- <img
           :class="{ 'checked-icon': queryParams.orderStatus == 102 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
-        /><span style="margin-left: 3px">退款中({{ numberData.tuikuanzhong }})</span>
+        /> -->
+        <span style="margin-left: 3px">退款中({{ numberData.tuikuanzhong }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParams.orderStatus == 5 }" @click="onRadioClick(5)">
-        <img
+        <!-- <img
           :class="{ 'checked-icon': queryParams.orderStatus == 5 }"
           style="width: 13px; height: 13px"
           src="~@/assets/icons/bcsf.png"
-        /><span style="margin-left: 3px">已取消({{ numberData.yiquxiao }})</span>
+        /> -->
+        <span style="margin-left: 3px">已取消({{ numberData.yiquxiao }})</span>
       </div>
     </div>
 
@@ -160,10 +157,9 @@
         <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
       </span>
 
-      <!-- 状态 -->
-      <span slot="orderStatus" slot-scope="text, record">
-        <span :style="{color:getColor(record)}">{{ getType(record) }}</span>
-      </span>
+        <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
+          {{ getType(record)  }}
+      </span> 
 
       
     </s-table>
@@ -194,6 +190,7 @@ export default {
       treeData: [],
       gropListData: [],
       packgeList:[],
+      confirmLoading:false,
       numberData: {
         quanbu: 0,
         daifukuan: 0,
@@ -263,7 +260,7 @@ export default {
         {
           title: '服务时间',
           dataIndex: 'serveTime',
-          ellipsis: true,
+          width:160,
         },
 
         {
@@ -326,7 +323,7 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'serveTime', item.startTime)
+                this.$set(item, 'serveTime', item.startTime+" "+item.endTime)
                 // this.$set(item, 'status', 1)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
@@ -395,7 +392,7 @@ export default {
         return '已配送'
       } else if (record.orderStatus == 8) {
         return '待发货'
-      } else if (record.orderStatus == 9) {
+      } else if (record.orderStatus == 101) {
         return '使用中'
       } else if (record.orderStatus == 102) {
         return '退款中'
@@ -404,30 +401,28 @@ export default {
 
     getColor(record){
       if (record.orderStatus == 1) {
-        return '#0E9B0B'
-      } else if (record.orderStatus == 2) {
-        return '#4D4D4D'
-      } else if (record.orderStatus == 3) {
-        return '#4D4D4D'
-      } else if (record.orderStatus == 4) {
-        return '#409EFF'
-      } else if (record.orderStatus == 5) {
-        return '#4D4D4D'
-      } else if (record.orderStatus == 6) {
-        return '#4D4D4D'
-      } else if (record.orderStatus == 7) {
-        return '#4D4D4D'
-      } else if (record.orderStatus == 8) {
-        return '#409EFF'
-      } else if (record.orderStatus == 9) {
-        return '#409EFF'
+        return 'span-green'
+      } else if (record.orderStatus == 2||record.orderStatus == 3||record.orderStatus == 5||record.orderStatus == 6||record.orderStatus == 7) {
+        return 'span-gray'
+      } else if (record.orderStatus == 4||record.orderStatus == 8||record.orderStatus == 101) {
+        return 'span-blue'
       } else if (record.orderStatus == 102) {
-        return '#F40E0E'
+        return 'span-red'
       }
-
-
     },
 
+    // getClass(status) {
+    //   if (status.value == 2) {
+    //     return 'span-red'
+    //   } else if (status.value == 1) {
+    //     return 'span-gray'
+    //   }
+    // },
+
+
+    isLoading(){
+    return this.confirmLoading 
+    },
 
 
     queryHospitalListOut() {
@@ -487,7 +482,7 @@ export default {
                 this.numberData.daifahuo  = res.data[index].co
               }else if(res.data[index].code == 4){ //待收货
                 this.numberData.daishouhuo  = res.data[index].co
-              }else if(res.data[index].code == 9){ //使用中
+              }else if(res.data[index].code == 101){ //使用中
                 this.numberData.shiyongzhong  = res.data[index].co
               }else if(res.data[index].code == 2){ //已完成
                 this.numberData.yiwancheng  = res.data[index].co
@@ -509,10 +504,14 @@ export default {
     },
 
     onRadioClick(type) {
+       //如果在加载中  不让点击
+       console.log("0000000000000:",this.confirmLoading)
+       if(this.confirmLoading){
+        return
+       }
+
+
       this.queryParams.orderStatus = type
-      // if(type==-1){
-        // this.queryParams.orderStatus = ''
-      // }
       this.handleOk()
     },
 
@@ -537,34 +536,50 @@ export default {
       this.getOrderStatusGroupByDataOut()
       this.$refs.table.refresh()
     },
+
+   
   },
 }
 </script>
  
  <style lang="less" scoped>
 .span-blue {
-  padding: 1% 2%;
+  background-color: #ECF5FF;
+  padding: 2px 4px;
   font-size: 12px;
   color: #3894ff;
+  border: #3894ff 1px solid;
   // background-color: #3894ff;
 }
 
+.span-green{
+  background-color: #EDFFED;
+  padding: 2px 4px;
+  font-size: 12px;
+  color: #0E9B0B;
+  border: #0E9B0B 1px solid;
+}
+
+
 .span-red {
-  padding: 1% 2%;
+  background-color: #FFF2F1;
+  padding: 2px 4px;
   font-size: 12px;
   color: #f26161;
-  // background-color: #f26161;
+  border: #f26161 1px solid;
 }
 
 .span-gray {
-  padding: 1% 2%;
+  background-color: #FAFAFA;
+  padding: 2px 4px;
   font-size: 12px;
-  color: #4d4d4d;
+  color: #4D4D4D;
+  border: #4D4D4D 1px solid;
   // background-color: #85888e;
 }
 
 .span-green {
-  padding: 1% 2%;
+  padding: 2px 4px;
   font-size: 12px;
   color: #69c07d;
   // background-color: #85888e;

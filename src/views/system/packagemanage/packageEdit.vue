@@ -75,7 +75,7 @@
               class="span-item-value"
               v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 40%;margin-left: -10px;"
+              style="display: inline-block; width: 42%;margin-left: -10px;"
               allow-clear
               placeholder="请输入 "
             />
@@ -380,7 +380,7 @@ export default {
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
-
+      isChecked:false,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',
@@ -518,11 +518,16 @@ export default {
         if (res.code == 0) {
           console.log('packageData Detail 1', res.data)
           this.packageData = res.data
-          this.packageData.pkgValidUnit = res.data.pkgValidUnit.value
+
+           if(res.data.pkgValidUnit){
+             this.packageData.pkgValidUnit = res.data.pkgValidUnit.value
+           }
           if(res.data.pkgValidNum&&res.data.pkgValidUnit){
+            this.isChecked = true
             this.hasData = true
             this.disabledValue = false
           }else{
+            this.isChecked = false
             this.hasData = false
             this.disabledValue = true
             
@@ -547,7 +552,8 @@ export default {
     },
 
     changeData(value) {
-      console.log('GGG:', value.target.checked)
+      // console.log('GGG:', value.target.checked)
+      this.isChecked = value.target.checked
       if(value.target.checked){
        this. disabledValue = false
        this.hasData = true
@@ -1323,6 +1329,22 @@ export default {
         this.$message.error('请选择所属机构')
         return
       }
+
+
+      if(this.isChecked){
+        if(!tempData.pkgValidNum){
+          this.$message.error('请选择有效期')
+          return
+        }
+
+        if(!tempData.pkgValidUnit){
+          this.$message.error('请选择有效期单位')
+          return
+        }
+      }
+
+
+
 
       //组装图片
       if (this.fileList.length == 0) {
