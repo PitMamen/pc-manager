@@ -346,14 +346,19 @@ export default {
  
 
 
-  mounted() {
-    // 用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
-    this.$Bus.$on('orderRefresh', (data) => {
-      // console.log('orderRefresh Refres', data)
-      // this.objct = data;
-      this.handleOk()
-    })
+  // mounted() {
+  //   // this.$Bus.$on('orderRefresh', (data) => {
+  //   //   this.handleOk()
+  //   // })
+  // },
+
+
+  activated() {
+    console.log('KKKppppppppppp')
+    this.handleOk()
   },
+
+
 
   created() {
     this.queryHospitalListOut()
