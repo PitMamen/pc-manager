@@ -12,7 +12,7 @@
         <div class="add-wrap-left">
           <div class="div-choose-dept">
             <span>请选择配置科室：</span>
-            <a-select @select="onDeptSelect" v-model="choseDepartmentId" allow-clear placeholder="请选择">
+            <a-select style="width: 206px;" @select="onDeptSelect" v-model="choseDepartmentId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in departmentLst" :key="index" :value="item.department_id">{{
                 item.department_name
               }}</a-select-option>
