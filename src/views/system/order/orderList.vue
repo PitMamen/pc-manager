@@ -348,7 +348,8 @@ export default {
 
   activated() {
     console.log('KKKppppppppppp')
-    this.handleOk()
+    this.reset()
+    
   },
 
 
