@@ -348,7 +348,7 @@ export default {
 
 
   activated() {
-    console.log('KKKppppppppppp:',this.queryParams.orderStatus)
+    // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.reset()
     this.queryParams.orderStatus = this.currentTab
     

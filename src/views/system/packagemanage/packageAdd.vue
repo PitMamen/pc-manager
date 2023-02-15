@@ -83,7 +83,7 @@
             <a-select
             :disabled="disabledValue"
               v-model="packageData.pkgValidUnit"
-              style="margin-left: 5px; width: 80px !important"
+              style="margin-left: 5px; width: 16.5% !important"
               allow-clear
               placeholder="请选择"
             >
