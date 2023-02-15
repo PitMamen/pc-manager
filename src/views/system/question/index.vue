@@ -283,6 +283,12 @@ export default {
     this.getDepartmentSelectList2(undefined)
   },
 
+
+  activated() {
+    console.log("刷新问卷!!!")
+    this.handleOk()
+  },
+
   methods: {
     //跳转配置问卷
     goConfigQuestion(record) {

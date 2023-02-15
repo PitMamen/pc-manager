@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false" class="sys-card" style="height: 100%">
+  <a-card :bordered="false" class="sys-card" >
     <div style="margin-top: 15px; height: 100%">
       <iframe
         defer="true"
