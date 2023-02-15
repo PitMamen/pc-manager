@@ -19,36 +19,36 @@
 
     </div>
 
-    <div class="big-kuang">
+    <div class="big-kuang" style="height:270px !important">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">基本信息</div>
       <div class="line"></div>
-      <div class="div-up-content">
+      <div class="div-up-content" style="margin-top:-15px;">
         <div class="div-pro-line">
           <span class="span-item-name">订单号 :</span>
           <!-- <span class="span-item-value">dddd</span> -->
-          <span class="span-item-value">{{ orderDetailDataList.orderId }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">套餐类型 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.classifyName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"> 套餐名称 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.commodityName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
         </div>
       </div>
 
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">所属医院 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.hospitalName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.hospitalName|| '-'  }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">下单时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.createTime }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.createTime || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
@@ -62,92 +62,92 @@
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">用户姓名 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.userName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.userName || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">联系方式 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.phone }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.phone || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"> 支付方式 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.payMode }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.payMode || '-' }}</span>
         </div>
       </div>
 
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">实付金额 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.payTotal }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.payTotal || '-'  }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">套餐价格 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.orderTotal }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.orderTotal || '-'  }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"> 交易流水号 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.agtOrdNum }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.agtOrdNum  || '-' }}</span>
         </div>
       </div>
 
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">套餐包服务时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.payTime }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.payTime  || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">订单更新时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.updateTime }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.updateTime || '-'  }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"> 订单结束时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.endTime }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.endTime || '-'  }}</span>
         </div>
       </div>
 
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">服务医生 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.doctorUserName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.doctorUserName || '-'  }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">服务护士 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.nurseUserName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.nurseUserName  || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"> 服务团队 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.teamName }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.teamName || '-'  }}</span>
         </div>
       </div>
 
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">退款单号 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.refundId }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.refundId ||'-'}}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">退款时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.refundTime }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.refundTime || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name"> 退款原因 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.refundReason }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.refundReason || '-' }}</span>
         </div>
       </div>
 
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">拒绝退款原因 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.remark }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.remark || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
@@ -163,6 +163,7 @@
       <a-table
         style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
         size="small"
+        class="a-table-one"
         :scroll="{ y: true }"
         :columns="goodsItemsDataColumns"
         :data-source="goodsItemsData"
@@ -183,6 +184,7 @@
       <a-table
         style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
         size="small"
+        class="a-table-one"
         :scroll="{ y: true }"
         :columns="rightItemsDataColumns"
         :data-source="rightItemsData"
@@ -299,6 +301,7 @@ export default {
         {
           title: '计费金额',
           dataIndex: 'saleAmount',
+          align:'right'
         },
         {
           title: '开始时间',
@@ -339,6 +342,7 @@ export default {
         {
           title: '计费金额',
           dataIndex: 'saleAmount',
+          align:'right'
         },
         {
           title: '开始时间',
@@ -535,6 +539,13 @@ export default {
   <style lang="less" scoped>
 
 
+//去掉 高亮
+
+.a-table-one /deep/ .ant-table-body{
+  overflow-y: auto !important;
+}
+
+
 /deep/.ant-modal-body {
   margin-left: 41% !important;
   margin-top: 43px;
@@ -601,7 +612,7 @@ export default {
     width: 100%;
     display: flex;
     padding-left: 8px;
-    padding-top: 1%;
+    padding-top: 8px;
     flex-direction: row;
 
     .div-up-left {
@@ -689,7 +700,7 @@ export default {
     width: 100%;
     display: flex;
     padding-left: 8px;
-    padding-top: 1%;
+    padding-top: 8px;
     flex-direction: row;
 
     .div-up-left {

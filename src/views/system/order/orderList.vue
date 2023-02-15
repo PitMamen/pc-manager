@@ -252,10 +252,12 @@ export default {
         {
           title: '应付',
           dataIndex: 'saleAmount',
+          align:'right'
         },
         {
           title: '实付',
           dataIndex: 'payTotal',
+          align:'right'
         },
         {
           title: '服务时间',
@@ -342,15 +344,6 @@ export default {
   },
 
 
-
- 
-
-
-  // mounted() {
-  //   // this.$Bus.$on('orderRefresh', (data) => {
-  //   //   this.handleOk()
-  //   // })
-  // },
 
 
   activated() {
@@ -487,6 +480,7 @@ export default {
       this.queryParams.orderEndTime = ''
       this.queryParams.orderStartTime = ''
       this.queryParams.classifyId = ''
+      this.queryParams.orderStatus = ''
       this.handleOk()
     },
 
@@ -529,7 +523,7 @@ export default {
         return
        }
       this.queryParams.orderStatus = type
-      this.handleOk()
+      this.$refs.table.refresh()
     },
 
     formatDate(date) {
@@ -550,7 +544,6 @@ export default {
 
 
     handleOk() {
-      console.log("666666666666")
       this.getOrderStatusGroupByDataOut()
       this.$refs.table.refresh()
     },

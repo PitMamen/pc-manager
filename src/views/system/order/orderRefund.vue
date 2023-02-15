@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="title"
-    :width="750"
+    :width="850"
     :visible="visible"
     @ok="handleSubmit"
     @cancel="handleCancel"
@@ -26,6 +26,7 @@
       style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
       size="small"
       bordered
+      class="a-table-one"
       :scroll="{ y: true }"
       :columns="cancelItemColumns"
       :data-source="cancelItemsData"
@@ -35,24 +36,24 @@
     >
       <!--   @blur="changeDes(record)" -->
       <span slot="jiankaction" slot-scope="text, record">
-        <a-input
+        <a-InputNumber 
+        class="ant-push-k"
           type="number"
           v-model="record.jiankouAmount"
-          class="span-item-value"
           :maxLength="30"
           :min="0"
-          style="display: inline-block; width: 60px; margin-right: 5px"
+          style=" width: 80px; margin-right: 5px"
           @blur="changeAmount(record)"
         />
       </span>
 
       <span slot="shikaction" slot-scope="text, record">
-        <a-input
+        <a-InputNumber 
           type="number"
+          class="ant-push-k"
           v-model="record.canRefundAmount"
-          class="span-item-value"
           :maxLength="30"
-          style="display: inline-block; width: 60px; margin-right: 5px"
+          style=" width: 80px; margin-right: 5px"
           @blur="changeshituiAmount(record)"
         />
       </span>
@@ -100,40 +101,6 @@ export default {
     STable,
   },
   data() {
-    const mergeCells = (text, array, columns) => {
-      const temp = [] // 当前重复的值,支持多列
-      let i = 0
-      if (text !== temp[columns]) {
-        temp[columns] = text
-
-        array.forEach((item) => {
-          console.log('LLLLL:', item[columns], temp[columns])
-
-          if (item[columns] === temp[columns]) {
-            i += 1
-          }
-        })
-      }
-      return i
-    }
-
-    // const mergeCells = (text, array, columns) => {
-    //   const temp = {} // 当前重复的值,支持多列
-    //   console.log('GGGG:', text, array, columns)
-    //   let i = 0
-    //   let isContinuous = false // 判断是否连续
-    //   if (text !== temp[columns]) {
-    //     temp[columns] = text
-    //     array.forEach((item) => {
-    //       console.log('LLLLL:', item[columns], temp[columns])
-    //       if (item[columns] === temp[columns]) {
-    //         i += 1
-    //       }
-    //     })
-    //   }
-    //   return i
-    // }
-
     return {
       orderId: '',
       paymode: '',
@@ -176,7 +143,7 @@ export default {
           customRender: (value, row, index) => {
             console.log(value, row, index)
             const obj = {
-            //   children: this.cancelItemsData.length,
+              //   children: this.cancelItemsData.length,
               children: row.payTotal,
               attrs: {},
             }
@@ -190,34 +157,6 @@ export default {
             }
             return obj
           },
-
-          //   customRender: (text, row) => {
-          //     console.log("OOO:",text,row)
-          //     if (text != '') {
-          //       const obj = {
-          //         children: text,
-          //         attrs: {},
-          //       }
-          //       obj.attrs.rowSpan = mergeCells(row.payTotal, this.cancelItemsData, 'payTotal')
-          //       return obj
-          //     }
-
-          //   },
-
-          // customRender: (text, record, index) => {
-          //     console.log("OOO:",text,record,index)
-          //   const obj = {
-          //     children: text,
-          //     props: {},
-          //   }
-          //   if ((index > 0 && text != this.cancelItemsData[index - 1].payTotal) || index == 0) {
-          //     obj.props.rowSpan = mergeCells(record.payTotal, this.cancelItemsData, 'payTotal')
-          //   } else {
-          //     obj.props.rowSpan = 0
-          //   }
-
-          //   return obj
-          // },
         },
 
         {
@@ -265,14 +204,16 @@ export default {
         return
       }
 
-      record.canRefundAmount = record.yingtuiAmount - record.jiankouAmount
+      // record.canRefundAmount = record.yingtuiAmount - record.jiankouAmount
+      record.canRefundAmount = parseFloat(record.yingtuiAmount - record.jiankouAmount).toFixed(2)
       let com = 0
       for (let index = 0; index < this.cancelItemsData.length; index++) {
         // console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
         com += this.cancelItemsData[index].canRefundAmount
+        com = parseFloat(com).toFixed(2)
       }
 
-      this.canRefundDataList.canRefundTotal =parseFloat(com).toFixed(2)  
+      this.canRefundDataList.canRefundTotal = com
     },
 
     //实退金额改变
@@ -282,16 +223,17 @@ export default {
         this.$message.error('减扣金额不能大于应退金额!')
         return
       }
-      record.jiankouAmount = record.yingtuiAmount - record.canRefundAmount
+      // record.jiankouAmount = record.yingtuiAmount - record.canRefundAmount
+      record.jiankouAmount = parseFloat(record.yingtuiAmount - record.canRefundAmount).toFixed(2)
 
       let number = 0
       for (let index = 0; index < this.cancelItemsData.length; index++) {
-        // console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
         number += Number(this.cancelItemsData[index].canRefundAmount)
+        number = parseFloat(number).toFixed(2)
       }
       //   console.log('dddddd:', number)
 
-      this.canRefundDataList.canRefundTotal =parseFloat(number).toFixed(2) 
+      this.canRefundDataList.canRefundTotal = number
     },
 
     //订单可退款明细
@@ -311,33 +253,11 @@ export default {
             })
 
             console.log('AAA:', this.cancelItemsData)
-            // this.rowspan(this.cancelItemsData)
-            // this.rowspan(this.cancelItemsData)
           }
         })
         .finally((res) => {
           this.confirmLoading = false
         })
-    },
-
-    rowspan(userData) {
-      var spanArr = []
-      var position = 0
-      userData.forEach((item, index) => {
-        if (index === 0) {
-          spanArr.push(1)
-          position = 0
-        } else {
-          //需要合并的地方判断
-          if (userData[index].payTotal === userData[index - 1].payTotal) {
-            spanArr[position] += 1
-            spanArr.push(0)
-          } else {
-            spanArr.push(1)
-            position = index
-          }
-        }
-      })
     },
 
     /**
@@ -386,15 +306,63 @@ export default {
 }
 </script >
             
-            <style lang="less" scoped>
-/deep/.ant-table-small {
-  border-radius: 2px;
-  border-bottom: 1px #e6e6e6 solid !important;
-}
-</style>
             
               
               <style lang="less" scoped>
+.a-table-one /deep/ .ant-table-body {
+  overflow-y: auto !important;
+  padding-right: 17px;
+
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: none !important;
+  }
+}
+
+.input::-webkit-inner-spin-button {
+    -webkit-appearance: none !important;
+  }
+  .input[type='number'] {
+    -moz-appearance: textfield !important;
+  }
+
+.ant-push-k  {
+  // display: none !important;
+  /deep/.ant-input-number-handler-wrap{
+    display: none !important;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 22px;
+    height: 100%;
+    background: #fff;
+    border-left: 1px solid #d9d9d9;
+    border-radius: 0 2px 2px 0;
+    opacity: 0;
+    -webkit-transition: opacity 0.24s linear 0.1s;
+    transition: opacity 0.24s linear 0.1s;
+  }
+ 
+}
+
+.table-hover-hidden {
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: none !important;
+  }
+  width: 100% !important;
+  .table-hover-hidden .ant-table-body {
+    //  overflow: auto ;
+  }
+  /deep/table tbody tr:hover > td {
+    background: #e7f1ff !important;
+  }
+  .ant-table-body .ant-table-row-hover {
+    background: #e7f1ff;
+  }
+  .ant-table-body .ant-table-row-hover > td {
+    background: #e7f1ff;
+  }
+}
+
 .span-green {
   padding: 1% 2%;
   font-size: 12px;
