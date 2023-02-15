@@ -191,6 +191,7 @@ export default {
       gropListData: [],
       packgeList:[],
       confirmLoading:false,
+      currentTab:'',
       numberData: {
         quanbu: 0,
         daifukuan: 0,
@@ -347,8 +348,9 @@ export default {
 
 
   activated() {
-    console.log('KKKppppppppppp')
+    console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.reset()
+    this.queryParams.orderStatus = this.currentTab
     
   },
 
@@ -523,6 +525,7 @@ export default {
        if(this.confirmLoading){
         return
        }
+       this.currentTab = type
       this.queryParams.orderStatus = type
       this.$refs.table.refresh()
     },
