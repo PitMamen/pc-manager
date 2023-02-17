@@ -42,6 +42,7 @@ const vueConfig = {
   },
 
   chainWebpack: (config) => {
+    config.plugins.delete("prefetch");
     config.resolve.alias
       .set('@$', resolve('src'))
 
