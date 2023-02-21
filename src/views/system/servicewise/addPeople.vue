@@ -142,6 +142,7 @@ export default {
       departmentLst: [],
       lastDeptId: undefined,
       assignments: [],
+      departmentDtos: [],
       type: '',
       tenantId: '',
       hospitalCode: '',
@@ -205,7 +206,7 @@ export default {
      * @param {*} index 
      * @param {*} deptUsers 
      */
-    add(index, type, assignments, isSingle, executeDepartments) {
+    add(index, type, departmentDtos, isSingle, executeDepartments) {
       this.visible = true
       this.index = index
       this.type = type
@@ -214,7 +215,9 @@ export default {
       this.choseDepartmentId = executeDepartments[0].department_id
       this.lastDeptId = executeDepartments[0].department_id
       this.isAverage = false
-      this.assignments = assignments || []
+      this.departmentDtos = departmentDtos || []
+      // this.assignments = departmentDtos[0].assignments || []
+   
       this.isSingle = isSingle
 
       this.departmentLst = executeDepartments
@@ -224,11 +227,22 @@ export default {
           choseNum: 0,
           totolAverage: 0,
           choseUsers: [],
+          assignments: [],
           isAverage: false,
           dataReady: false,
           commodityPkgManageItemRsps: [],
         })
       })
+
+      //处理人员已选的状态
+      this.departmentLst.forEach((itemOut, indexOut) => {
+        let hasOne = this.departmentDtos.find((itemIn) => itemIn.executeDepartmentId == itemOut.department_id)
+        if (hasOne) {
+          this.departmentLst[indexOut].checkData.assignments = hasOne.assignments
+        }
+      })
+      this.assignments = this.departmentLst[0].checkData.assignments
+
       this.countNotStr()
 
       this.getTreeUsers()
@@ -290,7 +304,8 @@ export default {
           proccesedAssignments.forEach((item, index) => {
             commodityPkgManageItemRsps.push({
               // achievementRatio: item.achievementRatio,
-              objectId: item.userId,
+              // objectId: item.userId,
+              userId: item.userId,
               weight: item.weight,
               userName: item.userName,
             })
@@ -312,7 +327,7 @@ export default {
         this.choseUsers = JSON.parse(JSON.stringify(hasOne.checkData.choseUsers))
         debugger
         this.isAverage = hasOne.checkData.isAverage
-        this.assignments = []
+        this.assignments = hasOne.checkData.assignments
         this.getTreeUsers()
       }
     },
@@ -368,7 +383,8 @@ export default {
             this.$set(item, 'canAdd', true)
             if (this.assignments && this.assignments.length > 0) {
               this.assignments.forEach((itemAss) => {
-                if (itemAss.objectId == item.userId) {
+                // if (itemAss.objectId == item.userId) {
+                if (itemAss.userId == item.userId) {
                   //组装可以添加的用户
                   this.$set(item, 'canAdd', false)
                   this.$set(item, 'isChecked', true)
@@ -529,27 +545,17 @@ export default {
         }
       }
 
-      let commodityPkgManageItemRsps = []
+      let departmentDtos = []
       for (let indexDown = 0; indexDown < this.departmentLst.length; indexDown++) {
-        commodityPkgManageItemRsps = commodityPkgManageItemRsps.concat(
-          this.departmentLst[indexDown].checkData.proccesedAssignments
-        )
-      }
+        departmentDtos.push({
+          executeDepartmentId: this.departmentLst[indexDown].department_id,
+          assignments: this.departmentLst[indexDown].checkData.proccesedAssignments,
+        })
 
-      // console.log('this.choseUsers', JSON.stringify(this.choseUsers))
-      // let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
-      // let commodityPkgManageItemRsps = []
-      // proccesedAssignments.forEach((item, index) => {
-      //   commodityPkgManageItemRsps.push({
-      //     // achievementRatio: item.achievementRatio,
-      //     objectId: item.userId,
-      //     weight: item.weight,
-      //     userName: item.userName,
-      //   })
-      // })
-      console.log('this.commodityPkgManageItemRsps', JSON.stringify(commodityPkgManageItemRsps))
+      }
+      console.log('emit departmentDtos', JSON.stringify(departmentDtos))
       console.log('this.choseDepartmentId', this.choseDepartmentId)
-      this.$emit('ok', this.index, commodityPkgManageItemRsps)
+      this.$emit('ok', this.index, departmentDtos)
       this.visible = false
     },
     handleCancel() {
