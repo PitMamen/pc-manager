@@ -48,8 +48,10 @@
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
             <a-select
-              v-model="projectData.basePlan.executeDepartment"
+              v-model="projectData.basePlan.executeDepartments"
               @select="onDeptSelect"
+              mode="multiple"
+              :token-separators="[',']"
               allow-clear
               placeholder="请选择执行科室"
             >
@@ -442,7 +444,7 @@ export default {
     return {
       user: {},
       keshiData: {},
-      deptUsers: {},
+      // deptUsers: {},
 
       typeData: [],
       sourceData: [],
@@ -484,7 +486,7 @@ export default {
           planName: undefined,
           followType: undefined, //随访类型；1:关怀型随访2:管理型随访3:科研型随访
           metaConfigureId: undefined,
-          executeDepartment: undefined, //执行科室
+          executeDepartments: undefined, //执行科室
           remark: undefined, //补充说明
         },
         filterRules: [],
@@ -688,13 +690,13 @@ export default {
      * 执行科室选择后需要请求执行人员
      */
     onDeptSelect() {
-      this.getUsersByDeptIdAndRoleOut()
+      // this.getUsersByDeptIdAndRoleOut()
       // this.getDeptAllQues()
     },
 
     addPerson(indexMisson) {
       //需增加人员先选执行科室
-      if (!this.projectData.basePlan.executeDepartment) {
+      if (!this.projectData.basePlan.executeDepartments) {
         this.$message.warn('请先选择执行科室')
         return
       }
@@ -705,17 +707,40 @@ export default {
       }
 
       console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
-      if (!this.deptUsers[0].users || this.deptUsers[0].users.length == 0) {
-        this.$message.warn('所选执行科室没有可选人员')
-        return
+      // if (!this.deptUsers[0].users || this.deptUsers[0].users.length == 0) {
+      //   this.$message.warn('所选执行科室没有可选人员')
+      //   return
+      // }
+
+      //组装传进去的科室，  department_id  department_name
+      let tempDepts = []
+      for (let index = 0; index < this.projectData.basePlan.executeDepartments.length; index++) {
+        let hasOne = this.keshiData.find(
+          (item) => item.departmentId == this.projectData.basePlan.executeDepartments[index]
+        )
+        if (hasOne) {
+          tempDepts.push({ department_id: hasOne.departmentId, department_name: hasOne.departmentName })
+        }
       }
+      console.log('add tempDepts', tempDepts)
+      this.$refs.addPeople.add(
+        indexMisson,
+        'doctor',
+        // this.packageData.tenantId,
+        // this.packageData.hospitalCode,
+        // this.docDepartmentId,
+        this.projectData.tasks[indexMisson].assignments,
+        //     * 2每次随机 3首次随机 4指定人员    指定人员只能单选，其他多选
+        this.projectData.tasks[indexMisson].personnelAssignmentType == 4 ? true : false,
+        tempDepts
+      )
 
       //     * 2每次随机 3首次随机 4指定人员    指定人员只能单选，其他多选
-      if (this.projectData.tasks[indexMisson].personnelAssignmentType == 4) {
-        this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
-      } else {
-        this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, false)
-      }
+      // if (this.projectData.tasks[indexMisson].personnelAssignmentType == 4) {
+      //   this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
+      // } else {
+      //   this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, false)
+      // }
       // this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments)
     },
 
@@ -995,15 +1020,15 @@ export default {
     //   })
     // },
 
-    getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
-        (res) => {
-          if (res.code == 0) {
-            this.deptUsers = res.data.deptUsers
-          }
-        }
-      )
-    },
+    // getUsersByDeptIdAndRoleOut() {
+    //   getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
+    //     (res) => {
+    //       if (res.code == 0) {
+    //         this.deptUsers = res.data.deptUsers
+    //       }
+    //     }
+    //   )
+    // },
 
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.projectData))
@@ -1020,7 +1045,7 @@ export default {
         this.$message.error('请选择来源名单')
         return
       }
-      if (!tempData.basePlan.executeDepartment) {
+      if (!tempData.basePlan.executeDepartments) {
         this.$message.error('请选择执行科室')
         return
       }
@@ -1074,7 +1099,8 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
           return
         }
-        if (!item.taskExecType) {//1临时  2长期
+        if (!item.taskExecType) {
+          //1临时  2长期
           this.$message.error('请选择第' + (index + 1) + '条任务执行周期')
           return
         }
@@ -1182,6 +1208,10 @@ export default {
   overflow: hidden;
   padding: 1%;
   padding-bottom: 2%;
+
+  /deep/ .ant-select-selection--multiple {
+    height: auto !important;
+  }
 
   span {
     font-size: 12px;
