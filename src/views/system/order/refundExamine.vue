@@ -207,7 +207,7 @@
           <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
             <span style="margin-top: 10px; width: 90px"> 驳回原因 :</span>
             <a-textarea
-              style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px; width: 87%"
+              style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px; "
               :maxLength="500"
               v-model="rejectReason"
               placeholder="请输入驳回理由"
