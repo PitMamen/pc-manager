@@ -137,7 +137,7 @@
               />
 
               <!-- 新增的包含加文字提示需求 -->
-              <div class="div-des" v-if="itemRule.condition == 'in'">
+              <div class="div-des" v-if="itemRule.condition == 'in' && itemRule.fieldType != 2">
                 <!-- style="display: inline-block; margin-top: 17px;width: 100%;" -->
                 <a-input
                   class="span-middle-value"
@@ -684,7 +684,7 @@ export default {
     /**
      * 执行科室选择后需要请求执行人员
      */
-    onDeptSelect(s1,s2) {
+    onDeptSelect(s1, s2) {
       console.log('proadd onDeptSelect', s1)
       console.log('proadd onDeptSelect', s2)
     },
@@ -812,7 +812,6 @@ export default {
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         itemTask.isChecked = false
       }
-
     },
 
     getDeptAllQues() {

@@ -140,7 +140,7 @@
               />
 
               <!-- 新增的包含加文字提示需求 -->
-              <div class="div-des" v-if="itemRule.condition == 'in'">
+              <div class="div-des" v-if="itemRule.condition == 'in' && itemRule.fieldType != 2">
                 <!-- style="display: inline-block; margin-top: 17px;width: 100%;" -->
                 <a-input
                   class="span-middle-value"
