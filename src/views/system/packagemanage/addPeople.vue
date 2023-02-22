@@ -59,7 +59,7 @@
               @click="addPerson(item, index)"
             />
           </div>
-          <div v-if="deptUsers.users.length == 0" style="margin-top: 60px; margin-left: 45%">
+          <div v-if="deptUsers.users.length == 0" style="margin-top: 60px; margin-left: 16%">
             <img src="~@/assets/icons/img_nodata.png" />
           </div>
         </div>
@@ -277,6 +277,7 @@ export default {
 
     onDeptSelect() {
       this.assignments = []
+      this.isAverage = false
       this.getTreeUsers()
     },
 

@@ -48,8 +48,10 @@
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
             <a-select
-              v-model="projectData.basePlan.executeDepartment"
+              v-model="projectData.basePlan.executeDepartments"
               @select="onDeptSelect"
+              mode="multiple"
+              :token-separators="[',']"
               allow-clear
               placeholder="请选择执行科室"
             >
@@ -128,10 +130,26 @@
                 class="span-middle-value"
                 v-model="itemRule.queryValue"
                 style="display: inline-block"
-                v-if="itemRule.fieldType == 1"
+                :maxLength="120"
+                v-if="itemRule.fieldType == 1 && itemRule.condition != 'in'"
                 allow-clear
                 placeholder="请输入内容"
               />
+
+              <!-- 新增的包含加文字提示需求 -->
+              <div class="div-des" v-if="itemRule.condition == 'in' && itemRule.fieldType != 2">
+                <!-- style="display: inline-block; margin-top: 17px;width: 100%;" -->
+                <a-input
+                  class="span-middle-value"
+                  v-model="itemRule.queryValue"
+                  style="display: inline-block; width: 100%"
+                  :maxLength="120"
+                  v-if="itemRule.fieldType == 1"
+                  allow-clear
+                  placeholder="请输入内容"
+                />
+                <span style="font-size: 6px; color: #999; margin-left: 5%"> 请用英文逗号隔开多个参数 </span>
+              </div>
             </div>
 
             <div class="div-rule-right">
@@ -442,7 +460,7 @@ export default {
     return {
       user: {},
       keshiData: {},
-      deptUsers: {},
+      // deptUsers: {},
 
       typeData: [],
       sourceData: [],
@@ -484,7 +502,7 @@ export default {
           planName: undefined,
           followType: undefined, //随访类型；1:关怀型随访2:管理型随访3:科研型随访
           metaConfigureId: undefined,
-          executeDepartment: undefined, //执行科室
+          executeDepartments: undefined, //执行科室
           remark: undefined, //补充说明
         },
         filterRules: [],
@@ -585,18 +603,6 @@ export default {
       }
     })
 
-    //全部的问卷模板
-    // getWxTemplateListForJumpType(1).then((res) => {
-    //   if (res.code == 0) {
-    //     res.data.forEach((item) => {
-    //       this.$set(item, 'messageContentType', 4)
-    //     })
-    //     this.templateListQues = res.data
-    //     this.getSmsTemplateListForJumpTypeOut()
-    //     console.log('getWxTemplateListForJumpType', res.data.length)
-    //   }
-    // })
-
     this.getDeptAllQues()
   },
 
@@ -665,15 +671,6 @@ export default {
      */
     goCheck(indexTask) {
       this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
-
-      // //1 电话 2 微信 3 短信
-      // if (this.projectData.tasks[indexTask].messageType == 1) {
-      //   this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
-      // } else if (
-      //   this.projectData.tasks[indexTask].messageType == 2 ||
-      //   this.projectData.tasks[indexTask].messageType == 3
-      // ) {
-      // }
     },
 
     delRule(indexRule, itemRule) {
@@ -687,14 +684,14 @@ export default {
     /**
      * 执行科室选择后需要请求执行人员
      */
-    onDeptSelect() {
-      this.getUsersByDeptIdAndRoleOut()
-      // this.getDeptAllQues()
+    onDeptSelect(s1, s2) {
+      console.log('proadd onDeptSelect', s1)
+      console.log('proadd onDeptSelect', s2)
     },
 
     addPerson(indexMisson) {
       //需增加人员先选执行科室
-      if (!this.projectData.basePlan.executeDepartment) {
+      if (!this.projectData.basePlan.executeDepartments) {
         this.$message.warn('请先选择执行科室')
         return
       }
@@ -704,19 +701,25 @@ export default {
         return
       }
 
-      console.log('this.addPerson', this.projectData.tasks[indexMisson].assignments)
-      if (!this.deptUsers[0].users || this.deptUsers[0].users.length == 0) {
-        this.$message.warn('所选执行科室没有可选人员')
-        return
+      //组装传进去的科室，  department_id  department_name
+      let tempDepts = []
+      for (let index = 0; index < this.projectData.basePlan.executeDepartments.length; index++) {
+        let hasOne = this.keshiData.find(
+          (item) => item.departmentId == this.projectData.basePlan.executeDepartments[index]
+        )
+        if (hasOne) {
+          tempDepts.push({ department_id: hasOne.departmentId, department_name: hasOne.departmentName })
+        }
       }
-
-      //     * 2每次随机 3首次随机 4指定人员    指定人员只能单选，其他多选
-      if (this.projectData.tasks[indexMisson].personnelAssignmentType == 4) {
-        this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, true)
-      } else {
-        this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments, false)
-      }
-      // this.$refs.addPeople.add(indexMisson, this.deptUsers, this.projectData.tasks[indexMisson].assignments)
+      console.log('add tempDepts', tempDepts)
+      this.$refs.addPeople.add(
+        indexMisson,
+        'doctor',
+        this.projectData.tasks[indexMisson].departmentDtos,
+        //     * 2每次随机 3首次随机 4指定人员    指定人员只能单选，其他多选
+        this.projectData.tasks[indexMisson].personnelAssignmentType == 4 ? true : false,
+        tempDepts
+      )
     },
 
     addStop(indexMisson) {
@@ -809,14 +812,9 @@ export default {
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         itemTask.isChecked = false
       }
-
-      //TODO
-      // itemTask.messageContentId = itemTask.itemTemplateList[0].id
     },
 
     getDeptAllQues() {
-      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
-
       let param = {
         pageNo: 1,
         pageSize: 100,
@@ -837,18 +835,6 @@ export default {
         }
       })
     },
-
-    // getSmsTemplateListForJumpTypeOut() {
-    //   getSmsTemplateListForJumpType(1).then((res) => {
-    //     if (res.code == 0) {
-    //       res.data.forEach((item) => {
-    //         this.$set(item, 'messageContentType', 3)
-    //         this.$set(item, 'templateName', item.templateTitle)
-    //       })
-    //       this.templateListQues = this.templateListQues.concat(res.data)
-    //     }
-    //   })
-    // },
 
     /**
      * 随访方式,随访模版选择后需要自动选择任务类型
@@ -939,27 +925,21 @@ export default {
       console.log('itemTask.everyData', itemTask.everyData)
     },
 
-    // /**
-    //  * 2每次随机 3首次随机 4指定人员
-    //  *
-    //  * personnelAssignmentType
-    //  * @param {
-    //  * } value
-    //  */
-    // onAssignmentTypeSelect(itemTask, indexTask) {
-    //   if (itemTask.personnelAssignmentType == 4) {
+    // handleAddPeople(indexTask, proccesedAssignments) {
+    handleAddPeople(indexTask, departmentDtos) {
+      console.log('handleAddPeople', departmentDtos)
+      this.projectData.tasks[indexTask].departmentDtos = departmentDtos
 
-    //   } else {
-    //   }
-    // },
+      let arrDtos = []
+      for (let index = 0; index < this.projectData.tasks[indexTask].departmentDtos.length; index++) {
+        arrDtos = arrDtos.concat(this.projectData.tasks[indexTask].departmentDtos[index].assignments)
+      }
 
-    handleAddPeople(indexTask, proccesedAssignments) {
-      this.projectData.tasks[indexTask].assignments = proccesedAssignments
       let nameStr = ''
       // debugger
-      if (this.projectData.tasks[indexTask].assignments.length > 0) {
-        this.projectData.tasks[indexTask].assignments.forEach((item, index) => {
-          if (index != this.projectData.tasks[indexTask].assignments.length - 1) {
+      if (arrDtos.length > 0) {
+        arrDtos.forEach((item, index) => {
+          if (index != arrDtos.length - 1) {
             nameStr = nameStr + item.userName + ','
           } else {
             nameStr = nameStr + item.userName
@@ -987,24 +967,6 @@ export default {
       })
     },
 
-    // getWxTemplateListOut() {
-    //   getWxTemplateList({ templateTitle: '', pageNo: 1, pageSize: 100 }).then((res) => {
-    //     if (res.code == 0) {
-    //       this.templateList = res.data.records
-    //     }
-    //   })
-    // },
-
-    getUsersByDeptIdAndRoleOut() {
-      getUsersByDeptIdAndRole({ departmentId: this.projectData.basePlan.executeDepartment, roleId: [3, 5, 7, 8] }).then(
-        (res) => {
-          if (res.code == 0) {
-            this.deptUsers = res.data.deptUsers
-          }
-        }
-      )
-    },
-
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.projectData))
 
@@ -1020,7 +982,7 @@ export default {
         this.$message.error('请选择来源名单')
         return
       }
-      if (!tempData.basePlan.executeDepartment) {
+      if (!tempData.basePlan.executeDepartments) {
         this.$message.error('请选择执行科室')
         return
       }
@@ -1064,6 +1026,12 @@ export default {
 
       for (let index = 0; index < tempData.tasks.length; index++) {
         let item = tempData.tasks[index]
+
+        //这里删除掉用到的临时问卷列表
+        if (item.itemTemplateList) {
+          delete item.itemTemplateList
+        }
+
         // console.log('aaa item', item)
         // console.log('aaa index', index)
         if (!item.messageType) {
@@ -1074,7 +1042,8 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
           return
         }
-        if (!item.taskExecType) {//1临时  2长期
+        if (!item.taskExecType) {
+          //1临时  2长期
           this.$message.error('请选择第' + (index + 1) + '条任务执行周期')
           return
         }
@@ -1124,12 +1093,14 @@ export default {
          如果是短信微信又没勾选，删掉跟进人员字段
          */
         if ((item.messageType == 2 || item.messageType == 3) && !item.isChecked) {
-          delete item.assignments
+          // delete item.assignments
+          delete item.departmentDtos
         }
 
         //微信和短信消息时勾选了加人，以及电话随访时需要添加人员
         if (((item.messageType == 2 || item.messageType == 3) && item.isChecked) || item.messageType == 1) {
-          if (!item.assignments || item.assignments.length == 0) {
+          // if (!item.assignments || item.assignments.length == 0) {
+          if (!item.departmentDtos || item.departmentDtos.length == 0) {
             this.$message.error('请添加人员分配')
             return
           }
@@ -1150,6 +1121,7 @@ export default {
       }
 
       this.confirmLoading = true
+      console.log('新增方案', JSON.stringify(tempData))
       saveFollow(tempData)
         .then((res) => {
           this.confirmLoading = false
@@ -1182,6 +1154,10 @@ export default {
   overflow: hidden;
   padding: 1%;
   padding-bottom: 2%;
+
+  /deep/ .ant-select-selection--multiple {
+    height: auto !important;
+  }
 
   span {
     font-size: 12px;
@@ -1284,7 +1260,7 @@ export default {
           display: flex;
           width: 80%;
           flex-direction: row;
-          align-items: center;
+          // align-items: center;
 
           .mid-select-one.ant-select {
             width: 30% !important;
@@ -1298,6 +1274,11 @@ export default {
           .span-middle-value {
             margin-left: 1%;
             width: 50%;
+          }
+          .div-des {
+            display: flex;
+            width: 50%;
+            flex-direction: column;
           }
         }
 
