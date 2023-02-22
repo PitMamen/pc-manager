@@ -95,8 +95,8 @@
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { orderList, queryHospitalList,getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { queryHospitalList,getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 

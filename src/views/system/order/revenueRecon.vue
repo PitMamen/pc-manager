@@ -46,6 +46,7 @@
    <div class="tab-all-content">
 
 
+    <!-- 订单总额 -->
     <div class="tab-total">
       <div class="content-dis">
         <a-icon style="width: 14px; height: 16px" type="container" />
@@ -145,8 +146,8 @@
      <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { orderList, queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
+import {  queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 
@@ -161,7 +162,6 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
-      createValue: [],
       orderTimeValue: [],
       treeData: [],
       gropListData: [],
@@ -321,7 +321,6 @@ export default {
 
   created() {
     this.queryHospitalListOut()
-    this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
@@ -468,15 +467,9 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    //更新时间
-    onChange(momentArr, dateArr) {
-      this.createValue = momentArr
-      this.queryParams.orderStartTime = dateArr[0]
-      this.queryParams.orderEndTime = dateArr[1]
-    },
     //下单时间
     onChangeOrder(momentArr, dateArr) {
-      this.createValue = momentArr
+      this.orderTimeValue = momentArr
       this.queryParams.refundStartTime = dateArr[0]
       this.queryParams.refundEndTime = dateArr[1]
     },

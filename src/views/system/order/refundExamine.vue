@@ -204,15 +204,15 @@
       :visible="visible_model"
     >
       <div class="div-up-content">
-          <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
-            <span style="margin-top: 10px; width: 90px"> 驳回原因 :</span>
-            <a-textarea
-              style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px; "
-              :maxLength="500"
-              v-model="rejectReason"
-              placeholder="请输入驳回理由"
-              v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入驳回理由' }] }]"
-            />
+        <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
+          <span style="margin-top: 10px; width: 90px"> 驳回原因 :</span>
+          <a-textarea
+            style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px"
+            :maxLength="150"
+            v-model="rejectReason"
+            placeholder="请输入驳回理由"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入驳回理由' }] }]"
+          />
         </div>
       </div>
 
@@ -247,7 +247,7 @@ export default {
       user: {},
       record: undefined,
       commodityPkgId: undefined,
-      showButton:true,
+      showButton: false,
       orderDetailDataList: [],
       goodsItemsData: [], //产品清单数据
       rightItemsData: [], //权益清单数据
@@ -491,18 +491,20 @@ export default {
       var orderId = this.$route.query.orderId
       this.init(orderId)
     }
-    // }
   },
 
-  created() {
-    this.user = Vue.ls.get(TRUE_USER)
-    // this.init(undefined)
-  },
+  created() {},
 
   methods: {
     moment,
     //入口
     init(refundId) {
+      this.user = Vue.ls.get(TRUE_USER)
+      this.orderDetailDataList = {}
+      if (this.user) {
+          //如果不是运营人员 或者 财务人员  不显示顶部按钮
+        this.showButton = this.user.dataAccessActors.includes('operationManager' || 'financialManager')
+      }
       this.orderId = refundId
       this.getrefundDetailOut(this.orderId)
     },
@@ -519,6 +521,10 @@ export default {
           if (res.code == 0) {
             var reponseDataList = res.data
             this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
+            if (this.orderDetailDataList.status.value == 103) {
+              //如果该订单是 退款成功了的  不显示顶部的两个按钮
+              this.showButton = false
+            }
             this.goodsItemsData = res.data.goodsItems //产品信息
             this.rightItemsData = res.data.rightItems //权益信息
             this.feeItemsData = res.data.feeItems //费用明细
