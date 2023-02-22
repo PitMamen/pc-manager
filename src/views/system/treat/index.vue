@@ -60,7 +60,7 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <a @click="$refs.infoForm.info(record)">问诊记录</a>
+          <a @click="$refs.infoForm.info(record)"><a-icon style="margin-right: 5px" type="hdd" />问诊记录</a>
         </template>
       </span>
     </s-table>
@@ -171,7 +171,7 @@ export default {
         },
         {
           title: '操作',
-          width: '80px',
+          width: '100px',
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
