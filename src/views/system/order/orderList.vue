@@ -419,17 +419,21 @@ export default {
         return '使用中'
       } else if (record.orderStatus == 102) {
         return '退款中'
+      }else if (record.orderStatus == 103) {
+        return '退款成功'
+      }else if (record.orderStatus == 104) {
+        return '退款失败'
       }
     },
 
     getColor(record){
-      if (record.orderStatus == 1) {
+      if (record.orderStatus == 1||record.orderStatus == 103) {
         return 'span-green'
       } else if (record.orderStatus == 2||record.orderStatus == 3||record.orderStatus == 5||record.orderStatus == 6||record.orderStatus == 7) {
         return 'span-gray'
       } else if (record.orderStatus == 4||record.orderStatus == 8||record.orderStatus == 101) {
         return 'span-blue'
-      } else if (record.orderStatus == 102) {
+      } else if (record.orderStatus == 102||record.orderStatus == 104) {
         return 'span-red'
       }
     },
@@ -765,6 +769,13 @@ export default {
     }
   }
 }
+</style>
+
+<style >
+ .ant-select-tree-dropdown {
+        max-height: 60vh !important;
+        top: 148px !important;
+      }
 </style>
    
    <style lang="less" scoped>

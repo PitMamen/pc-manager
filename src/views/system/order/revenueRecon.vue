@@ -14,34 +14,6 @@
       </div>
 
       <div class="search-row">
-        <span class="name">查询条件:</span>
-        <a-input
-          v-model="queryParams.combinedCondition"
-          allow-clear
-          placeholder="输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
-      </div>
-
-
-      <div class="search-row">
-        <span class="name">套餐类型:</span>
-        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
-            item.classifyName
-          }}</a-select-option>
-        </a-select>
-      </div>
-
-
-      <div class="search-row">
-        <span class="name">更新时间:</span>
-        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
-      </div>
-
-      <div class="search-row">
         <span class="name">下单时间:</span>
         <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" />
       </div>
@@ -49,26 +21,106 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()">导出</a-button>
         </span>
       </div>
     </div>
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
-        <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
+        <span style="margin-left: 3px">全部({{ numberData.quanbu }})</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
-        <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
+        <span style="margin-left: 3px">运营商收款({{ numberData.yy }}) </span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
-        <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
+        <span style="margin-left: 3px">医院收款({{ numberData.cw }})</span>
       </div>
 
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
-        <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
+      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
+          <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
+        </div> -->
+    </div>
+
+
+   <div class="tab-all-content">
+
+
+    <!-- 订单总额 -->
+    <div class="tab-total">
+      <div class="content-dis">
+        <a-icon style="width: 14px; height: 16px" type="container" />
+        <span style="font-size:12px;margin-left:10px;margin-top:-4px">订单总额</span>
+      </div>
+
+      <div class="content-dis">
+        <span style="font-size:24px;margin-top:-4px">250000.04</span>
+        <span style="font-size:12px;margin-top:4px;margin-left: 10px;">(差异:200)</span>
+      </div>
+     <div class="line"></div>
+     <div class="content-dis">
+        <span style="font-size:12px;margin-top:-4px">总笔数：{{zbs}}</span>
+        <span style="font-size:12px;margin-top:-4px;margin-left: 5px;">(差异:200)</span>
       </div>
     </div>
+
+
+
+     <!-- 微信支付 -->
+     <div class="tab-wx">
+      <div class="content-dis">
+        <a-icon style="width: 14px; height: 16px" type="wechat" />
+        <span style="font-size:12px;margin-left:10px;margin-top:-4px">微信支付订单额</span>
+      </div>
+
+      <div class="content-dis">
+        <span style="font-size:24px;margin-top:-4px">250000.04</span>
+        <span style="font-size:12px;margin-top:4px;margin-left: 10px;">(差异：200)</span>
+      </div>
+     <div class="line"></div>
+     <div class="content-dis">
+        <span style="font-size:12px;margin-top:-4px">总笔数：{{zbs}}</span>
+        <span style="font-size:12px;margin-top:-4px;margin-left: 5px;">(差异：200)</span>
+      </div>
+    </div>
+
+
+
+    <!-- 支付宝支付 -->
+    <div class="tab-alipay">
+      <div class="content-dis">
+        <a-icon style="width: 14px; height: 16px" type="alipay" />
+        <span style="font-size:12px;margin-left:10px;margin-top:-4px">支付宝支付订单额</span>
+      </div>
+
+      <div class="content-dis">
+        <span style="font-size:24px;margin-top:-4px">250000.04</span>
+        <span style="font-size:12px;margin-top:4px;margin-left: 10px;">(差异：200)</span>
+      </div>
+     <div class="line"></div>
+     <div class="content-dis">
+        <span style="font-size:12px;margin-top:-4px">总笔数：{{zbs}}</span>
+        <span style="font-size:12px;margin-top:-4px;margin-left: 5px;">(差异：200)</span>
+      </div>
+    </div>
+
+
+
+
+
+
+
+
+   </div>
+
+
+
+   
+
+
+
+
+    
 
     <s-table
       :scroll="{ x: true }"
@@ -84,18 +136,17 @@
       </span>
 
       <span slot="status" slot-scope="text, record" :class="getColor(record.status.value)">
-        <!-- {{ getType(record) }} -->
         {{ record.status.description }}
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
 </template>
-   
-   <script>
+     
+     <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { queryHospitalList,getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import {  queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
 import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -111,7 +162,6 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
-      createValue: [],
       orderTimeValue: [],
       treeData: [],
       gropListData: [],
@@ -120,11 +170,11 @@ export default {
       currentTab: 'qb',
       numberData: {
         quanbu: 0,
-        yy:0,
-        cw:0,
-        wc:0,
+        yy: 0,
+        cw: 0,
+        wc: 0,
       },
-
+      zbs:102,
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
@@ -175,17 +225,12 @@ export default {
         {
           title: '应退',
           dataIndex: 'refundMoney',
-          align: 'right',   
-        },
-        {
-          title: '实退',
-          dataIndex: 'actualRefundMoney',
-          align: 'right',   
+          align: 'right',
         },
         {
           title: '创建时间',
           dataIndex: 'createTime',
-        //   width: 160,
+          //   width: 160,
         },
 
         {
@@ -269,22 +314,15 @@ export default {
 
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
-    this.reset()
+    this.leadingOut()
     this.queryParams.tabCode = this.currentTab
     this.queryParamsTemp.tabCode = this.currentTab
   },
 
   created() {
     this.queryHospitalListOut()
-    this.createValue = [
-      moment(getDateNow(), this.dateFormat),
-      moment(getCurrentMonthLast(), this.dateFormat),
-    ]
 
-    this.orderTimeValue = [
-      moment(getDateNow(), this.dateFormat),
-      moment(getCurrentMonthLast(), this.dateFormat),
-    ]
+    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
 
@@ -327,17 +365,16 @@ export default {
     },
 
     getColor(value) {
-      if (value == 1||value == 2) {
+      if (value == 1 || value == 2) {
         return 'span-green'
-      }else if (value == 3 ||value == 5) {
+      } else if (value == 3 || value == 5) {
         return 'span-red'
       } else if (value == 6) {
         return 'span-blue'
-      }else if (value == 4) {
+      } else if (value == 4) {
         return 'span-gray'
       }
     },
-
 
     isLoading() {
       return this.confirmLoading
@@ -377,15 +414,9 @@ export default {
         })
     },
 
-    reset() {
-      this.queryParams.combinedCondition = ''
-      this.queryParams.hospitalCode = undefined
-      this.queryParams.orderEndTime = ''
-      this.queryParams.orderStartTime = ''
-      this.queryParams.classifyId = ''
-      this.queryParams. refundEndTime='',
-      this.queryParams.refundStartTime='',
-      this.handleOk()
+    //导出
+    leadingOut(){
+
     },
 
     //订单分组
@@ -394,19 +425,19 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].code == "qb") {
+              if (res.data[index].code == 'qb') {
                 //全部
                 this.numberData.quanbu = res.data[index].count
-              } else if (res.data[index].code == "yy") {
+              } else if (res.data[index].code == 'yy') {
                 //运营
                 this.numberData.yy = res.data[index].count
-              } else if (res.data[index].code == "cw") {
+              } else if (res.data[index].code == 'cw') {
                 //财务
                 this.numberData.cw = res.data[index].count
-              } else if (res.data[index].code == "wc") {
+              } else if (res.data[index].code == 'wc') {
                 //完成
                 this.numberData.wc = res.data[index].count
-              } 
+              }
             }
           }
         })
@@ -436,12 +467,6 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    //更新时间
-    onChange(momentArr, dateArr) {
-        this.createValue = momentArr
-        this.queryParams.orderStartTime = dateArr[0]
-        this.queryParams.orderEndTime = dateArr[1]
-    },
     //下单时间
     onChangeOrder(momentArr, dateArr) {
       this.orderTimeValue = momentArr
@@ -456,8 +481,8 @@ export default {
   },
 }
 </script>
-   
-   <style lang="less" scoped>
+     
+     <style lang="less" scoped>
 .span-blue {
   background-color: #ecf5ff;
   padding: 2px 4px;
@@ -512,73 +537,15 @@ export default {
 //   color: #333 !important;
 // }
 
-.sitemore {
-  .ant-select-selection.ant-select-selection--single {
-    height: 28px !important;
-  }
 
-  margin-left: 5px;
-  align-items: center;
 
-  .ant-select-selection--multiple {
-    width: 100%;
-    height: 28px;
 
-    .ant-select-selection__rendered {
-      height: 100%;
-      ul {
-        width: 100%;
-        height: 28px;
-        overflow-y: hidden;
-        display: -webkit-box;
-        &::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-        }
-        &::-webkit-scrollbar-track {
-          background-color: #dedede;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: #bfbfbf;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        & li {
-          padding: 0px 10px 0px 5px;
-          box-sizing: border-box;
-          width: 75px;
-          float: unset;
-          margin-top: 1px !important;
-        }
-
-        /deep/.ant-select-selection__choice {
-          margin-top: 1px !important;
-        }
-      }
-    }
-  }
-}
-
-.table-wrapper {
-  // max-height: 600px;
-  // overflow-y: auto;
-}
-.sys-card {
-  // height: 100%;
-  // padding-bottom: 52px;
-  // /deep/ .ant-table-pagination {
-  //   position: fixed;
-  //   right: 32px;
-  //   bottom: 20px;
-  // }
-}
 .table-page-search-wrapper {
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
+
+ 
+
   .action-row {
     display: inline-block;
     vertical-align: middle;
@@ -597,6 +564,105 @@ export default {
     }
   }
 }
+
+
+.tab-all-content{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    .tab-total {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 260px;
+  height: 120px;
+  background: #f28c73;
+  box-shadow: 0px 2px 4px 0px rgba(242, 140, 115, 0.35);
+
+  .content-dis {
+    margin-left: 15px;
+    margin-top: 15px;
+    margin-right: 15px;
+    display: flex;
+    flex-direction: row;
+    color: #ffffff;
+  }
+
+  .line {
+    width: 100%;
+    height: 1px;
+    background: #e6e6e6;
+    margin-top: 6px;
+  }
+}
+
+
+
+
+.tab-wx {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 260px;
+  height: 120px;
+  background: #8FCB4A;
+
+  .content-dis {
+    margin-left: 15px;
+    margin-top: 15px;
+    margin-right: 15px;
+    display: flex;
+    flex-direction: row;
+    color: #ffffff;
+  }
+
+  .line {
+    width: 100%;
+    height: 1px;
+    background: #e6e6e6;
+    margin-top: 6px;
+  }
+}
+
+
+
+
+.tab-alipay {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 260px;
+  height: 120px;
+  background: #5794E9;
+  box-shadow: 0px 2px 4px 0px rgba(87,148,233,0.35);
+  .content-dis {
+    margin-left: 15px;
+    margin-top: 15px;
+    margin-right: 15px;
+    display: flex;
+    flex-direction: row;
+    color: #ffffff;
+  }
+
+  .line {
+    width: 100%;
+    height: 1px;
+    background: #e6e6e6;
+    margin-top: 6px;
+  }
+}
+
+
+}
+
+
+
 
 .div-radio {
   margin-top: 10px;
@@ -646,25 +712,22 @@ export default {
   height: 1px;
 }
 </style>
-   
-   <style lang="less">
-.top-title {
-  .ant-select-selection__rendered {
-    li {
-      margin-top: 1px !important;
-    }
-  }
-}
-</style>
 
-<style >
+ <style >
  .ant-select-tree-dropdown {
         max-height: 60vh !important;
         top: 148px !important;
       }
 </style>
+
+
+
+
+
+
      
-     <style lang="less" scoped>
+       
+       <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 40px);

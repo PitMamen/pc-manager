@@ -3,8 +3,8 @@
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
-      <a-button style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
-      <a-button style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
+      <a-button v-show="showButton" style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
+      <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 49px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
       </div>
@@ -204,15 +204,15 @@
       :visible="visible_model"
     >
       <div class="div-up-content">
-          <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
-            <span style="margin-top: 10px; width: 90px"> 驳回原因 :</span>
-            <a-textarea
-              style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px; "
-              :maxLength="500"
-              v-model="rejectReason"
-              placeholder="请输入驳回理由"
-              v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入驳回理由' }] }]"
-            />
+        <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
+          <span style="margin-top: 10px; width: 90px"> 驳回原因 :</span>
+          <a-textarea
+            style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px"
+            :maxLength="150"
+            v-model="rejectReason"
+            placeholder="请输入驳回理由"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入驳回理由' }] }]"
+          />
         </div>
       </div>
 
@@ -247,6 +247,7 @@ export default {
       user: {},
       record: undefined,
       commodityPkgId: undefined,
+      showButton: false,
       orderDetailDataList: [],
       goodsItemsData: [], //产品清单数据
       rightItemsData: [], //权益清单数据
@@ -397,6 +398,23 @@ export default {
           title: '实收金额',
           dataIndex: 'payTotal',
           align: 'right',
+          customRender: (value, row, index) => {
+            console.log(value, row, index)
+            const obj = {
+              //   children: this.cancelItemsData.length,
+              children: row.payTotal,
+              attrs: {},
+            }
+            if (index === 0) {
+              // 第一行数据开始，跨行合并的长度为数据data的长度
+              obj.attrs.rowSpan = this.feeItemsData.length
+            }
+            if (index >= 1) {
+              // 从第一行往后的所有行表格均合并
+              obj.attrs.rowSpan = 0
+            }
+            return obj
+          },
         },
         {
           title: '已服务数',
@@ -473,18 +491,20 @@ export default {
       var orderId = this.$route.query.orderId
       this.init(orderId)
     }
-    // }
   },
 
-  created() {
-    this.user = Vue.ls.get(TRUE_USER)
-    // this.init(undefined)
-  },
+  created() {},
 
   methods: {
     moment,
     //入口
     init(refundId) {
+      this.user = Vue.ls.get(TRUE_USER)
+      this.orderDetailDataList = {}
+      if (this.user) {
+          //如果不是运营人员 或者 财务人员  不显示顶部按钮
+        this.showButton = this.user.dataAccessActors.includes('operationManager' || 'financialManager')
+      }
       this.orderId = refundId
       this.getrefundDetailOut(this.orderId)
     },
@@ -501,6 +521,10 @@ export default {
           if (res.code == 0) {
             var reponseDataList = res.data
             this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
+            if (this.orderDetailDataList.status.value == 103) {
+              //如果该订单是 退款成功了的  不显示顶部的两个按钮
+              this.showButton = false
+            }
             this.goodsItemsData = res.data.goodsItems //产品信息
             this.rightItemsData = res.data.rightItems //权益信息
             this.feeItemsData = res.data.feeItems //费用明细
@@ -542,7 +566,7 @@ export default {
       this.visible_model = true
     },
 
-    //审核通过退款
+    //审核通过退款   type=1 同意 2 驳回
     handleComf(type) {
       //请求接口
       this.smallLoading = true
@@ -555,6 +579,7 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             console.log('NNNNNNNNNNNNNNNN')
+            this.showButton = false
             this.handleOk()
             this.$message.success('操作成功!')
           } else {
