@@ -40,6 +40,7 @@
     <s-table
       ref="table"
       size="default"
+      :showPagination="false"
       :columns="columns"
       :data="loadData"
       :alert="true"
@@ -134,7 +135,7 @@ export default {
 
       queryParam: {
         pageNo: 0,
-        pageSize: 10,
+        pageSize: 100,
         status: 1,
         queryText: '',
         // isRegister: '1',

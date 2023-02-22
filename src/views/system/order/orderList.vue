@@ -766,6 +766,13 @@ export default {
   }
 }
 </style>
+
+<style >
+ .ant-select-tree-dropdown {
+        max-height: 60vh !important;
+        top: 148px !important;
+      }
+</style>
    
    <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px

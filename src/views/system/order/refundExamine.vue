@@ -3,8 +3,8 @@
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
-      <a-button style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
-      <a-button style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
+      <a-button v-show="showButton" style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
+      <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 49px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
       </div>
@@ -247,6 +247,7 @@ export default {
       user: {},
       record: undefined,
       commodityPkgId: undefined,
+      showButton:true,
       orderDetailDataList: [],
       goodsItemsData: [], //产品清单数据
       rightItemsData: [], //权益清单数据
@@ -397,6 +398,23 @@ export default {
           title: '实收金额',
           dataIndex: 'payTotal',
           align: 'right',
+          customRender: (value, row, index) => {
+            console.log(value, row, index)
+            const obj = {
+              //   children: this.cancelItemsData.length,
+              children: row.payTotal,
+              attrs: {},
+            }
+            if (index === 0) {
+              // 第一行数据开始，跨行合并的长度为数据data的长度
+              obj.attrs.rowSpan = this.feeItemsData.length
+            }
+            if (index >= 1) {
+              // 从第一行往后的所有行表格均合并
+              obj.attrs.rowSpan = 0
+            }
+            return obj
+          },
         },
         {
           title: '已服务数',
@@ -542,7 +560,7 @@ export default {
       this.visible_model = true
     },
 
-    //审核通过退款
+    //审核通过退款   type=1 同意 2 驳回
     handleComf(type) {
       //请求接口
       this.smallLoading = true
@@ -555,6 +573,7 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             console.log('NNNNNNNNNNNNNNNN')
+            this.showButton = false
             this.handleOk()
             this.$message.success('操作成功!')
           } else {
