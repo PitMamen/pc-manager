@@ -3851,3 +3851,41 @@ export function applyRefund(data) {
   })
 }
 
+
+//退款列表表头信息
+export function getTab(data){
+  return axios({
+    url: '/medical-api/admrefund/tab',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//管理端-分页查询退款单
+export function getPage(data){
+  return axios({
+    url: '/medical-api/admrefund/page',
+    method: 'post',
+    data: data,
+  })
+}
+
+//管理端-退款单详情
+export function refundDetail(data){
+  return axios({
+    url: '/medical-api/admrefund/detail',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+//管理端-退款审核
+export function examine(data){
+  return axios({
+    url: '/medical-api/admrefund/audit',
+    method: 'post',
+    data: data,
+  })
+}
