@@ -10,6 +10,16 @@
   >
     <a-spin :spinning="confirmLoading">
       <a-tabs v-model="activeKey" type="line" style="margin-top: -10px; position: relative">
+        <a-tab-pane key="0">
+          <template #tab>
+            <span>
+              <img v-show="activeKey != '0'" src="~@/assets/icons/jiben_not.png" class="icon" />
+              <img v-show="activeKey == '0'" src="~@/assets/icons/jiben.png" class="icon" />
+              基本信息
+            </span>
+          </template>
+          <patient-file ref="patientFile " :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
+        </a-tab-pane>
         <a-tab-pane key="1">
           <template #tab>
             <span>
@@ -33,8 +43,8 @@
         <a-tab-pane key="3" v-if="!isPatientManage">
           <template #tab>
             <span>
-              <img v-show="activeKey != '3'" src="~@/assets/icons/bcsf.png" class="icon" />
-              <img v-show="activeKey == '3'" src="~@/assets/icons/bcsf1.png" class="icon" />
+              <img v-show="activeKey != '3'" src="~@/assets/icons/benci_not.png" class="icon" />
+              <img v-show="activeKey == '3'" src="~@/assets/icons/benci.png" class="icon" />
               本次随访
             </span>
           </template>
@@ -57,7 +67,17 @@
             @playAudio="playAudio"
           />
         </a-tab-pane>
-        <div class="span-mid-audio" v-show="audioShow">
+        <a-tab-pane key="4">
+          <template #tab>
+            <span>
+              <img v-show="activeKey != '4'" src="~@/assets/icons/fangan_not.png" class="icon" />
+              <img v-show="activeKey == '4'" src="~@/assets/icons/fangan.png" class="icon" />
+              随访方案
+            </span>
+          </template>
+          <basic-plan ref="basicPlan " :record="record" @handleCancel="handleCancel"  />
+        </a-tab-pane>
+        <div class="span-mid-audio" v-if="audioShow">
           <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>
         </div>
        
@@ -73,6 +93,7 @@ import telSolve from './telSolve'
 import patientFile from './patientFile'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
+import basicPlan from './basicPlan'
 import { createSdkLoginToken, addTencentPhoneTape, getAccountParam } from '@/api/modular/system/posManage'
 import { canCall } from '@/utils/util'
 export default {
@@ -81,6 +102,7 @@ export default {
     patientFile,
     histroySolve,
     telDetail,
+    basicPlan,
   },
 
   data() {
