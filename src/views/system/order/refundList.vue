@@ -354,7 +354,6 @@ export default {
       if (clearTime) {
         this.createValue = []
         this.orderTimeValue = []
-
       }
       this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
@@ -428,13 +427,19 @@ export default {
       if (dateArr) {
         if (dateArr[0] > dateArr[1]) {
           this.$message.error('开始时间不能大于结束时间')
-        //   this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
-        //   this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
+          //   this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
+          //   this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
 
           this.queryParams.updateStartTime = ''
           this.queryParams.updateEndTime = ''
           return
         }
+      }
+
+      if (dateArr[0] == '' && dateArr[1] == '') {
+        this.queryParams.updateStartTime = ''
+        this.queryParams.updateEndTime = ''
+        return
       }
 
       this.orderTimeValue = momentArr
@@ -455,13 +460,19 @@ export default {
       if (dateArr2) {
         if (dateArr2[0] > dateArr2[1]) {
           this.$message.error('开始时间不能大于结束时间')
-        //   this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
-        //   this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
+          //   this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
+          //   this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
 
           this.queryParams.updateStartTime = ''
           this.queryParams.updateEndTime = ''
           return
         }
+      }
+
+      if (dateArr2[0] == '' && dateArr2[1] == '') {
+        this.queryParams.createStartTime = ''
+        this.queryParams.createEndTime = ''
+        return
       }
 
       this.createValue = momentArr
