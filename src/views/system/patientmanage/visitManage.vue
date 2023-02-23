@@ -135,21 +135,29 @@
         text-overflow: ellipsis; //超出省略号显示
         white-space: nowrap; //文字不换行 -->
                 <span
-                 
                   :class="getClassTime(item.overdueStatus.value)"
-                  style="width: 30px; margin-left: 7px; text-align: center; text-overflow: ellipsis;overflow: hidden;white-space: nowrap"
+                  style="
+                    width: 30px;
+                    margin-left: 7px;
+                    text-align: center;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                  "
                 >
                   {{ item.executeTime }}
                 </span>
 
                 <span
                   style="
-                  margin-bottom: -5px;
+                    margin-bottom: -5px;
                     margin-left: 0px;
                     text-align: center;
                     width: 200px;
                     display: inline-block;
-                    text-overflow: ellipsis;overflow: hidden;white-space: nowrap
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
                   "
                 >
                   {{ item.templateTitle }}
@@ -157,7 +165,16 @@
 
                 <span
                   :class="getClass(item.taskBizStatus.value)"
-                  style="margin-left: 0px;width: 55px;  text-align: end; display: inline-block;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;margin-bottom: -8px;"
+                  style="
+                    margin-left: 0px;
+                    width: 55px;
+                    text-align: end;
+                    display: inline-block;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    margin-bottom: -8px;
+                  "
                 >
                   {{ item.taskBizStatus.description }}
                 </span>
@@ -499,8 +516,6 @@ export default {
 </script>
   
   <style lang="less">
-  
-
 .no-data {
   height: 300px;
   display: flex;

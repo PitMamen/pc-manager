@@ -18,7 +18,7 @@
               基本信息
             </span>
           </template>
-          <patient-file ref="patientFile " :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
+          <basic-tel ref="basicPlan " :record="record" />
         </a-tab-pane>
         <a-tab-pane key="1">
           <template #tab>
@@ -94,6 +94,7 @@ import patientFile from './patientFile'
 import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import basicPlan from './basicPlan'
+import basicTel from './basicTel'
 import { createSdkLoginToken, addTencentPhoneTape, getAccountParam } from '@/api/modular/system/posManage'
 import { canCall } from '@/utils/util'
 export default {
@@ -103,6 +104,7 @@ export default {
     histroySolve,
     telDetail,
     basicPlan,
+    basicTel,
   },
 
   data() {

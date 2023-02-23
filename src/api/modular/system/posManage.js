@@ -3819,6 +3819,24 @@ export function stopFollowUserPlanTask(id) {
   })
 }
 
+//followMetaConfigure/getPatientInfo  档案基本信息查询
+export function getPatientInfo(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/getPatientInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+//followMetaConfigure/updatePatientInfo  修改档案基本信息
+export function updatePatientInfo(id) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/updatePatientInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 //订单分组
 export function getOrderStatusGroupByData(data) {
