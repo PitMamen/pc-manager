@@ -20,7 +20,7 @@
           :rowKey="(record) => record.code"
         >
           <span slot="action" slot-scope="text, record" v-if="record.status.value == 1 || record.status.value == 2">
-            <a-popconfirm placement="topRight" title="确认删除？" @confirm="goStop(record)">
+            <a-popconfirm placement="topRight" title="确认是否终止该任务？" @confirm="goStop(record)">
               <a style="margin-left: 5px">停止任务</a>
             </a-popconfirm>
 
@@ -32,7 +32,7 @@
       <!--  -->
       <div class="div-bo">
         <div style="float: right">
-          <a-popconfirm placement="topRight" title="确认删除？" @confirm="goStopPlan">
+          <a-popconfirm placement="topRight" title="确认是否终止该方案？" @confirm="goStopPlan">
             <div class="bo-btn">终止方案</div>
           </a-popconfirm>
           <div
@@ -278,6 +278,11 @@ export default {
         {
           title: '任务类型',
           dataIndex: 'taskTypeName',
+          ellipsis: true,
+        },
+        {
+          title: '计划执行时间',
+          dataIndex: 'latestExecDate',
           ellipsis: true,
         },
         {

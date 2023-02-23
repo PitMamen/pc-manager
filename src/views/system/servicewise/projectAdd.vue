@@ -50,9 +50,9 @@
             <a-select
               v-model="projectData.basePlan.executeDepartments"
               @select="onDeptSelect"
+              @deselect="onDeptDeSelect"
               mode="multiple"
               :token-separators="[',']"
-              allow-clear
               placeholder="请选择执行科室"
             >
               <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
@@ -685,13 +685,31 @@ export default {
      * 执行科室选择后需要请求执行人员
      */
     onDeptSelect(s1, s2) {
-      console.log('proadd onDeptSelect', s1)
-      console.log('proadd onDeptSelect', s2)
+      console.log('proadd onDeptSelect s1', s1)
+      console.log('proadd onDeptSelect s2', s2)
+    },
+
+    /**
+     * 取消选择时调用  取消哪一个，则需要清空哪一个科室的人员
+     */
+    onDeptDeSelect(departmentId) {
+      for (let index = 0; index < this.projectData.tasks.length; index++) {
+        let haveIndex = this.projectData.tasks[index].departmentDtos.findIndex((itemTemp, indexTemp) => {
+          return itemTemp.executeDepartmentId == departmentId
+        })
+        if (haveIndex != -1) {
+          this.projectData.tasks[index].departmentDtos.splice(haveIndex, 1)
+          console.log('nameS before', this.projectData.tasks[index].nameStr)
+          this.handleAddPeople(index, this.projectData.tasks[index].departmentDtos)
+          console.log('nameS after', this.projectData.tasks[index].nameStr)
+        }
+      }
+      console.log('proadd onDeptDeSelect De s1', departmentId)
     },
 
     addPerson(indexMisson) {
       //需增加人员先选执行科室
-      if (!this.projectData.basePlan.executeDepartments) {
+      if (!this.projectData.basePlan.executeDepartments || this.projectData.basePlan.executeDepartments.length == 0) {
         this.$message.warn('请先选择执行科室')
         return
       }
@@ -982,7 +1000,7 @@ export default {
         this.$message.error('请选择来源名单')
         return
       }
-      if (!tempData.basePlan.executeDepartments) {
+      if (!tempData.basePlan.executeDepartments || tempData.basePlan.executeDepartments.length == 0) {
         this.$message.error('请选择执行科室')
         return
       }
