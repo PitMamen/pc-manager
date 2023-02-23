@@ -417,9 +417,7 @@ export default {
       if (Math.abs(moment(dateArr[1]).unix() - moment(dateArr[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
 
-        // this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
-        // this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
-
+        this.orderTimeValue=[]
         this.queryParams.updateStartTime = ''
         this.queryParams.updateEndTime = ''
         return
@@ -427,9 +425,7 @@ export default {
       if (dateArr) {
         if (dateArr[0] > dateArr[1]) {
           this.$message.error('开始时间不能大于结束时间')
-          //   this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
-          //   this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
-
+          this.orderTimeValue=[]
           this.queryParams.updateStartTime = ''
           this.queryParams.updateEndTime = ''
           return
@@ -451,8 +447,7 @@ export default {
     onChangeOrder(momentArr, dateArr2) {
       if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
-        // this.queryParams.createStartTime = getDateNow() + ' 00:00:00'
-        // this.queryParams.createEndTime = getCurrentMonthLast() + ' 23:59:59'
+        this.createValue=[]
         this.queryParams.createStartTime = ''
         this.queryParams.createEndTime = ''
         return
@@ -460,9 +455,7 @@ export default {
       if (dateArr2) {
         if (dateArr2[0] > dateArr2[1]) {
           this.$message.error('开始时间不能大于结束时间')
-          //   this.queryParams.updateStartTime = getDateNow() + ' 00:00:00'
-          //   this.queryParams.updateEndTime = getCurrentMonthLast() + ' 23:59:59'
-
+          this.createValue=[]
           this.queryParams.updateStartTime = ''
           this.queryParams.updateEndTime = ''
           return
