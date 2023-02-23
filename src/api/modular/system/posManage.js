@@ -3792,6 +3792,51 @@ export function createNoLogin(data) {
   })
 }
 
+//follow/userplan/getFollowUserPlanPcList 用户随访方案列表(管理端)
+export function getFollowUserPlanPcList(data) {
+  return axios({
+    url: '/follow-api/follow/userplan/getFollowUserPlanPcList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// follow/userplan/stopFollowUserPlan/{userId}  终止当前用户方案
+export function stopFollowUserPlan(data) {
+  return axios({
+    url: '/follow-api/follow/userplan/stopFollowUserPlan',
+    method: 'post',
+    data: data,
+  })
+}
+
+//follow/userplan/stopFollowUserPlanTask/{id}  停止用户当前随访任务
+export function stopFollowUserPlanTask(id) {
+  return axios({
+    url: '/follow-api/follow/userplan/stopFollowUserPlanTask/' + id,
+    method: 'post',
+    // data: data,
+  })
+}
+
+//followMetaConfigure/getPatientInfo  档案基本信息查询
+export function getPatientInfo(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/getPatientInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+//followMetaConfigure/updatePatientInfo  修改档案基本信息
+export function updatePatientInfo(id) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/updatePatientInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 //订单分组
 export function getOrderStatusGroupByData(data) {

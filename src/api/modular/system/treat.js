@@ -12,34 +12,23 @@ export function list (parameter) {
 }
 
 /**
+ * 列表
+ */
+ export function list2 (parameter) {
+  return axios({
+    url: '/medical-api/rightsUse/qryHistoryByPage',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 查询
  */
  export function info (parameter) {
   return axios({
-    url: '/medical-api/application/detail',
+    url: '/medical-api/rightsUse/getRightsReqData',
     method: 'get',
     params: parameter
-  })
-}
-
-/**
- * 添加
- */
- export function add (parameter) {
-  return axios({
-    url: '/medical-api/application/save',
-    method: 'post',
-    data: parameter
-  })
-}
-
-/**
- * 修改
- */
- export function update (parameter) {
-  return axios({
-    url: '/medical-api/application/enable',
-    method: 'post',
-    data: parameter
   })
 }
