@@ -3829,7 +3829,7 @@ export function getPatientInfo(data) {
 }
 
 //followMetaConfigure/updatePatientInfo  修改档案基本信息
-export function updatePatientInfo(id) {
+export function updatePatientInfo(data) {
   return axios({
     url: '/follow-api/followMetaConfigure/updatePatientInfo',
     method: 'post',

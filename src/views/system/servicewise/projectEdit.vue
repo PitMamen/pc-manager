@@ -50,9 +50,9 @@
             <span class="span-item-name"><span style="color: red">*</span> 执行科室 :</span>
             <a-select
               v-model="projectData.basePlan.executeDepartments"
-              disabled
               mode="multiple"
               @select="onDeptSelect"
+              @deselect="onDeptDeSelect"
               allow-clear
               placeholder="请选择执行科室"
             >
@@ -713,6 +713,8 @@ export default {
             item.queryValue = moment(item.queryValue, 'YYYY-MM-DD')
           }
         })
+      } else {
+        this.projectData.filterRules = []
       }
 
       this.projectData.tasks.forEach((item) => {
@@ -760,24 +762,28 @@ export default {
         }
 
         //处理电话跟进用户名
-        let arrDtos = []
-        for (let indexNew = 0; indexNew < item.departmentDtos.length; indexNew++) {
-          arrDtos = arrDtos.concat(item.departmentDtos[indexNew].assignments)
-        }
+        if (item.departmentDtos && item.departmentDtos.length > 0) {
+          let arrDtos = []
+          for (let indexNew = 0; indexNew < item.departmentDtos.length; indexNew++) {
+            arrDtos = arrDtos.concat(item.departmentDtos[indexNew].assignments)
+          }
 
-        let nameStr = ''
-        // debugger
-        if (arrDtos.length > 0) {
-          arrDtos.forEach((itemDto, indexDto) => {
-            if (indexDto != arrDtos.length - 1) {
-              nameStr = nameStr + itemDto.userName + ','
-            } else {
-              nameStr = nameStr + itemDto.userName
-            }
-          })
+          let nameStr = ''
           // debugger
-          console.log('nameStr', nameStr)
-          this.$set(item, 'nameStr', nameStr)
+          if (arrDtos.length > 0) {
+            arrDtos.forEach((itemDto, indexDto) => {
+              if (indexDto != arrDtos.length - 1) {
+                nameStr = nameStr + itemDto.userName + ','
+              } else {
+                nameStr = nameStr + itemDto.userName
+              }
+            })
+            // debugger
+            console.log('nameStr', nameStr)
+            this.$set(item, 'nameStr', nameStr)
+          }
+        } else {
+          item.departmentDtos = []
         }
 
         //处理时间字段 微信短信消息需要时间
@@ -886,7 +892,6 @@ export default {
       console.log('isChecked be', this.projectData.tasks[indexTask].isChecked)
       this.projectData.tasks[indexTask].isChecked = !this.projectData.tasks[indexTask].isChecked
       console.log('isChecked af', this.projectData.tasks[indexTask].isChecked)
-
     },
 
     delRule(indexRule, itemRule) {
@@ -908,9 +913,27 @@ export default {
       // this.getDeptAllQues()
     },
 
+        /**
+     * 取消选择时调用  取消哪一个，则需要清空哪一个科室的人员
+     */
+     onDeptDeSelect(departmentId) {
+      for (let index = 0; index < this.projectData.tasks.length; index++) {
+        let haveIndex = this.projectData.tasks[index].departmentDtos.findIndex((itemTemp, indexTemp) => {
+          return itemTemp.executeDepartmentId == departmentId
+        })
+        if (haveIndex != -1) {
+          this.projectData.tasks[index].departmentDtos.splice(haveIndex, 1)
+          console.log('nameS before', this.projectData.tasks[index].nameStr)
+          this.handleAddPeople(index, this.projectData.tasks[index].departmentDtos)
+          console.log('nameS after', this.projectData.tasks[index].nameStr)
+        }
+      }
+      console.log('proadd onDeptDeSelect De s1', departmentId)
+    },
+
     addPerson(indexMisson) {
       //需增加人员先选执行科室
-      if (!this.projectData.basePlan.executeDepartments) {
+      if (!this.projectData.basePlan.executeDepartments || this.projectData.basePlan.executeDepartments.length == 0) {
         this.$message.warn('请先选择执行科室')
         return
       }
@@ -1212,7 +1235,7 @@ export default {
         this.$message.error('请选择来源名单')
         return
       }
-      if (!tempData.basePlan.executeDepartments) {
+      if (!tempData.basePlan.executeDepartments || tempData.basePlan.executeDepartments.length == 0) {
         this.$message.error('请选择执行科室')
         return
       }
