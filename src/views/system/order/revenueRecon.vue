@@ -343,10 +343,9 @@ export default {
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/refundExamine',
+        path: '/order/reconDetail',
         query: {
           orderId: record.applyId,
-          // orderId:1623236088379908098,
         },
       })
     },

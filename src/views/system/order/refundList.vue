@@ -93,7 +93,7 @@
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import { accessHospitals, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -277,7 +277,6 @@ export default {
         path: '/order/refundExamine',
         query: {
           orderId: record.applyId,
-          // orderId:1623236088379908098,
         },
       })
     },
@@ -315,13 +314,13 @@ export default {
     },
 
     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
