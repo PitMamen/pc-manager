@@ -184,8 +184,6 @@ export default {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        orderEndTime: getCurrentMonthLast(),
-        orderStartTime: getDateNow(),
         refundEndTime: getCurrentMonthLast(),
         refundStartTime: getDateNow(),
         tabCode: '',
