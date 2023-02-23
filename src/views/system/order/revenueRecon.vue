@@ -44,23 +44,27 @@
 
 
    <div class="tab-all-content">
-
+    
 
     <!-- 订单总额 -->
     <div class="tab-total">
       <div class="content-dis">
-        <a-icon style="width: 14px; height: 16px" type="container" />
-        <span style="font-size:12px;margin-left:10px;margin-top:-4px">订单总额</span>
+          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="container" />
+          <span style="font-size:12px;margin-left:10px;margin-top:3px">订单总额</span>
+          <div style="float:right">
+
+              <img style="padding-left:110px;margin-top: -10px;" src="@/assets/icons/tc.png" >
+          </div>
       </div>
 
       <div class="content-dis">
-        <span style="font-size:24px;margin-top:-4px">250000.04</span>
-        <span style="font-size:12px;margin-top:4px;margin-left: 10px;">(差异:200)</span>
+        <span style="font-size:24px;margin-top:-14px">250000.04</span>
+        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
       </div>
      <div class="line"></div>
      <div class="content-dis">
-        <span style="font-size:12px;margin-top:-4px">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-top:-4px;margin-left: 5px;">(差异:200)</span>
+        <span style="font-size:12px;">总笔数：{{zbs}}</span>
+        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
       </div>
     </div>
 
@@ -69,18 +73,22 @@
      <!-- 微信支付 -->
      <div class="tab-wx">
       <div class="content-dis">
-        <a-icon style="width: 14px; height: 16px" type="wechat" />
-        <span style="font-size:12px;margin-left:10px;margin-top:-4px">微信支付订单额</span>
+          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="wechat" />
+          <span style="font-size:12px;margin-left:10px;margin-top:3px">微信支付订单额</span>
+          <div style="float:right">
+
+              <img style="padding-left:74px;margin-top: -8px;" src="@/assets/icons/tc.png" >
+          </div>
       </div>
 
       <div class="content-dis">
-        <span style="font-size:24px;margin-top:-4px">250000.04</span>
-        <span style="font-size:12px;margin-top:4px;margin-left: 10px;">(差异：200)</span>
+        <span style="font-size:24px;margin-top:-14px">250000.04</span>
+        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
       </div>
      <div class="line"></div>
      <div class="content-dis">
-        <span style="font-size:12px;margin-top:-4px">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-top:-4px;margin-left: 5px;">(差异：200)</span>
+        <span style="font-size:12px;">总笔数：{{zbs}}</span>
+        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
       </div>
     </div>
 
@@ -89,27 +97,24 @@
     <!-- 支付宝支付 -->
     <div class="tab-alipay">
       <div class="content-dis">
-        <a-icon style="width: 14px; height: 16px" type="alipay" />
-        <span style="font-size:12px;margin-left:10px;margin-top:-4px">支付宝支付订单额</span>
+          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="alipay" />
+          <span style="font-size:12px;margin-left:10px;margin-top:3px">支付宝支付订单额</span>
+          <div style="float:right">
+
+              <img style="padding-left:61px;margin-top: -9px;" src="@/assets/icons/tc.png" >
+          </div>
       </div>
 
       <div class="content-dis">
-        <span style="font-size:24px;margin-top:-4px">250000.04</span>
-        <span style="font-size:12px;margin-top:4px;margin-left: 10px;">(差异：200)</span>
+        <span style="font-size:24px;margin-top:-14px">250000.04</span>
+        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
       </div>
      <div class="line"></div>
      <div class="content-dis">
-        <span style="font-size:12px;margin-top:-4px">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-top:-4px;margin-left: 5px;">(差异：200)</span>
+        <span style="font-size:12px;">总笔数：{{zbs}}</span>
+        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
       </div>
     </div>
-
-
-
-
-
-
-
 
    </div>
 
@@ -179,8 +184,6 @@ export default {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        orderEndTime: getCurrentMonthLast(),
-        orderStartTime: getDateNow(),
         refundEndTime: getCurrentMonthLast(),
         refundStartTime: getDateNow(),
         tabCode: '',
@@ -340,10 +343,9 @@ export default {
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/refundExamine',
+        path: '/order/reconDetail',
         query: {
           orderId: record.applyId,
-          // orderId:1623236088379908098,
         },
       })
     },
@@ -583,8 +585,7 @@ export default {
 
   .content-dis {
     margin-left: 15px;
-    margin-top: 15px;
-    margin-right: 15px;
+    margin-top: 9px;
     display: flex;
     flex-direction: row;
     color: #ffffff;
@@ -594,7 +595,6 @@ export default {
     width: 100%;
     height: 1px;
     background: #e6e6e6;
-    margin-top: 6px;
   }
 }
 
@@ -613,8 +613,7 @@ export default {
 
   .content-dis {
     margin-left: 15px;
-    margin-top: 15px;
-    margin-right: 15px;
+    margin-top: 8px;
     display: flex;
     flex-direction: row;
     color: #ffffff;
@@ -624,7 +623,6 @@ export default {
     width: 100%;
     height: 1px;
     background: #e6e6e6;
-    margin-top: 6px;
   }
 }
 
@@ -643,8 +641,8 @@ export default {
   box-shadow: 0px 2px 4px 0px rgba(87,148,233,0.35);
   .content-dis {
     margin-left: 15px;
-    margin-top: 15px;
-    margin-right: 15px;
+    margin-top: 9px;
+    // margin-right: 15px;
     display: flex;
     flex-direction: row;
     color: #ffffff;
@@ -654,7 +652,6 @@ export default {
     width: 100%;
     height: 1px;
     background: #e6e6e6;
-    margin-top: 6px;
   }
 }
 

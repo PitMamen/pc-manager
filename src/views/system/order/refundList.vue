@@ -25,7 +25,6 @@
         />
       </div>
 
-
       <div class="search-row">
         <span class="name">套餐类型:</span>
         <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
@@ -35,21 +34,20 @@
         </a-select>
       </div>
 
-
       <div class="search-row">
         <span class="name">更新时间:</span>
-        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+        <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChange" />
       </div>
 
       <div class="search-row">
-        <span class="name">下单时间:</span>
-        <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" />
+        <span class="name">创建时间:</span>
+        <a-range-picker style="width: 185px" :value="createValue" @change="onChangeOrder" />
       </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset(true)">重置</a-button>
         </span>
       </div>
     </div>
@@ -95,8 +93,8 @@
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { queryHospitalList,getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { accessHospitals, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 
@@ -120,19 +118,20 @@ export default {
       currentTab: 'qb',
       numberData: {
         quanbu: 0,
-        yy:0,
-        cw:0,
-        wc:0,
+        yy: 0,
+        cw: 0,
+        wc: 0,
       },
 
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        orderEndTime: getCurrentMonthLast(),
-        orderStartTime: getDateNow(),
-        refundEndTime: getCurrentMonthLast(),
-        refundStartTime: getDateNow(),
+        createEndTime: getCurrentMonthLast(),
+        createStartTime: getDateNow(),
+
+        updateEndTime: getCurrentMonthLast(),
+        updateStartTime: getDateNow(),
         tabCode: '',
       },
 
@@ -175,23 +174,23 @@ export default {
         {
           title: '应退',
           dataIndex: 'refundMoney',
-          align: 'right',   
+          align: 'right',
         },
         {
           title: '实退',
           dataIndex: 'actualRefundMoney',
-          align: 'right',   
+          align: 'right',
         },
         {
           title: '创建时间',
           dataIndex: 'createTime',
-        //   width: 160,
+          width: 120,
         },
 
         {
           title: '更新时间',
           dataIndex: 'updateTime',
-          ellipsis: true,
+          width: 120,
         },
         {
           title: '退款方式',
@@ -212,27 +211,6 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
-          if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.orderStartTime
-            delete this.queryParams.orderEndTime
-            this.$refs.table.refresh()
-            return
-          }
-          if (this.queryParams.orderStartTime) {
-            let start = this.formatDate(this.queryParams.orderStartTime)
-            this.queryParams.orderStartTime = start + ' 00:00:00'
-          }
-
-          if (this.queryParams.orderEndTime) {
-            let end = this.formatDate(this.queryParams.orderEndTime)
-            this.queryParams.orderEndTime = end + ' 23:59:59'
-          }
-        } else {
-          delete this.queryParams.orderStartTime
-          delete this.queryParams.orderEndTime
-        }
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         this.queryParamsTemp.tabCode = this.currentTab
         return getPage(Object.assign(parameter, this.queryParams))
@@ -269,22 +247,16 @@ export default {
 
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
-    this.reset()
+    this.reset(false)
     this.queryParams.tabCode = this.currentTab
     this.queryParamsTemp.tabCode = this.currentTab
   },
 
   created() {
     this.queryHospitalListOut()
-    this.createValue = [
-      moment(getDateNow(), this.dateFormat),
-      moment(getCurrentMonthLast(), this.dateFormat),
-    ]
+    this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-    this.orderTimeValue = [
-      moment(getDateNow(), this.dateFormat),
-      moment(getCurrentMonthLast(), this.dateFormat),
-    ]
+    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
 
@@ -305,7 +277,6 @@ export default {
         path: '/order/refundExamine',
         query: {
           orderId: record.applyId,
-          // orderId:1623236088379908098,
         },
       })
     },
@@ -327,30 +298,29 @@ export default {
     },
 
     getColor(value) {
-      if (value == 1||value == 2) {
+      if (value == 1 || value == 2) {
         return 'span-green'
-      }else if (value == 3 ||value == 5) {
+      } else if (value == 3 || value == 5) {
         return 'span-red'
       } else if (value == 6) {
         return 'span-blue'
-      }else if (value == 4) {
+      } else if (value == 4) {
         return 'span-gray'
       }
     },
-
 
     isLoading() {
       return this.confirmLoading
     },
 
     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
@@ -377,14 +347,19 @@ export default {
         })
     },
 
-    reset() {
+    reset(clearTime) {
       this.queryParams.combinedCondition = ''
       this.queryParams.hospitalCode = undefined
-      this.queryParams.orderEndTime = ''
-      this.queryParams.orderStartTime = ''
+      if (clearTime) {
+        this.createValue = []
+        this.orderTimeValue = []
+      }
+      this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
+      this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.classifyId = ''
-      this.queryParams. refundEndTime='',
-      this.queryParams.refundStartTime='',
+
       this.handleOk()
     },
 
@@ -394,19 +369,19 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].code == "qb") {
+              if (res.data[index].code == 'qb') {
                 //全部
                 this.numberData.quanbu = res.data[index].count
-              } else if (res.data[index].code == "yy") {
+              } else if (res.data[index].code == 'yy') {
                 //运营
                 this.numberData.yy = res.data[index].count
-              } else if (res.data[index].code == "cw") {
+              } else if (res.data[index].code == 'cw') {
                 //财务
                 this.numberData.cw = res.data[index].count
-              } else if (res.data[index].code == "wc") {
+              } else if (res.data[index].code == 'wc') {
                 //完成
                 this.numberData.wc = res.data[index].count
-              } 
+              }
             }
           }
         })
@@ -438,15 +413,63 @@ export default {
 
     //更新时间
     onChange(momentArr, dateArr) {
-        this.createValue = momentArr
-        this.queryParams.orderStartTime = dateArr[0]
-        this.queryParams.orderEndTime = dateArr[1]
-    },
-    //下单时间
-    onChangeOrder(momentArr, dateArr) {
+      if (Math.abs(moment(dateArr[1]).unix() - moment(dateArr[0]).unix()) > 7776000) {
+        this.$message.error('开始时间与结束时间跨度不能超过三个月!')
+
+        this.orderTimeValue=[]
+        this.queryParams.updateStartTime = ''
+        this.queryParams.updateEndTime = ''
+        return
+      }
+      if (dateArr) {
+        if (dateArr[0] > dateArr[1]) {
+          this.$message.error('开始时间不能大于结束时间')
+          this.orderTimeValue=[]
+          this.queryParams.updateStartTime = ''
+          this.queryParams.updateEndTime = ''
+          return
+        }
+      }
+
+      if (dateArr[0] == '' && dateArr[1] == '') {
+        this.queryParams.updateStartTime = ''
+        this.queryParams.updateEndTime = ''
+        return
+      }
+
       this.orderTimeValue = momentArr
-      this.queryParams.refundStartTime = dateArr[0]
-      this.queryParams.refundEndTime = dateArr[1]
+      this.queryParams.updateStartTime = dateArr[0] + ' 00:00:00'
+      this.queryParams.updateEndTime = dateArr[1] + ' 23:59:59'
+    },
+
+    //创建时间
+    onChangeOrder(momentArr, dateArr2) {
+      if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
+        this.$message.error('开始时间与结束时间跨度不能超过三个月!')
+        this.createValue=[]
+        this.queryParams.createStartTime = ''
+        this.queryParams.createEndTime = ''
+        return
+      }
+      if (dateArr2) {
+        if (dateArr2[0] > dateArr2[1]) {
+          this.$message.error('开始时间不能大于结束时间')
+          this.createValue=[]
+          this.queryParams.updateStartTime = ''
+          this.queryParams.updateEndTime = ''
+          return
+        }
+      }
+
+      if (dateArr2[0] == '' && dateArr2[1] == '') {
+        this.queryParams.createStartTime = ''
+        this.queryParams.createEndTime = ''
+        return
+      }
+
+      this.createValue = momentArr
+      this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
+      this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
     },
 
     handleOk() {
@@ -658,10 +681,10 @@ export default {
 </style>
 
 <style >
- .ant-select-tree-dropdown {
-        max-height: 60vh !important;
-        top: 148px !important;
-      }
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 148px !important;
+}
 </style>
      
      <style lang="less" scoped>
