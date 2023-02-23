@@ -47,7 +47,7 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset(true)">重置</a-button>
         </span>
       </div>
     </div>
@@ -211,28 +211,6 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.createStartTime && this.queryParams.createEndTime) {
-          if (this.queryParams.createStartTime > this.queryParams.createEndTime) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.createStartTime
-            delete this.queryParams.createEndTime
-            this.$refs.table.refresh()
-            return
-          }
-
-          if (this.queryParams.createStartTime) {
-            let start = this.formatDate(this.queryParams.createStartTime)
-            this.queryParams.createStartTime = start + ' 00:00:00'
-          }
-
-          if (this.queryParams.createEndTime) {
-            let end = this.formatDate(this.queryParams.createEndTime)
-            this.queryParams.createEndTime = end + ' 23:59:59'
-          }
-        } else {
-          delete this.queryParams.createStartTime
-          delete this.queryParams.createEndTime
-        }
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         this.queryParamsTemp.tabCode = this.currentTab
         return getPage(Object.assign(parameter, this.queryParams))
@@ -269,7 +247,7 @@ export default {
 
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
-    this.reset()
+    this.reset(false)
     this.queryParams.tabCode = this.currentTab
     this.queryParamsTemp.tabCode = this.currentTab
   },
@@ -370,13 +348,21 @@ export default {
         })
     },
 
-    reset() {
+    reset(clearTime) {
       this.queryParams.combinedCondition = ''
       this.queryParams.hospitalCode = undefined
-      this.queryParams.createEndTime = ''
-      this.queryParams.createStartTime = ''
+      if (clearTime) {
+        this.createValue = []
+        this.orderTimeValue = []
+
+      }
+      this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
+      this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.classifyId = ''
-      ;(this.queryParams.updateEndTime = ''), (this.queryParams.updateStartTime = ''), this.handleOk()
+
+      this.handleOk()
     },
 
     //订单分组
@@ -431,21 +417,45 @@ export default {
     onChange(momentArr, dateArr) {
       if (Math.abs(moment(dateArr[1]).unix() - moment(dateArr[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
+
+        this.queryParams.updateStartTime = getCurrentMonthLast() + ' 00:00:00'
+        this.queryParams.updateEndTime = getDateNow() + ' 23:59:59'
         return
       }
+      if (dateArr) {
+        if (dateArr[0] > dateArr[1]) {
+          this.$message.error('开始时间不能大于结束时间')
+          this.queryParams.updateStartTime = getCurrentMonthLast() + ' 00:00:00'
+          this.queryParams.updateEndTime = getDateNow() + ' 23:59:59'
+          return
+        }
+      }
+
       this.orderTimeValue = momentArr
-      this.queryParams.updateStartTime = dateArr[0]
-      this.queryParams.updateEndTime = dateArr[1]
+      this.queryParams.updateStartTime = dateArr[0] + ' 00:00:00'
+      this.queryParams.updateEndTime = dateArr[1] + ' 23:59:59'
     },
+
     //创建时间
     onChangeOrder(momentArr, dateArr2) {
       if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
+        this.queryParams.createStartTime = getCurrentMonthLast() + ' 00:00:00'
+        this.queryParams.createEndTime = getDateNow() + ' 23:59:59'
         return
       }
+      if (dateArr2) {
+        if (dateArr2[0] > dateArr2[1]) {
+          this.$message.error('开始时间不能大于结束时间')
+          this.queryParams.updateStartTime = getCurrentMonthLast() + ' 00:00:00'
+          this.queryParams.updateEndTime = getDateNow() + ' 23:59:59'
+          return
+        }
+      }
+
       this.createValue = momentArr
-      this.queryParams.createStartTime = dateArr2[0]
-      this.queryParams.createEndTime = dateArr2[1]
+      this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
+      this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
     },
 
     handleOk() {
