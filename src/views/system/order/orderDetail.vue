@@ -25,7 +25,6 @@
       <div class="div-up-content" style="margin-top:-15px;">
         <div class="div-pro-line">
           <span class="span-item-name">订单号 :</span>
-          <!-- <span class="span-item-value">dddd</span> -->
           <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
         </div>
 
@@ -96,7 +95,7 @@
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">套餐包服务时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.payTime  || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.effectiveStartTime+'-'+orderDetailDataList.effectiveEndTime  || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
@@ -366,14 +365,10 @@ export default {
   },
 
   activated() {
-    // if (to.path.indexOf('orderDetail') > -1) {
     if (this.$route.query.orderId) {
-    //   console.log('BBBBBBBBB', this.$route.query.orderId)
       var orderId = this.$route.query.orderId
-      //   var jumpData =JSON.parse(this.$route.query.data)
       this.init(orderId)
     }
-    // }
   },
 
   watch1: {
@@ -399,6 +394,7 @@ export default {
     moment,
     //入口
     init(orderId) {
+      this.orderDetailDataList={}
       this.orderId = orderId
       this.getOrderDetailOut(this.orderId)
     },
@@ -442,7 +438,7 @@ export default {
 
     //按钮显示与隐藏
     showHide(value) {
-      if (value == 2 || value == 5 || value == 102) {   //已完成 已取消  退款中 不显示可操作的按钮
+      if (value == 2 || value == 5 || value == 102||value == 103) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
         return false
       } else {
         return true

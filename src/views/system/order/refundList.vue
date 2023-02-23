@@ -18,24 +18,13 @@
         <a-input
           v-model="queryParams.combinedCondition"
           allow-clear
-          placeholder="可输入用户名/电话/订单号"
+          placeholder="输入用户名/电话/订单号"
           style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
 
-      <div class="search-row">
-        <span class="name">医生:</span>
-        <a-input
-          v-model="queryParams.doctorName"
-          allow-clear
-          placeholder="可输入医生姓名查询"
-          style="width: 120px; height: 28px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
-      </div>
 
       <div class="search-row">
         <span class="name">套餐类型:</span>
@@ -46,23 +35,16 @@
         </a-select>
       </div>
 
+
       <div class="search-row">
-        <span class="name">套餐名称:</span>
-        <a-input
-          v-model="queryParams.commodityName"
-          allow-clear
-          placeholder="可输入套餐名称查询"
-          style="width: 120px; height: 28px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
+        <span class="name">更新时间:</span>
+        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
       </div>
 
       <div class="search-row">
         <span class="name">下单时间:</span>
-        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+        <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" />
       </div>
-
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -73,74 +55,18 @@
     </div>
 
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == '' }" @click="onRadioClick('')">
-        <!-- <img
-          style="width: 13px; height: 13px"
-          :class="{ 'checked-icon': queryParams.orderStatus == '' }"
-          src="~@/assets/icons/icon_wait.svg"
-        /> -->
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 1 }" @click="onRadioClick(1)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 1 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/icon_completed.svg"
-        /> -->
-        <span style="margin-left: 3px">待付款({{ numberData.daifukuan }}) </span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
+        <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 8 }" @click="onRadioClick(8)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 8 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfsb.png"
-        /> -->
-        <span style="margin-left: 3px">待发货({{ numberData.daifahuo  }})</span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
+        <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
 
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 4 }" @click="onRadioClick(4)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 4 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
-        <span style="margin-left: 3px">待收货({{ numberData.daishouhuo  }})</span>
-      </div>
-
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 101 }" @click="onRadioClick(101)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 101 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
-        <span style="margin-left: 3px">使用中({{numberData.shiyongzhong }})</span>
-      </div>
-
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 2 }" @click="onRadioClick(2)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 2 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
-        <span style="margin-left: 3px">已完成({{ numberData.yiwancheng }})</span>
-      </div>
-
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 102 }" @click="onRadioClick(102)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 102 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
-        <span style="margin-left: 3px">退款中({{ numberData.tuikuanzhong }})</span>
-      </div>
-
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 5 }" @click="onRadioClick(5)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 5 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/bcsf.png"
-        /> -->
-        <span style="margin-left: 3px">已取消({{ numberData.yiquxiao }})</span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
+        <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
       </div>
     </div>
 
@@ -154,24 +80,23 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
+        <a @click="goExamine(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
       </span>
 
-        <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
-          {{ getType(record)  }}
-      </span> 
-
-      
+      <span slot="status" slot-scope="text, record" :class="getColor(record.status.value)">
+        <!-- {{ getType(record) }} -->
+        {{ record.status.description }}
+      </span>
     </s-table>
-    <orderDetail ref="orderDetail" @ok="handleOk" /> 
+    <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
 </template>
- 
- <script>
+   
+   <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { orderList, queryHospitalList, getOrderStatusGroupByData ,getCommodityClassify} from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { queryHospitalList,getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 
@@ -187,51 +112,37 @@ export default {
     return {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
+      orderTimeValue: [],
       treeData: [],
       gropListData: [],
-      packgeList:[],
-      confirmLoading:false,
-      currentTab:'',
+      packgeList: [],
+      confirmLoading: false,
+      currentTab: 'qb',
       numberData: {
         quanbu: 0,
-        daifukuan: 0,
-        daifahuo: 0,
-        daishouhuo: 0,
-        shiyongzhong: 0,
-        yiwancheng: 0,
-        tuikuanzhong: 0,
-        yiquxiao: 0,
+        yy:0,
+        cw:0,
+        wc:0,
       },
 
-      // queryParamGrop: {
-      //   combinedCondition: '',
-      //   commodityName: '',
-      //   doctorName: '',
-      //   hospitalCode:undefined,
-      //   orderEndTime: getCurrentMonthLast(),
-      //   orderStartTime:  getDateNow(),
-      //   classifyId: undefined,
-      // },
       queryParams: {
+        classifyId: undefined,
         combinedCondition: undefined,
-        commodityName: '',
-        doctorName: '',
         hospitalCode: undefined,
         orderEndTime: getCurrentMonthLast(),
-        orderStartTime:  getDateNow(),
-        classifyId: undefined,
-        orderStatus: '',
+        orderStartTime: getDateNow(),
+        refundEndTime: getCurrentMonthLast(),
+        refundStartTime: getDateNow(),
+        tabCode: '',
       },
 
-      queryParamsTemp:{},
-
-
+      queryParamsTemp: {},
 
       // 表头
       columns: [
         {
           title: '订单号',
-          dataIndex: 'orderId',
+          dataIndex: 'refundId',
           ellipsis: true,
         },
         {
@@ -252,38 +163,44 @@ export default {
           dataIndex: 'hospitalName',
         },
         {
-          title: '医生',
-          dataIndex: 'doctorName',
+          title: '订单金额',
+          dataIndex: 'orderTotal',
+          align: 'right',
         },
         {
-          title: '应付',
-          dataIndex: 'saleAmount',
-          align:'right'
-        },
-        {
-          title: '实付',
+          title: '实收',
           dataIndex: 'payTotal',
-          align:'right'
+          align: 'right',
         },
         {
-          title: '服务时间',
-          dataIndex: 'serveTime',
-          width:160,
+          title: '应退',
+          dataIndex: 'refundMoney',
+          align: 'right',   
+        },
+        {
+          title: '实退',
+          dataIndex: 'actualRefundMoney',
+          align: 'right',   
+        },
+        {
+          title: '创建时间',
+          dataIndex: 'createTime',
+        //   width: 160,
         },
 
         {
-          title: '下单时间',
-          dataIndex: 'orderTime',
+          title: '更新时间',
+          dataIndex: 'updateTime',
           ellipsis: true,
         },
         {
-          title: '支付方式',
-          dataIndex: 'payType',
+          title: '退款方式',
+          dataIndex: 'refundMethod',
         },
         {
           title: '状态',
-          dataIndex: 'orderStatus',
-          scopedSlots: { customRender: 'orderStatus' },
+          dataIndex: 'status',
+          scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
@@ -316,10 +233,9 @@ export default {
           delete this.queryParams.orderStartTime
           delete this.queryParams.orderEndTime
         }
-
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.orderStatus =this.currentTab
-        return orderList(Object.assign(parameter, this.queryParams))
+        this.queryParamsTemp.tabCode = this.currentTab
+        return getPage(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 && res.data.records.length > 0) {
               //组装控件需要的数据结构
@@ -333,7 +249,7 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'serveTime', item.startTime+" "+item.endTime)
+                // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // this.$set(item, 'status', 1)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
@@ -351,29 +267,26 @@ export default {
     }
   },
 
-
-
-
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.reset()
-    this.queryParams.orderStatus = this.currentTab
-    this.queryParamsTemp.orderStatus = this.currentTab
+    this.queryParams.tabCode = this.currentTab
+    this.queryParamsTemp.tabCode = this.currentTab
   },
-
-
 
   created() {
     this.queryHospitalListOut()
     this.createValue = [
-
-    // moment(getlastMonthToday(), this.dateFormat),
-    //   moment(formatDate(new Date().getTime()), this.dateFormat),
-
       moment(getDateNow(), this.dateFormat),
       moment(getCurrentMonthLast(), this.dateFormat),
     ]
-    this.getOrderStatusGroupByDataOut()
+
+    this.orderTimeValue = [
+      moment(getDateNow(), this.dateFormat),
+      moment(getCurrentMonthLast(), this.dateFormat),
+    ]
+
+    this.getTabOut()
 
     getCommodityClassify({}).then((res) => {
       if (res.code == 0) {
@@ -385,72 +298,50 @@ export default {
   },
 
   methods: {
-
     //详情
-    goDetail(record) {
+    goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/orderDetail',
+        path: '/order/refundExamine',
         query: {
-          orderId:record.orderId,
+          orderId: record.applyId,
           // orderId:1623236088379908098,
         },
       })
     },
 
     getType(record) {
-      if (record.orderStatus == 1) {
-        return '待付款'
-      } else if (record.orderStatus == 2) {
-        return '已完成'
-      } else if (record.orderStatus == 3) {
-        return '支付中'
-      } else if (record.orderStatus == 4) {
-        return '待收货'
-      } else if (record.orderStatus == 5) {
-        return '已取消'
-      } else if (record.orderStatus == 6) {
-        return '未配送'
-      } else if (record.orderStatus == 7) {
-        return '已配送'
-      } else if (record.orderStatus == 8) {
-        return '待发货'
-      } else if (record.orderStatus == 101) {
-        return '使用中'
-      } else if (record.orderStatus == 102) {
+      if (record.value == 1) {
+        return '运营审核'
+      } else if (record.value == 2) {
+        return '财务审核'
+      } else if (record.value == 3) {
+        return '审核拒绝'
+      } else if (record.value == 4) {
         return '退款中'
-      }else if (record.orderStatus == 103) {
-        return '退款成功'
-      }else if (record.orderStatus == 104) {
+      } else if (record.value == 5) {
         return '退款失败'
+      } else if (record.value == 6) {
+        return '已完成'
       }
     },
 
-    getColor(record){
-      if (record.orderStatus == 1||record.orderStatus == 103) {
+    getColor(value) {
+      if (value == 1||value == 2) {
         return 'span-green'
-      } else if (record.orderStatus == 2||record.orderStatus == 3||record.orderStatus == 5||record.orderStatus == 6||record.orderStatus == 7) {
-        return 'span-gray'
-      } else if (record.orderStatus == 4||record.orderStatus == 8||record.orderStatus == 101) {
-        return 'span-blue'
-      } else if (record.orderStatus == 102||record.orderStatus == 104) {
+      }else if (value == 3 ||value == 5) {
         return 'span-red'
+      } else if (value == 6) {
+        return 'span-blue'
+      }else if (value == 4) {
+        return 'span-gray'
       }
     },
 
-    // getClass(status) {
-    //   if (status.value == 2) {
-    //     return 'span-red'
-    //   } else if (status.value == 1) {
-    //     return 'span-gray'
-    //   }
-    // },
 
-
-    isLoading(){
-    return this.confirmLoading 
+    isLoading() {
+      return this.confirmLoading
     },
-
 
     queryHospitalListOut() {
       let queryData = {
@@ -488,42 +379,35 @@ export default {
 
     reset() {
       this.queryParams.combinedCondition = ''
-      this.queryParams.commodityName = ''
-      this.queryParams.doctorName = ''
       this.queryParams.hospitalCode = undefined
       this.queryParams.orderEndTime = ''
       this.queryParams.orderStartTime = ''
       this.queryParams.classifyId = ''
-      this.queryParams.orderStatus = ''
+      this.queryParams. refundEndTime='',
+      this.queryParams.refundStartTime='',
       this.handleOk()
     },
 
     //订单分组
-    getOrderStatusGroupByDataOut() {
-      getOrderStatusGroupByData(this.queryParams)
+    getTabOut() {
+      getTab(this.queryParams)
         .then((res) => {
           if (res.code == 0) {
             for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].code == 1) {    //待付款
-                this.numberData.daifukuan  = res.data[index].co
-              }else if(res.data[index].code == 8){ //待发货
-                this.numberData.daifahuo  = res.data[index].co
-              }else if(res.data[index].code == 4){ //待收货
-                this.numberData.daishouhuo  = res.data[index].co
-              }else if(res.data[index].code == 101){ //使用中
-                this.numberData.shiyongzhong  = res.data[index].co
-              }else if(res.data[index].code == 2){ //已完成
-                this.numberData.yiwancheng  = res.data[index].co
-              }else if(res.data[index].code == 102){ //退款中
-                this.numberData.tuikuanzhong  = res.data[index].co
-              }else if(res.data[index].code == 5){  //已取消
-                this.numberData.yiquxiao  = res.data[index].co
-              }else if(res.data[index].code == ''){  //全部订单
-                this.numberData.quanbu  = res.data[index].co
-              }
-              
+              if (res.data[index].code == "qb") {
+                //全部
+                this.numberData.quanbu = res.data[index].count
+              } else if (res.data[index].code == "yy") {
+                //运营
+                this.numberData.yy = res.data[index].count
+              } else if (res.data[index].code == "cw") {
+                //财务
+                this.numberData.cw = res.data[index].count
+              } else if (res.data[index].code == "wc") {
+                //完成
+                this.numberData.wc = res.data[index].count
+              } 
             }
-            // this.gropListData = res.data
           }
         })
         .catch((err) => {
@@ -532,13 +416,13 @@ export default {
     },
 
     onRadioClick(type) {
-       //如果在加载中  不让点击
-       if(this.confirmLoading){
+      //如果在加载中  不让点击
+      if (this.confirmLoading) {
         return
-       }
-       this.currentTab = type
-      this.queryParams.orderStatus = type
-      this.queryParamsTemp = type
+      }
+      this.currentTab = type
+      this.queryParams.tabCode = type
+      this.queryParamsTemp.tabCode = type
       this.$refs.table.refresh()
     },
 
@@ -552,27 +436,30 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
+    //更新时间
     onChange(momentArr, dateArr) {
-      this.createValue = momentArr
-      this.queryParams.orderStartTime = dateArr[0]
-      this.queryParams.orderEndTime = dateArr[1]
+        this.createValue = momentArr
+        this.queryParams.orderStartTime = dateArr[0]
+        this.queryParams.orderEndTime = dateArr[1]
     },
-
+    //下单时间
+    onChangeOrder(momentArr, dateArr) {
+      this.orderTimeValue = momentArr
+      this.queryParams.refundStartTime = dateArr[0]
+      this.queryParams.refundEndTime = dateArr[1]
+    },
 
     handleOk() {
-      this.queryParams.orderStatus = ''
-      this.getOrderStatusGroupByDataOut()
+      this.getTabOut()
       this.$refs.table.refresh()
     },
-
-   
   },
 }
 </script>
- 
- <style lang="less" scoped>
+   
+   <style lang="less" scoped>
 .span-blue {
-  background-color: #ECF5FF;
+  background-color: #ecf5ff;
   padding: 2px 4px;
   font-size: 12px;
   color: #3894ff;
@@ -580,17 +467,16 @@ export default {
   // background-color: #3894ff;
 }
 
-.span-green{
-  background-color: #EDFFED;
+.span-green {
+  background-color: #edffed;
   padding: 2px 4px;
   font-size: 12px;
-  color: #0E9B0B;
-  border: #0E9B0B 1px solid;
+  color: #0e9b0b;
+  border: #0e9b0b 1px solid;
 }
 
-
 .span-red {
-  background-color: #FFF2F1;
+  background-color: #fff2f1;
   padding: 2px 4px;
   font-size: 12px;
   color: #f26161;
@@ -598,11 +484,11 @@ export default {
 }
 
 .span-gray {
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   padding: 2px 4px;
   font-size: 12px;
-  color: #4D4D4D;
-  border: #4D4D4D 1px solid;
+  color: #4d4d4d;
+  border: #4d4d4d 1px solid;
   // background-color: #85888e;
 }
 
@@ -760,8 +646,8 @@ export default {
   height: 1px;
 }
 </style>
- 
- <style lang="less">
+   
+   <style lang="less">
 .top-title {
   .ant-select-selection__rendered {
     li {
@@ -777,8 +663,8 @@ export default {
         top: 148px !important;
       }
 </style>
-   
-   <style lang="less" scoped>
+     
+     <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 40px);
