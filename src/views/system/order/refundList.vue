@@ -36,12 +36,12 @@
 
       <div class="search-row">
         <span class="name">更新时间:</span>
-        <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChange" />
+        <a-range-picker style="width: 190px" :value="orderTimeValue" @change="onChange" />
       </div>
 
       <div class="search-row">
         <span class="name">创建时间:</span>
-        <a-range-picker style="width: 185px" :value="createValue" @change="onChangeOrder" />
+        <a-range-picker style="width: 190px" :value="createValue" @change="onChangeOrder" />
       </div>
 
       <div class="action-row">
@@ -85,6 +85,15 @@
         <!-- {{ getType(record) }} -->
         {{ record.status.description }}
       </span>
+
+       
+      <span slot="commodityName" slot-scope="text,record" class="multiLine">
+        {{ record.commodityName }}
+      </span>
+
+
+
+
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
@@ -99,6 +108,8 @@ import addForm from './addForm'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import orderDetail from './orderDetail'
+import { setHidden } from '@/api/modular/system/banner'
+import { noop } from 'ant-design-vue/es/_util/vue-types/utils'
 
 export default {
   components: {
@@ -159,7 +170,9 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
-          ellipsis: true,
+          width:240,
+          // scopedSlots: { customRender: 'commodityName' },
+          // ellipsis: true,
         },
         {
           title: '医院名称',
@@ -489,11 +502,28 @@ export default {
   },
 }
 </script>
+
+
+
+
    
    <style lang="less" scoped>
+
+
+.multiLine{
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // -webkit-line-clamp: 2;
+    line-clamp: 2 !important;
+
+  }
+
+
+
 .span-blue {
   background-color: #ecf5ff;
-  padding: 2px 4px;
+  padding: 2px 10px;
   font-size: 12px;
   color: #3894ff;
   border: #3894ff 1px solid;
@@ -518,7 +548,7 @@ export default {
 
 .span-gray {
   background-color: #fafafa;
-  padding: 2px 4px;
+  padding: 2px 10px;
   font-size: 12px;
   color: #4d4d4d;
   border: #4d4d4d 1px solid;

@@ -47,87 +47,73 @@
     </div>
 
     <a-modal
-      title="Title"
+      :title="title"
       width="1223px"
       :visible="visible"
+      :footer="null"
       :confirm-loading="confirmLoading"
       @ok="handleOk"
       @cancel="handleCancel"
     >
-      <div class="div-service-user">
+      <div class="div-add-task">
         <!-- 左边 -->
-        <div class="div-totalleft" style="width: 75%">
-          <div class="div-title" style="margin-top: -12px; margin-left: 10px; width: 95%">
+        <div class="div-task-left">
+          <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">添加任务</span>
           </div>
 
-          <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-            <span style="margin-top: 10px; width: 65px"> 随访方式:</span>
-            <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-              <a-select
-                style="width: 322px"
-                allow-clear
-                v-model="queryParams.messageType"
-                @select="onTypeSelect"
-                placeholder="微信随访/短信随访"
-              >
-                <a-select-option v-for="(item, index) in visitTypeList" :key="index" :value="item.value">{{
-                  item.description
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
+          <div class="display-item">
+            <span class="item-name"> 随访方式：</span>
 
-          <!--  -->
-          <div class="display-item" style="margin-top: 10px; margin-left: 10px">
-            <span style="margin-top: 10px; width: 65px"> 随访内容:</span>
-            <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-              <a-select
-                style="width: 322px"
-                allow-clear
-                v-model="queryParams.messageContentId"
-                @select="onContentSelect"
-                placeholder="微信随访模板"
-              >
-                <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
-                  item.templateTitle
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
-          </div>
-
-          <!--  -->
-          <div class="display-item" style="margin-top: 10px; margin-left: 10px">
-            <span style="margin-top: 10px; width: 65px"> 执行时间:</span>
-            <!-- <a-radio-group name="radioGroup" v-model="queryParams.executeType" style="margin-top: 10px; margin-left: -20px" @change="radioChange"> -->
-            <a-radio-group
-              name="radioGroup"
-              v-model="queryParams.executeType"
-              defaultValue="1"
-              style="margin-top: 10px; margin-left: 10px"
+            <a-select
+              style="width: 322px"
+              allow-clear
+              v-model="queryParams.messageType"
+              @select="onTypeSelect"
+              placeholder="微信随访/短信随访"
             >
+              <a-select-option v-for="(item, index) in visitTypeList" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+          <!--  -->
+          <div class="display-item">
+            <span class="item-name"> 随访内容：</span>
+
+            <a-select
+              style="width: 322px"
+              allow-clear
+              v-model="queryParams.messageContentId"
+              @select="onContentSelect"
+              placeholder="随访内容"
+            >
+              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
+                item.templateTitle
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+          <!--  -->
+          <div class="display-item" style="margin-top: 18px">
+            <span class="item-name"> 执行时间：</span>
+            <!-- <a-radio-group name="radioGroup" v-model="queryParams.executeType" style="margin-top: 10px; margin-left: -20px" @change="radioChange"> -->
+            <a-radio-group name="radioGroup" v-model="queryParams.executeType" defaultValue="1">
               <a-radio class="btn-add-plan" value="1" style="font-size: 12px"> 立即执行 </a-radio>
               <a-radio value="2" style="font-size: 12px"> 定时执行 </a-radio>
             </a-radio-group>
           </div>
 
-          <div
-            v-if="queryParams.executeType == '2'"
-            class="display-item"
-            style="margin-top: 2px; width: 100%; font-size: 12px; margin-left: 75px"
-          >
+          <div v-if="queryParams.executeType == '2'" class="display-item" style="margin-left: 73px; margin-top: 18px">
             <!-- <a-form-item> -->
-            <a-date-picker
-              style="margin-top: 27px; margin-left: 10px; height: 28px; width: 150px"
-              v-model="queryParams.executeTime"
-              format="YYYY-MM-DD"
-            />
+            <a-date-picker style="height: 28px; width: 150px" v-model="queryParams.executeTime" format="YYYY-MM-DD" />
             <!-- </a-form-item> -->
 
             <!-- <div class="display-item;" style="margin-top: 5px"> -->
             <a-time-picker
-              style="margin-top: 27px;margin-left: 10px; width: 150px; height: 28px; font-size: 12px"
+              style="margin-left: 10px; width: 150px; height: 28px; font-size: 12px"
               @change="timeChangeStart"
               :default-value="moment('00:00', 'HH:mm')"
               format="HH:mm"
@@ -135,27 +121,26 @@
             <!-- </div> -->
           </div>
 
-          <div class="display-item" v-if="queryParams.messageType == 1" style="margin-top: 10px; margin-left: 10px">
-            <span style="margin-top: 10px; width: 65px"> 任务执行人:</span>
+          <div class="display-item" v-if="queryParams.messageType == 1" style="margin-top: 18px">
+            <span class="item-name"> 任务执行人：</span>
             <!-- <a-radio-group name="radioGroup" v-model="queryParams.executeType" style="margin-top: 10px; margin-left: -20px" @change="radioChange"> -->
-            <a-form-item style="width: 30%; margin-left: 10px; align-items: center">
-              <a-select
-                style="width: 120px"
-                disabled
-                v-model="chosePerson"
-                @select="onTypeSelect"
-                placeholder="微信随访/短信随访"
-              >
-                <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{
-                  item.userName
-                }}</a-select-option>
-              </a-select>
-            </a-form-item>
+
+            <a-select
+              style="width: 120px"
+              disabled
+              v-model="chosePerson"
+              @select="onTypeSelect"
+              placeholder="微信随访/短信随访"
+            >
+              <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{
+                item.userName
+              }}</a-select-option>
+            </a-select>
           </div>
 
-          <div class="display-item" style="margin-top: 20px; margin-left: 7px">
+          <div class="display-item" style="margin-top: 20px">
             <a-button style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
-            <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button>
+            <!-- <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button> -->
           </div>
         </div>
 
@@ -163,89 +148,78 @@
         <div class="line-row"></div>
 
         <!-- ri -->
-        <div class="card-right-user" style="overflow-y: auto; height: 400px">
-          <div class="div-title" style="margin-top: 8px; margin-left: 10px; width: 96%">
+        <div class="div-task-right" style="overflow-y: auto; height: 550px">
+          <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">历史任务</span>
           </div>
 
-          <div class="div-wrap-control" style="margin-top: 2%; overflow-y: auto; width: 100%">
+          <div class="div-wrap-list">
             <div v-if="recordList && recordList.length > 0">
               <div
                 class="div-part"
                 :class="{ checked: item.isChecked }"
-                style="margin-bottom: 10px"
                 v-for="(item, index) in recordList"
                 :value="item.templateTitle"
                 :key="index"
               >
-                <!-- <span class="span-name">
-                    </span> -->
-                <div class="div-rate" style="margin-left: 10px; font-size: 14px">
-                  <!-- 1 电话  2微信  3短信 -->
-                  <img
-                    v-if="item.messageType.value == 1"
-                    style="width: 11px; height: 11px"
-                    src="~@/assets/icons/dh_icon.png"
-                  />
-                  <img
-                    v-if="item.messageType.value == 2"
-                    style="width: 12px; height: 10px"
-                    src="~@/assets/icons/weixin_icon.png"
-                  />
-                  <img
-                    v-if="item.messageType.value == 3"
-                    style="width: 11px; height: 10px"
-                    src="~@/assets/icons/dx_icon.png"
-                  />
+                <!-- 1 电话  2微信  3短信 -->
+                <img
+                  v-if="item.messageType.value == 1"
+                  style="width: 14px; height: 11px"
+                  src="~@/assets/icons/dh_icon.png"
+                />
+                <img
+                  v-if="item.messageType.value == 2"
+                  style="width: 14px; height: 11px"
+                  src="~@/assets/icons/weixin_icon.png"
+                />
+                <img
+                  v-if="item.messageType.value == 3"
+                  style="width: 14px; height: 11px"
+                  src="~@/assets/icons/dx_icon.png"
+                />
 
-                  <span
-                    :class="getClassTime(item.overdueStatus.value)"
-                    style="
-                      width: 30px;
-                      margin-left: 7px;
-                      text-align: center;
-                      text-overflow: ellipsis;
-                      overflow: hidden;
-                      white-space: nowrap;
-                    "
-                  >
-                    {{ item.executeTime }}
-                  </span>
+                <!-- :class="getClassTime(item.overdueStatus.value)" -->
+                <span
+                  style="
+                    width: 133px;
+                    margin-left: 20px;
+                    text-align: left;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                  "
+                >
+                  {{ item.executeTime }}
+                </span>
 
-                  <span
-                    style="
-                      margin-bottom: -5px;
-                      margin-left: 0px;
-                      text-align: center;
-                      width: 200px;
-                      display: inline-block;
-                      text-overflow: ellipsis;
-                      overflow: hidden;
-                      white-space: nowrap;
-                    "
-                  >
-                    {{ item.templateTitle }}
-                  </span>
+                <span
+                  style="
+                    text-align: center;
+                    width: 200px;
+                    display: inline-block;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                  "
+                >
+                  {{ item.templateTitle }}
+                </span>
 
-                  <span
-                    :class="getClass(item.taskBizStatus.value)"
-                    style="
-                      margin-left: 0px;
-                      width: 55px;
-                      text-align: end;
-                      display: inline-block;
-                      text-overflow: ellipsis;
-                      overflow: hidden;
-                      white-space: nowrap;
-                      margin-bottom: -8px;
-                    "
-                  >
-                    {{ item.taskBizStatus.description }}
-                  </span>
-                </div>
-                <!-- 分割线 -->
-                <!-- <div class="div-divider"></div> -->
+                <span
+                  :class="getClass(item.taskBizStatus.value)"
+                  style="
+                    text-align: center;
+                    display: inline-block;
+                    margin-left: 20px;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
+                  "
+                >
+                  {{ item.taskBizStatus.description }}
+                </span>
               </div>
             </div>
             <div v-else class="no-data">
@@ -272,11 +246,13 @@ import {
   getAllQuestions,
   getWxTemplateListForJumpType,
   getSmsTemplateListForJumpType,
+  qryExecuteRecordByUserId,
 } from '@/api/modular/system/posManage'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import { formatDate, formatDateFull } from '@/utils/util'
 import moment from 'moment'
+import { parseString } from 'loader-utils'
 export default {
   components: {},
   props: {
@@ -298,8 +274,9 @@ export default {
       templateListQues: [],
       rangeValue: '2',
       chosePerson: 0,
+      title: '',
       userList: [],
-      timeStr: '2',
+      timeStr: '00:00',
       queryParams: {
         execDoctorUserId: '',
         planId: '',
@@ -361,6 +338,10 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
+
+      queryParamsRecord: {
+        userId: '',
+      },
     }
   },
 
@@ -369,10 +350,15 @@ export default {
     // this.recordIn = this.record
     let user = Vue.ls.get(TRUE_USER)
     this.userList.push({ userId: user.userId, userName: user.userName })
+    this.queryParamsRecord.userId = this.recordIn.userId
     this.chosePerson = user.userId
     this.queryParams.execDoctorUserId = user.userId
+    this.recordIn.sex = this.recordIn.sex ? this.recordIn.sex : '未知'
+    this.title =
+      this.recordIn.userName + '\xa0' + '\xa0' + ' |   ' + this.recordIn.sex + '    |  ' + '\xa0' + this.recordIn.age
     this.queryParams.planId = this.recordIn.planId
     this.queryParams.userId = this.recordIn.userId
+    this.qryExecuteRecordByUserIdOut()
 
     let param = {
       pageNo: 1,
@@ -445,6 +431,7 @@ export default {
         pageNo: 1,
         pageSize: 999,
         userId: this.recordIn.userId,
+        followMetaDataId: this.recordIn.followMetaDataId,
         planId: this.recordIn.planId,
       }).then((res) => {
         this.isLoading = false
@@ -486,12 +473,13 @@ export default {
         planId: this.recordIn.planId,
         userId: this.recordIn.userId,
 
-        messageType: undefined,
-        executeTime: moment('2022-11-01', 'YYYY-MM-DD'),
+        executeTime: moment(new Date()),
         executeType: '1',
-        messageContentId: '',
+        messageType: undefined,
+        messageContentId: undefined,
         messageContentType: undefined,
       }
+      this.qryExecuteRecordByUserIdOut()
     },
     handleOk() {
       this.visible = false
@@ -568,6 +556,40 @@ export default {
       this.queryParams.messageContentType = hasOne.messageContentType
     },
 
+    /**
+     * 查询历史随访记录
+     */
+    qryExecuteRecordByUserIdOut() {
+      qryExecuteRecordByUserId(this.queryParamsRecord)
+        .then((res) => {
+          if (res.code == 0) {
+            this.recordList = res.data
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    getClass(status) {
+      console.log('VVV:', status)
+      if (status == 1) {
+        return 'span-gray'
+      } else if (status == 2) {
+        return 'span-green'
+      } else if (status == 3) {
+        return 'span-red'
+      }
+    },
+
+    // getClassTime(status) {
+    //   if (status == 2) {
+    //     return 'span-red'
+    //   } else {
+    //     return 'span-gray'
+    //   }
+    // },
+
     commit() {
       if (!this.queryParams.messageType) {
         this.$message.error('请选择随访方式')
@@ -585,11 +607,12 @@ export default {
         this.queryParams.executeTime = currentTime
       } else {
         //延时执行的
+        debugger
         // console.log("延时发送时间：",this.timeStr)
         if (!this.timeStr) {
           this.timeStr = '00:00'
         }
-        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr
+        let dateStr = this.queryParams.executeTime.format('YYYY-MM-DD') + ' ' + this.timeStr + ':00'
         this.queryParams.executeTime = dateStr
       }
       if (this.queryParams.executeTime.includes('Invalid date')) {
@@ -613,14 +636,18 @@ export default {
       this.confirmLoading = true
       let param = JSON.parse(JSON.stringify(this.queryParams))
       param.messageType = parseInt(param.messageType)
-      addExecuteRecordTempTask({ addTempTaskReq: param })
+      param.executeType = parseInt(param.executeType)
+      param.messageContentId = parseString(param.messageContentId)
+      console.log('param', JSON.stringify(param))
+      // addExecuteRecordTempTask({ addTempTaskReq: param })
+      addExecuteRecordTempTask(param)
         .then((res) => {
           if (res.code == 0) {
             this.$message.success('新增成功!')
             this.visible = false
             this.getDataList()
             // this.handleCancel()
-            // this.qryExecuteRecordByUserIdOut()
+            this.qryExecuteRecordByUserIdOut()
           } else {
             this.$message.error('新增失败!')
           }
@@ -641,42 +668,14 @@ export default {
   // width: 99%;
 
   .div-yizhu {
+    height: 500px;
     display: flex;
     flex-direction: column;
 
     .div-janyan {
-      height: 100%;
+      flex: 1;
+      // height: 100%;
     }
-
-    .div-shu {
-      font-size: 12px;
-      width: 12%;
-
-      /deep/ .ant-timeline-item {
-        padding: 0 0 8px 0 !important;
-      }
-
-      .div-line-content {
-        font-size: 12px;
-
-        .div-name {
-          margin-left: 2%;
-          margin-top: 5px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
-
-      .doubled {
-        color: #1890ff;
-      }
-    }
-
     .div-bo {
       .bo-btn {
         padding: 5px 15px;
@@ -698,283 +697,136 @@ export default {
 }
 </style>
 
-<style lang="less">
-.no-data {
-  height: 300px;
+<style lang="less" scoped>
+.div-add-task {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.line-row {
-  width: 1px;
-  margin-left: 10px;
-  height: 425px;
-  background: #cccccc;
-}
-
-.span-red {
-  padding: 1% 2%;
-  font-size: 12px;
-  color: #f26161;
-  // background-color: #f26161;
-}
-
-.span-gray {
-  padding: 1% 2%;
-  font-size: 12px;
-  color: #4d4d4d;
-  // background-color: #85888e;
-}
-
-.span-green {
-  padding: 1% 2%;
-  font-size: 12px;
-  color: #69c07d;
-  // background-color: #85888e;
-}
-
-.table-page-wrapper {
-  .ant-form-inline {
-    .ant-form-item {
-      display: flex;
-      margin-bottom: 24px;
-      margin-right: 0;
-
-      .ant-form-item-control-wrapper {
-        flex: 1 1;
-        display: inline-block;
-        vertical-align: middle;
-      }
-
-      > .ant-form-item-label {
-        line-height: 32px;
-        padding-right: 8px;
-        width: auto;
-      }
-      .ant-form-item-control {
-        height: 32px;
-        line-height: 32px;
-      }
-    }
-  }
-
-  .table-page-search-submitButtons {
-    display: block;
-    margin-bottom: 24px;
-    white-space: nowrap;
-  }
-}
-</style>
-<style lang="less">
-.div-service-user {
-  display: flex;
+  height: 552px;
   flex-direction: row;
+  font-size: 12px;
   width: 100%;
-  overflow: hidden;
-  height: 510px;
 
-  .div-total1 {
-    height: 100px;
-    width: 90%;
-    margin-left: 20px;
-    margin-right: 60px;
-    //   background-color: #f0f0f2;
-    background-color: #ffffff;
-    border: 1px solid #e6e6e6;
-    border-radius: 2px;
-    padding: 2% 0;
-    overflow: hidden;
+  .div-task-left {
+    margin-top: 10px;
+    width: 48%;
 
-    .div-item {
-      float: left;
-      width: 20%;
-
-      p {
-        margin: 0 auto;
-        text-align: center;
-      }
-    }
-  }
-
-  .div-totalleft {
-    height: 100%;
-    width: 50%;
-    // margin-left: 10px;
-    //   background-color: #f0f0f2;
-    background-color: #ffffff;
-    // border: 1px solid #e6e6e6;
-    border-radius: 5px;
-    padding: 20px 0;
-    overflow: hidden;
-
-    .div-item {
-      float: left;
-      width: 20%;
-
-      p {
-        margin: 0 auto;
-        text-align: center;
-      }
-    }
-  }
-
-  .div-totaltopleft {
-    height: 40px;
-    width: 100%;
-    margin-right: 60px;
-    margin-top: -20px;
-    //   background-color: #f0f0f2;
-    background-color: #ffffff;
-    border: 1px solid #e6e6e6;
-    // border-radius: 5px;
-    padding: 2% 0;
-    overflow: hidden;
-
-    .div-item {
-      float: left;
-      width: 20%;
-
-      p {
-        margin: 0 auto;
-        text-align: center;
-      }
-    }
-  }
-
-  .div-totaltop {
-    height: 40px;
-    width: 90%;
-    margin-left: 20px;
-    margin-right: 60px;
-    //   background-color: #f0f0f2;
-    background-color: #ffffff;
-    border: 1px solid #e6e6e6;
-    border-radius: 2px;
-    padding: 2% 0;
-    overflow: hidden;
-
-    .div-item {
-      float: left;
-      width: 20%;
-
-      p {
-        margin: 0 auto;
-        text-align: center;
-      }
-    }
-  }
-
-  .div-line-wrap {
-    width: 120%;
-    overflow: hidden;
-
-    .span-item-name {
-      width: 15%;
-      display: inline-block;
-      color: #4d4d4d;
-      font-size: 12px;
-      text-align: left;
-    }
-
-    .span-item-value {
-      width: 20%;
-      // overflow: hidden;
-      color: #4d4d4d;
-      text-align: left;
-      font-size: 12px;
-      display: inline-block;
-      text-overflow: ellipsis;
-    }
-
-    .span-item-value1 {
-      width: 10%;
-      margin-bottom: -4px;
-      color: #4d4d4d;
-      text-align: left;
-      font-size: 12px;
-      display: inline-block;
-      white-space: nowrap;
-      -webkit-line-clamp: 1;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-    }
-  }
-
-  .div-service-left-user {
-    background-color: white;
-    padding: 2% 3%;
-    float: left;
-    height: 100%;
-    min-height: 300px;
-    border-right: 1px dashed #e6e6e6;
-    width: 50%;
-    overflow: hidden;
-
-    .div-divider {
+    .div-title {
+      display: flex;
+      background-color: #f7f7f7;
+      flex-direction: row;
       width: 100%;
-      background-color: #e6e6e6;
-      height: 1px;
-    }
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      height: 26px;
 
-    .p-part-title {
-      height: 18px;
-      font-size: 18px;
-      text-align: left;
-      color: #000;
-      font-weight: bold;
-    }
-
-    .div-part {
-      overflow: hidden;
-      width: 100%;
-      padding-left: 5%;
-      height: 10%;
-
-      .checked {
-        color: #1890ff !important;
-      }
-
-      .p-name {
-        margin-top: 3.5%;
-        display: block;
+      .div-line-blue {
+        width: 5px;
         height: 100%;
-        padding-left: 1%;
-        color: #000;
+        background-color: #409eff;
+      }
+      .span-title {
         font-size: 14px;
-        text-align: left|center;
-        &:hover {
-          cursor: pointer;
+        margin-left: 10px;
+        font-weight: bold;
+        color: #4d4d4d;
+      }
+    }
+
+    .display-item {
+      display: flex;
+      margin-top: 10px;
+      flex-direction: row;
+      align-items: center;
+      width: 100%;
+      // margin-top: -20px;
+      .item-name {
+        color: #4d4d4d;
+        text-align: right;
+        width: 73px;
+
+        font-weight: 400;
+      }
+    }
+  }
+
+  .line-row {
+    width: 1px;
+    margin-left: 27px;
+    height: 558px;
+    background: #cccccc;
+  }
+
+  .div-task-right {
+    margin-top: 10px;
+    margin-left: 27px;
+    width: 48%;
+    .div-title {
+      display: flex;
+      background-color: #f7f7f7;
+      flex-direction: row;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      height: 26px;
+
+      .div-line-blue {
+        width: 5px;
+        height: 100%;
+        background-color: #409eff;
+      }
+      .span-title {
+        font-size: 14px;
+        margin-left: 10px;
+        font-weight: bold;
+        color: #4d4d4d;
+      }
+    }
+
+    .div-wrap-list {
+      overflow-y: auto;
+      width: 100%;
+      margin-top: 10px;
+
+      .div-part {
+        margin-bottom: 10px;
+        align-items: center;
+        display: flex;
+        flex-direction: row;
+        // background-color: #409eff;
+
+        .span-gray {
+          padding: 2px 6px;
+          width: 62px;
+          display: inline-block;
+          font-size: 12px;
+          color: #4d4d4d;
+          border: 1px solid #cccccc;
+          border-radius: 3px;
+          background-color: #f2f2f2;
+        }
+        .span-green {
+          padding: 2px 6px;
+          width: 62px;
+          display: inline-block;
+          font-size: 12px;
+          color: #69c07d;
+          border: 1px solid #69c07d;
+          border-radius: 3px;
+          background-color: #ecfff0;
+        }
+
+        .span-red {
+          padding: 2px 6px;
+          width: 62px;
+          display: inline-block;
+          font-size: 12px;
+          color: #e95454;
+          border: 1px solid #e95454;
+          border-radius: 3px;
+          background-color: #fff2f1;
         }
       }
-    }
-  }
-
-  .display-item {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    margin-top: -20px;
-  }
-
-  .card-right-user {
-    overflow: hidden;
-    width: 85% !important;
-
-    .table-operator {
-      margin-bottom: 18px;
-    }
-    button {
-      margin-right: 8px;
-    }
-
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
     }
   }
 }

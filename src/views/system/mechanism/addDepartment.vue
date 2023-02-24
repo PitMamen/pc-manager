@@ -34,6 +34,7 @@
 
     <div class="div-service-user" style="margin-top: 10px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 科室类型 :</span>
+
       <a-select
         style="min-width: 248px; margin-left: 5px"
         v-model="queryParams.departmentType"
@@ -45,11 +46,11 @@
         }}</a-select-option>
       </a-select>
 
-      <span class="span-item-name" style="margin-top: 5px; margin-left: 48px"> 科室位置 :</span>
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 50px"> 科室位置 :</span>
       <a-input
+        :disabled="queryParams.departmentType == 8"
         class="span-item-value"
         v-model="queryParams.departmentAddr"
-        :disabled="queryParams.departmentType == 8"
         :maxLength="30"
         style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
@@ -58,12 +59,12 @@
     </div>
 
     <div class="div-service-user" style="margin-top: 10px">
-      <span class="span-item-name" style="margin-top: 5px;margin-left: 10px;"> HIS编码 :</span>
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 10px"> HIS编码 :</span>
       <a-input
+        :disabled="queryParams.departmentType == 8"
         type="number"
         class="span-item-value"
         v-model="queryParams.hisId"
-        :disabled="queryParams.departmentType == 8"
         :maxLength="30"
         style="display: inline-block; width: 248px; margin-left: 8px"
         allow-clear
@@ -71,16 +72,16 @@
       />
 
       <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
-        ><span style="color: red">*</span> 显示序号 :</span
+        ><span style="color: red">*</span> 科室编码 :</span
       >
-      <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
       <a-input
-        v-model="queryParams.departmentOrder"
-        :defaultValue="0"
+        class="span-item-value"
+        v-model="queryParams.departmentId"
+        :maxLength="30"
+        style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
-        style="width: 190px; margin-left: 4px; text-align: center"
+        placeholder="科室编码 "
       />
-      <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
     </div>
 
     <div class="display-item" style="margin-left: 5px; margin-top: 10px">
@@ -91,6 +92,18 @@
       >
 
       <a-checkbox @change="radioChange2" :disabled="queryParams.departmentType == 8">全病程科室</a-checkbox>
+
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 46px"
+        ><span style="color: red">*</span> 显示序号 :</span
+      >
+      <a-button style="margin-left: 5px" icon="plus" size="small" @click="addNum()" />
+      <a-input
+        v-model="queryParams.departmentOrder"
+        :defaultValue="0"
+        allow-clear
+        style="width: 192px; margin-left: 4px; text-align: center"
+      />
+      <a-button style="margin-left: 5px" size="small" icon="minus" @click="duleNum()" />
     </div>
 
     <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
@@ -141,6 +154,8 @@ export default {
       record: {},
       treeData: [],
       findItemData: {},
+      internetType: false,
+      isFullDiseaseType: false,
       queryParams: {
         departmentName: '',
         hospitalCode: '',
@@ -151,6 +166,7 @@ export default {
         isFullDisease: '',
         departmentIntroduce: '',
         departmentType: undefined,
+        departmentId:'',
       },
 
       labelCol: {
@@ -383,6 +399,7 @@ export default {
      * 重置
      */
     reset() {
+      this.queryParams.departmentId = ''
       this.queryParams.hospitalCode = ''
       this.queryParams.departmentName = ''
       this.queryParams.departmentAddr = ''
@@ -419,6 +436,15 @@ export default {
         this.$message.error('请选择科室排序')
         return
       }
+
+     
+      if(!this.queryParams.departmentId){
+        this.$message.error('请输入科室编码')
+        return
+      }
+
+
+
       // if (!this.queryParams.hisId) {
       //   this.$message.error('请输入His编码')
       //   return
@@ -429,7 +455,7 @@ export default {
         return
       }
 
-      if(this.queryParams.departmentOrder<0){
+      if (this.queryParams.departmentOrder < 0) {
         this.$message.error('显示序号不能小于0!')
         return
       }
@@ -440,8 +466,8 @@ export default {
       if (this.queryParams.departmentType == 8) {
         // this.queryParams.hisId = ''
         // this.queryParams.departmentAddr = ''
-        this.internetType = false
-        this.isFullDiseaseType = false
+        this.queryParams.isFullDiseaseType = ''
+        this.queryParams.isInternetHospital = ''
       }
       this.addDepartmentForReqOut()
     },

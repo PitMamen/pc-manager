@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="big-kuang" style="height: 200px !important">
+    <div class="big-kuang" style="height: 190px !important">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">基本信息</div>
       <div class="line"></div>
       <div class="div-up-content" style="margin-top: -15px">
@@ -168,7 +168,7 @@
         <div class="div-up-content">
           <div class="div-pro-line" style="margin-left: 50px">
             <span style="color: #1a1a1a" class="span-item-name">应退总金额 :</span>
-            <span style="color: #1a1a1a" class="span-item-value">{{ orderDetailDataList.actualRefundMoney }}</span>
+            <span style="color: #1a1a1a" class="span-item-value">{{ orderDetailDataList.refundMoney }}</span>
           </div>
 
           <div class="div-pro-line" style="margin-left: 20px">
@@ -193,6 +193,13 @@
       <div style="margin-top: 20px; height: 122px !important; width: 150% !important" class="half-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">审核建议</div>
         <div class="line"></div>
+        <div class="div-pro-line"  style="margin-left:20px">
+          <span class="span-item-name" style="color:#1A1A1A">  {{getReason(orderDetailDataList)}} </span>
+          <!-- <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
+          {{ getType(record)  }}
+      </span>  -->
+          <!-- <span class="span-item-value" style="width:65%;color:#1A1A1A">{{orderDetailDataList.rejectRefundReason}}</span> -->
+        </div>
       </div>
     </div>
 
@@ -202,6 +209,7 @@
       style="margin-top: 90px; width: 500px !important; height: 218px"
       :title="dealResultTitle"
       :visible="visible_model"
+      @cancel="handleCancelUpdPwd"
     >
       <div class="div-up-content">
         <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
@@ -596,6 +604,16 @@ export default {
     handleCancelUpdPwd() {
       this.visible_model = false
     },
+
+    getReason(data){
+    //  if(data.suggestion){
+    //   return 
+    //  }
+
+     return data.suggestion?data.suggestion[0]:''
+    },
+
+
   },
 }
 </script>
