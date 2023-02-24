@@ -374,7 +374,7 @@ export default {
 
 
 
-      followPlanPhonePatientInfo(this.record.userId).then((res) => {
+      followPlanPhonePatientInfo(this.record.id).then((res) => {
         if (res.code === 0) {
           res.data.forEach(element => {
             if(element.tableField=='id_card'){
