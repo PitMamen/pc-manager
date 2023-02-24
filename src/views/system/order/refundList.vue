@@ -82,7 +82,6 @@
       </span>
 
       <span slot="status" slot-scope="text, record" :class="getColor(record.status.value)">
-        <!-- {{ getType(record) }} -->
         {{ record.status.description }}
       </span>
 
@@ -328,7 +327,7 @@ export default {
       } else if (value == 6) {
         return 'span-blue'
       } else if (value == 4) {
-        return 'span-gray'
+        return 'span-green-p'
       }
     },
 
@@ -535,7 +534,15 @@ export default {
   padding: 2px 4px;
   font-size: 12px;
   color: #0e9b0b;
-  border: #0e9b0b 1px solid;
+  border: #69c07d 1px solid;
+}
+
+.span-green-p {
+  background-color: #edffed;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #0e9b0b;
+  border: #69c07d 1px solid;
 }
 
 .span-red {
@@ -555,12 +562,23 @@ export default {
   // background-color: #85888e;
 }
 
-.span-green {
-  padding: 2px 4px;
-  font-size: 12px;
-  color: #69c07d;
-  // background-color: #85888e;
-}
+// .span-green {
+//   padding: 2px 4px;
+//   font-size: 12px;
+//   color: #69c07d;
+//   // background-color: #85888e;
+// }
+
+// .span-green-p {
+//   background-color: #edffed;
+//   padding: 2px 10px;
+//   font-size: 12px;
+//   color: #69c07d;
+//   border: #0e9b0b 1px solid;
+//   // border: #69c07d 1px solid;
+// }
+
+
 .small-modal {
   display: flex;
   flex-direction: column;
