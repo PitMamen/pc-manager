@@ -347,7 +347,6 @@ export default {
           title: '订单编号',
           dataIndex: 'orderId',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.orderId,
@@ -368,7 +367,6 @@ export default {
           title: '支付方式',
           dataIndex: 'payMode',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.payMode,
@@ -399,7 +397,6 @@ export default {
           dataIndex: 'payTotal',
           align: 'right',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.payTotal,
@@ -444,7 +441,6 @@ export default {
           dataIndex: 'refundMoney',
           align: 'right',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               children: row.refundMoney,
               attrs: {},
@@ -465,7 +461,6 @@ export default {
           dataIndex: 'actualRefundMoney',
           align: 'right',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.actualRefundMoney,
@@ -503,14 +498,13 @@ export default {
       this.orderDetailDataList = {}
       if (this.user) {
         //如果不是运营人员 或者 财务人员  不显示顶部按钮
-        this.showButton = this.user.dataAccessActors.includes('operationManager' || 'financialManager')
+        this.showButton = this.user.dataAccessActors.includes('operationManager')||this.user.dataAccessActors.includes('financialManager')
       }
       this.orderId = refundId
       this.getrefundDetailOut(this.orderId)
     },
 
     handleOk() {
-      console.log('刷新数据----', this.orderId)
       this.getrefundDetailOut(this.orderId)
     },
 
@@ -585,7 +579,6 @@ export default {
       examine(requestData)
         .then((res) => {
           if (res.code == 0) {
-            console.log('NNNNNNNNNNNNNNNN')
             this.showButton = false
             this.handleOk()
             this.$message.success('操作成功!')
