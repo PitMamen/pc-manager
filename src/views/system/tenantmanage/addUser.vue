@@ -115,17 +115,34 @@
             <div class="div-line-blue"></div>
             <span class="span-title">账号信息</span>
           </div>
-          <div class="div-content">
-            <a-checkbox v-model="accountChecked" :disabled="record.userId?true:false"></a-checkbox>
+          
+          <!-- 修改 -->
+          <div v-if="record.userId" class="div-content">
+            <a-checkbox v-model="accountChecked" disabled></a-checkbox>
             <span class="span-item-name">创建账号:</span>
             <a-input
-              v-model="checkData.phone"
+              v-model="checkData.loginName"
               class="span-item-value"
               style="display: inline-block"
-              readOnly
+              :maxLength="40"
+              disabled
               placeholder="请输入内容"
             />
           </div>
+           <!-- 新增 -->
+          <div v-else class="div-content">
+            <a-checkbox v-model="accountChecked" ></a-checkbox>
+            <span class="span-item-name">创建账号:</span>
+            <a-input
+              v-model="checkData.loginName"
+              class="span-item-value"
+              style="display: inline-block"
+              :maxLength="40"
+              :disabled="!accountChecked"
+              placeholder="请输入内容"
+            />
+          </div>
+
         </div>
 
         <div class="div-part-right">
@@ -282,7 +299,7 @@ export default {
     this.checkData= {
         avatarUrl: '', //头像
         userName: '',
-
+        loginName:'',//账号
         userSex: 0,
         birthday: '', //出生日期
         identificationNo: '',
@@ -518,7 +535,10 @@ export default {
       console.log('avatarUrl:' + this.checkData.avatarUrl)
     },
     telInputChange(e) {
-      console.log(e)
+      if(!this.record.userId){
+        this.checkData.loginName=this.checkData.phone
+      }
+    
     },
     onDatePickerChange(date, dateString) {
       console.log(date, dateString)
@@ -587,6 +607,10 @@ export default {
 
       if (this.accountChecked) {
         //如果勾选了创建账号
+        if (isStringEmpty(this.checkData.loginName)) {
+        this.$message.error('请创建账号')
+        return
+      }
         //角色
         var checkedRoleList = []
         this.roleList.forEach((item) => {
@@ -670,7 +694,7 @@ export default {
         professionalTitle: this.checkData.professionalTitle, //职称 
       }
       if (this.accountChecked) {
-        postData.loginName= this.checkData.phone //目前账号不准修改，默认就是电话号码
+        postData.loginName= this.checkData.loginName 
         postData.roleIds= this.checkData.roleIds
         postData.registerTypeOptions= registerTypeOptions //服务选项
       }

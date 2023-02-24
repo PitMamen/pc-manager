@@ -22,6 +22,8 @@
               v-model="checkData.loginName"
               style="display: inline-block"
               allow-clear
+              :disabled="record.accountId"
+              :maxLength="40"
               placeholder="请输入账号"
            
             />
