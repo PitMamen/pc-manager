@@ -4,7 +4,7 @@
   
   
         <div class="action-row" style="margin-top:-15px !important;margin-left: -18px;">
-            <a-button type="link" icon="left" @click="handleOk()">返回</a-button>
+            <a-button type="link" icon="left" @click="goBack()">返回</a-button>
             <span style="font-size:14px;color:#4D4D4D">2023-02-22对账单</span>
         </div>
       </div>
@@ -208,47 +208,46 @@
             dataIndex: 'hospitalName',
           },
           {
-            title: '订单金额',
-            dataIndex: 'orderTotal',
-            align: 'right',
-          },
-          {
-            title: '实收',
+            title: '应收',
             dataIndex: 'payTotal',
             align: 'right',
           },
           {
-            title: '应退',
+            title: '实收',
             dataIndex: 'refundMoney',
             align: 'right',
           },
           {
-            title: '创建时间',
+            title: '下单时间',
             dataIndex: 'createTime',
             //   width: 160,
           },
   
           {
-            title: '更新时间',
-            dataIndex: 'updateTime',
-            ellipsis: true,
-          },
-          {
-            title: '退款方式',
+            title: '支付方式',
             dataIndex: 'refundMethod',
           },
           {
-            title: '状态',
+            title: '支付流水号',
+            dataIndex: 'orderId',
+          },
+          {
+            title: '订单状态',
             dataIndex: 'status',
             scopedSlots: { customRender: 'status' },
           },
           {
-            title: '操作',
-            fixed: 'right',
-            with: 130,
-            dataIndex: 'action',
-            scopedSlots: { customRender: 'action' },
+            title: '差异状态',
+            dataIndex: 'status',
+            scopedSlots: { customRender: 'status' },
           },
+        //   {
+        //     title: '操作',
+        //     fixed: 'right',
+        //     with: 130,
+        //     dataIndex: 'action',
+        //     scopedSlots: { customRender: 'action' },
+        //   },
         ],
         // 加载数据方法 必须为 Promise 对象
         loadData: (parameter) => {
@@ -413,6 +412,13 @@
       leadingOut(){
   
       },
+
+       //返回
+    goBack() {
+      this.$bus.$emit('orderRefresh', '刷新数据')
+      this.$router.go(-1)
+      // this.$router.back()
+    },
   
       //订单分组
       getTabOut() {
