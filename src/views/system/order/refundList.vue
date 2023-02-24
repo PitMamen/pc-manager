@@ -307,7 +307,7 @@ export default {
       if (record.value == 1) {
         return '运营审核'
       } else if (record.value == 2) {
-        return '财务审核'
+        return '财务退款'
       } else if (record.value == 3) {
         return '审核拒绝'
       } else if (record.value == 4) {
