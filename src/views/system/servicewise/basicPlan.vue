@@ -431,6 +431,7 @@ export default {
         pageNo: 1,
         pageSize: 999,
         userId: this.recordIn.userId,
+        followMetaDataId: this.recordIn.followMetaDataId,
         planId: this.recordIn.planId,
       }).then((res) => {
         this.isLoading = false
