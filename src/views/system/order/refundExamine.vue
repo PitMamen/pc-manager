@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <div class="big-kuang" style="height: 200px !important">
+    <div class="big-kuang" style="height: 190px !important">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">基本信息</div>
       <div class="line"></div>
       <div class="div-up-content" style="margin-top: -15px">

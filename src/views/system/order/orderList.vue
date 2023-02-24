@@ -63,7 +63,6 @@
         <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
       </div>
 
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
@@ -95,7 +94,7 @@
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfsb.png"
         /> -->
-        <span style="margin-left: 3px">待发货({{ numberData.daifahuo  }})</span>
+        <span style="margin-left: 3px">待发货({{ numberData.daifahuo }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 4 }" @click="onRadioClick(4)">
@@ -104,7 +103,7 @@
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
         /> -->
-        <span style="margin-left: 3px">待收货({{ numberData.daishouhuo  }})</span>
+        <span style="margin-left: 3px">待收货({{ numberData.daishouhuo }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 101 }" @click="onRadioClick(101)">
@@ -113,7 +112,7 @@
           style="width: 13px; height: 13px"
           src="~@/assets/icons/sfyq.png"
         /> -->
-        <span style="margin-left: 3px">使用中({{numberData.shiyongzhong }})</span>
+        <span style="margin-left: 3px">使用中({{ numberData.shiyongzhong }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 2 }" @click="onRadioClick(2)">
@@ -157,13 +156,11 @@
         <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
       </span>
 
-        <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
-          {{ getType(record)  }}
-      </span> 
-
-      
+      <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
+        {{ getType(record) }}
+      </span>
     </s-table>
-    <orderDetail ref="orderDetail" @ok="handleOk" /> 
+    <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
 </template>
  
@@ -245,6 +242,7 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
+          
           ellipsis: true,
         },
         {
@@ -572,7 +570,7 @@ export default {
  
  <style lang="less" scoped>
 .span-blue {
-  background-color: #ECF5FF;
+  background-color: #ecf5ff;
   padding: 2px 4px;
   font-size: 12px;
   color: #3894ff;
@@ -580,17 +578,16 @@ export default {
   // background-color: #3894ff;
 }
 
-.span-green{
-  background-color: #EDFFED;
+.span-green {
+  background-color: #edffed;
   padding: 2px 4px;
   font-size: 12px;
-  color: #0E9B0B;
-  border: #0E9B0B 1px solid;
+  color: #0e9b0b;
+  border: #0e9b0b 1px solid;
 }
 
-
 .span-red {
-  background-color: #FFF2F1;
+  background-color: #fff2f1;
   padding: 2px 4px;
   font-size: 12px;
   color: #f26161;
@@ -598,11 +595,11 @@ export default {
 }
 
 .span-gray {
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   padding: 2px 4px;
   font-size: 12px;
-  color: #4D4D4D;
-  border: #4D4D4D 1px solid;
+  color: #4d4d4d;
+  border: #4d4d4d 1px solid;
   // background-color: #85888e;
 }
 
@@ -772,10 +769,10 @@ export default {
 </style>
 
 <style >
- .ant-select-tree-dropdown {
-        max-height: 60vh !important;
-        top: 148px !important;
-      }
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 148px !important;
+}
 </style>
    
    <style lang="less" scoped>
