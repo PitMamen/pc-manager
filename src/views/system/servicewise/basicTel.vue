@@ -17,7 +17,7 @@
           </div>
           <div class="div-4">
             <div style="width: 16%; display: inline-block"><span style="color: red">*</span> 年龄：</div>
-            <a-input type="number" v-model="baseData.age" style="width: 67%" placeholder="请输入" />
+            <a-input disabled type="number" v-model="baseData.age" style="width: 67%" placeholder="请输入" />
           </div>
           <div class="div-4">
             <div style="width: 16%; display: inline-block"><span style="color: red">*</span> 性别：</div>
