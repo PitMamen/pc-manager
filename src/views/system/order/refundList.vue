@@ -170,8 +170,9 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
+          width:240,
           // scopedSlots: { customRender: 'commodityName' },
-          ellipsis: true,
+          // ellipsis: true,
         },
         {
           title: '医院名称',
@@ -513,7 +514,8 @@ export default {
     position: relative;
     overflow: hidden;
     text-overflow: ellipsis;
-    -webkit-line-clamp: 2;
+    // -webkit-line-clamp: 2;
+    line-clamp: 2 !important;
 
   }
 
