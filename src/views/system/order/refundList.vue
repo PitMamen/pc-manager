@@ -53,13 +53,13 @@
     </div>
 
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+      <div  class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
+      <div v-show="showTabyy" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
+      <div v-show="showTabcw" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
         <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
 
@@ -93,9 +93,11 @@
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import { accessHospitals, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
 import orderDetail from './orderDetail'
 
 export default {
@@ -109,6 +111,8 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
+      showTabyy:false,
+      showTabcw:false,
       createValue: [],
       orderTimeValue: [],
       treeData: [],
@@ -253,6 +257,12 @@ export default {
   },
 
   created() {
+    this.user = Vue.ls.get(TRUE_USER)
+      if (this.user) {
+        //如果不是运营人员 或者 财务人员  不显示顶部按钮
+        this.showTabyy = this.user.dataAccessActors.includes('operationManager')
+        this.showTabcw = this.user.dataAccessActors.includes('financialManager')
+      }
     this.queryHospitalListOut()
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
@@ -277,7 +287,6 @@ export default {
         path: '/order/refundExamine',
         query: {
           orderId: record.applyId,
-          // orderId:1623236088379908098,
         },
       })
     },
@@ -315,13 +324,13 @@ export default {
     },
 
     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
@@ -354,7 +363,6 @@ export default {
       if (clearTime) {
         this.createValue = []
         this.orderTimeValue = []
-
       }
       this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
@@ -418,17 +426,25 @@ export default {
       if (Math.abs(moment(dateArr[1]).unix() - moment(dateArr[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
 
-        this.queryParams.updateStartTime = getCurrentMonthLast() + ' 00:00:00'
-        this.queryParams.updateEndTime = getDateNow() + ' 23:59:59'
+        this.orderTimeValue=[]
+        this.queryParams.updateStartTime = ''
+        this.queryParams.updateEndTime = ''
         return
       }
       if (dateArr) {
         if (dateArr[0] > dateArr[1]) {
           this.$message.error('开始时间不能大于结束时间')
-          this.queryParams.updateStartTime = getCurrentMonthLast() + ' 00:00:00'
-          this.queryParams.updateEndTime = getDateNow() + ' 23:59:59'
+          this.orderTimeValue=[]
+          this.queryParams.updateStartTime = ''
+          this.queryParams.updateEndTime = ''
           return
         }
+      }
+
+      if (dateArr[0] == '' && dateArr[1] == '') {
+        this.queryParams.updateStartTime = ''
+        this.queryParams.updateEndTime = ''
+        return
       }
 
       this.orderTimeValue = momentArr
@@ -440,17 +456,25 @@ export default {
     onChangeOrder(momentArr, dateArr2) {
       if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
-        this.queryParams.createStartTime = getCurrentMonthLast() + ' 00:00:00'
-        this.queryParams.createEndTime = getDateNow() + ' 23:59:59'
+        this.createValue=[]
+        this.queryParams.createStartTime = ''
+        this.queryParams.createEndTime = ''
         return
       }
       if (dateArr2) {
         if (dateArr2[0] > dateArr2[1]) {
           this.$message.error('开始时间不能大于结束时间')
-          this.queryParams.updateStartTime = getCurrentMonthLast() + ' 00:00:00'
-          this.queryParams.updateEndTime = getDateNow() + ' 23:59:59'
+          this.createValue=[]
+          this.queryParams.updateStartTime = ''
+          this.queryParams.updateEndTime = ''
           return
         }
+      }
+
+      if (dateArr2[0] == '' && dateArr2[1] == '') {
+        this.queryParams.createStartTime = ''
+        this.queryParams.createEndTime = ''
+        return
       }
 
       this.createValue = momentArr

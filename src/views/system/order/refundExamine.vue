@@ -205,7 +205,7 @@
     >
       <div class="div-up-content">
         <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
-          <span style="margin-top: 10px; width: 90px"> 驳回原因 :</span>
+          <span style="margin-top: 10px; width: 90px"> <span style="color: red">*</span> 驳回原因 :</span>
           <a-textarea
             style="height: 80px; min-height: 120px; margin-top: 10px; margin-bottom: 10px"
             :maxLength="150"
@@ -227,7 +227,7 @@
 </template>
     
     <script>
-import { cancelOrder, refundDetail, examine } from '@/api/modular/system/posManage'
+import {  refundDetail, examine } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -347,7 +347,6 @@ export default {
           title: '订单编号',
           dataIndex: 'orderId',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.orderId,
@@ -368,7 +367,6 @@ export default {
           title: '支付方式',
           dataIndex: 'payMode',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.payMode,
@@ -399,7 +397,6 @@ export default {
           dataIndex: 'payTotal',
           align: 'right',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.payTotal,
@@ -444,7 +441,6 @@ export default {
           dataIndex: 'refundMoney',
           align: 'right',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               children: row.refundMoney,
               attrs: {},
@@ -465,7 +461,6 @@ export default {
           dataIndex: 'actualRefundMoney',
           align: 'right',
           customRender: (value, row, index) => {
-            console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.actualRefundMoney,
@@ -502,15 +497,14 @@ export default {
       this.user = Vue.ls.get(TRUE_USER)
       this.orderDetailDataList = {}
       if (this.user) {
-          //如果不是运营人员 或者 财务人员  不显示顶部按钮
-        this.showButton = this.user.dataAccessActors.includes('operationManager' || 'financialManager')
+        //如果不是运营人员 或者 财务人员  不显示顶部按钮
+        this.showButton = this.user.dataAccessActors.includes('operationManager')||this.user.dataAccessActors.includes('financialManager')
       }
       this.orderId = refundId
       this.getrefundDetailOut(this.orderId)
     },
 
     handleOk() {
-      console.log('刷新数据----', this.orderId)
       this.getrefundDetailOut(this.orderId)
     },
 
@@ -569,6 +563,13 @@ export default {
     //审核通过退款   type=1 同意 2 驳回
     handleComf(type) {
       //请求接口
+      if (type == 2) {
+        if(!this.rejectReason){
+            this.$message.error('请输入驳回原因!')
+            return
+        }
+      }
+
       this.smallLoading = true
       var requestData = {
         applyId: this.orderId,
@@ -578,7 +579,6 @@ export default {
       examine(requestData)
         .then((res) => {
           if (res.code == 0) {
-            console.log('NNNNNNNNNNNNNNNN')
             this.showButton = false
             this.handleOk()
             this.$message.success('操作成功!')

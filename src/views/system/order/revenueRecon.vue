@@ -97,7 +97,8 @@
     <!-- 支付宝支付 -->
     <div class="tab-alipay">
       <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="alipay" />
+          <!-- <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="alipay" /> -->
+          <img style="width:14px;height:16px;margin-top:5px;" src="@/assets/icons/zhifubao.png">
           <span style="font-size:12px;margin-left:10px;margin-top:3px">支付宝支付订单额</span>
           <div style="float:right">
 
@@ -184,8 +185,6 @@ export default {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        orderEndTime: getCurrentMonthLast(),
-        orderStartTime: getDateNow(),
         refundEndTime: getCurrentMonthLast(),
         refundStartTime: getDateNow(),
         tabCode: '',
@@ -345,10 +344,9 @@ export default {
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/refundExamine',
+        path: '/order/reconDetail',
         query: {
           orderId: record.applyId,
-          // orderId:1623236088379908098,
         },
       })
     },

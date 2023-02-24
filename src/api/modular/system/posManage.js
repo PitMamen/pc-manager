@@ -2520,6 +2520,20 @@ export function queryHospitalList(data) {
 
 
 /**
+ * 可访问机构列表
+ */
+ export function accessHospitals(data){
+  return axios({
+    url:'/uam-api/hospital/accessHospitals',
+    method:'get',
+    params: data,
+  })
+ }
+
+
+
+
+/**
  * 修改机构状态
  */
 export function updateStatus(data) {
