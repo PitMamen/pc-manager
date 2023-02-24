@@ -46,8 +46,8 @@
       </a-select>
 
   
-        <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
-          ><span style="color: red">*</span> 科室位置 :</span
+        <span class="span-item-name" style="margin-top: 5px; margin-left: 50px"
+          > 科室位置 :</span
         >
         <a-input
         :disabled="queryParams.departmentType==8"
@@ -480,10 +480,10 @@
         }
 
 
-        if (this.queryParams.departmentType!=8&&!this.queryParams.departmentAddr) {
-          this.$message.error('请输入科室地址')
-          return
-        }
+        // if (this.queryParams.departmentType!=8&&!this.queryParams.departmentAddr) {
+        //   this.$message.error('请输入科室地址')
+        //   return
+        // }
         if (!this.queryParams.departmentOrder) {
           this.$message.error('请选择科室排序')
           return
@@ -503,8 +503,8 @@
          * 如果选中的是企业部门 则不传 科室编码、科室位置、科室属性参数
          */
        if(this.queryParams.departmentType==8){
-        this.queryParams.hisId = ''
-        this.queryParams.departmentAddr = ''
+        // this.queryParams.hisId = ''
+        // this.queryParams.departmentAddr = ''
         this.internetType = false
         this.isFullDiseaseType = false
        }

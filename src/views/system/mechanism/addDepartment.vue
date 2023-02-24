@@ -438,8 +438,8 @@ export default {
        * 如果选中的是企业部门 则不传 科室编码、科室位置、科室属性参数
        */
       if (this.queryParams.departmentType == 8) {
-        this.queryParams.hisId = ''
-        this.queryParams.departmentAddr = ''
+        // this.queryParams.hisId = ''
+        // this.queryParams.departmentAddr = ''
         this.internetType = false
         this.isFullDiseaseType = false
       }
