@@ -58,7 +58,7 @@
     </div>
 
     <div class="div-service-user" style="margin-top: 10px">
-      <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> HIS编码 :</span>
+      <span class="span-item-name" style="margin-top: 5px;margin-left: 10px;"> HIS编码 :</span>
       <a-input
         type="number"
         class="span-item-value"
@@ -419,10 +419,10 @@ export default {
         this.$message.error('请选择科室排序')
         return
       }
-      if (!this.queryParams.hisId) {
-        this.$message.error('请输入His编码')
-        return
-      }
+      // if (!this.queryParams.hisId) {
+      //   this.$message.error('请输入His编码')
+      //   return
+      // }
 
       if (!this.queryParams.departmentType) {
         this.$message.error('请选择科室类型')

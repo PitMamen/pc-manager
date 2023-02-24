@@ -61,8 +61,8 @@
       </div>
   
       <div class="div-service-user" style="margin-top: 10px;">
-        <span class="span-item-name" style="margin-top: 5px; "
-          ><span style="color: red">*</span> HIS编码  :</span
+        <span class="span-item-name" style="margin-top: 5px;margin-left: 10px; "
+          > HIS编码  :</span
         >
         <a-input
         :disabled="queryParams.departmentType==8"
@@ -480,7 +480,7 @@
         }
 
 
-        if (!this.queryParams.departmentAddr) {
+        if (this.queryParams.departmentType!=8&&!this.queryParams.departmentAddr) {
           this.$message.error('请输入科室地址')
           return
         }
@@ -488,10 +488,10 @@
           this.$message.error('请选择科室排序')
           return
         }
-        if (!this.queryParams.hisId) {
-          this.$message.error('请输入His编码')
-          return
-        }
+        // if (!this.queryParams.hisId) {
+        //   this.$message.error('请输入His编码')
+        //   return
+        // }
 
         if(this.queryParams.departmentOrder<0){
         this.$message.error('显示序号不能小于0!')
