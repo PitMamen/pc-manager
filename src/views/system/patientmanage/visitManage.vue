@@ -4,13 +4,14 @@
     :width="900"
     :height="700"
     :visible="visible"
+    :footer="null"
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
-    <template slot="footer">
+    <!-- <template slot="footer">
       <a-button @click="handleCancel">关闭</a-button>
-    </template>
+    </template> -->
     <div class="div-service-user">
       <!-- 左边 -->
       <div class="div-totalleft" style="width: 75%">
@@ -87,7 +88,7 @@
 
         <div class="display-item" style="margin-top: 20px; margin-left: 7px">
           <a-button style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
-          <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button>
+          <!-- <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button> -->
         </div>
       </div>
 
