@@ -53,13 +53,13 @@
     </div>
 
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+      <div  class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
+      <div v-show="showTabyy" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
+      <div v-show="showTabcw" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
         <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
 
@@ -96,6 +96,8 @@ import moment from 'moment'
 import { accessHospitals, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
 import orderDetail from './orderDetail'
 
 export default {
@@ -109,6 +111,8 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
+      showTabyy:false,
+      showTabcw:false,
       createValue: [],
       orderTimeValue: [],
       treeData: [],
@@ -253,6 +257,12 @@ export default {
   },
 
   created() {
+    this.user = Vue.ls.get(TRUE_USER)
+      if (this.user) {
+        //如果不是运营人员 或者 财务人员  不显示顶部按钮
+        this.showTabyy = this.user.dataAccessActors.includes('operationManager')
+        this.showTabcw = this.user.dataAccessActors.includes('financialManager')
+      }
     this.queryHospitalListOut()
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 

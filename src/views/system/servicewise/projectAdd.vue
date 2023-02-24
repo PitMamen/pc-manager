@@ -693,14 +693,20 @@ export default {
      * 取消选择时调用  取消哪一个，则需要清空哪一个科室的人员
      */
     onDeptDeSelect(departmentId) {
+      debugger
       for (let index = 0; index < this.projectData.tasks.length; index++) {
         let haveIndex = this.projectData.tasks[index].departmentDtos.findIndex((itemTemp, indexTemp) => {
           return itemTemp.executeDepartmentId == departmentId
         })
+        debugger
         if (haveIndex != -1) {
           this.projectData.tasks[index].departmentDtos.splice(haveIndex, 1)
           console.log('nameS before', this.projectData.tasks[index].nameStr)
-          this.handleAddPeople(index, this.projectData.tasks[index].departmentDtos)
+          if (this.projectData.tasks[index].departmentDtos.length == 0) {
+            this.projectData.tasks[index].nameStr = ''
+          } else {
+            this.handleAddPeople(index, this.projectData.tasks[index].departmentDtos)
+          }
           console.log('nameS after', this.projectData.tasks[index].nameStr)
         }
       }
@@ -835,7 +841,7 @@ export default {
     getDeptAllQues() {
       let param = {
         pageNo: 1,
-        pageSize: 100,
+        pageSize: 10000,
         typeName: '', //获取全量问卷，不根据科室获取
         // typeName: chooseDept.departmentName,
         // typeName: this.projectData.basePlan.executeDepartment,
@@ -945,7 +951,7 @@ export default {
 
     // handleAddPeople(indexTask, proccesedAssignments) {
     handleAddPeople(indexTask, departmentDtos) {
-      console.log('handleAddPeople', departmentDtos)
+      console.log('handleAddPeople', JSON.stringify(departmentDtos))
       this.projectData.tasks[indexTask].departmentDtos = departmentDtos
 
       let arrDtos = []

@@ -243,7 +243,7 @@ export default {
    
     self = this
     console.log('telSolve', this.record.userId)
-    this.followPlanPhonePatientInfo(this.record.userId)
+    this.followPlanPhonePatientInfo(this.record.id)
     this.followPlanPhoneCurrent(this.record.id)
     this.getUsersByDeptIdAndRoleOut(this.record.executeDepartmentId)
     this.getSoundRecordingList(this.record.id)
@@ -312,16 +312,15 @@ export default {
           if (res.data.urgentContacts) {
             this.patientInfo.urgentTel = res.data.urgentContacts
           }
-          console.log(this.followResultContent)
-          console.log(this.questionUrl)
+          
         } else {
           this.$message.error(res.message)
         }
       })
     },
 
-    followPlanPhonePatientInfo(userId) {
-      followPlanPhonePatientInfo(userId).then((res) => {
+    followPlanPhonePatientInfo(id) {
+      followPlanPhonePatientInfo(id).then((res) => {
         if (res.code === 0) {
           res.data.forEach((element) => {
             if (element.tableField == 'id_card') {

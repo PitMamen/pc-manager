@@ -53,7 +53,6 @@
               mode="multiple"
               @select="onDeptSelect"
               @deselect="onDeptDeSelect"
-              allow-clear
               placeholder="请选择执行科室"
             >
               <a-select-option v-for="(item, index) in keshiData" :key="index" :value="item.departmentId">{{
@@ -755,7 +754,7 @@ export default {
 
         //处理微信短信是否显示电话跟进
         this.$set(item, 'isChecked', true)
-        if ((item.messageType == 2 || item.messageType == 3) && (!item.assignments || item.assignments.length == 0)) {
+        if ((item.messageType == 2 || item.messageType == 3) && (!item.departmentDtos || item.departmentDtos.length == 0)) {
           this.$set(item, 'isChecked', false)
         } else {
           this.$set(item, 'isChecked', true)
@@ -809,7 +808,7 @@ export default {
 
       let param = {
         pageNo: 1,
-        pageSize: 100,
+        pageSize: 10000,
         typeName: '', //获取全量问卷，不根据科室获取
         // typeName: chooseDept.departmentName,
         // typeName: this.projectData.basePlan.executeDepartment,
@@ -913,10 +912,10 @@ export default {
       // this.getDeptAllQues()
     },
 
-        /**
+    /**
      * 取消选择时调用  取消哪一个，则需要清空哪一个科室的人员
      */
-     onDeptDeSelect(departmentId) {
+    onDeptDeSelect(departmentId) {
       for (let index = 0; index < this.projectData.tasks.length; index++) {
         let haveIndex = this.projectData.tasks[index].departmentDtos.findIndex((itemTemp, indexTemp) => {
           return itemTemp.executeDepartmentId == departmentId
@@ -924,7 +923,11 @@ export default {
         if (haveIndex != -1) {
           this.projectData.tasks[index].departmentDtos.splice(haveIndex, 1)
           console.log('nameS before', this.projectData.tasks[index].nameStr)
-          this.handleAddPeople(index, this.projectData.tasks[index].departmentDtos)
+          if (this.projectData.tasks[index].departmentDtos.length == 0) {
+            this.projectData.tasks[index].nameStr = ''
+          } else {
+            this.handleAddPeople(index, this.projectData.tasks[index].departmentDtos)
+          }
           console.log('nameS after', this.projectData.tasks[index].nameStr)
         }
       }
@@ -1161,7 +1164,7 @@ export default {
     },
 
     handleAddPeople(indexTask, departmentDtos) {
-      console.log('handleAddPeople', departmentDtos)
+      console.log('handleAddPeople', JSON.stringify(departmentDtos))
       this.projectData.tasks[indexTask].departmentDtos = departmentDtos
 
       let arrDtos = []
