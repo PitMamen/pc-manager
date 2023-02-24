@@ -149,7 +149,7 @@
               <div class="wenjuan" v-if="false">
                 <iframe src="https://www.w3school.com.cn/html/html_iframe.asp" width="600" height="500" frameborder="0"></iframe>
               </div>
-              <div class="wenzhen" v-if="true">
+              <div class="wenzhen" v-if="false">
                 <div class="card card1">
                   <div class="titles">服务团队</div>
                   <div class="body">
@@ -193,7 +193,7 @@
         </div>
       </div>
 
-      <a-modal title="" :footer="null" :visible="previewVisible" @cancel="() => { previewVisible = false; }">
+      <a-modal title="预览" :footer="null" :visible="previewVisible" @cancel="() => { previewVisible = false; }">
         <img style="width: 100%;" :src="previewImage" />
       </a-modal>
     </a-spin>
@@ -209,6 +209,7 @@ export default {
       confirmLoading: false,
       
       tab: 1,
+      item: {},
       chatItem: {},
       previewVisible: false,
       previewImage: '',
@@ -217,6 +218,7 @@ export default {
   methods: {
     // 初始化方法
     info(item) {
+      this.item = item
       this.visible = true
     },
     tabClick(tab) {
@@ -239,6 +241,7 @@ export default {
     handleCancel() {
       this.visible = false
       this.previewVisible = false
+      this.chatItem = {}
     }
   }
 }
@@ -462,6 +465,7 @@ export default {
                   cursor: pointer;
                 }
                 &.card {
+                  position: relative;
                   color: #409EFF;
                   cursor: pointer;
                 }
@@ -477,6 +481,9 @@ export default {
                 margin-left: 10px;
                 .row {
                   text-align: left;
+                  &.card {
+                    left: -4px;
+                  }
                   .time {
                     margin-left: 60px;
                   }
@@ -488,6 +495,9 @@ export default {
                 margin-right: 10px;
                 .row {
                   text-align: right;
+                  &.card {
+                    right: -4px;
+                  }
                   .time {
                     margin-right: 60px;
                   }
@@ -517,26 +527,76 @@ export default {
           overflow-y: auto;
           border: 1px solid #DFE3E5;
           .text {
-            span {}
+            padding: 10px 20px;
+            span {
+              font-size: 18px;
+              font-weight: 400;
+              color: #1A1A1A;
+              line-height: 38px;
+            }
           }
           .tupian {
-            img {}
+            padding: 20px;
+            img {
+              width: 100%;
+              height: auto;
+            }
           }
           .yuying {
-            audio {}
+            padding: 20px;
+            audio {
+              width: 300px;
+              height: 54px;
+              background: #F1F3F4;
+              border-radius: 27px;
+            }
           }
-          .wenzhang {}
-          .wenjuan {}
+          .wenzhang {
+            padding: 10px;
+          }
+          .wenjuan {
+            padding: 10px;
+          }
           .wenzhen {
+            padding: 10px;
             .card {
-              .titles {}
-              .body {}
+              margin-bottom: 10px;
+              padding: 0 5px 5px 5px;
+              border: 1px solid #DFE3E5;
+              .titles {
+                padding: 0 5px;
+                font-size: 14px;
+                font-weight: 500;
+                color: #4D4D4D;
+                line-height: 32px;
+                border-bottom: 1px solid #DFE3E5;
+              }
+              .body {
+                padding: 5px;
+              }
               &.card1 {
                 .body {
-                  img {}
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: flex-start;
+                  img {
+                    width: 40px;
+                    height: 40px;
+                    margin-right: 10px;
+                    border-radius: 50%;
+                  }
                   .infos {
+                    flex: 1;
                     .row {
-                      .name {}
+                      font-size: 12px;
+                      font-weight: 400;
+                      color: #4D4D4D;
+                      line-height: 22px;
+                      .name {
+                        margin-right: 10px;
+                        font-size: 14px;
+                        color: #1A1A1A;
+                      }
                     }
                   }
                 }
@@ -544,16 +604,40 @@ export default {
               &.card2 {
                 .body {
                   .row {
-                    .num {}
+                    font-size: 12px;
+                    font-weight: 400;
+                    color: #999999;
+                    line-height: 20px;
+                    .num {
+                      color: #027DFD;
+                    }
                   }
                 }
               }
               &.card3 {
                 .body {
-                  .subtitle {}
-                  .msg {}
+                  .subtitle {
+                    font-size: 12px;
+                    font-weight: 500;
+                    color: #1A1A1A;
+                    line-height: 20px;
+                  }
+                  .msg {
+                    font-size: 12px;
+                    font-weight: 400;
+                    color: #4D4D4D;
+                    line-height: 20px;
+                  }
                   .imgs {
-                    img {}
+                    margin-top: 6px;
+                    img {
+                      display: inline-block;
+                      width: 25px;
+                      height: 25px;
+                      margin-right: 4px;
+                      margin-bottom: 4px;
+                      cursor: pointer;
+                    }
                   }
                 }
               }
