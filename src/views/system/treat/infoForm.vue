@@ -102,29 +102,29 @@
               <div class="item right">
                 <div class="msg">
                   <div class="row">
-                    <div class="time">2022-10-23 22:23</div>
-                    <div class="nick">医生助手</div>
+                    <span class="time">2022-10-23 22:23</span>
+                    <span class="nick">医生助手</span>
                   </div>
                   <div class="row text" @click="chatClick()">咨询诊室已创建成功，服务开始</div>
                 </div>
-                <img class="avatar" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                <img class="avatar" src="@/assets/icons/wenzhen/header.png" />
               </div>
               <div class="item right">
                 <div class="msg">
                   <div class="row">
-                    <div class="time">2022-10-23 22:23</div>
-                    <div class="nick">医生助手</div>
+                    <span class="time">2022-10-23 22:23</span>
+                    <span class="nick">医生助手</span>
                   </div>
                   <div class="row card" @click="chatClick()">【问诊卡】</div>
                 </div>
-                <img class="avatar" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                <img class="avatar" src="@/assets/icons/wenzhen/header.png" />
               </div>
               <div class="item left">
-                <img class="avatar" src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                <img class="avatar" src="@/assets/icons/wenzhen/huanzhe.png" />
                 <div class="msg">
                   <div class="row">
-                    <div class="nick">医生助手</div>
-                    <div class="time">2022-10-23 22:23</div>
+                    <span class="nick">医生助手</span>
+                    <span class="time">2022-10-23 22:23</span>
                   </div>
                   <div class="row text" @click="chatClick()">文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文</div>
                 </div>
@@ -135,7 +135,7 @@
             <div class="title">内容详情（<span>点击左侧内容在此查看详情</span>）</div>
             <div class="container">
               <div class="text" v-if="false">
-                <span></span>
+                <span>自从吃了您开的药品以后一直有腹泻，是否可以停止用药呢？</span>
               </div>
               <div class="tupian" v-if="false">
                 <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
@@ -151,9 +151,9 @@
               </div>
               <div class="wenzhen" v-if="true">
                 <div class="card card1">
-                  <div class="title">服务团队</div>
+                  <div class="titles">服务团队</div>
                   <div class="body">
-                    <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+                    <img src="@/assets/icons/wenzhen/header.png" />
                     <div class="infos">
                       <div class="row"><span class="name">刘医生</span>副主任医师</div>
                       <div class="row">中南大学湘雅二医院  内分泌内科</div>
@@ -162,7 +162,7 @@
                   </div>
                 </div>
                 <div class="card card2">
-                  <div class="title">剩余权益</div>
+                  <div class="titles">剩余权益</div>
                   <div class="body">
                     <div class="row">视频咨询【15分钟/24小时】：<span class="num">剩余1次/共2次</span></div>
                     <div class="row">视频咨询【15分钟/24小时】：<span class="num">剩余1次/共2次</span></div>
@@ -170,7 +170,7 @@
                   </div>
                 </div>
                 <div class="card card3">
-                  <div class="title">患者提交的信息</div>
+                  <div class="titles">患者提交的信息</div>
                   <div class="body">
                     <div class="subtitle">病情描述</div>
                     <div class="msg">自从吃了您开的药品以后一直有腹泻，是否可以停止用药呢？</div>
@@ -352,7 +352,7 @@ export default {
           border-bottom: 1px solid #DFE3E5;
         }
         .infos {
-          height: 164px;
+          height: 184px;
           padding: 10px 0;
           overflow-y: auto;
           &::-webkit-scrollbar {
@@ -378,44 +378,119 @@ export default {
       }
     }
     &.content2 {
+      padding: 10px 20px;
+      overflow-y: auto;
+      border: 1px solid #DFE3E5;
       .part {
-        .title {}
-        .word {}
+        margin-bottom: 10px;
+        border-bottom: 1px solid #DFE3E5;
+        .title {
+          font-size: 14px;
+          font-weight: 500;
+          color: #1A1A1A;
+          line-height: 34px;
+        }
+        .word {
+          font-size: 12px;
+          font-weight: 400;
+          color: #4D4D4D;
+          line-height: 32px;
+        }
       }
       .images {
-        .desc {}
+        .desc {
+          font-size: 12px;
+          font-weight: 500;
+          color: #1A1A1A;
+          line-height: 32px;
+        }
         .list {
-          img {}
+          img {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+          }
         }
       }
     }
     &.content3 {
+      display: flex;
+      justify-content: space-between;
       .chat {
-        .title {}
+        width: 556px;
+        .title {
+          margin-bottom: 10px;
+          padding-left: 10px;
+          font-size: 12px;
+          font-weight: 500;
+          color: #4D4D4D;
+          line-height: 28px;
+          background: #FAFAFA;
+          border-left: 4px solid #409EFF;
+        }
         .list {
+          height: 422px;
+          overflow-y: auto;
+          border: 1px solid #DFE3E5;
           .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            border-bottom: 1px solid #E6E6E6;
             .msg {
+              flex: 1;
               .row {
-                .time {}
-                .nick {}
-                &.text {}
-                &.card {}
+                max-width: 464px;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 30px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                .time {
+                  color: #999999;
+                }
+                .nick {
+                  color: #999999;
+                }
+                &.text {
+                  color: #1A1A1A;
+                  cursor: pointer;
+                }
+                &.card {
+                  color: #409EFF;
+                  cursor: pointer;
+                }
               }
             }
-            .avatar {}
+            .avatar {
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+            }
             &.left {
               .msg {
+                margin-left: 10px;
                 .row {
-                  .time {}
-                  .nick {}
+                  text-align: left;
+                  .time {
+                    margin-left: 60px;
+                  }
                 }
               }
             }
             &.right {
               .msg {
+                margin-right: 10px;
                 .row {
-                  .time {}
-                  .nick {}
+                  text-align: right;
+                  .time {
+                    margin-right: 60px;
+                  }
                 }
               }
             }
@@ -423,10 +498,24 @@ export default {
         }
       }
       .chat-detail {
+        width: 556px;
         .title {
-          span {}
+          margin-bottom: 10px;
+          padding-left: 10px;
+          font-size: 12px;
+          font-weight: 500;
+          color: #4D4D4D;
+          line-height: 28px;
+          background: #FAFAFA;
+          border-left: 4px solid #409EFF;
+          span {
+            color: #999999;
+          }
         }
         .container {
+          height: 422px;
+          overflow-y: auto;
+          border: 1px solid #DFE3E5;
           .text {
             span {}
           }
@@ -440,7 +529,7 @@ export default {
           .wenjuan {}
           .wenzhen {
             .card {
-              .title {}
+              .titles {}
               .body {}
               &.card1 {
                 .body {

@@ -420,22 +420,6 @@
           })
       },
   
-      /**
-       *   机构选择
-       */
-      radioChange(event) {
-        //立即发送
-        if (event.target.value == 1) {
-          this.rangeValue = 1
-          this.queryParams.isInternetHospital = 1
-          this.queryParams.isFullDisease = 2
-          //延时发送
-        } else if (event.target.value == 2) {
-          this.rangeValue = 2
-          this.queryParams.isFullDisease = 1
-          this.queryParams.isInternetHospital = 2
-        }
-      },
   
       /**
        * 重置

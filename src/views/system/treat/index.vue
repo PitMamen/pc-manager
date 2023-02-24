@@ -88,6 +88,7 @@ export default {
       // 查询参数
       queryParam: {
         times: [],
+        serviceItemType: 101
       },
       format: 'YYYY-MM-DD',
       statusSelects: [
@@ -239,7 +240,8 @@ export default {
      */
     reset() {
       this.queryParam = {
-        times: []
+        times: [],
+        serviceItemType: 101
       }
       this.$refs.table.refresh(true)
     },
