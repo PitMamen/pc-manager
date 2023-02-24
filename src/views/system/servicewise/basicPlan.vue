@@ -307,7 +307,7 @@ export default {
 
         executeTime: moment(new Date()),
         executeType: '1',
-        messageContentId: '',
+        messageContentId: undefined,
         messageContentType: undefined,
         messageType: undefined,
       },

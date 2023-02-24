@@ -754,7 +754,7 @@ export default {
 
         //处理微信短信是否显示电话跟进
         this.$set(item, 'isChecked', true)
-        if ((item.messageType == 2 || item.messageType == 3) && (!item.assignments || item.assignments.length == 0)) {
+        if ((item.messageType == 2 || item.messageType == 3) && (!item.departmentDtos || item.departmentDtos.length == 0)) {
           this.$set(item, 'isChecked', false)
         } else {
           this.$set(item, 'isChecked', true)
