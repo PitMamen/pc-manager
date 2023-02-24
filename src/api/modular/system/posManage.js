@@ -375,6 +375,17 @@ export function addExecuteRecord(data) {
   })
 }
 
+/**
+ * /tbFollowExecuteRecord/addExecuteRecordTempTask 新增临时任务
+ */
+export function addExecuteRecordTempTask(data) {
+  return axios({
+    url: '/follow-api/tbFollowExecuteRecord/addExecuteRecordTempTask',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 /**
  * 根据Userid 查询随访历史记录

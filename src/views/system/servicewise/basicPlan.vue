@@ -57,23 +57,23 @@
       <div class="div-service-user">
         <!-- 左边 -->
         <div class="div-totalleft" style="width: 75%">
-          <div class="div-title" style="margin-top: -10px; margin-left: 10px; width: 95%">
+          <div class="div-title" style="margin-top: -12px; margin-left: 10px; width: 95%">
             <div class="div-line-blue"></div>
             <span class="span-title">添加任务</span>
           </div>
 
           <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-            <span style="margin-top: 10px"> 随访方式:</span>
+            <span style="margin-top: 10px; width: 65px"> 随访方式:</span>
             <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
               <a-select
                 style="width: 322px"
                 allow-clear
                 v-model="queryParams.messageType"
-                @select="onTypeSelect(queryParams.messageType)"
+                @select="onTypeSelect"
                 placeholder="微信随访/短信随访"
               >
-                <a-select-option v-for="(item, index) in visitTypeList" :key="index" :value="item.code">{{
-                  item.value
+                <a-select-option v-for="(item, index) in visitTypeList" :key="index" :value="item.value">{{
+                  item.description
                 }}</a-select-option>
               </a-select>
             </a-form-item>
@@ -81,9 +81,15 @@
 
           <!--  -->
           <div class="display-item" style="margin-top: 10px; margin-left: 10px">
-            <span style="margin-top: 10px"> 随访内容:</span>
+            <span style="margin-top: 10px; width: 65px"> 随访内容:</span>
             <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-              <a-select style="width: 322px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
+              <a-select
+                style="width: 322px"
+                allow-clear
+                v-model="queryParams.messageContentId"
+                @select="onContentSelect"
+                placeholder="微信随访模板"
+              >
                 <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
                   item.templateTitle
                 }}</a-select-option>
@@ -93,22 +99,23 @@
 
           <!--  -->
           <div class="display-item" style="margin-top: 10px; margin-left: 10px">
-            <span style="margin-top: 10px; width: 80px"> 发送时间:</span>
+            <span style="margin-top: 10px; width: 65px"> 执行时间:</span>
+            <!-- <a-radio-group name="radioGroup" v-model="queryParams.executeType" style="margin-top: 10px; margin-left: -20px" @change="radioChange"> -->
             <a-radio-group
               name="radioGroup"
-              style="margin-top: 10px; margin-left: -20px"
-              @change="radioChange"
-              v-decorator="['roleId', { rules: [{ required: true, message: '请选择发送时间！' }] }]"
+              v-model="queryParams.executeType"
+              defaultValue="1"
+              style="margin-top: 10px; margin-left: 10px"
             >
-              <a-radio class="btn-add-plan" :value="1" style="font-size: 12px"> 立即发送 </a-radio>
-              <a-radio :value="2" style="font-size: 12px"> 延时发送 </a-radio>
+              <a-radio class="btn-add-plan" value="1" style="font-size: 12px"> 立即执行 </a-radio>
+              <a-radio value="2" style="font-size: 12px"> 定时执行 </a-radio>
             </a-radio-group>
           </div>
 
           <div
-            v-if="rangeValue == '2'"
-            class="display-item;"
-            style="margin-top: 2px; width: 100%; font-size: 12px; margin-left: 60px"
+            v-if="queryParams.executeType == '2'"
+            class="display-item"
+            style="margin-top: 2px; width: 100%; font-size: 12px; margin-left: 75px"
           >
             <!-- <a-form-item> -->
             <a-date-picker
@@ -120,12 +127,30 @@
 
             <!-- <div class="display-item;" style="margin-top: 5px"> -->
             <a-time-picker
-              style="margin-left: 10px; width: 150px; margin: 20px; height: 28px; font-size: 12px"
+              style="margin-top: 27px;margin-left: 10px; width: 150px; height: 28px; font-size: 12px"
               @change="timeChangeStart"
               :default-value="moment('00:00', 'HH:mm')"
               format="HH:mm"
             />
             <!-- </div> -->
+          </div>
+
+          <div class="display-item" v-if="queryParams.messageType == 1" style="margin-top: 10px; margin-left: 10px">
+            <span style="margin-top: 10px; width: 65px"> 任务执行人:</span>
+            <!-- <a-radio-group name="radioGroup" v-model="queryParams.executeType" style="margin-top: 10px; margin-left: -20px" @change="radioChange"> -->
+            <a-form-item style="width: 30%; margin-left: 10px; align-items: center">
+              <a-select
+                style="width: 120px"
+                disabled
+                v-model="chosePerson"
+                @select="onTypeSelect"
+                placeholder="微信随访/短信随访"
+              >
+                <a-select-option v-for="(item, index) in userList" :key="index" :value="item.userId">{{
+                  item.userName
+                }}</a-select-option>
+              </a-select>
+            </a-form-item>
           </div>
 
           <div class="display-item" style="margin-top: 20px; margin-left: 7px">
@@ -174,9 +199,6 @@
                     src="~@/assets/icons/dx_icon.png"
                   />
 
-                  <!-- overflow: hidden; //溢出隐藏
-        text-overflow: ellipsis; //超出省略号显示
-        white-space: nowrap; //文字不换行 -->
                   <span
                     :class="getClassTime(item.overdueStatus.value)"
                     style="
@@ -239,7 +261,22 @@
 
 
 <script>
-import { getFollowUserPlanPcList, stopFollowUserPlan, stopFollowUserPlanTask } from '@/api/modular/system/posManage'
+import {
+  getFollowUserPlanPcList,
+  stopFollowUserPlan,
+  stopFollowUserPlanTask,
+
+  //新增任务相关接口
+  addExecuteRecordTempTask,
+  messageTypes,
+  getAllQuestions,
+  getWxTemplateListForJumpType,
+  getSmsTemplateListForJumpType,
+} from '@/api/modular/system/posManage'
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
+import { formatDate, formatDateFull } from '@/utils/util'
+import moment from 'moment'
 export default {
   components: {},
   props: {
@@ -256,17 +293,23 @@ export default {
       recordList: [],
       visitTypeList: [],
       msgData: [],
-      rangeValue: '1',
+      templateListWX: [],
+      templateListSMS: [],
+      templateListQues: [],
+      rangeValue: '2',
+      chosePerson: 0,
+      userList: [],
+      timeStr: '2',
       queryParams: {
         execDoctorUserId: '',
-        executeDepartmentId: '',
+        planId: '',
         userId: '',
-        tenantId: '',
-        messageType: undefined,
-        messageContentType: undefined,
+
+        executeTime: moment(new Date()),
+        executeType: '1',
         messageContentId: '',
-        hospitalCode: '',
-        executeTime: '2022-11-01',
+        messageContentType: undefined,
+        messageType: undefined,
       },
 
       columns: [
@@ -323,22 +366,78 @@ export default {
 
   created() {
     console.log('created basicPlan', this.record)
+    // this.recordIn = this.record
+    let user = Vue.ls.get(TRUE_USER)
+    this.userList.push({ userId: user.userId, userName: user.userName })
+    this.chosePerson = user.userId
+    this.queryParams.execDoctorUserId = user.userId
+    this.queryParams.planId = this.recordIn.planId
+    this.queryParams.userId = this.recordIn.userId
+
+    let param = {
+      pageNo: 1,
+      pageSize: 10000,
+      typeName: '', //获取全量问卷，不根据科室获取
+      // typeName: chooseDept.departmentName,
+      // typeName: this.projectData.basePlan.executeDepartment,
+    }
+    messageTypes().then((res) => {
+      if (res.code == 0) {
+        this.visitTypeList = res.data
+      }
+    })
+
+    getAllQuestions(param).then((res) => {
+      if (res.code == 0) {
+        res.data.list.forEach((item) => {
+          this.$set(item, 'templateTitle', item.name)
+          //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
+          this.$set(item, 'messageContentType', 1)
+        })
+        this.templateListQues = res.data.list
+      } else {
+        // return {}
+      }
+    })
+
+    //全部的微信模板
+    getWxTemplateListForJumpType(0).then((res) => {
+      if (res.code == 0) {
+        res.data.forEach((item) => {
+          this.$set(item, 'messageContentType', 4)
+        })
+        this.templateListWX = res.data
+      }
+    })
+
+    //全部的短信模板
+    getSmsTemplateListForJumpType(0).then((res) => {
+      if (res.code == 0) {
+        res.data.forEach((item) => {
+          this.$set(item, 'messageContentType', 3)
+          this.$set(item, 'templateName', item.templateTitle)
+        })
+        this.templateListSMS = res.data
+      }
+    })
+
     this.getDataList()
   },
 
   methods: {
-    /**
-     * 立即发送  延时发送选择
-     */
-    radioChange(event) {
-      //立即发送
-      if (event.target.value == 1) {
-        this.rangeValue = '1'
-        //延时发送
-      } else if (event.target.value == 2) {
-        this.rangeValue = '2'
-      }
-    },
+    moment,
+    // /**
+    //  * 立即执行  延时执行
+    //  */
+    // radioChange(event) {
+    //   //立即执行
+    //   if (event.target.value == 1) {
+    //     this.rangeValue = '1'
+    //     //延时执行
+    //   } else if (event.target.value == 2) {
+    //     this.rangeValue = '2'
+    //   }
+    // },
 
     getDataList() {
       this.isLoading = true
@@ -382,6 +481,17 @@ export default {
 
     goAdd() {
       this.visible = true
+      this.queryParams = {
+        execDoctorUserId: Vue.ls.get(TRUE_USER).userId,
+        planId: this.recordIn.planId,
+        userId: this.recordIn.userId,
+
+        messageType: undefined,
+        executeTime: moment('2022-11-01', 'YYYY-MM-DD'),
+        executeType: '1',
+        messageContentId: '',
+        messageContentType: undefined,
+      }
     },
     handleOk() {
       this.visible = false
@@ -424,6 +534,100 @@ export default {
 
     refreshData(recordIn) {
       this.recordIn = recordIn
+    },
+
+    /**
+     *
+     * @param {随访方式选择}
+     *
+     */
+    onTypeSelect() {
+      // if (this.queryParams.messageType == 1) {
+      //   //电话消息不需要时间
+      // } else if (messageType == 2 || messageType == 3) {
+      //   //微信短信消息需要时间
+      //   let date = formatDate(new Date()) + ' 08:00:00'
+      //   console.log('date', date)
+      //   let mom = moment(date, 'YYYY-MM-DD HH:mm:ss')
+      //   console.log('mom', mom)
+      // }
+
+      if (this.queryParams.messageType == 1) {
+        this.msgData = JSON.parse(JSON.stringify(this.templateListQues))
+      } else if (this.queryParams.messageType == 2) {
+        //查所有微信模版
+        this.msgData = JSON.parse(JSON.stringify(this.templateListWX))
+      } else if (this.queryParams.messageType == 3) {
+        //查所有短信模版
+        this.msgData = JSON.parse(JSON.stringify(this.templateListSMS))
+      }
+    },
+
+    onContentSelect() {
+      let hasOne = this.msgData.find((item) => item.id == this.queryParams.messageContentId)
+      this.queryParams.messageContentType = hasOne.messageContentType
+    },
+
+    commit() {
+      if (!this.queryParams.messageType) {
+        this.$message.error('请选择随访方式')
+        return
+      }
+
+      if (!this.queryParams.messageContentId) {
+        this.$message.error('请选择随访内容')
+        return
+      }
+
+      if (this.queryParams.executeType == '1') {
+        //立即执行的
+        let currentTime = formatDateFull(new Date().getTime())
+        this.queryParams.executeTime = currentTime
+      } else {
+        //延时执行的
+        // console.log("延时发送时间：",this.timeStr)
+        if (!this.timeStr) {
+          this.timeStr = '00:00'
+        }
+        let dateStr = moment(this.queryParams.executeTime).format('YYYY-MM-DD') + ' ' + this.timeStr
+        this.queryParams.executeTime = dateStr
+      }
+      if (this.queryParams.executeTime.includes('Invalid date')) {
+        this.$message.error('请选择发送时间')
+        return
+      }
+
+      console.log('选择的时间：', this.queryParams)
+      this.addExecuteRecordOut()
+    },
+
+    timeChangeStart(moment, time) {
+      console.log('00000:', time)
+      this.timeStr = time
+    },
+
+    /**
+     * 新增随访记录
+     */
+    addExecuteRecordOut() {
+      this.confirmLoading = true
+      let param = JSON.parse(JSON.stringify(this.queryParams))
+      param.messageType = parseInt(param.messageType)
+      addExecuteRecordTempTask({ addTempTaskReq: param })
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('新增成功!')
+            this.visible = false
+            this.getDataList()
+            // this.handleCancel()
+            // this.qryExecuteRecordByUserIdOut()
+          } else {
+            this.$message.error('新增失败!')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
   },
 }
@@ -489,9 +693,8 @@ export default {
       }
     }
   }
-  
+
   // div-yizhu 同级
-  
 }
 </style>
 
@@ -506,6 +709,7 @@ export default {
 
 .line-row {
   width: 1px;
+  margin-left: 10px;
   height: 425px;
   background: #cccccc;
 }

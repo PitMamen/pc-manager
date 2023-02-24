@@ -217,9 +217,10 @@ export default {
       this.isAverage = false
       this.departmentDtos = departmentDtos || []
       // this.assignments = departmentDtos[0].assignments || []
-   
-      this.isSingle = isSingle
 
+      this.isSingle = isSingle
+      console.log('add departmentDtos', JSON.stringify(departmentDtos))
+      console.log('add executeDepartments', JSON.stringify(executeDepartments))
       this.departmentLst = executeDepartments
       //造数据，把每个校验数据绑定到可是列表
       this.departmentLst.forEach((item) => {
@@ -239,6 +240,8 @@ export default {
         let hasOne = this.departmentDtos.find((itemIn) => itemIn.executeDepartmentId == itemOut.department_id)
         if (hasOne) {
           this.departmentLst[indexOut].checkData.assignments = hasOne.assignments
+          this.departmentLst[indexOut].checkData.dataReady = true
+          this.departmentLst[indexOut].checkData.totolAverage = 100
         }
       })
       this.assignments = this.departmentLst[0].checkData.assignments
@@ -250,11 +253,13 @@ export default {
 
     onDeptSelect(department_id) {
       if (this.choseDepartmentId != this.lastDeptId) {
+        debugger
         this.saveChoseDeptData(true)
       }
     },
 
     saveChoseDeptData(needChange) {
+      debugger
       this.countTotal()
 
       if (this.choseNum == 0) {
@@ -285,11 +290,9 @@ export default {
 
       //验证完了保存数据
       for (let indexOut = 0; indexOut < this.departmentLst.length; indexOut++) {
-        debugger
         if (this.departmentLst[indexOut].department_id == this.lastDeptId) {
           // if (this.departmentLst[indexOut].department_id == this.choseDepartmentId) {
           //保存全局数据
-          debugger
           this.departmentLst[indexOut].checkData = {
             choseNum: this.choseNum,
             totolAverage: this.totolAverage,
@@ -298,24 +301,31 @@ export default {
             dataReady: true,
           }
 
+          debugger
           //保存后台需要的数据
-          let proccesedAssignments = JSON.parse(JSON.stringify(this.choseUsers))
-          let commodityPkgManageItemRsps = []
-          proccesedAssignments.forEach((item, index) => {
-            commodityPkgManageItemRsps.push({
+          let commodityPkgManageItemRsps = JSON.parse(JSON.stringify(this.choseUsers))
+          let proccesedAssignments = []
+          commodityPkgManageItemRsps.forEach((item, index) => {
+            proccesedAssignments.push({
               // achievementRatio: item.achievementRatio,
-              // objectId: item.userId,
+              // assignId: item.assignId ? item.assignId : '',
               userId: item.userId,
               weight: item.weight,
               userName: item.userName,
             })
+
+            if (item.assignId) {
+              this.$set(proccesedAssignments[index], 'assignId', item.assignId)
+            }
           })
-          this.$set(this.departmentLst[indexOut].checkData, 'proccesedAssignments', commodityPkgManageItemRsps)
+          debugger
+          this.$set(this.departmentLst[indexOut].checkData, 'proccesedAssignments', proccesedAssignments)
+          console.log('addItem indexOut', indexOut)
+          console.log('addItem', JSON.stringify(this.departmentLst[indexOut]))
         }
       }
 
       this.countNotStr()
-      debugger
       if (needChange) {
         console.log('onDeptSelect departmentLst', JSON.stringify(this.departmentLst))
         this.lastDeptId = this.choseDepartmentId
@@ -325,7 +335,6 @@ export default {
         this.choseNum = hasOne.checkData.choseNum
         this.totolAverage = hasOne.checkData.totolAverage
         this.choseUsers = JSON.parse(JSON.stringify(hasOne.checkData.choseUsers))
-        debugger
         this.isAverage = hasOne.checkData.isAverage
         this.assignments = hasOne.checkData.assignments
         this.getTreeUsers()
@@ -334,7 +343,6 @@ export default {
 
     countNotStr() {
       this.notStr = ''
-      debugger
       let notArr = this.departmentLst.filter((item) => !item.checkData.dataReady)
       notArr.forEach((itemNot, indexNot) => {
         console.log('itemNot', itemNot)
@@ -377,6 +385,7 @@ export default {
           this.choseUsers = []
 
           console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
+          debugger
           console.log('assignments', JSON.parse(JSON.stringify(this.assignments)))
           this.deptUsers.users.forEach((item) => {
             this.$set(item, 'isChecked', false)
@@ -392,6 +401,9 @@ export default {
                   //组装已添加用户
                   let tempItem = JSON.parse(JSON.stringify(item))
                   this.$set(tempItem, 'weight', itemAss.weight)
+                  if (itemAss.assignId) {
+                    this.$set(tempItem, 'assignId', itemAss.assignId)
+                  }
                   this.choseUsers.push(tempItem)
                 }
               })
@@ -443,6 +455,7 @@ export default {
       if (this.isAverage) {
         let num = (100 / this.choseUsers.length).toFixed(0)
         //平均的时候先设均值，然后改变最后一个值
+        debugger
         this.choseUsers.forEach((item, index) => {
           this.$set(item, 'weight', num)
         })
@@ -536,8 +549,9 @@ export default {
     },
 
     handleSubmit() {
+      debugger
       this.saveChoseDeptData(false)
-
+      debugger
       for (let index = 0; index < this.departmentLst.length; index++) {
         if (!this.departmentLst[index].checkData.dataReady) {
           this.$message.error('【' + this.departmentLst[index].department_name + '】' + '科室未配置人员')
@@ -545,13 +559,31 @@ export default {
         }
       }
 
+      console.log('fff', JSON.stringify(this.departmentLst))
+      //处理没有切换过的科室数据
+      for (let indexLo = 0; indexLo < this.departmentLst.length; indexLo++) {
+        if (
+          this.departmentLst[indexLo].checkData.dataReady &&
+          !this.departmentLst[indexLo].checkData.proccesedAssignments
+        ) {
+          // assignments
+          // {"executeDepartmentId":"2351395","assignments":[{"assignId":1797,"userId":1582,"userName":"急诊医生","weight":100}]}
+          this.$set(
+            this.departmentLst[indexLo].checkData,
+            'proccesedAssignments',
+            this.departmentLst[indexLo].checkData.assignments
+          )
+        }
+      }
+
       let departmentDtos = []
       for (let indexDown = 0; indexDown < this.departmentLst.length; indexDown++) {
+        debugger
+        console.log('in item', JSON.stringify(this.departmentLst[indexDown].checkData.proccesedAssignments))
         departmentDtos.push({
           executeDepartmentId: this.departmentLst[indexDown].department_id,
           assignments: this.departmentLst[indexDown].checkData.proccesedAssignments,
         })
-
       }
       console.log('emit departmentDtos', JSON.stringify(departmentDtos))
       console.log('this.choseDepartmentId', this.choseDepartmentId)
