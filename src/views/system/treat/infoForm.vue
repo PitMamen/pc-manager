@@ -33,43 +33,39 @@
             <div class="title">基本信息</div>
             <div class="infos">
               <div class="col">
-                <div class="item">订单号：1613717611264397314</div>
-                <div class="item">所属医院：中南大学湘雅二医院</div>
-                <div class="item">用户姓名：张三</div>
-                <div class="item">实付金额：1288</div>
-                <div class="item">服务医生：邓姿峰</div>
-                <div class="item">退款单号：--</div>
+                <div class="item">订单号：{{ tab1Info.orderId || '--' }}</div>
+                <div class="item">所属医院：{{ tab1Info.hospitalName || '--' }}</div>
+                <div class="item">用户姓名：{{ tab1Info.userName || '--' }}</div>
+                <div class="item">实付金额：{{ tab1Info.payTotal || '--' }}</div>
+                <div class="item">服务医生：{{ tab1Info.doctorUserName || '--' }}</div>
+                <div class="item">退款单号：{{ tab1Info.refundId || '--' }}</div>
               </div>
               <div class="col">
-                <div class="item">套餐类型：疾病管理</div>
-                <div class="item">下单时间：2023-01-13 10:00:39</div>
-                <div class="item">联系方式：18766899908</div>
-                <div class="item">套餐包服务时间：2023-01-13 10:00:39 - 2023-01-14 10:00:39</div>
-                <div class="item">服务护士：张悦</div>
-                <div class="item">退款时间：--</div>
+                <div class="item">套餐类型：{{ tab1Info.classifyName || '--' }}</div>
+                <div class="item">下单时间：{{ tab1Info.createTime || '--' }}</div>
+                <div class="item">联系方式：{{ tab1Info.phone || '--' }}</div>
+                <div class="item">套餐包服务时间：{{ tab1Info.effectiveStartTime || '--' }} - {{ tab1Info.effectiveEndTime || '--' }}</div>
+                <div class="item">服务护士：{{ tab1Info.nurseUserName || '--' }}</div>
+                <div class="item">退款时间：{{ tab1Info.refundTime || '--' }}</div>
               </div>
               <div class="col">
-                <div class="item">套餐名称：糖尿病管理</div>
-                <div class="item">订单状态：<span class="ing">使用中</span></div>
+                <div class="item">套餐名称：{{ tab1Info.commodityName || '--' }}</div>
+                <div class="item">订单状态：<span class="ing">{{ tab1Info.status.description || '--' }}</span></div>
                 <div class="item">&nbsp;</div>
                 <div class="item">&nbsp;</div>
-                <div class="item">服务团队：--</div>
-                <div class="item">退款原因：--</div>
+                <div class="item" :title="tab1Info.teamName || '--'">服务团队：{{ tab1Info.teamName || '--' }}</div>
+                <div class="item" :title="tab1Info.refundReason || '--'">退款原因：{{ tab1Info.refundReason || '--' }}</div>
               </div>
             </div>
           </div>
           <div class="bottom">
             <div class="title">权益使用情况</div>
             <div class="infos">
-              <a-timeline>
-                <a-timeline-item color="#409EFF"><span class="line">2022年1月5日  12:00  完成【图文咨询】使用</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  用户申请【图文咨询】使用1次</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  完成【图文咨询】使用</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  完成【图文咨询】使用</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  完成【图文咨询】使用</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  完成【图文咨询】使用</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  完成【图文咨询】使用</span></a-timeline-item>
-                <a-timeline-item color="#CCCCCC"><span class="line ed">2022年1月4日  12:00  完成【图文咨询】使用</span></a-timeline-item>
+              <a-empty style="margin-top: 35px" :image="simpleImage" v-if="tab1List.length === 0" />
+              <a-timeline v-else>
+                <a-timeline-item color="#409EFF" v-for="item in tab1List" :key="item.id">
+                  <span class="line">{{ format(item.createdTime, 'YYYY年MM月DD日  HH:mm') }}  {{ item.dealDesc || '--' }}</span>
+                </a-timeline-item>
               </a-timeline>
             </div>
           </div>
@@ -77,21 +73,17 @@
         <div class="content content2" v-show="tab === 2">
           <div class="part">
             <div class="title">病情描述</div>
-            <div class="word">自从吃了您开的药品以后一直有腹泻，是否可以停止用药呢？</div>
+            <div class="word">{{ tab2Info.diseaseDesc || '--' }}</div>
           </div>
           <div class="part">
             <div class="title">希望获得的帮助</div>
-            <div class="word">用药调整</div>
+            <div class="word">{{ tab2Info.appealDesc || '--' }}</div>
           </div>
           <div class="images">
             <div class="desc">上传检查报告或患处图片</div>
             <div class="list">
-              <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-              <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-              <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-              <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-              <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-              <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
+              <div v-if="(tab2Info.images||'').length === 0">--</div>
+              <img v-for="item in tab2Info.images.split(',')" :key="item" :src="item" @click="previewClick(item)" v-else />
             </div>
           </div>
         </div>
@@ -99,91 +91,92 @@
           <div class="chat">
             <div class="title">问诊记录</div>
             <div class="list">
-              <div class="item right">
-                <div class="msg">
-                  <div class="row">
-                    <span class="time">2022-10-23 22:23</span>
-                    <span class="nick">医生助手</span>
+              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chatList.length === 0" />
+              <template v-for="item in chatList" v-else>
+                <div class="item left" :key="item.id" v-if="item.isCustomer">
+                  <img class="avatar" :src="item.avatar" v-if="item.avatar" />
+                  <img class="avatar" src="@/assets/icons/wenzhen/huanzhe.png" v-else />
+                  <div class="msg">
+                    <div class="row">
+                      <span class="nick">{{ item.nick || '' }}</span>
+                      <span class="time">{{ format(new Date(item.time*1000), 'YYYY-MM-DD HH:mm') }}</span>
+                    </div>
+                    <div class="row text" @click="chatClick(item)" v-if="item.type === 'TIMTextElem'" :title="item.payload.text">{{ item.payload.text }}</div>
+                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMImageElem'">【图片】</div>
+                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMSoundElem'">【语音】</div>
+                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMCustomElem'">【{{ item.payload.description }}】</div>
+                    <div class="row card" v-else>【未定义类型消息】</div>
                   </div>
-                  <div class="row text" @click="chatClick()">咨询诊室已创建成功，服务开始</div>
                 </div>
-                <img class="avatar" src="@/assets/icons/wenzhen/header.png" />
-              </div>
-              <div class="item right">
-                <div class="msg">
-                  <div class="row">
-                    <span class="time">2022-10-23 22:23</span>
-                    <span class="nick">医生助手</span>
+                <div class="item right" :key="item.id" v-else>
+                  <div class="msg">
+                    <div class="row">
+                      <span class="time">{{ format(new Date(item.time*1000), 'YYYY-MM-DD HH:mm') }}</span>
+                      <span class="nick">{{ item.nick || '' }}</span>
+                    </div>
+                    <div class="row text" @click="chatClick(item)" v-if="item.type === 'TIMTextElem'" :title="item.payload.text">{{ item.payload.text }}</div>
+                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMImageElem'">【图片】</div>
+                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMSoundElem'">【语音】</div>
+                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMCustomElem'">【{{ item.payload.description }}】</div>
+                    <div class="row card" v-else>【未定义类型消息】</div>
                   </div>
-                  <div class="row card" @click="chatClick()">【问诊卡】</div>
+                  <img class="avatar" :src="item.avatar" v-if="item.avatar" />
+                  <img class="avatar" src="@/assets/icons/wenzhen/header.png" v-else />
                 </div>
-                <img class="avatar" src="@/assets/icons/wenzhen/header.png" />
-              </div>
-              <div class="item left">
-                <img class="avatar" src="@/assets/icons/wenzhen/huanzhe.png" />
-                <div class="msg">
-                  <div class="row">
-                    <span class="nick">医生助手</span>
-                    <span class="time">2022-10-23 22:23</span>
-                  </div>
-                  <div class="row text" @click="chatClick()">文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文字文</div>
-                </div>
-              </div>
+              </template>
             </div>
           </div>
           <div class="chat-detail">
             <div class="title">内容详情（<span>点击左侧内容在此查看详情</span>）</div>
             <div class="container">
-              <div class="text" v-if="false">
-                <span>自从吃了您开的药品以后一直有腹泻，是否可以停止用药呢？</span>
+              <div class="text" v-if="chatItem.type === 'TIMTextElem'">
+                <span>{{ chatItem.payload.text }}</span>
               </div>
-              <div class="tupian" v-if="false">
-                <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+              <div class="tupian" v-else-if="chatItem.type === 'TIMImageElem'">
+                <img :src="chatItem.payload.imageInfoArray[0].url" />
               </div>
-              <div class="yuying" v-if="false">
-                <audio src="file.mp3" controls autoplay />
+              <div class="yuying" v-else-if="chatItem.type === 'TIMSoundElem'">
+                <audio :src="chatItem.payload.url" controls autoplay />
               </div>
-              <div class="wenzhang" v-if="false">
-                <div v-html="'1234567'"></div>
+              <div class="wenzhang" v-else-if="chatItem.type==='TIMCustomElem' && JSON.parse(chatItem.payload.data).type==='CustomArticleMessage'">
+                <div v-html="articleHtml"></div>
               </div>
-              <div class="wenjuan" v-if="false">
-                <iframe src="https://www.w3school.com.cn/html/html_iframe.asp" width="600" height="500" frameborder="0"></iframe>
+              <div class="wenjuan" v-else-if="chatItem.type==='TIMCustomElem' && JSON.parse(chatItem.payload.data).type==='CustomWenJuanMessage'">
+                <iframe :src="JSON.parse(chatItem.payload.data).url" width="520" height="395" frameborder="0"></iframe>
               </div>
-              <div class="wenzhen" v-if="false">
+              <div class="wenzhen" v-else-if="chatItem.type==='TIMCustomElem' && JSON.parse(chatItem.payload.data).type==='CustomIllnessMessage'">
                 <div class="card card1">
                   <div class="titles">服务团队</div>
                   <div class="body">
-                    <img src="@/assets/icons/wenzhen/header.png" />
+                    <img :src="(wzInfo1.docInfo||{}).avatarUrl" v-if="(wzInfo1.docInfo||{}).avatarUrl" />
+                    <img src="@/assets/icons/wenzhen/header.png" v-else />
                     <div class="infos">
-                      <div class="row"><span class="name">刘医生</span>副主任医师</div>
-                      <div class="row">中南大学湘雅二医院  内分泌内科</div>
-                      <div class="row">医疗团队（2人）：王必成、刘月月</div>
+                      <div class="row"><span class="name">{{ (wzInfo1.docInfo||{}).userName || '' }}</span>{{ (wzInfo1.docInfo||{}).professionalTitle || '' }}</div>
+                      <div class="row">{{ (wzInfo1.docInfo||{}).hospitalName || '' }}  {{ (wzInfo1.docInfo||{}).departmentName || '' }}</div>
+                      <div class="row" v-if="(wzInfo1.teamInfo||[]).length === 0">医疗团队（0人）</div>
+                      <div class="row" v-else>医疗团队（{{ (wzInfo1.teamInfo||[]).length }}人）：{{ (wzInfo1.teamInfo||[]).join('、') }}</div>
                     </div>
                   </div>
                 </div>
                 <div class="card card2">
                   <div class="titles">剩余权益</div>
                   <div class="body">
-                    <div class="row">视频咨询【15分钟/24小时】：<span class="num">剩余1次/共2次</span></div>
-                    <div class="row">视频咨询【15分钟/24小时】：<span class="num">剩余1次/共2次</span></div>
-                    <div class="row">视频咨询【15分钟/24小时】：<span class="num">剩余1次/共2次</span></div>
+                    <div class="row" v-for="item in (wzInfo1.rightsItemInfo||[])" :key="item.id">
+                      <span>{{item.serviceItemName}}【{{item.serviceItemAttrs}}】：<span class="num">剩余{{item.surplusQuantity}}{{item.unit}}/共{{item.equityQuantity}}{{item.unit}}</span></span>
+                    </div>
                   </div>
                 </div>
                 <div class="card card3">
                   <div class="titles">患者提交的信息</div>
                   <div class="body">
                     <div class="subtitle">病情描述</div>
-                    <div class="msg">自从吃了您开的药品以后一直有腹泻，是否可以停止用药呢？</div>
+                    <div class="msg">{{ wzInfo2.diseaseDesc || '--' }}</div>
                     <div class="subtitle">希望获得帮助</div>
-                    <div class="msg">用药调整</div>
+                    <div class="msg">{{ wzInfo2.appealDesc || '--' }}</div>
                     <div class="subtitle">上传检查报告或患处图片</div>
                     <div class="imgs">
-                      <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-                      <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-                      <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-                      <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-                      <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
-                      <img src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" @click="previewClick('https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png')" />
+                      <div class="msg" v-if="(wzInfo2.images||'').length === 0">--</div>
+                      <img v-for="item in wzInfo2.images.split(',')" :key="item" :src="item" @click="previewClick(item)" v-else />
                     </div>
                   </div>
                 </div>
@@ -201,18 +194,33 @@
 </template>
 
 <script>
-import { info, list2 as list } from '@/api/modular/system/treat'
+import { info, info2, info3, info4, list2, list3 } from '@/api/modular/system/treat'
+import { Empty } from 'ant-design-vue'
+import moment from 'moment'
 export default {
   data() {
     return {
+      simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       visible: false,
       confirmLoading: false,
       
-      tab: 1,
+      tab: 0,
+      pageNo: 1,
+      pageSize: 99999,
       item: {},
       chatItem: {},
+      chatList: [],
+      tab1Flag: false,
+      tab2Flag: false,
+      tab3Flag: false,
       previewVisible: false,
       previewImage: '',
+      articleHtml: '',
+      tab1List: [],
+      tab1Info: {},
+      tab2Info: {},
+      wzInfo1: {},
+      wzInfo2: {}
     }
   },
   methods: {
@@ -220,19 +228,110 @@ export default {
     info(item) {
       this.item = item
       this.visible = true
+      this.tabClick(1)
     },
     tabClick(tab) {
       if (this.tab === tab){
         return
       }
       this.tab = tab
+      if (this.tab===1 && !this.tab1Flag){
+        this.tab1Info = {}
+        this.tab1List = []
+        this.getTab1Info()
+        this.getTab1List()
+      }
+      if (this.tab===2 && !this.tab2Flag){
+        this.tab2Info = {}
+        this.getTab2Info()
+      }
+      if (this.tab===3 && !this.tab3Flag){
+        this.chatItem = {}
+        this.chatList = []
+        this.getChatList()
+      }
     },
     chatClick(item) {
       this.chatItem = item
+      if (this.chatItem.type==='TIMCustomElem' && JSON.parse(this.chatItem.payload.data).type==='CustomArticleMessage'){
+        this.articleHtml = ''
+        this.getArticle()
+      }else if (this.chatItem.type==='TIMCustomElem' && JSON.parse(this.chatItem.payload.data).type==='CustomIllnessMessage'){
+        this.wzInfo1 = {}
+        this.wzInfo2 = {}
+        this.getWZInfo1()
+        this.getWZInfo2()
+      }
     },
     previewClick(src) {
       this.previewImage = src
       this.previewVisible = true
+    },
+
+    format(date, fmt) {
+      return moment(date).format(fmt)
+    },
+    getTab1List() {
+      list3(this.item.orderId).then(res => {
+        this.tab1List = res.data || []
+      })
+    },
+    getTab1Info() {
+      this.confirmLoading = true
+      info4({
+        orderId: this.item.orderId
+      }).then(res => {
+        this.tab1Flag = true
+        this.tab1Info = res.data || {}
+      }).finally(() => {
+        this.confirmLoading = false
+      })
+    },
+    getTab2Info() {
+      this.confirmLoading = true
+      info2({
+        rightsId: this.item.id
+      }).then(res => {
+        this.tab2Flag = true
+        this.tab2Info = res.data || {}
+      }).finally(() => {
+        this.confirmLoading = false
+      })
+    },
+    getArticle() {
+      info3({
+        id: JSON.parse(this.chatItem.payload.data).id
+      }).then(res => {
+        res.data = res.data || {}
+        this.articleHtml = res.data.content
+      })
+    },
+    getWZInfo1() {
+      info({
+        rightsId: this.item.id
+      }).then(res => {
+        this.wzInfo1 = res.data || {}
+      })
+    },
+    getWZInfo2() {
+      info2({
+        rightsId: this.item.id
+      }).then(res => {
+        this.wzInfo2 = res.data || {}
+      })
+    },
+    getChatList() {
+      this.confirmLoading = true
+      list2({
+        pageNo: this.pageNo,
+        pageSize: this.pageSize,
+        groupId: this.item.orderId
+      }).then(res => {
+        this.tab3Flag = true
+        this.chatList = res.data.rows || []
+      }).finally(() => {
+        this.confirmLoading = false
+      })
     },
 
     handleSubmit() {
@@ -240,8 +339,12 @@ export default {
     },
     handleCancel() {
       this.visible = false
+      this.confirmLoading = false
+      this.tab1Flag = false
+      this.tab2Flag = false
+      this.tab3Flag = false
       this.previewVisible = false
-      this.chatItem = {}
+      this.tab = 0
     }
   }
 }
@@ -447,7 +550,7 @@ export default {
             .msg {
               flex: 1;
               .row {
-                max-width: 464px;
+                max-width: 447px;
                 font-size: 12px;
                 font-weight: 400;
                 line-height: 30px;
@@ -608,6 +711,9 @@ export default {
                     font-weight: 400;
                     color: #999999;
                     line-height: 20px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                     .num {
                       color: #027DFD;
                     }
