@@ -178,6 +178,7 @@ export default {
   },
   methods: {
     clearData() {
+      this.articleId =-1
       this.record = {}
       this.checkData = {
         title: '',

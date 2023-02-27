@@ -286,7 +286,6 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          with: 130,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -425,14 +424,18 @@ export default {
     },
 
     getColor(record){
-      if (record.orderStatus == 1||record.orderStatus == 103) {
+      if (record.orderStatus == 1) {
         return 'span-green'
       } else if (record.orderStatus == 2||record.orderStatus == 3||record.orderStatus == 5||record.orderStatus == 6||record.orderStatus == 7) {
         return 'span-gray'
       } else if (record.orderStatus == 4||record.orderStatus == 8||record.orderStatus == 101) {
         return 'span-blue'
-      } else if (record.orderStatus == 102||record.orderStatus == 104) {
+      } else if (record.orderStatus == 102) {
         return 'span-red'
+      }else if(record.orderStatus == 103){
+        return 'span-green-p'
+      }else if(record.orderStatus == 104){
+        return 'span-red-p'
       }
     },
 
@@ -571,7 +574,7 @@ export default {
  <style lang="less" scoped>
 .span-blue {
   background-color: #ecf5ff;
-  padding: 2px 4px;
+  padding: 2px 10px;
   font-size: 12px;
   color: #3894ff;
   border: #3894ff 1px solid;
@@ -580,13 +583,29 @@ export default {
 
 .span-green {
   background-color: #edffed;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #69c07d;
+  border: #69c07d 1px solid;
+}
+
+.span-green-p {
+  background-color: #edffed;
   padding: 2px 4px;
   font-size: 12px;
-  color: #0e9b0b;
-  border: #0e9b0b 1px solid;
+  color: #69c07d;
+  border: #69c07d 1px solid;
 }
 
 .span-red {
+  background-color: #fff2f1;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #f26161;
+  border: #f26161 1px solid;
+}
+
+.span-red-p {
   background-color: #fff2f1;
   padding: 2px 4px;
   font-size: 12px;
@@ -596,7 +615,7 @@ export default {
 
 .span-gray {
   background-color: #fafafa;
-  padding: 2px 4px;
+  padding: 2px 10px;
   font-size: 12px;
   color: #4d4d4d;
   border: #4d4d4d 1px solid;
@@ -604,7 +623,7 @@ export default {
 }
 
 .span-green {
-  padding: 2px 4px;
+  padding: 2px 10px;
   font-size: 12px;
   color: #69c07d;
   // background-color: #85888e;

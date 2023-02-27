@@ -14,57 +14,105 @@
       </div>
 
       <div class="search-row">
-        <span class="name">查询条件:</span>
-        <a-input
-          v-model="queryParams.combinedCondition"
-          allow-clear
-          placeholder="输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
+        <span class="name">对账月份:</span>
+        <!-- <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" /> -->
+        <a-month-picker
+          :default-value="nowMonth"
+          placeholder="选择月份"
+          :format="monthFormat"
+          v-model="queryParams.month"
         />
-      </div>
-
-      <div class="search-row">
-        <span class="name">套餐类型:</span>
-        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
-            item.classifyName
-          }}</a-select-option>
-        </a-select>
-      </div>
-
-      <div class="search-row">
-        <span class="name">更新时间:</span>
-        <a-range-picker style="width: 190px" :value="orderTimeValue" @change="onChange" />
-      </div>
-
-      <div class="search-row">
-        <span class="name">创建时间:</span>
-        <a-range-picker style="width: 190px" :value="createValue" @change="onChangeOrder" />
       </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset(true)">重置</a-button>
+          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+            >导出</a-button
+          >
         </span>
       </div>
     </div>
 
     <div class="div-radio">
-      <div  class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
-        <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+        <span style="margin-left: 3px">全部({{ numberData.quanbu }})</span>
       </div>
-      <div v-show="showTabyy" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
-        <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
+        <span style="margin-left: 3px">运营商收款({{ numberData.yy }}) </span>
       </div>
-      <div v-show="showTabcw" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
-        <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
+        <span style="margin-left: 3px">医院收款({{ numberData.cw }})</span>
       </div>
 
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
-        <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
+      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
+          <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
+        </div> -->
+    </div>
+
+    <div class="tab-all-content">
+      <!-- 订单总额 -->
+      <div class="tab-total">
+        <div class="content-dis">
+          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">退款总额</span>
+          <div style="float: right">
+            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
+          </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">250000.04</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：200)</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">退款总笔数：{{ zbs }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：200)</span>
+        </div>
+      </div>
+
+      <!-- 微信支付 -->
+      <div class="tab-wx">
+        <div class="content-dis">
+          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">微信支付订单额</span>
+          <div style="float: right">
+            <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
+          </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">250000.04</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：200)</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ zbs }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：200)</span>
+        </div>
+      </div>
+
+      <!-- 支付宝支付 -->
+      <div class="tab-alipay">
+        <div class="content-dis">
+          <!-- <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="alipay" /> -->
+          <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">支付宝支付订单额</span>
+          <div style="float: right">
+            <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
+          </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">250000.04</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：200)</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ zbs }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：200)</span>
+        </div>
       </div>
     </div>
 
@@ -84,31 +132,18 @@
       <span slot="status" slot-scope="text, record" :class="getColor(record.status.value)">
         {{ record.status.description }}
       </span>
-
-       
-      <span slot="commodityName" slot-scope="text,record" class="multiLine">
-        {{ record.commodityName }}
-      </span>
-
-
-
-
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
 </template>
-   
-   <script>
+     
+     <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { accessHospitals, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'
-import Vue from 'vue'
-import { TRUE_USER } from '@/store/mutation-types'
 import orderDetail from './orderDetail'
-import { setHidden } from '@/api/modular/system/banner'
-import { noop } from 'ant-design-vue/es/_util/vue-types/utils'
 
 export default {
   components: {
@@ -121,9 +156,6 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
-      showTabyy:false,
-      showTabcw:false,
-      createValue: [],
       orderTimeValue: [],
       treeData: [],
       gropListData: [],
@@ -136,16 +168,13 @@ export default {
         cw: 0,
         wc: 0,
       },
-
+      zbs: 102,
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        createEndTime: getCurrentMonthLast(),
-        createStartTime: getDateNow(),
-
-        updateEndTime: getCurrentMonthLast(),
-        updateStartTime: getDateNow(),
+        refundEndTime: getCurrentMonthLast(),
+        refundStartTime: getDateNow(),
         tabCode: '',
       },
 
@@ -154,66 +183,59 @@ export default {
       // 表头
       columns: [
         {
-          title: '订单号',
+          title: '对账日期',
           dataIndex: 'refundId',
           ellipsis: true,
         },
         {
-          title: '用户姓名',
+          title: '微信退款金额',
           dataIndex: 'userName',
         },
         {
-          title: '手机号',
+          title: '微信退款单数',
           dataIndex: 'userPhone',
         },
         {
-          title: '套餐名称',
+          title: '支付宝退款金额',
           dataIndex: 'commodityName',
-          width:240,
-          // scopedSlots: { customRender: 'commodityName' },
-          // ellipsis: true,
+          ellipsis: true,
         },
         {
-          title: '医院名称',
+          title: '支付宝退款单数',
           dataIndex: 'hospitalName',
         },
         {
-          title: '订单金额',
+          title: '线下退款金额',
           dataIndex: 'orderTotal',
           align: 'right',
         },
         {
-          title: '实收',
+          title: '线下退款单数',
           dataIndex: 'payTotal',
           align: 'right',
         },
         {
-          title: '应退',
+          title: '总单数',
           dataIndex: 'refundMoney',
           align: 'right',
         },
         {
-          title: '实退',
-          dataIndex: 'actualRefundMoney',
-          align: 'right',
-        },
-        {
-          title: '创建时间',
+          title: '应退总金额',
           dataIndex: 'createTime',
-          width: 120,
+          //   width: 160,
         },
 
         {
-          title: '更新时间',
+          title: '实退总金额',
           dataIndex: 'updateTime',
-          width: 120,
+          ellipsis: true,
         },
         {
-          title: '退款方式',
+          title: '差异金额',
           dataIndex: 'refundMethod',
         },
         {
-          title: '状态',
+          title: '差异状态',
           dataIndex: 'status',
           scopedSlots: { customRender: 'status' },
         },
@@ -227,6 +249,27 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
+          if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
+            this.$message.error('请选择开始时间小于结束时间')
+            delete this.queryParams.orderStartTime
+            delete this.queryParams.orderEndTime
+            this.$refs.table.refresh()
+            return
+          }
+          if (this.queryParams.orderStartTime) {
+            let start = this.formatDate(this.queryParams.orderStartTime)
+            this.queryParams.orderStartTime = start + ' 00:00:00'
+          }
+
+          if (this.queryParams.orderEndTime) {
+            let end = this.formatDate(this.queryParams.orderEndTime)
+            this.queryParams.orderEndTime = end + ' 23:59:59'
+          }
+        } else {
+          delete this.queryParams.orderStartTime
+          delete this.queryParams.orderEndTime
+        }
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         this.queryParamsTemp.tabCode = this.currentTab
         return getPage(Object.assign(parameter, this.queryParams))
@@ -258,25 +301,22 @@ export default {
             this.confirmLoading = false
           })
       },
+      monthFormat: 'YYYY-MM',
+      dateFormat: 'YYYY-MM-DD',
+      nowMonth: '',
     }
   },
 
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
-    this.reset(false)
+    this.leadingOut()
     this.queryParams.tabCode = this.currentTab
     this.queryParamsTemp.tabCode = this.currentTab
   },
 
   created() {
-    this.user = Vue.ls.get(TRUE_USER)
-      if (this.user) {
-        //如果不是运营人员 或者 财务人员  不显示顶部按钮
-        this.showTabyy = this.user.dataAccessActors.includes('operationManager')
-        this.showTabcw = this.user.dataAccessActors.includes('financialManager')
-      }
+    this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
-    this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
@@ -292,11 +332,13 @@ export default {
   },
 
   methods: {
+    moment,
     //详情
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/refundExamine',
+        // path: '/order/reconDetail',
+        path: '/order/refundDetail',
         query: {
           orderId: record.applyId,
         },
@@ -307,7 +349,7 @@ export default {
       if (record.value == 1) {
         return '运营审核'
       } else if (record.value == 2) {
-        return '财务退款'
+        return '财务审核'
       } else if (record.value == 3) {
         return '审核拒绝'
       } else if (record.value == 4) {
@@ -327,7 +369,7 @@ export default {
       } else if (value == 6) {
         return 'span-blue'
       } else if (value == 4) {
-        return 'span-green-p'
+        return 'span-gray'
       }
     },
 
@@ -336,13 +378,13 @@ export default {
     },
 
     queryHospitalListOut() {
-    //   let queryData = {
-    //     tenantId: '',
-    //     status: 1,
-    //     hospitalName: '',
-    //   }
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
       this.confirmLoading = true
-      accessHospitals()
+      queryHospitalList(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
@@ -369,21 +411,8 @@ export default {
         })
     },
 
-    reset(clearTime) {
-      this.queryParams.combinedCondition = ''
-      this.queryParams.hospitalCode = undefined
-      if (clearTime) {
-        this.createValue = []
-        this.orderTimeValue = []
-      }
-      this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
-      this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
-      this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
-      this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
-      this.queryParams.classifyId = ''
-
-      this.handleOk()
-    },
+    //导出
+    leadingOut() {},
 
     //订单分组
     getTabOut() {
@@ -433,65 +462,11 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    //更新时间
-    onChange(momentArr, dateArr) {
-      if (Math.abs(moment(dateArr[1]).unix() - moment(dateArr[0]).unix()) > 7776000) {
-        this.$message.error('开始时间与结束时间跨度不能超过三个月!')
-
-        this.orderTimeValue=[]
-        this.queryParams.updateStartTime = ''
-        this.queryParams.updateEndTime = ''
-        return
-      }
-      if (dateArr) {
-        if (dateArr[0] > dateArr[1]) {
-          this.$message.error('开始时间不能大于结束时间')
-          this.orderTimeValue=[]
-          this.queryParams.updateStartTime = ''
-          this.queryParams.updateEndTime = ''
-          return
-        }
-      }
-
-      if (dateArr[0] == '' && dateArr[1] == '') {
-        this.queryParams.updateStartTime = ''
-        this.queryParams.updateEndTime = ''
-        return
-      }
-
+    //下单时间
+    onChangeOrder(momentArr, dateArr) {
       this.orderTimeValue = momentArr
-      this.queryParams.updateStartTime = dateArr[0] + ' 00:00:00'
-      this.queryParams.updateEndTime = dateArr[1] + ' 23:59:59'
-    },
-
-    //创建时间
-    onChangeOrder(momentArr, dateArr2) {
-      if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
-        this.$message.error('开始时间与结束时间跨度不能超过三个月!')
-        this.createValue=[]
-        this.queryParams.createStartTime = ''
-        this.queryParams.createEndTime = ''
-        return
-      }
-      if (dateArr2) {
-        if (dateArr2[0] > dateArr2[1]) {
-          this.$message.error('开始时间不能大于结束时间')
-          this.createValue=[]
-          this.queryParams.updateStartTime = ''
-          this.queryParams.updateEndTime = ''
-          return
-        }
-      }
-
-      if (dateArr2[0] == '' && dateArr2[1] == '') {
-        this.queryParams.createStartTime = ''
-        this.queryParams.createEndTime = ''
-        return
-      }
-
-      this.createValue = momentArr
-      this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
-      this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
+      this.queryParams.refundStartTime = dateArr[0]
+      this.queryParams.refundEndTime = dateArr[1]
     },
 
     handleOk() {
@@ -501,28 +476,11 @@ export default {
   },
 }
 </script>
-
-
-
-
-   
-   <style lang="less" scoped>
-
-
-.multiLine{
-    position: relative;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    // -webkit-line-clamp: 2;
-    line-clamp: 2 !important;
-
-  }
-
-
-
+     
+     <style lang="less" scoped>
 .span-blue {
   background-color: #ecf5ff;
-  padding: 2px 10px;
+  padding: 2px 4px;
   font-size: 12px;
   color: #3894ff;
   border: #3894ff 1px solid;
@@ -534,15 +492,7 @@ export default {
   padding: 2px 4px;
   font-size: 12px;
   color: #0e9b0b;
-  border: #69c07d 1px solid;
-}
-
-.span-green-p {
-  background-color: #edffed;
-  padding: 2px 10px;
-  font-size: 12px;
-  color: #0e9b0b;
-  border: #69c07d 1px solid;
+  border: #0e9b0b 1px solid;
 }
 
 .span-red {
@@ -555,30 +505,19 @@ export default {
 
 .span-gray {
   background-color: #fafafa;
-  padding: 2px 10px;
+  padding: 2px 4px;
   font-size: 12px;
   color: #4d4d4d;
   border: #4d4d4d 1px solid;
   // background-color: #85888e;
 }
 
-// .span-green {
-//   padding: 2px 4px;
-//   font-size: 12px;
-//   color: #69c07d;
-//   // background-color: #85888e;
-// }
-
-// .span-green-p {
-//   background-color: #edffed;
-//   padding: 2px 10px;
-//   font-size: 12px;
-//   color: #69c07d;
-//   border: #0e9b0b 1px solid;
-//   // border: #69c07d 1px solid;
-// }
-
-
+.span-green {
+  padding: 2px 4px;
+  font-size: 12px;
+  color: #69c07d;
+  // background-color: #85888e;
+}
 .small-modal {
   display: flex;
   flex-direction: column;
@@ -593,73 +532,10 @@ export default {
 //   color: #333 !important;
 // }
 
-.sitemore {
-  .ant-select-selection.ant-select-selection--single {
-    height: 28px !important;
-  }
-
-  margin-left: 5px;
-  align-items: center;
-
-  .ant-select-selection--multiple {
-    width: 100%;
-    height: 28px;
-
-    .ant-select-selection__rendered {
-      height: 100%;
-      ul {
-        width: 100%;
-        height: 28px;
-        overflow-y: hidden;
-        display: -webkit-box;
-        &::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-        }
-        &::-webkit-scrollbar-track {
-          background-color: #dedede;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: #bfbfbf;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        & li {
-          padding: 0px 10px 0px 5px;
-          box-sizing: border-box;
-          width: 75px;
-          float: unset;
-          margin-top: 1px !important;
-        }
-
-        /deep/.ant-select-selection__choice {
-          margin-top: 1px !important;
-        }
-      }
-    }
-  }
-}
-
-.table-wrapper {
-  // max-height: 600px;
-  // overflow-y: auto;
-}
-.sys-card {
-  // height: 100%;
-  // padding-bottom: 52px;
-  // /deep/ .ant-table-pagination {
-  //   position: fixed;
-  //   right: 32px;
-  //   bottom: 20px;
-  // }
-}
 .table-page-search-wrapper {
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
+
   .action-row {
     display: inline-block;
     vertical-align: middle;
@@ -675,6 +551,88 @@ export default {
     }
     .ant-select-selection--single {
       height: 28px !important;
+    }
+  }
+}
+
+.tab-all-content {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .tab-total {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #f28c73;
+    box-shadow: 0px 2px 4px 0px rgba(242, 140, 115, 0.35);
+
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
+  }
+
+  .tab-wx {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #8fcb4a;
+
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
+  }
+
+  .tab-alipay {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #5794e9;
+    box-shadow: 0px 2px 4px 0px rgba(87, 148, 233, 0.35);
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      // margin-right: 15px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
     }
   }
 }
@@ -727,25 +685,22 @@ export default {
   height: 1px;
 }
 </style>
-   
-   <style lang="less">
-.top-title {
-  .ant-select-selection__rendered {
-    li {
-      margin-top: 1px !important;
-    }
-  }
-}
-</style>
 
-<style >
+ <style >
 .ant-select-tree-dropdown {
   max-height: 60vh !important;
   top: 148px !important;
 }
 </style>
+
+
+
+
+
+
      
-     <style lang="less" scoped>
+       
+       <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 40px);
