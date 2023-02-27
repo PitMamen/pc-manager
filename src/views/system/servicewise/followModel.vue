@@ -67,7 +67,7 @@
             @playAudio="playAudio"
           />
         </a-tab-pane>
-        <a-tab-pane key="4">
+        <a-tab-pane key="4" v-if="isSuifang">
           <template #tab>
             <span>
               <img v-show="activeKey != '4'" src="~@/assets/icons/fangan_not.png" class="icon" />
@@ -94,7 +94,12 @@ import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import basicPlan from './basicPlan'
 import basicTel from './basicTel'
-import { createSdkLoginToken, addTencentPhoneTape, getAccountParam } from '@/api/modular/system/posManage'
+import {
+  createSdkLoginToken,
+  addTencentPhoneTape,
+  getAccountParam,
+  getPatientInfo,
+} from '@/api/modular/system/posManage'
 import { canCall } from '@/utils/util'
 export default {
   components: {
@@ -120,6 +125,8 @@ export default {
       isSDKReady: false,
       // 从档案管理页面进入不需要显示本次随访
       isPatientManage: false,
+      // 从随访进去才显示随访方案
+      isSuifang: false,
       audioUrl: '',
       audioShow: false,
       callers: [],
@@ -151,6 +158,7 @@ export default {
     //随访
     doDeal(record) {
       this.modelType = 0
+      this.isSuifang = true
       this.showHangTag =
         record.hangStatus && record.hangStatus != null && record.hangStatus.value && record.hangStatus.value == 1
       this.init(record)
@@ -162,10 +170,22 @@ export default {
       this.init(record)
     },
 
+    getPatientInfoOut() {
+      getPatientInfo({
+        userId: this.record.userId,
+      }).then((res) => {
+        if (res.code === 0) {
+          let age = (res.data.age = new Date().getFullYear() - parseInt(res.data.age.substring(0, 4)))
+          this.title = res.data.userName + ' | ' + res.data.sex + ' | ' + age + '岁'
+        }
+      })
+    },
+
     //详情
     doInfo(record) {
       console.log('详情:', record)
       this.modelType = 1
+      this.isSuifang = true
       this.init(record)
     },
     init(record) {
@@ -191,6 +211,7 @@ export default {
       }
       this.visible = true
       this.record = record
+      this.getPatientInfoOut()
     },
 
     handleCancel() {

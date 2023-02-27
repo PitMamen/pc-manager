@@ -353,7 +353,7 @@ export default {
     this.queryParamsRecord.userId = this.recordIn.userId
     this.chosePerson = user.userId
     this.queryParams.execDoctorUserId = user.userId
-    this.recordIn.sex = this.recordIn.sex ? this.recordIn.sex : '未知'
+    this.recordIn.sex = this.recordIn.sex ? this.recordIn.sex.description : ''
     this.title =
       this.recordIn.userName + '\xa0' + '\xa0' + ' |   ' + this.recordIn.sex + '    |  ' + '\xa0' + this.recordIn.age
     this.queryParams.planId = this.recordIn.planId

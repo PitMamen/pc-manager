@@ -209,6 +209,7 @@
       style="margin-top: 90px; width: 500px !important; height: 218px"
       :title="dealResultTitle"
       :visible="visible_model"
+      @cancel="handleCancelUpdPwd"
     >
       <div class="div-up-content">
         <div class="div-service-user" style="margin-top: 5px; margin-left: 7px; position: relative">
