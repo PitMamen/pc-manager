@@ -186,7 +186,12 @@
         // 表头
         columns: [
           {
-            title: '订单号',
+            title: '退款单号',
+            dataIndex: 'refundId',
+            ellipsis: true,
+          },
+          {
+            title: '原订单号',
             dataIndex: 'refundId',
             ellipsis: true,
           },
@@ -208,28 +213,32 @@
             dataIndex: 'hospitalName',
           },
           {
-            title: '应收',
+            title: '退款单时间',
+            dataIndex: 'hospitalNfame',
+          },
+          {
+            title: '收款方',
+            dataIndex: 'hospitaldName',
+          },
+          {
+            title: '退款流水号',
             dataIndex: 'payTotal',
             align: 'right',
           },
           {
-            title: '实收',
+            title: '应退',
             dataIndex: 'refundMoney',
             align: 'right',
           },
           {
-            title: '下单时间',
+            title: '实退',
+            dataIndex: 'refundMoney',
+            align: 'right',
+          },
+          {
+            title: '退款方式',
             dataIndex: 'createTime',
             //   width: 160,
-          },
-  
-          {
-            title: '支付方式',
-            dataIndex: 'refundMethod',
-          },
-          {
-            title: '支付流水号',
-            dataIndex: 'orderId',
           },
           {
             title: '订单状态',

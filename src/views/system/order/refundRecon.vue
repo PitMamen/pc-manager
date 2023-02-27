@@ -14,14 +14,22 @@
       </div>
 
       <div class="search-row">
-        <span class="name">下单时间:</span>
-        <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" />
+        <span class="name">对账月份:</span>
+        <!-- <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" /> -->
+        <a-month-picker
+          :default-value="nowMonth"
+          placeholder="选择月份"
+          :format="monthFormat"
+          v-model="queryParams.month"
+        />
       </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()">导出</a-button>
+          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+            >导出</a-button
+          >
         </span>
       </div>
     </div>
@@ -42,91 +50,71 @@
         </div> -->
     </div>
 
-
-   <div class="tab-all-content">
-    
-
-    <!-- 订单总额 -->
-    <div class="tab-total">
-      <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="container" />
-          <span style="font-size:12px;margin-left:10px;margin-top:3px">订单总额</span>
-          <div style="float:right">
-
-              <img style="padding-left:110px;margin-top: -10px;" src="@/assets/icons/tc.png" >
+    <div class="tab-all-content">
+      <!-- 订单总额 -->
+      <div class="tab-total">
+        <div class="content-dis">
+          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">退款总额</span>
+          <div style="float: right">
+            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">250000.04</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：200)</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">退款总笔数：{{ zbs }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：200)</span>
+        </div>
       </div>
 
-      <div class="content-dis">
-        <span style="font-size:24px;margin-top:-14px">250000.04</span>
-        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
-      </div>
-     <div class="line"></div>
-     <div class="content-dis">
-        <span style="font-size:12px;">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
-      </div>
-    </div>
-
-
-
-     <!-- 微信支付 -->
-     <div class="tab-wx">
-      <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="wechat" />
-          <span style="font-size:12px;margin-left:10px;margin-top:3px">微信支付订单额</span>
-          <div style="float:right">
-
-              <img style="padding-left:74px;margin-top: -8px;" src="@/assets/icons/tc.png" >
+      <!-- 微信支付 -->
+      <div class="tab-wx">
+        <div class="content-dis">
+          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">微信支付订单额</span>
+          <div style="float: right">
+            <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">250000.04</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：200)</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ zbs }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：200)</span>
+        </div>
       </div>
 
-      <div class="content-dis">
-        <span style="font-size:24px;margin-top:-14px">250000.04</span>
-        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
-      </div>
-     <div class="line"></div>
-     <div class="content-dis">
-        <span style="font-size:12px;">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
-      </div>
-    </div>
-
-
-
-    <!-- 支付宝支付 -->
-    <div class="tab-alipay">
-      <div class="content-dis">
+      <!-- 支付宝支付 -->
+      <div class="tab-alipay">
+        <div class="content-dis">
           <!-- <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="alipay" /> -->
-          <img style="width:14px;height:16px;margin-top:5px;" src="@/assets/icons/zhifubao.png">
-          <span style="font-size:12px;margin-left:10px;margin-top:3px">支付宝支付订单额</span>
-          <div style="float:right">
-
-              <img style="padding-left:61px;margin-top: -9px;" src="@/assets/icons/tc.png" >
+          <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">支付宝支付订单额</span>
+          <div style="float: right">
+            <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
-      </div>
+        </div>
 
-      <div class="content-dis">
-        <span style="font-size:24px;margin-top:-14px">250000.04</span>
-        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
-      </div>
-     <div class="line"></div>
-     <div class="content-dis">
-        <span style="font-size:12px;">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">250000.04</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：200)</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ zbs }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：200)</span>
+        </div>
       </div>
     </div>
-
-   </div>
-
-
-
-   
-
-
-
-
-    
 
     <s-table
       :scroll="{ x: true }"
@@ -152,8 +140,8 @@
      <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import {  queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 
@@ -180,7 +168,7 @@ export default {
         cw: 0,
         wc: 0,
       },
-      zbs:102,
+      zbs: 102,
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
@@ -195,59 +183,59 @@ export default {
       // 表头
       columns: [
         {
-          title: '订单号',
+          title: '对账日期',
           dataIndex: 'refundId',
           ellipsis: true,
         },
         {
-          title: '用户姓名',
+          title: '微信退款金额',
           dataIndex: 'userName',
         },
         {
-          title: '手机号',
+          title: '微信退款单数',
           dataIndex: 'userPhone',
         },
         {
-          title: '套餐名称',
+          title: '支付宝退款金额',
           dataIndex: 'commodityName',
           ellipsis: true,
         },
         {
-          title: '医院名称',
+          title: '支付宝退款单数',
           dataIndex: 'hospitalName',
         },
         {
-          title: '订单金额',
+          title: '线下退款金额',
           dataIndex: 'orderTotal',
           align: 'right',
         },
         {
-          title: '实收',
+          title: '线下退款单数',
           dataIndex: 'payTotal',
           align: 'right',
         },
         {
-          title: '应退',
+          title: '总单数',
           dataIndex: 'refundMoney',
           align: 'right',
         },
         {
-          title: '创建时间',
+          title: '应退总金额',
           dataIndex: 'createTime',
           //   width: 160,
         },
 
         {
-          title: '更新时间',
+          title: '实退总金额',
           dataIndex: 'updateTime',
           ellipsis: true,
         },
         {
-          title: '退款方式',
+          title: '差异金额',
           dataIndex: 'refundMethod',
         },
         {
-          title: '状态',
+          title: '差异状态',
           dataIndex: 'status',
           scopedSlots: { customRender: 'status' },
         },
@@ -313,6 +301,9 @@ export default {
             this.confirmLoading = false
           })
       },
+      monthFormat: 'YYYY-MM',
+      dateFormat: 'YYYY-MM-DD',
+      nowMonth: '',
     }
   },
 
@@ -324,6 +315,7 @@ export default {
   },
 
   created() {
+    this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
 
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
@@ -340,6 +332,7 @@ export default {
   },
 
   methods: {
+    moment,
     //详情
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
@@ -419,9 +412,7 @@ export default {
     },
 
     //导出
-    leadingOut(){
-
-    },
+    leadingOut() {},
 
     //订单分组
     getTabOut() {
@@ -541,14 +532,9 @@ export default {
 //   color: #333 !important;
 // }
 
-
-
-
 .table-page-search-wrapper {
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
-
- 
 
   .action-row {
     display: inline-block;
@@ -569,99 +555,87 @@ export default {
   }
 }
 
-
-.tab-all-content{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-
-    .tab-total {
+.tab-all-content {
   display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 260px;
-  height: 120px;
-  background: #f28c73;
-  box-shadow: 0px 2px 4px 0px rgba(242, 140, 115, 0.35);
+  flex-direction: row;
+  width: 100%;
 
-  .content-dis {
-    margin-left: 15px;
-    margin-top: 9px;
+  .tab-total {
     display: flex;
-    flex-direction: row;
-    color: #ffffff;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #f28c73;
+    box-shadow: 0px 2px 4px 0px rgba(242, 140, 115, 0.35);
+
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
   }
 
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e6e6e6;
-  }
-}
-
-
-
-
-.tab-wx {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 260px;
-  height: 120px;
-  background: #8FCB4A;
-
-  .content-dis {
-    margin-left: 15px;
-    margin-top: 8px;
+  .tab-wx {
     display: flex;
-    flex-direction: row;
-    color: #ffffff;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #8fcb4a;
+
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
   }
 
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e6e6e6;
-  }
-}
-
-
-
-
-.tab-alipay {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 260px;
-  height: 120px;
-  background: #5794E9;
-  box-shadow: 0px 2px 4px 0px rgba(87,148,233,0.35);
-  .content-dis {
-    margin-left: 15px;
-    margin-top: 9px;
-    // margin-right: 15px;
+  .tab-alipay {
     display: flex;
-    flex-direction: row;
-    color: #ffffff;
-  }
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #5794e9;
+    box-shadow: 0px 2px 4px 0px rgba(87, 148, 233, 0.35);
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      // margin-right: 15px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
 
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e6e6e6;
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
   }
 }
-
-
-}
-
-
-
 
 .div-radio {
   margin-top: 10px;
@@ -713,10 +687,10 @@ export default {
 </style>
 
  <style >
- .ant-select-tree-dropdown {
-        max-height: 60vh !important;
-        top: 148px !important;
-      }
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 148px !important;
+}
 </style>
 
 
