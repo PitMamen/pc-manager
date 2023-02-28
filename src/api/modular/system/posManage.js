@@ -3959,3 +3959,81 @@ export function examine(data){
     data: data,
   })
 }
+
+
+//交易账单流水-汇总信息
+export function tradeBillSummary(data){
+  return axios({
+    url:'/order-api/order/bill/tradeBillSummary',
+    method:'post',
+    data:data
+  })
+}
+
+
+//交易流水 列表
+export function tradeBillPage(data){
+  return axios({
+    url:'/order-api/order/bill/tradeBillPage',
+    method:'post',
+    data:data,
+  })
+}
+
+//交易账单-按收款方Tab信息
+export function tradeBillTab(data){
+  return axios({
+    url:'/order-api/order/bill/tradeBillTab',
+    method:'post',
+    data:data,
+  })
+}
+
+//交易账单-对账流水分页 详情
+export function tradeRecordPage(data){
+  return axios({
+    url:'/order-api/order/bill/tradeRecordPage',
+    method:'post',
+    data:data,
+  })
+}
+
+
+//交易账单-对账流水分渠道汇总
+export function tradeRecordChannelSummary(data){
+  return axios({
+    url:'/order-api/order/bill/tradeRecordChannelSummary',
+    method:'post',
+    data:data,
+  })
+}
+
+//交易账单-日对账明细>按天对账流水TAB
+export function tradeRecordTab(data){
+  return axios({
+    url:'/order-api/order/bill/tradeRecordTab',
+    method:'post',
+    data:data,
+  })
+}
+
+
+
+//交易账单-日对账明细>按天对账流水导出
+export function tradeRecordExport(data){
+  return axios({
+    url:'/order-api/order/bill/tradeRecordExport',
+    method:'post',
+    data:data,
+  })
+}
+
+
+//交易账单-总对账>按天汇总导出
+export function tradeBillExport(data){
+  return axios({
+    url:'/order-api/order/bill/tradeBillExport',
+    method:'post',
+    data:data,
+  })
+}

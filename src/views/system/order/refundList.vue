@@ -53,13 +53,23 @@
     </div>
 
     <div class="div-radio">
-      <div  class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
-      <div v-show="showTabyy" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
+      <div
+        v-show="showTabyy"
+        class="radio-item"
+        :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }"
+        @click="onRadioClick('yy')"
+      >
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
-      <div v-show="showTabcw" class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
+      <div
+        v-show="showTabcw"
+        class="radio-item"
+        :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }"
+        @click="onRadioClick('cw')"
+      >
         <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
 
@@ -85,14 +95,9 @@
         {{ record.status.description }}
       </span>
 
-       
-      <span slot="commodityName" slot-scope="text,record" class="multiLine">
+      <span slot="commodityName" slot-scope="text, record" class="multiLine">
         {{ record.commodityName }}
       </span>
-
-
-
-
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
@@ -121,8 +126,8 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
-      showTabyy:false,
-      showTabcw:false,
+      showTabyy: false,
+      showTabcw: false,
       createValue: [],
       orderTimeValue: [],
       treeData: [],
@@ -169,7 +174,7 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
-          width:240,
+          width: 240,
           // scopedSlots: { customRender: 'commodityName' },
           // ellipsis: true,
         },
@@ -270,11 +275,11 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-      if (this.user) {
-        //如果不是运营人员 或者 财务人员  不显示顶部按钮
-        this.showTabyy = this.user.dataAccessActors.includes('operationManager')
-        this.showTabcw = this.user.dataAccessActors.includes('financialManager')
-      }
+    if (this.user) {
+      //如果不是运营人员 或者 财务人员  不显示顶部按钮
+      this.showTabyy = this.user.dataAccessActors.includes('operationManager')
+      this.showTabcw = this.user.dataAccessActors.includes('financialManager')
+    }
     this.queryHospitalListOut()
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
@@ -336,11 +341,11 @@ export default {
     },
 
     queryHospitalListOut() {
-    //   let queryData = {
-    //     tenantId: '',
-    //     status: 1,
-    //     hospitalName: '',
-    //   }
+      //   let queryData = {
+      //     tenantId: '',
+      //     status: 1,
+      //     hospitalName: '',
+      //   }
       this.confirmLoading = true
       accessHospitals()
         .then((res) => {
@@ -375,6 +380,10 @@ export default {
       if (clearTime) {
         this.createValue = []
         this.orderTimeValue = []
+      } else {
+        this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+
+        this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
       }
       this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
@@ -438,7 +447,7 @@ export default {
       if (Math.abs(moment(dateArr[1]).unix() - moment(dateArr[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
 
-        this.orderTimeValue=[]
+        this.orderTimeValue = []
         this.queryParams.updateStartTime = ''
         this.queryParams.updateEndTime = ''
         return
@@ -446,7 +455,7 @@ export default {
       if (dateArr) {
         if (dateArr[0] > dateArr[1]) {
           this.$message.error('开始时间不能大于结束时间')
-          this.orderTimeValue=[]
+          this.orderTimeValue = []
           this.queryParams.updateStartTime = ''
           this.queryParams.updateEndTime = ''
           return
@@ -468,7 +477,7 @@ export default {
     onChangeOrder(momentArr, dateArr2) {
       if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
-        this.createValue=[]
+        this.createValue = []
         this.queryParams.createStartTime = ''
         this.queryParams.createEndTime = ''
         return
@@ -476,7 +485,7 @@ export default {
       if (dateArr2) {
         if (dateArr2[0] > dateArr2[1]) {
           this.$message.error('开始时间不能大于结束时间')
-          this.createValue=[]
+          this.createValue = []
           this.queryParams.updateStartTime = ''
           this.queryParams.updateEndTime = ''
           return
@@ -507,18 +516,13 @@ export default {
 
    
    <style lang="less" scoped>
-
-
-.multiLine{
-    position: relative;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    // -webkit-line-clamp: 2;
-    line-clamp: 2 !important;
-
-  }
-
-
+.multiLine {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  // -webkit-line-clamp: 2;
+  line-clamp: 2 !important;
+}
 
 .span-blue {
   background-color: #ecf5ff;
@@ -577,7 +581,6 @@ export default {
 //   border: #0e9b0b 1px solid;
 //   // border: #69c07d 1px solid;
 // }
-
 
 .small-modal {
   display: flex;

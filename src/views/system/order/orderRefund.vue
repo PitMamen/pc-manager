@@ -36,24 +36,24 @@
     >
       <!--   @blur="changeDes(record)" -->
       <span slot="jiankaction" slot-scope="text, record">
-        <a-InputNumber 
-        class="ant-push-k"
+        <a-InputNumber
+          class="ant-push-k"
           type="number"
           v-model="record.jiankouAmount"
           :maxLength="30"
           :min="0"
-          style=" width: 80px; margin-right: 5px"
+          style="width: 80px; margin-right: 5px"
           @blur="changeAmount(record)"
         />
       </span>
 
       <span slot="shikaction" slot-scope="text, record">
-        <a-InputNumber 
+        <a-InputNumber
           type="number"
           class="ant-push-k"
           v-model="record.canRefundAmount"
           :maxLength="30"
-          style=" width: 80px; margin-right: 5px"
+          style="width: 80px; margin-right: 5px"
           @blur="changeshituiAmount(record)"
         />
       </span>
@@ -198,9 +198,9 @@ export default {
 
     //减扣金额改变
     changeAmount(record) {
-      if (record.canRefundAmount > record.yingtuiAmount) {
-        record.canRefundAmount = 0
-        this.$message.error('实退金额不能大于应退金额!')
+      if (record.jiankouAmount > record.yingtuiAmount) {
+        record.jiankouAmount = 0
+        this.$message.error('减扣金额不能大于应退金额!')
         return
       }
 
@@ -208,19 +208,26 @@ export default {
       record.canRefundAmount = parseFloat(record.yingtuiAmount - record.jiankouAmount).toFixed(2)
       let com = 0
       for (let index = 0; index < this.cancelItemsData.length; index++) {
-        // console.log('JJJJ:', this.cancelItemsData[index].canRefundAmount)
-        com += this.cancelItemsData[index].canRefundAmount
-        com = parseFloat(com).toFixed(2)
+        com += Number(this.cancelItemsData[index].canRefundAmount)
       }
-
-      this.canRefundDataList.canRefundTotal = com
+      var com1 = parseFloat(com).toFixed(2)
+      this.canRefundDataList.canRefundTotal = com1
     },
 
     //实退金额改变
     changeshituiAmount(record) {
       if (record.canRefundAmount > record.yingtuiAmount) {
         record.canRefundAmount = record.TempcanRefundAmount
-        this.$message.error('减扣金额不能大于应退金额!')
+        // console.log("QQQQ:",record.canRefundAmount)
+        // this.canRefundDataList.canRefundTotal=this.canRefundDataList.needRefundTotal   
+        let number = 0
+        for (let index = 0; index < this.cancelItemsData.length; index++) {
+        number += Number(this.cancelItemsData[index].canRefundAmount)
+      }
+      var number1 = parseFloat(number).toFixed(2)
+      this.canRefundDataList.canRefundTotal = number1
+
+        this.$message.error('实退金额不能大于应退金额!')
         return
       }
       // record.jiankouAmount = record.yingtuiAmount - record.canRefundAmount
@@ -229,11 +236,9 @@ export default {
       let number = 0
       for (let index = 0; index < this.cancelItemsData.length; index++) {
         number += Number(this.cancelItemsData[index].canRefundAmount)
-        number = parseFloat(number).toFixed(2)
       }
-      //   console.log('dddddd:', number)
-
-      this.canRefundDataList.canRefundTotal = number
+      var number1 = parseFloat(number).toFixed(2)
+      this.canRefundDataList.canRefundTotal = number1
     },
 
     //订单可退款明细
@@ -252,7 +257,7 @@ export default {
               this.$set(item, 'key', index)
             })
 
-            console.log('AAA:', this.cancelItemsData)
+            // console.log('AAA:', this.cancelItemsData)
           }
         })
         .finally((res) => {
@@ -319,15 +324,15 @@ export default {
 }
 
 .input::-webkit-inner-spin-button {
-    -webkit-appearance: none !important;
-  }
-  .input[type='number'] {
-    -moz-appearance: textfield !important;
-  }
+  -webkit-appearance: none !important;
+}
+.input[type='number'] {
+  -moz-appearance: textfield !important;
+}
 
-.ant-push-k  {
+.ant-push-k {
   // display: none !important;
-  /deep/.ant-input-number-handler-wrap{
+  /deep/.ant-input-number-handler-wrap {
     display: none !important;
     position: absolute;
     top: 0;
@@ -341,7 +346,6 @@ export default {
     -webkit-transition: opacity 0.24s linear 0.1s;
     transition: opacity 0.24s linear 0.1s;
   }
- 
 }
 
 .table-hover-hidden {
