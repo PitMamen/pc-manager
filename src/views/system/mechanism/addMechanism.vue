@@ -35,7 +35,7 @@
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构代码:</span>
           <a-input
-            type="number"
+            type="text"
             v-model="queryParams.hospitalCode"
             allow-clear
             placeholder="请输入内容"
