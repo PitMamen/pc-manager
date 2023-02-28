@@ -12,7 +12,7 @@
       <div style="margin-top: 5px; color: #0e9b0b" :class="{ 'red-text': statusName == '有差异' }">
         {{ statusName }}
       </div>
-      <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+      <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="exportExcel"
         >导出</a-button
       >
     </div>
@@ -137,7 +137,12 @@
        
        <script>
 import { STable } from '@/components'
-import { refundRecordPage, refundRecordTab, refundRecordChannelSummary } from '@/api/modular/system/posManage'
+import {
+  refundRecordPage,
+  refundRecordTab,
+  refundRecordChannelSummary,
+  refundRecordExport,
+} from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -355,6 +360,35 @@ export default {
         }
         // this.confirmLoading=false
       })
+    },
+
+    exportExcel() {
+      let params = JSON.parse(JSON.stringify(this.queryParams))
+      refundRecordExport(params)
+        .then((res) => {
+          this.downloadfile(res)
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
     },
 
     getTabList() {

@@ -1783,11 +1783,24 @@ export function refundBillPage(data) {
 
 /**
  * 
- * 退款账单-按天汇总分页
+ * 退款账单-按天汇总导出
  */
 export function refundBillExport(data) {
   return axios({
     url: '/order-api/order/bill/refundBillExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+/**
+ * 
+ * 退款账单-按天对账流水导出
+ */
+export function refundRecordExport(data) {
+  return axios({
+    url: '/order-api/order/bill/refundRecordExport',
     method: 'post',
     data: data,
     responseType: 'blob'
