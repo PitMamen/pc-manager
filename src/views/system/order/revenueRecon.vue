@@ -17,8 +17,9 @@
       <div class="search-row">
         <span class="name">下单时间:</span>
         <a-month-picker
+        placeholder="选择月份"
           :allow-clear="false"
-          placeholder="选择月份"
+          :disabled-date="disabledDate"
           :default-value="nowMonth"
           :format="monthFormat"
           v-model="queryParams.billMonth"
@@ -332,6 +333,12 @@ export default {
   },
 
   methods: {
+
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current > moment().endOf('day')
+    },
+
     //详情
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
