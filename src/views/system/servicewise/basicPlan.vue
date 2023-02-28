@@ -46,12 +46,13 @@
       </div>
     </div>
 
+    <!-- :confirm-loading="confirmLoading" -->
+    <!-- :confirmLoading="confirmLoading" -->
     <a-modal
       :title="title"
       width="1223px"
       :visible="visible"
       :footer="null"
-      :confirm-loading="confirmLoading"
       @ok="handleOk"
       @cancel="handleCancel"
     >
@@ -139,7 +140,7 @@
           </div>
 
           <div class="display-item" style="margin-top: 20px">
-            <a-button style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
+            <a-button :loading="confirmLoading" style="margin-left: 1%" type="primary" @click="commit()">任务执行</a-button>
             <!-- <a-button style="margin-left: 20px" type="default" @click="reset()">任务取消</a-button> -->
           </div>
         </div>
@@ -355,7 +356,7 @@ export default {
     this.queryParams.execDoctorUserId = user.userId
     this.recordIn.sex = this.recordIn.sex ? this.recordIn.sex.description : ''
     this.title =
-      this.recordIn.userName + '\xa0' + '\xa0' + ' |   ' + this.recordIn.sex + '    |  ' + '\xa0' + this.recordIn.age
+      this.recordIn.userName + '\xa0' + '\xa0' + ' |   ' + this.recordIn.sex + '    |  ' + '\xa0' + this.recordIn.age + '岁'
     this.queryParams.planId = this.recordIn.planId
     this.queryParams.userId = this.recordIn.userId
     this.qryExecuteRecordByUserIdOut()
@@ -642,6 +643,7 @@ export default {
       addExecuteRecordTempTask(param)
         .then((res) => {
           if (res.code == 0) {
+            this.confirmLoading = false
             this.$message.success('新增成功!')
             this.visible = false
             this.getDataList()
