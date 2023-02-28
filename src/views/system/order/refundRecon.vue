@@ -27,7 +27,7 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="goQuery">查询</a-button>
-          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="exportExcel"
             >导出</a-button
           >
         </span>
@@ -143,8 +143,14 @@
 <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { refundBillPage, refundBillTab, refundBillSummary, queryHospitalList } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
+import {
+  refundBillPage,
+  refundBillTab,
+  refundBillSummary,
+  queryHospitalList,
+  refundBillExport,
+} from '@/api/modular/system/posManage'
+import { getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 // import orderDetail from './orderDetail'
 
@@ -280,9 +286,9 @@ export default {
     }
   },
 
-  activated() {
-    this.leadingOut()
-  },
+  // activated() {
+  //   this.leadingOut()
+  // },
 
   created() {
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
@@ -403,7 +409,39 @@ export default {
     },
 
     //导出
-    leadingOut() {},
+    // leadingOut() {},
+
+    exportExcel() {
+      let params = JSON.parse(JSON.stringify(this.queryParams))
+      refundBillExport(params)
+        .then((res) => {
+          this.downloadfile(res)
+          // eslint-disable-next-line handle-callback-err
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+    
+
+    downloadfile(res) {
+      // var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
+      var blob = new Blob([res.data], { type: 'application/msexcel;charset=utf-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
+    },
 
     onRadioClick(index) {
       //如果在加载中  不让点击

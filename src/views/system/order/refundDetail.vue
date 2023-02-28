@@ -120,6 +120,14 @@
       :alert="true"
       :rowKey="(record) => record.code"
     >
+      <span slot="refundOrderId" slot-scope="text, record">
+        <a @click="goRufundDetail(record)"
+          ><a-icon style="margin-right: 5px" type="hdd"></a-icon>{{ record.refundOrderId }}</a
+        >
+      </span>
+      <span slot="orderId" slot-scope="text, record">
+        <a @click="goOrderDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>{{ record.orderId }}</a>
+      </span>
       <span slot="status" slot-scope="text, record" :class="getColor(record.billStatus)">
         {{ record.statusName }}
       </span>
@@ -165,13 +173,13 @@ export default {
       columns: [
         {
           title: '退款单号',
-          dataIndex: 'refundOrderId',
-          ellipsis: true,
+          // dataIndex: 'refundOrderId',
+          scopedSlots: { customRender: 'refundOrderId' },
         },
         {
           title: '原订单号',
-          dataIndex: 'orderId', ///
-          ellipsis: true,
+          // dataIndex: 'orderId',
+          scopedSlots: { customRender: 'orderId' },
         },
         {
           title: '用户姓名',
@@ -320,6 +328,22 @@ export default {
   },
 
   methods: {
+    goRufundDetail(record) {
+      this.$router.push({
+        path: '/order/refundExamine',
+        query: {
+          orderId: record.refundOrderId,
+        },
+      })
+    },
+    goOrderDetail(record) {
+      this.$router.push({
+        path: '/order/orderDetail',
+        query: {
+          orderId: record.orderId,
+        },
+      })
+    },
     getTotalList() {
       let data = JSON.parse(JSON.stringify(this.queryParams))
       refundRecordChannelSummary(data).then((res) => {
