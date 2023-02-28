@@ -186,7 +186,7 @@
         </div>
       </div>
 
-      <a-modal title="预览" :footer="null" :visible="previewVisible" @cancel="() => { previewVisible = false; }">
+      <a-modal title="图片预览" :footer="null" :visible="previewVisible" @cancel="() => { previewVisible = false; }">
         <img style="width: 100%;" :src="previewImage" />
       </a-modal>
     </a-spin>
