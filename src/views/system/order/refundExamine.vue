@@ -16,7 +16,7 @@
       <div class="div-up-content" style="margin-top: -15px">
         <div class="div-pro-line">
           <span class="span-item-name">订单号 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.orderId || '-' }}</span>
+          <a style="color: #409eff;" @click="goDetail(orderDetailDataList.orderId)"  class="span-item-value">{{ orderDetailDataList.orderId || '-' }}</a>
         </div>
 
         <div class="div-pro-line">
@@ -231,6 +231,7 @@
     </a-modal>
 
     <order-Refund ref="orderRefund" @ok="handleOk" />
+    <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-spin>
 </template>
     
@@ -243,11 +244,13 @@ import { formatDate, formatDateFull } from '@/utils/util'
 import orderRefund from './orderRefund'
 import { json } from 'body-parser'
 import { STable } from '@/components'
+import orderDetail from './orderDetail'
 
 export default {
   components: {
     STable,
     orderRefund,
+    orderDetail,
   },
 
   data() {
@@ -542,6 +545,21 @@ export default {
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    //详情
+    goDetail(orderId) {
+      if(!orderId){
+        return
+      }
+      // this.$refs.orderDetail.orderDetail(record)
+      this.$router.push({
+        path: '/order/orderDetail',
+        query: {
+          orderId:orderId,
+          // orderId:1623236088379908098,
+        },
+      })
     },
 
     //返回

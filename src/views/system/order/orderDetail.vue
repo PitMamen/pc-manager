@@ -129,7 +129,7 @@
       <div class="div-up-content" style="margin-top: -18px">
         <div class="div-pro-line">
           <span class="span-item-name">退款单号 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.refundId ||'-'}}</span>
+          <a style="color: #409eff;" @click="goExamine(orderDetailDataList.applyRefundId)" class="span-item-value">{{ orderDetailDataList.refundId ||'-'}}</a>
         </div>
 
         <div class="div-pro-line">
@@ -258,6 +258,7 @@ import { formatDate, formatDateFull } from '@/utils/util'
 import orderRefund from './orderRefund'
 import { json } from 'body-parser'
 import { STable } from '@/components'
+
 
 export default {
   components: {
@@ -425,6 +426,24 @@ export default {
       this.$router.go(-1)
       // this.$router.back()
     },
+
+
+  //点击退款单号 进入退款详情界面
+  goExamine(refundId) {
+    console.log("HHHH:",refundId)
+    if(!refundId){
+      return
+    }
+      // this.$refs.orderDetail.orderDetail(record)
+      this.$router.push({
+        path: '/order/refundExamine',
+        query: {
+          orderId: refundId,
+        },
+      })
+    },
+
+
 
     getType(value) {
       if (value == 4 || value == 8 || value == 101) {

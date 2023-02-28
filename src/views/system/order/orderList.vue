@@ -167,7 +167,7 @@
  <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { orderList, queryHospitalList, getOrderStatusGroupByData ,getCommodityClassify} from '@/api/modular/system/posManage'
+import { orderList, accessHospitals, getOrderStatusGroupByData ,getCommodityClassify} from '@/api/modular/system/posManage'
 import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -454,13 +454,13 @@ export default {
 
 
     queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
-      this.confirmLoading = true
-      queryHospitalList(queryData)
+   //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    this.confirmLoading = true
+      accessHospitals()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
