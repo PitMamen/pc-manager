@@ -17,7 +17,8 @@
       <div class="search-row">
         <span class="name">下单时间:</span>
         <a-month-picker
-        placeholder="选择月份"
+          :allow-clear="false"
+          placeholder="选择月份"
           :default-value="nowMonth"
           :format="monthFormat"
           v-model="queryParams.billMonth"
@@ -152,7 +153,14 @@
      <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { tradeBillSummary, tradeBillPage, tradeBillTab, getPage, accessHospitals,tradeBillExport } from '@/api/modular/system/posManage'
+import {
+  tradeBillSummary,
+  tradeBillPage,
+  tradeBillTab,
+  getPage,
+  accessHospitals,
+  tradeBillExport,
+} from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -401,7 +409,6 @@ export default {
 
     //导出
     leadingOut() {
-      
       let params = JSON.parse(JSON.stringify(this.queryParams))
       tradeBillExport(params)
         .then((res) => {
@@ -490,10 +497,9 @@ export default {
       })
       this.$set(this.tabDataList[index], 'isChecked', true)
       this.queryParams.payeeId = this.tabDataList[index].payeeId
-         this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
+      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
       this.gettradeBillSummaryOut()
       this.$refs.table.refresh()
-
     },
 
     formatDate(date) {
@@ -742,12 +748,12 @@ export default {
        <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 40px);
+  height: calc(100% - 98px);
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 138px);
+      height: calc(100% - 158px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
@@ -755,7 +761,7 @@ export default {
           .ant-spin-container {
             height: 100%;
             .ant-table {
-              height: calc(100% - 48px);
+              height: calc(100% - 98px);
               overflow-y: auto;
             }
           }
