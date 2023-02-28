@@ -153,8 +153,6 @@ export default {
       queryParams: {
         billDate: '',
         channel: 'all',
-        pageNo: 1,
-        pageSize: 10,
         payeeId: 0,
       },
 
@@ -236,6 +234,7 @@ export default {
                 totalRows: res.data.total,
                 totalPage: res.data.total / parameter.pageSize,
                 rows: res.data.records,
+
               }
 
               //设置序号
@@ -267,6 +266,7 @@ export default {
       this.queryParams.payeeId = this.currentTab
       this.getTabOut()
      this.tradeRecordChannelSummaryOut()
+     this.$refs.table.refresh()
 
 
       // var orderId = this.$route.query.orderId

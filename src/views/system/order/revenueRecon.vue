@@ -35,7 +35,7 @@
     </div>
 
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == 0 }" @click="onRadioClick(0)">
+      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == 0 }" @click="onRadioClick(0)">
         <span style="margin-left: 3px">全部({{ numberData.quanbu }})</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == 1 }" @click="onRadioClick(1)">
@@ -43,6 +43,17 @@
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == -1 }" >
         <span style="margin-left: 3px">医院收款({{ numberData.yiyuan }})</span>
+      </div> -->
+
+      <div
+        v-for="(item, index) in tabDataList"
+        :key="index"
+        :value="item.payeeId"
+        class="radio-item"
+        :class="{ 'checked-btn': item.isChecked }"
+        @click="onRadioClick(index)"
+      >
+        <span style="margin-left: 3px">{{ item.payeeName + '（' + item.total + '）' }}</span>
       </div>
     </div>
 
@@ -51,7 +62,7 @@
       <div class="tab-total">
         <div class="content-dis">
           <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[0].title }}</span>
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[0].title }}</span>
           <div style="float: right">
             <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
@@ -59,7 +70,9 @@
 
         <div class="content-dis">
           <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[0].diffFee }})</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >(差异：{{ SummaryDataList[0].diffFee }})</span
+          >
         </div>
         <div class="line"></div>
         <div class="content-dis">
@@ -72,15 +85,17 @@
       <div class="tab-wx">
         <div class="content-dis">
           <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[1].title }}</span>
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[1].title }}</span>
           <div style="float: right">
             <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{SummaryDataList[1].totalFee  }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[1].diffFee }})</span>
+          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[1].totalFee }}</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >(差异：{{ SummaryDataList[1].diffFee }})</span
+          >
         </div>
         <div class="line"></div>
         <div class="content-dis">
@@ -93,15 +108,17 @@
       <div class="tab-alipay">
         <div class="content-dis">
           <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[2].title }}</span>
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[2].title }}</span>
           <div style="float: right">
             <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{SummaryDataList[2].totalFee  }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[2].diffFee }})</span>
+          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[2].totalFee }}</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >(差异：{{ SummaryDataList[2].diffFee }})</span
+          >
         </div>
         <div class="line"></div>
         <div class="content-dis">
@@ -158,7 +175,8 @@ export default {
       treeData: [],
       gropListData: [],
       packgeList: [],
-      SummaryDataList:[],
+      SummaryDataList: [],
+      tabDataList: [],
       confirmLoading: false,
       currentTab: 0,
       numberData: {
@@ -245,7 +263,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.payeeId = this.currentTab
+        // this.queryParamsTemp.payeeId = this.currentTab
         return tradeBillPage(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 && res.data.records.length > 0) {
@@ -291,7 +309,7 @@ export default {
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
 
-    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
     this.gettradeBillSummaryOut()
@@ -389,17 +407,31 @@ export default {
       tradeBillTab(this.queryParams)
         .then((res) => {
           if (res.code == 0) {
-            for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].payeeId == 0) {
-                //全部
-                this.numberData.quanbu = res.data[index].total
-              } else if (res.data[index].payeeId == 1) {
-                //运营
-                this.numberData.yy = res.data[index].total
-              } else if (res.data[index].payeeId == -1) {
-                //医院
-                this.numberData.yiyuan = res.data[index].total
-              }
+            // for (let index = 0; index < res.data.length; index++) {
+            //   if (res.data[index].payeeId == 0) {
+            //     //全部
+            //     this.numberData.quanbu = res.data[index].total
+            //   } else if (res.data[index].payeeId == 1) {
+            //     //运营
+            //     this.numberData.yy = res.data[index].total
+            //   } else if (res.data[index].payeeId == -1) {
+            //     //医院
+            //     this.numberData.yiyuan = res.data[index].total
+            //   }
+            // }
+
+            if (res.code == 0) {
+              this.tabDataList = res.data
+              this.tabDataList.forEach((item) => {
+                this.$set(item, 'isChecked', false)
+              })
+              this.queryParams.payeeId = this.tabDataList[0].payeeId
+              this.$set(this.tabDataList[0], 'isChecked', true)
+              // if (needGet) {
+              //   this.getTotalList(needGet)
+              // }
+            } else {
+              // this.$message.error('获取计划列表失败：' + res.message)
             }
           }
         })
@@ -408,31 +440,37 @@ export default {
         })
     },
 
-
     //汇总信息
-    gettradeBillSummaryOut(){
-      tradeBillSummary(this.queryParams).then((res)=>{
-        if(res.code==0){
+    gettradeBillSummaryOut() {
+      tradeBillSummary(this.queryParams).then((res) => {
+        if (res.code == 0) {
           this.SummaryDataList = res.data
         }
-        
       })
     },
 
-
-
-
-    onRadioClick(type) {
+    onRadioClick(index) {
       //如果在加载中  不让点击
       if (this.confirmLoading) {
         return
       }
-      this.currentTab = type
-      this.queryParams.payeeId = type
-      this.queryParamsTemp.payeeId = type
-      this.getTabOut()
+      if (index == 2) {
+        return
+      }
+      this.tabDataList.forEach((item) => {
+        this.$set(item, 'isChecked', false)
+      })
+      this.$set(this.tabDataList[index], 'isChecked', true)
+      this.queryParams.payeeId = this.tabDataList[index].payeeId
       this.gettradeBillSummaryOut()
       this.$refs.table.refresh()
+
+      // this.currentTab = type
+      // this.queryParams.payeeId = type
+      // this.queryParamsTemp.payeeId = type
+      // this.getTabOut()
+      // this.gettradeBillSummaryOut()
+      // this.$refs.table.refresh()
     },
 
     formatDate(date) {
@@ -444,7 +482,6 @@ export default {
       myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
       return `${myyear}-${mymonth}-${myweekday}`
     },
-
 
     handleOk() {
       this.getTabOut()
