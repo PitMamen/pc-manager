@@ -17,8 +17,8 @@
       <div class="search-row">
         <span class="name">下单时间:</span>
         <a-month-picker
+        placeholder="选择月份"
           :default-value="nowMonth"
-          placeholder="选择月份"
           :format="monthFormat"
           v-model="queryParams.billMonth"
         />
@@ -300,17 +300,17 @@ export default {
 
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
-    this.leadingOut()
     this.queryParams.payeeId = this.currentTab
     this.queryParamsTemp.payeeId = this.currentTab
   },
 
   created() {
+    this.queryParams.billMonth = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
 
     // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-
+    this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
     this.getTabOut()
     this.gettradeBillSummaryOut()
 
@@ -490,15 +490,10 @@ export default {
       })
       this.$set(this.tabDataList[index], 'isChecked', true)
       this.queryParams.payeeId = this.tabDataList[index].payeeId
+         this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
       this.gettradeBillSummaryOut()
       this.$refs.table.refresh()
 
-      // this.currentTab = type
-      // this.queryParams.payeeId = type
-      // this.queryParamsTemp.payeeId = type
-      // this.getTabOut()
-      // this.gettradeBillSummaryOut()
-      // this.$refs.table.refresh()
     },
 
     formatDate(date) {
@@ -512,6 +507,7 @@ export default {
     },
 
     handleOk() {
+      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
       this.getTabOut()
       this.gettradeBillSummaryOut()
       this.$refs.table.refresh()

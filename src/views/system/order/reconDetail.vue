@@ -19,10 +19,18 @@
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.channel == 'all' }" @click="onRadioClick('all')">
         <span style="margin-left: 3px">全部({{ numberData.all }})</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.channel == 'wechat' }" @click="onRadioClick('wechat')">
+      <div
+        class="radio-item"
+        :class="{ 'checked-btn': queryParamsTemp.channel == 'wechat' }"
+        @click="onRadioClick('wechat')"
+      >
         <span style="margin-left: 3px">微信支付({{ numberData.wechat }}) </span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.channel == 'alipay' }" @click="onRadioClick('alipay')">
+      <div
+        class="radio-item"
+        :class="{ 'checked-btn': queryParamsTemp.channel == 'alipay' }"
+        @click="onRadioClick('alipay')"
+      >
         <span style="margin-left: 3px">支付宝支付({{ numberData.zhifub }})</span>
       </div>
 
@@ -36,7 +44,7 @@
       <div class="tab-total">
         <div class="content-dis">
           <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[0].title}}</span>
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[0].title }}</span>
           <div style="float: right">
             <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
@@ -44,7 +52,9 @@
 
         <div class="content-dis">
           <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[0].diffFee }})</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >(差异：{{ SummaryDataList[0].diffFee }})</span
+          >
         </div>
         <div class="line"></div>
         <div class="content-dis">
@@ -57,7 +67,7 @@
       <div class="tab-wx">
         <div class="content-dis">
           <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[1].title}}</span>
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[1].title }}</span>
           <div style="float: right">
             <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
@@ -65,7 +75,9 @@
 
         <div class="content-dis">
           <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[1].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[1].diffFee }})</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >(差异：{{ SummaryDataList[1].diffFee }})</span
+          >
         </div>
         <div class="line"></div>
         <div class="content-dis">
@@ -78,7 +90,7 @@
       <div class="tab-alipay">
         <div class="content-dis">
           <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[2].title}}</span>
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[2].title }}</span>
           <div style="float: right">
             <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
@@ -86,7 +98,9 @@
 
         <div class="content-dis">
           <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[2].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[2].diffFee }})</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >(差异：{{ SummaryDataList[2].diffFee }})</span
+          >
         </div>
         <div class="line"></div>
         <div class="content-dis">
@@ -109,7 +123,7 @@
         {{ record.billStatusDesc }}
       </span>
 
-      <span slot="ordrstatus" slot-scope="text, record" style="color:#409EFF" >
+      <span slot="ordrstatus" slot-scope="text, record" style="color: #409eff">
         {{ record.orderStatusDesc }}
       </span>
     </s-table>
@@ -142,7 +156,7 @@ export default {
     return {
       dateFormat: 'YYYY-MM-DD',
       orderTimeValue: [],
-      SummaryDataList:[],
+      SummaryDataList: [],
       confirmLoading: false,
       currentTab: 0,
       numberData: {
@@ -156,8 +170,8 @@ export default {
         payeeId: 0,
       },
 
-      reconData: '',  //对账 日期
-      statusShow: '',  //状态
+      reconData: '', //对账 日期
+      statusShow: '', //状态
 
       queryParamsTemp: {},
 
@@ -234,7 +248,6 @@ export default {
                 totalRows: res.data.total,
                 totalPage: res.data.total / parameter.pageSize,
                 rows: res.data.records,
-
               }
 
               //设置序号
@@ -265,13 +278,27 @@ export default {
       this.queryParams.billDate = this.reconData
       this.queryParams.payeeId = this.currentTab
       this.getTabOut()
-     this.tradeRecordChannelSummaryOut()
-     this.$refs.table.refresh()
-
+      this.tradeRecordChannelSummaryOut()
+      this.$refs.table.refresh()
 
       // var orderId = this.$route.query.orderId
       // this.init(orderId)
     }
+  },
+
+  watch: {
+    $route(to, from) {
+      if (to.path.indexOf('reconDetail') > -1) {
+        this.reconData = this.$route.query.billDate
+        this.statusShow = this.$route.query.state
+        this.currentTab = this.$route.query.payeeId
+        this.queryParams.billDate = this.reconData
+        this.queryParams.payeeId = this.currentTab
+        this.getTabOut()
+        this.tradeRecordChannelSummaryOut()
+        this.$refs.table.refresh()
+      }
+    },
   },
 
   created() {
@@ -279,41 +306,24 @@ export default {
   },
 
   methods: {
-
-      //汇总信息
-      tradeRecordChannelSummaryOut(){
-        tradeRecordChannelSummary(this.queryParams).then((res)=>{
-        if(res.code==0){
+    //汇总信息
+    tradeRecordChannelSummaryOut() {
+      tradeRecordChannelSummary(this.queryParams).then((res) => {
+        if (res.code == 0) {
           this.SummaryDataList = res.data
         }
-        
       })
     },
 
-    // getType(record) {
-    //   if (record.value == 1) {
-    //     return '运营审核'
-    //   } else if (record.value == 2) {
-    //     return '财务审核'
-    //   } else if (record.value == 3) {
-    //     return '审核拒绝'
-    //   } else if (record.value == 4) {
-    //     return '退款中'
-    //   } else if (record.value == 5) {
-    //     return '退款失败'
-    //   } else if (record.value == 6) {
-    //     return '已完成'
-    //   }
-    // },
 
     getColor(value) {
-      if (value ==0) {
+      if (value == 0) {
         return 'span-gray'
       } else if (value == 2) {
         return 'span-red'
       } else if (value == 1) {
         return 'span-blue'
-      } 
+      }
     },
 
     getStyle(value) {
@@ -327,7 +337,6 @@ export default {
     isLoading() {
       return this.confirmLoading
     },
-
 
     //导出
     leadingOut() {
