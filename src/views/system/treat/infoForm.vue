@@ -50,7 +50,7 @@
               </div>
               <div class="col">
                 <div class="item">套餐名称：{{ tab1Info.commodityName || '--' }}</div>
-                <div class="item">订单状态：<span class="ing">{{ tab1Info.status.description || '--' }}</span></div>
+                <div class="item">订单状态：<span class="ing">{{ (tab1Info.status||{}).description || '--' }}</span></div>
                 <div class="item">&nbsp;</div>
                 <div class="item">&nbsp;</div>
                 <div class="item" :title="tab1Info.teamName || '--'">服务团队：{{ tab1Info.teamName || '--' }}</div>
