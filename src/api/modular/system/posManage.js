@@ -1768,6 +1768,79 @@ export function updateOrderStatusById(data) {
     params: data
   })
 }
+
+/**
+ * 
+ * 退款账单-按天汇总分页
+ */
+export function refundBillPage(data) {
+  return axios({
+    url: '/order-api/order/bill/refundBillPage',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 
+ * 退款账单-汇总信息
+ */
+export function refundBillSummary(data) {
+  return axios({
+    url: '/order-api/order/bill/refundBillSummary',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 
+ * 退款账单-按收款方Tab信息
+ */
+export function refundBillTab(data) {
+  return axios({
+    url: '/order-api/order/bill/refundBillTab',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 
+ * 退款账单-对账流水分页
+ */
+export function refundRecordPage(data) {
+  return axios({
+    url: '/order-api/order/bill/refundRecordPage',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 
+ * 退款账单-按天对账流水TAB
+ */
+export function refundRecordTab(data) {
+  return axios({
+    url: '/order-api/order/bill/refundRecordTab',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 
+ * 退款账单-对账流水分渠道汇总
+ */
+export function refundRecordChannelSummary(data) {
+  return axios({
+    url: '/order-api/order/bill/refundRecordChannelSummary',
+    method: 'post',
+    data: data
+  })
+}
+
 /**
  * 
  * 管理端-查询申请列表

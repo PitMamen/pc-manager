@@ -779,7 +779,7 @@ export default {
       //做判断，不然可选删完了会undefined
       if (newKe[0]) {
         this.record.startPrice = (biTotal + newKe[0]).toFixed(2) + '元'
-      }else{
+      } else {
         this.record.startPrice = biTotal.toFixed(2) + '元'
       }
     },

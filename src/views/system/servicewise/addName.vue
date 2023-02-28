@@ -16,7 +16,7 @@
             v-model="metaName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 20%; margin-left: 2%"
+           
             allow-clear
             placeholder="请输入内容"
             @blur="changeName()"
@@ -24,19 +24,19 @@
             @search="changeName()"
           />
 
-          <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 数据库表 :</span>
+          <span class="span-item-name" style="margin-left: 100px"><span style="color: red">*</span> 数据库表 :</span>
           <a-input
             v-model="queryParam.databaseTableName"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width: 20%; margin-left: 2%"
+           
             allow-clear
             @blur="focus()"
             @keyup.enter="focus()"
             @search="focus()"
           />
 
-          <span class="span-item-name" style="margin-left: 10%"><span style="color: red">*</span> 支持分类查询 :</span>
+          <span class="span-item-name" style="margin-left:  100px"><span style="color: red">*</span> 支持分类查询 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
           <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->
@@ -44,7 +44,7 @@
 
         <div class="div-line-wrap">
           <span v-show="failShow" class="span-item-name"
-            ><span style="color: red; margin-left: 45%">当前表名不符合名单建立要求,请重新选择</span>
+            ><span style="color: red; margin-left: 345px">当前表名不符合名单建立要求,请重新选择</span>
           </span>
         </div>
       </div>
@@ -493,14 +493,40 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
  
 
 .table-page-wrapper {
   /deep/.ant-spin-nested-loading{
     margin-right: 50px !important;
   }
+  .div-line-wrap {
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 20px;
 
+     
+
+        .span-item-name {
+          display: inline-block;
+          color: #000;
+          font-size: 12px;
+          text-align: left;
+          margin-right: 10px;
+         
+        }
+        .span-item-value {
+          width: 200px;
+          color: #333;
+          text-align: left;
+          font-size: 12px;
+          display: inline-block;
+        }
+        .ant-select {
+          width: 295px !important;
+        }
+      
+    }
   .ant-form-inline {
     .ant-form-item {
       display: flex;
