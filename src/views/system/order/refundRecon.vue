@@ -19,6 +19,8 @@
         <a-month-picker
           placeholder="选择月份"
           :default-value="nowMonth"
+          :allow-clear="false"
+          :disabled-date="disabledDate"
           :format="monthFormat"
           v-model="queryParams.billMonth"
         />
@@ -345,6 +347,11 @@ export default {
       })
     },
 
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current > moment().endOf('day')
+    },
+
     //详情
     goExamine(record) {
       let data = {
@@ -418,7 +425,6 @@ export default {
           this.$message.error('导出错误：' + err.message)
         })
     },
-    
 
     downloadfile(res) {
       var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
