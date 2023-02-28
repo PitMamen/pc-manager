@@ -193,7 +193,7 @@
       <div style="margin-top: 20px; height: 122px !important; width: 150% !important" class="half-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">审核建议</div>
         <div class="line"></div>
-        <div class="div-pro-line"  style="margin-left:20px">
+        <div class="div-pro-line"  style="margin-left:20px;width:80% !important">
           <span class="span-item-name" style="color:#1A1A1A">  {{getReason(orderDetailDataList)}} </span>
           <!-- <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
           {{ getType(record)  }}
@@ -221,6 +221,7 @@
             placeholder="请输入驳回理由"
             v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入驳回理由' }] }]"
           />
+          <span class="m-count-pxk">{{ rejectReason ? rejectReason.length : 0 }}/150</span>
         </div>
       </div>
 
@@ -507,6 +508,7 @@ export default {
     init(refundId) {
       this.user = Vue.ls.get(TRUE_USER)
       this.orderDetailDataList = {}
+      this.rejectReason = ''
       if (this.user) {
         //如果不是运营人员 或者 财务人员  不显示顶部按钮
         this.showButton = this.user.dataAccessActors.includes('operationManager')||this.user.dataAccessActors.includes('financialManager')
@@ -600,7 +602,7 @@ export default {
       var requestData = {
         applyId: this.orderId,
         status: type,
-        reason: type == 1 ? '' : this.rejectReason,
+        rejectReason: type == 1 ? '' : this.rejectReason,
       }
       examine(requestData)
         .then((res) => {
@@ -665,6 +667,13 @@ export default {
   
     
     <style lang="less" scoped>
+.m-count-pxk {
+  position: absolute;
+  font-size: 12px;
+  bottom: 12px;
+  right: 10px;
+}
+
 //去掉 高亮
 
 .a-table-one /deep/ .ant-table-body {
@@ -737,6 +746,16 @@ export default {
       width: 90% !important;
     }
   }
+  .div-service-user {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow: hidden;
+  height: 100%;
+}
+
+  
+
 
   .div-up-content {
     width: 100%;

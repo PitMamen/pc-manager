@@ -8,6 +8,7 @@
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"
+          allow-clear
           tree-default-expand-all
         >
         </a-tree-select>
@@ -15,118 +16,100 @@
 
       <div class="search-row">
         <span class="name">下单时间:</span>
-        <a-range-picker style="width: 185px" :value="orderTimeValue" @change="onChangeOrder" />
+        <a-month-picker
+          :default-value="nowMonth"
+          placeholder="选择月份"
+          :format="monthFormat"
+          v-model="queryParams.billMonth"
+        />
       </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()">导出</a-button>
+          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+            >导出</a-button
+          >
         </span>
       </div>
     </div>
 
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == 0 }" @click="onRadioClick(0)">
         <span style="margin-left: 3px">全部({{ numberData.quanbu }})</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }" @click="onRadioClick('yy')">
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == 1 }" @click="onRadioClick(1)">
         <span style="margin-left: 3px">运营商收款({{ numberData.yy }}) </span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }" @click="onRadioClick('cw')">
-        <span style="margin-left: 3px">医院收款({{ numberData.cw }})</span>
+      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.payeeId == -1 }" >
+        <span style="margin-left: 3px">医院收款({{ numberData.yiyuan }})</span>
       </div>
-
-      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
-          <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
-        </div> -->
     </div>
 
-
-   <div class="tab-all-content">
-    
-
-    <!-- 订单总额 -->
-    <div class="tab-total">
-      <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="container" />
-          <span style="font-size:12px;margin-left:10px;margin-top:3px">订单总额</span>
-          <div style="float:right">
-
-              <img style="padding-left:110px;margin-top: -10px;" src="@/assets/icons/tc.png" >
+    <div class="tab-all-content">
+      <!-- 订单总额 -->
+      <div class="tab-total">
+        <div class="content-dis">
+          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[0].title }}</span>
+          <div style="float: right">
+            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[0].diffFee }})</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ SummaryDataList[0].totalCount }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[0].diffCount }})</span>
+        </div>
       </div>
 
-      <div class="content-dis">
-        <span style="font-size:24px;margin-top:-14px">250000.04</span>
-        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
-      </div>
-     <div class="line"></div>
-     <div class="content-dis">
-        <span style="font-size:12px;">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
-      </div>
-    </div>
-
-
-
-     <!-- 微信支付 -->
-     <div class="tab-wx">
-      <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="wechat" />
-          <span style="font-size:12px;margin-left:10px;margin-top:3px">微信支付订单额</span>
-          <div style="float:right">
-
-              <img style="padding-left:74px;margin-top: -8px;" src="@/assets/icons/tc.png" >
+      <!-- 微信支付 -->
+      <div class="tab-wx">
+        <div class="content-dis">
+          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[1].title }}</span>
+          <div style="float: right">
+            <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">{{SummaryDataList[1].totalFee  }}</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[1].diffFee }})</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ SummaryDataList[1].totalCount }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[1].diffCount }})</span>
+        </div>
       </div>
 
-      <div class="content-dis">
-        <span style="font-size:24px;margin-top:-14px">250000.04</span>
-        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
-      </div>
-     <div class="line"></div>
-     <div class="content-dis">
-        <span style="font-size:12px;">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
-      </div>
-    </div>
-
-
-
-    <!-- 支付宝支付 -->
-    <div class="tab-alipay">
-      <div class="content-dis">
-          <!-- <a-icon style="width: 14px; height: 16px;margin-top: 7px;" type="alipay" /> -->
-          <img style="width:14px;height:16px;margin-top:5px;" src="@/assets/icons/zhifubao.png">
-          <span style="font-size:12px;margin-left:10px;margin-top:3px">支付宝支付订单额</span>
-          <div style="float:right">
-
-              <img style="padding-left:61px;margin-top: -9px;" src="@/assets/icons/tc.png" >
+      <!-- 支付宝支付 -->
+      <div class="tab-alipay">
+        <div class="content-dis">
+          <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{SummaryDataList[2].title }}</span>
+          <div style="float: right">
+            <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
-      </div>
+        </div>
 
-      <div class="content-dis">
-        <span style="font-size:24px;margin-top:-14px">250000.04</span>
-        <span style="font-size:12px;margin-top:-5px;margin-left: 10px;">(差异：200)</span>
-      </div>
-     <div class="line"></div>
-     <div class="content-dis">
-        <span style="font-size:12px;">总笔数：{{zbs}}</span>
-        <span style="font-size:12px;margin-left: 5px;">(差异：200)</span>
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px">{{SummaryDataList[2].totalFee  }}</span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[2].diffFee }})</span>
+        </div>
+        <div class="line"></div>
+        <div class="content-dis">
+          <span style="font-size: 12px">总笔数：{{ SummaryDataList[2].totalCount }}</span>
+          <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[2].diffCount }})</span>
+        </div>
       </div>
     </div>
-
-   </div>
-
-
-
-   
-
-
-
-
-    
 
     <s-table
       :scroll="{ x: true }"
@@ -141,8 +124,8 @@
         <a @click="goExamine(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
       </span>
 
-      <span slot="status" slot-scope="text, record" :class="getColor(record.status.value)">
-        {{ record.status.description }}
+      <span slot="state" slot-scope="text, record" :class="getColor(record.state)">
+        {{ record.stateShow }}
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
@@ -152,10 +135,11 @@
      <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import {  queryHospitalList, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import {  getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { tradeBillSummary, tradeBillPage, tradeBillTab, getPage, accessHospitals } from '@/api/modular/system/posManage'
+import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
+import { getState } from 'core-js/modules/web.url-search-params'
 
 export default {
   components: {
@@ -167,27 +151,27 @@ export default {
 
   data() {
     return {
+      monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
+      nowMonth: '',
       orderTimeValue: [],
       treeData: [],
       gropListData: [],
       packgeList: [],
+      SummaryDataList:[],
       confirmLoading: false,
-      currentTab: 'qb',
+      currentTab: 0,
       numberData: {
         quanbu: 0,
         yy: 0,
-        cw: 0,
-        wc: 0,
+        yiyuan: 0,
       },
-      zbs:102,
       queryParams: {
-        classifyId: undefined,
-        combinedCondition: undefined,
         hospitalCode: undefined,
-        refundEndTime: getCurrentMonthLast(),
-        refundStartTime: getDateNow(),
-        tabCode: '',
+        billMonth: getMonthNow(),
+        // pageNo: 0,
+        // pageSize: 10,
+        payeeId: 0,
       },
 
       queryParamsTemp: {},
@@ -195,61 +179,60 @@ export default {
       // 表头
       columns: [
         {
-          title: '订单号',
-          dataIndex: 'refundId',
+          title: '对账日期',
+          dataIndex: 'billDate',
           ellipsis: true,
         },
         {
-          title: '用户姓名',
-          dataIndex: 'userName',
-        },
-        {
-          title: '手机号',
-          dataIndex: 'userPhone',
-        },
-        {
-          title: '套餐名称',
-          dataIndex: 'commodityName',
-          ellipsis: true,
-        },
-        {
-          title: '医院名称',
-          dataIndex: 'hospitalName',
-        },
-        {
-          title: '订单金额',
-          dataIndex: 'orderTotal',
+          title: '微信金额',
+          dataIndex: 'wechatTotal',
           align: 'right',
         },
         {
-          title: '实收',
-          dataIndex: 'payTotal',
+          title: '微信单数',
+          dataIndex: 'wechatCount',
+          align: 'center',
+        },
+        {
+          title: '支付宝金额',
+          dataIndex: 'alipayTotal',
           align: 'right',
         },
         {
-          title: '应退',
-          dataIndex: 'refundMoney',
+          title: '支付宝单数',
+          dataIndex: 'alipayCount',
+          align: 'center',
+        },
+        {
+          title: '总单数',
+          dataIndex: 'platformCount',
+          align: 'center',
+        },
+        {
+          title: '应收总金额',
+          dataIndex: 'platformTotal',
           align: 'right',
         },
         {
-          title: '创建时间',
-          dataIndex: 'createTime',
-          //   width: 160,
+          title: '实收总金额',
+          dataIndex: 'channelTotal',
+          align: 'right',
+        },
+        {
+          title: '差异金额',
+          dataIndex: 'diffTotal',
+          align: 'right',
         },
 
         {
-          title: '更新时间',
-          dataIndex: 'updateTime',
-          ellipsis: true,
+          title: '差异笔数',
+          dataIndex: 'diffCount',
+          align: 'center',
         },
         {
-          title: '退款方式',
-          dataIndex: 'refundMethod',
-        },
-        {
-          title: '状态',
-          dataIndex: 'status',
-          scopedSlots: { customRender: 'status' },
+          title: '差异状态',
+          dataIndex: 'state',
+          scopedSlots: { customRender: 'state' },
         },
         {
           title: '操作',
@@ -261,30 +244,9 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
-          if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.orderStartTime
-            delete this.queryParams.orderEndTime
-            this.$refs.table.refresh()
-            return
-          }
-          if (this.queryParams.orderStartTime) {
-            let start = this.formatDate(this.queryParams.orderStartTime)
-            this.queryParams.orderStartTime = start + ' 00:00:00'
-          }
-
-          if (this.queryParams.orderEndTime) {
-            let end = this.formatDate(this.queryParams.orderEndTime)
-            this.queryParams.orderEndTime = end + ' 23:59:59'
-          }
-        } else {
-          delete this.queryParams.orderStartTime
-          delete this.queryParams.orderEndTime
-        }
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.tabCode = this.currentTab
-        return getPage(Object.assign(parameter, this.queryParams))
+        this.queryParamsTemp.payeeId = this.currentTab
+        return tradeBillPage(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 && res.data.records.length > 0) {
               //组装控件需要的数据结构
@@ -298,6 +260,8 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
+                this.$set(item, 'stateShow', item.state == 0 ? '无差异' : '有差异')
+
                 // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // this.$set(item, 'status', 1)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
@@ -319,16 +283,18 @@ export default {
   activated() {
     // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.leadingOut()
-    this.queryParams.tabCode = this.currentTab
-    this.queryParamsTemp.tabCode = this.currentTab
+    this.queryParams.payeeId = this.currentTab
+    this.queryParamsTemp.payeeId = this.currentTab
   },
 
   created() {
+    this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
 
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
+    this.gettradeBillSummaryOut()
 
     getCommodityClassify({}).then((res) => {
       if (res.code == 0) {
@@ -346,7 +312,9 @@ export default {
       this.$router.push({
         path: '/order/reconDetail',
         query: {
-          orderId: record.applyId,
+          billDate: record.billDate,
+          state: record.stateShow,
+          payeeId: this.currentTab,
         },
       })
     },
@@ -368,14 +336,10 @@ export default {
     },
 
     getColor(value) {
-      if (value == 1 || value == 2) {
+      if (value == 0) {
         return 'span-green'
-      } else if (value == 3 || value == 5) {
+      } else {
         return 'span-red'
-      } else if (value == 6) {
-        return 'span-blue'
-      } else if (value == 4) {
-        return 'span-gray'
       }
     },
 
@@ -390,7 +354,7 @@ export default {
         hospitalName: '',
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
@@ -418,28 +382,23 @@ export default {
     },
 
     //导出
-    leadingOut(){
-
-    },
+    leadingOut() {},
 
     //订单分组
     getTabOut() {
-      getTab(this.queryParams)
+      tradeBillTab(this.queryParams)
         .then((res) => {
           if (res.code == 0) {
             for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].code == 'qb') {
+              if (res.data[index].payeeId == 0) {
                 //全部
-                this.numberData.quanbu = res.data[index].count
-              } else if (res.data[index].code == 'yy') {
+                this.numberData.quanbu = res.data[index].total
+              } else if (res.data[index].payeeId == 1) {
                 //运营
-                this.numberData.yy = res.data[index].count
-              } else if (res.data[index].code == 'cw') {
-                //财务
-                this.numberData.cw = res.data[index].count
-              } else if (res.data[index].code == 'wc') {
-                //完成
-                this.numberData.wc = res.data[index].count
+                this.numberData.yy = res.data[index].total
+              } else if (res.data[index].payeeId == -1) {
+                //医院
+                this.numberData.yiyuan = res.data[index].total
               }
             }
           }
@@ -449,14 +408,30 @@ export default {
         })
     },
 
+
+    //汇总信息
+    gettradeBillSummaryOut(){
+      tradeBillSummary(this.queryParams).then((res)=>{
+        if(res.code==0){
+          this.SummaryDataList = res.data
+        }
+        
+      })
+    },
+
+
+
+
     onRadioClick(type) {
       //如果在加载中  不让点击
       if (this.confirmLoading) {
         return
       }
       this.currentTab = type
-      this.queryParams.tabCode = type
-      this.queryParamsTemp.tabCode = type
+      this.queryParams.payeeId = type
+      this.queryParamsTemp.payeeId = type
+      this.getTabOut()
+      this.gettradeBillSummaryOut()
       this.$refs.table.refresh()
     },
 
@@ -470,15 +445,10 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    //下单时间
-    onChangeOrder(momentArr, dateArr) {
-      this.orderTimeValue = momentArr
-      this.queryParams.refundStartTime = dateArr[0]
-      this.queryParams.refundEndTime = dateArr[1]
-    },
 
     handleOk() {
       this.getTabOut()
+      this.gettradeBillSummaryOut()
       this.$refs.table.refresh()
     },
   },
@@ -496,19 +466,19 @@ export default {
 }
 
 .span-green {
-  background-color: #edffed;
+  // background-color: #edffed;
   padding: 2px 4px;
   font-size: 12px;
   color: #0e9b0b;
-  border: #0e9b0b 1px solid;
+  // border: #0e9b0b 1px solid;
 }
 
 .span-red {
-  background-color: #fff2f1;
+  // background-color: #fff2f1;
   padding: 2px 4px;
   font-size: 12px;
   color: #f26161;
-  border: #f26161 1px solid;
+  // border: #f26161 1px solid;
 }
 
 .span-gray {
@@ -540,14 +510,9 @@ export default {
 //   color: #333 !important;
 // }
 
-
-
-
 .table-page-search-wrapper {
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
-
- 
 
   .action-row {
     display: inline-block;
@@ -568,99 +533,87 @@ export default {
   }
 }
 
-
-.tab-all-content{
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-
-    .tab-total {
+.tab-all-content {
   display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 260px;
-  height: 120px;
-  background: #f28c73;
-  box-shadow: 0px 2px 4px 0px rgba(242, 140, 115, 0.35);
+  flex-direction: row;
+  width: 100%;
 
-  .content-dis {
-    margin-left: 15px;
-    margin-top: 9px;
+  .tab-total {
     display: flex;
-    flex-direction: row;
-    color: #ffffff;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #f28c73;
+    box-shadow: 0px 2px 4px 0px rgba(242, 140, 115, 0.35);
+
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
   }
 
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e6e6e6;
-  }
-}
-
-
-
-
-.tab-wx {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 260px;
-  height: 120px;
-  background: #8FCB4A;
-
-  .content-dis {
-    margin-left: 15px;
-    margin-top: 8px;
+  .tab-wx {
     display: flex;
-    flex-direction: row;
-    color: #ffffff;
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #8fcb4a;
+
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
   }
 
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e6e6e6;
-  }
-}
-
-
-
-
-.tab-alipay {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  width: 260px;
-  height: 120px;
-  background: #5794E9;
-  box-shadow: 0px 2px 4px 0px rgba(87,148,233,0.35);
-  .content-dis {
-    margin-left: 15px;
-    margin-top: 9px;
-    // margin-right: 15px;
+  .tab-alipay {
     display: flex;
-    flex-direction: row;
-    color: #ffffff;
-  }
+    flex-direction: column;
+    margin-left: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 260px;
+    height: 120px;
+    background: #5794e9;
+    box-shadow: 0px 2px 4px 0px rgba(87, 148, 233, 0.35);
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      // margin-right: 15px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
 
-  .line {
-    width: 100%;
-    height: 1px;
-    background: #e6e6e6;
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
   }
 }
-
-
-}
-
-
-
 
 .div-radio {
   margin-top: 10px;
@@ -712,10 +665,10 @@ export default {
 </style>
 
  <style >
- .ant-select-tree-dropdown {
-        max-height: 60vh !important;
-        top: 148px !important;
-      }
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 148px !important;
+}
 </style>
 
 
