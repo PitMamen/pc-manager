@@ -331,8 +331,8 @@ export default {
 
     //导出
     leadingOut() {
-
-      tradeRecordExport(this.queryParams)
+      let params = JSON.parse(JSON.stringify(this.queryParams))
+      tradeRecordExport(params)
         .then((res) => {
           this.downloadfile(res)
           // eslint-disable-next-line handle-callback-err

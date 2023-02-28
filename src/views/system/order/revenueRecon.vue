@@ -152,7 +152,7 @@
      <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { tradeBillSummary, tradeBillPage, tradeBillTab, getPage, accessHospitals } from '@/api/modular/system/posManage'
+import { tradeBillSummary, tradeBillPage, tradeBillTab, getPage, accessHospitals,tradeBillExport } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -400,7 +400,35 @@ export default {
     },
 
     //导出
-    leadingOut() {},
+    leadingOut() {
+      
+      let params = JSON.parse(JSON.stringify(this.queryParams))
+      tradeBillExport(params)
+        .then((res) => {
+          this.downloadfile(res)
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
+    },
 
     //订单分组
     getTabOut() {

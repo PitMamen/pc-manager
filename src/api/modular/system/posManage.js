@@ -4124,6 +4124,7 @@ export function tradeRecordExport(data) {
     url: '/order-api/order/bill/tradeRecordExport',
     method: 'post',
     data: data,
+    responseType: 'blob'
   })
 }
 
@@ -4134,5 +4135,6 @@ export function tradeBillExport(data) {
     url: '/order-api/order/bill/tradeBillExport',
     method: 'post',
     data: data,
+    responseType: 'blob'
   })
 }
