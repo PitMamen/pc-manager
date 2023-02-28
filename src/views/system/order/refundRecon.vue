@@ -408,15 +408,11 @@ export default {
         })
     },
 
-    //导出
-    // leadingOut() {},
-
     exportExcel() {
       let params = JSON.parse(JSON.stringify(this.queryParams))
       refundBillExport(params)
         .then((res) => {
           this.downloadfile(res)
-          // eslint-disable-next-line handle-callback-err
         })
         .catch((err) => {
           this.$message.error('导出错误：' + err.message)
@@ -425,8 +421,7 @@ export default {
     
 
     downloadfile(res) {
-      // var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
-      var blob = new Blob([res.data], { type: 'application/msexcel;charset=utf-8' })
+      var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
       var contentDisposition = res.headers['content-disposition']
       var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
       var result = patt.exec(contentDisposition)
