@@ -94,7 +94,12 @@ import histroySolve from './histroySolve'
 import telDetail from './telDetail'
 import basicPlan from './basicPlan'
 import basicTel from './basicTel'
-import { createSdkLoginToken, addTencentPhoneTape, getAccountParam } from '@/api/modular/system/posManage'
+import {
+  createSdkLoginToken,
+  addTencentPhoneTape,
+  getAccountParam,
+  getPatientInfo,
+} from '@/api/modular/system/posManage'
 import { canCall } from '@/utils/util'
 export default {
   components: {
@@ -165,6 +170,17 @@ export default {
       this.init(record)
     },
 
+    getPatientInfoOut() {
+      getPatientInfo({
+        userId: this.record.userId,
+      }).then((res) => {
+        if (res.code === 0) {
+          let age = (res.data.age = new Date().getFullYear() - parseInt(res.data.age.substring(0, 4)))
+          this.title = res.data.userName + ' | ' + res.data.sex + ' | ' + age + '岁'
+        }
+      })
+    },
+
     //详情
     doInfo(record) {
       console.log('详情:', record)
@@ -195,6 +211,7 @@ export default {
       }
       this.visible = true
       this.record = record
+      this.getPatientInfoOut()
     },
 
     handleCancel() {

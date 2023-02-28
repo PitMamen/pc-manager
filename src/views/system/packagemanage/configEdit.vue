@@ -695,6 +695,7 @@ export default {
         this.delCollectionItemByidOut(indexOut, indexTask, itemTask.idIn)
       } else {
         this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
+        this.countMinPrice()
       }
 
       if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
@@ -723,6 +724,7 @@ export default {
         this.delCommodityPkgCollectionByidOut(indexOut, this.configData.tasksKe[indexOut].selectId)
       } else {
         this.configData.tasksKe.splice(indexOut, 1)
+        this.countMinPrice()
       }
     },
 
@@ -736,6 +738,7 @@ export default {
         this.delCollectionItemByidBiOut(indexTask, itemTask.idIn)
       } else {
         this.configData.tasksBi.splice(indexTask, 1)
+        this.countMinPrice()
       }
     },
 
@@ -761,6 +764,7 @@ export default {
       console.log('addKe', addKe)
 
       let newKe = addKe.sort((a, b) => a - b)
+      console.log('最小值', newKe[0])
       // newKe[newKe.length - 1] // 获取最大值：100
       // newKe[0] // 获取最小值： -1
 
@@ -772,7 +776,12 @@ export default {
       }
       console.log('biTotal', biTotal)
       // let totalFinal = (biTotal + newKe[0]).toFixed(2)
-      this.record.startPrice = (biTotal + newKe[0]).toFixed(2) + '元'
+      //做判断，不然可选删完了会undefined
+      if (newKe[0]) {
+        this.record.startPrice = (biTotal + newKe[0]).toFixed(2) + '元'
+      }else{
+        this.record.startPrice = biTotal.toFixed(2) + '元'
+      }
     },
 
     /**
@@ -929,6 +938,7 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
+            this.countMinPrice()
             this.configData.tasksKe[indexOut].itemsKe.splice(indexTask, 1)
             if (this.configData.tasksKe[indexOut].itemsKe.length == 0) {
               this.configData.tasksKe.splice(indexOut, 1)
@@ -947,6 +957,7 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
+            this.countMinPrice()
             this.configData.tasksBi.splice(indexTask, 1)
             this.$message.success('刪除成功')
           }
@@ -962,6 +973,7 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
+            this.countMinPrice()
             this.$message.success('刪除成功')
             // if (flag == 1) {
             this.configData.tasksKe.splice(indexTask, 1)
