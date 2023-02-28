@@ -1783,6 +1783,32 @@ export function refundBillPage(data) {
 
 /**
  * 
+ * 退款账单-按天汇总导出
+ */
+export function refundBillExport(data) {
+  return axios({
+    url: '/order-api/order/bill/refundBillExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+/**
+ * 
+ * 退款账单-按天对账流水导出
+ */
+export function refundRecordExport(data) {
+  return axios({
+    url: '/order-api/order/bill/refundRecordExport',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+
+/**
+ * 
  * 退款账单-汇总信息
  */
 export function refundBillSummary(data) {
@@ -2595,13 +2621,13 @@ export function queryHospitalList(data) {
 /**
  * 可访问机构列表
  */
- export function accessHospitals(data){
+export function accessHospitals(data) {
   return axios({
-    url:'/uam-api/hospital/accessHospitals',
-    method:'get',
+    url: '/uam-api/hospital/accessHospitals',
+    method: 'get',
     params: data,
   })
- }
+}
 
 
 
@@ -3996,7 +4022,7 @@ export function applyRefund(data) {
 
 
 //退款列表表头信息
-export function getTab(data){
+export function getTab(data) {
   return axios({
     url: '/medical-api/admrefund/tab',
     method: 'post',
@@ -4006,7 +4032,7 @@ export function getTab(data){
 
 
 //管理端-分页查询退款单
-export function getPage(data){
+export function getPage(data) {
   return axios({
     url: '/medical-api/admrefund/page',
     method: 'post',
@@ -4015,7 +4041,7 @@ export function getPage(data){
 }
 
 //管理端-退款单详情
-export function refundDetail(data){
+export function refundDetail(data) {
   return axios({
     url: '/medical-api/admrefund/detail',
     method: 'get',
@@ -4025,7 +4051,7 @@ export function refundDetail(data){
 
 
 //管理端-退款审核
-export function examine(data){
+export function examine(data) {
   return axios({
     url: '/medical-api/admrefund/audit',
     method: 'post',
@@ -4035,78 +4061,78 @@ export function examine(data){
 
 
 //交易账单流水-汇总信息
-export function tradeBillSummary(data){
+export function tradeBillSummary(data) {
   return axios({
-    url:'/order-api/order/bill/tradeBillSummary',
-    method:'post',
-    data:data
+    url: '/order-api/order/bill/tradeBillSummary',
+    method: 'post',
+    data: data
   })
 }
 
 
 //交易流水 列表
-export function tradeBillPage(data){
+export function tradeBillPage(data) {
   return axios({
-    url:'/order-api/order/bill/tradeBillPage',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeBillPage',
+    method: 'post',
+    data: data,
   })
 }
 
 //交易账单-按收款方Tab信息
-export function tradeBillTab(data){
+export function tradeBillTab(data) {
   return axios({
-    url:'/order-api/order/bill/tradeBillTab',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeBillTab',
+    method: 'post',
+    data: data,
   })
 }
 
 //交易账单-对账流水分页 详情
-export function tradeRecordPage(data){
+export function tradeRecordPage(data) {
   return axios({
-    url:'/order-api/order/bill/tradeRecordPage',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeRecordPage',
+    method: 'post',
+    data: data,
   })
 }
 
 
 //交易账单-对账流水分渠道汇总
-export function tradeRecordChannelSummary(data){
+export function tradeRecordChannelSummary(data) {
   return axios({
-    url:'/order-api/order/bill/tradeRecordChannelSummary',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeRecordChannelSummary',
+    method: 'post',
+    data: data,
   })
 }
 
 //交易账单-日对账明细>按天对账流水TAB
-export function tradeRecordTab(data){
+export function tradeRecordTab(data) {
   return axios({
-    url:'/order-api/order/bill/tradeRecordTab',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeRecordTab',
+    method: 'post',
+    data: data,
   })
 }
 
 
 
 //交易账单-日对账明细>按天对账流水导出
-export function tradeRecordExport(data){
+export function tradeRecordExport(data) {
   return axios({
-    url:'/order-api/order/bill/tradeRecordExport',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeRecordExport',
+    method: 'post',
+    data: data,
   })
 }
 
 
 //交易账单-总对账>按天汇总导出
-export function tradeBillExport(data){
+export function tradeBillExport(data) {
   return axios({
-    url:'/order-api/order/bill/tradeBillExport',
-    method:'post',
-    data:data,
+    url: '/order-api/order/bill/tradeBillExport',
+    method: 'post',
+    data: data,
   })
 }

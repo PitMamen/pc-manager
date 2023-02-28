@@ -12,7 +12,7 @@
       <div style="margin-top: 5px; color: #0e9b0b" :class="{ 'red-text': statusName == '有差异' }">
         {{ statusName }}
       </div>
-      <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+      <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="exportExcel"
         >导出</a-button
       >
     </div>
@@ -120,6 +120,14 @@
       :alert="true"
       :rowKey="(record) => record.code"
     >
+      <span slot="refundOrderId" slot-scope="text, record">
+        <a @click="goRufundDetail(record)"
+          ><a-icon style="margin-right: 5px" type="hdd"></a-icon>{{ record.refundOrderId }}</a
+        >
+      </span>
+      <span slot="orderId" slot-scope="text, record">
+        <a @click="goOrderDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>{{ record.orderId }}</a>
+      </span>
       <span slot="status" slot-scope="text, record" :class="getColor(record.billStatus)">
         {{ record.statusName }}
       </span>
@@ -129,7 +137,12 @@
        
        <script>
 import { STable } from '@/components'
-import { refundRecordPage, refundRecordTab, refundRecordChannelSummary } from '@/api/modular/system/posManage'
+import {
+  refundRecordPage,
+  refundRecordTab,
+  refundRecordChannelSummary,
+  refundRecordExport,
+} from '@/api/modular/system/posManage'
 
 export default {
   components: {
@@ -165,13 +178,13 @@ export default {
       columns: [
         {
           title: '退款单号',
-          dataIndex: 'refundOrderId',
-          ellipsis: true,
+          // dataIndex: 'refundOrderId',
+          scopedSlots: { customRender: 'refundOrderId' },
         },
         {
           title: '原订单号',
-          dataIndex: 'orderId', ///
-          ellipsis: true,
+          // dataIndex: 'orderId',
+          scopedSlots: { customRender: 'orderId' },
         },
         {
           title: '用户姓名',
@@ -320,6 +333,22 @@ export default {
   },
 
   methods: {
+    goRufundDetail(record) {
+      this.$router.push({
+        path: '/order/refundExamine',
+        query: {
+          orderId: record.refundOrderId,
+        },
+      })
+    },
+    goOrderDetail(record) {
+      this.$router.push({
+        path: '/order/orderDetail',
+        query: {
+          orderId: record.orderId,
+        },
+      })
+    },
     getTotalList() {
       let data = JSON.parse(JSON.stringify(this.queryParams))
       refundRecordChannelSummary(data).then((res) => {
@@ -331,6 +360,35 @@ export default {
         }
         // this.confirmLoading=false
       })
+    },
+
+    exportExcel() {
+      let params = JSON.parse(JSON.stringify(this.queryParams))
+      refundRecordExport(params)
+        .then((res) => {
+          this.downloadfile(res)
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
     },
 
     getTabList() {
