@@ -149,8 +149,8 @@ import {
   refundBillPage,
   refundBillTab,
   refundBillSummary,
-  queryHospitalList,
   refundBillExport,
+  accessHospitals,
 } from '@/api/modular/system/posManage'
 import { getMonthNow } from '@/utils/util'
 import addForm from './addForm'
@@ -388,7 +388,7 @@ export default {
         hospitalName: '',
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
