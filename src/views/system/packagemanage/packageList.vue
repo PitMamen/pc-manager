@@ -131,7 +131,7 @@
 <script>
 import { STable } from '@/components'
 
-import { queryHospitalList, getPkgList, updatePkgStatus, getCommodityClassify } from '@/api/modular/system/posManage'
+import { accessHospitals, getPkgList, updatePkgStatus, getCommodityClassify } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -326,7 +326,7 @@ export default {
         hospitalName: '',
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
