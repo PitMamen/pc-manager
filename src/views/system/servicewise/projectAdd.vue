@@ -210,9 +210,13 @@
               allow-clear
               placeholder="请选择模版"
             >
-              <a-select-option v-for="(item, index) in itemTask.itemTemplateList" :key="index" :value="item.id">{{
-                item.templateTitle
-              }}</a-select-option>
+              <a-select-option
+                v-for="(item, index) in itemTask.itemTemplateList"
+                :title="item.templateTitle"
+                :key="index"
+                :value="item.id"
+                >{{ item.templateTitle }}</a-select-option
+              >
             </a-select>
             <a-select class="mid-select-two" v-model="itemTask.taskType" disabled allow-clear placeholder="任务类型">
               <a-select-option v-for="(item, index) in taskTypeData" :key="index" :value="item.value">{{
