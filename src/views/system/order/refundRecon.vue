@@ -22,7 +22,7 @@
           :allow-clear="false"
           :disabled-date="disabledDate"
           :format="monthFormat"
-          v-model="queryParams.billMonth"
+          v-model="monthValue"
         />
       </div>
 
@@ -283,6 +283,7 @@ export default {
       monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
       nowMonth: '',
+      monthValue: {}, //Date类型对象，用于与请求参数的转换
       tabDataList: '',
       totalDataList: '',
     }
@@ -294,10 +295,9 @@ export default {
 
   created() {
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
-    this.queryParams.billMonth = moment(getMonthNow(), this.monthFormat)
+    this.monthValue = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
 
-    this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
     this.getTabList(true)
   },
 
@@ -309,6 +309,7 @@ export default {
      * @param {*} needGet 是否需要全部刷新
      */
     getTabList(needGet) {
+      this.queryParams.billMonth = this.formatDate(this.monthValue).substring(0, 7)
       let params = {
         billMonth: this.queryParams.billMonth,
         hospitalCode: this.queryParams.hospitalCode,
@@ -416,6 +417,7 @@ export default {
     },
 
     exportExcel() {
+      this.queryParams.billMonth = this.formatDate(this.monthValue).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
       refundBillExport(params)
         .then((res) => {
@@ -471,7 +473,6 @@ export default {
     },
 
     goQuery() {
-      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
       this.getTabList(true)
     },
   },

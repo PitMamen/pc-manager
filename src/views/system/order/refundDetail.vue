@@ -337,7 +337,8 @@ export default {
       this.$router.push({
         path: '/order/refundExamine',
         query: {
-          orderId: record.refundOrderId,
+          // orderId: record.refundOrderId,
+          orderId: record.applyRefundId,
         },
       })
     },
@@ -393,7 +394,7 @@ export default {
 
     getTabList() {
       let params = {
-        billMonth: this.queryParams.billMonth,
+        billDate: this.queryParams.billDate,
         hospitalCode: this.queryParams.hospitalCode,
         payeeId: this.queryParams.payeeId,
       }
