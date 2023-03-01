@@ -416,6 +416,7 @@ export default {
 
     //导出
     leadingOut() {
+      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
       tradeBillExport(params)
         .then((res) => {
