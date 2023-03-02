@@ -11,8 +11,14 @@
       <div class="add-wrap">
         <div class="add-wrap-left">
           <div class="div-choose-dept">
-            <span>请选择配置科室：</span>
-            <a-select style="width: 206px;" @select="onDeptSelect" v-model="choseDepartmentId" allow-clear placeholder="请选择">
+            <span style="display: inline-block; width: 22%">请选择配置科室：</span>
+            <a-select
+              style="width: 76%"
+              @select="onDeptSelect"
+              v-model="choseDepartmentId"
+              allow-clear
+              placeholder="请选择"
+            >
               <a-select-option v-for="(item, index) in departmentLst" :key="index" :value="item.department_id">{{
                 item.department_name
               }}</a-select-option>
@@ -20,7 +26,7 @@
           </div>
           <!-- size="large" -->
           <a-auto-complete
-            style="width: 100%; font-size: 14px"
+            style="width: 98%; font-size: 14px"
             placeholder="请输入并选择"
             option-label-prop="title"
             @select="onSelect"
@@ -211,7 +217,7 @@ export default {
       this.tenantId = tenantId
       this.hospitalCode = hospitalCode
       this.choseDepartmentId = departmentId
-      console.log('add**departmentId',departmentId)
+      console.log('add**departmentId', departmentId)
       this.isAverage = false
       this.assignments = assignments
       this.isSingle = isSingle
@@ -538,10 +544,11 @@ export default {
     flex-direction: column;
 
     .div-choose-dept {
+      width: 100%;
       display: flex;
       color: #333;
       align-items: center;
-      padding: 10px 20px 20px 0;
+      padding: 10px 0 20px 0;
       flex-direction: row;
     }
 

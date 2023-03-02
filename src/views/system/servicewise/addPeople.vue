@@ -12,9 +12,9 @@
         <div class="add-wrap">
           <div class="add-wrap-left">
             <div class="div-choose-dept">
-              <span>请选择配置科室：</span>
+              <span style="display: inline-block;width: 22%;">请选择配置科室：</span>
               <a-select
-                style="width: 206px"
+                style="width: 76%"
                 @select="onDeptSelect"
                 @change="onDeptChange"
                 v-model="choseDepartmentId"
@@ -28,7 +28,7 @@
             </div>
             <!-- size="large" -->
             <a-auto-complete
-              style="width: 100%; font-size: 14px"
+              style="width: 98%; font-size: 14px"
               placeholder="请输入并选择"
               option-label-prop="title"
               @select="onSelect"
@@ -623,10 +623,11 @@ export default {
       flex-direction: column;
 
       .div-choose-dept {
+        width: 100%;
         display: flex;
         color: #333;
         align-items: center;
-        padding: 2px 20px 20px 0;
+        padding: 2px 0 20px 0;
         flex-direction: row;
       }
 
