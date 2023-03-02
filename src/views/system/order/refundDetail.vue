@@ -682,7 +682,7 @@ export default {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 138px);
+      height: calc(100% - 238px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
