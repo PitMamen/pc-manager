@@ -166,18 +166,8 @@ export default {
 
   data() {
     return {
-      dateFormat: 'YYYY-MM-DD',
       treeData: [],
-      gropListData: [],
       confirmLoading: false,
-      currentTab: 'qb',
-      numberData: {
-        quanbu: 0,
-        yy: 0,
-        cw: 0,
-        wc: 0,
-      },
-      zbs: 102,
       queryParams: {
         hospitalCode: undefined,
         billMonth: getMonthNow(),

@@ -9,9 +9,13 @@
 
     <div class="recon-content">
       <div style="margin-top: 5px; color: #4d4d4d">对账状态：</div>
-      <div style="margin-top: 5px; color: #0e9b0b" :class="{ 'red-text': statusName == '有差异' }">
+      <div class="red-text" v-if="isNot">
         {{ statusName }}
       </div>
+      <div class="div-status" v-else>
+        {{ statusName }}
+      </div>
+
       <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="exportExcel"
         >导出</a-button
       >
@@ -28,16 +32,6 @@
       >
         <span style="margin-left: 3px">{{ item.chanelName + '（' + item.total + '）' }}</span>
       </div>
-
-      <!-- <div  class="radio-item" :class="{ 'checked-btn': queryParams.tabCode == 'qb' }" @click="onRadioClick('qb')">
-        <span style="margin-left: 3px">全部({{ numberData.quanbu }})</span>
-      </div> -->
-      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParams.tabCode == 'yy' }" @click="onRadioClick('yy')">
-        <span style="margin-left: 3px">微信支付({{ numberData.yy }}) </span>
-      </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.tabCode == 'cw' }" @click="onRadioClick('cw')">
-        <span style="margin-left: 3px">支付宝支付({{ numberData.cw }})</span>
-      </div> -->
     </div>
 
     <div class="tab-all-content">
@@ -156,14 +150,6 @@ export default {
       gropListData: [],
       packgeList: [],
       confirmLoading: false,
-      currentTab: 'qb',
-      numberData: {
-        quanbu: 0,
-        yy: 0,
-        cw: 0,
-        wc: 0,
-      },
-      zbs: 102,
 
       //默认为获取总数请求参数，先获取总数，然后获取tab，然后tab切换可以更新列表
       queryParams: {
@@ -275,7 +261,7 @@ export default {
                 // 2 短款
                 if (item.billStatus == 0) {
                   this.$set(item, 'statusName', '正常')
-                } else if (condition) {
+                } else if (item.billStatus == 1) {
                   this.$set(item, 'statusName', '长款')
                 } else {
                   this.$set(item, 'statusName', '短款')
@@ -292,6 +278,7 @@ export default {
           })
       },
       statusName: '',
+      isNot: false,
       totalDataList: [{}, {}],
       tabDataList: [],
     }
@@ -305,15 +292,14 @@ export default {
   watch: {
     $route(to, from) {
       console.log('watch----refundDetail out', to, from)
-      debugger
       if (to.path.indexOf('refundDetail') > -1) {
-        debugger
         console.log('watch----refundDetail', to, from)
         let data = JSON.parse(this.$route.query.dataStr)
         console.log('data---', data)
 
         this.queryParams.billDate = data.billDate
         this.statusName = data.statusName
+        this.isNot = this.statusName == '有差异'?true:false
         this.queryParams.hospitalCode = data.hospitalCode
         this.queryParams.payeeId = data.payeeId
         this.getTotalList()
@@ -327,6 +313,7 @@ export default {
 
     this.queryParams.billDate = data.billDate
     this.statusName = data.statusName
+    this.isNot = this.statusName == '有差异'?true:false
     this.queryParams.hospitalCode = data.hospitalCode
     this.queryParams.payeeId = data.payeeId
     this.getTotalList()
@@ -461,10 +448,7 @@ export default {
 }
 </script>
        
-       <style lang="less" scoped>
-.red-text {
-  color: #f21010;
-}
+  <style lang="less" scoped>
 .span-blue {
   background-color: #ecf5ff;
   padding: 2px 4px;
@@ -520,6 +504,14 @@ export default {
   flex-direction: row;
   margin-bottom: 15px;
   margin-top: 10px;
+  .red-text {
+    margin-top: 5px;
+    color: #f21010 !important;
+  }
+  .div-status {
+    margin-top: 5px;
+    color: #0e9b0b;
+  }
 }
 
 .table-page-search-wrapper {
