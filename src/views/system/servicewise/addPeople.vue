@@ -12,7 +12,7 @@
         <div class="add-wrap">
           <div class="add-wrap-left">
             <div class="div-choose-dept">
-              <span style="display: inline-block;width: 22%;">请选择配置科室：</span>
+              <span style="display: inline-block; width: 22%">请选择配置科室：</span>
               <a-select
                 style="width: 76%"
                 @select="onDeptSelect"
@@ -39,6 +39,9 @@
                   {{ item.userName }}
                 </a-select-option>
               </template>
+              <a-input>
+                <a-icon slot="suffix" type="search" class="certain-category-icon" />
+              </a-input>
             </a-auto-complete>
 
             <div class="left-num-des">

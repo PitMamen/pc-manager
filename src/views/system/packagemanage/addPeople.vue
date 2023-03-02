@@ -37,6 +37,9 @@
                 {{ item.userName }}
               </a-select-option>
             </template>
+            <a-input>
+              <a-icon slot="suffix" type="search" class="certain-category-icon" />
+            </a-input>
           </a-auto-complete>
 
           <div class="left-num-des">
