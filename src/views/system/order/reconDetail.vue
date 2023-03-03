@@ -677,6 +677,10 @@ export default {
 </style>
          
          <style lang="less" scoped>
+.ant-layout-content {
+  height: calc(100vh - 82px) !important;
+}
+
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 40px);
