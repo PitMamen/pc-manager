@@ -492,7 +492,7 @@ export default {
         border-bottom: 1px solid #DFE3E5;
         .title {
           font-size: 14px;
-          font-weight: 500;
+          font-weight: 600;
           color: #1A1A1A;
           line-height: 34px;
         }
@@ -505,8 +505,8 @@ export default {
       }
       .images {
         .desc {
-          font-size: 12px;
-          font-weight: 500;
+          font-size: 14px;
+          font-weight: 600;
           color: #1A1A1A;
           line-height: 32px;
         }
