@@ -19,10 +19,10 @@
 
     </div>
 
-    <div class="big-kuang" style="height:270px !important">
+    <div class="big-kuang" >
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">基本信息</div>
       <div class="line"></div>
-      <div class="div-up-content" style="margin-top:-15px;">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">订单号 :</span>
           <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
@@ -39,7 +39,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">所属医院 :</span>
           <span class="span-item-value">{{ orderDetailDataList.hospitalName|| '-'  }}</span>
@@ -58,7 +58,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">用户姓名 :</span>
           <span class="span-item-value">{{ orderDetailDataList.userName || '-' }}</span>
@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">实付金额 :</span>
           <span class="span-item-value">{{ orderDetailDataList.payTotal || '-'  }}</span>
@@ -92,7 +92,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">套餐包服务时间 :</span>
           <span class="span-item-value">{{ orderDetailDataList.effectiveStartTime+'-'+orderDetailDataList.effectiveEndTime  || '-' }}</span>
@@ -109,7 +109,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">服务医生 :</span>
           <span class="span-item-value">{{ orderDetailDataList.doctorUserName || '-'  }}</span>
@@ -126,7 +126,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">退款单号 :</span>
           <a style="color: #409eff;" @click="goExamine(orderDetailDataList.applyRefundId)" class="span-item-value">{{ orderDetailDataList.refundId ||'-'}}</a>
@@ -143,7 +143,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="margin-top: -18px">
+      <div class="div-up-content" style="padding-bottom: 10px;" >
         <div class="div-pro-line">
           <span class="span-item-name">拒绝退款原因 :</span>
           <span class="span-item-value">{{ orderDetailDataList.remark || '-' }}</span>
@@ -199,12 +199,12 @@
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">收货地址</div>
         <div class="line"></div>
 
-        <div class="div-pro-line"  style="margin-left:20px">
+        <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
           <span class="span-item-name">发货方式 :</span>
           <span class="span-item-value">到院自提</span>
         </div>
 
-        <div class="div-pro-line"  style="margin-left:20px">
+        <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
           <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
           <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
         </div>
@@ -214,12 +214,12 @@
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
         <div class="line"></div>
 
-        <div class="div-pro-line" style="margin-left:20px">
+        <div class="div-pro-line" style="margin-left:20px;width: 40%;">
           <span class="span-item-name">发货方式 :</span>
           <span class="span-item-value">到院自提</span>
         </div>
 
-        <div class="div-pro-line"  style="margin-left:20px">
+        <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
           <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
           <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
         </div>
@@ -576,7 +576,7 @@ export default {
 .topButton {
   margin: 10px;
   width: 100%;
-  height: 60px;
+  height: 30px;
   margin-left: 20px;
   display: flex;
   flex-direction: row;
@@ -585,10 +585,9 @@ export default {
 
 .big-kuang {
   width: 97%;
-  height: 350px;
   margin-left: 20px;
   margin-right: 91px;
-  margin-top: -30px;
+  // margin-top: -30px;
   background: #ffffff;
   border: 1px solid #e6e6e6;
 
@@ -600,7 +599,7 @@ export default {
 
   .div-pro-line {
     width: 30%;
-    margin-top: 1%;
+    margin-top: 10px;
     overflow: hidden;
 
     .ant-select {
@@ -633,7 +632,6 @@ export default {
     width: 100%;
     display: flex;
     padding-left: 8px;
-    padding-top: 8px;
     flex-direction: row;
 
     .div-up-left {
@@ -721,7 +719,6 @@ export default {
     width: 100%;
     display: flex;
     padding-left: 8px;
-    padding-top: 8px;
     flex-direction: row;
 
     .div-up-left {
