@@ -366,7 +366,8 @@ export default {
       getTreeUsersByDeptIdsAndRoles({
         // hospitalCode: this.hospitalCode,
         // tenantId: this.tenantId,
-        roleIds: [this.type],
+        // roleIds: [this.type],
+        roleIds: ['doctor', 'nurse'],
         departmentIds: [this.choseDepartmentId],
       }).then((res) => {
         if (res.code == 0) {
