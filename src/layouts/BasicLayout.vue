@@ -290,6 +290,7 @@ export default {
       }
       > .ant-layout-content {
         margin-left: 84px !important;
+        height: calc(100vh - 82px) !important;
       }
     }
   }

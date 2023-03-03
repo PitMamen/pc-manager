@@ -679,20 +679,18 @@ export default {
   height: 1px;
 }
 </style>
-  
-   <style lang="less" scoped>
-/deep/.ant-card-body {
-  margin-top: -20px;
-}
-</style>
          
-         <style lang="less" scoped>
+<style lang="less" scoped>
+.ant-layout-content {
+  height: calc(100vh - 82px) !important;
+}
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 40px);
+  height: calc(100% - 20px);
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
+    margin-top: -20px;
     .table-wrapper {
       height: calc(100% - 238px);
       .ant-table-wrapper {
