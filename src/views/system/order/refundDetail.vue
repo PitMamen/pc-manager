@@ -115,12 +115,10 @@
       :rowKey="(record) => record.code"
     >
       <span slot="refundOrderId" slot-scope="text, record">
-        <a @click="goRufundDetail(record)"
-          ><a-icon style="margin-right: 5px" type="hdd"></a-icon>{{ record.refundOrderId }}</a
-        >
+        <a @click="goRufundDetail(record)">{{ record.refundOrderId }}</a>
       </span>
       <span slot="orderId" slot-scope="text, record">
-        <a @click="goOrderDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>{{ record.orderId }}</a>
+        <a @click="goOrderDetail(record)">{{ record.orderId }}</a>
       </span>
       <span slot="status" slot-scope="text, record" :class="getColor(record.billStatus)">
         {{ record.statusName }}
@@ -174,10 +172,12 @@ export default {
         },
         {
           title: '用户姓名',
+          ellipsis: true,
           dataIndex: 'name',
         },
         {
           title: '手机号',
+          ellipsis: true,
           dataIndex: 'phone',
         },
         {
@@ -187,47 +187,53 @@ export default {
         },
         {
           title: '医院名称',
+          ellipsis: true,
           dataIndex: 'hospitalName',
         },
         {
           title: '退款单时间',
           dataIndex: 'refundTime',
+          ellipsis: true,
         },
         {
           title: '收款方',
+          ellipsis: true,
           dataIndex: 'payeeName',
         },
         {
           title: '退款流水号',
+          ellipsis: true,
           dataIndex: 'refundAgtOrdNum',
-          align: 'right',
         },
         {
           title: '应退',
+          ellipsis: true,
           dataIndex: 'refundTotal',
-          align: 'right',
         },
         {
           title: '实退',
           dataIndex: 'actualRefundTotal',
-          align: 'right',
+          ellipsis: true,
         },
         {
           title: '退款方式',
           dataIndex: 'refundMode',
-          //   width: 160,
+          ellipsis: true,
         },
         {
           title: '订单状态',
+          ellipsis: true,
           dataIndex: 'orderStatusDesc',
         },
         {
           title: '差异状态',
+          ellipsis: true,
           scopedSlots: { customRender: 'status' },
         },
         //   {
         //     title: '操作',
         //     fixed: 'right',
+        //     align: 'right',
         //     with: 130,
         //     dataIndex: 'action',
         //     scopedSlots: { customRender: 'action' },
@@ -299,7 +305,7 @@ export default {
 
         this.queryParams.billDate = data.billDate
         this.statusName = data.statusName
-        this.isNot = this.statusName == '有差异'?true:false
+        this.isNot = this.statusName == '有差异' ? true : false
         this.queryParams.hospitalCode = data.hospitalCode
         this.queryParams.payeeId = data.payeeId
         this.getTotalList()
@@ -313,7 +319,7 @@ export default {
 
     this.queryParams.billDate = data.billDate
     this.statusName = data.statusName
-    this.isNot = this.statusName == '有差异'?true:false
+    this.isNot = this.statusName == '有差异' ? true : false
     this.queryParams.hospitalCode = data.hospitalCode
     this.queryParams.payeeId = data.payeeId
     this.getTotalList()
@@ -448,7 +454,13 @@ export default {
 }
 </script>
        
-  <style lang="less" scoped>
+<style lang="less" scoped>
+.ant-table-thead > tr > th {
+  white-space: nowrap;
+}
+.ant-table-row td {
+  white-space: nowrap;
+}
 .span-blue {
   background-color: #ecf5ff;
   padding: 2px 4px;
