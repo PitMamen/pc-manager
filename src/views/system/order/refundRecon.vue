@@ -184,6 +184,7 @@ export default {
         {
           title: '微信退款金额',
           dataIndex: 'wechatTotal',
+          align: 'right',
         },
         {
           title: '微信退款单数',
@@ -193,6 +194,7 @@ export default {
           title: '支付宝退款金额',
           dataIndex: 'alipayTotal',
           ellipsis: true,
+          align: 'right',
         },
         {
           title: '支付宝退款单数',
@@ -211,22 +213,25 @@ export default {
         {
           title: '总单数',
           dataIndex: 'platformCount',
-          align: 'right',
+          // align: 'right',
         },
         {
           title: '应退总金额',
           dataIndex: 'platformTotal',
           //   width: 160,
+          align: 'right',
         },
 
         {
           title: '实退总金额',
           dataIndex: 'channelTotal',
           ellipsis: true,
+          align: 'right',
         },
         {
           title: '差异金额',
           dataIndex: 'diffTotal',
+          align: 'right',
         },
         {
           title: '差异状态',
