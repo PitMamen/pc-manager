@@ -185,10 +185,12 @@ export default {
         {
           title: '用户姓名',
           dataIndex: 'name',
+          ellipsis: true,
         },
         {
           title: '手机号',
           dataIndex: 'phone',
+          ellipsis: true,
         },
         {
           title: '套餐名称',
@@ -198,39 +200,47 @@ export default {
         {
           title: '医院名称',
           dataIndex: 'hospitalName',
+          ellipsis: true,
         },
         {
           title: '应收',
           dataIndex: 'orderTotal',
           align: 'right',
+          ellipsis: true,
         },
         {
           title: '实收',
           dataIndex: 'payTotal',
           align: 'right',
+          ellipsis: true,
         },
         {
           title: '下单时间',
           dataIndex: 'orderTime',
+          ellipsis: true,
           //   width: 160,
         },
 
         {
           title: '支付方式',
           dataIndex: 'payMode',
+          ellipsis: true,
         },
         {
           title: '支付流水号',
           dataIndex: 'agtOrdNum',
+          ellipsis: true,
         },
         {
           title: '订单状态',
           dataIndex: 'orderStatusDesc',
+          ellipsis: true,
           scopedSlots: { customRender: 'ordrstatus' },
         },
         {
           title: '差异状态',
           dataIndex: 'billStatusDesc',
+          ellipsis: true,
           scopedSlots: { customRender: 'billStatus' },
         },
       ],

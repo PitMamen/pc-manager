@@ -16,7 +16,9 @@
       <div class="div-up-content" style="margin-top: -15px">
         <div class="div-pro-line">
           <span class="span-item-name">订单号 :</span>
-          <a style="color: #409eff;" @click="goDetail(orderDetailDataList.orderId)"  class="span-item-value">{{ orderDetailDataList.orderId || '-' }}</a>
+          <a style="color: #409eff" @click="goDetail(orderDetailDataList.orderId)" class="span-item-value">{{
+            orderDetailDataList.orderId || '-'
+          }}</a>
         </div>
 
         <div class="div-pro-line">
@@ -110,6 +112,7 @@
         style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
         size="small"
         class="a-table-one"
+        bordered
         :scroll="{ y: true }"
         :columns="goodsItemsDataColumns"
         :data-source="goodsItemsData"
@@ -131,6 +134,7 @@
         style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
         size="small"
         class="a-table-one"
+        bordered
         :scroll="{ y: true }"
         :columns="rightItemsDataColumns"
         :data-source="rightItemsData"
@@ -173,14 +177,14 @@
 
           <div class="div-pro-line" style="margin-left: 20px">
             <span class="span-item-name" style="color: #1a1a1a"> 实退总金额 :</span>
-            <span class="span-item-value" style="width: 65%; color: #1a1a1a">{{
+            <span class="span-item-value" style="color: #1a1a1a">{{
               orderDetailDataList.actualRefundMoney
             }}</span>
           </div>
 
           <div class="div-pro-line" style="margin-left: 20px">
             <span class="span-item-name" style="color: #1a1a1a"> 退款方式 :</span>
-            <span class="span-item-value" style="width: 65%; color: #1a1a1a">{{
+            <span class="span-item-value" style=" color: #1a1a1a">{{
               orderDetailDataList.refundMethod
             }}</span>
           </div>
@@ -193,8 +197,8 @@
       <div style="margin-top: 20px; height: 122px !important; width: 150% !important" class="half-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">审核建议</div>
         <div class="line"></div>
-        <div class="div-pro-line"  style="margin-left:20px;width:80% !important">
-          <span class="span-item-name" style="color:#1A1A1A">  {{getReason(orderDetailDataList)}} </span>
+        <div class="div-pro-line" style="margin-left: 20px; width: 80% !important">
+          <span class="span-item-name" style="color: #1a1a1a"> {{ getReason(orderDetailDataList) }} </span>
           <!-- <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
           {{ getType(record)  }}
       </span>  -->
@@ -237,7 +241,7 @@
 </template>
     
     <script>
-import {  refundDetail, examine } from '@/api/modular/system/posManage'
+import { refundDetail, examine } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -316,18 +320,22 @@ export default {
         {
           title: '服务项目',
           dataIndex: 'rightsItemName',
+          ellipsis: true,
         },
         {
           title: '规格',
           dataIndex: 'ruleInfo',
+          align: 'center',
         },
         {
           title: '数量',
           dataIndex: 'equityQuantity',
+          align: 'center',
         },
         {
           title: '单位',
           dataIndex: 'unit',
+          align: 'center',
         },
         {
           title: '计费金额',
@@ -337,18 +345,22 @@ export default {
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
+          align: 'center',
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
+          align: 'center',
         },
         {
           title: '类型',
           dataIndex: 'projectType',
+          align: 'center',
         },
         {
           title: '操作',
           dataIndex: 'action',
+          align: 'center',
           //   scopedSlots: { customRender: 'action' },
         },
       ],
@@ -378,6 +390,7 @@ export default {
         {
           title: '支付方式',
           dataIndex: 'payMode',
+          align: 'center',
           customRender: (value, row, index) => {
             const obj = {
               //   children: this.cancelItemsData.length,
@@ -398,6 +411,7 @@ export default {
         {
           title: '项目',
           dataIndex: 'rightsItemName',
+          align: 'center',
         },
         {
           title: '应付金额',
@@ -428,10 +442,12 @@ export default {
         {
           title: '已服务数',
           dataIndex: 'usedQuantity',
+          align: 'center',
         },
         {
           title: '剩余数',
           dataIndex: 'surplusQuantity',
+          align: 'center',
         },
         {
           title: '应退金额',
@@ -509,10 +525,10 @@ export default {
       this.user = Vue.ls.get(TRUE_USER)
       this.orderDetailDataList = {}
       this.rejectReason = ''
-      if (this.user) {
-        //如果不是运营人员 或者 财务人员  不显示顶部按钮
-        this.showButton = this.user.dataAccessActors.includes('operationManager')||this.user.dataAccessActors.includes('financialManager')
-      }
+      // if (this.user) {
+      //   //如果不是运营人员 或者 财务人员  不显示顶部按钮
+      //   this.showButton = this.user.dataAccessActors.includes('operationManager')||this.user.dataAccessActors.includes('financialManager')
+      // }
       this.orderId = refundId
       this.getrefundDetailOut(this.orderId)
     },
@@ -528,10 +544,21 @@ export default {
           if (res.code == 0) {
             var reponseDataList = res.data
             this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
-            if (this.orderDetailDataList.status.value == 103) {
-              //如果该订单是 退款成功了的  不显示顶部的两个按钮
-              this.showButton = false
+
+            //如果是运营待审核 则显示
+            if (this.user && this.user.dataAccessActors.includes('operationManager')) {
+              if (this.orderDetailDataList.auditStatus == 1) {
+                this.showButton = true
+              }
+              //如果是财务待审核 则显示
+            } else if (this.user && this.user.dataAccessActors.includes('financialManager')) {
+              if (this.orderDetailDataList.auditStatus == 2) {
+                this.showButton = true
+              }
             }
+
+            console.log('NNNN:', this.showButton)
+
             this.goodsItemsData = res.data.goodsItems //产品信息
             this.rightItemsData = res.data.rightItems //权益信息
             this.feeItemsData = res.data.feeItems //费用明细
@@ -551,14 +578,14 @@ export default {
 
     //详情
     goDetail(orderId) {
-      if(!orderId){
+      if (!orderId) {
         return
       }
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
         path: '/order/orderDetail',
         query: {
-          orderId:orderId,
+          orderId: orderId,
           // orderId:1623236088379908098,
         },
       })
@@ -592,9 +619,9 @@ export default {
     handleComf(type) {
       //请求接口
       if (type == 2) {
-        if(!this.rejectReason){
-            this.$message.error('请输入驳回原因!')
-            return
+        if (!this.rejectReason) {
+          this.$message.error('请输入驳回原因!')
+          return
         }
       }
 
@@ -625,15 +652,13 @@ export default {
       this.visible_model = false
     },
 
-    getReason(data){
-    //  if(data.suggestion){
-    //   return 
-    //  }
+    getReason(data) {
+      //  if(data.suggestion){
+      //   return
+      //  }
 
-     return data.suggestion?data.suggestion[0]:''
+      return data.suggestion ? data.suggestion[0] : ''
     },
-
-
   },
 }
 </script>
@@ -747,15 +772,12 @@ export default {
     }
   }
   .div-service-user {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  overflow: hidden;
-  height: 100%;
-}
-
-  
-
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    overflow: hidden;
+    height: 100%;
+  }
 
   .div-up-content {
     width: 100%;

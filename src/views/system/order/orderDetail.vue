@@ -306,14 +306,17 @@ export default {
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
+          align:'center'
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
+          align:'center'
         },
         {
           title: '类型',
           dataIndex: 'projectType',
+          align:'center'
         },
         {
           title: '操作',
@@ -347,14 +350,17 @@ export default {
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
+          align:'center'
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
+          align:'center'
         },
         {
           title: '类型',
           dataIndex: 'projectType',
+          align:'center'
         },
         {
           title: '操作',

@@ -160,6 +160,11 @@ export default {
       columns: [
         {
           title: '订单号',
+          dataIndex: 'orderId',
+          ellipsis: true,
+        },
+        {
+          title: '退款单号',
           dataIndex: 'refundId',
           ellipsis: true,
         },
@@ -174,7 +179,7 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
-          width: 240,
+          ellipsis: true,
           // scopedSlots: { customRender: 'commodityName' },
           // ellipsis: true,
         },
