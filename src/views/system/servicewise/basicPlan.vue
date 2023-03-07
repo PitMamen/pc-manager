@@ -258,6 +258,7 @@ export default {
   components: {},
   props: {
     record: Object,
+    title: String,
   },
   data() {
     return {
@@ -275,7 +276,7 @@ export default {
       templateListQues: [],
       rangeValue: '2',
       chosePerson: 0,
-      title: '',
+      // title: '',
       userList: [],
       timeStr: '00:00',
       queryParams: {
@@ -355,8 +356,8 @@ export default {
     this.chosePerson = user.userId
     this.queryParams.execDoctorUserId = user.userId
     this.recordIn.sex = this.recordIn.sex ? this.recordIn.sex.description : ''
-    this.title =
-      this.recordIn.userName + '\xa0' + '\xa0' + ' |   ' + this.recordIn.sex + '    |  ' + '\xa0' + this.recordIn.age + '岁'
+    // this.title =
+    //   this.recordIn.userName + '\xa0' + '\xa0' + ' |   ' + this.recordIn.sex + '    |  ' + '\xa0' + this.recordIn.age + '岁'
     this.queryParams.planId = this.recordIn.planId
     this.queryParams.userId = this.recordIn.userId
     this.qryExecuteRecordByUserIdOut()

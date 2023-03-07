@@ -1747,18 +1747,6 @@ export function qryOrdersList(data) {
 
 /**
  * 
- * 配送信息导出
- */
-export function exportOrders() {
-  return axios({
-    url: '/health-api/excel/exportOrders',
-    method: 'get',
-    // data: data,
-  })
-}
-
-/**
- * 
  * 根据订单id修改订单状态  get post 请求的结合体
  */
 export function updateOrderStatusById(data) {

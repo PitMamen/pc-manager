@@ -75,7 +75,7 @@
               随访方案
             </span>
           </template>
-          <basic-plan ref="basicPlan " :record="record" @handleCancel="handleCancel" />
+          <basic-plan ref="basicPlan" :title="title" :record="record" @handleCancel="handleCancel" />
         </a-tab-pane>
         <div class="span-mid-audio" v-if="audioShow">
           <audio style="height: 44px" controls :src="audioUrl" autoplay></audio>

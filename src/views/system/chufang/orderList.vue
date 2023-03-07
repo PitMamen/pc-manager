@@ -96,7 +96,7 @@
 
 <script>
 import { STable } from '@/components'
-import { qryOrdersList, updateOrderStatusById, exportOrders } from '@/api/modular/system/posManage'
+import { qryOrdersList, updateOrderStatusById } from '@/api/modular/system/posManage'
 import orderDetail from './orderDetail'
 import { currentEnv } from '@/utils/util'
 // import { formatDateFull, formatDate } from '@/utils/util'
@@ -229,19 +229,10 @@ export default {
       } else if (currentEnv == 'online') {
         //线上环境
         // url = 'http://172.31.100.71:8124/excel/exportOrders'
-        url = 'http://manager.mclouds.org.cn:8088/api/health-api/excel/exportOrders'
+        url = 'http://manager.mclouds.org.cn/api/health-api/excel/exportOrders'
       }
 
       this.downloadUrl(url, '')
-
-      // exportOrders()
-      //   .then((res) => {
-      //     this.downloadfile(res)
-      //     // eslint-disable-next-line handle-callback-err
-      //   })
-      //   .catch((err) => {
-      //     this.$message.error('导出错误：' + err.message)
-      //   })
     },
 
     downloadUrl(url, fileName = '未知文件') {
