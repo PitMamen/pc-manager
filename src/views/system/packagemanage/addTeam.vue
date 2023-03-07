@@ -146,11 +146,12 @@ export default {
     // 初始化方法
     edit(commodityPkgManageItemRsps, hospitalCode) {
       this.visible = true
+      console.log(' edit hospitalCode', hospitalCode)
       this.hospitalCode = hospitalCode
       this.selectedRowKeys = []
       if (commodityPkgManageItemRsps.length > 0) {
         commodityPkgManageItemRsps.forEach((item) => {
-          this.selectedRowKeys.push(item.objectId)
+          this.selectedRowKeys.push(parseInt(item.objectId))
         })
       }
 

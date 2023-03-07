@@ -1216,10 +1216,10 @@ export default {
           this.$message.warn('请先选择护士参与分配方式')
           return
         }
-        if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
-          this.$message.warn('该机构没有可选护士')
-          return
-        }
+        // if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
+        //   this.$message.warn('该机构没有可选护士')
+        //   return
+        // }
 
         this.$refs.addPeople.add(
           index,
@@ -1291,7 +1291,8 @@ export default {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
-      this.$refs.addTeam.edit(this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs)
+      this.$refs.addTeam.edit(this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
+        this.packageData.hospitalCode)
     },
 
     handleAddTeam(commodityPkgManageItemReqs) {
