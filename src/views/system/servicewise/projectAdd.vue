@@ -61,16 +61,23 @@
             </a-select>
           </div>
 
-          <div class="div-pro-line" style="width: 60%">
-            <span class="span-item-name" style="margin-left: 1%"> 补充说明 :</span>
+          <div class="div-pro-line">
+            <span class="span-item-name" style="margin-left: 1%"> &nbsp;补充说明 :</span>
             <a-input
               class="span-item-value"
               v-model="projectData.basePlan.remark"
               :maxLength="30"
-              style="display: inline-block; width: 80%; padding-left: 0.9%"
+              style="display: inline-block; width: 60%"
               allow-clear
               placeholder="请输入补充说明 "
             />
+          </div>
+
+          <div class="div-pro-line">
+            <a-checkbox @click="goAgin()" :checked="isAgain" style="margin-left: 1%" />
+            <span class="span-titl" style="margin-left: 1%">随访名单更新时需重新匹配</span>
+            <a-checkbox @click="goOnce()" :checked="isOnce" style="margin-left: 3%" />
+            <span class="span-titl" style="margin-left: 1%">每个患者仅匹配一次</span>
           </div>
         </div>
       </div>
@@ -487,6 +494,10 @@ export default {
         { value: '2', description: '周二' },
       ], //每周第、每月第、每年第切换时改变的集合
       confirmLoading: false,
+      //随访名单更新时需重新匹配：0不匹配1匹配
+      isAgain: false,
+      //重复匹配状态：0不重复1可以重
+      isOnce: true,
 
       /**
        *
@@ -508,6 +519,9 @@ export default {
           metaConfigureId: undefined,
           executeDepartments: undefined, //执行科室
           remark: undefined, //补充说明
+
+          updateMatchStatus: 0, //随访名单更新时需重新匹配：0不匹配1匹配
+          repeatMatchStatus: 0, //重复匹配状态：0不重复1可以重
         },
         filterRules: [],
         tasks: [],
@@ -612,7 +626,16 @@ export default {
 
   methods: {
     moment,
-
+    goAgin() {
+      // 随访名单更新时需重新匹配：0不匹配1匹配
+      this.isAgain = !this.isAgain
+      this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0
+    },
+    goOnce() {
+      //重复匹配状态：0不重复1可以重
+      this.isOnce = !this.isOnce
+      this.projectData.basePlan.repeatMatchStatus = this.isOnce ? 0 : 1
+    },
     getDeptsOut() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
       if (this.user.roleId == 7 || this.user.roleName == 'admin') {
