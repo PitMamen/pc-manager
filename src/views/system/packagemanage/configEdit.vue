@@ -1343,29 +1343,41 @@ export default {
       }
 
       //咨询类三种单独处理
-      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
-        //总量约束，必须有一条
-        let itemTotal = 0
-        for (let index = 0; index < this.configData.tasksKe.length; index++) {
-          itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
-        }
-        itemTotal = itemTotal + this.configData.tasksBi.length
-        //时效单位 都有  需要勾选
-        if (itemTotal == 0) {
-          this.$message.error('总项目必须至少添加一个')
-          return
-        }
-      } else {
-        //总量约束，必须有一条
-        let itemTotal = 0
-        for (let index = 0; index < this.configData.tasksKe.length; index++) {
-          itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
-        }
-        //时效单位 都有  需要勾选
-        if (itemTotal == 0) {
-          this.$message.error('总项目必须至少添加一个')
-          return
-        }
+      // if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+      //   //总量约束，必须有一条
+      //   let itemTotal = 0
+      //   for (let index = 0; index < this.configData.tasksKe.length; index++) {
+      //     itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+      //   }
+      //   itemTotal = itemTotal + this.configData.tasksBi.length
+      //   //时效单位 都有  需要勾选
+      //   if (itemTotal == 0) {
+      //     this.$message.error('总项目必须至少添加一个')
+      //     return
+      //   }
+      // } else {
+      //   //总量约束，必须有一条
+      //   let itemTotal = 0
+      //   for (let index = 0; index < this.configData.tasksKe.length; index++) {
+      //     itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+      //   }
+      //   //时效单位 都有  需要勾选
+      //   if (itemTotal == 0) {
+      //     this.$message.error('总项目必须至少添加一个')
+      //     return
+      //   }
+      // }
+
+      //总量约束，必须有一条
+      let itemTotal = 0
+      for (let index = 0; index < this.configData.tasksKe.length; index++) {
+        itemTotal = itemTotal + this.configData.tasksKe[index].itemsKe.length
+      }
+      itemTotal = itemTotal + this.configData.tasksBi.length
+      //时效单位 都有  需要勾选
+      if (itemTotal == 0) {
+        this.$message.error('总项目必须至少添加一个')
+        return
       }
 
       //处理成接口需要的数据结构 项目类型：1可选2必选
