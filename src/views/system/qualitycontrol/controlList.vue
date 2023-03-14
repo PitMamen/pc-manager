@@ -606,7 +606,6 @@ export default {
      * 显示隐藏 审核按钮  （待随访的  不显示审核 和 查看 操作）
      */
     showOrHide(record, type) {
-      console.log('999999:', record.auditResultStatus.value)
 
       // if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
       if (this.queryParams.type == 1) {
