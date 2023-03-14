@@ -2814,6 +2814,22 @@ export function getUsersByDeptIdsAndRoles(data) {
 
 
 /**
+ * 随访问卷开关配置
+ */
+export function getSwitchStatus(data){
+  return axios({
+    url:'/info-api/sysConfigData/get/department_management_status',
+    method:"get",
+    params: data,
+  })
+}
+
+
+
+
+
+
+/**
  * 审核随访任务
  */
 export function audit(data) {
@@ -4124,5 +4140,88 @@ export function tradeBillExport(data) {
     method: 'post',
     data: data,
     responseType: 'blob'
+  })
+}
+
+
+//用户标签分类列表
+export function getUserTagsTypeList(data){
+  return axios({
+    url:'/account-api/tdUserTagsType/getUserTagsTypeList',
+    method:'post',
+    data:data,
+  })
+ 
+}
+
+
+//添加用户标签分类
+export function addUserTagsType(data){
+  return axios({
+    url:'/account-api/tdUserTagsType/addUserTagsType',
+    method:'post',
+    data:data,
+  })
+ 
+}
+
+
+//删除分类
+export function deleteUserTagsType(id){
+  return axios({
+    url:'/account-api/tdUserTagsType/deleteUserTagsType/'+id,
+    method:'post',
+    // data:data,
+  })
+ 
+}
+
+
+
+//修改分类
+export function modifyUserTagsType(data){
+  return axios({
+    url:'/account-api/tdUserTagsType/modifyUserTagsType',
+    method:'post',
+    data:data,
+  })
+ 
+}
+
+
+//用户标签列表
+export function getUserTags(data){
+  return axios({
+    url:'/account-api/tdUserTags/getUserTags',
+    method:'post',
+    data:data,
+  })
+}
+
+
+//删除用户标签
+export function deleteUserTag(id){
+  return axios({
+    url:'/account-api/tdUserTags/deleteUserTags/'+id,
+    method:'post',
+    // data:data,
+  })
+}
+
+//添加用户标签
+export function addUserTag(data){
+  return axios({
+    url:'/account-api/tdUserTags/addUserTags',
+    method:'post',
+    data:data,
+  })
+}
+
+//修改用户标签
+export function modifyUserTag(data){
+  return axios({
+    url:'/account-api/tdUserTags/modifyUserTags',
+    method:'post',
+    data:data,
   })
 }

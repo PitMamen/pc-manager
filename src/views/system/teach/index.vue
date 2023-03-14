@@ -95,7 +95,9 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a @click="$refs.checkModel.init(record.articleId)"><a-icon style="margin-right:5px" type="eye"></a-icon>查看</a>
+              <a @click="$refs.checkModel.init(record.articleId)"
+                ><a-icon style="margin-right: 5px" type="eye"></a-icon>查看</a
+              >
               <a-divider type="vertical" />
               <a @click="$refs.addModel.editModel(record.articleId)"><a-icon type="edit"></a-icon>修改</a>
               <a-divider type="vertical" />
@@ -231,7 +233,6 @@ export default {
       ],
 
       selects: [
-        
         {
           id: 1,
           name: '上架',

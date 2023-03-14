@@ -9,7 +9,6 @@
           :collapse-tags="true"
           show-search
           v-model="queryParams.executeDepartmentIds"
-          mode="multiple"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
@@ -53,7 +52,7 @@
           v-model="queryParams.queryStr"
           allow-clear
           placeholder="输入患者姓名或手机号码"
-          style="width: 120px; height: 28px"
+          style="width: 185px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -76,8 +75,9 @@
         /><span style="margin-left: 3px"></span>
 
         <a-dropdown>
-          <span placement="bottomCenter"><a-icon style="padding-left=5px;" />{{ daisuif }} </span>
-          <a-menu slot="overlay">
+          <!-- <span v-show="isOpen" placement="bottomCenter"><a-icon style="padding-left=5px;" />{{'待随访'}} </span> -->
+          <span placement="bottomCenter"><a-icon style="padding-left=5px;" />{{ isOpen ? daisuif : '待随访' }} </span>
+          <a-menu v-show="isOpen" slot="overlay">
             <a-menu-item key="1">
               <a @click="all(1, 1)" href="javascript:;">全部</a>
             </a-menu-item>
@@ -101,7 +101,7 @@
           <span placement="bottomCenter" class="ant-dropdown-link"
             ><a-icon style="padding-left=5px" />{{ flowsuccess }}
           </span>
-          <a-menu slot="overlay">
+          <a-menu v-show="isOpen" slot="overlay">
             <a-menu-item>
               <a @click="all(4, 2)" href="javascript:;">全部</a>
             </a-menu-item>
@@ -124,7 +124,7 @@
           <span placement="bottomCenter" class="ant-dropdown-link"
             ><a-icon style="padding-left=5px" /> {{ flowfail }}</span
           >
-          <a-menu slot="overlay">
+          <a-menu v-show="isOpen" slot="overlay">
             <a-menu-item>
               <a @click="all(7, 3)" href="javascript:;">全部</a>
             </a-menu-item>
@@ -148,7 +148,7 @@
           <span placement="bottomCenter" class="ant-dropdown-link"
             ><a-icon style="padding-left=5px" /> {{ flowoverdue }}</span
           >
-          <a-menu slot="overlay">
+          <a-menu v-show="isOpen" slot="overlay">
             <a-menu-item>
               <a @click="all(10, 4)" href="javascript:;">全部</a>
             </a-menu-item>
@@ -167,7 +167,7 @@
       <a-button style="float: right;margin-left;: 0px" type="primary" ghost @click="batchTransfer()">
         批量转移
       </a-button>
-      <a-button style="float: right; margin-right: 20px" type="primary" ghost @click="batchExamine()">
+      <a-button v-show="isOpen" style="float: right; margin-right: 20px" type="primary" ghost @click="batchExamine()">
         批量审核
       </a-button>
     </div>
@@ -204,18 +204,21 @@
       :rowKey="(record) => record.id"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goDetail(record)"><a-icon style="margin-right:5px" type="hdd"></a-icon>详情</a>
+        <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
         <a-divider v-if="showLine" type="vertical" />
-        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)"><a-icon style="margin-right:5px" type="idcard"></a-icon>{{
-          getText(record.auditResultStatus.value)
-        }}</a>
+        <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)"
+          ><a-icon style="margin-right: 5px" type="idcard"></a-icon>{{ getText(record.auditResultStatus.value) }}</a
+        >
         <a-divider type="vertical" />
-        <a @click="gotransfer(record)" :disabled="checkDis(record.status)"><a-icon style="margin-right:5px" type="swap"></a-icon>转移</a>
+        <a @click="gotransfer(record)" :disabled="checkDis(record.status)"
+          ><a-icon style="margin-right: 5px" type="swap"></a-icon>转移</a
+        >
       </span>
 
       <!-- 审核   只显示审核不通过的  未审核  审核通过不显示  v-if="record.auditResultStatus.value == 2" -->
       <span
-      slot="examine11"
+        v-show="isOpen"
+        slot="examine11"
         slot-scope="text, record"
         :title="showTitle(record)"
         :class="getClass(record.auditResultStatus.value)"
@@ -248,6 +251,7 @@ import {
   followList, //随访任务列表
   questionnaires, //问卷列表
   getUsersByDeptIdsAndRoles, //随访医生
+  getSwitchStatus,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -265,6 +269,7 @@ export default {
   data() {
     return {
       fetching: false,
+      isOpen: false,
       showLine: true,
       dealResultTitle: '处理结果',
       totalCount: 0,
@@ -403,6 +408,11 @@ export default {
     }
   },
 
+  activated() {
+    console.log('点点点')
+    this.getSwitchStatusOut()
+  },
+
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
@@ -423,7 +433,7 @@ export default {
     //     }
     //   })
     // }
-
+    this.getSwitchStatusOut()
     this.getDepartmentSelectList(undefined)
 
     this.createValue = [
@@ -442,6 +452,17 @@ export default {
       mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
       myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
       return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    //获取状态开关
+    getSwitchStatusOut() {
+      getSwitchStatus().then((res) => {
+        if (res.code == 0) {
+          this.isOpen = res.data
+        }
+      })
+
+      // console.log("KKK:",this.isOpen)
     },
 
     getClass(status) {
@@ -524,8 +545,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records

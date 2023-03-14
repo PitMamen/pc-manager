@@ -3,18 +3,11 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-service-control">
         <div class="div-service-left-control">
-          <a-tree-select
-            v-model="queryParam.hospitalCode"
-            style="min-width: 180px; height: 28px"
-            :tree-data="treeData"
-            placeholder="请选择机构"
-            tree-default-expand-all
-            @select="selectChange"
-          >
-          </a-tree-select>
+          <div style="margin-top: 10px">标签类别</div>
+          <div class="line"></div>
 
           <div class="left-content" style="margin-right: 10px">
-            <div class="typeadd" @click="$refs.addTeam.addTeam()">
+            <div class="typeadd" @click="$refs.addTab.addTab()">
               新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
             <div class="ksview" v-for="(item, index) in leftListData" :key="index">
@@ -23,10 +16,10 @@
                 class="left-lb-title"
                 @click="onCategoryChange(item)"
               >
-                {{ item.teamName }}
+                {{ item.tagsTypeName }}
               </div>
               <div class="content-right">
-                <a style="color: #409eff; margin-right: 10px" @click="$refs.modifyTeam.editModel(item)">修改</a>
+                <a style="color: #409eff; margin-right: 10px" @click="$refs.addTab.editTab(item)">修改</a>
                 <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
                   <a>删除</a>
                 </a-popconfirm>
@@ -40,12 +33,37 @@
           </div>
         </div>
         <div class="div-service-right-control">
-          <div class="table-page-search-wrapper" style="margin-bottom:-20px">
-            <div class="table-operator" style="overflow: hidden; margin-top: 0px; margin-bottom: 0px">
-              <a-button :disabled="!leftListData || leftListData.length == 0" icon="plus" style="float: right; margin-right: 0" @click="$refs.addTeamUser.addUser(params.id)"
-                >新增成员</a-button
-              >
+          <div class="table-page-search-wrapper">
+            <div class="search-row">
+              <span class="name">标签名称:</span>
+              <a-input
+                v-model="params.tagsName"
+                allow-clear
+                placeholder="请输入标签名称查询"
+                style="width: 120px; height: 28px"
+                @keyup.enter="$refs.table.refresh(true)"
+                @search="$refs.table.refresh(true)"
+              />
             </div>
+
+            <div class="action-row">
+              <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+                <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+                <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+              </span>
+            </div>
+
+            <!-- <div class="table-operator" style="overflow: hidden; margin-top: 0px; margin-bottom: 0px">
+                <a-button :disabled="!leftListData || leftListData.length == 0" icon="plus" style="float: right; margin-right: 0" 
+                  >新增成员</a-button
+                >
+              </div> -->
+          </div>
+
+          <div class="table-operator" style="overflow: hidden">
+            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addLable.addLable()"
+              >新增</a-button
+            >
           </div>
 
           <s-table
@@ -58,42 +76,45 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteUser(record)">
+              <a style="margin-right: 5px" @click="$refs.addLable.editLable(record)">
+                <a-icon style="margin-right: 5px" type="edit"></a-icon>编辑</a
+              >
+              <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteUserTagOut(record)">
                 <a><a-icon style="margin-right: 5px" type="delete"></a-icon>移除</a>
               </a-popconfirm>
             </span>
-
           </s-table>
         </div>
       </div>
-      <modify-Team ref="modifyTeam" @ok="refreshLeftList" />
-      <add-Team ref="addTeam" @ok="refreshLeftList" />
-      <add-TeamUser ref="addTeamUser" @ok="handleOk" />
+      <!-- <modify-Team ref="modifyTeam" @ok="refreshLeftList" /> -->
+      <add-Tab ref="addTab" @ok="refreshLeftList" />
+      <add-Lable ref="addLable" @ok="handleOk" />
     </a-spin>
   </a-card>
 </template>
-  
-  <script>
+    
+    <script>
 import { STable } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
-import modifyTeam from './modifyTeam'
-import addTeam from './addTeam'
-import addTeamUser from './addTeamUser'
+import addTab from './addTab'
+//   import modifyTeam from './modifyTeam'
+import addLable from './addLable'
 import Vue from 'vue'
 import {
-  getTdHealthyTeamUserPageList,
-  getTdHealthyTeamPageList,
+  getUserTags,
+  getUserTagsTypeList,
   queryHospitalList,
-  deleteTdHealthyTeam,
-  deleteTdHealthyTeamUser,
+  deleteUserTagsType,
+  deleteUserTag,
 } from '@/api/modular/system/posManage'
 
 export default {
   components: {
     STable,
-    modifyTeam,
-    addTeam,
-    addTeamUser,
+    //   modifyTeam,
+    addTab,
+    addLable,
+    //   addTeamUser,
   },
 
   data() {
@@ -110,49 +131,36 @@ export default {
         xs: { span: 24 },
         sm: { span: 11 },
       },
-      queryParam: {
-        description: undefined,
-        hospitalCode: undefined,
+
+      queryParamType: {
         pageNo: 1,
-        pageSize: 999,
-        teamName: '',
+        pageSize: 100,
       },
 
       params: {
-        id: -1,
+        id: '',
+        tagsName: '',
+        tagsTypeId: '',
       },
       // 表头
       columns: [
         {
-          title: '姓名',
-          dataIndex: 'name',
-          width: 80,
+          title: '标签名称',
+          dataIndex: 'tagsName',
           ellipsis: true,
         },
         {
-          title: '性别',
-          dataIndex: 'sex',
+          title: '创建时间',
+          dataIndex: 'createdTime',
         },
         {
-          title: '出生日期',
-          dataIndex: 'birthday',
+          title: '更新时间',
+          dataIndex: 'updatedTime',
         },
-        {
-          title: '联系电话',
-          dataIndex: 'phone',
-        },
-        {
-          title: '团队角色',
-          dataIndex: 'teamRoleValue',
-        },
-        {
-          title: '所属机构',
-          dataIndex: 'hospitalName',
-        },
-        {
-          title: '所属部门',
-          dataIndex: 'departmentNames',
-        },
+        // {
+        //   title: '患者数',
+        //   dataIndex: 'phone',
+        // },
 
         {
           title: '操作',
@@ -164,7 +172,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getTdHealthyTeamUserPageList(Object.assign(parameter, this.params)).then((res) => {
+        return getUserTags(Object.assign(parameter, this.params)).then((res) => {
           //组装控件需要的数据结构
           var data = {
             pageNo: parameter.pageNo,
@@ -175,7 +183,7 @@ export default {
           }
           if (res.code == 0 && res.data.records.length > 0) {
             data.rows.forEach((item, index) => {
-              this.$set(item, 'teamRoleValue', item.teamRole ? item.teamRole.description : '')
+              //   this.$set(item, 'teamRoleValue', item.teamRole ? item.teamRole.description : '')
             })
           }
 
@@ -188,38 +196,16 @@ export default {
     }
   },
 
-
   created() {
-    this.getTdHealthyTeamPageListOut()
+    this.getUserTagsTypeListOut()
     this.queryHospitalListOut()
   },
 
   methods: {
-    onStatusSelect(id) {
-      this.queryParam.isVisible = id == 1 ? true : false
-    },
-
-    onStatusChange(id) {
-      if (!id) {
-        delete this.queryParam.isVisible
-      }
-    },
-
     reset() {
-      this.queryParam.title = ''
-      this.queryParam.isVisible = true
-      this.queryParam.categoryId = ''
-      this.queryParam.departmentId = ''
+      this.params.tagsName = ''
 
       this.$refs.table.refresh()
-    },
-
-    /**
-     * 下拉框选中
-     */
-    selectChange(data) {
-      this.queryParam.hospitalCode = data
-      this.getTdHealthyTeamPageListOut()
     },
 
     /**
@@ -264,19 +250,19 @@ export default {
     },
 
     //健康团队分页列表  （左侧）
-    getTdHealthyTeamPageListOut() {
-      getTdHealthyTeamPageList(this.queryParam).then((res) => {
+    getUserTagsTypeListOut() {
+      getUserTagsTypeList(this.queryParamType).then((res) => {
         if (res.code == 0) {
           if (res.data.records && res.data.records.length > 0) {
             res.data.records.forEach((item) => {
               item.checked = false
             })
             this.leftListData = res.data.records
-            this.params.id = this.leftListData[0].id //默认第一个 id
+            this.params.tagsTypeId = this.leftListData[0].id //默认第一个 id
             this.leftListData[0].checked = true
           } else {
-            this.leftListData=[]
-            this.params.id = -1 //默认第一个 id
+            this.leftListData = []
+            this.params.tagsTypeId = -1 //默认第一个 id
           }
           this.$refs.table.refresh()
         } else {
@@ -291,23 +277,22 @@ export default {
       this.leftListData.forEach((e) => {
         if (e.id == item.id) {
           e.checked = true
-          this.queryParam.id = e.id
         } else {
           e.checked = false
         }
-        this.params.id = item.id
+        this.params.tagsTypeId = item.id
       })
       this.$refs.table.refresh()
     },
 
     //删除团队
     goDelete(item) {
-      this.confirmLoading = true
-      deleteTdHealthyTeam(item.id).then((res) => {
+      //   this.confirmLoading = true
+      deleteUserTagsType(item.id).then((res) => {
         this.confirmLoading = false
         if (res.code == 0) {
           this.$message.success('删除成功')
-          this.getTdHealthyTeamPageListOut()
+          this.getUserTagsTypeListOut()
           this.handleOk()
         } else {
           this.$message.error('删除失败：' + res.message)
@@ -316,11 +301,11 @@ export default {
     },
 
     /**
-     * 删除成员
+     * 删除标签
      */
-    deleteUser(record) {
+    deleteUserTagOut(record) {
       this.confirmLoading = true
-      deleteTdHealthyTeamUser(record.id)
+      deleteUserTag(record.id)
         .then((res) => {
           if (res.code == 0) {
             this.$message.success('删除成功')
@@ -335,16 +320,14 @@ export default {
     },
 
     handleOk() {
-      console.log("77777777777777")
+      console.log('77777777777777')
       this.$refs.table.refresh()
     },
 
- 
-    refreshLeftList(){
-      console.log("88888888888")
-      this.getTdHealthyTeamPageListOut() //刷新健康团队列表 (左侧)
+    refreshLeftList() {
+      console.log('88888888888')
+      this.getUserTagsTypeListOut() //刷新健康团队列表 (左侧)
     },
-
 
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -353,15 +336,15 @@ export default {
   },
 }
 </script>
-
-<style >
+  
+  <style >
 .ant-select-tree-dropdown {
   max-height: 60vh !important;
   top: 148px !important;
 }
 </style>
-  
-  <style lang="less" scoped>
+    
+    <style lang="less" scoped>
 .card-right-pac {
   overflow: hidden;
   width: 100%;
@@ -381,7 +364,6 @@ export default {
     color: #000;
   }
 }
-
 
 .no-data {
   height: 300px;
@@ -418,6 +400,13 @@ export default {
     overflow: hidden;
 
     border-right: 1px solid #e6e6e6;
+
+    .line {
+      height: 1px;
+      margin-top: 20px;
+      width: 100%;
+      background: #e8e8e8;
+    }
 
     .left-lb-title {
       overflow: hidden;
@@ -543,8 +532,8 @@ button {
   color: #000;
 }
 </style>
-  
-  <style lang="less" scoped>
+    
+    <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 50px);
@@ -570,4 +559,4 @@ button {
   }
 }
 </style>
-  
+    

@@ -51,11 +51,11 @@
             </a-radio-group>
           </div>
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>出生日期:</span>
+            <span class="span-item-name">出生日期:</span>
             <a-date-picker :value="checkData.birthday?moment(checkData.birthday, 'YYYY-MM-DD'):undefined"  @change="onDatePickerChange" />
           </div>
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>身份证号:</span>
+            <span class="span-item-name">身份证号:</span>
             <a-input
               v-model="checkData.identificationNo"
               class="span-item-value"
@@ -557,21 +557,21 @@ export default {
         this.$message.error('请输入姓名')
         return
       }
-      if (isStringEmpty(this.checkData.birthday)) {
-        this.$message.error('请选择出生日期')
-        return
-      }
-      if (isStringEmpty(this.checkData.identificationNo)) {
-        this.$message.error('请输入身份证号码')
-        return
-      }
+      // if (isStringEmpty(this.checkData.birthday)) {
+      //   this.$message.error('请选择出生日期')
+      //   return
+      // }
+      // if (isStringEmpty(this.checkData.identificationNo)) {
+      //   this.$message.error('请输入身份证号码')
+      //   return
+      // }
 
-      var idRes = idCardValidity(this.checkData.identificationNo)
-      console.log(idRes)
-      if (!idRes.result) {
-        this.$message.error('请输入正确的身份证号码')
-        return
-      }
+      // var idRes = idCardValidity(this.checkData.identificationNo)
+      // console.log(idRes)
+      // if (!idRes.result) {
+      //   this.$message.error('请输入正确的身份证号码')
+      //   return
+      // }
 
       if (isStringEmpty(this.checkData.phone)) {
         this.$message.error('请输入联系电话')
@@ -686,7 +686,7 @@ export default {
         email: this.checkData.email,
         phone: this.checkData.phone,
         avatarUrl: this.checkData.avatarUrl,
-        birthday: this.checkData.birthday.split('-').join(''),
+        birthday: this.checkData.birthday?this.checkData.birthday.split('-').join(''):'',
         doctorBrief: this.checkData.doctorBrief,
         expertInDisease: this.checkData.expertInDisease,
         userType:this.checkData.userType, //人员类型
