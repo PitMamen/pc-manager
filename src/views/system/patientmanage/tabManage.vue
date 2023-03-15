@@ -67,9 +67,10 @@
           </div>
 
           <s-table
-            :scroll="{ x: true }"
-            ref="table"
-            size="default"
+          style="overflow-y: auto;"
+          :showPagination="false"
+          ref="table"
+          size="default"
             :columns="columns"
             :data="loadData"
             :alert="true"
@@ -141,6 +142,8 @@ export default {
         id: '',
         tagsName: '',
         tagsTypeId: '',
+        pageNo: 1,
+        pageSize: 999,
       },
       // 表头
       columns: [
@@ -181,11 +184,11 @@ export default {
             totalPage: res.data.total / parameter.pageSize,
             rows: res.data.records,
           }
-          if (res.code == 0 && res.data.records.length > 0) {
-            data.rows.forEach((item, index) => {
-              //   this.$set(item, 'teamRoleValue', item.teamRole ? item.teamRole.description : '')
-            })
-          }
+          // if (res.code == 0 && res.data.records.length > 0) {
+          //   data.rows.forEach((item, index) => {
+          //     //   this.$set(item, 'teamRoleValue', item.teamRole ? item.teamRole.description : '')
+          //   })
+          // }
 
           return data
         })
