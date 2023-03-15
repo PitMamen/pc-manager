@@ -102,7 +102,6 @@ export default {
         },
         {
           title: '操作',
-          fixed: 'right',
           scopedSlots: { customRender: 'action' },
         },
       ],
@@ -222,30 +221,12 @@ export default {
 
  <style lang="less" scoped>
 /deep/.ant-radio-wrapper {
-  // -webkit-box-sizing: border-box;
-  // box-sizing: border-box;
-  // margin: 0;
-  // padding: 0;
-  // color: rgba(0, 0, 0, 0.65);
-  // font-size: 14px;
-  // font-variant: tabular-nums;
-  // line-height: 1.5;
-  // list-style: none;
-  // -webkit-font-feature-settings: 'tnum';
-  // font-feature-settings: 'tnum';
-  // position: relative;
-  // display: inline-block;
-  // margin-right: 28px;
-  // white-space: nowrap;
-  // cursor: pointer;
-  //   vertical-align: sub;
-  // margin-bottom: 3px !important;
   box-sizing: border-box;
     margin: 0;
     padding: 0;
     color: rgba(0, 0, 0, 0.65);
     font-size: 14px;
-    font-variant: tabular-nums;
+    // font-variant: tabular-nums;
     line-height: 1.5;
     list-style: none;
     -webkit-font-feature-settings: 'tnum';
@@ -258,6 +239,24 @@ export default {
     outline: none;
     cursor: pointer;
     margin-bottom: 3px !important;
+}
+
+
+
+/deep/.ant-radio-inner {
+    position: relative;
+    top: 0;
+    left: 0;
+    display: block;
+    width: 16px;
+    height: 16px;
+    background-color: #fff;
+    border-color: #d9d9d9;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 100px;
+    -webkit-transition: all 0.3s;
+    transition: all 0.3s;
 }
 </style>
 
@@ -290,6 +289,6 @@ export default {
   margin-right: 28px;
   white-space: nowrap;
   cursor: pointer;
-  margin-bottom: 33px;
+  margin-bottom: 3px;
 }
 </style>

@@ -18,7 +18,7 @@
               allow-clear
               style="width: 120px; height: 28px"
             >
-              <a-select-option v-for="item in selects" :key="item.code" :value="item.code">{{
+              <a-select-option v-for="item in bigTagType" :key="item.code" :value="item.code">{{
                 item.value
               }}</a-select-option>
             </a-select>
@@ -42,7 +42,7 @@
       
       
       <script>
-import { addUserTagsType, queryHospitalList,modifyUserTagsType } from '@/api/modular/system/posManage'
+import { addUserTagsType,modifyUserTagsType,getDictDataForCodeTagstype} from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
@@ -65,6 +65,8 @@ export default {
         tagsTypeName: '',
         tagsType: undefined,
       },
+
+      bigTagType:[],
 
       selects: [
         { code: 'jbqk', value: '基本情况' },
@@ -89,6 +91,7 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
+      this.getDictDataForCodeTagstypeOut()
     },
 
     editTab(record) {
@@ -98,6 +101,7 @@ export default {
       this.checkData.tagsTypeName = record.tagsTypeName
       this.checkData.tagsType = record.tagsType
       this.checkData.id = record.id
+      this.getDictDataForCodeTagstypeOut()
     },
 
     handleSubmit() {
@@ -122,6 +126,27 @@ export default {
     },
 
     selectChange(value) {},
+
+
+
+    getDictDataForCodeTagstypeOut(){
+        this.confirmLoading = true
+        getDictDataForCodeTagstype().then((res)=>{
+            if (res.code == 0 && res.data.length > 0) {
+            this.bigTagType = res.data
+            // for (let index = 0; index < this.bigTagType.length; index++) {
+            //   this.bigTagType[index].code = Number(this.bigTagType[index].code)
+            // }
+          } else {
+            this.bigTagType = res.data
+          }
+        }).finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+
+
 
     //添加类别
     addUserTagsTypeOut(postData) {

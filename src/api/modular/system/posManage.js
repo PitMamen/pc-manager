@@ -4166,6 +4166,21 @@ export function addUserTagsType(data){
 }
 
 
+
+/**
+* 所属大类 字典
+*/
+export function getDictDataForCodeTagstype(data) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/tags_type',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
+
 //删除分类
 export function deleteUserTagsType(id){
   return axios({
