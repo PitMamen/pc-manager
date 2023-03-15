@@ -281,6 +281,7 @@ export default {
       flowsuccess: '随访成功',
       flowfail: '随访失败',
       flowoverdue: '随访逾期',
+      singleRowkey:[],
       selectedRowKeys: [],
       selectedRows: [],
       //   selectionRows:[],
@@ -588,6 +589,7 @@ export default {
         this.selectedRowKeys.push(record.id)
         var templateData = JSON.parse(JSON.stringify(this.selectedRowKeys))
         this.$refs.examine.process(templateData, 'xxx')
+        this.updateSelect()
       }
     },
 
@@ -633,13 +635,14 @@ export default {
       this.selectedRowKeys.push(record.id)
       var templateData = JSON.parse(JSON.stringify(this.selectedRowKeys))
       this.$refs.transfer.transfer(templateData, flowDocData, 'xxx')
+      this.updateSelect()
     },
 
     /**
      * 批量转移
      */
     batchTransfer() {
-      // console.log("数据大小11:",this.selectedRowKeys)
+      console.log("数据大小11:",this.selectedRowKeys)
       if (this.selectedRowKeys.length == 0) {
         this.$message.error('请勾选内容!')
         return
@@ -1045,7 +1048,8 @@ export default {
     },
 
     handleOk(resultData) {
-      console.log('tttt:', resultData)
+      // console.log('tttt:', resultData)
+      this.updateSelect()
       if (resultData && resultData.totalCount > 1) {
         this.visible_updPwd = true
         this.dealResultData = resultData
@@ -1054,7 +1058,6 @@ export default {
         this.successCount = resultData.succCount
         this.failCount = resultData.failCount
       }
-      this.updateSelect()
       this.$refs.table.refresh()
     },
 
@@ -1062,6 +1065,7 @@ export default {
     updateSelect() {
       this.selectedRowKeys = []
       this.selectedRows = []
+      this.singleRowkey=[]
       this.$refs.table.updateSelect(this.selectedRowKeys, [])
       this.$refs.table.updateSelect(this.selectedRows, [])
     },
