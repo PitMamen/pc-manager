@@ -609,7 +609,10 @@ export default {
      */
     showOrHide(record, type) {
 
-      // if (this.queryParams.type == 1 && record.auditResultStatus.value != 1) {
+      if(this.isOpen){
+        return true
+      }
+
       if (this.queryParams.type == 1) {
         this.showLine = false
         return false
