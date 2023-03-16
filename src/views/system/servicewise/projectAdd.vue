@@ -196,6 +196,28 @@
           :key="indexTask"
           :value="itemTask.taskId"
         >
+          <div class="mission-top-add">
+            <div class="btn-top" @click="addStop(indexTask)">
+              <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop_d.png" /><span
+                style="color: white; margin-left: 10px"
+                >终止条件</span
+              >
+            </div>
+            <div class="btn-top" @click="addFilter(indexTask)">
+              <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_filter.png" /><span
+                style="color: white; margin-left: 10px"
+                >过滤条件</span
+              >
+            </div>
+            <div class="btn-desc">
+              <div class="desc-content" style="color: #cb0000">终止条件：</div>
+              <div class="desc-content" style="color: #1890ff; margin-top: 5px">过滤条件：</div>
+            </div>
+          </div>
+
+          <!-- 分割线 -->
+          <div class="div-divider"></div>
+
           <div class="mission-top">
             <a-select
               class="mid-select-one"
@@ -340,10 +362,10 @@
               format="HH:mm"
             />
 
-            <div class="end-btn-stop" style="margin-left: 2%; width: 80px" @click="addStop(indexTask)">
+            <!-- <div class="end-btn-stop" style="margin-left: 2%; width: 80px" @click="addStop(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop.png" />
               <span style="width: 50px; color: #1890ff; margin-left: 3%">终止条件</span>
-            </div>
+            </div> -->
           </div>
 
           <!-- 分割线 -->
@@ -451,6 +473,7 @@
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
       <add-stop ref="addStop" @ok="handleAddStop" />
+      <add-filter ref="addFilter" @ok="handleAddFilter" />
     </div>
   </a-spin>
 </template>
@@ -483,12 +506,14 @@ import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
 import addStop from './addStop'
+import addFilter from './addFilter'
 import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
   components: {
     addPeople,
     addStop,
+    addFilter,
   },
 
   data() {
@@ -846,6 +871,25 @@ export default {
     handleAddStop(index, arr) {
       this.projectData.tasks[index].stopTaskDetailDtos = arr
       console.log('stopTaskDetailDtos got', arr)
+    },
+
+    addFilter(indexMisson) {
+      if (!this.projectData.basePlan.metaConfigureId) {
+        this.$message.error('请选择来源名单')
+        return
+      }
+      this.$refs.addFilter.add(
+        indexMisson,
+        this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos,
+        this.chooseData,
+        this.operateData
+      )
+    },
+
+    handleAddFilter(index, filterRules, secondaryFilterTypeEnum) {
+      this.$set(this.projectData.tasks[index], 'taskDetailFilterRuleDtos', filterRules)
+      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnum', secondaryFilterTypeEnum)
+      console.log('handleAddFilter filterRules', filterRules)
     },
 
     delMission(index, item) {
@@ -1452,6 +1496,36 @@ export default {
       margin-top: 1%;
       border: 1px solid #e6e6e6;
       width: 100%;
+
+      .mission-top-add {
+        font-size: 12px;
+        display: flex;
+        flex-direction: row;
+        margin-top: 1%;
+        align-items: center;
+
+        .btn-top {
+          margin-left: 1%;
+          display: flex;
+          background: #1890ff;
+          border: #1890ff solid 1px;
+          border-radius: 3px;
+          padding: 5px 10px;
+          flex-direction: row;
+          align-items: center;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .btn-desc {
+          margin-left: 1%;
+          display: flex;
+          flex-direction: column;
+          .desc-content {
+          }
+        }
+      }
 
       .mission-top {
         margin-top: 1%;
