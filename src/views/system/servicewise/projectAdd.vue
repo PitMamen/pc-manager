@@ -210,8 +210,10 @@
               >
             </div>
             <div class="btn-desc">
-              <div class="desc-content" style="color: #cb0000">终止条件：</div>
-              <div class="desc-content" style="color: #1890ff; margin-top: 5px">过滤条件：</div>
+              <div class="desc-content" style="color: #cb0000">终止条件：{{ itemTask.stopConditionRemark }}</div>
+              <div class="desc-content" style="color: #1890ff; margin-top: 5px">
+                过滤条件：{{ itemTask.filterConditionRemark }}
+              </div>
             </div>
           </div>
 
@@ -868,8 +870,14 @@ export default {
       )
     },
 
-    handleAddStop(index, arr) {
+    /**
+     * 终止条件回调
+     * @param {*} index
+     * @param {*} arr
+     */
+    handleAddStop(index, arr, stopConditionRemark) {
       this.projectData.tasks[index].stopTaskDetailDtos = arr
+      this.$set(this.projectData.tasks[index], 'stopConditionRemark', stopConditionRemark)
       console.log('stopTaskDetailDtos got', arr)
     },
 
@@ -886,9 +894,16 @@ export default {
       )
     },
 
-    handleAddFilter(index, filterRules, secondaryFilterTypeEnum) {
+    /**
+     * 过滤条件回调
+     * @param {*} index
+     * @param {*} filterRules
+     * @param {*} secondaryFilterTypeEnum
+     */
+    handleAddFilter(index, filterRules, secondaryFilterTypeEnumm, filterConditionRemark) {
       this.$set(this.projectData.tasks[index], 'taskDetailFilterRuleDtos', filterRules)
-      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnum', secondaryFilterTypeEnum)
+      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnumm', secondaryFilterTypeEnumm)
+      this.$set(this.projectData.tasks[index], 'filterConditionRemark', filterConditionRemark)
       console.log('handleAddFilter filterRules', filterRules)
     },
 

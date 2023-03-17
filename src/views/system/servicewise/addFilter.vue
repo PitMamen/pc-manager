@@ -156,6 +156,7 @@ export default {
       this.visible = true
       this.index = index
       this.filterRules = filterRules || [{ fieldType: 1 }]
+      console.log('add this.filterRules', this.filterRules)
       this.chooseData = chooseData
       this.operateData = operateData
 
@@ -167,7 +168,9 @@ export default {
      */
     processData() {
       this.filterRules.forEach((item) => {
-        item.metaConfigureDetailId = item.metaConfigureDetailId + ''
+        if (item.metaConfigureDetailId) {
+          item.metaConfigureDetailId = item.metaConfigureDetailId + ''
+        }
         if (item.fieldType == 2) {
           // this.$set(item, 'queryValue', 4)
           item.queryValue = moment(item.queryValue, 'YYYY-MM-DD')
@@ -202,6 +205,7 @@ export default {
     },
     handleSubmit() {
       let newArr = JSON.parse(JSON.stringify(this.filterRules))
+      let filterConditionRemark = ''
       if (newArr.length > 0) {
         for (let indexRule = 0; indexRule < newArr.length; indexRule++) {
           let itemRule = newArr[indexRule]
@@ -223,9 +227,21 @@ export default {
           }
           console.log('itemRule.queryValue', itemRule.queryValue)
         }
+
+        //拼接描述 filterConditionRemark
+        for (let index = 0; index < newArr.length; index++) {
+          // let nameStr = ''
+          let nameStr = this.chooseData.find((item) => item.value == newArr[index].metaConfigureDetailId).description
+          let relationStr = this.operateData.find((item) => item.value == newArr[index].condition).description
+          if (index != newArr.length - 1) {
+            filterConditionRemark = filterConditionRemark + nameStr + relationStr + newArr[index].queryValue + '，或'
+          } else {
+            filterConditionRemark = filterConditionRemark + nameStr + relationStr + newArr[index].queryValue + '。'
+          }
+        }
       }
 
-      this.$emit('ok', this.index, newArr, this.secondaryFilterTypeEnum)
+      this.$emit('ok', this.index, newArr, this.secondaryFilterTypeEnum, filterConditionRemark)
       this.visible = false
     },
     handleCancel() {

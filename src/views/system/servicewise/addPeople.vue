@@ -256,13 +256,11 @@ export default {
 
     onDeptSelect(department_id) {
       if (this.choseDepartmentId != this.lastDeptId) {
-        debugger
         this.saveChoseDeptData(true)
       }
     },
 
     saveChoseDeptData(needChange) {
-      debugger
       this.countTotal()
 
       if (this.choseNum == 0) {
@@ -304,7 +302,6 @@ export default {
             dataReady: true,
           }
 
-          debugger
           //保存后台需要的数据
           let commodityPkgManageItemRsps = JSON.parse(JSON.stringify(this.choseUsers))
           let proccesedAssignments = []
@@ -321,7 +318,6 @@ export default {
               this.$set(proccesedAssignments[index], 'assignId', item.assignId)
             }
           })
-          debugger
           this.$set(this.departmentLst[indexOut].checkData, 'proccesedAssignments', proccesedAssignments)
           console.log('addItem indexOut', indexOut)
           console.log('addItem', JSON.stringify(this.departmentLst[indexOut]))
@@ -389,7 +385,6 @@ export default {
           this.choseUsers = []
 
           console.log('before', JSON.parse(JSON.stringify(this.deptUsers)))
-          debugger
           console.log('assignments', JSON.parse(JSON.stringify(this.assignments)))
           this.deptUsers.users.forEach((item) => {
             this.$set(item, 'isChecked', false)
@@ -459,7 +454,6 @@ export default {
       if (this.isAverage) {
         let num = (100 / this.choseUsers.length).toFixed(0)
         //平均的时候先设均值，然后改变最后一个值
-        debugger
         this.choseUsers.forEach((item, index) => {
           this.$set(item, 'weight', num)
         })
@@ -553,9 +547,7 @@ export default {
     },
 
     handleSubmit() {
-      debugger
       this.saveChoseDeptData(false)
-      debugger
       for (let index = 0; index < this.departmentLst.length; index++) {
         if (!this.departmentLst[index].checkData.dataReady) {
           this.$message.error('【' + this.departmentLst[index].department_name + '】' + '科室未配置人员')
@@ -582,7 +574,6 @@ export default {
 
       let departmentDtos = []
       for (let indexDown = 0; indexDown < this.departmentLst.length; indexDown++) {
-        debugger
         console.log('in item', JSON.stringify(this.departmentLst[indexDown].checkData.proccesedAssignments))
         departmentDtos.push({
           executeDepartmentId: this.departmentLst[indexDown].department_id,
