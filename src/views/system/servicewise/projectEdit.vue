@@ -208,7 +208,7 @@
                 >终止条件</span
               >
             </div>
-            <div class="btn-top" style="margin-left: 10px;" @click="addFilter(indexTask)">
+            <div class="btn-top" style="margin-left: 10px" @click="addFilter(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_filter.png" /><span
                 style="color: white; margin-left: 10px"
                 >过滤条件</span
@@ -814,6 +814,10 @@ export default {
         item.repeatTimeUnit = parseString(item.repeatTimeUnit)
         item.timeQuantity = parseString(item.timeQuantity)
 
+        if (item.secondaryFilterTypeEnum) {
+          item.secondaryFilterTypeEnum = item.secondaryFilterTypeEnum.value
+        }
+
         //处理每周每月选择的集合
         if (item.repeatTimeUnit == 2) {
           item.everyData = []
@@ -835,7 +839,7 @@ export default {
             item.everyData.push({ value: str + '', description: index + 1 + '号' })
           }
         }
-
+        debugger
         //处理微信短信是否显示电话跟进
         this.$set(item, 'isChecked', true)
         if (
@@ -846,6 +850,7 @@ export default {
         } else {
           this.$set(item, 'isChecked', true)
         }
+        console.log('这里是 isChecked item', item)
 
         //处理电话跟进用户名
         if (item.departmentDtos && item.departmentDtos.length > 0) {
@@ -919,6 +924,7 @@ export default {
                   id: item.id,
                   messageContentType: item.messageContentType,
                   templateTitle: item.templateTitle,
+                  jumpType: item.jumpType,
                 })
               })
               itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -932,6 +938,7 @@ export default {
                   id: item.id,
                   messageContentType: item.messageContentType,
                   templateTitle: item.templateTitle,
+                  jumpType: item.jumpType,
                 })
               })
               itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -945,6 +952,7 @@ export default {
                   id: item.id,
                   messageContentType: item.messageContentType,
                   templateTitle: item.templateTitle,
+                  jumpType: item.jumpType,
                 })
               })
               itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1231,6 +1239,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1246,6 +1255,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1263,6 +1273,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1548,6 +1559,10 @@ export default {
          */
         if ((item.messageType == 2 || item.messageType == 3) && !item.isChecked) {
           delete item.departmentDtos
+          delete item.personnelAssignmentType
+          if (item.overdueFollowType) {
+            delete item.overdueFollowType
+          }
         }
 
         //微信和短信消息时勾选了加人，以及电话随访时需要添加人员

@@ -203,7 +203,7 @@
                 >终止条件</span
               >
             </div>
-            <div class="btn-top" style="margin-left: 10px;" @click="addFilter(indexTask)">
+            <div class="btn-top" style="margin-left: 10px" @click="addFilter(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_filter.png" /><span
                 style="color: white; margin-left: 10px"
                 >过滤条件</span
@@ -958,7 +958,7 @@ export default {
         console.log('pushTimePoint add', itemTask.pushTimePoint)
       }
 
-      //这里做数据优化，只需要3个字段 id  messageContentType templateTitle
+      //这里做数据优化，只需要4个字段 id  messageContentType templateTitle
       if (itemTask.messageType == 1) {
         let arr = []
         this.templateListQues.forEach((item) => {
@@ -966,6 +966,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -978,6 +979,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -996,6 +998,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1045,7 +1048,7 @@ export default {
       let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
-
+      console.log('onTemSelect chooseOne', chooseOne)
       itemTask.messageContentType = chooseOne.messageContentType
 
       if (itemTask.messageType == 1) {
@@ -1291,6 +1294,10 @@ export default {
         if ((item.messageType == 2 || item.messageType == 3) && !item.isChecked) {
           // delete item.assignments
           delete item.departmentDtos
+          delete item.personnelAssignmentType
+          if (item.overdueFollowType) {
+            delete item.overdueFollowType
+          }
         }
 
         //微信和短信消息时勾选了加人，以及电话随访时需要添加人员
