@@ -19,7 +19,7 @@
           >
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_rule.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 8%">新增</span>
+            <span style="width: 50px; color: #1890ff; margin-left: 1%">新增</span>
           </div>
 
           <div

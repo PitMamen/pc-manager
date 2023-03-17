@@ -203,7 +203,7 @@
                 >终止条件</span
               >
             </div>
-            <div class="btn-top" @click="addFilter(indexTask)">
+            <div class="btn-top" style="margin-left: 10px;" @click="addFilter(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_filter.png" /><span
                 style="color: white; margin-left: 10px"
                 >过滤条件</span
