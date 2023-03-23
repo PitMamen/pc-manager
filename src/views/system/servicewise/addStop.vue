@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="终止条件配置"
-    style="width:800px"
+    style="width: 800px"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -198,8 +198,30 @@ export default {
         }
       }
 
+      //拼接描述 stopConditionRemark
+      let stopConditionRemark = ''
+      if (arr.length > 0) {
+        for (let index = 0; index < arr.length; index++) {
+          let itemStr = ''
+          if (arr[index].stopType == 1) {
+            itemStr = arr[index].conditionValue + '终止'
+          } else if (arr[index].stopType == 2) {
+            let nameStr = this.sourceData.find((item) => item.value == arr[index].conditionValue).description
+            itemStr = '出现在' + nameStr + '终止'
+          } else if (arr[index].stopType == 3) {
+            itemStr = '执行' + arr[index].conditionValue + '次后终止'
+          }
+
+          if (index != arr.length - 1) {
+            stopConditionRemark = stopConditionRemark + itemStr + '，或'
+          } else {
+            stopConditionRemark = stopConditionRemark + itemStr + '。'
+          }
+        }
+      }
+
       console.log('addStop arr', arr)
-      this.$emit('ok', this.index, arr)
+      this.$emit('ok', this.index, arr, stopConditionRemark)
       this.visible = false
     },
     handleCancel() {
@@ -210,7 +232,6 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-
 .stop-wrap {
   width: 100%;
   // height: 100%;
@@ -218,7 +239,7 @@ export default {
   overflow-y: auto;
   margin-top: 30px;
   margin-left: 85px;
-  height:350px;
+  height: 350px;
   // display: flex;
   // flex-direction: row;
 

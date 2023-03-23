@@ -196,6 +196,30 @@
           :key="indexTask"
           :value="itemTask.taskId"
         >
+          <div class="mission-top-add">
+            <div class="btn-top" @click="addStop(indexTask)">
+              <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop_d.png" /><span
+                style="color: white; margin-left: 10px"
+                >终止条件</span
+              >
+            </div>
+            <div class="btn-top" style="margin-left: 10px" @click="addFilter(indexTask)">
+              <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_filter.png" /><span
+                style="color: white; margin-left: 10px"
+                >过滤条件</span
+              >
+            </div>
+            <div class="btn-desc">
+              <div class="desc-content" style="color: #cb0000">终止条件：{{ itemTask.stopConditionRemark }}</div>
+              <div class="desc-content" style="color: #1890ff; margin-top: 5px">
+                过滤条件：{{ itemTask.filterConditionRemark }}
+              </div>
+            </div>
+          </div>
+
+          <!-- 分割线 -->
+          <div class="div-divider"></div>
+
           <div class="mission-top">
             <a-select
               class="mid-select-one"
@@ -340,10 +364,10 @@
               format="HH:mm"
             />
 
-            <div class="end-btn-stop" style="margin-left: 2%; width: 80px" @click="addStop(indexTask)">
+            <!-- <div class="end-btn-stop" style="margin-left: 2%; width: 80px" @click="addStop(indexTask)">
               <img style="width: 16px; height: 16px" src="~@/assets/icons/icon_stop.png" />
               <span style="width: 50px; color: #1890ff; margin-left: 3%">终止条件</span>
-            </div>
+            </div> -->
           </div>
 
           <!-- 分割线 -->
@@ -451,6 +475,7 @@
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
       <add-stop ref="addStop" @ok="handleAddStop" />
+      <add-filter ref="addFilter" @ok="handleAddFilter" />
     </div>
   </a-spin>
 </template>
@@ -483,12 +508,14 @@ import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import addPeople from './addPeople'
 import addStop from './addStop'
+import addFilter from './addFilter'
 import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
   components: {
     addPeople,
     addStop,
+    addFilter,
   },
 
   data() {
@@ -843,9 +870,41 @@ export default {
       )
     },
 
-    handleAddStop(index, arr) {
+    /**
+     * 终止条件回调
+     * @param {*} index
+     * @param {*} arr
+     */
+    handleAddStop(index, arr, stopConditionRemark) {
       this.projectData.tasks[index].stopTaskDetailDtos = arr
+      this.$set(this.projectData.tasks[index], 'stopConditionRemark', stopConditionRemark)
       console.log('stopTaskDetailDtos got', arr)
+    },
+
+    addFilter(indexMisson) {
+      if (!this.projectData.basePlan.metaConfigureId) {
+        this.$message.error('请选择来源名单')
+        return
+      }
+      this.$refs.addFilter.add(
+        indexMisson,
+        this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos,
+        this.chooseData,
+        this.operateData
+      )
+    },
+
+    /**
+     * 过滤条件回调
+     * @param {*} index
+     * @param {*} filterRules
+     * @param {*} secondaryFilterTypeEnum
+     */
+    handleAddFilter(index, filterRules, secondaryFilterTypeEnumm, filterConditionRemark) {
+      this.$set(this.projectData.tasks[index], 'taskDetailFilterRuleDtos', filterRules)
+      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnumm', secondaryFilterTypeEnumm)
+      this.$set(this.projectData.tasks[index], 'filterConditionRemark', filterConditionRemark)
+      console.log('handleAddFilter filterRules', filterRules)
     },
 
     delMission(index, item) {
@@ -899,7 +958,7 @@ export default {
         console.log('pushTimePoint add', itemTask.pushTimePoint)
       }
 
-      //这里做数据优化，只需要3个字段 id  messageContentType templateTitle
+      //这里做数据优化，只需要4个字段 id  messageContentType templateTitle
       if (itemTask.messageType == 1) {
         let arr = []
         this.templateListQues.forEach((item) => {
@@ -907,6 +966,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -919,6 +979,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -937,6 +998,7 @@ export default {
             id: item.id,
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
+            jumpType: item.jumpType,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -986,7 +1048,7 @@ export default {
       let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
-
+      console.log('onTemSelect chooseOne', chooseOne)
       itemTask.messageContentType = chooseOne.messageContentType
 
       if (itemTask.messageType == 1) {
@@ -1232,6 +1294,10 @@ export default {
         if ((item.messageType == 2 || item.messageType == 3) && !item.isChecked) {
           // delete item.assignments
           delete item.departmentDtos
+          delete item.personnelAssignmentType
+          if (item.overdueFollowType) {
+            delete item.overdueFollowType
+          }
         }
 
         //微信和短信消息时勾选了加人，以及电话随访时需要添加人员
@@ -1452,6 +1518,36 @@ export default {
       margin-top: 1%;
       border: 1px solid #e6e6e6;
       width: 100%;
+
+      .mission-top-add {
+        font-size: 12px;
+        display: flex;
+        flex-direction: row;
+        margin-top: 1%;
+        align-items: center;
+
+        .btn-top {
+          margin-left: 1%;
+          display: flex;
+          background: #1890ff;
+          border: #1890ff solid 1px;
+          border-radius: 3px;
+          padding: 5px 10px;
+          flex-direction: row;
+          align-items: center;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+
+        .btn-desc {
+          margin-left: 1%;
+          display: flex;
+          flex-direction: column;
+          .desc-content {
+          }
+        }
+      }
 
       .mission-top {
         margin-top: 1%;
