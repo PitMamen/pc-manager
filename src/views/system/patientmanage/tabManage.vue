@@ -61,7 +61,7 @@
           </div>
 
           <div class="table-operator" style="overflow: hidden">
-            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addLable.addLable()"
+            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addLable.addLable(tagsTypeId)"
               >新增</a-button
             >
           </div>
@@ -123,6 +123,7 @@ export default {
       // 高级搜索 展开/关闭
       leftListData: [],
       confirmLoading: false,
+      tagsTypeId:'',
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -207,7 +208,7 @@ export default {
   methods: {
     reset() {
       this.params.tagsName = ''
-
+      this.tagsTypeId=''
       this.$refs.table.refresh()
     },
 
@@ -263,6 +264,7 @@ export default {
             this.leftListData = res.data.records
             this.params.tagsTypeId = this.leftListData[0].id //默认第一个 id
             this.leftListData[0].checked = true
+            this.tagsTypeId = this.leftListData[0].id
           } else {
             this.leftListData = []
             this.params.tagsTypeId = -1 //默认第一个 id
@@ -284,6 +286,7 @@ export default {
           e.checked = false
         }
         this.params.tagsTypeId = item.id
+        this.tagsTypeId = item.id
       })
       this.$refs.table.refresh()
     },

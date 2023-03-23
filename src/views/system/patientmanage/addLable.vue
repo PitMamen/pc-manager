@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="'新增标签'"
+    :title="titleTab"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -52,6 +52,7 @@ export default {
   data() {
     return {
       visible: false,
+      titleTab:'新增标签',
       record: {},
       headers: {},
       confirmLoading: false,
@@ -85,16 +86,19 @@ export default {
       }
     },
     //新增
-    addLable() {
+    addLable(tagsTypeId) {
       this.clearData()
+      this.titleTab = '新增标签'
       this.visible = true
       this.confirmLoading = false
+      this.checkData.tagsTypeId = tagsTypeId
       this.getUserTagsTypeListOut()
     },
 
     // 修改
     editLable(record) {
       this.clearData()
+      this.titleTab = '编辑标签'
       this.visible = true
       this.confirmLoading = false
       this.checkData.tagsName = record.tagsName
