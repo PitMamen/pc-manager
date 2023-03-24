@@ -7,9 +7,10 @@
     @cancel="handleCancel"
     :confirmLoading="confirmLoading"
   >
-    <div class="display-item" style="margin-left: 5px; margin-top: -21px">
+    <div class="display-item" style="margin-left: 5px;">
       <span style="margin-top: 0px"> 审核结论 :</span>
       <a-radio-group
+      style="margin-top: -5px !important;"
         name="radioGroup"
         v-model="rangeValue"
         @change="radioChange"
@@ -20,8 +21,8 @@
       </a-radio-group>
     </div>
 
-    <div class="display-item" style="margin-top: -22px;" >
-      <span style="margin-top: -57px; width: 90px;margin-left: -3px;"> 不通过原因:</span>
+    <div class="display-item"  >
+      <span style="margin-top: -78px; width: 90px;margin-left: -3px;"> 不通过原因:</span>
       <a-textarea
         style="height: 80px; min-height: 100px; margin-top: 10px; margin-left: -20px; width: 87%"
         :maxLength="300"

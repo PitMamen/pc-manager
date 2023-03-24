@@ -326,12 +326,10 @@ export default {
     },
 
     handleOk() {
-      console.log('77777777777777')
       this.$refs.table.refresh()
     },
 
     refreshLeftList() {
-      console.log('88888888888')
       this.getUserTagsTypeListOut() //刷新健康团队列表 (左侧)
     },
 

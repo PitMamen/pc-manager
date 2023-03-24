@@ -195,7 +195,7 @@ export default {
           if (this.chooseArr[index].type == 1 || this.chooseArr[index].type == 3) {
             this.$set(param, this.chooseArr[index].tableField, this.chooseArr[index].tempValue)
           } else if (this.chooseArr[index].type == 2) {
-            console.log('BBBB:', this.chooseArr[index].arrMoment)
+            // console.log('BBBB:', this.chooseArr[index].arrMoment)
             //如果是 时期的
             if (this.chooseArr[index].arrMoment && this.chooseArr[index].arrMoment.length > 0) {
               this.$set(
