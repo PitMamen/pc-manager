@@ -428,6 +428,7 @@ export default {
     },
 
     downloadfile(res) {
+      debugger
       var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
       var contentDisposition = res.headers['content-disposition']
       var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
