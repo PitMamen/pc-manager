@@ -74,7 +74,7 @@
             :value="itemTask.taskId"
           >
             <div class="mission-top">
-              <div class="mission-top-left">
+              <div class="mission-top-left" style="height: 30px">
                 <a-select class="mid-select-one" v-model="itemTask.typeCode" disabled allow-clear placeholder="请选择">
                   <a-select-option v-for="(item, index) in serviceTypes" :key="index" :value="item.code">{{
                     item.value
@@ -189,6 +189,13 @@
                     item.description
                   }}</a-select-option>
                 </a-select>
+
+                <!-- v-if="itemTask.itemStatus == 0" -->
+                <img
+                  v-if="itemTask.itemStatus == 0"
+                  style="width: 63px; height: 55px; margin-left: 100px"
+                  src="@/assets/icons/offline.png"
+                />
               </div>
 
               <!-- itemImg -->
@@ -299,7 +306,7 @@
           :value="itemTask.taskId"
         >
           <div class="mission-top">
-            <div class="mission-top-left">
+            <div class="mission-top-left" style="height: 30px">
               <a-select class="mid-select-one" v-model="itemTask.typeCode" disabled allow-clear placeholder="请选择">
                 <a-select-option v-for="(item, index) in serviceTypes" :key="index" :value="item.code">{{
                   item.value
@@ -413,6 +420,12 @@
                   item.description
                 }}</a-select-option>
               </a-select>
+
+              <!-- <img
+                v-if="itemTask.itemStatus == 0"
+                style="width: 63px; height: 55px; margin-left: 100px"
+                src="@/assets/icons/offline.png"
+              /> -->
             </div>
 
             <!-- itemImg -->
@@ -1073,6 +1086,9 @@ export default {
               factoryName: itemIn.itemInfo.factoryName, //产地
 
               typeCode: itemIn.itemInfo.projectType + '', //单独处理，后台再给
+
+              //新增的打标签需求
+              itemStatus: itemIn.itemStatus,
             })
 
             this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'idOut', itemOut.id)
@@ -1150,6 +1166,9 @@ export default {
               factoryName: itemIn.itemInfo.factoryName, //产地
 
               typeCode: itemIn.itemInfo.projectType + '', //单独处理，后台再给
+
+              //新增的打标签需求
+              itemStatus: itemIn.itemStatus,
             })
 
             this.$set(this.configData.tasksBi[indexIn], 'idOut', itemOut.id)

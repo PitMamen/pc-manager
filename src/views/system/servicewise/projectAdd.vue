@@ -52,6 +52,8 @@
               @select="onDeptSelect"
               @deselect="onDeptDeSelect"
               mode="multiple"
+              :collapse-tags="true"
+              :maxTagCount="1"
               :token-separators="[',']"
               placeholder="请选择执行科室"
             >

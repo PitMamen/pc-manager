@@ -51,6 +51,8 @@
             <a-select
               v-model="projectData.basePlan.executeDepartments"
               mode="multiple"
+              :collapse-tags="true"
+              :maxTagCount="1"
               @select="onDeptSelect"
               @deselect="onDeptDeSelect"
               placeholder="请选择执行科室"

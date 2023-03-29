@@ -4240,3 +4240,57 @@ export function modifyUserTag(data){
     data:data,
   })
 }
+
+
+//随访统计列表
+export function qryFollowStatList(data){
+  return axios({
+    url:'/follow-api/follow/stat/qryFollowStatList',
+    method:'post',
+    data:data,
+  })
+}
+
+//统计(标题)
+export function getFollowStat(data){
+  return axios({
+    url:'/follow-api/follow/stat/getFollowStat',
+    method:'post',
+    data:data,
+  })
+}
+
+
+
+
+
+
+
+//导出
+export function exportFollowStatListm(data){
+  return axios({
+    url:'/follow-api/excel/exportFollowStatList',
+    method:'get',
+    params:data,
+    responseType: 'blob',
+  })
+}
+
+
+
+//打标识
+export function updatePatientSpecFlag(data){
+  return axios({
+    url:'/follow-api/followMetaConfigure/updatePatientSpecFlag',
+    method:'post',
+    data:data,
+  })
+}
+
+//患者信息查询  
+  export function getPatientInfoCon(id){
+  return axios({
+    url:'/follow-api/followMetaConfigure/getPatientInfo/'+id,
+    method:'post'
+  })
+}
