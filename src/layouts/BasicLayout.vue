@@ -259,7 +259,9 @@ export default {
     .main-content {
       margin-left: -170px !important;
       > .ant-layout-content {
-        margin-left: 190px !important;
+        margin-left: 170px !important;
+        margin-right: 0px !important;
+        margin-bottom: 0px !important;
       }
     }
   }
