@@ -119,8 +119,8 @@
                 class="span-item-value"
                 style="width: 100%; margin-left: 0; display: inline-block"
                 allow-clear
-                :maxLength="150"
-                placeholder="请输入参数,不超过150字 "
+                :maxLength="180"
+                placeholder="请输入参数,不超过180字 "
               />
             </div>
           </div>

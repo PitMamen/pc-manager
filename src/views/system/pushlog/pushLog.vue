@@ -54,7 +54,7 @@ export default {
 
 <style lang="less" scoped>
 .wrap {
-  height: calc(100% - 40px);
+  height: calc(100% - 20px);
   .ant-tabs {
     height: 100%;
     /deep/ .ant-tabs-content {
