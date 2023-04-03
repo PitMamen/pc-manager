@@ -1,4 +1,5 @@
 import { axios } from '@/utils/request'
+import { data } from 'jquery'
 
 /**
  * 列表
@@ -28,7 +29,19 @@ export function list (parameter) {
  export function list3 (orderId) {
   return axios({
     url: `/medical-api/rightsUse/qryRightsUseLogForOrderId/${orderId}`,
-    method: 'get'
+    method: 'get',
+  })
+}
+
+
+/**
+ * 列表4
+ */
+export function list4(data) {
+  return axios({
+    url: '/medical-api/rightsUse/getRightsInfo',
+    method: 'get',
+    params:data
   })
 }
 

@@ -263,7 +263,7 @@ export default {
 }
 
 .ant-card {
-  height: calc(100% - 40px);
+  height: calc(100% - 20px);
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
