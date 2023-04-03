@@ -27,8 +27,8 @@
             <img src="@/assets/icons/wenzhen/tab3.png" v-else />
             <span>聊天记录</span>
           </div>
-          <div class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
-            <img src="@/assets/icons/wenzhen/tab33.png" v-if="tab === 4" />
+          <div v-if="jumpType==4" class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
+            <img src="@/assets/icons/wenzhen/phone_n.png" v-if="tab === 4" />
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
           </div>
@@ -426,6 +426,7 @@ export default {
       phoneFollowListData: {},
       timelineData: {},
       voiceListData: [],
+      jumpType:1,
     }
   },
   methods: {
@@ -433,6 +434,7 @@ export default {
     info(item, jumbType) {
       this.item = item
       this.visible = true
+      this.jumpType = jumbType
       if (jumbType == 1) {
         this.tabClick(1)
       } else {
