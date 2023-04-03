@@ -102,6 +102,16 @@
               placeholder="请输入客服坐席ID"
             />
           </div>
+          <div class="div-content" style="margin-left: 1px;width: 433px;">
+            <a-checkbox  v-model="wecomChecked">企微账号:</a-checkbox>
+            <a-input
+            v-model="checkData.companywxUserId"
+              class="span-item-value"
+              style="display: inline-block;"
+              :disabled="!wecomChecked"
+              placeholder="请输入企业微信账号"
+            />
+          </div>
         </div>
       </div>
     </a-spin>
@@ -142,9 +152,11 @@ export default {
         phone: '',
         role: undefined, //分配角色
         seatUser: '', //坐席
+        companywxUserId:'',//企微账号
       },
       fetching: false,
       accountChecked: false, //客服坐席
+      wecomChecked: false, //企稳账号
 
       roleList: [], //角色列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
@@ -162,10 +174,12 @@ export default {
         phone: '',
         role: [], //分配角色
         seatUser: '', //坐席
+        companywxUserId:''
       }
       this.roleList=[]
       this.userList=[]
       this.accountChecked = false
+      this.wecomChecked=false
     },
     //新增
     addModel() {
@@ -196,6 +210,7 @@ export default {
         if (res.code == 0) {
           this.checkData = res.data
           this.accountChecked=res.data.seatUser?true:false
+          this.wecomChecked=res.data.companywxUserId?true:false
           var roles = []
           res.data.roles.forEach((element) => {
             roles.push(element.roleId)
@@ -323,6 +338,14 @@ export default {
           return
         }
       }
+      if(this.wecomChecked){
+         //如果勾选了企微账号
+
+         if (isStringEmpty(this.checkData.companywxUserId)) {
+          this.$message.error('请输入企业微信账号')
+          return
+        }
+      }
 
       var postData = {
         loginName: this.checkData.loginName,
@@ -333,6 +356,11 @@ export default {
         postData.seatUser = this.checkData.seatUser
       }else{
         postData.seatUser=''
+      }
+      if (this.wecomChecked) {
+        postData.companywxUserId = this.checkData.companywxUserId
+      }else{
+        postData.companywxUserId=''
       }
       this.confirmLoading = true
 
@@ -411,7 +439,7 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 310px;
+  height: 342px;
   margin-top: 10px;
 
   .div-part-left {
