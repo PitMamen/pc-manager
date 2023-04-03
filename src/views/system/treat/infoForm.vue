@@ -593,6 +593,7 @@ export default {
     },
     handleCancel() {
       this.visible = false
+      this.voiceListData = []
       this.confirmLoading = false
       this.tab1Flag = false
       this.tab2Flag = false

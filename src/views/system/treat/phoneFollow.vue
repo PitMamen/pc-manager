@@ -70,7 +70,7 @@
   
   <script>
   import {
-    queryHospitalList as orgList
+    queryHospitalList as accessHospitals
   } from '@/api/modular/system/posManage'
   import { list } from '@/api/modular/system/treat'
   import { STable, Ellipsis } from '@/components'
@@ -208,31 +208,36 @@
     },
     methods: {
       getOrgList() {
-        orgList({
-          tenantId: '',
-          status: 1,
-          hospitalName: ''
-        }).then(res => {
-          if (res.code === 0){
-            res.data = res.data || []
-            this.treeData = res.data.map(item => {
-              const result = {
-                key: item.hospitalCode,
-                value: item.hospitalCode,
-                title: item.hospitalName
-              }
-              if (item.hospitals && item.hospitals.length>0){
-                result.children = item.hospitals.map(subItem => {
-                  return {
-                    key: subItem.hospitalCode,
-                    value: subItem.hospitalCode,
-                    title: subItem.hospitalName
-                  }
-                })
-              }
-              return result
+        let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: '',
+      }
+      this.confirmLoading = true
+      accessHospitals(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
+
+              item.hospitals.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
             })
+
+            this.treeData = res.data
+          } else {
+            this.treeData = res.data
           }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
         })
       },
       /**
