@@ -312,7 +312,7 @@
                     phoneFollowListData.rightsUseRecordStatus
                       ? phoneFollowListData.rightsUseRecordStatus.serviceTime
                       : '-' || '-'
-                  }}
+                  }}分钟
                 </div>
               </div>
 
@@ -333,7 +333,7 @@
                     <div class="row-content">
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        设置电话时间:{{ phoneFollowListData.startTime || '-' }}
+                        设置电话时间:{{ phoneFollowListData.rightsUseRecordStatus?phoneFollowListData.rightsUseRecordStatus.confirmPeriod:'-' || '-' }}
                       </div>
                     </div>
                     <div class="colum-line"></div>
