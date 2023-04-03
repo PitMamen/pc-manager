@@ -70,7 +70,7 @@
   
   <script>
   import {
-    queryHospitalList as accessHospitals
+     accessHospitals,
   } from '@/api/modular/system/posManage'
   import { list } from '@/api/modular/system/treat'
   import { STable, Ellipsis } from '@/components'

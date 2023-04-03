@@ -340,7 +340,7 @@
                     <div class="row-content">
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        实际拨打时间:{{ phoneFollowListData.voiceTapeInfo?phoneFollowListData.voiceTapeInfo.callTime:'-' || '-' }}
+                        实际拨打时间:{{ voiceListData&&voiceListData.length>0?voiceListData[0].callTime:'-' || '-' }}
                       </div>
                     </div>
                     <div class="colum-line"></div>
@@ -348,7 +348,7 @@
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                         结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
-                          phoneFollowListData.voiceTapeInfo?phoneFollowListData.voiceTapeInfo.endTime:'-' || '-'
+                           voiceListData&&voiceListData.length>0?voiceListData[0].endTime:'-' || '-'
                         }}
                       </div>
                     </div>
