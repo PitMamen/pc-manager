@@ -325,7 +325,7 @@
                     <div class="row-content">
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        意向预约时间:{{ phoneFollowListData.rightsUseRecordStatus?phoneFollowListData.rightsUseRecordStatus.appointTime:'-' || '-' }}
+                        意向预约时间:{{ phoneFollowListData.rightsUseRecordStatus?phoneFollowListData.rightsUseRecordStatus.appointPeriod:'-' || '-' }}
                       </div>
                     </div>
 
@@ -371,7 +371,7 @@
                 :value="item"
               >
                 <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">通话录音{{ index + 1 }}:</div>
-                <audio :src="item.callTape" controls autoplay />
+                <audio :src="item.callTape" controls  />
               </div>
             </div>
           </div>
