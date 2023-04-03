@@ -119,6 +119,25 @@
                     :jbxx="fileDetailData"
                   />
                 </a-tab-pane>
+                <a-tab-pane key="6">
+                  <template #tab>
+                    <span class="span-tab">
+                      <img
+                        style="width: 13px; height: 13px; margin-right: 7px"
+                        :class="{ 'checked-icon': activeKey == '6' }"
+                        src="~@/assets/icons/jbxx.svg"
+                      />
+                      出院小结
+                    </span>
+                  </template>
+                  <!-- style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px; overflow: hidden" -->
+                  <basic-xiaojie
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
+                    ref="basicXiaojie"
+                    :jbxx="fileDetailData"
+                    :patientInfo="patientInfo"
+                  />
+                </a-tab-pane>
               </a-tabs>
             </div>
           </div>
@@ -144,6 +163,7 @@
 <script>
 import { getFileList, getFileDtail, getBaseInfo } from '@/api/modular/system/posManage'
 import basicInfo from './basicInfo'
+import basicXiaojie from './basicXiaojie'
 import basicTech from './basicTech'
 import basicMedic from './basicMedic'
 import basicSurgery from './basicSurgery'
@@ -153,7 +173,7 @@ import { decodeRecord } from '@/utils/forgeUtils'
 import { formatDateFull, formatDate } from '@/utils/util'
 import Vue from 'vue'
 export default {
-  components: { basicInfo, basicTech, basicMedic, basicSurgery, basicFee },
+  components: { basicInfo, basicTech, basicMedic, basicSurgery, basicFee,basicXiaojie },
   props: {
     record: Object,
   },
@@ -500,6 +520,9 @@ export default {
             if (this.$refs.basicFee) {
               this.$refs.basicFee.refreshData(JSON.parse(JSON.stringify(this.fileDetailData.sfxx)))
             }
+            if (this.$refs.basicXiaojie) {
+              this.$refs.basicXiaojie.refreshData(this.fileDetailData.zdxx)
+            }
           } else {
             this.$message.error(res.message)
           }
@@ -525,6 +548,10 @@ export default {
       } else if (key == 5) {
         this.$nextTick(() => {
           this.$refs.basicFee.refreshData(JSON.parse(JSON.stringify(this.fileDetailData.sfxx)))
+        })
+      } else if (key == 5) {
+        this.$nextTick(() => {
+          this.$refs.basicXiaojie.refreshData(this.fileDetailData.zdxx)
         })
       }
     },
