@@ -278,7 +278,7 @@
                     icon="user"
                     style="margin-left: 14px; margin-top: 10px"
                   />
-                  <a-avatar style="size:48" src="@/assets/icons/wenzhen/header.png" v-else />
+                  <a-avatar style="size:48;margin-left: 14px; margin-top: 10px" src="@/assets/icons/wenzhen/header.png" v-else />
                   <div class="nom-content">
                     <div class="row-content">
                       <div style="font-size: 14px; color: #1a1a1a">
