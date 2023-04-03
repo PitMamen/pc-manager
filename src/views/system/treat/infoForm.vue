@@ -278,7 +278,7 @@
                     icon="user"
                     style="margin-left: 14px; margin-top: 10px"
                   />
-                  <img style="size:48" src="@/assets/icons/wenzhen/header.png" v-else />
+                  <a-avatar style="size:48" src="@/assets/icons/wenzhen/header.png" v-else />
                   <div class="nom-content">
                     <div class="row-content">
                       <div style="font-size: 14px; color: #1a1a1a">
@@ -340,7 +340,7 @@
                     <div class="row-content">
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        实际拨打时间:{{ phoneFollowListData.rightsUseRecordStatus?phoneFollowListData.rightsUseRecordStatus.confirmTime:'-' || '-' }}
+                        实际拨打时间:{{ phoneFollowListData.voiceTapeInfo?phoneFollowListData.voiceTapeInfo.callTime:'-' || '-' }}
                       </div>
                     </div>
                     <div class="colum-line"></div>
@@ -348,7 +348,7 @@
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                         结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
-                          phoneFollowListData.rightsUseRecordStatus?phoneFollowListData.rightsUseRecordStatus.updatedTime:'-' || '-'
+                          phoneFollowListData.voiceTapeInfo?phoneFollowListData.voiceTapeInfo.endTime:'-' || '-'
                         }}
                       </div>
                     </div>
@@ -360,18 +360,18 @@
           <div class="right">
             <div class="title">内容详情</div>
             <div class="container">
-              <div v-if="voiceListData.length===0" style="width: 100%">
+              <div v-if="!voiceListData||voiceListData.length===0" style="width: 100%">
                 <a-empty style="margin-top: 25%" :image="simpleImage" />
               </div>
               <div
-              v-else-if="voiceListData.length>0"
+              v-else-if="voiceListData||voiceListData.length>0"
                 class="radio-content"
                 v-for="(item, index) in voiceListData"
                 :key="index"
                 :value="item"
               >
                 <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">通话录音{{ index + 1 }}:</div>
-                <audio :src="phoneFollowListData.voiceTapeInfo" controls autoplay />
+                <audio :src="item.callTape" controls autoplay />
               </div>
             </div>
           </div>
