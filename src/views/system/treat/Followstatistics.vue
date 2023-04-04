@@ -190,7 +190,7 @@ export default {
       },
       form: this.$form.createForm(this),
       queryParamsStatisit: {
-        beginExecuteTime: getlastMonthToday(),
+        beginExecuteTime: getDateNow(),
         endExecuteTime: getCurrentMonthLast(),
         executeDepartmentIds: [],
         messageOriginalId: undefined,
