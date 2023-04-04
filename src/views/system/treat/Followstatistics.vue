@@ -191,7 +191,6 @@ export default {
       form: this.$form.createForm(this),
       queryParamsStatisit: {
         beginExecuteTime: getlastMonthToday(),
-
         endExecuteTime: getCurrentMonthLast(),
         executeDepartmentIds: [],
         messageOriginalId: undefined,
@@ -397,6 +396,9 @@ export default {
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
+        var array = []
+        array.push(value)
+        this.queryParamsStatisit.executeDepartmentIds=array
       if (value === undefined || value.length == 0) {
         this.originData = []
         this.getDepartmentSelectList(undefined)
