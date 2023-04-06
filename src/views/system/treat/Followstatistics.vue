@@ -396,6 +396,10 @@ export default {
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
+        if(value==undefined){
+            this.queryParamsStatisit.executeDepartmentIds=[]
+            return
+        }
         var array = []
         array.push(value)
         this.queryParamsStatisit.executeDepartmentIds=array
@@ -404,6 +408,17 @@ export default {
         this.getDepartmentSelectList(undefined)
       }
     },
+
+
+    change(row){
+      //触发清空
+      if(row.gettype='click'&&row.isTrusted){
+        this.userInfos = this.userInfosTemp
+      }
+    },
+
+
+
 
     handleOk() {
       this.$refs.tableStat.refresh()
