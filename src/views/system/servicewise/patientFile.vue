@@ -119,7 +119,7 @@
                     :jbxx="fileDetailData"
                   />
                 </a-tab-pane>
-                <a-tab-pane key="6">
+                <!-- <a-tab-pane key="6">
                   <template #tab>
                     <span class="span-tab">
                       <img
@@ -130,14 +130,14 @@
                       出院小结
                     </span>
                   </template>
-                  <!-- style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px; overflow: hidden" -->
+                 
                   <basic-xiaojie
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicXiaojie"
                     :jbxx="fileDetailData"
                     :patientInfo="patientInfo"
                   />
-                </a-tab-pane>
+                </a-tab-pane> -->
               </a-tabs>
             </div>
           </div>
