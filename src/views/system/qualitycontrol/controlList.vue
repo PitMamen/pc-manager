@@ -326,7 +326,7 @@ export default {
         {
           title: '状态',
           dataIndex: 'statusShow',
-          width:20,
+          width:80,
           ellipsis: true,
         },
         {
