@@ -333,7 +333,7 @@
       </div>
 
       <div class="div-pro-btn">
-        <a-button style="margin-left: 79.5%; float: right" type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 91%; float: right" type="primary" @click="submitData()">提交</a-button>
         <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
       </div>
 
@@ -1504,8 +1504,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  padding: 1%;
-  padding-bottom: 2%;
+  padding: 1% 1.4% 3% 1.4%;
 
   span {
     font-size: 12px;
@@ -1515,7 +1514,7 @@ export default {
     display: flex;
     background-color: #ebebeb;
     flex-direction: row;
-    width: 100%;
+    width: 100% !important;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -1676,7 +1675,7 @@ export default {
     flex-direction: row;
     align-items: center;
 
-    margin-top: 3%;
+    margin-top: 2%;
   }
 
   /deep/ .ant-select-selection--multiple {
