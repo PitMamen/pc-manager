@@ -242,6 +242,7 @@
 
             <a-auto-complete
               class="mid-select-two"
+              style="width: 13% !important"
               v-model="itemTask.messageContentId"
               placeholder="请选择模版"
               option-label-prop="title"
@@ -479,7 +480,7 @@
       </div>
 
       <div class="div-pro-btn">
-        <a-button style="margin-left: 79.5%; float: right" type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 91%; float: right" type="primary" @click="submitData()">提交</a-button>
         <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
       </div>
 
@@ -841,7 +842,6 @@ export default {
             item.everyData.push({ value: str + '', description: index + 1 + '号' })
           }
         }
-        debugger
         //处理微信短信是否显示电话跟进
         this.$set(item, 'isChecked', true)
         if (
@@ -1621,8 +1621,7 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  padding: 1%;
-  padding-bottom: 2%;
+  padding: 1% 1.4% 2% 1.4%;
 
   /deep/ .ant-select-selection--multiple {
     height: auto !important;
@@ -1636,7 +1635,7 @@ export default {
     display: flex;
     background-color: #ebebeb;
     flex-direction: row;
-    width: 100%;
+    width: 100% !important;
     display: flex;
     align-items: center;
     flex-direction: row;

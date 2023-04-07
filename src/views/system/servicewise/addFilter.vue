@@ -234,7 +234,11 @@ export default {
           let nameStr = this.chooseData.find((item) => item.value == newArr[index].metaConfigureDetailId).description
           let relationStr = this.operateData.find((item) => item.value == newArr[index].condition).description
           if (index != newArr.length - 1) {
-            filterConditionRemark = filterConditionRemark + nameStr + relationStr + newArr[index].queryValue + '，或'
+            if (this.secondaryFilterTypeEnum == 'or') {
+              filterConditionRemark = filterConditionRemark + nameStr + relationStr + newArr[index].queryValue + '，或'
+            } else {
+              filterConditionRemark = filterConditionRemark + nameStr + relationStr + newArr[index].queryValue + '，且'
+            }
           } else {
             filterConditionRemark = filterConditionRemark + nameStr + relationStr + newArr[index].queryValue + '。'
           }
