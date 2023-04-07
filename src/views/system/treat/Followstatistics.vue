@@ -201,11 +201,13 @@ export default {
         {
           title: '姓名',
           dataIndex: 'name',
+          width:150,
           ellipsis: true,
         },
         {
           title: '性别',
           dataIndex: 'sex',
+          width:70,
         },
 
         {
@@ -215,10 +217,12 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
+          width:80,
         },
         {
           title: '出院科室',
           dataIndex: 'cyksmc',
+          width:150,
           ellipsis: true,
         },
         {
@@ -229,6 +233,7 @@ export default {
         {
           title: '随访内容',
           dataIndex: 'questName',
+          width:150,
           ellipsis: true,
         },
         {
@@ -239,16 +244,21 @@ export default {
         {
           title: '微信登记',
           dataIndex: 'openidFlag',
+          align: 'right',
+          width:80,
+        //   ellipsis: true,
         },
         {
           title: '推送次数',
           dataIndex: 'totalTask',
+          width:80,
           align: 'right',
         },
         {
           title: '成功次数',
           dataIndex: 'successTotalTask',
           align: 'right',
+          width:80,
         },
         {
           title: '标记',
