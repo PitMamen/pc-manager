@@ -677,6 +677,7 @@ export default {
       if (to.path.indexOf('configEdit') > -1) {
         console.log('watch----configEdit', to, from)
         this.record = JSON.parse(this.$route.query.recordStr)
+        console.log('record', this.record)
         this.qryServiceItemListOut('', true)
       }
     },
@@ -810,6 +811,7 @@ export default {
      * @param {*} itemTask
      */
     onSelect(indexOut, itemTask) {
+    
       console.log('itemTask ', itemTask)
       let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
       itemTask.typeCode = findItem.projectType + ''
@@ -1022,7 +1024,15 @@ export default {
       })
         .then((res) => {
           if (res.code == 0) {
+            if(!this.record.doctorNames || this.record.doctorNames.length == 0){
+              //如果没有配置医生 则过滤掉图文、电话、视频咨询
+              res.data.rows= res.data.rows.filter(item=>{
+              return item.projectType !==  101 && item.projectType !==  102 && item.projectType !==  103
+            })
+            }
+            
             this.serviceData = res.data.rows
+
             if (isFirst) {
               this.getDetailData()
             }
