@@ -343,7 +343,7 @@ export default {
 
     init(introduction) {
       if (this.editor) {
-        this.editor.txt.html(introduction)
+        this.editor.txt.html(introduction||'')
         return
       }
       this.editor = new E('#div2')
@@ -468,7 +468,6 @@ export default {
             this.queryParams.introduction = res.data.introduction
             this.queryParams.orgType = res.data.orgType.value
             if (res.data.hospitalType != null) {
-              console.log('5555:', res.data.hospitalType.description)
               this.hospitalTypeSelect = res.data.hospitalType.description
             }
             if (res.data.level != null) {

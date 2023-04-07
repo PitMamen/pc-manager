@@ -320,35 +320,49 @@ export default {
         {
           title: '随访方式',
           dataIndex: 'flowType',
+          width:100,
+          ellipsis: true,
         },
         {
           title: '状态',
           dataIndex: 'statusShow',
+          width:20,
+          ellipsis: true,
         },
         {
           title: '随访患者',
           dataIndex: 'userName',
+          width:150,
+          ellipsis: true,
         },
         {
           title: '性别',
           dataIndex: 'sex',
+          width:80,
         },
         {
           title: '年龄',
           dataIndex: 'age',
+          width:80,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
+          width:180,
+          ellipsis: true,
         },
         {
           title: '随访医生',
           dataIndex: 'doctorUserName',
+          width:180,
+          ellipsis: true,
         },
 
         {
           title: '计划日期',
           dataIndex: 'executeTime',
+          width:180,
+          ellipsis: true,
         },
 
         {
@@ -361,6 +375,8 @@ export default {
         {
           title: '随访问卷',
           dataIndex: 'questionnaireName',
+          width:180,
+          ellipsis: true,
         },
 
         {
