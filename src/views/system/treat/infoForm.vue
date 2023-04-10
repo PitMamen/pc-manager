@@ -273,12 +273,11 @@
               <div class="top-content">
                 <div class="div-content">  
                   <a-avatar
-                    :size="48"
                     :src="(phoneFollowListData.docInfo || {}).avatarUrl" v-if="(phoneFollowListData.docInfo|| {}).avatarUrl"
                     icon="user"
-                    style="margin-left: 14px; margin-top: 10px"
+                    style="margin-left: 14px; margin-top: 8px;width: 60px;height: 54px;"
                   />
-                  <a-avatar style="size:48;margin-left: 14px; margin-top: 10px" src="@/assets/icons/wenzhen/header.png" v-else />
+                  <a-avatar style="size:54;margin-left: 14px; margin-top: 10px" src="@/assets/icons/wenzhen/header.png" v-else />
                   <div class="nom-content">
                     <div class="row-content">
                       <div style="font-size: 14px; color: #1a1a1a">
@@ -300,14 +299,14 @@
                   </div>
                 </div>
                 <div class="line"></div>
-                <div style="margin-left: 11px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
                   套餐名称:{{
                     phoneFollowListData.rightsUseRecordStatus
                       ? phoneFollowListData.rightsUseRecordStatus.serviceItemName
                       : '-' || '-'
                   }}
                 </div>
-                <div style="margin-left: 11px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
+                <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
                   服务时长:{{
                     phoneFollowListData.rightsUseRecordStatus
                       ? phoneFollowListData.rightsUseRecordStatus.serviceTime
@@ -322,7 +321,7 @@
                     <a-empty style="margin-top: 35px" :image="simpleImage" />
                   </div>
                   <div v-else-if="timelineData" class="nom-content">
-                    <div class="row-content">
+                    <div class="row-content" style="padding-top: 10px;">
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                         意向预约时间:{{ phoneFollowListData.rightsUseRecordStatus?phoneFollowListData.rightsUseRecordStatus.appointPeriod:'-' || '-' }}
@@ -344,7 +343,7 @@
                       </div>
                     </div>
                     <div class="colum-line"></div>
-                    <div class="row-content">
+                    <div class="row-content" style="padding-bottom: 15px">
                       <div class="docpoint"></div>
                       <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                         结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
@@ -1039,7 +1038,7 @@ export default {
 
           .top-content {
             width: 535px;
-            height: 116px;
+            height: 120px;
             margin-top: 11px;
             margin-left: 11px;
             background: rgba(0, 1, 3, 0);
