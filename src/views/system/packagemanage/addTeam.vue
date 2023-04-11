@@ -149,6 +149,7 @@ export default {
       console.log(' edit hospitalCode', hospitalCode)
       this.hospitalCode = hospitalCode
       this.selectedRowKeys = []
+      debugger
       if (commodityPkgManageItemRsps.length > 0) {
         commodityPkgManageItemRsps.forEach((item) => {
           this.selectedRowKeys.push(parseInt(item.objectId))
@@ -186,6 +187,8 @@ export default {
         if (res.code === 0) {
           this.lists = res.data || []
           console.log('getLists', this.lists)
+
+          this.updateSelect()
         }
       })
     },
