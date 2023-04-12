@@ -242,6 +242,7 @@
               class="mid-select-two"
               style="width: 13% !important"
               v-model="itemTask.messageContentId"
+              :title="itemTask.templateTitle"
               placeholder="请选择模版"
               option-label-prop="title"
               @focus="onTemFocus(indexTask, itemTask)"
@@ -1053,6 +1054,7 @@ export default {
       })
       console.log('onTemSelect chooseOne', chooseOne)
       itemTask.messageContentType = chooseOne.messageContentType
+      itemTask.templateTitle = chooseOne.templateTitle || ''
 
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'

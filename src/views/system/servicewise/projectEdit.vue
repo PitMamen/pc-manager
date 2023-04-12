@@ -246,6 +246,7 @@
               v-model="itemTask.messageContentId"
               placeholder="请选择模版"
               option-label-prop="title"
+              :title="itemTask.templateTitle"
               @focus="onTemFocus(indexTask, itemTask)"
               @select="onTemSelect(indexTask, itemTask)"
               @search="handleSearch"
@@ -961,7 +962,15 @@ export default {
               this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
               // this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
             }
-
+           
+         var findOne=   itemTask.itemTemplateListOrigin.find(el=>{
+              return el.id==parseInt(itemTask.messageContentId)
+            }) 
+           
+            if(findOne){
+              itemTask.templateTitle=findOne.templateTitle
+            }
+           
             this.confirmLoading = false
           })
         } else {
@@ -1307,6 +1316,7 @@ export default {
       })
 
       itemTask.messageContentType = chooseOne.messageContentType
+      itemTask.templateTitle = chooseOne.templateTitle || ''
 
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'
