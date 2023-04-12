@@ -327,8 +327,9 @@
       </div>
 
       <div class="div-pro-btn">
-        <a-button style="margin-left: 91%; float: right" type="primary" @click="submitData()">提交</a-button>
-        <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
+        <div style="flex: 1;"></div>
+        <a-button  type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 2%" @click="cancel()">取消</a-button>
       </div>
 
       <add-people ref="addPeople" @ok="handleAddPeople" />

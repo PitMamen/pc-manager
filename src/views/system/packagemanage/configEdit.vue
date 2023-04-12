@@ -496,8 +496,9 @@
       </div>
 
       <div class="div-pro-btn">
-        <a-button style="margin-left: 91%; float: right" type="primary" @click="submitData()">提交</a-button>
-        <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
+        <div style="flex: 1;"></div>
+        <a-button type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 2%;" @click="cancel()">取消</a-button>
       </div>
     </div>
   </a-spin>
@@ -1122,7 +1123,7 @@ export default {
               //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
-                if (findItem) {
+                if (findItem&& findItem.serviceValue) {
                   this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'chatNum', findItem.serviceValue)
                   this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'needChatNum', true)
                   this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'attrIdChatNum', findItem.id)
@@ -1200,7 +1201,7 @@ export default {
               //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
-                if (findItem) {
+                if (findItem && findItem.serviceValue) {
                   this.$set(this.configData.tasksBi[indexIn], 'chatNum', findItem.serviceValue)
                   this.$set(this.configData.tasksBi[indexIn], 'needChatNum', true)
                   this.$set(this.configData.tasksBi[indexIn], 'attrIdChatNum', findItem.id)

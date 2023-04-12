@@ -104,13 +104,16 @@
           </div>
           <div class="div-content" style="margin-left: 1px;width: 433px;">
             <a-checkbox  v-model="wecomChecked">企微账号:</a-checkbox>
-            <a-input
+            <!-- <a-input
             v-model="checkData.companywxUserId"
               class="span-item-value"
               style="display: inline-block;"
               :disabled="!wecomChecked"
               placeholder="请输入企业微信账号"
-            />
+            /> -->
+            <a-select :disabled="!wecomChecked" v-model="checkData.companywxUserId" allow-clear placeholder="请选择企微账号">
+              <a-select-option v-for="(item, index) in wecomUserList" :key="index" :value="item">{{ item }}</a-select-option>
+            </a-select>
           </div>
         </div>
       </div>
@@ -127,6 +130,7 @@ import {
   createDoctorAccount,
   getUnbindAccountDoctorUser,
   updateDoctorAccount,
+  getOwnConnectCustomerFunUserList
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -159,6 +163,7 @@ export default {
       wecomChecked: false, //企稳账号
 
       roleList: [], //角色列表
+      wecomUserList:[],//企稳用户列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
       userList: [],
     }
@@ -189,6 +194,7 @@ export default {
       this.confirmLoading = false
       this.getUserList('')
       this.getRolesOut()
+      this.getOwnConnectCustomerFunUserListOut()
     },
     //修改
     editModel(record) {
@@ -199,6 +205,7 @@ export default {
       this.record = record
 
       this.getRolesOut()
+      this.getOwnConnectCustomerFunUserListOut()
 
       this.getDoctorAccountDetailOut(record.accountId)
     },
@@ -246,6 +253,14 @@ export default {
             }
           }
           this.roleList = roleList
+        }
+      })
+    },
+     //获取配置了客户联系功能的成员列表
+     getOwnConnectCustomerFunUserListOut() {
+      getOwnConnectCustomerFunUserList().then((res) => {
+        if (res.code == 0) {
+          this.wecomUserList=res.data.follow_user
         }
       })
     },
@@ -342,7 +357,7 @@ export default {
          //如果勾选了企微账号
 
          if (isStringEmpty(this.checkData.companywxUserId)) {
-          this.$message.error('请输入企业微信账号')
+          this.$message.error('请选择企业微信账号')
           return
         }
       }

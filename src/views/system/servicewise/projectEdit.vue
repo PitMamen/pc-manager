@@ -246,6 +246,7 @@
               v-model="itemTask.messageContentId"
               placeholder="请选择模版"
               option-label-prop="title"
+              :title="itemTask.templateTitle"
               @focus="onTemFocus(indexTask, itemTask)"
               @select="onTemSelect(indexTask, itemTask)"
               @search="handleSearch"
@@ -480,8 +481,9 @@
       </div>
 
       <div class="div-pro-btn">
-        <a-button style="margin-left: 91%; float: right" type="primary" @click="submitData()">提交</a-button>
-        <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
+        <div style="flex: 1;"></div>
+        <a-button  type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 2%;" @click="cancel()">取消</a-button>
       </div>
 
       <!-- <div style="margin-top: 3%; margin-bottom: 2%; margin-right: 53%">
@@ -961,7 +963,15 @@ export default {
               this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
               // this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
             }
-
+           
+         var findOne=   itemTask.itemTemplateListOrigin.find(el=>{
+              return el.id==parseInt(itemTask.messageContentId)
+            }) 
+           
+            if(findOne){
+              itemTask.templateTitle=findOne.templateTitle
+            }
+           
             this.confirmLoading = false
           })
         } else {
@@ -1307,6 +1317,7 @@ export default {
       })
 
       itemTask.messageContentType = chooseOne.messageContentType
+      itemTask.templateTitle = chooseOne.templateTitle || ''
 
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'

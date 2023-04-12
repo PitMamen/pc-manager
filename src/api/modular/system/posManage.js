@@ -4052,7 +4052,14 @@ export function refundDetail(data) {
     params: data,
   })
 }
-
+//获取配置了客户联系功能的成员列表
+export function getOwnConnectCustomerFunUserList(data) {
+  return axios({
+    url: '/medical-api/tdCompanywxApplication/getOwnConnectCustomerFunUserList/1',
+    method: 'get',
+    params: data,
+  })
+}
 
 //管理端-退款审核
 export function examine(data) {
