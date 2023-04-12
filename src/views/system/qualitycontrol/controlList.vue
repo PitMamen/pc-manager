@@ -194,6 +194,7 @@
     </a-modal>
 
     <s-table
+    :scorll={x:max-content}
       ref="table"
       size="default"
       :columns="columns"
