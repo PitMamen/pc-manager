@@ -67,21 +67,21 @@
           </div>
 
           <div class="div-pro-line" style="margin-left: -25px !important">
-            <a-checkbox @change="changeData" :checked="hasData" class="span-item-name" style="margin-left: 8px"
-              > 套餐效期 :</a-checkbox
+            <a-checkbox @change="changeData" :checked="hasData" class="span-item-name" style="margin-left: 8px"></a-checkbox>
+              套餐效期 :</a-checkbox
             >
             <a-input
               :disabled="disabledValue"
               class="span-item-value"
               v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 42%;margin-left: -10px;"
+              style="display: inline-block; width: 42%; margin-left: -10px"
               allow-clear
               placeholder="请输入 "
             />
 
             <a-select
-            :disabled="disabledValue"
+              :disabled="disabledValue"
               v-model="packageData.pkgValidUnit"
               style="margin-left: 5px; width: 16.5% !important"
               allow-clear
@@ -333,8 +333,9 @@
       </div>
 
       <div class="div-pro-btn">
-        <a-button style="margin-left: 91%; float: right" type="primary" @click="submitData()">提交</a-button>
-        <a-button style="margin-left: 2%; float: right" @click="cancel()">取消</a-button>
+        <div style="flex: 1"></div>
+        <a-button type="primary" @click="submitData()">提交</a-button>
+        <a-button style="margin-left: 2%" @click="cancel()">取消</a-button>
       </div>
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
@@ -380,12 +381,12 @@ export default {
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
-      isChecked:false,
+      isChecked: false,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',
       disabledValue: false,
-      hasData:false,
+      hasData: false,
       fileList: [],
       fileListBanner: [],
       fileListDetail: [],
@@ -519,18 +520,17 @@ export default {
           console.log('packageData Detail 1', res.data)
           this.packageData = res.data
 
-           if(res.data.pkgValidUnit){
-             this.packageData.pkgValidUnit = res.data.pkgValidUnit.value
-           }
-          if(res.data.pkgValidNum&&res.data.pkgValidUnit){
+          if (res.data.pkgValidUnit) {
+            this.packageData.pkgValidUnit = res.data.pkgValidUnit.value
+          }
+          if (res.data.pkgValidNum && res.data.pkgValidUnit) {
             this.isChecked = true
             this.hasData = true
             this.disabledValue = false
-          }else{
+          } else {
             this.isChecked = false
             this.hasData = false
             this.disabledValue = true
-            
           }
           console.log('packageData Detail 2', this.packageData)
           //这个可以提前处理，不放在processData里面
@@ -554,14 +554,14 @@ export default {
     changeData(value) {
       // console.log('GGG:', value.target.checked)
       this.isChecked = value.target.checked
-      if(value.target.checked){
-       this. disabledValue = false
-       this.hasData = true
-      }else{
+      if (value.target.checked) {
+        this.disabledValue = false
+        this.hasData = true
+      } else {
         this.hasData = false
-       this. disabledValue = true
-       this.packageData.pkgValidNum =null
-       this.packageData.pkgValidUnit = null
+        this.disabledValue = true
+        this.packageData.pkgValidNum = null
+        this.packageData.pkgValidUnit = null
       }
     },
 
@@ -726,6 +726,9 @@ export default {
           docItem.teamType = docItem.teamType.value
           newRsps.push(docItem)
         } else {
+          this.allocationTypeDoc = undefined
+          this.nameDoc = ''
+          this.isDoctor = false
           newRsps.push({
             allocationType: undefined,
             commodityPkgManageItemReqs: [],
@@ -756,13 +759,16 @@ export default {
           nurseItem.teamType = nurseItem.teamType.value
           newRsps.push(nurseItem)
         } else {
+          this.allocationTypeNurse = undefined
+          this.nameNurse = ''
+          this.isNurse = false
           newRsps.push({
             allocationType: undefined,
             commodityPkgManageItemReqs: [],
             teamType: undefined,
           })
         }
-
+        debugger
         //团队
         let teamItem = undefined
         for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
@@ -786,6 +792,9 @@ export default {
           teamItem.teamType = teamItem.teamType.value
           newRsps.push(teamItem)
         } else {
+          this.allocationTypeTeam = undefined
+          this.nameTeam = ''
+          this.isTeam = false
           newRsps.push({
             allocationType: undefined,
             commodityPkgManageItemReqs: [],
@@ -806,8 +815,11 @@ export default {
           roleItem.commodityPkgManageItemReqs.forEach((item, index) => {
             this.roleIds.push(item.objectId)
           })
+        } else {
+          this.roleIds = []
         }
 
+        debugger
         this.packageData.commodityPkgManageReqs = newRsps
         this.confirmLoading = false
       } else {
@@ -934,7 +946,7 @@ export default {
     },
 
     /**
-     * 1 咨询服务   2 服务套餐   3 健康商品
+     * broadClassify 套餐分类  1 咨询服务   2 服务套餐   3 健康商品
      * 根据用户配置的套餐类型，如果选择的套餐类型对应的大类是咨询服务类，那么仅可配置咨询医生或咨询护士，不可配置健管团队，且分配方式为随机分配，医生也只能选1位；
      * 如果选择的套餐类型对应的大类是服务套餐，那么都可任意配置咨询医生与咨询护士和健康团队;
      * 如果选择的套餐类型对应的大类是健康商品，那么不可配置咨询医生、咨询护士与健管团队；
@@ -1291,8 +1303,10 @@ export default {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
-      this.$refs.addTeam.edit(this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
-        this.packageData.hospitalCode)
+      this.$refs.addTeam.edit(
+        this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
+        this.packageData.hospitalCode
+      )
     },
 
     handleAddTeam(commodityPkgManageItemReqs) {
@@ -1331,21 +1345,17 @@ export default {
         return
       }
 
-
-      if(this.isChecked){
-        if(!tempData.pkgValidNum){
+      if (this.isChecked) {
+        if (!tempData.pkgValidNum) {
           this.$message.error('请选择有效期')
           return
         }
 
-        if(!tempData.pkgValidUnit){
+        if (!tempData.pkgValidUnit) {
           this.$message.error('请选择有效期单位')
           return
         }
       }
-
-
-
 
       //组装图片
       if (this.fileList.length == 0) {
