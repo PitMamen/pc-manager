@@ -81,7 +81,7 @@
             <span class="name">所属科室:</span>
 
             <a-select
-              style="width: 150px"
+              style="width: 180px"
               show-search
               v-model="queryParams.ascriptionDepartmentId"
               :filter-option="false"
@@ -92,7 +92,7 @@
               @search="onDepartmentSelectSearch"
             >
               <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+              <a-select-option v-for="(item, index) in originData" :title="item.department_name" :key="index" :value="item.department_id">{{
                 item.department_name
               }}</a-select-option>
             </a-select>
@@ -102,7 +102,7 @@
             v-if="queryParams.queryStatus == 2 || queryParams.queryStatus == 3 || queryParams.queryStatus == 4"
           >
             <span class="name">随访方式:</span>
-            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 120px">
+            <a-select allow-clear v-model="queryParams.messageType" placeholder="请选择随访方式" style="width: 140px">
               <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -1334,7 +1334,7 @@ export default {
           .ant-spin-container {
             height: 100%;
             .ant-table {
-              height: calc(100% - 48px);
+              height: calc(100% - 80px);
               overflow-y: auto;
             }
           }

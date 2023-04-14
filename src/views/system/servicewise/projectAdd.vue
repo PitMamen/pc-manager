@@ -240,7 +240,7 @@
             <!-- @search="handleSearch(indexTask, itemTask)" -->
             <a-auto-complete
               class="mid-select-two"
-              style="width: 13% !important"
+              style="width: 18% !important"
               v-model="itemTask.messageContentId"
               :title="itemTask.templateTitle"
               placeholder="请选择模版"

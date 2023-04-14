@@ -7,7 +7,7 @@
           v-model="queryParams.userNameOrTel"
           allow-clear
           placeholder="输入姓名"
-          style="width: 120px; height: 28px"
+          style="width: 125px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -27,13 +27,18 @@
           :not-found-content="fetching ? undefined : null"
           allow-clear
           placeholder="请选择科室"
+          style="width: 180px"
           @change="onDepartmentSelectChange"
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
-          }}</a-select-option>
+          <a-select-option
+            v-for="(item, index) in originData"
+            :key="index"
+            :title="item.department_name"
+            :value="item.department_id"
+            >{{ item.department_name }}</a-select-option
+          >
         </a-select>
       </div>
 
@@ -57,7 +62,7 @@
           v-model="queryParams.planName"
           allow-clear
           placeholder="输入方案名称"
-          style="width: 120px; height: 28px"
+          style="width: 125px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -81,7 +86,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goCheck(record)"><a-icon style="margin-right:5px" type="eye"></a-icon>查看</a>
+        <a @click="goCheck(record)"><a-icon style="margin-right: 5px" type="eye"></a-icon>查看</a>
       </span>
 
       <span slot="status" slot-scope="text, record">
@@ -97,7 +102,12 @@
 <script>
 import { STable } from '@/components'
 import logDetail from './logDetail'
-import {getDepartmentListForSelect,  getWxPushRecordHistory, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
+import {
+  getDepartmentListForSelect,
+  getWxPushRecordHistory,
+  getDeptsPersonal,
+  getDepts,
+} from '@/api/modular/system/posManage'
 
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -246,11 +256,11 @@ export default {
     refresh() {
       this.$refs.table.refresh(true)
     },
-   //获取管理的科室 可首拼
- getDepartmentSelectList(departmentName) {
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (departmentName === undefined) {
           res.data.records.unshift({ department_name: '全部', department_id: -1 })

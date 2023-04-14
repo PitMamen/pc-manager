@@ -42,7 +42,7 @@
                 v-model="queryParam.title"
                 allow-clear
                 placeholder="输入文章名称查询"
-                style="width: 120px; height: 28px"
+                style="width: 180px; height: 28px"
                 @keyup.enter="$refs.table.refresh(true)"
                 @search="$refs.table.refresh(true)"
               />
