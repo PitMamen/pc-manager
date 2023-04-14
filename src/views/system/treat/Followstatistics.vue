@@ -344,6 +344,7 @@ export default {
     //导出
     exportOut() {
       let params = JSON.parse(JSON.stringify(this.queryParamsStatisit))
+      console.log("KK：",params)
       exportFollowStatListm(params)
         .then((res) => {
           this.downloadfile(res)
@@ -413,6 +414,7 @@ export default {
         var array = []
         array.push(value)
         this.queryParamsStatisit.executeDepartmentIds=array
+        console.log("JJJ:",this.queryParamsStatisit)
       if (value === undefined || value.length == 0) {
         this.originData = []
         this.getDepartmentSelectList(undefined)
