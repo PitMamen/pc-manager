@@ -2,7 +2,7 @@
   <a-modal
     title="选择健康宣教"
     :width="900"
-    :height="900" 
+    :height="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -10,6 +10,59 @@
     footer=""
   >
     <a-spin :spinning="confirmLoading">
+      <div class="table-page-search-wrapper">
+        <div class="search-row">
+          <span class="name">文章名称:</span>
+          <a-input
+            v-model="queryParam.title"
+            allow-clear
+            placeholder="输入文章名称查询"
+            style="width: 180px"
+            @blur="$refs.table.refresh(true)"
+            @keyup.enter="$refs.table.refresh(true)"
+            @search="$refs.table.refresh(true)"
+          />
+        </div>
+
+        <!-- <div class="search-row">
+        <span class="name">状态:</span>
+        <a-switch :checked="isOpen" @click="goOpen" />
+      </div> -->
+
+        <div class="search-row">
+          <span class="name">科室:</span>
+          <a-select
+            class="sitemore"
+            style="min-width: 180px; height: 28px"
+            :collapse-tags="true"
+            show-search
+            v-model="queryParam.deptCode"
+            :filter-option="false"
+            :not-found-content="fetching ? undefined : null"
+            allow-clear
+            placeholder="输入科室查询"
+            @change="onDepartmentSelectChange"
+            @search="onDepartmentSelectSearch"
+          >
+            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+            <a-select-option
+              v-for="(item, index) in originData"
+              :title="item.department_name"
+              :key="index"
+              :value="item.department_id"
+              >{{ item.department_name }}</a-select-option
+            >
+          </a-select>
+        </div>
+
+        <div class="action-row">
+          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+            <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          </span>
+        </div>
+      </div>
+
       <s-table
         ref="table"
         size="default"
@@ -28,7 +81,7 @@
 
 
 <script>
-import { getAllArticlesNew } from '@/api/modular/system/posManage'
+import { getAllArticlesNew, getDepartmentListForSelect } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -37,7 +90,7 @@ export default {
 
   data() {
     return {
-      queryParam: { deptCode: '' },
+      queryParam: { title: '', deptCode: '' },
       // 表头
       columns: [
         {
@@ -61,6 +114,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        console.log('Object.assign(parameter, this.queryParam)',Object.assign(parameter, this.queryParam))
         return getAllArticlesNew(Object.assign(parameter, this.queryParam)).then((res) => {
           console.log(parameter)
           console.log(res.data.total / parameter.pageSize)
@@ -92,10 +146,15 @@ export default {
       },
       type: '',
       index: -1,
+      fetching: false,
+      originData: [],
       form: this.$form.createForm(this),
       confirmLoading: false,
       visible: false,
     }
+  },
+  created() {
+    this.getDepartmentSelectList(undefined)
   },
   methods: {
     //初始化方法
@@ -104,6 +163,44 @@ export default {
       this.queryParam.deptCode = deptCode
       this.index = index
       this.$refs.table.refresh()
+    },
+
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      // if (value == undefined) {
+      //   this.queryParam.executeDepartmentIds = []
+      //   return
+      // }
+      // var array = []
+      // array.push(value)
+      // this.queryParam.executeDepartmentIds = array
+      // if (value === undefined || value.length == 0) {
+      //   this.originData = []
+      //   this.getDepartmentSelectList(undefined)
+      // }
+    },
+
+    reset() {
+      // this.createValue = []
+      this.queryParam.title = undefined
+      this.queryParam.deptCode = undefined
+      this.$refs.table.refresh(true)
     },
 
     pick(record) {
@@ -122,3 +219,30 @@ export default {
   },
 }
 </script>
+<style lang="less" scoped>
+.table-page-search-wrapper {
+  padding-bottom: 18px;
+  border-bottom: 1px solid #e8e8e8;
+  .action-row {
+    display: inline-block;
+    vertical-align: middle;
+  }
+  .search-row {
+    display: inline-block;
+    vertical-align: middle;
+    padding-right: 20px;
+    .name {
+      margin-right: 10px;
+    }
+
+    .ant-input {
+      width: 100%;
+      height: 28px !important;
+      padding: 4px 11px;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 12px !important;
+      line-height: 1.5;
+    }
+  }
+}
+</style>

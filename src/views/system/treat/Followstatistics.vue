@@ -43,6 +43,32 @@
         </a-select>
       </div>
 
+      <div class="search-row">
+        <span class="name">姓名:</span>
+        <a-input
+          v-model="queryParamsStatisit.queryStr"
+          allow-clear
+          placeholder="输入姓名查询"
+          style="width: 180px"
+          @blur="$refs.table.refresh(true)"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
+      <div class="search-row">
+        <span class="name">住院号:</span>
+        <a-input
+          v-model="queryParamsStatisit.zyh"
+          allow-clear
+          placeholder="输入住院号查询"
+          style="width: 180px"
+          @blur="$refs.table.refresh(true)"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
       <div class="search-row" style="margin-left: 15px; padding-bottom: 0%">
         <span class="name">时间:</span>
         <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important; width: 185px" />
@@ -198,6 +224,8 @@ export default {
         endExecuteTime: getCurrentMonthLast(),
         executeDepartmentIds: [],
         messageOriginalId: undefined,
+        queryStr: undefined,
+        zyh: undefined,
       },
 
       // 表头
@@ -228,6 +256,11 @@ export default {
           dataIndex: 'cyksmc',
           width: 150,
           ellipsis: true,
+        },
+        {
+          title: '住院号',
+          dataIndex: 'zyh',
+          width: 100,
         },
         {
           title: '床号',

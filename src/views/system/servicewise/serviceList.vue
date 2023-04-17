@@ -71,7 +71,8 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a>
+        <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
+        <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
       </span>
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
@@ -119,7 +120,7 @@ export default {
         planName: '',
         executeDepartment: undefined,
 
-        status: 1,
+        status: '',
       },
       labelCol: {
         xs: { span: 24 },
