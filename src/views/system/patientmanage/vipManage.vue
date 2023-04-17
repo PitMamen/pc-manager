@@ -12,7 +12,7 @@
           v-model="name"
           allow-clear
           placeholder="输入姓名"
-          style="width: 140px; height: 28px"
+          style="width: 160px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -32,7 +32,7 @@
           }}</a-select-option>
         </a-select> -->
         <a-select       
-        style="min-width: 150px; height: 28px;"
+        style="min-width: 180px; height: 28px;"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -59,7 +59,7 @@
             v-model="item.tempValue"
             allow-clear
             placeholder="输入内容"
-            style="width: 120px; height: 28px"
+            style="width: 160px; height: 28px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />

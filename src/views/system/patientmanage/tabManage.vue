@@ -40,7 +40,7 @@
                 v-model="params.tagsName"
                 allow-clear
                 placeholder="请输入标签名称查询"
-                style="width: 120px; height: 28px"
+                style="width: 180px; height: 28px"
                 @keyup.enter="$refs.table.refresh(true)"
                 @search="$refs.table.refresh(true)"
               />
