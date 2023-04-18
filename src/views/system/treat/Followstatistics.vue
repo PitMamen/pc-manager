@@ -7,7 +7,7 @@
           class="sitemore"
           allow-clear
           v-model="queryParamsStatisit.messageOriginalId"
-          style="width: 180px; height: 28px"
+          style="width: 280px; height: 28px"
           placeholder="请选择问卷名称"
         >
           <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index">{{
@@ -164,6 +164,7 @@
       ref="tableStat"
       size="default"
       :columns="columnsStat"
+      :scroll="{ x: true }"
       :data="loadDataStat"
       :alert="true"
       :rowKey="(record) => record.code"
@@ -433,6 +434,10 @@ export default {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
+          if (this.originData.length == 1) {
+            this.queryParamsStatisit.executeDepartmentIds.push(this.originData[0].department_id)
+            this.$refs.tableStat.refresh()
+          }
         }
       })
     },
