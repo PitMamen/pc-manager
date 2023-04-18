@@ -242,7 +242,7 @@
 
             <a-auto-complete
               class="mid-select-two"
-              style="width: 18% !important"
+              style="width: 20% !important"
               v-model="itemTask.messageContentId"
               placeholder="请选择模版"
               option-label-prop="title"
@@ -296,8 +296,9 @@
               class="mid-select-two"
               @focus="getFocus"
               v-model="itemTask.metaConfigureDetailId"
+              style="width: 100px!important"
               allow-clear
-              placeholder="请选择日期类别"
+              placeholder="日期类别"
             >
               <a-select-option v-for="(item, index) in dateFieldsData" :key="index" :value="item.value">{{
                 item.description
@@ -311,10 +312,11 @@
             <a-select
               class="mid-select-two"
               v-if="itemTask.taskExecType == 2"
+              style="width: 100px!important"
               v-model="itemTask.repeatTimeUnit"
               @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
               allow-clear
-              placeholder="请选择重复周期"
+              placeholder="重复周期"
             >
               <a-select-option v-for="(item, index) in repeatTimeUnitTypesData" :key="index" :value="item.value">{{
                 item.description
@@ -327,6 +329,7 @@
               class="mid-select-two"
               v-if="itemTask.taskExecType == 2 && itemTask.repeatTimeUnit != 1 && itemTask.repeatTimeUnit != 4"
               v-model="itemTask.timeQuantity"
+              style="width: 100px!important"
               allow-clear
               placeholder="请选择"
             >
@@ -337,23 +340,23 @@
 
             <!-- 临时任务要显示；间隔要显示 -->
             <a-input-number
-              style="display: inline-block; margin-left: 1%; width: 96px"
+              style="display: inline-block; margin-left: 1%; width: 50px"
               v-model="itemTask.timeQuantity"
               v-if="itemTask.taskExecType == 1 || itemTask.repeatTimeUnit == 1"
               :min="0"
               :max="10000"
               :maxLength="30"
               allow-clear
-              placeholder="请输入数量"
+              placeholder="数量"
             />
 
             <a-select
               class="mid-select-two"
-              style="width: 8% !important"
+              style="width: 5% !important"
               v-if="itemTask.taskExecType == 1 || itemTask.repeatTimeUnit == 1"
               v-model="itemTask.timeUnit"
               allow-clear
-              placeholder="请选择单位"
+              placeholder="单位"
             >
               <a-select-option v-for="(item, index) in timeUnitTypesData" :key="index" :value="item.value">{{
                 item.description
