@@ -36,7 +36,7 @@
 
 
 
-          <div class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
+          <div v-show="jumpType!=3" class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
             <img src="@/assets/icons/wenzhen/phone_n.png" v-if="tab === 4" />
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
@@ -130,7 +130,7 @@
                   <span
                     style="margin-left: 10px; margin-top: 5px; color: {currentItem == index?#4d4d4d:blue}; font-size: 12px"
                   >
-                    {{ item.createdTime }}
+                    {{ item.serviceItemType==101?item.createdTime.substring(0,10):item.appointTime.substring(0,10) }}
                   </span>
                   <!-- 最后一根横线不显示 -->
                   <div v-if="timeAxisList.length - index > 1" class="rowLine"></div>
@@ -843,12 +843,10 @@ export default {
     },
 
     tabClick(tab1) {
-      console.log('DDD:', tab1,this.tab)
       if (this.tab === tab1) {
         return
       }
       this.tab = tab1
-      console.log('FFF:', this.tab)
       if (this.tab === 1 && !this.tab1Flag) {
         this.tab1Info = {}
         this.tab1List = []
@@ -963,7 +961,6 @@ export default {
 
     //聊天记录
     getChatList(orderId) {
-      console.log("执行聊天----")
       this.confirmLoading = true
       list2({
         pageNo: this.pageNo,
@@ -1270,7 +1267,7 @@ export default {
 
         .timeLine {
           width: 1163px;
-          height: 52px;
+          // height: 52px;
           background: #ffffff;
           border: 1px solid #dfe3e5;
           margin-bottom: 15px;
