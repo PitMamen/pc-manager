@@ -39,12 +39,12 @@
         </a-select>
       </div>
 
-      <div class="search-row" style="margin-left: 15px; padding-bottom: 0%">
+      <div class="search-row" style="margin-left: 15px; ">
         <span class="name">时间:</span>
         <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important; width: 185px" />
       </div>
 
-      <div class="action-row">
+      <div  class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="searchOut()">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
@@ -201,7 +201,7 @@ export default {
         {
           title: '姓名',
           dataIndex: 'name',
-          width:150,
+          width:80,
           ellipsis: true,
         },
         {
@@ -213,6 +213,8 @@ export default {
         {
           title: '电话',
           dataIndex: 'phone',
+          width:150,
+          ellipsis: true,
         },
         {
           title: '年龄',
@@ -228,6 +230,8 @@ export default {
         {
           title: '床号',
           dataIndex: 'ch',
+          width:80,
+          ellipsis: true,
         },
 
         {
@@ -239,6 +243,8 @@ export default {
         {
           title: '出院时间',
           dataIndex: 'cysj',
+          width:180,
+          ellipsis: true,
         },
 
         {
@@ -450,7 +456,7 @@ export default {
 </script>
   
   
-    <style lang="less" >
+    <style lang="less" scoped >
 .ant-select-selection--multiple {
   min-height: 28px;
   cursor: text;
@@ -686,13 +692,15 @@ export default {
 }
 
 .table-page-search-wrapper {
-  padding-bottom: 18px;
+  // padding-bottom: 18px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
+    padding-bottom: 18px;
     display: inline-block;
     vertical-align: middle;
   }
   .search-row {
+    padding-bottom: 18px;
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;

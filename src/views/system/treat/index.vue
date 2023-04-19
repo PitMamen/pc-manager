@@ -60,7 +60,7 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <a @click="$refs.infoForm.info(record,1)"><a-icon style="margin-right: 5px" type="hdd" />问诊记录</a>
+          <a @click="$refs.infoForm.info(record,5)"><a-icon style="margin-right: 5px" type="hdd" />问诊记录</a>
         </template>
       </span>
     </s-table>

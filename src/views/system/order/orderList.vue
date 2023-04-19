@@ -58,6 +58,18 @@
         />
       </div>
 
+
+      <div class="search-row">
+        <span class="name">订单分类:</span>
+        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="(item, index) in ordertypeList" :key="index" :value="item.code">{{
+            item.value
+          }}</a-select-option>
+        </a-select>
+      </div>
+
+
+
       <div class="search-row">
         <span class="name">下单时间:</span>
         <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
@@ -161,6 +173,7 @@
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
+    <yzOrderDetail ref="yzOrderDetail" @ok="handleOk" />
   </a-card>
 </template>
  
@@ -171,12 +184,14 @@ import { orderList, accessHospitals, getOrderStatusGroupByData ,getCommodityClas
 import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
+import yzOrderDetail from './yzOrderDetail'
 
 export default {
   components: {
     STable,
     addForm,
     orderDetail,
+    yzOrderDetail,
     // editForm,
   },
 
@@ -220,6 +235,9 @@ export default {
         orderStatus: '',
       },
 
+
+      ordertypeList:[{code:1,value:'咨询订单'},{code:2,value:'专科服务'},{code:3,value:'商城订单'}],
+
       queryParamsTemp:{},
 
 
@@ -230,6 +248,12 @@ export default {
           title: '订单号',
           dataIndex: 'orderId',
           ellipsis: true,
+        },
+
+        {
+          title: '订单分类',
+          dataIndex: 'userName',
+          width:100,
         },
         {
           title: '用户姓名',
@@ -246,7 +270,7 @@ export default {
           ellipsis: true,
         },
         {
-          title: '医院名称',
+          title: '所属机构',
           dataIndex: 'hospitalName',
         },
         {
@@ -386,12 +410,11 @@ export default {
 
     //详情
     goDetail(record) {
-      // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/orderDetail',
+        path: '/order/yzOrderDetail',
+        // path: '/order/orderDetail',
         query: {
           orderId:record.orderId,
-          // orderId:1623236088379908098,
         },
       })
     },
