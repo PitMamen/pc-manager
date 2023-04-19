@@ -34,6 +34,7 @@
             <a-select
               class="deptselect-single"
               show-search
+              style="width: 180px"
               v-model="queryParams.executeDepartmentId"
               :filter-option="false"
               :not-found-content="fetching ? undefined : null"
@@ -43,9 +44,13 @@
               @search="onDepartmentSelectSearch"
             >
               <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-              <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-                item.department_name
-              }}</a-select-option>
+              <a-select-option
+                v-for="(item, index) in originData"
+                :title="item.department_name"
+                :key="index"
+                :value="item.department_id"
+                >{{ item.department_name }}</a-select-option
+              >
             </a-select>
           </div>
 
@@ -192,11 +197,12 @@
           >
             <span slot="action" slot-scope="text, record">
               <!-- 跳转详情 -->
-              <a @click="goDetai(record)"><a-icon style="margin-right:5px" type="hdd"></a-icon>详情</a>
+              <a @click="goDetai(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
               <!-- 跳转抽查 -->
-              <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)"><a-icon style="margin-right:2px" type="search"></a-icon>{{
-                queryParams.type == 1 ? '抽查' : '详情'
-              }}</a>
+              <a style="margin-left: 6%" v-if="queryParams.type == 1" @click="goAction(record)"
+                ><a-icon style="margin-right: 2px" type="search"></a-icon
+                >{{ queryParams.type == 1 ? '抽查' : '详情' }}</a
+              >
               <!-- 跳转抽查结果 -->
               <a style="margin-left: 6%" v-if="queryParams.type == 2" @click="goAction(record)">抽查结果</a>
             </span>
@@ -703,8 +709,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (departmentName === undefined) {
           res.data.records.unshift({ department_name: '全部', department_id: -1 })
@@ -945,6 +951,7 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
+  padding-top: 20px;
   height: 100%;
 
   .div-radio {

@@ -451,7 +451,7 @@ export default {
       this.$refs.addQuestion.add(0)
     },
     selectTeachBtn() {
-      this.$refs.addTeach.add(0, '')
+      this.$refs.addTeach.add(0, undefined)
     },
     handleQuestion(index, record) {
       console.log(record)

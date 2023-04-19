@@ -66,6 +66,7 @@ export function getAllArticlesNew(parameter) {
       start: parameter.pageNo,
       pageSize: parameter.pageSize,
       deptCode: parameter.deptCode,
+      title: parameter.title
     }
   })
 }
@@ -2816,10 +2817,10 @@ export function getUsersByDeptIdsAndRoles(data) {
 /**
  * 随访问卷开关配置
  */
-export function getSwitchStatus(data){
+export function getSwitchStatus(data) {
   return axios({
-    url:'/info-api/sysConfigData/get/department_management_status',
-    method:"get",
+    url: '/info-api/sysConfigData/get/department_management_status',
+    method: "get",
     params: data,
   })
 }
@@ -4152,24 +4153,24 @@ export function tradeBillExport(data) {
 
 
 //用户标签分类列表
-export function getUserTagsTypeList(data){
+export function getUserTagsTypeList(data) {
   return axios({
-    url:'/account-api/tdUserTagsType/getUserTagsTypeList',
-    method:'post',
-    data:data,
+    url: '/account-api/tdUserTagsType/getUserTagsTypeList',
+    method: 'post',
+    data: data,
   })
- 
+
 }
 
 
 //添加用户标签分类
-export function addUserTagsType(data){
+export function addUserTagsType(data) {
   return axios({
-    url:'/account-api/tdUserTagsType/addUserTagsType',
-    method:'post',
-    data:data,
+    url: '/account-api/tdUserTagsType/addUserTagsType',
+    method: 'post',
+    data: data,
   })
- 
+
 }
 
 
@@ -4189,81 +4190,81 @@ export function getDictDataForCodeTagstype(data) {
 
 
 //删除分类
-export function deleteUserTagsType(id){
+export function deleteUserTagsType(id) {
   return axios({
-    url:'/account-api/tdUserTagsType/deleteUserTagsType/'+id,
-    method:'post',
+    url: '/account-api/tdUserTagsType/deleteUserTagsType/' + id,
+    method: 'post',
     // data:data,
   })
- 
+
 }
 
 
 
 //修改分类
-export function modifyUserTagsType(data){
+export function modifyUserTagsType(data) {
   return axios({
-    url:'/account-api/tdUserTagsType/modifyUserTagsType',
-    method:'post',
-    data:data,
+    url: '/account-api/tdUserTagsType/modifyUserTagsType',
+    method: 'post',
+    data: data,
   })
- 
+
 }
 
 
 //用户标签列表
-export function getUserTags(data){
+export function getUserTags(data) {
   return axios({
-    url:'/account-api/tdUserTags/getUserTags',
-    method:'post',
-    data:data,
+    url: '/account-api/tdUserTags/getUserTags',
+    method: 'post',
+    data: data,
   })
 }
 
 
 //删除用户标签
-export function deleteUserTag(id){
+export function deleteUserTag(id) {
   return axios({
-    url:'/account-api/tdUserTags/deleteUserTags/'+id,
-    method:'post',
+    url: '/account-api/tdUserTags/deleteUserTags/' + id,
+    method: 'post',
     // data:data,
   })
 }
 
 //添加用户标签
-export function addUserTag(data){
+export function addUserTag(data) {
   return axios({
-    url:'/account-api/tdUserTags/addUserTags',
-    method:'post',
-    data:data,
+    url: '/account-api/tdUserTags/addUserTags',
+    method: 'post',
+    data: data,
   })
 }
 
 //修改用户标签
-export function modifyUserTag(data){
+export function modifyUserTag(data) {
   return axios({
-    url:'/account-api/tdUserTags/modifyUserTags',
-    method:'post',
-    data:data,
+    url: '/account-api/tdUserTags/modifyUserTags',
+    method: 'post',
+    data: data,
   })
 }
 
 
 //随访统计列表
-export function qryFollowStatList(data){
+export function qryFollowStatList(data) {
   return axios({
-    url:'/follow-api/follow/stat/qryFollowStatList',
-    method:'post',
-    data:data,
+    url: '/follow-api/follow/stat/qryFollowStatList',
+    method: 'post',
+    data: data,
   })
 }
 
 //统计(标题)
-export function getFollowStat(data){
+export function getFollowStat(data) {
   return axios({
-    url:'/follow-api/follow/stat/getFollowStat',
-    method:'post',
-    data:data,
+    url: '/follow-api/follow/stat/getFollowStat',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -4274,7 +4275,7 @@ export function getFollowStat(data){
 
 
 //导出
-export function exportFollowStatListm(data){
+export function exportFollowStatListm(data) {
   return axios({
     url:'/follow-api/excel/exportFollowStatList',
     method:'post',
@@ -4286,18 +4287,18 @@ export function exportFollowStatListm(data){
 
 
 //打标识
-export function updatePatientSpecFlag(data){
+export function updatePatientSpecFlag(data) {
   return axios({
-    url:'/follow-api/followMetaConfigure/updatePatientSpecFlag',
-    method:'post',
-    data:data,
+    url: '/follow-api/followMetaConfigure/updatePatientSpecFlag',
+    method: 'post',
+    data: data,
   })
 }
 
 //患者信息查询  
-  export function getPatientInfoCon(id){
+export function getPatientInfoCon(id) {
   return axios({
-    url:'/follow-api/followMetaConfigure/getPatientInfo/'+id,
-    method:'post'
+    url: '/follow-api/followMetaConfigure/getPatientInfo/' + id,
+    method: 'post'
   })
 }

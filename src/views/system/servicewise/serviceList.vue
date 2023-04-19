@@ -7,7 +7,7 @@
           v-model="queryParams.planName"
           allow-clear
           placeholder="可输入方案名称"
-          style="width: 120px; height: 28px"
+          style="width: 180px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -18,6 +18,7 @@
         <a-select
           class="deptselect-single"
           show-search
+          style="width: 180px"
           v-model="queryParams.executeDepartment"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
@@ -27,9 +28,13 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
-          }}</a-select-option>
+          <a-select-option
+            v-for="(item, index) in originData"
+            :title="item.department_name"
+            :key="index"
+            :value="item.department_id"
+            >{{ item.department_name }}</a-select-option
+          >
         </a-select>
       </div>
       <!-- <div class="search-row">
@@ -66,7 +71,8 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a>
+        <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
+        <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
       </span>
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
@@ -114,7 +120,7 @@ export default {
         planName: '',
         executeDepartment: undefined,
 
-        status: 1,
+        status: '',
       },
       labelCol: {
         xs: { span: 24 },
@@ -184,9 +190,9 @@ export default {
       },
 
       selects: [
-      {
+        {
           id: '',
-          name: '全部'
+          name: '全部',
         },
         {
           id: 1,
@@ -232,8 +238,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,undefined).then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, undefined).then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records

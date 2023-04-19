@@ -43,7 +43,7 @@
         </a-select> -->
         <a-select
           class="sitemore"
-          style="min-width: 150px; height: 28px"
+          style="min-width: 180px; height: 28px"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -57,15 +57,19 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
-          }}</a-select-option>
+          <a-select-option
+            v-for="(item, index) in originData"
+            :title="item.department_name"
+            :key="index"
+            :value="item.department_id"
+            >{{ item.department_name }}</a-select-option
+          >
         </a-select>
       </div>
 
       <div class="search-row" style="margin-left: 15px; padding-bottom: 0%">
         <span class="name">时间:</span>
-        <a-range-picker   :value="createValue" @change="onChange" style="height: 28px !important;width: 185px" />
+        <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important; width: 185px" />
       </div>
 
       <div class="action-row">
@@ -384,8 +388,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
@@ -435,7 +439,6 @@ export default {
 
 
   <style lang="less" >
-
 .ant-select-selection--multiple {
   min-height: 28px;
   cursor: text;
@@ -464,10 +467,9 @@ export default {
     /deep/.ant-select-selection__rendered {
       margin-top: -2px !important;
     }
-    /deep/.ant-select-selection__placeholder{
+    /deep/.ant-select-selection__placeholder {
       margin-top: -8px !important;
     }
-
   }
 }
 

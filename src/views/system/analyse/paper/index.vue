@@ -45,6 +45,7 @@
               <a-select
                 class="deptselect-single"
                 show-search
+                style="min-width: 180px"
                 v-model="queryParam.executeDepartmentId"
                 :filter-option="false"
                 :not-found-content="fetching ? undefined : null"

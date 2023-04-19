@@ -5,7 +5,7 @@
         <div class="search-row">
           <span class="name">文章名称:</span>
           <a-select
-            style="width: 150px"
+            style="width: 180px"
             show-search
             v-model="queryParam.articleId"
             :filter-option="false"
@@ -24,7 +24,7 @@
           <span class="name">执行科室:</span>
 
           <a-select
-            style="width: 150px"
+            style="width: 180px"
             show-search
             v-model="queryParam.departmentId"
             :filter-option="false"
@@ -35,9 +35,13 @@
             @search="onDepartmentSelectSearch"
           >
             <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-            <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-              item.department_name
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in originData"
+              :key="index"
+              :title="item.department_name"
+              :value="item.department_id"
+              >{{ item.department_name }}</a-select-option
+            >
           </a-select>
         </div>
         <div class="search-row">
@@ -81,7 +85,6 @@
                   {{ item.articleName }}
                 </div>
                 {{ item.count }}/{{ item.readCount }}/{{ item.rate }}
-                             
               </div>
             </div>
           </a-spin>
@@ -478,10 +481,9 @@ export default {
       justify-content: space-between;
     }
     .ksview {
-      
       font-size: 12px;
       width: 120px;
-      
+
       white-space: nowrap;
 
       overflow: hidden;

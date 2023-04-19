@@ -7,7 +7,7 @@
           class="sitemore"
           allow-clear
           v-model="queryParamsStatisit.messageOriginalId"
-          style="width: 150px; height: 28px"
+          style="width: 280px; height: 28px"
           placeholder="请选择问卷名称"
         >
           <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index">{{
@@ -21,7 +21,7 @@
         <span class="name">科室:</span>
         <a-select
           class="sitemore"
-          style="min-width: 150px; height: 28px"
+          style="min-width: 180px; height: 28px"
           :collapse-tags="true"
           show-search
           v-model="queryParamsStatisit.executeDepartmentIds"
@@ -33,13 +33,43 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
-            item.department_name
-          }}</a-select-option>
+          <a-select-option
+            v-for="(item, index) in originData"
+            :title="item.department_name"
+            :key="index"
+            :value="item.department_id"
+            >{{ item.department_name }}</a-select-option
+          >
         </a-select>
       </div>
 
-      <div class="search-row" style="margin-left: 15px; ">
+      <div class="search-row">
+        <span class="name">姓名:</span>
+        <a-input
+          v-model="queryParamsStatisit.queryStr"
+          allow-clear
+          placeholder="输入姓名查询"
+          style="width: 180px"
+          @blur="$refs.table.refresh(true)"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
+      <div class="search-row">
+        <span class="name">住院号:</span>
+        <a-input
+          v-model="queryParamsStatisit.zyh"
+          allow-clear
+          placeholder="输入住院号查询"
+          style="width: 180px"
+          @blur="$refs.table.refresh(true)"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
+      <div class="search-row" style="margin-left: 15px;">
         <span class="name">时间:</span>
         <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important; width: 185px" />
       </div>
@@ -134,6 +164,7 @@
       ref="tableStat"
       size="default"
       :columns="columnsStat"
+      :scroll="{ x: true }"
       :data="loadDataStat"
       :alert="true"
       :rowKey="(record) => record.code"
@@ -194,6 +225,8 @@ export default {
         endExecuteTime: getCurrentMonthLast(),
         executeDepartmentIds: [],
         messageOriginalId: undefined,
+        queryStr: undefined,
+        zyh: undefined,
       },
 
       // 表头
@@ -207,7 +240,7 @@ export default {
         {
           title: '性别',
           dataIndex: 'sex',
-          width:70,
+          width: 70,
         },
 
         {
@@ -219,13 +252,18 @@ export default {
         {
           title: '年龄',
           dataIndex: 'age',
-          width:80,
+          width: 80,
         },
         {
           title: '出院科室',
           dataIndex: 'cyksmc',
-          width:150,
+          width: 150,
           ellipsis: true,
+        },
+        {
+          title: '住院号',
+          dataIndex: 'zyh',
+          width: 100,
         },
         {
           title: '床号',
@@ -237,7 +275,7 @@ export default {
         {
           title: '随访内容',
           dataIndex: 'questName',
-          width:150,
+          width: 150,
           ellipsis: true,
         },
         {
@@ -251,20 +289,20 @@ export default {
           title: '微信登记',
           dataIndex: 'openidFlag',
           align: 'right',
-          width:80,
-        //   ellipsis: true,
+          width: 80,
+          //   ellipsis: true,
         },
         {
           title: '推送次数',
           dataIndex: 'totalTask',
-          width:80,
+          width: 80,
           align: 'right',
         },
         {
           title: '成功次数',
           dataIndex: 'successTotalTask',
           align: 'right',
-          width:80,
+          width: 80,
         },
         {
           title: '标记',
@@ -328,10 +366,10 @@ export default {
 
   methods: {
     searchOut() {
-        if(!this.queryParamsStatisit.messageOriginalId){
-            this.$message.error("请选择问卷名称")
-            return
-        }
+      if (!this.queryParamsStatisit.messageOriginalId) {
+        this.$message.error('请选择问卷名称')
+        return
+      }
       this.getFollowStatOut()
       this.$refs.tableStat.refresh(true)
     },
@@ -342,7 +380,7 @@ export default {
     questionnairesOut() {
       questionnaires({}).then((res) => {
         if (res.code == 0) {
-            this.quesData = res.data
+          this.quesData = res.data
         }
       })
     },
@@ -403,6 +441,10 @@ export default {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
+          if (this.originData.length == 1) {
+            this.queryParamsStatisit.executeDepartmentIds.push(this.originData[0].department_id)
+            this.$refs.tableStat.refresh()
+          }
         }
       })
     },
@@ -413,30 +455,25 @@ export default {
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
-        if(value==undefined){
-            this.queryParamsStatisit.executeDepartmentIds=[]
-            return
-        }
-        var array = []
-        array.push(value)
-        this.queryParamsStatisit.executeDepartmentIds=array
-        console.log("JJJ:",this.queryParamsStatisit)
+      if (value == undefined) {
+        this.queryParamsStatisit.executeDepartmentIds = []
+        return
+      }
+      var array = []
+      array.push(value)
+      this.queryParamsStatisit.executeDepartmentIds = array
       if (value === undefined || value.length == 0) {
         this.originData = []
         this.getDepartmentSelectList(undefined)
       }
     },
 
-
-    change(row){
+    change(row) {
       //触发清空
-      if(row.gettype='click'&&row.isTrusted){
+      if ((row.gettype = 'click' && row.isTrusted)) {
         this.userInfos = this.userInfosTemp
       }
     },
-
-
-
 
     handleOk() {
       this.$refs.tableStat.refresh()

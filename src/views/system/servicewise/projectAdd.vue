@@ -240,7 +240,7 @@
             <!-- @search="handleSearch(indexTask, itemTask)" -->
             <a-auto-complete
               class="mid-select-two"
-              style="width: 13% !important"
+              style="width: 20% !important"
               v-model="itemTask.messageContentId"
               :title="itemTask.templateTitle"
               placeholder="请选择模版"
@@ -276,13 +276,21 @@
                 >{{ item.templateTitle }}</a-select-option
               >
             </a-select> -->
-
-            <a-select class="mid-select-two" v-model="itemTask.taskType" disabled allow-clear placeholder="任务类型">
-              <a-select-option v-for="(item, index) in taskTypeData" :key="index" :value="item.value">{{
-                item.description
-              }}</a-select-option>
-            </a-select>
-
+            <div class="div-type" @click="showDetail(indexTask)">
+              {{ itemTask.taskTypeName }}
+              <!-- <a-select
+                class="mid-select-two"
+                style="width: 100% !important"
+                v-model="itemTask.taskType"
+                disabled
+                allow-clear
+                placeholder="任务类型"
+              >
+                <a-select-option v-for="(item, index) in taskTypeData" :key="index" :value="item.value">{{
+                  item.description
+                }}</a-select-option>
+              </a-select> -->
+            </div>
             <!-- @select="onTaskExecTypeSelect" -->
             <a-select class="mid-select-two" v-model="itemTask.taskExecType" allow-clear placeholder="请选择执行周期">
               <a-select-option v-for="(item, index) in taskExecData" :key="index" :value="item.value">{{
@@ -293,9 +301,10 @@
             <a-select
               class="mid-select-two"
               @focus="getFocus"
+              style="width: 100px !important"
               v-model="itemTask.metaConfigureDetailId"
               allow-clear
-              placeholder="请选择日期类别"
+              placeholder="日期类别"
             >
               <a-select-option v-for="(item, index) in dateFieldsData" :key="index" :value="item.value">{{
                 item.description
@@ -309,10 +318,11 @@
             <a-select
               class="mid-select-two"
               v-if="itemTask.taskExecType == 2"
+              style="width: 100px !important"
               v-model="itemTask.repeatTimeUnit"
               @select="onRepeatTimeUnitSelect(itemTask, indexTask)"
               allow-clear
-              placeholder="请选择重复周期"
+              placeholder="重复周期"
             >
               <a-select-option v-for="(item, index) in repeatTimeUnitTypesData" :key="index" :value="item.value">{{
                 item.description
@@ -325,6 +335,7 @@
               class="mid-select-two"
               v-if="itemTask.taskExecType == 2 && itemTask.repeatTimeUnit != 1 && itemTask.repeatTimeUnit != 4"
               v-model="itemTask.timeQuantity"
+              style="width: 100px !important"
               allow-clear
               placeholder="请选择"
             >
@@ -335,24 +346,24 @@
 
             <!-- 临时任务要显示；间隔要显示 -->
             <a-input-number
-              style="display: inline-block; margin-left: 1%; width: 96px"
+              style="display: inline-block; margin-left: 1%; width: 50px"
               v-model="itemTask.timeQuantity"
               v-if="itemTask.taskExecType == 1 || itemTask.repeatTimeUnit == 1"
               :min="0"
               :max="10000"
               :maxLength="30"
               allow-clear
-              placeholder="请输入数量"
+              placeholder="数量"
             />
 
             <!-- 临时任务要显示；间隔要显示 -->
             <a-select
               class="mid-select-two"
-              style="width: 8% !important"
+              style="width: 5% !important"
               v-if="itemTask.taskExecType == 1 || itemTask.repeatTimeUnit == 1"
               v-model="itemTask.timeUnit"
               allow-clear
-              placeholder="请选择单位"
+              placeholder="单位"
             >
               <a-select-option v-for="(item, index) in timeUnitTypesData" :key="index" :value="item.value">{{
                 item.description
@@ -473,9 +484,9 @@
       </div>
 
       <div class="div-pro-btn">
-        <div style="flex: 1;"></div>
+        <div style="flex: 1"></div>
         <a-button type="primary" @click="submitData()">提交</a-button>
-        <a-button style="margin-left: 2%;" @click="cancel()">取消</a-button>
+        <a-button style="margin-left: 2%" @click="cancel()">取消</a-button>
       </div>
 
       <add-people ref="addPeople" @ok="handleAddPeople" />
@@ -1059,19 +1070,27 @@ export default {
 
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'
+        this.$set(itemTask, 'taskTypeName', '问卷搜集')
       } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
         //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
         if (chooseOne.jumpType == 1) {
           itemTask.taskType = '1'
+          this.$set(itemTask, 'taskTypeName', '问卷搜集')
         } else if (chooseOne.jumpType == 2) {
           itemTask.taskType = '2'
+          this.$set(itemTask, 'taskTypeName', '健康宣教')
         } else {
           itemTask.taskType = '3'
+          this.$set(itemTask, 'taskTypeName', '消息提醒')
         }
       }
       //TODO 选任务类型
       console.log('onTemSelect indexTask', indexTask)
       console.log('onTemSelect itemTask', itemTask)
+    },
+
+    showDetail(indexTask) {
+      console.log('showDetail indexTask', indexTask)
     },
 
     onFieldSelect(itemRule, indexRule) {
@@ -1560,6 +1579,22 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+        .div-type {
+          width: 6%;
+          margin-left: 1%;
+          background-color: #bbbbbb;
+          color: #333;
+          border-radius: 2px;
+          display: inline-block;
+          text-align: center;
+          height: 27px;
+          font-size: 12px;
+          padding-top: 4px;
+
+          &:hover {
+            cursor: pointer;
+          }
+        }
 
         /deep/ .ant-time-picker-input {
           height: 28px !important;

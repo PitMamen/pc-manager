@@ -7,7 +7,7 @@
           v-model="queryParams.metaName"
           allow-clear
           placeholder="可输入应用名称查询"
-          style="width: 120px"
+          style="width: 180px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />

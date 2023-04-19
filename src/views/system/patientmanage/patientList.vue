@@ -7,7 +7,7 @@
           v-model="queryParams.name"
           allow-clear
           placeholder="人员姓名查询"
-          style="width: 120px; height: 28px"
+          style="width: 160px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -29,7 +29,7 @@
           }}</a-select-option>
         </a-select> -->
         <a-select       
-        style="min-width: 150px; height: 28px;"
+        style="min-width: 180px; height: 28px;"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search

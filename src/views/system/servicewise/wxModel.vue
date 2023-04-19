@@ -7,7 +7,7 @@
           v-model="queryParams.templateTitle"
           allow-clear
           placeholder="可输入模板名称查询"
-          style="width: 120px"
+          style="width: 180px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
