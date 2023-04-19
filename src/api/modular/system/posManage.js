@@ -1,6 +1,6 @@
 import { axios } from '@/utils/request'
 import { appId } from '@/utils/util'
-import { data } from 'jquery'
+import { data, param } from 'jquery'
 import { method } from 'lodash'
 import { start } from 'nprogress'
 
@@ -4277,9 +4277,9 @@ export function getFollowStat(data) {
 //导出
 export function exportFollowStatListm(data) {
   return axios({
-    url: '/follow-api/excel/exportFollowStatList',
-    method: 'get',
-    params: data,
+    url:'/follow-api/excel/exportFollowStatList',
+    method:'post',
+    data:data,
     responseType: 'blob',
   })
 }

@@ -1,6 +1,19 @@
 import { axios } from '@/utils/request'
 import { data } from 'jquery'
 
+
+/**
+ * 专科服务列表 
+ */
+
+export function qryServiceRightsPage(parameter) {
+  return axios({
+    url: '/medical-api/rightsUse/qryServiceRightsPage',
+    method: 'post',
+    data: parameter
+  })
+}
+
 /**
  * 列表
  */
@@ -44,6 +57,18 @@ export function list4(data) {
     params:data
   })
 }
+
+
+export function qryRightsUseRecord(data) {
+  return axios({
+    url: '/medical-api/rightsUse/qryRightsUseRecord',
+    method: 'post',
+    data:data
+  })
+}
+
+
+
 
 /**
  * 查询
