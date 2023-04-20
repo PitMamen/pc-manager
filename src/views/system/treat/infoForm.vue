@@ -949,14 +949,15 @@ export default {
     },
     getWZInfo1() {
       info({
-        rightsId: this.item.id,
+        rightsId: this.jumpType==3?this.item.rightsId:this.item.id,
       }).then((res) => {
         this.wzInfo1 = res.data || {}
       })
     },
     getWZInfo2() {
+      console.log("OOO:",this.item,this.jumpType)
       info2({
-        rightsId: this.item.id,
+        rightsId: this.jumpType==3?this.item.rightsId:this.item.id,
       }).then((res) => {
         this.wzInfo2 = res.data || {}
       })
@@ -990,10 +991,12 @@ export default {
           if (this.timeAxisList && this.timeAxisList.length > 0) {
             this.item = this.timeAxisList[0]
             if (this.item.serviceItemType == 101) {
+              this.showdhTab = false
               this.currentTab = 'tw'
               this.clickType = 101
               this.getChatList(this.item.orderId)
             } else {
+              this.showdhTab = true
               this.currentTab = 'dh'
               this.clickType = 102
               this.getphoneRecords(this.item)
