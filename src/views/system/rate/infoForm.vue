@@ -534,7 +534,7 @@ export default {
     info(item) {
       this.item = item
       this.visible = true
-      this.tabClick(1)
+      this.tabClick(5)
     },
     tabClick(tab) {
       if (this.tab === tab) {

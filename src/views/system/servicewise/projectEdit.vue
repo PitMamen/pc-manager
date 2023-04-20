@@ -279,7 +279,7 @@
               >
             </a-select> -->
 
-            <div @click="showDetail(indexTask)" class="div-type">
+            <div @click="showDetail(itemTask, indexTask)" class="div-type">
               {{ itemTask.taskTypeName }}
               <!-- <a-select
                 class="mid-select-two"
@@ -506,6 +506,7 @@
       <add-people ref="addPeople" @ok="handleAddPeople" />
       <add-stop ref="addStop" @ok="handleAddStop" />
       <add-filter ref="addFilter" @ok="handleAddFilter" />
+      <task-detail ref="taskDetail" />
     </div>
   </a-spin>
 </template>
@@ -542,12 +543,14 @@ import { formatDate, formatDateFull } from '@/utils/util'
 import { parseString } from 'loader-utils'
 import addStop from './addStop'
 import addFilter from './addFilter'
+import taskDetail from './taskDetail'
 
 export default {
   components: {
     addPeople,
     addStop,
     addFilter,
+    taskDetail,
   },
 
   data() {
@@ -836,14 +839,6 @@ export default {
           item.secondaryFilterTypeEnum = item.secondaryFilterTypeEnum.value
         }
 
-        if (item.taskType == 1) {
-          this.$set(item, 'taskTypeName', '问卷搜集')
-        } else if (item.taskType == 2) {
-          this.$set(item, 'taskTypeName', '健康宣教')
-        } else {
-          this.$set(item, 'taskTypeName', '消息提醒')
-        }
-
         //处理每周每月选择的集合
         if (item.repeatTimeUnit == 2) {
           item.everyData = []
@@ -950,6 +945,7 @@ export default {
                   messageContentType: item.messageContentType,
                   templateTitle: item.templateTitle,
                   jumpType: item.jumpType,
+                  questUrl: item.questUrl,
                 })
               })
               itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -964,6 +960,8 @@ export default {
                   messageContentType: item.messageContentType,
                   templateTitle: item.templateTitle,
                   jumpType: item.jumpType,
+                  jumpValue: item.jumpValue,
+                  templateContent: item.templateContent,
                 })
               })
               itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -978,12 +976,16 @@ export default {
                   messageContentType: item.messageContentType,
                   templateTitle: item.templateTitle,
                   jumpType: item.jumpType,
+                  jumpValue: item.jumpValue,
+                  templateContent: item.templateContent,
                 })
               })
               itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
               this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
               // this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
             }
+
+            //组装每条数据显示内容
 
             var findOne = itemTask.itemTemplateListOrigin.find((el) => {
               return el.id == parseInt(itemTask.messageContentId)
@@ -994,6 +996,36 @@ export default {
             }
 
             this.confirmLoading = false
+          })
+
+          this.projectData.tasks.forEach((itemTask) => {
+            let chooseOne = itemTask.itemTemplateList.find((item) => {
+              return item.id == itemTask.messageContentId
+            })
+            console.log('onTemSelect chooseOne', chooseOne)
+            itemTask.messageContentType = chooseOne.messageContentType
+            itemTask.templateTitle = chooseOne.templateTitle || ''
+
+            if (itemTask.messageType == 1) {
+              itemTask.taskType = '1'
+              this.$set(itemTask, 'taskTypeName', '问卷搜集')
+              this.$set(itemTask, 'questUrl', chooseOne.questUrl)
+            } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
+              //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
+              if (chooseOne.jumpType == 1) {
+                itemTask.taskType = '1'
+                this.$set(itemTask, 'taskTypeName', '问卷搜集')
+              } else if (chooseOne.jumpType == 2) {
+                itemTask.taskType = '2'
+                this.$set(itemTask, 'taskTypeName', '健康宣教')
+              } else {
+                itemTask.taskType = '3'
+                this.$set(itemTask, 'taskTypeName', '消息提醒')
+              }
+              this.$set(itemTask, 'jumpType', chooseOne.jumpType)
+              this.$set(itemTask, 'jumpValue', chooseOne.jumpValue)
+              this.$set(itemTask, 'templateContent', chooseOne.templateContent)
+            }
           })
         } else {
           // return {}
@@ -1273,6 +1305,7 @@ export default {
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
             jumpType: item.jumpType,
+            questUrl: item.questUrl,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1289,6 +1322,8 @@ export default {
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
             jumpType: item.jumpType,
+            jumpValue: item.jumpValue,
+            templateContent: item.templateContent,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1307,6 +1342,8 @@ export default {
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
             jumpType: item.jumpType,
+            jumpValue: item.jumpValue,
+            templateContent: item.templateContent,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1343,6 +1380,7 @@ export default {
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'
         this.$set(itemTask, 'taskTypeName', '问卷搜集')
+        this.$set(itemTask, 'questUrl', chooseOne.questUrl)
       } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
         //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
         if (chooseOne.jumpType == 1) {
@@ -1355,11 +1393,15 @@ export default {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
         }
+        this.$set(itemTask, 'jumpType', chooseOne.jumpType)
+        this.$set(itemTask, 'jumpValue', chooseOne.jumpValue)
+        this.$set(itemTask, 'templateContent', chooseOne.templateContent)
       }
     },
 
-    showDetail(indexTask) {
+    showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
+      this.$refs.taskDetail.showDetail(itemTask)
     },
 
     onFieldSelect(itemRule, indexRule) {
