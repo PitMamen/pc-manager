@@ -784,6 +784,7 @@ export default {
       clickType: 101,
       showdhTab: true, //隐藏电话咨询tab标识
       jumbType: 3,
+      id:'',
     }
   },
   methods: {
@@ -792,6 +793,7 @@ export default {
       this.currentItem = 0
       this.currentTab = 'tw'
       this.clickType = 101
+      this.id = item.id
       this.item = item
       // console.log('HAHAH：', item)
       this.visible = true
@@ -925,8 +927,9 @@ export default {
     },
     getTab2Info() {
       this.confirmLoading = true
+      console.log("KKK:",this.id)
       info2({
-        rightsId: this.item.id,
+        rightsId: this.id,
       })
         .then((res) => {
           this.tab2Flag = true

@@ -251,6 +251,13 @@
     }
   }
   </script>
+
+<style >
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 148px !important;
+}
+</style>
   
   <style lang="less">
   button {
