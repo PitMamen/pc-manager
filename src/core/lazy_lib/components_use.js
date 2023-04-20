@@ -52,8 +52,9 @@ import {
   Empty,
   AutoComplete,
   Calendar,
-  Timeline ,
- 
+  Timeline,
+  Rate,
+
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
 
@@ -103,6 +104,7 @@ Vue.use(Empty)
 Vue.use(AutoComplete)
 Vue.use(Calendar)
 Vue.use(Timeline)
+Vue.use(Rate)
 
 
 Vue.prototype.$confirm = Modal.confirm
@@ -112,3 +114,6 @@ Vue.prototype.$info = Modal.info
 Vue.prototype.$success = Modal.success
 Vue.prototype.$error = Modal.error
 Vue.prototype.$warning = Modal.warning
+
+
+
