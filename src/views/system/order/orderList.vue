@@ -173,7 +173,7 @@
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
-    <yzOrderDetail ref="yzOrderDetail" @ok="handleOk" />
+    <!-- <yzOrderDetail ref="yzOrderDetail" @ok="handleOk" /> -->
   </a-card>
 </template>
  
@@ -182,17 +182,16 @@ import { STable } from '@/components'
 import moment from 'moment'
 import { orderList, accessHospitals, getOrderStatusGroupByData ,getCommodityClassify} from '@/api/modular/system/posManage'
 import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
-import addForm from './addForm'
+// import addForm from './addForm'
 import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
 
 export default {
   components: {
     STable,
-    addForm,
+    // addForm,
     orderDetail,
     yzOrderDetail,
-    // editForm,
   },
 
   data() {
@@ -252,7 +251,7 @@ export default {
 
         {
           title: '订单分类',
-          dataIndex: 'userName',
+          dataIndex: 'orderTypeDesc',
           width:100,
         },
         {
@@ -410,9 +409,9 @@ export default {
 
     //详情
     goDetail(record) {
+
       this.$router.push({
-        path: '/order/yzOrderDetail',
-        // path: '/order/orderDetail',
+        path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',
         query: {
           orderId:record.orderId,
         },
@@ -652,84 +651,7 @@ export default {
   color: #69c07d;
   // background-color: #85888e;
 }
-.small-modal {
-  display: flex;
-  flex-direction: column;
 
-  .tital-t {
-    display: flex;
-    flex-direction: row;
-  }
-}
-
-// a {
-//   color: #333 !important;
-// }
-
-.sitemore {
-  .ant-select-selection.ant-select-selection--single {
-    height: 28px !important;
-  }
-
-  margin-left: 5px;
-  align-items: center;
-
-  .ant-select-selection--multiple {
-    width: 100%;
-    height: 28px;
-
-    .ant-select-selection__rendered {
-      height: 100%;
-      ul {
-        width: 100%;
-        height: 28px;
-        overflow-y: hidden;
-        display: -webkit-box;
-        &::-webkit-scrollbar {
-          width: 5px;
-          height: 5px;
-        }
-        &::-webkit-scrollbar-track {
-          background-color: #dedede;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: #bfbfbf;
-          -webkit-border-radius: 1em;
-          -moz-border-radius: 1em;
-          border-radius: 1em;
-        }
-        & li {
-          padding: 0px 10px 0px 5px;
-          box-sizing: border-box;
-          width: 75px;
-          float: unset;
-          margin-top: 1px !important;
-        }
-
-        /deep/.ant-select-selection__choice {
-          margin-top: 1px !important;
-        }
-      }
-    }
-  }
-}
-
-.table-wrapper {
-  // max-height: 600px;
-  // overflow-y: auto;
-}
-.sys-card {
-  // height: 100%;
-  // padding-bottom: 52px;
-  // /deep/ .ant-table-pagination {
-  //   position: fixed;
-  //   right: 32px;
-  //   bottom: 20px;
-  // }
-}
 .table-page-search-wrapper {
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
@@ -791,14 +713,6 @@ export default {
     transform: translateX(-200px);
   }
 }
-
-.div-divider {
-  margin-top: 1%;
-  margin-bottom: 1%;
-  width: 100%;
-  background-color: #e6e6e6;
-  height: 1px;
-}
 </style>
  
  <style lang="less">
@@ -818,7 +732,7 @@ export default {
 }
 </style>
    
-   <style lang="less" scoped>
+<style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 115px);

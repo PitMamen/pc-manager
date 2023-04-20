@@ -24,25 +24,8 @@
           </div>
   
           <div class="div-pro-line">
-            <span class="span-item-name">套餐类型 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
-          </div>
-  
-          <div class="div-pro-line">
-            <span class="span-item-name"> 套餐名称 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
-          </div>
-        </div>
-  
-        <div class="div-up-content" >
-          <div class="div-pro-line">
-            <span class="span-item-name">所属医院 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.hospitalName|| '-'  }}</span>
-          </div>
-  
-          <div class="div-pro-line">
-            <span class="span-item-name">下单时间 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.createTime || '-' }}</span>
+            <span class="span-item-name">所属机构 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.hospitalName || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
@@ -53,9 +36,10 @@
           </div>
         </div>
   
+  
         <div class="div-up-content" >
           <div class="div-pro-line">
-            <span class="span-item-name">用户姓名 :</span>
+            <span class="span-item-name">用户昵称 :</span>
             <span class="span-item-value">{{ orderDetailDataList.userName || '-' }}</span>
           </div>
   
@@ -72,13 +56,13 @@
   
         <div class="div-up-content" >
           <div class="div-pro-line">
+            <span class="span-item-name">订单价格 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.orderTotal || '-'  }}</span>
+          </div>
+
+          <div class="div-pro-line">
             <span class="span-item-name">实付金额 :</span>
             <span class="span-item-value">{{ orderDetailDataList.payTotal || '-'  }}</span>
-          </div>
-  
-          <div class="div-pro-line">
-            <span class="span-item-name">套餐价格 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.orderTotal || '-'  }}</span>
           </div>
   
           <div class="div-pro-line">
@@ -89,8 +73,8 @@
   
         <div class="div-up-content" >
           <div class="div-pro-line">
-            <span class="span-item-name">套餐包服务时间 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.effectiveStartTime+'-'+orderDetailDataList.effectiveEndTime  || '-' }}</span>
+            <span class="span-item-name">下单时间 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.createTime || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
@@ -104,22 +88,6 @@
           </div>
         </div>
   
-        <div class="div-up-content" >
-          <div class="div-pro-line">
-            <span class="span-item-name">服务医生 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.doctorUserName || '-'  }}</span>
-          </div>
-  
-          <div class="div-pro-line">
-            <span class="span-item-name">服务护士 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.nurseUserName  || '-' }}</span>
-          </div>
-  
-          <div class="div-pro-line">
-            <span class="span-item-name"> 服务团队 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.teamName || '-'  }}</span>
-          </div>
-        </div>
   
         <div class="div-up-content" >
           <div class="div-pro-line">
@@ -166,6 +134,10 @@
           :pagination="false"
           :rowKey="(record) => record.code"
         >
+
+        <span slot="rightsItemName" slot-scope="text, record">
+        <a >{{ record.rightsItemName }}</a>
+      </span>
         </a-table>
       </div>
   
@@ -177,12 +149,22 @@
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
             <span class="span-item-name">发货方式 :</span>
-            <span class="span-item-value">到院自提</span>
+            <span class="span-item-value">{{addressInfo.sendMethod}}</span>
           </div>
   
-          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
+          <div class="div-pro-line"  style="margin-left:20px;width: 100%;">
             <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+            <span class="span-item-value" style="width:90%;color:#1A1A1A">{{addressInfo.address||'-'}}</span>
+          </div>
+
+          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
+            <span class="span-item-name" style="color:#1A1A1A"> 收货人姓名 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo.name||'-'}}</span>
+          </div>
+
+          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
+            <span class="span-item-name" style="color:#1A1A1A"> 收件人电话 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo.mobile||'-'}}</span>
           </div>
         </div>
   
@@ -192,12 +174,17 @@
   
           <div class="div-pro-line" style="margin-left:20px;width: 40%;">
             <span class="span-item-name">发货方式 :</span>
-            <span class="span-item-value">到院自提</span>
+            <span class="span-item-value">{{expressInfo?expressInfo.expressName||'-':'-'}}</span>
           </div>
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
-            <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+            <span class="span-item-name" style="color:#1A1A1A"> 物流单号 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{expressInfo?expressInfo.expressNo||'-':'-'}}</span>
+          </div>
+
+          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
+            <span class="span-item-name" style="color:#1A1A1A"> 运费 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{expressInfo?expressInfo.postFee||'-':'-'}}</span>
           </div>
         </div>
       </div>
@@ -250,6 +237,8 @@
         orderDetailDataList: [],
         goodsItemsData: [], //产品清单数据
         rightItemsData: [], //权益清单数据
+        addressInfo:{},
+        expressInfo:{},
         visible_model: false,
         dealResultTitle: '订单取消',
         confirmLoading: false,
@@ -260,38 +249,39 @@
         goodsItemsDataColumns: [
           {
             title: '商品编码',
-            dataIndex: 'rightsItemName',
+            dataIndex: 'goodsId',
           },
           {
             title: '商品类型',
-            dataIndex: 'ruleInfo',
+            dataIndex: 'projectType',
           },
           {
             title: '商品名称',
-            dataIndex: 'equityQuantity',
+            // dataIndex: 'rightsItemName',
+            scopedSlots: { customRender: 'rightsItemName' },
           },
           {
             title: '商品规格',
-            dataIndex: 'unit',
+            dataIndex: 'ruleInfo',
           },
           {
             title: '数量',
-            dataIndex: 'saleAmount',
+            dataIndex: 'equityQuantity',
             align:'right'
           },
           {
             title: '商品原价',
-            dataIndex: 'effectiveStartTime',
+            dataIndex: 'saleAmount',
             align:'center'
           },
           {
             title: '应付金额',
-            dataIndex: 'effectiveEndTime',
-            align:'center'
+            dataIndex: 'totalAmount',
+            align:'right'
           },
           {
             title: '商品留言',
-            dataIndex: 'projectType',
+            // dataIndex: 'unit',
             align:'center'
           },
         ],
@@ -335,19 +325,20 @@
       },
   
       handleOk() {
-          console.log("刷新数据----",this.orderId)
         this.getOrderDetailOut(this.orderId)
       },
   
       getOrderDetailOut(orderID) {
           this.confirmLoading = true
-        getOrderDetail({ orderId: orderID }).then((res) => {
+        getOrderDetail({ orderId: orderID}).then((res) => {
           if (res.code == 0) {
             var reponseDataList = res.data
             this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
             this.payMode = this.orderDetailDataList.payMode
             this.goodsItemsData = res.data.goodsItems
             this.rightItemsData = res.data.rightItems
+            this.addressInfo = res.data.addressInfo
+            this.expressInfo = res.data.expressInfo
           }
         }).finally((res) => {
             this.confirmLoading = false
@@ -379,25 +370,6 @@
   
   
   
-      getType(value) {
-        if (value == 4 || value == 8 || value == 101) {
-          return '申请退款'
-        } else if (value == 1) {
-          return '取消订单'
-        } else {
-          return ''
-        }
-      },
-  
-      //按钮显示与隐藏
-      showHide(value) {
-        if (value == 2 || value == 5 || value == 102||value == 103) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
-          return false
-        } else {
-          return true
-        }
-      },
-  
       //点击
       clickType(value) {
         if (value == 1) {  //取消订单
@@ -420,7 +392,6 @@
         cancelOrder(requestData)
           .then((res) => {
             if (res.code == 0) {
-              console.log('NNNNNNNNNNNNNNNN')
               this.handleOk()
               this.$message.success('取消成功!')
             } else {
@@ -473,7 +444,14 @@
   }
   
   
-  
+  .a-table-one /deep/ .ant-table-body {
+  overflow-y: auto !important;
+  padding-right: 17px;
+
+  .ant-table-tbody > tr.ant-table-row:hover > td {
+    background: none !important;
+  }
+}
   
   
   
