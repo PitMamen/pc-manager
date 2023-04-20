@@ -123,7 +123,7 @@
         <div class="div-down">
           <div class="div-service-left-control">
             <div class="left-control">
-              <span class="span-current-ques">{{ choseQues.questionnaireName }}</span>
+              <span class="span-current-ques" :title="choseQues.questionnaireName">{{ choseQues.questionnaireName }}</span>
               <!-- 分割线 -->
               <!-- <div class="div-divider"></div> -->
 
@@ -160,7 +160,7 @@
                     :value="item.departmentName"
                     :key="index"
                   >
-                    <span class="span-name" @click="onPartChoose(index)">
+                    <span class="span-name" @click="onPartChoose(index)" :title="item.questionnaireName">
                       {{ item.questionnaireName }}
                     </span>
                     <div class="div-rate">

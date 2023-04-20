@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="title"
-    :width="900"
+    :width="1100"
     :height="700"
     :visible="visible"
     :footer="null"
@@ -144,11 +144,13 @@
                 </span>
 
                 <span
+                :title="item.templateTitle "
                   style="
                   margin-bottom: -5px;
                     margin-left: 0px;
                     text-align: center;
-                    width: 200px;
+                    width: 300px;
+                   
                     display: inline-block;
                     text-overflow: ellipsis;overflow: hidden;white-space: nowrap
                   "
@@ -158,7 +160,7 @@
 
                 <span
                   :class="getClass(item.taskBizStatus.value)"
-                  style="margin-left: 0px;width: 55px;  text-align: end; display: inline-block;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;margin-bottom: -8px;"
+                  style="margin-left: 0px;width: 65px;  text-align: end; display: inline-block;text-overflow: ellipsis;overflow: hidden;white-space: nowrap;margin-bottom: -8px;"
                 >
                   {{ item.taskBizStatus.description }}
                 </span>

@@ -30,12 +30,7 @@
 
       <div class="search-row">
         <span class="name">随访问卷:</span>
-        <a-select
-          v-model="queryParams.messageOriginalId"
-          placeholder="请选择"
-          style="width: 180px"
-          allow-clear
-        >
+        <a-select v-model="queryParams.messageOriginalId" placeholder="请选择" style="width: 180px" allow-clear>
           <a-select-option
             v-for="(item, index) in quesData"
             :title="item.questionnaireName"
@@ -207,8 +202,9 @@
       </div>
     </a-modal>
 
+    <!-- :scorll="{ x: max - content }" -->
     <s-table
-      :scorll="{ x: max - content }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
