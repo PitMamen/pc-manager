@@ -111,15 +111,20 @@
             <div class="div-rule-left">
               <a-select
                 class="mid-select-one"
+                style="width: 180px !important"
                 @focus="getFocus"
                 v-model="itemRule.metaConfigureDetailId"
                 @select="onFieldSelect(itemRule, indexRule)"
                 allow-clear
                 placeholder="请选择字段"
               >
-                <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value">{{
-                  item.description
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in chooseData"
+                  :key="index"
+                  :title="item.description"
+                  :value="item.value"
+                  >{{ item.description }}</a-select-option
+                >
               </a-select>
 
               <a-select class="mid-select-two" v-model="itemRule.condition" allow-clear placeholder="请选择操作">
