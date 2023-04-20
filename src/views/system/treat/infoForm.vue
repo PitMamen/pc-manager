@@ -118,7 +118,7 @@
         <div class="content content3" v-show="tab === 3">
           <div class="chat">
             <div class="timeLine">
-              <div style="margin-left: 10px; margin-top: 5px; color: #4d4d4d; font-size: 12px">咨询记录:</div>
+              <div style="margin-left: 10px; margin-top: 5px;margin-bottom: 5px; color: #4d4d4d; font-size: 12px">咨询记录:</div>
               <div
                 class="itemTime"
                 v-for="(item, index) in timeAxisList"
