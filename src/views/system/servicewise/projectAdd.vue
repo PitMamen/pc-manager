@@ -276,7 +276,7 @@
                 >{{ item.templateTitle }}</a-select-option
               >
             </a-select> -->
-            <div class="div-type" @click="showDetail(indexTask)">
+            <div class="div-type" @click="showDetail(itemTask, indexTask)">
               {{ itemTask.taskTypeName }}
               <!-- <a-select
                 class="mid-select-two"
@@ -492,6 +492,7 @@
       <add-people ref="addPeople" @ok="handleAddPeople" />
       <add-stop ref="addStop" @ok="handleAddStop" />
       <add-filter ref="addFilter" @ok="handleAddFilter" />
+      <task-detail ref="taskDetail" />
     </div>
   </a-spin>
 </template>
@@ -525,6 +526,7 @@ import Vue from 'vue'
 import addPeople from './addPeople'
 import addStop from './addStop'
 import addFilter from './addFilter'
+import taskDetail from './taskDetail'
 import { formatDate, formatDateFull } from '@/utils/util'
 
 export default {
@@ -532,6 +534,7 @@ export default {
     addPeople,
     addStop,
     addFilter,
+    taskDetail,
   },
 
   data() {
@@ -983,6 +986,7 @@ export default {
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
             jumpType: item.jumpType,
+            questUrl: item.questUrl,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -996,6 +1000,8 @@ export default {
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
             jumpType: item.jumpType,
+            jumpValue: item.jumpValue,
+            templateContent: item.templateContent,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1015,6 +1021,8 @@ export default {
             messageContentType: item.messageContentType,
             templateTitle: item.templateTitle,
             jumpType: item.jumpType,
+            jumpValue: item.jumpValue,
+            templateContent: item.templateContent,
           })
         })
         itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
@@ -1071,6 +1079,7 @@ export default {
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'
         this.$set(itemTask, 'taskTypeName', '问卷搜集')
+        this.$set(itemTask, 'questUrl', chooseOne.questUrl)
       } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
         //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
         if (chooseOne.jumpType == 1) {
@@ -1083,14 +1092,18 @@ export default {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
         }
+        this.$set(itemTask, 'jumpType', chooseOne.jumpType)
+        this.$set(itemTask, 'jumpValue', chooseOne.jumpValue)
+        this.$set(itemTask, 'templateContent', chooseOne.templateContent)
       }
       //TODO 选任务类型
       console.log('onTemSelect indexTask', indexTask)
       console.log('onTemSelect itemTask', itemTask)
     },
 
-    showDetail(indexTask) {
+    showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
+      this.$refs.taskDetail.showDetail(itemTask)
     },
 
     onFieldSelect(itemRule, indexRule) {
