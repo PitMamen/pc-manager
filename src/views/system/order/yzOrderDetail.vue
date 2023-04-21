@@ -172,20 +172,25 @@
           <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
           <div class="line"></div>
   
-          <div class="div-pro-line" style="margin-left:20px;width: 40%;">
-            <span class="span-item-name">发货方式 :</span>
-            <span class="span-item-value">{{expressInfo?expressInfo.expressName||'-':'-'}}</span>
-          </div>
-  
-          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
-            <span class="span-item-name" style="color:#1A1A1A"> 物流单号 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{expressInfo?expressInfo.expressNo||'-':'-'}}</span>
+          <div class="div-pro-line" style="margin-left:20px;width: 100%;" v-for="(item,index) in expressInfos" :key="index" :value="item" >
+            <span style="color:#1A1A1A">{{index+1}}.</span>
+            <span style="color: #4d4d4d;" >商品名称 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.goodsNames||'-'}};</span>
+
+            <span style="color:#4d4d4d;margin-left: 40px;" >发货方式 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressName||'-'}};</span>
+
+            <span style="color:#4d4d4d;margin-left: 40px;" > 物流单号 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressNo||'-'}}</span>
+
+            <span style="color:#4d4d4d;margin-left: 40px;" > 运费 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.postFee||'-'}}</span>
           </div>
 
-          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
-            <span class="span-item-name" style="color:#1A1A1A"> 运费 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{expressInfo?expressInfo.postFee||'-':'-'}}</span>
-          </div>
+
+          
+  
+         
         </div>
       </div>
   
@@ -238,7 +243,7 @@
         goodsItemsData: [], //产品清单数据
         rightItemsData: [], //权益清单数据
         addressInfo:{},
-        expressInfo:{},
+        expressInfos:[],
         visible_model: false,
         dealResultTitle: '订单取消',
         confirmLoading: false,
@@ -338,7 +343,7 @@
             this.goodsItemsData = res.data.goodsItems
             this.rightItemsData = res.data.rightItems
             this.addressInfo = res.data.addressInfo
-            this.expressInfo = res.data.expressInfo
+            this.expressInfos = res.data.expressInfos
           }
         }).finally((res) => {
             this.confirmLoading = false

@@ -44,7 +44,7 @@
 
       <div class="search-row">
         <span class="name">订单分类:</span>
-        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
+        <a-select v-model="queryParams.orderType" placeholder="请选择" allow-clear style="width: 120px">
           <a-select-option v-for="(item, index) in ordertypeList" :key="index" :value="item.code">{{
             item.value
           }}</a-select-option>
@@ -157,14 +157,14 @@ export default {
         cw: 0,
         wc: 0,
       },
-      ordertypeList:[{code:1,value:'咨询订单'},{code:2,value:'专科服务'},{code:3,value:'商城订单'}],
+      ordertypeList:[{code:'consultOrder',value:'咨询订单'},{code:'srvPackOrder',value:'专科服务'},{code:'youzanOrder',value:'商城订单'}],
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
         createEndTime: getCurrentMonthLast(),
         createStartTime: getDateNow(),
-
+        orderType:undefined,
         updateEndTime: getCurrentMonthLast(),
         updateStartTime: getDateNow(),
         tabCode: '',
@@ -411,6 +411,7 @@ export default {
       this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.classifyId = ''
+      this.queryParams.orderType = undefined
 
       this.handleOk()
     },

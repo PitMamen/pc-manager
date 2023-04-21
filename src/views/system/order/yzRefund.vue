@@ -3,11 +3,11 @@
     <a-spin :spinning="confirmLoading">
       <div class="topButton">
         <a-button type="primary" ghost @click="goBack()">返回</a-button>
-        <a-button v-show="showButton" style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
-        <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
-        <div style="overflow: hidden; float: right; width: 100%; margin-right: 49px">
+        <!-- <a-button v-show="showButton" style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
+        <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button> -->
+        <!-- <div style="overflow: hidden; float: right; width: 100%; margin-right: 49px">
           <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
-        </div>
+        </div> -->
       </div>
   
       <div class="big-kuang" >
@@ -90,12 +90,12 @@
         <div class="div-up-content" style="padding-bottom: 10px;">
           <div class="div-pro-line">
             <span class="span-item-name">退货物流单号 :</span>
-            <span class="span-item-value">物流单号</span>
+            <span class="span-item-value">{{ orderDetailDataList.expressNo||'-'}}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name">物流公司 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.refundAgtOrdNum || '-' }}</span>
+            <span class="span-item-value">{{ orderDetailDataList.expressName || '-' }}</span>
           </div>
   
           <!-- <div class="div-pro-line">
@@ -199,19 +199,19 @@
           <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
           <div class="line"></div>
   
-          <div class="div-pro-line" style="margin-left:20px;width: 40%;">
+          <div class="div-pro-line" style="margin-left:20px;width: 100%;">
             <span class="span-item-name" style="color:#1A1A1A">收件人地址 :</span>
-            <span class="span-item-value">{{expressInfo?expressInfo.expressName||'-':'-'}}</span>
+            <span class="span-item-value" style="color:#1A1A1A">{{addressInfo?addressInfo.address||'-':'-'}}</span>
           </div>
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
             <span class="span-item-name" style="color:#1A1A1A"> 收件人姓名 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{expressInfo?expressInfo.expressNo||'-':'-'}}</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo?addressInfo.name||'-':'-'}}</span>
           </div>
 
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
             <span class="span-item-name" style="color:#1A1A1A"> 收件人电话 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{expressInfo?expressInfo.postFee||'-':'-'}}</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo?addressInfo.mobile||'-':'-'}}</span>
           </div>
         </div>
 
@@ -292,6 +292,7 @@
         goodsItemsData: [], //产品清单数据
         rightItemsData: [], //权益清单数据
         feeItemsData: [], //费用清单数据
+        addressInfo: {}, //物流信息
         visible_model: false,
         dealResultTitle: '驳回退款',
         confirmLoading: false,
@@ -301,36 +302,38 @@
         goodsItemsDataColumns: [
           {
             title: '商品编码',
-            dataIndex: 'rightsItemName',
+            dataIndex: 'goodsId',
           },
           {
             title: '商品类型',
-            dataIndex: 'ruleInfo',
+            dataIndex: 'projectType',
           },
           {
             title: '商品名称',
-            dataIndex: 'equityQuantity',
+            dataIndex: 'rightsItemName',
           },
           {
             title: '商品规格',
-            dataIndex: 'unit',
+            dataIndex: 'ruleInfo',
           },
           {
             title: '数量',
-            dataIndex: 'saleAmount',
+            dataIndex: 'equityQuantity',
             align: 'right',
           },
           {
             title: '商品原价',
-            dataIndex: 'effectiveStartTime',
+            dataIndex: 'saleAmount',
+            align: 'right',
           },
           {
             title: '应付金额',
-            dataIndex: 'effectiveEndTime',
+            dataIndex: 'totalAmount',
+            align: 'right',
           },
           {
             title: '商品留言',
-            dataIndex: 'projectType',
+            dataIndex: 'unit',
           },
         ],
   
@@ -411,7 +414,7 @@
           },
           {
             title: '购买数量',
-            dataIndex: 'usedQuantity',
+            dataIndex: 'equityQuantity',
             align: 'center',
           },
           {
@@ -504,7 +507,7 @@
   
       getrefundDetailOut(orderID) {
         this.confirmLoading = true
-        refundDetail({ applyId: orderID })
+        refundDetail({ applyId: '1128667121' })
           .then((res) => {
             if (res.code == 0) {
               var reponseDataList = res.data
@@ -522,11 +525,11 @@
                 }
               }
   
-              console.log('NNNN:', this.showButton)
   
               this.goodsItemsData = res.data.goodsItems //产品信息
               this.rightItemsData = res.data.rightItems //权益信息
               this.feeItemsData = res.data.feeItems //费用明细
+              this.addressInfo = res.data.addressInfo//物流信息
               this.feeItemsData.forEach((item, index) => {
                 this.$set(item, 'payMode', res.data.payMode)
                 this.$set(item, 'orderId', res.data.orderId)
