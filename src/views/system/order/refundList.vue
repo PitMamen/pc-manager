@@ -34,13 +34,26 @@
         </a-select>
       </div>
 
+     
+
       <div class="search-row">
         <span class="name">更新时间:</span>
         <a-range-picker style="width: 190px" :value="orderTimeValue" @change="onChange" />
       </div>
 
+
       <div class="search-row">
-        <span class="name">创建时间:</span>
+        <span class="name">订单分类:</span>
+        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
+          <a-select-option v-for="(item, index) in ordertypeList" :key="index" :value="item.code">{{
+            item.value
+          }}</a-select-option>
+        </a-select>
+      </div>
+
+
+      <div class="search-row">
+        <span class="name">下单时间:</span>
         <a-range-picker style="width: 190px" :value="createValue" @change="onChangeOrder" />
       </div>
 
@@ -100,6 +113,7 @@
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
+    <!-- <yzRefund ref="yzRefund" @ok="handleOk" /> -->
   </a-card>
 </template>
    
@@ -112,6 +126,7 @@ import addForm from './addForm'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import orderDetail from './orderDetail'
+import yzRefund from './yzRefund'
 import { setHidden } from '@/api/modular/system/banner'
 import { noop } from 'ant-design-vue/es/_util/vue-types/utils'
 
@@ -120,6 +135,7 @@ export default {
     STable,
     addForm,
     orderDetail,
+    yzRefund,
     // editForm,
   },
 
@@ -141,7 +157,7 @@ export default {
         cw: 0,
         wc: 0,
       },
-
+      ordertypeList:[{code:1,value:'咨询订单'},{code:2,value:'专科服务'},{code:3,value:'商城订单'}],
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
@@ -304,9 +320,9 @@ export default {
   methods: {
     //详情
     goExamine(record) {
-      // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
-        path: '/order/refundExamine',
+        // path: '/order/refundExamine',
+        path: '/order/yzRefund',
         query: {
           orderId: record.applyId,
         },
