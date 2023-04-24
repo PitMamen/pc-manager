@@ -168,6 +168,7 @@ export default {
         billDate: '',
         channel: 'all',
         payeeId: 0,
+        hospitalCode:undefined,
       },
 
       reconData: '', //对账 日期
@@ -285,8 +286,10 @@ export default {
       this.reconData = this.$route.query.billDate
       this.statusShow = this.$route.query.state
       this.currentTab = this.$route.query.payeeId
+      console.log("hospitalCode:",this.$route.query.hospitalCode)
       this.queryParams.billDate = this.reconData
       this.queryParams.payeeId = this.currentTab
+      this.queryParams.hospitalCode = this.$route.query.hospitalCode
       this.getTabOut()
       this.tradeRecordChannelSummaryOut()
       this.$refs.table.refresh()
@@ -304,6 +307,7 @@ export default {
         this.currentTab = this.$route.query.payeeId
         this.queryParams.billDate = this.reconData
         this.queryParams.payeeId = this.currentTab
+        this.queryParams.hospitalCode = this.$route.query.hospitalCode
         this.getTabOut()
         this.tradeRecordChannelSummaryOut()
         this.$refs.table.refresh()

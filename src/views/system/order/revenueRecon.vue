@@ -348,6 +348,7 @@ export default {
           billDate: record.billDate,
           state: record.stateShow,
           payeeId: this.currentTab,
+          hospitalCode:this.queryParams.hospitalCode
         },
       })
     },
