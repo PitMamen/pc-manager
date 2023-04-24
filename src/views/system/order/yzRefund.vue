@@ -260,7 +260,7 @@
       </a-modal>
   
       <order-Refund ref="orderRefund" @ok="handleOk" />
-      <orderDetail ref="orderDetail" @ok="handleOk" />
+      <!-- <orderDetail ref="orderDetail" @ok="handleOk" /> -->
     </a-spin>
   </template>
       
@@ -273,13 +273,13 @@
   import orderRefund from './orderRefund'
   import { json } from 'body-parser'
   import { STable } from '@/components'
-  import orderDetail from './orderDetail'
+  import yzOrderDetail from './yzOrderDetail'
   
   export default {
     components: {
       STable,
       orderRefund,
-      orderDetail,
+      yzOrderDetail,
     },
   
     data() {
@@ -507,7 +507,7 @@
   
       getrefundDetailOut(orderID) {
         this.confirmLoading = true
-        refundDetail({ applyId: '1128667121' })
+        refundDetail({ applyId: orderID })
           .then((res) => {
             if (res.code == 0) {
               var reponseDataList = res.data
@@ -549,9 +549,8 @@
         if (!orderId) {
           return
         }
-        // this.$refs.orderDetail.orderDetail(record)
         this.$router.push({
-          path: '/order/orderDetail',
+          path: '/order/yzOrderDetail',
           query: {
             orderId: orderId,
             // orderId:1623236088379908098,

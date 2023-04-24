@@ -213,7 +213,7 @@
         </div>
       </a-modal>
   
-      <order-Refund ref="orderRefund" @ok="handleOk" />
+      <yzRefund ref="yzRefund" @ok="handleOk" />
     </a-spin>
   </template>
     
@@ -223,7 +223,7 @@
   import { TRUE_USER } from '@/store/mutation-types'
   import Vue from 'vue'
   import { formatDate, formatDateFull } from '@/utils/util'
-  import orderRefund from './orderRefund'
+  import yzRefund from './yzRefund'
   import { json } from 'body-parser'
   import { STable } from '@/components'
   
@@ -231,7 +231,7 @@
   export default {
     components: {
       STable,
-      orderRefund,
+      yzRefund,
     },
   
     data() {
@@ -366,7 +366,7 @@
       }
         // this.$refs.orderDetail.orderDetail(record)
         this.$router.push({
-          path: '/order/refundExamine',
+          path: '/order/yzRefund',
           query: {
             orderId: refundId,
           },
