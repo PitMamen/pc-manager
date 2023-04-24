@@ -119,11 +119,11 @@
         </div>
       </div>
   
-      <div style="margin-top: 20px;height: 260px !important" class="big-kuang">
+      <div style="margin-top: 20px;" class="big-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">商品清单</div>
         <div class="line"></div>
         <a-table
-          style="margin-left: 15px; margin-right: 15px; margin-top: 10px; border: none; background-color: #f5f5f5"
+          style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5"
           size="small"
           class="a-table-one"
           bordered
