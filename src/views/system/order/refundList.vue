@@ -112,7 +112,7 @@
         {{ record.commodityName }}
       </span>
     </s-table>
-    <orderDetail ref="orderDetail" @ok="handleOk" />
+    <!-- <orderDetail ref="orderDetail" @ok="handleOk" /> -->
     <!-- <yzRefund ref="yzRefund" @ok="handleOk" /> -->
   </a-card>
 </template>
@@ -125,7 +125,7 @@ import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
-import orderDetail from './orderDetail'
+import refundExamine from './refundExamine'
 import yzRefund from './yzRefund'
 import { setHidden } from '@/api/modular/system/banner'
 import { noop } from 'ant-design-vue/es/_util/vue-types/utils'
@@ -134,7 +134,7 @@ export default {
   components: {
     STable,
     addForm,
-    orderDetail,
+    refundExamine,
     yzRefund,
     // editForm,
   },
@@ -177,6 +177,11 @@ export default {
         {
           title: '订单号',
           dataIndex: 'orderId',
+          ellipsis: true,
+        },
+        {
+          title: '订单分类',
+          dataIndex: 'orderfl',
           ellipsis: true,
         },
         {
@@ -269,8 +274,8 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
+                this.$set(item, 'orderfl', item.orderType.description)
                 // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
-                // this.$set(item, 'status', 1)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
               })
@@ -321,8 +326,7 @@ export default {
     //详情
     goExamine(record) {
       this.$router.push({
-        // path: '/order/refundExamine',
-        path: '/order/yzRefund',
+        path: record.orderType.value=='youzanOrder'?'/order/yzRefund':'/order/refundExamine',
         query: {
           orderId: record.applyId,
         },
