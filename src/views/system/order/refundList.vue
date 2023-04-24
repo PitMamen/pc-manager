@@ -274,7 +274,7 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'orderfl', item.orderType.description)
+                this.$set(item, 'orderfl', item.orderType?item.orderType.description:'')
                 // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
