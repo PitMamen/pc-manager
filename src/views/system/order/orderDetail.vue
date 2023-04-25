@@ -194,7 +194,7 @@
       </a-table>
     </div>
 
-    <div style="width: 100%; display: flex; flex-direction: row">
+    <div style="width: 100%; display: flex; flex-direction: row;margin-bottom: 20px;">
       <div style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">收货地址</div>
         <div class="line"></div>
