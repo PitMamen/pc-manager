@@ -174,17 +174,17 @@
   
           <div class="div-pro-line" style="margin-left:20px;width: 100%;" v-for="(item,index) in expressInfos" :key="index" :value="item" >
             <span style="color:#1A1A1A">{{index+1}}.</span>
-            <span style="color: #4d4d4d;" >商品名称 :</span>
-            <span style="color:#1A1A1A;margin-left: 10px;">{{item.goodsNames||'-'}};</span>
+            <span style="color:#4d4d4d;" > 物流单号 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressNo||'-'}}</span>
 
             <span style="color:#4d4d4d;margin-left: 40px;" >发货方式 :</span>
             <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressName||'-'}};</span>
 
-            <span style="color:#4d4d4d;margin-left: 40px;" > 物流单号 :</span>
-            <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressNo||'-'}}</span>
-
             <span style="color:#4d4d4d;margin-left: 40px;" > 运费 :</span>
             <span style="color:#1A1A1A;margin-left: 10px;">{{item.postFee||'-'}}</span>
+
+            <span style="color: #4d4d4d;margin-left: 40px;" >商品名称 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.goodsNames||'-'}};</span>
           </div>
 
 

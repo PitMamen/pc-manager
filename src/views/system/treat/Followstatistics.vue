@@ -10,7 +10,7 @@
           style="width: 280px; height: 28px"
           placeholder="请选择问卷名称"
         >
-          <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index">{{
+          <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index"  :title="item.questionnaireName">{{
             item.questionnaireName
           }}</a-select-option>
           >

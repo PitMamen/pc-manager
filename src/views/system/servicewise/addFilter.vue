@@ -31,25 +31,25 @@
             <div class="div-rule-left">
               <!-- class="mid-select-one" -->
               <a-select
-                style="width: 110px"
+                style="width: 220px"
                 v-model="itemRule.metaConfigureDetailId"
                 @select="onFieldSelect(itemRule, indexRule)"
                 allow-clear
                 placeholder="请选择字段"
               >
-                <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value">{{
+                <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value" :title="item.description">{{
                   item.description
                 }}</a-select-option>
               </a-select>
 
               <!-- class="mid-select-one" -->
               <a-select
-                style="width: 110px; margin-left: 10px"
+                style="width: 180px; margin-left: 10px"
                 v-model="itemRule.condition"
                 allow-clear
                 placeholder="请选择操作"
               >
-                <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value">{{
+                <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value" :title="item.description">{{
                   item.description
                 }}</a-select-option>
               </a-select>
