@@ -407,7 +407,6 @@ export default {
     },
 
     handleOk() {
-        console.log("刷新数据----",this.orderId)
       this.getOrderDetailOut(this.orderId)
     },
 
@@ -436,7 +435,6 @@ export default {
 
   //点击退款单号 进入退款详情界面
   goExamine(refundId) {
-    console.log("HHHH:",refundId)
     if(!refundId){
       return
     }
@@ -476,7 +474,6 @@ export default {
         this.visible_model = true //显示 弹框
       } else {
         // 申请退款
-        // console.log('XXXXXXXX',this.orderId,this.payMode)
         this.$refs.orderRefund.refund(this.orderId, this.payMode)
       }
     },
@@ -492,7 +489,6 @@ export default {
       cancelOrder(requestData)
         .then((res) => {
           if (res.code == 0) {
-            console.log('NNNNNNNNNNNNNNNN')
             this.handleOk()
             this.$message.success('取消成功!')
           } else {

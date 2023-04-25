@@ -557,7 +557,6 @@ export default {
               }
             }
 
-            console.log('NNNN:', this.showButton)
 
             this.goodsItemsData = res.data.goodsItems //产品信息
             this.rightItemsData = res.data.rightItems //权益信息

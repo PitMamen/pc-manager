@@ -308,7 +308,6 @@ export default {
   },
 
   activated() {
-    // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.queryParams.payeeId = this.currentTab
     this.queryParamsTemp.payeeId = this.currentTab
   },

@@ -233,7 +233,6 @@ export default {
 
     onSelect(hospitalId) {
       //选择类别
-      console.log('选择类别:', hospitalId)
       for (let index = 0; index < this.treeData.length; index++) {
         if (hospitalId == this.treeData[index].hospitalId) {
           this.findItemData = JSON.parse(JSON.stringify(this.treeData[index]))

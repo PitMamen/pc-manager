@@ -316,7 +316,6 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        console.log("JJH:",this.queryParams.orderStartTime,this.queryParams.orderEndTime)
         if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
           if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
             this.$message.error('请选择开始时间小于结束时间')
@@ -377,7 +376,6 @@ export default {
 
 
   activated() {
-    // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.reset()
     this.queryParams.orderStatus = this.currentTab
     this.queryParamsTemp.orderStatus = this.currentTab

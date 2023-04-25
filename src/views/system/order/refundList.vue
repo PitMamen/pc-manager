@@ -293,7 +293,6 @@ export default {
   },
 
   activated() {
-    // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.reset(false)
     this.queryParams.tabCode = this.currentTab
     this.queryParamsTemp.tabCode = this.currentTab

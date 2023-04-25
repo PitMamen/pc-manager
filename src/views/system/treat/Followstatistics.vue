@@ -388,7 +388,6 @@ export default {
     //导出
     exportOut() {
       let params = JSON.parse(JSON.stringify(this.queryParamsStatisit))
-      console.log("KK：",params)
       exportFollowStatListm(params)
         .then((res) => {
           this.downloadfile(res)
@@ -840,88 +839,88 @@ export default {
   }
 }
 
-.card-right-service {
-  overflow: hidden;
-  width: 82%;
+// .card-right-service {
+//   overflow: hidden;
+//   width: 82%;
 
-  .table-operator {
-    margin-bottom: 18px;
-  }
-  button {
-    margin-right: 8px;
-  }
+//   .table-operator {
+//     margin-bottom: 18px;
+//   }
+//   button {
+//     margin-right: 8px;
+//   }
 
-  .title {
-    background: #fff;
-    font-size: 18px;
-    font-weight: bold;
-    color: #000;
-  }
-}
+//   .title {
+//     background: #fff;
+//     font-size: 18px;
+//     font-weight: bold;
+//     color: #000;
+//   }
+// }
 
-.div-text-auto {
-  width: 100%;
-  display: inline-block;
-  margin-top: -1.5%;
-  .ant-input {
-    height: 28px;
-  }
-}
+// .div-text-auto {
+//   width: 100%;
+//   display: inline-block;
+//   margin-top: -1.5%;
+//   .ant-input {
+//     height: 28px;
+//   }
+// }
 
-.row-stat {
-  display: flex;
-  flex-direction: row;
+// .row-stat {
+//   display: flex;
+//   flex-direction: row;
 
-  align-items: center;
-  width: 100%;
+//   align-items: center;
+//   width: 100%;
 
-  .row-item {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 50px 50px;
-    justify-content: center;
-    border: 1px #ddd solid;
-    border-radius: 10px;
-    background-color: white;
-    height: 260px;
-    width: 30%;
+//   .row-item {
+//     display: flex;
+//     flex-direction: row;
+//     align-items: center;
+//     margin: 50px 50px;
+//     justify-content: center;
+//     border: 1px #ddd solid;
+//     border-radius: 10px;
+//     background-color: white;
+//     height: 260px;
+//     width: 30%;
 
-    .item-inside {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
+//     .item-inside {
+//       display: flex;
+//       flex-direction: row;
+//       align-items: center;
 
-      .item-image {
-        width: 50px;
-        margin-top: 15px;
-        height: 50px;
-      }
+//       .item-image {
+//         width: 50px;
+//         margin-top: 15px;
+//         height: 50px;
+//       }
 
-      .item-right {
-        display: flex;
-        margin-left: 20px;
-        flex-direction: column;
+//       .item-right {
+//         display: flex;
+//         margin-left: 20px;
+//         flex-direction: column;
 
-        .item-right-top {
-          display: flex;
-          flex-direction: row;
-          align-items: baseline;
-          .item-stat-num {
-            font-size: 46px;
-          }
-          .item-stat-unit {
-            font-size: 20px;
-          }
-        }
+//         .item-right-top {
+//           display: flex;
+//           flex-direction: row;
+//           align-items: baseline;
+//           .item-stat-num {
+//             font-size: 46px;
+//           }
+//           .item-stat-unit {
+//             font-size: 20px;
+//           }
+//         }
 
-        .item-stat-name {
-          font-size: 20px;
-        }
-      }
-    }
-  }
-}
+//         .item-stat-name {
+//           font-size: 20px;
+//         }
+//       }
+//     }
+//   }
+// }
 </style>
 
 

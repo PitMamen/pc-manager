@@ -291,17 +291,16 @@ export default {
   },
 
   activated() {
-    // console.log('KKKppppppppppp:',this.queryParams.orderStatus)
     this.leadingOut()
   },
 
   watch: {
     $route(to, from) {
-      console.log('watch----refundDetail out', to, from)
+      // console.log('watch----refundDetail out', to, from)
       if (to.path.indexOf('refundDetail') > -1) {
-        console.log('watch----refundDetail', to, from)
+        // console.log('watch----refundDetail', to, from)
         let data = JSON.parse(this.$route.query.dataStr)
-        console.log('data---', data)
+        // console.log('data---', data)
 
         this.queryParams.billDate = data.billDate
         this.statusName = data.statusName
@@ -315,7 +314,7 @@ export default {
 
   created() {
     let data = JSON.parse(this.$route.query.dataStr)
-    console.log('data---', data)
+    // console.log('data---', data)
 
     this.queryParams.billDate = data.billDate
     this.statusName = data.statusName
@@ -440,7 +439,6 @@ export default {
       this.tabDataList.forEach((item) => {
         this.$set(item, 'isChecked', false)
       })
-      // console.log('watch----configEdit', to, from)
       this.$set(this.tabDataList[index], 'isChecked', true)
       this.selectChannel = this.tabDataList[index].channel
       this.$refs.table.refresh()

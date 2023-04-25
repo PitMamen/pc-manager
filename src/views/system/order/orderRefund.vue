@@ -141,7 +141,7 @@ export default {
           dataIndex: 'payTotal',
 
           customRender: (value, row, index) => {
-            console.log(value, row, index)
+            // console.log(value, row, index)
             const obj = {
               //   children: this.cancelItemsData.length,
               children: row.payTotal,
@@ -218,7 +218,6 @@ export default {
     changeshituiAmount(record) {
       if (record.canRefundAmount > record.yingtuiAmount) {
         record.canRefundAmount = record.TempcanRefundAmount
-        // console.log("QQQQ:",record.canRefundAmount)
         // this.canRefundDataList.canRefundTotal=this.canRefundDataList.needRefundTotal   
         let number = 0
         for (let index = 0; index < this.cancelItemsData.length; index++) {
@@ -257,7 +256,6 @@ export default {
               this.$set(item, 'key', index)
             })
 
-            // console.log('AAA:', this.cancelItemsData)
           }
         })
         .finally((res) => {
