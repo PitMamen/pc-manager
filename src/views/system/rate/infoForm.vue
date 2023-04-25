@@ -382,7 +382,52 @@
         <div class="content content5" v-show="tab === 5">
           <div class="top">
             <div class="title">患者评价</div>
-            <div class="infos">
+            <div class="infos" v-if="item.broadClassify === 2">
+              <div class="col">
+                <div class="item">
+                  <span class="name">总体评价：</span>
+                  <div class="rate">
+                    <a-rate
+                      :count="5"
+                      :value="tab5Info.allAppraise"
+                      allowHalf
+                      disabled
+                    />
+                  </div>
+                </div>
+                <div class="item">
+                  <span class="name">个案管理师评价：</span>
+                  <div class="rate">
+                    <a-rate
+                      :count="5"
+                      :value="tab5Info.managerAppraise"
+                      allowHalf
+                      disabled
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="col">
+                <div class="item">
+                  <span class="name">医生评价：</span>
+                  <div class="rate">
+                    <a-rate
+                      :count="5"
+                      :value="tab5Info.doctorAppraise"
+                      allowHalf
+                      disabled
+                    />
+                  </div>
+                </div>
+                <div class="item">
+                  <span class="name">患者评价：</span>
+                  <div class="rate desc">
+                    <span :title="tab5Info.patientOpinion||'--'">{{ tab5Info.patientOpinion || '--' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="infos" v-else>
               <div class="col">
                 <div class="item">
                   <span class="name">医生总评：</span>
@@ -432,7 +477,7 @@
                 </div>
               </div>
             </div>
-            <div class="infos-row">
+            <div class="infos-row" v-if="item.broadClassify !== 2">
               <span>患者评价：</span>
               <span>{{ tab5Info.patientOpinion || '--' }}</span>
             </div>
@@ -1541,6 +1586,14 @@ export default {
               .rate {
                 position: relative;
                 top: -2px;
+                &.desc {
+                  top: 0px;
+                  max-width: 490px;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  color: #1A1A1A;
+                }
               }
             }
           }
