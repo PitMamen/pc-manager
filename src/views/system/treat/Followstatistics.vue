@@ -234,54 +234,54 @@ export default {
         {
           title: '姓名',
           dataIndex: 'name',
-          width:80,
+          // width:80,
           ellipsis: true,
         },
         {
           title: '性别',
           dataIndex: 'sex',
-          width: 70,
+          // width: 70,
         },
 
         {
           title: '电话',
           dataIndex: 'phone',
-          width:150,
+          // width:150,
           ellipsis: true,
         },
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 80,
+          // width: 80,
         },
         {
           title: '出院科室',
           dataIndex: 'cyksmc',
-          width: 150,
+          // width: 150,
           ellipsis: true,
         },
         {
           title: '住院号',
           dataIndex: 'zyh',
-          width: 100,
+          // width: 100,
         },
         {
           title: '床号',
           dataIndex: 'ch',
-          width:80,
+          // width:80,
           ellipsis: true,
         },
 
         {
           title: '随访内容',
           dataIndex: 'questName',
-          width: 150,
+          // width: 150,
           ellipsis: true,
         },
         {
           title: '出院时间',
           dataIndex: 'cysj',
-          width:180,
+          // width:180,
           ellipsis: true,
         },
 
@@ -289,20 +289,20 @@ export default {
           title: '微信登记',
           dataIndex: 'openidFlag',
           align: 'right',
-          width: 80,
+          // width: 80,
           //   ellipsis: true,
         },
         {
           title: '推送次数',
           dataIndex: 'totalTask',
-          width: 80,
+          // width: 80,
           align: 'right',
         },
         {
           title: '成功次数',
           dataIndex: 'successTotalTask',
           align: 'right',
-          width: 80,
+          // width: 80,
         },
         {
           title: '标记',
