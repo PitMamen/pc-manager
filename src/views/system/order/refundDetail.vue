@@ -327,7 +327,7 @@ export default {
   methods: {
     goRufundDetail(record) {
       this.$router.push({
-        path: '/order/refundExamine',
+        path: record.orderType=='youzanOrder'?'/order/yzRefund':'/order/refundExamine',
         query: {
           // orderId: record.refundOrderId,
           orderId: record.applyRefundId,
@@ -336,7 +336,7 @@ export default {
     },
     goOrderDetail(record) {
       this.$router.push({
-        path: '/order/orderDetail',
+        path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',
         query: {
           orderId: record.orderId,
         },
