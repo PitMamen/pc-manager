@@ -742,7 +742,7 @@ export default {
     authRate(status) {
       this.tab5Info.checktOpinion = this.tab5Info.checktOpinion || ''
       this.tab5Info.checktOpinion = this.tab5Info.checktOpinion.trim()
-      if (!this.tab5Info.checktOpinion){
+      if (!this.tab5Info.checktOpinion && status===3){
         this.$message.error('请先输入审核建议')
         return
       }
