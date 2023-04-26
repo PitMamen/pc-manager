@@ -156,7 +156,6 @@ export default {
       this.visible = true
       this.index = index
       this.filterRules = filterRules || [{ fieldType: 1 }]
-      console.log('add this.filterRules', this.filterRules)
       this.chooseData = chooseData
       this.operateData = operateData
 
@@ -179,13 +178,13 @@ export default {
     },
 
     onFieldSelect(itemRule, indexRule) {
-      console.log('onFieldSelect chooseData', this.chooseData)
-      console.log('onFieldSelect itemRule Be', JSON.parse(JSON.stringify(itemRule)))
+      // console.log('onFieldSelect chooseData', this.chooseData)
+      // console.log('onFieldSelect itemRule Be', JSON.parse(JSON.stringify(itemRule)))
       let chooseOne = this.chooseData.find((item) => {
         return item.value == itemRule.metaConfigureDetailId
       })
       this.$set(itemRule, 'fieldType', chooseOne.fieldType)
-      console.log('onFieldSelect itemRule Af', JSON.parse(JSON.stringify(itemRule)))
+      // console.log('onFieldSelect itemRule Af', JSON.parse(JSON.stringify(itemRule)))
     },
 
     delRule(indexRule, itemRule) {
@@ -225,7 +224,7 @@ export default {
           if (itemRule.fieldType == 2) {
             itemRule.queryValue = moment(itemRule.queryValue).format('YYYY-MM-DD')
           }
-          console.log('itemRule.queryValue', itemRule.queryValue)
+          // console.log('itemRule.queryValue', itemRule.queryValue)
         }
 
         //拼接描述 filterConditionRemark

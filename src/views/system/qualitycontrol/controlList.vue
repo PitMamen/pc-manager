@@ -4,7 +4,6 @@
       <div class="search-row">
         <span class="name">执行科室:</span>
         <a-select
-          class="deptselect-mult"
           :maxTagCount="1"
           style="width: 180px"
           :collapse-tags="true"
