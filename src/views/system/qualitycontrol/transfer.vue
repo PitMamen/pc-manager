@@ -115,27 +115,37 @@ export default {
       this.queryParams.doctorUserId = this.selectedRows[0].userId
     },
 
-    change(row){
+    change(row) {
       //触发清空
-      if(row.gettype='click'&&row.isTrusted){
+      if ((row.gettype = 'click' && row.isTrusted)) {
         this.userInfos = this.userInfosTemp
       }
+    },
+
+    fuzzyQuery(list, keyWord) {
+      var arr = []
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].userName.split(keyWord).length > 1) {
+          arr.push(list[i])
+        }
+      }
+      return arr
     },
 
     //查询医生
     searchDoc() {
       if (this.docName) {
-        var chooseDeptItem = undefined
-        if (this.userInfosTemp) {
-          chooseDeptItem = this.userInfosTemp.find((item) => item.userName == this.docName)
-        }
-        if (chooseDeptItem) {
-          this.userInfos = []
-          this.userInfos.push(chooseDeptItem)
-        }
-        // this.$refs.table.refresh()
+        this.userInfos = this.fuzzyQuery(this.userInfosTemp, this.docName) //模糊查询
+        // var chooseDeptItem = undefined
+        // if (this.userInfosTemp) {
+        //   chooseDeptItem = this.userInfosTemp.find((item) => item.userName == this.docName)
+        // }
+        // if (chooseDeptItem) {
+        //   this.userInfos = []
+        //   this.userInfos.push(chooseDeptItem)
+        // }
 
-        console.log('LLL:', chooseDeptItem)
+        // console.log('LLL:', chooseDeptItem)
       }
     },
 
@@ -179,6 +189,7 @@ export default {
       transfer(this.queryParams)
         .then((res) => {
           if (res.code == 0) {
+            this.$message.success('操作成功!')
             var resultData = {
               succCount: res.data.succCount,
               failCount: res.data.failCount,
@@ -222,41 +233,39 @@ export default {
  <style lang="less" scoped>
 /deep/.ant-radio-wrapper {
   box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    color: rgba(0, 0, 0, 0.65);
-    font-size: 14px;
-    // font-variant: tabular-nums;
-    line-height: 1.5;
-    list-style: none;
-    -webkit-font-feature-settings: 'tnum';
-    font-feature-settings: 'tnum';
-    position: relative;
-    display: inline-block;
-    line-height: 1;
-    white-space: nowrap;
-    vertical-align: sub;
-    outline: none;
-    cursor: pointer;
-    margin-bottom: 3px !important;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.65);
+  font-size: 14px;
+  // font-variant: tabular-nums;
+  line-height: 1.5;
+  list-style: none;
+  -webkit-font-feature-settings: 'tnum';
+  font-feature-settings: 'tnum';
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: sub;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 3px !important;
 }
 
-
-
 /deep/.ant-radio-inner {
-    position: relative;
-    top: 0;
-    left: 0;
-    display: block;
-    width: 16px;
-    height: 16px;
-    background-color: #fff;
-    border-color: #d9d9d9;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 100px;
-    -webkit-transition: all 0.3s;
-    transition: all 0.3s;
+  position: relative;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border-color: #d9d9d9;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 100px;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
 }
 </style>
 
