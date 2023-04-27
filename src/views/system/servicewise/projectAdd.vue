@@ -1083,13 +1083,13 @@ export default {
 
       if (itemTask.messageType == 1) {
         itemTask.taskType = '1'
-        this.$set(itemTask, 'taskTypeName', '问卷搜集')
+        this.$set(itemTask, 'taskTypeName', '问卷收集')
         this.$set(itemTask, 'questUrl', chooseOne.questUrl)
       } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
         //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
         if (chooseOne.jumpType == 1) {
           itemTask.taskType = '1'
-          this.$set(itemTask, 'taskTypeName', '问卷搜集')
+          this.$set(itemTask, 'taskTypeName', '问卷收集')
         } else if (chooseOne.jumpType == 2) {
           itemTask.taskType = '2'
           this.$set(itemTask, 'taskTypeName', '健康宣教')
