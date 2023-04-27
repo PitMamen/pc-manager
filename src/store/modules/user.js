@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { login, getLoginUser, logout, changeLoginUserRole } from '@/api/modular/system/loginManage'
+import { login,getImage, getLoginUser, logout, changeLoginUserRole } from '@/api/modular/system/loginManage'
 import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { sysUserUpdatePwd } from '@/api/modular/system/userManage'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
@@ -45,14 +45,13 @@ const user = {
     },
     SET_ADMINTYPE: (state, admintype) => {
       state.admintype = admintype
-    }
+    },
   },
 
   actions: {
     // 登录
     Login({ commit }, userInfo) {
       return new Promise((resolve, reject) => {
-
         login(userInfo).then(response => {
           if (!response.success) {
             reject(response.message)
@@ -67,6 +66,8 @@ const user = {
         })
       })
     },
+    
+
 
     // 获取用户信息
     ChangeRole({ commit }, data) {

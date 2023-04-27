@@ -154,7 +154,7 @@
   
           <div class="div-pro-line"  style="margin-left:20px;width: 100%;">
             <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-            <span class="span-item-value" style="width:90%;color:#1A1A1A">{{addressInfo.address||'-'}}</span>
+            <span  style="color:#1A1A1A">{{addressInfo.address||'-'}}</span>
           </div>
 
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
@@ -172,18 +172,18 @@
           <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
           <div class="line"></div>
   
-          <div class="div-pro-line" style="margin-left:20px;width: 100%;" v-for="(item,index) in expressInfos" :key="index" :value="item" >
+          <div class="div-pro-line" style="margin-left:20px;width: 95%;" v-for="(item,index) in expressInfos" :key="index" :value="item" >
             <span style="color:#1A1A1A">{{index+1}}.</span>
             <span style="color:#4d4d4d;" > 物流单号 :</span>
             <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressNo||'-'}}</span>
 
-            <span style="color:#4d4d4d;margin-left: 40px;" >发货方式 :</span>
+            <span style="color:#4d4d4d;margin-left: 20px;" >发货方式 :</span>
             <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressName||'-'}};</span>
 
-            <span style="color:#4d4d4d;margin-left: 40px;" > 运费 :</span>
+            <span style="color:#4d4d4d;margin-left: 20px;" > 运费 :</span>
             <span style="color:#1A1A1A;margin-left: 10px;">{{item.postFee||'-'}}</span>
 
-            <span style="color: #4d4d4d;margin-left: 40px;" >商品名称 :</span>
+            <span style="color: #4d4d4d;margin-left: 20px;" >商品名称 :</span>
             <span style="color:#1A1A1A;margin-left: 10px;">{{item.goodsNames||'-'}};</span>
           </div>
 

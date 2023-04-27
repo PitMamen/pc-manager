@@ -249,7 +249,11 @@ export default {
           dataIndex: 'orderId',
           ellipsis: true,
         },
-
+        {
+          title: '状态',
+          dataIndex: 'orderStatus',
+          scopedSlots: { customRender: 'orderStatus' },
+        },
         {
           title: '订单分类',
           dataIndex: 'orderTypeDesc',
@@ -302,11 +306,7 @@ export default {
           title: '支付方式',
           dataIndex: 'payType',
         },
-        {
-          title: '状态',
-          dataIndex: 'orderStatus',
-          scopedSlots: { customRender: 'orderStatus' },
-        },
+        
         {
           title: '操作',
           fixed: 'right',

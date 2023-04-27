@@ -171,19 +171,19 @@
   
           <div class="div-up-content" style="margin-top: 30px; ">
             <div class="div-pro-line" style="margin-left: 50px">
-              <span style="color: #1a1a1a" class="span-item-name">应退总金额 :</span>
+              <span style="color: #1a1a1a;margin-left: 0px;" class="span-item-name">应退总金额 :</span>
               <span style="color: #1a1a1a" class="span-item-value">{{ orderDetailDataList.refundMoney }}</span>
             </div>
   
             <div class="div-pro-line" style="margin-left: 20px">
-              <span class="span-item-name" style="color: #1a1a1a"> 实退总金额 :</span>
+              <span class="span-item-name" style="color: #1a1a1a;margin-left: 0px;"> 实退总金额 :</span>
               <span class="span-item-value" style="color: #1a1a1a">{{
                 orderDetailDataList.actualRefundMoney
               }}</span>
             </div>
   
             <div class="div-pro-line" style="margin-left: 20px">
-              <span class="span-item-name" style="color: #1a1a1a"> 退款方式 :</span>
+              <span class="span-item-name" style="color: #1a1a1a;margin-left: 0px;"> 退款方式 :</span>
               <span class="span-item-value" style=" color: #1a1a1a">{{
                 orderDetailDataList.refundMethod
               }}</span>
@@ -201,7 +201,7 @@
   
           <div class="div-pro-line" style="margin-left:20px;width: 100%;">
             <span class="span-item-name" style="color:#1A1A1A">收件人地址 :</span>
-            <span class="span-item-value" style="color:#1A1A1A">{{addressInfo?addressInfo.address||'-':'-'}}</span>
+            <span  style="color:#1A1A1A">{{addressInfo?addressInfo.address||'-':'-'}}</span>
           </div>
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
@@ -418,7 +418,7 @@
             align: 'center',
           },
           {
-            title: '退款数量',
+            title: '退货数量',
             dataIndex: 'surplusQuantity',
             align: 'center',
           },

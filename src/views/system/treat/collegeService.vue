@@ -13,16 +13,16 @@
           </a-tree-select>
         </div>
         <div class="search-row">
-          <span class="name">查询条件:</span>
-          <a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入患者姓名/手机号/订单号" style="width: 120px" />
+          <span class="name">患者:</span>
+          <a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入患者姓名/手机号/订单号" style="width: 180px" />
         </div>
         <div class="search-row">
           <span class="name">医生:</span>
-          <a-input v-model="queryParam.docName" allow-clear placeholder="请输入医生姓名" style="width: 120px" />
+          <a-input v-model="queryParam.docName" allow-clear placeholder="请输入医生姓名" style="width: 150px" />
         </div>
         <div class="search-row">
           <span class="name">套餐名称:</span>
-          <a-input v-model="queryParam.packageName" allow-clear placeholder="请输入套餐名称" style="width: 120px" />
+          <a-input v-model="queryParam.packageName" allow-clear placeholder="请输入套餐名称" style="width: 180px" />
         </div>
         <div class="search-row">
           <span class="name">状态:</span>

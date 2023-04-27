@@ -26,6 +26,24 @@ export function login (parameter) {
 
 
 /**
+ * 获取验证码
+ *
+ * @author yubaoshan
+ * @date 2020/5/26 19:06
+ */
+ export  function getImage(parameter) {
+  return axios({
+    url: '/account-api/captcha/image',
+    method: 'get',
+    params: parameter
+  })
+}
+
+
+
+
+
+/**
  * 登出
  *
  * @author yubaoshan

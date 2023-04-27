@@ -2,7 +2,7 @@
   <div id="loginLayout">
     <div class="left">
       <img class="chahua" src="@/assets/login/chahua.png" />
-      <div class="mask" v-if="hasLogin && sysApps && sysApps.length>1">
+      <div class="mask" v-if="hasLogin && sysApps && sysApps.length > 1">
         <img class="logo" src="@/assets/login/logo.png" />
         <div class="menus">
           <div class="row">
@@ -44,9 +44,9 @@
       <div class="right-wrap">
         <div class="titles">
           <div class="title1">患者服务信息系统</div>
-          <div class="title2">健/康/城/市  智/慧/医/疗</div>
+          <div class="title2">健/康/城/市 智/慧/医/疗</div>
         </div>
-        <div class="success-wrap" v-if="hasLogin && sysApps && sysApps.length>1">
+        <div class="success-wrap" v-if="hasLogin && sysApps && sysApps.length > 1">
           <div class="welcome">平台管理员，您好！欢迎使用本系统。</div>
           <img class="success" src="@/assets/login/success.png" />
           <div class="msg">登录成功!</div>
@@ -77,6 +77,23 @@
               <img class="password-icon" src="@/assets/login/passwd.png" />
             </div>
           </a-input>
+
+          <!-- <div style="margin-top: 15px" class="intro">验证码</div>
+          <a-input
+            size="large"
+            class="password-input"
+            v-model="loginParams.captcha"
+            placeholder="请输入验证码"
+          >
+            <div class="slot" slot="prefix">
+              <img class="password-icon" src="@/assets/login/passwd.png" />
+            </div>
+          </a-input>
+
+          
+           <img style="width: 200px;height: 70px;margin-top: 10px;" :src="imageUrl"> -->
+
+
           <a-button
             size="large"
             type="primary"
@@ -95,67 +112,86 @@
 
 <script>
 import Vue from 'vue'
-import cryptoJs from 'crypto-js';
-import forge from 'node-forge';
+import cryptoJs from 'crypto-js'
+import forge from 'node-forge'
 import RouteView from './RouteView'
 import { mixinDevice } from '@/utils/mixin'
 import { mapActions, mapGetters } from 'vuex'
 import { SYS_APP } from '@/store/mutation-types'
 import { SYS_APP_ID } from '@/store/mutation-types'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+// import { getImage } from '@/api/modular/system/loginManage'
+// import { getLoginUser } from '@/api/modular/system/loginManage'
 
 export default {
   name: 'LoginLayout',
   components: { RouteView },
   mixins: [mixinDevice],
-  data () {
+  data() {
     return {
       flag: false,
       logined: false,
+      imageUrl:'',
       loginParams: {
         username: '',
-        password: ''
+        password: '',
+        captcha: '',
+        captchaKey: '',
       },
-      sysApps: []
+      sysApps: [],
     }
   },
   computed: {
     ...mapGetters(['nickname', 'avatar', 'userInfo']),
 
     hasLogin() {
-      if (this.logined){
+      if (this.logined) {
         return true
       }
-      if (this.userInfo && this.userInfo.id){
+      if (this.userInfo && this.userInfo.id) {
         return true
       }
-      if (Vue.ls.get(ACCESS_TOKEN)){
+      if (Vue.ls.get(ACCESS_TOKEN)) {
         return true
       }
       return false
-    }
+    },
   },
-  mounted () {
+  mounted() {
     this.setSysApps()
+    this.getImageOut()
+    
   },
-  beforeDestroy () {
+  beforeDestroy() {},
+
+  created() {
+   
   },
   methods: {
     ...mapActions(['Login', 'Logout', 'LogoutApp']),
 
+     getImageOut(){
+  //  this.getImage().then((res) => {
+  //     if (res.code == 0) {
+  //       this.loginParams.captchaKey = res.data.captchaKey
+  //       this.imageUrl = res.data.base64Image
+  //     }
+  //   })
+   },
+
     itemClick(item) {
       this.LogoutApp()
       Vue.ls.set(SYS_APP_ID, item.id)
-      if ((item.indexUrl || '').startsWith('http')){
+      if ((item.indexUrl || '').startsWith('http')) {
         location.href = item.indexUrl
         return
       }
       this.$router.push({ path: item.indexUrl })
     },
     setSysApps(apps) {
-      if (apps){
+      if (apps) {
         Vue.ls.set(SYS_APP, apps)
-      }else {
+      } else {
         apps = Vue.ls.get(SYS_APP) || []
       }
       this.sysApps = apps
@@ -169,71 +205,85 @@ export default {
     handleLogin() {
       this.loginParams.username = this.loginParams.username.trim()
       this.loginParams.password = this.loginParams.password.trim()
-      if (!this.loginParams.username){
+      this.loginParams.captcha = this.loginParams.captcha.trim()
+      if (!this.loginParams.username) {
         this.$message.error('请输入用户名')
         return
       }
-      if (!this.loginParams.password){
+      if (!this.loginParams.password) {
         this.$message.error('请输入密码')
         return
       }
+
+      // if (!this.loginParams.captcha){
+      //   this.$message.error('请输入验证码')
+      //   return
+      // }
       this.flag = true
       Vue.ls.clear()
 
       this.getRSAKey()
       //获取保存的公私钥
-			// var keypairsSto=uni.getStorageSync('keypair')
-      var keypairsSto= Vue.ls.get('keypair')
-			console.log(keypairsSto)
-			//去掉前后格式和空格
-			var publicKey=keypairsSto.publicKey
-			publicKey = (publicKey.split('-----'))[2]
-			publicKey = publicKey.replace(/\n/g, "").replace(/\r/g, "").replace(/\t/g, "").replace(/\s*/g, "")
-				
-			// this.loginData.pubKey=publicKey;
-      this.$set(this.loginParams,'pubKey',publicKey)
+      // var keypairsSto=uni.getStorageSync('keypair')
+      var keypairsSto = Vue.ls.get('keypair')
+      console.log(keypairsSto)
+      //去掉前后格式和空格
+      var publicKey = keypairsSto.publicKey
+      publicKey = publicKey.split('-----')[2]
+      publicKey = publicKey.replace(/\n/g, '').replace(/\r/g, '').replace(/\t/g, '').replace(/\s*/g, '')
 
-      this.Login({...{}, ...this.loginParams, ...{
-        password: this.encryptDes(this.loginParams.password)
-      }}).then(res => {
-        const apps = res.data.applications || []
-        if (apps.length === 0){
-          Vue.ls.remove(ACCESS_TOKEN)
-          this.$message.error('您账号未绑定系统应用，无法登录')
-          return
-        }
-        this.setSysApps(apps)
-        if (apps.length === 1){
-          this.itemClick(apps[0])
-          return
-        }
-        this.logined = true
-      }).catch(err => {
-        this.$message.error(err)
-      }).finally(() => {
-        this.flag = false
+      // this.loginData.pubKey=publicKey;
+      this.$set(this.loginParams, 'pubKey', publicKey)
+
+      this.Login({
+        ...{},
+        ...this.loginParams,
+        ...{
+          password: this.encryptDes(this.loginParams.password),
+        },
       })
+        .then((res) => {
+          const apps = res.data.applications || []
+          if (apps.length === 0) {
+            Vue.ls.remove(ACCESS_TOKEN)
+            this.$message.error('您账号未绑定系统应用，无法登录')
+            return
+          }
+          this.setSysApps(apps)
+          if (apps.length === 1) {
+            this.itemClick(apps[0])
+            return
+          }
+          this.logined = true
+        })
+        .catch((err) => {
+          this.$message.error(err)
+          this.getImageOut()   //登录接口报错 刷新验证码
+        })
+        .finally(() => {
+          this.flag = false
+        })
     },
 
-    getRSAKey(){
-				// var keypairsSto=uni.getStorageSync('keypair')
-				var keypairsSto= Vue.ls.get('keypair')
-        
-				if(keypairsSto){
-					console.log("RSA已存在")
-					return
-				}
-				
-				forge.options.usePureJavaScript = true;
-				var keypair = forge.rsa.generateKeyPair({bits: 2048, e: 0x10001});
-				console.log('keypair',keypair)
-				var pemPrivateKey =forge.pki.privateKeyToPem(keypair.privateKey)
-				var pemPublicKey =forge.pki.publicKeyToPem(keypair.publicKey)
-        console.log("pemPrivateKey",pemPrivateKey)
-        console.log("pemPublicKey",pemPublicKey)
-        Vue.ls.set('keypair',{publicKey:pemPublicKey,privateKey:pemPrivateKey})
-				// uni.setStorageSync('keypair', {publicKey:pemPublicKey,privateKey:pemPrivateKey}); //存数据
-			},
+    getRSAKey() {
+      // var keypairsSto=uni.getStorageSync('keypair')
+      var keypairsSto = Vue.ls.get('keypair')
+
+      if (keypairsSto) {
+        console.log('RSA已存在')
+        return
+      }
+
+      forge.options.usePureJavaScript = true
+      var keypair = forge.rsa.generateKeyPair({ bits: 2048, e: 0x10001 })
+      console.log('keypair', keypair)
+      var pemPrivateKey = forge.pki.privateKeyToPem(keypair.privateKey)
+      var pemPublicKey = forge.pki.publicKeyToPem(keypair.publicKey)
+      console.log('pemPrivateKey', pemPrivateKey)
+      console.log('pemPublicKey', pemPublicKey)
+      Vue.ls.set('keypair', { publicKey: pemPublicKey, privateKey: pemPrivateKey })
+      // uni.setStorageSync('keypair', {publicKey:pemPublicKey,privateKey:pemPrivateKey}); //存数据
+    },
 
     handleLogout() {
       this.$confirm({
@@ -255,9 +305,8 @@ export default {
         },
         onCancel() {},
       })
-    }
-
-  }
+    },
+  },
 }
 </script>
 
@@ -319,20 +368,20 @@ export default {
               float: right;
             }
             &.item1 {
-              background: #2886B1;
-              box-shadow: 0px 3px 5px 0px rgba(40,134,177,0.35);
+              background: #2886b1;
+              box-shadow: 0px 3px 5px 0px rgba(40, 134, 177, 0.35);
             }
             &.item2 {
-              background: #4894A2;
-              box-shadow: 0px 3px 5px 0px rgba(72,148,162,0.35);
+              background: #4894a2;
+              box-shadow: 0px 3px 5px 0px rgba(72, 148, 162, 0.35);
             }
             &.item3 {
-              background: #3373A5;
-              box-shadow: 0px 3px 5px 0px rgba(51,115,165,0.35);
+              background: #3373a5;
+              box-shadow: 0px 3px 5px 0px rgba(51, 115, 165, 0.35);
             }
             &.item4 {
-              background: #5472AB;
-              box-shadow: 0px 3px 5px 0px rgba(84,114,171,0.35);
+              background: #5472ab;
+              box-shadow: 0px 3px 5px 0px rgba(84, 114, 171, 0.35);
             }
             .icon {
               .px2rem(margin-right, 15);
@@ -361,7 +410,7 @@ export default {
               display: inline-block;
               font-family: PingFang SC;
               font-weight: 400;
-              color: #FFFFFF;
+              color: #ffffff;
             }
           }
         }
@@ -373,8 +422,8 @@ export default {
     .px2rem(border-radius, 8);
     position: relative;
     height: 100%;
-    background: #FFFFFF;
-    box-shadow: 0px 5px 10px 0px rgba(217,239,255,0.35);
+    background: #ffffff;
+    box-shadow: 0px 5px 10px 0px rgba(217, 239, 255, 0.35);
     .right-wrap {
       position: absolute;
       width: 100%;
@@ -387,7 +436,7 @@ export default {
           .px2rem(line-height, 46);
           font-family: PingFang SC;
           font-weight: 400;
-          color: #409EFF;
+          color: #409eff;
           text-align: center;
         }
         .title2 {
@@ -396,7 +445,7 @@ export default {
           .px2rem(line-height, 19);
           font-family: PingFang SC;
           font-weight: 400;
-          color: #CCCCCC;
+          color: #cccccc;
           text-align: center;
         }
       }
@@ -454,7 +503,7 @@ export default {
           // .px2rem(height, 52);
           height: 0.27083333rem;
           position: relative;
-          background: #F6F8FB;
+          background: #f6f8fb;
           .text-icon {
             .px2rem(width, 26);
             .px2rem(height, 26);
@@ -480,7 +529,7 @@ export default {
           .px2rem(line-height, 24);
           font-family: PingFang SC;
           font-weight: 400;
-          color: #4D4D4D;
+          color: #4d4d4d;
           text-align: center;
         }
         .success {
@@ -496,7 +545,7 @@ export default {
           .px2rem(margin-top, 33);
           font-family: PingFang SC;
           font-weight: 400;
-          color: #409EFF;
+          color: #409eff;
           text-align: center;
         }
         .logout-button {
