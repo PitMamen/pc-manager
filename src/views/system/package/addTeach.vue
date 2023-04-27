@@ -106,6 +106,10 @@ export default {
           dataIndex: 'brief',
         },
         {
+          title: '科室',
+          dataIndex: 'departmentName',
+        },
+        {
           title: '操作',
           width: '150px',
           dataIndex: 'action',
