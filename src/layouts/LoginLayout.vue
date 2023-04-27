@@ -82,7 +82,7 @@
           <div style="margin-top: 15px" class="intro">验证码</div>
           <div class="captcha">
             <a-input
-              style="width: 300px"
+              style="width: 50%"
               size="large"
               class="captcha-input"
               v-model="loginParams.captcha"
@@ -94,7 +94,7 @@
             
             
           </a-input>
-          <img style="width: 160px; height: 60px;" :src="imageUrl" />
+          <img style="width: 50%; height: 51px;" :src="imageUrl" />
          
           </div>
 
