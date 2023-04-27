@@ -3,6 +3,7 @@ import { login,getImage, getLoginUser, logout, changeLoginUserRole } from '@/api
 import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { sysUserUpdatePwd } from '@/api/modular/system/userManage'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { CAPTTHAKEY } from '@/store/mutation-types'
 import { SYS_APP } from '@/store/mutation-types'
 import { SYS_APP_ID } from '@/store/mutation-types'
 import { ALL_APPS_MENU } from '@/store/mutation-types'
@@ -66,6 +67,24 @@ const user = {
         })
       })
     },
+
+
+    getImageOut({}){
+      return new Promise((resolve, reject) => {
+        getImage().then(response => {
+          if (!response.success) {
+            reject(response.message)
+            return
+          }
+          resolve(response)
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+  
+
+
     
 
 
@@ -87,7 +106,6 @@ const user = {
             // Vue.ls.set(TRUE_USER, data)
             resolve(response)
           } else {
-            debugger
             reject(new Error(data.message))
           }
         }).catch(error => {

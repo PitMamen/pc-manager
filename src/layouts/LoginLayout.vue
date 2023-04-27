@@ -78,7 +78,7 @@
             </div>
           </a-input>
 
-          <!-- <div style="margin-top: 15px" class="intro">验证码</div>
+          <div style="margin-top: 15px" class="intro">验证码</div>
           <a-input
             size="large"
             class="password-input"
@@ -91,7 +91,7 @@
           </a-input>
 
           
-           <img style="width: 200px;height: 70px;margin-top: 10px;" :src="imageUrl"> -->
+           <img style="width: 200px;height: 70px;margin-top: 10px;" :src="imageUrl">
 
 
           <a-button
@@ -121,7 +121,6 @@ import { SYS_APP } from '@/store/mutation-types'
 import { SYS_APP_ID } from '@/store/mutation-types'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 // import { getImage } from '@/api/modular/system/loginManage'
-// import { getLoginUser } from '@/api/modular/system/loginManage'
 
 export default {
   name: 'LoginLayout',
@@ -159,25 +158,35 @@ export default {
   },
   mounted() {
     this.setSysApps()
-    this.getImageOut()
+    // this.getImageOut()
     
   },
   beforeDestroy() {},
 
   created() {
-   
+    this.getCaptcha()
   },
   methods: {
-    ...mapActions(['Login', 'Logout', 'LogoutApp']),
+    ...mapActions(['Login','getImageOut', 'Logout', 'LogoutApp']),
+    
+    //获取验证码调用
+    getCaptcha(){
+      this.getImageOut().then((res=>{
+      this.loginParams.captchaKey = res.data.captchaKey
+        this.imageUrl = res.data.base64Image
+    }))
+    },
+    
 
-     getImageOut(){
-  //  this.getImage().then((res) => {
+
+  //    getImageOut(){
+  //  getImage().then((res) => {
   //     if (res.code == 0) {
   //       this.loginParams.captchaKey = res.data.captchaKey
   //       this.imageUrl = res.data.base64Image
   //     }
   //   })
-   },
+  //  },
 
     itemClick(item) {
       this.LogoutApp()
@@ -215,10 +224,10 @@ export default {
         return
       }
 
-      // if (!this.loginParams.captcha){
-      //   this.$message.error('请输入验证码')
-      //   return
-      // }
+      if (!this.loginParams.captcha){
+        this.$message.error('请输入验证码')
+        return
+      }
       this.flag = true
       Vue.ls.clear()
 
@@ -258,7 +267,7 @@ export default {
         })
         .catch((err) => {
           this.$message.error(err)
-          this.getImageOut()   //登录接口报错 刷新验证码
+          this.getCaptcha()   //登录接口报错 刷新验证码
         })
         .finally(() => {
           this.flag = false
