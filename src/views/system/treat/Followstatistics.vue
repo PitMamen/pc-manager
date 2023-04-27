@@ -1,6 +1,6 @@
 <template>
-  <a-card :bordered="false" class="sys-card" :confirmLoading="confirmLoading">
-    <div class="table-page-search-wrapper">
+  <a-spin :spinning="confirmLoading">
+    <div class="table-page-search-wrapper" style="margin-top: 10px;margin-left: 10px;">
       <div class="search-row">
         <span class="name">问卷名称:</span>
         <a-select
@@ -85,7 +85,7 @@
       </div>
     </div>
 
-    <div class="tab-all-content">
+    <div class="tab-all-content" style="margin-left: 10px;">
       <div class="tab-wx">
         <div class="content-dis">
           <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">出院人数</span>
@@ -161,10 +161,11 @@
     <!--  style="overflow-y: auto" -->
     <s-table
       class="table-hover-hidden"
+      style="margin-left: 10px;"
       ref="tableStat"
       size="default"
       :columns="columnsStat"
-      :scroll="{ x: true }"
+      :scroll="{ x: true,y:true }"
       :data="loadDataStat"
       :alert="true"
       :rowKey="(record) => record.code"
@@ -175,7 +176,7 @@
     </s-table>
 
     <goMarking ref="goMarking" @ok="handleOk" />
-  </a-card>
+  </a-spin>
 </template>
     
     <script>
@@ -354,7 +355,7 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.confirmLoading = true
+    // this.confirmLoading = true
 
     this.getDepartmentSelectList(undefined)
     this.questionnairesOut()
