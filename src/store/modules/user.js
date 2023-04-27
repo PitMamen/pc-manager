@@ -3,7 +3,6 @@ import { login,getImage, getLoginUser, logout, changeLoginUserRole } from '@/api
 import { sysMenuChange } from '@/api/modular/system/menuManage'
 import { sysUserUpdatePwd } from '@/api/modular/system/userManage'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
-import { CAPTTHAKEY } from '@/store/mutation-types'
 import { SYS_APP } from '@/store/mutation-types'
 import { SYS_APP_ID } from '@/store/mutation-types'
 import { ALL_APPS_MENU } from '@/store/mutation-types'

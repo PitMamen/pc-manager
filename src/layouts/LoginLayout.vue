@@ -76,23 +76,27 @@
             <div class="slot" slot="prefix">
               <img class="password-icon" src="@/assets/login/passwd.png" />
             </div>
+            
           </a-input>
 
           <div style="margin-top: 15px" class="intro">验证码</div>
-          <a-input
-            size="large"
-            class="password-input"
-            v-model="loginParams.captcha"
-            placeholder="请输入验证码"
-          >
+          <div class="captcha">
+            <a-input
+              style="width: 300px"
+              size="large"
+              class="captcha-input"
+              v-model="loginParams.captcha"
+              placeholder="请输入验证码"
+            >
             <div class="slot" slot="prefix">
-              <img class="password-icon" src="@/assets/login/passwd.png" />
+              <img class="password-icon" src="@/assets/login/yanzheng.png" />
             </div>
+            
+            
           </a-input>
-
-          
-           <img style="width: 200px;height: 70px;margin-top: 10px;" :src="imageUrl">
-
+          <img style="width: 160px; height: 60px;" :src="imageUrl" />
+         
+          </div>
 
           <a-button
             size="large"
@@ -120,7 +124,6 @@ import { mapActions, mapGetters } from 'vuex'
 import { SYS_APP } from '@/store/mutation-types'
 import { SYS_APP_ID } from '@/store/mutation-types'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
-// import { getImage } from '@/api/modular/system/loginManage'
 
 export default {
   name: 'LoginLayout',
@@ -130,7 +133,7 @@ export default {
     return {
       flag: false,
       logined: false,
-      imageUrl:'',
+      imageUrl: '',
       loginParams: {
         username: '',
         password: '',
@@ -159,7 +162,6 @@ export default {
   mounted() {
     this.setSysApps()
     // this.getImageOut()
-    
   },
   beforeDestroy() {},
 
@@ -167,26 +169,24 @@ export default {
     this.getCaptcha()
   },
   methods: {
-    ...mapActions(['Login','getImageOut', 'Logout', 'LogoutApp']),
-    
+    ...mapActions(['Login', 'getImageOut', 'Logout', 'LogoutApp']),
+
     //获取验证码调用
-    getCaptcha(){
-      this.getImageOut().then((res=>{
-      this.loginParams.captchaKey = res.data.captchaKey
+    getCaptcha() {
+      this.getImageOut().then((res) => {
+        this.loginParams.captchaKey = res.data.captchaKey
         this.imageUrl = res.data.base64Image
-    }))
+      })
     },
-    
 
-
-  //    getImageOut(){
-  //  getImage().then((res) => {
-  //     if (res.code == 0) {
-  //       this.loginParams.captchaKey = res.data.captchaKey
-  //       this.imageUrl = res.data.base64Image
-  //     }
-  //   })
-  //  },
+    //    getImageOut(){
+    //  getImage().then((res) => {
+    //     if (res.code == 0) {
+    //       this.loginParams.captchaKey = res.data.captchaKey
+    //       this.imageUrl = res.data.base64Image
+    //     }
+    //   })
+    //  },
 
     itemClick(item) {
       this.LogoutApp()
@@ -224,7 +224,7 @@ export default {
         return
       }
 
-      if (!this.loginParams.captcha){
+      if (!this.loginParams.captcha) {
         this.$message.error('请输入验证码')
         return
       }
@@ -267,7 +267,7 @@ export default {
         })
         .catch((err) => {
           this.$message.error(err)
-          this.getCaptcha()   //登录接口报错 刷新验证码
+          this.getCaptcha() //登录接口报错 刷新验证码
         })
         .finally(() => {
           this.flag = false
@@ -459,7 +459,14 @@ export default {
         }
       }
       .login-wrap {
-        .px2rem(margin-top, 114);
+        /deep/.captcha {
+          align-items: center;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+        }
+
+        .px2rem(margin-top, 94);
         .px2rem(padding-left, 155);
         .px2rem(padding-right, 155);
         .intro {
@@ -501,6 +508,23 @@ export default {
             }
           }
         }
+
+        .captcha-input {
+          height: calc(0.27083333rem + 2px);
+          /deep/ .ant-input-prefix {
+            left: 1px;
+            bottom: 1px;
+          }
+          /deep/ .ant-input {
+            padding-left: 0 !important;
+            .px2rem(font-size, 24) !important;
+            .px2rem(text-indent, 90);
+            &:-webkit-autofill::first-line {
+              .px2rem(font-size, 24) !important;
+            }
+          }
+        }
+
         .login-button {
           .px2rem(height, 58) !important;
           .px2rem(font-size, 24) !important;
