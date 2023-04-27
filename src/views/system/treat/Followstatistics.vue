@@ -1,6 +1,7 @@
 <template>
-  <a-spin :spinning="confirmLoading">
-    <div class="table-page-search-wrapper" style="margin-top: 10px;margin-left: 10px;">
+  <a-card  class="sys-card" :bordered="false">
+    <a-spin :spinning="confirmLoading">
+    <div class="table-page-search-wrapper" >
       <div class="search-row">
         <span class="name">问卷名称:</span>
         <a-select
@@ -85,7 +86,7 @@
       </div>
     </div>
 
-    <div class="tab-all-content" style="margin-left: 10px;">
+    <div class="tab-all-content" >
       <div class="tab-wx">
         <div class="content-dis">
           <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">出院人数</span>
@@ -161,7 +162,6 @@
     <!--  style="overflow-y: auto" -->
     <s-table
       class="table-hover-hidden"
-      style="margin-left: 10px;"
       ref="tableStat"
       size="default"
       :columns="columnsStat"
@@ -177,6 +177,7 @@
 
     <goMarking ref="goMarking" @ok="handleOk" />
   </a-spin>
+  </a-card>
 </template>
     
     <script>
@@ -839,89 +840,6 @@ export default {
     }
   }
 }
-
-// .card-right-service {
-//   overflow: hidden;
-//   width: 82%;
-
-//   .table-operator {
-//     margin-bottom: 18px;
-//   }
-//   button {
-//     margin-right: 8px;
-//   }
-
-//   .title {
-//     background: #fff;
-//     font-size: 18px;
-//     font-weight: bold;
-//     color: #000;
-//   }
-// }
-
-// .div-text-auto {
-//   width: 100%;
-//   display: inline-block;
-//   margin-top: -1.5%;
-//   .ant-input {
-//     height: 28px;
-//   }
-// }
-
-// .row-stat {
-//   display: flex;
-//   flex-direction: row;
-
-//   align-items: center;
-//   width: 100%;
-
-//   .row-item {
-//     display: flex;
-//     flex-direction: row;
-//     align-items: center;
-//     margin: 50px 50px;
-//     justify-content: center;
-//     border: 1px #ddd solid;
-//     border-radius: 10px;
-//     background-color: white;
-//     height: 260px;
-//     width: 30%;
-
-//     .item-inside {
-//       display: flex;
-//       flex-direction: row;
-//       align-items: center;
-
-//       .item-image {
-//         width: 50px;
-//         margin-top: 15px;
-//         height: 50px;
-//       }
-
-//       .item-right {
-//         display: flex;
-//         margin-left: 20px;
-//         flex-direction: column;
-
-//         .item-right-top {
-//           display: flex;
-//           flex-direction: row;
-//           align-items: baseline;
-//           .item-stat-num {
-//             font-size: 46px;
-//           }
-//           .item-stat-unit {
-//             font-size: 20px;
-//           }
-//         }
-
-//         .item-stat-name {
-//           font-size: 20px;
-//         }
-//       }
-//     }
-//   }
-// }
 </style>
 
 
@@ -933,7 +851,7 @@ export default {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 126px);
+      height: calc(100% - 38px);
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
