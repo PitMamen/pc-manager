@@ -68,6 +68,7 @@ const user = {
     },
 
 
+    //获取验证码
     getImageOut({}){
       return new Promise((resolve, reject) => {
         getImage().then(response => {

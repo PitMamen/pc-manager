@@ -89,12 +89,12 @@
               placeholder="请输入验证码"
             >
             <div class="slot" slot="prefix">
-              <img class="password-icon" src="@/assets/login/yanzheng.png" />
+              <img  class="password-icon" src="@/assets/login/yanzheng.png" />
             </div>
             
             
           </a-input>
-          <img style="width: 50%; height: 51px;" :src="imageUrl" />
+          <img @click="update()" style="width: 50%; height: 51px;" :src="imageUrl" />
          
           </div>
 
@@ -161,7 +161,6 @@ export default {
   },
   mounted() {
     this.setSysApps()
-    // this.getImageOut()
   },
   beforeDestroy() {},
 
@@ -170,6 +169,10 @@ export default {
   },
   methods: {
     ...mapActions(['Login', 'getImageOut', 'Logout', 'LogoutApp']),
+
+    update(){
+      this.getCaptcha()
+    },
 
     //获取验证码调用
     getCaptcha() {

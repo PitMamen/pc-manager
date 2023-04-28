@@ -165,7 +165,7 @@
       ref="tableStat"
       size="default"
       :columns="columnsStat"
-      :scroll="{ x: true,y:true }"
+      :scroll="{ x: true }"
       :data="loadDataStat"
       :alert="true"
       :rowKey="(record) => record.code"
