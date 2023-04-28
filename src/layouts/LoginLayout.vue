@@ -179,7 +179,9 @@ export default {
       this.getImageOut().then((res) => {
         this.loginParams.captchaKey = res.data.captchaKey
         this.imageUrl = res.data.base64Image
-      })
+      }) .catch((err) => {
+          this.$message.error(err)
+        })
     },
 
     //    getImageOut(){
