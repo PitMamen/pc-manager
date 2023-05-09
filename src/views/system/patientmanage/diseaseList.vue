@@ -259,15 +259,14 @@ export default {
 
     //点击第一层选中按钮，
     onChangeOut(itemOut, indexOut) {
-      // itemOut.isChecked = !itemOut.isChecked
-      itemOut.isChecked = true
+      console.log("ssss:",itemOut)
+      itemOut.isChecked = !itemOut.isChecked
       if (itemOut.isChecked) {
-        //当父节点切换之后需要切换tree的选中状态；需要改变请求条件；需要改变表格列表数据；需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）；需要改变表格里面操作的按钮
-
+        var idArray = []
+        idArray.push(itemOut.subjectClassifyId)  //选中一级学科 需要把一级学科的id 带上
         //当父节点切换之后需要切换tree的选中状态；需要改变请求条件
         this.treeData.forEach((itemOutTemp, indexOutTemp) => {
           if (indexOutTemp != indexOut) {
-            console.log("*****")
             this.$set(itemOutTemp, 'isChecked', false)
             this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
               this.$set(itemChild, 'isChecked', false)
@@ -276,9 +275,8 @@ export default {
             //处理查询入参
             // this.queryParams.medicalId = itemOutTemp.subjectClassifyId
             this.$set(itemOutTemp, 'isChecked', true)
-            var idArray = []
+         
             this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
-              console.log("vvv:",itemChild.subjectClassifyId)
               this.$set(itemChild, 'isChecked', true)
               idArray.push(itemChild.subjectClassifyId)
              
@@ -286,8 +284,6 @@ export default {
 
             let ids = idArray.join(',')
               this.queryParams.medicalId = ids
-              console.log("JJJJ:",this.queryParams.medicalId)
-
           }
         })
 
@@ -301,6 +297,24 @@ export default {
         itemOut.outIcon = itemOut.isVisible ? 'caret-down' : 'caret-right'
       } else {
         //TODO 取消勾选不做，外层没有取消的功能，点击了就是全选
+        this.treeData.forEach((itemOutTemp, indexOutTemp) => {
+          if (indexOutTemp != indexOut) {
+            this.$set(itemOutTemp, 'isChecked', false)
+            this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
+              this.$set(itemChild, 'isChecked', false)
+            })
+          } else {
+            //处理查询入参
+            this.$set(itemOutTemp, 'isChecked', false)
+            this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
+              this.$set(itemChild, 'isChecked', false)
+             
+            })
+          }
+
+        })
+        this.queryParams.medicalId =''
+
       }
 
       this.goSearch()
