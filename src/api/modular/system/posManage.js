@@ -4302,3 +4302,50 @@ export function getPatientInfoCon(id) {
     method: 'post'
   })
 }
+
+//病种列表  
+export function getDiseaseTypePageList(data) {
+  return axios({
+    url: '/info-api/tdDiseaseType/getDiseaseTypePageList',
+    method: 'post',
+    data:data,
+  })
+}
+
+//学科列表
+export function gettreeMedicalSubjects(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/treeMedicalSubjects',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+//新增病种
+export function addDiseaseType(data) {
+  return axios({
+    url: '/info-api/tdDiseaseType/addDiseaseType',
+    method: 'post',
+    data: data,
+  })
+}
+
+//删除病种
+export function deleteDiseaseType(id) {
+  return axios({
+    url: '/info-api/tdDiseaseType/deleteDiseaseType/'+id,
+    method: 'get',
+    // params: id,
+  })
+}
+
+
+//修改病种
+export function modifyDiseaseType(data) {
+  return axios({
+    url: '/info-api/tdDiseaseType/modifyDiseaseType',
+    method: 'post',
+    data: data,
+  })
+}

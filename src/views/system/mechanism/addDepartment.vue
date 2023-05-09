@@ -117,6 +117,26 @@
       />
       <span class="m-count">{{ queryParams.departmentIntroduce ? queryParams.departmentIntroduce.length : 0 }}/30</span>
     </div>
+
+
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
+      <span class="span-item-name" style="margin-top: 5px"> 管理病种 :</span>
+
+      <a-select
+        mode="multiple"
+        style="min-width: 87%; margin-left: 5px;height: 30px;"
+        v-model="idArray"
+        allow-clear
+        placeholder="请选择病种"
+        @select="onChangeDisease"
+        @change="changeDis"
+      >
+        <a-select-option v-for="(item, index) in diseaseTypeListData" :key="index" :value="item.id">{{
+          item.typeName
+        }}</a-select-option>
+      </a-select>
+    </div>
+
   </a-modal>
 </template>
         
@@ -129,6 +149,7 @@ import {
   parent,
   queryHospitalList,
   getDictDataForCodeDepartType,
+  getDiseaseTypePageList,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import E from 'wangeditor'
@@ -142,6 +163,8 @@ export default {
   },
   data() {
     return {
+      idArray:[],
+      diseaseTypeListData: [],
       bb: '1',
       userId: '',
       timeStr: '',
@@ -167,6 +190,7 @@ export default {
         departmentIntroduce: '',
         departmentType: undefined,
         departmentId:'',
+        managerDiseaseType: undefined,
       },
 
       labelCol: {
@@ -208,7 +232,49 @@ export default {
       //   this.getParentList()
       this.queryHospitalListOut()
       this.getDictDataForCodeorgDepartTypeOut()
+      this.getDiseaseTypePageListOut()
     },
+
+ /**
+     * 获取病种列表
+     */
+     getDiseaseTypePageListOut() {
+      let queryDiseaseParams = {
+        pageNo: 1,
+        pageSize: 999,
+      }
+      this.confirmLoading = true
+      getDiseaseTypePageList(queryDiseaseParams)
+        .then((res) => {
+          if (res.code == 0) {
+            this.diseaseTypeListData = res.data.records
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+
+   /**
+    * 病种选择
+    */
+    onChangeDisease(id){
+      // console.log("KKKK:",this.idArray)
+      let premiss = this.idArray.join(",")
+      this.queryParams.managerDiseaseType = premiss
+
+    },
+    /**
+    * 病种改变
+    */
+    changeDis(id){
+      this.idArray = id
+      this.queryParams.managerDiseaseType=this.idArray.join(",")
+    },
+
+
+
 
     /**
      * 组织类型接口
@@ -398,6 +464,8 @@ export default {
      * 重置
      */
     reset() {
+      this.idArray = []
+      this.queryParams.managerDiseaseType = undefined
       this.queryParams.departmentId = ''
       this.queryParams.hospitalCode = ''
       this.queryParams.departmentName = ''
@@ -473,6 +541,16 @@ export default {
   },
 }
 </script>
+
+
+<style lang="less" scoped>
+/deep/.ant-select-selection--multiple {
+    height: 30px !important;
+    min-height: 28px !important;
+}
+</style>
+
+
 
         <style lang="less">
 /deep/.ant-col-sm-15 {
