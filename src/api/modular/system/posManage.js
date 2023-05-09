@@ -4302,3 +4302,44 @@ export function getPatientInfoCon(id) {
     method: 'post'
   })
 }
+
+
+
+
+//收款方列表  收款方列表
+export function getTbMerchantPageList(data) {
+  return axios({
+    url: '/order-api/tbMerchant/getTbMerchantPageList',
+    method: 'post',
+    data:data,
+  })
+}
+
+
+//添加收款方
+export function addTbMerchant(data) {
+  return axios({
+    url: '/order-api/tbMerchant/addTbMerchant',
+    method: 'post',
+    data:data,
+  })
+}
+
+
+//修改状态
+export function modifyStatus(data) {
+  return axios({
+    url: '/order-api/tbMerchant/modifyStatus',
+    method: 'post',
+    data:data,
+  })
+}
+
+//修改收款方信息
+export function modifyTbMerchant(data) {
+  return axios({
+    url: '/order-api/tbMerchant/modifyTbMerchant',
+    method: 'post',
+    data:data,
+  })
+}

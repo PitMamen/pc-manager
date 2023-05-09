@@ -2,16 +2,17 @@
   <a-card :bordered="false" class="card-right-pac">
     <div class="table-page-search-wrapper">
       <div class="search-row">
-        <span class="name">查询条件:</span>
-        <a-input
+        <span class="name">商户类型:</span>
+        <a-select
+          v-model="queryParams.channel"
+          placeholder="请选择商户类型"
           allow-clear
-          v-model="queryParams.departmentName"
-          placeholder="可输入科室名称查询"
-          style="width: 120px"
-          @blur="$refs.table.refresh(true)"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
+          style="width: 120px; height: 28px"
+        >
+          <a-select-option v-for="item in payeeType" :key="item.code" :value="item.code">{{
+            item.name
+          }}</a-select-option>
+        </a-select>
       </div>
       <div class="search-row">
         <span class="name"> 所属机构:</span>
@@ -26,12 +27,12 @@
       </div>
 
       <div class="search-row">
-        <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px;height: 28px;">
+        <span class="name">当前状态:</span>
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
-     
+
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -41,17 +42,17 @@
     </div>
 
     <div class="table-operator" style="overflow: hidden">
-        <a-button
-          icon="plus"
-          style="float: right; margin-right: 0; margin-top: 0px"
-          @click="addDepartment()"
-          @ok="handleOk"
-          >新增</a-button
-        >
-      </div>
+      <a-button
+        icon="plus"
+        style="float: right; margin-right: 0; margin-top: 0px"
+        @click="$refs.addMerchant.addModel()"
+        @ok="handleOk"
+        >新增</a-button
+      >
+    </div>
 
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -60,44 +61,41 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.deptCode.add(record)"><a-icon type="wechat"></a-icon>随访二维码</a>
-        <a-divider type="vertical" />
-        <a @click="$refs.modifyDepartment.modifyDepartment(record)"><a-icon type="edit"></a-icon>修改</a>
+        <a @click="$refs.addMerchant.editModel(record)"><a-icon type="edit"></a-icon>修改</a>
       </span>
 
       <span slot="statuas" slot-scope="text, record">
         <!-- <a-switch :checked="record.enableStatus" @click="statusCheck(record)" /> -->
         <template v-if="true">
-          <a-popconfirm placement="topRight" :title="record.enableStatus ? '确认停用？' : '确认启用？'" @confirm="() => statusCheck(record)">
+          <a-popconfirm
+            placement="topRight"
+            :title="record.enableStatus ? '确认停用？' : '确认启用？'"
+            @confirm="() => statusCheck(record)"
+          >
             <a-switch size="small" :checked="record.enableStatus" />
           </a-popconfirm>
         </template>
       </span>
     </s-table>
-    <dept-code ref="deptCode" @ok="handleOk" />
-    <add-Department ref="addDepartment" @ok="handleOk" />
-    <modify-Department ref="modifyDepartment" @ok="handleOk" />
+    <add-Merchant ref="addMerchant" @ok="handleOk" />
   </a-card>
 </template>
-    
-    
-    <script>
+      
+      
+      <script>
 import { STable } from '@/components'
 import {
-  getDepartmentListForReq,
-  queryHospitalType,
   queryHospitalList,
-  modifyDepartmentForReq,
+  modifyStatus,
+  getTbMerchantPageList,
 } from '@/api/modular/system/posManage'
-import addDepartment from './addDepartment'
-import modifyDepartment from './modifyDepartment'
+import addMerchant from './addMerchant'
 import deptCode from './deptCode'
 export default {
   components: {
     STable,
     deptCode,
-    modifyDepartment,
-    addDepartment,
+    addMerchant,
   },
   data() {
     return {
@@ -108,9 +106,15 @@ export default {
       treeData: [],
       HospitalTypeList: [],
       queryParams: {
-        hospitalCode: undefined,
+        channel: '',
+        hospitalCode: '',
+        insideId: 0,
+        merchantId: '',
+        name: '',
+        namePy: '',
+        paramJson: '',
         status: 1,
-        departmentName: '',
+        tenantId: '',
       },
       labelCol: {
         xs: { span: 24 },
@@ -125,53 +129,53 @@ export default {
       form: this.$form.createForm(this),
       selects: [
         {
-          id: 0,
-          name: '全部'
-        },
-        {
           id: 1,
-          name: '启用'
+          name: '启用',
         },
         {
           id: 2,
-          name: '停用'
-        }
+          name: '停用',
+        },
       ],
+
+      payeeType: [
+        {
+          code: 'wechat',
+          name: '微信',
+        },
+        {
+          code: 'alipay',
+          name: '支付宝',
+        },
+      ],
+
       // 表头
       columns: [
         {
+          title: '商户类型',
+          dataIndex: 'channel',
+        },
+
+        {
           title: '所属机构',
-          dataIndex: 'hospitalName',
+          dataIndex: 'hospitalCode',
+          ellipsis: true,
+        },
+
+        {
+          title: '商户编码',
+          dataIndex: 'merchantId',
+
           ellipsis: true,
         },
         {
-          title: '科室名称',
-          dataIndex: 'department_name',
-        
-        },
-        {
-          title: 'His编码',
-          dataIndex: 'his_id',
-         
-          ellipsis: true,
-        },
-        {
-          title: '科室类型',
-          dataIndex: 'departmenttype',
-      
-        },
-        {
-          title: '排序',
-          dataIndex: 'department_order',
-         
+          title: '商户名称',
+          dataIndex: 'name',
         },
 
-
         {
-          title: '备注',
-          dataIndex: 'department_introduce',
-        
-         
+          title: '相关参数',
+          dataIndex: 'paramJson',
         },
 
         {
@@ -193,7 +197,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDepartmentListForReq(Object.assign(parameter, this.queryParams)).then((res) => {
+        return getTbMerchantPageList(Object.assign(parameter, this.queryParams)).then((res) => {
           console.log('请求结果:', res.message)
           var data = {
             pageNo: parameter.current,
@@ -205,25 +209,7 @@ export default {
 
           if (res.code == 0 && res.data.records.length > 0) {
             data.rows.forEach((item, index) => {
-              // this.$set(item, 'zt', item.status.description)
               this.$set(item, 'enableStatus', item.status == 1)
-              var type = ''
-              if (item.department_type == 1) {
-                type = '门诊科室'
-              } else if (item.department_type == 2) {
-                type = '急诊科室'
-              } else if (item.department_type == 3) {
-                type = '住院科室'
-              } else if (item.department_type == 4) {
-                type = '医技科室'
-              } else if (item.department_type == 5) {
-                type = '药剂科室'
-              } else if (item.department_type == 6) {
-                type = '后勤物资'
-              } else if (item.department_type == 7) {
-                type = '机关科室'
-              }
-              this.$set(item, 'departmenttype', type)
             })
           }
           console.log(data)
@@ -234,7 +220,7 @@ export default {
   },
 
   created() {
-    this.getHospitalType()
+    // this.getHospitalType()
     this.queryHospitalListOut()
   },
 
@@ -246,9 +232,9 @@ export default {
       if (this.queryParams.metaName != '') {
         this.queryParams.metaName = ''
       }
-      this.queryParams.departmentName=undefined
+      this.queryParams.departmentName = undefined
       this.queryParams.hospitalCode = undefined
-      this.queryParams.status=1
+      this.queryParams.status = 1
 
       this.handleOk()
     },
@@ -265,20 +251,6 @@ export default {
       this.setState({ value })
     },
 
-    /**
-     * 机构类型
-     */
-    getHospitalType() {
-      queryHospitalType()
-        .then((res) => {
-          if (res.code == 0) {
-            this.HospitalTypeList = res.data
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
 
     /**
      * 所属机构接口
@@ -369,11 +341,11 @@ export default {
     statusCheck(record) {
       var state = !record.enableStatus
       let queryParam = {
-        departmentId: record.department_id,
+        insideId: record.insideId,
         status: state ? 1 : 2,
       }
       this.confirmLoading = true
-      modifyDepartmentForReq(queryParam)
+      modifyStatus(queryParam)
         .then((res) => {
           if (res.code == 0 && res.success) {
             //  this.$set(record, 'enableStatus', state)
@@ -393,8 +365,8 @@ export default {
   },
 }
 </script>
-    
-    <style lang="less">
+      
+      <style lang="less">
 .ant-select-selection {
   .ant-select-selection-single {
     width: 128px !important;
@@ -437,15 +409,14 @@ export default {
   }
 }
 </style>
-
-<style >
+  <style >
 .ant-select-tree-dropdown {
   max-height: 60vh !important;
   top: 148px !important;
 }
 </style>
-
-<style lang="less" scoped>
+  
+  <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 20px);
@@ -471,3 +442,4 @@ export default {
   }
 }
 </style>
+  
