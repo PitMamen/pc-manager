@@ -340,7 +340,7 @@ export default {
           })
 
           // this.queryParams.medicalId = ''
-          var idArray = []
+          // var idArray = []
           this.adArryTemp.push(itemChild.subjectClassifyId)
           this.queryParams.medicalId = this.adArryTemp.join(',')
           // console.log("KKK111:",this.queryParams.medicalId)
@@ -406,10 +406,12 @@ export default {
         //初始化请求数据
         this.queryParams.medicalId = ''
         var idArray = []
+        idArray.push(this.treeData[0].subjectClassifyId)  //第一次进来 外出的id也要传入
         this.treeData[0].children.forEach((item, index) => {
-          idArray.push(item.subjectClassifyId)
+          idArray.push(item.subjectClassifyId)  // 将里面的一次所有id传入
           this.queryParams.medicalId = idArray.join(',')
         })
+        this.adArryTemp = idArray
         console.log("sss:",this.queryParams.medicalId)
       } else {
         // debugger
