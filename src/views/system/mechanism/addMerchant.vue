@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="record.accountId ? '修改收款商户' : '新增收款商户'"
+    :title="record.merchantId ? '修改收款商户' : '新增收款商户'"
     :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -13,7 +13,7 @@
         <div class="div-part-left">
           <div class="div-title" style="margin-top: 0">
             <div class="div-line-blue"></div>
-            <span class="span-title">账号信息</span>
+            <span class="span-title">基本信息</span>
           </div>
 
           <div class="div-content">
@@ -37,7 +37,6 @@
               v-model="checkData.merchantId"
               style="display: inline-block"
               allow-clear
-              :disabled="record.accountId"
               :maxLength="40"
               placeholder="请输入商户编码"
             />
@@ -81,49 +80,35 @@
 
           <div class="div-title">
             <div class="div-line-blue"></div>
-            <span class="span-title">服务权限</span>
+            <span class="span-title">相关参数</span>
           </div>
-          <!-- <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>所属角色:</span>
-            <a-select
-              v-model="checkData.role"
-              allow-clear
-              placeholder="请选择所属角色"
-              :maxTagCount="3"
-              :collapse-tags="true"
-              mode="multiple"
-              style="height: 28px"
-              @change="onRoleSelectChange"
-            >
-              <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.roleId">{{
-                item.roleRealName
-              }}</a-select-option>
-            </a-select>
-          </div> -->
 
-          <!-- <div class="div-content" style="margin-left: 1px; width: 433px">
-            <a-checkbox v-model="accountChecked">客服坐席:</a-checkbox>
+          <div class="div-content" v-for="(item, index) in paramJsonList" :key="index" :value="item.key">
             <a-input
-              v-model="checkData.seatUser"
-              class="span-item-value"
-              style="display: inline-block"
-              :disabled="!accountChecked"
-              placeholder="请输入客服坐席ID"
-            />
-          </div> -->
-          <!-- <div class="div-content" style="margin-left: 1px; width: 433px">
-            <a-checkbox v-model="wecomChecked">企微账号:</a-checkbox>
-            <a-select
-              :disabled="!wecomChecked"
-              v-model="checkData.companywxUserId"
+              v-model="item.key"
+              style="display: inline-block; width: 25%"
               allow-clear
-              placeholder="请选择企微账号"
-            >
-              <a-select-option v-for="(item, index) in wecomUserList" :key="index" :value="item">{{
-                item
-              }}</a-select-option>
-            </a-select>
-          </div> -->
+              :maxLength="40"
+              placeholder="请输入参数名称"
+            />
+            <a-input
+              v-model="item.value"
+              style="display: inline-block; width: 40%; margin-left: 10px"
+              allow-clear
+              :maxLength="40"
+              placeholder="请输入参数值"
+            />
+
+            <div style="cursor: pointer" @click="deleteMer(index)">
+              <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_delete.jpg" />
+              <span style="width: 50px; color: #1890ff; margin-left: 5px">删除</span>
+            </div>
+
+            <div style="cursor: pointer" @click="addMer(index)" v-if="index == paramJsonList.length - 1">
+              <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_add_rule.png" />
+              <span style="width: 50px; color: #1890ff; margin-left: 5px">新增</span>
+            </div>
+          </div>
         </div>
       </div>
     </a-spin>
@@ -132,7 +117,7 @@
   
   
   <script>
-import { queryHospitalList } from '@/api/modular/system/posManage'
+import { queryHospitalList, modifyTbMerchant, addTbMerchant } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
@@ -154,12 +139,12 @@ export default {
         merchantId: '', //商户编码
         namePy: '',
         hospitalCode: undefined, //
-        paramJson:''
+        paramJson: '',
       },
+      paramJsonList: [{ key: '', value: '' }],
       fetching: false,
       accountChecked: false, //客服坐席
       wecomChecked: false, //企稳账号
-
 
       payeeType: [
         {
@@ -177,17 +162,28 @@ export default {
   methods: {
     clearData() {
       this.record = {}
+      this.paramJsonList = [{ key: '', value: '' }]
       this.checkData = {
         name: '', //商户名称
         channel: '', //商户类型
         merchantId: '', //商户编码
         namePy: '',
         hospitalCode: undefined, //机构
-        paramJson:''
+        paramJson: '',
       }
       this.accountChecked = false
       this.wecomChecked = false
     },
+
+    deleteMer(index) {
+      this.paramJsonList.splice(index, 1)
+    },
+
+    addMer() {
+      var jsonData = { key: '', value: '' }
+      this.paramJsonList.push(jsonData)
+    },
+
     //新增
     addModel() {
       this.clearData()
@@ -201,7 +197,16 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.record = record
-
+      this.checkData = record
+      if (record.paramJson) {
+        var data = eval(JSON.parse(record.paramJson))
+        var keyData = []
+        for (var key in data) {
+          keyData.push({ key: key, value: data[key] })
+        }
+        this.paramJsonList = keyData
+      }
+      console.log('KKK22:', this.paramJsonList)
       this.queryHospitalListOut()
     },
 
@@ -247,72 +252,49 @@ export default {
     },
 
     handleSubmit() {
-      console.log(this.checkData)
-
-      if (isStringEmpty(this.checkData.loginName)) {
-        this.$message.error('请输入登录账号')
-        return
+      var object = {}
+      // if(this.paramJsonList.length&&this.paramJsonList.length.length>0){
+      for (let index = 0; index < this.paramJsonList.length; index++) {
+        this.$set(object, this.paramJsonList[index].key, this.paramJsonList[index].value)
       }
-      if (!this.checkAccountName()) {
-        return
-      }
+      // }
 
-      if (isStringEmpty(this.checkData.userId)) {
-        this.$message.error('请选择对应人员')
-        return
-      }
+      // console.log('KKK:', JSON.stringify(object))
 
-      if (isArrayEmpty(this.checkData.role)) {
-        this.$message.error('请分配角色')
+      if (isStringEmpty(this.checkData.name)) {
+        this.$message.error('请输入商户名称')
         return
       }
 
-      if (this.accountChecked) {
-        //如果勾选了客服坐席
-
-        if (isStringEmpty(this.checkData.seatUser)) {
-          this.$message.error('请输入客服坐席ID')
-          return
-        }
-      }
-      if (this.wecomChecked) {
-        //如果勾选了企微账号
-
-        if (isStringEmpty(this.checkData.companywxUserId)) {
-          this.$message.error('请选择企业微信账号')
-          return
-        }
+      if (isStringEmpty(this.checkData.channel)) {
+        this.$message.error('请选择商户类型')
+        return
       }
 
       var postData = {
-        loginName: this.checkData.loginName,
-        userId: this.checkData.userId,
-        actorIds: this.checkData.role,
-      }
-      if (this.accountChecked) {
-        postData.seatUser = this.checkData.seatUser
-      } else {
-        postData.seatUser = ''
-      }
-      if (this.wecomChecked) {
-        postData.companywxUserId = this.checkData.companywxUserId
-      } else {
-        postData.companywxUserId = ''
+        name: this.checkData.name,
+        channel: this.checkData.channel,
+        paramJson: JSON.stringify(object) ? JSON.stringify(object) : '',
+        hospitalCode: this.checkData.hospitalCode,
+        insideId: this.checkData.insideId,
+        namePy: this.checkData.namePy,
+        merchantId:this.checkData.merchantId,
+        status:1,
       }
       this.confirmLoading = true
 
-      if (this.record.accountId) {
-        postData.accountId = this.record.accountId
+      if (this.record.insideId) {
+        postData.insideId = this.record.insideId
         //修改
-        this.editAccount(postData)
+        this.modifyTbMerchantOut(postData)
       } else {
         //新增
-        this.addAccount(postData)
+        this.addMerchantOut(postData)
       }
     },
 
-    addAccount(postData) {
-      createDoctorAccount(postData).then((res) => {
+    addMerchantOut(postData) {
+      addTbMerchant(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.visible = false
@@ -323,8 +305,8 @@ export default {
         this.confirmLoading = false
       })
     },
-    editAccount(postData) {
-      updateDoctorAccount(postData).then((res) => {
+    modifyTbMerchantOut(postData) {
+      modifyTbMerchant(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
           this.visible = false
@@ -376,7 +358,7 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 342px;
+  // height: 342px;
   margin-top: 10px;
 
   .div-part-left {
@@ -390,6 +372,13 @@ export default {
     width: 353px;
     overflow: hidden;
     height: 100%;
+  }
+
+  .div-bottomlayout {
+    display: flex;
+    flex-direction: column;
+    width: 420px;
+    flex-wrap: wrap;
   }
 
   .div-content {
