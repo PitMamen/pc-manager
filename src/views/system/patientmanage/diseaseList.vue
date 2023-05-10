@@ -122,6 +122,7 @@ export default {
       drawerWidth: 300,
       drawerTitle: '学科',
       treeData: [],
+      adArryTemp:[],
       queryParams: {
         medicalId: '',
         typeName: '',
@@ -259,7 +260,6 @@ export default {
 
     //点击第一层选中按钮，
     onChangeOut(itemOut, indexOut) {
-      console.log("ssss:",itemOut)
       itemOut.isChecked = !itemOut.isChecked
       if (itemOut.isChecked) {
         var idArray = []
@@ -281,6 +281,7 @@ export default {
               idArray.push(itemChild.subjectClassifyId)
              
             })
+            this.adArryTemp = idArray
 
             let ids = idArray.join(',')
               this.queryParams.medicalId = ids
@@ -314,6 +315,7 @@ export default {
 
         })
         this.queryParams.medicalId =''
+        this.adArryTemp = []
 
       }
 
@@ -326,7 +328,7 @@ export default {
       if (itemChild.isChecked) {
        
         //当父节点切换之后需要切换选中状态；需要改变列表数据；需求改变请求条件
-        if (this.queryParams.medicalId != itemOut.subjectClassifyId) {
+        // if (this.queryParams.medicalId != itemOut.subjectClassifyId) {
           this.treeData.forEach((itemOutTemp, indexOutTemp) => {
             if (indexOutTemp != indexOut) {
               this.$set(itemOutTemp, 'isChecked', false)
@@ -337,31 +339,31 @@ export default {
             }
           })
 
-          this.queryParams.medicalId = ''
+          // this.queryParams.medicalId = ''
           var idArray = []
-          idArray.push(itemChild.subjectClassifyId)
-          this.queryParams.medicalId = idArray.join(',')
-          // console.log("CCCC:",this.queryParams.medicalId)
-        } else {
-          this.$set(itemChild, 'isChecked', true)
-          // this.queryParams.medicalId.push(itemChild.subjectClassifyId)
-        }
+          this.adArryTemp.push(itemChild.subjectClassifyId)
+          this.queryParams.medicalId = this.adArryTemp.join(',')
+          // console.log("KKK111:",this.queryParams.medicalId)
+        // } else {
+        //   this.$set(itemChild, 'isChecked', true)
+        // }
       } else {
         //取消勾选  则是去掉勾选那一条子层数据
         let num = 0
-        var tempIds = this.queryParams.medicalId.split(',')
-        console.log("bbbbbb:",tempIds)
-        tempIds.forEach((id, indexChildTemp) => {
+        // var tempIds = this.queryParams.medicalId.split(',')
+        // console.log("bbbbbb:",tempIds)
+        this.adArryTemp.forEach((id, indexChildTemp) => {
           if (itemChild.subjectClassifyId == id) {
-            console.log("GGGG:",id,indexChildTemp)
             num = indexChildTemp
-            tempIds.splice(num, 1)
-          //  console.log("MMMM:",tempIdvs)
+            this.adArryTemp.splice(num, 1)
+            //  console.log("MMMM:",tempIdvs)
           }
         })
-        this.queryParams.medicalId = tempIds.join(',')
-        // console.log("KKKKKK:",this.queryParams.medicalId)
+        this.queryParams.medicalId = this.adArryTemp.join(',')
+        // console.log("KKK222:",this.queryParams.medicalId)
+       
       }
+
 
       this.goSearch()
     },
