@@ -768,7 +768,6 @@ export default {
             teamType: undefined,
           })
         }
-        debugger
         //团队
         let teamItem = undefined
         for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
@@ -819,7 +818,6 @@ export default {
           this.roleIds = []
         }
 
-        debugger
         this.packageData.commodityPkgManageReqs = newRsps
         this.confirmLoading = false
       } else {

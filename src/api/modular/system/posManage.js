@@ -4343,3 +4343,24 @@ export function modifyTbMerchant(data) {
     data:data,
   })
 }
+
+//收款配置列表接口
+export function getTbBizMerchantPageList(data) {
+  return axios({
+    url: '/order-api/tbBizMerchant/getTbBizMerchantPageList',
+    method: 'post',
+    data:data,
+  })
+}
+
+//收款配置
+export function tbBizMerchantConfig(data) {
+  return axios({
+    url: '/order-api/tbBizMerchant/tbBizMerchantConfig',
+    method: 'post',
+    data:data,
+  })
+}
+
+
+
