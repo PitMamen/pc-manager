@@ -1322,8 +1322,8 @@ export default {
       //   return
       // }
 
-      //咨询类的三种 不需要必选项目
-      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+      //咨询类的三种  复诊开方 不需要必选项目
+      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103 && this.record.broadClassify !=4) {
         //校验必选
         for (let index = 0; index < this.configData.tasksBi.length; index++) {
           let itemTask = this.configData.tasksBi[index]
@@ -1373,6 +1373,7 @@ export default {
         this.record.classifyCode != 101 &&
         this.record.classifyCode != 102 &&
         this.record.classifyCode != 103 &&
+        this.record.broadClassify !=4 &&
         this.configData.tasksBi.length > 0 &&
         !this.hasHeadImgBi
       ) {
@@ -1515,7 +1516,7 @@ export default {
       let pkgsLength = uploadData.pkgs.length
 
       //咨询类三种单独处理
-      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103 && this.record.broadClassify !=4) {
         //组装必选
         uploadData.pkgs.push({ itemType: 2, items: [] })
         this.configData.tasksBi.forEach((item, indexItem) => {
