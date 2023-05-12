@@ -292,7 +292,7 @@
 
       <div
         class="div-pro-middle"
-        v-show="record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103"
+        v-show="record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103 && record.broadClassify !=4"
       >
         <div class="div-title">
           <div class="div-line-blue"></div>
@@ -1031,6 +1031,14 @@ export default {
               return item.projectType !==  101 && item.projectType !==  102 && item.projectType !==  103
             })
             }
+
+            //如果是复诊开方  只要图文咨询项目
+            if(this.record.broadClassify ==4){
+              res.data.rows= res.data.rows.filter(item=>{
+                return item.projectType ==  101 
+              })
+            }
+              
             
             this.serviceData = res.data.rows
 
