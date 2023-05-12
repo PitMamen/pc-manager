@@ -228,7 +228,7 @@ export default {
       this.visible = true
       this.reset()
       this.idArray = []
-      if(record.manager_disease_type&&record.manager_disease_type.length>1){
+      if(record.manager_disease_type){
 
         this.idArray = record.manager_disease_type.split(",")
         let arr = []
