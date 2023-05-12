@@ -108,7 +108,7 @@ export default {
       queryParams: {
         channel: '',
         hospitalCode: '',
-        insideId: 0,
+        insideId: '',
         merchantId: '',
         name: '',
         namePy: '',

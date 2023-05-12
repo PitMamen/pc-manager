@@ -37,7 +37,7 @@
               v-model="checkData.merchantId"
               style="display: inline-block"
               allow-clear
-              :maxLength="40"
+              :maxLength="36"
               placeholder="请输入商户编码"
             />
           </div>
@@ -49,19 +49,19 @@
               v-model="checkData.name"
               style="display: inline-block"
               allow-clear
-              :maxLength="40"
+              :maxLength="150"
               placeholder="请输入商户名称"
             />
           </div>
 
           <div class="div-content">
-            <span class="span-item-name">拼音码:</span>
+            <span class="span-item-name"><span style="color: red">*</span>拼音码:</span>
             <a-input
               class="span-item-value"
               v-model="checkData.namePy"
               style="display: inline-block"
               allow-clear
-              :maxLength="40"
+              :maxLength="150"
               placeholder="请输入商户名称"
             />
           </div>
@@ -84,18 +84,19 @@
           </div>
 
           <div class="div-content" v-for="(item, index) in paramJsonList" :key="index" :value="item.key">
+            <span style="color: red">*</span>
             <a-input
               v-model="item.key"
               style="display: inline-block; width: 25%"
               allow-clear
-              :maxLength="40"
+              :maxLength="36"
               placeholder="请输入参数名称"
             />
             <a-input
               v-model="item.value"
               style="display: inline-block; width: 40%; margin-left: 10px"
               allow-clear
-              :maxLength="40"
+              :maxLength="200"
               placeholder="请输入参数值"
             />
 
@@ -135,7 +136,7 @@ export default {
       treeData: [],
       checkData: {
         name: '', //商户名称
-        channel: '', //商户类型
+        channel: undefined, //商户类型
         merchantId: '', //商户编码
         namePy: '',
         hospitalCode: undefined, //
@@ -165,7 +166,7 @@ export default {
       this.paramJsonList = [{ key: '', value: '' }]
       this.checkData = {
         name: '', //商户名称
-        channel: '', //商户类型
+        channel: undefined, //商户类型
         merchantId: '', //商户编码
         namePy: '',
         hospitalCode: undefined, //机构
@@ -180,6 +181,10 @@ export default {
     },
 
     addMer() {
+      if(this.paramJsonList&&this.paramJsonList.length>=10){
+        this.$message.error('最多只能添加10个参数!')
+        return
+      }
       var jsonData = { key: '', value: '' }
       this.paramJsonList.push(jsonData)
     },
@@ -253,11 +258,13 @@ export default {
 
     handleSubmit() {
       var object = {}
-      // if(this.paramJsonList.length&&this.paramJsonList.length.length>0){
       for (let index = 0; index < this.paramJsonList.length; index++) {
+        if(!this.paramJsonList[index].key||!this.paramJsonList[index].value){
+          this.$message.error('参数不能为空！')
+          return
+        }
         this.$set(object, this.paramJsonList[index].key, this.paramJsonList[index].value)
       }
-      // }
 
       // console.log('KKK:', JSON.stringify(object))
 
