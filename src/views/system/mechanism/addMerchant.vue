@@ -209,6 +209,7 @@ export default {
 
     deleteMer(index) {
       if(this.paramJsonList.length==1){
+        this.$message.error('请至少配置一个参数!')
         return
       }
       this.paramJsonList.splice(index, 1)
