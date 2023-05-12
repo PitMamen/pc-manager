@@ -194,7 +194,6 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        this.queryParams.hospitalCode = ''
         return getTbBizMerchantPageList(Object.assign(parameter, this.queryParams)).then((res) => {
           let data = {}
           if (res.code == 0 && res.data && res.data.records.length > 0) {
