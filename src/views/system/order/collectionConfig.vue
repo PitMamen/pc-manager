@@ -33,9 +33,10 @@
     >
       <span slot="action" slot-scope="text, record">
         <a-icon type="edit" style="color: #1890ff; margin-right: 3px" />
-        <a @click="editPlan(record)">配置</a>
+        <a @click="$refs.collectionfig.editModel(record)">配置</a>
       </span>
     </s-table>
+    <collectionfig ref="collectionfig" @ok="handleOk" />
   </a-card>
 </template>
   
@@ -44,11 +45,12 @@
 import { STable } from '@/components'
 
 import { accessHospitals, getTbBizMerchantPageList } from '@/api/modular/system/posManage'
-import { TRUE_USER } from '@/store/mutation-types'
-import Vue from 'vue'
+import collectionfig from './collectionfig'
+
 export default {
   components: {
     STable,
+    collectionfig,
   },
   data() {
     return {
@@ -80,9 +82,8 @@ export default {
         {
           title: '机构名称',
           dataIndex: 'hospitalName',
-          width:120,
+          width: 120,
           ellipsis: true,
-          
         },
         {
           title: '在线咨询',
@@ -90,15 +91,17 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'name',
-            //   key: 'wechat',
-              width: 100,
+              dataIndex: 'wechat1',
+              align:'center'
+              //   key: 'wechat',
+              // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'name',
-            //   key: 'alipay',
-              width: 100,
+              dataIndex: 'alipay1',
+              align:'center'
+              //   key: 'alipay',
+              // width: 100,
             },
           ],
         },
@@ -108,15 +111,17 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'name',
-            //   key: 'wechat',
-              width: 100,
+              dataIndex: 'wechat2',
+              align:'center'
+              //   key: 'wechat',
+              // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'name',
-            //   key: 'alipay',
-              width: 100,
+              dataIndex: 'alipay2',
+              align:'center'
+              //   key: 'alipay',
+              // width: 100,
             },
           ],
         },
@@ -126,15 +131,17 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'name',
-            //   key: 'wechat',
-              width: 100,
+              dataIndex: 'wechat3',
+              align:'center'
+              //   key: 'wechat',
+              // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'name',
-            //   key: 'alipay',
-              width: 100,
+              dataIndex: 'alipay3',
+              align:'center'
+              //   key: 'alipay',
+              // width: 100,
             },
           ],
         },
@@ -144,15 +151,17 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'name',
-            //   key: 'wechat',
-              width: 100,
+              dataIndex: 'wechat4',
+              align:'center'
+              //   key: 'wechat',
+              // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'name',
-            //   key: 'alipay',
-              width: 100,
+              dataIndex: 'alipay4',
+              align:'center'
+              //   key: 'alipay',
+              // width: 100,
             },
           ],
         },
@@ -162,21 +171,23 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'name',
-              key: 'wechat',
-              width: 100,
+              dataIndex: 'wechat5',
+              align:'center'
+              // key: 'wechat',
+              // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'name',
-              key: 'name',
-              width: 100,
+              dataIndex: 'alipay5',
+              align:'center'
+              // key: 'name',
+              // width: 100,
             },
           ],
         },
         {
           title: '操作',
-          fixed: 'right',
+          // fixed: 'right',
           scopedSlots: { customRender: 'action' },
         },
       ],
@@ -198,6 +209,54 @@ export default {
 
             //设置序号
             data.rows.forEach((item, index) => {
+              item.configData.forEach((itemChilden, indexChilden) => {
+                //在线咨询
+                if (itemChilden.order_type == 'consultOrder') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat1', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay1', itemChilden.name)
+                  }
+                  //   专科服务
+                } else if (itemChilden.order_type == 'srvPackOrder') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat2', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay2', itemChilden.name)
+                  }
+                  //   复诊续方
+                } else if (itemChilden.order_type == 'appPreRegister') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat3', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay3', itemChilden.name)
+                  }
+                  //   在线咨询处方
+                } else if (itemChilden.order_type == 'consultOrderPrescription') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat4', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay4', itemChilden.name)
+                  }
+                  //   本院复诊处方
+                } else if (itemChilden.order_type == 'appPrePrescription') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat5', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay5', itemChilden.name)
+                  }
+                }
+              })
               //   this.$set(item, 'key', item.hospitalCode)
             })
           }
@@ -264,6 +323,9 @@ export default {
         })
     },
 
+    handleOk() {
+      this.refresh()
+    },
     refresh() {
       this.$refs.table.refresh(true)
     },

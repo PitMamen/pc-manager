@@ -185,6 +185,7 @@ import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 // import addForm from './addForm'
 import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
+import continuationDetail from './continuationDetail'
 
 export default {
   components: {
@@ -192,6 +193,7 @@ export default {
     // addForm,
     orderDetail,
     yzOrderDetail,
+    continuationDetail,
   },
 
   data() {
@@ -410,7 +412,8 @@ export default {
     goDetail(record) {
 
       this.$router.push({
-        path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',
+        // path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',
+        path: '/order/continuationDetail',
         query: {
           orderId:record.orderId,
         },
