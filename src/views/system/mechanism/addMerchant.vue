@@ -67,12 +67,13 @@
           </div>
 
           <div class="div-content">
-            <span class="span-item-name">所属机构:</span>
+            <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
             <a-tree-select
-              v-model="checkData.hospitalCode"
+            :dropdown-style="{'margin-top':'215px','height': '140px',overflow: 'auto'}"
               style="min-width: 120px"
               :tree-data="treeData"
-              placeholder="请选择"
+              placeholder="请选择机构"
+              @select="treeSelect"
               tree-default-expand-all
             >
             </a-tree-select>
@@ -101,13 +102,14 @@
             />
 
             <div style="cursor: pointer" @click="deleteMer(index)">
-              <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_delete.jpg" />
-              <span style="width: 50px; color: #1890ff; margin-left: 5px">删除</span>
+              <!-- <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_delete.jpg" /> -->
+             
+              <span style="width: 50px; color: #1890ff; margin-left: 5px">  <a-icon type="delete" style="width: 18px; height: 18px; margin-left: 5px"></a-icon>删除</span>
             </div>
 
             <div style="cursor: pointer" @click="addMer(index)" v-if="index == paramJsonList.length - 1">
-              <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_add_rule.png" />
-              <span style="width: 50px; color: #1890ff; margin-left: 5px">新增</span>
+              <!-- <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_add_rule.png" /> -->
+              <span style="width: 50px; color: #1890ff; margin-left: 5px"> <a-icon type="plus" style="width: 18px; height: 18px; margin-left: 5px"></a-icon>新增</span>
             </div>
           </div>
         </div>
@@ -131,6 +133,7 @@ export default {
       record: {},
       headers: {},
       confirmLoading: false,
+      findItemData:{},
       // 高级搜索 展开/关闭
       danandataList: [],
       treeData: [],
@@ -141,6 +144,7 @@ export default {
         namePy: '',
         hospitalCode: undefined, //
         paramJson: '',
+        tenantId:'',
       },
       paramJsonList: [{ key: '', value: '' }],
       fetching: false,
@@ -161,6 +165,32 @@ export default {
   },
   created() {},
   methods: {
+
+
+    treeSelect(hospitalId){
+   //根据选中的 反向查询
+   for (let index = 0; index < this.treeData.length; index++) {
+        if (hospitalId == this.treeData[index].hospitalId) {
+          this.findItemData = JSON.parse(JSON.stringify(this.treeData[index]))
+          break
+        }
+        if (this.treeData[index].children && this.treeData[index].children.length > 0) {
+          for (let indexIn = 0; indexIn < this.treeData[index].children.length; indexIn++) {
+            if (hospitalId == this.treeData[index].children[indexIn].hospitalId) {
+              this.findItemData = JSON.parse(JSON.stringify(this.treeData[index].children[indexIn]))
+              break
+            }
+          }
+        }
+      }
+      // console.log("HHHH:",this.findItemData)
+      this.checkData.hospitalCode = this.findItemData.hospitalCode
+      this.checkData.tenantId = this.findItemData.hospitalId
+
+    },
+
+
+
     clearData() {
       this.record = {}
       this.paramJsonList = [{ key: '', value: '' }]
@@ -171,12 +201,16 @@ export default {
         namePy: '',
         hospitalCode: undefined, //机构
         paramJson: '',
+        tenantId:'',
       }
       this.accountChecked = false
       this.wecomChecked = false
     },
 
     deleteMer(index) {
+      if(this.paramJsonList.length==1){
+        return
+      }
       this.paramJsonList.splice(index, 1)
     },
 
@@ -234,13 +268,13 @@ export default {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
               this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalId)
               this.$set(item, 'title', item.hospitalName)
               this.$set(item, 'children', item.hospitals)
 
               item.hospitals.forEach((item1, index1) => {
                 this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalId)
                 this.$set(item1, 'title', item1.hospitalName)
               })
             })
@@ -278,7 +312,19 @@ export default {
         return
       }
 
+      if (isStringEmpty(this.checkData.hospitalCode)) {
+        this.$message.error('请选择机构')
+        return
+      }
+
+
+      if (isStringEmpty(this.checkData.namePy)) {
+        this.$message.error('请输入拼音码')
+        return
+      }
+
       var postData = {
+        tenantId:this.checkData.tenantId,
         name: this.checkData.name,
         channel: this.checkData.channel,
         paramJson: JSON.stringify(object) ? JSON.stringify(object) : '',
@@ -335,7 +381,18 @@ export default {
   },
 }
 </script>
+
+
+
+ 
+
   <style lang="less" scoped>
+
+// .ant-select-tree-dropdown {
+//   max-height: 860vh !important;
+//   top: 200px !important;
+// }
+
 /deep/ .ant-checkbox-wrapper {
   font-size: 12px !important;
 }

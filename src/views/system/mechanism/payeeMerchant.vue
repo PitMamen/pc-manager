@@ -106,8 +106,8 @@ export default {
       treeData: [],
       HospitalTypeList: [],
       queryParams: {
-        channel: '',
-        hospitalCode: '',
+        channel: undefined,
+        hospitalCode: undefined,
         insideId: '',
         merchantId: '',
         name: '',
@@ -229,10 +229,7 @@ export default {
      * 重置
      */
     reset() {
-      if (this.queryParams.metaName != '') {
-        this.queryParams.metaName = ''
-      }
-      this.queryParams.departmentName = undefined
+      this.queryParams.channel = undefined
       this.queryParams.hospitalCode = undefined
       this.queryParams.status = 1
 
