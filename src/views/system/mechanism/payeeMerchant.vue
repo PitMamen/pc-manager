@@ -211,7 +211,7 @@ export default {
             data.rows.forEach((item, index) => {
 
               this.$set(item, 'enableStatus', item.status == 1)
-              this.$set(item, 'channelName', item.channel == 'wechat'?'微信':'支付宝')
+              this.$set(item, 'channelName', item.channel == 'wechat'?'微信支付':'支付宝支付')
             })
           }
           console.log(data)
