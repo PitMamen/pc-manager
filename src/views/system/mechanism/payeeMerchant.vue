@@ -153,12 +153,12 @@ export default {
       columns: [
         {
           title: '商户类型',
-          dataIndex: 'channel',
+          dataIndex: 'channelName',
         },
 
         {
           title: '所属机构',
-          dataIndex: 'hospitalCode',
+          dataIndex: 'hospitalName',
           ellipsis: true,
         },
 
@@ -209,7 +209,9 @@ export default {
 
           if (res.code == 0 && res.data.records.length > 0) {
             data.rows.forEach((item, index) => {
+
               this.$set(item, 'enableStatus', item.status == 1)
+              this.$set(item, 'channelName', item.channel == 'wechat'?'微信':'支付宝')
             })
           }
           console.log(data)

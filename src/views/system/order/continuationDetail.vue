@@ -117,7 +117,7 @@
         <div class="div-up-content" >
             <div class="div-pro-line">
             <span class="span-item-name">收单商户 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.nurseUserName  || '-' }}</span>
+            <span class="span-item-value">{{ orderDetailDataList.insideName  || '-' }}</span>
           </div>
           <div class="div-pro-line">
             <span class="span-item-name">服务医生 :</span>
@@ -453,7 +453,7 @@
   
   
       getType(value) {
-        if (value == 4 || value == 8 || value == 101) {
+        if (value == 2 || value == 101) {
           return '申请退款'
         } else if (value == 1) {
           return '取消订单'
@@ -473,6 +473,7 @@
   
       //点击
       clickType(value) {
+        return  //点击效果暂时不做
         if (value == 1) {  //取消订单
           this.visible_model = true //显示 弹框
         } else {
