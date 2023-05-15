@@ -5,9 +5,9 @@
         <a-button type="primary" ghost @click="goBack()"  >返回</a-button>
         <a-button
           :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
-          style="margin-left: 15px"
           v-show="showHide(orderDetailDataList.status.value)"
           @click="clickType(orderDetailDataList.status.value)"
+          style="margin-left: 15px"
           @ok="handleOk"
           >{{ getType(orderDetailDataList.status.value) }}</a-button
         >
@@ -117,7 +117,7 @@
         <div class="div-up-content" >
             <div class="div-pro-line">
             <span class="span-item-name">收单商户 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.nurseUserName  || '-' }}</span>
+            <span class="span-item-value">{{ orderDetailDataList.insideName  || '-' }}</span>
           </div>
           <div class="div-pro-line">
             <span class="span-item-name">服务医生 :</span>
@@ -453,7 +453,7 @@
   
   
       getType(value) {
-        if (value == 4 || value == 8 || value == 101) {
+        if (value == 2 || value == 101) {
           return '申请退款'
         } else if (value == 1) {
           return '取消订单'
@@ -464,15 +464,16 @@
   
       //按钮显示与隐藏
       showHide(value) {
-        if (value == 2 || value == 5 || value == 102||value == 103) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
-          return false
-        } else {
+        if (value == 1||value == 2 || value == 101) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
           return true
+        } else {
+          return false
         }
       },
   
       //点击
       clickType(value) {
+        return  //点击效果暂时不做
         if (value == 1) {  //取消订单
           this.visible_model = true //显示 弹框
         } else {

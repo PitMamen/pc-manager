@@ -75,6 +75,7 @@
               placeholder="请选择机构"
               @select="treeSelect"
               tree-default-expand-all
+              v-model="hospitalName"
             >
             </a-tree-select>
           </div>
@@ -85,7 +86,7 @@
           </div>
 
           <div class="div-content" v-for="(item, index) in paramJsonList" :key="index" :value="item.key">
-            <span style="color: red">*</span>
+            <span style="color: red;margin-right: 5px;">*</span>
             <a-input
               v-model="item.key"
               style="display: inline-block; width: 25%"
@@ -129,6 +130,7 @@ export default {
   components: {},
   data() {
     return {
+      hospitalName:'',
       visible: false,
       record: {},
       headers: {},
@@ -203,6 +205,7 @@ export default {
         paramJson: '',
         tenantId:'',
       }
+      this.hospitalName = ''
       this.accountChecked = false
       this.wecomChecked = false
     },
@@ -237,6 +240,7 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.record = record
+      this.hospitalName = record.hospitalName
       this.checkData = record
       if (record.paramJson) {
         var data = eval(JSON.parse(record.paramJson))
