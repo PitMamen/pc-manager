@@ -5,9 +5,9 @@
         <a-button type="primary" ghost @click="goBack()"  >返回</a-button>
         <a-button
           :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
-          style="margin-left: 15px"
           v-show="showHide(orderDetailDataList.status.value)"
           @click="clickType(orderDetailDataList.status.value)"
+          style="margin-left: 15px"
           @ok="handleOk"
           >{{ getType(orderDetailDataList.status.value) }}</a-button
         >
@@ -464,10 +464,10 @@
   
       //按钮显示与隐藏
       showHide(value) {
-        if (value == 2 || value == 5 || value == 102||value == 103) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
-          return false
-        } else {
+        if (value == 1||value == 2 || value == 101) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
           return true
+        } else {
+          return false
         }
       },
   
