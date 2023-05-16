@@ -83,10 +83,11 @@ export default {
       this.titleTab = '新增病种'
       this.visible = true
       this.confirmLoading = false
-      console.log("DDD:",medicalId.toString().split(',')) 
-      var ids = medicalId.toString().split(',')
+      if(medicalId){
+        var ids = medicalId.toString().split(',')
+        this.checkData.medicalId = ids[ids.length-1]
+      }
       
-      this.checkData.medicalId = ids[ids.length-1]
       this.gettreeMedicalSubjectsOut()
     },
 
