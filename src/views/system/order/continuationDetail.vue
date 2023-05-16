@@ -227,7 +227,7 @@
             <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
           </div>
         </div> -->
-      </div>
+      <!-- </div> -->
   
       <a-modal
         class="ant-modal"

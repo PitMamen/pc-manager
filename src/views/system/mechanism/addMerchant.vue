@@ -340,11 +340,12 @@ export default {
         status:1,
       }
       this.confirmLoading = true
+      // console.log("JJJJ:",postData.channel)
 
       if (this.record.insideId) {
         postData.insideId = this.record.insideId
         //修改
-        this.modifyTbMerchantOut(postData)
+        // this.modifyTbMerchantOut(postData)
       } else {
         //新增
         this.addMerchantOut(postData)
