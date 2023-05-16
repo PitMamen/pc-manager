@@ -2775,7 +2775,26 @@ export function getFileDtail(data) {
     data: data,
   })
 }
-
+/**
+ * 获取住院记录
+ */
+export function getZyRecords(data) {
+  return axios({
+    url: "/health-api/revisit/getZyRecords",
+    method: 'get',
+    params: data,
+  })
+}
+/**
+ * 获取住院小结
+ */
+export function getZySummary(data) {
+  return axios({
+    url: "/health-api/revisit/getZySummary",
+    method: 'get',
+    params: data,
+  })
+}
 /**
 * 修改科室
 */
@@ -3180,6 +3199,16 @@ export function saveSysConfigData(data) {
     url: '/info-api/sysConfigData/save',
     method: 'post',
     data: data,
+  })
+}
+
+/**
+ * 获取参数配置
+ */
+export function getSysConfigData(data) {
+  return axios({
+    url: '/info-api/sysConfigData/getConfig/'+data,
+    method: 'get'
   })
 }
 

@@ -119,7 +119,7 @@
                     :jbxx="fileDetailData"
                   />
                 </a-tab-pane>
-                <!-- <a-tab-pane key="6">
+                <a-tab-pane key="6">
                   <template #tab>
                     <span class="span-tab">
                       <img
@@ -130,14 +130,14 @@
                       出院小结
                     </span>
                   </template>
-                 
+
                   <basic-xiaojie
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicXiaojie"
                     :jbxx="fileDetailData"
                     :patientInfo="patientInfo"
                   />
-                </a-tab-pane> -->
+                </a-tab-pane>
               </a-tabs>
             </div>
           </div>
@@ -161,7 +161,14 @@
 
 
 <script>
-import { getFileList, getFileDtail, getBaseInfo } from '@/api/modular/system/posManage'
+import {
+  getFileList,
+  getFileDtail,
+  getBaseInfo,
+  getZyRecords,
+  getZySummary,
+  getSysConfigData,
+} from '@/api/modular/system/posManage'
 import basicInfo from './basicInfo'
 import basicXiaojie from './basicXiaojie'
 import basicTech from './basicTech'
@@ -173,12 +180,13 @@ import { decodeRecord } from '@/utils/forgeUtils'
 import { formatDateFull, formatDate } from '@/utils/util'
 import Vue from 'vue'
 export default {
-  components: { basicInfo, basicTech, basicMedic, basicSurgery, basicFee,basicXiaojie },
+  components: { basicInfo, basicTech, basicMedic, basicSurgery, basicFee, basicXiaojie },
   props: {
     record: Object,
   },
   data() {
     return {
+      MEDICAL_DATA_SOURCE: '0', //档案来源 1：从emr获取 0：从私有云获取
       isDoubled: true,
       confirmLoading: false,
       defaultShowType: 'jiancha',
@@ -208,42 +216,55 @@ export default {
   created() {
     // debugger
     this.user = Vue.ls.get(TRUE_USER)
-    console.log('this.historyList.length', this.historyList.length)
-    let param = {
-      dataOwnerId: this.record.userId,
-      // dataOwnerId: '1195',
-      // dataOwnerId: '1239',
-      // dataOwnerId: '1194',
-      dataUserId: this.user.userId,
-      recordType: this.recordType,
-      pastMonths: '60',
-    }
-    this.confirmLoading = true
-    getFileList(param)
-      .then((res) => {
-        if (res.code === 0) {
-          this.historyList = res.data
-          if (this.historyList.length > 0) {
-            for (let index = 0; index < this.historyList.length; index++) {
-              this.$set(this.historyList[index], 'isChecked', false)
-            }
-            this.$set(this.historyList[0], 'isChecked', true)
-            this.getDetailOut(0)
-          } else {
-            this.confirmLoading = false
-          }
-        } else {
-          this.$message.error(res.message)
-          this.confirmLoading = false
-        }
-      })
-      .finally(() => {
-        this.confirmLoading = false
-      })
+
+    //查询系统配置  显示不同档案来源
+    getSysConfigData('MEDICAL_DATA_SOURCE').then((res) => {
+      this.MEDICAL_DATA_SOURCE = res.data.value || '0'
+
+      if (this.MEDICAL_DATA_SOURCE == '1') {
+        //从emr获取
+        this.getZyRecordsOut()
+      } else {
+        //私有云
+        this.getFileListOut()
+      }
+    })
 
     this.getPatientBaseInfo()
   },
   methods: {
+    //私有云档案 列表
+    getFileListOut() {
+      let param = {
+        dataOwnerId: this.record.userId,
+        dataUserId: this.user.userId,
+        recordType: this.recordType,
+        pastMonths: '60',
+      }
+      this.confirmLoading = true
+      getFileList(param)
+        .then((res) => {
+          if (res.code === 0) {
+            this.historyList = res.data
+            if (this.historyList.length > 0) {
+              for (let index = 0; index < this.historyList.length; index++) {
+                this.$set(this.historyList[index], 'isChecked', false)
+              }
+              this.$set(this.historyList[0], 'isChecked', true)
+              this.getDetailOut(0)
+            } else {
+              this.confirmLoading = false
+            }
+          } else {
+            this.$message.error(res.message)
+            this.confirmLoading = false
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+    },
+
     getPatientBaseInfo() {
       getBaseInfo({ userId: this.record.userId }).then((res) => {
         if (res.code === 0) {
@@ -261,6 +282,40 @@ export default {
       })
     },
 
+    //emr档案 列表
+    getZyRecordsOut() {
+      let param = {
+        userId: this.record.userId,
+      }
+      this.confirmLoading = true
+      getZyRecords(param)
+        .then((res) => {
+          if (res.code === 0) {
+            this.historyList = res.data
+            if (this.historyList.length > 0) {
+              for (let index = 0; index < this.historyList.length; index++) {
+                this.$set(this.historyList[index], 'isChecked', false)
+              }
+              this.$set(this.historyList[0], 'isChecked', true)
+              this.getDetailOut(0)
+            } else {
+              this.confirmLoading = false
+            }
+          } else {
+            this.$message.error(res.message)
+            this.confirmLoading = false
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+    },
+   //emr档案 详情
+   getEMRData(zylsh) {
+    getZySummary({ zylsh: zylsh }).then((res) => {
+        
+      })
+    },
     onFileItemClick(itemData, indexData) {
       for (let index = 0; index < this.historyList.length; index++) {
         this.$set(this.historyList[index], 'isChecked', false)
@@ -268,9 +323,17 @@ export default {
           this.$set(this.historyList[index], 'isChecked', true)
         }
       }
-      this.getDetailOut(indexData)
+      if (this.MEDICAL_DATA_SOURCE == '1') {
+        //从emr获取
+        this.getEMRData(itemData.zylsh)
+      } else {
+        //私有云
+        this.getDetailOut(indexData)
+      }
+     
     },
 
+    //私有云档案详情
     getDetailOut(index) {
       let param = {
         dataOwnerId: this.record.userId,
