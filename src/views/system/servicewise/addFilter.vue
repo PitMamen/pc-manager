@@ -163,7 +163,6 @@ export default {
     add(index, filterRules, chooseData, operateData) {
       this.visible = true
       this.index = index
-      console.log("ddd:",operateData)
       this.operateData = operateData
       if (filterRules) {
         this.filterRules = JSON.parse(JSON.stringify(filterRules)) || []
