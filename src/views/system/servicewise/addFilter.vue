@@ -37,9 +37,13 @@
                 allow-clear
                 placeholder="请选择字段"
               >
-                <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value" :title="item.description">{{
-                  item.description
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in chooseData"
+                  :key="index"
+                  :value="item.value"
+                  :title="item.description"
+                  >{{ item.description }}</a-select-option
+                >
               </a-select>
 
               <!-- class="mid-select-one" -->
@@ -49,9 +53,13 @@
                 allow-clear
                 placeholder="请选择操作"
               >
-                <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value" :title="item.description">{{
-                  item.description
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in operateData"
+                  :key="index"
+                  :value="item.value"
+                  :title="item.description"
+                  >{{ item.description }}</a-select-option
+                >
               </a-select>
 
               <a-date-picker
@@ -144,9 +152,9 @@ export default {
         { value: 'and', name: '并且' },
         { value: 'or', name: '或者' },
       ],
-      secondaryFilterTypeEnum: 'and',
+      secondaryFilterTypeEnum: 'or',
       confirmLoading: false,
-
+      hasOne: undefined,
       visible: false,
     }
   },
@@ -155,9 +163,34 @@ export default {
     add(index, filterRules, chooseData, operateData) {
       this.visible = true
       this.index = index
-      this.filterRules = filterRules || [{ fieldType: 1 }]
-      this.chooseData = chooseData
+      console.log("ddd:",operateData)
       this.operateData = operateData
+      if (filterRules) {
+        this.filterRules = JSON.parse(JSON.stringify(filterRules)) || []
+      } else {
+        this.filterRules = []
+      }
+      this.chooseData = chooseData
+      chooseData.forEach((element) => {
+        if (element.description == '出院诊断名称') {
+          this.hasOne = JSON.parse(JSON.stringify(element))
+        }
+      })
+
+      //如果有 出院诊断名称字段
+      if (this.hasOne) {
+        // debugger
+        if (filterRules && filterRules.length > 0) {
+          //修改
+          this.filterRules = this.filterRules || [{ fieldType: 1, metaConfigureDetailId: this.hasOne.value,condition:'like' }]   // 默认填充  “出院诊断名称”  “模糊查询”
+        } else {
+          //新增
+          this.filterRules = [{ fieldType: 1, metaConfigureDetailId: this.hasOne.value,condition:'like' }]  // 默认填充  “出院诊断名称”  “模糊查询”
+        }
+        // 没有 出院诊断名称字段  不管 只默认填充 “模糊查询”
+      } else {
+        this.filterRules = this.filterRules || [{ fieldType: 1,condition:'like'  }]  // 默认填充  “出院诊断名称”  “模糊查询”
+      }
 
       this.processData()
     },
@@ -178,13 +211,10 @@ export default {
     },
 
     onFieldSelect(itemRule, indexRule) {
-      // console.log('onFieldSelect chooseData', this.chooseData)
-      // console.log('onFieldSelect itemRule Be', JSON.parse(JSON.stringify(itemRule)))
       let chooseOne = this.chooseData.find((item) => {
         return item.value == itemRule.metaConfigureDetailId
       })
       this.$set(itemRule, 'fieldType', chooseOne.fieldType)
-      // console.log('onFieldSelect itemRule Af', JSON.parse(JSON.stringify(itemRule)))
     },
 
     delRule(indexRule, itemRule) {
@@ -192,11 +222,11 @@ export default {
     },
 
     addRule() {
-      // if (this.filterRules.length == 5) {
-      //   this.$message.warn('最多仅可添加5个过滤条件!')
-      //   return
-      // }
-      this.filterRules.push({ fieldType: 1 })
+      if (this.hasOne) {
+        this.filterRules.push({ fieldType: 1, metaConfigureDetailId: this.hasOne.value,condition:'like' })  //如果有 出院诊断名称字段  默认填充  “出院诊断名称”  “模糊查询”
+      } else {
+        this.filterRules.push({ fieldType: 1,condition:'like' })  // 默认填充   “模糊查询”
+      }
     },
 
     cancel() {
