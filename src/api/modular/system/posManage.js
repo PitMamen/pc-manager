@@ -3081,6 +3081,16 @@ export function resetPasswordByAdmin(data) {
     data: data,
   })
 }
+/**
+ * 系统日志
+ */
+export function getSysAccessLogPageList(data) {
+  return axios({
+    url: '/account-api/sysAccessLog/getSysAccessLogPageList',
+    method: 'post',
+    data: data,
+  })
+}
 
 /**
  * 文章分类列表
