@@ -144,6 +144,7 @@ export default {
         },
         {
           title: '登录时间',
+          fixed: 'right',
           dataIndex: 'createTime',
         },
         // {
@@ -205,6 +206,23 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
+
+  },
+
+  mounted(){
+    // const domList = document.querySelectorAll('.ant-table-thead th')
+    // console.log(domList)
+    // // domList是一个类数组,先把它转为数组
+    // const newThead = [...domList]
+    // // 删除数组第一项'可选框'
+    // newThead.shift()
+    // // 删除数组最后一项重复的`操作栏`
+    // newThead.pop()
+    // // 为剩下的每一个th设置title属性
+    // // this.columns是table的配置项
+    // newThead.forEach((item,idx)=>{
+    //   item.setAttribute('title',this.columns[idx].title)
+    // })
 
   },
   methods: {

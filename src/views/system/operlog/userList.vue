@@ -144,6 +144,7 @@ export default {
         },
         {
           title: '操作时间',
+          fixed: 'right',
           dataIndex: 'createTime',
         },
         // {
