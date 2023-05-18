@@ -171,7 +171,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 打标记</a>
+        <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 备注</a>
       </span>
     </s-table>
 
@@ -307,7 +307,7 @@ export default {
           // width: 80,
         },
         {
-          title: '标记',
+          title: '备注',
           dataIndex: 'specFlag',
           ellipsis: true,
         },

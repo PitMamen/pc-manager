@@ -1,7 +1,7 @@
 <template>
   <a-modal
     class="hide-sure-modal"
-    title="打标记"
+    title="备注"
     cancelText="关 闭"
     :width="1200"
     :visible="visible"
@@ -37,13 +37,13 @@
     <div class="big-kuang" style="margin-top: 30px">
         <div class="top-content">
         <div style="padding-top: 5px;">
-            <span style="font-weight: bold;padding-top: 5px; margin: 10px; margin-left: 18px !important;font-size: 14px;color: #1A1A1A;">打标记</span>
+            <span style="font-weight: bold;padding-top: 5px; margin: 10px; margin-left: 18px !important;font-size: 14px;color: #1A1A1A;">备注</span>
         </div>
       </div>
       <div class="line"></div>
 
       <div class="flag-content" style="margin-top: 20px; margin-bottom: 20px">
-          <span class="span-item-name" style="margin-left: 10px;font-size: 12px;color: #1A1A1A;">患者标记 :</span>
+          <span class="span-item-name" style="margin-left: 10px;font-size: 12px;color: #1A1A1A;">患者备注 :</span>
           <a-input
             style="width: 90%;margin-top: -4px;margin-left: 5px;display: inline-block"
             v-model="specFlag"

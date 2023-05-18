@@ -192,10 +192,10 @@ export default {
     },
 
     addRule() {
-      if (this.filterRules.length == 5) {
-        this.$message.warn('最多仅可添加5个过滤条件!')
-        return
-      }
+      // if (this.filterRules.length == 5) {
+      //   this.$message.warn('最多仅可添加5个过滤条件!')
+      //   return
+      // }
       this.filterRules.push({ fieldType: 1 })
     },
 
