@@ -3,20 +3,7 @@
   <div class="inner-wrap">
     <div v-if="jbxx" style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px">
       
-      <div class="div-line-wrap">
-        <div class="div-item-two">入院情况：</div>
-      </div>
-      <div class="div-line-wrap">
-        <span class="div-item-content"
-          >增加一个医疗机构级的系统参数用于配置执行随访界面时的内容展示：0表示调用HIS的实时接口展示健康档案；1表示调用私有云展示健康档案，默认机构为0，湘雅二医院配置改为0。</span >
-      </div>
-      <div class="div-line-wrap">
-        <div class="div-item-two">入院诊断：</div>
-      </div>
-      <div class="div-line-wrap">
-        <span class="div-item-content"
-          >增加一个医疗机构级的系统参数用于配置执行随访界面时的内容展示：0表示调用HIS的实时接口展示健康档案；1表示调用私有云展示健康档案，默认机构为0，湘雅二医院配置改为0。</span >
-      </div>
+      <div :id="'myHtml' + indexData" v-for="(itemData, indexData) in insideZdxx" ></div>
     </div>
 
     <div v-else class="nodata">
@@ -27,6 +14,7 @@
 
 
 <script>
+
 export default {
   components: {},
   props: {
@@ -35,42 +23,21 @@ export default {
   },
   data() {
     return {
-      insideZdxx: this.jbxx.zdxx,
-      columns: [
-        {
-          title: '医院诊断类别名称',
-          dataIndex: 'zdlbmc',
-        },
-        {
-          title: '诊断编码',
-          dataIndex: 'zdbm',
-          ellipsis: true,
-        },
-        {
-          title: '医院诊断名称',
-          // innerHeight:20,
-          dataIndex: 'zdbmmc',
-        },
-        {
-          title: '诊断时间',
-          dataIndex: 'zdsj',
-          ellipsis: true,
-        },
-        {
-          title: '主要诊断标志',
-          dataIndex: 'zyzdbz',
-          ellipsis: true,
-        },
-        {
-          title: '疑似诊断标志',
-          dataIndex: 'yzdbz',
-          ellipsis: true,
-        },
-      ],
+      insideZdxx: this.jbxx,
+     
     }
   },
 
-  created() {},
+  mounted(){
+    this.$nextTick(()=>{
+      for (let index = 0; index < this.insideZdxx.length; index++) {
+        document.getElementById('myHtml'+index).innerHTML =this.insideZdxx[index].contentHtmDetail
+        
+      }
+     
+    })
+  },
+ 
   methods: {
     formatDate(date) {
       date = new Date(date)
@@ -84,6 +51,10 @@ export default {
 
     refreshData(zdxx) {
       this.insideZdxx = zdxx
+      for (let index = 0; index < this.insideZdxx.length; index++) {
+        document.getElementById('myHtml'+index).innerHTML =this.insideZdxx[index].contentHtmDetail
+        
+      }
     },
   },
 }
