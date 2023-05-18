@@ -1,7 +1,7 @@
 <template>
   <!-- <div style="height: 500px; width: 100%"> -->
   <div class="inner-wrap">
-    <div v-if="jbxx" style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px">
+    <div v-if="jbxx && jbxx.length>0" style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px">
       
       <div :id="'myHtml' + indexData" v-for="(itemData, indexData) in insideZdxx" ></div>
     </div>
@@ -18,7 +18,7 @@
 export default {
   components: {},
   props: {
-    jbxx: Object,
+    jbxx: Array,
     patientInfo: Object,
   },
   data() {
@@ -51,10 +51,14 @@ export default {
 
     refreshData(zdxx) {
       this.insideZdxx = zdxx
-      for (let index = 0; index < this.insideZdxx.length; index++) {
+      this.$nextTick(()=>{
+        for (let index = 0; index < this.insideZdxx.length; index++) {
         document.getElementById('myHtml'+index).innerHTML =this.insideZdxx[index].contentHtmDetail
         
       }
+     
+    })
+      
     },
   },
 }

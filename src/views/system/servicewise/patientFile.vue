@@ -347,7 +347,7 @@ export default {
        
 
       }else {
-        this.zmrHtml=''
+        this.zmrHtml=[]
       }
       this.activeKey='6'
         this.$nextTick(() => {
