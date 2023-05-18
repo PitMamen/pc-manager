@@ -61,8 +61,8 @@
       <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
     </div>
 
+    <!-- :scroll="{ x: true }" -->
     <s-table
-      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -138,26 +138,34 @@ export default {
       columns: [
         {
           title: '方案名称',
+          // width: 160,
           dataIndex: 'planName',
         },
         {
           title: '制定时间',
+          width: 160,
           dataIndex: 'formulateTime',
         },
         {
           title: '制定人员',
+          width: 100,
           dataIndex: 'formulateUserName',
         },
         {
           title: '执行科室',
+          ellipsis: true,
+          width: 180,
           dataIndex: 'executeDepartmentName',
         },
         {
           title: '随访名单',
+          width: 200,
+          ellipsis: true,
           dataIndex: 'metaConfigureName',
         },
         {
           title: '随访类型',
+          width: 100,
           dataIndex: 'followType',
         },
 
