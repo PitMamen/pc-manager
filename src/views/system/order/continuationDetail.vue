@@ -242,8 +242,8 @@
           <a-button type="primary" @click="handleComf">确定</a-button>
           <a-button @click="handleCancelUpdPwd">关闭</a-button>
         </template>
-        <div class="display-item" style="margin-left: 42%; margin-top: 40px;margin-bottom: 40px;">
-          <span style="margin-top: 10px"> 确定取消订单吗?</span>
+        <div class="display-item" style="margin-left: 20%; margin-top: 40px;margin-bottom: 40px;">
+          <span style="margin-top: 10px"> 本次退款将退还全部订单金额:10元,请确认是否进行退款!</span>
           <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
         </div>
       </a-modal>
@@ -278,7 +278,7 @@
         goodsItemsData: [], //产品清单数据
         rightItemsData: [], //权益清单数据
         visible_model: false,
-        dealResultTitle: '订单取消',
+        dealResultTitle: '退款确认',
         confirmLoading: false,
         smallLoading: false,
         orderId: '',
@@ -473,16 +473,16 @@
   
       //点击
       clickType(value) {
-        return  //点击效果暂时不做
-        if (value == 1) {  //取消订单
+        // return  //点击效果暂时不做
+        if (value == 101||value == 2) {  //取消订单
           this.visible_model = true //显示 弹框
         } else {
           // 申请退款
-          this.$refs.orderRefund.refund(this.orderId, this.payMode)
+          // this.$refs.orderRefund.refund(this.orderId, this.payMode)
         }
       },
   
-      //提交取消订单
+      //提交退款请求
       handleComf() {
         //请求接口
         this.smallLoading = true
@@ -494,7 +494,7 @@
           .then((res) => {
             if (res.code == 0) {
               this.handleOk()
-              this.$message.success('取消成功!')
+              this.$message.success('操作成功!')
             } else {
               this.$message.error(res.message)
             }

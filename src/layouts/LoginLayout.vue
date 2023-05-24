@@ -43,7 +43,7 @@
     <div class="right">
       <div class="right-wrap">
         <div class="titles">
-          <div class="title1">患者服务信息系统</div>
+          <div class="title1">数智化全病程服务管理平台</div>
           <div class="title2">健/康/城/市 智/慧/医/疗</div>
         </div>
         <div class="success-wrap" v-if="hasLogin && sysApps && sysApps.length > 1">

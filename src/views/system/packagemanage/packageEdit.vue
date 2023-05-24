@@ -67,9 +67,14 @@
           </div>
 
           <div class="div-pro-line" style="margin-left: -25px !important">
-            <a-checkbox @change="changeData" :checked="hasData" class="span-item-name" style="margin-left: 8px"></a-checkbox>
-              套餐效期 :</a-checkbox
-            >
+            <a-checkbox
+              @change="changeData"
+              :checked="hasData"
+              class="span-item-name"
+              style="margin-left: 8px"
+            ></a-checkbox>
+            套餐效期 :
+
             <a-input
               :disabled="disabledValue"
               class="span-item-value"
@@ -94,6 +99,30 @@
           </div>
 
           <!-- <div class="div-pro-line"></div> -->
+        </div>
+
+        <div class="div-up-content">
+          <div style="display: flex; flex-direction: row; margin-top: 1%">
+            <a-checkbox
+              @change="changeDaoliu"
+              :disabled="disabledDaoliu"
+              :checked="daoliubao"
+              class="span-item-name"
+            ></a-checkbox>
+            <div style="margin-left: 3px">导流包:</div>
+            <div style="margin-left: 20px">限购:</div>
+
+            <a-InputNumber
+              :disabled="isDisabled"
+              class="span-item-value"
+              v-model="packageData.limitPurchaseTimes"
+              type="number"
+              :min="1"
+              style="display: inline-block; width: 148px; margin-left: 10px; margin-top: -3px"
+              oninput="if(value<=1)value=1"
+            />
+            <div style="margin-left: 10px">次</div>
+          </div>
         </div>
       </div>
 
@@ -382,10 +411,14 @@ export default {
       previewVisibleBanner: false,
       previewVisibleDetail: false,
       isChecked: false,
+      isDaoliuChecked: false,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',
       disabledValue: false,
+      disabledDaoliu: false,
+      isDisabled: false,
+      daoliubao: false,
       hasData: false,
       fileList: [],
       fileListBanner: [],
@@ -424,6 +457,7 @@ export default {
       allocationTypeNurse: undefined,
       allocationTypeTeam: undefined,
       isRefresh: false,
+      classifyName: '',
       /**
        *
        */
@@ -479,6 +513,8 @@ export default {
         packageName: undefined,
         subjectClassifyId: undefined,
         tenantId: undefined,
+        limitPurchaseTimes: 1, //限购
+        giftFlag: 1, //导流包 开关
       },
     }
   },
@@ -532,6 +568,22 @@ export default {
             this.hasData = false
             this.disabledValue = true
           }
+
+          this.daoliubao = res.data.giftFlag == 1
+          if (!this.daoliubao) {
+            // this.disabledDaoliu = false
+            this.isDisabled = false
+          }
+
+          //如果是 图文咨询 则允许 引入导流包
+          if (res.data.packageClassifyId == 9) {
+            this.disabledDaoliu = true
+            this.isDisabled = true
+          } else {
+            this.disabledDaoliu = false
+            this.isDisabled = false
+          }
+
           console.log('packageData Detail 2', this.packageData)
           //这个可以提前处理，不放在processData里面
           if (this.packageData.commodityFollowPlanIds && this.packageData.commodityFollowPlanIds.length > 0) {
@@ -562,6 +614,23 @@ export default {
         this.disabledValue = true
         this.packageData.pkgValidNum = null
         this.packageData.pkgValidUnit = null
+      }
+    },
+
+    //导流包选择
+    changeDaoliu(value) {
+      this.isDaoliuChecked = value.target.checked
+      if (value.target.checked) {
+        this.daoliubao = true
+        this.isDisabled = false
+        this.packageData.giftFlag = 1
+      } else {
+        this.packageData.giftFlag = 0
+        this.daoliubao = false
+        this.isDisabled = true
+        // this.d
+        // this.packageData.pkgValidNum = null
+        // this.packageData.pkgValidUnit = null
       }
     },
 
@@ -953,6 +1022,14 @@ export default {
       let findItem = this.classData.find((item) => item.id == this.packageData.packageClassifyId)
       if (findItem) {
         this.broadClassify = findItem.broadClassify
+        this.classifyName = findItem.classifyName
+        if (this.classifyName == '图文咨询') {
+          this.disabledDaoliu = false
+          this.isDisabled = false
+        }else{
+          this.disabledDaoliu = true
+          this.isDisabled = true
+        }
       }
       console.log('this.broadClassify', this.broadClassify)
 
@@ -1321,6 +1398,12 @@ export default {
 
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.packageData))
+
+      if(tempData.packageClassifyId!=9){
+        tempData.limitPurchaseTimes = 0
+        tempData.giftFlag = 0
+      }
+
 
       if (!tempData.packageName) {
         this.$message.error('请输入套餐名称')

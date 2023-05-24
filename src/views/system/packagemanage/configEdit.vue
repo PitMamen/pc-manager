@@ -47,6 +47,7 @@
             >
           </div>
           <div class="div-up-right">
+            <span v-if="record.giftFlag==1" class="span-item-name" style="font-weight: bold;margin-right:-30px"> 导流包</span>
             <span class="span-item-name" style="font-weight: bold"> 套餐起价 :</span>
             <span class="span-item-value" style="font-weight: bold; font-size: 16px">
               {{ record.startPrice || 0 + '元' }}</span
@@ -678,7 +679,7 @@ export default {
       if (to.path.indexOf('configEdit') > -1) {
         console.log('watch----configEdit', to, from)
         this.record = JSON.parse(this.$route.query.recordStr)
-        console.log('record', this.record)
+        console.log('recordQQQQQ', this.record)
         this.qryServiceItemListOut('', true)
       }
     },

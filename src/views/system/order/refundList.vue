@@ -112,8 +112,6 @@
         {{ record.commodityName }}
       </span>
     </s-table>
-    <!-- <orderDetail ref="orderDetail" @ok="handleOk" /> -->
-    <!-- <yzRefund ref="yzRefund" @ok="handleOk" /> -->
   </a-card>
 </template>
    
@@ -127,6 +125,7 @@ import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import refundExamine from './refundExamine'
 import yzRefund from './yzRefund'
+import followRefund from './followRefund'
 import { setHidden } from '@/api/modular/system/banner'
 import { noop } from 'ant-design-vue/es/_util/vue-types/utils'
 
@@ -136,6 +135,7 @@ export default {
     addForm,
     refundExamine,
     yzRefund,
+    followRefund,
     // editForm,
   },
 
@@ -325,7 +325,8 @@ export default {
     //详情
     goExamine(record) {
       this.$router.push({
-        path: record.orderType.value=='youzanOrder'?'/order/yzRefund':'/order/refundExamine',
+        // path: record.orderType.value=='youzanOrder'?'/order/yzRefund':'/order/refundExamine',
+        path: '/order/followRefund',
         query: {
           orderId: record.applyId,
         },

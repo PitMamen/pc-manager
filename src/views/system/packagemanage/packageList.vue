@@ -186,6 +186,11 @@ export default {
           title: '套餐名称',
           dataIndex: 'packageName',
         },
+
+        {
+          title: '导流包',
+          dataIndex: 'giftFlag',
+        },
         {
           title: '效期',
           dataIndex: 'pkgValidNum',
@@ -260,8 +265,9 @@ export default {
                 this.$set(item, 'pkgValidNum', item.pkgValidNum+item.pkgValidUnit.description)
               }else{
                 this.$set(item, 'pkgValidNum', '')
-
+                
               }
+              this.$set(item, 'giftFlag', item.giftFlag==1?'是':'否')
 
               // item.createTimeDes = item.createTime.substring(0,11)
             })

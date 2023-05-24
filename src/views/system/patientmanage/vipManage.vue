@@ -1,7 +1,12 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs  v-model="keyindex" @change="chanage" style="margin-top:-20px;"   >
-      <a-tab-pane class="ant-tabs-tab-active"  v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName" >
+    <a-tabs v-model="keyindex" @change="chanage" style="margin-top: -20px">
+      <a-tab-pane
+        class="ant-tabs-tab-active"
+        v-for="(itemTab, indexTab) in tabDatas"
+        :tab="itemTab.metaName"
+        :key="itemTab.databaseTableName"
+      >
         <div style="height: 1px"></div>
       </a-tab-pane>
     </a-tabs>
@@ -31,8 +36,8 @@
             item.departmentName
           }}</a-select-option>
         </a-select> -->
-        <a-select       
-        style="min-width: 180px; height: 28px;"
+        <a-select
+          style="min-width: 180px; height: 28px"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -46,7 +51,7 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id" >{{
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
             item.department_name
           }}</a-select-option>
         </a-select>
@@ -74,8 +79,13 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="refresh">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px;" @click="reset()">重置</a-button>
         </span>
+      </div>
+
+      <div class="action-row" style="margin-left: auto;">
+        <a-button style="margin-right: 10px;" type="primary" icon="upload" @click="uploadModal()">上传</a-button>
+        <a-button type="primary" icon="download" ghost @click="downLoadModal()">下载模板</a-button>
       </div>
     </div>
     <!-- :columns="columns" -->
@@ -95,7 +105,7 @@
 
       <span slot="action" slot-scope="text, record">
         <a @click="goPlan(record)"><a-icon type="solution"></a-icon>随访</a>
-        <a-divider style="margin-left:5px;margin-right:5px" type="vertical" />
+        <a-divider style="margin-left: 5px; margin-right: 5px" type="vertical" />
         <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
       </span>
     </s-table>
@@ -295,7 +305,7 @@ export default {
 
                 if (!item.success_total_task) {
                   success_total = 0
-                }else{
+                } else {
                   success_total = item.success_total_task
                 }
 
@@ -360,14 +370,14 @@ export default {
     refresh() {
       this.$refs.table.refresh(true)
     },
-   //获取管理的科室 可首拼
-   getDepartmentSelectList(departmentName) {
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
-          if(departmentName === undefined){
+          if (departmentName === undefined) {
             res.data.records.unshift({ department_name: '全部', department_id: -1 })
           }
           this.originData = res.data.records
@@ -458,10 +468,10 @@ export default {
                 }
               }
 
-                 /**
+              /**
                * 添加2个固定的表头  账号信息  和 随访任务
                */
-               this.tableClumns.push({
+              this.tableClumns.push({
                 width: 100,
                 title: '账号信息',
                 dataIndex: 'openid_flag',
@@ -476,8 +486,6 @@ export default {
                 fixed: 'right',
                 scopedSlots: { customRender: 'action' },
               })
-
-           
             }
           }
           this.refresh()
@@ -517,6 +525,23 @@ export default {
       this.handleOk()
     },
 
+
+    //上传
+   uploadModal(){
+
+
+   },
+
+   //下载模板
+   downLoadModal(){
+
+   },
+
+
+
+
+
+
     handleOk() {
       this.$refs.table.refresh()
     },
@@ -524,7 +549,6 @@ export default {
 }
 </script>
   <style lang="less" scoped>
-  
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -540,9 +564,10 @@ export default {
 }
 
 /deep/.ant-tabs-tab-active {
- background:#EFF7FF;
+  background: #eff7ff;
 }
 .table-page-search-wrapper {
+  display: flex;
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
@@ -575,12 +600,12 @@ export default {
   <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 20px);   //60PX
+  height: calc(100% - 20px); //60PX
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 95px);  //78PX
+      height: calc(100% - 95px); //78PX
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {

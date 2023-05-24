@@ -67,21 +67,19 @@
           </div>
 
           <div class="div-pro-line" style="margin-left: -25px !important">
-            <a-checkbox @change="changeData"   class="span-item-name" style="margin-left: 8px"
-              >套餐效期 :</a-checkbox
-            >
+            <a-checkbox @change="changeData" class="span-item-name" style="margin-left: 8px">套餐效期 :</a-checkbox>
             <a-input
-            :disabled="disabledValue"
+              :disabled="disabledValue"
               class="span-item-value"
               v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 42%;margin-left: -7px;"
+              style="display: inline-block; width: 42%; margin-left: -7px"
               allow-clear
               placeholder="请输入 "
             />
 
             <a-select
-            :disabled="disabledValue"
+              :disabled="disabledValue"
               v-model="packageData.pkgValidUnit"
               style="margin-left: 5px; width: 16.5% !important"
               allow-clear
@@ -91,6 +89,30 @@
                 item.value
               }}</a-select-option>
             </a-select>
+          </div>
+        </div>
+
+        <div class="div-up-content">
+          <div style="display: flex; flex-direction: row; margin-top: 1%">
+            <a-checkbox
+              @change="changeDaoliu"
+              :disabled="disabledDaoliu"
+              :checked="daoliubao"
+              class="span-item-name"
+            ></a-checkbox>
+            <div style="margin-left: 3px">导流包:</div>
+            <div style="margin-left: 20px">限购:</div>
+
+            <a-InputNumber
+              :disabled="isDisabled"
+              class="span-item-value"
+              v-model="packageData.limitPurchaseTimes"
+              type="number"
+              :min="1"
+              style="display: inline-block; width: 148px; margin-left: 10px; margin-top: -3px"
+              oninput="if(value<=1)value=1"
+            />
+            <div style="margin-left: 10px">次</div>
           </div>
         </div>
       </div>
@@ -327,8 +349,8 @@
       </div>
 
       <div class="div-pro-btn">
-        <div style="flex: 1;"></div>
-        <a-button  type="primary" @click="submitData()">提交</a-button>
+        <div style="flex: 1"></div>
+        <a-button type="primary" @click="submitData()">提交</a-button>
         <a-button style="margin-left: 2%" @click="cancel()">取消</a-button>
       </div>
 
@@ -375,8 +397,8 @@ export default {
       previewVisible: false,
       previewVisibleBanner: false,
       previewVisibleDetail: false,
-      disabledValue:true,
-      isChecked:false,
+      disabledValue: true,
+      isChecked: false,
       previewImage: '',
       previewImageBanner: '',
       previewImageDetail: '',
@@ -415,6 +437,10 @@ export default {
       allocationTypeDoc: undefined,
       allocationTypeNurse: undefined,
       allocationTypeTeam: undefined,
+      disabledDaoliu: false,
+      isDisabled: false,
+      daoliubao:false,
+      classifyName:'',
 
       /**
        *
@@ -459,20 +485,27 @@ export default {
         packageName: undefined,
         subjectClassifyId: undefined,
         tenantId: undefined,
+        limitPurchaseTimes:1,  //限购
+        giftFlag:1,  //导流包 开关
       },
       packageData: {},
     }
   },
 
-  // watch: {
-  //   $route(to, from) {
-  //     console.log('watch----packageAdd out', to, from)
-  //     if (to.path.indexOf('packageAdd') > -1) {
-  //       console.log('watch----packageAdd', to, from)
-  //       // this.refresh()
-  //     }
-  //   },
-  // },
+  watch: {
+    $route(to, from) {
+      // console.log('watch----packageAdd out', to, from)
+      if (to.path.indexOf('packageAdd') > -1) {
+        this.resetData()
+        // console.log('watch----packageAdd', to, from)
+        // this.refresh()
+      }
+    },
+  },
+
+   
+
+
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
@@ -495,6 +528,9 @@ export default {
   methods: {
     moment,
     resetData() {
+      this.disabledDaoliu=false,
+      this.isDisabled=false,
+      this.daoliubao=false,
       this.needPlan = false
       this.canConfigTeam = true
       this.broadClassify = ''
@@ -549,17 +585,33 @@ export default {
         })
     },
 
-
-
     changeData(value) {
       console.log('tttt:', value.target.checked)
       this.isChecked = value.target.checked
-      if(value.target.checked){
-       this. disabledValue = false
-      }else{
-       this. disabledValue = true
-       this.packageData.pkgValidNum = null
-       this.packageData.pkgValidUnit = null
+      if (value.target.checked) {
+        this.disabledValue = false
+      } else {
+        this.disabledValue = true
+        this.packageData.pkgValidNum = null
+        this.packageData.pkgValidUnit = null
+      }
+    },
+
+
+       //导流包选择 
+       changeDaoliu(value) {
+      this.isDaoliuChecked = value.target.checked
+      if (value.target.checked) {
+        this.daoliubao = true
+        this.isDisabled = false
+        this.packageData.giftFlag = 1
+      } else {
+        this.packageData.giftFlag = 0
+        this.daoliubao = false
+        this.isDisabled = true
+        // this.d
+        // this.packageData.pkgValidNum = null
+        // this.packageData.pkgValidUnit = null
       }
     },
 
@@ -751,6 +803,14 @@ export default {
       let findItem = this.classData.find((item) => item.id == this.packageData.packageClassifyId)
       if (findItem) {
         this.broadClassify = findItem.broadClassify
+        this.classifyName = findItem.classifyName
+        if (this.classifyName == '图文咨询') {
+          this.disabledDaoliu = false
+          this.isDisabled = false
+        }else{
+          this.disabledDaoliu = true
+          this.isDisabled = true
+        }
       }
       console.log('this.broadClassify', this.broadClassify)
 
@@ -997,14 +1057,14 @@ export default {
         // }
 
         this.$refs.addPeople.add(
-            index,
-            'nurse',
-            this.packageData.tenantId,
-            this.packageData.hospitalCode,
-            this.nurseDepartmentId,
-            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-            this.broadClassify == 1 ? true : false
-          )
+          index,
+          'nurse',
+          this.packageData.tenantId,
+          this.packageData.hospitalCode,
+          this.nurseDepartmentId,
+          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          this.broadClassify == 1 ? true : false
+        )
 
         // if (this.broadClassify == 1) {
         //   this.$refs.addPeople.add(
@@ -1093,6 +1153,10 @@ export default {
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.packageData))
 
+      if(tempData.packageClassifyId!=9){
+        tempData.limitPurchaseTimes = 0
+        tempData.giftFlag = 0
+      }
       if (!tempData.packageName) {
         this.$message.error('请输入套餐名称')
         return
@@ -1114,23 +1178,17 @@ export default {
         return
       }
 
-      
-      if(this.isChecked){
-        if(!tempData.pkgValidNum){
+      if (this.isChecked) {
+        if (!tempData.pkgValidNum) {
           this.$message.error('请选择有效期')
           return
         }
 
-        if(!tempData.pkgValidUnit){
+        if (!tempData.pkgValidUnit) {
           this.$message.error('请选择有效期单位')
           return
         }
       }
-
-
-
- 
-
 
       //组装图片
       if (this.fileList.length == 0) {
