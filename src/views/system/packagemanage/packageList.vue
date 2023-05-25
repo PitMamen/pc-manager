@@ -78,8 +78,9 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a-icon type="edit" style="color: #1890ff; margin-right: 3px" />
-        <a @click="editPlan(record)">修改</a>
+        <a @click="$refs.packageCode.add(record)"><a-icon type="wechat"></a-icon>二维码</a>
+        <a-divider  type="vertical" />
+        <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
       </span>
       <span slot="cover" slot-scope="text, record">
         <!-- <img src="~@/assets/icons/weixin_icon.png" /> -->
@@ -124,6 +125,9 @@
         </a-popconfirm>
       </span>
     </s-table>
+
+    <package-code ref="packageCode" @ok="handleOk" />
+
   </a-card>
 </template>
 
@@ -133,9 +137,11 @@ import { STable } from '@/components'
 
 import { accessHospitals, getPkgList, updatePkgStatus, getCommodityClassify } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
+import packageCode from './packageCode'
 import Vue from 'vue'
 export default {
   components: {
+    packageCode,
     STable,
   },
   data() {
