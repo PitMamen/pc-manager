@@ -34,7 +34,7 @@
             <a-select
               class="deptselect-single"
               show-search
-              style="width: 180px"
+              style="width: 120x"
               v-model="queryParams.executeDepartmentId"
               :filter-option="false"
               :not-found-content="fetching ? undefined : null"
@@ -96,6 +96,20 @@
             <span class="name">抽查日期:</span>
             <a-range-picker style="width: 185px" :value="createValueCheck" @change="onChangeCheck" />
           </div>
+
+
+          <div class="search-row">
+            <span class="name">问卷名称:</span>
+            <a-select    @change="onselectQuestion" allow-clear v-model="queryParams.questionnaireId" placeholder="请选择问卷" style="width: 120px">
+              <a-select-option v-for="(item, index) in quesData" :key="index" :value="item.questionnaireId">{{
+                item.questionnaireName
+              }}</a-select-option>
+            </a-select>
+          </div>
+
+
+
+
           <div class="search-row" v-if="queryParams.type == 1">
             <span class="name">患者查找:</span>
             <a-input
@@ -123,39 +137,13 @@
         <div class="div-down">
           <div class="div-service-left-control">
             <div class="left-control">
-              <span class="span-current-ques" :title="choseQues.questionnaireName">{{ choseQues.questionnaireName }}</span>
-              <!-- 分割线 -->
-              <!-- <div class="div-divider"></div> -->
-
-              <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
-              <div class="div-text-auto">
-                <a-auto-complete
-                  class="global-search"
-                  size="large"
-                  style="width: 99%; font-size: 12px"
-                  placeholder="请输入名称查询"
-                  option-label-prop="title"
-                  @select="onSelect"
-                  @search="handleSearch"
-                >
-                  <template slot="dataSource">
-                    <a-select-option
-                      v-for="item in quesDataTemp"
-                      :key="item.questionnaireId + ''"
-                      :title="item.questionnaireName"
-                    >
-                      {{ item.questionnaireName }}
-                    </a-select-option>
-                  </template>
-                </a-auto-complete>
-              </div>
 
               <div class="div-wrap-control" style="margin-top: 2%">
-                <div v-if="quesData && quesData.length > 0">
+                <div v-if="quesDataTemp && quesDataTemp.length > 0">
                   <div
                     class="div-part"
                     :class="{ checked: item.isChecked }"
-                    v-for="(item, index) in quesData"
+                    v-for="(item, index) in quesDataTemp"
                     @click="onItemClick(item, index)"
                     :value="item.departmentName"
                     :key="index"
@@ -163,11 +151,18 @@
                     <span class="span-name" @click="onPartChoose(index)" :title="item.questionnaireName">
                       {{ item.questionnaireName }}
                     </span>
+
+                    <div
+                      style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"
+                    ></div>
+
                     <div class="div-rate">
-                      <span style="width: 30px; text-align: center">
+                      <span style="color: #999999">抽查率:</span>
+                      <span style="text-align: center; margin-left: 5px">
                         {{ item.checkPercentage }}
                       </span>
-                      <span style="margin-left: 5px; width: 30px; text-align: center">
+                      <span style="color: #999999; margin-left: 5px">合格率:</span>
+                      <span style="margin-left: 5px; text-align: center">
                         {{ item.passCheckPercentage }}
                       </span>
                     </div>
@@ -299,6 +294,7 @@ export default {
 
         messageContentId: null, //推送具体内容id
         messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
+        questionnaireId:undefined  //问卷ID
       },
       queryParamsOrigin: {
         // 默认本月的代码
@@ -320,6 +316,7 @@ export default {
 
         messageContentId: null, //推送具体内容id
         messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
+        questionnaireId:undefined  //问卷ID
       },
       // 表头
       columns: [
@@ -628,6 +625,22 @@ export default {
   },
 
   methods: {
+
+    //筛选条件 问卷名称选择时 左侧卡片需要改变
+    onselectQuestion(value) {
+      let itemFind = this.quesData.find((item) => item.questionnaireId == value)
+      if (itemFind) {
+        this.quesDataTemp = []
+        this.quesDataTemp.push(itemFind)
+      } else {
+        this.quesDataTemp = this.quesData
+      }
+    },
+
+
+
+
+
     onRadioClick(type) {
       this.queryParams.type = type
       //改变样式
@@ -1024,7 +1037,7 @@ export default {
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 17.5%;
+      width: 12.5%;
       overflow: hidden;
 
       .left-control {
@@ -1085,14 +1098,21 @@ export default {
         }
 
         .div-part {
+          padding: 8px;
+          background: rgba(0, 1, 3, 0);
+          border: 1px solid #dfe3e5;
           overflow: hidden;
           width: 95%;
           display: flex;
-          align-items: center;
-          flex-direction: row;
+          flex-direction: column;
+          margin-bottom: 5px;
           // padding-left: 5%;
           border-bottom: #e6e6e6 1px solid;
-          height: 26px;
+
+          // /deep/&:checked {
+          //   color: #1890ff !important;
+          //   background: #69c07d;
+          // }
 
           &:hover {
             cursor: pointer;
@@ -1103,7 +1123,6 @@ export default {
             // display: inline-block;
             flex: 1;
             height: 85%;
-            width: 60%;
             overflow: hidden; //溢出隐藏
             text-overflow: ellipsis; //超出省略号显示
             white-space: nowrap; //文字不换行
@@ -1117,7 +1136,6 @@ export default {
 
           .div-rate {
             display: flex;
-            width: 30%;
             font-size: 12px;
             align-items: center;
             flex-direction: row;
@@ -1132,7 +1150,7 @@ export default {
       // border-left: #eee solid 1px;
       border: #eee solid 1px;
       float: right;
-      width: 81%;
+      width: 86%;
 
       /deep/ .ant-card-body {
         padding: 0px 20px !important;
