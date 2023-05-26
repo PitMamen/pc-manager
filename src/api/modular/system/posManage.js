@@ -245,6 +245,18 @@ export function getQrUrl(param) {
   })
 }
 /**
+ * 获取二维码链接  套餐二维码
+ *
+ */
+export function getCommodityQrCode(param) {
+  return axios({
+    url: '/wx-api/wx/qrcode/' + appId + '/getCommodityQrCode',
+    method: 'get',
+    params: param,
+
+  })
+}
+/**
  * 获取二维码链接  机构的随访二维码
  *
  */
