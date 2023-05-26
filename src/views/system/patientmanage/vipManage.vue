@@ -79,12 +79,45 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="refresh">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px;" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
       </div>
 
-      <div class="action-row" style="margin-left: auto;">
-        <a-button style="margin-right: 10px;" type="primary" icon="upload" @click="uploadModal()">上传</a-button>
+      <div class="action-row" style="display:flex;flex-direction:row;flex-wrap:wrap;margin-left: auto">
+        <!-- <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
+          <!-- <div class="clearfix"> -->
+            <!-- @preview="handlePreview" -->
+            <!--               list-type="picture-card"  -->
+            <a-upload
+              :action="actionUrl"
+              :multiple="false"
+              :headers="headers"
+              :data="uploadData"
+              list-type="text"
+              :file-list="fileList"
+              @change="handleChange"
+            >
+              <div style="margin-right:5px" v-if="fileList.length < 1">
+                <a-button type="primary">
+                    <a-icon type="upload" />
+                    上传
+                  </a-button>
+              </div>
+            </a-upload>
+            <!-- <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+          </a-modal> -->
+          <!-- </div> -->
+        <!-- </a-form-item> -->
+        <!-- <a-button
+          :file-list="fileList"
+          :headers="headers"
+          style="margin-right: 10px"
+          type="primary"
+          icon="upload"
+          @click="uploadModal()"
+          >上传</a-button
+        > -->
         <a-button type="primary" icon="download" ghost @click="downLoadModal()">下载模板</a-button>
       </div>
     </div>
@@ -126,9 +159,9 @@ import {
   qryMetaConfigureDetailFilter,
   qryMetaByPage,
   qryMetaConfigure,
+  importPatientData,
 } from '@/api/modular/system/posManage'
-
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import moment from 'moment'
 import Vue from 'vue'
 export default {
@@ -140,6 +173,9 @@ export default {
   },
   data() {
     return {
+      actionUrl: '/follow-api/followMetaConfigure/importPatientData',
+      uploadData: { platform: 1 },
+      fileList: [],
       fetching: false,
       tableClumns: [],
       chooseArrOrigin: [],
@@ -180,6 +216,9 @@ export default {
       confirmLoading: false,
       createValue: [],
       form: this.$form.createForm(this),
+      headers: {
+        Authorization: '',
+      },
 
       // 表头
       columns: [
@@ -329,6 +368,7 @@ export default {
     var requestDataCon = {
       qryFlag: 1,
     }
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
 
     // 获取table
     qryMetaConfigure(requestDataCon).then((res) => {
@@ -367,6 +407,31 @@ export default {
     this.getDepartmentSelectList(undefined)
   },
   methods: {
+
+    handleChange(changeObj) {
+      console.log('fff', changeObj)
+      // if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+      //   this.$message.error(changeObj.file.response.message)
+      //   changeObj.fileList.pop()
+      //   this.fileList = changeObj.fileList
+      // } else {
+      //   this.fileList = changeObj.fileList
+      //   if (this.fileList[0].response && this.fileList[0].response.data) {
+      //     this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
+      //     setTimeout(() => {
+      //       this.form.setFieldsValue({
+      //         versionCode: this.versionData.versionCode,
+      //         versionNumber: this.versionData.versionNumber,
+      //       })
+      //     }, 100)
+      //   }
+      // }
+    },
+
+
+
+
+
     refresh() {
       this.$refs.table.refresh(true)
     },
@@ -460,30 +525,29 @@ export default {
               for (let index = 0; index < detailData.length; index++) {
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
-                    if (detailData[index].tableField=='ssmc') {
-                      console.log("HAHAHHAHAH")
+                    if (detailData[index].tableField == 'ssmc') {
+                      console.log('HAHAHHAHAH')
                       this.tableClumns.push({
-                      title: detailData[index].fieldComment,
-                      dataIndex: detailData[index].tableField,
-                      width:180,
-                      ellipsis: true,
-                      onCell:()=>{
-                        return{
-                          style:{
-                            overflow:'hidden',
-                           
-                            whiteSpace:'nowrop',
-                            textOverflow:'ellipsis'
+                        title: detailData[index].fieldComment,
+                        dataIndex: detailData[index].tableField,
+                        width: 180,
+                        ellipsis: true,
+                        onCell: () => {
+                          return {
+                            style: {
+                              overflow: 'hidden',
+
+                              whiteSpace: 'nowrop',
+                              textOverflow: 'ellipsis',
+                            },
                           }
-                        }
-                      },
-                    })
-                    continue
+                        },
+                      })
+                      continue
                     }
                     this.tableClumns.push({
                       title: detailData[index].fieldComment,
                       dataIndex: detailData[index].tableField,
-
                     })
                   }
                 }
@@ -546,22 +610,23 @@ export default {
       this.handleOk()
     },
 
-
     //上传
-   uploadModal(){
+    uploadModal() {
+      var postData = {
+        file: 'd',
+      }
+      importPatientData(postData)
+        .then((res) => {
+          if (res.code == 0) {
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
-
-   },
-
-   //下载模板
-   downLoadModal(){
-
-   },
-
-
-
-
-
+    //下载模板
+    downLoadModal() {},
 
     handleOk() {
       this.$refs.table.refresh()

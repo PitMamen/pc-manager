@@ -4458,3 +4458,12 @@ export function modifyDiseaseType(data) {
     data: data,
   })
 }
+
+//上传模板
+export function importPatientData(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/importPatientData',
+    method: 'post',
+    data: data,
+  })
+}
