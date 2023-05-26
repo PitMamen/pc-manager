@@ -188,6 +188,7 @@ import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
 import continuationDetail from './continuationDetail'
+import prescriptionDetail from './prescriptionDetail'
 
 export default {
   components: {
@@ -196,6 +197,7 @@ export default {
     orderDetail,
     yzOrderDetail,
     continuationDetail,
+    prescriptionDetail,
   },
 
   data() {
@@ -415,6 +417,8 @@ export default {
       } else {
         path = '/order/orderDetail'
       }
+
+      path = '/order/prescriptionDetail'
 
       this.$router.push({
         // path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',

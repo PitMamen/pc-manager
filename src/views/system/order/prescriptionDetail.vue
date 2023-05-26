@@ -162,6 +162,78 @@
       <div style="margin-top: 20px;" class="big-kuang">
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">处方详情</div>
         <div class="line"></div>
+
+        <div class="div-up-content" >
+          <div class="div-pro-line">
+            <span class="span-item-name">处方编号 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name">开具时间 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name"> 登记号 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
+          </div>
+        </div>
+
+
+        <div class="div-up-content" >
+          <div class="div-pro-line">
+            <span class="span-item-name">诊疗卡号 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name">患者姓名 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name"> 患者年龄 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
+          </div>
+        </div>
+
+
+        <div class="div-up-content" >
+          <div class="div-pro-line">
+            <span class="span-item-name">性别 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name">临床诊断 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name"> 医生 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
+          </div>
+        </div>
+
+        <div class="div-up-content" >
+          <div class="div-pro-line">
+            <span class="span-item-name">执行科室 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+          </div>
+  
+          <div class="div-pro-line">
+            <span class="span-item-name">总计 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+          </div>
+  
+        </div>
+
+
+
+
+
+
         <a-table
           style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5"
           size="small"
@@ -286,7 +358,7 @@
   
         goodsItemsDataColumns: [
           {
-            title: '产品名称',
+            title: '药品名称',
             dataIndex: 'rightsItemName',
           },
           {
