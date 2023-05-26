@@ -624,7 +624,7 @@ export default {
 
   methods: {
 
-    //筛选条件 问卷名称选择时 左侧卡片需要改变
+    //筛选条件 问卷名称选择时 左侧卡片需要改变  同时刷新右边列表
     onselectQuestion(value) {
       let itemFind = this.quesData.find((item) => item.questionnaireId == value)
       if (itemFind) {
@@ -633,6 +633,8 @@ export default {
       } else {
         this.quesDataTemp = this.quesData
       }
+      this.$refs.table.refresh(true)
+      
     },
 
 

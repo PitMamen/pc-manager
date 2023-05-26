@@ -410,6 +410,26 @@ export default {
 
     handleChange(changeObj) {
       console.log('fff', changeObj)
+      if (info.file.response != null) {
+        var ret = info.file.response
+        if (ret.success) {
+          // this.form.setFieldsValue({
+          //   fileId: ret.data.id,
+          // })
+          this.form.setFieldsValue({
+            file: ret.data.name,
+          })
+          // this.form.setFieldsValue({
+          //   linkUrl: ret.data.fileLinkUrl,
+          // })
+          // this.form.setFieldsValue({
+          //   previewFileId: ret.data.previewFileId,
+          // })
+          // this.form.setFieldsValue({
+          //   previewFileName: ret.data.previewFileId,
+          // })
+        }
+      }
       // if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
       //   this.$message.error(changeObj.file.response.message)
       //   changeObj.fileList.pop()
