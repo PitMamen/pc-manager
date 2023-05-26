@@ -868,10 +868,12 @@ export default {
     },
 
     onItemClick(item, indexClick) {
+      // console.log("kkk:",item.questionnaireName,indexClick)
       for (let index = 0; index < this.quesData.length; index++) {
-        this.$set(this.quesData[index], 'isChecked', false)
+        this.$set(this.quesDataTemp[index], 'isChecked', false)
       }
-      this.$set(this.quesData[indexClick], 'isChecked', true)
+      this.$set(this.quesDataTemp[indexClick], 'isChecked', true)
+
       this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
       this.queryParams.messageContentId = this.choseQues.questionnaireId
       this.$refs.table.refresh(true)

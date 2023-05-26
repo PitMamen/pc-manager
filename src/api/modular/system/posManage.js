@@ -4047,6 +4047,30 @@ export function getOrderDetail(data) {
 }
 
 
+//处方订单详情
+export function getMedicalChufangDetail(data) {
+  return axios({
+    url: '/medical-api/medical/getMedicalOrdersDetail/'+data,
+    method: 'post',
+    // params: data,
+  })
+}
+
+
+//处方信息
+export function getMedicalOrdersInfo(data) {
+  return axios({
+    url: '/medical-api/medical/getMedicalOrdersInfo/'+data,
+    method: 'post',
+    // params: data,
+  })
+}
+
+
+
+
+
+
 //取消订单
 export function cancelOrder(data) {
   return axios({
@@ -4465,5 +4489,15 @@ export function importPatientData(data) {
     url: '/follow-api/followMetaConfigure/importPatientData',
     method: 'post',
     data: data,
+  })
+}
+
+
+//下载模板
+export function downloadModel(data) {
+  return axios({
+    url: '/follow-api/名单导入模板.xlsx',
+    method: 'post',
+    // data: data,
   })
 }

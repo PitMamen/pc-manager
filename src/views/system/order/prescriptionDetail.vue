@@ -325,7 +325,7 @@
   </template>
     
     <script>
-  import { getOrderDetail, cancelOrder } from '@/api/modular/system/posManage'
+  import { getOrderDetail, cancelOrder,getMedicalChufangDetail,getMedicalOrdersInfo } from '@/api/modular/system/posManage'
   import moment from 'moment'
   import { TRUE_USER } from '@/store/mutation-types'
   import Vue from 'vue'
@@ -469,10 +469,12 @@
         this.orderDetailDataList={}
         this.orderId = orderId
         this.getOrderDetailOut(this.orderId)
+        this.getOrderDetailChufangOut(this.orderId)
       },
   
       handleOk() {
         this.getOrderDetailOut(this.orderId)
+        this.getOrderDetailChufangOut(this.orderId)
       },
   
       getOrderDetailOut(orderID) {
@@ -489,6 +491,26 @@
             this.confirmLoading = false
           })
       },
+
+      getOrderDetailChufangOut(orderID) {
+          this.confirmLoading = true
+          getMedicalChufangDetail(orderID).then((res) => {
+          if (res.code == 0) {
+            // var reponseDataList = res.data
+            // this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
+            // this.payMode = this.orderDetailDataList.payMode
+            // this.goodsItemsData = res.data.goodsItems
+            // this.rightItemsData = res.data.rightItems
+          }
+        }).finally((res) => {
+            this.confirmLoading = false
+          })
+      },
+
+
+
+
+
   
       //返回
       goBack() {

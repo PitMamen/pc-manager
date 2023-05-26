@@ -83,42 +83,29 @@
         </span>
       </div>
 
-      <div class="action-row" style="display:flex;flex-direction:row;flex-wrap:wrap;margin-left: auto">
+      <div class="action-row" style="display: flex; flex-direction: row; flex-wrap: wrap; margin-left: auto">
         <!-- <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
-          <!-- <div class="clearfix"> -->
-            <!-- @preview="handlePreview" -->
-            <!--               list-type="picture-card"  -->
-            <a-upload
-              :action="actionUrl"
-              :multiple="false"
-              :headers="headers"
-              :data="uploadData"
-              list-type="text"
-              :file-list="fileList"
-              @change="handleChange"
-            >
-              <div style="margin-right:5px" v-if="fileList.length < 1">
-                <a-button type="primary">
-                    <a-icon type="upload" />
-                    上传
-                  </a-button>
-              </div>
-            </a-upload>
-            <!-- <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel">
-            <img alt="example" style="width: 100%" :src="previewImage" />
-          </a-modal> -->
-          <!-- </div> -->
-        <!-- </a-form-item> -->
-        <!-- <a-button
-          :file-list="fileList"
+        <!-- <div class="clearfix"> -->
+        <!-- @preview="handlePreview" -->
+        <!--               list-type="picture-card"  accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" --> 
+        <a-upload
+          :action="actionUrl"
+          :multiple="false"
           :headers="headers"
-          style="margin-right: 10px"
-          type="primary"
-          icon="upload"
-          @click="uploadModal()"
-          >上传</a-button
-        > -->
-        <a-button type="primary" icon="download" ghost @click="downLoadModal()">下载模板</a-button>
+          :data="uploadData"
+          list-type="text"
+          :file-list="fileList"
+          accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          @change="uploadModal"
+        >
+          <div style="margin-right: 5px" v-if="fileList.length < 1">
+            <a-button type="primary">
+              <a-icon type="upload" />
+              上传
+            </a-button>
+          </div>
+        </a-upload>
+        <a-button type="primary" icon="download" ghost @click="downLoadModalOut()">下载模板</a-button>
       </div>
     </div>
     <!-- :columns="columns" -->
@@ -160,8 +147,10 @@ import {
   qryMetaByPage,
   qryMetaConfigure,
   importPatientData,
+  downloadModel,
 } from '@/api/modular/system/posManage'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import { currentEnv } from '@/utils/util'
 import moment from 'moment'
 import Vue from 'vue'
 export default {
@@ -173,8 +162,8 @@ export default {
   },
   data() {
     return {
-      actionUrl: '/follow-api/followMetaConfigure/importPatientData',
-      uploadData: { platform: 1 },
+      actionUrl: '/api/follow-api/followMetaConfigure/importPatientData',
+      uploadData: { file: 1 },
       fileList: [],
       fetching: false,
       tableClumns: [],
@@ -386,71 +375,71 @@ export default {
     })
 
     this.user = Vue.ls.get(TRUE_USER)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-    //   getDepts().then((res) => {
-    //     if (res.code == 0) {
-    //       this.originData = res.data
-    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-    //       this.$refs.table.refresh(true)
-    //     }
-    //   })
-    // } else {
-    //   getDeptsPersonal().then((res) => {
-    //     if (res.code == 0) {
-    //       this.originData = res.data
-    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-    //       this.$refs.table.refresh(true)
-    //     }
-    //   })
-    // }
     this.getDepartmentSelectList(undefined)
   },
   methods: {
 
-    handleChange(changeObj) {
-      console.log('fff', changeObj)
-      if (info.file.response != null) {
-        var ret = info.file.response
-        if (ret.success) {
-          // this.form.setFieldsValue({
-          //   fileId: ret.data.id,
-          // })
-          this.form.setFieldsValue({
-            file: ret.data.name,
-          })
-          // this.form.setFieldsValue({
-          //   linkUrl: ret.data.fileLinkUrl,
-          // })
-          // this.form.setFieldsValue({
-          //   previewFileId: ret.data.previewFileId,
-          // })
-          // this.form.setFieldsValue({
-          //   previewFileName: ret.data.previewFileId,
-          // })
-        }
+
+    // beforeUpload(file) {
+    //   console.log("HHHH",file)
+    //   const isJpgOrPng = file.type === 'xlsx'||file.type ==='xls'
+    //   if (!isJpgOrPng) {
+    //     this.$message.error('请选择正确的文件格式！')
+    //     return false
+    //   }
+    //   return true
+    // },
+
+   //下载模板
+   downLoadModalOut() {
+      let url
+      if (currentEnv == 'test') {
+        //测试环境
+        url = 'http://192.168.1.121:8090/名单导入模板.xlsx'
+      } else if (currentEnv == 'show') {
+        //演示环境
+        url = 'http://172.31.160.11:8124/名单导入模板.xlsx'
+      } else if (currentEnv == 'online') {
+        //线上环境
+        url = 'http://manager.mclouds.org.cn/名单导入模板.xlsx'
       }
-      // if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
-      //   this.$message.error(changeObj.file.response.message)
-      //   changeObj.fileList.pop()
-      //   this.fileList = changeObj.fileList
-      // } else {
-      //   this.fileList = changeObj.fileList
-      //   if (this.fileList[0].response && this.fileList[0].response.data) {
-      //     this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
-      //     setTimeout(() => {
-      //       this.form.setFieldsValue({
-      //         versionCode: this.versionData.versionCode,
-      //         versionNumber: this.versionData.versionNumber,
-      //       })
-      //     }, 100)
-      //   }
-      // }
+
+      this.downloadUrl(url, '')
     },
 
+    downloadUrl(url, fileName = '未知文件') {
+      const el = document.createElement('a')
+      el.style.display = 'none'
+      // el.setAttribute('target', '_blank')
+      /**
+       * download的属性是HTML5新增的属性
+       * href属性的地址必须是非跨域的地址，如果引用的是第三方的网站或者说是前后端分离的项目(调用后台的接口)，这时download就会不起作用。
+       * 此时，如果是下载浏览器无法解析的文件，例如.exe,.xlsx..那么浏览器会自动下载，但是如果使用浏览器可以解析的文件，比如.txt,.png,.pdf....浏览器就会采取预览模式
+       * 所以，对于.txt,.png,.pdf等的预览功能我们就可以直接不设置download属性(前提是后端响应头的Content-Type: application/octet-stream，如果为application/pdf浏览器则会判断文件为 pdf ，自动执行预览的策略)
+       */
+      fileName && el.setAttribute('download', fileName)
+      el.href = url
+      console.log(el)
+      document.body.appendChild(el)
+      el.click()
+      document.body.removeChild(el)
+    },
 
-
-
+    //上传
+    uploadModal(changeObj) {
+      console.log('fff', changeObj)
+      if (changeObj.file.status == 'done') {
+        this.$message.success(changeObj.file.response.message)
+        changeObj.fileList.pop()
+        this.fileList = changeObj.fileList
+      } else {
+        this.$message.error('上传失败!')
+        // this.fileList = changeObj.fileList
+        // if (this.fileList[0].response && this.fileList[0].response.data) {
+        //   this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
+        // }
+      }
+    },
 
     refresh() {
       this.$refs.table.refresh(true)
@@ -629,24 +618,6 @@ export default {
 
       this.handleOk()
     },
-
-    //上传
-    uploadModal() {
-      var postData = {
-        file: 'd',
-      }
-      importPatientData(postData)
-        .then((res) => {
-          if (res.code == 0) {
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
-    //下载模板
-    downLoadModal() {},
 
     handleOk() {
       this.$refs.table.refresh()
