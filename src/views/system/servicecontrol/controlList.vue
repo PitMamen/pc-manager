@@ -100,7 +100,7 @@
 
           <div class="search-row">
             <span class="name">问卷名称:</span>
-            <a-select    @change="onselectQuestion" allow-clear v-model="queryParams.questionnaireId" placeholder="请选择问卷" style="width: 120px">
+            <a-select    @change="onselectQuestion" allow-clear v-model="queryParams.messageContentId" placeholder="请选择问卷" style="width: 120px">
               <a-select-option v-for="(item, index) in quesData" :key="index" :value="item.questionnaireId">{{
                 item.questionnaireName
               }}</a-select-option>
@@ -294,7 +294,6 @@ export default {
 
         messageContentId: null, //推送具体内容id
         messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
-        questionnaireId:undefined  //问卷ID
       },
       queryParamsOrigin: {
         // 默认本月的代码
@@ -316,7 +315,6 @@ export default {
 
         messageContentId: null, //推送具体内容id
         messageContentType: null, //1:问卷2:文章3:短信模板4:微信模板
-        questionnaireId:undefined  //问卷ID
       },
       // 表头
       columns: [

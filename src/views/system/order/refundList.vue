@@ -324,9 +324,18 @@ export default {
   methods: {
     //详情
     goExamine(record) {
+      var path = ''
+      //复诊续方
+      if (record.orderType.value == 'appPreRegister') {
+        path = '/order/followRefund'
+        //有赞
+      } else if (record.orderType.value == 'youzanOrder') {
+        path = '/order/yzRefund'
+      }else{
+        path = '/order/refundExamine'
+      }
       this.$router.push({
-        // path: record.orderType.value=='youzanOrder'?'/order/yzRefund':'/order/refundExamine',
-        path: '/order/followRefund',
+        path: path,
         query: {
           orderId: record.applyId,
         },

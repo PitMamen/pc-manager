@@ -460,9 +460,30 @@ export default {
               for (let index = 0; index < detailData.length; index++) {
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
+                    if (detailData[index].tableField=='ssmc') {
+                      console.log("HAHAHHAHAH")
+                      this.tableClumns.push({
+                      title: detailData[index].fieldComment,
+                      dataIndex: detailData[index].tableField,
+                      width:180,
+                      ellipsis: true,
+                      onCell:()=>{
+                        return{
+                          style:{
+                            overflow:'hidden',
+                           
+                            whiteSpace:'nowrop',
+                            textOverflow:'ellipsis'
+                          }
+                        }
+                      },
+                    })
+                    continue
+                    }
                     this.tableClumns.push({
                       title: detailData[index].fieldComment,
                       dataIndex: detailData[index].tableField,
+
                     })
                   }
                 }

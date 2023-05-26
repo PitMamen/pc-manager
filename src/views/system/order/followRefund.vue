@@ -81,7 +81,7 @@
 
         <div class="div-pro-line">
           <span class="span-item-name">服务医生 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.refundChannel || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.doctorUserName || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
@@ -98,17 +98,17 @@
       <div class="div-up-content" >
         <div class="div-pro-line">
           <span class="span-item-name">退款商户 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.agreeRefundTime || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.insideName || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
-          <span class="span-item-name">同意退款时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.agreeRefundTime || '-' }}</span>
+          <span class="span-item-name">申请退款时间 :</span>
+          <span class="span-item-value">{{ orderDetailDataList.createTime || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">退款时间 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.refundAgtOrdNum || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.refundTime || '-' }}</span>
         </div>
 
         <!-- <div class="div-pro-line">
@@ -120,12 +120,12 @@
       <div class="div-up-content" style="padding-bottom: 10px">
         <div class="div-pro-line">
           <span class="span-item-name">退款原因 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.agreeRefundTime || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.refundReason || '-' }}</span>
         </div>
 
         <div class="div-pro-line">
           <span class="span-item-name">退款流水号 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.agreeRefundTime || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.refundAgtOrdNum || '-' }}</span>
         </div>
 
         <!-- <div class="div-pro-line">
