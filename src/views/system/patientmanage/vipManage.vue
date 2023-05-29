@@ -395,13 +395,13 @@ export default {
       let url
       if (currentEnv == 'test') {
         //测试环境
-        url = 'http://192.168.1.121:8090/名单导入模板.xlsx'
+        url = 'http://192.168.1.121:8090/template.xlsx'
       } else if (currentEnv == 'show') {
         //演示环境
-        url = 'http://172.31.160.11:8124/名单导入模板.xlsx'
+        url = 'http://172.31.160.11:8124/template.xlsx'
       } else if (currentEnv == 'online') {
         //线上环境
-        url = 'http://manager.mclouds.org.cn/名单导入模板.xlsx'
+        url = 'http://manager.mclouds.org.cn/template.xlsx'
       }
 
       this.downloadUrl(url, '')
@@ -429,12 +429,13 @@ export default {
     uploadModal(changeObj) {
       console.log('fff', changeObj)
       if (changeObj.file.status == 'done') {
-        this.$message.success(changeObj.file.response.message)
         changeObj.fileList.pop()
         this.fileList = changeObj.fileList
+        this.$message.success(changeObj.file.response.message)
+        // this.$message.success('上传成功!')
       } else {
-        this.$message.error('上传失败!')
-        // this.fileList = changeObj.fileList
+        // this.$message.error('上传失败!')
+        this.fileList = changeObj.fileList
         // if (this.fileList[0].response && this.fileList[0].response.data) {
         //   this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
         // }
