@@ -418,7 +418,7 @@ export default {
         path = '/order/orderDetail'
       }
 
-      path = '/order/prescriptionDetail'
+      // path = '/order/prescriptionDetail'
 
       this.$router.push({
         // path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',

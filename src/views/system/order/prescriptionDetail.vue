@@ -390,49 +390,49 @@
           },
         ],
   
-        rightItemsDataColumns: [
-          {
-            title: '服务项目',
-            dataIndex: 'rightsItemName',
-          },
-          {
-            title: '服务规格',
-            dataIndex: 'ruleInfo',
-          },
-          {
-            title: '数量',
-            dataIndex: 'equityQuantity',
-          },
-          {
-            title: '单位',
-            dataIndex: 'unit',
-          },
-          {
-            title: '计费金额',
-            dataIndex: 'saleAmount',
-            align:'right'
-          },
-          {
-            title: '开始时间',
-            dataIndex: 'effectiveStartTime',
-            align:'center'
-          },
-          {
-            title: '结束时间',
-            dataIndex: 'effectiveEndTime',
-            align:'center'
-          },
-          {
-            title: '类型',
-            dataIndex: 'projectType',
-            align:'center'
-          },
-          {
-            title: '操作',
-            dataIndex: 'action',
-            //   scopedSlots: { customRender: 'action' },
-          },
-        ],
+        // rightItemsDataColumns: [
+        //   {
+        //     title: '服务项目',
+        //     dataIndex: 'rightsItemName',
+        //   },
+        //   {
+        //     title: '服务规格',
+        //     dataIndex: 'ruleInfo',
+        //   },
+        //   {
+        //     title: '数量',
+        //     dataIndex: 'equityQuantity',
+        //   },
+        //   {
+        //     title: '单位',
+        //     dataIndex: 'unit',
+        //   },
+        //   {
+        //     title: '计费金额',
+        //     dataIndex: 'saleAmount',
+        //     align:'right'
+        //   },
+        //   {
+        //     title: '开始时间',
+        //     dataIndex: 'effectiveStartTime',
+        //     align:'center'
+        //   },
+        //   {
+        //     title: '结束时间',
+        //     dataIndex: 'effectiveEndTime',
+        //     align:'center'
+        //   },
+        //   {
+        //     title: '类型',
+        //     dataIndex: 'projectType',
+        //     align:'center'
+        //   },
+        //   {
+        //     title: '操作',
+        //     dataIndex: 'action',
+        //     //   scopedSlots: { customRender: 'action' },
+        //   },
+        // ],
       }
     },
   
