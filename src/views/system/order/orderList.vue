@@ -412,16 +412,16 @@ export default {
       if (record.orderType == 'appPreRegister') {
         //复诊续方
         path = '/order/continuationDetail'
+        //有赞商城
       } else if (record.orderType == 'youzanOrder') {
         path = '/order/yzOrderDetail'
+        //处方订单
+      }else if(record.orderType == 'appPrePrescription'){
+        path = '/order/prescriptionDetail'
       } else {
         path = '/order/orderDetail'
       }
-
-      // path = '/order/prescriptionDetail'
-
       this.$router.push({
-        // path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',
         path: path,
         query: {
           orderId: record.orderId,

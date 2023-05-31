@@ -114,48 +114,48 @@
   
         <div class="div-up-content" >
           <div class="div-pro-line">
-            <span class="span-item-name">服务医生 :</span>
+              <span class="span-item-name">收单商户 :</span>
             <span class="span-item-value">{{ orderDetailDataList.doctorUserName || '-'  }}</span>
           </div>
   
           <div class="div-pro-line">
-            <span class="span-item-name">服务护士 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.nurseUserName  || '-' }}</span>
+            <span class="span-item-name">服务医生 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.doctorUserName  || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
-            <span class="span-item-name"> 服务团队 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.teamName || '-'  }}</span>
+            <span class="span-item-name">退款单号 :</span>
+            <a style="color: #409eff;" @click="goExamine(orderDetailDataList.applyRefundId)" class="span-item-value">{{ orderDetailDataList.refundId ||'-'}}</a>
           </div>
         </div>
   
         <div class="div-up-content" >
           <div class="div-pro-line">
-            <span class="span-item-name">退款单号 :</span>
-            <a style="color: #409eff;" @click="goExamine(orderDetailDataList.applyRefundId)" class="span-item-value">{{ orderDetailDataList.refundId ||'-'}}</a>
-          </div>
-  
-          <div class="div-pro-line">
             <span class="span-item-name">退款时间 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.refundTime || '-' }}</span>
+            <a style="color: #409eff;"  class="span-item-value">{{ orderDetailDataList.refundTime||'-'}}</a>
           </div>
   
           <div class="div-pro-line">
-            <span class="span-item-name"> 退款原因 :</span>
+            <span class="span-item-name">退款原因 :</span>
             <span class="span-item-value">{{ orderDetailDataList.refundReason || '-' }}</span>
-          </div>
-        </div>
-  
-        <div class="div-up-content" style="padding-bottom: 10px;" >
-          <div class="div-pro-line">
-            <span class="span-item-name">拒绝退款原因 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.remark || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name">备注说明 :</span>
             <span style="color: #409eff" class="span-item-value">请输入</span>
           </div>
+        </div>
+  
+        <div class="div-up-content" style="padding-bottom: 10px;" >
+          <div class="div-pro-line">
+            <span class="span-item-name">复诊订单号 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.appPrePrescriptionOrderId || '-' }}</span>
+          </div>
+  
+          <!-- <div class="div-pro-line">
+            <span class="span-item-name">备注说明 :</span>
+            <span style="color: #409eff" class="span-item-value">请输入</span>
+          </div> -->
         </div>
       </div>
   
@@ -166,17 +166,17 @@
         <div class="div-up-content" >
           <div class="div-pro-line">
             <span class="span-item-name">处方编号 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.preNo||'-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name">开具时间 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.prescriptionTime || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name"> 登记号 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
+            <span class="span-item-value">{{ medicalInfoList.regRightsId|| '-'  }}</span>
           </div>
         </div>
 
@@ -184,17 +184,17 @@
         <div class="div-up-content" >
           <div class="div-pro-line">
             <span class="span-item-name">诊疗卡号 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.preNo||'-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name">患者姓名 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.userName || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name"> 患者年龄 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
+            <span class="span-item-value">{{ medicalInfoList.userAge|| '-'  }}</span>
           </div>
         </div>
 
@@ -202,29 +202,29 @@
         <div class="div-up-content" >
           <div class="div-pro-line">
             <span class="span-item-name">性别 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.userSex||'-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name">临床诊断 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.diagnosis || '-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name"> 医生 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.commodityName|| '-'  }}</span>
+            <span class="span-item-value">{{ medicalInfoList.docName|| '-'  }}</span>
           </div>
         </div>
 
         <div class="div-up-content" >
           <div class="div-pro-line">
             <span class="span-item-name">执行科室 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.orderId||'-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.deptName||'-' }}</span>
           </div>
   
           <div class="div-pro-line">
             <span class="span-item-name">总计 :</span>
-            <span class="span-item-value">{{ orderDetailDataList.classifyName || '-' }}</span>
+            <span class="span-item-value">{{ medicalInfoList.payTotal || '-' }}</span>
           </div>
   
         </div>
@@ -276,27 +276,53 @@
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
             <span class="span-item-name">发货方式 :</span>
-            <span class="span-item-value">到院自提</span>
+            <span class="span-item-value">{{addressInfo?addressInfo.sendMethod:'-'}}</span>
           </div>
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
             <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo?addressInfo.address:'-'}}</span>
+          </div>
+
+          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
+            <span class="span-item-name" style="color:#1A1A1A"> 收件人姓名 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo?addressInfo.name:'-'}}</span>
+          </div>
+
+
+          <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
+            <span class="span-item-name" style="color:#1A1A1A"> 收件人电话 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">{{addressInfo?addressInfo.mobile:'-'}}</span>
           </div>
         </div>
+
+
+        <div v-if="expressInfos" style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
+          <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
+          <div class="line"></div>
   
-        <div style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
+          <div class="div-pro-line" style="margin-left:20px;width: 95%;" v-for="(item,index) in expressInfos" :key="index" :value="item" >
+            <span style="color:#4d4d4d;margin-left: 20px;" >物流公司 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressName||'-'}};</span>
+
+            <span style="color:#4d4d4d;" > 物流单号 :</span>
+            <span style="color:#1A1A1A;margin-left: 10px;">{{item.expressNo||'-'}}</span>
+          </div>
+         
+        </div>
+  
+        <div v-if="!expressInfos" style="margin-top: 20px; height: 200px !important;width: 150% !important;" class="half-kuang">
           <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">物流信息</div>
           <div class="line"></div>
   
           <div class="div-pro-line" style="margin-left:20px;width: 40%;">
-            <span class="span-item-name">发货方式 :</span>
-            <span class="span-item-value">到院自提</span>
+            <span class="span-item-name">物流公司 :</span>
+            <span class="span-item-value">-</span>
           </div>
   
           <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
-            <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-            <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+            <span class="span-item-name" style="color:#1A1A1A"> 物流单号 :</span>
+            <span class="span-item-value" style="width:65%;color:#1A1A1A">-</span>
           </div>
         </div>
       </div>
@@ -349,6 +375,9 @@
         orderDetailDataList: [],
         goodsItemsData: [], //产品清单数据
         rightItemsData: [], //权益清单数据
+        medicalInfoList:[], //处方信息
+        addressInfo:{},
+        expressInfos:[],
         visible_model: false,
         dealResultTitle: '订单取消',
         confirmLoading: false,
@@ -359,33 +388,33 @@
         goodsItemsDataColumns: [
           {
             title: '药品名称',
-            dataIndex: 'rightsItemName',
+            dataIndex: 'drugName',
           },
           {
             title: '规格',
-            dataIndex: 'ruleInfo',
+            dataIndex: 'drugSpec',
           },
           {
             title: '数量',
-            dataIndex: 'equityQuantity',
+            dataIndex: 'num',
           },
           {
             title: '价格',
-            dataIndex: 'unit',
+            dataIndex: 'price',
           },
           {
             title: '用法',
-            dataIndex: 'saleAmount',
+            dataIndex: 'drugUsemethod',
             align:'right'
           },
           {
             title: '用量',
-            dataIndex: 'effectiveStartTime',
+            dataIndex: 'useNum',
             align:'center'
           },
           {
             title: '频次',
-            dataIndex: 'effectiveEndTime',
+            dataIndex: 'useFrequency',
             align:'center'
           },
         ],
@@ -469,12 +498,12 @@
         this.orderDetailDataList={}
         this.orderId = orderId
         this.getOrderDetailOut(this.orderId)
-        this.getOrderDetailChufangOut(this.orderId)
+        // this.getOrderDetailChufangOut(this.orderId)
       },
   
       handleOk() {
         this.getOrderDetailOut(this.orderId)
-        this.getOrderDetailChufangOut(this.orderId)
+        // this.getOrderDetailChufangOut(this.orderId)
       },
   
       getOrderDetailOut(orderID) {
@@ -485,7 +514,11 @@
             this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
             this.payMode = this.orderDetailDataList.payMode
             this.goodsItemsData = res.data.goodsItems
-            this.rightItemsData = res.data.rightItems
+            this.addressInfo = res.data.addressInfo
+            this.expressInfos = res.data.expressInfos
+            // this.rightItemsData = res.data.rightItems
+            this.getOrderDetailChufangOut(reponseDataList.outOrderNo)
+            this.getMedicalOrdersInfoOut(reponseDataList.outOrderNo)
           }
         }).finally((res) => {
             this.confirmLoading = false
@@ -496,15 +529,26 @@
           this.confirmLoading = true
           getMedicalChufangDetail(orderID).then((res) => {
           if (res.code == 0) {
-            // var reponseDataList = res.data
-            // this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
-            // this.payMode = this.orderDetailDataList.payMode
-            // this.goodsItemsData = res.data.goodsItems
-            // this.rightItemsData = res.data.rightItems
+            this.goodsItemsData = res.data
           }
         }).finally((res) => {
             this.confirmLoading = false
           })
+      },
+
+
+
+    //处方信息接口
+      getMedicalOrdersInfoOut(orderID){
+        this.confirmLoading = true
+          getMedicalOrdersInfo(orderID).then((res) => {
+          if (res.code == 0) {
+            this.medicalInfoList = res.data
+          }
+        }).finally((res) => {
+            this.confirmLoading = false
+          })
+
       },
 
 
@@ -548,6 +592,7 @@
   
       //按钮显示与隐藏
       showHide(value) {
+        return false
         if (value == 2 || value == 5 || value == 102||value == 103) {   //已完成 已取消  退款中 退款成功 不显示可操作的按钮
           return false
         } else {
@@ -762,7 +807,7 @@
   .half-kuang {
     height: 350px;
     margin-left: 20px;
-    margin-right: 25px;
+    margin-right: 30px;
     margin-top: -30px;
     background: #ffffff;
     border: 1px solid #e6e6e6;
