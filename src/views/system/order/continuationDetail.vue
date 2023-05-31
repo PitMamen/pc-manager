@@ -460,7 +460,8 @@ export default {
     },
 
     getType(value,canRefund) {
-      if (value == 2 || value == 101||canRefund) {
+      // if (value == 2 || value == 101||canRefund) {
+      if (canRefund) {
         return '申请退款'
       } else if (value == 1) {
         return '取消订单'
@@ -471,7 +472,8 @@ export default {
 
     //按钮显示与隐藏
     showHide(value,canRefund) {
-      if (value == 1 || value == 2 || value == 101||canRefund) {
+      // if (value == 1 || value == 2 || value == 101||canRefund) {
+      if (canRefund) {
         //已完成 已取消  退款中 退款成功 不显示可操作的按钮
         return true
       } else {
@@ -482,7 +484,8 @@ export default {
     //点击
     clickType(value,canRefund) {
       // return  //点击效果暂时不做
-      if (value == 101 || value == 2||canRefund) {
+      // if (value == 101 || value == 2||canRefund) {
+      if (canRefund) {
         //取消订单
         this.visible_model = true //显示 弹框
       } else {
