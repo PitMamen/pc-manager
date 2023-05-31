@@ -5,11 +5,11 @@
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
       <a-button
         :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
-        v-show="showHide(orderDetailDataList.status.value)"
-        @click="clickType(orderDetailDataList.status.value)"
+        v-show="showHide(orderDetailDataList.status.value,orderDetailDataList.canRefund)"
+        @click="clickType(orderDetailDataList.status.value,orderDetailDataList.canRefund)"
         style="margin-left: 15px"
         @ok="handleOk"
-        >{{ getType(orderDetailDataList.status.value) }}</a-button
+        >{{ getType(orderDetailDataList.status.value,orderDetailDataList.canRefund) }}</a-button
       >
 
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 45px">
@@ -459,8 +459,8 @@ export default {
       })
     },
 
-    getType(value) {
-      if (value == 2 || value == 101) {
+    getType(value,canRefund) {
+      if (value == 2 || value == 101||canRefund) {
         return '申请退款'
       } else if (value == 1) {
         return '取消订单'
@@ -470,8 +470,8 @@ export default {
     },
 
     //按钮显示与隐藏
-    showHide(value) {
-      if (value == 1 || value == 2 || value == 101) {
+    showHide(value,canRefund) {
+      if (value == 1 || value == 2 || value == 101||canRefund) {
         //已完成 已取消  退款中 退款成功 不显示可操作的按钮
         return true
       } else {
@@ -480,9 +480,9 @@ export default {
     },
 
     //点击
-    clickType(value) {
+    clickType(value,canRefund) {
       // return  //点击效果暂时不做
-      if (value == 101 || value == 2) {
+      if (value == 101 || value == 2||canRefund) {
         //取消订单
         this.visible_model = true //显示 弹框
       } else {
