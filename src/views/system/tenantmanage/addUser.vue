@@ -202,13 +202,13 @@
               v-model="checkData.expertInDisease"
               class="span-item-value"
               showCount
-              :maxLength="30"
+              :maxLength="300"
               style="height: 68px !important; width: 695px !important; display: inline-block"
               allow-clear
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/30</span>
+            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/300</span>
           </div>
           <div class="div-content" style="position: relative">
             <span class="span-item-name" style="text-align: left">详细介绍:</span>
@@ -218,13 +218,13 @@
               v-model="checkData.doctorBrief"
               class="span-item-value"
               showCount
-              :maxLength="100"
+              :maxLength="1000"
               style="height: 120px !important; width: 695px !important; display: inline-block"
               allow-clear
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count2">{{ checkData.doctorBrief?checkData.doctorBrief.length : 0 }}/100</span>
+            <span class="m-count2">{{ checkData.doctorBrief?checkData.doctorBrief.length : 0 }}/1000</span>
           </div>
         </div>
       </div>

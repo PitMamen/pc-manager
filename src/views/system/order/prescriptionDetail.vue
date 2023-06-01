@@ -184,7 +184,7 @@
         <div class="div-up-content" >
           <div class="div-pro-line">
             <span class="span-item-name">诊疗卡号 :</span>
-            <span class="span-item-value">{{ medicalInfoList.preNo||'-' }}</span>
+            <span class="span-item-value">{{ '-' }}</span>
           </div>
   
           <div class="div-pro-line">
