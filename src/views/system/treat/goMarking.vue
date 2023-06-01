@@ -13,47 +13,61 @@
     <!-- <a-card :bordered="false" class="sys-card" > -->
     <div class="big-kuang">
       <div class="top-content">
-        <div style="padding-top: 5px;">
-            <span style="font-weight: bold;padding-top: 5px; margin: 10px; margin-left: 18px !important;font-size: 14px;color: #1A1A1A;">患者信息</span>
+        <div style="padding-top: 5px">
+          <span
+            style="
+              font-weight: bold;
+              padding-top: 5px;
+              margin: 10px;
+              margin-left: 18px !important;
+              font-size: 14px;
+              color: #1a1a1a;
+            "
+            >患者信息</span
+          >
         </div>
       </div>
 
       <div class="line"></div>
 
       <div class="content1">
-
-        <div class="div-up-content" v-for="(item, index) in orderDetailDataList"
-          :key="index"
-          :value="item">
-        <div class="div-pro-line" >
-          <span class="span-item-name">{{ item.fieldComment }}:</span>
-          <span class="span-item-value">{{ item.fieldValue || '-' }}</span>
+        <div class="div-up-content" v-for="(item, index) in orderDetailDataList" :key="index" :value="item">
+          <div class="div-pro-line">
+            <div class="span-item-name">{{ item.fieldComment }}:</div>
+            <div :title="item.fieldValue || '-'" class="span-item-value">{{ item.fieldValue || '-' }}</div>
+          </div>
         </div>
-      </div>
-
       </div>
     </div>
 
     <div class="big-kuang" style="margin-top: 30px">
-        <div class="top-content">
-        <div style="padding-top: 5px;">
-            <span style="font-weight: bold;padding-top: 5px; margin: 10px; margin-left: 18px !important;font-size: 14px;color: #1A1A1A;">备注</span>
+      <div class="top-content">
+        <div style="padding-top: 5px">
+          <span
+            style="
+              font-weight: bold;
+              padding-top: 5px;
+              margin: 10px;
+              margin-left: 18px !important;
+              font-size: 14px;
+              color: #1a1a1a;
+            "
+            >备注</span
+          >
         </div>
       </div>
       <div class="line"></div>
 
       <div class="flag-content" style="margin-top: 20px; margin-bottom: 20px">
-          <span class="span-item-name" style="margin-left: 10px;font-size: 12px;color: #1A1A1A;">患者备注 :</span>
-          <a-input
-            style="width: 90%;margin-top: -4px;margin-left: 5px;display: inline-block"
-            v-model="specFlag"
-            class="span-item-value"
-            allow-clear
-            placeholder="请输入患者标记 "
-          />
-        <div >
-        
-        </div>
+        <span class="span-item-name" style="margin-left: 10px; font-size: 12px; color: #1a1a1a">患者备注 :</span>
+        <a-input
+          style="width: 90%; margin-top: -4px; margin-left: 5px; display: inline-block"
+          v-model="specFlag"
+          class="span-item-value"
+          allow-clear
+          placeholder="请输入患者标记 "
+        />
+        <div></div>
       </div>
     </div>
 
@@ -62,10 +76,7 @@
 </template>
     
     <script>
-import {
-  getPatientInfoCon,
-  updatePatientSpecFlag,
-} from '@/api/modular/system/posManage'
+import { getPatientInfoCon, updatePatientSpecFlag } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -87,12 +98,11 @@ export default {
       confirmLoading: false,
       payMode: '',
       visible: false,
-      specFlag:"",//标记
+      specFlag: '', //标记
     }
   },
 
-  created() {
-  },
+  created() {},
 
   methods: {
     moment,
@@ -101,42 +111,40 @@ export default {
       this.visible = true
       this.orderDetailDataList = {}
       this.record = record
-      this.specFlag = ""
+      this.specFlag = ''
       this.followPlanPhonePatientInfoOut(this.record.id)
     },
 
     followPlanPhonePatientInfoOut(id) {
-        getPatientInfoCon(id).then((res) => {
+      getPatientInfoCon(id).then((res) => {
         if (res.code === 0) {
           this.orderDetailDataList = res.data
           this.orderDetailDataList.forEach((item, index) => {
-            if(item.tableField=="sex"){
-                this.$set(item, 'fieldValue', item.fieldValue==1?"男":"女")
+            if (item.tableField == 'sex') {
+              this.$set(item, 'fieldValue', item.fieldValue == 1 ? '男' : '女')
             }
-            })
+          })
         } else {
           this.$message.error(res.message)
         }
       })
     },
 
-    handleOk() {
-    },
+    handleOk() {},
 
     getOrderDetailOut() {
       this.confirmLoading = true
       var requestData = {
-        id:this.record.id,
-        specFlag:this.specFlag,
+        id: this.record.id,
+        specFlag: this.specFlag,
       }
       updatePatientSpecFlag(requestData)
         .then((res) => {
           if (res.code == 0) {
-             this.$message.success("操作成功!")
-             this.visible = false
-             this.$emit('ok')
+            this.$message.success('操作成功!')
+            this.visible = false
+            this.$emit('ok')
           }
-
         })
         .finally((res) => {
           this.confirmLoading = false
@@ -146,7 +154,7 @@ export default {
     //提交取消订单
     handleComf() {
       //请求接口
-     this.getOrderDetailOut()
+      this.getOrderDetailOut()
     },
 
     //取消
@@ -217,12 +225,12 @@ export default {
   border: 1px solid #e6e6e6;
   padding-bottom: 20px;
 
-  .top-content{
+  .top-content {
     width: 100%;
     height: 32px;
-    background: #F2F2F2;
+    background: #f2f2f2;
     justify-items: center;
-}
+  }
 
   .line {
     width: 100%;
@@ -259,24 +267,20 @@ export default {
     }
   }
 
-
-
-  .flag-content{
+  .flag-content {
     width: 100%;
     display: flex;
     padding-left: 8px;
     flex-direction: row;
   }
 
-
-   .content1{
+  .content1 {
     width: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-   }
-
+  }
 
   .div-up-content {
     width: 30%;
@@ -306,16 +310,20 @@ export default {
     }
     .span-item-value {
       // width: 38%;
+      max-width: 200px;
       color: #333;
       text-align: left;
       padding-left: 8px;
       font-size: 12px;
-      display: inline-block;
 
       //限制一行
-      //   overflow: hidden; //溢出隐藏
-      text-overflow: ellipsis; //超出省略号显示
-      white-space: nowrap; //文字不换行
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-box-orient: vertical;
+      white-space: nowrap;
+      position: relative;
+      top: 4px;
+      // display: -webkit-box;
     }
   }
 }

@@ -264,7 +264,7 @@ export default {
         {
           title: '订单分类',
           dataIndex: 'orderTypeDesc',
-          width: 100,
+          width: 120,
         },
         {
           title: '用户姓名',
