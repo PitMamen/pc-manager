@@ -310,7 +310,7 @@ export default {
     }
     .span-item-value {
       // width: 38%;
-      max-width: 200px;
+     max-width: 200px;
       color: #333;
       text-align: left;
       padding-left: 8px;
@@ -321,8 +321,8 @@ export default {
       text-overflow: ellipsis;
       -webkit-box-orient: vertical;
       white-space: nowrap;
-      position: relative;
-      top: 4px;
+ position: relative;
+ top: 4px;
       // display: -webkit-box;
     }
   }
