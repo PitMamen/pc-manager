@@ -244,7 +244,10 @@ export default {
       ordertypeList: [
         { code: 'consultOrder', value: '咨询订单' },
         { code: 'srvPackOrder', value: '专科服务' },
+        { code: 'appPreRegister', value: '复诊续方' },
         { code: 'youzanOrder', value: '商城订单' },
+        { code: 'consultOrderPrescription', value: '在线咨询处方' },
+        { code: 'appPrePrescription', value: '本院复诊处方' },
       ],
 
       queryParamsTemp: {},

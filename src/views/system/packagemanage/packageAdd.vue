@@ -109,7 +109,7 @@
               v-model="packageData.limitPurchaseTimes"
               type="number"
               :min="1"
-              style="display: inline-block; width: 148px; margin-left: 10px; margin-top: -3px"
+              style="display: inline-block; width: 200px; margin-left: 10px; margin-top: -3px"
               oninput="if(value<=1)value=1"
             />
             <div style="margin-left: 10px">次</div>

@@ -279,11 +279,11 @@ export default {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    // justify-content: space-between;
   }
 
   .div-up-content {
-    width: 30%;
+    width: 33%;
     display: flex;
     padding-left: 8px;
     flex-direction: row;
@@ -310,7 +310,7 @@ export default {
     }
     .span-item-value {
       // width: 38%;
-     max-width: 200px;
+     max-width: 270px;
       color: #333;
       text-align: left;
       padding-left: 8px;

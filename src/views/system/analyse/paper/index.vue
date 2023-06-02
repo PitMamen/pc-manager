@@ -599,13 +599,12 @@ button {
     width: 221px;
     height: 100%;
     height: calc(100vh - 151px);
-    padding-top: 15px;
-    border: 1px solid #e6e6e6;
+    // border: 1px solid #e6e6e6;
     .search {
       padding: 0px 14px;
     }
     .list {
-      height: calc(100% - 28px);
+      height: calc(100% - 0px);
       padding: 0px 14px;
       overflow-y: auto;
       .item {
@@ -621,7 +620,7 @@ button {
         overflow: hidden;
         border-bottom: 1px solid #e6e6e6;
         &:last-child {
-          border-bottom: none;
+          // border-bottom: none;
         }
         &.active {
           color: #409eff;

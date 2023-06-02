@@ -5,11 +5,11 @@
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
       <a-button
         :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
-        v-show="showHide(orderDetailDataList.status.value,orderDetailDataList.canRefund)"
-        @click="clickType(orderDetailDataList.status.value,orderDetailDataList.canRefund)"
+        v-show="showHide(orderDetailDataList.status.value, orderDetailDataList.canRefund)"
+        @click="clickType(orderDetailDataList.status.value, orderDetailDataList.canRefund)"
         style="margin-left: 15px"
         @ok="handleOk"
-        >{{ getType(orderDetailDataList.status.value,orderDetailDataList.canRefund) }}</a-button
+        >{{ getType(orderDetailDataList.status.value, orderDetailDataList.canRefund) }}</a-button
       >
 
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 45px">
@@ -237,9 +237,9 @@
     <!-- </div> -->
 
     <a-modal
-      class="ant-modal"
+      :width="440"
       :confirmLoading="smallLoading"
-      style="margin-top: 90px; width: 488px !important; height: 218px"
+      style="margin-top: 90px; height: 218px !important"
       :title="dealResultTitle"
       :visible="visible_model"
       @ok="handleComf"
@@ -249,11 +249,10 @@
         <a-button type="primary" @click="handleComf">确定</a-button>
         <a-button @click="handleCancelUpdPwd">关闭</a-button>
       </template>
-      <div class="display-item" style="margin-left: 20%; margin-top: 40px; margin-bottom: 40px">
+      <div class="display-item" style="margin-left: 10%; margin-top: 20px; margin-bottom: 20px">
         <span style="margin-top: 10px">
           本次退款将退还全部订单金额:{{ orderDetailDataList.payTotal }}元,请确认是否进行退款!</span
         >
-        <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
       </div>
     </a-modal>
 
@@ -459,7 +458,7 @@ export default {
       })
     },
 
-    getType(value,canRefund) {
+    getType(value, canRefund) {
       // if (value == 2 || value == 101||canRefund) {
       if (canRefund) {
         return '申请退款'
@@ -471,7 +470,7 @@ export default {
     },
 
     //按钮显示与隐藏
-    showHide(value,canRefund) {
+    showHide(value, canRefund) {
       // if (value == 1 || value == 2 || value == 101||canRefund) {
       if (canRefund) {
         //已完成 已取消  退款中 退款成功 不显示可操作的按钮
@@ -482,7 +481,7 @@ export default {
     },
 
     //点击
-    clickType(value,canRefund) {
+    clickType(value, canRefund) {
       // return  //点击效果暂时不做
       // if (value == 101 || value == 2||canRefund) {
       if (canRefund) {
@@ -540,7 +539,10 @@ export default {
   
   
   
-  <style lang="less" scoped>
+  <!-- <style lang="less" scoped>
+
+
+
 /deep/.ant-table-small {
   border-radius: 2px;
   border-bottom: 1px #e6e6e6 solid !important;
@@ -549,12 +551,13 @@ export default {
 /deep/.ant-modal-root {
   /deep/.ant-modal {
     margin-top: 90px;
-    width: 488px !important;
+    width: 440px !important;
     height: 218px;
   }
 
   /deep/.ant-modal-content {
-    height: 318px;
+    width: 440px !important;
+    height: 218px !important;
   }
 
   /deep/.ant-modal-body {
@@ -563,21 +566,26 @@ export default {
     margin-bottom: 30px;
   }
 }
-</style>
+</style>  -->
   
     
     <style lang="less" scoped>
+/deep/.ant-modal-content {
+  width: 440px !important;
+  height: 218px !important;
+}
+
 //去掉 高亮
 
 .a-table-one /deep/ .ant-table-body {
   overflow-y: auto !important;
 }
 
-/deep/.ant-modal-body {
-  margin-left: 41% !important;
-  margin-top: 43px;
-  margin-bottom: 30px;
-}
+// /deep/.ant-modal-body {
+//   margin-left: 41% !important;
+//   margin-top: 43px;
+//   margin-bottom: 30px;
+// }
 
 .topButton {
   margin: 10px;
@@ -638,6 +646,12 @@ export default {
     .global-search.ant-select {
       width: 90% !important;
     }
+  }
+
+  /deep/.ant-modal {
+    margin-top: 90px;
+    width: 440px !important;
+    height: 218px;
   }
 
   .div-up-content {

@@ -1039,14 +1039,14 @@ export default {
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 12.5%;
+      width: 14.5%;
       overflow: hidden;
 
       .left-control {
         display: flex;
         // padding: 20px 0 20px 20px;
-        padding: 10px;
-        border: 1px solid #e6e6e6;
+        // padding: 10px;
+        // border: 1px solid #e6e6e6;
         flex-direction: column;
         // width: 100%;
         // // height: 100%;
@@ -1085,7 +1085,8 @@ export default {
       }
 
       .div-wrap-control {
-        max-height: 420px;
+        // max-height: 420px;
+        margin-bottom: 10px;
         overflow-y: auto !important;
         .checked {
           color: #1890ff !important;
@@ -1148,11 +1149,11 @@ export default {
     }
 
     .card-right-control {
-      overflow: hidden;
+      // overflow: hidden;
       // border-left: #eee solid 1px;
-      border: #eee solid 1px;
+      // border: #eee solid 1px;
       float: right;
-      width: 86%;
+      width: 84%;
 
       /deep/ .ant-card-body {
         padding: 0px 20px !important;

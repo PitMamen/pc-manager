@@ -66,7 +66,7 @@
             </a-tree-select>
           </div>
 
-          <div class="div-pro-line" style="margin-left: -25px !important">
+          <div class="div-pro-line" style="margin-left: -27px !important">
             <a-checkbox
               @change="changeData"
               :checked="hasData"
@@ -80,7 +80,7 @@
               class="span-item-value"
               v-model="packageData.pkgValidNum"
               :maxLength="30"
-              style="display: inline-block; width: 42%; margin-left: -10px"
+              style="display: inline-block; width: 42%; margin-left: -6px"
               allow-clear
               placeholder="请输入 "
             />
@@ -118,7 +118,7 @@
               v-model="packageData.limitPurchaseTimes"
               type="number"
               :min="1"
-              style="display: inline-block; width: 148px; margin-left: 10px; margin-top: -3px"
+              style="display: inline-block; width: 200px; margin-left: 10px; margin-top: -3px"
               oninput="if(value<=1)value=1"
             />
             <div style="margin-left: 10px">次</div>
