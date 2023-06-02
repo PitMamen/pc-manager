@@ -1,7 +1,12 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs  v-model="keyindex" @change="chanage" style="margin-top:-20px;"   >
-      <a-tab-pane class="ant-tabs-tab-active"  v-for="(itemTab, indexTab) in tabDatas" :tab="itemTab.metaName" :key="itemTab.databaseTableName" >
+    <a-tabs v-model="keyindex" @change="chanage" style="margin-top: -20px">
+      <a-tab-pane
+        class="ant-tabs-tab-active"
+        v-for="(itemTab, indexTab) in tabDatas"
+        :tab="itemTab.metaName"
+        :key="itemTab.databaseTableName"
+      >
         <div style="height: 1px"></div>
       </a-tab-pane>
     </a-tabs>
@@ -31,8 +36,8 @@
             item.departmentName
           }}</a-select-option>
         </a-select> -->
-        <a-select       
-        style="min-width: 180px; height: 28px;"
+        <a-select
+          style="min-width: 180px; height: 28px"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -46,7 +51,7 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id" >{{
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
             item.department_name
           }}</a-select-option>
         </a-select>
@@ -74,8 +79,33 @@
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="refresh">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px" @click="reset()">重置</a-button>
         </span>
+      </div>
+
+      <div class="action-row" style="display: flex; flex-direction: row; flex-wrap: wrap; margin-left: auto">
+        <!-- <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
+        <!-- <div class="clearfix"> -->
+        <!-- @preview="handlePreview" -->
+        <!--               list-type="picture-card"  accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" --> 
+        <a-upload
+          :action="actionUrl"
+          :multiple="false"
+          :headers="headers"
+          :data="uploadData"
+          list-type="text"
+          :file-list="fileList"
+          accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          @change="uploadModal"
+        >
+          <div style="margin-right: 5px" v-if="fileList.length < 1">
+            <a-button type="primary">
+              <a-icon type="upload" />
+              上传
+            </a-button>
+          </div>
+        </a-upload>
+        <a-button type="primary" icon="download" ghost @click="downLoadModalOut()">下载模板</a-button>
       </div>
     </div>
     <!-- :columns="columns" -->
@@ -95,7 +125,7 @@
 
       <span slot="action" slot-scope="text, record">
         <a @click="goPlan(record)"><a-icon type="solution"></a-icon>随访</a>
-        <a-divider style="margin-left:5px;margin-right:5px" type="vertical" />
+        <a-divider style="margin-left: 5px; margin-right: 5px" type="vertical" />
         <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
       </span>
     </s-table>
@@ -116,9 +146,11 @@ import {
   qryMetaConfigureDetailFilter,
   qryMetaByPage,
   qryMetaConfigure,
+  importPatientData,
+  downloadModel,
 } from '@/api/modular/system/posManage'
-
-import { TRUE_USER } from '@/store/mutation-types'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import { currentEnv } from '@/utils/util'
 import moment from 'moment'
 import Vue from 'vue'
 export default {
@@ -130,6 +162,9 @@ export default {
   },
   data() {
     return {
+      actionUrl: '/api/follow-api/followMetaConfigure/importPatientData',
+      uploadData: { file: 1 },
+      fileList: [],
       fetching: false,
       tableClumns: [],
       chooseArrOrigin: [],
@@ -170,6 +205,9 @@ export default {
       confirmLoading: false,
       createValue: [],
       form: this.$form.createForm(this),
+      headers: {
+        Authorization: '',
+      },
 
       // 表头
       columns: [
@@ -295,7 +333,7 @@ export default {
 
                 if (!item.success_total_task) {
                   success_total = 0
-                }else{
+                } else {
                   success_total = item.success_total_task
                 }
 
@@ -319,6 +357,7 @@ export default {
     var requestDataCon = {
       qryFlag: 1,
     }
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
 
     // 获取table
     qryMetaConfigure(requestDataCon).then((res) => {
@@ -336,38 +375,84 @@ export default {
     })
 
     this.user = Vue.ls.get(TRUE_USER)
-    //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    // if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-    //   getDepts().then((res) => {
-    //     if (res.code == 0) {
-    //       this.originData = res.data
-    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-    //       this.$refs.table.refresh(true)
-    //     }
-    //   })
-    // } else {
-    //   getDeptsPersonal().then((res) => {
-    //     if (res.code == 0) {
-    //       this.originData = res.data
-    //       this.originData.unshift({ departmentName: '全部', departmentId: -1 })
-    //       this.$refs.table.refresh(true)
-    //     }
-    //   })
-    // }
     this.getDepartmentSelectList(undefined)
   },
   methods: {
+
+
+    // beforeUpload(file) {
+    //   console.log("HHHH",file)
+    //   const isJpgOrPng = file.type === 'xlsx'||file.type ==='xls'
+    //   if (!isJpgOrPng) {
+    //     this.$message.error('请选择正确的文件格式！')
+    //     return false
+    //   }
+    //   return true
+    // },
+
+   //下载模板
+   downLoadModalOut() {
+      let url
+      if (currentEnv == 'test') {
+        //测试环境
+        url = 'http://192.168.1.121:8090/template.xlsx'
+      } else if (currentEnv == 'show') {
+        //演示环境
+        url = 'http://172.31.160.11:8124/template.xlsx'
+      } else if (currentEnv == 'online') {
+        //线上环境
+        url = 'http://manager.mclouds.org.cn/template.xlsx'
+      }
+
+      this.downloadUrl(url, '')
+    },
+
+    downloadUrl(url, fileName = '未知文件') {
+      const el = document.createElement('a')
+      el.style.display = 'none'
+      // el.setAttribute('target', '_blank')
+      /**
+       * download的属性是HTML5新增的属性
+       * href属性的地址必须是非跨域的地址，如果引用的是第三方的网站或者说是前后端分离的项目(调用后台的接口)，这时download就会不起作用。
+       * 此时，如果是下载浏览器无法解析的文件，例如.exe,.xlsx..那么浏览器会自动下载，但是如果使用浏览器可以解析的文件，比如.txt,.png,.pdf....浏览器就会采取预览模式
+       * 所以，对于.txt,.png,.pdf等的预览功能我们就可以直接不设置download属性(前提是后端响应头的Content-Type: application/octet-stream，如果为application/pdf浏览器则会判断文件为 pdf ，自动执行预览的策略)
+       */
+      fileName && el.setAttribute('download', fileName)
+      el.href = url
+      console.log(el)
+      document.body.appendChild(el)
+      el.click()
+      document.body.removeChild(el)
+    },
+
+    //上传
+    uploadModal(changeObj) {
+      console.log('fff', changeObj)
+      if (changeObj.file.status == 'done') {
+        changeObj.fileList.pop()
+        this.fileList = changeObj.fileList
+        this.$message.success(changeObj.file.response.message)
+        // this.$message.success('上传成功!')
+      } else {
+        // this.$message.error('上传失败!')
+        this.fileList = changeObj.fileList
+        // if (this.fileList[0].response && this.fileList[0].response.data) {
+        //   this.versionData = Object.assign(this.versionData, this.fileList[0].response.data)
+        // }
+      }
+    },
+
     refresh() {
       this.$refs.table.refresh(true)
     },
-   //获取管理的科室 可首拼
-   getDepartmentSelectList(departmentName) {
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
-          if(departmentName === undefined){
+          if (departmentName === undefined) {
             res.data.records.unshift({ department_name: '全部', department_id: -1 })
           }
           this.originData = res.data.records
@@ -450,6 +535,26 @@ export default {
               for (let index = 0; index < detailData.length; index++) {
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
+                    if (detailData[index].tableField == 'ssmc') {
+                      console.log('HAHAHHAHAH')
+                      this.tableClumns.push({
+                        title: detailData[index].fieldComment,
+                        dataIndex: detailData[index].tableField,
+                        width: 180,
+                        ellipsis: true,
+                        onCell: () => {
+                          return {
+                            style: {
+                              overflow: 'hidden',
+
+                              whiteSpace: 'nowrop',
+                              textOverflow: 'ellipsis',
+                            },
+                          }
+                        },
+                      })
+                      continue
+                    }
                     this.tableClumns.push({
                       title: detailData[index].fieldComment,
                       dataIndex: detailData[index].tableField,
@@ -458,10 +563,10 @@ export default {
                 }
               }
 
-                 /**
+              /**
                * 添加2个固定的表头  账号信息  和 随访任务
                */
-               this.tableClumns.push({
+              this.tableClumns.push({
                 width: 100,
                 title: '账号信息',
                 dataIndex: 'openid_flag',
@@ -476,8 +581,6 @@ export default {
                 fixed: 'right',
                 scopedSlots: { customRender: 'action' },
               })
-
-           
             }
           }
           this.refresh()
@@ -524,7 +627,6 @@ export default {
 }
 </script>
   <style lang="less" scoped>
-  
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -540,9 +642,10 @@ export default {
 }
 
 /deep/.ant-tabs-tab-active {
- background:#EFF7FF;
+  background: #eff7ff;
 }
 .table-page-search-wrapper {
+  display: flex;
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
@@ -575,12 +678,12 @@ export default {
   <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
-  height: calc(100% - 20px);   //60PX
+  height: calc(100% - 20px); //60PX
   /deep/ .ant-card-body {
     height: 100%;
     padding-bottom: 10px !important;
     .table-wrapper {
-      height: calc(100% - 95px);  //78PX
+      height: calc(100% - 95px); //78PX
       .ant-table-wrapper {
         height: 100%;
         .ant-spin-nested-loading {
