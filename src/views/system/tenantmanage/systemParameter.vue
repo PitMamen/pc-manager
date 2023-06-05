@@ -147,7 +147,8 @@ export default {
         {
           title: '参数编码',
           dataIndex: 'code',
-          width: 180,
+          width: 280,
+          ellipsis: true,
         },
         {
           title: '参数值',
