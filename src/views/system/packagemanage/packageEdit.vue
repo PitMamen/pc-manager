@@ -98,32 +98,32 @@
             </a-select>
           </div>
 
-          <!-- <div class="div-pro-line"></div> -->
         </div>
-
-        <div class="div-up-content">
-          <div style="display: flex; flex-direction: row; margin-top: 1%">
+          <div class="div-pro-line">
+          <div style="display: flex; flex-direction: row; margin-top: 1%;margin-left:4px">
             <a-checkbox
               @change="changeDaoliu"
               :disabled="disabledDaoliu"
               :checked="daoliubao"
               class="span-item-name"
             ></a-checkbox>
-            <div style="margin-left: 3px">导流包:</div>
-            <div style="margin-left: 20px">限购:</div>
+            <div style="margin-left: 3px; color: #000;">导流包 :</div>
+            <div style="margin-left: 15px; color: #000;">限购:</div>
 
             <a-InputNumber
               :disabled="isDisabled"
-              class="span-item-value"
+             
               v-model="packageData.limitPurchaseTimes"
               type="number"
               :min="1"
-              style="display: inline-block; width: 200px; margin-left: 10px; margin-top: -3px"
+              style="display: inline-block; width: 35%; margin-left: 5px; margin-top: -3px"
               oninput="if(value<=1)value=1"
             />
-            <div style="margin-left: 10px">次</div>
-          </div>
+            <div style="margin-left: 10px; color: #000;">次</div>
         </div>
+
+        </div>
+        
       </div>
 
       <div class="div-pro-middle">
