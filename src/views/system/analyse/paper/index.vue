@@ -557,6 +557,7 @@ button {
   padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
+    margin-top: 10px;
     display: inline-block;
     vertical-align: middle;
   }
@@ -564,6 +565,7 @@ button {
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
+    margin-top: 10px;
     .name {
       margin-right: 10px;
     }
@@ -645,6 +647,7 @@ button {
     }
   }
   .right {
+    margin-top: -10px;
     flex: 1;
     padding-left: 14px;
     .top {

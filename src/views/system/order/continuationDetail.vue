@@ -498,7 +498,7 @@ export default {
       //请求接口
       this.smallLoading = true
 
-      var refundItemsData = []
+      // var refundItemsData = []
       //复诊续方退款的 不需要 传权益参数
       // for (let index = 0; index < this.cancelItemsData.length; index++) {
       //   refundItemsData.push({

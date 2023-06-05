@@ -85,8 +85,7 @@
     <s-table
       class="table-hover-hidden"
       :showPagination="false"
-      style="overflow-y: auto; width: 101%"
-      :scroll="{ y: 700, x: 0 }"
+    
       bordered
       ref="tableStat"
       size="default"
@@ -217,6 +216,7 @@ export default {
           dataIndex: 'planName',
           scopedSlots: { customRender: 'action', title: 'titleNNN' },
           customRender: renderContent,
+          width:200,
         },
         {
           title: '随访方式',
