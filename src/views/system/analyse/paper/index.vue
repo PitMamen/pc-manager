@@ -577,13 +577,13 @@ button {
 }
 </style>
 <style lang="less" scoped>
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-  }
-}
+// .ant-card {
+  // height: calc(100% - 20px);
+  // /deep/ .ant-card-body {
+  //   height: 100%;
+  //   padding-bottom: 10px !important;
+  // }
+// }
 </style>
 
 <style lang="less" scoped>
@@ -616,7 +616,6 @@ button {
         border: 1px solid #dfe3e5;
         font-size: 12px;
         font-weight: 400;
-        line-height: 32px;
         color: #4d4d4d;
         cursor: pointer;
         overflow: hidden;
@@ -626,6 +625,7 @@ button {
         }
         &.active {
           color: #409eff;
+          border: 1px solid #409eff;
           .icon {
             display: block;
           }

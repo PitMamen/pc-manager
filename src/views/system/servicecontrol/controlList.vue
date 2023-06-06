@@ -97,18 +97,20 @@
             <a-range-picker style="width: 185px" :value="createValueCheck" @change="onChangeCheck" />
           </div>
 
-
           <div class="search-row">
             <span class="name">问卷名称:</span>
-            <a-select    @change="onselectQuestion" allow-clear v-model="queryParams.messageContentId" placeholder="请选择问卷" style="width: 120px">
+            <a-select
+              @change="onselectQuestion"
+              allow-clear
+              v-model="queryParams.messageContentId"
+              placeholder="请选择问卷"
+              style="width: 120px"
+            >
               <a-select-option v-for="(item, index) in quesData" :key="index" :value="item.questionnaireId">{{
                 item.questionnaireName
               }}</a-select-option>
             </a-select>
           </div>
-
-
-
 
           <div class="search-row" v-if="queryParams.type == 1">
             <span class="name">患者查找:</span>
@@ -136,13 +138,12 @@
         <!-- </div> -->
         <div class="div-down">
           <div class="div-service-left-control">
-            <div class="left-control">
-
+            <div class="left-control" style="height: 400px">
               <div class="div-wrap-control" style="margin-top: 2%">
                 <div v-if="quesDataTemp && quesDataTemp.length > 0">
                   <div
                     class="div-part"
-                    :class="{ checked: item.isChecked }"
+                    :class="{ 'checked': item.isChecked }"
                     v-for="(item, index) in quesDataTemp"
                     @click="onItemClick(item, index)"
                     :value="item.departmentName"
@@ -158,11 +159,11 @@
 
                     <div class="div-rate">
                       <span style="color: #999999">抽查率:</span>
-                      <span style="text-align: center; margin-left: 5px">
+                      <span style="text-align: center; margin-left: 5px; color: #1890ff">
                         {{ item.checkPercentage }}
                       </span>
                       <span style="color: #999999; margin-left: 5px">合格率:</span>
-                      <span style="margin-left: 5px; text-align: center">
+                      <span style="margin-left: 5px; text-align: center; color: #1890ff">
                         {{ item.passCheckPercentage }}
                       </span>
                     </div>
@@ -623,7 +624,6 @@ export default {
   },
 
   methods: {
-
     //筛选条件 问卷名称选择时 左侧卡片需要改变  同时刷新右边列表
     onselectQuestion(value) {
       let itemFind = this.quesData.find((item) => item.questionnaireId == value)
@@ -634,12 +634,7 @@ export default {
         this.quesDataTemp = this.quesData
       }
       this.$refs.table.refresh(true)
-      
     },
-
-
-
-
 
     onRadioClick(type) {
       this.queryParams.type = type
@@ -1088,9 +1083,9 @@ export default {
         // max-height: 420px;
         margin-bottom: 10px;
         overflow-y: auto !important;
-        .checked {
-          color: #1890ff !important;
-        }
+        // .checked {
+        //   color: #1890ff !important;
+        // }
 
         .no-data {
           height: 300px;
@@ -1099,6 +1094,12 @@ export default {
           align-items: center;
           justify-content: center;
         }
+
+
+        .checked {
+            color: #1890ff !important;
+            border: 1px solid #1890ff !important;
+          }
 
         .div-part {
           padding: 8px;
@@ -1112,11 +1113,7 @@ export default {
           // padding-left: 5%;
           border-bottom: #e6e6e6 1px solid;
 
-          // /deep/&:checked {
-          //   color: #1890ff !important;
-          //   background: #69c07d;
-          // }
-
+        
           &:hover {
             cursor: pointer;
           }
