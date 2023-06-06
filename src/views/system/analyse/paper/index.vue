@@ -610,7 +610,7 @@ button {
       padding: 0px 14px;
       overflow-y: auto;
       .item {
-        margin-bottom: 5px;
+        margin-bottom: 8px;
         padding: 8px;
         background: rgba(0, 1, 3, 0);
         border: 1px solid #dfe3e5;
@@ -620,12 +620,12 @@ button {
         cursor: pointer;
         overflow: hidden;
         border-bottom: 1px solid #e6e6e6;
-        &:last-child {
-          // border-bottom: none;
-        }
         &.active {
-          color: #409eff;
           border: 1px solid #409eff;
+          box-shadow: 0px 0px 4px 1px #409eff !important;
+
+          
+          
           .icon {
             display: block;
           }

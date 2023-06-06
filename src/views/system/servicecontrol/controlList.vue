@@ -1097,8 +1097,9 @@ export default {
 
 
         .checked {
-            color: #1890ff !important;
+            // color: #1890ff !important;
             border: 1px solid #1890ff !important;
+            box-shadow: 0px 0px 4px 1px #409eff !important;
           }
 
         .div-part {
@@ -1109,7 +1110,7 @@ export default {
           width: 95%;
           display: flex;
           flex-direction: column;
-          margin-bottom: 5px;
+          margin-bottom: 8px;
           // padding-left: 5%;
           border-bottom: #e6e6e6 1px solid;
 
