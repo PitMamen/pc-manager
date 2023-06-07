@@ -150,7 +150,7 @@ export default {
         
         },
         {
-          title: 'His编码',
+          title: '科室编码',
           dataIndex: 'department_id',
          
           ellipsis: true,
