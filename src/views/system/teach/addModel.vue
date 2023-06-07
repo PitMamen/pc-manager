@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="articleId==-1 ? '新增文章' : '修改文章'"
+    :title="articleId == -1 ? '新增文章' : '修改文章'"
     :width="800"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -36,9 +36,19 @@
           <div class="div-line-wrap">
             <div class="div-total-one">
               <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
-              <a-select v-model="checkData.departmentId" allow-clear placeholder="请选择科室" @change="handleChangeDept">
-                <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.departmentId">{{
-                  item.departmentName
+              <a-select
+                :filter-option="false"
+                v-model="checkData.departmentId"
+                allow-clear
+                placeholder="请选择科室"
+                show-search
+                :not-found-content="fetching ? undefined : null"
+                @change="onDepartmentSelectChange"
+                @search="onDepartmentSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+                  item.department_name
                 }}</a-select-option>
               </a-select>
             </div>
@@ -70,18 +80,16 @@
               <a-input
                 v-model="checkData.brief"
                 class="span-item-value"
-                style="display: inline-block;width: 690px;"
+                style="display: inline-block; width: 690px"
                 allow-clear
                 placeholder="请输入摘要说明 "
               />
             </div>
           </div>
 
-          
           <!-- <span class="title-article-pic"><span style="color: red">*</span> 图片 :(限定一张,文件大小64kb以下,建议尺寸比例4:3)</span> -->
-          
-          <div  style="position: absolute;right: 120px;top: 10px;">
-            
+
+          <div style="position: absolute; right: 120px; top: 10px">
             <a-upload
               :action="actionUrlCover"
               :multiple="true"
@@ -98,20 +106,16 @@
                 <div class="ant-upload-text">上传封面图片</div>
               </div>
             </a-upload>
-            
           </div>
-          
+
           <!-- <div class="div-line-wrap">
             <div class="div-total-one" style="margin-top: 0px">
               <span class="span-item-name"><span style="color: red">*</span>文章内容 :</span>
             </div>
           </div> -->
-          <span class="title-article-pic" ><span style="color: red">*</span> 文章内容 :</span>
+          <span class="title-article-pic"><span style="color: red">*</span> 文章内容 :</span>
           <div id="div11" style="margin-top: 10px"></div>
         </div>
-
-      
-      
       </div>
     </a-spin>
   </a-modal>
@@ -119,7 +123,15 @@
 
 
 <script>
-import { getArticleByIdNew, modifyArticle, getDepts, getDiseases, saveArticleWeixin,getArticleCategoryList,addArticle } from '@/api/modular/system/posManage'
+import {
+  getArticleByIdNew,
+  modifyArticle,
+  getDiseases,
+  saveArticleWeixin,
+  getArticleCategoryList,
+  addArticle,
+  getDepartmentListForSelect,
+} from '@/api/modular/system/posManage'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import { appId } from '@/utils/util'
@@ -130,6 +142,8 @@ export default {
   components: {},
   data() {
     return {
+      originData: [],
+      fetching: false,
       visible: false,
       confirmLoading: false,
       articleId: -1,
@@ -139,9 +153,9 @@ export default {
         title: '',
         brief: '', //描述
         departmentName: '', //科室名称
-        departmentId:'',//科室
+        departmentId: '', //科室
         categoryId: '', //类别
-        imgPath:'',//图片
+        imgPath: '', //图片
         content: '', //内容
       },
 
@@ -159,7 +173,7 @@ export default {
       previewVisible: false,
       previewImage: '',
       diseaseData: [],
-      typeData:[],
+      typeData: [],
       selectedRowKeys: [],
       selectedRows: [],
 
@@ -168,39 +182,38 @@ export default {
       headers: {
         Authorization: '',
       },
-   
-      editor:{}
+
+      editor: {},
     }
   },
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    
   },
   methods: {
     clearData() {
-      this.articleId =-1
+      this.articleId = -1
+      this.originData=[]
       this.record = {}
-      this.checkData = {
+      ;(this.checkData = {
         title: '',
         brief: '', //描述
         departmentName: '', //科室名称
-        departmentId:'',//科室
+        departmentId: '', //科室
         categoryId: '', //类别
-        imgPath:'',//图片
+        imgPath: '', //图片
         content: '', //内容
-      },
-      this.fileList=[]
-      if(this.editor &&  this.editor.txt){
+      }),
+        (this.fileList = [])
+      if (this.editor && this.editor.txt) {
         this.editor.txt.html('')
       }
-     
     },
     //新增
     addModel() {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      this.getDeptsOut()
+      this.getDepartmentSelectList(undefined)
       this.getArticleCategoryListOut()
       this.$nextTick(() => {
         this.init()
@@ -212,46 +225,33 @@ export default {
       this.visible = true
       this.confirmLoading = true
       this.articleId = articleId
-      this.getDeptsOut()
+      this.getDepartmentSelectList(undefined)
       this.getArticleCategoryListOut()
       this.$nextTick(() => {
         this.init()
-        
+
         getArticleByIdNew(this.articleId).then((res) => {
           if (res.code == 0) {
-            res.data.departmentId=Number(res.data.departmentId)
-            res.data.categoryId=Number(res.data.categoryId)
-            res.data.imgPath=res.data.previewUrl
+            res.data.departmentId = Number(res.data.departmentId)
+            res.data.categoryId = Number(res.data.categoryId)
+            res.data.imgPath = res.data.previewUrl
             this.checkData = res.data
-            
+
             this.fileList.push({
-            uid: '-1',
-            name: '封面',
-            status: 'done',
-            url: res.data.previewUrl,
-          })
+              uid: '-1',
+              name: '封面',
+              status: 'done',
+              url: res.data.previewUrl,
+            })
             this.editor.txt.html(res.data.content)
-           
           } else {
             this.$message.error('获取失败：' + res.message)
           }
           this.confirmLoading = false
         })
-      
-      })
-
-           
-    },
-
-    getDeptsOut() {
-      getDepts().then((res) => {
-        if (res.code == 0) {
-          this.ksTypeData = res.data
-          this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
-        }
       })
     },
-  
+
 
     goBack() {
       window.history.back()
@@ -264,14 +264,27 @@ export default {
       this.getDiseasesOut(code)
     },
 
-    /**
-     *autoComplete回调，本地模拟的数据处理
-     */
-    handleSearch(inputName) {
-      if (inputName) {
-        this.ksTypeDataTemp = this.ksTypeData.filter((item) => item.departmentName.indexOf(inputName) != -1)
-      } else {
-        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined || value.length == 0) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
       }
     },
 
@@ -309,18 +322,17 @@ export default {
 
     handleChange(changeObj) {
       this.fileList = changeObj.fileList
-          console.log(this.fileList)
-          if (this.fileList.length == 0) {
-            this.checkData.imgPath = ''
-          } else {
-            console.log(this.fileList[0])
-            if(this.fileList[0].response){
-              this.checkData.imgPath = this.fileList[0].response.data.fileLinkUrl
-            }else{
-              this.checkData.imgPath = ''
-            }
-           
-          }
+      console.log(this.fileList)
+      if (this.fileList.length == 0) {
+        this.checkData.imgPath = ''
+      } else {
+        console.log(this.fileList[0])
+        if (this.fileList[0].response) {
+          this.checkData.imgPath = this.fileList[0].response.data.fileLinkUrl
+        } else {
+          this.checkData.imgPath = ''
+        }
+      }
       // if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
       //   this.$message.error(changeObj.file.response.message)
       //   changeObj.fileList.pop()
@@ -335,8 +347,6 @@ export default {
       //   this.checkData.imgPath = this.fileList[0].response.data.fileLinkUrl
       // }
       // }
-
-      
     },
     beforeUpload(file) {
       const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
@@ -352,7 +362,6 @@ export default {
       }
       return true
     },
-  
 
     getDiseasesOut(departmentId) {
       getDiseases({ departmentId: departmentId }).then((res) => {
@@ -363,12 +372,11 @@ export default {
         }
       })
     },
-  //分类列表
-  getArticleCategoryListOut() {
-    getArticleCategoryList({pageNo:1,pageSize:10000}).then((res) => {
+    //分类列表
+    getArticleCategoryListOut() {
+      getArticleCategoryList({ pageNo: 1, pageSize: 10000 }).then((res) => {
         if (res.code == 0) {
-          
-         this.typeData=res.data.records
+          this.typeData = res.data.records
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -380,7 +388,7 @@ export default {
         this.$message.error('请填写标题')
         return
       }
-      
+
       if (!this.checkData.categoryId) {
         this.$message.error('请选择类别')
         return
@@ -395,10 +403,10 @@ export default {
       }
 
       //组装图片
-      if ( !this.checkData.imgPath) {
+      if (!this.checkData.imgPath) {
         this.$message.error('请上传图片！')
         return
-      } 
+      }
 
       if (!this.checkData.content) {
         this.$message.error('请编辑内容')
@@ -412,51 +420,48 @@ export default {
       var postdata = {
         title: this.checkData.title,
         brief: this.checkData.brief, //描述
-        departmentName:this.checkData.departmentName, //科室名称
-        departmentId:this.checkData.departmentId,//科室
+        departmentName: this.checkData.departmentName, //科室名称
+        departmentId: this.checkData.departmentId, //科室
         categoryId: this.checkData.categoryId, //类别
-        imgPath:this.checkData.imgPath,//图片
+        imgPath: this.checkData.imgPath, //图片
         content: this.checkData.content, //内容
       }
 
-      //todo 
-     
-     
+      //todo
+
       this.confirmLoading = true
 
-      if(this.articleId==-1){
+      if (this.articleId == -1) {
         let user = Vue.ls.get(TRUE_USER)
-      // this.checkData.publisherName = user.userName
-      // this.checkData.source = 'weixin'
-      // this.checkData.publisherUserId = user.userId
-      //作者，只有新增的时候才传的字段
-      postdata.author = user.userName
+        // this.checkData.publisherName = user.userName
+        // this.checkData.source = 'weixin'
+        // this.checkData.publisherUserId = user.userId
+        //作者，只有新增的时候才传的字段
+        postdata.author = user.userName
 
         addArticle(postdata).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('新增成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-          })
-      }else{
-        postdata.id=this.articleId
+          if (res.code == 0) {
+            this.$message.success('新增成功！')
+            this.visible = false
+            this.$emit('ok', '')
+          } else {
+            this.$message.error(res.message)
+          }
+          this.confirmLoading = false
+        })
+      } else {
+        postdata.id = this.articleId
         modifyArticle(postdata).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('修改成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-          })
+          if (res.code == 0) {
+            this.$message.success('修改成功！')
+            this.visible = false
+            this.$emit('ok', '')
+          } else {
+            this.$message.error(res.message)
+          }
+          this.confirmLoading = false
+        })
       }
-
-      
     },
 
     goBack() {
@@ -497,7 +502,7 @@ export default {
     },
 
     init() {
-      if(this.editor.isEnable){
+      if (this.editor.isEnable) {
         return
       }
       var editor = new E('#div11')
@@ -564,11 +569,7 @@ export default {
        */
 
       editor.create()
-      this.editor=editor
-
-    
-     
-      
+      this.editor = editor
     },
   },
 }
@@ -692,9 +693,8 @@ export default {
 
       .div-total-one {
         margin-top: 10px;
-        overflow: hidden;
+        // overflow: hidden;
         width: 100%;
-        
 
         .span-item-name {
           display: inline-block;

@@ -41,8 +41,8 @@
         <div class="display-item" style="margin-top: 10px; margin-left: 10px">
           <span style="margin-top: 10px"> 随访内容:</span>
           <a-form-item style="width: 50%; margin-left: 10px; align-items: center">
-            <a-select style="width: 322px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
-              <a-select-option v-for="(item, index) in msgData" :key="index" :value="item.id">{{
+            <a-select  show-search    @search="onTemplateListSearch" @change="onChangeTemp"   :filter-option="false"  :not-found-content="fetching ? undefined : null" style="width: 322px" allow-clear v-model="messageContentType" placeholder="微信随访模板">
+              <a-select-option v-for="(item, index) in msgDataTemp" :key="index" :value="item.id">{{
                 item.templateTitle
               }}</a-select-option>
             </a-select>
@@ -204,6 +204,8 @@ export default {
       recordList: [],
       timeStr: '',
       msgData: [],
+      msgDataTemp:[],
+      fetching:false,
       templateListWX: [],
       templateListSMS: [],
       templateListQues: [],
@@ -300,6 +302,8 @@ export default {
         //查所有短信模版
         this.msgData = JSON.parse(JSON.stringify(this.templateListSMS))
       }
+
+      this.msgDataTemp = JSON.parse(JSON.stringify(this.msgData))
     },
 
     formatDateOut(date) {
@@ -364,8 +368,10 @@ export default {
 
     //全部的短信模板
     getSmsTemplateListForJumpTypeOut() {
+      this.fetching = true
       getSmsTemplateListForJumpType(0)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0) {
             this.templateListSMS = res.data
           }
@@ -377,8 +383,10 @@ export default {
 
     //全部的微信模板
     getWxTemplateListForJumpTypeOut() {
+      this.fetching = true
       getWxTemplateListForJumpType(0)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0) {
             this.templateListWX = res.data
           }
@@ -388,8 +396,23 @@ export default {
         })
     },
 
+    onTemplateListSearch(name) {
+      if(name){
+        this.msgDataTemp= this.msgData.filter((item) => item.templateTitle.indexOf(name) != -1)
+      }else{
+        this.msgDataTemp = this.msgData
+      }
+    },
+
+
+    onChangeTemp(value){
+      this.msgDataTemp = this.msgData
+    },
+
+
+
+
     timeChangeStart(moment, time) {
-      console.log('00000:', time)
       this.timeStr = time
     },
 
@@ -407,7 +430,6 @@ export default {
     },
 
     getClass(status) {
-      console.log('VVV:', status)
       if (status == 1) {
         return 'span-gray'
       } else if (status == 2) {
@@ -482,6 +504,7 @@ export default {
       this.queryParams.messageType = undefined
       this.queryParams.messageContentType = undefined
       this.queryParams.messageContentId = ''
+      this.msgDataTemp=[]
     },
 
     /**
