@@ -10,7 +10,7 @@
           </div>
           <div class="right-content">
             <div class="content-top">
-              <span style="margin-left: 10px">住院时间：</span>
+              <span style="margin-left: 10px;flex-shrink: 0;">住院时间：</span>
               <div
                 class="data-item"
                 v-for="(itemData, indexData) in historyList"
@@ -319,6 +319,7 @@ export default {
         .then((res) => {
           if (res.code === 0 && res.data) {
             this.historyList = res.data
+          
             if (this.historyList.length > 0) {
               for (let index = 0; index < this.historyList.length; index++) {
                 this.$set(this.historyList[index], 'isChecked', false)
@@ -708,11 +709,13 @@ export default {
       overflow-x: auto;
       align-items: center;
       flex-direction: row;
+      flex-shrink: 0;
 
       .data-item {
         display: flex;
         align-items: center;
         flex-direction: row;
+        flex-shrink: 0;
 
         .checked {
           color: #1890ff;

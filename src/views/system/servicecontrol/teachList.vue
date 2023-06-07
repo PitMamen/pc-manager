@@ -72,7 +72,7 @@
           <div class="toptab">
             <div>文章列表</div>
           </div>
-          <a-spin :spinning="confirmLoading2">
+         
             <div class="left-content">
               <div
                 class="ksviewaper"
@@ -87,7 +87,7 @@
                 {{ item.count }}/{{ item.readCount }}/{{ item.rate }}
               </div>
             </div>
-          </a-spin>
+         
         </div>
 
         <div class="div-service-right-control">
