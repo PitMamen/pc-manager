@@ -151,7 +151,7 @@ export default {
         },
         {
           title: 'His编码',
-          dataIndex: 'his_id',
+          dataIndex: 'department_id',
          
           ellipsis: true,
         },
