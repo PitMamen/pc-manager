@@ -1575,6 +1575,8 @@ export function checkDetail(data) {
 
 
 
+
+
 /**
  * 更新名单配置状态
  *
@@ -4499,5 +4501,15 @@ export function downloadModel(data) {
     url: '/follow-api/名单导入模板.xlsx',
     method: 'post',
     // data: data,
+  })
+}
+
+
+//查询方案绑定人信息
+export function qryPlanUserInfo(data){
+  return axios({
+    url: '/follow-api/follow/userplan/qryPlanUserInfo',
+    method: 'post',
+    data: data,
   })
 }

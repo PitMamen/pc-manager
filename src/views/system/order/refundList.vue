@@ -34,13 +34,10 @@
         </a-select>
       </div>
 
-     
-
       <div class="search-row">
         <span class="name">更新时间:</span>
         <a-range-picker style="width: 190px" :value="orderTimeValue" @change="onChange" />
       </div>
-
 
       <div class="search-row">
         <span class="name">订单分类:</span>
@@ -50,7 +47,6 @@
           }}</a-select-option>
         </a-select>
       </div>
-
 
       <div class="search-row">
         <span class="name">下单时间:</span>
@@ -70,16 +66,16 @@
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div
-        v-show="showTabyy"
         class="radio-item"
+        v-show="showTabyy"
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }"
         @click="onRadioClick('yy')"
       >
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
       <div
-        v-show="showTabcw"
         class="radio-item"
+        v-show="showTabcw"
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }"
         @click="onRadioClick('cw')"
       >
@@ -157,14 +153,18 @@ export default {
         cw: 0,
         wc: 0,
       },
-      ordertypeList:[{code:'consultOrder',value:'咨询订单'},{code:'srvPackOrder',value:'专科服务'},{code:'youzanOrder',value:'商城订单'}],
+      ordertypeList: [
+        { code: 'consultOrder', value: '咨询订单' },
+        { code: 'srvPackOrder', value: '专科服务' },
+        { code: 'youzanOrder', value: '商城订单' },
+      ],
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
         createEndTime: getCurrentMonthLast(),
         createStartTime: getDateNow(),
-        orderType:undefined,
+        orderType: undefined,
         updateEndTime: getCurrentMonthLast(),
         updateStartTime: getDateNow(),
         tabCode: '',
@@ -274,7 +274,7 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'orderfl', item.orderType?item.orderType.description:'')
+                this.$set(item, 'orderfl', item.orderType ? item.orderType.description : '')
                 // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
@@ -331,7 +331,7 @@ export default {
         //有赞
       } else if (record.orderType.value == 'youzanOrder') {
         path = '/order/yzRefund'
-      }else{
+      } else {
         path = '/order/refundExamine'
       }
       this.$router.push({

@@ -37,10 +37,6 @@
           >
         </a-select>
       </div>
-      <!-- <div class="search-row">
-        <span class="name">方案状态:</span>
-        <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
-      </div> -->
 
       <div class="search-row">
         <span class="name">状态:</span>
@@ -74,6 +70,10 @@
         <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
         <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
       </span>
+
+      <span slot="execute" slot-scope="text, record">
+        <a @click="goExecute(record)">{{record.planUserInfo}}</a>
+      </span>
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
           placement="topRight"
@@ -86,6 +86,7 @@
     </s-table>
 
     <add-Name ref="addName" @ok="handleOk" />
+    <plan-Execute ref="planExecute" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -100,13 +101,13 @@ import {
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import addName from './addName'
+import planExecute from './planExecute'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addName,
+    planExecute,
   },
   data() {
     return {
@@ -167,6 +168,13 @@ export default {
           title: '随访类型',
           width: 100,
           dataIndex: 'followType',
+        },
+        {
+          title: '方案执行',
+          width: 120,
+          dataIndex: 'planUserInfo',
+          align: 'center',
+          scopedSlots: { customRender: 'execute' },
         },
 
         {
@@ -241,6 +249,11 @@ export default {
           planId: record.id,
         },
       })
+    },
+
+
+    goExecute(record){
+      this.$refs.planExecute.execute(record)
     },
 
     //获取管理的科室 可首拼
