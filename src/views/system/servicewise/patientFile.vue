@@ -21,7 +21,7 @@
                   @click="onFileItemClick(itemData, indexData)"
                   class="div-time"
                   :class="{ checked: itemData.isChecked }"
-                  >{{ MEDICAL_DATA_SOURCE=='0'? itemData.happenedTime.substring(0, 11) : itemData.cysj.substring(0, 11)}}</span
+                  >{{ itemData.time}}</span
                 >
                 <div v-if="indexData != historyList.length - 1" class="div-line"></div>
               </div>
@@ -275,6 +275,13 @@ export default {
             if (this.historyList.length > 0) {
               for (let index = 0; index < this.historyList.length; index++) {
                 this.$set(this.historyList[index], 'isChecked', false)
+                var time='未知时间'
+                if(this.historyList[index].happenedTime && this.historyList[index].happenedTime.length>10){
+                
+                  time=  this.historyList[index].happenedTime.substring(0, 10)
+                 
+                }
+                this.$set(this.historyList[index], 'time', time)
               }
               this.$set(this.historyList[0], 'isChecked', true)
               this.getDetailOut(0)
@@ -323,6 +330,13 @@ export default {
             if (this.historyList.length > 0) {
               for (let index = 0; index < this.historyList.length; index++) {
                 this.$set(this.historyList[index], 'isChecked', false)
+                var time='未知时间'
+                if(this.historyList[index].cysj && this.historyList[index].cysj.length>10){
+                
+                  time=  this.historyList[index].cysj.substring(0, 10)
+                 
+                }
+                this.$set(this.historyList[index], 'time', time)
               }
               this.$set(this.historyList[0], 'isChecked', true)
               this.getEMRData(this.historyList[0].zyh)
