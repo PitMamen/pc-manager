@@ -10,7 +10,7 @@
           </div>
           <div class="right-content">
             <div class="content-top">
-              <span style="margin-left: 10px">住院时间：</span>
+              <span style="margin-left: 10px;flex-shrink: 0;">住院时间：</span>
               <div
                 class="data-item"
                 v-for="(itemData, indexData) in historyList"
@@ -21,7 +21,7 @@
                   @click="onFileItemClick(itemData, indexData)"
                   class="div-time"
                   :class="{ checked: itemData.isChecked }"
-                  >{{ MEDICAL_DATA_SOURCE=='0'? itemData.happenedTime.substring(0, 11) : itemData.cysj.substring(0, 11)}}</span
+                  >{{ itemData.time}}</span
                 >
                 <div v-if="indexData != historyList.length - 1" class="div-line"></div>
               </div>
@@ -275,6 +275,13 @@ export default {
             if (this.historyList.length > 0) {
               for (let index = 0; index < this.historyList.length; index++) {
                 this.$set(this.historyList[index], 'isChecked', false)
+                var time='未知时间'
+                if(this.historyList[index].happenedTime && this.historyList[index].happenedTime.length>10){
+                
+                  time=  this.historyList[index].happenedTime.substring(0, 10)
+                 
+                }
+                this.$set(this.historyList[index], 'time', time)
               }
               this.$set(this.historyList[0], 'isChecked', true)
               this.getDetailOut(0)
@@ -319,9 +326,17 @@ export default {
         .then((res) => {
           if (res.code === 0 && res.data) {
             this.historyList = res.data
+          
             if (this.historyList.length > 0) {
               for (let index = 0; index < this.historyList.length; index++) {
                 this.$set(this.historyList[index], 'isChecked', false)
+                var time='未知时间'
+                if(this.historyList[index].cysj && this.historyList[index].cysj.length>10){
+                
+                  time=  this.historyList[index].cysj.substring(0, 10)
+                 
+                }
+                this.$set(this.historyList[index], 'time', time)
               }
               this.$set(this.historyList[0], 'isChecked', true)
               this.getEMRData(this.historyList[0].zyh)
@@ -708,11 +723,13 @@ export default {
       overflow-x: auto;
       align-items: center;
       flex-direction: row;
+      flex-shrink: 0;
 
       .data-item {
         display: flex;
         align-items: center;
         flex-direction: row;
+        flex-shrink: 0;
 
         .checked {
           color: #1890ff;

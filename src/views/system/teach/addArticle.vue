@@ -37,6 +37,9 @@
               style="width: 100%; font-size: 14px"
               placeholder="请输入并选择"
               option-label-prop="title"
+              show-search
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
               @select="onSelect"
               @search="handleSearch"
             >
@@ -124,6 +127,7 @@ export default {
   data() {
     return {
       // 高级搜索 展开/关闭
+      fetching: false,
       advanced: false,
       checkData: {
         title: '',
@@ -161,7 +165,9 @@ export default {
 
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+    this.fetching = true
     getDepts().then((res) => {
+      this.fetching = false
       if (res.code == 0) {
         this.ksTypeData = res.data
         this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData))
@@ -413,7 +419,7 @@ export default {
 
     /**
      * 插入视频写法：
-     * 
+     *
      * <iframe frameborder="0" src="https://v.qq.com/txp/iframe/player.html?vid=n0020yrnly7" allowFullScreen="true"></iframe>
      * <iframe frameborder="0" src="https://vd3.bdstatic.com/mda-nit9wfd413e2xjsh/sc/cae_h264/1664351398486048214/mda-nit9wfd413e2xjsh.mp4?v_from_s=hkapp-haokan-hbf&auth_key=1664420478-0-0-ee34ef2d3450dbb1901bde7ab5ebd63b&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=1878163596&vid=7560524968628684931&abtest=104960_1-104959_1&klogid=1878163596" allowFullScreen="true"></iframe>
      *
