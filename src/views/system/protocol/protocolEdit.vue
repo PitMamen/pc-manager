@@ -25,9 +25,9 @@
 
 
 <script>
-import { sysDictTypeDropDown, sysConfigEdit } from '@/api/modular/system/configManage'
 import E from 'wangeditor'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import { getContract, saveContract, downloadPdfContract, reportPdfContract } from '@/api/modular/system/posManage'
 import Vue from 'vue'
 import { appId } from '@/utils/util'
 
@@ -41,7 +41,9 @@ export default {
   data() {
     return {
       confirmLoading: false,
+      isSaved: false,
       deptId: '',
+      content: '',
     }
   },
   mounted() {
@@ -54,7 +56,7 @@ export default {
     console.log('editor', editor)
     console.log('editorconfig', editor.config)
     editor.config.onchange = (html) => {
-      this.checkData.content = html
+      this.content = html
     }
     // 配置 server 接口地址
     // 默认情况下，显示所有菜单
@@ -110,16 +112,107 @@ export default {
 
     refreshData(deptId) {
       this.deptId = deptId
+      this.getContractOut()
       //TODO 更新协议内容
       console.log('ddd', this.protocolType)
       console.log('fff', this.deptId)
     },
 
-    goSave() {},
+    getContractOut() {
+      let queryData = {
+        hospitalCode: this.deptId,
+        categoryId: this.protocolType,
+      }
+      getContract(queryData)
+        .then((res) => {
+          if (res.code == 0 && res.data.content) {
+            this.content = res.data.content
+            this.editor.txt.html(res.data.content)
+            this.isSaved = true
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+    goSave() {
+      let queryData = {
+        hospitalCode: this.deptId,
+        categoryId: this.protocolType,
+        content: this.content,
+      }
+      saveContract(queryData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.isSaved = true
+            this.$message.success('保存成功')
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    goDownload() {
+      if (!this.isSaved) {
+        this.$message.error('请先保存发布')
+        return
+      }
+      let queryData = {
+        hospitalCode: this.deptId,
+        categoryId: this.protocolType,
+      }
+      downloadPdfContract(queryData)
+        .then((res) => {
+          // TODO 处理下载 this.$message.success('保存成功')
+          this.downloadfile(res)
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      var filename = result[1]
+      var downloadElement = document.createElement('a')
+      var href = window.URL.createObjectURL(blob) // 创建下载的链接
+      var reg = /^["](.*)["]$/g
+      downloadElement.style.display = 'none'
+      downloadElement.href = href
+      downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+      document.body.appendChild(downloadElement)
+      downloadElement.click() // 点击下载
+      document.body.removeChild(downloadElement) // 下载完成移除元素
+      window.URL.revokeObjectURL(href)
+    },
 
     //上传下载需要先判断是否已保存
-    goUpload() {},
-    goDownload() {},
+    goUpload() {
+      if (!this.isSaved) {
+        this.$message.error('请先保存发布')
+        return
+      }
+      let queryData = {
+        hospitalCode: this.deptId,
+        categoryId: this.protocolType,
+      }
+      reportPdfContract(queryData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('上传成功')
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
   },
 }
 </script>
