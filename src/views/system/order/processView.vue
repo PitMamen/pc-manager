@@ -4,6 +4,7 @@
     :width="1000"
     :height="800"
     :visible="visible"
+    :footer="footer"
     @cancel="handleCancel"
     @ok="handleSubmit"
     :confirmLoading="confirmLoading"
@@ -12,7 +13,7 @@
       <div class="div-appoint-detail-check">
         <!-- 左边视图 -->
         <div class="div-span-content-left" style="overflow-y: auto !important">
-          <div style="margin-left: 10px; margin-top: 5px">患者信息</div>
+          <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">患者信息</div>
           <div style="width: 100%; height: 1px; margin-top: 5px; background: darkgrey"></div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">姓 名:{{ userInfoData.name }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">年 龄:{{ userInfoData.age }}</div>
@@ -47,23 +48,25 @@
 
         <!-- 中间视图 -->
         <div class="div-span-content-mid" style="overflow-y: auto">
-          <div style="margin-left: 20px; margin-top: 5px">处方信息</div>
+          <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">处方信息</div>
           <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div>
           <div class="big-kuang">
             <div class="top-content">
-              <div style="margin-left: 30%">{{ preDetailData.medicalInfo.preHead }}</div>
+              <div style="margin-left: 30%; color: #1a1a1a">{{ preDetailData.medicalInfo.preHead }}</div>
               <div class="span-gray">{{ preDetailData.medicalInfo.preType }}</div>
             </div>
 
-            <div style="margin-left: 43%; margin-top: 10px">{{ preDetailData.medicalInfo.preTitle }}</div>
+            <div style="margin-left: 43%; margin-top: 10px; color: #1a1a1a">
+              {{ preDetailData.medicalInfo.preTitle }}
+            </div>
             <div class="user-content">
-              <div>姓名:{{ preDetailData.medicalInfo.name }}</div>
-              <div>性别:{{ preDetailData.medicalInfo.sex }}</div>
-              <div>年龄:{{ preDetailData.medicalInfo.age }}</div>
+              <div style="color: #1a1a1a">姓名:{{ preDetailData.medicalInfo.name }}</div>
+              <div style="color: #1a1a1a">性别:{{ preDetailData.medicalInfo.sex }}</div>
+              <div style="color: #1a1a1a">年龄:{{ preDetailData.medicalInfo.age }}</div>
             </div>
             <div class="user-content" style="margin-bottom: 15px">
-              <div>科室:{{ preDetailData.medicalInfo.deptName }}</div>
-              <div>日期:{{ preDetailData.medicalInfo.createDate }}</div>
+              <div style="color: #1a1a1a">科室:{{ preDetailData.medicalInfo.deptName }}</div>
+              <div style="color: #1a1a1a">日期:{{ preDetailData.medicalInfo.createDate }}</div>
             </div>
           </div>
 
@@ -72,7 +75,9 @@
               诊断
             </div>
             <div class="line-content"></div>
-            <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px">{{ preDetailData.diagnosis }}</div>
+            <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px; color: #1a1a1a">
+              {{ preDetailData.diagnosis }}
+            </div>
           </div>
 
           <div class="big-kuang">
@@ -82,15 +87,15 @@
             <div style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: darkgrey"></div>
             <div v-for="(item, index) in preDetailData.medOrderItems" :key="index" :value="item.drugName">
               <div class="top-content">
-                <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px">
+                <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px; color: #1a1a1a">
                   {{ index + 1 }}.{{ item.drugName }}
                 </div>
-                <div style="margin-left: auto; margin-top: 5px; margin-bottom: 5px; margin-right: 5px">
+                <div style="margin-left: auto; margin-top: 5px; margin-bottom: 5px; margin-right: 5px; color: #1a1a1a">
                   X{{ item.itemNum }}{{ item.itemDrugUnit }}
                 </div>
               </div>
               <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
-              <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
+              <div style="margin-left: 10px; color: #1a1a1a; font-size: 10px">
                 用法用量:{{ item.frequency }},{{ item.useMethod }}
               </div>
             </div>
@@ -102,29 +107,63 @@
             </div>
             <div class="line-content"></div>
 
-            <div style="margin-left: 10px">开发医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-            <div style="margin-left: 10px; margin-bottom: 10px">执行科室：{{ preDetailData.medicalInfo.deptName }}</div>
+            <div style="margin-left: 10px; color: #1a1a1a">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+            <div style="margin-left: 10px; color: #1a1a1a; margin-bottom: 10px">
+              执行科室：{{ preDetailData.medicalInfo.deptName }}
+            </div>
           </div>
         </div>
 
         <div class="midline"></div>
         <!-- 右边视图 -->
-        <div class="div-span-content-right">
-          <div style="margin-left: 20px; margin-top: 5px">审核信息</div>
+        <div class="div-span-content-right" style="position: relative">
+          <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">审核信息</div>
           <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div>
 
-          <div class="radia-content">
-            <div style="margin-left: 10px; margin-top: 10px">审核：</div>
+          <div class="radia-content" v-if="record.checkStatus == 1">
+            <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">审核：</div>
             <a-radio-group
-            style="margin-top:10px"
+              style="margin-top: 10px"
               name="radioGroup"
               v-model="radioTyPe"
               @change="radioChange"
               v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
             >
-              <a-radio :value="1" style="font-size: 8px;"> 成功 </a-radio>
-              <a-radio :value="2" style="font-size: 8px;"> 失败 </a-radio>
+              <a-radio :value="2" style="font-size: 8px; color: #1a1a1a"> 成功 </a-radio>
+              <a-radio :value="3" style="font-size: 8px; color: #1a1a1a"> 失败 </a-radio>
             </a-radio-group>
+          </div>
+
+          <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a" v-if="record.checkStatus != 1">
+            审核：{{ preDetailData.medicalInfo.checkStatusDesc }}
+          </div>
+          <div
+            style="margin-left: 10px; margin-top: 10px; color: #1a1a1a"
+            v-if="record.checkStatus != 1 && preDetailData.medicalInfo.checkStatus == 3"
+          >
+            失败原因：{{ preDetailData.medicalInfo.refuseReason }}
+          </div>
+
+          <div class="reason-content" v-if="record.checkStatus == 1">
+            <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">失败原因 ：</div>
+
+            <div style="display: flex; flex-direction: row; overflow: hidden; position: relative">
+              <a-textarea
+                style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: 10px; width: 87%"
+                v-model="queryParams.refuseReason"
+                :maxLength="200"
+                placeholder="请输入原因"
+                v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入科室简介！' }] }]"
+              />
+              <span class="m-count">{{ queryParams.refuseReason ? queryParams.refuseReason.length : 0 }}/200</span>
+            </div>
+          </div>
+
+          <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
+            审核药师：{{ preDetailData.medicalInfo.checkUserName }}
+          </div>
+          <div v-if="record.checkStatus != 1" style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
+            审核日期：{{ preDetailData.medicalInfo.checkDate }}
           </div>
         </div>
       </div>
@@ -143,14 +182,22 @@ export default {
     return {
       user: {},
       record: {},
-      radioTyPe: '',
+      radioTyPe: '2',
       isCheckInfo: false,
       visible: false,
       title: '处方审核',
+      footer: null,
       confirmLoading: false,
       userInfoData: {},
       userTagsInfoData: [],
       preDetailData: [],
+      queryParams: {
+        checkStatus: 0,
+        pageNo: 1,
+        pageSize: 999,
+        preNo: 0,
+        refuseReason: '',
+      },
     }
   },
 
@@ -160,6 +207,7 @@ export default {
   methods: {
     radioChange(e) {
       this.radioTyPe = e.target.value
+      this.queryParams.checkStatus = e.target.value
       console.log('sss:', this.radioTyPe)
     },
 
@@ -179,7 +227,9 @@ export default {
       this.title = '处方审核'
       this.visible = true
       this.record = {}
+      this.footer = 'undefined'
       this.record = record
+      this.queryParams.preNo = record.preNo
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
       this.preDetailOut()
@@ -188,8 +238,10 @@ export default {
     lookview(record) {
       console.log('22222222')
       this.title = '处方查看'
+      this.footer = null
       this.visible = true
       this.record = record
+      this.queryParams.preNo = record.preNo
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
       this.preDetailOut()
@@ -240,12 +292,30 @@ export default {
         })
     },
 
+    // 审核
+    checkPreOut() {
+      this.confirmLoading = true
+      checkPre(this.queryParams)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功!')
+            this.visible = false
+            this.$emit('ok', '')
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+    },
+
     handleCancel() {
       this.visible = false
     },
 
     handleSubmit() {
-      this.visible = true
+      this.checkPreOut()
     },
   },
 }
@@ -384,6 +454,27 @@ export default {
     margin-top: 10px;
     position: relative;
     border: 1px solid #dfe3e5;
+    overflow: hidden;
+
+    .div-service-user {
+      display: flex;
+      flex-direction: row;
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+    .m-count {
+      position: absolute;
+      font-size: 12px;
+      bottom: 2px;
+      right: 30px;
+    }
+
+    .reason-content {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
 
     .radia-content {
       width: 100%;
