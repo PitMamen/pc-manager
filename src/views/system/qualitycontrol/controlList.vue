@@ -216,7 +216,7 @@
         <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
         <a-divider v-if="showLine" type="vertical" />
         <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)"
-          ><a-icon style="margin-right: 5px" type="idcard"></a-icon>{{ getText(record.auditResultStatus.value) }}</a
+          ><a-icon style="margin-right: 5px;margin-left:10px" type="idcard"></a-icon>{{ getText(record.auditResultStatus.value) }}</a
         >
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)"

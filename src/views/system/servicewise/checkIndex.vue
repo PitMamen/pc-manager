@@ -11,7 +11,7 @@
     <a-card :bordered="false" class="card-top-pac1">
       <div class="table-page-wrapper" style="margin-top: -2%">
         <div class="div-line-wrap">
-          <span class="span-item-name"><span style="color: red">*</span> 名单描述 :</span>
+          <span class="span-item-name"  style="width:70px !important"><span style="color: red">*</span> 名单描述 :</span>
           <a-input
             v-model="metaName"
             class="span-item-value"
@@ -22,7 +22,7 @@
             @blur="focus(record)"
           />
 
-          <span class="span-item-name" style="margin-left: 100px"><span style="color: red">*</span> 数据库表 :</span>
+          <span class="span-item-name" style="margin-left: 30px;width:70px !important"><span style="color: red">*</span> 数据库表 :</span>
           <a-input
             v-model="record.databaseTableName"
             class="span-item-value"
@@ -32,7 +32,7 @@
             allow-clear
           />
 
-          <span class="span-item-name" style="margin-left: 100px"><span style="color: red">*</span> 支持分类查询 :</span>
+          <span class="span-item-name" style="margin-left: 30px;width:100px !important"><span style="color: red">*</span> 支持分类查询 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
           <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->

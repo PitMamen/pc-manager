@@ -4513,3 +4513,62 @@ export function qryPlanUserInfo(data){
     data: data,
   })
 }
+
+
+
+//处方审核tab
+export function checkPreTab(data){
+  return axios({
+    url: '/medical-api/medOrders/checkPreTab',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//处方审核列表
+export function checkPrePage(data){
+  return axios({
+    url: '/medical-api/medOrders/checkPrePage',
+    method: 'post',
+    data: data,
+  })
+}
+
+//处方审核
+export function checkPre(data){
+  return axios({
+    url: '/medical-api/medOrders/checkPre',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//处方详情
+export function preDetail(data){
+  return axios({
+    url: '/medical-api/medOrders/preDetail',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+//用户基本信息
+export function getUserExternalInfo(userId){
+  return axios({
+    url: '/account-api/getUserExternalInfo/'+userId,
+    method: 'post',
+    // data: data,
+  })
+}
+
+//用户标签信息
+export function getSavedUserTagsInfo(userId){
+  return axios({
+    url: '/account-api/getSavedUserTagsInfo/'+userId,
+    method: 'post',
+    // data: data,
+  })
+}
