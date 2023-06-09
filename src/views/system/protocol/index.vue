@@ -35,9 +35,10 @@
               v-else
               src="~@/assets/icons/shouquan_not.png"
             />
-            患者服务授权协议
+            {{ contractList[0].description }}
           </span>
-          <protocol-edit ref="protocolEdit1" :protocolType="'1'" />
+          <!-- <protocol-edit ref="protocolEdit1" :protocolType="'CP_10001'" /> -->
+          <protocol-edit ref="protocolEdit1" :protocolType="contractList[0].value" />
         </a-tab-pane>
         <a-tab-pane key="2">
           <span slot="tab">
@@ -51,9 +52,11 @@
               v-else
               src="~@/assets/icons/huanzhe_not.png"
             />
-            患者端用户协议
+            <!-- 患者端用户协议 -->
+            {{ contractList[1].description }}
           </span>
-          <protocol-edit ref="protocolEdit2" :protocolType="'2'" />
+          <!-- <protocol-edit ref="protocolEdit2" :protocolType="'CP_10002'" /> -->
+          <protocol-edit ref="protocolEdit2" :protocolType="contractList[1].value" />
         </a-tab-pane>
         <a-tab-pane key="3">
           <span slot="tab">
@@ -67,9 +70,11 @@
               v-else
               src="~@/assets/icons/yisheng_not.png"
             />
-            医生端用户协议
+            <!-- 医生端用户协议 -->
+            {{ contractList[2].description }}
           </span>
-          <protocol-edit ref="protocolEdit3" :protocolType="'3'" />
+          <!-- <protocol-edit ref="protocolEdit3" :protocolType="'CP_10003'" /> -->
+          <protocol-edit ref="protocolEdit3" :protocolType="contractList[2].value" />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -77,7 +82,7 @@
 </template>
 
 <script>
-import { accessHospitals } from '@/api/modular/system/posManage'
+import { accessHospitals, contractTypes } from '@/api/modular/system/posManage'
 import protocolEdit from './protocolEdit'
 
 export default {
@@ -98,6 +103,11 @@ export default {
 
       deptId: '',
       treeData: [],
+      contractList: [
+        { value: '', description: '' },
+        { value: '', description: '' },
+        { value: '', description: '' },
+      ],
     }
   },
 
@@ -105,10 +115,23 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.queryHospitalListOut()
+    this.contractTypesOut()
   },
 
   methods: {
+    contractTypesOut() {
+      contractTypes({})
+        .then((res) => {
+          if (res.code == 0) {
+            this.contractList = res.data
+            this.queryHospitalListOut()
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
     queryHospitalListOut() {
       let queryData = {
         tenantId: '',

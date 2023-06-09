@@ -3202,6 +3202,66 @@ export function getArticleByIdNew(id) {
   })
 }
 
+/**
+ * 获取协议    hospitalCode   categoryId
+ *
+ */
+export function getContract(data) {
+  return axios({
+    url: '/health-api/article/getContract',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 获取协议列表    hospitalCode   categoryId
+ *
+ */
+export function contractTypes(data) {
+  return axios({
+    url: '/health-api/article/contractTypes',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 保存协议    hospitalCode   categoryId   content
+ *
+ */
+export function saveContract(data) {
+  return axios({
+    url: '/health-api/article/saveContract',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 下载协议PDF    hospitalCode   categoryId 
+ *
+ */
+export function downloadPdfContract(data) {
+  return axios({
+    url: '/health-api/article/downloadPdfContract',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+/**
+ * 协议上传监管平台    hospitalCode   categoryId 
+ *
+ */
+export function reportPdfContract(data) {
+  return axios({
+    url: '/health-api/article/reportPdfContract',
+    method: 'post',
+    data: data
+  })
+}
+
 
 /**
  * 分页查询参数列表
@@ -3231,7 +3291,7 @@ export function saveSysConfigData(data) {
  */
 export function getSysConfigData(data) {
   return axios({
-    url: '/info-api/sysConfigData/getConfig/'+data,
+    url: '/info-api/sysConfigData/getConfig/' + data,
     method: 'get'
   })
 }
@@ -4052,7 +4112,7 @@ export function getOrderDetail(data) {
 //处方订单详情
 export function getMedicalChufangDetail(data) {
   return axios({
-    url: '/medical-api/medical/getMedicalOrdersDetail/'+data,
+    url: '/medical-api/medical/getMedicalOrdersDetail/' + data,
     method: 'post',
     // params: data,
   })
@@ -4062,7 +4122,7 @@ export function getMedicalChufangDetail(data) {
 //处方信息
 export function getMedicalOrdersInfo(data) {
   return axios({
-    url: '/medical-api/medical/getMedicalOrdersInfo/'+data,
+    url: '/medical-api/medical/getMedicalOrdersInfo/' + data,
     method: 'post',
     // params: data,
   })
@@ -4354,9 +4414,9 @@ export function getFollowStat(data) {
 //导出
 export function exportFollowStatListm(data) {
   return axios({
-    url:'/follow-api/excel/exportFollowStatList',
-    method:'post',
-    data:data,
+    url: '/follow-api/excel/exportFollowStatList',
+    method: 'post',
+    data: data,
     responseType: 'blob',
   })
 }
@@ -4388,7 +4448,7 @@ export function getTbMerchantPageList(data) {
   return axios({
     url: '/order-api/tbMerchant/getTbMerchantPageList',
     method: 'post',
-    data:data
+    data: data
   })
 }
 //病种列表  
@@ -4396,7 +4456,7 @@ export function getDiseaseTypePageList(data) {
   return axios({
     url: '/info-api/tdDiseaseType/getDiseaseTypePageList',
     method: 'post',
-    data:data,
+    data: data,
   })
 }
 
@@ -4406,9 +4466,9 @@ export function addTbMerchant(data) {
   return axios({
     url: '/order-api/tbMerchant/addTbMerchant',
     method: 'post',
-    data:data,
+    data: data,
   })
-  }
+}
 
 //学科列表
 export function gettreeMedicalSubjects(data) {
@@ -4425,7 +4485,7 @@ export function modifyStatus(data) {
   return axios({
     url: '/order-api/tbMerchant/modifyStatus',
     method: 'post',
-    data:data,
+    data: data,
   })
 }
 
@@ -4434,7 +4494,7 @@ export function modifyTbMerchant(data) {
   return axios({
     url: '/order-api/tbMerchant/modifyTbMerchant',
     method: 'post',
-    data:data,
+    data: data,
   })
 }
 
@@ -4443,7 +4503,7 @@ export function getTbBizMerchantPageList(data) {
   return axios({
     url: '/order-api/tbBizMerchant/getTbBizMerchantPageList',
     method: 'post',
-    data:data,
+    data: data,
   })
 }
 
@@ -4452,7 +4512,7 @@ export function tbBizMerchantConfig(data) {
   return axios({
     url: '/order-api/tbBizMerchant/tbBizMerchantConfig',
     method: 'post',
-    data:data,
+    data: data,
   })
 }
 
@@ -4469,7 +4529,7 @@ export function addDiseaseType(data) {
 //删除病种
 export function deleteDiseaseType(id) {
   return axios({
-    url: '/info-api/tdDiseaseType/deleteDiseaseType/'+id,
+    url: '/info-api/tdDiseaseType/deleteDiseaseType/' + id,
     method: 'get',
     // params: id,
   })
@@ -4506,7 +4566,7 @@ export function downloadModel(data) {
 
 
 //查询方案绑定人信息
-export function qryPlanUserInfo(data){
+export function qryPlanUserInfo(data) {
   return axios({
     url: '/follow-api/follow/userplan/qryPlanUserInfo',
     method: 'post',
