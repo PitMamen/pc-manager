@@ -173,10 +173,40 @@
             @search="$refs.table.refresh(true)"
           />
         </div>
+
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构代码:</span>
+          <a-input
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
+            v-model="queryParams.supervisionHosCode"
+            allow-clear
+            placeholder="请输入代码"
+            style="width: 200px; margin-top: 5px; margin-left: 7px"
+            @keyup.enter="$refs.table.refresh(true)"
+            @search="$refs.table.refresh(true)"
+          />
+        </div>
+
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构分类:</span>
+          <a-tree-select
+            v-model="queryParams.institutionClassify"
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
+            style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
+            :tree-data="classifyTreeData"
+            placeholder="请选择机构分类"
+            allow-clear
+            show-search
+            tree-node-filter-prop="title"
+            @change="onDepartmentSelectChange"
+            @search="onDepartmentSelectSearch"
+          >
+          </a-tree-select>
+        </div>
       </div>
 
       <!-- ri -->
-      <div class="card-right-user" style="height: 500px">
+      <div class="card-right-user" style="height: 570px">
         <div class="div-title" style="margin-left: 10px; margin-top: 3px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
@@ -225,6 +255,7 @@ import {
   queryHospitalType,
   parent,
   getDictDataForCodeorgType,
+  institutionClassify,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
@@ -260,11 +291,19 @@ export default {
         introduction: '',
         level: undefined,
         middleware: '',
+        supervisionHosCode: '', //机构代码
+        institutionClassify: undefined, //机构分类
         orgType: undefined,
         pid: 0,
         sortedNo: 1,
         tenantId: 0,
       },
+
+      queryClassify: {
+        queryText: '',
+        ver: 'WS 218-2002',
+      },
+      classifyTreeData: [],
 
       orgTypeData: [],
 
@@ -298,6 +337,7 @@ export default {
     add(record) {
       this.visible = true
       this.reset()
+      this.getinstitutionClassify()
       this.getHospitalLevel()
       this.getHospitalType()
       this.getParentList()
@@ -305,6 +345,53 @@ export default {
       this.$nextTick(() => {
         this.init()
       })
+    },
+
+    // 获取机构分类列表接口
+    getinstitutionClassify() {
+      institutionClassify(this.queryClassify).then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+          res.data.forEach((item, index) => {
+            this.$set(item, 'key', item.classify)
+            this.$set(item, 'value', item.classify)
+            this.$set(item, 'title', item.name)
+            this.$set(item, 'children', item.children)
+
+            item.children.forEach((item1, index1) => {
+              this.$set(item1, 'key', item1.classify)
+              this.$set(item1, 'value', item1.classify)
+              this.$set(item1, 'title', item1.name)
+              this.$set(item1, 'children', item1.children)
+
+              item1.children.forEach((item2, index2) => {
+                this.$set(item2, 'key', item2.classify)
+                this.$set(item2, 'value', item2.classify)
+                this.$set(item2, 'title', item2.name)
+              })
+            })
+          })
+
+          this.classifyTreeData = res.data
+        } else {
+          this.classifyTreeData = res.data
+        }
+        return []
+      })
+    },
+
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.classifyTreeData = []
+      this.queryClassify.queryText = value
+      console.log('BBB:', this.queryClassify.queryText, value)
+      this.getinstitutionClassify(this.queryClassify)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.classifyTreeData = []
+        this.getinstitutionClassify(undefined)
+      }
     },
 
     /**
@@ -559,6 +646,8 @@ export default {
       this.queryParams.sortedNo = 1
       this.queryParams.tenantId = ''
       this.queryParams.orgType = undefined
+      this.queryParams.supervisionHosCode = ''
+      this.queryParams.institutionClassify = undefined
     },
 
     /**
@@ -612,6 +701,16 @@ export default {
           this.$message.error('请输入服务地址')
           return
         }
+
+        if (!this.queryParams.supervisionHosCode) {
+          this.$message.error('请输入机构代码')
+          return
+        }
+
+        if (!this.queryParams.institutionClassify) {
+          this.$message.error('请选择机构分类')
+          return
+        }
       }
 
       /**
@@ -622,6 +721,8 @@ export default {
         this.queryParams.level = ''
         this.queryParams.hisCode = ''
         this.queryParams.middleware = ''
+        this.queryParams.supervisionHosCode = ''
+        this.queryParams.institutionClassify = ''
       }
 
       if (this.fileList.length > 0 && this.fileList[0].response) {
