@@ -18,7 +18,7 @@
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">姓 名:{{ userInfoData.name }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">年 龄:{{ userInfoData.age }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">性 别:{{ userInfoData.sex }}</div>
-          <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">身 高:{{ userInfoData.height }}</div>
+          <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">身 高:{{ userInfoData.height }} cm</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">体 重:{{ userInfoData.weight }} kg</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">血 型:{{ userInfoData.bloodType }} 型</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">

@@ -4632,3 +4632,13 @@ export function getSavedUserTagsInfo(userId){
     // data: data,
   })
 }
+
+
+// 机构分类列表接口
+export function institutionClassify(data){
+  return axios({
+    url: '/info-api/medinsInfo/institutionClassify',
+    method: 'post',
+    data: data,
+  })
+}
