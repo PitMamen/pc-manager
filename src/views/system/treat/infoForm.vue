@@ -343,8 +343,8 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px">开发医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px;margin-top: 10px; ">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                 </div>
@@ -837,8 +837,8 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px">开发医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px;margin-top: 10px;">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                 </div>
@@ -1007,8 +1007,8 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px">开发医生：{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px;margin-top: 10px;">开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
+                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
                   </div>
                 </div>
