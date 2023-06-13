@@ -35,6 +35,7 @@
               v-else
               src="~@/assets/icons/shouquan_not.png"
             />
+            <!-- 患者服务授权协议 -->
             {{ contractList[0].description }}
           </span>
           <!-- <protocol-edit ref="protocolEdit1" :protocolType="'CP_10001'" /> -->
@@ -202,8 +203,26 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less" >
 /deep/ .ant-tabs-bar {
   margin-bottom: 10px !important;
+}
+
+// .aaa .ant-select-dropdown{
+//   z-index: 11111 !important;
+// }
+// /deep/ .ant-select-dropdown {
+//   z-index: 11111 !important;
+// }
+
+.w-e-toolbar {
+  z-index: 1 !important;
+}
+
+.w-e-menu {
+  z-index: 2 !important;
+}
+.w-e-text-container {
+  z-index: 1 !important;
 }
 </style>
