@@ -3527,6 +3527,28 @@ export function saveOrUpdate(data) {
   })
 }
 
+/**
+ * 不良事件列表接口
+ */
+export function qryComplaintByPage(data) {
+  return axios({
+    url: '/medical-api/ehosp/qryComplaintByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /ehosp/saveComplaint 不良事件登记、审核
+ */
+export function saveComplaint(data) {
+  return axios({
+    url: '/medical-api/ehosp/saveComplaint',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 /**
  * 健康商城首页 添加 
@@ -4577,7 +4599,7 @@ export function qryPlanUserInfo(data) {
 
 
 //处方审核tab
-export function checkPreTab(data){
+export function checkPreTab(data) {
   return axios({
     url: '/medical-api/medOrders/checkPreTab',
     method: 'post',
@@ -4587,7 +4609,7 @@ export function checkPreTab(data){
 
 
 //处方审核列表
-export function checkPrePage(data){
+export function checkPrePage(data) {
   return axios({
     url: '/medical-api/medOrders/checkPrePage',
     method: 'post',
@@ -4596,7 +4618,7 @@ export function checkPrePage(data){
 }
 
 //处方审核
-export function checkPre(data){
+export function checkPre(data) {
   return axios({
     url: '/medical-api/medOrders/checkPre',
     method: 'post',
@@ -4606,7 +4628,7 @@ export function checkPre(data){
 
 
 //处方详情
-export function preDetail(data){
+export function preDetail(data) {
   return axios({
     url: '/medical-api/medOrders/preDetail',
     method: 'get',
@@ -4615,7 +4637,7 @@ export function preDetail(data){
 }
 
 //复诊续方权益Id查看处方列表
-export function getPreListByRightsId(data){
+export function getPreListByRightsId(data) {
   return axios({
     url: '/medical-api/medOrders/getPreListByRightsId',
     method: 'get',
@@ -4624,18 +4646,18 @@ export function getPreListByRightsId(data){
 }
 
 //用户基本信息
-export function getUserExternalInfo(userId){
+export function getUserExternalInfo(userId) {
   return axios({
-    url: '/account-api/getUserExternalInfo/'+userId,
+    url: '/account-api/getUserExternalInfo/' + userId,
     method: 'post',
     // data: data,
   })
 }
 
 //用户标签信息
-export function getSavedUserTagsInfo(userId){
+export function getSavedUserTagsInfo(userId) {
   return axios({
-    url: '/account-api/getSavedUserTagsInfo/'+userId,
+    url: '/account-api/getSavedUserTagsInfo/' + userId,
     method: 'post',
     // data: data,
   })
@@ -4643,7 +4665,7 @@ export function getSavedUserTagsInfo(userId){
 
 
 // 机构分类列表接口
-export function institutionClassify(data){
+export function institutionClassify(data) {
   return axios({
     url: '/info-api/medinsInfo/institutionClassify',
     method: 'post',
