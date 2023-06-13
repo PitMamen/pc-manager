@@ -4614,6 +4614,14 @@ export function preDetail(data){
   })
 }
 
+//复诊续方权益Id查看处方列表
+export function getPreListByRightsId(data){
+  return axios({
+    url: '/medical-api/medOrders/getPreListByRightsId',
+    method: 'get',
+    params: data,
+  })
+}
 
 //用户基本信息
 export function getUserExternalInfo(userId){
