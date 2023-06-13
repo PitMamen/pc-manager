@@ -265,13 +265,15 @@ export default {
       this.visible = true
       this.reset()
       this.record = record
+      console.log("Ddd:",record.id)
       this.queryParam.planId = record.id
       this.title = record.planName+'随访方案'
       this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
       this.queryParam.cysjBegin = getDateNow()
       this.queryParam.cysjEnd = getCurrentMonthLast()
       this.getDepartmentSelectList(undefined)
-      this.$refs.table.refresh(true)
+      this.$refs.table.refresh()
+      // this.$refs.table.refresh()
     },
 
     getStatus(statuas) {
@@ -297,7 +299,7 @@ export default {
     //查询
     search() {
       //   this.qryPlanUserInfoOut()
-      this.$refs.table.refresh(true)
+      this.$refs.table.refresh()
     },
 
     reset() {
@@ -307,12 +309,12 @@ export default {
         cysjBegin: getDateNow(),
         cysjEnd:  getCurrentMonthLast(),
         cyzdmc: '',
-        planId: '',
+        planId: this.record.id,
         ssmc: '',
         status: undefined,
         userName: '',
       }
-      this.search()
+      // this.search()
     },
 
     //根据输入的表名查询 数据
