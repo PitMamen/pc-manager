@@ -26,7 +26,7 @@
           <a-select
             show-search
             style="width: 150px"
-            v-model="queryParam.cyksmc"
+            v-model="queryParam.cyksbm"
             :filter-option="false"
             :not-found-content="fetching ? undefined : null"
             allow-clear
@@ -105,7 +105,7 @@
   
   <script>
 import { qryPlanUserInfo, getDepartmentListForSelect } from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getlastMonthToday } from '@/utils/util'
+import { formatDate, getDateNow, getlastMonthToday,getCurrentMonthLast } from '@/utils/util'
 import { STable } from '@/components'
 import moment from 'moment'
 import { number } from 'yargs'
@@ -124,8 +124,8 @@ export default {
       record: {},
       queryParam: {
         cyksbm: undefined,
-        cysjBegin: formatDate(new Date()),
-        cysjEnd: formatDate(new Date()),
+        cysjBegin: getDateNow(),
+        cysjEnd: getCurrentMonthLast(),
         cyzdmc: '',
         planId: 0,
         ssmc: '',
@@ -213,7 +213,7 @@ export default {
         {
           title: '出院科室',
           dataIndex: 'cyksmc',
-          width:100,
+          width:180,
           ellipsis: true,
         },
 
@@ -265,14 +265,15 @@ export default {
       this.visible = true
       this.reset()
       this.record = record
+      console.log("Ddd:",record.id)
       this.queryParam.planId = record.id
       this.title = record.planName+'随访方案'
-      this.createValue = [
-        moment(this.formatDate(new Date()), this.dateFormat),
-        moment(this.formatDate(new Date()), this.dateFormat),
-      ]
+      this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+      this.queryParam.cysjBegin = getDateNow()
+      this.queryParam.cysjEnd = getCurrentMonthLast()
       this.getDepartmentSelectList(undefined)
-      this.$refs.table.refresh(true)
+      this.$refs.table.refresh()
+      // this.$refs.table.refresh()
     },
 
     getStatus(statuas) {
@@ -298,20 +299,22 @@ export default {
     //查询
     search() {
       //   this.qryPlanUserInfoOut()
-      this.$refs.table.refresh(true)
+      this.$refs.table.refresh()
     },
 
     reset() {
+      this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
       this.queryParam = {
         cyksbm: undefined,
-        cysjBegin: formatDate(new Date()),
-        cysjEnd: formatDate(new Date()),
+        cysjBegin: getDateNow(),
+        cysjEnd:  getCurrentMonthLast(),
         cyzdmc: '',
-        planId: '',
+        planId: this.record.id,
         ssmc: '',
         status: undefined,
         userName: '',
       }
+      // this.search()
     },
 
     //根据输入的表名查询 数据

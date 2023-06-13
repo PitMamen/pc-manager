@@ -148,6 +148,48 @@
           <span class="span-title">接口配置</span>
         </div>
 
+
+
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构分类:</span>
+          <a-tree-select
+            v-model="queryParams.institutionClassify"
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
+            style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
+            :tree-data="classifyTreeData"
+            placeholder="请选择机构分类"
+            allow-clear
+            show-search
+            tree-node-filter-prop="title"
+            @change="onDepartmentSelectChange"
+            @search="onDepartmentSelectSearch"
+          >
+          </a-tree-select>
+        </div>
+
+
+        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构代码:</span>
+          <a-input
+            :disabled="!queryParams.orgType || queryParams.orgType != 2"
+            v-model="queryParams.supervisionHosCode"
+            allow-clear
+            placeholder="请输入代码"
+            style="width: 200px; margin-top: 5px; margin-left: 7px"
+            @keyup.enter="$refs.table.refresh(true)"
+            @search="$refs.table.refresh(true)"
+          />
+        </div>
+
+
+
+
+
+
+
+
+
+
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
           <a-input
@@ -176,38 +218,7 @@
         </div>
 
 
-        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构代码:</span>
-          <a-input
-            :disabled="!queryParams.orgType || queryParams.orgType != 2"
-            v-model="queryParams.supervisionHosCode"
-            allow-clear
-            placeholder="请输入代码"
-            style="width: 200px; margin-top: 5px; margin-left: 7px"
-            @keyup.enter="$refs.table.refresh(true)"
-            @search="$refs.table.refresh(true)"
-          />
-        </div>
-
-        <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构分类:</span>
-          <a-tree-select
-            v-model="queryParams.institutionClassify"
-            :disabled="!queryParams.orgType || queryParams.orgType != 2"
-            style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
-            :tree-data="classifyTreeData"
-            placeholder="请选择机构分类"
-            allow-clear
-            show-search
-            tree-node-filter-prop="title"
-            @change="onDepartmentSelectChange"
-            @search="onDepartmentSelectSearch"
-          >
-          </a-tree-select>
-        </div>
-
-
-
+        
 
       </div>
 
@@ -348,14 +359,12 @@ export default {
     //初始化方法
     modify(record) {
       this.visible = true
-      console.log('444:', record)
       this.reset()
       this.shoudata = record.hospitalName
       this.queryParams.pid = record.pid
       this.hospitalId = record.hospitalId
 
       this.queryParams.hospitalId = record.hospitalId
-      console.log('9999', record.pid, this.queryParams.hospitalId)
       this.getinstitutionClassify()
       this.getHospitalDetailOut()
       this.getHospitalLevel()
@@ -755,7 +764,6 @@ export default {
      * 提交
      */
     handleSubmit() {
-      console.log('0000000:', this.queryParams.hospitalId)
       if (this.queryParams.hospitalId === '') {
         this.$message.error('请选择上级机构')
         return
@@ -832,6 +840,14 @@ export default {
   },
 }
 </script>
+
+<style lang="less"  >
+.ant-select-tree-dropdown {
+  max-height: 27vh !important; //60
+  top: 540px !important; //148
+  left: 637px;
+}
+</style>
         
         <style lang="less">
 .dddd-r {
