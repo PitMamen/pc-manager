@@ -151,7 +151,7 @@
       <div class="div-up-content" style="padding-bottom: 10px">
         <div class="div-pro-line">
           <span class="span-item-name">复诊订单号 :</span>
-          <span style="color: #409eff;cursor:pointer" class="span-item-value" @click="goExamine(orderDetailDataList.orderId)">{{ orderDetailDataList.appPrePrescriptionOrderId || '-' }} </span>
+          <span style="color: #409eff;cursor:pointer" class="span-item-value" @click="goExamine(orderDetailDataList.appPrePrescriptionOrderId)">{{ orderDetailDataList.appPrePrescriptionOrderId || '-' }} </span>
         </div>
 
         <!-- <div class="div-pro-line">

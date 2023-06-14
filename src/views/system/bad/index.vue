@@ -76,16 +76,16 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <!-- 审核状态 1未审核2已审核3未登记 -->
-          <a @click="$refs.editForm.edit(record, true)" v-if="record.status == 1"
+          <!-- 审核状态 1未审核2已审核3未登记   //传参1登记2审核 3详情 -->
+          <a @click="$refs.editForm.edit(record, '2')" v-if="record.status == 1"
             ><a-icon type="edit" style="margin-right: 0" />审核</a
           >
           <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
-          <a @click="$refs.editForm.edit(record, false)" v-if="record.status == 2"
+          <a @click="$refs.editForm.edit(record, '3')" v-if="record.status == 2"
             ><a-icon type="apartment" style="margin-right: 0" />详情</a
           >
           <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
-          <a @click="$refs.editForm.edit(record, true)" v-if="record.status == 3"
+          <a @click="$refs.editForm.edit(record, '1')" v-if="record.status == 3"
             ><a-icon type="apartment" style="margin-right: 0" />登记</a
           >
         </template>
@@ -197,8 +197,9 @@ export default {
           if (res.code === 0) {
             res.data.rows.forEach((element) => {
               this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
+              // this.$set(element, 'status', 2)
               this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
-              // 状态 0 正常 1 发布 2 删除
+              // 1未审核2已审核3未登记
               if (element.status == 1) {
                 this.$set(element, 'statusText', '未审核')
               } else if (element.status == 2) {
@@ -207,6 +208,7 @@ export default {
                 this.$set(element, 'statusText', '未登记')
               }
             })
+            console.log(JSON.stringify(res.data.rows))
             return res.data
           } else {
             this.$message.error(res.message)
