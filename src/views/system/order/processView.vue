@@ -9,6 +9,11 @@
     @ok="handleSubmit"
     :confirmLoading="confirmLoading"
   >
+    <template slot="footer">
+      <a-button type="primary" @click="handleSubmit">确定</a-button>
+      <a-button @click="handleCancel">关闭</a-button>
+    </template>
+
     <div style="height: 500px; width: 100%">
       <div class="div-appoint-detail-check">
         <!-- 左边视图 -->
@@ -121,7 +126,7 @@
           <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div>
 
           <div class="radia-content" v-if="record.checkStatus == 1">
-            <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">审核：</div>
+            <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a; width: 50px">审核：</div>
             <a-radio-group
               style="margin-top: 10px"
               name="radioGroup"
@@ -129,7 +134,7 @@
               @change="radioChange"
               v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
             >
-              <a-radio :value="2" style="font-size: 8px; color: #1a1a1a"> 成功 </a-radio>
+              <a-radio :value="2" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important"> 成功 </a-radio>
               <a-radio :value="3" style="font-size: 8px; color: #1a1a1a"> 失败 </a-radio>
             </a-radio-group>
           </div>
@@ -149,6 +154,7 @@
 
             <div style="display: flex; flex-direction: row; overflow: hidden; position: relative">
               <a-textarea
+                :disabled="radioTyPe==2"
                 style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: 10px; width: 87%"
                 v-model="queryParams.refuseReason"
                 :maxLength="200"
@@ -159,7 +165,7 @@
             </div>
           </div>
 
-          <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
+          <div v-if="record.checkStatus != 1" style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
             审核药师：{{ preDetailData.medicalInfo.checkUserName }}
           </div>
           <div v-if="record.checkStatus != 1" style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
@@ -223,24 +229,27 @@ export default {
 
     //审核
     process(record) {
-      console.log('1111111111')
+      // console.log('1111111111')
       this.title = '处方审核'
       this.visible = true
       this.record = {}
-      this.footer = 'undefined'
+      this.radioTyPe='2',
+      this.footer = undefined
       this.record = record
       this.queryParams.preNo = record.preNo
+      this.queryParams.refuseReason = ''
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
       this.preDetailOut()
     },
 
     lookview(record) {
-      console.log('22222222')
+      // console.log('22222222')
       this.title = '处方查看'
       this.footer = null
       this.visible = true
       this.record = record
+      this.radioTyPe='2',
       this.queryParams.preNo = record.preNo
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
@@ -295,6 +304,9 @@ export default {
     // 审核
     checkPreOut() {
       this.confirmLoading = true
+      if(this.radioTyPe==2){
+        this.queryParams.refuseReason = ''
+      }
       checkPre(this.queryParams)
         .then((res) => {
           if (res.code == 0) {

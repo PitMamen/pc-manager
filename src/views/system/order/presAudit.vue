@@ -19,7 +19,7 @@
           v-model="queryParams.queryText"
           allow-clear
           placeholder="输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
+          style="width: 158px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
