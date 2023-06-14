@@ -1,6 +1,6 @@
 <template>
   <a-modal
-  :title="record.userId?'修改人员':'新增人员'"
+    :title="record.userId ? '修改人员' : '新增人员'"
     :width="800"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -10,7 +10,20 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
-        <div class="div-part-left">
+        <div class="recordType">
+          <div style="padding: 10px 20px" :class="{ 'checked-btn': currentTab == 'base' }" @click="checketab('base')">
+            <a-icon type="home" style="margin-right: 5px"></a-icon><span>基本信息</span>
+          </div>
+          <div
+            :class="{ 'checked-btn': currentTab == 'photo' }"
+            style="margin-left: 15px; padding: 10px 20px"
+            @click="checketab('photo')"
+          >
+            <a-icon type="idcard" style="margin-right: 5px"></a-icon><span>证件信息</span>
+          </div>
+        </div>
+
+        <div v-if="currentTab == 'base'" class="div-part-left">
           <div class="div-content">
             <a-avatar :size="48" :src="checkData.avatarUrl" icon="user" style="margin-right: 21px" />
             <div class="avator-right">
@@ -52,7 +65,10 @@
           </div>
           <div class="div-content">
             <span class="span-item-name">出生日期:</span>
-            <a-date-picker :value="checkData.birthday?moment(checkData.birthday, 'YYYY-MM-DD'):undefined"  @change="onDatePickerChange" />
+            <a-date-picker
+              :value="checkData.birthday ? moment(checkData.birthday, 'YYYY-MM-DD') : undefined"
+              @change="onDatePickerChange"
+            />
           </div>
           <div class="div-content">
             <span class="span-item-name">身份证号:</span>
@@ -103,19 +119,26 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>人员职称:</span>
             <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择人员职称">
-              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{ item.description }}</a-select-option>
+              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-tree-select v-model="checkData.hospitalCode" style="min-width: 120px" :tree-data="treeData" placeholder="请选择">
+            <a-tree-select
+              v-model="checkData.hospitalCode"
+              style="min-width: 120px"
+              :tree-data="treeData"
+              placeholder="请选择"
+            >
             </a-tree-select>
           </div>
           <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">账号信息</span>
           </div>
-          
+
           <!-- 修改 -->
           <div v-if="record.userId" class="div-content">
             <a-checkbox v-model="accountChecked" disabled></a-checkbox>
@@ -129,9 +152,9 @@
               placeholder="请输入内容"
             />
           </div>
-           <!-- 新增 -->
+          <!-- 新增 -->
           <div v-else class="div-content">
-            <a-checkbox v-model="accountChecked" ></a-checkbox>
+            <a-checkbox v-model="accountChecked"></a-checkbox>
             <span class="span-item-name">创建账号:</span>
             <a-input
               v-model="checkData.loginName"
@@ -142,10 +165,9 @@
               placeholder="请输入内容"
             />
           </div>
-
         </div>
 
-        <div class="div-part-right">
+        <div v-if="currentTab == 'base'" class="div-part-right">
           <div class="div-title" style="margin-top: 0">
             <div class="div-line-blue"></div>
             <span class="span-title">分配角色</span>
@@ -170,23 +192,23 @@
           <div class="div-content" style="flex-wrap: wrap">
             <div class="checkview">
               <span class="span-check-title">图文咨询:</span>
-              <a-switch v-model="textNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="textNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">电话咨询:</span>
-              <a-switch v-model="telNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="telNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview" style="margin-right: 0">
               <span class="span-check-title">视频咨询:</span>
-              <a-switch v-model="videoNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="videoNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">复诊开方:</span>
-              <a-switch v-model="appointNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="appointNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">MDT会诊:</span>
-              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked" />
             </div>
           </div>
 
@@ -208,7 +230,7 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/300</span>
+            <span class="m-count">{{ checkData.expertInDisease ? checkData.expertInDisease.length : 0 }}/300</span>
           </div>
           <div class="div-content" style="position: relative">
             <span class="span-item-name" style="text-align: left">详细介绍:</span>
@@ -224,7 +246,177 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count2">{{ checkData.doctorBrief?checkData.doctorBrief.length : 0 }}/1000</span>
+            <span class="m-count2">{{ checkData.doctorBrief ? checkData.doctorBrief.length : 0 }}/1000</span>
+          </div>
+        </div>
+
+        <div v-if="currentTab == 'photo'" class="idcard-infor">
+          <!-- 身份证 -->
+          <div class="item-idcard">
+            <div>身份证照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传身份证正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传身份证反面图片</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <!-- 职称 -->
+          <div class="item-idcard">
+            <div style="margin-left: 12px">职称照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传职称正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传职称反面图片</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <!-- 资格证 -->
+          <div class="item-idcard">
+            <div>资格证照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传资格证正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传资格证反面图片</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <!-- 执业证照片 -->
+          <div class="item-idcard">
+            <div>执业证照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传执业证正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :file-list="idcardfileList"
+                :headers="headers"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                @preview="handlePreview"
+                @change="handleChange"
+              >
+                <div v-if="idcardfileList.length < 1">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传执业证反面图片</div>
+                </div>
+              </a-upload>
+            </div>
           </div>
         </div>
       </div>
@@ -234,7 +426,7 @@
 
 
 <script>
-import moment from 'moment';
+import moment from 'moment'
 import {
   getRoleList,
   queryHospitalList,
@@ -246,23 +438,38 @@ import {
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
-import {isObjectEmpty,isStringEmpty} from '@/utils/util'
+import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
+import { isObjectEmpty, isStringEmpty } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
   data() {
     return {
+      actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
+      currentTab: 'base',
       visible: false,
-      record:{},
-      isDetailTag:false,
+      record: {},
+      isDetailTag: false,
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
       fileList: [],
+      idcardfileList: [],
       danandataList: [],
       treeData: [],
+
+      photoListCheck: {
+        idcardF: '',
+        idcardZ: '',
+        practiceF: '',
+        practiceZ: '',
+        qualificationF: '',
+        qualificationZ: '',
+        titleF: '',
+        titleZ: '',
+      },
+
       checkData: {
         avatarUrl: '', //头像
         userName: '',
@@ -294,12 +501,12 @@ export default {
   methods: {
     moment,
     clearData() {
-      this.record={}
-      this.isDetailTag=false
-    this.checkData= {
+      this.record = {}
+      this.isDetailTag = false
+      this.checkData = {
         avatarUrl: '', //头像
         userName: '',
-        loginName:'',//账号
+        loginName: '', //账号
         userSex: 0,
         birthday: '', //出生日期
         identificationNo: '',
@@ -312,12 +519,12 @@ export default {
         doctorBrief: '', //详细介绍
         roleIds: '', //分配角色
       }
-      this.accountChecked= true//创建账号
-      this.textNumChecked= false
-      this.telNumChecked=false
-      this.videoNumChecked= false
-      this.appointNumChecked= false
-      this.MDTNumChecked= false
+      this.accountChecked = true //创建账号
+      this.textNumChecked = false
+      this.telNumChecked = false
+      this.videoNumChecked = false
+      this.appointNumChecked = false
+      this.MDTNumChecked = false
     },
     //新增
     addModel() {
@@ -330,71 +537,116 @@ export default {
       this.queryHospitalListOut()
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
-     
     },
-//修改
-  editModel(record) {
-    console.log(record)
+    //修改
+    editModel(record) {
+      console.log(record)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      this.record=record
-      this.isDetailTag=true
-      
-     
+      this.record = record
+      this.isDetailTag = true
+
       this.queryHospitalListOut()
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
     },
+
+    checketab(type) {
+      if (this.currentTab == type) {
+        return
+      }
+      this.currentTab = type
+      if (type == 'base') {
+        // this.getChatList(this.item.orderId)
+      } else if (type == 'photo') {
+        // this.getphoneRecords(this.item)
+      }
+    },
+
+    async handlePreview(file) {
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisible = true
+    },
+
+    handleChange(changeObj) {
+      this.idcardfileList = changeObj.fileList
+      console.log(this.fileList)
+      if (this.idcardfileList.length == 0) {
+        this.checkData.imgPath = ''
+      } else {
+        console.log(this.fileList[0])
+        if (this.idcardfileList[0].response) {
+          this.checkData.imgPath = this.idcardfileList[0].response.data.fileLinkUrl
+        } else {
+          this.checkData.imgPath = ''
+        }
+      }
+      // if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
+      //   this.$message.error(changeObj.file.response.message)
+      //   changeObj.fileList.pop()
+      //   this.fileList = changeObj.fileList
+      // } else {
+      //   this.fileList = changeObj.fileList
+      //   console.log(this.fileList)
+      //   if(this.fileList.length==0){
+      //   this.checkData.imgPath = ''
+      // }else{
+      //   console.log(this.fileList[0])
+      //   this.checkData.imgPath = this.fileList[0].response.data.fileLinkUrl
+      // }
+      // }
+    },
+
     //用户详情
-    getDoctorUserDetailOut(userId){
+    getDoctorUserDetailOut(userId) {
       getDoctorUserDetail({
         userId: userId,
       }).then((res) => {
         if (res.code == 0) {
-          res.data.userSex= res.data.userSex=='男'?0:res.data.userSex=='女'?1:2
+          res.data.userSex = res.data.userSex == '男' ? 0 : res.data.userSex == '女' ? 1 : 2
           // var birthday=res.data.birthday
-          // var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6) 
+          // var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6)
           // res.data.birthday=birthday2
-          if(res.data.loginName){
-            this.accountChecked=true
-          }else{
-            this.accountChecked=false
+          if (res.data.loginName) {
+            this.accountChecked = true
+          } else {
+            this.accountChecked = false
           }
-         
-          this.checkData=res.data
-          if(res.data.registerTypeOptions){
-            if(res.data.registerTypeOptions.indexOf("textNum")>-1){
-              this.textNumChecked=true
+
+          this.checkData = res.data
+          if (res.data.registerTypeOptions) {
+            if (res.data.registerTypeOptions.indexOf('textNum') > -1) {
+              this.textNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("telNum")>-1){
-              this.telNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('telNum') > -1) {
+              this.telNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("videoNum")>-1){
-              this.videoNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('videoNum') > -1) {
+              this.videoNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("appointNum")>-1){
-              this.appointNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('appointNum') > -1) {
+              this.appointNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("consult")>-1){
-              this.MDTNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('consult') > -1) {
+              this.MDTNumChecked = true
             }
           }
-         
-         
 
           this.getRolesOut()
         }
       })
     },
 
-
     /**
      * 人员类型
      */
-     getDictDataForCodeUserTypeOut() {
+    getDictDataForCodeUserTypeOut() {
       this.confirmLoading = true
       getDictDataForCodeUserType()
         .then((res) => {
@@ -412,15 +664,9 @@ export default {
         })
     },
 
-
-
-
-
-
-
-      //人员职称
-      getProfessionalTitles() {
-        professionalTitles().then((res) => {
+    //人员职称
+    getProfessionalTitles() {
+      professionalTitles().then((res) => {
         if (res.code == 0) {
           this.ryzcList = res.data
         }
@@ -436,15 +682,14 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           var roleList = []
-          var resdata=res.data.records
-          for (let i = 0; i <resdata.length; i++) {
+          var resdata = res.data.records
+          for (let i = 0; i < resdata.length; i++) {
             if (resdata[i].state == 1) {
-              
-              if(this.record.userId && this.checkData.roleIds){
+              if (this.record.userId && this.checkData.roleIds) {
                 //如果是详情 显示已勾选
-                this.checkData.roleIds.forEach(id=>{
-                  if(id == resdata[i].roleId){
-                    resdata[i].checked=true
+                this.checkData.roleIds.forEach((id) => {
+                  if (id == resdata[i].roleId) {
+                    resdata[i].checked = true
                   }
                 })
               }
@@ -509,12 +754,11 @@ export default {
       }
       return true
     },
-   
-    momentfun(){
-     
-      if(this.checkData.birthday){
+
+    momentfun() {
+      if (this.checkData.birthday) {
         return moment(this.checkData.birthday, 'YYYYMMDD')
-      }else{
+      } else {
         return undefined
       }
     },
@@ -535,10 +779,9 @@ export default {
       console.log('avatarUrl:' + this.checkData.avatarUrl)
     },
     telInputChange(e) {
-      if(!this.record.userId){
-        this.checkData.loginName=this.checkData.phone
+      if (!this.record.userId) {
+        this.checkData.loginName = this.checkData.phone
       }
-    
     },
     onDatePickerChange(date, dateString) {
       console.log(date, dateString)
@@ -547,7 +790,6 @@ export default {
 
     handleSubmit() {
       console.log(this.checkData)
-      
 
       // if (isStringEmpty(this.checkData.avatarUrl)) {
       //   this.$message.error('请上传头像')
@@ -608,9 +850,9 @@ export default {
       if (this.accountChecked) {
         //如果勾选了创建账号
         if (isStringEmpty(this.checkData.loginName)) {
-        this.$message.error('请创建账号')
-        return
-      }
+          this.$message.error('请创建账号')
+          return
+        }
         //角色
         var checkedRoleList = []
         this.roleList.forEach((item) => {
@@ -636,80 +878,74 @@ export default {
          * "consult": //MDT会诊
          * "vipNum": //VIP号源
          */
-         var  registerTypeOptions=''
-      if(this.textNumChecked){
-        registerTypeOptions='textNum'
-      }
-    
-      if(this.telNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',telNum'
-        }else{
-          registerTypeOptions='telNum'
+        var registerTypeOptions = ''
+        if (this.textNumChecked) {
+          registerTypeOptions = 'textNum'
         }
-      
-      }
-     
-      if(this.videoNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',videoNum'
-        }else{
-          registerTypeOptions='videoNum'
+
+        if (this.telNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',telNum'
+          } else {
+            registerTypeOptions = 'telNum'
+          }
         }
-       
-      }
-      
-      if(this.appointNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',appointNum'
-        }else{
-          registerTypeOptions='appointNum'
+
+        if (this.videoNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',videoNum'
+          } else {
+            registerTypeOptions = 'videoNum'
+          }
         }
-     
-      }
-    
-      if(this.MDTNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',consult'
-        }else{
-          registerTypeOptions='consult'
+
+        if (this.appointNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',appointNum'
+          } else {
+            registerTypeOptions = 'appointNum'
+          }
         }
-      
+
+        if (this.MDTNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',consult'
+          } else {
+            registerTypeOptions = 'consult'
+          }
+        }
       }
-     
-    }
-   
+
       var postData = {
         identificationNo: this.checkData.identificationNo,
-        userName:this.checkData.userName,
-        userSex:this.checkData.userSex=='0'?'男':this.checkData.userSex=='1'?'女':'未知',
+        userName: this.checkData.userName,
+        userSex: this.checkData.userSex == '0' ? '男' : this.checkData.userSex == '1' ? '女' : '未知',
         email: this.checkData.email,
         phone: this.checkData.phone,
         avatarUrl: this.checkData.avatarUrl,
-        birthday: this.checkData.birthday?this.checkData.birthday.split('-').join(''):'',
+        birthday: this.checkData.birthday ? this.checkData.birthday.split('-').join('') : '',
         doctorBrief: this.checkData.doctorBrief,
         expertInDisease: this.checkData.expertInDisease,
-        userType:this.checkData.userType, //人员类型
+        userType: this.checkData.userType, //人员类型
         hospitalCode: this.checkData.hospitalCode,
-        professionalTitle: this.checkData.professionalTitle, //职称 
+        professionalTitle: this.checkData.professionalTitle, //职称
       }
       if (this.accountChecked) {
-        postData.loginName= this.checkData.loginName 
-        postData.roleIds= this.checkData.roleIds
-        postData.registerTypeOptions= registerTypeOptions //服务选项
+        postData.loginName = this.checkData.loginName
+        postData.roleIds = this.checkData.roleIds
+        postData.registerTypeOptions = registerTypeOptions //服务选项
       }
 
-      console.log('postData',postData)
+      console.log('postData', postData)
       this.confirmLoading = true
-      if(this.record.userId){
-      //修改
-      postData.userId=this.record.userId
-      this.editUser(postData)
-      }else{
-      //新增
-      this.addUser(postData)
+      if (this.record.userId) {
+        //修改
+        postData.userId = this.record.userId
+        this.editUser(postData)
+      } else {
+        //新增
+        this.addUser(postData)
       }
-
     },
 
     addUser(postData) {
@@ -717,7 +953,7 @@ export default {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.visible = false
-         
+
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
@@ -730,7 +966,7 @@ export default {
         if (res.code == 0) {
           this.$message.success('修改成功！')
           this.visible = false
-         
+
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
@@ -751,17 +987,17 @@ export default {
 </script>
 <style lang="less" scoped>
 .m-count {
-    position: absolute;
-    font-size: 12px;
-    bottom: 2px;
-    right: 10px;
-  }
-  .m-count2 {
-    position: absolute;
-    font-size: 12px;
-    bottom: 13px;
-    right: 10px;
-  }
+  position: absolute;
+  font-size: 12px;
+  bottom: 2px;
+  right: 10px;
+}
+.m-count2 {
+  position: absolute;
+  font-size: 12px;
+  bottom: 13px;
+  right: 10px;
+}
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
@@ -787,8 +1023,39 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 530px;
+  height: 580px;
   margin-top: 10px;
+
+  .idcard-infor {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+
+    .item-idcard {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-left: 25px;
+      margin-bottom: 8px;
+    }
+  }
+
+  .recordType {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .checked-btn {
+    background-color: #eff7ff;
+    color: #1890ff;
+    border-bottom: #1890ff 2px solid;
+  }
 
   .div-part-left {
     float: left;
