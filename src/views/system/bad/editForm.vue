@@ -1,10 +1,11 @@
 <template>
   <a-modal
-    title="不良事件登记"
+    :title="title"
     :width="500"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
+    :footer="inputFlag == '3' ? null : undefined"
     @cancel="handleCancel"
   >
     <a-spin :spinning="confirmLoading">
@@ -12,35 +13,35 @@
         <!-- 基本信息 -->
         <div class="wrap-info">
           <div class="info-per">
-            <div>姓名：张三</div>
+            <div>姓名：{{ item.userName }}</div>
             <div class="shu-line"></div>
-            <div>性别：男</div>
+            <div>性别：{{ item.sex }}</div>
             <div class="shu-line"></div>
-            <div>年龄：18</div>
+            <div>年龄：{{ item.age }}</div>
             <div class="shu-line"></div>
-            <div>联系方式：张18888888888</div>
+            <div>联系方式：{{ item.userPhone }}</div>
           </div>
         </div>
 
         <div class="wrap-hor">
           <div class="hor-half">
             <div>业务单号：</div>
-            <div>1454545</div>
+            <div>{{ item.orderId }}</div>
           </div>
           <div class="hor-half">
             <div>业务类型：</div>
-            <div>咨询服务类</div>
+            <div>{{ item.broadClassifyName }}</div>
           </div>
         </div>
 
         <div class="wrap-hor">
           <div class="hor-half">
             <div>所属机构：</div>
-            <div>湘雅二</div>
+            <div>{{ item.hospitalName }}</div>
           </div>
           <div class="hor-half">
             <div>事件时间：</div>
-            <div>2023-09-24</div>
+            <div>{{ item.createTime }}</div>
           </div>
         </div>
 
@@ -61,13 +62,14 @@
               :rows="4"
               :maxLength="500"
               placeholder="请输入事件描述"
+              :disabled="inputFlag == '3'"
               style="min-height: 100px"
-              v-decorator="['wardName', { rules: [{ required: true, message: '请输入事件描述！' }] }]"
+              v-decorator="['eventDesc', { rules: [{ required: true, message: '请输入事件描述！' }] }]"
             ></a-textarea>
-            <span class="m-count">{{ textLength() }}/200 </span>
+            <span class="m-count">{{ textLength1() }}/500 </span>
           </a-form-item>
           <a-form-item
-            label="备注说明"
+            label="发生原因"
             class="remark"
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
@@ -77,14 +79,15 @@
             <a-textarea
               :rows="4"
               :maxLength="500"
-              placeholder="备注说明"
+              placeholder="请输入发生原因"
+              :disabled="inputFlag == '3'"
               style="min-height: 100px"
-              v-decorator="['wardIntroduce']"
+              v-decorator="['eventReason']"
             ></a-textarea>
-            <span class="m-count">{{ textLength() }}/200 </span>
+            <span class="m-count">{{ textLength2() }}/500 </span>
           </a-form-item>
           <a-form-item
-            label="备注说明"
+            label="采取措施"
             class="remark"
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
@@ -94,14 +97,15 @@
             <a-textarea
               :rows="4"
               :maxLength="500"
-              placeholder="备注说明"
+              placeholder="请输入采取措施"
+              :disabled="inputFlag == '3'"
               style="min-height: 100px"
-              v-decorator="['wardIntroduce']"
+              v-decorator="['eventDeal']"
             ></a-textarea>
-            <span class="m-count">{{ textLength() }}/200 </span>
+            <span class="m-count">{{ textLength3() }}/500 </span>
           </a-form-item>
           <a-form-item
-            label="备注说明"
+            label="损害程度"
             class="remark"
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
@@ -111,14 +115,15 @@
             <a-textarea
               :rows="4"
               :maxLength="500"
-              placeholder="备注说明"
+              placeholder="请输入损害程度"
+              :disabled="inputFlag == '3'"
               style="min-height: 100px"
-              v-decorator="['wardIntroduce']"
+              v-decorator="['eventLevel']"
             ></a-textarea>
-            <span class="m-count">{{ textLength() }}/200 </span>
+            <span class="m-count">{{ textLength4() }}/500 </span>
           </a-form-item>
           <a-form-item
-            label="备注说明"
+            label="后续改进"
             class="remark"
             :labelCol="labelCol"
             :wrapperCol="wrapperCol"
@@ -128,13 +133,49 @@
             <a-textarea
               :rows="4"
               :maxLength="500"
-              placeholder="备注说明"
+              placeholder="请输入后续改进"
+              :disabled="inputFlag == '3'"
               style="min-height: 100px"
-              v-decorator="['wardIntroduce']"
+              v-decorator="['eventImprove']"
             ></a-textarea>
-            <span class="m-count">{{ textLength() }}/200 </span>
+            <span class="m-count">{{ textLength5() }}/500 </span>
           </a-form-item>
-          <a-row>
+
+          <a-form-item
+            label="上报时间"
+            class="remark"
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            has-feedback
+            style="position: relative; margin-top: 10px"
+          >
+            <a-date-picker
+              v-decorator="['uploadTime', { rules: [{ required: false, message: '请选择！' }] }]"
+              show-time
+              :disabled="inputFlag == '3'"
+              placeholder="请选择"
+              @change="onChange"
+              @ok="onOk"
+            />
+          </a-form-item>
+
+          <a-form-item
+            label="上报人"
+            class="remark"
+            :labelCol="labelCol"
+            :wrapperCol="wrapperCol"
+            has-feedback
+            style="position: relative; margin-top: 10px"
+          >
+            <a-input
+              placeholder="请输入上报人"
+              style="width: 195px"
+              :disabled="inputFlag == '3'"
+              v-decorator="['uploadUserName', { rules: [{ required: false, message: '请输入上报人！' }] }]"
+            />
+          </a-form-item>
+
+          <!-- <a-row>
             <a-col :span="12">
               <a-form-item
                 label="上报时间"
@@ -149,9 +190,12 @@
                 }"
                 has-feedback
               >
-                <a-input
-                  placeholder="病区名称"
-                  v-decorator="['wardName', { rules: [{ required: false, message: '请输入病区名称！' }] }]"
+                <a-date-picker
+                  v-decorator="['uploadTime', { rules: [{ required: false, message: '请选择！' }] }]"
+                  show-time
+                  placeholder="请选择"
+                  @change="onChange"
+                  @ok="onOk"
                 />
               </a-form-item>
             </a-col>
@@ -170,12 +214,13 @@
                 has-feedback
               >
                 <a-input
-                  placeholder="病区名称"
-                  v-decorator="['wardName', { rules: [{ required: false, message: '请输入病区名称！' }] }]"
+                  placeholder="请输入上报人"
+                  :disabled="!isEdit"
+                  v-decorator="['uploadUserName', { rules: [{ required: false, message: '请输入上报人！' }] }]"
                 />
               </a-form-item>
             </a-col>
-          </a-row>
+          </a-row> -->
         </a-form>
       </div>
     </a-spin>
@@ -183,8 +228,11 @@
 </template>
 
 <script>
-import { queryHospitalList as list2 } from '@/api/modular/system/posManage'
-import { update } from '@/api/modular/system/ward'
+import { saveComplaint } from '@/api/modular/system/posManage'
+import { formatDateFull, formatDate } from '@/utils/util'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
+import Vue from 'vue'
+import moment from 'moment'
 export default {
   data() {
     return {
@@ -198,86 +246,72 @@ export default {
       },
 
       visible: false,
-      isEdit: false,
+      item: {},
+      user: {},
+      chooseTime: '',
+      inputFlag: '',
+      title: '',
+      // isEdit: false,
       confirmLoading: false,
 
-      treeData: [],
       form: this.$form.createForm(this),
     }
   },
+  mounted() {
+    this.user = Vue.ls.get(TRUE_USER)
+  },
   methods: {
     // 初始化方法
-    edit(item, isEdit) {
+    edit(item, inputFlag) {
+      this.item = item
+      // 传参1登记2审核 3详情
+      if (inputFlag == '1') {
+        this.title = '不良事件登记'
+      } else if (inputFlag == '2') {
+        this.title = '不良事件审核'
+      } else {
+        this.title = '不良事件详情'
+      }
+      this.inputFlag = inputFlag
       this.visible = true
-      this.isEdit = isEdit
-      this.getTreeData()
+
+      let mTime
+      if (item.uploadTime) {
+        mTime = moment(item.uploadTime, 'YYYY-MM-DD HH:mm:ss')
+      } else {
+        mTime = moment(formatDateFull(new Date()), 'YYYY-MM-DD HH:mm:ss')
+      }
+
+      if (!item.uploadUserName) {
+        item.uploadUserName = this.user.userName
+      }
       setTimeout(() => {
         this.form.setFieldsValue({
           id: item.id,
-          selectHospitalCode: item.hospital_code,
-          wardName: item.ward_name,
-          wardOrder: item.ward_order,
-          bedQuantity: item.bed_quantity,
-          hisId: item.his_id,
-          hisName: item.his_name,
-          wardIntroduce: item.ward_introduce,
+          eventDesc: item.eventDesc,
+          eventReason: item.eventReason,
+          eventDeal: item.eventDeal,
+          eventLevel: item.eventLevel,
+          eventImprove: item.eventImprove,
+          uploadTime: mTime,
+          uploadUserName: item.uploadUserName,
         })
       })
-    },
-    getTreeData() {
-      this.confirmLoading = true
-      list2({
-        status: 1,
-        tenantId: '',
-        hospitalName: '',
-      })
-        .then((res) => {
-          if (res.code === 0) {
-            this.treeData = (res.data || []).map((item) => {
-              const tree = {
-                key: item.hospitalCode,
-                value: item.hospitalCode,
-                title: item.hospitalName,
-              }
-              if (item.hospitals && item.hospitals.length > 0) {
-                tree.children = item.hospitals.map((item_) => {
-                  return {
-                    key: item_.hospitalCode,
-                    value: item_.hospitalCode,
-                    title: item_.hospitalName,
-                  }
-                })
-              }
-              return tree
-            })
-          } else {
-            this.$message.error(res.message)
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false
-        })
     },
 
-    geneSubmitData(values) {
-      for (let x = 0; x < this.treeData.length; x++) {
-        const tree = this.treeData[x]
-        if (tree.value === values.selectHospitalCode) {
-          values.parentDisarmamentName = tree.title
-          return values
-        }
-        if (tree.children && tree.children.length > 0) {
-          for (let y = 0; y < tree.children.length; y++) {
-            const tree_ = tree.children[y]
-            if (tree_.value === values.selectHospitalCode) {
-              values.parentDisarmamentName = tree_.title
-              return values
-            }
-          }
-        }
-      }
-      return values
+    onChange(value, dateString) {
+      console.log('onChange value:', value)
+      console.log('onChange dateString: ', dateString)
+      console.log('chooseTime ', this.chooseTime)
     },
+    onOk(value) {
+      console.log('onOk value: ', value)
+      console.log('chooseTime ', this.chooseTime)
+      // this.form.setFieldsValue({
+      //   uploadTime: item.uploadTime,
+      // })
+    },
+
     handleSubmit() {
       const {
         form: { validateFields },
@@ -285,10 +319,19 @@ export default {
       this.confirmLoading = true
       validateFields((errors, values) => {
         if (!errors) {
-          update(this.geneSubmitData(values))
+          values.uploadTime = values.uploadTime.format('YYYY-MM-DD HH:mm:ss')
+          this.$set(values, 'status', this.inputFlag)
+          this.$set(values, 'id', this.item.id)
+
+          if (this.item.uploadUserId) {
+            this.$set(values, 'uploadUserId', this.item.uploadUserId)
+          } else {
+            this.$set(values, 'uploadUserId', this.user.userId)
+          }
+          saveComplaint(values)
             .then((res) => {
               if (res.code === 0) {
-                this.$message.success('修改成功')
+                this.$message.success('操作成功')
                 this.$emit('ok', values)
                 this.handleCancel()
                 this.clearDatas()
@@ -305,9 +348,41 @@ export default {
       })
     },
     //字数统计
-    textLength() {
+    textLength1() {
       if (this.form) {
-        return (this.form.getFieldValue('wardIntroduce') || '').length
+        return (this.form.getFieldValue('eventDesc') || '').length
+      } else {
+        return 0
+      }
+    },
+    //字数统计
+    textLength2() {
+      if (this.form) {
+        return (this.form.getFieldValue('eventReason') || '').length
+      } else {
+        return 0
+      }
+    },
+    //字数统计
+    textLength3() {
+      if (this.form) {
+        return (this.form.getFieldValue('eventDeal') || '').length
+      } else {
+        return 0
+      }
+    },
+    //字数统计
+    textLength4() {
+      if (this.form) {
+        return (this.form.getFieldValue('eventLevel') || '').length
+      } else {
+        return 0
+      }
+    },
+    //字数统计
+    textLength5() {
+      if (this.form) {
+        return (this.form.getFieldValue('eventImprove') || '').length
       } else {
         return 0
       }
@@ -326,6 +401,11 @@ export default {
 .bad-wrap {
   color: #4d4d4d;
   font-size: 12px;
+
+  .ant-calendar-picker {
+    // min-width: 161px !important;
+  }
+
   .wrap-info {
     // padding-left: 10px;
     .info-per {
