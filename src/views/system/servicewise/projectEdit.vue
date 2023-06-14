@@ -1361,6 +1361,9 @@ export default {
       //TODO 修改随访方式时，如果id不存在，给它的模版或者问卷置空
 
       // itemTask.messageContentId = itemTask.itemTemplateList[0].id
+
+      //将模版置空
+      itemTask.messageContentId = ''
     },
 
     /**

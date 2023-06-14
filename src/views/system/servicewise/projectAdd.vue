@@ -820,12 +820,10 @@ export default {
      * 取消选择时调用  取消哪一个，则需要清空哪一个科室的人员
      */
     onDeptDeSelect(departmentId) {
-      debugger
       for (let index = 0; index < this.projectData.tasks.length; index++) {
         let haveIndex = this.projectData.tasks[index].departmentDtos.findIndex((itemTemp, indexTemp) => {
           return itemTemp.executeDepartmentId == departmentId
         })
-        debugger
         if (haveIndex != -1) {
           this.projectData.tasks[index].departmentDtos.splice(haveIndex, 1)
           console.log('nameS before', this.projectData.tasks[index].nameStr)
@@ -924,9 +922,9 @@ export default {
      * @param {*} filterRules
      * @param {*} secondaryFilterTypeEnum
      */
-    handleAddFilter(index, filterRules, secondaryFilterTypeEnumm, filterConditionRemark) {
+    handleAddFilter(index, filterRules, secondaryFilterTypeEnum, filterConditionRemark) {
       this.$set(this.projectData.tasks[index], 'taskDetailFilterRuleDtos', filterRules)
-      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnumm', secondaryFilterTypeEnumm)
+      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnum', secondaryFilterTypeEnum)
       this.$set(this.projectData.tasks[index], 'filterConditionRemark', filterConditionRemark)
       console.log('handleAddFilter filterRules', filterRules)
     },
@@ -1037,6 +1035,8 @@ export default {
         // itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
         itemTask.isChecked = false
       }
+      //将模版置空
+      itemTask.messageContentId = ''
     },
 
     getDeptAllQues() {
