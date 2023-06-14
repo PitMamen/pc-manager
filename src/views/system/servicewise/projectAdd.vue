@@ -924,9 +924,9 @@ export default {
      * @param {*} filterRules
      * @param {*} secondaryFilterTypeEnum
      */
-    handleAddFilter(index, filterRules, secondaryFilterTypeEnumm, filterConditionRemark) {
+    handleAddFilter(index, filterRules, secondaryFilterTypeEnum, filterConditionRemark) {
       this.$set(this.projectData.tasks[index], 'taskDetailFilterRuleDtos', filterRules)
-      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnumm', secondaryFilterTypeEnumm)
+      this.$set(this.projectData.tasks[index], 'secondaryFilterTypeEnum', secondaryFilterTypeEnum)
       this.$set(this.projectData.tasks[index], 'filterConditionRemark', filterConditionRemark)
       console.log('handleAddFilter filterRules', filterRules)
     },
