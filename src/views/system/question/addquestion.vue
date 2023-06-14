@@ -186,6 +186,8 @@ export default {
         hospitalCode: this.queryParams.hospitalCode,
         status: 1,
         departmentName: departmentName,
+        pageNo: 1,
+        pageSize: 9999
       }
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
       getDepartmentListForReq(requestData).then((res) => {
