@@ -12,12 +12,12 @@
     <a-spin :spinning="confirmLoading">
       <div class="wrap">
         <div class="tabs">
-          <div   class="tab tab1" :class="{ active: tab === 1 }" @click="tabClick(1)">
+          <div class="tab tab1" :class="{ active: tab === 1 }" @click="tabClick(1)">
             <img src="@/assets/icons/wenzhen/tab11.png" v-if="tab === 1" />
             <img src="@/assets/icons/wenzhen/tab1.png" v-else />
             <span>订单信息</span>
           </div>
-         
+
           <div class="tab tab2" :class="{ active: tab === 2 }" @click="tabClick(2)">
             <img src="@/assets/icons/wenzhen/tab22.png" v-if="tab === 2" />
             <img src="@/assets/icons/wenzhen/tab2.png" v-else />
@@ -40,13 +40,13 @@
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
           </div>
-          <div  class="tab tab5" :class="{ active: tab === 6 }" @click="tabClick(6)">
+          <div class="tab tab5" :class="{ active: tab === 6 }" @click="tabClick(6)">
             <img src="@/assets/icons/wenzhen/chuf.png" v-if="tab === 6" />
             <img src="@/assets/icons/wenzhen/chuf1.png" v-else />
             <span>处方记录</span>
           </div>
         </div>
-     
+
         <div class="content content1" v-show="tab === 1">
           <div class="top">
             <div class="title">基本信息</div>
@@ -56,7 +56,6 @@
                 <div class="item">套餐类型：{{ tab1Info.classifyName || '--' }}</div>
                 <div class="item">套餐名称：{{ tab1Info.commodityName || '--' }}</div>
               </div>
-             
             </div>
             <div class="infos">
               <div class="row">
@@ -66,14 +65,13 @@
                   订单状态：<span class="ing">{{ (tab1Info.status || {}).description || '--' }}</span>
                 </div>
               </div>
-             
             </div>
             <div class="infos">
               <div class="row">
                 <div class="item">用户姓名：{{ tab1Info.userName || '--' }}</div>
                 <div class="item">联系方式：{{ tab1Info.phone || '--' }}</div>
                 <div class="item">&nbsp;</div>
-              </div>           
+              </div>
             </div>
             <div class="infos">
               <div class="row">
@@ -82,18 +80,32 @@
                   套餐包服务时间：{{ tab1Info.effectiveStartTime || '--' }} - {{ tab1Info.effectiveEndTime || '--' }}
                 </div>
                 <div class="item">&nbsp;</div>
-              </div>           
+              </div>
             </div>
             <div class="infos">
               <div class="row">
                 <div class="item">服务医生：{{ tab1Info.doctorUserName || '--' }}</div>
                 <div v-if="jumpType != 6" class="item">服务护士：{{ tab1Info.nurseUserName || '--' }}</div>
-                <div  v-if="jumpType != 6" class="item" :title="tab1Info.teamName || '--'">服务团队：{{ tab1Info.teamName || '--' }}</div>
-                <div v-if="jumpType == 6" class="item" style="width:66.66%;display: flex;flex-direction: row;">
-                  <div >处方订单号：</div>
-                <div v-for="(item,index) in tab1Info.preOrderIds" style="  cursor: pointer; color:#409eff;word-wrap:break-word;word-break:break-all;white-space:pre-wrap;" @click="onTab1ChufangClick(item)"  >{{index !=0?' ，':''}}{{ item }} </div>
+                <div v-if="jumpType != 6" class="item" :title="tab1Info.teamName || '--'">
+                  服务团队：{{ tab1Info.teamName || '--' }}
                 </div>
-              </div>           
+                <div v-if="jumpType == 6" class="item" style="width: 66.66%; display: flex; flex-direction: row">
+                  <div>处方订单号：</div>
+                  <div
+                    v-for="(item, index) in tab1Info.preOrderIds"
+                    style="
+                      cursor: pointer;
+                      color: #409eff;
+                      word-wrap: break-word;
+                      word-break: break-all;
+                      white-space: pre-wrap;
+                    "
+                    @click="onTab1ChufangClick(item)"
+                  >
+                    {{ index != 0 ? ' ，' : '' }}{{ item }}
+                  </div>
+                </div>
+              </div>
             </div>
             <div class="infos">
               <div class="row">
@@ -102,9 +114,8 @@
                 <div class="item" :title="tab1Info.refundReason || '--'">
                   退款原因：{{ tab1Info.refundReason || '--' }}
                 </div>
-              </div>           
+              </div>
             </div>
- 
           </div>
           <div class="bottom">
             <div class="title">权益使用情况</div>
@@ -279,14 +290,15 @@
                   chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomChuFangMessage'
                 "
               >
-              
                 <div class="big-kuang">
                   <div class="top-content">
                     <div style="margin-left: 30%">{{ preDetailData.medicalInfo.preHead }}</div>
                     <div class="span-gray">{{ preDetailData.medicalInfo.preType }}</div>
                   </div>
 
-                  <div style="margin-left: 43%; margin-top: 10px;margin-bottom: 20px;">{{ preDetailData.medicalInfo.preTitle }}</div>
+                  <div style="margin-left: 43%; margin-top: 10px; margin-bottom: 20px">
+                    {{ preDetailData.medicalInfo.preTitle }}
+                  </div>
                   <div class="user-content">
                     <div>姓名:{{ preDetailData.medicalInfo.name }}</div>
                     <div>性别:{{ preDetailData.medicalInfo.sex }}</div>
@@ -317,7 +329,7 @@
                     RP
                   </div>
                   <div
-                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #E6E6E6"
+                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #e6e6e6"
                   ></div>
                   <div v-for="(item, index) in preDetailData.medOrderItems" :key="index" :value="item.drugName">
                     <div class="top-content">
@@ -335,6 +347,21 @@
                   </div>
                 </div>
 
+
+
+                <div class="big-kuang">
+                  <div
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
+                  >
+                    备注
+                  </div>
+                  <div class="line-content"></div>
+
+                  <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
+                    {{ chufangPreDetailData.medicalInfo.remark }}
+                  </div>
+                </div>
+
                 <div class="big-kuang">
                   <div
                     style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
@@ -343,15 +370,24 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px;margin-top: 10px; ">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
+                  </div>
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
+                  </div>
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
-                <div style="margin-left: 10px;color: #999999; font-size: 1em">1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。</div>
-                <div style="margin-left: 10px;color: #999999; font-size: 1em">2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
-品一经发出，不得退换</div>
+                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                  1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
+                </div>
+                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                  2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
+                  品一经发出，不得退换
+                </div>
               </div>
 
               <div
@@ -773,14 +809,15 @@
                   chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomChuFangMessage'
                 "
               >
-              
                 <div class="big-kuang">
                   <div class="top-content">
                     <div style="margin-left: 30%">{{ preDetailData.medicalInfo.preHead }}</div>
                     <div class="span-gray">{{ preDetailData.medicalInfo.preType }}</div>
                   </div>
 
-                  <div style="margin-left: 43%; margin-top: 10px;margin-bottom: 20px;">{{ preDetailData.medicalInfo.preTitle }}</div>
+                  <div style="margin-left: 43%; margin-top: 10px; margin-bottom: 20px">
+                    {{ preDetailData.medicalInfo.preTitle }}
+                  </div>
                   <div class="user-content">
                     <div>姓名:{{ preDetailData.medicalInfo.name }}</div>
                     <div>性别:{{ preDetailData.medicalInfo.sex }}</div>
@@ -811,7 +848,7 @@
                     RP
                   </div>
                   <div
-                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #E6E6E6"
+                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #e6e6e6"
                   ></div>
                   <div v-for="(item, index) in preDetailData.medOrderItems" :key="index" :value="item.drugName">
                     <div class="top-content">
@@ -833,19 +870,41 @@
                   <div
                     style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
                   >
+                    备注
+                  </div>
+                  <div class="line-content"></div>
+
+                  <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
+                    {{ chufangPreDetailData.medicalInfo.remark }}
+                  </div>
+                </div>
+
+                <div class="big-kuang">
+                  <div
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
+                  >
                     签字盖章
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px;margin-top: 10px;">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
+                  </div>
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
+                  </div>
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
-                <div style="margin-left: 10px;color: #999999; font-size: 1em">1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。</div>
-                <div style="margin-left: 10px;color: #999999; font-size: 1em">2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
-品一经发出，不得退换</div>
+                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                  1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
+                </div>
+                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                  2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
+                  品一经发出，不得退换
+                </div>
               </div>
               <div
                 class="wenjuan"
@@ -920,37 +979,34 @@
           </div>
         </div>
 
-
         <div class="content content5" v-show="tab === 6">
           <div class="chat">
             <div class="title">历史处方</div>
             <div class="list">
               <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chufangList.length === 0" />
-              <template v-for="(item,index) in chufangList" v-else>
+              <template v-for="(item, index) in chufangList" v-else>
                 <div class="chufangitem" @click="onChufangItemClick(item.preNo)">
-                  <img class="msg" src="@/assets/icons/wenzhen/chufang-2.png"/>                  
-                  <div :class="chufangItemNo==item.preNo?'cftitle-active':'cftitle' " >{{item.diagnosis}}</div>
-                  <div class="right">{{item.createDate}}</div>
+                  <img class="msg" src="@/assets/icons/wenzhen/chufang-2.png" />
+                  <div :class="chufangItemNo == item.preNo ? 'cftitle-active' : 'cftitle'">{{ item.diagnosis }}</div>
+                  <div class="right">{{ item.createDate }}</div>
                 </div>
               </template>
-              
             </div>
           </div>
           <div class="chat-detail">
             <div class="title">内容详情（<span>点击左侧内容在此查看详情</span>）</div>
             <div class="container">
-              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chufangItemNo==-1" />
-              <div
-                class="chufang" v-else
-              >
-              
+              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chufangItemNo == -1" />
+              <div class="chufang" v-else>
                 <div class="big-kuang">
                   <div class="top-content">
                     <div style="margin-left: 30%">{{ chufangPreDetailData.medicalInfo.preHead }}</div>
                     <div class="span-gray">{{ chufangPreDetailData.medicalInfo.preType }}</div>
                   </div>
 
-                  <div style="margin-left: 43%; margin-top: 10px;margin-bottom: 20px;">{{ chufangPreDetailData.medicalInfo.preTitle }}</div>
+                  <div style="margin-left: 43%; margin-top: 10px; margin-bottom: 20px">
+                    {{ chufangPreDetailData.medicalInfo.preTitle }}
+                  </div>
                   <div class="user-content">
                     <div>姓名:{{ chufangPreDetailData.medicalInfo.name }}</div>
                     <div>性别:{{ chufangPreDetailData.medicalInfo.sex }}</div>
@@ -981,7 +1037,7 @@
                     RP
                   </div>
                   <div
-                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #E6E6E6"
+                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #e6e6e6"
                   ></div>
                   <div v-for="(item, index) in chufangPreDetailData.medOrderItems" :key="index" :value="item.drugName">
                     <div class="top-content">
@@ -999,6 +1055,20 @@
                   </div>
                 </div>
 
+                <!-- 备注 -->
+                <div class="big-kuang">
+                  <div
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
+                  >
+                    备注
+                  </div>
+                  <div class="line-content"></div>
+
+                  <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
+                    {{ chufangPreDetailData.medicalInfo.remark }}
+                  </div>
+                </div>
+
                 <div class="big-kuang">
                   <div
                     style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
@@ -1007,22 +1077,29 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px;margin-top: 10px;">开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}
+                  </div>
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
                   </div>
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                  </div>
                 </div>
+
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
-                <div style="margin-left: 10px;color: #999999; font-size: 1em">1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。</div>
-                <div style="margin-left: 10px;color: #999999; font-size: 1em">2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
-品一经发出，不得退换</div>
+                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                  1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
+                </div>
+                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                  2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
+                  品一经发出，不得退换
+                </div>
               </div>
-              
-       
             </div>
           </div>
         </div>
-
       </div>
 
       <a-modal
@@ -1043,7 +1120,7 @@
 
 <script>
 import { info, info2, info3, info4, list2, list3, list4, qryRightsUseRecord } from '@/api/modular/system/treat'
-import { preDetail,getPreListByRightsId } from '@/api/modular/system/posManage'
+import { preDetail, getPreListByRightsId } from '@/api/modular/system/posManage'
 import { Empty } from 'ant-design-vue'
 import moment from 'moment'
 export default {
@@ -1088,13 +1165,13 @@ export default {
         medOrderItems: [],
         medicalInfo: {},
       },
-      chufangItemNo:-1,
-      chufangList:[],
-      chufangPreDetailData:{
+      chufangItemNo: -1,
+      chufangList: [],
+      chufangPreDetailData: {
         diagnosis: '',
         medOrderItems: [],
         medicalInfo: {},
-      }
+      },
     }
   },
   methods: {
@@ -1117,7 +1194,8 @@ export default {
         this.tabClick(4)
       } else if (this.jumpType == 5) {
         this.tabClick(5)
-      }else if (this.jumpType == 6) { //复诊续方
+      } else if (this.jumpType == 6) {
+        //复诊续方
         this.tabClick(5)
       }
     },
@@ -1190,15 +1268,13 @@ export default {
         // this.phoneFollowListData = {}
         this.getChatList(this.item.orderId)
       }
-      
+
       if (this.tab === 6 && !this.tab6Flag) {
         this.chufangItemNo = -1
         this.chufangList = []
-        
+
         this.getPreListByRightsIdOut(this.item.id)
       }
-
-     
     },
     chatClick(item) {
       this.chatItem = item
@@ -1220,37 +1296,29 @@ export default {
         this.chatItem.type === 'TIMCustomElem' &&
         JSON.parse(this.chatItem.payload.data).type === 'CustomChuFangMessage'
       ) {
-       
         this.preDetailOut(JSON.parse(this.chatItem.payload.data).preNo)
       }
     },
 
     //处方列表点击
-    onChufangItemClick(preNo){
-     
-      this.chufangItemNo=preNo
+    onChufangItemClick(preNo) {
+      this.chufangItemNo = preNo
 
-      preDetail({ preNo: preNo })
-        .then((res) => {
-          if (res.code == 0) {
-            this.chufangPreDetailData = res.data
-          }
-        })
+      preDetail({ preNo: preNo }).then((res) => {
+        if (res.code == 0) {
+          this.chufangPreDetailData = res.data
+        }
+      })
     },
-    onTab1ChufangClick(preOrderId){
-     
-
-      
+    onTab1ChufangClick(preOrderId) {
       this.$router.push({
         path: '../order/prescriptionDetail',
         query: {
           orderId: preOrderId,
         },
       })
-      
-      this.handleSubmit() 
-      
 
+      this.handleSubmit()
     },
 
     previewClick(src) {
@@ -1318,31 +1386,25 @@ export default {
     },
     // 查询处方详情接口
     preDetailOut(preNo) {
-      preDetail({ preNo: preNo })
-        .then((res) => {
-          if (res.code == 0) {
-            this.preDetailData = res.data
-          }
-        })
-       
+      preDetail({ preNo: preNo }).then((res) => {
+        if (res.code == 0) {
+          this.preDetailData = res.data
+        }
+      })
     },
-// 查询处方列表
-getPreListByRightsIdOut(rightsId) {
-  getPreListByRightsId({ rightsId:   rightsId })
-        .then((res) => {
-          if (res.code == 0) {
-           this.tab6Flag=true
-           this.chufangList=res.data
-           if(res.data.length > 0){
-            if(this.chufangItemNo == -1){
+    // 查询处方列表
+    getPreListByRightsIdOut(rightsId) {
+      getPreListByRightsId({ rightsId: rightsId }).then((res) => {
+        if (res.code == 0) {
+          this.tab6Flag = true
+          this.chufangList = res.data
+          if (res.data.length > 0) {
+            if (this.chufangItemNo == -1) {
               this.onChufangItemClick(res.data[0].preNo)
             }
-           
-           }
-           
           }
-        })
-       
+        }
+      })
     },
     //聊天记录
     getChatList(orderId) {
@@ -1446,9 +1508,9 @@ getPreListByRightsIdOut(rightsId) {
       this.tab3Flag = false
       this.tab4Flag = false
       this.tab5Flag = false
-      this.tab6Flag=false
-      this.tab76Flag=false
-      this.chufangItemNo=-1
+      this.tab6Flag = false
+      this.tab76Flag = false
+      this.chufangItemNo = -1
       this.previewVisible = false
       this.tab = 0
     },
@@ -1544,11 +1606,11 @@ getPreListByRightsIdOut(rightsId) {
         .infos {
           display: flex;
           justify-content: space-between;
-          .row{
-             width: 100%;
-             display: flex;
-             flex-direction: row;
-          justify-content: space-between;
+          .row {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
             .item {
               width: 33.33%;
               font-size: 12px;
@@ -1867,26 +1929,20 @@ getPreListByRightsIdOut(rightsId) {
             padding: 10px;
           }
           .chufang {
-            
-            
             padding: 10px;
-          
-            
 
             .big-kuang {
-              
-             
               margin-bottom: 10px;
               background: #ffffff;
               border: 1px solid #e6e6e6;
-              color: #1A1A1A;
+              color: #1a1a1a;
 
               .line-content {
                 width: 100%;
                 height: 1px;
                 margin-right: 10px;
                 margin-right: 10px;
-                background: #E6E6E6;
+                background: #e6e6e6;
               }
 
               .user-content {
@@ -2294,26 +2350,20 @@ getPreListByRightsIdOut(rightsId) {
             padding: 10px;
           }
           .chufang {
-            
-            
             padding: 10px;
-          
-            
 
             .big-kuang {
-              
-             
               margin-bottom: 10px;
               background: #ffffff;
               border: 1px solid #e6e6e6;
-              color: #1A1A1A;
+              color: #1a1a1a;
 
               .line-content {
                 width: 100%;
                 height: 1px;
                 margin-right: 10px;
                 margin-right: 10px;
-                background: #E6E6E6;
+                background: #e6e6e6;
               }
 
               .user-content {
@@ -2476,33 +2526,33 @@ getPreListByRightsIdOut(rightsId) {
           overflow-y: auto;
           border: 1px solid #dfe3e5;
 
-          .chufangitem{
+          .chufangitem {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
             border-bottom: 1px solid #e6e6e6;
             cursor: pointer;
-            .msg{
+            .msg {
               width: 13px;
               height: 16px;
               margin-right: 10px;
             }
-            .cftitle{
+            .cftitle {
               font-size: 12px;
               font-weight: 400;
-              color: #4D4D4D;
+              color: #4d4d4d;
             }
-            .cftitle-active{
+            .cftitle-active {
               font-size: 12px;
               font-weight: 400;
-              color: #409EFF;
+              color: #409eff;
             }
-            .right{
+            .right {
               font-size: 12px;
               margin-left: auto;
               font-weight: 400;
-              color: #4D4D4D;
+              color: #4d4d4d;
             }
           }
 
@@ -2626,26 +2676,20 @@ getPreListByRightsIdOut(rightsId) {
             padding: 10px;
           }
           .chufang {
-            
-            
             padding: 10px;
-          
-            
 
             .big-kuang {
-              
-             
               margin-bottom: 10px;
               background: #ffffff;
               border: 1px solid #e6e6e6;
-              color: #1A1A1A;
+              color: #1a1a1a;
 
               .line-content {
                 width: 100%;
                 height: 1px;
                 margin-right: 10px;
                 margin-right: 10px;
-                background: #E6E6E6;
+                background: #e6e6e6;
               }
 
               .user-content {
