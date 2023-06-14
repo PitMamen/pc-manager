@@ -198,6 +198,7 @@ export default {
       },
 
       visible: false,
+      isEdit: false,
       confirmLoading: false,
 
       treeData: [],
@@ -206,8 +207,9 @@ export default {
   },
   methods: {
     // 初始化方法
-    edit(item) {
+    edit(item, isEdit) {
       this.visible = true
+      this.isEdit = isEdit
       this.getTreeData()
       setTimeout(() => {
         this.form.setFieldsValue({
