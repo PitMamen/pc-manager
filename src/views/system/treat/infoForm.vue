@@ -90,8 +90,8 @@
                 <div v-if="jumpType != 6" class="item">服务护士：{{ tab1Info.nurseUserName || '--' }}</div>
                 <div  v-if="jumpType != 6" class="item" :title="tab1Info.teamName || '--'">服务团队：{{ tab1Info.teamName || '--' }}</div>
                 <div v-if="jumpType == 6" class="item" style="width:66.66%;display: flex;flex-direction: row;">
-                  <div>处方订单号：</div>
-                <div v-for="(item,index) in tab1Info.preNos" style="  cursor: pointer; color:#409eff;" @click="onTab1ChufangClick(item)"  >{{index !=0?' ，':''}}{{ item }} </div>
+                  <div >处方订单号：</div>
+                <div v-for="(item,index) in tab1Info.preOrderIds" style="  cursor: pointer; color:#409eff;word-wrap:break-word;word-break:break-all;white-space:pre-wrap;" @click="onTab1ChufangClick(item)"  >{{index !=0?' ，':''}}{{ item }} </div>
                 </div>
               </div>           
             </div>
@@ -343,8 +343,8 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px">开发医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px;margin-top: 10px; ">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                 </div>
@@ -837,8 +837,8 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px">开发医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px;margin-top: 10px;">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                 </div>
@@ -1007,8 +1007,8 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px">开发医生：{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
-                  <div style="margin-left: 10px; margin-bottom: 10px">
+                  <div style="margin-left: 10px;margin-top: 10px;">开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
+                  <div style="margin-left: 10px;margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
                   </div>
                 </div>
@@ -1237,11 +1237,20 @@ export default {
           }
         })
     },
-    onTab1ChufangClick(preNo){
-      this.onChufangItemClick(preNo)
+    onTab1ChufangClick(preOrderId){
      
-        this.tabClick(6)
+
       
+      this.$router.push({
+        path: '../order/prescriptionDetail',
+        query: {
+          orderId: preOrderId,
+        },
+      })
+      
+      this.handleSubmit() 
+      
+
     },
 
     previewClick(src) {

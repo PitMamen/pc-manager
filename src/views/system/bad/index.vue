@@ -4,7 +4,7 @@
       <div class="search-row">
         <span class="name">所属机构:</span>
         <a-tree-select
-          v-model="queryParam.selectHospitalCode"
+          v-model="queryParam.hospitalCode"
           tree-default-expand-all
           :tree-data="treeData"
           placeholder="请选择所属机构"
@@ -14,7 +14,12 @@
       </div>
       <div class="search-row">
         <span class="name">查询条件:</span>
-        <a-input v-model="queryParam.wardName" allow-clear placeholder="请输入患者姓名/手机号/业务流水号查询" style="width: 260px" />
+        <a-input
+          v-model="queryParam.keyWord"
+          allow-clear
+          placeholder="请输入患者姓名/手机号/业务流水号查询"
+          style="width: 260px"
+        />
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -23,19 +28,19 @@
         </a-select>
       </div>
       <div class="search-row">
-            <span class="name">下单时间:</span>
-            <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
-          </div>
-      <div class="action-row" style="margin-top: -10px;">
+        <span class="name">下单时间:</span>
+        <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+      </div>
+      <div class="action-row" style="margin-top: -10px">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
 
-          <a-button icon="undo" style="margin-left: 8px;margin-right: 0;" @click="reset()">重置</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
       </div>
     </div>
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -74,6 +79,7 @@
           <a @click="$refs.editForm.edit(record)"><a-icon type="edit" style="margin-right: 0" />审核</a>
           <a-divider type="vertical" />
           <a @click="$refs.editForm.edit(record)"><a-icon type="apartment" style="margin-right: 0" />详情</a>
+          <a-divider type="vertical" />
           <a @click="$refs.editForm.edit(record)"><a-icon type="apartment" style="margin-right: 0" />登记</a>
         </template>
       </span>
@@ -85,8 +91,8 @@
 </template>
 
 <script>
-import { accessHospitals as list2 } from '@/api/modular/system/posManage'
-import { list, update } from '@/api/modular/system/ward'
+import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
+// import { list, update } from '@/api/modular/system/ward'
 import { STable, Ellipsis } from '@/components'
 // import addForm from './addForm'
 import editForm from './editForm'
@@ -101,46 +107,58 @@ export default {
   },
   data() {
     return {
-      // 高级搜索 展开/关闭
-      advanced: false,
-      // 查询参数
-      queryParam: {status:1},
+      // 查询参数  审核状态 1未审核2已审核3未登记
+      queryParam: {
+        status: '',
+        beginDate: '',
+        endDate: '',
+        hospitalCode: '',
+        keyWord: '',
+      },
+      queryParamOrigin: {
+        status: '',
+        beginDate: '',
+        endDate: '',
+        hospitalCode: '',
+        keyWord: '',
+      },
+      createValue: [],
       // 表头
       columns: [
         {
           title: '业务流水号',
-          dataIndex: 'parent_disarmament_name',
-          scopedSlots: { customRender: 'parent_disarmament_name' },
+          dataIndex: 'orderId',
+          scopedSlots: { customRender: 'orderId' },
         },
         {
           title: '业务类型',
-          dataIndex: 'ward_name',
-          scopedSlots: { customRender: 'ward_name' },
+          dataIndex: 'broadClassifyName',
+          scopedSlots: { customRender: 'broadClassifyName' },
         },
         {
           title: '姓名',
-          dataIndex: 'bed_quantity',
-          scopedSlots: { customRender: 'bed_quantity' },
+          dataIndex: 'userName',
+          scopedSlots: { customRender: 'userName' },
         },
         {
           title: '手机号',
-          dataIndex: 'departmentNames',
-          scopedSlots: { customRender: 'departmentNames' },
+          dataIndex: 'userPhone',
+          scopedSlots: { customRender: 'userPhone' },
         },
         {
           title: '事件描述',
-          dataIndex: 'his_id',
-          scopedSlots: { customRender: 'his_id' },
+          dataIndex: 'eventDesc',
+          scopedSlots: { customRender: 'eventDesc' },
         },
         {
           title: '所属机构',
-          dataIndex: 'his_name',
-          scopedSlots: { customRender: 'his_name' },
+          dataIndex: 'hospitalName',
+          scopedSlots: { customRender: 'hospitalName' },
         },
         {
           title: '上报人',
-          dataIndex: 'ward_order',
-          scopedSlots: { customRender: 'ward_order' },
+          dataIndex: 'uploadUserName',
+          scopedSlots: { customRender: 'uploadUserName' },
         },
         {
           title: '事件时间',
@@ -149,33 +167,28 @@ export default {
         },
         {
           title: '上报时间',
-          dataIndex: 'ward_introdduce',
-          scopedSlots: { customRender: 'ward_introdduce' },
+          dataIndex: 'createTime',
+          scopedSlots: { customRender: 'createTime' },
         },
         {
           title: '状态',
           width: '60px',
-          fixed: 'right',
           dataIndex: 'status',
-          scopedSlots: { customRender: 'status' }
+          scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
-          width: '150px',
+          // width: '150px',
           fixed: 'right',
           dataIndex: 'action',
-          scopedSlots: { customRender: 'action' }
-        }
-   
+          scopedSlots: { customRender: 'action' },
+        },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return list(Object.assign(parameter, this.queryParam)).then((res) => {
+        return qryComplaintByPage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            return {
-              totalRows: res.data.total,
-              rows: res.data.records || [],
-            }
+            return res.data
           } else {
             this.$message.error(res.message)
           }
@@ -183,22 +196,25 @@ export default {
       },
 
       treeData: [],
+      // 审核状态 1未审核2已审核3未登记
       selects: [
-      {
+        {
           id: '',
-          name: '全部'
+          name: '全部',
         },
         {
           id: 1,
-          name: '启用',
+          name: '未审核',
         },
         {
           id: 2,
-          name: '停用',
+          name: '已审核',
+        },
+        {
+          id: 3,
+          name: '未登记',
         },
       ],
-      selectedRowKeys: [],
-      selectedRows: [],
     }
   },
   /**
@@ -246,28 +262,32 @@ export default {
             }
             return tree
           })
+
+          this.queryParam.hospitalCode = res.data[0].hospitalCode
+          this.handleOk()
         } else {
           this.$message.error(res.message)
         }
       })
     },
 
+    onChange(momentArr, dateArr) {
+      this.createValue = momentArr
+      this.queryParam.beginDate = dateArr[0]
+      this.queryParams.endDate = dateArr[1]
+    },
 
-      /**
+    /**
      * 重置
      */
-     reset() {
-      this.queryParam={}
-      this.queryParam.status=1
-
+    reset() {
+      this.createValue = []
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.queryParam.hospitalCode = this.treeData[0].value
       this.handleOk()
     },
     handleOk() {
       this.$refs.table.refresh()
-    },
-    onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
     },
   },
 }
