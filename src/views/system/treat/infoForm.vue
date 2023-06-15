@@ -598,7 +598,8 @@
           <div class="left">
             <div class="title">基本信息</div>
             <div class="list">
-              <!-- <a-empty style="margin-top: 150px" :image="simpleImage" v-if="phoneFollowListData.length === 0" /> -->
+              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!phoneFollowListData.id" />
+              <div  v-else>
 
               <div class="top-content">
                 <div class="div-content">
@@ -699,6 +700,7 @@
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
           <div class="right">
@@ -1479,8 +1481,8 @@ export default {
           })
       } else {
         list4({
-          tradeId: item.id,
-          rightsId: item.rightsId,
+          rightsId: item.id,
+          // rightsId: item.rightsId,
         })
           .then((res) => {
             this.tab4Flag = true
