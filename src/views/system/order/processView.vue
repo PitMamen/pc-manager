@@ -44,15 +44,17 @@
               "
             >
               {{ item.name }}:
-              <div v-for="(item1, index1) in item.value" :key="index1" :value="item1.value">{{ item1.tagsName }},</div>
+              <div v-for="(item1, index1) in item.value" :key="index1" :value="item1.value">
+                {{ item1.tagsName }}{{ (item.value.length - 1 > 0 && index1 != item.value.length - 1) ? '，' : '' }}
+              </div>
             </div>
           </div>
         </div>
 
         <div class="midline"></div>
 
-        <!-- 中间视图 -->
-        <div class="div-span-content-mid" style="overflow-y: auto">
+        <!-- 中间视图 style="overflow-y: auto"-->
+        <div class="div-span-content-mid" >
           <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">处方信息</div>
           <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div>
           <div class="big-kuang">
@@ -106,7 +108,7 @@
             </div>
           </div>
 
-          <div class="big-kuang">
+          <div class="big-kuang" style="margin-bottom: 10px;">
             <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold">
               签字盖章
             </div>
@@ -385,6 +387,8 @@ export default {
     flex-direction: column;
   }
   .div-span-content-mid {
+    overflow-x: hidden;
+    overflow-y: auto;
     width: 56%;
     // min-height: 100%;
     // height: 100%;

@@ -213,7 +213,8 @@ export default {
         {
           title: '开具时间',
           dataIndex: 'createTime',
-          width: 120,
+          width: 180,
+          ellipsis:true
         },
         {
           title: '状态',

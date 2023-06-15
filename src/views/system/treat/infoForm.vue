@@ -1190,7 +1190,6 @@ export default {
       // console.log('HAHAH：', item)
       this.visible = true
       this.jumpType = Type
-      console.log('LLL:', this.jumpType)
       if (this.jumbType == 1) {
         this.tabClick(1)
       } else if (this.jumpType == 3) {
