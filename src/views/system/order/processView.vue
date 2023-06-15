@@ -25,7 +25,7 @@
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">性 别:{{ userInfoData.sex }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">身 高:{{ userInfoData.height }} cm</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">体 重:{{ userInfoData.weight }} kg</div>
-          <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">血 型:{{ userInfoData.bloodType }} 型</div>
+          <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">血 型:{{ userInfoData.bloodType }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">
             婚姻状况:{{ userInfoData.ismarry == 1 ? '已婚' : '未婚' }}
           </div>
@@ -44,7 +44,7 @@
               "
             >
               {{ item.name }}:
-              <div v-for="(item1, index1) in item.value" :key="index1" :value="item1.value">{{ item1.tagsName }}</div>
+              <div v-for="(item1, index1) in item.value" :key="index1" :value="item1.value">{{ item1.tagsName }},</div>
             </div>
           </div>
         </div>
@@ -101,7 +101,7 @@
               </div>
               <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
               <div style="margin-left: 10px; color: #1a1a1a; font-size: 10px">
-                用法用量:{{ item.frequency }},{{ item.useMethod }}
+                用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
               </div>
             </div>
           </div>
@@ -154,7 +154,7 @@
 
             <div style="display: flex; flex-direction: row; overflow: hidden; position: relative">
               <a-textarea
-                :disabled="radioTyPe==2"
+                :disabled="radioTyPe == 2"
                 style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: 10px; width: 87%"
                 v-model="queryParams.refuseReason"
                 :maxLength="200"
@@ -233,8 +233,7 @@ export default {
       this.title = '处方审核'
       this.visible = true
       this.record = {}
-      this.radioTyPe='2',
-      this.footer = undefined
+      ;(this.radioTyPe = '2'), (this.footer = undefined)
       this.record = record
       this.queryParams.preNo = record.preNo
       this.queryParams.refuseReason = ''
@@ -249,8 +248,7 @@ export default {
       this.footer = null
       this.visible = true
       this.record = record
-      this.radioTyPe='2',
-      this.queryParams.preNo = record.preNo
+      ;(this.radioTyPe = '2'), (this.queryParams.preNo = record.preNo)
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
       this.preDetailOut()
@@ -304,7 +302,7 @@ export default {
     // 审核
     checkPreOut() {
       this.confirmLoading = true
-      if(this.radioTyPe==2){
+      if (this.radioTyPe == 2) {
         this.queryParams.refuseReason = ''
       }
       checkPre(this.queryParams)

@@ -35,7 +35,12 @@
             <span>聊天记录</span>
           </div>
 
-          <div v-show="jumpType != 3" class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
+          <div
+            v-show="jumpType != 5 && jumpType != 6 && jumpType != 3"
+            class="tab tab4"
+            :class="{ active: tab === 4 }"
+            @click="tabClick(4)"
+          >
             <img src="@/assets/icons/wenzhen/phone_n2.png" v-if="tab === 4" />
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
@@ -346,8 +351,6 @@
                     </div>
                   </div>
                 </div>
-
-
 
                 <div class="big-kuang">
                   <div

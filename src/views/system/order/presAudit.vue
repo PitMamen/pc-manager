@@ -18,8 +18,8 @@
         <a-input
           v-model="queryParams.queryText"
           allow-clear
-          placeholder="输入用户名/电话/订单号"
-          style="width: 158px; height: 28px"
+          placeholder="输入用户名/医生/处方号"
+          style="width: 188px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />

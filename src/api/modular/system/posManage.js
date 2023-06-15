@@ -4672,3 +4672,22 @@ export function institutionClassify(data) {
     data: data,
   })
 }
+
+//设置医生证件信息
+export function setCertificateForUserId(data) {
+  return axios({
+    url: '/account-api/tdUserInfoCaAuth/setCertificateForUserId',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//获取医生证件信息
+export function getCaAuthInfoAdminForUserId(userid) {
+  return axios({
+    url: '/account-api/tdUserInfoCaAuth/getCaAuthInfoAdminForUserId/'+userid,
+    method: 'post',
+    // data: data,
+  })
+}
