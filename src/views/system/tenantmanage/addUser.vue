@@ -580,15 +580,6 @@ export default {
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
-      // this.getCaAuthInfoAdminForUserIdOut()
-      // let url = 'https://develop.mclouds.org.cn/content-api/file/I20230615114448195QTVCC4CJPSEXKW-doctor2.png'
-      // this.zhiyeFList = []
-      // this.zhiyeFList.push({
-      //   uid: '-1',
-      //   name: '照片',
-      //   status: 'done',
-      //   url: url,
-      // })
     },
 
     // 顶部tab切换
@@ -1112,15 +1103,15 @@ export default {
     },
 
     //修改 医生执照 照片
-    setCertificateForUserIdOut() {
-      setCertificateForUserId(this.photoListCheck).then((res) => {
-        if (res.code == 0) {
-        }
-      })
-    },
+    // setCertificateForUserIdOut() {
+    //   setCertificateForUserId(this.photoListCheck).then((res) => {
+    //     if (res.code == 0) {
+    //     }
+    //   })
+    // },
 
     //获取执照
-    getCaAuthInfoAdminForUserIdOut() {
+    // getCaAuthInfoAdminForUserIdOut() {
       // this.idcardZList= [],
       // this.idcardFList= [],
       // this.zhichengZList= [],
@@ -1129,11 +1120,11 @@ export default {
       // this.zhigeFList= [],
       // this.zhiyeZList= [],
       // this.zhiyeFList= [],
-      getCaAuthInfoAdminForUserId(this.photoListCheck.userId).then((res) => {
-        if (res.code == 0) {
-        }
-      })
-    },
+    //   getCaAuthInfoAdminForUserId(this.photoListCheck.userId).then((res) => {
+    //     if (res.code == 0) {
+    //     }
+    //   })
+    // },
 
     addUser(postData) {
       createDoctorUser(postData).then((res) => {

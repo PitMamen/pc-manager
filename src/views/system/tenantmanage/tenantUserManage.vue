@@ -19,6 +19,7 @@
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"         
+          allow-clear
         >
         </a-tree-select>
       </div>
@@ -440,6 +441,12 @@ export default {
   width: 100%;
   background-color: #e6e6e6;
   height: 1px;
+}
+</style>
+<style >
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 148px !important;
 }
 </style>
 

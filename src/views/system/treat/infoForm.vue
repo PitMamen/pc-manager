@@ -1311,7 +1311,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.chufangPreDetailData = res.data
-          console.log("www:",this.chufangPreDetailData.medicalInfo.remark)
+          // console.log("www:",this.chufangPreDetailData.medicalInfo.remark)
         }
       })
     },
@@ -1394,7 +1394,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.preDetailData = res.data
-          console.log("ttt:",this.preDetailData.medicalInfo.remark)
+          // console.log("ttt:",this.preDetailData.medicalInfo.remark)
         }
       })
     },
