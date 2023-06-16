@@ -177,7 +177,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -196,7 +196,7 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -521,9 +521,6 @@ export default {
     console.log("传参:",cs)                                         //这样就拿到了参数中的数据
 
 
-
-
-    
       this.orderId=cs.orderId
       this.rightsId=cs.rightsId
       this.chatItem = {}
