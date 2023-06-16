@@ -361,7 +361,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -380,7 +380,7 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -880,7 +880,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -899,7 +899,7 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -1070,7 +1070,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -1083,13 +1083,13 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px">
-                    开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}
+                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
-                    执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
+                    执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
 
@@ -1311,6 +1311,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.chufangPreDetailData = res.data
+          console.log("www:",this.chufangPreDetailData.medicalInfo.remark)
         }
       })
     },
@@ -1393,6 +1394,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.preDetailData = res.data
+          console.log("ttt:",this.preDetailData.medicalInfo.remark)
         }
       })
     },

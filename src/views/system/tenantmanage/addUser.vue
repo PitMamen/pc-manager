@@ -523,6 +523,16 @@ export default {
         expertInDisease: '', //擅长领域
         doctorBrief: '', //详细介绍
         roleIds: '', //分配角色
+        // 证件照 参数
+        idcardF: '',
+        idcardZ: '',
+        practiceF: '',
+        practiceZ: '',
+        qualificationF: '',
+        qualificationZ: '',
+        titleF: '',
+        titleZ: '',
+        userId: '',
       }
       this.accountChecked = true //创建账号
       this.textNumChecked = false
@@ -540,7 +550,6 @@ export default {
         qualificationZ: '',
         titleF: '',
         titleZ: '',
-        userId: '',
       }
     },
     //新增
@@ -571,7 +580,7 @@ export default {
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
-      this.getCaAuthInfoAdminForUserIdOut()
+      // this.getCaAuthInfoAdminForUserIdOut()
       // let url = 'https://develop.mclouds.org.cn/content-api/file/I20230615114448195QTVCC4CJPSEXKW-doctor2.png'
       // this.zhiyeFList = []
       // this.zhiyeFList.push({
@@ -704,7 +713,102 @@ export default {
             this.accountChecked = false
           }
 
+          //   idcardF: '',
+          // idcardZ: '',
+          // practiceF: '',
+          // practiceZ: '',
+          // qualificationF: '',
+          // qualificationZ: '',
+          // titleF: '',
+          // titleZ: '',
+
           this.checkData = res.data
+
+          this.idcardZList = []
+          this.idcardFList = []
+          this.zhichengZList = []
+          this.zhichengFList = []
+          this.zhigeZList = []
+          this.zhigeFList = []
+          this.zhiyeZList = []
+          this.zhiyeFList = []
+
+          // 身份证
+          if (this.checkData.idcardF) {
+            this.idcardFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.idcardF,
+            })
+          }
+
+          if (this.checkData.idcardZ) {
+            this.idcardZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.idcardZ,
+            })
+          }
+
+          // 职称
+          if (this.checkData.titleZ) {
+            this.zhichengZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.titleZ,
+            })
+          }
+
+          if (this.checkData.titleF) {
+            this.zhichengFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.titleF,
+            })
+          }
+
+          // 资格
+          if (this.checkData.qualificationZ) {
+            this.zhigeZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.qualificationZ,
+            })
+          }
+
+          if (this.checkData.qualificationF) {
+            this.zhigeFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.qualificationF,
+            })
+          }
+
+          // 职业
+          if (this.checkData.practiceZ) {
+            this.zhiyeZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.practiceZ,
+            })
+          }
+
+          if (this.checkData.practiceF) {
+            this.zhiyeFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.practiceF,
+            })
+          }
+
           if (res.data.registerTypeOptions) {
             if (res.data.registerTypeOptions.indexOf('textNum') > -1) {
               this.textNumChecked = true
@@ -859,148 +963,151 @@ export default {
     },
 
     handleSubmit() {
-      if (this.currentTab == 'base') {
-        // 基础信息的提交
-        console.log(this.checkData)
-        if (isStringEmpty(this.checkData.userName)) {
-          this.$message.error('请输入姓名')
+      // 基础信息的提交
+      console.log(this.checkData)
+      if (isStringEmpty(this.checkData.userName)) {
+        this.$message.error('请输入姓名')
+        return
+      }
+
+      if (isStringEmpty(this.checkData.phone)) {
+        this.$message.error('请输入联系电话')
+        return
+      }
+
+      if (!phoneValidity(this.checkData.phone)) {
+        this.$message.error('请输入正确的联系电话')
+        return
+      }
+
+      // if (isStringEmpty(this.checkData.email)) {
+      //   this.$message.error('请输入邮箱地址')
+      //   return
+      // }
+      // if (!emailValidity(this.checkData.email)) {
+      //   this.$message.error('请输入正确的邮箱地址')
+      //   return
+      // }
+
+      if (isStringEmpty(this.checkData.userType)) {
+        this.$message.error('请选择人员类型')
+        return
+      }
+      if (isStringEmpty(this.checkData.professionalTitle)) {
+        this.$message.error('请选择人员职称')
+        return
+      }
+      if (isStringEmpty(this.checkData.hospitalCode)) {
+        this.$message.error('请选择所属机构')
+        return
+      }
+
+      if (this.accountChecked) {
+        //如果勾选了创建账号
+        if (isStringEmpty(this.checkData.loginName)) {
+          this.$message.error('请创建账号')
           return
         }
-
-        if (isStringEmpty(this.checkData.phone)) {
-          this.$message.error('请输入联系电话')
+        //角色
+        var checkedRoleList = []
+        this.roleList.forEach((item) => {
+          if (item.checked) {
+            checkedRoleList.push(item.roleId)
+          }
+        })
+        console.log(checkedRoleList)
+        if (checkedRoleList.length == 0) {
+          this.$message.error('请分配角色')
           return
-        }
-
-        if (!phoneValidity(this.checkData.phone)) {
-          this.$message.error('请输入正确的联系电话')
-          return
-        }
-
-        // if (isStringEmpty(this.checkData.email)) {
-        //   this.$message.error('请输入邮箱地址')
-        //   return
-        // }
-        // if (!emailValidity(this.checkData.email)) {
-        //   this.$message.error('请输入正确的邮箱地址')
-        //   return
-        // }
-
-        if (isStringEmpty(this.checkData.userType)) {
-          this.$message.error('请选择人员类型')
-          return
-        }
-        if (isStringEmpty(this.checkData.professionalTitle)) {
-          this.$message.error('请选择人员职称')
-          return
-        }
-        if (isStringEmpty(this.checkData.hospitalCode)) {
-          this.$message.error('请选择所属机构')
-          return
-        }
-
-        if (this.accountChecked) {
-          //如果勾选了创建账号
-          if (isStringEmpty(this.checkData.loginName)) {
-            this.$message.error('请创建账号')
-            return
-          }
-          //角色
-          var checkedRoleList = []
-          this.roleList.forEach((item) => {
-            if (item.checked) {
-              checkedRoleList.push(item.roleId)
-            }
-          })
-          console.log(checkedRoleList)
-          if (checkedRoleList.length == 0) {
-            this.$message.error('请分配角色')
-            return
-          } else {
-            this.checkData.roleIds = checkedRoleList
-          }
-
-          //服务
-          /*
-           * 服务可选项,多个“,”分隔
-           * "telNum": //电话咨询
-           * "videoNum": //视频咨询
-           * "textNum": //图文咨询
-           * "appointNum": //复诊开方
-           * "consult": //MDT会诊
-           * "vipNum": //VIP号源
-           */
-          var registerTypeOptions = ''
-          if (this.textNumChecked) {
-            registerTypeOptions = 'textNum'
-          }
-
-          if (this.telNumChecked) {
-            if (registerTypeOptions) {
-              registerTypeOptions = registerTypeOptions + ',telNum'
-            } else {
-              registerTypeOptions = 'telNum'
-            }
-          }
-
-          if (this.videoNumChecked) {
-            if (registerTypeOptions) {
-              registerTypeOptions = registerTypeOptions + ',videoNum'
-            } else {
-              registerTypeOptions = 'videoNum'
-            }
-          }
-
-          if (this.appointNumChecked) {
-            if (registerTypeOptions) {
-              registerTypeOptions = registerTypeOptions + ',appointNum'
-            } else {
-              registerTypeOptions = 'appointNum'
-            }
-          }
-
-          if (this.MDTNumChecked) {
-            if (registerTypeOptions) {
-              registerTypeOptions = registerTypeOptions + ',consult'
-            } else {
-              registerTypeOptions = 'consult'
-            }
-          }
-        }
-
-        var postData = {
-          identificationNo: this.checkData.identificationNo,
-          userName: this.checkData.userName,
-          userSex: this.checkData.userSex == '0' ? '男' : this.checkData.userSex == '1' ? '女' : '未知',
-          email: this.checkData.email,
-          phone: this.checkData.phone,
-          avatarUrl: this.checkData.avatarUrl,
-          birthday: this.checkData.birthday ? this.checkData.birthday.split('-').join('') : '',
-          doctorBrief: this.checkData.doctorBrief,
-          expertInDisease: this.checkData.expertInDisease,
-          userType: this.checkData.userType, //人员类型
-          hospitalCode: this.checkData.hospitalCode,
-          professionalTitle: this.checkData.professionalTitle, //职称
-        }
-        if (this.accountChecked) {
-          postData.loginName = this.checkData.loginName
-          postData.roleIds = this.checkData.roleIds
-          postData.registerTypeOptions = registerTypeOptions //服务选项
-        }
-
-        console.log('postData', postData)
-        this.confirmLoading = true
-        if (this.record.userId) {
-          //修改
-          postData.userId = this.record.userId
-          this.editUser(postData)
         } else {
-          //新增
-          this.addUser(postData)
+          this.checkData.roleIds = checkedRoleList
         }
+
+        //服务
+        /*
+         * 服务可选项,多个“,”分隔
+         * "telNum": //电话咨询
+         * "videoNum": //视频咨询
+         * "textNum": //图文咨询
+         * "appointNum": //复诊开方
+         * "consult": //MDT会诊
+         * "vipNum": //VIP号源
+         */
+        var registerTypeOptions = ''
+        if (this.textNumChecked) {
+          registerTypeOptions = 'textNum'
+        }
+
+        if (this.telNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',telNum'
+          } else {
+            registerTypeOptions = 'telNum'
+          }
+        }
+
+        if (this.videoNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',videoNum'
+          } else {
+            registerTypeOptions = 'videoNum'
+          }
+        }
+
+        if (this.appointNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',appointNum'
+          } else {
+            registerTypeOptions = 'appointNum'
+          }
+        }
+
+        if (this.MDTNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',consult'
+          } else {
+            registerTypeOptions = 'consult'
+          }
+        }
+      }
+
+      var postData = {
+        identificationNo: this.checkData.identificationNo,
+        userName: this.checkData.userName,
+        userSex: this.checkData.userSex == '0' ? '男' : this.checkData.userSex == '1' ? '女' : '未知',
+        email: this.checkData.email,
+        phone: this.checkData.phone,
+        avatarUrl: this.checkData.avatarUrl,
+        birthday: this.checkData.birthday ? this.checkData.birthday.split('-').join('') : '',
+        doctorBrief: this.checkData.doctorBrief,
+        expertInDisease: this.checkData.expertInDisease,
+        userType: this.checkData.userType, //人员类型
+        hospitalCode: this.checkData.hospitalCode,
+        professionalTitle: this.checkData.professionalTitle, //职称
+        idcardZ: this.photoListCheck.idcardZ,
+        idcardF: this.photoListCheck.idcardF,
+        practiceF: this.photoListCheck.practiceF,
+        practiceZ: this.photoListCheck.practiceZ,
+        qualificationF: this.photoListCheck.qualificationF,
+        qualificationZ: this.photoListCheck.qualificationZ,
+        titleF: this.photoListCheck.titleF,
+        titleZ: this.photoListCheck.titleZ,
+      }
+      if (this.accountChecked) {
+        postData.loginName = this.checkData.loginName
+        postData.roleIds = this.checkData.roleIds
+        postData.registerTypeOptions = registerTypeOptions //服务选项
+      }
+
+      console.log('postData', postData)
+      this.confirmLoading = true
+      if (this.record.userId) {
+        //修改
+        postData.userId = this.record.userId
+        this.editUser(postData)
       } else {
-        // 照片上传的提交
-        this.setCertificateForUserIdOut()
+        //新增
+        this.addUser(postData)
       }
     },
 
