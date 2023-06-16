@@ -35,7 +35,12 @@
             <span>聊天记录</span>
           </div>
 
-          <div v-show="jumpType != 3" class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
+          <div
+            v-show="jumpType != 5 && jumpType != 6 && jumpType != 3"
+            class="tab tab4"
+            :class="{ active: tab === 4 }"
+            @click="tabClick(4)"
+          >
             <img src="@/assets/icons/wenzhen/phone_n2.png" v-if="tab === 4" />
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
@@ -347,8 +352,6 @@
                   </div>
                 </div>
 
-
-
                 <div class="big-kuang">
                   <div
                     style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
@@ -358,7 +361,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -377,7 +380,7 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -877,7 +880,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -896,7 +899,7 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -1067,7 +1070,7 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ chufangPreDetailData.medicalInfo.remark }}
+                    {{ preDetailData.medicalInfo.remark }}
                   </div>
                 </div>
 
@@ -1080,13 +1083,13 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px">
-                    开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}
+                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
-                    执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
+                    执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
 
@@ -1187,7 +1190,6 @@ export default {
       // console.log('HAHAH：', item)
       this.visible = true
       this.jumpType = Type
-      console.log('LLL:', this.jumpType)
       if (this.jumbType == 1) {
         this.tabClick(1)
       } else if (this.jumpType == 3) {
@@ -1309,6 +1311,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.chufangPreDetailData = res.data
+          console.log("www:",this.chufangPreDetailData.medicalInfo.remark)
         }
       })
     },
@@ -1391,6 +1394,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.preDetailData = res.data
+          console.log("ttt:",this.preDetailData.medicalInfo.remark)
         }
       })
     },

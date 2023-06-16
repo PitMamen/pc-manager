@@ -22,13 +22,7 @@
         />
       </div>
       <div class="search-row">
-        <span class="name">状态:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
-      </div>
-      <div class="search-row">
-        <span class="name">下单时间:</span>
+        <span class="name">上传时间:</span>
         <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
       </div>
       <div class="action-row" style="margin-top: -10px">
@@ -76,18 +70,12 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <!-- 审核状态 1未审核2已审核3未登记   //传参1登记2审核 3详情 -->
-          <a @click="$refs.editForm.edit(record, '2')" v-if="record.status == 1"
-            ><a-icon type="edit" style="margin-right: 0" />审核</a
-          >
+
           <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
-          <a @click="$refs.editForm.edit(record, '3')" v-if="record.status == 2"
+          <a @click="goDetail(record)" v-if="record.status == 2"
             ><a-icon type="hdd" style="margin-right: 0" />详情</a
           >
-          <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
-          <a @click="$refs.editForm.edit(record, '1')" v-if="record.status == 3"
-            ><a-icon type="apartment" style="margin-right: 0" />登记</a
-          >
+
         </template>
       </span>
     </s-table>
@@ -246,6 +234,14 @@ export default {
     this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
+    goDetail(record){
+      this.$router.push({
+        path: '/upload/uploadDetail',
+        query: {
+          id: record.id,
+        },
+      })
+    },
     update(item) {
       update({
         id: item.id,
