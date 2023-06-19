@@ -63,17 +63,6 @@
       <span slot="ward_introduce" slot-scope="text">
         <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
       </span>
-      <span slot="status" slot-scope="text, record">
-        <template v-if="true">
-          <a-popconfirm
-            placement="topRight"
-            :title="record.status === 1 ? '确认停用？' : '确认启用？'"
-            @confirm="() => update(record)"
-          >
-            <a-switch size="small" :checked="record.status === 1" />
-          </a-popconfirm>
-        </template>
-      </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
           <!-- 审核状态 1未审核2已审核3未登记   //传参1登记2审核 3详情 -->
@@ -91,27 +80,20 @@
         </template>
       </span>
     </s-table>
-    <!-- <add-form ref="addForm" @ok="handleOk" /> -->
     <edit-form ref="editForm" @ok="handleOk" />
-    <!-- <edit-form2 ref="editForm2" @ok="handleOk" /> -->
   </a-card>
 </template>
 
 <script>
 import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
-// import { list, update } from '@/api/modular/system/ward'
 import { STable, Ellipsis } from '@/components'
-// import addForm from './addForm'
 import editForm from './editForm'
 import { formatDateFull, formatDate } from '@/utils/util'
-// import editForm2 from './editForm2'
 export default {
   components: {
     STable,
     Ellipsis,
-    // addForm,
     editForm,
-    // editForm2,
   },
   data() {
     return {
@@ -208,7 +190,7 @@ export default {
                 this.$set(element, 'statusText', '未登记')
               }
             })
-            console.log(JSON.stringify(res.data.rows))
+            // console.log(JSON.stringify(res.data.rows))
             return res.data
           } else {
             this.$message.error(res.message)
@@ -246,19 +228,6 @@ export default {
     this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
-    update(item) {
-      update({
-        id: item.id,
-        status: item.status === 1 ? 2 : 1,
-      }).then((res) => {
-        if (res.code === 0) {
-          this.$message.success(`${item.status === 1 ? '停用' : '启用'}成功!`)
-          this.handleOk()
-        } else {
-          this.$message.error(`${item.status === 1 ? '停用' : '启用'}失败：` + res.message)
-        }
-      })
-    },
     getTreeData() {
       list2({
         status: 1,
@@ -295,7 +264,7 @@ export default {
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
       this.queryParam.beginDate = dateArr[0]
-      this.queryParams.endDate = dateArr[1]
+      this.queryParam.endDate = dateArr[1]
     },
 
     /**

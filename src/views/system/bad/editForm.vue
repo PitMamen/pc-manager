@@ -8,174 +8,173 @@
     :footer="inputFlag == '3' ? null : undefined"
     @cancel="handleCancel"
   >
-    <a-spin :spinning="confirmLoading">
-      <div class="bad-wrap">
-        <!-- 基本信息 -->
-        <div class="wrap-info">
-          <div class="info-per">
-            <div>姓名：{{ item.userName }}</div>
-            <div class="shu-line"></div>
-            <div>性别：{{ item.sex }}</div>
-            <div class="shu-line"></div>
-            <div>年龄：{{ item.age }}</div>
-            <div class="shu-line"></div>
-            <div>联系方式：{{ item.userPhone }}</div>
-          </div>
+    <div class="bad-wrap">
+      <!-- 基本信息 -->
+      <div class="wrap-info">
+        <div class="info-per">
+          <div>姓名：{{ item.userName }}</div>
+          <div class="shu-line"></div>
+          <div>性别：{{ item.sex }}</div>
+          <div class="shu-line"></div>
+          <div>年龄：{{ item.age }}</div>
+          <div class="shu-line"></div>
+          <div>联系方式：{{ item.userPhone }}</div>
         </div>
+      </div>
 
-        <div class="wrap-hor">
-          <div class="hor-half">
-            <div>业务单号：</div>
-            <div>{{ item.orderId }}</div>
-          </div>
-          <div class="hor-half">
-            <div>业务类型：</div>
-            <div>{{ item.broadClassifyName }}</div>
-          </div>
+      <div class="wrap-hor">
+        <div class="hor-half">
+          <div>业务单号：</div>
+          <div>{{ item.orderId }}</div>
         </div>
-
-        <div class="wrap-hor">
-          <div class="hor-half">
-            <div>所属机构：</div>
-            <div>{{ item.hospitalName }}</div>
-          </div>
-          <div class="hor-half">
-            <div>事件时间：</div>
-            <div>{{ item.createTime }}</div>
-          </div>
+        <div class="hor-half">
+          <div>业务类型：</div>
+          <div>{{ item.broadClassifyName }}</div>
         </div>
+      </div>
 
-        <a-form :form="form">
-          <a-form-item v-show="false">
-            <a-input v-decorator="['id']" />
-          </a-form-item>
+      <div class="wrap-hor">
+        <div class="hor-half">
+          <div>所属机构：</div>
+          <div>{{ item.hospitalName }}</div>
+        </div>
+        <div class="hor-half">
+          <div>事件时间：</div>
+          <div>{{ item.createTime }}</div>
+        </div>
+      </div>
 
-          <a-form-item
-            label="事件描述"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-textarea
-              :rows="4"
-              :maxLength="500"
-              placeholder="请输入事件描述"
-              :disabled="inputFlag == '3'"
-              style="min-height: 100px"
-              v-decorator="['eventDesc', { rules: [{ required: true, message: '请输入事件描述！' }] }]"
-            ></a-textarea>
-            <span class="m-count">{{ textLength1() }}/500 </span>
-          </a-form-item>
-          <a-form-item
-            label="发生原因"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-textarea
-              :rows="4"
-              :maxLength="500"
-              placeholder="请输入发生原因"
-              :disabled="inputFlag == '3'"
-              style="min-height: 100px"
-              v-decorator="['eventReason']"
-            ></a-textarea>
-            <span class="m-count">{{ textLength2() }}/500 </span>
-          </a-form-item>
-          <a-form-item
-            label="采取措施"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-textarea
-              :rows="4"
-              :maxLength="500"
-              placeholder="请输入采取措施"
-              :disabled="inputFlag == '3'"
-              style="min-height: 100px"
-              v-decorator="['eventDeal']"
-            ></a-textarea>
-            <span class="m-count">{{ textLength3() }}/500 </span>
-          </a-form-item>
-          <a-form-item
-            label="损害程度"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-textarea
-              :rows="4"
-              :maxLength="500"
-              placeholder="请输入损害程度"
-              :disabled="inputFlag == '3'"
-              style="min-height: 100px"
-              v-decorator="['eventLevel']"
-            ></a-textarea>
-            <span class="m-count">{{ textLength4() }}/500 </span>
-          </a-form-item>
-          <a-form-item
-            label="后续改进"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-textarea
-              :rows="4"
-              :maxLength="500"
-              placeholder="请输入后续改进"
-              :disabled="inputFlag == '3'"
-              style="min-height: 100px"
-              v-decorator="['eventImprove']"
-            ></a-textarea>
-            <span class="m-count">{{ textLength5() }}/500 </span>
-          </a-form-item>
+      <a-form :form="form">
+        <a-form-item v-show="false">
+          <a-input v-decorator="['id']" />
+        </a-form-item>
 
-          <a-form-item
-            label="上报时间"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-date-picker
-              v-decorator="['uploadTime', { rules: [{ required: false, message: '请选择！' }] }]"
-              show-time
-              :disabled="inputFlag == '3'"
-              placeholder="请选择"
-              @change="onChange"
-              @ok="onOk"
-            />
-          </a-form-item>
+        <a-form-item
+          label="事件描述"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-textarea
+            :rows="4"
+            :maxLength="500"
+            placeholder="请输入事件描述"
+            :disabled="inputFlag == '3'"
+            style="min-height: 100px"
+            v-decorator="['eventDesc', { rules: [{ required: true, message: '请输入事件描述！' }] }]"
+          ></a-textarea>
+          <span class="m-count">{{ textLength1() }}/500 </span>
+        </a-form-item>
+        <a-form-item
+          label="发生原因"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-textarea
+            :rows="4"
+            :maxLength="500"
+            placeholder="请输入发生原因"
+            :disabled="inputFlag == '3'"
+            style="min-height: 100px"
+            v-decorator="['eventReason']"
+          ></a-textarea>
+          <span class="m-count">{{ textLength2() }}/500 </span>
+        </a-form-item>
+        <a-form-item
+          label="采取措施"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-textarea
+            :rows="4"
+            :maxLength="500"
+            placeholder="请输入采取措施"
+            :disabled="inputFlag == '3'"
+            style="min-height: 100px"
+            v-decorator="['eventDeal']"
+          ></a-textarea>
+          <span class="m-count">{{ textLength3() }}/500 </span>
+        </a-form-item>
+        <a-form-item
+          label="损害程度"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-textarea
+            :rows="4"
+            :maxLength="500"
+            placeholder="请输入损害程度"
+            :disabled="inputFlag == '3'"
+            style="min-height: 100px"
+            v-decorator="['eventLevel']"
+          ></a-textarea>
+          <span class="m-count">{{ textLength4() }}/500 </span>
+        </a-form-item>
+        <a-form-item
+          label="后续改进"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-textarea
+            :rows="4"
+            :maxLength="500"
+            placeholder="请输入后续改进"
+            :disabled="inputFlag == '3'"
+            style="min-height: 100px"
+            v-decorator="['eventImprove']"
+          ></a-textarea>
+          <span class="m-count">{{ textLength5() }}/500 </span>
+        </a-form-item>
 
-          <a-form-item
-            label="上报人"
-            class="remark"
-            :labelCol="labelCol"
-            :wrapperCol="wrapperCol"
-            has-feedback
-            style="position: relative; margin-top: 10px"
-          >
-            <a-input
-              placeholder="请输入上报人"
-              style="width: 195px"
-              :disabled="inputFlag == '3'"
-              v-decorator="['uploadUserName', { rules: [{ required: false, message: '请输入上报人！' }] }]"
-            />
-          </a-form-item>
+        <a-form-item
+          label="上报时间"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-date-picker
+            v-decorator="['uploadTime', { rules: [{ required: false, message: '请选择！' }] }]"
+            show-time
+            :disabled="inputFlag == '3'"
+            placeholder="请选择"
+            @change="onChange"
+            @ok="onOk"
+          />
+        </a-form-item>
 
-          <!-- <a-row>
+        <a-form-item
+          label="上报人"
+          class="remark"
+          :labelCol="labelCol"
+          :wrapperCol="wrapperCol"
+          has-feedback
+          style="position: relative; margin-top: 10px"
+        >
+          <a-input
+            placeholder="请输入上报人"
+            style="width: 195px"
+            :disabled="inputFlag == '3'"
+            v-decorator="['uploadUserName', { rules: [{ required: false, message: '请输入上报人！' }] }]"
+          />
+        </a-form-item>
+
+        <!-- <a-row>
             <a-col :span="12">
               <a-form-item
                 label="上报时间"
@@ -221,9 +220,8 @@
               </a-form-item>
             </a-col>
           </a-row> -->
-        </a-form>
-      </div>
-    </a-spin>
+      </a-form>
+    </div>
   </a-modal>
 </template>
 
