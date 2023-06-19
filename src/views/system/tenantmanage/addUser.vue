@@ -596,11 +596,11 @@ export default {
         return
       }
       this.currentTab = type
-      if (type == 'base') {
+      // if (type == 'base') {
         // this.getChatList(this.item.orderId)
-      } else if (type == 'photo') {
+      // } else if (type == 'photo') {
         // this.getphoneRecords(this.item)
-      }
+      // }
     },
 
     async handlePreview(type, file) {
