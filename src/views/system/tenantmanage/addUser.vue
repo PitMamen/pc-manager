@@ -262,6 +262,7 @@
                 :file-list="idcardZList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(1, value)"
                 @change="(value) => handleidcardChange(1, value)"
               >
                 <div v-if="idcardZList.length == 0">
@@ -279,6 +280,7 @@
                 :file-list="idcardFList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(2, value)"
                 @change="(value) => handleidcardChange(2, value)"
               >
                 <div v-if="idcardFList.length == 0">
@@ -300,6 +302,7 @@
                 :file-list="zhichengZList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(3, value)"
                 @change="(value) => handleidcardChange(3, value)"
               >
                 <div v-if="zhichengZList.length == 0">
@@ -318,6 +321,7 @@
                 :file-list="zhichengFList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(4, value)"
                 @change="(value) => handleidcardChange(4, value)"
               >
                 <div v-if="zhichengFList.length == 0">
@@ -340,6 +344,7 @@
                 :file-list="zhigeZList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(5, value)"
                 @change="(value) => handleidcardChange(5, value)"
               >
                 <div v-if="zhigeZList.length == 0">
@@ -358,6 +363,7 @@
                 :file-list="zhigeFList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(6, value)"
                 @change="(value) => handleidcardChange(6, value)"
               >
                 <div v-if="zhigeFList.length == 0">
@@ -380,6 +386,7 @@
                 :file-list="zhiyeZList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(7, value)"
                 @change="(value) => handleidcardChange(7, value)"
               >
                 <div v-if="zhiyeZList.length == 0">
@@ -398,6 +405,7 @@
                 :file-list="zhiyeFList"
                 accept="image/jpeg,image/png,image/jpg"
                 :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(8, value)"
                 @change="(value) => handleidcardChange(8, value)"
               >
                 <div v-if="zhiyeFList.length == 0">
@@ -604,6 +612,28 @@ export default {
       this.previewVisibleidcard = true
     },
 
+    deletePhoto(type, value) {
+      if (type == 1) {
+        this.photoListCheck.idcardZ = ''
+      } else if (type == 2) {
+        this.photoListCheck.idcardF = ''
+      } else if (type == 3) {
+        this.photoListCheck.titleZ = ''
+      } else if (type == 4) {
+        this.photoListCheck.titleF = ''
+      } else if (type == 5) {
+        this.photoListCheck.qualificationZ = ''
+      } else if (type == 6) {
+        this.photoListCheck.qualificationF = ''
+      } else if (type == 7) {
+        this.photoListCheck.practiceZ = ''
+      } else if (type == 8) {
+        this.photoListCheck.practiceF = ''
+      }
+
+      console.log('删除：', value, type)
+    },
+
     handleidcardChange(type, changeObj) {
       // console.log('DDD:', type, changeObj)
       if (changeObj.file.status == 'done') {
@@ -665,7 +695,6 @@ export default {
       // console.log('avatarUrl:' + this.previewImage)
     },
 
-
     // 上传头像
     handleChange(changeObj) {
       if (changeObj.file.status == 'done') {
@@ -723,6 +752,7 @@ export default {
 
           // 身份证
           if (this.checkData.idcardF) {
+            this.photoListCheck.idcardF = this.checkData.idcardF
             this.idcardFList.push({
               uid: '-1',
               name: '照片',
@@ -732,6 +762,7 @@ export default {
           }
 
           if (this.checkData.idcardZ) {
+            this.photoListCheck.idcardZ = this.checkData.idcardZ
             this.idcardZList.push({
               uid: '-1',
               name: '照片',
@@ -742,6 +773,7 @@ export default {
 
           // 职称
           if (this.checkData.titleZ) {
+            this.photoListCheck.titleZ = this.checkData.titleZ
             this.zhichengZList.push({
               uid: '-1',
               name: '照片',
@@ -751,6 +783,7 @@ export default {
           }
 
           if (this.checkData.titleF) {
+            this.photoListCheck.titleF = this.checkData.titleF
             this.zhichengFList.push({
               uid: '-1',
               name: '照片',
@@ -761,6 +794,7 @@ export default {
 
           // 资格
           if (this.checkData.qualificationZ) {
+            this.photoListCheck.qualificationZ = this.checkData.qualificationZ
             this.zhigeZList.push({
               uid: '-1',
               name: '照片',
@@ -770,6 +804,7 @@ export default {
           }
 
           if (this.checkData.qualificationF) {
+            this.photoListCheck.qualificationF = this.checkData.qualificationF
             this.zhigeFList.push({
               uid: '-1',
               name: '照片',
@@ -780,6 +815,7 @@ export default {
 
           // 职业
           if (this.checkData.practiceZ) {
+            this.photoListCheck.practiceZ = this.checkData.practiceZ
             this.zhiyeZList.push({
               uid: '-1',
               name: '照片',
@@ -789,6 +825,7 @@ export default {
           }
 
           if (this.checkData.practiceF) {
+            this.photoListCheck.practiceF = this.checkData.practiceF
             this.zhiyeFList.push({
               uid: '-1',
               name: '照片',

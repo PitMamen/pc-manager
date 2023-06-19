@@ -3,6 +3,7 @@
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
+     
       <a-button
         :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
         style="margin-left: 15px"
@@ -11,6 +12,8 @@
         @ok="handleOk"
         >{{ getType(orderDetailDataList.status.value) }}</a-button
       >
+
+      <a-button v-if="orderDetailDataList.deliverType==2" style="margin-left: 10px;" type="primary"  @click="godistribution()">发货配送</a-button>
 
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 45px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
@@ -365,6 +368,7 @@
     </a-modal>
 
     <cont-Detail ref="continuationDetail" @ok="handleOk" />
+    <Distributionmodal ref="Distributionmodal" @ok="handleOk" />
   </a-spin>
 </template>
     
@@ -379,14 +383,14 @@ import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { formatDate, formatDateFull } from '@/utils/util'
-// import continuationDetail from './continuationDetail'
+import Distributionmodal from './Distributionmodal'
 import { json } from 'body-parser'
 import { STable } from '@/components'
 
 export default {
   components: {
     STable,
-    // continuationDetail,
+    Distributionmodal,
   },
 
   data() {
@@ -583,6 +587,14 @@ export default {
       this.$router.go(-1)
       // this.$router.back()
     },
+
+
+    // 发货配送
+    godistribution(){
+      this.$refs.Distributionmodal.editmodal(this.orderId)
+    },
+
+
 
     //点击复诊单号 进入复诊续方详情界面
     goExamine(id) {

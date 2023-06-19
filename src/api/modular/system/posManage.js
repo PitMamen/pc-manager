@@ -4691,3 +4691,12 @@ export function getCaAuthInfoAdminForUserId(userid) {
     // data: data,
   })
 }
+
+//获取医生证件信息
+export function updateExpressInfo(data) {
+  return axios({
+    url: '/medical-api/admorder/updateExpressInfo',
+    method: 'post',
+    data: data,
+  })
+}
