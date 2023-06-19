@@ -605,7 +605,7 @@ export default {
     },
 
     handleidcardChange(type, changeObj) {
-      console.log('DDD:', type, changeObj)
+      // console.log('DDD:', type, changeObj)
       if (changeObj.file.status == 'done') {
         // changeObj.fileList.pop()
         this.$message.success(changeObj.file.response.message)
@@ -662,12 +662,9 @@ export default {
         }
       }
 
-      console.log('avatarUrl:' + this.previewImage)
+      // console.log('avatarUrl:' + this.previewImage)
     },
 
-    deleteChange(value) {
-      console.log('GGG:', value)
-    },
 
     // 上传头像
     handleChange(changeObj) {
@@ -922,17 +919,32 @@ export default {
         })
     },
     beforeUpload(file) {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
-      if (!isJpgOrPng) {
-        this.$message.error('请选择正确的图片格式')
-        return false
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('图片大小不能超过2M')
-        return false
-      }
-      return true
+      // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      // if (!isJpgOrPng) {
+      //   this.$message.error('请选择正确的图片格式')
+      //   return false
+      // }
+      // const isLt2M = file.size / 1024 / 1024 < 2
+      // if (!isLt2M) {
+      //   this.$message.error('图片大小不能超过2M')
+      //   return false
+      // }
+      // return true
+
+      return new Promise((resolve, reject) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+        if (!isJpgOrPng) {
+          this.$message.error('请选择正确的图片格式')
+          return reject(false)
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2
+        if (!isLt2M) {
+          this.$message.error('图片大小不能超过2M')
+          return reject(false)
+        }
+
+        return resolve(true)
+      })
     },
 
     momentfun() {
@@ -1112,14 +1124,14 @@ export default {
 
     //获取执照
     // getCaAuthInfoAdminForUserIdOut() {
-      // this.idcardZList= [],
-      // this.idcardFList= [],
-      // this.zhichengZList= [],
-      // this.zhichengFList= [],
-      // this.zhigeZList= [],
-      // this.zhigeFList= [],
-      // this.zhiyeZList= [],
-      // this.zhiyeFList= [],
+    // this.idcardZList= [],
+    // this.idcardFList= [],
+    // this.zhichengZList= [],
+    // this.zhichengFList= [],
+    // this.zhigeZList= [],
+    // this.zhigeFList= [],
+    // this.zhiyeZList= [],
+    // this.zhiyeFList= [],
     //   getCaAuthInfoAdminForUserId(this.photoListCheck.userId).then((res) => {
     //     if (res.code == 0) {
     //     }
