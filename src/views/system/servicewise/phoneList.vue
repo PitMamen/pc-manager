@@ -1,25 +1,55 @@
 <template>
   <a-spin :spinning="confirmLoading">
     <div class="div-service-phone">
+      <!-- 类型，1: 待抽查 2: 已抽查 -->
+      <div class="div-radio">
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 1 }" @click="onRadioClick(1)">
+          <span style="margin-left: 3px">{{ treeData[0].title }}</span>
+        </div>
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 2 }" @click="onRadioClick(2)">
+          <span style="margin-left: 3px">{{ treeData[1].title }}</span>
+        </div>
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 3 }" @click="onRadioClick(3)">
+          <span style="margin-left: 3px">{{ treeData[2].title }}</span>
+        </div>
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 4 }" @click="onRadioClick(4)">
+          <span style="margin-left: 3px">{{ treeData[3].title }}</span>
+        </div>
+      </div>
+
+      <div class="div-divider-in"></div>
       <div class="div-service-left-phone">
-        <div class="draw-bottom">
+        <div class="left-control">
+          <div class="div-wrap-control" style="height: 510px">
+            <div v-if="quesDataTemp && quesDataTemp.length > 0">
+              <div
+                class="div-part"
+                :class="{ checked: item.isChecked }"
+                v-for="(item, index) in quesDataTemp"
+                @click="onItemClick(item, index)"
+                :value="item.departmentName"
+                :key="index"
+              >
+                <span class="span-name" @click="onPartChoose(index)" :title="item.title">
+                  {{ item.title }}
+                </span>
+                <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
+                <div style="font-size: 12px">全部待随访：{{ item.count }}</div>
+              </div>
+            </div>
+            <div v-else class="no-data">
+              <img src="~@/assets/icons/no_data.jpg" />
+              <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="draw-bottom">
           <div class="bottom-top">{{ drawerTitle }}</div>
           <div class="bottom-down">
-            <!-- <a-tree
-              v-model="checkedKeys"
-              checkable
-              :expanded-keys="expandedKeys"
-              :auto-expand-parent="autoExpandParent"
-              :selected-keys="selectedKeys"
-              :tree-data="treeData"
-              @expand="onExpand"
-              @check="onCheck"
-              @select="onSelect"
-            /> -->
             <div class="item-out" v-for="(itemOut, indexOut) in treeData" :key="indexOut" :value="itemOut.key">
               <div class="out-top">
                 <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
-                <!-- <a-icon type="caret-down" /> <-->
                 <a-checkbox
                   style="margin-left: 3%"
                   @change="onChangeOut(itemOut, indexOut)"
@@ -30,7 +60,6 @@
                 }}</span>
               </div>
 
-              <!-- v-if="itemOut.isVisible" -->
               <div
                 class="out-list"
                 v-show="itemOut.isVisible"
@@ -42,14 +71,13 @@
                   @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
                   :checked="itemChild.isChecked"
                 />
-                <!--  overflow: hidden; text-overflow: ellipsis; white-space: nowrap   限制一行 -->
                 <span class="out-list-title" @click="onChangeIn(itemChild, indexChild, itemOut, indexOut)">{{
                   itemChild.title
                 }}</span>
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <a-card :bordered="false" class="card-right-phone">
@@ -92,9 +120,13 @@
               @search="onDepartmentSelectSearch"
             >
               <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-              <a-select-option v-for="(item, index) in originData" :title="item.department_name" :key="index" :value="item.department_id">{{
-                item.department_name
-              }}</a-select-option>
+              <a-select-option
+                v-for="(item, index) in originData"
+                :title="item.department_name"
+                :key="index"
+                :value="item.department_id"
+                >{{ item.department_name }}</a-select-option
+              >
             </a-select>
           </div>
           <div
@@ -263,7 +295,7 @@ export default {
         startDate: null,
         endDate: null,
         queryStatus: 1,
-        messageOriginalIds: null,
+        messageOriginalIds: [],
         hangStatus: -1,
       },
       queryParamsOrigin: {
@@ -276,9 +308,11 @@ export default {
         startDate: null,
         endDate: null,
         queryStatus: 1,
-        messageOriginalIds: null,
+        messageOriginalIds: [],
         hangStatus: -1,
       },
+
+      quesDataTemp: [],
 
       labelCol: {
         xs: { span: 24 },
@@ -709,7 +743,7 @@ export default {
 
         //后台需要null
         if (!param.messageOriginalIds || param.messageOriginalIds.length == 0) {
-          param.messageOriginalIds == null
+          param.messageOriginalIds == []
         }
 
         //         userName: null,
@@ -808,10 +842,62 @@ export default {
       qryPhoneFollowTaskStatistics().then((res) => {
         if (res.code == 0) {
           this.treeData = res.data
+          this.treeData.forEach((element) => {
+            element.title = element.title + '（' + element.count + '）'
+          })
           console.log('Tree created', JSON.parse(JSON.stringify(this.treeData)))
-          this.processDataNew(isRest)
+          // this.processDataNew(isRest)
+          this.onRadioClick(1)
         }
       })
+    },
+
+    onRadioClick(queryStatus) {
+      this.queryParams.queryStatus = queryStatus
+      //改变样式
+
+      if (this.queryParams.queryStatus == 1) {
+        this.quesDataTemp = this.treeData[0].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+      } else if (this.queryParams.queryStatus == 2) {
+        this.quesDataTemp = this.treeData[1].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+      } else if (this.queryParams.queryStatus == 3) {
+        this.quesDataTemp = this.treeData[2].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+      } else if (this.queryParams.queryStatus == 4) {
+        this.quesDataTemp = this.treeData[3].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+      }
+
+      this.onItemClick(this.quesDataTemp[0], 0)
+
+      // if (this.queryParams.queryStatus == 1) {
+      //   this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+      //   this.isDoubled = false
+      // } else if (this.queryParams.queryStatus == 2) {
+      //   this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+      //   this.isDoubled = true
+      // } else if (this.queryParams.queryStatus == 3) {
+      //   this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+      //   this.isDoubled = true
+      // } else if (this.queryParams.queryStatus == 4) {
+      //   this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+      //   this.isDoubled = true
+      // }
+    },
+
+    onItemClick(item, indexClick) {
+      // console.log("kkk:",item.questionnaireName,indexClick)
+      for (let index = 0; index < this.quesDataTemp.length; index++) {
+        this.$set(this.quesDataTemp[index], 'isChecked', false)
+      }
+      this.$set(this.quesDataTemp[indexClick], 'isChecked', true)
+
+      this.queryParams.messageOriginalIds = []
+      // this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
+      this.queryParams.messageOriginalIds.push(this.quesDataTemp[indexClick].key)
+      this.$refs.table.refresh(true)
     },
 
     //点击查询时 重置数量
@@ -957,7 +1043,7 @@ export default {
         if (this.treeData[index].children && this.treeData[index].children.length > 0) {
           this.treeData[index].children.forEach((itemChild, indexChild) => {
             this.$set(itemChild, 'isChecked', false)
-            this.$set(itemChild, 'title', itemChild.title + '（' + itemChild.count + '）')
+            // this.$set(itemChild, 'title', itemChild.title + '（' + itemChild.count + '）')
           })
         }
       }
@@ -1029,6 +1115,8 @@ export default {
           this.queryParams.messageOriginalIds = []
         }
       }
+
+      this.quesDataTemp = this.treeData[0].children
 
       this.canHide = true
       this.$refs.table.refresh(true)
@@ -1184,6 +1272,48 @@ export default {
   overflow: hidden;
   height: 100%;
 
+  .div-divider-in {
+    margin: 0 20px;
+    // width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
+  .div-radio {
+    font-size: 12px;
+    margin: 20px 20px 0 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    .radio-item {
+      display: flex;
+      // color: white;
+      overflow: hidden;
+      padding: 10px 20px;
+      align-items: center;
+      flex-direction: row;
+      &:hover {
+        cursor: pointer;
+        color: #1890ff;
+        img {
+          filter: drop-shadow(#1890ff 600px 0);
+          transform: translateX(-600px);
+        }
+      }
+    }
+
+    .checked-btn {
+      background-color: #eff7ff;
+      color: #1890ff;
+      border-bottom: #1890ff 2px solid;
+    }
+
+    // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
+    .checked-icon {
+      filter: drop-shadow(#1890ff 200px 0);
+      transform: translateX(-200px);
+    }
+  }
+
   .div-divider {
     margin: 0% 0% 0% 1%;
     width: 100%;
@@ -1200,75 +1330,139 @@ export default {
     width: 19%;
     overflow: hidden;
 
-    .draw-bottom {
-      display: flex;
-      border: 1px solid #e6e6e6;
-      flex-direction: column;
-      width: 100%;
-      // height: 100%;
-      min-height: 100%;
-      // justify-content: center;
-      // align-items: center;
+    .div-wrap-control {
+      // max-height: 420px;
+      margin-bottom: 10px;
+      overflow-y: auto !important;
+      // .checked {
+      //   color: #1890ff !important;
+      // }
 
-      .bottom-top {
-        // color: #1890ff;
-        margin-top: 15px;
-        height: 10%;
-        margin-left: 30%;
-        font-size: 14px;
+      .no-data {
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
-      .bottom-down {
-        margin-top: 10px;
-        max-height: 90%;
-        min-height: 90%;
-        margin-bottom: 10px;
-        border-top: #e6e6e6 1px solid;
-        // border-left: #e6e6e6 1px solid;
 
-        .item-out {
+      .checked {
+        // color: #1890ff !important;
+        border: 1px solid #1890ff !important;
+        box-shadow: 0px 0px 4px 1px #409eff !important;
+      }
+
+      .div-part {
+        padding: 8px;
+        background: rgba(0, 1, 3, 0);
+        border: 1px solid #dfe3e5;
+        overflow: hidden;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 8px;
+        // padding-left: 5%;
+        border-bottom: #e6e6e6 1px solid;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .span-name {
+          // margin-top: 3.5%;
+          // display: inline-block;
+          flex: 1;
+          height: 85%;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+
+          // padding-left: 1%;
+          // color: #000;
+          margin-top: 1%;
+          font-size: 12px;
+          text-align: left|center;
+        }
+
+        .div-rate {
           display: flex;
-          flex-direction: column;
-          // max-height: 550px;
-          overflow-y: auto;
-          width: 100%;
-
-          .out-top {
-            margin-top: 3%;
-            font-size: 12px;
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            align-items: center;
-
-            .out-top-title {
-              &:hover {
-                cursor: pointer;
-              }
-            }
-          }
-
-          .out-list {
-            font-size: 12px;
-            margin-top: 3%;
-            margin-left: 15%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            .out-list-title {
-              margin-left: 3%;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-
-              &:hover {
-                cursor: pointer;
-              }
-            }
-          }
+          font-size: 12px;
+          align-items: center;
+          flex-direction: row;
+          margin-right: 3%;
         }
       }
     }
+
+    // .draw-bottom {
+    //   display: flex;
+    //   border: 1px solid #e6e6e6;
+    //   flex-direction: column;
+    //   width: 100%;
+    //   // height: 100%;
+    //   min-height: 100%;
+    //   // justify-content: center;
+    //   // align-items: center;
+
+    //   .bottom-top {
+    //     // color: #1890ff;
+    //     margin-top: 15px;
+    //     height: 10%;
+    //     margin-left: 30%;
+    //     font-size: 14px;
+    //   }
+    //   .bottom-down {
+    //     margin-top: 10px;
+    //     max-height: 90%;
+    //     min-height: 90%;
+    //     margin-bottom: 10px;
+    //     border-top: #e6e6e6 1px solid;
+    //     // border-left: #e6e6e6 1px solid;
+
+    //     .item-out {
+    //       display: flex;
+    //       flex-direction: column;
+    //       // max-height: 550px;
+    //       overflow-y: auto;
+    //       width: 100%;
+
+    //       .out-top {
+    //         margin-top: 3%;
+    //         font-size: 12px;
+    //         display: flex;
+    //         flex-direction: row;
+    //         width: 100%;
+    //         align-items: center;
+
+    //         .out-top-title {
+    //           &:hover {
+    //             cursor: pointer;
+    //           }
+    //         }
+    //       }
+
+    //       .out-list {
+    //         font-size: 12px;
+    //         margin-top: 3%;
+    //         margin-left: 15%;
+    //         display: flex;
+    //         flex-direction: row;
+    //         align-items: center;
+
+    //         .out-list-title {
+    //           margin-left: 3%;
+    //           overflow: hidden;
+    //           text-overflow: ellipsis;
+    //           white-space: nowrap;
+
+    //           &:hover {
+    //             cursor: pointer;
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   .card-right-phone {

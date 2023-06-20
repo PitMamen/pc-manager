@@ -94,6 +94,7 @@
                 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
               >
             </a-timeline>
+            <div style="margin-bottom: 10px" v-if="regData.uploadRecord.length == 0">无</div>
           </div>
         </div>
       </div>
@@ -157,6 +158,7 @@
                 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
               >
             </a-timeline>
+            <div style="margin-bottom: 10px" v-if="consultData.uploadRecord.length == 0">无</div>
           </div>
         </div>
       </div>
@@ -224,6 +226,7 @@
                 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
               >
             </a-timeline>
+            <div style="margin-bottom: 10px" v-if="regConsultData.uploadRecord.length == 0">无</div>
           </div>
         </div>
       </div>
@@ -354,6 +357,7 @@
                 }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
               >
             </a-timeline>
+            <div style="margin-bottom: 10px" v-if="appraiseData.uploadRecord.length == 0">无</div>
           </div>
         </div>
       </div>
@@ -472,26 +476,26 @@ export default {
         },
         {
           title: '处方核销方式',
-          dataIndex: 'age',
-          key: 'age',
+          dataIndex: 'hxfs',
+          key: 'hxfs',
           // width: 80,
         },
         {
           title: '物流公司',
-          dataIndex: 'address',
-          key: 'address 1',
+          dataIndex: 'psgsmc',
+          key: 'psgsmc',
           ellipsis: true,
         },
         {
           title: '配送单号',
-          dataIndex: 'address',
-          key: 'address 2',
+          dataIndex: 'psdh',
+          key: 'psdh',
           ellipsis: true,
         },
         {
           title: '配送日期',
-          dataIndex: 'address',
-          key: 'addressd 3',
+          dataIndex: 'pskssj',
+          key: 'pskssj',
           ellipsis: true,
         },
         {
@@ -515,32 +519,32 @@ export default {
         },
         {
           title: '业务咨询类型',
-          dataIndex: 'age',
-          key: 'age',
+          dataIndex: 'ywlx',
+          key: 'ywlx',
           // width: 80,
         },
         {
           title: '处方数',
-          dataIndex: 'address',
-          key: 'address 1',
+          dataIndex: 'cfs',
+          key: 'cfs',
           ellipsis: true,
         },
         {
           title: '挂号费',
-          dataIndex: 'address',
-          key: 'address 2',
+          dataIndex: 'ghf',
+          key: 'ghf',
           ellipsis: true,
         },
         {
           title: '在线咨询费',
-          dataIndex: 'address',
-          key: 'addressd 3',
+          dataIndex: 'zxzxf',
+          key: 'zxzxf',
           ellipsis: true,
         },
         {
           title: '在线复诊费',
-          dataIndex: 'address',
-          key: 'addrdess 3',
+          dataIndex: 'zxzlf',
+          key: 'zxzlf',
           ellipsis: true,
         },
         {
@@ -551,8 +555,8 @@ export default {
         },
         {
           title: '上传状态',
-          dataIndex: 'address',
-          key: 'addrhtess 3',
+          dataIndex: 'xyf',
+          key: 'xyf',
           ellipsis: true,
         },
         {
