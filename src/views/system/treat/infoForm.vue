@@ -347,7 +347,7 @@
                     </div>
                     <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
                     <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                      用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
                     </div>
                   </div>
                 </div>
@@ -868,7 +868,7 @@
                     </div>
                     <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
                     <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                      用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
                     </div>
                   </div>
                 </div>
@@ -1059,7 +1059,7 @@
                     </div>
                     <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
                     <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                      用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
                     </div>
                   </div>
                 </div>
@@ -1317,7 +1317,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.chufangPreDetailData = res.data
-          console.log("www:",this.chufangPreDetailData.medicalInfo.remark)
+          // console.log("www:",this.chufangPreDetailData.medicalInfo.remark)
         }
       })
     },
@@ -1400,7 +1400,7 @@ export default {
       preDetail({ preNo: preNo }).then((res) => {
         if (res.code == 0) {
           this.preDetailData = res.data
-          console.log("ttt:",this.preDetailData.medicalInfo.remark)
+          // console.log("ttt:",this.preDetailData.medicalInfo.remark)
         }
       })
     },

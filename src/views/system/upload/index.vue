@@ -42,77 +42,34 @@
       :alert="true"
       :rowKey="(record) => record.id"
     >
-      <span slot="parent_disarmament_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="departmentNames" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="his_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_introduce" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="status" slot-scope="text, record">
-        <template v-if="true">
-          <a-popconfirm
-            placement="topRight"
-            :title="record.status === 1 ? '确认停用？' : '确认启用？'"
-            @confirm="() => update(record)"
-          >
-            <a-switch size="small" :checked="record.status === 1" />
-          </a-popconfirm>
-        </template>
-      </span>
       <span slot="action" slot-scope="text, record">
-        <template v-if="true">
-
-          <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
-          <a @click="goDetail(record)" v-if="record.status == 2"
-            ><a-icon type="hdd" style="margin-right: 0" />详情</a
-          >
-
-        </template>
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <a @click="goDetail(record)"><a-icon type="hdd" style="margin-right: 0" />详情</a>
       </span>
     </s-table>
-    <!-- <add-form ref="addForm" @ok="handleOk" /> -->
-    <edit-form ref="editForm" @ok="handleOk" />
-    <!-- <edit-form2 ref="editForm2" @ok="handleOk" /> -->
+
   </a-card>
 </template>
 
 <script>
-import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
-// import { list, update } from '@/api/modular/system/ward'
+import { accessHospitals as list2, qryUploadLogByPage } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
-// import addForm from './addForm'
-import editForm from './editForm'
 import { formatDateFull, formatDate } from '@/utils/util'
-// import editForm2 from './editForm2'
 export default {
   components: {
     STable,
     Ellipsis,
-    // addForm,
-    editForm,
-    // editForm2,
   },
   data() {
     return {
       // 查询参数  审核状态 1未审核2已审核3未登记
       queryParam: {
-        status: '',
         beginDate: '',
         endDate: '',
         hospitalCode: '',
         keyWord: '',
       },
       queryParamOrigin: {
-        status: '',
         beginDate: '',
         endDate: '',
         hospitalCode: '',
@@ -121,11 +78,6 @@ export default {
       createValue: [],
       // 表头
       columns: [
-        {
-          title: '业务流水号',
-          dataIndex: 'orderId',
-          scopedSlots: { customRender: 'orderId' },
-        },
         {
           title: '业务类型',
           dataIndex: 'broadClassifyName',
@@ -142,9 +94,9 @@ export default {
           scopedSlots: { customRender: 'userPhone' },
         },
         {
-          title: '事件描述',
-          dataIndex: 'eventDesc',
-          scopedSlots: { customRender: 'eventDesc' },
+          title: '服务时间',
+          dataIndex: 'serviceTime',
+          scopedSlots: { customRender: 'serviceTime' },
         },
         {
           title: '所属机构',
@@ -152,51 +104,76 @@ export default {
           scopedSlots: { customRender: 'hospitalName' },
         },
         {
-          title: '上报人',
-          dataIndex: 'uploadUserName',
-          scopedSlots: { customRender: 'uploadUserName' },
+          title: '医生',
+          dataIndex: 'doctorName',
+          scopedSlots: { customRender: 'doctorName' },
         },
         {
-          title: '事件时间',
-          dataIndex: 'createTime',
-          scopedSlots: { customRender: 'createTime' },
+          title: '预约',
+          dataIndex: 'regData',
+          scopedSlots: { customRender: 'regData' },
         },
         {
-          title: '上报时间',
-          dataIndex: 'uploadTime',
-          scopedSlots: { customRender: 'uploadTime' },
+          title: '咨询',
+          dataIndex: 'consultData',
+          scopedSlots: { customRender: 'consultData' },
         },
         {
-          title: '状态',
-          dataIndex: 'statusText',
-          // scopedSlots: { customRender: 'status' },
+          title: '复诊',
+          dataIndex: 'regConsultData',
+          scopedSlots: { customRender: 'regConsultData' },
+        },
+        {
+          title: '处方',
+          dataIndex: 'preSaveData',
+          scopedSlots: { customRender: 'preSaveData' },
+        },
+        {
+          title: '核销',
+          dataIndex: 'preCancelData',
+          scopedSlots: { customRender: 'preCancelData' },
+        },
+        {
+          title: '收费',
+          dataIndex: 'feeData',
+          scopedSlots: { customRender: 'feeData' },
+        },
+        {
+          title: '评价',
+          dataIndex: 'appraiseData',
+          scopedSlots: { customRender: 'appraiseData' },
+        },
+        {
+          title: '最新上传时间',
+          dataIndex: 'updateTime',
+          scopedSlots: { customRender: 'updateTime' },
         },
         {
           title: '操作',
           // width: '150px',
           fixed: 'right',
-          dataIndex: 'action',
+          // dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryComplaintByPage(Object.assign(parameter, this.queryParam)).then((res) => {
+        return qryUploadLogByPage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            res.data.rows.forEach((element) => {
-              this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
-              // this.$set(element, 'status', 2)
-              this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
-              // 1未审核2已审核3未登记
-              if (element.status == 1) {
-                this.$set(element, 'statusText', '未审核')
-              } else if (element.status == 2) {
-                this.$set(element, 'statusText', '已审核')
-              } else {
-                this.$set(element, 'statusText', '未登记')
-              }
-            })
-            console.log(JSON.stringify(res.data.rows))
+            // res.data.rows.forEach((element) => {
+            //   this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
+            //   // this.$set(element, 'status', 2)
+            //   this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
+            //   // 1未审核2已审核3未登记
+            //   if (element.status == 1) {
+            //     this.$set(element, 'statusText', '未审核')
+            //   } else if (element.status == 2) {
+            //     this.$set(element, 'statusText', '已审核')
+            //   } else {
+            //     this.$set(element, 'statusText', '未登记')
+            //   }
+            // })
+            // console.log(JSON.stringify(res.data.rows))
             return res.data
           } else {
             this.$message.error(res.message)
@@ -205,25 +182,6 @@ export default {
       },
 
       treeData: [],
-      // 审核状态 1未审核2已审核3未登记
-      selects: [
-        {
-          id: '',
-          name: '全部',
-        },
-        {
-          id: 1,
-          name: '未审核',
-        },
-        {
-          id: 2,
-          name: '已审核',
-        },
-        {
-          id: 3,
-          name: '未登记',
-        },
-      ],
     }
   },
   /**
@@ -234,27 +192,17 @@ export default {
     this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
-    goDetail(record){
-      this.$router.push({
-        path: '/upload/uploadDetail',
-        query: {
-          id: record.id,
-        },
-      })
+    goDetail(record) {
+      // this.$router.push({
+      //   path: '/upload/uploadDetail',
+      //   query: {
+      //     id: record.id,
+      //   },
+      // })
+
+      this.$router.push({ path: '/upload/uploadDetail', query: { recordStr: JSON.stringify(record) } })
     },
-    update(item) {
-      update({
-        id: item.id,
-        status: item.status === 1 ? 2 : 1,
-      }).then((res) => {
-        if (res.code === 0) {
-          this.$message.success(`${item.status === 1 ? '停用' : '启用'}成功!`)
-          this.handleOk()
-        } else {
-          this.$message.error(`${item.status === 1 ? '停用' : '启用'}失败：` + res.message)
-        }
-      })
-    },
+
     getTreeData() {
       list2({
         status: 1,
@@ -291,7 +239,7 @@ export default {
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
       this.queryParam.beginDate = dateArr[0]
-      this.queryParams.endDate = dateArr[1]
+      this.queryParam.endDate = dateArr[1]
     },
 
     /**

@@ -3549,6 +3549,61 @@ export function saveComplaint(data) {
   })
 }
 
+/**
+ * /ehosp/qryUploadLogByPage 查询上传日志
+ */
+export function qryUploadLogByPage(data) {
+  return axios({
+    url: '/medical-api/ehosp/qryUploadLogByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /ehosp/getPreUploadLogByOrderIdAndType 根据订单、上传类型查询上传日志
+ */
+export function getPreUploadLogByOrderIdAndType(data) {
+  return axios({
+    url: '/medical-api/ehosp/getPreUploadLogByOrderIdAndType',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /ehosp/getUploadLogByOrderIdAndType 根据订单、上传类型查询上传日志
+ */
+export function getUploadLogByOrderIdAndType(data) {
+  return axios({
+    url: '/medical-api/ehosp/getUploadLogByOrderIdAndType',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /ehosp/getPreUploadLogList 根据订单、上传类型、业务数据id,查询上传日志
+ */
+export function getPreUploadLogList(data) {
+  return axios({
+    url: '/medical-api/ehosp/getPreUploadLogList',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /ehosp/reUpload 失败记录重传
+ */
+export function reUpload(data) {
+  return axios({
+    url: '/medical-api/ehosp/reUpload',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 /**
  * 健康商城首页 添加 
@@ -4686,8 +4741,17 @@ export function setCertificateForUserId(data) {
 //获取医生证件信息
 export function getCaAuthInfoAdminForUserId(userid) {
   return axios({
-    url: '/account-api/tdUserInfoCaAuth/getCaAuthInfoAdminForUserId/'+userid,
+    url: '/account-api/tdUserInfoCaAuth/getCaAuthInfoAdminForUserId/' + userid,
     method: 'post',
     // data: data,
+  })
+}
+
+//获取医生证件信息
+export function updateExpressInfo(data) {
+  return axios({
+    url: '/medical-api/admorder/updateExpressInfo',
+    method: 'post',
+    data: data,
   })
 }
