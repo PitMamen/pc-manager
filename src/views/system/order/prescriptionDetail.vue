@@ -285,7 +285,7 @@
 
         <div class="div-pro-line" style="margin-left: 20px; width: 40%">
           <span class="span-item-name" style="color: #1a1a1a"> 收货地址 :</span>
-          <span class="span-item-value" style="width: 65%; color: #1a1a1a">{{
+          <span class="span-item-value" style="width: 80%;display: inline-flex; color: #1a1a1a">{{
             addressInfo ? addressInfo.address : '-'
           }}</span>
         </div>
