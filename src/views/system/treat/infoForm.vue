@@ -347,7 +347,7 @@
                     </div>
                     <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
                     <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                      用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
                     </div>
                   </div>
                 </div>
@@ -866,7 +866,7 @@
                     </div>
                     <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
                     <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                      用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
                     </div>
                   </div>
                 </div>
@@ -1055,7 +1055,7 @@
                     </div>
                     <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
                     <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                      用法用量:{{ item.frequency }},1次{{ item.useNum + item.useUnit }},{{ item.useMethod }}
                     </div>
                   </div>
                 </div>
