@@ -374,7 +374,9 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px">
-                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
+                    开方医生：
+                    <img style="height: 25px;" v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile" :src="preDetailData.doctorCerFile" />
+                    <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
@@ -893,7 +895,9 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px">
-                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
+                    开方医生：
+                    <img style="height: 25px;" v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile" :src="preDetailData.doctorCerFile" />
+                    <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
@@ -1083,7 +1087,9 @@
                   <div class="line-content"></div>
 
                   <div style="margin-left: 10px; margin-top: 10px">
-                    开方医生：{{ chufangPreDetailData.medicalInfo.doctorName }}
+                    开方医生：
+                    <img style="height: 25px;" v-if="chufangPreDetailData.caAuthFlag && chufangPreDetailData.doctorCerFile" :src="chufangPreDetailData.doctorCerFile" />
+                    <div v-else>{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}

@@ -189,8 +189,10 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px">
-                    开方医生：{{ preDetailData.medicalInfo.doctorName }}
+                  <div style="margin-left: 10px; margin-top: 10px;display: flex;flex-direction: row;align-items: center;">
+                    开方医生：
+                    <img style="height: 25px;" v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile" :src="preDetailData.doctorCerFile" />
+                    <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
