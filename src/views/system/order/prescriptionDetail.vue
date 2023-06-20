@@ -13,7 +13,7 @@
         >{{ getType(orderDetailDataList.status.value) }}</a-button
       >
 
-      <a-button v-if="orderDetailDataList.deliverType==2" style="margin-left: 10px;" type="primary"  @click="godistribution()">发货配送</a-button>
+      <a-button v-if="orderDetailDataList.deliverType==2&&orderDetailDataList.status.value==8" style="margin-left: 10px;" type="primary"  @click="godistribution()">发货配送</a-button>
 
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 45px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
