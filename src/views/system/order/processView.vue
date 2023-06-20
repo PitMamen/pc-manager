@@ -114,7 +114,10 @@
             </div>
             <div class="line-content"></div>
 
-            <div style="margin-left: 10px; color: #1a1a1a">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+            <div v-if="!preDetailData.caAuthFlag" style="margin-left: 10px; color: #1a1a1a">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
+            <div v-if="preDetailData.caAuthFlag" style="margin-left: 10px; color: #1a1a1a;display: flex;flex-direction: row;margin-top: 5px;">开方医生：
+              <img style="width: 80px;height: 30px;" :src="preDetailData.doctorCerFile"/>
+            </div>
             <div style="margin-left: 10px; color: #1a1a1a; margin-bottom: 10px">
               执行科室：{{ preDetailData.medicalInfo.deptName }}
             </div>
