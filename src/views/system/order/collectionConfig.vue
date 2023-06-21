@@ -393,30 +393,7 @@ export default {
   height: 1px;
 }
 
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 47px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 48px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
+
 </style>
   
   <!-- tree-select限制高度 -->
