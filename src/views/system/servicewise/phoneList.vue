@@ -30,11 +30,16 @@
                 :value="item.departmentName"
                 :key="index"
               >
-                <span class="span-name" @click="onPartChoose(index)" :title="item.title">
+                <span class="span-name"  :title="item.title">
                   {{ item.title }}
                 </span>
                 <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
-                <div style="font-size: 12px">全部待随访：{{ item.count }}</div>
+                <div style="font-size: 12px">
+                  {{ item.titleFather }}：<span v-if="queryParams.queryStatus == 4" style="color: #409eff">{{
+                    item.count
+                  }}</span
+                  ><span v-else style="color: #f26161">{{ item.count }}</span>
+                </div>
               </div>
             </div>
             <div v-else class="no-data">
@@ -43,41 +48,6 @@
             </div>
           </div>
         </div>
-
-        <!-- <div class="draw-bottom">
-          <div class="bottom-top">{{ drawerTitle }}</div>
-          <div class="bottom-down">
-            <div class="item-out" v-for="(itemOut, indexOut) in treeData" :key="indexOut" :value="itemOut.key">
-              <div class="out-top">
-                <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
-                <a-checkbox
-                  style="margin-left: 3%"
-                  @change="onChangeOut(itemOut, indexOut)"
-                  :checked="itemOut.isChecked"
-                />
-                <span class="out-top-title" @click="onChangeOut(itemOut, indexOut)" style="margin-left: 1%">{{
-                  itemOut.title
-                }}</span>
-              </div>
-
-              <div
-                class="out-list"
-                v-show="itemOut.isVisible"
-                v-for="(itemChild, indexChild) in treeData[indexOut].children"
-                :key="indexChild"
-                :value="itemChild.key"
-              >
-                <a-checkbox
-                  @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
-                  :checked="itemChild.isChecked"
-                />
-                <span class="out-list-title" @click="onChangeIn(itemChild, indexChild, itemOut, indexOut)">{{
-                  itemChild.title
-                }}</span>
-              </div>
-            </div>
-          </div>
-        </div> -->
       </div>
 
       <a-card :bordered="false" class="card-right-phone">
@@ -286,19 +256,6 @@ export default {
       treeData: [],
       keshiData: [],
       queryParams: {
-        userName: null,
-        phone: null,
-        ascriptionDepartmentId: undefined,
-        messageType: undefined,
-        overdueStatus: -1,
-        bizStatus: -1,
-        startDate: null,
-        endDate: null,
-        queryStatus: 1,
-        messageOriginalIds: [],
-        hangStatus: -1,
-      },
-      queryParamsOrigin: {
         userName: null,
         phone: null,
         ascriptionDepartmentId: undefined,
@@ -825,7 +782,7 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
     this.getDepartmentSelectList(undefined)
     // this.getDeptsOut()
-    this.initData(true)
+    this.initData()
     messageTypes().then((res) => {
       if (res.code == 0) {
         this.msgData = res.data
@@ -838,11 +795,12 @@ export default {
      * 第一次和重置的时候 isRest为true
      * @param {*} isRest
      */
-    initData(isRest) {
+    initData() {
       qryPhoneFollowTaskStatistics().then((res) => {
         if (res.code == 0) {
           this.treeData = res.data
           this.treeData.forEach((element) => {
+            this.$set(element, 'titleOrigin', element.title)
             element.title = element.title + '（' + element.count + '）'
           })
           console.log('Tree created', JSON.parse(JSON.stringify(this.treeData)))
@@ -854,19 +812,30 @@ export default {
     onRadioClick(queryStatus) {
       this.queryParams.queryStatus = queryStatus
       //改变样式
-
       if (this.queryParams.queryStatus == 1) {
         this.quesDataTemp = this.treeData[0].children
         this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+        this.quesDataTemp.forEach((element) => {
+          this.$set(element, 'titleFather', this.treeData[0].titleOrigin)
+        })
       } else if (this.queryParams.queryStatus == 2) {
         this.quesDataTemp = this.treeData[1].children
         this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+        this.quesDataTemp.forEach((element) => {
+          this.$set(element, 'titleFather', this.treeData[1].titleOrigin)
+        })
       } else if (this.queryParams.queryStatus == 3) {
         this.quesDataTemp = this.treeData[2].children
         this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+        this.quesDataTemp.forEach((element) => {
+          this.$set(element, 'titleFather', this.treeData[2].titleOrigin)
+        })
       } else if (this.queryParams.queryStatus == 4) {
         this.quesDataTemp = this.treeData[3].children
         this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+        this.quesDataTemp.forEach((element) => {
+          this.$set(element, 'titleFather', this.treeData[3].titleOrigin)
+        })
       }
 
       this.onItemClick(this.quesDataTemp[0], 0)
@@ -874,14 +843,18 @@ export default {
 
     onItemClick(item, indexClick) {
       // console.log("kkk:",item.questionnaireName,indexClick)
-      for (let index = 0; index < this.quesDataTemp.length; index++) {
-        this.$set(this.quesDataTemp[index], 'isChecked', false)
-      }
-      this.$set(this.quesDataTemp[indexClick], 'isChecked', true)
+      if (this.quesDataTemp.length > 0) {
+        for (let index = 0; index < this.quesDataTemp.length; index++) {
+          this.$set(this.quesDataTemp[index], 'isChecked', false)
+        }
+        this.$set(this.quesDataTemp[indexClick], 'isChecked', true)
 
-      this.queryParams.messageOriginalIds = []
-      // this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
-      this.queryParams.messageOriginalIds.push(this.quesDataTemp[indexClick].key)
+        this.queryParams.messageOriginalIds = []
+        // this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
+        this.queryParams.messageOriginalIds.push(this.quesDataTemp[indexClick].key)
+      } else {
+        this.queryParams.messageOriginalIds = []
+      }
       this.$refs.table.refresh(true)
     },
 
@@ -889,7 +862,8 @@ export default {
     goSearch() {
       this.confirmLoading = true
 
-      this.initData(false)
+      this.$refs.table.refresh(true)
+      // this.initData()
     },
 
     //获取管理的科室 可首拼
@@ -937,10 +911,20 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.queryParams.userName = null
+      this.queryParams.phone = null
+      this.queryParams.ascriptionDepartmentId = undefined
+      this.queryParams.messageType = undefined
+      this.queryParams.useroverdueStatusName = -1
+      this.queryParams.bizStatus = -1
+      this.queryParams.startDate = null
+      this.queryParams.endDate = null
+      // this.queryParams.messageOriginalIds = []
+      this.queryParams.hangStatus = -1
 
       this.createValue = []
-      this.initData(true)
+      this.$refs.table.refresh(true)
+      // this.initData()
     },
 
     onChange(momentArr, dateArr) {
@@ -965,7 +949,7 @@ export default {
     },
 
     handleOk() {
-      this.initData(false)
+      this.initData()
     },
 
     handleCancel() {
@@ -1260,8 +1244,6 @@ export default {
 </style>
 
 <style lang="less" scoped>
-
-
 .ant-spin-nested-loading {
   height: calc(100% - 40px);
   /deep/ .ant-spin-container {
