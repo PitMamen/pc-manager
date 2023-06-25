@@ -3,6 +3,22 @@
     <div class="wrap">
       <div class="left">
         <a-spin :spinning="confirmLoading_left">
+
+          <a-select
+                style="width: 180px;margin-left: 12px;margin-bottom: 20px;"
+                class="deptselect-single"
+                show-search
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请输入问卷名称查询"
+                @change="onselectQuestion"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in list1" :key="index" :value="item.id">{{
+                  item.name
+                }}</a-select-option>
+              </a-select>
           
           <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1Temp.length === 0" />
           <div class="list" v-else>
@@ -77,8 +93,7 @@
               </a-select>
             </div>
 
-            <div class="search-row">
-
+            <!-- <div class="search-row">
             <div style="display: flex; flex-direction: row; align-items: baseline;">
               <span style="width: 70px">问卷名称:</span>
               <a-select
@@ -91,14 +106,13 @@
                 placeholder="选择问卷"
                 @change="onselectQuestion"
               >
-                <!-- @search="onDepartmentSelectSearch" -->
                 <a-spin v-if="fetching" slot="notFoundContent" size="small" />
                 <a-select-option v-for="(item, index) in list1" :key="index" :value="item.id">{{
                   item.name
                 }}</a-select-option>
               </a-select>
             </div>
-          </div>
+          </div> -->
 
 
 
