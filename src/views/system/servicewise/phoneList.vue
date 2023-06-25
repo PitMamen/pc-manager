@@ -1,25 +1,55 @@
 <template>
   <a-spin :spinning="confirmLoading">
     <div class="div-service-phone">
+      <!-- 类型，1: 待抽查 2: 已抽查 -->
+      <div class="div-radio">
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 1 }" @click="onRadioClick(1)">
+          <span style="margin-left: 3px">{{ treeData[0].title }}</span>
+        </div>
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 2 }" @click="onRadioClick(2)">
+          <span style="margin-left: 3px">{{ treeData[1].title }}</span>
+        </div>
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 3 }" @click="onRadioClick(3)">
+          <span style="margin-left: 3px">{{ treeData[2].title }}</span>
+        </div>
+        <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 4 }" @click="onRadioClick(4)">
+          <span style="margin-left: 3px">{{ treeData[3].title }}</span>
+        </div>
+      </div>
+
+      <div class="div-divider-in"></div>
       <div class="div-service-left-phone">
-        <div class="draw-bottom">
+        <div class="left-control">
+          <div class="div-wrap-control" style="height: 510px">
+            <div v-if="quesDataTemp && quesDataTemp.length > 0">
+              <div
+                class="div-part"
+                :class="{ checked: item.isChecked }"
+                v-for="(item, index) in quesDataTemp"
+                @click="onItemClick(item, index)"
+                :value="item.departmentName"
+                :key="index"
+              >
+                <span class="span-name" @click="onPartChoose(index)" :title="item.title">
+                  {{ item.title }}
+                </span>
+                <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
+                <div style="font-size: 12px">全部待随访：{{ item.count }}</div>
+              </div>
+            </div>
+            <div v-else class="no-data">
+              <img src="~@/assets/icons/no_data.jpg" />
+              <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- <div class="draw-bottom">
           <div class="bottom-top">{{ drawerTitle }}</div>
           <div class="bottom-down">
-            <!-- <a-tree
-              v-model="checkedKeys"
-              checkable
-              :expanded-keys="expandedKeys"
-              :auto-expand-parent="autoExpandParent"
-              :selected-keys="selectedKeys"
-              :tree-data="treeData"
-              @expand="onExpand"
-              @check="onCheck"
-              @select="onSelect"
-            /> -->
             <div class="item-out" v-for="(itemOut, indexOut) in treeData" :key="indexOut" :value="itemOut.key">
               <div class="out-top">
                 <a-icon :type="itemOut.outIcon" @click="onHideAndSee(itemOut, indexOut)" />
-                <!-- <a-icon type="caret-down" /> <-->
                 <a-checkbox
                   style="margin-left: 3%"
                   @change="onChangeOut(itemOut, indexOut)"
@@ -30,7 +60,6 @@
                 }}</span>
               </div>
 
-              <!-- v-if="itemOut.isVisible" -->
               <div
                 class="out-list"
                 v-show="itemOut.isVisible"
@@ -42,14 +71,13 @@
                   @change="onChangeIn(itemChild, indexChild, itemOut, indexOut)"
                   :checked="itemChild.isChecked"
                 />
-                <!--  overflow: hidden; text-overflow: ellipsis; white-space: nowrap   限制一行 -->
                 <span class="out-list-title" @click="onChangeIn(itemChild, indexChild, itemOut, indexOut)">{{
                   itemChild.title
                 }}</span>
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <a-card :bordered="false" class="card-right-phone">
@@ -92,9 +120,13 @@
               @search="onDepartmentSelectSearch"
             >
               <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-              <a-select-option v-for="(item, index) in originData" :title="item.department_name" :key="index" :value="item.department_id">{{
-                item.department_name
-              }}</a-select-option>
+              <a-select-option
+                v-for="(item, index) in originData"
+                :title="item.department_name"
+                :key="index"
+                :value="item.department_id"
+                >{{ item.department_name }}</a-select-option
+              >
             </a-select>
           </div>
           <div
@@ -263,7 +295,7 @@ export default {
         startDate: null,
         endDate: null,
         queryStatus: 1,
-        messageOriginalIds: null,
+        messageOriginalIds: [],
         hangStatus: -1,
       },
       queryParamsOrigin: {
@@ -276,9 +308,11 @@ export default {
         startDate: null,
         endDate: null,
         queryStatus: 1,
-        messageOriginalIds: null,
+        messageOriginalIds: [],
         hangStatus: -1,
       },
+
+      quesDataTemp: [],
 
       labelCol: {
         xs: { span: 24 },
@@ -709,7 +743,7 @@ export default {
 
         //后台需要null
         if (!param.messageOriginalIds || param.messageOriginalIds.length == 0) {
-          param.messageOriginalIds == null
+          param.messageOriginalIds == []
         }
 
         //         userName: null,
@@ -808,10 +842,47 @@ export default {
       qryPhoneFollowTaskStatistics().then((res) => {
         if (res.code == 0) {
           this.treeData = res.data
+          this.treeData.forEach((element) => {
+            element.title = element.title + '（' + element.count + '）'
+          })
           console.log('Tree created', JSON.parse(JSON.stringify(this.treeData)))
-          this.processDataNew(isRest)
+          this.onRadioClick(1)
         }
       })
+    },
+
+    onRadioClick(queryStatus) {
+      this.queryParams.queryStatus = queryStatus
+      //改变样式
+
+      if (this.queryParams.queryStatus == 1) {
+        this.quesDataTemp = this.treeData[0].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
+      } else if (this.queryParams.queryStatus == 2) {
+        this.quesDataTemp = this.treeData[1].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+      } else if (this.queryParams.queryStatus == 3) {
+        this.quesDataTemp = this.treeData[2].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
+      } else if (this.queryParams.queryStatus == 4) {
+        this.quesDataTemp = this.treeData[3].children
+        this.columns = JSON.parse(JSON.stringify(this.columnsAready))
+      }
+
+      this.onItemClick(this.quesDataTemp[0], 0)
+    },
+
+    onItemClick(item, indexClick) {
+      // console.log("kkk:",item.questionnaireName,indexClick)
+      for (let index = 0; index < this.quesDataTemp.length; index++) {
+        this.$set(this.quesDataTemp[index], 'isChecked', false)
+      }
+      this.$set(this.quesDataTemp[indexClick], 'isChecked', true)
+
+      this.queryParams.messageOriginalIds = []
+      // this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
+      this.queryParams.messageOriginalIds.push(this.quesDataTemp[indexClick].key)
+      this.$refs.table.refresh(true)
     },
 
     //点击查询时 重置数量
@@ -821,235 +892,6 @@ export default {
       this.initData(false)
     },
 
-    onHideAndSee(itemOut, indexOut) {
-      let tmpVisible = itemOut.isVisible
-      for (let index = 0; index < this.treeData.length; index++) {
-        this.treeData[index].isVisible = false
-        this.treeData[index].outIcon = 'caret-right'
-      }
-      itemOut.isVisible = !tmpVisible
-      itemOut.outIcon = itemOut.isVisible ? 'caret-down' : 'caret-right'
-    },
-
-    //点击第一层选中按钮，
-    onChangeOut(itemOut, indexOut) {
-      // itemOut.isChecked = !itemOut.isChecked
-      itemOut.isChecked = true
-      if (itemOut.isChecked) {
-        //当父节点切换之后需要切换tree的选中状态；需要改变请求条件；需要改变表格列表数据；需求改变筛选请求条件（v-if实现，加上请求数据的时候改变参数）；需要改变表格里面操作的按钮
-
-        //当父节点切换之后需要切换tree的选中状态；需要改变请求条件
-        this.treeData.forEach((itemOutTemp, indexOutTemp) => {
-          if (indexOutTemp != indexOut) {
-            this.$set(itemOutTemp, 'isChecked', false)
-            this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
-              this.$set(itemChild, 'isChecked', false)
-            })
-          } else {
-            //处理查询入参
-            this.queryParams.queryStatus = itemOutTemp.key
-            this.queryParams.messageOriginalIds = []
-            this.$set(itemOutTemp, 'isChecked', true)
-            this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
-              this.$set(itemChild, 'isChecked', true)
-              this.queryParams.messageOriginalIds.push(itemChild.key)
-            })
-          }
-        })
-
-        // 需要改变表格列表数据；
-        if (this.queryParams.queryStatus == 1) {
-          this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
-          this.isDoubled = false
-        } else if (this.queryParams.queryStatus == 2) {
-          this.columns = JSON.parse(JSON.stringify(this.columnsAll))
-          this.isDoubled = true
-        } else if (this.queryParams.queryStatus == 3) {
-          this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
-          this.isDoubled = true
-        } else if (this.queryParams.queryStatus == 4) {
-          this.columns = JSON.parse(JSON.stringify(this.columnsAready))
-          this.isDoubled = true
-        }
-
-        for (let index = 0; index < this.treeData.length; index++) {
-          this.treeData[index].isVisible = false
-          this.treeData[index].outIcon = 'caret-right'
-        }
-        itemOut.isVisible = !itemOut.isVisible
-        itemOut.outIcon = itemOut.isVisible ? 'caret-down' : 'caret-right'
-      } else {
-        //TODO 取消勾选不做，外层没有取消的功能，点击了就是全选
-      }
-
-      this.goSearch()
-    },
-
-    //点击第二层选中按钮，先判断是否改变
-    onChangeIn(itemChild, indexChild, itemOut, indexOut) {
-      itemChild.isChecked = !itemChild.isChecked
-
-      if (itemChild.isChecked) {
-        //当父节点切换之后需要切换选中状态；需要改变列表数据；需求改变请求条件
-        if (this.queryParams.queryStatus != itemOut.key) {
-          this.treeData.forEach((itemOutTemp, indexOutTemp) => {
-            if (indexOutTemp != indexOut) {
-              this.$set(itemOutTemp, 'isChecked', false)
-              this.treeData[indexOutTemp].children.forEach((itemChildTemp, indexChildTemp) => {
-                this.$set(itemChildTemp, 'isChecked', false)
-              })
-            } else {
-            }
-          })
-
-          this.queryParams.queryStatus = itemOut.key
-          this.queryParams.messageOriginalIds = []
-          this.queryParams.messageOriginalIds.push(itemChild.key)
-        } else {
-          this.$set(itemChild, 'isChecked', true)
-          console.log('itemChild.isChecked 直接添加', itemChild.isChecked)
-          this.queryParams.messageOriginalIds.push(itemChild.key)
-        }
-      } else {
-        //取消勾选  则是去掉勾选那一条子层数据
-        let num = 0
-        this.queryParams.messageOriginalIds.forEach((itemChildTemp, indexChildTemp) => {
-          if (itemChild.key == itemChildTemp) {
-            num = indexChildTemp
-          }
-        })
-        this.queryParams.messageOriginalIds.splice(num, 1)
-      }
-
-      // 需要改变表格列表数据；
-      if (this.queryParams.queryStatus == 1) {
-        this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
-        this.isDoubled = false
-      } else if (this.queryParams.queryStatus == 2) {
-        this.columns = JSON.parse(JSON.stringify(this.columnsAll))
-        this.isDoubled = true
-      } else if (this.queryParams.queryStatus == 3) {
-        this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
-        this.isDoubled = true
-      } else if (this.queryParams.queryStatus == 4) {
-        this.columns = JSON.parse(JSON.stringify(this.columnsAready))
-        this.isDoubled = true
-      }
-
-      this.goSearch()
-    },
-
-    /**
-     * 处理树和勾选
-     * @param {} isReset
-     */
-    processDataNew(isReset) {
-      //先整体初始化
-      for (let index = 0; index < this.treeData.length; index++) {
-        this.treeData[index].title = this.treeData[index].title + '（' + this.treeData[index].count + '）'
-        console.log('title', this.treeData[index].title)
-        console.log('count', this.treeData[index].count)
-
-        this.$set(this.treeData[index], 'outIcon', 'caret-right')
-        this.$set(this.treeData[index], 'isChecked', false)
-        this.$set(this.treeData[index], 'isVisible', false)
-
-        if (this.treeData[index].children && this.treeData[index].children.length > 0) {
-          this.treeData[index].children.forEach((itemChild, indexChild) => {
-            this.$set(itemChild, 'isChecked', false)
-            this.$set(itemChild, 'title', itemChild.title + '（' + itemChild.count + '）')
-          })
-        }
-      }
-
-      // debugger
-      //初始化逻辑
-      if (isReset) {
-        // debugger
-        //再把首个全部展开和勾选
-        this.$set(this.treeData[0], 'isChecked', true)
-        this.$set(this.treeData[0], 'isVisible', true)
-        this.$set(this.treeData[0], 'outIcon', 'caret-down')
-        if (this.treeData[0].children && this.treeData[0].children.length > 0) {
-          this.treeData[0].children.forEach((item, index) => {
-            this.$set(item, 'isChecked', true)
-          })
-        }
-
-        //初始化请求数据
-        this.queryParams.queryStatus = this.treeData[0].key
-        this.queryParams.messageOriginalIds = []
-        this.treeData[0].children.forEach((item, index) => {
-          this.queryParams.messageOriginalIds.push(item.key)
-        })
-      } else {
-        // debugger
-        //非初始化逻辑，记住了以前选择的父层和子层；子层可能记住了，但是新的树里面没有了，要判断删除请求数据
-        this.$set(this.treeData[this.queryParams.queryStatus - 1], 'isChecked', true)
-        this.$set(this.treeData[this.queryParams.queryStatus - 1], 'isVisible', true)
-        this.$set(this.treeData[this.queryParams.queryStatus - 1], 'outIcon', 'caret-down')
-        if (
-          this.treeData[this.queryParams.queryStatus - 1].children &&
-          this.treeData[this.queryParams.queryStatus - 1].children.length > 0
-        ) {
-          //勾选记住的子层
-          for (let index = 0; index < this.treeData[this.queryParams.queryStatus - 1].children.length; index++) {
-            for (let indexIn = 0; indexIn < this.queryParams.messageOriginalIds.length; indexIn++) {
-              if (
-                this.queryParams.messageOriginalIds[indexIn] ==
-                this.treeData[this.queryParams.queryStatus - 1].children[index].key
-              ) {
-                this.$set(this.treeData[this.queryParams.queryStatus - 1].children[index], 'isChecked', true)
-              }
-            }
-          }
-
-          console.log('messageOriginalIds', JSON.parse(JSON.stringify(this.queryParams.messageOriginalIds)))
-
-          // 子层可能记住了，但是新的树里面没有了，要判断删除请求数据
-          let newIds = []
-          for (let index = 0; index < this.queryParams.messageOriginalIds.length; index++) {
-            for (
-              let indexIn = 0;
-              indexIn < this.treeData[this.queryParams.queryStatus - 1].children.length;
-              indexIn++
-            ) {
-              if (
-                this.treeData[this.queryParams.queryStatus - 1].children[indexIn].key ==
-                this.queryParams.messageOriginalIds[index]
-              ) {
-                newIds.push(this.queryParams.messageOriginalIds[index])
-              }
-            }
-          }
-          this.queryParams.messageOriginalIds = JSON.parse(JSON.stringify(newIds))
-          console.log('messageOriginalIds After', JSON.parse(JSON.stringify(this.queryParams.messageOriginalIds)))
-        } else {
-          //父层没有子层了
-          this.queryParams.messageOriginalIds = []
-        }
-      }
-
-      this.canHide = true
-      this.$refs.table.refresh(true)
-    },
-
-    // getDeptsOut() {
-    //   //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
-    //   if (this.user.roleId == 7 || this.user.roleName == 'admin') {
-    //     getDepts().then((res) => {
-    //       if (res.code == 0) {
-    //         this.originData = res.data
-    //       }
-    //     })
-    //   } else {
-    //     getDeptsPersonal().then((res) => {
-    //       if (res.code == 0) {
-    //         this.originData = res.data
-    //       }
-    //     })
-    //   }
-    // },
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
@@ -1184,6 +1026,48 @@ export default {
   overflow: hidden;
   height: 100%;
 
+  .div-divider-in {
+    margin: 0 20px;
+    // width: 100%;
+    background-color: #e6e6e6;
+    height: 1px;
+  }
+  .div-radio {
+    font-size: 12px;
+    margin: 20px 20px 0 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    .radio-item {
+      display: flex;
+      // color: white;
+      overflow: hidden;
+      padding: 10px 20px;
+      align-items: center;
+      flex-direction: row;
+      &:hover {
+        cursor: pointer;
+        color: #1890ff;
+        img {
+          filter: drop-shadow(#1890ff 600px 0);
+          transform: translateX(-600px);
+        }
+      }
+    }
+
+    .checked-btn {
+      background-color: #eff7ff;
+      color: #1890ff;
+      border-bottom: #1890ff 2px solid;
+    }
+
+    // svg 使用到 drop-shadow 阴影展示 ， 所以父元素加 overflow: hidden;
+    .checked-icon {
+      filter: drop-shadow(#1890ff 200px 0);
+      transform: translateX(-200px);
+    }
+  }
+
   .div-divider {
     margin: 0% 0% 0% 1%;
     width: 100%;
@@ -1200,75 +1084,139 @@ export default {
     width: 19%;
     overflow: hidden;
 
-    .draw-bottom {
-      display: flex;
-      border: 1px solid #e6e6e6;
-      flex-direction: column;
-      width: 100%;
-      // height: 100%;
-      min-height: 100%;
-      // justify-content: center;
-      // align-items: center;
+    .div-wrap-control {
+      // max-height: 420px;
+      margin-bottom: 10px;
+      overflow-y: auto !important;
+      // .checked {
+      //   color: #1890ff !important;
+      // }
 
-      .bottom-top {
-        // color: #1890ff;
-        margin-top: 15px;
-        height: 10%;
-        margin-left: 30%;
-        font-size: 14px;
+      .no-data {
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
-      .bottom-down {
-        margin-top: 10px;
-        max-height: 90%;
-        min-height: 90%;
-        margin-bottom: 10px;
-        border-top: #e6e6e6 1px solid;
-        // border-left: #e6e6e6 1px solid;
 
-        .item-out {
+      .checked {
+        // color: #1890ff !important;
+        border: 1px solid #1890ff !important;
+        box-shadow: 0px 0px 4px 1px #409eff !important;
+      }
+
+      .div-part {
+        padding: 8px;
+        background: rgba(0, 1, 3, 0);
+        border: 1px solid #dfe3e5;
+        overflow: hidden;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 8px;
+        // padding-left: 5%;
+        border-bottom: #e6e6e6 1px solid;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .span-name {
+          // margin-top: 3.5%;
+          // display: inline-block;
+          flex: 1;
+          height: 85%;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+
+          // padding-left: 1%;
+          // color: #000;
+          margin-top: 1%;
+          font-size: 12px;
+          text-align: left|center;
+        }
+
+        .div-rate {
           display: flex;
-          flex-direction: column;
-          // max-height: 550px;
-          overflow-y: auto;
-          width: 100%;
-
-          .out-top {
-            margin-top: 3%;
-            font-size: 12px;
-            display: flex;
-            flex-direction: row;
-            width: 100%;
-            align-items: center;
-
-            .out-top-title {
-              &:hover {
-                cursor: pointer;
-              }
-            }
-          }
-
-          .out-list {
-            font-size: 12px;
-            margin-top: 3%;
-            margin-left: 15%;
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-
-            .out-list-title {
-              margin-left: 3%;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-
-              &:hover {
-                cursor: pointer;
-              }
-            }
-          }
+          font-size: 12px;
+          align-items: center;
+          flex-direction: row;
+          margin-right: 3%;
         }
       }
     }
+
+    // .draw-bottom {
+    //   display: flex;
+    //   border: 1px solid #e6e6e6;
+    //   flex-direction: column;
+    //   width: 100%;
+    //   // height: 100%;
+    //   min-height: 100%;
+    //   // justify-content: center;
+    //   // align-items: center;
+
+    //   .bottom-top {
+    //     // color: #1890ff;
+    //     margin-top: 15px;
+    //     height: 10%;
+    //     margin-left: 30%;
+    //     font-size: 14px;
+    //   }
+    //   .bottom-down {
+    //     margin-top: 10px;
+    //     max-height: 90%;
+    //     min-height: 90%;
+    //     margin-bottom: 10px;
+    //     border-top: #e6e6e6 1px solid;
+    //     // border-left: #e6e6e6 1px solid;
+
+    //     .item-out {
+    //       display: flex;
+    //       flex-direction: column;
+    //       // max-height: 550px;
+    //       overflow-y: auto;
+    //       width: 100%;
+
+    //       .out-top {
+    //         margin-top: 3%;
+    //         font-size: 12px;
+    //         display: flex;
+    //         flex-direction: row;
+    //         width: 100%;
+    //         align-items: center;
+
+    //         .out-top-title {
+    //           &:hover {
+    //             cursor: pointer;
+    //           }
+    //         }
+    //       }
+
+    //       .out-list {
+    //         font-size: 12px;
+    //         margin-top: 3%;
+    //         margin-left: 15%;
+    //         display: flex;
+    //         flex-direction: row;
+    //         align-items: center;
+
+    //         .out-list-title {
+    //           margin-left: 3%;
+    //           overflow: hidden;
+    //           text-overflow: ellipsis;
+    //           white-space: nowrap;
+
+    //           &:hover {
+    //             cursor: pointer;
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 
   .card-right-phone {
@@ -1312,37 +1260,8 @@ export default {
 </style>
 
 <style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
 
-    // 这里不同显示器的电脑反应不一样，采取双行三个table头都是-133px,将原来的doubled样式注释
-    .table-wrapper {
-      // height: calc(100% - 93px);
-      height: calc(100% - 161px);
 
-      // &.doubled {
-      //   height: calc(100% - 133px);
-      // }
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 80px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
 .ant-spin-nested-loading {
   height: calc(100% - 40px);
   /deep/ .ant-spin-container {

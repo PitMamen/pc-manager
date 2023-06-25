@@ -675,32 +675,7 @@ export default {
 }
 </style>
   
-  <style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px); //60PX
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 95px); //78PX
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 48px); //48   78   160
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-</style>
+  
 
 
 <style lang="less" scoped>
