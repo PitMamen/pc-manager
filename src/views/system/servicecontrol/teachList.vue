@@ -69,25 +69,25 @@
       </div>
       <div class="div-service-control">
         <div class="div-service-left-control">
-          <div class="toptab">
-            <div>文章列表</div>
-          </div>
-          <a-spin :spinning="confirmLoading2">
-            <div class="left-content">
-              <div
-                class="ksviewaper"
-                v-for="(item, index) in articleList"
-                :key="index"
-                @click="handleChange(item.message_original_id)"
-                :style="item.checked ? 'color:#409EFF;' : 'color:#4D4D4D;'"
-              >
-                <div class="ksview">
-                  {{ item.articleName }}
-                </div>
-                {{ item.count }}/{{ item.readCount }}/{{ item.rate }}
+          <div class="left-content">
+            <div
+              class="div-part"
+              :class="{ 'checked': item.isChecked }"
+              v-for="(item, index) in articleList"
+              :key="index"
+              :value="item.articleName"
+              @click="handleChange(item.message_original_id,index)"
+            >
+              <div class="ksview" :title="item.articleName">
+                {{ item.articleName }}
               </div>
+              <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:{{ item.count }} &nbsp; &nbsp;成功:{{ item.readCount }} 
+               <div style="color: #999999; font-size: 8px;margin-left: 10px;">{{ item.rate }}</div>
+              </div>
+
+              <!-- {{ item.count }}/{{ item.readCount }}/{{ item.rate }} -->
             </div>
-          </a-spin>
+          </div>
         </div>
 
         <div class="div-service-right-control">
@@ -304,6 +304,7 @@ export default {
 
             this.articleList = res.data
             this.articleListTemp = res.data
+            this.$set(this.articleList[0], 'isChecked', true)
             this.$refs.table.refresh()
           } else {
             this.queryParam.articleId = undefined
@@ -348,17 +349,18 @@ export default {
         this.articleListTemp = this.articleList
       }
     },
-    handleChange(value) {
+    handleChange(value,indexClick) {
       console.log(value)
       this.queryParam.articleId = value
       this.articleList.forEach((item) => {
-        item.checked = item.message_original_id == this.queryParam.articleId
+        this.$set(item, 'isChecked', false)
         if (item.message_original_id == this.queryParam.articleId) {
           this.queryParam.articleName = item.articleName
         }
       })
+      this.$set(this.articleList[indexClick], 'isChecked', true)
+
       if (!this.queryParam.articleId) {
-        this.articleList[0].checked = true
         this.queryParam.articleId = this.articleList[0].message_original_id
         this.queryParam.articleName = this.articleList[0].articleName
       }
@@ -422,7 +424,7 @@ export default {
     width: 200px;
     overflow: hidden;
 
-    border: 1px solid #e6e6e6;
+    // border: 1px solid #e6e6e6;
 
     .left-lb-title {
       overflow: hidden;
@@ -460,6 +462,53 @@ export default {
       height: 100%;
       overflow-y: auto;
       padding: 10px;
+
+      .checked {
+        // color: #1890ff !important;
+        border: 1px solid #1890ff !important;
+        box-shadow: 0px 0px 4px 1px #409eff !important;
+      }
+
+      .div-part {
+        padding: 8px;
+        background: rgba(0, 1, 3, 0);
+        border: 1px solid #dfe3e5;
+        overflow: hidden;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 8px;
+        // padding-left: 5%;
+        border-bottom: #e6e6e6 1px solid;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .span-name {
+          // margin-top: 3.5%;
+          // display: inline-block;
+          flex: 1;
+          height: 85%;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+
+          // padding-left: 1%;
+          // color: #000;
+          margin-top: 1%;
+          font-size: 12px;
+          text-align: left|center;
+        }
+
+        .div-rate {
+          display: flex;
+          font-size: 12px;
+          align-items: center;
+          flex-direction: row;
+          margin-right: 3%;
+        }
+      }
     }
     .content-right {
       display: flex;

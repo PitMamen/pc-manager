@@ -389,10 +389,50 @@
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">
                   1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
                 </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                <div style="margin-left: 10px; color: #999999; font-size: 1em;margin-bottom: 10px;">
                   2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
                   品一经发出，不得退换
                 </div>
+
+
+                <div class="big-kuang">
+                  <div
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
+                  >
+                    配送信息
+                  </div>
+                  <div class="line-content"></div>
+
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                    收货地址： {{ preDetailData.medicalInfo.deliverAddress }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    收货人： {{ preDetailData.medicalInfo.deliverName }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    电话： {{ preDetailData.medicalInfo.deliverMobile }}
+                  </div>
+                  <div  v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    物流公司： {{ preDetailData.medicalInfo.expressName }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    物流单号： {{ preDetailData.medicalInfo.expressNo }}
+                  </div>
+
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    发货日期： {{ preDetailData.medicalInfo.expressDate }}
+                  </div>
+                </div>
+
+
+
+
+
+
+
               </div>
 
               <div
@@ -910,10 +950,48 @@
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">
                   1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
                 </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                <div style="margin-left: 10px; color: #999999; font-size: 1em;margin-bottom: 10px;">
                   2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
                   品一经发出，不得退换
                 </div>
+
+
+                <div class="big-kuang">
+                  <div
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
+                  >
+                    配送信息
+                  </div>
+                  <div class="line-content"></div>
+
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                    收货地址： {{ preDetailData.medicalInfo.deliverAddress }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    收货人： {{ preDetailData.medicalInfo.deliverName }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    电话： {{ preDetailData.medicalInfo.deliverMobile }}
+                  </div>
+                  <div  v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    物流公司： {{ preDetailData.medicalInfo.expressName }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    物流单号： {{ preDetailData.medicalInfo.expressNo }}
+                  </div>
+
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    发货日期： {{ preDetailData.medicalInfo.expressDate }}
+                  </div>
+                </div>
+
+
+
+
+
               </div>
               <div
                 class="wenjuan"
@@ -1103,10 +1181,54 @@
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">
                   1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
                 </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                <div style="margin-left: 10px; color: #999999; font-size: 1em;margin-bottom: 10px;">
                   2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
                   品一经发出，不得退换
                 </div>
+
+
+
+
+                <div class="big-kuang">
+                  <div
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
+                  >
+                    配送信息
+                  </div>
+                  <div class="line-content"></div>
+
+                  <div style="margin-left: 10px; margin-top: 10px">
+                    发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                    收货地址： {{ preDetailData.medicalInfo.deliverAddress }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    收货人： {{ preDetailData.medicalInfo.deliverName }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    电话： {{ preDetailData.medicalInfo.deliverMobile }}
+                  </div>
+                  <div  v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    物流公司： {{ preDetailData.medicalInfo.expressName }}
+                  </div>
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    物流单号： {{ preDetailData.medicalInfo.expressNo }}
+                  </div>
+
+                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                    发货日期： {{ preDetailData.medicalInfo.expressDate }}
+                  </div>
+                </div>
+
+
+
+
+
+
+
+
+
               </div>
             </div>
           </div>
