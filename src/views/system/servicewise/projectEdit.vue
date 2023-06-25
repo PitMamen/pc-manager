@@ -1446,6 +1446,11 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
           return
         }
+        let num = Number(item.messageContentId)
+        if (isNaN(num)) {
+          this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
+          return
+        }
         if (!item.taskExecType) {
           this.$message.error('请选择第' + (index + 1) + '条任务执行周期')
           return

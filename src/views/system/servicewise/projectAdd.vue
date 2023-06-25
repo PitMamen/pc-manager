@@ -784,7 +784,6 @@ export default {
           }
         })
       }
-
     },
 
     timeChangeStart(itemTask, indexTask) {
@@ -1038,6 +1037,21 @@ export default {
       console.log('onTemSelect itemTask', itemTask)
     },
 
+    onTemInputChange(s1, s2) {
+      // debugger
+      // if (this.lastInput.length > s1.length && this.projectData.tasks[this.indexTaskNow].messageContentId) {
+      //   this.projectData.tasks[this.indexTaskNow].messageContentId = ''
+      //   this.chooseTemplateList = []
+      //   console.log('onTemInputChange 清空了', s1)
+      //   this.lastInput = ''
+      // } else {
+      //   this.lastInput = s1
+      // }
+      // console.log('onTemInputChange lastInput', this.lastInput)
+      // console.log('onTemInputChange s1', s1)
+      // console.log('onTemInputChange s2', s2)
+    },
+
     showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
       this.$refs.taskDetail.showDetail(itemTask)
@@ -1216,6 +1230,24 @@ export default {
           this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
           return
         }
+        // debugger 此处为了解决antocomplete组件删除文字后id绑定异常的问题  parseInt方法对带数字的字符串不行，Number方法此处可用
+        // let num = parseInt(item.messageContentId)
+        let num = Number(item.messageContentId)
+        if (isNaN(num)) {
+          this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
+          return
+        }
+        // try {
+        //   let num = parseInt(item.messageContentId)
+        //   if (isNaN(num)) {
+        //     this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
+        //     return
+        //   }
+        // } catch (error) {
+        //   console.log('消息模版错误信息', error)
+        //   this.$message.error('请选择第' + (index + 1) + '条任务消息模版')
+        //   return
+        // }
         if (!item.taskExecType) {
           //1临时  2长期
           this.$message.error('请选择第' + (index + 1) + '条任务执行周期')
