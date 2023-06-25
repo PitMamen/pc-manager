@@ -113,20 +113,20 @@ export default {
         {
           title: '模板名称',
           dataIndex: 'templateTitle',
-          // width: 200,
+        
         },
         {
           title: '内部编码',
           dataIndex: 'templateInsideCode',
-          // width: 300,
+         
         },
 
         {
           title: '模板内容',
           dataIndex: 'templateContent',
-          // scopedSlots: { customRender: 'content' },
+        
           ellipsis: true,
-          width: 300,
+        
         },
         {
           title: '状态',
@@ -137,7 +137,7 @@ export default {
         },
         {
           title: '操作',
-          width: 90,
+          width: 70,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

@@ -218,7 +218,7 @@ export default {
         },
         {
           title: '上架',
-          width: 60,
+        
           fixed: 'right',
           scopedSlots: { customRender: 'isVisible' },
         },
@@ -226,7 +226,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 280,
+          width: 235,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

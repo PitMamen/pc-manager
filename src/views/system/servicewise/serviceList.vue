@@ -59,12 +59,14 @@
 
     <!-- :scroll="{ x: true }" -->
     <s-table
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
+      
     >
       <span slot="action" slot-scope="text, record">
         <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
@@ -139,39 +141,37 @@ export default {
       columns: [
         {
           title: '方案名称',
-          // width: 160,
+         
           dataIndex: 'planName',
         },
         {
           title: '制定时间',
-          width: 160,
+       
           dataIndex: 'formulateTime',
         },
         {
           title: '制定人员',
-          width: 100,
+         
           dataIndex: 'formulateUserName',
         },
         {
           title: '执行科室',
-          ellipsis: true,
-          width: 180,
+        
           dataIndex: 'executeDepartmentName',
         },
         {
           title: '随访名单',
-          width: 200,
-          ellipsis: true,
+         
           dataIndex: 'metaConfigureName',
         },
         {
           title: '随访类型',
-          width: 100,
+        
           dataIndex: 'followType',
         },
         {
           title: '方案执行',
-          width: 120,
+        
           dataIndex: 'planUserInfo',
           align: 'center',
           scopedSlots: { customRender: 'execute' },
@@ -179,14 +179,14 @@ export default {
 
         {
           title: '状态',
-          width: 70,
+         
           fixed: 'right',
           scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
           fixed: 'right',
-          width: '100px',
+          width: '70px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },

@@ -534,7 +534,7 @@ button {
   // }
 }
 .table-page-search-wrapper {
-  padding-bottom: 20px !important;
+ 
   margin-top: -1px !important;
   padding-top: 8px;
   border-bottom: 1px solid #e8e8e8;
@@ -546,12 +546,13 @@ button {
   .action-row {
     display: inline-block;
     vertical-align: middle;
+    padding-bottom: 20px !important;
   }
   .search-row {
     /deep/.ant-select-selection__rendered {
       margin-top: -2px !important;
     }
-
+    padding-bottom: 20px !important;
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;

@@ -33,6 +33,7 @@
       </div>
 
       <s-table
+        :scroll="{ x: true }"
         ref="table"
         size="default"
         :columns="columns"
