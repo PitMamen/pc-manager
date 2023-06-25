@@ -2263,6 +2263,48 @@ export function getWxTemplateListForJumpType(data) {
 }
 
 /**
+ * 模糊查询
+ *  /smsTemplate/getSmsTemplateListForJumpType/{jumpType} 获取短信模板列表,根据jumpType
+ */
+export function getSmsTemplateListForJumpTypeFuzzy(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/getSmsTemplateListForJumpTypeNew/0/' + data,
+    method: 'post',
+    data: {},
+  })
+}
+
+/**
+ * 模糊查询
+ * /wxTemplate/getWxTemplateListForJumpType/{jumpType} 获取微信模板,根据模板跳转内容
+ */
+export function getWxTemplateListForJumpTypeFuzzy(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/getWxTemplateListForJumpTypeNew/0/' + data,
+    method: 'post',
+    data: {},
+  })
+}
+
+/**
+ * 模糊查询
+ * 获取问卷列表
+ */
+export function getAllQuestionsFuzzy(parameter) {
+  return axios({
+    url: '/health-api/health/doctor/qryQuestByKeyWord',
+    method: 'get',
+    params: {
+      start: parameter.pageNo,
+      pageSize: parameter.pageSize,
+      keyWord: parameter.keyWord,
+      typeName: parameter.typeName
+    },
+
+  })
+}
+
+/**
  * /follow/plan/detail  查询方案详情
  */
 export function getDetail(data) {
@@ -2801,7 +2843,7 @@ export function getZySummary(data) {
  */
 export function getSysConfigData(data) {
   return axios({
-    url: '/info-api/sysConfigData/getConfig/'+data,
+    url: '/info-api/sysConfigData/getConfig/' + data,
     method: 'get'
   })
 }
@@ -4307,9 +4349,9 @@ export function getFollowStat(data) {
 //导出
 export function exportFollowStatListm(data) {
   return axios({
-    url:'/follow-api/excel/exportFollowStatList',
-    method:'post',
-    data:data,
+    url: '/follow-api/excel/exportFollowStatList',
+    method: 'post',
+    data: data,
     responseType: 'blob',
   })
 }
@@ -4338,7 +4380,7 @@ export function getDiseaseTypePageList(data) {
   return axios({
     url: '/info-api/tdDiseaseType/getDiseaseTypePageList',
     method: 'post',
-    data:data,
+    data: data,
   })
 }
 
@@ -4364,7 +4406,7 @@ export function addDiseaseType(data) {
 //删除病种
 export function deleteDiseaseType(id) {
   return axios({
-    url: '/info-api/tdDiseaseType/deleteDiseaseType/'+id,
+    url: '/info-api/tdDiseaseType/deleteDiseaseType/' + id,
     method: 'get',
     // params: id,
   })

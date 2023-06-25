@@ -258,7 +258,7 @@
             >
               <template slot="dataSource">
                 <a-select-option
-                  v-for="(item, index) in itemTask.itemTemplateList"
+                  v-for="(item, index) in chooseTemplateList"
                   :title="item.templateTitle"
                   :key="index + ''"
                   :value="item.id + ''"
@@ -532,13 +532,11 @@ import {
   repeatTimeUnitTypes,
   timeUnitTypes,
   personnelAssignmentTypes,
-  getWxTemplateList,
-  getUsersByDeptIdAndRole,
   saveFollow,
-  getSmsTemplateListForJumpType,
-  getWxTemplateListForJumpType,
   getDetail,
-  getAllQuestions,
+  getSmsTemplateListForJumpTypeFuzzy,
+  getWxTemplateListForJumpTypeFuzzy,
+  getAllQuestionsFuzzy,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -581,6 +579,7 @@ export default {
       templateListWX: [],
       templateListSMS: [],
       templateListQues: [],
+      chooseTemplateList: [],
       everyData: [
         { value: '1', description: '周一' },
         { value: '2', description: '周二' },
@@ -746,37 +745,6 @@ export default {
       }
     },
 
-    getWxTemplateListForJumpTypeOut() {
-      //全部的微信模板
-      getWxTemplateListForJumpType(0).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 4)
-          })
-          this.templateListWX = res.data
-        }
-        this.getSmsTemplateListForJumpTypeOut()
-      })
-    },
-    getSmsTemplateListForJumpTypeOut() {
-      //全部的短信模板
-      getSmsTemplateListForJumpType(0).then((res) => {
-        if (res.code == 0) {
-          res.data.forEach((item) => {
-            this.$set(item, 'messageContentType', 3)
-            this.$set(item, 'templateName', item.templateTitle)
-          })
-          this.templateListSMS = res.data
-        }
-
-        this.confirmLoading = false
-
-        //原定的获取所有带问卷的模版改成，直接获取相应科室的所有问卷
-        // this.getDeptAllQues()
-        this.getDeptAllQues()
-      })
-    },
-
     /**
      * 时序问题多，先获取详情再根据详情获取科室列表；再获取模版问卷列表添加到每条数据去
      */
@@ -916,125 +884,40 @@ export default {
         console.log('pushTimePoint ddd', item.pushTimePoint)
         console.log('item processData', item)
 
-        this.getWxTemplateListForJumpTypeOut()
-      })
-    },
+        //处理选择的集合
+        this.chooseTemplateList.push({
+          id: item.messageContentId,
+          messageContentType: item.messageContentType,
+          templateTitle: item.templateTitle,
+          jumpType: item.jumpType,
+          questUrl: item.questUrl,
+          jumpValue: item.jumpValue,
+          templateContent: item.templateContent,
+        })
 
-    getDeptAllQues() {
-      // let chooseDept = this.keshiData.find((item) => item.departmentId == this.projectData.basePlan.executeDepartment)
-
-      let param = {
-        pageNo: 1,
-        pageSize: 10000,
-        typeName: '', //获取全量问卷，不根据科室获取
-        // typeName: chooseDept.departmentName,
-        // typeName: this.projectData.basePlan.executeDepartment,
-      }
-      getAllQuestions(param).then((res) => {
-        if (res.code == 0) {
-          res.data.list.forEach((item) => {
-            this.$set(item, 'templateTitle', item.name)
-            //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
-            this.$set(item, 'messageContentType', 1)
-          })
-          this.templateListQues = res.data.list
-
-          //所有问卷请求下来之后，再每条任务赋值模板和问卷列表数据
-          this.projectData.tasks.forEach((itemTask) => {
-            // item.messageContentId = parseInt(item.messageContentId)
-            if (itemTask.messageType == 1) {
-              let arr = []
-              this.templateListQues.forEach((item) => {
-                arr.push({
-                  id: item.id,
-                  messageContentType: item.messageContentType,
-                  templateTitle: item.templateTitle,
-                  jumpType: item.jumpType,
-                  questUrl: item.questUrl,
-                })
-              })
-              itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
-              this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
-              // this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListQues)))
-            } else if (itemTask.messageType == 2) {
-              //查所有微信模版
-              let arr = []
-              this.templateListWX.forEach((item) => {
-                arr.push({
-                  id: item.id,
-                  messageContentType: item.messageContentType,
-                  templateTitle: item.templateTitle,
-                  jumpType: item.jumpType,
-                  jumpValue: item.jumpValue,
-                  templateContent: item.templateContent,
-                })
-              })
-              itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
-              this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
-              // this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListWX)))
-            } else if (itemTask.messageType == 3) {
-              //查所有短信模版
-              let arr = []
-              this.templateListSMS.forEach((item) => {
-                arr.push({
-                  id: item.id,
-                  messageContentType: item.messageContentType,
-                  templateTitle: item.templateTitle,
-                  jumpType: item.jumpType,
-                  jumpValue: item.jumpValue,
-                  templateContent: item.templateContent,
-                })
-              })
-              itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
-              this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
-              // this.$set(item, 'itemTemplateList', JSON.parse(JSON.stringify(this.templateListSMS)))
-            }
-
-            //组装每条数据显示内容
-
-            var findOne = itemTask.itemTemplateListOrigin.find((el) => {
-              return el.id == parseInt(itemTask.messageContentId)
-            })
-
-            if (findOne) {
-              itemTask.templateTitle = findOne.templateTitle
-            }
-
-            this.confirmLoading = false
-          })
-
-          this.projectData.tasks.forEach((itemTask) => {
-            let chooseOne = itemTask.itemTemplateList.find((item) => {
-              return item.id == itemTask.messageContentId
-            })
-            console.log('onTemSelect chooseOne', chooseOne)
-            itemTask.messageContentType = chooseOne.messageContentType
-            itemTask.templateTitle = chooseOne.templateTitle || ''
-
-            if (itemTask.messageType == 1) {
-              itemTask.taskType = '1'
-              this.$set(itemTask, 'taskTypeName', '问卷收集')
-              this.$set(itemTask, 'questUrl', chooseOne.questUrl)
-            } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
-              //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
-              if (chooseOne.jumpType == 1) {
-                itemTask.taskType = '1'
-                this.$set(itemTask, 'taskTypeName', '问卷收集')
-              } else if (chooseOne.jumpType == 2) {
-                itemTask.taskType = '2'
-                this.$set(itemTask, 'taskTypeName', '健康宣教')
-              } else {
-                itemTask.taskType = '3'
-                this.$set(itemTask, 'taskTypeName', '消息提醒')
-              }
-              this.$set(itemTask, 'jumpType', chooseOne.jumpType)
-              this.$set(itemTask, 'jumpValue', chooseOne.jumpValue)
-              this.$set(itemTask, 'templateContent', chooseOne.templateContent)
-            }
-          })
-        } else {
-          // return {}
+        if (item.messageType == 1) {
+          item.taskType = '1'
+          this.$set(item, 'taskTypeName', '问卷收集')
+          this.$set(item, 'questUrl', item.jumpValue)
+        } else if (item.messageType == 2 || item.messageType == 3) {
+          //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
+          if (item.jumpType == 1) {
+            item.taskType = '1'
+            this.$set(item, 'taskTypeName', '问卷收集')
+          } else if (item.jumpType == 2) {
+            item.taskType = '2'
+            this.$set(item, 'taskTypeName', '健康宣教')
+          } else {
+            item.taskType = '3'
+            this.$set(item, 'taskTypeName', '消息提醒')
+          }
+          // this.$set(item, 'jumpType', chooseOne.jumpType)
+          // this.$set(item, 'jumpValue', chooseOne.jumpValue)
+          // this.$set(item, 'templateContent', chooseOne.templateContent)
         }
+
+        // this.getWxTemplateListForJumpTypeOut()
+        this.confirmLoading = false
       })
     },
 
@@ -1065,15 +948,50 @@ export default {
     },
 
     handleSearch(inputName) {
-      console.log('---inputName', inputName)
-      if (inputName) {
-        this.projectData.tasks[this.indexTaskNow].itemTemplateList = this.projectData.tasks[
-          this.indexTaskNow
-        ].itemTemplateListOrigin.filter((item) => item.templateTitle.indexOf(inputName) != -1)
-      } else {
-        this.projectData.tasks[this.indexTaskNow].itemTemplateList = JSON.parse(
-          JSON.stringify(this.projectData.tasks[this.indexTaskNow].itemTemplateListOrigin)
-        )
+      console.log('onTemFocus handleSearch', inputName)
+
+      //这里做数据优化，只需要4个字段 id  messageContentType templateTitle
+      if (this.projectData.tasks[this.indexTaskNow].messageType == 1) {
+        //查找问卷
+        let param = {
+          pageNo: 1,
+          pageSize: 10000,
+          keyWord: inputName,
+          typeName: '', //获取全量问卷，不根据科室获取
+        }
+        getAllQuestionsFuzzy(param).then((res) => {
+          if (res.code == 0) {
+            res.data.list.forEach((item) => {
+              this.$set(item, 'templateTitle', item.name)
+              //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
+              this.$set(item, 'messageContentType', 1)
+            })
+            this.chooseTemplateList = res.data.list
+          } else {
+            // return {}
+          }
+        })
+      } else if (this.projectData.tasks[this.indexTaskNow].messageType == 2) {
+        //查找微信模版
+        getWxTemplateListForJumpTypeFuzzy(inputName).then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              this.$set(item, 'messageContentType', 4)
+            })
+            this.chooseTemplateList = res.data
+          }
+        })
+      } else if (this.projectData.tasks[this.indexTaskNow].messageType == 3) {
+        //查所有短信模版
+        getSmsTemplateListForJumpTypeFuzzy(inputName).then((res) => {
+          if (res.code == 0) {
+            res.data.forEach((item) => {
+              this.$set(item, 'messageContentType', 3)
+              // this.$set(item, 'templateName', item.templateTitle)
+            })
+            this.chooseTemplateList = res.data
+          }
+        })
       }
     },
 
@@ -1082,8 +1000,6 @@ export default {
       console.log('itemTask', itemTask)
       console.log('indexTask', indexTask)
       console.log('pushTimePoint timeChangeStart', itemTask.pushTimePoint)
-      // itemTask.pushTimePoint = formatDateFull(itemTask.pushTimePoint).substring(11, 16)
-      // console.log('itemTask.pushTimePoint', formatDateFull(itemTask.pushTimePoint).substring(11, 16))
     },
 
     /**
@@ -1302,66 +1218,6 @@ export default {
         console.log('pushTimePoint add', itemTask.pushTimePoint)
       }
 
-      if (itemTask.messageType == 1) {
-        let arr = []
-        this.templateListQues.forEach((item) => {
-          arr.push({
-            id: item.id,
-            messageContentType: item.messageContentType,
-            templateTitle: item.templateTitle,
-            jumpType: item.jumpType,
-            questUrl: item.questUrl,
-          })
-        })
-        itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
-        this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
-
-        // itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListQues))
-      } else if (itemTask.messageType == 2) {
-        //查所有微信模版
-        //查所有微信模版
-        let arr = []
-        this.templateListWX.forEach((item) => {
-          arr.push({
-            id: item.id,
-            messageContentType: item.messageContentType,
-            templateTitle: item.templateTitle,
-            jumpType: item.jumpType,
-            jumpValue: item.jumpValue,
-            templateContent: item.templateContent,
-          })
-        })
-        itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
-        this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
-
-        // itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListWX))
-
-        //短信消息和微信消息默认不勾选
-        itemTask.isChecked = false
-      } else if (itemTask.messageType == 3) {
-        //查所有短信模版
-        let arr = []
-        this.templateListSMS.forEach((item) => {
-          arr.push({
-            id: item.id,
-            messageContentType: item.messageContentType,
-            templateTitle: item.templateTitle,
-            jumpType: item.jumpType,
-            jumpValue: item.jumpValue,
-            templateContent: item.templateContent,
-          })
-        })
-        itemTask.itemTemplateList = JSON.parse(JSON.stringify(arr))
-        this.$set(itemTask, 'itemTemplateListOrigin', JSON.parse(JSON.stringify(arr)))
-
-        // itemTask.itemTemplateList = JSON.parse(JSON.stringify(this.templateListSMS))
-        itemTask.isChecked = false
-      }
-
-      //TODO 修改随访方式时，如果id不存在，给它的模版或者问卷置空
-
-      // itemTask.messageContentId = itemTask.itemTemplateList[0].id
-
       //将模版置空
       itemTask.messageContentId = ''
     },
@@ -1378,7 +1234,7 @@ export default {
      * "data":[{"value":"1","description":"问卷收集"},{"value":"2","description":"健康宣教"},{"value":"3","description":"消息提醒"}]}
      */
     onTemSelect(indexTask, itemTask) {
-      let chooseOne = itemTask.itemTemplateList.find((item) => {
+      let chooseOne = this.chooseTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
 
@@ -1575,12 +1431,12 @@ export default {
       for (let index = 0; index < tempData.tasks.length; index++) {
         let item = tempData.tasks[index]
         //这里删除掉用到的临时问卷列表
-        if (item.itemTemplateList) {
-          delete item.itemTemplateList
-        }
-        if (item.itemTemplateListOrigin) {
-          delete item.itemTemplateListOrigin
-        }
+        // if (item.itemTemplateList) {
+        //   delete item.itemTemplateList
+        // }
+        // if (item.itemTemplateListOrigin) {
+        //   delete item.itemTemplateListOrigin
+        // }
 
         if (!item.messageType) {
           this.$message.error('请选择第' + (index + 1) + '条任务随访方式')

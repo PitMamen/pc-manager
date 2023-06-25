@@ -77,9 +77,9 @@ export default {
       } else if (itemTask.messageType == 2 || itemTask.messageType == 3) {
         //短信、微信模版，分模版内容和跳转内容展示
         //找出模版判断他的属性 jumpType 1:问卷2:宣教3:不跳转4:外网地址
-        if (chooseOne.jumpType == 1) {
-        } else if (chooseOne.jumpType == 2) {
-        } else if (chooseOne.jumpType == 4) {
+        if (itemTask.jumpType == 1) {
+        } else if (itemTask.jumpType == 2) {
+        } else if (itemTask.jumpType == 4) {
         } else {
         }
       }
