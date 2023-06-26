@@ -1,16 +1,16 @@
 <template>
-  <a-card :bordered="false" class="sys-card" >
-    <div style="margin-top: 15px; height: 100%">
+  <div :bordered="false" class="sys-card" >
+    <!-- <div style="margin-top: 15px; height: 100%"> -->
       <iframe
         defer="true"
         :src="questionUrl"
-        style="width: 100%; height: 100%; overflow: scroll"
+        style="width: 100%; height: 100%; overflow: auto"
         frameborder="0"
         scrolling="yes"
       >
       </iframe>
-    </div>
-  </a-card>
+    <!-- </div> -->
+  </div>
 </template>
   
   <script>
@@ -124,7 +124,7 @@ button {
   // overflow-y: auto;
 }
 .sys-card {
-  // height: 100%;
+  height: 90%;
   // padding-bottom: 52px;
   // /deep/ .ant-table-pagination {
   //   position: fixed;
