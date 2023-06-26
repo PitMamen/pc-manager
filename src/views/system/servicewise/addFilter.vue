@@ -165,7 +165,7 @@ export default {
       this.visible = true
       this.index = index
       this.filterRules = filterRules || [{ fieldType: 1 }]
-      if (!secondaryFilterTypeEnum) {
+      if (secondaryFilterTypeEnum) {
         this.secondaryFilterTypeEnum = secondaryFilterTypeEnum
       }
       this.chooseData = chooseData
