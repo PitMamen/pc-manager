@@ -549,14 +549,14 @@ export default {
         },
         {
           title: '西药费',
-          dataIndex: 'address',
-          key: 'adfgdress 3',
+          dataIndex: 'xyf',
+          key: 'xyf',
           ellipsis: true,
         },
         {
           title: '上传状态',
-          dataIndex: 'xyf',
-          key: 'xyf',
+          dataIndex: 'uploadStatus',
+          key: 'uploadStatus',
           ellipsis: true,
         },
         {
