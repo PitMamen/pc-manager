@@ -265,7 +265,8 @@ export default {
 
   methods: {
     queryAgain() {
-      this.getFollowArticleDataOut()
+      // this.getFollowArticleDataOut()
+      this.$refs.table.refresh()
     },
     reset() {
       this.queryParam.departmentId = undefined
