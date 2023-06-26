@@ -1151,6 +1151,7 @@ export default {
       this.$refs.addFilter.add(
         indexMisson,
         this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos,
+        this.projectData.tasks[indexMisson].secondaryFilterTypeEnum,
         this.chooseData,
         this.operateData
       )

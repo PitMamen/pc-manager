@@ -37,9 +37,13 @@
                 allow-clear
                 placeholder="请选择字段"
               >
-                <a-select-option v-for="(item, index) in chooseData" :key="index" :value="item.value" :title="item.description">{{
-                  item.description
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in chooseData"
+                  :key="index"
+                  :value="item.value"
+                  :title="item.description"
+                  >{{ item.description }}</a-select-option
+                >
               </a-select>
 
               <!-- class="mid-select-one" -->
@@ -49,9 +53,13 @@
                 allow-clear
                 placeholder="请选择操作"
               >
-                <a-select-option v-for="(item, index) in operateData" :key="index" :value="item.value" :title="item.description">{{
-                  item.description
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in operateData"
+                  :key="index"
+                  :value="item.value"
+                  :title="item.description"
+                  >{{ item.description }}</a-select-option
+                >
               </a-select>
 
               <a-date-picker
@@ -144,7 +152,8 @@ export default {
         { value: 'and', name: '并且' },
         { value: 'or', name: '或者' },
       ],
-      secondaryFilterTypeEnum: 'and',
+      // secondaryFilterTypeEnum: 'and',
+      secondaryFilterTypeEnum: 'or',
       confirmLoading: false,
 
       visible: false,
@@ -152,10 +161,13 @@ export default {
   },
   methods: {
     moment,
-    add(index, filterRules, chooseData, operateData) {
+    add(index, filterRules, secondaryFilterTypeEnum, chooseData, operateData) {
       this.visible = true
       this.index = index
       this.filterRules = filterRules || [{ fieldType: 1 }]
+      if (!secondaryFilterTypeEnum) {
+        this.secondaryFilterTypeEnum = secondaryFilterTypeEnum
+      }
       this.chooseData = chooseData
       this.operateData = operateData
 
