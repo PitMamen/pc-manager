@@ -1216,6 +1216,8 @@ export default {
         console.log('mom', mom)
         itemTask.pushTimePoint = mom
         console.log('pushTimePoint add', itemTask.pushTimePoint)
+
+        itemTask.isChecked = false
       }
 
       //将模版置空
