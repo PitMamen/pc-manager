@@ -52,7 +52,7 @@ export default {
     },
 
     getPreUploadLogListOut() {
-      getPreUploadLogList({ orderId: this.item.orderId, type: 5, preNo: this.item.preNo }).then((res) => {
+      getPreUploadLogList({ orderId: this.item.orderId, type: item.type, preNo: this.item.preNo }).then((res) => {
         if (res.code == 0) {
           this.recordData = res.data
 
