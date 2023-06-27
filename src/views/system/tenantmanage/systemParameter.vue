@@ -111,6 +111,8 @@ export default {
         metaName: '',
         status: 1,
         tenantName: '',
+        pageNo:1,
+        pageSize:1000,
       },
 
       labelCol: {
