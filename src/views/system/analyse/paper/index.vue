@@ -3,7 +3,30 @@
     <div class="wrap">
       <div class="left">
         <a-spin :spinning="confirmLoading_left">
-          
+          <a-input
+            allow-clear
+            placeholder="请输入问卷名称查询"
+            @keyup.enter="onselectQuestion"
+            @search="onselectQuestion"
+            @change="change"
+            style="width: 180px; margin-left: 12px; margin-bottom: 20px"
+          />
+          <!-- <a-select
+                style="width: 180px;margin-left: 12px;margin-bottom: 20px;"
+                class="deptselect-single"
+                show-search
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请输入问卷名称查询"
+                @change="onselectQuestion"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in list1" :key="index" :value="item.id">{{
+                  item.name
+                }}</a-select-option>
+              </a-select>
+           -->
           <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1Temp.length === 0" />
           <div class="list" v-else>
             <div
@@ -11,11 +34,11 @@
               v-for="item in list1Temp"
               :key="item.id"
               class="item"
-              :class="{active:item.id===currentPaper.id}"
+              :class="{ active: item.id === currentPaper.id }"
               @click="paperClick(item)"
             >
               <span class="name" :title="item.name">{{ item.name }}</span>
-              <div style="width: 100%; height: 0.5px; background: #999999;margin-top:5px;margin-bottom:5px"></div>
+              <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
 
               <!-- <a-icon type="check" class="icon" /> -->
 
@@ -77,8 +100,7 @@
               </a-select>
             </div>
 
-            <div class="search-row">
-
+            <!-- <div class="search-row">
             <div style="display: flex; flex-direction: row; align-items: baseline;">
               <span style="width: 70px">问卷名称:</span>
               <a-select
@@ -91,17 +113,13 @@
                 placeholder="选择问卷"
                 @change="onselectQuestion"
               >
-                <!-- @search="onDepartmentSelectSearch" -->
                 <a-spin v-if="fetching" slot="notFoundContent" size="small" />
                 <a-select-option v-for="(item, index) in list1" :key="index" :value="item.id">{{
                   item.name
                 }}</a-select-option>
               </a-select>
             </div>
-          </div>
-
-
-
+          </div> -->
 
             <div class="search-row">
               <span class="name">执行时间:</span>
@@ -323,15 +341,38 @@ export default {
       }
     },
 
-    onselectQuestion(value) {
-      // console.log("KKKK:",value)
-      let itemFind = this.list1.find((item) => item.id == value)
-      if (itemFind) {
-        this.list1Temp = []
-        this.list1Temp.push(itemFind)
-      } else {
+    change(row) {
+      //触发清空
+      if ((row.gettype = 'click' && row.isTrusted)) {
         this.list1Temp = this.list1
       }
+    },
+
+    onselectQuestion(value) {
+      console.log('KKKK:', value.target._value)
+      var arrTemp = []
+      if (this.list1 && this.list1.length > 0) {
+        for (let index = 0; index < this.list1.length; index++) {
+          if (this.list1[index].name.indexOf(value.target._value) >= 0) {
+            arrTemp.push(this.list1[index])
+          }
+        }
+        // console.log('FFFF:', arrTemp)
+        if (arrTemp && arrTemp.length > 0) {
+          this.list1Temp = []
+          this.list1Temp = arrTemp
+        } else {
+          this.list1Temp = this.list1
+        }
+      }
+
+      // let itemFind = this.list1.filter((item) => item.name == value.target._value)
+      // if (itemFind) {
+      //   this.list1Temp = []
+      //   this.list1Temp.push(itemFind)
+      // } else {
+      //   this.list1Temp = this.list1
+      // }
     },
 
     getParams1() {
@@ -578,11 +619,11 @@ button {
 </style>
 <style lang="less" scoped>
 // .ant-card {
-  // height: calc(100% - 20px);
-  // /deep/ .ant-card-body {
-  //   height: 100%;
-  //   padding-bottom: 10px !important;
-  // }
+// height: calc(100% - 20px);
+// /deep/ .ant-card-body {
+//   height: 100%;
+//   padding-bottom: 10px !important;
+// }
 // }
 </style>
 
@@ -624,8 +665,6 @@ button {
           border: 1px solid #409eff;
           box-shadow: 0px 0px 4px 1px #409eff !important;
 
-          
-          
           .icon {
             display: block;
           }

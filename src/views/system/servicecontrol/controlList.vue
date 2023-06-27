@@ -167,8 +167,6 @@
                         {{ item.passCheckPercentage }}
                       </span>
                     </div>
-                    <!-- 分割线 -->
-                    <!-- <div class="div-divider"></div> -->
                   </div>
                 </div>
                 <div v-else class="no-data">
