@@ -246,7 +246,7 @@
           <a-table :columns="columnsChufang" :data-source="preSaveData.preList">
             <a slot="name" slot-scope="text">{{ text }}</a>
             <span slot="action" slot-scope="text, record">
-              <a class="ant-dropdown-link" @click="goRecord(record)">上传记录</a>
+              <a class="ant-dropdown-link" @click="goRecord(record, 4)">上传记录</a>
             </span>
           </a-table>
         </div>
@@ -267,7 +267,7 @@
           <a-table :columns="columnsHexiao" :data-source="preCancelData.preList">
             <a slot="name" slot-scope="text">{{ text }}</a>
             <span slot="action" slot-scope="text, record">
-              <a class="ant-dropdown-link" @click="goRecord(record)">上传记录</a>
+              <a class="ant-dropdown-link" @click="goRecord(record, 5)">上传记录</a>
             </span>
           </a-table>
         </div>
@@ -288,7 +288,7 @@
           <a-table :columns="columnsFee" :data-source="feeData.preList">
             <a slot="name" slot-scope="text">{{ text }}</a>
             <span slot="action" slot-scope="text, record">
-              <a class="ant-dropdown-link" @click="goRecord(record)">上传记录</a>
+              <a class="ant-dropdown-link" @click="goRecord(record, 6)">上传记录</a>
             </span>
           </a-table>
         </div>
@@ -630,7 +630,8 @@ export default {
       // this.$router.back()
     },
 
-    goRecord(record) {
+    goRecord(record, type) {
+      this.$set(record, 'type', type)
       this.$refs.editForm.edit(record)
     },
 
