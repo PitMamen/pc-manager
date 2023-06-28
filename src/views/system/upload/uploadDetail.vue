@@ -414,9 +414,9 @@ export default {
       columnsChufang: [
         {
           title: '处方号',
-          dataIndex: 'cfh',
-          key: 'cfh',
-          scopedSlots: { customRender: 'cfh' },
+          dataIndex: 'preNo',
+          key: 'preNo',
+          scopedSlots: { customRender: 'preNo' },
         },
         {
           title: '处方类型',
@@ -606,24 +606,33 @@ export default {
   },
 
   watch: {
-    visible() {},
+    $route(to, from) {
+      console.log('watch----uploadDetail out', to, from)
+      if (to.path.indexOf('uploadDetail') > -1) {
+        console.log('watch----uploadDetail', to, from)
+        this.init()
+      }
+    },
   },
 
   created() {
     // this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    this.item = JSON.parse(this.$route.query.recordStr)
-    this.getRegData()
-    this.getConsultData()
-    this.getRegConsultData()
-
-    this.getPreSaveData()
-    this.getPreCancelData()
-    this.getFeeData()
-
-    this.getAppraiseData()
+    this.init()
   },
 
   methods: {
+    init() {
+      this.item = JSON.parse(this.$route.query.recordStr)
+      this.getRegData()
+      this.getConsultData()
+      this.getRegConsultData()
+
+      this.getPreSaveData()
+      this.getPreCancelData()
+      this.getFeeData()
+
+      this.getAppraiseData()
+    },
     //返回
     goBack() {
       this.$router.go(-1)
