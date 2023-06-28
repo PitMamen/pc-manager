@@ -125,10 +125,17 @@ export default {
       }
       getContract(queryData)
         .then((res) => {
-          if (res.code == 0 && res.data.content) {
-            this.content = res.data.content
-            this.editor.txt.html(res.data.content)
-            this.isSaved = true
+          // if (res.code == 0 && res.data.content) {
+          // debugger
+          if (res.code == 0) {
+            if (res.data.content == null || res.data.content == '') {
+              this.editor.txt.clear()
+              this.content = ''
+            } else {
+              this.editor.txt.html(res.data.content)
+              this.isSaved = true
+              this.content = res.data.content
+            }
           }
         })
         .finally((res) => {

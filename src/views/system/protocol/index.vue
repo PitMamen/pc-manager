@@ -22,7 +22,7 @@
 
     <div class="wrap-tab">
       <!-- <a-tabs default-active-key="2" v-model="activeKey" @change="tabChange"> -->
-      <a-tabs default-active-key="2" v-model="activeKey">
+      <a-tabs default-active-key="2" @change="tabChange" v-model="activeKey">
         <a-tab-pane key="1">
           <span slot="tab">
             <img
@@ -171,33 +171,62 @@ export default {
     },
 
     refreshProtocol() {
-      if (this.$refs.protocolEdit1) {
-        this.$refs.protocolEdit1.refreshData(this.deptId)
-      }
-      if (this.$refs.protocolEdit2) {
-        this.$refs.protocolEdit2.refreshData(this.deptId)
-      }
-      if (this.$refs.protocolEdit3) {
-        this.$refs.protocolEdit3.refreshData(this.deptId)
-      }
-      // this.$refs.protocolEdit2.refreshData(this.deptId)
-      // this.$refs.protocolEdit3.refreshData(this.deptId)
+      // if (this.$refs.protocolEdit1) {
+      //   this.$refs.protocolEdit1.refreshData(this.deptId)
+      // }
+      // if (this.$refs.protocolEdit2) {
+      //   this.$refs.protocolEdit2.refreshData(this.deptId)
+      // }
+      // if (this.$refs.protocolEdit3) {
+      //   this.$refs.protocolEdit3.refreshData(this.deptId)
+      // }
+
+      this.$nextTick(() => {
+        if (this.$refs.protocolEdit1) {
+          this.$refs.protocolEdit1.refreshData(this.deptId)
+        }
+        if (this.$refs.protocolEdit2) {
+          this.$refs.protocolEdit2.refreshData(this.deptId)
+        }
+        if (this.$refs.protocolEdit3) {
+          this.$refs.protocolEdit3.refreshData(this.deptId)
+        }
+      })
     },
 
     tabChange(key) {
-      // switch (key) {
-      //   case '1':
-      //     this.$refs.protocolEdit1.refreshData(this.deptId)
-      //     break
-      //   case '2':
-      //     this.$refs.protocolEdit2.refreshData(this.deptId)
-      //     break
-      //   case '3':
-      //     this.$refs.protocolEdit3.refreshData(this.deptId)
-      //     break
-      //   default:
-      //     break
-      // }
+      console.log('tabChange', key)
+      // debugger
+      switch (key) {
+        case '1':
+          // if (this.$refs.protocolEdit1) {
+          //   this.$refs.protocolEdit1.refreshData(this.deptId)
+          // }
+          this.$nextTick(() => {
+            if (this.$refs.protocolEdit1) {
+              this.$refs.protocolEdit1.refreshData(this.deptId)
+            }
+          })
+          break
+        case '2':
+          // this.$refs.protocolEdit2.refreshData(this.deptId)
+
+          this.$nextTick(() => {
+            if (this.$refs.protocolEdit2) {
+              this.$refs.protocolEdit2.refreshData(this.deptId)
+            }
+          })
+          break
+        case '3':
+          this.$nextTick(() => {
+            if (this.$refs.protocolEdit3) {
+              this.$refs.protocolEdit3.refreshData(this.deptId)
+            }
+          })
+          break
+        default:
+          break
+      }
     },
   },
 }
