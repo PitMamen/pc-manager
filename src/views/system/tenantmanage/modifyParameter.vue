@@ -73,7 +73,7 @@
       <a-input
         class="span-item-value"
         v-model="queryParamsData.value"
-        :maxLength="30"
+        :maxLength="50"
         style="display: inline-block; width: 180px; margin-left: 6px"
         allow-clear
         placeholder="请输入参数值 "
