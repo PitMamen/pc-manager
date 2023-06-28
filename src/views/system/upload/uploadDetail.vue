@@ -649,6 +649,7 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.$message.success('操作成功')
+            this.$message.success('总条数:'+res.data.totalNum+"   成功条数:"+res.data.sucessNum+"   失败条数:"+res.data.failNum)
             this.isAllUploaded = true
             this.getRegData()
             this.getConsultData()
