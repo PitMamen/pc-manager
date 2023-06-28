@@ -3599,8 +3599,8 @@ export function getPreUploadLogList(data) {
 export function reUpload(data) {
   return axios({
     url: '/medical-api/ehosp/reUpload',
-    method: 'post',
-    data: data,
+    method: 'get',
+    params: data,
   })
 }
 
