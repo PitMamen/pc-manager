@@ -144,7 +144,7 @@ export default {
         { value: 'and', name: '并且' },
         { value: 'or', name: '或者' },
       ],
-      secondaryFilterTypeEnum: 'and',
+      secondaryFilterTypeEnum: 'or',
       confirmLoading: false,
 
       visible: false,
