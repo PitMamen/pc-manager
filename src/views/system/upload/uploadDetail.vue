@@ -609,6 +609,7 @@ export default {
     $route(to, from) {
       console.log('watch----uploadDetail out', to, from)
       if (to.path.indexOf('uploadDetail') > -1) {
+        this.isAllUploaded = true
         console.log('watch----uploadDetail', to, from)
         this.init()
       }
