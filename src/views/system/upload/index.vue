@@ -46,8 +46,50 @@
         <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
         <a @click="goDetail(record)"><a-icon type="hdd" style="margin-right: 0" />详情</a>
       </span>
-    </s-table>
 
+      <!-- regData  consultData  regConsultData  preSaveData  preCancelData  feeData appraiseData -->
+      <span slot="regData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.regDataEqual">{{ record.regData }}</span>
+        <span v-else>{{ record.regData }}</span>
+      </span>
+
+      <span slot="consultData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.consultDataEqual">{{ record.consultData }}</span>
+        <span v-else>{{ record.consultData }}</span>
+      </span>
+
+      <span slot="regConsultData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.regConsultDataEqual">{{ record.regConsultData }}</span>
+        <span v-else>{{ record.regConsultData }}</span>
+      </span>
+
+      <span slot="preSaveData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.preSaveDataEqual">{{ record.preSaveData }}</span>
+        <span v-else>{{ record.preSaveData }}</span>
+      </span>
+
+      <span slot="preCancelData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.preCancelDataEqual">{{ record.preCancelData }}</span>
+        <span v-else>{{ record.preCancelData }}</span>
+      </span>
+
+      <span slot="feeData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.feeDataEqual">{{ record.feeData }}</span>
+        <span v-else>{{ record.feeData }}</span>
+      </span>
+
+      <span slot="appraiseData" slot-scope="text, record">
+        <!-- <a-divider type="vertical" v-if="record.status == 2" /> -->
+        <span style="color: red" v-if="!record.appraiseDataEqual">{{ record.appraiseData }}</span>
+        <span v-else>{{ record.appraiseData }}</span>
+      </span>
+    </s-table>
   </a-card>
 </template>
 
@@ -156,24 +198,52 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
+      isInited: false,
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        if (!this.isInited) {
+          return {}
+        }
         return qryUploadLogByPage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            // res.data.rows.forEach((element) => {
-            //   this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
-            //   // this.$set(element, 'status', 2)
-            //   this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
-            //   // 1未审核2已审核3未登记
-            //   if (element.status == 1) {
-            //     this.$set(element, 'statusText', '未审核')
-            //   } else if (element.status == 2) {
-            //     this.$set(element, 'statusText', '已审核')
-            //   } else {
-            //     this.$set(element, 'statusText', '未登记')
-            //   }
-            // })
-            // console.log(JSON.stringify(res.data.rows))
+            res.data.rows.forEach((element) => {
+              // regData  consultData  regConsultData  preSaveData  preCancelData  feeData appraiseData
+              let arr1 = element.regData.split('/')
+              this.$set(element, 'regDataEqual', arr1[0] == arr1[1] ? true : false)
+
+              let arr2 = element.consultData.split('/')
+              this.$set(element, 'consultDataEqual', arr2[0] == arr2[1] ? true : false)
+
+              let arr3 = element.regConsultData.split('/')
+              this.$set(element, 'regConsultDataEqual', arr3[0] == arr3[1] ? true : false)
+
+              let arr4 = element.preSaveData.split('/')
+              this.$set(element, 'preSaveDataEqual', arr4[0] == arr4[1] ? true : false)
+
+              let arr5 = element.preCancelData.split('/')
+              this.$set(element, 'preCancelDataEqual', arr5[0] == arr5[1] ? true : false)
+
+              let arr6 = element.feeData.split('/')
+              this.$set(element, 'feeDataEqual', arr6[0] == arr6[1] ? true : false)
+
+              let arr7 = element.appraiseData.split('/')
+              this.$set(element, 'appraiseDataEqual', arr7[0] == arr7[1] ? true : false)
+
+              console.log('arr', arr1)
+
+              // this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
+              // // this.$set(element, 'status', 2)
+              // this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
+              // // 1未审核2已审核3未登记
+              // if (element.status == 1) {
+              //   this.$set(element, 'statusText', '未审核')
+              // } else if (element.status == 2) {
+              //   this.$set(element, 'statusText', '已审核')
+              // } else {
+              //   this.$set(element, 'statusText', '未登记')
+              // }
+            })
+            console.log(JSON.stringify(res.data.rows))
             return res.data
           } else {
             this.$message.error(res.message)
@@ -229,6 +299,7 @@ export default {
           })
 
           this.queryParam.hospitalCode = res.data[0].hospitalCode
+          this.isInited = true
           this.handleOk()
         } else {
           this.$message.error(res.message)
