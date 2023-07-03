@@ -620,6 +620,7 @@ export default {
     //导流包选择
     changeDaoliu(value) {
       this.isDaoliuChecked = value.target.checked
+      // console.log("GGGG:",value)
       if (value.target.checked) {
         this.daoliubao = true
         this.isDisabled = false
