@@ -514,7 +514,7 @@ export default {
         subjectClassifyId: undefined,
         tenantId: undefined,
         limitPurchaseTimes: 1, //限购
-        giftFlag: 1, //导流包 开关
+        giftFlag: 0, //导流包 开关
       },
     }
   },
@@ -1398,12 +1398,11 @@ export default {
 
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.packageData))
-
+     
       if(tempData.packageClassifyId!=9){
         tempData.limitPurchaseTimes = 0
         tempData.giftFlag = 0
       }
-
 
       if (!tempData.packageName) {
         this.$message.error('请输入套餐名称')

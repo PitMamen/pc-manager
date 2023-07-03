@@ -487,7 +487,7 @@ export default {
         subjectClassifyId: undefined,
         tenantId: undefined,
         limitPurchaseTimes:1,  //限购
-        giftFlag:1,  //导流包 开关
+        giftFlag:0,  //导流包 开关
       },
       packageData: {},
     }
@@ -1158,6 +1158,8 @@ export default {
         tempData.limitPurchaseTimes = 0
         tempData.giftFlag = 0
       }
+
+
       if (!tempData.packageName) {
         this.$message.error('请输入套餐名称')
         return
