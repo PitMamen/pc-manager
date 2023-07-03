@@ -9,7 +9,7 @@
             @keyup.enter="onselectQuestion"
             @search="onselectQuestion"
             @change="change"
-            style="width: 180px; margin-left: 12px; margin-bottom: 20px"
+            style="width: 210px; margin-left: 12px; margin-bottom: 20px"
           />
           <!-- <a-select
                 style="width: 180px;margin-left: 12px;margin-bottom: 20px;"
@@ -40,15 +40,27 @@
               <span class="name" :title="item.name">{{ item.name }}</span>
               <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
 
-              <!-- <a-icon type="check" class="icon" /> -->
+
+              <!-- <div style="display: flex; flex-direction: row">
+                <span style="color: #999999">发送:</span>
+                <span style="margin-left: 2px; color: #409eff">2455</span>
+                <span style="color: #999999; margin-left: 10px">回收:</span>
+                <span style="margin-left: 5px; color: #409eff">5622</span>
+                <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span>
+              </div> -->
+
 
               <div style="display: flex; flex-direction: row">
                 <span style="color: #999999">发送:</span>
-                <span style="margin-left: 5px; color: #409eff">{{ item.spotAll }}</span>
+                <span style="margin-left: 2px; color: #409eff">{{ item.spotAll }}</span>
                 <span style="color: #999999; margin-left: 10px">回收:</span>
                 <span style="margin-left: 5px; color: #409eff">{{ item.spotOk }}</span>
-                <span style="margin-left: 10px; color: #409eff">{{ item.co }}</span>
+                <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span>
               </div>
+
+
+
+
             </div>
           </div>
         </a-spin>
@@ -639,7 +651,7 @@ button {
   height: 100%;
   justify-content: space-between;
   .left {
-    width: 221px;
+    width: 250px;
     height: 100%;
     height: calc(100vh - 151px);
     // border: 1px solid #e6e6e6;
