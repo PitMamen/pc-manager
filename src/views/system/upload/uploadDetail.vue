@@ -44,7 +44,7 @@
         <div class="card-bottom">
           <div class="wrap-hor">
             <div class="hor-half">
-              <div class="in-half">预约流水的号：</div>
+              <div class="in-half">预约流水号：</div>
               <div>{{ item.orderId }}</div>
             </div>
             <div class="hor-half">
@@ -91,7 +91,9 @@
                 :value="itemChild.id"
                 >{{ itemChild.createTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
                   itemChild.uploadStatus == 1 ? '上传成功' : '上传失败'
-                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
+                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="itemChild.uploadStatus != 1"
+                  >描述：{{ itemChild.uploadReturn.msg }}</span
+                ></a-timeline-item
               >
             </a-timeline>
             <div style="margin-bottom: 10px" v-if="regData.uploadRecord.length == 0">无</div>
@@ -112,7 +114,7 @@
         <div class="card-bottom">
           <div class="wrap-hor">
             <div class="hor-half">
-              <div class="in-half">咨询流水的号：</div>
+              <div class="in-half">咨询流水号：</div>
               <div>{{ item.orderId }}</div>
             </div>
             <div class="hor-half">
@@ -155,7 +157,9 @@
                 :value="itemChild.id"
                 >{{ itemChild.createTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
                   itemChild.uploadStatus == 1 ? '上传成功' : '上传失败'
-                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
+                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="itemChild.uploadStatus != 1"
+                  >描述：{{ itemChild.uploadReturn.msg }}</span
+                ></a-timeline-item
               >
             </a-timeline>
             <div style="margin-bottom: 10px" v-if="consultData.uploadRecord.length == 0">无</div>
@@ -176,7 +180,7 @@
         <div class="card-bottom">
           <div class="wrap-hor">
             <div class="hor-half">
-              <div class="in-half">复诊流水的号：</div>
+              <div class="in-half">复诊流水号：</div>
               <div>{{ item.orderId }}</div>
             </div>
             <div class="hor-half">
@@ -223,7 +227,9 @@
                 :value="itemChild.id"
                 >{{ itemChild.createTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
                   itemChild.uploadStatus == 1 ? '上传成功' : '上传失败'
-                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
+                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="itemChild.uploadStatus != 1"
+                  >描述：{{ itemChild.uploadReturn.msg }}</span
+                ></a-timeline-item
               >
             </a-timeline>
             <div style="margin-bottom: 10px" v-if="regConsultData.uploadRecord.length == 0">无</div>
@@ -319,18 +325,18 @@
               <div>{{ appraiseData.baseInfo.pf }}</div>
             </div>
             <div class="hor-half">
-              <div class="in-half">服务质量评分：</div>
+              <div class="in-half">服务质量：</div>
               <div>{{ appraiseData.baseInfo.fwzlpf }}</div>
             </div>
           </div>
 
           <div class="wrap-hor" style="margin-top: 20px">
             <div class="hor-half">
-              <div class="in-half">服务态度评分：</div>
+              <div class="in-half">服务态度：</div>
               <div>{{ appraiseData.baseInfo.fwtdpf }}</div>
             </div>
             <div class="hor-half">
-              <div class="in-half">系统使用评分：</div>
+              <div class="in-half">系统使用：</div>
               <div>{{ appraiseData.baseInfo.xtsypf }}</div>
             </div>
             <div class="hor-half">
@@ -354,7 +360,9 @@
                 :value="itemChild.id"
                 >{{ itemChild.createTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
                   itemChild.uploadStatus == 1 ? '上传成功' : '上传失败'
-                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
+                }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span v-if="itemChild.uploadStatus != 1"
+                  >描述：{{ itemChild.uploadReturn.msg }}</span
+                ></a-timeline-item
               >
             </a-timeline>
             <div style="margin-bottom: 10px" v-if="appraiseData.uploadRecord.length == 0">无</div>
@@ -433,6 +441,7 @@ export default {
         {
           title: '诊断名称',
           dataIndex: 'zdmc',
+          width: 200,
           key: 'zdmc',
           ellipsis: true,
         },
@@ -440,24 +449,28 @@ export default {
           title: '开方日期',
           dataIndex: 'kfrq',
           key: 'kfrq',
+          width: 110,
           ellipsis: true,
         },
         {
           title: '处方金额',
           dataIndex: 'cfje',
           key: 'cfje',
+          width: 80,
           ellipsis: true,
         },
         {
           title: '是否支付',
           dataIndex: 'sfzf',
           key: 'sfzf',
+          width: 80,
           ellipsis: true,
         },
         {
           title: '上传状态',
           dataIndex: 'uploadStatus',
           key: 'uploadStatus',
+          width: 80,
           ellipsis: true,
         },
         {
@@ -650,7 +663,9 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.$message.success('操作成功')
-            this.$message.success('总条数:'+res.data.totalNum+"   成功条数:"+res.data.sucessNum+"   失败条数:"+res.data.failNum)
+            this.$message.success(
+              '总条数:' + res.data.totalNum + '   成功条数:' + res.data.sucessNum + '   失败条数:' + res.data.failNum
+            )
             this.isAllUploaded = true
             this.getRegData()
             this.getConsultData()
@@ -676,6 +691,7 @@ export default {
         // getUploadLogByOrderIdAndType({ orderId: this.item.orderId, type: 4 }).then((res) => {
         if (res.code == 0) {
           this.regData = res.data
+          // this.regData.uploadRecord = this.regData.uploadRecord.concat(res.data.uploadRecord)
           if (this.regData.baseInfo.uploadStatus == '未上传') {
             this.isAllUploaded = false
           }
@@ -919,8 +935,13 @@ export default {
         flex-direction: row;
         margin-top: 15px;
 
+        .ant-timeline{
+          margin-top: 3px;
+        }
+
         .ant-timeline-item {
           padding-bottom: 10px !important;
+          font-size: 12px !important;
         }
 
         // .ant-timeline-item-last > .ant-timeline-item-content {
