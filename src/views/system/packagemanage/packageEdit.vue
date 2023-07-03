@@ -1400,10 +1400,10 @@ export default {
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.packageData))
      
-      if(tempData.packageClassifyId!=9){
-        tempData.limitPurchaseTimes = 0
-        tempData.giftFlag = 0
-      }
+      // if(tempData.packageClassifyId!=9){
+      //   tempData.limitPurchaseTimes = 0
+      //   tempData.giftFlag = 0
+      // }
 
       if (!tempData.packageName) {
         this.$message.error('请输入套餐名称')
