@@ -674,9 +674,8 @@ export default {
   height: 1px;
 }
 </style>
-  
-<<<<<<< HEAD
-  <style lang="less" scoped>
+
+<!-- <style lang="less" scoped>
 // 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
 .ant-card {
   height: calc(100% - 20px); //60PX
@@ -701,11 +700,7 @@ export default {
     }
   }
 }
-</style>
-=======
-  
->>>>>>> dev_1.7.6
-
+</style> -->
 
 <style lang="less" scoped>
 .sys-card2 {

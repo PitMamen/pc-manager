@@ -11,12 +11,12 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
         <div class="recordType">
-          <div style="padding: 10px 20px" :class="{ 'checked-btn': currentTab == 'base' }" @click="checketab('base')">
+          <div style="padding: 10px 10px" :class="{ 'checked-btn': currentTab == 'base' }" @click="checketab('base')">
             <a-icon type="home" style="margin-right: 5px"></a-icon><span>基本信息</span>
           </div>
           <div
             :class="{ 'checked-btn': currentTab == 'photo' }"
-            style="margin-left: 15px; padding: 10px 20px"
+            style="margin-left: 15px; padding: 10px 10px"
             @click="checketab('photo')"
           >
             <a-icon type="idcard" style="margin-right: 5px"></a-icon><span>证件信息</span>
@@ -254,7 +254,7 @@
           <!-- 身份证 -->
           <div class="item-idcard">
             <div>身份证照片：</div>
-            <div style="right: 120px; top: 10px; margin-left: 30px">
+            <div style="right: 120px; top: 10px; ">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -272,7 +272,7 @@
               </a-upload>
             </div>
 
-            <div style="right: 120px; top: 10px; margin-left: 20px">
+            <div style="right: 120px; top: 10px; margin-left: 10px">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -294,7 +294,7 @@
           <!-- 职称 -->
           <div class="item-idcard">
             <div style="margin-left: 12px">职称照片：</div>
-            <div style="right: 120px; top: 10px; margin-left: 30px">
+            <div style="right: 120px; top: 10px; ">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -312,7 +312,7 @@
               </a-upload>
             </div>
 
-            <div style="right: 120px; top: 10px; margin-left: 20px">
+            <div style="right: 120px; top: 10px; margin-left: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -335,7 +335,7 @@
           <!-- 资格证 -->
           <div class="item-idcard">
             <div>资格证照片：</div>
-            <div style="right: 120px; top: 10px; margin-left: 30px">
+            <div style="right: 120px; top: 10px; ">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -354,7 +354,7 @@
               </a-upload>
             </div>
 
-            <div style="right: 120px; top: 10px; margin-left: 20px">
+            <div style="right: 120px; top: 10px; margin-left: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -377,7 +377,7 @@
           <!-- 执业证照片 -->
           <div class="item-idcard">
             <div>执业证照片：</div>
-            <div style="right: 120px; top: 10px; margin-left: 30px">
+            <div style="right: 120px; top: 10px;">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -396,7 +396,7 @@
               </a-upload>
             </div>
 
-            <div style="right: 120px; top: 10px; margin-left: 20px">
+            <div style="right: 120px; top: 10px; margin-left: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -1254,6 +1254,7 @@ export default {
   margin-top: 10px;
 
   .idcard-infor {
+    margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
@@ -1279,7 +1280,7 @@ export default {
     }
   }
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

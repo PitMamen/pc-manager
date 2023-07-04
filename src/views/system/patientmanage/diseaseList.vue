@@ -571,9 +571,9 @@ export default {
         font-size: 14px;
       }
       .bottom-down {
+        overflow-y: auto;
         margin-top: 10px;
-        max-height: 90%;
-        min-height: 90%;
+       height: 500px;
         margin-bottom: 10px;
         border-top: #e6e6e6 1px solid;
         // border-left: #e6e6e6 1px solid;
@@ -586,6 +586,7 @@ export default {
           width: 100%;
 
           .out-top {
+            padding-left: 25px;
             margin-top: 3%;
             font-size: 12px;
             display: flex;
