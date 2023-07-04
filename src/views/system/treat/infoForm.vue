@@ -381,7 +381,7 @@
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
-                  <div style="margin-left: 10px; margin-top: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
                     审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
@@ -403,7 +403,7 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
                     发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
                   </div>
                   <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
@@ -942,7 +942,7 @@
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
-                  <div style="margin-left: 10px; margin-top: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
                     审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
@@ -964,7 +964,7 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
                     发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
                   </div>
                   <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
@@ -1172,7 +1172,7 @@
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
                   </div>
-                  <div style="margin-left: 10px; margin-top: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
                     审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
@@ -1197,7 +1197,7 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px">
+                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
                     发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
                   </div>
                   <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">

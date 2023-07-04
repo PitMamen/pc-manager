@@ -151,13 +151,13 @@
 
 
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构分类:</span>
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 监管分类:</span>
           <a-tree-select
             v-model="queryParams.institutionClassify"
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
             :tree-data="classifyTreeData"
-            placeholder="请选择机构分类"
+            placeholder="请选择监管机构分类"
             allow-clear
             show-search
             tree-node-filter-prop="title"
@@ -169,12 +169,12 @@
 
 
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 机构代码:</span>
+          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 监管代码:</span>
           <a-input
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
             v-model="queryParams.supervisionHosCode"
             allow-clear
-            placeholder="请输入代码"
+            placeholder="请输入监管机构代码"
             style="width: 200px; margin-top: 5px; margin-left: 7px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"

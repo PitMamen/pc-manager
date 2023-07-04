@@ -16,10 +16,15 @@
 
     <div style="height: 500px; width: 100%">
       <div class="div-appoint-detail-check">
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">患者信息</span>
+        </div>
         <!-- 左边视图 -->
         <div class="div-span-content-left" style="overflow-y: auto !important">
-          <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">患者信息</div>
-          <div style="width: 100%; height: 1px; margin-top: 5px; background: darkgrey"></div>
+         
+          <!-- <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">患者信息</div> -->
+          <!-- <div style="width: 100%; height: 1px; margin-top: 5px; background: darkgrey"></div> -->
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">姓 名:{{ userInfoData.name }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">年 龄:{{ userInfoData.age }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">性 别:{{ userInfoData.sex }}</div>
@@ -54,10 +59,17 @@
         <div class="midline"></div>
 
         <!-- 中间视图 style="overflow-y: auto"-->
+
+        <div class="div-title-mind">
+          <div class="div-line-blue"></div>
+          <span class="span-title">处方信息</span>
+        </div>
+
+
         <div class="div-span-content-mid" >
-          <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">处方信息</div>
-          <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div>
-          <div class="big-kuang">
+          <!-- <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">处方信息</div> -->
+          <!-- <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div> -->
+          <div class="big-kuang-border">
             <div class="top-content">
               <div style="margin-left: 30%; color: #1a1a1a">{{ preDetailData.medicalInfo.preHead }}</div>
               <div class="span-gray">{{ preDetailData.medicalInfo.preType }}</div>
@@ -125,10 +137,18 @@
         </div>
 
         <div class="midline"></div>
+
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">审核信息</span>
+        </div>
+
+
+
         <!-- 右边视图 -->
         <div class="div-span-content-right" style="position: relative">
-          <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">审核信息</div>
-          <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div>
+          <!-- <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">审核信息</div>
+          <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div> -->
 
           <div class="radia-content" v-if="record.checkStatus == 1">
             <div style="margin-left: 10px; margin-top: 10px; color: #1a1a1a; width: 50px">审核：</div>
@@ -344,32 +364,14 @@ export default {
   margin-top: 10px;
 }
 
-.div-title {
-  display: flex;
-  background-color: #f7f7f7;
-  flex-direction: row;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  height: 26px;
-
-  .div-line-blue {
-    width: 5px;
-    height: 100%;
-    background-color: #409eff;
-  }
-  .span-title {
-    font-size: 14px;
-    margin-left: 10px;
-    font-weight: bold;
-    color: #4d4d4d;
-  }
-}
 .top-tab {
   width: 100%;
   overflow: hidden;
 }
+
+
+
+
 .div-appoint-detail-check {
   background-color: white;
   width: 100%;
@@ -378,12 +380,65 @@ export default {
   display: flex;
   flex-direction: row;
 
+
+  .div-title {
+  margin-top: 10px;
+  display: flex;
+  background-color: #ebebeb;
+  flex-direction: row;
+  width: 20% !important;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 26px;
+
+  .div-line-blue {
+    width: 5px;
+    height: 100%;
+    background-color: #1890ff;
+  }
+  .span-title {
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.div-title-mind {
+  margin-top: 10px;
+  display: flex;
+  background-color: #ebebeb;
+  flex-direction: row;
+  width: 56% !important;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 26px;
+
+  .div-line-blue {
+    width: 5px;
+    height: 100%;
+    background-color: #1890ff;
+  }
+  .span-title {
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+
+
+
+
   .div-span-content-left {
-    width: 22%;
+    width: 20%;
     // height: 100%;
 
-    margin-top: 10px;
-    margin-left: 11px;
+    margin-top: 40px;
+    margin-left: -19.9%;
     background: rgba(0, 1, 3, 0);
     border: 1px solid #dfe3e5;
     display: flex;
@@ -397,9 +452,59 @@ export default {
     // height: 100%;
     display: flex;
     flex-direction: column;
-    margin-top: 10px;
+    margin-top: 40px;
+    margin-left: -55.9%;
     position: relative;
     border: 1px solid #dfe3e5;
+
+
+
+    .big-kuang-border {
+      width: 92%;
+      margin-left: 20px;
+      margin-right: 50px;
+      margin-top: 8px;
+      background: #ffffff;
+      // border: 1px solid #e6e6e6;
+
+      .line-content {
+        width: 100%;
+        height: 1px;
+        margin-right: 10px;
+        margin-right: 10px;
+        background: darkgrey;
+      }
+
+      .user-content {
+        margin-left: 10px;
+        margin-right: 40px;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+      }
+
+      .top-content {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .span-gray {
+          padding: 2px 7px;
+          font-size: 12px;
+          margin-left: auto;
+          margin-right: 20px;
+          color: #4d4d4d;
+          border: #4d4d4d 1px solid;
+          border-radius: 4px;
+        }
+      }
+    }
+
+
+
 
     .big-kuang {
       width: 92%;
@@ -465,10 +570,11 @@ export default {
     }
   }
   .div-span-content-right {
-    width: 22%;
+    width: 20%;
     display: flex;
     flex-direction: column;
-    margin-top: 10px;
+    margin-top: 40px;
+    margin-left: -19.9%;
     position: relative;
     border: 1px solid #dfe3e5;
     overflow: hidden;

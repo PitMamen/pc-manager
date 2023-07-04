@@ -81,8 +81,8 @@
               <div class="ksview" :title="item.articleName">
                 {{ item.articleName }}
               </div>
-              <!-- <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:{{ item.count }} &nbsp;成功:{{ item.readCount }}   -->
-              <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:3000 &nbsp;成功:1000  
+              <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:{{ item.count }} &nbsp;成功:{{ item.readCount }}  
+              <!-- <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:3000 &nbsp;成功:1000   -->
                <div style="color: #999999; font-size: 8px;margin-left: 10px;">{{ item.rate }}</div>
               </div>
 
