@@ -401,7 +401,7 @@ export default {
         url = 'http://172.31.160.11:8124/template.xlsx'
       } else if (currentEnv == 'online') {
         //线上环境
-        url = 'http://manager.mclouds.org.cn/template.xlsx'
+        url = 'https://hmg.mclouds.org.cn/follow-api/template.xlsx'
       }
 
       this.downloadUrl(url, '')
