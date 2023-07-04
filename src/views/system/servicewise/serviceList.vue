@@ -37,10 +37,6 @@
           >
         </a-select>
       </div>
-      <!-- <div class="search-row">
-        <span class="name">方案状态:</span>
-        <a-switch :checked="queryParams.status === 1" @change="onSwitchChange" />
-      </div> -->
 
       <div class="search-row">
         <span class="name">状态:</span>
@@ -61,6 +57,7 @@
       <a-button icon="plus" style="float: right; margin-right: 0" @click="addName()">新增</a-button>
     </div>
 
+    <!-- :scroll="{ x: true }" -->
     <s-table
       :scroll="{ x: true }"
       ref="table"
@@ -69,10 +66,15 @@
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
+      
     >
       <span slot="action" slot-scope="text, record">
         <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
         <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
+      </span>
+
+      <span slot="execute" slot-scope="text, record">
+        <a @click="goExecute(record)">{{record.planUserInfo}}</a>
       </span>
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
@@ -86,6 +88,7 @@
     </s-table>
 
     <add-Name ref="addName" @ok="handleOk" />
+    <plan-Execute ref="planExecute" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -100,13 +103,13 @@ import {
   qryFollowPlan,
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
-import addName from './addName'
+import planExecute from './planExecute'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {
     STable,
-    addName,
+    planExecute,
   },
   data() {
     return {
@@ -138,39 +141,52 @@ export default {
       columns: [
         {
           title: '方案名称',
+         
           dataIndex: 'planName',
         },
         {
           title: '制定时间',
+       
           dataIndex: 'formulateTime',
         },
         {
           title: '制定人员',
+         
           dataIndex: 'formulateUserName',
         },
         {
           title: '执行科室',
+        
           dataIndex: 'executeDepartmentName',
         },
         {
           title: '随访名单',
+         
           dataIndex: 'metaConfigureName',
         },
         {
           title: '随访类型',
+        
           dataIndex: 'followType',
+        },
+        {
+          title: '方案执行',
+        
+          dataIndex: 'planUserInfo',
+          align: 'center',
+          scopedSlots: { customRender: 'execute' },
         },
 
         {
           title: '状态',
-          width: 70,
+         
           fixed: 'right',
           scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
           fixed: 'right',
-          width: '100px',
+          width: '70px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -233,6 +249,11 @@ export default {
           planId: record.id,
         },
       })
+    },
+
+
+    goExecute(record){
+      this.$refs.planExecute.execute(record)
     },
 
     //获取管理的科室 可首拼
@@ -415,29 +436,4 @@ export default {
 }
 </style>
 
-<style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 96px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 48px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-</style>
+

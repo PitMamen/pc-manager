@@ -58,7 +58,6 @@
         />
       </div>
 
-
       <div class="search-row">
         <span class="name">订单分类:</span>
         <a-select v-model="queryParams.orderType" placeholder="请选择" allow-clear style="width: 120px">
@@ -67,8 +66,6 @@
           }}</a-select-option>
         </a-select>
       </div>
-
-
 
       <div class="search-row">
         <span class="name">下单时间:</span>
@@ -180,11 +177,18 @@
  <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { orderList, accessHospitals, getOrderStatusGroupByData ,getCommodityClassify} from '@/api/modular/system/posManage'
+import {
+  orderList,
+  accessHospitals,
+  getOrderStatusGroupByData,
+  getCommodityClassify,
+} from '@/api/modular/system/posManage'
 import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 // import addForm from './addForm'
 import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
+import continuationDetail from './continuationDetail'
+import prescriptionDetail from './prescriptionDetail'
 
 export default {
   components: {
@@ -192,6 +196,8 @@ export default {
     // addForm,
     orderDetail,
     yzOrderDetail,
+    continuationDetail,
+    prescriptionDetail,
   },
 
   data() {
@@ -200,9 +206,9 @@ export default {
       createValue: [],
       treeData: [],
       gropListData: [],
-      packgeList:[],
-      confirmLoading:false,
-      currentTab:'',
+      packgeList: [],
+      confirmLoading: false,
+      currentTab: '',
       numberData: {
         quanbu: 0,
         daifukuan: 0,
@@ -229,18 +235,22 @@ export default {
         doctorName: '',
         hospitalCode: undefined,
         orderEndTime: getCurrentMonthLast(),
-        orderStartTime:  getDateNow(),
+        orderStartTime: getDateNow(),
         classifyId: undefined,
         orderStatus: '',
-        orderType:undefined,
+        orderType: undefined,
       },
 
+      ordertypeList: [
+        { code: 'consultOrder', value: '咨询订单' },
+        { code: 'srvPackOrder', value: '专科服务' },
+        { code: 'appPreRegister', value: '复诊续方' },
+        { code: 'youzanOrder', value: '商城订单' },
+        { code: 'consultOrderPrescription', value: '在线咨询处方' },
+        { code: 'appPrePrescription', value: '本院复诊处方' },
+      ],
 
-      ordertypeList:[{code:'consultOrder',value:'咨询订单'},{code:'srvPackOrder',value:'专科服务'},{code:'youzanOrder',value:'商城订单'}],
-
-      queryParamsTemp:{},
-
-
+      queryParamsTemp: {},
 
       // 表头
       columns: [
@@ -257,7 +267,7 @@ export default {
         {
           title: '订单分类',
           dataIndex: 'orderTypeDesc',
-          width:100,
+          width: 120,
         },
         {
           title: '用户姓名',
@@ -270,7 +280,7 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
-          
+
           ellipsis: true,
         },
         {
@@ -284,17 +294,17 @@ export default {
         {
           title: '应付',
           dataIndex: 'saleAmount',
-          align:'right'
+          align: 'right',
         },
         {
           title: '实付',
           dataIndex: 'payTotal',
-          align:'right'
+          align: 'right',
         },
         {
           title: '服务时间',
           dataIndex: 'serveTime',
-          width:160,
+          width: 160,
         },
 
         {
@@ -306,7 +316,7 @@ export default {
           title: '支付方式',
           dataIndex: 'payType',
         },
-        
+
         {
           title: '操作',
           fixed: 'right',
@@ -339,7 +349,7 @@ export default {
         }
 
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.orderStatus =this.currentTab
+        this.queryParamsTemp.orderStatus = this.currentTab
         return orderList(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 && res.data.records.length > 0) {
@@ -354,7 +364,7 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'serveTime', item.startTime+" "+item.endTime)
+                this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // this.$set(item, 'status', 1)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
@@ -372,23 +382,17 @@ export default {
     }
   },
 
-
-
-
   activated() {
     this.reset()
     this.queryParams.orderStatus = this.currentTab
     this.queryParamsTemp.orderStatus = this.currentTab
   },
 
-
-
   created() {
     this.queryHospitalListOut()
     this.createValue = [
-
-    // moment(getlastMonthToday(), this.dateFormat),
-    //   moment(formatDate(new Date().getTime()), this.dateFormat),
+      // moment(getlastMonthToday(), this.dateFormat),
+      //   moment(formatDate(new Date().getTime()), this.dateFormat),
 
       moment(getDateNow(), this.dateFormat),
       moment(getCurrentMonthLast(), this.dateFormat),
@@ -405,14 +409,25 @@ export default {
   },
 
   methods: {
-
     //详情
     goDetail(record) {
-
+      var path = ''
+      if (record.orderType == 'appPreRegister') {
+        //复诊续方
+        path = '/order/continuationDetail'
+        //有赞商城
+      } else if (record.orderType == 'youzanOrder') {
+        path = '/order/yzOrderDetail'
+        //处方订单
+      }else if(record.orderType == 'appPrePrescription'){
+        path = '/order/prescriptionDetail'
+      } else {
+        path = '/order/orderDetail'
+      }
       this.$router.push({
-        path: record.orderType=='youzanOrder'?'/order/yzOrderDetail':'/order/orderDetail',
+        path: path,
         query: {
-          orderId:record.orderId,
+          orderId: record.orderId,
         },
       })
     },
@@ -438,25 +453,31 @@ export default {
         return '使用中'
       } else if (record.orderStatus == 102) {
         return '退款中'
-      }else if (record.orderStatus == 103) {
+      } else if (record.orderStatus == 103) {
         return '退款成功'
-      }else if (record.orderStatus == 104) {
+      } else if (record.orderStatus == 104) {
         return '退款失败'
       }
     },
 
-    getColor(record){
+    getColor(record) {
       if (record.orderStatus == 1) {
         return 'span-green'
-      } else if (record.orderStatus == 2||record.orderStatus == 3||record.orderStatus == 5||record.orderStatus == 6||record.orderStatus == 7) {
+      } else if (
+        record.orderStatus == 2 ||
+        record.orderStatus == 3 ||
+        record.orderStatus == 5 ||
+        record.orderStatus == 6 ||
+        record.orderStatus == 7
+      ) {
         return 'span-gray'
-      } else if (record.orderStatus == 4||record.orderStatus == 8||record.orderStatus == 101) {
+      } else if (record.orderStatus == 4 || record.orderStatus == 8 || record.orderStatus == 101) {
         return 'span-blue'
       } else if (record.orderStatus == 102) {
         return 'span-red'
-      }else if(record.orderStatus == 103){
+      } else if (record.orderStatus == 103) {
         return 'span-green-p'
-      }else if(record.orderStatus == 104){
+      } else if (record.orderStatus == 104) {
         return 'span-red-p'
       }
     },
@@ -469,19 +490,17 @@ export default {
     //   }
     // },
 
-
-    isLoading(){
-    return this.confirmLoading 
+    isLoading() {
+      return this.confirmLoading
     },
 
-
     queryHospitalListOut() {
-   //   let queryData = {
-    //     tenantId: '',
-    //     status: 1,
-    //     hospitalName: '',
-    //   }
-    this.confirmLoading = true
+      //   let queryData = {
+      //     tenantId: '',
+      //     status: 1,
+      //     hospitalName: '',
+      //   }
+      this.confirmLoading = true
       accessHospitals()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
@@ -528,24 +547,31 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].code == 1) {    //待付款
-                this.numberData.daifukuan  = res.data[index].co
-              }else if(res.data[index].code == 8){ //待发货
-                this.numberData.daifahuo  = res.data[index].co
-              }else if(res.data[index].code == 4){ //待收货
-                this.numberData.daishouhuo  = res.data[index].co
-              }else if(res.data[index].code == 101){ //使用中
-                this.numberData.shiyongzhong  = res.data[index].co
-              }else if(res.data[index].code == 2){ //已完成
-                this.numberData.yiwancheng  = res.data[index].co
-              }else if(res.data[index].code == 102){ //退款中
-                this.numberData.tuikuanzhong  = res.data[index].co
-              }else if(res.data[index].code == 5){  //已取消
-                this.numberData.yiquxiao  = res.data[index].co
-              }else if(res.data[index].code == ''){  //全部订单
-                this.numberData.quanbu  = res.data[index].co
+              if (res.data[index].code == 1) {
+                //待付款
+                this.numberData.daifukuan = res.data[index].co
+              } else if (res.data[index].code == 8) {
+                //待发货
+                this.numberData.daifahuo = res.data[index].co
+              } else if (res.data[index].code == 4) {
+                //待收货
+                this.numberData.daishouhuo = res.data[index].co
+              } else if (res.data[index].code == 101) {
+                //使用中
+                this.numberData.shiyongzhong = res.data[index].co
+              } else if (res.data[index].code == 2) {
+                //已完成
+                this.numberData.yiwancheng = res.data[index].co
+              } else if (res.data[index].code == 102) {
+                //退款中
+                this.numberData.tuikuanzhong = res.data[index].co
+              } else if (res.data[index].code == 5) {
+                //已取消
+                this.numberData.yiquxiao = res.data[index].co
+              } else if (res.data[index].code == '') {
+                //全部订单
+                this.numberData.quanbu = res.data[index].co
               }
-              
             }
             // this.gropListData = res.data
           }
@@ -556,11 +582,11 @@ export default {
     },
 
     onRadioClick(type) {
-       //如果在加载中  不让点击
-       if(this.confirmLoading){
+      //如果在加载中  不让点击
+      if (this.confirmLoading) {
         return
-       }
-       this.currentTab = type
+      }
+      this.currentTab = type
       this.queryParams.orderStatus = type
       this.queryParamsTemp = type
       this.$refs.table.refresh()
@@ -582,14 +608,11 @@ export default {
       this.queryParams.orderEndTime = dateArr[1]
     },
 
-
     handleOk() {
       this.queryParams.orderStatus = ''
       this.getOrderStatusGroupByDataOut()
       this.$refs.table.refresh()
     },
-
-   
   },
 }
 </script>
@@ -732,29 +755,3 @@ export default {
 }
 </style>
    
-<style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 115px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 137px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 72px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-</style>

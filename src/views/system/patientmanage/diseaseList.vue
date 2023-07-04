@@ -69,7 +69,7 @@
         </div>
 
         <div class="table-operator" style="overflow: hidden;margin-top: 10px;">
-            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addDisease.addDis(tagsTypeId)"
+            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addDisease.addDis(queryParams.medicalId)"
               >新增</a-button
             >
           </div>
@@ -664,51 +664,5 @@ export default {
 }
 </style>
   
-  <style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
 
-    // 这里不同显示器的电脑反应不一样，采取双行三个table头都是-133px,将原来的doubled样式注释
-    .table-wrapper {
-      // height: calc(100% - 93px);
-      height: calc(100% - 161px);
-
-      // &.doubled {
-      //   height: calc(100% - 133px);
-      // }
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 80px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-.ant-spin-nested-loading {
-  height: calc(100% - 40px);
-  /deep/ .ant-spin-container {
-    height: 100%;
-  }
-  .ant-spin-container {
-    .div-service-phone {
-      height: 100%;
-      .ant-card {
-        height: 100%;
-      }
-    }
-  }
-}
-</style>
   

@@ -216,7 +216,7 @@
         <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
         <a-divider v-if="showLine" type="vertical" />
         <a v-if="showOrHide(record, queryParams.type)" @click="goCheck(record)"
-          ><a-icon style="margin-right: 5px" type="idcard"></a-icon>{{ getText(record.auditResultStatus.value) }}</a
+          ><a-icon style="margin-right: 5px;margin-left:10px" type="idcard"></a-icon>{{ getText(record.auditResultStatus.value) }}</a
         >
         <a-divider type="vertical" />
         <a @click="gotransfer(record)" :disabled="checkDis(record.status)"
@@ -399,7 +399,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: '190px',
+          width: '200px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -1286,31 +1286,6 @@ export default {
 }
 </style>
   
-  <style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 138px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 48px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-</style>
+
   
 

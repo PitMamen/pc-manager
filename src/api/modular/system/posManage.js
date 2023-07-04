@@ -245,6 +245,18 @@ export function getQrUrl(param) {
   })
 }
 /**
+ * 获取二维码链接  套餐二维码
+ *
+ */
+export function getCommodityQrCode(param) {
+  return axios({
+    url: '/wx-api/wx/qrcode/' + appId + '/getCommodityQrCode',
+    method: 'get',
+    params: param,
+
+  })
+}
+/**
  * 获取二维码链接  机构的随访二维码
  *
  */
@@ -1563,6 +1575,8 @@ export function checkDetail(data) {
 
 
 
+
+
 /**
  * 更新名单配置状态
  *
@@ -2838,15 +2852,15 @@ export function getZySummary(data) {
   })
 }
 
-/**
- * 获取参数配置
- */
-export function getSysConfigData(data) {
-  return axios({
-    url: '/info-api/sysConfigData/getConfig/' + data,
-    method: 'get'
-  })
-}
+// /**
+//  * 获取参数配置
+//  */
+// export function getSysConfigData(data) {
+//   return axios({
+//     url: '/info-api/sysConfigData/getConfig/' + data,
+//     method: 'get'
+//   })
+// }
 
 /**
 * 修改科室
@@ -3134,6 +3148,16 @@ export function resetPasswordByAdmin(data) {
     data: data,
   })
 }
+/**
+ * 系统日志
+ */
+export function getSysAccessLogPageList(data) {
+  return axios({
+    url: '/account-api/sysAccessLog/getSysAccessLogPageList',
+    method: 'post',
+    data: data,
+  })
+}
 
 /**
  * 文章分类列表
@@ -3231,6 +3255,66 @@ export function getArticleByIdNew(id) {
   })
 }
 
+/**
+ * 获取协议    hospitalCode   categoryId
+ *
+ */
+export function getContract(data) {
+  return axios({
+    url: '/health-api/article/getContract',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 获取协议列表    hospitalCode   categoryId
+ *
+ */
+export function contractTypes(data) {
+  return axios({
+    url: '/health-api/article/contractTypes',
+    method: 'get',
+    params: data
+  })
+}
+
+/**
+ * 保存协议    hospitalCode   categoryId   content
+ *
+ */
+export function saveContract(data) {
+  return axios({
+    url: '/health-api/article/saveContract',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 下载协议PDF    hospitalCode   categoryId 
+ *
+ */
+export function downloadPdfContract(data) {
+  return axios({
+    url: '/health-api/article/downloadPdfContract',
+    method: 'post',
+    data: data,
+    responseType: 'blob'
+  })
+}
+/**
+ * 协议上传监管平台    hospitalCode   categoryId 
+ *
+ */
+export function reportPdfContract(data) {
+  return axios({
+    url: '/health-api/article/reportPdfContract',
+    method: 'post',
+    data: data
+  })
+}
+
 
 /**
  * 分页查询参数列表
@@ -3252,6 +3336,16 @@ export function saveSysConfigData(data) {
     url: '/info-api/sysConfigData/save',
     method: 'post',
     data: data,
+  })
+}
+
+/**
+ * 获取参数配置
+ */
+export function getSysConfigData(data) {
+  return axios({
+    url: '/info-api/sysConfigData/getConfig/' + data,
+    method: 'get'
   })
 }
 
@@ -3483,6 +3577,83 @@ export function saveOrUpdate(data) {
     url: '/medical-api/pkg/saveOrUpdate',
     method: 'post',
     data: data,
+  })
+}
+
+/**
+ * 不良事件列表接口
+ */
+export function qryComplaintByPage(data) {
+  return axios({
+    url: '/medical-api/ehosp/qryComplaintByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /ehosp/saveComplaint 不良事件登记、审核
+ */
+export function saveComplaint(data) {
+  return axios({
+    url: '/medical-api/ehosp/saveComplaint',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /ehosp/qryUploadLogByPage 查询上传日志
+ */
+export function qryUploadLogByPage(data) {
+  return axios({
+    url: '/medical-api/ehosp/qryUploadLogByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * /ehosp/getPreUploadLogByOrderIdAndType 根据订单、上传类型查询上传日志
+ */
+export function getPreUploadLogByOrderIdAndType(data) {
+  return axios({
+    url: '/medical-api/ehosp/getPreUploadLogByOrderIdAndType',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /ehosp/getUploadLogByOrderIdAndType 根据订单、上传类型查询上传日志
+ */
+export function getUploadLogByOrderIdAndType(data) {
+  return axios({
+    url: '/medical-api/ehosp/getUploadLogByOrderIdAndType',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /ehosp/getPreUploadLogList 根据订单、上传类型、业务数据id,查询上传日志
+ */
+export function getPreUploadLogList(data) {
+  return axios({
+    url: '/medical-api/ehosp/getPreUploadLogList',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /ehosp/reUpload 失败记录重传
+ */
+export function reUpload(data) {
+  return axios({
+    url: '/medical-api/ehosp/reUpload',
+    method: 'get',
+    params: data,
   })
 }
 
@@ -4068,6 +4239,30 @@ export function getOrderDetail(data) {
 }
 
 
+//处方订单详情
+export function getMedicalChufangDetail(data) {
+  return axios({
+    url: '/medical-api/medical/getMedicalOrdersDetail/' + data,
+    method: 'post',
+    // params: data,
+  })
+}
+
+
+//处方信息
+export function getMedicalOrdersInfo(data) {
+  return axios({
+    url: '/medical-api/medical/getMedicalOrdersInfo/' + data,
+    method: 'post',
+    // params: data,
+  })
+}
+
+
+
+
+
+
 //取消订单
 export function cancelOrder(data) {
   return axios({
@@ -4375,10 +4570,31 @@ export function getPatientInfoCon(id) {
   })
 }
 
+
+
+
+//收款方列表  收款方列表
+export function getTbMerchantPageList(data) {
+  return axios({
+    url: '/order-api/tbMerchant/getTbMerchantPageList',
+    method: 'post',
+    data: data
+  })
+}
 //病种列表  
 export function getDiseaseTypePageList(data) {
   return axios({
     url: '/info-api/tdDiseaseType/getDiseaseTypePageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//添加收款方
+export function addTbMerchant(data) {
+  return axios({
+    url: '/order-api/tbMerchant/addTbMerchant',
     method: 'post',
     data: data,
   })
@@ -4390,6 +4606,43 @@ export function gettreeMedicalSubjects(data) {
     url: '/uam-api/tdMedicalSubject/treeMedicalSubjects',
     method: 'get',
     params: data,
+  })
+}
+
+
+//修改状态
+export function modifyStatus(data) {
+  return axios({
+    url: '/order-api/tbMerchant/modifyStatus',
+    method: 'post',
+    data: data,
+  })
+}
+
+//修改收款方信息
+export function modifyTbMerchant(data) {
+  return axios({
+    url: '/order-api/tbMerchant/modifyTbMerchant',
+    method: 'post',
+    data: data,
+  })
+}
+
+//收款配置列表接口
+export function getTbBizMerchantPageList(data) {
+  return axios({
+    url: '/order-api/tbBizMerchant/getTbBizMerchantPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+//收款配置
+export function tbBizMerchantConfig(data) {
+  return axios({
+    url: '/order-api/tbBizMerchant/tbBizMerchantConfig',
+    method: 'post',
+    data: data,
   })
 }
 
@@ -4417,6 +4670,140 @@ export function deleteDiseaseType(id) {
 export function modifyDiseaseType(data) {
   return axios({
     url: '/info-api/tdDiseaseType/modifyDiseaseType',
+    method: 'post',
+    data: data,
+  })
+}
+
+//上传模板
+export function importPatientData(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigure/importPatientData',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//下载模板
+export function downloadModel(data) {
+  return axios({
+    url: '/follow-api/名单导入模板.xlsx',
+    method: 'post',
+    // data: data,
+  })
+}
+
+
+//查询方案绑定人信息
+export function qryPlanUserInfo(data) {
+  return axios({
+    url: '/follow-api/follow/userplan/qryPlanUserInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+//处方审核tab
+export function checkPreTab(data) {
+  return axios({
+    url: '/medical-api/medOrders/checkPreTab',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//处方审核列表
+export function checkPrePage(data) {
+  return axios({
+    url: '/medical-api/medOrders/checkPrePage',
+    method: 'post',
+    data: data,
+  })
+}
+
+//处方审核
+export function checkPre(data) {
+  return axios({
+    url: '/medical-api/medOrders/checkPre',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//处方详情
+export function preDetail(data) {
+  return axios({
+    url: '/medical-api/medOrders/preDetail',
+    method: 'get',
+    params: data,
+  })
+}
+
+//复诊续方权益Id查看处方列表
+export function getPreListByRightsId(data) {
+  return axios({
+    url: '/medical-api/medOrders/getPreListByRightsId',
+    method: 'get',
+    params: data,
+  })
+}
+
+//用户基本信息
+export function getUserExternalInfo(userId) {
+  return axios({
+    url: '/account-api/getUserExternalInfo/' + userId,
+    method: 'post',
+    // data: data,
+  })
+}
+
+//用户标签信息
+export function getSavedUserTagsInfo(userId) {
+  return axios({
+    url: '/account-api/getSavedUserTagsInfo/' + userId,
+    method: 'post',
+    // data: data,
+  })
+}
+
+
+// 机构分类列表接口
+export function institutionClassify(data) {
+  return axios({
+    url: '/info-api/medinsInfo/institutionClassify',
+    method: 'post',
+    data: data,
+  })
+}
+
+//设置医生证件信息
+export function setCertificateForUserId(data) {
+  return axios({
+    url: '/account-api/tdUserInfoCaAuth/setCertificateForUserId',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+//获取医生证件信息
+export function getCaAuthInfoAdminForUserId(userid) {
+  return axios({
+    url: '/account-api/tdUserInfoCaAuth/getCaAuthInfoAdminForUserId/' + userid,
+    method: 'post',
+    // data: data,
+  })
+}
+
+//获取医生证件信息
+export function updateExpressInfo(data) {
+  return axios({
+    url: '/medical-api/admorder/updateExpressInfo',
     method: 'post',
     data: data,
   })

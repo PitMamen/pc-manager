@@ -60,7 +60,7 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <a @click="$refs.infoForm.info(record,5)"><a-icon style="margin-right: 5px" type="hdd" />问诊记录</a>
+          <a @click="$refs.infoForm.info(record,record.orderType=='appPreRegister'?6:5)"><a-icon style="margin-right: 5px" type="hdd" />问诊记录</a>
         </template>
       </span>
     </s-table>
@@ -297,29 +297,5 @@ button {
   margin-bottom: 10px;
 }
 </style>
-<style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 96px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 58px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
+
 </style>

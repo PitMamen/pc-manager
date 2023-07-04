@@ -34,13 +34,10 @@
         </a-select>
       </div>
 
-     
-
       <div class="search-row">
         <span class="name">更新时间:</span>
         <a-range-picker style="width: 190px" :value="orderTimeValue" @change="onChange" />
       </div>
-
 
       <div class="search-row">
         <span class="name">订单分类:</span>
@@ -50,7 +47,6 @@
           }}</a-select-option>
         </a-select>
       </div>
-
 
       <div class="search-row">
         <span class="name">下单时间:</span>
@@ -70,16 +66,16 @@
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div
-        v-show="showTabyy"
         class="radio-item"
+        v-show="showTabyy"
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }"
         @click="onRadioClick('yy')"
       >
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
       <div
-        v-show="showTabcw"
         class="radio-item"
+        v-show="showTabcw"
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }"
         @click="onRadioClick('cw')"
       >
@@ -112,8 +108,6 @@
         {{ record.commodityName }}
       </span>
     </s-table>
-    <!-- <orderDetail ref="orderDetail" @ok="handleOk" /> -->
-    <!-- <yzRefund ref="yzRefund" @ok="handleOk" /> -->
   </a-card>
 </template>
    
@@ -127,6 +121,7 @@ import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
 import refundExamine from './refundExamine'
 import yzRefund from './yzRefund'
+import followRefund from './followRefund'
 import { setHidden } from '@/api/modular/system/banner'
 import { noop } from 'ant-design-vue/es/_util/vue-types/utils'
 
@@ -136,6 +131,7 @@ export default {
     addForm,
     refundExamine,
     yzRefund,
+    followRefund,
     // editForm,
   },
 
@@ -157,14 +153,18 @@ export default {
         cw: 0,
         wc: 0,
       },
-      ordertypeList:[{code:'consultOrder',value:'咨询订单'},{code:'srvPackOrder',value:'专科服务'},{code:'youzanOrder',value:'商城订单'}],
+      ordertypeList: [
+        { code: 'consultOrder', value: '咨询订单' },
+        { code: 'srvPackOrder', value: '专科服务' },
+        { code: 'youzanOrder', value: '商城订单' },
+      ],
       queryParams: {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
         createEndTime: getCurrentMonthLast(),
         createStartTime: getDateNow(),
-        orderType:undefined,
+        orderType: undefined,
         updateEndTime: getCurrentMonthLast(),
         updateStartTime: getDateNow(),
         tabCode: '',
@@ -274,7 +274,7 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'orderfl', item.orderType?item.orderType.description:'')
+                this.$set(item, 'orderfl', item.orderType ? item.orderType.description : '')
                 // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
@@ -324,8 +324,18 @@ export default {
   methods: {
     //详情
     goExamine(record) {
+      var path = ''
+      //复诊续方
+      if (record.orderType.value == 'appPreRegister') {
+        path = '/order/followRefund'
+        //有赞
+      } else if (record.orderType.value == 'youzanOrder') {
+        path = '/order/yzRefund'
+      } else {
+        path = '/order/refundExamine'
+      }
       this.$router.push({
-        path: record.orderType.value=='youzanOrder'?'/order/yzRefund':'/order/refundExamine',
+        path: path,
         query: {
           orderId: record.applyId,
         },
@@ -773,29 +783,4 @@ export default {
 }
 </style>
      
-     <style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 115px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 137px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 72px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-</style>
+    

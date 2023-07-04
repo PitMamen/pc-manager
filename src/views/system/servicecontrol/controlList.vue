@@ -34,7 +34,7 @@
             <a-select
               class="deptselect-single"
               show-search
-              style="width: 180px"
+              style="width: 120x"
               v-model="queryParams.executeDepartmentId"
               :filter-option="false"
               :not-found-content="fetching ? undefined : null"
@@ -96,6 +96,22 @@
             <span class="name">抽查日期:</span>
             <a-range-picker style="width: 185px" :value="createValueCheck" @change="onChangeCheck" />
           </div>
+
+          <div class="search-row">
+            <span class="name">问卷名称:</span>
+            <a-select
+              @change="onselectQuestion"
+              allow-clear
+              v-model="queryParams.messageContentId"
+              placeholder="请选择问卷"
+              style="width: 120px"
+            >
+              <a-select-option v-for="(item, index) in quesData" :key="index" :value="item.questionnaireId">{{
+                item.questionnaireName
+              }}</a-select-option>
+            </a-select>
+          </div>
+
           <div class="search-row" v-if="queryParams.type == 1">
             <span class="name">患者查找:</span>
             <a-input
@@ -122,40 +138,13 @@
         <!-- </div> -->
         <div class="div-down">
           <div class="div-service-left-control">
-            <div class="left-control">
-              <span class="span-current-ques" :title="choseQues.questionnaireName">{{ choseQues.questionnaireName }}</span>
-              <!-- 分割线 -->
-              <!-- <div class="div-divider"></div> -->
-
-              <!-- <div class="global-search-wrapper" style="width: 160px; display: inline-block"> -->
-              <div class="div-text-auto">
-                <a-auto-complete
-                  class="global-search"
-                  size="large"
-                  style="width: 99%; font-size: 12px"
-                  placeholder="请输入名称查询"
-                  option-label-prop="title"
-                  @select="onSelect"
-                  @search="handleSearch"
-                >
-                  <template slot="dataSource">
-                    <a-select-option
-                      v-for="item in quesDataTemp"
-                      :key="item.questionnaireId + ''"
-                      :title="item.questionnaireName"
-                    >
-                      {{ item.questionnaireName }}
-                    </a-select-option>
-                  </template>
-                </a-auto-complete>
-              </div>
-
+            <div class="left-control" style="height: 400px">
               <div class="div-wrap-control" style="margin-top: 2%">
-                <div v-if="quesData && quesData.length > 0">
+                <div v-if="quesDataTemp && quesDataTemp.length > 0">
                   <div
                     class="div-part"
-                    :class="{ checked: item.isChecked }"
-                    v-for="(item, index) in quesData"
+                    :class="{ 'checked': item.isChecked }"
+                    v-for="(item, index) in quesDataTemp"
                     @click="onItemClick(item, index)"
                     :value="item.departmentName"
                     :key="index"
@@ -163,16 +152,21 @@
                     <span class="span-name" @click="onPartChoose(index)" :title="item.questionnaireName">
                       {{ item.questionnaireName }}
                     </span>
+
+                    <div
+                      style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"
+                    ></div>
+
                     <div class="div-rate">
-                      <span style="width: 30px; text-align: center">
+                      <span style="color: #999999">抽查率:</span>
+                      <span style="text-align: center; margin-left: 5px; color: #1890ff">
                         {{ item.checkPercentage }}
                       </span>
-                      <span style="margin-left: 5px; width: 30px; text-align: center">
+                      <span style="color: #999999; margin-left: 5px">合格率:</span>
+                      <span style="margin-left: 5px; text-align: center; color: #1890ff">
                         {{ item.passCheckPercentage }}
                       </span>
                     </div>
-                    <!-- 分割线 -->
-                    <!-- <div class="div-divider"></div> -->
                   </div>
                 </div>
                 <div v-else class="no-data">
@@ -628,6 +622,18 @@ export default {
   },
 
   methods: {
+    //筛选条件 问卷名称选择时 左侧卡片需要改变  同时刷新右边列表
+    onselectQuestion(value) {
+      let itemFind = this.quesData.find((item) => item.questionnaireId == value)
+      if (itemFind) {
+        this.quesDataTemp = []
+        this.quesDataTemp.push(itemFind)
+      } else {
+        this.quesDataTemp = this.quesData
+      }
+      this.$refs.table.refresh(true)
+    },
+
     onRadioClick(type) {
       this.queryParams.type = type
       //改变样式
@@ -855,10 +861,12 @@ export default {
     },
 
     onItemClick(item, indexClick) {
+      // console.log("kkk:",item.questionnaireName,indexClick)
       for (let index = 0; index < this.quesData.length; index++) {
-        this.$set(this.quesData[index], 'isChecked', false)
+        this.$set(this.quesDataTemp[index], 'isChecked', false)
       }
-      this.$set(this.quesData[indexClick], 'isChecked', true)
+      this.$set(this.quesDataTemp[indexClick], 'isChecked', true)
+
       this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
       this.queryParams.messageContentId = this.choseQues.questionnaireId
       this.$refs.table.refresh(true)
@@ -1024,14 +1032,14 @@ export default {
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 17.5%;
+      width: 14.5%;
       overflow: hidden;
 
       .left-control {
         display: flex;
         // padding: 20px 0 20px 20px;
-        padding: 10px;
-        border: 1px solid #e6e6e6;
+        // padding: 10px;
+        // border: 1px solid #e6e6e6;
         flex-direction: column;
         // width: 100%;
         // // height: 100%;
@@ -1070,11 +1078,12 @@ export default {
       }
 
       .div-wrap-control {
-        max-height: 420px;
+        // max-height: 420px;
+        margin-bottom: 10px;
         overflow-y: auto !important;
-        .checked {
-          color: #1890ff !important;
-        }
+        // .checked {
+        //   color: #1890ff !important;
+        // }
 
         .no-data {
           height: 300px;
@@ -1084,16 +1093,26 @@ export default {
           justify-content: center;
         }
 
+
+        .checked {
+            // color: #1890ff !important;
+            border: 1px solid #1890ff !important;
+            box-shadow: 0px 0px 4px 1px #409eff !important;
+          }
+
         .div-part {
+          padding: 8px;
+          background: rgba(0, 1, 3, 0);
+          border: 1px solid #dfe3e5;
           overflow: hidden;
           width: 95%;
           display: flex;
-          align-items: center;
-          flex-direction: row;
+          flex-direction: column;
+          margin-bottom: 8px;
           // padding-left: 5%;
           border-bottom: #e6e6e6 1px solid;
-          height: 26px;
 
+        
           &:hover {
             cursor: pointer;
           }
@@ -1103,7 +1122,6 @@ export default {
             // display: inline-block;
             flex: 1;
             height: 85%;
-            width: 60%;
             overflow: hidden; //溢出隐藏
             text-overflow: ellipsis; //超出省略号显示
             white-space: nowrap; //文字不换行
@@ -1117,7 +1135,6 @@ export default {
 
           .div-rate {
             display: flex;
-            width: 30%;
             font-size: 12px;
             align-items: center;
             flex-direction: row;
@@ -1128,11 +1145,11 @@ export default {
     }
 
     .card-right-control {
-      overflow: hidden;
+      // overflow: hidden;
       // border-left: #eee solid 1px;
-      border: #eee solid 1px;
+      // border: #eee solid 1px;
       float: right;
-      width: 81%;
+      width: 84%;
 
       /deep/ .ant-card-body {
         padding: 0px 20px !important;
@@ -1184,43 +1201,4 @@ export default {
 }
 </style>
 
-<style lang="less" scoped>
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 89px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 48px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-.ant-spin-nested-loading {
-  height: calc(100% - 40px);
-  /deep/ .ant-spin-container {
-    height: 100%;
-  }
-  .ant-spin-container {
-    .div-service-control {
-      height: 100%;
-      .ant-card {
-        height: 100%;
-      }
-    }
-  }
-}
-</style>
+

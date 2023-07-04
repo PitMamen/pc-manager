@@ -3,26 +3,64 @@
     <div class="wrap">
       <div class="left">
         <a-spin :spinning="confirmLoading_left">
-          <div class="search">
-            <a-input-search
-              style="width: 100%; height: 28px"
-              placeholder="请输入名称查询"
-              v-model="paperName"
-              @change="onChange"
-              allow-clear
-            />
-          </div>
-          <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1.length === 0" />
+          <a-input
+            allow-clear
+            placeholder="请输入问卷名称查询"
+            @keyup.enter="onselectQuestion"
+            @search="onselectQuestion"
+            @change="change"
+            style="width: 210px; margin-left: 12px; margin-bottom: 20px"
+          />
+          <!-- <a-select
+                style="width: 180px;margin-left: 12px;margin-bottom: 20px;"
+                class="deptselect-single"
+                show-search
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请输入问卷名称查询"
+                @change="onselectQuestion"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in list1" :key="index" :value="item.id">{{
+                  item.name
+                }}</a-select-option>
+              </a-select>
+           -->
+          <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1Temp.length === 0" />
           <div class="list" v-else>
             <div
-              v-for="item in list1"
+              style="display: flex; flex-direction: column"
+              v-for="item in list1Temp"
               :key="item.id"
               class="item"
               :class="{ active: item.id === currentPaper.id }"
               @click="paperClick(item)"
             >
               <span class="name" :title="item.name">{{ item.name }}</span>
-              <a-icon type="check" class="icon" />
+              <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
+
+
+              <!-- <div style="display: flex; flex-direction: row">
+                <span style="color: #999999">发送:</span>
+                <span style="margin-left: 2px; color: #409eff">2455</span>
+                <span style="color: #999999; margin-left: 10px">回收:</span>
+                <span style="margin-left: 5px; color: #409eff">5622</span>
+                <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span>
+              </div> -->
+
+
+              <div style="display: flex; flex-direction: row">
+                <span style="color: #999999">发送:</span>
+                <span style="margin-left: 2px; color: #409eff">{{ item.spotAll }}</span>
+                <span style="color: #999999; margin-left: 10px">回收:</span>
+                <span style="margin-left: 5px; color: #409eff">{{ item.spotOk }}</span>
+                <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span>
+              </div>
+
+
+
+
             </div>
           </div>
         </a-spin>
@@ -73,6 +111,28 @@
                 </a-select-option>
               </a-select>
             </div>
+
+            <!-- <div class="search-row">
+            <div style="display: flex; flex-direction: row; align-items: baseline;">
+              <span style="width: 70px">问卷名称:</span>
+              <a-select
+                style="width: 135px"
+                class="deptselect-single"
+                show-search
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="选择问卷"
+                @change="onselectQuestion"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in list1" :key="index" :value="item.id">{{
+                  item.name
+                }}</a-select-option>
+              </a-select>
+            </div>
+          </div> -->
+
             <div class="search-row">
               <span class="name">执行时间:</span>
               <a-range-picker style="width: 185px; height: 28px" :format="format" v-model="queryParam.times" />
@@ -150,6 +210,7 @@ export default {
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       confirmLoading_left: false,
       confirmLoading_right: false,
+
       // 查询参数
       queryParam: {
         times: [],
@@ -174,6 +235,7 @@ export default {
         },
       ],
       list1: [],
+      list1Temp: [],
       list2: [],
       overview: [],
       pie: [],
@@ -270,8 +332,8 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true
-    //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-    getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.params1 = res.data.records
@@ -290,6 +352,41 @@ export default {
         this.getDepartmentSelectList(undefined)
       }
     },
+
+    change(row) {
+      //触发清空
+      if ((row.gettype = 'click' && row.isTrusted)) {
+        this.list1Temp = this.list1
+      }
+    },
+
+    onselectQuestion(value) {
+      console.log('KKKK:', value.target._value)
+      var arrTemp = []
+      if (this.list1 && this.list1.length > 0) {
+        for (let index = 0; index < this.list1.length; index++) {
+          if (this.list1[index].name.indexOf(value.target._value) >= 0) {
+            arrTemp.push(this.list1[index])
+          }
+        }
+        // console.log('FFFF:', arrTemp)
+        if (arrTemp && arrTemp.length > 0) {
+          this.list1Temp = []
+          this.list1Temp = arrTemp
+        } else {
+          this.list1Temp = this.list1
+        }
+      }
+
+      // let itemFind = this.list1.filter((item) => item.name == value.target._value)
+      // if (itemFind) {
+      //   this.list1Temp = []
+      //   this.list1Temp.push(itemFind)
+      // } else {
+      //   this.list1Temp = this.list1
+      // }
+    },
+
     getParams1() {
       //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
       if (this.user.roleId == 7 || this.user.roleName == 'admin') {
@@ -314,6 +411,7 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.list1 = res.data || []
+            this.list1Temp = JSON.parse(JSON.stringify(this.list1))
             if (this.list1.length > 0) {
               this.paperClick(this.list1[0])
             }
@@ -512,6 +610,7 @@ button {
   padding-bottom: 20px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
+    margin-top: 10px;
     display: inline-block;
     vertical-align: middle;
   }
@@ -519,6 +618,7 @@ button {
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
+    margin-top: 10px;
     .name {
       margin-right: 10px;
     }
@@ -530,13 +630,13 @@ button {
 }
 </style>
 <style lang="less" scoped>
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-  }
-}
+// .ant-card {
+// height: calc(100% - 20px);
+// /deep/ .ant-card-body {
+//   height: 100%;
+//   padding-bottom: 10px !important;
+// }
+// }
 </style>
 
 <style lang="less" scoped>
@@ -551,31 +651,32 @@ button {
   height: 100%;
   justify-content: space-between;
   .left {
-    width: 221px;
+    width: 250px;
     height: 100%;
     height: calc(100vh - 151px);
-    padding-top: 15px;
-    border: 1px solid #e6e6e6;
+    // border: 1px solid #e6e6e6;
     .search {
       padding: 0px 14px;
     }
     .list {
-      height: calc(100% - 28px);
+      height: calc(100% - 0px);
       padding: 0px 14px;
       overflow-y: auto;
       .item {
+        margin-bottom: 8px;
+        padding: 8px;
+        background: rgba(0, 1, 3, 0);
+        border: 1px solid #dfe3e5;
         font-size: 12px;
         font-weight: 400;
-        line-height: 32px;
         color: #4d4d4d;
         cursor: pointer;
         overflow: hidden;
         border-bottom: 1px solid #e6e6e6;
-        &:last-child {
-          border-bottom: none;
-        }
         &.active {
-          color: #409eff;
+          border: 1px solid #409eff;
+          box-shadow: 0px 0px 4px 1px #409eff !important;
+
           .icon {
             display: block;
           }
@@ -597,6 +698,7 @@ button {
     }
   }
   .right {
+    margin-top: -10px;
     flex: 1;
     padding-left: 14px;
     .top {

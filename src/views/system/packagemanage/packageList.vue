@@ -78,8 +78,9 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a-icon type="edit" style="color: #1890ff; margin-right: 3px" />
-        <a @click="editPlan(record)">修改</a>
+        <a @click="$refs.packageCode.add(record)"><a-icon type="wechat"></a-icon>二维码</a>
+        <a-divider  type="vertical" />
+        <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
       </span>
       <span slot="cover" slot-scope="text, record">
         <!-- <img src="~@/assets/icons/weixin_icon.png" /> -->
@@ -124,6 +125,9 @@
         </a-popconfirm>
       </span>
     </s-table>
+
+    <package-code ref="packageCode" @ok="handleOk" />
+
   </a-card>
 </template>
 
@@ -133,9 +137,11 @@ import { STable } from '@/components'
 
 import { accessHospitals, getPkgList, updatePkgStatus, getCommodityClassify } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
+import packageCode from './packageCode'
 import Vue from 'vue'
 export default {
   components: {
+    packageCode,
     STable,
   },
   data() {
@@ -185,6 +191,11 @@ export default {
         {
           title: '套餐名称',
           dataIndex: 'packageName',
+        },
+
+        {
+          title: '导流包',
+          dataIndex: 'giftFlag',
         },
         {
           title: '效期',
@@ -260,8 +271,9 @@ export default {
                 this.$set(item, 'pkgValidNum', item.pkgValidNum+item.pkgValidUnit.description)
               }else{
                 this.$set(item, 'pkgValidNum', '')
-
+                
               }
+              this.$set(item, 'giftFlag', item.giftFlag==1?'是':'否')
 
               // item.createTimeDes = item.createTime.substring(0,11)
             })
@@ -464,30 +476,7 @@ export default {
   height: 1px;
 }
 
-// 分页器置底，每个页面会有适当修改，修改内容为下面calc()中的px
-.ant-card {
-  height: calc(100% - 20px);
-  /deep/ .ant-card-body {
-    height: 100%;
-    padding-bottom: 10px !important;
-    .table-wrapper {
-      height: calc(100% - 96px);
-      .ant-table-wrapper {
-        height: 100%;
-        .ant-spin-nested-loading {
-          height: 100%;
-          .ant-spin-container {
-            height: 100%;
-            .ant-table {
-              height: calc(100% - 48px);
-              overflow-y: auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
+
 </style>
 
 <!-- tree-select限制高度 -->

@@ -47,6 +47,9 @@
             >
           </div>
           <div class="div-up-right">
+            <span v-if="record.giftFlag == 1" class="span-item-name" style="font-weight: bold; margin-right: -30px">
+              导流包</span
+            >
             <span class="span-item-name" style="font-weight: bold"> 套餐起价 :</span>
             <span class="span-item-value" style="font-weight: bold; font-size: 16px">
               {{ record.startPrice || 0 + '元' }}</span
@@ -292,7 +295,12 @@
 
       <div
         class="div-pro-middle"
-        v-show="record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103"
+        v-show="
+          record.classifyCode != 101 &&
+          record.classifyCode != 102 &&
+          record.classifyCode != 103 &&
+          record.broadClassify != 4
+        "
       >
         <div class="div-title">
           <div class="div-line-blue"></div>
@@ -496,9 +504,9 @@
       </div>
 
       <div class="div-pro-btn">
-        <div style="flex: 1;"></div>
+        <div style="flex: 1"></div>
         <a-button type="primary" @click="submitData()">提交</a-button>
-        <a-button style="margin-left: 2%;" @click="cancel()">取消</a-button>
+        <a-button style="margin-left: 2%" @click="cancel()">取消</a-button>
       </div>
     </div>
   </a-spin>
@@ -678,7 +686,7 @@ export default {
       if (to.path.indexOf('configEdit') > -1) {
         console.log('watch----configEdit', to, from)
         this.record = JSON.parse(this.$route.query.recordStr)
-        console.log('record', this.record)
+        console.log('recordQQQQQ', this.record)
         this.qryServiceItemListOut('', true)
       }
     },
@@ -812,7 +820,6 @@ export default {
      * @param {*} itemTask
      */
     onSelect(indexOut, itemTask) {
-    
       console.log('itemTask ', itemTask)
       let findItem = this.serviceData.find((item) => item.id == itemTask.serviceItemId)
       itemTask.typeCode = findItem.projectType + ''
@@ -1025,13 +1032,20 @@ export default {
       })
         .then((res) => {
           if (res.code == 0) {
-            if(!this.record.doctorNames || this.record.doctorNames.length == 0){
+            if (!this.record.doctorNames || this.record.doctorNames.length == 0) {
               //如果没有配置医生 则过滤掉图文、电话、视频咨询
-              res.data.rows= res.data.rows.filter(item=>{
-              return item.projectType !==  101 && item.projectType !==  102 && item.projectType !==  103
-            })
+              res.data.rows = res.data.rows.filter((item) => {
+                return item.projectType !== 101 && item.projectType !== 102 && item.projectType !== 103
+              })
             }
-            
+
+            //如果是复诊开方  只要图文咨询项目
+            if (this.record.broadClassify == 4) {
+              res.data.rows = res.data.rows.filter((item) => {
+                return item.projectType == 101
+              })
+            }
+
             this.serviceData = res.data.rows
 
             if (isFirst) {
@@ -1123,7 +1137,7 @@ export default {
               //限制条数 图文咨询特有  且需要勾选
               if (itemIn.itemInfo.projectType == 101) {
                 let findItem = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_LIMITNUMS')
-                if (findItem&& findItem.serviceValue) {
+                if (findItem && findItem.serviceValue) {
                   this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'chatNum', findItem.serviceValue)
                   this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'needChatNum', true)
                   this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'attrIdChatNum', findItem.id)
@@ -1265,7 +1279,10 @@ export default {
             return
           }
 
-          if (!itemTask.saleAmount) {
+
+          //套餐为 导流包 允许价格输入0元
+          if (this.record.giftFlag != 1 && !itemTask.saleAmount) {
+            console.log("FFFF:",itemTask.saleAmount)
             this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务价格】')
             return
           }
@@ -1314,8 +1331,13 @@ export default {
       //   return
       // }
 
-      //咨询类的三种 不需要必选项目
-      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+      //咨询类的三种  复诊开方 不需要必选项目
+      if (
+        this.record.classifyCode != 101 &&
+        this.record.classifyCode != 102 &&
+        this.record.classifyCode != 103 &&
+        this.record.broadClassify != 4
+      ) {
         //校验必选
         for (let index = 0; index < this.configData.tasksBi.length; index++) {
           let itemTask = this.configData.tasksBi[index]
@@ -1324,7 +1346,8 @@ export default {
             return
           }
 
-          if (!itemTask.saleAmount) {
+          //套餐为 导流包 允许价格输入0元
+          if (this.record.giftFlag != 1 &&!itemTask.saleAmount) {
             this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【服务价格】')
             return
           }
@@ -1365,6 +1388,7 @@ export default {
         this.record.classifyCode != 101 &&
         this.record.classifyCode != 102 &&
         this.record.classifyCode != 103 &&
+        this.record.broadClassify != 4 &&
         this.configData.tasksBi.length > 0 &&
         !this.hasHeadImgBi
       ) {
@@ -1507,7 +1531,12 @@ export default {
       let pkgsLength = uploadData.pkgs.length
 
       //咨询类三种单独处理
-      if (this.record.classifyCode != 101 && this.record.classifyCode != 102 && this.record.classifyCode != 103) {
+      if (
+        this.record.classifyCode != 101 &&
+        this.record.classifyCode != 102 &&
+        this.record.classifyCode != 103 &&
+        this.record.broadClassify != 4
+      ) {
         //组装必选
         uploadData.pkgs.push({ itemType: 2, items: [] })
         this.configData.tasksBi.forEach((item, indexItem) => {

@@ -1,6 +1,6 @@
 <template>
   <a-modal
-  :title="record.userId?'修改人员':'新增人员'"
+    :title="record.userId ? '修改人员' : '新增人员'"
     :width="800"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -10,7 +10,20 @@
   >
     <a-spin :spinning="confirmLoading">
       <div class="div-part">
-        <div class="div-part-left">
+        <div class="recordType">
+          <div style="padding: 10px 20px" :class="{ 'checked-btn': currentTab == 'base' }" @click="checketab('base')">
+            <a-icon type="home" style="margin-right: 5px"></a-icon><span>基本信息</span>
+          </div>
+          <div
+            :class="{ 'checked-btn': currentTab == 'photo' }"
+            style="margin-left: 15px; padding: 10px 20px"
+            @click="checketab('photo')"
+          >
+            <a-icon type="idcard" style="margin-right: 5px"></a-icon><span>证件信息</span>
+          </div>
+        </div>
+
+        <div v-if="currentTab == 'base'" class="div-part-left">
           <div class="div-content">
             <a-avatar :size="48" :src="checkData.avatarUrl" icon="user" style="margin-right: 21px" />
             <div class="avator-right">
@@ -52,7 +65,10 @@
           </div>
           <div class="div-content">
             <span class="span-item-name">出生日期:</span>
-            <a-date-picker :value="checkData.birthday?moment(checkData.birthday, 'YYYY-MM-DD'):undefined"  @change="onDatePickerChange" />
+            <a-date-picker
+              :value="checkData.birthday ? moment(checkData.birthday, 'YYYY-MM-DD') : undefined"
+              @change="onDatePickerChange"
+            />
           </div>
           <div class="div-content">
             <span class="span-item-name">身份证号:</span>
@@ -103,19 +119,26 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>人员职称:</span>
             <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择人员职称">
-              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{ item.description }}</a-select-option>
+              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{
+                item.description
+              }}</a-select-option>
             </a-select>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-tree-select v-model="checkData.hospitalCode" style="min-width: 120px" :tree-data="treeData" placeholder="请选择">
+            <a-tree-select
+              v-model="checkData.hospitalCode"
+              style="min-width: 120px"
+              :tree-data="treeData"
+              placeholder="请选择"
+            >
             </a-tree-select>
           </div>
           <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">账号信息</span>
           </div>
-          
+
           <!-- 修改 -->
           <div v-if="record.userId" class="div-content">
             <a-checkbox v-model="accountChecked" disabled></a-checkbox>
@@ -129,9 +152,9 @@
               placeholder="请输入内容"
             />
           </div>
-           <!-- 新增 -->
+          <!-- 新增 -->
           <div v-else class="div-content">
-            <a-checkbox v-model="accountChecked" ></a-checkbox>
+            <a-checkbox v-model="accountChecked"></a-checkbox>
             <span class="span-item-name">创建账号:</span>
             <a-input
               v-model="checkData.loginName"
@@ -142,10 +165,9 @@
               placeholder="请输入内容"
             />
           </div>
-
         </div>
 
-        <div class="div-part-right">
+        <div v-if="currentTab == 'base'" class="div-part-right">
           <div class="div-title" style="margin-top: 0">
             <div class="div-line-blue"></div>
             <span class="span-title">分配角色</span>
@@ -170,23 +192,23 @@
           <div class="div-content" style="flex-wrap: wrap">
             <div class="checkview">
               <span class="span-check-title">图文咨询:</span>
-              <a-switch v-model="textNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="textNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">电话咨询:</span>
-              <a-switch v-model="telNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="telNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview" style="margin-right: 0">
               <span class="span-check-title">视频咨询:</span>
-              <a-switch v-model="videoNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="videoNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">复诊开方:</span>
-              <a-switch v-model="appointNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="appointNumChecked" :disabled="!accountChecked" />
             </div>
             <div class="checkview">
               <span class="span-check-title">MDT会诊:</span>
-              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked " />
+              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked" />
             </div>
           </div>
 
@@ -224,7 +246,174 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count2">{{ checkData.doctorBrief?checkData.doctorBrief.length : 0 }}/1000</span>
+            <span class="m-count2">{{ checkData.doctorBrief ? checkData.doctorBrief.length : 0 }}/1000</span>
+          </div>
+        </div>
+
+        <div v-if="currentTab == 'photo'" class="idcard-infor">
+          <!-- 身份证 -->
+          <div class="item-idcard">
+            <div>身份证照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="idcardZList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(1, value)"
+                @change="(value) => handleidcardChange(1, value)"
+              >
+                <div v-if="idcardZList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传身份证正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="idcardFList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(2, value)"
+                @change="(value) => handleidcardChange(2, value)"
+              >
+                <div v-if="idcardFList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传身份证反面图片</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <!-- 职称 -->
+          <div class="item-idcard">
+            <div style="margin-left: 12px">职称照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="zhichengZList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(3, value)"
+                @change="(value) => handleidcardChange(3, value)"
+              >
+                <div v-if="zhichengZList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传职称正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="zhichengFList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(4, value)"
+                @change="(value) => handleidcardChange(4, value)"
+              >
+                <div v-if="zhichengFList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传职称反面图片</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <!-- 资格证 -->
+          <div class="item-idcard">
+            <div>资格证照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="zhigeZList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(5, value)"
+                @change="(value) => handleidcardChange(5, value)"
+              >
+                <div v-if="zhigeZList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传资格证正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="zhigeFList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(6, value)"
+                @change="(value) => handleidcardChange(6, value)"
+              >
+                <div v-if="zhigeFList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传资格证反面图片</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <!-- 执业证照片 -->
+          <div class="item-idcard">
+            <div>执业证照片：</div>
+            <div style="right: 120px; top: 10px; margin-left: 30px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="zhiyeZList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(7, value)"
+                @change="(value) => handleidcardChange(7, value)"
+              >
+                <div v-if="zhiyeZList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传执业证正面图片</div>
+                </div>
+              </a-upload>
+            </div>
+
+            <div style="right: 120px; top: 10px; margin-left: 20px">
+              <a-upload
+                :action="actionUrlCover"
+                :multiple="true"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="zhiyeFList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(8, value)"
+                @change="(value) => handleidcardChange(8, value)"
+              >
+                <div v-if="zhiyeFList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">上传执业证反面图片</div>
+                </div>
+              </a-upload>
+            </div>
           </div>
         </div>
       </div>
@@ -234,7 +423,7 @@
 
 
 <script>
-import moment from 'moment';
+import moment from 'moment'
 import {
   getRoleList,
   queryHospitalList,
@@ -243,26 +432,57 @@ import {
   getDoctorUserDetail,
   updateDoctorUser,
   getDictDataForCodeUserType,
+  setCertificateForUserId,
+  getCaAuthInfoAdminForUserId,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import {idCardValidity,phoneValidity,emailValidity} from '@/utils/validityUtils'
-import {isObjectEmpty,isStringEmpty} from '@/utils/util'
+import { idCardValidity, phoneValidity, emailValidity } from '@/utils/validityUtils'
+import { isObjectEmpty, isStringEmpty } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
   data() {
     return {
+      previewImage: '',
+      previewVisibleidcard: false,
+      actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
+      currentTab: 'base',
       visible: false,
-      record:{},
-      isDetailTag:false,
+      record: {},
+      isDetailTag: false,
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
       fileList: [],
+      idcardZList: [],
+      idcardFList: [],
+
+      zhichengZList: [],
+      zhichengFList: [],
+
+      zhigeZList: [],
+      zhigeFList: [],
+
+      zhiyeZList: [],
+      zhiyeFList: [],
+
       danandataList: [],
       treeData: [],
+
+      photoListCheck: {
+        idcardF: '',
+        idcardZ: '',
+        practiceF: '',
+        practiceZ: '',
+        qualificationF: '',
+        qualificationZ: '',
+        titleF: '',
+        titleZ: '',
+        userId: '',
+      },
+
       checkData: {
         avatarUrl: '', //头像
         userName: '',
@@ -294,12 +514,12 @@ export default {
   methods: {
     moment,
     clearData() {
-      this.record={}
-      this.isDetailTag=false
-    this.checkData= {
+      this.record = {}
+      this.isDetailTag = false
+      this.checkData = {
         avatarUrl: '', //头像
         userName: '',
-        loginName:'',//账号
+        loginName: '', //账号
         userSex: 0,
         birthday: '', //出生日期
         identificationNo: '',
@@ -311,13 +531,34 @@ export default {
         expertInDisease: '', //擅长领域
         doctorBrief: '', //详细介绍
         roleIds: '', //分配角色
+        // 证件照 参数
+        idcardF: '',
+        idcardZ: '',
+        practiceF: '',
+        practiceZ: '',
+        qualificationF: '',
+        qualificationZ: '',
+        titleF: '',
+        titleZ: '',
+        userId: '',
       }
-      this.accountChecked= true//创建账号
-      this.textNumChecked= false
-      this.telNumChecked=false
-      this.videoNumChecked= false
-      this.appointNumChecked= false
-      this.MDTNumChecked= false
+      this.accountChecked = true //创建账号
+      this.textNumChecked = false
+      this.telNumChecked = false
+      this.videoNumChecked = false
+      this.appointNumChecked = false
+      this.MDTNumChecked = false
+
+      this.photoListCheck = {
+        idcardF: '',
+        idcardZ: '',
+        practiceF: '',
+        practiceZ: '',
+        qualificationF: '',
+        qualificationZ: '',
+        titleF: '',
+        titleZ: '',
+      }
     },
     //新增
     addModel() {
@@ -325,76 +566,301 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-
+      this.currentTab = 'base'
       this.getRolesOut()
       this.queryHospitalListOut()
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
-     
     },
-//修改
-  editModel(record) {
-    console.log(record)
+    //修改
+    editModel(record) {
+      console.log(record)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
+      this.currentTab = 'base'
       this.confirmLoading = false
-      this.record=record
-      this.isDetailTag=true
-      
-     
+      this.record = record
+      this.photoListCheck.userId = record.userId
+      this.isDetailTag = true
+
       this.queryHospitalListOut()
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
     },
+
+    // 顶部tab切换
+    checketab(type) {
+      if (this.currentTab == type) {
+        return
+      }
+      this.currentTab = type
+      // if (type == 'base') {
+        // this.getChatList(this.item.orderId)
+      // } else if (type == 'photo') {
+        // this.getphoneRecords(this.item)
+      // }
+    },
+
+    async handlePreview(type, file) {
+      console.log('GGG:', type, file)
+      if (!file.url && !file.preview) {
+        file.preview = await this.getBase64(file.originFileObj)
+      }
+      this.previewImage = file.url || file.preview
+      this.previewVisibleidcard = true
+    },
+
+    deletePhoto(type, value) {
+      if (type == 1) {
+        this.photoListCheck.idcardZ = ''
+      } else if (type == 2) {
+        this.photoListCheck.idcardF = ''
+      } else if (type == 3) {
+        this.photoListCheck.titleZ = ''
+      } else if (type == 4) {
+        this.photoListCheck.titleF = ''
+      } else if (type == 5) {
+        this.photoListCheck.qualificationZ = ''
+      } else if (type == 6) {
+        this.photoListCheck.qualificationF = ''
+      } else if (type == 7) {
+        this.photoListCheck.practiceZ = ''
+      } else if (type == 8) {
+        this.photoListCheck.practiceF = ''
+      }
+
+      console.log('删除：', value, type)
+    },
+
+    handleidcardChange(type, changeObj) {
+      // console.log('DDD:', type, changeObj)
+      if (changeObj.file.status == 'done') {
+        // changeObj.fileList.pop()
+        this.$message.success(changeObj.file.response.message)
+        if (type == 1) {
+          this.idcardZList = changeObj.fileList
+          this.photoListCheck.idcardZ = changeObj.file.response.data.fileLinkUrl
+          console.log('1111:', this.photoListCheck.idcardZ)
+        } else if (type == 2) {
+          this.idcardFList = changeObj.fileList
+          this.photoListCheck.idcardF = changeObj.file.response.data.fileLinkUrl
+          console.log('2222:', this.photoListCheck.idcardF)
+        } else if (type == 3) {
+          this.zhichengZList = changeObj.fileList
+          this.photoListCheck.titleZ = changeObj.file.response.data.fileLinkUrl
+          console.log('3333:', this.photoListCheck.titleZ)
+        } else if (type == 4) {
+          this.zhichengFList = changeObj.fileList
+          this.photoListCheck.titleF = changeObj.file.response.data.fileLinkUrl
+          console.log('4444:', this.photoListCheck.titleF)
+        } else if (type == 5) {
+          this.zhigeZList = changeObj.fileList
+          this.photoListCheck.qualificationZ = changeObj.file.response.data.fileLinkUrl
+          console.log('5555:', this.photoListCheck.qualificationZ)
+        } else if (type == 6) {
+          this.zhigeFList = changeObj.fileList
+          this.photoListCheck.qualificationF = changeObj.file.response.data.fileLinkUrl
+          console.log('6666:', this.photoListCheck.qualificationF)
+        } else if (type == 7) {
+          this.zhiyeZList = changeObj.fileList
+          this.photoListCheck.practiceZ = changeObj.file.response.data.fileLinkUrl
+          console.log('7777:', this.photoListCheck.practiceZ)
+        } else if (type == 8) {
+          this.zhiyeFList = changeObj.fileList
+          this.photoListCheck.practiceF = changeObj.file.response.data.fileLinkUrl
+          console.log('8888:', this.photoListCheck.practiceF)
+        }
+      } else {
+        if (type == 1) {
+          this.idcardZList = changeObj.fileList
+        } else if (type == 2) {
+          this.idcardFList = changeObj.fileList
+        } else if (type == 3) {
+          this.zhichengZList = changeObj.fileList
+        } else if (type == 4) {
+          this.zhichengFList = changeObj.fileList
+        } else if (type == 5) {
+          this.zhigeZList = changeObj.fileList
+        } else if (type == 6) {
+          this.zhigeFList = changeObj.fileList
+        } else if (type == 7) {
+          this.zhiyeZList = changeObj.fileList
+        } else if (type == 8) {
+          this.zhiyeFList = changeObj.fileList
+        }
+      }
+
+      // console.log('avatarUrl:' + this.previewImage)
+    },
+
+    // 上传头像
+    handleChange(changeObj) {
+      if (changeObj.file.status == 'done') {
+        if (changeObj.file.response.code != 0) {
+          this.$message.error(changeObj.file.response.message)
+        } else {
+          if (changeObj.fileList.length == 0) {
+            this.checkData.avatarUrl = ''
+          } else {
+            this.checkData.avatarUrl = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
+          }
+        }
+      }
+    },
+
+    handleCancelBanner() {
+      this.previewVisibleidcard = false
+    },
+
     //用户详情
-    getDoctorUserDetailOut(userId){
+    getDoctorUserDetailOut(userId) {
       getDoctorUserDetail({
         userId: userId,
       }).then((res) => {
         if (res.code == 0) {
-          res.data.userSex= res.data.userSex=='男'?0:res.data.userSex=='女'?1:2
+          res.data.userSex = res.data.userSex == '男' ? 0 : res.data.userSex == '女' ? 1 : 2
           // var birthday=res.data.birthday
-          // var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6) 
+          // var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6)
           // res.data.birthday=birthday2
-          if(res.data.loginName){
-            this.accountChecked=true
-          }else{
-            this.accountChecked=false
+          if (res.data.loginName) {
+            this.accountChecked = true
+          } else {
+            this.accountChecked = false
           }
-         
-          this.checkData=res.data
-          if(res.data.registerTypeOptions){
-            if(res.data.registerTypeOptions.indexOf("textNum")>-1){
-              this.textNumChecked=true
+
+          //   idcardF: '',
+          // idcardZ: '',
+          // practiceF: '',
+          // practiceZ: '',
+          // qualificationF: '',
+          // qualificationZ: '',
+          // titleF: '',
+          // titleZ: '',
+
+          this.checkData = res.data
+
+          this.idcardZList = []
+          this.idcardFList = []
+          this.zhichengZList = []
+          this.zhichengFList = []
+          this.zhigeZList = []
+          this.zhigeFList = []
+          this.zhiyeZList = []
+          this.zhiyeFList = []
+
+          // 身份证
+          if (this.checkData.idcardF) {
+            this.photoListCheck.idcardF = this.checkData.idcardF
+            this.idcardFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.idcardF,
+            })
+          }
+
+          if (this.checkData.idcardZ) {
+            this.photoListCheck.idcardZ = this.checkData.idcardZ
+            this.idcardZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.idcardZ,
+            })
+          }
+
+          // 职称
+          if (this.checkData.titleZ) {
+            this.photoListCheck.titleZ = this.checkData.titleZ
+            this.zhichengZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.titleZ,
+            })
+          }
+
+          if (this.checkData.titleF) {
+            this.photoListCheck.titleF = this.checkData.titleF
+            this.zhichengFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.titleF,
+            })
+          }
+
+          // 资格
+          if (this.checkData.qualificationZ) {
+            this.photoListCheck.qualificationZ = this.checkData.qualificationZ
+            this.zhigeZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.qualificationZ,
+            })
+          }
+
+          if (this.checkData.qualificationF) {
+            this.photoListCheck.qualificationF = this.checkData.qualificationF
+            this.zhigeFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.qualificationF,
+            })
+          }
+
+          // 职业
+          if (this.checkData.practiceZ) {
+            this.photoListCheck.practiceZ = this.checkData.practiceZ
+            this.zhiyeZList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.practiceZ,
+            })
+          }
+
+          if (this.checkData.practiceF) {
+            this.photoListCheck.practiceF = this.checkData.practiceF
+            this.zhiyeFList.push({
+              uid: '-1',
+              name: '照片',
+              status: 'done',
+              url: this.checkData.practiceF,
+            })
+          }
+
+          if (res.data.registerTypeOptions) {
+            if (res.data.registerTypeOptions.indexOf('textNum') > -1) {
+              this.textNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("telNum")>-1){
-              this.telNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('telNum') > -1) {
+              this.telNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("videoNum")>-1){
-              this.videoNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('videoNum') > -1) {
+              this.videoNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("appointNum")>-1){
-              this.appointNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('appointNum') > -1) {
+              this.appointNumChecked = true
             }
-            if(res.data.registerTypeOptions.indexOf("consult")>-1){
-              this.MDTNumChecked=true
+            if (res.data.registerTypeOptions.indexOf('consult') > -1) {
+              this.MDTNumChecked = true
             }
           }
-         
-         
 
           this.getRolesOut()
         }
       })
     },
 
-
     /**
      * 人员类型
      */
-     getDictDataForCodeUserTypeOut() {
+    getDictDataForCodeUserTypeOut() {
       this.confirmLoading = true
       getDictDataForCodeUserType()
         .then((res) => {
@@ -412,15 +878,9 @@ export default {
         })
     },
 
-
-
-
-
-
-
-      //人员职称
-      getProfessionalTitles() {
-        professionalTitles().then((res) => {
+    //人员职称
+    getProfessionalTitles() {
+      professionalTitles().then((res) => {
         if (res.code == 0) {
           this.ryzcList = res.data
         }
@@ -436,15 +896,14 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           var roleList = []
-          var resdata=res.data.records
-          for (let i = 0; i <resdata.length; i++) {
+          var resdata = res.data.records
+          for (let i = 0; i < resdata.length; i++) {
             if (resdata[i].state == 1) {
-              
-              if(this.record.userId && this.checkData.roleIds){
+              if (this.record.userId && this.checkData.roleIds) {
                 //如果是详情 显示已勾选
-                this.checkData.roleIds.forEach(id=>{
-                  if(id == resdata[i].roleId){
-                    resdata[i].checked=true
+                this.checkData.roleIds.forEach((id) => {
+                  if (id == resdata[i].roleId) {
+                    resdata[i].checked = true
                   }
                 })
               }
@@ -497,48 +956,46 @@ export default {
         })
     },
     beforeUpload(file) {
-      const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
-      if (!isJpgOrPng) {
-        this.$message.error('请选择正确的图片格式')
-        return false
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('图片大小不能超过2M')
-        return false
-      }
-      return true
+      // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+      // if (!isJpgOrPng) {
+      //   this.$message.error('请选择正确的图片格式')
+      //   return false
+      // }
+      // const isLt2M = file.size / 1024 / 1024 < 2
+      // if (!isLt2M) {
+      //   this.$message.error('图片大小不能超过2M')
+      //   return false
+      // }
+      // return true
+
+      return new Promise((resolve, reject) => {
+        const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
+        if (!isJpgOrPng) {
+          this.$message.error('请选择正确的图片格式')
+          return reject(false)
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2
+        if (!isLt2M) {
+          this.$message.error('图片大小不能超过2M')
+          return reject(false)
+        }
+
+        return resolve(true)
+      })
     },
-   
-    momentfun(){
-     
-      if(this.checkData.birthday){
+
+    momentfun() {
+      if (this.checkData.birthday) {
         return moment(this.checkData.birthday, 'YYYYMMDD')
-      }else{
+      } else {
         return undefined
       }
     },
-    handleChange(changeObj) {
-      console.log(changeObj)
-      if (changeObj.file.status == 'done') {
-        if (changeObj.file.response.code != 0) {
-          this.$message.error(changeObj.file.response.message)
-        } else {
-          if (changeObj.fileList.length == 0) {
-            this.checkData.avatarUrl = ''
-          } else {
-            this.checkData.avatarUrl = changeObj.fileList[changeObj.fileList.length - 1].response.data.fileLinkUrl
-          }
-        }
-      }
 
-      console.log('avatarUrl:' + this.checkData.avatarUrl)
-    },
     telInputChange(e) {
-      if(!this.record.userId){
-        this.checkData.loginName=this.checkData.phone
+      if (!this.record.userId) {
+        this.checkData.loginName = this.checkData.phone
       }
-    
     },
     onDatePickerChange(date, dateString) {
       console.log(date, dateString)
@@ -546,32 +1003,12 @@ export default {
     },
 
     handleSubmit() {
+      // 基础信息的提交
       console.log(this.checkData)
-      
-
-      // if (isStringEmpty(this.checkData.avatarUrl)) {
-      //   this.$message.error('请上传头像')
-      //   return
-      // }
       if (isStringEmpty(this.checkData.userName)) {
         this.$message.error('请输入姓名')
         return
       }
-      // if (isStringEmpty(this.checkData.birthday)) {
-      //   this.$message.error('请选择出生日期')
-      //   return
-      // }
-      // if (isStringEmpty(this.checkData.identificationNo)) {
-      //   this.$message.error('请输入身份证号码')
-      //   return
-      // }
-
-      // var idRes = idCardValidity(this.checkData.identificationNo)
-      // console.log(idRes)
-      // if (!idRes.result) {
-      //   this.$message.error('请输入正确的身份证号码')
-      //   return
-      // }
 
       if (isStringEmpty(this.checkData.phone)) {
         this.$message.error('请输入联系电话')
@@ -608,9 +1045,9 @@ export default {
       if (this.accountChecked) {
         //如果勾选了创建账号
         if (isStringEmpty(this.checkData.loginName)) {
-        this.$message.error('请创建账号')
-        return
-      }
+          this.$message.error('请创建账号')
+          return
+        }
         //角色
         var checkedRoleList = []
         this.roleList.forEach((item) => {
@@ -636,88 +1073,114 @@ export default {
          * "consult": //MDT会诊
          * "vipNum": //VIP号源
          */
-         var  registerTypeOptions=''
-      if(this.textNumChecked){
-        registerTypeOptions='textNum'
-      }
-    
-      if(this.telNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',telNum'
-        }else{
-          registerTypeOptions='telNum'
+        var registerTypeOptions = ''
+        if (this.textNumChecked) {
+          registerTypeOptions = 'textNum'
         }
-      
-      }
-     
-      if(this.videoNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',videoNum'
-        }else{
-          registerTypeOptions='videoNum'
+
+        if (this.telNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',telNum'
+          } else {
+            registerTypeOptions = 'telNum'
+          }
         }
-       
-      }
-      
-      if(this.appointNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',appointNum'
-        }else{
-          registerTypeOptions='appointNum'
+
+        if (this.videoNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',videoNum'
+          } else {
+            registerTypeOptions = 'videoNum'
+          }
         }
-     
-      }
-    
-      if(this.MDTNumChecked){
-        if(registerTypeOptions){
-          registerTypeOptions=registerTypeOptions+',consult'
-        }else{
-          registerTypeOptions='consult'
+
+        if (this.appointNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',appointNum'
+          } else {
+            registerTypeOptions = 'appointNum'
+          }
         }
-      
+
+        if (this.MDTNumChecked) {
+          if (registerTypeOptions) {
+            registerTypeOptions = registerTypeOptions + ',consult'
+          } else {
+            registerTypeOptions = 'consult'
+          }
+        }
       }
-     
-    }
-   
+
       var postData = {
         identificationNo: this.checkData.identificationNo,
-        userName:this.checkData.userName,
-        userSex:this.checkData.userSex=='0'?'男':this.checkData.userSex=='1'?'女':'未知',
+        userName: this.checkData.userName,
+        userSex: this.checkData.userSex == '0' ? '男' : this.checkData.userSex == '1' ? '女' : '未知',
         email: this.checkData.email,
         phone: this.checkData.phone,
         avatarUrl: this.checkData.avatarUrl,
-        birthday: this.checkData.birthday?this.checkData.birthday.split('-').join(''):'',
+        birthday: this.checkData.birthday ? this.checkData.birthday.split('-').join('') : '',
         doctorBrief: this.checkData.doctorBrief,
         expertInDisease: this.checkData.expertInDisease,
-        userType:this.checkData.userType, //人员类型
+        userType: this.checkData.userType, //人员类型
         hospitalCode: this.checkData.hospitalCode,
-        professionalTitle: this.checkData.professionalTitle, //职称 
+        professionalTitle: this.checkData.professionalTitle, //职称
+        idcardZ: this.photoListCheck.idcardZ,
+        idcardF: this.photoListCheck.idcardF,
+        practiceF: this.photoListCheck.practiceF,
+        practiceZ: this.photoListCheck.practiceZ,
+        qualificationF: this.photoListCheck.qualificationF,
+        qualificationZ: this.photoListCheck.qualificationZ,
+        titleF: this.photoListCheck.titleF,
+        titleZ: this.photoListCheck.titleZ,
       }
       if (this.accountChecked) {
-        postData.loginName= this.checkData.loginName 
-        postData.roleIds= this.checkData.roleIds
-        postData.registerTypeOptions= registerTypeOptions //服务选项
+        postData.loginName = this.checkData.loginName
+        postData.roleIds = this.checkData.roleIds
+        postData.registerTypeOptions = registerTypeOptions //服务选项
       }
 
-      console.log('postData',postData)
+      console.log('postData', postData)
       this.confirmLoading = true
-      if(this.record.userId){
-      //修改
-      postData.userId=this.record.userId
-      this.editUser(postData)
-      }else{
-      //新增
-      this.addUser(postData)
+      if (this.record.userId) {
+        //修改
+        postData.userId = this.record.userId
+        this.editUser(postData)
+      } else {
+        //新增
+        this.addUser(postData)
       }
-
     },
+
+    //修改 医生执照 照片
+    // setCertificateForUserIdOut() {
+    //   setCertificateForUserId(this.photoListCheck).then((res) => {
+    //     if (res.code == 0) {
+    //     }
+    //   })
+    // },
+
+    //获取执照
+    // getCaAuthInfoAdminForUserIdOut() {
+    // this.idcardZList= [],
+    // this.idcardFList= [],
+    // this.zhichengZList= [],
+    // this.zhichengFList= [],
+    // this.zhigeZList= [],
+    // this.zhigeFList= [],
+    // this.zhiyeZList= [],
+    // this.zhiyeFList= [],
+    //   getCaAuthInfoAdminForUserId(this.photoListCheck.userId).then((res) => {
+    //     if (res.code == 0) {
+    //     }
+    //   })
+    // },
 
     addUser(postData) {
       createDoctorUser(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
           this.visible = false
-         
+
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
@@ -730,7 +1193,7 @@ export default {
         if (res.code == 0) {
           this.$message.success('修改成功！')
           this.visible = false
-         
+
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
@@ -751,17 +1214,17 @@ export default {
 </script>
 <style lang="less" scoped>
 .m-count {
-    position: absolute;
-    font-size: 12px;
-    bottom: 2px;
-    right: 10px;
-  }
-  .m-count2 {
-    position: absolute;
-    font-size: 12px;
-    bottom: 13px;
-    right: 10px;
-  }
+  position: absolute;
+  font-size: 12px;
+  bottom: 2px;
+  right: 10px;
+}
+.m-count2 {
+  position: absolute;
+  font-size: 12px;
+  bottom: 13px;
+  right: 10px;
+}
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
@@ -787,8 +1250,39 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 530px;
+  height: 580px;
   margin-top: 10px;
+
+  .idcard-infor {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+
+    .item-idcard {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-left: 25px;
+      margin-bottom: 8px;
+    }
+  }
+
+  .recordType {
+    flex-wrap: wrap;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .checked-btn {
+    background-color: #eff7ff;
+    color: #1890ff;
+    border-bottom: #1890ff 2px solid;
+  }
 
   .div-part-left {
     float: left;

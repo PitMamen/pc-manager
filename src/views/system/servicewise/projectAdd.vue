@@ -891,7 +891,6 @@ export default {
       }
 
       let newData = this.sourceData.filter((item) => item.value != this.projectData.basePlan.metaConfigureId)
-
       this.$refs.addStop.add(
         indexMisson,
         this.projectData.tasks[indexMisson].stopTaskDetailDtos,
@@ -916,6 +915,7 @@ export default {
         this.$message.error('请选择来源名单')
         return
       }
+      console.log("PPPP:",this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos)
       this.$refs.addFilter.add(
         indexMisson,
         this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos,

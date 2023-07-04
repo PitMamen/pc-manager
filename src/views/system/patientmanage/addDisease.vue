@@ -78,12 +78,16 @@ export default {
       }
     },
     //新增
-    addDis(tagsTypeId) {
+    addDis(medicalId) {
       this.clearData()
       this.titleTab = '新增病种'
       this.visible = true
       this.confirmLoading = false
-    //   this.checkData.medicalId = tagsTypeId
+      if(medicalId){
+        var ids = medicalId.toString().split(',')
+        this.checkData.medicalId = ids[ids.length-1]
+      }
+      
       this.gettreeMedicalSubjectsOut()
     },
 

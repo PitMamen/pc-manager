@@ -37,17 +37,18 @@
             <div class="div-total-one">
               <span class="span-item-name"><span style="color: red">*</span> 所属科室 :</span>
               <a-select
+              style="height: 30px !important;"
+                show-search
                 :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
                 v-model="checkData.departmentId"
                 allow-clear
                 placeholder="请选择科室"
-                show-search
-                :not-found-content="fetching ? undefined : null"
                 @change="onDepartmentSelectChange"
                 @search="onDepartmentSelectSearch"
               >
                 <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-                <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
+                <a-select-option v-for="(item, index) in ksTypeData" :key="index" :value="item.department_id">{{
                   item.department_name
                 }}</a-select-option>
               </a-select>
@@ -126,11 +127,11 @@
 import {
   getArticleByIdNew,
   modifyArticle,
+  getDepartmentListForSelect,
   getDiseases,
   saveArticleWeixin,
   getArticleCategoryList,
   addArticle,
-  getDepartmentListForSelect,
 } from '@/api/modular/system/posManage'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -142,7 +143,6 @@ export default {
   components: {},
   data() {
     return {
-      originData: [],
       fetching: false,
       visible: false,
       confirmLoading: false,
@@ -192,7 +192,6 @@ export default {
   methods: {
     clearData() {
       this.articleId = -1
-      this.originData=[]
       this.record = {}
       ;(this.checkData = {
         title: '',
@@ -252,6 +251,30 @@ export default {
       })
     },
 
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, undefined).then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.ksTypeData = res.data.records
+        }
+      })
+    },
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.ksTypeData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.ksTypeData = []
+        this.getDepartmentSelectList(undefined)
+      }
+      // this.$refs.table.refresh(true)
+    },
 
     goBack() {
       window.history.back()
@@ -264,29 +287,6 @@ export default {
       this.getDiseasesOut(code)
     },
 
-    //获取管理的科室 可首拼
-    getDepartmentSelectList(departmentName) {
-      this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
-        this.fetching = false
-        if (res.code == 0) {
-          this.originData = res.data.records
-        }
-      })
-    },
-    //科室搜索
-    onDepartmentSelectSearch(value) {
-      this.originData = []
-      this.getDepartmentSelectList(value)
-    },
-    //科室选择变化
-    onDepartmentSelectChange(value) {
-      if (value === undefined || value.length == 0) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
-      }
-    },
 
     onSelect(departmentId) {
       //选择类别
