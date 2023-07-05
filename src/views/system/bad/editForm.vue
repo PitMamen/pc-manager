@@ -146,7 +146,7 @@
           :labelCol="labelCol"
           :wrapperCol="wrapperCol"
           has-feedback
-          style="position: relative; margin-top: 10px"
+          style="position: relative; margin-top: 10px; width: 500px"
         >
           <a-date-picker
             v-decorator="['uploadTime', { rules: [{ required: false, message: '请选择！' }] }]"
@@ -401,7 +401,10 @@ export default {
   font-size: 12px;
 
   .ant-calendar-picker {
-    // min-width: 161px !important;
+    width: 370px !important;
+  }
+  .ant-input {
+    width: 377px !important;
   }
 
   .wrap-info {
