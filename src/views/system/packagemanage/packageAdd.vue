@@ -1327,6 +1327,14 @@ export default {
 }
 </script>
 
+<style >
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 222px !important;
+}
+</style>
+
+
 <style lang="less" scoped>
 /deep/ .ant-checkbox-wrapper {
   font-size: 12px !important;
