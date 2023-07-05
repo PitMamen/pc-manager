@@ -1212,6 +1212,23 @@ export default {
   },
 }
 </script>
+
+
+
+<style lang="less" scoped>
+.ant-select-tree-dropdown {
+  max-height: 40vh !important;
+  top: 420px !important;
+}
+</style>
+
+
+
+
+
+
+
+
 <style lang="less" scoped>
 .m-count {
   position: absolute;
