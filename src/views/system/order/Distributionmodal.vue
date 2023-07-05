@@ -53,7 +53,7 @@
 import { updateExpressInfo } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
+import { isObjectEmpty, isStringEmpty, isArrayEmpty,formatDate } from '@/utils/util'
 import Vue from 'vue'
 import moment from 'moment'
 export default {
@@ -66,7 +66,7 @@ export default {
       headers: {},
       confirmLoading: false,
       checkData: {
-        expressDate: '',
+        expressDate: formatDate(new Date()),
         expressName: '',
         expressNo: '',
         orderId: 0,
@@ -79,11 +79,22 @@ export default {
     moment,
     clearData() {
       this.checkData = {
-        expressDate: '',
+        expressDate:this.formatDate(new Date()),
         expressNo: '',
         expressName: '',
       }
     },
+
+    formatDate(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
 
     // 配送
     editmodal(orderId) {
