@@ -1288,13 +1288,13 @@
           <div class="left">
             <div class="title">基本信息</div>
             <div class="list" style="height: 420px">
-              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!phoneFollowListData.id" />
+              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!videoFollowListData.id" />
               <div v-else>
                 <div class="top-content">
                   <div class="div-content">
                     <a-avatar
-                      :src="(phoneFollowListData.docInfo || {}).avatarUrl"
-                      v-if="(phoneFollowListData.docInfo || {}).avatarUrl"
+                      :src="(videoFollowListData.docInfo || {}).avatarUrl"
+                      v-if="videoFollowListData.docInfo.avatarUrl != null"
                       icon="user"
                       style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
                     />
@@ -1306,19 +1306,19 @@
                     <div class="nom-content">
                       <div class="row-content">
                         <div style="font-size: 14px; color: #1a1a1a">
-                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.userName : '-' || '-' }}
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
                         </div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
-                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.professionalTitle : '-' || '-' }}
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.professionalTitle : '-' || '-' }}
                         </div>
                       </div>
 
                       <div class="row-content">
                         <div style="font-size: 14px; color: #1a1a1a">
-                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.hospitalName : '-' || '-' }}
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.hospitalName : '-' || '-' }}
                         </div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
-                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.departmentName : '-' || '-' }}
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.departmentName : '-' || '-' }}
                         </div>
                       </div>
                     </div>
@@ -1326,15 +1326,15 @@
                   <div class="line"></div>
                   <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
                     套餐名称:{{
-                      phoneFollowListData.rightsUseRecordStatus
-                        ? phoneFollowListData.rightsUseRecordStatus.serviceItemName
+                      videoFollowListData.rightsUseRecordStatus
+                        ? videoFollowListData.rightsUseRecordStatus.serviceItemName
                         : '-' || '-'
                     }}
                   </div>
                   <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
                     服务时长:{{
-                      phoneFollowListData.rightsUseRecordStatus
-                        ? phoneFollowListData.rightsUseRecordStatus.serviceTime
+                      videoFollowListData.rightsUseRecordStatus
+                        ? videoFollowListData.rightsUseRecordStatus.serviceTime
                         : '-' || '-'
                     }}分钟
                   </div>
@@ -1350,8 +1350,8 @@
                         <div class="docpoint"></div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                           意向预约时间:{{
-                            phoneFollowListData.rightsUseRecordStatus
-                              ? phoneFollowListData.rightsUseRecordStatus.appointPeriod
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.appointPeriod
                               : '-' || '-'
                           }}
                         </div>
@@ -1360,10 +1360,11 @@
                       <div class="colum-line"></div>
                       <div class="row-content">
                         <div class="docpoint"></div>
+                        <!-- TODO 这里可能要改字段 -->
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          设置电话时间:{{
-                            phoneFollowListData.rightsUseRecordStatus
-                              ? phoneFollowListData.rightsUseRecordStatus.confirmPeriod
+                          医生确认时间:{{
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
                               : '-' || '-'
                           }}
                         </div>
@@ -1372,8 +1373,8 @@
                       <div class="row-content">
                         <div class="docpoint"></div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          实际拨打时间:{{
-                            voiceListData && voiceListData.length > 0 ? voiceListData[0].callTime : '-' || '-'
+                          实际视频时间:{{
+                            videoListData && videoListData.length > 0 ? videoListData[0].callTime : '-' || '-'
                           }}
                         </div>
                       </div>
@@ -1381,8 +1382,8 @@
                       <div class="row-content" style="padding-bottom: 15px">
                         <div class="docpoint"></div>
                         <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
-                            voiceListData && voiceListData.length > 0 ? voiceListData[0].endTime : '-' || '-'
+                          结束问诊时间:{{
+                            videoListData && videoListData.length > 0 ? videoListData[0].endTime : '-' || '-'
                           }}
                         </div>
                       </div>
@@ -1495,7 +1496,9 @@ export default {
       wzInfo1: {},
       wzInfo2: {},
       phoneFollowListData: {},
+      videoFollowListData: {},
       timelineData: {},
+      timelineDataVideo: {},
       voiceListData: [],
       videoListData: [
         {
@@ -1546,7 +1549,7 @@ export default {
       currentItem: 0,
       clickType: 101,
       showdhTab: true, //隐藏电话咨询tab标识
-      jumbType: 3,
+      jumpType: 3,
       id: '',
       preDetailData: {
         diagnosis: '',
@@ -1573,7 +1576,7 @@ export default {
       // console.log('HAHAH：', item)
       this.visible = true
       this.jumpType = Type
-      if (this.jumbType == 1) {
+      if (this.jumpType == 1) {
         this.tabClick(1)
       } else if (this.jumpType == 3) {
         this.tabClick(3)
@@ -1666,6 +1669,10 @@ export default {
         this.getPreListByRightsIdOut(this.item.id)
       }
       if (this.tab === 7 && !this.tab7Flag) {
+        // this.chatItem = {}
+        // this.chatList = []
+        this.videoFollowListData = {}
+        this.getVideoRecords(this.item)
         // this.chufangItemNo = -1
         // this.chufangList = []
         // this.getPreListByRightsIdOut(this.item.id)
@@ -1891,6 +1898,33 @@ export default {
             this.confirmLoading = false
           })
       }
+    },
+
+    //电话咨询记录
+    getVideoRecords(item) {
+      this.confirmLoading = true
+      this.timelineData = {}
+      this.voiceListData = []
+      // if (this.jumpType == 4) {
+      list4({
+        rightsId: item.id,
+      })
+        .then((res) => {
+          console.log('getVideoRecords', res.data)
+          this.tab7Flag = true
+          this.videoFollowListData = res.data || []
+          if (this.videoFollowListData.rightsUseRecordStatus) {
+            this.timelineDataVideo = this.videoFollowListData.rightsUseRecordStatus
+          } else {
+            this.timelineDataVideo = {}
+          }
+
+          // this.videoListData = this.videoFollowListData.voiceTapeInfo //TODO 这里处理视频数据
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+      // }
     },
 
     handleSubmit() {

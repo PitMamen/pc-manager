@@ -97,7 +97,7 @@ export default {
       // 查询参数
       queryParam: {
         times: [],
-        serviceItemType: 102,
+        serviceItemType: 103,//视频咨询
       },
       format: 'YYYY-MM-DD',
       statusSelects: [
