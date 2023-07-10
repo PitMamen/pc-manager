@@ -89,14 +89,20 @@
 
     <div class="div-service-user" style="margin-top: 10px">
       <span class="span-item-name" style="margin-top: 5px; margin-left: 5px"> 监管编码 :</span>
-      <a-input
-        class="span-item-value"
-        v-model="queryParams.supervisionCode"
-        :maxLength="30"
-        style="display: inline-block; width: 248px; margin-left: 8px"
+      <a-select
+        style="width: 248px; margin-left: 9px"
+        v-model="queryParams.subjectCode"
         allow-clear
-        placeholder="请输入监管编码 "
-      />
+        show-search
+        :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+        placeholder="请选择科室类型"
+        @search="onSelectSearch"
+      >
+        <a-select-option v-for="(item, index) in treeCodeData" :key="index" :value="item.subjectCode">{{
+          item.subjectName
+        }}</a-select-option>
+      </a-select>
     </div>
 
 
@@ -177,6 +183,7 @@ import {
   queryHospitalList,
   getDictDataForCodeDepartType,
   getDiseaseTypePageList,
+  getTdMedicalSubjectPageListForVer,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
@@ -196,6 +203,8 @@ export default {
       userId: '',
       timeStr: '',
       originData: [],
+      fetching: false,
+      treeCodeData: [],
       internetType: false,
       isFullDiseaseType: false,
       previewVisible: false,
@@ -216,7 +225,7 @@ export default {
         isFullDisease: '',
         departmentIntroduce: '',
         departmentId: '',
-        supervisionCode:'',
+        subjectCode:undefined,
         departmentType: undefined,
         managerDiseaseType: undefined,
       },
@@ -273,14 +282,40 @@ export default {
       this.queryParams.departmentOrder = record.department_order
       this.queryParams.departmentType = record.department_type
       this.queryParams.departmentId = record.department_id
-      this.queryParams.supervisionCode = record.supervisionCode
+      this.queryParams.subjectCode = record.subject_code
       this.internetType = record.is_internet_hospital == 1
       this.isFullDiseaseType = record.is_full_disease == 1
       // this.getParentList()
       this.queryHospitalListOut()
       this.getDictDataForCodeorgDepartTypeOut()
       this.getDiseaseTypePageListOut()
+      this.getgetTdMedicalSubjectPageListForVerOut('')
     },
+
+
+ //编码搜索
+ onSelectSearch(value) {
+      this.treeCodeData = []
+      this.getgetTdMedicalSubjectPageListForVerOut(value)
+    },
+
+
+    getgetTdMedicalSubjectPageListForVerOut(name) {
+      this.fetching = true
+      getTdMedicalSubjectPageListForVer({subjectName:name})
+        .then((res) => {
+          this.fetching = false
+          if (res.code == 0 && res.data.length > 0) {
+            this.treeCodeData = res.data
+          } else {
+            this.treeCodeData =[]
+          }
+          
+        })
+    },
+
+
+
 
     /**
      * 获取病种列表
@@ -520,8 +555,9 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
-      this.queryParams.supervisionCode = ''
+      this.queryParams.subjectCode=undefined,
       this.queryParams.departmentType = undefined
+     
     },
 
     /**
