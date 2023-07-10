@@ -36,7 +36,7 @@
           </div>
 
           <div
-            v-show="jumpType != 5 && jumpType != 6 && jumpType != 3"
+            v-show="jumpType != 5 && jumpType != 6 && jumpType != 3 && jumpType != 7"
             class="tab tab4"
             :class="{ active: tab === 4 }"
             @click="tabClick(4)"
@@ -45,10 +45,15 @@
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
           </div>
-          <div class="tab tab5" :class="{ active: tab === 6 }" @click="tabClick(6)">
+          <div v-show="jumpType != 7" class="tab tab5" :class="{ active: tab === 6 }" @click="tabClick(6)">
             <img src="@/assets/icons/wenzhen/chuf.png" v-if="tab === 6" />
             <img src="@/assets/icons/wenzhen/chuf1.png" v-else />
             <span>处方记录</span>
+          </div>
+          <div v-show="jumpType == 7" class="tab tab5" :class="{ active: tab === 7 }" @click="tabClick(7)">
+            <img src="@/assets/icons/wenzhen/video.png" v-if="tab === 7" />
+            <img src="@/assets/icons/wenzhen/video_not.png" v-else />
+            <span>视频记录</span>
           </div>
         </div>
 
@@ -375,13 +380,17 @@
 
                   <div style="margin-left: 10px; margin-top: 10px">
                     开方医生：
-                    <img style="height: 25px;" v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile" :src="preDetailData.doctorCerFile" />
+                    <img
+                      style="height: 25px"
+                      v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile"
+                      :src="preDetailData.doctorCerFile"
+                    />
                     <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
-                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
@@ -389,11 +398,10 @@
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">
                   1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
                 </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em;margin-bottom: 10px;">
+                <div style="margin-left: 10px; color: #999999; font-size: 1em; margin-bottom: 10px">
                   2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
                   品一经发出，不得退换
                 </div>
-
 
                 <div class="big-kuang">
                   <div
@@ -403,36 +411,49 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
-                    发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                    发货方式：{{
+                      preDetailData.medicalInfo.deliverType ? preDetailData.medicalInfo.deliverType.description : ''
+                    }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px"
+                  >
                     收货地址： {{ preDetailData.medicalInfo.deliverAddress }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     收货人： {{ preDetailData.medicalInfo.deliverName }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     电话： {{ preDetailData.medicalInfo.deliverMobile }}
                   </div>
-                  <div  v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     物流公司： {{ preDetailData.medicalInfo.expressName }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     物流单号： {{ preDetailData.medicalInfo.expressNo }}
                   </div>
 
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     发货日期： {{ preDetailData.medicalInfo.expressDate }}
                   </div>
                 </div>
-
-
-
-
-
-
-
               </div>
 
               <div
@@ -641,108 +662,107 @@
             <div class="title">基本信息</div>
             <div class="list">
               <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!phoneFollowListData.id" />
-              <div  v-else>
+              <div v-else>
+                <div class="top-content">
+                  <div class="div-content">
+                    <a-avatar
+                      :src="(phoneFollowListData.docInfo || {}).avatarUrl"
+                      v-if="(phoneFollowListData.docInfo || {}).avatarUrl"
+                      icon="user"
+                      style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
+                    />
+                    <a-avatar
+                      style="size: 54; margin-left: 14px; margin-top: 10px"
+                      src="@/assets/icons/wenzhen/header.png"
+                      v-else
+                    />
+                    <div class="nom-content">
+                      <div class="row-content">
+                        <div style="font-size: 14px; color: #1a1a1a">
+                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.userName : '-' || '-' }}
+                        </div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.professionalTitle : '-' || '-' }}
+                        </div>
+                      </div>
 
-              <div class="top-content">
-                <div class="div-content">
-                  <a-avatar
-                    :src="(phoneFollowListData.docInfo || {}).avatarUrl"
-                    v-if="(phoneFollowListData.docInfo || {}).avatarUrl"
-                    icon="user"
-                    style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
-                  />
-                  <a-avatar
-                    style="size: 54; margin-left: 14px; margin-top: 10px"
-                    src="@/assets/icons/wenzhen/header.png"
-                    v-else
-                  />
-                  <div class="nom-content">
-                    <div class="row-content">
-                      <div style="font-size: 14px; color: #1a1a1a">
-                        {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.userName : '-' || '-' }}
-                      </div>
-                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
-                        {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.professionalTitle : '-' || '-' }}
-                      </div>
-                    </div>
-
-                    <div class="row-content">
-                      <div style="font-size: 14px; color: #1a1a1a">
-                        {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.hospitalName : '-' || '-' }}
-                      </div>
-                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
-                        {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.departmentName : '-' || '-' }}
+                      <div class="row-content">
+                        <div style="font-size: 14px; color: #1a1a1a">
+                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.hospitalName : '-' || '-' }}
+                        </div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ phoneFollowListData.docInfo ? phoneFollowListData.docInfo.departmentName : '-' || '-' }}
+                        </div>
                       </div>
                     </div>
                   </div>
+                  <div class="line"></div>
+                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                    套餐名称:{{
+                      phoneFollowListData.rightsUseRecordStatus
+                        ? phoneFollowListData.rightsUseRecordStatus.serviceItemName
+                        : '-' || '-'
+                    }}
+                  </div>
+                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
+                    服务时长:{{
+                      phoneFollowListData.rightsUseRecordStatus
+                        ? phoneFollowListData.rightsUseRecordStatus.serviceTime
+                        : '-' || '-'
+                    }}分钟
+                  </div>
                 </div>
-                <div class="line"></div>
-                <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
-                  套餐名称:{{
-                    phoneFollowListData.rightsUseRecordStatus
-                      ? phoneFollowListData.rightsUseRecordStatus.serviceItemName
-                      : '-' || '-'
-                  }}
-                </div>
-                <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
-                  服务时长:{{
-                    phoneFollowListData.rightsUseRecordStatus
-                      ? phoneFollowListData.rightsUseRecordStatus.serviceTime
-                      : '-' || '-'
-                  }}分钟
+
+                <div class="top-content">
+                  <div class="div-content">
+                    <div v-if="!timelineData" style="width: 100%">
+                      <a-empty style="margin-top: 35px" :image="simpleImage" />
+                    </div>
+                    <div v-else-if="timelineData" class="nom-content">
+                      <div class="row-content" style="padding-top: 10px">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          意向预约时间:{{
+                            phoneFollowListData.rightsUseRecordStatus
+                              ? phoneFollowListData.rightsUseRecordStatus.appointPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+
+                      <div class="colum-line"></div>
+                      <div class="row-content">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          设置电话时间:{{
+                            phoneFollowListData.rightsUseRecordStatus
+                              ? phoneFollowListData.rightsUseRecordStatus.confirmPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                      <div class="colum-line"></div>
+                      <div class="row-content">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          实际拨打时间:{{
+                            voiceListData && voiceListData.length > 0 ? voiceListData[0].callTime : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                      <div class="colum-line"></div>
+                      <div class="row-content" style="padding-bottom: 15px">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
+                            voiceListData && voiceListData.length > 0 ? voiceListData[0].endTime : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              <div class="top-content">
-                <div class="div-content">
-                  <div v-if="!timelineData" style="width: 100%">
-                    <a-empty style="margin-top: 35px" :image="simpleImage" />
-                  </div>
-                  <div v-else-if="timelineData" class="nom-content">
-                    <div class="row-content" style="padding-top: 10px">
-                      <div class="docpoint"></div>
-                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        意向预约时间:{{
-                          phoneFollowListData.rightsUseRecordStatus
-                            ? phoneFollowListData.rightsUseRecordStatus.appointPeriod
-                            : '-' || '-'
-                        }}
-                      </div>
-                    </div>
-
-                    <div class="colum-line"></div>
-                    <div class="row-content">
-                      <div class="docpoint"></div>
-                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        设置电话时间:{{
-                          phoneFollowListData.rightsUseRecordStatus
-                            ? phoneFollowListData.rightsUseRecordStatus.confirmPeriod
-                            : '-' || '-'
-                        }}
-                      </div>
-                    </div>
-                    <div class="colum-line"></div>
-                    <div class="row-content">
-                      <div class="docpoint"></div>
-                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        实际拨打时间:{{
-                          voiceListData && voiceListData.length > 0 ? voiceListData[0].callTime : '-' || '-'
-                        }}
-                      </div>
-                    </div>
-                    <div class="colum-line"></div>
-                    <div class="row-content" style="padding-bottom: 15px">
-                      <div class="docpoint"></div>
-                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                        结 &nbsp;束 &nbsp;时 &nbsp; 间:{{
-                          voiceListData && voiceListData.length > 0 ? voiceListData[0].endTime : '-' || '-'
-                        }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
             </div>
           </div>
           <div class="right">
@@ -936,13 +956,17 @@
 
                   <div style="margin-left: 10px; margin-top: 10px">
                     开方医生：
-                    <img style="height: 25px;" v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile" :src="preDetailData.doctorCerFile" />
+                    <img
+                      style="height: 25px"
+                      v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile"
+                      :src="preDetailData.doctorCerFile"
+                    />
                     <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
-                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     审核药师：{{ preDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
@@ -950,11 +974,10 @@
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">
                   1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
                 </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em;margin-bottom: 10px;">
+                <div style="margin-left: 10px; color: #999999; font-size: 1em; margin-bottom: 10px">
                   2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
                   品一经发出，不得退换
                 </div>
-
 
                 <div class="big-kuang">
                   <div
@@ -964,34 +987,49 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
-                    发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                    发货方式：{{
+                      preDetailData.medicalInfo.deliverType ? preDetailData.medicalInfo.deliverType.description : ''
+                    }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px"
+                  >
                     收货地址： {{ preDetailData.medicalInfo.deliverAddress }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     收货人： {{ preDetailData.medicalInfo.deliverName }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     电话： {{ preDetailData.medicalInfo.deliverMobile }}
                   </div>
-                  <div  v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     物流公司： {{ preDetailData.medicalInfo.expressName }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     物流单号： {{ preDetailData.medicalInfo.expressNo }}
                   </div>
 
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     发货日期： {{ preDetailData.medicalInfo.expressDate }}
                   </div>
                 </div>
-
-
-
-
-
               </div>
               <div
                 class="wenjuan"
@@ -1166,13 +1204,17 @@
 
                   <div style="margin-left: 10px; margin-top: 10px">
                     开方医生：
-                    <img style="height: 25px;" v-if="chufangPreDetailData.caAuthFlag && chufangPreDetailData.doctorCerFile" :src="chufangPreDetailData.doctorCerFile" />
+                    <img
+                      style="height: 25px"
+                      v-if="chufangPreDetailData.caAuthFlag && chufangPreDetailData.doctorCerFile"
+                      :src="chufangPreDetailData.doctorCerFile"
+                    />
                     <div v-else>{{ chufangPreDetailData.medicalInfo.doctorName }}</div>
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
                   </div>
-                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
                     审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
                   </div>
                 </div>
@@ -1181,13 +1223,10 @@
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">
                   1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
                 </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em;margin-bottom: 10px;">
+                <div style="margin-left: 10px; color: #999999; font-size: 1em; margin-bottom: 10px">
                   2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
                   品一经发出，不得退换
                 </div>
-
-
-
 
                 <div class="big-kuang">
                   <div
@@ -1197,39 +1236,210 @@
                   </div>
                   <div class="line-content"></div>
 
-                  <div style="margin-left: 10px; margin-top: 10px;margin-bottom: 10px;">
-                    发货方式：{{ preDetailData.medicalInfo.deliverType?preDetailData.medicalInfo.deliverType.description:'' }}
+                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                    发货方式：{{
+                      preDetailData.medicalInfo.deliverType ? preDetailData.medicalInfo.deliverType.description : ''
+                    }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2" style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px"
+                  >
                     收货地址： {{ preDetailData.medicalInfo.deliverAddress }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     收货人： {{ preDetailData.medicalInfo.deliverName }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     电话： {{ preDetailData.medicalInfo.deliverMobile }}
                   </div>
-                  <div  v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     物流公司： {{ preDetailData.medicalInfo.expressName }}
                   </div>
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     物流单号： {{ preDetailData.medicalInfo.expressNo }}
                   </div>
 
-                  <div v-if="preDetailData.medicalInfo.deliverType&&preDetailData.medicalInfo.deliverType.value==2"  style="margin-left: 10px; margin-top: 10px">
+                  <div
+                    v-if="preDetailData.medicalInfo.deliverType && preDetailData.medicalInfo.deliverType.value == 2"
+                    style="margin-left: 10px; margin-top: 10px"
+                  >
                     发货日期： {{ preDetailData.medicalInfo.expressDate }}
                   </div>
                 </div>
-
-
-
-
-
-
-
-
-
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="content content4" v-show="tab === 7">
+          <div class="left">
+            <div class="title">基本信息</div>
+            <div class="list" style="height: 420px">
+              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!videoFollowListData.id" />
+              <div v-else>
+                <div class="top-content">
+                  <div class="div-content">
+                    <a-avatar
+                      :src="(videoFollowListData.docInfo || {}).avatarUrl"
+                      v-if="videoFollowListData.docInfo.avatarUrl != null"
+                      icon="user"
+                      style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
+                    />
+                    <a-avatar
+                      style="size: 54; margin-left: 14px; margin-top: 10px"
+                      src="@/assets/icons/wenzhen/header.png"
+                      v-else
+                    />
+                    <div class="nom-content">
+                      <div class="row-content">
+                        <div style="font-size: 14px; color: #1a1a1a">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
+                        </div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.professionalTitle : '-' || '-' }}
+                        </div>
+                      </div>
+
+                      <div class="row-content">
+                        <div style="font-size: 14px; color: #1a1a1a">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.hospitalName : '-' || '-' }}
+                        </div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.departmentName : '-' || '-' }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="line"></div>
+                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                    套餐名称:{{
+                      videoFollowListData.rightsUseRecordStatus
+                        ? videoFollowListData.rightsUseRecordStatus.serviceItemName
+                        : '-' || '-'
+                    }}
+                  </div>
+                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
+                    服务时长:{{
+                      videoFollowListData.rightsUseRecordStatus
+                        ? videoFollowListData.rightsUseRecordStatus.serviceTime
+                        : '-' || '-'
+                    }}分钟
+                  </div>
+                </div>
+
+                <div class="top-content">
+                  <div class="div-content">
+                    <div v-if="!timelineData" style="width: 100%">
+                      <a-empty style="margin-top: 35px" :image="simpleImage" />
+                    </div>
+                    <div v-else-if="timelineData" class="nom-content">
+                      <div class="row-content" style="padding-top: 10px">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          意向预约时间:{{
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.appointPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+
+                      <div class="colum-line"></div>
+                      <div class="row-content">
+                        <div class="docpoint"></div>
+                        <!-- TODO 这里可能要改字段 -->
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          医生确认时间:{{
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                      <div class="colum-line"></div>
+                      <div class="row-content">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          实际视频时间:{{
+                            videoListData && videoListData.length > 0 ? videoListData[0].callTime : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                      <div class="colum-line"></div>
+                      <div class="row-content" style="padding-bottom: 15px">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          结束问诊时间:{{
+                            videoListData && videoListData.length > 0 ? videoListData[0].endTime : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="title">视频文件</div>
+            <div class="container" style="height: 420px">
+              <div v-if="!videoListData || videoListData.length === 0" style="width: 100%">
+                <a-empty style="margin-top: 25%" :image="simpleImage" />
+              </div>
+
+              <div class="video-wrap" v-else>
+                <!-- class="video-player vjs-custom-skin" -->
+                <video-player
+                  style="width: 534px; height: 300px; margin: 10px 10px 0 10px"
+                  ref="videoPlayer"
+                  :playsinline="true"
+                  :autoplay="true"
+                  :loop="true"
+                  :options="playerOptions"
+                />
+
+                <div
+                  class="video-list"
+                  @click="onVideoClick(item)"
+                  v-for="(item, index) in videoListData"
+                  :key="index"
+                  :value="item"
+                >
+                  <div class="video-list-wrap">
+                    <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
+                    <span style="margin-left: 10px">{{ item.name }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div
+                v-else-if="videoListData || videoListData.length > 0"
+                class="radio-content"
+                v-for="(item, index) in videoListData"
+                :key="index"
+                :value="item"
+              >
+                <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">视频文件{{ index + 1 }}:</div>
+                <video-player
+                  class="video-player vjs-custom-skin"
+                  ref="videoPlayer"
+                  :playsinline="true"
+                  :options="playerOptions"
+                />
+              </div> -->
             </div>
           </div>
         </div>
@@ -1276,6 +1486,7 @@ export default {
       tab4Flag: false,
       tab5Flag: false,
       tab6Flag: false,
+      tab7Flag: false,
       previewVisible: false,
       previewImage: '',
       articleHtml: '',
@@ -1285,13 +1496,60 @@ export default {
       wzInfo1: {},
       wzInfo2: {},
       phoneFollowListData: {},
+      videoFollowListData: {},
       timelineData: {},
+      timelineDataVideo: {},
       voiceListData: [],
+      videoListData: [
+        {
+          src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4',
+          name: '青花瓷',
+        },
+        {
+          src: 'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4',
+          name: '爱你一万年',
+        },
+      ],
+      // 视频播放
+      playerOptions: {
+        playbackRates: [0.5, 1.0, 1.5, 2.0], //可选择的播放速度
+        autoplay: false, //如果true,浏览器准备好时开始回放。
+        muted: false, // 默认情况下将会消除任何音频。
+        loop: false, // 视频一结束就重新开始。
+        preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+        language: 'zh-CN',
+        aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+        fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+        sources: [
+          {
+            type: '',
+            src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4', //url地址
+          },
+        ],
+        poster: '', //你的封面地址
+        // width: document.documentElement.clientWidth,
+        notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
+        controlBar: {
+          timeDivider: true, //当前时间和持续时间的分隔符
+          durationDisplay: true, //显示持续时间
+          remainingTimeDisplay: false, //是否显示剩余时间功能
+          fullscreenToggle: true, //全屏按钮
+        },
+      },
+      // video: {
+      //   v1080:
+      //     'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4',
+      //   v1440:
+      //     'https://prod-streaming-video-msn-com.akamaized.net/ba258271-89c7-47bc-9742-bcae67c23202/f7ff4fe4-1346-47bb-9466-3f4662c1ac3a.mp4',
+      //   v2160:
+      //     'https://prod-streaming-video-msn-com.akamaized.net/b7014b7e-b38f-4a64-bd95-4a28a8ef6dee/113a2bf3-3a5f-45d4-8b6f-e40ce8559da3.mp4',
+      // },
+
       currentTab: 'tw',
       currentItem: 0,
       clickType: 101,
       showdhTab: true, //隐藏电话咨询tab标识
-      jumbType: 3,
+      jumpType: 3,
       id: '',
       preDetailData: {
         diagnosis: '',
@@ -1318,7 +1576,7 @@ export default {
       // console.log('HAHAH：', item)
       this.visible = true
       this.jumpType = Type
-      if (this.jumbType == 1) {
+      if (this.jumpType == 1) {
         this.tabClick(1)
       } else if (this.jumpType == 3) {
         this.tabClick(3)
@@ -1329,6 +1587,9 @@ export default {
       } else if (this.jumpType == 6) {
         //复诊续方
         this.tabClick(5)
+      } else if (this.jumpType == 7) {
+        //复诊续方
+        this.tabClick(7)
       }
     },
 
@@ -1406,6 +1667,15 @@ export default {
         this.chufangList = []
 
         this.getPreListByRightsIdOut(this.item.id)
+      }
+      if (this.tab === 7 && !this.tab7Flag) {
+        // this.chatItem = {}
+        // this.chatList = []
+        this.videoFollowListData = {}
+        this.getVideoRecords(this.item)
+        // this.chufangItemNo = -1
+        // this.chufangList = []
+        // this.getPreListByRightsIdOut(this.item.id)
       }
     },
     chatClick(item) {
@@ -1630,12 +1900,40 @@ export default {
       }
     },
 
+    //电话咨询记录
+    getVideoRecords(item) {
+      this.confirmLoading = true
+      this.timelineData = {}
+      this.voiceListData = []
+      // if (this.jumpType == 4) {
+      list4({
+        rightsId: item.id,
+      })
+        .then((res) => {
+          console.log('getVideoRecords', res.data)
+          this.tab7Flag = true
+          this.videoFollowListData = res.data || []
+          if (this.videoFollowListData.rightsUseRecordStatus) {
+            this.timelineDataVideo = this.videoFollowListData.rightsUseRecordStatus
+          } else {
+            this.timelineDataVideo = {}
+          }
+
+          // this.videoListData = this.videoFollowListData.voiceTapeInfo //TODO 这里处理视频数据
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+      // }
+    },
+
     handleSubmit() {
       this.handleCancel()
     },
     handleCancel() {
       this.visible = false
       this.voiceListData = []
+      this.videoListData = []
       this.confirmLoading = false
       this.tab1Flag = false
       this.tab2Flag = false
@@ -1643,10 +1941,14 @@ export default {
       this.tab4Flag = false
       this.tab5Flag = false
       this.tab6Flag = false
-      this.tab76Flag = false
+      this.tab7Flag = false
       this.chufangItemNo = -1
       this.previewVisible = false
       this.tab = 0
+    },
+
+    onVideoClick(item) {
+      this.playerOptions.sources[0].src = item.src
     },
   },
 }
@@ -2428,6 +2730,32 @@ export default {
       }
       .right {
         width: 556px;
+
+        // TODO 视频文件样式
+
+        .video-wrap {
+          width: 100%;
+          // height: 300px;
+          font-size: 12px;
+
+          color: #409eff;
+          .video-list {
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #409eff;
+            margin: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            // justify-content: center;
+            .video-list-wrap {
+              margin-left: 42%;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            }
+          }
+        }
         .title {
           margin-bottom: 10px;
           padding-left: 10px;

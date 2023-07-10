@@ -24,6 +24,12 @@ import { hasBtnPermission } from './utils/permissions' // button permission
 import { sysApplication } from './utils/applocation'
 import Print from 'vue-print-nb'
 import Bus from './bus'
+import VideoPlayer from 'vue-video-player'
+// import 'vue-video-player/src/custom-theme.css'
+import 'video.js/dist/video-js.css'
+// require('video.js/dist/video-js.css')
+// require('vue-video-player/src/custom-theme.css')
+Vue.use(VideoPlayer)
 Vue.prototype.$bus = Bus 
 Vue.use(Print)
 

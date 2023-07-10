@@ -31,6 +31,7 @@
     "nprogress": "^0.2.0",
     "raphael": "^2.3.0",
     "tencentcloud-sdk-nodejs": "^4.0.473",
+    "video.js": "^8.3.0",
     "viser-vue": "^2.4.6",
     "vue": "^2.6.10",
     "vue-clipboard2": "^0.2.1",
@@ -40,6 +41,7 @@
     "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.1.2",
     "vue-svg-component-runtime": "^1.0.1",
+    "vue-video-player": "^5.0.1",
     "vuex": "^3.1.1",
     "wangeditor": "^4.7.11"
   },
