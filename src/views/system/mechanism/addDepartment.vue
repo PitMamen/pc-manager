@@ -84,6 +84,21 @@
       />
     </div>
 
+
+    <div class="div-service-user" style="margin-top: 10px">
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 5px"> 监管编码 :</span>
+      <a-input
+        class="span-item-value"
+        v-model="queryParams.supervisionCode"
+        :maxLength="30"
+        style="display: inline-block; width: 248px; margin-left: 8px"
+        allow-clear
+        placeholder="请输入监管编码 "
+      />
+    </div>
+
+
+
     <div class="display-item" style="margin-left: 5px; margin-top: 10px">
       <span style="margin-top: 10px"> 科室属性 :</span>
 
@@ -191,6 +206,7 @@ export default {
         departmentType: undefined,
         departmentId:'',
         managerDiseaseType: undefined,
+        supervisionCode:'',
       },
 
       labelCol: {
@@ -475,6 +491,7 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
+      this.queryParams.supervisionCode = ''
       this.queryParams.departmentType = undefined
     },
 

@@ -85,6 +85,26 @@
       />
     </div>
 
+
+
+    <div class="div-service-user" style="margin-top: 10px">
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 5px"> 监管编码 :</span>
+      <a-input
+        class="span-item-value"
+        v-model="queryParams.supervisionCode"
+        :maxLength="30"
+        style="display: inline-block; width: 248px; margin-left: 8px"
+        allow-clear
+        placeholder="请输入监管编码 "
+      />
+    </div>
+
+
+
+
+
+
+
     <div class="display-item" style="margin-left: 5px; margin-top: 10px">
       <span style="margin-top: 10px"> 科室属性 :</span>
 
@@ -196,6 +216,7 @@ export default {
         isFullDisease: '',
         departmentIntroduce: '',
         departmentId: '',
+        supervisionCode:'',
         departmentType: undefined,
         managerDiseaseType: undefined,
       },
@@ -252,6 +273,7 @@ export default {
       this.queryParams.departmentOrder = record.department_order
       this.queryParams.departmentType = record.department_type
       this.queryParams.departmentId = record.department_id
+      this.queryParams.supervisionCode = record.supervisionCode
       this.internetType = record.is_internet_hospital == 1
       this.isFullDiseaseType = record.is_full_disease == 1
       // this.getParentList()
@@ -498,6 +520,7 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
+      this.queryParams.supervisionCode = ''
       this.queryParams.departmentType = undefined
     },
 
