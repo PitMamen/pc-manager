@@ -216,7 +216,7 @@
                 >过滤条件</span
               >
             </div>
-            <div class="btn-desc">
+            <div class="btn-desc" style="width: 79%;">
               <div class="desc-content" style="color: #cb0000">终止条件：{{ itemTask.stopConditionRemark }}</div>
               <div class="desc-content" style="color: #1890ff; margin-top: 5px">
                 过滤条件：{{ itemTask.filterConditionRemark }}
