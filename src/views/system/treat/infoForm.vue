@@ -1438,7 +1438,7 @@
                 >
                   <div class="video-list-wrap">
                     <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
-                    <span style="margin-left: 10px">{{ item.name }}</span>
+                    <span style="margin-left: 10px">视频文件{{ index+1 }}</span>
                   </div>
                 </div>
               </div>
@@ -1937,7 +1937,7 @@ export default {
             this.timelineDataVideo = {}
           }
 
-          // this.videoListData = this.videoFollowListData.voiceTapeInfo //TODO 这里处理视频数据
+          this.videoListData = this.videoFollowListData.videoTapeInfo //TODO 这里处理视频数据
         })
         .finally(() => {
           this.confirmLoading = false

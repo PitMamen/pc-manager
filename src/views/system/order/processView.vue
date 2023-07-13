@@ -145,7 +145,7 @@
               style="margin-left: 10px; color: #1a1a1a; display: flex; flex-direction: row; margin-top: 5px"
             >
               审核药师：
-              <img style="width: 80px; height: 30px; margin-bottom: 5px" :src="preDetailData.checkerCerFile" />
+              <img v-if="preDetailData.checkerCerFile" style="width: 80px; height: 30px; margin-bottom: 5px" :src="preDetailData.checkerCerFile" />
             </div>
           </div>
         </div>
@@ -396,7 +396,7 @@ export default {
     handleSubmit() {
       this.previsible = true
       return
-      this.checkPreOut()
+      // this.checkPreOut()
     },
 
     cancelcheckCaPassword() {
