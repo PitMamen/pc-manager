@@ -7,6 +7,7 @@
  */
 import Vue from 'vue'
 import {
+  Pagination,
   ConfigProvider,
   Layout,
   Input,
@@ -59,6 +60,7 @@ import {
 // import VueCropper from 'vue-cropper'
 
 Vue.use(ConfigProvider)
+Vue.use(Pagination)
 Vue.use(Layout)
 Vue.use(Input)
 Vue.use(InputNumber)

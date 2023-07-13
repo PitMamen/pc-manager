@@ -391,7 +391,13 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
-                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
+                    审核药师：
+                    <img
+                      style="height: 25px"
+                      v-if="preDetailData.caAuthFlag && preDetailData.checkerCerFile"
+                      :src="preDetailData.checkerCerFile"
+                    />
+                    <div v-else>{{ preDetailData.medicalInfo.checkUserName }}</div>
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -967,7 +973,13 @@
                     执行科室：{{ preDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
-                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
+                    审核药师：
+                    <img
+                      style="height: 25px"
+                      v-if="preDetailData.caAuthFlag && preDetailData.checkerCerFile"
+                      :src="preDetailData.checkerCerFile"
+                    />
+                    <div v-else>{{ preDetailData.medicalInfo.checkUserName }}</div>
                   </div>
                 </div>
                 <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
@@ -1215,7 +1227,13 @@
                     执行科室：{{ chufangPreDetailData.medicalInfo.deptName }}
                   </div>
                   <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
-                    审核药师：{{ chufangPreDetailData.medicalInfo.checkUserName }}
+                    审核药师：
+                    <img
+                      style="height: 25px"
+                      v-if="preDetailData.caAuthFlag && preDetailData.checkerCerFile"
+                      :src="preDetailData.checkerCerFile"
+                    />
+                    <div v-else>{{ preDetailData.medicalInfo.checkUserName }}</div>
                   </div>
                 </div>
 

@@ -64,6 +64,7 @@
           <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
             <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
             <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
+          
           </span>
         </div>
       </div>
@@ -89,7 +90,12 @@
               <!-- {{ item.count }}/{{ item.readCount }}/{{ item.rate }} -->
             </div>
           </div>
+          <!-- <div> HAHAHHAHAH</div> -->
+          <a-pagination style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
+                      @change="handleChangePage"/>
         </div>
+          
+        
 
         <div class="div-service-right-control">
           <s-table
@@ -122,6 +128,7 @@
 
 <script>
 import { STable } from '@/components'
+import { Pagination } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
 import addCategory from '../teach/addCategory'
 import addModel from '../teach/addModel'
@@ -138,6 +145,7 @@ import {
 export default {
   components: {
     STable,
+    Pagination,
     addCategory,
     addModel,
     checkModel,
@@ -145,6 +153,8 @@ export default {
 
   data() {
     return {
+      currentPage:1,  //默认第一页
+      totalPage:10,
       fetching: false,
       // 高级搜索 展开/关闭
 
@@ -153,7 +163,6 @@ export default {
       articleListTemp: [],
       articleList: [],
       createValue: [],
-      typeData: ['类型1', '类型2'],
       confirmLoading: false,
       confirmLoading2: false,
       idArr: [],
@@ -174,7 +183,6 @@ export default {
         endTime: '',
         readStatus: undefined,
       },
-      statusOut: 1,
 
       // 表头
       columns: [
@@ -260,13 +268,19 @@ export default {
   },
 
   created() {
-    this.getFollowArticleDataOut()
+    this.getFollowArticleDataOut(true)
     this.getDepartmentSelectList(undefined)
   },
 
   methods: {
+
+    handleChangePage(value){
+      this.currentPage = value
+      // console.log("fff:",this.currentPage,value)
+      this.getFollowArticleDataOut(false)
+    },
+
     queryAgain() {
-      // this.getFollowArticleDataOut()
       this.$refs.table.refresh()
     },
     reset() {
@@ -277,42 +291,50 @@ export default {
       this.queryParam.articleId = undefined
       this.queryParam.articleName = undefined
 
-      this.getFollowArticleDataOut()
+      this.getFollowArticleDataOut(true)
     },
 
     onTabChange(key) {
       console.log(key)
     },
     //获取文章列表
-    getFollowArticleDataOut() {
+    getFollowArticleDataOut(isRefreshAll) {
       this.confirmLoading2 = true
       var postData = {
         departmentId: this.queryParam.departmentId,
         startTime: this.queryParam.startTime,
         endTime: this.queryParam.endTime,
+        pageNo:this.currentPage,
+        pageSize:15,
       }
       getFollowArticleData(postData)
         .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
+          if (res.code == 0 && res.data.records.length > 0) {
             if (this.queryParam.articleId) {
-              res.data.forEach((item) => {
+              res.data.records.forEach((item) => {
                 item.checked = item.message_original_id == this.queryParam.articleId
               })
             } else {
-              res.data[0].checked = true
-              this.queryParam.articleId = res.data[0].message_original_id
-              this.queryParam.articleName = res.data[0].articleName
+              res.data.records[0].checked = true
+              this.queryParam.articleId = res.data.records[0].message_original_id
+              this.queryParam.articleName = res.data.records[0].articleName
             }
 
-            this.articleList = res.data
-            this.articleListTemp = res.data
+            this.articleList = res.data.records
+            this.articleListTemp = res.data.records
+            this.totalPage = res.data.total
+            this.currentPage = res.data.current
             this.$set(this.articleList[0], 'isChecked', true)
-            this.$refs.table.refresh()
+            if(isRefreshAll){
+              this.$refs.table.refresh()
+            }
           } else {
             this.queryParam.articleId = undefined
             this.articleList = []
             this.articleListTemp = []
-            this.$refs.table.refresh()
+            if(isRefreshAll){
+              this.$refs.table.refresh()
+            }
           }
         })
         .finally(() => {
@@ -419,6 +441,7 @@ export default {
   }
 
   .div-service-left-control {
+    display: grid;
     margin-right: 20px;
     height: calc(100% - 20px);
     min-height: 300px;

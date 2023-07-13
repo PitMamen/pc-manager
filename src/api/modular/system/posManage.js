@@ -4764,3 +4764,12 @@ export function getTdMedicalSubjectPageListForVer(data) {
     params: data,
   })
 }
+
+// ca验证密码
+export function checkCaPassword(data) {
+  return axios({
+    url: '/account-api/tdUserInfoCaAuth/checkCaPassword',
+    method: 'get',
+    params: data,
+  })
+}
