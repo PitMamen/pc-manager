@@ -1938,6 +1938,7 @@ export default {
           }
 
           this.videoListData = this.videoFollowListData.videoTapeInfo //TODO 这里处理视频数据
+          this.playerOptions.sources[0].src = this.videoListData[0].callTape
         })
         .finally(() => {
           this.confirmLoading = false
@@ -1966,7 +1967,7 @@ export default {
     },
 
     onVideoClick(item) {
-      this.playerOptions.sources[0].src = item.src
+      this.playerOptions.sources[0].src = item.callTape
     },
   },
 }
@@ -2765,6 +2766,11 @@ export default {
             display: flex;
             flex-direction: row;
             align-items: center;
+
+            &:hover{
+              cursor: pointer;
+            }
+
             // justify-content: center;
             .video-list-wrap {
               margin-left: 42%;
