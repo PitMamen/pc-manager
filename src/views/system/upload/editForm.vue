@@ -13,7 +13,7 @@
         <a-timeline-item v-for="(itemChild, indexChild) in recordData" :key="indexChild" :value="itemChild.id"
           >{{ itemChild.createTime }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
             itemChild.uploadStatus == 1 ? '上传成功' : '上传失败'
-          }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.msg }}</a-timeline-item
+          }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{ itemChild.uploadReturn.err }}</a-timeline-item
         >
         <!-- <a-timeline-item v-for="(itemChild, indexChild) in recordData" :key="indexChild" :value="itemChild.id"
           >{{ itemChild.time }}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{
