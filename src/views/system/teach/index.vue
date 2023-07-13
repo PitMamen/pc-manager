@@ -570,7 +570,6 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
-  height: 85vh;
   display: flex;
   flex-direction: row;
 
@@ -587,7 +586,7 @@ export default {
 
   .div-service-left-control {
     margin-right: 20px;
-    height: 100%;
+    height: 85vh;
     min-height: 300px;
     flex-shrink: 0;
     width: 200px;
