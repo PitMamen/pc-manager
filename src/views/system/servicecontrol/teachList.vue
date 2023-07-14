@@ -91,7 +91,7 @@
             </div>
           </div>
           <!-- <div> HAHAHHAHAH</div> -->
-          <a-pagination style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
+          <a-pagination v-if="showPagination" style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
                       @change="handleChangePage"/>
         </div>
           
@@ -156,6 +156,7 @@ export default {
       currentPage:1,  //默认第一页
       totalPage:10,
       fetching: false,
+      showPagination:true,
       // 高级搜索 展开/关闭
 
       advanced: false,
@@ -310,6 +311,7 @@ export default {
       getFollowArticleData(postData)
         .then((res) => {
           if (res.code == 0 && res.data.records.length > 0) {
+            this.showPagination  =true
             if (this.queryParam.articleId) {
               res.data.records.forEach((item) => {
                 item.checked = item.message_original_id == this.queryParam.articleId
@@ -329,6 +331,7 @@ export default {
               this.$refs.table.refresh()
             }
           } else {
+            this.showPagination  =false
             this.queryParam.articleId = undefined
             this.articleList = []
             this.articleListTemp = []
