@@ -90,7 +90,7 @@
 
       <a-select
         style="width: 248px; margin-left: 9px"
-        v-model="queryParams.subjectCode"
+        v-model="queryParams.supervisionCode"
         allow-clear
         show-search
         :filter-option="false"
@@ -216,7 +216,7 @@ export default {
         departmentType: undefined,
         departmentId:'',
         managerDiseaseType: undefined,
-        subjectCode:undefined,
+        supervisionCode:undefined,
       },
 
       labelCol: {
@@ -528,7 +528,7 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
-      this.queryParams.subjectCode = undefined
+      this.queryParams.supervisionCode = undefined
       this.queryParams.departmentType = undefined
     },
 
