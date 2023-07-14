@@ -91,7 +91,7 @@
       <span class="span-item-name" style="margin-top: 5px; margin-left: 5px"> 监管编码 :</span>
       <a-select
         style="width: 248px; margin-left: 9px"
-        v-model="queryParams.subjectCode"
+        v-model="queryParams.supervisionCode"
         allow-clear
         show-search
         :filter-option="false"
@@ -99,7 +99,7 @@
         placeholder="请选择科室类型"
         @search="onSelectSearch"
       >
-        <a-select-option v-for="(item, index) in treeCodeData" :key="index" :value="item.subjectCode">{{
+        <a-select-option v-for="(item, index) in treeCodeData" :key="index" :value="item.supervisionCode">{{
           item.subjectName
         }}</a-select-option>
       </a-select>
@@ -225,7 +225,7 @@ export default {
         isFullDisease: '',
         departmentIntroduce: '',
         departmentId: '',
-        subjectCode:undefined,
+        supervisionCode:undefined,
         departmentType: undefined,
         managerDiseaseType: undefined,
       },
@@ -282,7 +282,7 @@ export default {
       this.queryParams.departmentOrder = record.department_order
       this.queryParams.departmentType = record.department_type
       this.queryParams.departmentId = record.department_id
-      this.queryParams.subjectCode = record.subject_code
+      this.queryParams.supervisionCode = record.supervision_code
       this.internetType = record.is_internet_hospital == 1
       this.isFullDiseaseType = record.is_full_disease == 1
       // this.getParentList()
@@ -555,7 +555,7 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
-      this.queryParams.subjectCode=undefined,
+      this.queryParams.supervisionCode=undefined,
       this.queryParams.departmentType = undefined
      
     },
