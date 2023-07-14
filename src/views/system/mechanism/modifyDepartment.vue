@@ -99,7 +99,7 @@
         placeholder="请选择科室类型"
         @search="onSelectSearch"
       >
-        <a-select-option v-for="(item, index) in treeCodeData" :key="index" :value="item.supervisionCode">{{
+        <a-select-option v-for="(item, index) in treeCodeData" :key="index" :value="item.subjectCode">{{
           item.subjectName
         }}</a-select-option>
       </a-select>
