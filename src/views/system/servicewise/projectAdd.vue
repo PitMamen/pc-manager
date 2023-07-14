@@ -473,6 +473,12 @@
 
             <div class="end-btn-task" style="width: 20%">
               <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
+              
+              <span
+                class="span-end"
+                style="margin-left: 10%"
+                @click="copyMission(indexTask, itemTask)"
+                >复制任务</span>
               <span
                 class="span-end"
                 style="margin-left: 10%"
@@ -940,6 +946,10 @@ export default {
 
     delMission(index, item) {
       this.projectData.tasks.splice(index, 1)
+    },
+
+    copyMission(index, item) {
+      this.projectData.tasks.splice(index, 0,JSON.parse(JSON.stringify(item)))
     },
 
     addMission() {
