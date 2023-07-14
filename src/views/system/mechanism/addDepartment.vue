@@ -84,6 +84,28 @@
       />
     </div>
 
+
+    <div class="div-service-user" style="margin-top: 10px">
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 5px"> 监管编码 :</span>
+
+      <a-select
+        style="width: 248px; margin-left: 9px"
+        v-model="queryParams.subjectCode"
+        allow-clear
+        show-search
+        :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+        placeholder="请选择科室类型"
+        @search="onSelectSearch"
+      >
+        <a-select-option v-for="(item, index) in treeCodeData" :key="index" :value="item.subjectCode">{{
+          item.subjectName
+        }}</a-select-option>
+      </a-select>
+    </div>
+
+
+
     <div class="display-item" style="margin-left: 5px; margin-top: 10px">
       <span style="margin-top: 10px"> 科室属性 :</span>
 
@@ -150,6 +172,7 @@ import {
   queryHospitalList,
   getDictDataForCodeDepartType,
   getDiseaseTypePageList,
+  getTdMedicalSubjectPageListForVer,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import E from 'wangeditor'
@@ -169,6 +192,7 @@ export default {
       userId: '',
       timeStr: '',
       originData: [],
+      fetching: false,
       rangeValue: '2',
       previewVisible: false,
       HospitalLevelList: [],
@@ -176,6 +200,7 @@ export default {
       ParentList: [],
       record: {},
       treeData: [],
+      treeCodeData: [],
       findItemData: {},
       internetType: false,
       isFullDiseaseType: false,
@@ -191,6 +216,7 @@ export default {
         departmentType: undefined,
         departmentId:'',
         managerDiseaseType: undefined,
+        subjectCode:undefined,
       },
 
       labelCol: {
@@ -233,7 +259,34 @@ export default {
       this.queryHospitalListOut()
       this.getDictDataForCodeorgDepartTypeOut()
       this.getDiseaseTypePageListOut()
+      this.getgetTdMedicalSubjectPageListForVerOut('')
     },
+
+
+     //编码搜索
+     onSelectSearch(value) {
+      this.treeCodeData = []
+      this.getgetTdMedicalSubjectPageListForVerOut(value)
+    },
+
+
+    getgetTdMedicalSubjectPageListForVerOut(name) {
+      this.fetching = true
+      getTdMedicalSubjectPageListForVer({subjectName:name})
+        .then((res) => {
+          this.fetching = false
+          if (res.code == 0 && res.data.length > 0) {
+            this.treeCodeData = res.data
+          } else {
+            this.treeCodeData =[]
+          }
+          
+        })
+    },
+
+
+
+
 
  /**
      * 获取病种列表
@@ -475,6 +528,7 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
+      this.queryParams.subjectCode = undefined
       this.queryParams.departmentType = undefined
     },
 

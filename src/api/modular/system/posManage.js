@@ -4808,3 +4808,21 @@ export function updateExpressInfo(data) {
     data: data,
   })
 }
+
+// 科室里面的 监管机构编码列表
+export function getTdMedicalSubjectPageListForVer(data) {
+  return axios({
+    url: '/uam-api/tdMedicalSubject/getTdMedicalSubjectPageListForVer/',
+    method: 'get',
+    params: data,
+  })
+}
+
+// ca验证密码
+export function checkCaPassword(data) {
+  return axios({
+    url: '/account-api/tdUserInfoCaAuth/checkCaPassword',
+    method: 'get',
+    params: data,
+  })
+}

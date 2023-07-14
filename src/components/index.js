@@ -23,6 +23,7 @@ import DescriptionList from '@/components/DescriptionList'
 import Tree from '@/components/Tree/Tree'
 import Trend from '@/components/Trend'
 import STable from '@/components/Table'
+import Pagination from '@/components/Table'
 import MultiTab from '@/components/MultiTab'
 import Result from '@/components/Result'
 import IconSelector from '@/components/IconSelector'
@@ -34,6 +35,7 @@ import Dialog from '@/components/Dialog'
 
 export {
   AvatarList,
+  Pagination,
   Bar,
   Bars,
   Pies,

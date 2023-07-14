@@ -22,7 +22,6 @@
         </div>
         <!-- 左边视图 -->
         <div class="div-span-content-left" style="overflow-y: auto !important">
-         
           <!-- <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">患者信息</div> -->
           <!-- <div style="width: 100%; height: 1px; margin-top: 5px; background: darkgrey"></div> -->
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">姓 名:{{ userInfoData.name }}</div>
@@ -50,7 +49,7 @@
             >
               {{ item.name }}:
               <div v-for="(item1, index1) in item.value" :key="index1" :value="item1.value">
-                {{ item1.tagsName }}{{ (item.value.length - 1 > 0 && index1 != item.value.length - 1) ? '，' : '' }}
+                {{ item1.tagsName }}{{ item.value.length - 1 > 0 && index1 != item.value.length - 1 ? '，' : '' }}
               </div>
             </div>
           </div>
@@ -65,8 +64,7 @@
           <span class="span-title">处方信息</span>
         </div>
 
-
-        <div class="div-span-content-mid" >
+        <div class="div-span-content-mid">
           <!-- <div style="margin-left: 20px; margin-top: 5px; color: #1a1a1a">处方信息</div> -->
           <!-- <div style="width: 100%; height: 1px; margin-top: 5px; padding-bottom: 1px; background: darkgrey"></div> -->
           <div class="big-kuang-border">
@@ -120,18 +118,34 @@
             </div>
           </div>
 
-          <div class="big-kuang" style="margin-bottom: 10px;">
+          <div class="big-kuang" style="margin-bottom: 10px">
             <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold">
               签字盖章
             </div>
             <div class="line-content"></div>
 
-            <div v-if="!preDetailData.caAuthFlag" style="margin-left: 10px; color: #1a1a1a">开方医生：{{ preDetailData.medicalInfo.doctorName }}</div>
-            <div v-if="preDetailData.caAuthFlag" style="margin-left: 10px; color: #1a1a1a;display: flex;flex-direction: row;margin-top: 5px;">开方医生：
-              <img style="width: 80px;height: 30px;" :src="preDetailData.doctorCerFile"/>
+            <div v-if="!preDetailData.caAuthFlag" style="margin-left: 10px; color: #1a1a1a">
+              开方医生：{{ preDetailData.medicalInfo.doctorName }}
+            </div>
+            <div
+              v-if="preDetailData.caAuthFlag"
+              style="margin-left: 10px; color: #1a1a1a; display: flex; flex-direction: row; margin-top: 5px"
+            >
+              开方医生：
+              <img style="width: 80px; height: 30px" :src="preDetailData.doctorCerFile" />
             </div>
             <div style="margin-left: 10px; color: #1a1a1a; margin-bottom: 10px">
               执行科室：{{ preDetailData.medicalInfo.deptName }}
+            </div>
+            <div v-if="!preDetailData.caAuthFlag" style="margin-left: 10px; color: #1a1a1a">
+              审核药师：{{ preDetailData.medicalInfo.checkUserName }}
+            </div>
+            <div
+              v-if="preDetailData.caAuthFlag"
+              style="margin-left: 10px; color: #1a1a1a; display: flex; flex-direction: row; margin-top: 5px"
+            >
+              审核药师：
+              <img v-if="preDetailData.checkerCerFile" style="width: 80px; height: 30px; margin-bottom: 5px" :src="preDetailData.checkerCerFile" />
             </div>
           </div>
         </div>
@@ -142,8 +156,6 @@
           <div class="div-line-blue"></div>
           <span class="span-title">审核信息</span>
         </div>
-
-
 
         <!-- 右边视图 -->
         <div class="div-span-content-right" style="position: relative">
@@ -190,27 +202,56 @@
             </div>
           </div>
 
-          <div v-if="record.checkStatus != 1" style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
+          <!-- 审核药师不再右边区域显示 改成中间底部显示 -->
+          <!-- <div v-if="record.checkStatus != 1" style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
             审核药师：{{ preDetailData.medicalInfo.checkUserName }}
-          </div>
+          </div> -->
           <div v-if="record.checkStatus != 1" style="margin-left: 10px; margin-top: 10px; color: #1a1a1a">
             审核日期：{{ preDetailData.medicalInfo.checkDate }}
           </div>
         </div>
       </div>
     </div>
+    <a-modal
+      :title="titleSmall"
+      :width="300"
+      :height="600"
+      :visible="previsible"
+      :footer="footer"
+      :confirmLoading="confirmLoading"
+      @cancel="cancelcheckCaPassword"
+      style="margin-top: 10%"
+    >
+      <template slot="footer">
+        <a-button type="primary" @click="handlecheckCaPassword">确定</a-button>
+        <a-button @click="cancelcheckCaPassword">关闭</a-button>
+      </template>
+
+      <div style="display: flex; flex-direction: row">
+        <div style="margin-top: 5px">验证密码：</div>
+        <a-input v-model="inputPassword" allow-clear placeholder="请输入密码" style="width: 180px" />
+      </div>
+    </a-modal>
   </a-modal>
 </template>
 
 
 <script>
-import { getUserExternalInfo, getSavedUserTagsInfo, checkPre, preDetail } from '@/api/modular/system/posManage'
+import {
+  getUserExternalInfo,
+  getSavedUserTagsInfo,
+  checkPre,
+  preDetail,
+  checkCaPassword,
+} from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
 export default {
   data() {
     return {
+      titleSmall: '输入密码',
+      previsible: false,
       user: {},
       record: {},
       radioTyPe: '2',
@@ -222,6 +263,7 @@ export default {
       userInfoData: {},
       userTagsInfoData: [],
       preDetailData: [],
+      inputPassword: '',
       queryParams: {
         checkStatus: 0,
         pageNo: 1,
@@ -262,11 +304,12 @@ export default {
       this.record = record
       this.queryParams.preNo = record.preNo
       this.queryParams.refuseReason = ''
+      this.inputPassword = ''
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
       this.preDetailOut()
     },
-
+    
     lookview(record) {
       // console.log('22222222')
       this.title = '处方查看'
@@ -274,6 +317,7 @@ export default {
       this.visible = true
       this.record = record
       ;(this.radioTyPe = '2'), (this.queryParams.preNo = record.preNo)
+      this.inputPassword = ''
       this.getUserInfoOut()
       this.getSavedUserTagsInfoOut()
       this.preDetailOut()
@@ -350,7 +394,26 @@ export default {
     },
 
     handleSubmit() {
-      this.checkPreOut()
+      this.previsible = true
+      return
+      // this.checkPreOut()
+    },
+
+    cancelcheckCaPassword() {
+      this.previsible = false
+    },
+
+    handlecheckCaPassword() {
+      checkCaPassword({ password: this.inputPassword }).then((res) => {
+          if(res.code==0){
+            this.previsible = false
+            this.checkPreOut() //密码正确后 提交审核
+          }else{
+            this.$message.error(res.message)
+          }
+
+      })
+      // this.previsible = false
     },
   },
 }
@@ -369,9 +432,6 @@ export default {
   overflow: hidden;
 }
 
-
-
-
 .div-appoint-detail-check {
   background-color: white;
   width: 100%;
@@ -380,58 +440,53 @@ export default {
   display: flex;
   flex-direction: row;
 
-
   .div-title {
-  margin-top: 10px;
-  display: flex;
-  background-color: #ebebeb;
-  flex-direction: row;
-  width: 20% !important;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  height: 26px;
+    margin-top: 10px;
+    display: flex;
+    background-color: #ebebeb;
+    flex-direction: row;
+    width: 20% !important;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 26px;
 
-  .div-line-blue {
-    width: 5px;
-    height: 100%;
-    background-color: #1890ff;
+    .div-line-blue {
+      width: 5px;
+      height: 100%;
+      background-color: #1890ff;
+    }
+    .span-title {
+      font-size: 12px;
+      margin-left: 10px;
+      font-weight: bold;
+      color: #333;
+    }
   }
-  .span-title {
-    font-size: 12px;
-    margin-left: 10px;
-    font-weight: bold;
-    color: #333;
+
+  .div-title-mind {
+    margin-top: 10px;
+    display: flex;
+    background-color: #ebebeb;
+    flex-direction: row;
+    width: 56% !important;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 26px;
+
+    .div-line-blue {
+      width: 5px;
+      height: 100%;
+      background-color: #1890ff;
+    }
+    .span-title {
+      font-size: 12px;
+      margin-left: 10px;
+      font-weight: bold;
+      color: #333;
+    }
   }
-}
-
-.div-title-mind {
-  margin-top: 10px;
-  display: flex;
-  background-color: #ebebeb;
-  flex-direction: row;
-  width: 56% !important;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  height: 26px;
-
-  .div-line-blue {
-    width: 5px;
-    height: 100%;
-    background-color: #1890ff;
-  }
-  .span-title {
-    font-size: 12px;
-    margin-left: 10px;
-    font-weight: bold;
-    color: #333;
-  }
-}
-
-
-
-
 
   .div-span-content-left {
     width: 20%;
@@ -456,8 +511,6 @@ export default {
     margin-left: -55.9%;
     position: relative;
     border: 1px solid #dfe3e5;
-
-
 
     .big-kuang-border {
       width: 92%;
@@ -502,9 +555,6 @@ export default {
         }
       }
     }
-
-
-
 
     .big-kuang {
       width: 92%;

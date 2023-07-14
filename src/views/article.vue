@@ -17,6 +17,12 @@
             <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
             <span>电话记录</span>
           </div>
+
+          <div  class="tab tab5" :class="{ active: tab === 7 }" @click="tabClick(7)">
+            <img src="@/assets/icons/wenzhen/video.png" v-if="tab === 7" />
+            <img src="@/assets/icons/wenzhen/video_not.png" v-else />
+            <span>视频记录</span>
+          </div>
           
         </div>
 
@@ -414,6 +420,166 @@
           </div>
         </div>
 
+        <div class="content content4" v-show="tab === 7">
+          <div class="left">
+            <div class="title">基本信息</div>
+            <div class="list" style="height: 420px">
+              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!videoFollowListData.id" />
+              <div v-else>
+                <div class="top-content">
+                  <div class="div-content">
+                    <a-avatar
+                      :src="(videoFollowListData.docInfo || {}).avatarUrl"
+                      v-if="videoFollowListData.docInfo.avatarUrl != null"
+                      icon="user"
+                      style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
+                    />
+                    <a-avatar
+                      style="size: 54; margin-left: 14px; margin-top: 10px"
+                      src="@/assets/icons/wenzhen/header.png"
+                      v-else
+                    />
+                    <div class="nom-content">
+                      <div class="row-content">
+                        <div style="font-size: 14px; color: #1a1a1a">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
+                        </div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.professionalTitle : '-' || '-' }}
+                        </div>
+                      </div>
+
+                      <div class="row-content">
+                        <div style="font-size: 14px; color: #1a1a1a">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.hospitalName : '-' || '-' }}
+                        </div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.departmentName : '-' || '-' }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="line"></div>
+                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                    套餐名称:{{
+                      videoFollowListData.rightsUseRecordStatus
+                        ? videoFollowListData.rightsUseRecordStatus.serviceItemName
+                        : '-' || '-'
+                    }}
+                  </div>
+                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
+                    服务时长:{{
+                      videoFollowListData.rightsUseRecordStatus
+                        ? videoFollowListData.rightsUseRecordStatus.serviceTime
+                        : '-' || '-'
+                    }}分钟
+                  </div>
+                </div>
+
+                <div class="top-content">
+                  <div class="div-content">
+                    <div v-if="!timelineData" style="width: 100%">
+                      <a-empty style="margin-top: 35px" :image="simpleImage" />
+                    </div>
+                    <div v-else-if="timelineData" class="nom-content">
+                      <div class="row-content" style="padding-top: 10px">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          意向预约时间:{{
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.appointPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+
+                      <div class="colum-line"></div>
+                      <div class="row-content">
+                        <div class="docpoint"></div>
+                        <!-- TODO 这里可能要改字段 -->
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          医生确认时间:{{
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                      <div class="colum-line"></div>
+                      <div class="row-content">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          实际视频时间:{{
+                            videoListData && videoListData.length > 0 ? videoListData[0].callTime : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                      <div class="colum-line"></div>
+                      <div class="row-content" style="padding-bottom: 15px">
+                        <div class="docpoint"></div>
+                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          结束问诊时间:{{
+                            videoListData && videoListData.length > 0 ? videoListData[0].endTime : '-' || '-'
+                          }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="title">视频文件</div>
+            <div class="container" style="height: 420px">
+              <div v-if="!videoListData || videoListData.length === 0" style="width: 100%">
+                <a-empty style="margin-top: 25%" :image="simpleImage" />
+              </div>
+
+              <div class="video-wrap" v-else>
+                <!-- class="video-player vjs-custom-skin" -->
+                <video-player
+                  style="width: 534px; height: 300px; margin: 10px 10px 0 10px"
+                  ref="videoPlayer"
+                  :playsinline="true"
+                  :autoplay="true"
+                  :loop="true"
+                  :options="playerOptions"
+                />
+
+                <div
+                  class="video-list"
+                  @click="onVideoClick(item)"
+                  v-for="(item, index) in videoListData"
+                  :key="index"
+                  :value="item"
+                >
+                  <div class="video-list-wrap">
+                    <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
+                    <span style="margin-left: 10px">视频文件{{ index+1 }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div
+                v-else-if="videoListData || videoListData.length > 0"
+                class="radio-content"
+                v-for="(item, index) in videoListData"
+                :key="index"
+                :value="item"
+              >
+                <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">视频文件{{ index + 1 }}:</div>
+                <video-player
+                  class="video-player vjs-custom-skin"
+                  ref="videoPlayer"
+                  :playsinline="true"
+                  :options="playerOptions"
+                />
+              </div> -->
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <a-modal
@@ -470,6 +636,44 @@ export default {
       phoneFollowListData: {},
       timelineData: {},
       voiceListData: [],
+      videoFollowListData:{},
+      videoListData: [
+        {
+          src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4',
+          name: '青花瓷',
+        },
+        {
+          src: 'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4',
+          name: '爱你一万年',
+        },
+      ],
+      // 视频播放
+      playerOptions: {
+        playbackRates: [0.5, 1.0, 1.5, 2.0], //可选择的播放速度
+        autoplay: false, //如果true,浏览器准备好时开始回放。
+        muted: false, // 默认情况下将会消除任何音频。
+        loop: false, // 视频一结束就重新开始。
+        preload: 'auto', // 建议浏览器在<video>加载元素后是否应该开始下载视频数据。auto浏览器选择最佳行为,立即开始加载视频（如果浏览器支持）
+        language: 'zh-CN',
+        aspectRatio: '16:9', // 将播放器置于流畅模式，并在计算播放器的动态大小时使用该值。值应该代表一个比例 - 用冒号分隔的两个数字（例如"16:9"或"4:3"）
+        fluid: true, // 当true时，Video.js player将拥有流体大小。换句话说，它将按比例缩放以适应其容器。
+        sources: [
+          {
+            type: '',
+            src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4', //url地址
+          },
+        ],
+        poster: '', //你的封面地址
+        // width: document.documentElement.clientWidth,
+        notSupportedMessage: '此视频暂无法播放，请稍后再试', //允许覆盖Video.js无法播放媒体源时显示的默认信息。
+        controlBar: {
+          timeDivider: true, //当前时间和持续时间的分隔符
+          durationDisplay: true, //显示持续时间
+          remainingTimeDisplay: false, //是否显示剩余时间功能
+          fullscreenToggle: true, //全屏按钮
+        },
+      },
+
       currentTab: 'tw',
       currentItem: 0,
       clickType: 101,
@@ -532,7 +736,7 @@ export default {
       
         this.getphoneRecords()
         this.getChatList()
-     
+        this.getVideoRecords()
   },
   methods: {
   
@@ -546,7 +750,33 @@ export default {
     },
 
 
+    //电话咨询记录
+    getVideoRecords() {
+      this.confirmLoading = true
+      this.timelineData = {}
+      this.voiceListData = []
+      // if (this.jumpType == 4) {
+      list4({
+        rightsId:  this.rightsId,
+      })
+        .then((res) => {
+          console.log('getVideoRecords', res.data)
+          this.tab7Flag = true
+          this.videoFollowListData = res.data || []
+          if (this.videoFollowListData.rightsUseRecordStatus) {
+            this.timelineDataVideo = this.videoFollowListData.rightsUseRecordStatus
+          } else {
+            this.timelineDataVideo = {}
+          }
 
+          this.videoListData = this.videoFollowListData.videoTapeInfo //TODO 这里处理视频数据
+          this.playerOptions.sources[0].src = this.videoListData[0].callTape
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+      // }
+    },
    
 
  
@@ -688,6 +918,10 @@ export default {
       this.chufangItemNo = -1
       this.previewVisible = false
       this.tab = 0
+    },
+
+    onVideoClick(item) {
+      this.playerOptions.sources[0].src = item.callTape
     },
   },
 }
@@ -1115,6 +1349,34 @@ export default {
       }
       .right {
         width: 556px;
+
+        .video-wrap {
+          width: 100%;
+          // height: 300px;
+          font-size: 12px;
+
+          color: #409eff;
+          .video-list {
+            padding: 5px;
+            margin-top: 10px;
+            border: 1px solid #409eff;
+            margin: 10px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            &:hover{
+              cursor: pointer;
+            }
+            // justify-content: center;
+            .video-list-wrap {
+              margin-left: 42%;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            }
+          }
+        }
         .title {
           margin-bottom: 10px;
           padding-left: 10px;

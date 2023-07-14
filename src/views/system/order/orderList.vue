@@ -419,7 +419,7 @@ export default {
       } else if (record.orderType == 'youzanOrder') {
         path = '/order/yzOrderDetail'
         //处方订单
-      }else if(record.orderType == 'appPrePrescription'){
+      }else if(record.orderType == 'appPrePrescription'||record.orderType =='consultOrderPrescription'){
         path = '/order/prescriptionDetail'
       } else {
         path = '/order/orderDetail'
