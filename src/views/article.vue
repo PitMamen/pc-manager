@@ -750,7 +750,7 @@ export default {
     },
 
 
-    //电话咨询记录
+    //视频咨询记录
     getVideoRecords() {
       this.confirmLoading = true
       this.timelineData = {}
@@ -762,7 +762,19 @@ export default {
         .then((res) => {
           console.log('getVideoRecords', res.data)
           this.tab7Flag = true
-          this.videoFollowListData = res.data || []
+
+          var resData = res.data || {}
+            if(resData.docInfo && resData.docInfo.avatarUrl){
+              resData.docInfo.avatarUrl=this.replaceURL(resData.docInfo.avatarUrl)
+            }
+
+            if(resData.videoTapeInfo && resData.videoTapeInfo.length>0){
+              resData.videoTapeInfo.forEach(element => {
+                element.callTape=this.replaceURL(element.callTape)
+              });
+            }
+
+          this.videoFollowListData = resData
           if (this.videoFollowListData.rightsUseRecordStatus) {
             this.timelineDataVideo = this.videoFollowListData.rightsUseRecordStatus
           } else {
@@ -888,7 +900,18 @@ export default {
         })
           .then((res) => {
             this.tab4Flag = true
-            this.phoneFollowListData = res.data || {}
+            var resData = res.data || {}
+            if(resData.docInfo && resData.docInfo.avatarUrl){
+              resData.docInfo.avatarUrl=this.replaceURL(resData.docInfo.avatarUrl)
+            }
+            if(resData.voiceTapeInfo && resData.voiceTapeInfo.length>0){
+              resData.voiceTapeInfo.forEach(element => {
+                element.callTape=this.replaceURL(element.callTape)
+              });
+            }
+            this.phoneFollowListData = resData
+
+
             if (this.phoneFollowListData.rightsUseRecordStatus) {
               this.timelineData = this.phoneFollowListData.rightsUseRecordStatus
             } else {
@@ -903,6 +926,12 @@ export default {
       
     },
 
+    //处理替换URL地址
+    replaceURL(url){
+      return url.replace('https://develop.mclouds.org.cn','http://172.16.38.4:8088').replace('https://hmg.mclouds.org.cn','http://172.16.38.4:8088')
+      .replace('https://ys.mclouds.org.cn','http://172.16.38.4:8088')
+      
+    },
 
     handleCancel() {
       this.visible = false
