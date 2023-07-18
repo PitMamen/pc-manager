@@ -216,7 +216,7 @@
                 >过滤条件</span
               >
             </div>
-            <div class="btn-desc" style="width: 79%;">
+            <div class="btn-desc" style="width: 79%">
               <div class="desc-content" style="color: #cb0000">终止条件：{{ itemTask.stopConditionRemark }}</div>
               <div class="desc-content" style="color: #1890ff; margin-top: 5px">
                 过滤条件：{{ itemTask.filterConditionRemark }}
@@ -473,12 +473,8 @@
 
             <div class="end-btn-task" style="width: 20%">
               <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
-              
-              <span
-                class="span-end"
-                style="margin-left: 10%"
-                @click="copyMission(indexTask, itemTask)"
-                >复制任务</span>
+
+              <span class="span-end" style="margin-left: 10%" @click="copyMission(indexTask, itemTask)">复制任务</span>
               <span
                 class="span-end"
                 style="margin-left: 10%"
@@ -627,6 +623,8 @@ export default {
         this.confirmLoading = false
         if (res.code == 0) {
           this.typeData = res.data
+          //默认值需求  默认随访类型
+          this.projectData.basePlan.followType = this.typeData[0].value
         }
       })
       .finally((res) => {
@@ -636,6 +634,12 @@ export default {
     tables().then((res) => {
       if (res.code == 0) {
         this.sourceData = res.data
+        //默认值需求  默认来源名单
+        this.projectData.basePlan.metaConfigureId = this.sourceData[0].value
+        this.isAgain = true //默认勾选重新匹配
+        this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0
+        //选择来源名单后，必须调取数据了
+        this.onSourceSelect()
       }
     })
     operationTypes().then((res) => {
@@ -921,7 +925,7 @@ export default {
         this.$message.error('请选择来源名单')
         return
       }
-      console.log("PPPP:",this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos)
+      console.log('PPPP:', this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos)
       this.$refs.addFilter.add(
         indexMisson,
         this.projectData.tasks[indexMisson].taskDetailFilterRuleDtos,
@@ -949,7 +953,7 @@ export default {
     },
 
     copyMission(index, item) {
-      this.projectData.tasks.splice(index, 0,JSON.parse(JSON.stringify(item)))
+      this.projectData.tasks.splice(index, 0, JSON.parse(JSON.stringify(item)))
     },
 
     addMission() {
@@ -959,14 +963,19 @@ export default {
         timeQuantity: 1,
         overdueTimeUnit: 24,
         stopTaskDetailDtos: [],
+        messageType: this.msgData[1].value,
+        taskExecType: this.taskExecData[0].value,
+        metaConfigureDetailId: this.dateFieldsData[3].value,
+        timeUnit: this.timeUnitTypesData[0].value,
       })
+
+      this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
     },
 
     /**
      * 名单来源选择后需要请求 名单过滤字段列表 时间名滤字段列表
      */
     onSourceSelect() {
-      this.fieldsOut()
       this.dateFieldsOut()
     },
 
@@ -1153,6 +1162,18 @@ export default {
       fields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then((res) => {
         if (res.code == 0) {
           this.chooseData = res.data
+
+          //默认值需求  默认来源名单
+          if (this.projectData.filterRules.length == 0) {
+            this.projectData.filterRules.push({
+              fieldType: 1,
+              metaConfigureDetailId: this.chooseData[13].value,
+              condition: this.operateData[2].value,
+            })
+          }
+          if (this.projectData.tasks.length == 0) {
+            this.addMission()
+          }
         }
       })
     },
@@ -1161,6 +1182,7 @@ export default {
       dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then((res) => {
         if (res.code == 0) {
           this.dateFieldsData = res.data
+          this.fieldsOut()
         }
       })
     },

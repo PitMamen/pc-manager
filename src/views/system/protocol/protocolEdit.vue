@@ -27,8 +27,8 @@
 <script>
 import E from 'wangeditor'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import { getContract, saveContract, downloadPdfContract, reportPdfContract } from '@/api/modular/system/posManage'
 import Vue from 'vue'
+import { getContract, saveContract, downloadPdfContract, reportPdfContract } from '@/api/modular/system/posManage'
 import { appId } from '@/utils/util'
 
 export default {
@@ -43,72 +43,157 @@ export default {
       confirmLoading: false,
       isSaved: false,
       deptId: '',
+      editor: {},
       content: '',
     }
   },
   mounted() {
-    let id = 'richId' + this.protocolType
-    var editor = new E(`#${id}`)
-    this.editor = editor
+    this.$nextTick(() => {
+      this.init()
+    })
+    // let id = 'richId' + this.protocolType
+    // var editor = new E(`#${id}`)
 
-    editor.config.height = 600
-    editor.config.pasteFilterStyle = false
-    console.log('editor', editor)
-    console.log('editorconfig', editor.config)
-    editor.config.onchange = (html) => {
-      this.content = html
-    }
-    // 配置 server 接口地址
-    // 默认情况下，显示所有菜单
-    editor.config.menus = [
-      'head',
-      'bold',
-      'fontSize',
-      'fontName',
-      'italic',
-      'underline',
-      'strikeThrough',
-      'indent',
-      'lineHeight',
-      'foreColor',
-      'backColor',
-      'link',
-      'list',
-      'todo',
-      'justify',
-      'quote',
-      // 'emoticon',
-      // 'image',
-      // 'video',
-      'table',
-      'code',
-      'splitLine',
-      'undo',
-      'redo',
-    ]
+    // editor.config.height = 600
+    // editor.config.pasteFilterStyle = false
+    // console.log('editor', editor)
+    // console.log('editorconfig', editor.config)
+    // editor.config.onchange = (html) => {
+    //   this.content = html
+    // }
+    // // 配置 server 接口地址
+    // // 默认情况下，显示所有菜单
+    // editor.config.menus = [
+    //   'head',
+    //   'bold',
+    //   'fontSize',
+    //   'fontName',
+    //   'italic',
+    //   'underline',
+    //   'strikeThrough',
+    //   'indent',
+    //   'lineHeight',
+    //   'foreColor',
+    //   'backColor',
+    //   'link',
+    //   'list',
+    //   'todo',
+    //   'justify',
+    //   'quote',
+    //   'image',
+    //   // 'emoticon',
+    //   // 'video',
+    //   'table',
+    //   'code',
+    //   'splitLine',
+    //   'undo',
+    //   'redo',
+    // ]
 
-    editor.config.uploadImgHeaders = {
-      Authorization: Vue.ls.get(ACCESS_TOKEN),
-    }
+    // editor.config.uploadImgHeaders = {
+    //   Authorization: Vue.ls.get(ACCESS_TOKEN),
+    // }
 
-    // 配置 server 接口地址
-    editor.config.uploadFileName = 'file'
-    editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
+    // // 配置 server 接口地址
+    // // editor.config.uploadFileName = 'file'
+    // // editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
+    // editor.config.uploadFileName = 'file'
+    // editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
 
-    // editor.config.showLinkVideo = false
+    // // editor.config.showLinkVideo = false
 
-    //教育文章先不支持视频，所以注释
-    editor.config.uploadVideoName = 'file'
-    editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
-    editor.config.uploadVideoHeaders = {
-      Authorization: Vue.ls.get(ACCESS_TOKEN),
-    }
+    // //教育文章先不支持视频，所以注释
+    // editor.config.uploadVideoName = 'file'
+    // editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+    // editor.config.uploadVideoHeaders = {
+    //   Authorization: Vue.ls.get(ACCESS_TOKEN),
+    // }
 
-    editor.create()
+    // console.log('rrr-----------------', editor.config.menus)
+
+    // editor.create()
+    // this.editor = editor
   },
+
+
   methods: {
     //初始化方法
     edit(record) {},
+
+    init() {
+      if (this.editor.isEnable) {
+        return
+      }
+
+      let id = 'richId' + this.protocolType
+      var editor = new E(`#${id}`)
+      // var editor = new E('#div11')
+
+      editor.config.height = 600
+      editor.config.pasteFilterStyle = false
+      console.log('editor', editor)
+      console.log('editorconfig', editor.config)
+      editor.config.onchange = (html) => {
+        // this.checkData.content = html
+        this.content = html
+      }
+      // 默认情况下，显示所有菜单
+      editor.config.menus = [
+        'head',
+        'bold',
+        'fontSize',
+        'fontName',
+        'italic',
+        'underline',
+        'strikeThrough',
+        'indent',
+        'lineHeight',
+        'foreColor',
+        'backColor',
+        'link',
+        'list',
+        'todo',
+        'justify',
+        'quote',
+        // 'emoticon',
+        'image',
+        // 'video',
+        'table',
+        'code',
+        'splitLine',
+        'undo',
+        'redo',
+      ]
+
+      editor.config.uploadImgHeaders = {
+        Authorization: Vue.ls.get(ACCESS_TOKEN),
+      }
+
+      // 配置 server 接口地址
+      editor.config.uploadFileName = 'file'
+      editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
+      // editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
+
+      // editor.config.showLinkVideo = false
+
+      //教育文章先不支持视频，所以注释
+      editor.config.uploadVideoName = 'file'
+      editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+      editor.config.uploadVideoHeaders = {
+        Authorization: Vue.ls.get(ACCESS_TOKEN),
+      }
+
+      /**
+       * 插入视频写法：
+       *
+       * <iframe frameborder="0" src="https://v.qq.com/txp/iframe/player.html?vid=n0020yrnly7" allowFullScreen="true"></iframe>
+       * <iframe frameborder="0" src="https://vd3.bdstatic.com/mda-nit9wfd413e2xjsh/sc/cae_h264/1664351398486048214/mda-nit9wfd413e2xjsh.mp4?v_from_s=hkapp-haokan-hbf&auth_key=1664420478-0-0-ee34ef2d3450dbb1901bde7ab5ebd63b&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=1878163596&vid=7560524968628684931&abtest=104960_1-104959_1&klogid=1878163596" allowFullScreen="true"></iframe>
+       *
+       */
+
+      editor.create()
+      this.editor = editor
+    },
 
     refreshData(deptId) {
       this.deptId = deptId

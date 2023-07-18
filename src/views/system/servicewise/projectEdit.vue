@@ -221,7 +221,7 @@
                 >过滤条件</span
               >
             </div>
-            <div class="btn-desc" style="width: 79%;">
+            <div class="btn-desc" style="width: 79%">
               <div class="desc-content" style="color: #cb0000">终止条件：{{ itemTask.stopConditionRemark }}</div>
               <div class="desc-content" style="color: #1890ff; margin-top: 5px">
                 过滤条件：{{ itemTask.filterConditionRemark }}
@@ -483,11 +483,7 @@
             <div class="end-btn-task" style="width: 20%">
               <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
 
-              <span
-                class="span-end"
-                style="margin-left: 10%"
-                @click="copyMission(indexTask, itemTask)"
-                >复制任务</span>
+              <span class="span-end" style="margin-left: 10%" @click="copyMission(indexTask, itemTask)">复制任务</span>
 
               <span
                 class="span-end"
@@ -595,7 +591,7 @@ export default {
       //随访名单更新时需重新匹配：0不匹配1匹配
       isAgain: false,
       //重复匹配状态：0不重复1可以重
-      isOnce: true,
+      isOnce: false,
       indexTaskNow: 0,
 
       /**
@@ -722,7 +718,7 @@ export default {
       this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0
     },
     goOnce() {
-      //重复匹配状态：0不重复1可以重
+      //重复匹配状态：0不重复1可以重   true不重复  false重复
       this.isOnce = !this.isOnce
       this.projectData.basePlan.repeatMatchStatus = this.isOnce ? 0 : 1
     },
@@ -780,7 +776,10 @@ export default {
       this.projectData.basePlan.updateMatchStatus = this.projectData.basePlan.updateMatchStatus.value
       this.projectData.basePlan.repeatMatchStatus = this.projectData.basePlan.repeatMatchStatus.value
       this.isAgain = this.projectData.basePlan.updateMatchStatus == 1 ? true : false
-      this.isOnce = this.projectData.basePlan.repeatMatchStatus == 1 ? false : true
+      //重复匹配状态：0不重复1可以重   true不重复  false重复
+      //repeatMatchStatus为0勾上    updateMatchStatus为1勾上
+      this.isOnce = this.projectData.basePlan.repeatMatchStatus == 0 ? true : false
+      // this.projectData.basePlan.repeatMatchStatus = this.isOnce ? 0 : 1
 
       // this.projectData.basePlan.executeDepartment = parseInt(this.projectData.basePlan.executeDepartment)
       let newArr = []
@@ -1182,7 +1181,7 @@ export default {
     },
 
     copyMission(index, item) {
-      this.projectData.tasks.splice(index, 0,JSON.parse(JSON.stringify(item)))
+      this.projectData.tasks.splice(index, 0, JSON.parse(JSON.stringify(item)))
     },
 
     addMission() {
@@ -1192,7 +1191,12 @@ export default {
         timeQuantity: 1,
         overdueTimeUnit: 24,
         stopTaskDetailDtos: [],
+        messageType: this.msgData[1].value,
+        taskExecType: this.taskExecData[0].value,
+        metaConfigureDetailId: this.dateFieldsData[3].value,
+        timeUnit: this.timeUnitTypesData[0].value,
       })
+      this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
     },
 
     /**

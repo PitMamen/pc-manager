@@ -377,6 +377,7 @@ export default {
       getArticleCategoryList({ pageNo: 1, pageSize: 10000 }).then((res) => {
         if (res.code == 0) {
           this.typeData = res.data.records
+          this.checkData.categoryId = this.typeData[0].id
         } else {
           this.$message.error('获取失败：' + res.message)
         }
