@@ -4482,6 +4482,25 @@ export function getFollowStat(data) {
   })
 }
 
+// 全院统计列表
+export function qryFollowStatByGroup(data) {
+  return axios({
+    url: '/follow-api/follow/stat/qryFollowStatByGroup',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 随访分组统计信息导出
+export function exportFollowStatByGroup(data) {
+  return axios({
+    url: '/follow-api/excel/exportFollowStatByGroup',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+  })
+}
 
 
 
