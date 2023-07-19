@@ -408,7 +408,14 @@ export default {
             //新增
             this.templateData = res.data
             //默认值需求  默认模板
-            this.checkData.templateId =  this.templateData[0].templateId
+            // this.checkData.templateId =  this.templateData[0].templateId
+            let hasOne = {}
+            this.templateData.forEach((element) => {
+              if (element.title == '随访提醒') {
+                hasOne = JSON.parse(JSON.stringify(element))
+              }
+            })
+            this.checkData.templateId =  hasOne.templateId
             this.onTemplateChange(this.checkData.templateId)
              //默认值需求  默认模板字段内容
              this.fieldList[0].property = '自定义传参'
