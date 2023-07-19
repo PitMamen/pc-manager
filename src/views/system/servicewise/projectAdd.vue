@@ -254,9 +254,10 @@
               @select="onTemSelect(indexTask, itemTask)"
               @search="handleSearch"
             >
+              <!-- v-for="(item, index) in chooseTemplateList" -->
               <template slot="dataSource">
                 <a-select-option
-                  v-for="(item, index) in chooseTemplateList"
+                  v-for="(item, index) in itemTask.itemTemplateList"
                   :title="item.templateTitle"
                   :key="index + ''"
                   :value="item.id + ''"
@@ -603,7 +604,7 @@ export default {
           remark: undefined, //补充说明
 
           updateMatchStatus: 0, //随访名单更新时需重新匹配：0不匹配1匹配
-          repeatMatchStatus: 0, //重复匹配状态：0不重复1可以重
+          repeatMatchStatus: 1, //重复匹配状态：0不重复1可以重
         },
         filterRules: [],
         tasks: [],
@@ -767,7 +768,10 @@ export default {
               //问卷新增字段 1:问卷2:文章3:短信模板4:微信模板
               this.$set(item, 'messageContentType', 1)
             })
-            this.chooseTemplateList = res.data.list
+            // this.chooseTemplateList = res.data.list
+            // itemTask.itemTemplateList = res.data.list
+            // this.$set(this.projectData.tasks[this.indexTaskNow], 'itemTemplateList', res.data.list)
+            this.$set(this.projectData.tasks[this.indexTaskNow], 'itemTemplateList', res.data.list)
           } else {
             // return {}
           }
@@ -779,7 +783,8 @@ export default {
             res.data.forEach((item) => {
               this.$set(item, 'messageContentType', 4)
             })
-            this.chooseTemplateList = res.data
+            // this.chooseTemplateList = res.data
+            this.$set(this.projectData.tasks[this.indexTaskNow], 'itemTemplateList', res.data)
           }
         })
       } else if (this.projectData.tasks[this.indexTaskNow].messageType == 3) {
@@ -790,7 +795,8 @@ export default {
               this.$set(item, 'messageContentType', 3)
               // this.$set(item, 'templateName', item.templateTitle)
             })
-            this.chooseTemplateList = res.data
+            // this.chooseTemplateList = res.data
+            this.$set(this.projectData.tasks[this.indexTaskNow], 'itemTemplateList', res.data)
           }
         })
       }
@@ -967,6 +973,7 @@ export default {
         taskExecType: this.taskExecData[0].value,
         metaConfigureDetailId: this.dateFieldsData[3].value,
         timeUnit: this.timeUnitTypesData[0].value,
+        itemTemplateList:[],
       })
 
       this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
@@ -1027,7 +1034,7 @@ export default {
      */
     onTemSelect(indexTask, itemTask) {
       // let chooseOne = this.templateList.find((item) => {
-      let chooseOne = this.chooseTemplateList.find((item) => {
+      let chooseOne = itemTask.itemTemplateList.find((item) => {
         return item.id == itemTask.messageContentId
       })
       console.log('onTemSelect chooseOne', chooseOne)
@@ -1247,13 +1254,10 @@ export default {
       for (let index = 0; index < tempData.tasks.length; index++) {
         let item = tempData.tasks[index]
 
-        // //这里删除掉用到的临时问卷列表
-        // if (item.itemTemplateList) {
-        //   delete item.itemTemplateList
-        // }
-        // if (item.itemTemplateListOrigin) {
-        //   delete item.itemTemplateListOrigin
-        // }
+        //这里删除掉用到的临时问卷列表
+        if (item.itemTemplateList) {
+          delete item.itemTemplateList
+        }
 
         // console.log('aaa item', item)
         // console.log('aaa index', index)
