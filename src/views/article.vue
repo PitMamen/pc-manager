@@ -28,6 +28,8 @@
             <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chatList.length === 0" />
             <template v-for="item in chatList" v-else>
               <div class="item left" :key="item.id" v-if="item.isCustomer">
+                
+                <!-- <img class="avatar" src="@/assets/icons/xyzs1.png" v-if="item.nick=='小医助手'" /> -->
                 <img class="avatar" :src="item.avatar" v-if="item.avatar" />
                 <img class="avatar" src="@/assets/icons/wenzhen/huanzhe.png" v-else />
                 <div class="msg">
@@ -861,6 +863,7 @@ export default {
 
           resData.forEach((element) => {
             element.avatar = this.replaceURL(element.avatar)
+           
           })
 
           this.chatList = resData
@@ -907,13 +910,14 @@ export default {
 
     //处理替换URL地址
     replaceURL(url) {
-      //192.168.1.121:8089
-      //172.16.38.4:8088
+     
+      var REPRRL='http://192.168.1.121:8089/api'
+      // var REPRRL='172.16.38.4:8088'
       return url
-        .replace('https://develop.mclouds.org.cn', 'http://192.168.1.121:8089')	
-        .replace('http://develop.mclouds.org.cn:8009', 'http://192.168.1.121:8089')	
-        .replace('https://hmg.mclouds.org.cn', 'http://192.168.1.121:8089')
-        .replace('https://ys.mclouds.org.cn', 'http://192.168.1.121:8089')
+        .replace('https://develop.mclouds.org.cn', REPRRL)	
+        .replace('http://develop.mclouds.org.cn:8009', REPRRL)	
+        .replace('https://hmg.mclouds.org.cn', REPRRL)
+        .replace('https://ys.mclouds.org.cn', REPRRL)
     },
 
     handleCancel() {
