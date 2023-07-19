@@ -584,6 +584,7 @@ import { info, info2, info3, list2, list4 } from '@/api/modular/system/treat'
 import { preDetail } from '@/api/modular/system/posManage'
 import { Empty } from 'ant-design-vue'
 import moment from 'moment'
+import { currentEnv } from '@/utils/util'
 export default {
   data() {
     return {
@@ -911,8 +912,20 @@ export default {
     //处理替换URL地址
     replaceURL(url) {
      
-      var REPRRL='http://192.168.1.121:8089/api'
-      // var REPRRL='172.16.38.4:8088'
+      var REPRRL=''
+     
+
+      if (currentEnv == 'test') {
+        //测试环境
+        REPRRL='http://192.168.1.121:8089/api'
+      } else if (currentEnv == 'show') {
+        //演示环境
+        REPRRL='http://172.16.38.2:8088/api'
+      } else if (currentEnv == 'online') {
+        //线上环境
+        return url
+      }
+
       return url
         .replace('https://develop.mclouds.org.cn', REPRRL)	
         .replace('http://develop.mclouds.org.cn:8009', REPRRL)	
