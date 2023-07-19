@@ -907,11 +907,13 @@ export default {
 
     //处理替换URL地址
     replaceURL(url) {
+      //192.168.1.121:8089
+      //172.16.38.4:8088
       return url
-        .replace('https://develop.mclouds.org.cn', 'http://172.16.38.4:8088')	
-        .replace('http://develop.mclouds.org.cn:8009', 'http://172.16.38.4:8088')	
-        .replace('https://hmg.mclouds.org.cn', 'http://172.16.38.4:8088')
-        .replace('https://ys.mclouds.org.cn', 'http://172.16.38.4:8088')
+        .replace('https://develop.mclouds.org.cn', 'http://192.168.1.121:8089')	
+        .replace('http://develop.mclouds.org.cn:8009', 'http://192.168.1.121:8089')	
+        .replace('https://hmg.mclouds.org.cn', 'http://192.168.1.121:8089')
+        .replace('https://ys.mclouds.org.cn', 'http://192.168.1.121:8089')
     },
 
     handleCancel() {
