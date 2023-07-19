@@ -22,7 +22,7 @@
             </div>
             <div class="div-left" style="padding-left: 20px;">
          <span class="span-item-name">模 板 I D :</span>
-              <a-select v-model="checkData.templateId" allow-clear placeholder="请选择" @change="onTemplateChange">
+              <a-select v-model="checkData.templateId" @focus="onModelFocus" allow-clear placeholder="请选择" @change="onTemplateChange">
                 <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.templateId">{{
                   item.title
                 }}</a-select-option>
@@ -266,6 +266,14 @@ export default {
       this.questionContent = { name: '' }
       this.teachContent = { title: '' }
     },
+
+    onModelFocus(){
+      if (!this.checkData.wxAppId) {
+        this.$message.warn('请先选择公众号')
+        return
+      }
+    },
+
     //新增
     addModel() {
       this.clearData()
@@ -276,6 +284,9 @@ export default {
       getWxConfigureList({}).then((res) => {
         if (res.code == 0) {
           this.wxgzhData = res.data
+          //默认值需求  默认公众号
+          this.checkData.wxAppId = this.wxgzhData[0].wxAppId
+          this.onWXProgramChange( this.checkData.wxAppId)
         }
       })
 
@@ -396,6 +407,20 @@ export default {
           } else {
             //新增
             this.templateData = res.data
+            //默认值需求  默认模板
+            this.checkData.templateId =  this.templateData[0].templateId
+            this.onTemplateChange(this.checkData.templateId)
+             //默认值需求  默认模板字段内容
+             this.fieldList[0].property = '自定义传参'
+             this.fieldList[0].content = '湘雅二医院提醒您：为您提供了消息提醒，请您查看！'
+             this.fieldList[1].property = '档案字段'
+             this.fieldList[1].content = '姓名'
+             this.fieldList[2].property = '自定义传参'
+             this.fieldList[2].content = '${nowDate}'
+             this.fieldList[3].property = '自定义传参'
+             this.fieldList[3].content = '为您提供宣教文章，请您点击查看！'
+             this.fieldList[4].property = '自定义传参'
+             this.fieldList[4].content = '为您提供宣教文章，请您点击查看！'
           }
         }
       })
