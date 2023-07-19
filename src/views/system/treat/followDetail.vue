@@ -202,9 +202,10 @@ export default {
     //初始化方法
     checkDetail(record, name, type) {
       this.visible = true
+      console.log("ddf:",type)
       this.reset()
       this.titleTop = record.cyksmc + '-' + name
-      this.queryParamsStatisit.executeDepartmentIds.push(record.cyksbm)
+      this.queryParamsStatisit.executeDepartmentIds.push(parseInt(record.cyksbm))
       this.queryParamsStatisit.messageOriginalId = record.messageOriginalId
       this.queryParamsStatisit.beginExecuteTime = record.beginExecuteTime
       this.queryParamsStatisit.endExecuteTime = record.endExecuteTime
@@ -212,21 +213,21 @@ export default {
       //     specFlag: '', //随访标识  1 无需随访 0 应随访
       //     successFlag: '', //随访成功标识 1 实际随访人数  0  失访人数
       if (type == 1) {
-        this.qryFollowStatList.successFlag = 1
-        this.qryFollowStatList.openidFlag = ''
-        this.qryFollowStatList.specFlag = ''
+        this.queryParamsStatisit.successFlag = 1
+        this.queryParamsStatisit.openidFlag = ''
+        this.queryParamsStatisit.specFlag = ''
       } else if (type == 2) {
-        this.qryFollowStatList.specFlag = 0
-        this.qryFollowStatList.successFlag = ''
-        this.qryFollowStatList.openidFlag = ''
+        this.queryParamsStatisit.specFlag = 0
+        this.queryParamsStatisit.successFlag = ''
+        this.queryParamsStatisit.openidFlag = ''
       } else if (type == 3) {
-        this.qryFollowStatList.specFlag = 1
-        this.qryFollowStatList.successFlag = ''
-        this.qryFollowStatList.openidFlag = ''
+        this.queryParamsStatisit.specFlag = 1
+        this.queryParamsStatisit.successFlag = ''
+        this.queryParamsStatisit.openidFlag = ''
       } else if (type == 4) {
-        this.qryFollowStatList.specFlag = ''
-        this.qryFollowStatList.successFlag = 0
-        this.qryFollowStatList.openidFlag = ''
+        this.queryParamsStatisit.specFlag = ''
+        this.queryParamsStatisit.successFlag = 0
+        this.queryParamsStatisit.openidFlag = ''
       }
 
       this.$nextTick(() => {
@@ -253,6 +254,7 @@ export default {
      */
     reset() {
       this.queryParamsStatisit.queryStr = ''
+      this.queryParamsStatisit.executeDepartmentIds = []
       this.queryParamsStatisit.zyh = ''
     },
   },
