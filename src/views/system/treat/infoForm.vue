@@ -1518,16 +1518,7 @@ export default {
       timelineData: {},
       timelineDataVideo: {},
       voiceListData: [],
-      videoListData: [
-        {
-          src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4',
-          name: '青花瓷',
-        },
-        {
-          src: 'https://prod-streaming-video-msn-com.akamaized.net/a8c412fa-f696-4ff2-9c76-e8ed9cdffe0f/604a87fc-e7bc-463e-8d56-cde7e661d690.mp4',
-          name: '爱你一万年',
-        },
-      ],
+      videoListData: [],
       // 视频播放
       playerOptions: {
         playbackRates: [0.5, 1.0, 1.5, 2.0], //可选择的播放速度
@@ -1541,7 +1532,7 @@ export default {
         sources: [
           {
             type: '',
-            src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4', //url地址
+            src: '', //url地址
           },
         ],
         poster: '', //你的封面地址

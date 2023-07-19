@@ -633,7 +633,7 @@ export default {
         sources: [
           {
             type: '',
-            src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4', //url地址
+            src: '', //url地址
           },
         ],
         poster: '', //你的封面地址
