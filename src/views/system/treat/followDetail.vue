@@ -202,9 +202,10 @@ export default {
     //初始化方法
     checkDetail(record, name, type) {
       this.visible = true
+      console.log("ddf:",type)
       this.reset()
       this.titleTop = record.cyksmc + '-' + name
-      this.queryParamsStatisit.executeDepartmentIds.push(record.cyksbm)
+      this.queryParamsStatisit.executeDepartmentIds.push(parseInt(record.cyksbm))
       this.queryParamsStatisit.messageOriginalId = record.messageOriginalId
       this.queryParamsStatisit.beginExecuteTime = record.beginExecuteTime
       this.queryParamsStatisit.endExecuteTime = record.endExecuteTime
@@ -253,6 +254,7 @@ export default {
      */
     reset() {
       this.queryParamsStatisit.queryStr = ''
+      this.queryParamsStatisit.executeDepartmentIds = []
       this.queryParamsStatisit.zyh = ''
     },
   },
