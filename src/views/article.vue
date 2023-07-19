@@ -935,6 +935,7 @@ export default {
         .replace('http://develop.mclouds.org.cn:8009', REPRRL)	
         .replace('https://hmg.mclouds.org.cn', REPRRL)
         .replace('https://ys.mclouds.org.cn', REPRRL)
+        .replace('http://172.16.38.4:8088', REPRRL)
     },
 
     handleCancel() {
