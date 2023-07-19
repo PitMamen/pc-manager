@@ -1,303 +1,286 @@
 <template>
- 
-    <a-spin :spinning="confirmLoading">
-      <div class="wrap">
-       
-        <div class="tabs">
-          
-
-          <div  class="tab tab5" :class="{ active: tab === 5 }" @click="tabClick(5)">
-            <img src="@/assets/icons/wenzhen/tab33.png" v-if="tab === 5" />
-            <img src="@/assets/icons/wenzhen/tab3.png" v-else />
-            <span>聊天记录</span>
-          </div>
-
-          <div  class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
-            <img src="@/assets/icons/wenzhen/phone_n2.png" v-if="tab === 4" />
-            <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
-            <span>电话记录</span>
-          </div>
-
-          <div  class="tab tab5" :class="{ active: tab === 7 }" @click="tabClick(7)">
-            <img src="@/assets/icons/wenzhen/video.png" v-if="tab === 7" />
-            <img src="@/assets/icons/wenzhen/video_not.png" v-else />
-            <span>视频记录</span>
-          </div>
-          
+  <a-spin :spinning="confirmLoading">
+    <div class="wrap">
+      <div class="tabs">
+        <div class="tab tab5" :class="{ active: tab === 5 }" @click="tabClick(5)">
+          <img src="@/assets/icons/wenzhen/tab33.png" v-if="tab === 5" />
+          <img src="@/assets/icons/wenzhen/tab3.png" v-else />
+          <span>聊天记录</span>
         </div>
 
-        <div class="content content5" v-show="tab === 5">
-          <div class="chat">
-            <div class="title">问诊记录</div>
-            <div class="list">
-              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chatList.length === 0" />
-              <template v-for="item in chatList" v-else>
-                <div class="item left" :key="item.id" v-if="item.isCustomer">
-                  <img class="avatar" :src="item.avatar" v-if="item.avatar" />
-                  <img class="avatar" src="@/assets/icons/wenzhen/huanzhe.png" v-else />
-                  <div class="msg">
-                    <div class="row">
-                      <span class="nick">{{ item.nick || '' }}</span>
-                      <span class="time">{{ format(new Date(item.time * 1000), 'YYYY-MM-DD HH:mm') }}</span>
-                    </div>
-                    <div
-                      class="row text"
-                      @click="chatClick(item)"
-                      v-if="item.type === 'TIMTextElem'"
-                      :title="item.payload.text"
-                    >
-                      {{ item.payload.text }}
-                    </div>
-                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMImageElem'">
-                      【图片】
-                    </div>
-                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMSoundElem'">
-                      【语音】
-                    </div>
-                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMCustomElem'">
-                      【{{ item.payload.description }}】
-                    </div>
-                    <div class="row card" v-else>【未定义类型消息】</div>
+        <div class="tab tab4" :class="{ active: tab === 4 }" @click="tabClick(4)">
+          <img src="@/assets/icons/wenzhen/phone_n2.png" v-if="tab === 4" />
+          <img src="@/assets/icons/wenzhen/phone_n.png" v-else />
+          <span>电话记录</span>
+        </div>
+
+        <div class="tab tab5" :class="{ active: tab === 7 }" @click="tabClick(7)">
+          <img src="@/assets/icons/wenzhen/video.png" v-if="tab === 7" />
+          <img src="@/assets/icons/wenzhen/video_not.png" v-else />
+          <span>视频记录</span>
+        </div>
+      </div>
+
+      <div class="content content5" v-show="tab === 5">
+        <div class="chat">
+          <div class="title">问诊记录</div>
+          <div class="list">
+            <a-empty style="margin-top: 150px" :image="simpleImage" v-if="chatList.length === 0" />
+            <template v-for="item in chatList" v-else>
+              <div class="item left" :key="item.id" v-if="item.isCustomer">
+                
+                <!-- <img class="avatar" src="@/assets/icons/xyzs1.png" v-if="item.nick=='小医助手'" /> -->
+                <img class="avatar" :src="item.avatar" v-if="item.avatar" />
+                <img class="avatar" src="@/assets/icons/wenzhen/huanzhe.png" v-else />
+                <div class="msg">
+                  <div class="row">
+                    <span class="nick">{{ item.nick || '' }}</span>
+                    <span class="time">{{ format(new Date(item.time * 1000), 'YYYY-MM-DD HH:mm') }}</span>
                   </div>
-                </div>
-                <div class="item right" :key="item.id" v-else>
-                  <div class="msg">
-                    <div class="row">
-                      <span class="time">{{ format(new Date(item.time * 1000), 'YYYY-MM-DD HH:mm') }}</span>
-                      <span class="nick">{{ item.nick || '' }}</span>
-                    </div>
-                    <div
-                      class="row text"
-                      @click="chatClick(item)"
-                      v-if="item.type === 'TIMTextElem'"
-                      :title="item.payload.text"
-                    >
-                      {{ item.payload.text }}
-                    </div>
-                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMImageElem'">
-                      【图片】
-                    </div>
-                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMSoundElem'">
-                      【语音】
-                    </div>
-                    <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMCustomElem'">
-                      【{{ item.payload.description }}】
-                    </div>
-                    <div class="row card" v-else>【未定义类型消息】</div>
+                  <div
+                    class="row text"
+                    @click="chatClick(item)"
+                    v-if="item.type === 'TIMTextElem'"
+                    :title="item.payload.text"
+                  >
+                    {{ item.payload.text }}
                   </div>
-                  <img class="avatar" :src="item.avatar" v-if="item.avatar" />
-                  <img class="avatar" src="@/assets/icons/wenzhen/header.png" v-else />
+                  <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMImageElem'">【图片】</div>
+                  <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMSoundElem'">【语音】</div>
+                  <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMCustomElem'">
+                    【{{ item.payload.description }}】
+                  </div>
+                  <div class="row card" v-else>【未定义类型消息】</div>
                 </div>
-              </template>
-            </div>
+              </div>
+              <div class="item right" :key="item.id" v-else>
+                <div class="msg">
+                  <div class="row">
+                    <span class="time">{{ format(new Date(item.time * 1000), 'YYYY-MM-DD HH:mm') }}</span>
+                    <span class="nick">{{ item.nick || '' }}</span>
+                  </div>
+                  <div
+                    class="row text"
+                    @click="chatClick(item)"
+                    v-if="item.type === 'TIMTextElem'"
+                    :title="item.payload.text"
+                  >
+                    {{ item.payload.text }}
+                  </div>
+                  <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMImageElem'">【图片】</div>
+                  <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMSoundElem'">【语音】</div>
+                  <div class="row card" @click="chatClick(item)" v-else-if="item.type === 'TIMCustomElem'">
+                    【{{ item.payload.description }}】
+                  </div>
+                  <div class="row card" v-else>【未定义类型消息】</div>
+                </div>
+                <img class="avatar" :src="item.avatar" v-if="item.avatar" />
+                <img class="avatar" src="@/assets/icons/wenzhen/header.png" v-else />
+              </div>
+            </template>
           </div>
-          <div class="chat-detail">
-            <div class="title">内容详情（<span>点击左侧内容在此查看详情</span>）</div>
-            <div class="container">
-              <div class="text" v-if="chatItem.type === 'TIMTextElem'">
-                <span>{{ chatItem.payload.text }}</span>
+        </div>
+        <div class="chat-detail">
+          <div class="title">内容详情（<span>点击左侧内容在此查看详情</span>）</div>
+          <div class="container">
+            <div class="text" v-if="chatItem.type === 'TIMTextElem'">
+              <span>{{ chatItem.payload.text }}</span>
+            </div>
+            <div class="tupian" v-else-if="chatItem.type === 'TIMImageElem'">
+              <img :src="chatItem.payload.imageInfoArray[0].url" />
+            </div>
+            <div class="yuying" v-else-if="chatItem.type === 'TIMSoundElem'">
+              <audio :src="chatItem.payload.url" controls autoplay />
+            </div>
+            <div
+              class="wenzhang"
+              v-else-if="
+                chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomArticleMessage'
+              "
+            >
+              <div v-html="articleHtml"></div>
+            </div>
+            <div
+              class="chufang"
+              v-else-if="
+                chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomChuFangMessage'
+              "
+            >
+              <div class="big-kuang">
+                <div class="top-content">
+                  <div style="margin-left: 30%">{{ preDetailData.medicalInfo.preHead }}</div>
+                  <div class="span-gray">{{ preDetailData.medicalInfo.preType }}</div>
+                </div>
+
+                <div style="margin-left: 43%; margin-top: 10px; margin-bottom: 20px">
+                  {{ preDetailData.medicalInfo.preTitle }}
+                </div>
+                <div class="user-content">
+                  <div>姓名:{{ preDetailData.medicalInfo.name }}</div>
+                  <div>性别:{{ preDetailData.medicalInfo.sex }}</div>
+                  <div>年龄:{{ preDetailData.medicalInfo.age }}</div>
+                </div>
+                <div class="user-content" style="margin-bottom: 15px">
+                  <div>科室:{{ preDetailData.medicalInfo.deptName }}</div>
+                  <div>日期:{{ preDetailData.medicalInfo.createDate }}</div>
+                </div>
               </div>
-              <div class="tupian" v-else-if="chatItem.type === 'TIMImageElem'">
-                <img :src="chatItem.payload.imageInfoArray[0].url" />
+
+              <div class="big-kuang">
+                <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold">
+                  诊断
+                </div>
+                <div class="line-content"></div>
+                <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px">
+                  {{ preDetailData.diagnosis }}
+                </div>
               </div>
-              <div class="yuying" v-else-if="chatItem.type === 'TIMSoundElem'">
-                <audio :src="chatItem.payload.url" controls autoplay />
-              </div>
-              <div
-                class="wenzhang"
-                v-else-if="
-                  chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomArticleMessage'
-                "
-              >
-                <div v-html="articleHtml"></div>
-              </div>
-              <div
-                class="chufang"
-                v-else-if="
-                  chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomChuFangMessage'
-                "
-              >
-                <div class="big-kuang">
+
+              <div class="big-kuang">
+                <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold">
+                  RP
+                </div>
+                <div
+                  style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #e6e6e6"
+                ></div>
+                <div v-for="(item, index) in preDetailData.medOrderItems" :key="index" :value="item.drugName">
                   <div class="top-content">
-                    <div style="margin-left: 30%">{{ preDetailData.medicalInfo.preHead }}</div>
-                    <div class="span-gray">{{ preDetailData.medicalInfo.preType }}</div>
-                  </div>
-
-                  <div style="margin-left: 43%; margin-top: 10px; margin-bottom: 20px">
-                    {{ preDetailData.medicalInfo.preTitle }}
-                  </div>
-                  <div class="user-content">
-                    <div>姓名:{{ preDetailData.medicalInfo.name }}</div>
-                    <div>性别:{{ preDetailData.medicalInfo.sex }}</div>
-                    <div>年龄:{{ preDetailData.medicalInfo.age }}</div>
-                  </div>
-                  <div class="user-content" style="margin-bottom: 15px">
-                    <div>科室:{{ preDetailData.medicalInfo.deptName }}</div>
-                    <div>日期:{{ preDetailData.medicalInfo.createDate }}</div>
-                  </div>
-                </div>
-
-                <div class="big-kuang">
-                  <div
-                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
-                  >
-                    诊断
-                  </div>
-                  <div class="line-content"></div>
-                  <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px">
-                    {{ preDetailData.diagnosis }}
-                  </div>
-                </div>
-
-                <div class="big-kuang">
-                  <div
-                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
-                  >
-                    RP
-                  </div>
-                  <div
-                    style="width: 100%; height: 1px; margin-right: 10px; margin-right: 10px; background: #e6e6e6"
-                  ></div>
-                  <div v-for="(item, index) in preDetailData.medOrderItems" :key="index" :value="item.drugName">
-                    <div class="top-content">
-                      <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px">
-                        {{ index + 1 }}.{{ item.drugName }}
-                      </div>
-                      <div style="margin-left: auto; margin-top: 5px; margin-bottom: 5px; margin-right: 5px">
-                        x{{ item.itemNum }}{{ item.itemDrugUnit }}
-                      </div>
+                    <div style="margin-left: 10px; margin-top: 5px; margin-bottom: 5px">
+                      {{ index + 1 }}.{{ item.drugName }}
                     </div>
-                    <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
-                    <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
-                      用法用量:{{ item.frequency }},{{ item.useMethod }}
+                    <div style="margin-left: auto; margin-top: 5px; margin-bottom: 5px; margin-right: 5px">
+                      x{{ item.itemNum }}{{ item.itemDrugUnit }}
                     </div>
                   </div>
-                </div>
-
-                <div class="big-kuang">
-                  <div
-                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
-                  >
-                    备注
+                  <div style="margin-left: 10px; color: #999999; font-size: 1em">规格:{{ item.drugSpec }}</div>
+                  <div style="margin-left: 10px; color: #4d4d4d; font-size: 10px">
+                    用法用量:{{ item.frequency }},{{ item.useMethod }}
                   </div>
-                  <div class="line-content"></div>
-
-                  <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
-                    {{ preDetailData.medicalInfo.remark }}
-                  </div>
-                </div>
-
-                <div class="big-kuang">
-                  <div
-                    style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold"
-                  >
-                    签字盖章
-                  </div>
-                  <div class="line-content"></div>
-
-                  <div style="margin-left: 10px; margin-top: 10px;display: flex;flex-direction: row;align-items: center;">
-                    开方医生：
-                    <img style="height: 25px;" v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile" :src="preDetailData.doctorCerFile" />
-                    <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
-                  </div>
-                  <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
-                    执行科室：{{ preDetailData.medicalInfo.deptName }}
-                  </div>
-                  <div style="margin-left: 10px; margin-top: 10px">
-                    审核药师：{{ preDetailData.medicalInfo.checkUserName }}
-                  </div>
-                </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em">
-                  1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
-                </div>
-                <div style="margin-left: 10px; color: #999999; font-size: 1em">
-                  2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药
-                  品一经发出，不得退换
                 </div>
               </div>
-              <div
-                class="wenjuan"
-                v-else-if="
-                  chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomWenJuanMessage'
-                "
-              >
-                <iframe :src="JSON.parse(chatItem.payload.data).url" width="520" height="395" frameborder="0"></iframe>
+
+              <div class="big-kuang">
+                <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold">
+                  备注
+                </div>
+                <div class="line-content"></div>
+
+                <div style="margin-left: 10px; margin-top: 10px; flex-wrap: wrap">
+                  {{ preDetailData.medicalInfo.remark }}
+                </div>
               </div>
-              <div
-                class="wenzhen"
-                v-else-if="
-                  chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomIllnessMessage'
-                "
-              >
-                <div class="card card1">
-                  <div class="titles">服务团队</div>
-                  <div class="body">
-                    <img :src="(wzInfo1.docInfo || {}).avatarUrl" v-if="(wzInfo1.docInfo || {}).avatarUrl" />
-                    <img src="@/assets/icons/wenzhen/header.png" v-else />
-                    <div class="infos">
-                      <div class="row">
-                        <span class="name">{{ (wzInfo1.docInfo || {}).userName || '' }}</span
-                        >{{ (wzInfo1.docInfo || {}).professionalTitle || '' }}
-                      </div>
-                      <div class="row">
-                        {{ (wzInfo1.docInfo || {}).hospitalName || '' }}
-                        {{ (wzInfo1.docInfo || {}).departmentName || '' }}
-                      </div>
-                      <div class="row" v-if="(wzInfo1.teamInfo || []).length === 0">医疗团队（0人）</div>
-                      <div class="row" v-else>
-                        医疗团队（{{ (wzInfo1.teamInfo || []).length }}人）：{{ (wzInfo1.teamInfo || []).join('、') }}
-                      </div>
+
+              <div class="big-kuang">
+                <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 5px; color: #1a1a1a; font-weight: bold">
+                  签字盖章
+                </div>
+                <div class="line-content"></div>
+
+                <div
+                  style="margin-left: 10px; margin-top: 10px; display: flex; flex-direction: row; align-items: center"
+                >
+                  开方医生：
+                  <img
+                    style="height: 25px"
+                    v-if="preDetailData.caAuthFlag && preDetailData.doctorCerFile"
+                    :src="preDetailData.doctorCerFile"
+                  />
+                  <div v-else>{{ preDetailData.medicalInfo.doctorName }}</div>
+                </div>
+                <div style="margin-left: 10px; margin-top: 10px; margin-bottom: 10px">
+                  执行科室：{{ preDetailData.medicalInfo.deptName }}
+                </div>
+                <div style="margin-left: 10px; margin-top: 10px">
+                  审核药师：{{ preDetailData.medicalInfo.checkUserName }}
+                </div>
+              </div>
+              <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
+              <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
+              </div>
+              <div style="margin-left: 10px; color: #999999; font-size: 1em">
+                2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药 品一经发出，不得退换
+              </div>
+            </div>
+            <div
+              class="wenjuan"
+              v-else-if="
+                chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomWenJuanMessage'
+              "
+            >
+              <iframe :src="JSON.parse(chatItem.payload.data).url" width="520" height="395" frameborder="0"></iframe>
+            </div>
+            <div
+              class="wenzhen"
+              v-else-if="
+                chatItem.type === 'TIMCustomElem' && JSON.parse(chatItem.payload.data).type === 'CustomIllnessMessage'
+              "
+            >
+              <div class="card card1">
+                <div class="titles">服务团队</div>
+                <div class="body">
+                  <img :src="(wzInfo1.docInfo || {}).avatarUrl" v-if="(wzInfo1.docInfo || {}).avatarUrl" />
+                  <img src="@/assets/icons/wenzhen/header.png" v-else />
+                  <div class="infos">
+                    <div class="row">
+                      <span class="name">{{ (wzInfo1.docInfo || {}).userName || '' }}</span
+                      >{{ (wzInfo1.docInfo || {}).professionalTitle || '' }}
+                    </div>
+                    <div class="row">
+                      {{ (wzInfo1.docInfo || {}).hospitalName || '' }}
+                      {{ (wzInfo1.docInfo || {}).departmentName || '' }}
+                    </div>
+                    <div class="row" v-if="(wzInfo1.teamInfo || []).length === 0">医疗团队（0人）</div>
+                    <div class="row" v-else>
+                      医疗团队（{{ (wzInfo1.teamInfo || []).length }}人）：{{ (wzInfo1.teamInfo || []).join('、') }}
                     </div>
                   </div>
                 </div>
-                <div class="card card2">
-                  <div class="titles">剩余权益</div>
-                  <div class="body">
-                    <div class="row" v-for="item in wzInfo1.rightsItemInfo || []" :key="item.id">
-                      <span
-                        >{{ item.serviceItemName }}【{{ item.serviceItemAttrs }}】：<span class="num"
-                          >剩余{{ item.surplusQuantity }}{{ item.unit }}/共{{ item.equityQuantity
-                          }}{{ item.unit }}</span
-                        ></span
-                      >
-                    </div>
+              </div>
+              <div class="card card2">
+                <div class="titles">剩余权益</div>
+                <div class="body">
+                  <div class="row" v-for="item in wzInfo1.rightsItemInfo || []" :key="item.id">
+                    <span
+                      >{{ item.serviceItemName }}【{{ item.serviceItemAttrs }}】：<span class="num"
+                        >剩余{{ item.surplusQuantity }}{{ item.unit }}/共{{ item.equityQuantity }}{{ item.unit }}</span
+                      ></span
+                    >
                   </div>
                 </div>
-                <div class="card card3">
-                  <div class="titles">患者提交的信息</div>
-                  <div class="body">
-                    <div class="subtitle">病情描述</div>
-                    <div class="msg">{{ wzInfo2.diseaseDesc || '--' }}</div>
-                    <div class="subtitle">希望获得帮助</div>
-                    <div class="msg">{{ wzInfo2.appealDesc || '--' }}</div>
-                    <div class="subtitle">上传检查报告或患处图片</div>
-                    <div class="imgs">
-                      <div class="msg" v-if="(wzInfo2.images || '').length === 0">--</div>
-                      <img
-                        v-for="item in wzInfo2.images.split(',')"
-                        :key="item"
-                        :src="item"
-                        @click="previewClick(item)"
-                        v-else
-                      />
-                    </div>
+              </div>
+              <div class="card card3">
+                <div class="titles">患者提交的信息</div>
+                <div class="body">
+                  <div class="subtitle">病情描述</div>
+                  <div class="msg">{{ wzInfo2.diseaseDesc || '--' }}</div>
+                  <div class="subtitle">希望获得帮助</div>
+                  <div class="msg">{{ wzInfo2.appealDesc || '--' }}</div>
+                  <div class="subtitle">上传检查报告或患处图片</div>
+                  <div class="imgs">
+                    <div class="msg" v-if="(wzInfo2.images || '').length === 0">--</div>
+                    <img
+                      v-for="item in wzInfo2.images.split(',')"
+                      :key="item"
+                      :src="item"
+                      @click="previewClick(item)"
+                      v-else
+                    />
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="content content4" v-show="tab === 4">
-          <div class="left">
-            <div class="title">基本信息</div>
-            
-            <div class="list" >
-              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!phoneFollowListData.id" />
-              <div  v-else>
+      <div class="content content4" v-show="tab === 4">
+        <div class="left">
+          <div class="title">基本信息</div>
 
-           
+          <div class="list">
+            <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!phoneFollowListData.id" />
+            <div v-else>
               <div class="top-content">
                 <div class="div-content">
                   <a-avatar
@@ -398,170 +381,170 @@
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="right">
+          <div class="title">内容详情</div>
+          <div class="container">
+            <div v-if="!voiceListData || voiceListData.length === 0" style="width: 100%">
+              <a-empty style="margin-top: 25%" :image="simpleImage" />
+            </div>
+            <div
+              v-else-if="voiceListData || voiceListData.length > 0"
+              class="radio-content"
+              v-for="(item, index) in voiceListData"
+              :key="index"
+              :value="item"
+            >
+              <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">通话录音{{ index + 1 }}:</div>
+              <audio :src="item.callTape" controls />
             </div>
           </div>
-          <div class="right">
-            <div class="title">内容详情</div>
-            <div class="container">
-              <div v-if="!voiceListData || voiceListData.length === 0" style="width: 100%">
-                <a-empty style="margin-top: 25%" :image="simpleImage" />
+        </div>
+      </div>
+
+      <div class="content content4" v-show="tab === 7">
+        <div class="left">
+          <div class="title">基本信息</div>
+          <div class="list" style="height: 420px">
+            <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!videoFollowListData.id" />
+            <div v-else>
+              <div class="top-content">
+                <div class="div-content">
+                  <a-avatar
+                    :src="(videoFollowListData.docInfo || {}).avatarUrl"
+                    v-if="videoFollowListData.docInfo.avatarUrl != null"
+                    icon="user"
+                    style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
+                  />
+                  <a-avatar
+                    style="size: 54; margin-left: 14px; margin-top: 10px"
+                    src="@/assets/icons/wenzhen/header.png"
+                    v-else
+                  />
+                  <div class="nom-content">
+                    <div class="row-content">
+                      <div style="font-size: 14px; color: #1a1a1a">
+                        {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
+                      </div>
+                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                        {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.professionalTitle : '-' || '-' }}
+                      </div>
+                    </div>
+
+                    <div class="row-content">
+                      <div style="font-size: 14px; color: #1a1a1a">
+                        {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.hospitalName : '-' || '-' }}
+                      </div>
+                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                        {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.departmentName : '-' || '-' }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="line"></div>
+                <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                  套餐名称:{{
+                    videoFollowListData.rightsUseRecordStatus
+                      ? videoFollowListData.rightsUseRecordStatus.serviceItemName
+                      : '-' || '-'
+                  }}
+                </div>
+                <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
+                  服务时长:{{
+                    videoFollowListData.rightsUseRecordStatus
+                      ? videoFollowListData.rightsUseRecordStatus.serviceTime
+                      : '-' || '-'
+                  }}分钟
+                </div>
               </div>
-              <div
-                v-else-if="voiceListData || voiceListData.length > 0"
-                class="radio-content"
-                v-for="(item, index) in voiceListData"
-                :key="index"
-                :value="item"
-              >
-                <div style="margin-top: 18px; margin-left: 10px; margin-right: 10px">通话录音{{ index + 1 }}:</div>
-                <audio :src="item.callTape" controls />
+
+              <div class="top-content">
+                <div class="div-content">
+                  <div v-if="!timelineData" style="width: 100%">
+                    <a-empty style="margin-top: 35px" :image="simpleImage" />
+                  </div>
+                  <div v-else-if="timelineData" class="nom-content">
+                    <div class="row-content" style="padding-top: 10px">
+                      <div class="docpoint"></div>
+                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                        意向预约时间:{{
+                          videoFollowListData.rightsUseRecordStatus
+                            ? videoFollowListData.rightsUseRecordStatus.appointPeriod
+                            : '-' || '-'
+                        }}
+                      </div>
+                    </div>
+
+                    <div class="colum-line"></div>
+                    <div class="row-content">
+                      <div class="docpoint"></div>
+                      <!-- TODO 这里可能要改字段 -->
+                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                        医生确认时间:{{
+                          videoFollowListData.rightsUseRecordStatus
+                            ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
+                            : '-' || '-'
+                        }}
+                      </div>
+                    </div>
+                    <div class="colum-line"></div>
+                    <div class="row-content">
+                      <div class="docpoint"></div>
+                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                        实际视频时间:{{
+                          videoListData && videoListData.length > 0 ? videoListData[0].callTime : '-' || '-'
+                        }}
+                      </div>
+                    </div>
+                    <div class="colum-line"></div>
+                    <div class="row-content" style="padding-bottom: 15px">
+                      <div class="docpoint"></div>
+                      <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                        结束问诊时间:{{
+                          videoListData && videoListData.length > 0 ? videoListData[0].endTime : '-' || '-'
+                        }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+        <div class="right">
+          <div class="title">视频文件</div>
+          <div class="container" style="height: 420px">
+            <div v-if="!videoListData || videoListData.length === 0" style="width: 100%">
+              <a-empty style="margin-top: 25%" :image="simpleImage" />
+            </div>
 
-        <div class="content content4" v-show="tab === 7">
-          <div class="left">
-            <div class="title">基本信息</div>
-            <div class="list" style="height: 420px">
-              <a-empty style="margin-top: 150px" :image="simpleImage" v-if="!videoFollowListData.id" />
-              <div v-else>
-                <div class="top-content">
-                  <div class="div-content">
-                    <a-avatar
-                      :src="(videoFollowListData.docInfo || {}).avatarUrl"
-                      v-if="videoFollowListData.docInfo.avatarUrl != null"
-                      icon="user"
-                      style="margin-left: 14px; margin-top: 8px; width: 60px; height: 54px"
-                    />
-                    <a-avatar
-                      style="size: 54; margin-left: 14px; margin-top: 10px"
-                      src="@/assets/icons/wenzhen/header.png"
-                      v-else
-                    />
-                    <div class="nom-content">
-                      <div class="row-content">
-                        <div style="font-size: 14px; color: #1a1a1a">
-                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
-                        </div>
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
-                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.professionalTitle : '-' || '-' }}
-                        </div>
-                      </div>
+            <div class="video-wrap" v-else>
+              <!-- class="video-player vjs-custom-skin" -->
+              <video-player
+                style="width: 534px; height: 300px; margin: 10px 10px 0 10px"
+                ref="videoPlayer"
+                :playsinline="true"
+                :autoplay="true"
+                :loop="true"
+                :options="playerOptions"
+              />
 
-                      <div class="row-content">
-                        <div style="font-size: 14px; color: #1a1a1a">
-                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.hospitalName : '-' || '-' }}
-                        </div>
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
-                          {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.departmentName : '-' || '-' }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="line"></div>
-                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
-                    套餐名称:{{
-                      videoFollowListData.rightsUseRecordStatus
-                        ? videoFollowListData.rightsUseRecordStatus.serviceItemName
-                        : '-' || '-'
-                    }}
-                  </div>
-                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px; margin-bottom: 5px">
-                    服务时长:{{
-                      videoFollowListData.rightsUseRecordStatus
-                        ? videoFollowListData.rightsUseRecordStatus.serviceTime
-                        : '-' || '-'
-                    }}分钟
-                  </div>
-                </div>
-
-                <div class="top-content">
-                  <div class="div-content">
-                    <div v-if="!timelineData" style="width: 100%">
-                      <a-empty style="margin-top: 35px" :image="simpleImage" />
-                    </div>
-                    <div v-else-if="timelineData" class="nom-content">
-                      <div class="row-content" style="padding-top: 10px">
-                        <div class="docpoint"></div>
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          意向预约时间:{{
-                            videoFollowListData.rightsUseRecordStatus
-                              ? videoFollowListData.rightsUseRecordStatus.appointPeriod
-                              : '-' || '-'
-                          }}
-                        </div>
-                      </div>
-
-                      <div class="colum-line"></div>
-                      <div class="row-content">
-                        <div class="docpoint"></div>
-                        <!-- TODO 这里可能要改字段 -->
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          医生确认时间:{{
-                            videoFollowListData.rightsUseRecordStatus
-                              ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
-                              : '-' || '-'
-                          }}
-                        </div>
-                      </div>
-                      <div class="colum-line"></div>
-                      <div class="row-content">
-                        <div class="docpoint"></div>
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          实际视频时间:{{
-                            videoListData && videoListData.length > 0 ? videoListData[0].callTime : '-' || '-'
-                          }}
-                        </div>
-                      </div>
-                      <div class="colum-line"></div>
-                      <div class="row-content" style="padding-bottom: 15px">
-                        <div class="docpoint"></div>
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
-                          结束问诊时间:{{
-                            videoListData && videoListData.length > 0 ? videoListData[0].endTime : '-' || '-'
-                          }}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              <div
+                class="video-list"
+                @click="onVideoClick(item)"
+                v-for="(item, index) in videoListData"
+                :key="index"
+                :value="item"
+              >
+                <div class="video-list-wrap">
+                  <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
+                  <span style="margin-left: 10px">视频文件{{ index + 1 }}</span>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="right">
-            <div class="title">视频文件</div>
-            <div class="container" style="height: 420px">
-              <div v-if="!videoListData || videoListData.length === 0" style="width: 100%">
-                <a-empty style="margin-top: 25%" :image="simpleImage" />
-              </div>
 
-              <div class="video-wrap" v-else>
-                <!-- class="video-player vjs-custom-skin" -->
-                <video-player
-                  style="width: 534px; height: 300px; margin: 10px 10px 0 10px"
-                  ref="videoPlayer"
-                  :playsinline="true"
-                  :autoplay="true"
-                  :loop="true"
-                  :options="playerOptions"
-                />
-
-                <div
-                  class="video-list"
-                  @click="onVideoClick(item)"
-                  v-for="(item, index) in videoListData"
-                  :key="index"
-                  :value="item"
-                >
-                  <div class="video-list-wrap">
-                    <img src="@/assets/icons/wenzhen/video.png" style="width: 15px; height: 15px" />
-                    <span style="margin-left: 10px">视频文件{{ index+1 }}</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- <div
+            <!-- <div
                 v-else-if="videoListData || videoListData.length > 0"
                 class="radio-content"
                 v-for="(item, index) in videoListData"
@@ -576,26 +559,24 @@
                   :options="playerOptions"
                 />
               </div> -->
-            </div>
           </div>
         </div>
-
       </div>
+    </div>
 
-      <a-modal
-        title="图片预览"
-        :footer="null"
-        :visible="previewVisible"
-        @cancel="
-          () => {
-            previewVisible = false
-          }
-        "
-      >
-        <img style="width: 100%" :src="previewImage" />
-      </a-modal>
-    </a-spin>
-  
+    <a-modal
+      title="图片预览"
+      :footer="null"
+      :visible="previewVisible"
+      @cancel="
+        () => {
+          previewVisible = false
+        }
+      "
+    >
+      <img style="width: 100%" :src="previewImage" />
+    </a-modal>
+  </a-spin>
 </template>
 
 <script>
@@ -603,15 +584,16 @@ import { info, info2, info3, list2, list4 } from '@/api/modular/system/treat'
 import { preDetail } from '@/api/modular/system/posManage'
 import { Empty } from 'ant-design-vue'
 import moment from 'moment'
+import { currentEnv } from '@/utils/util'
 export default {
   data() {
     return {
       simpleImage: Empty.PRESENTED_IMAGE_SIMPLE,
       visible: false,
       confirmLoading: false,
-      orderId:'',
+      orderId: '',
       tradeId: '',
-      rightsId:'',
+      rightsId: '',
       tab: 0,
       pageNo: 1,
       pageSize: 99999,
@@ -636,7 +618,7 @@ export default {
       phoneFollowListData: {},
       timelineData: {},
       voiceListData: [],
-      videoFollowListData:{},
+      videoFollowListData: {},
       videoListData: [
         {
           src: 'https://stream7.iqilu.com/10339/upload_transcode/202002/18/20200218114723HDu3hhxqIT.mp4',
@@ -695,74 +677,79 @@ export default {
     }
   },
   created() {
-      this.currentItem = 0
-      this.currentTab = 'tw'
-      this.clickType = 101
-    
-   
-      this.visible = true
+    this.currentItem = 0
+    this.currentTab = 'tw'
+    this.clickType = 101
 
-      this.tab=5
-      this.jumpType = 5
+    this.visible = true
 
-      document.title = '问诊记录'
-    
-    var url = window.location.href ;             //获取当前url
-    console.log("url:"+url)
- 
-    var dz_url = url.split('#')[0];                //获取#/之前的字符串
- 
-    var cs = dz_url.split('?')[1];                //获取?之后的参数字符串
- 
-    var cs_arr = cs.split('&');                    //参数字符串分割为数组
- 
-    var cs={};
- 
-    for(var i=0;i<cs_arr.length;i++){         //遍历数组，拿到json对象
- 
+    this.tab = 5
+    this.jumpType = 5
+
+    document.title = '问诊记录'
+
+    var url = window.location.href //获取当前url
+    console.log('url:' + url)
+
+    var dz_url = url.split('#')[0] //获取#/之前的字符串
+
+    var cs = dz_url.split('?')[1] //获取?之后的参数字符串
+
+    var cs_arr = cs.split('&') //参数字符串分割为数组
+
+    var cs = {}
+
+    for (var i = 0; i < cs_arr.length; i++) {
+      //遍历数组，拿到json对象
+
       cs[cs_arr[i].split('=')[0]] = cs_arr[i].split('=')[1]
- 
     }
- 
-    console.log("传参:",cs)                                         //这样就拿到了参数中的数据
 
+    console.log('传参:', cs) //这样就拿到了参数中的数据
 
-      this.orderId=cs.orderId
-      this.rightsId=cs.rightsId
-      this.chatItem = {}
-      this.chatList = []
-      this.phoneFollowListData = {}
-     
-      
-        this.getphoneRecords()
-        this.getChatList()
-        this.getVideoRecords()
+    this.orderId = cs.orderId
+    this.rightsId = cs.rightsId
+    this.chatItem = {}
+    this.chatList = []
+    this.phoneFollowListData = {}
+
+    this.getphoneRecords()
+    this.getChatList()
+    this.getVideoRecords()
   },
   methods: {
-  
     tabClick(tab1) {
       if (this.tab === tab1) {
         return
       }
       this.tab = tab1
-
-   
     },
 
-
-    //电话咨询记录
+    //视频咨询记录
     getVideoRecords() {
       this.confirmLoading = true
       this.timelineData = {}
       this.voiceListData = []
       // if (this.jumpType == 4) {
       list4({
-        rightsId:  this.rightsId,
+        rightsId: this.rightsId,
       })
         .then((res) => {
           console.log('getVideoRecords', res.data)
           this.tab7Flag = true
-          this.videoFollowListData = res.data || []
+
+          var resData = res.data || {}
+          if (resData.docInfo && resData.docInfo.avatarUrl) {
+            resData.docInfo.avatarUrl = this.replaceURL(resData.docInfo.avatarUrl)
+          }
+
+          if (resData.videoTapeInfo && resData.videoTapeInfo.length > 0) {
+            resData.videoTapeInfo.forEach((element) => {
+              element.callTape = this.replaceURL(element.callTape)
+            })
+          }
+
+          this.videoFollowListData = resData
           if (this.videoFollowListData.rightsUseRecordStatus) {
             this.timelineDataVideo = this.videoFollowListData.rightsUseRecordStatus
           } else {
@@ -777,9 +764,7 @@ export default {
         })
       // }
     },
-   
 
- 
     chatClick(item) {
       this.chatItem = item
       if (
@@ -814,7 +799,6 @@ export default {
         }
       })
     },
-   
 
     previewClick(src) {
       this.previewImage = src
@@ -824,7 +808,6 @@ export default {
     format(date, fmt) {
       return moment(date).format(fmt)
     },
-   
 
     getArticle() {
       info3({
@@ -836,17 +819,24 @@ export default {
     },
     getWZInfo1() {
       info({
-        rightsId: this.rightsId 
+        rightsId: this.rightsId,
       }).then((res) => {
-        this.wzInfo1 = res.data || {}
+        var resData = res.data || {}
+        if (resData.docInfo && resData.docInfo.avatarUrl) {
+          resData.docInfo.avatarUrl = this.replaceURL(resData.docInfo.avatarUrl)
+        }
+        this.wzInfo1 = resData
       })
     },
     getWZInfo2() {
-     
       info2({
-        rightsId: this.rightsId 
+        rightsId: this.rightsId,
       }).then((res) => {
-        this.wzInfo2 = res.data || {}
+        var resData = res.data || {}
+        if (resData.images) {
+          resData.images = this.replaceURL(resData.images)
+        }
+        this.wzInfo2 = resData
       })
     },
     // 查询处方详情接口
@@ -857,7 +847,7 @@ export default {
         }
       })
     },
-   
+
     //聊天记录
     getChatList() {
       this.confirmLoading = true
@@ -869,40 +859,83 @@ export default {
         .then((res) => {
           this.tab3Flag = true
           this.tab5Flag = true
-          this.chatList = res.data.rows || []
+
+          var resData = res.data.rows || []
+
+          resData.forEach((element) => {
+            element.avatar = this.replaceURL(element.avatar)
+           
+          })
+
+          this.chatList = resData
         })
         .finally(() => {
           this.confirmLoading = false
         })
     },
 
-
     //电话咨询记录
     getphoneRecords() {
       this.confirmLoading = true
       this.timelineData = {}
       this.voiceListData = []
-     
-        list4({
-          rightsId: this.rightsId,
-        })
-          .then((res) => {
-            this.tab4Flag = true
-            this.phoneFollowListData = res.data || {}
-            if (this.phoneFollowListData.rightsUseRecordStatus) {
-              this.timelineData = this.phoneFollowListData.rightsUseRecordStatus
-            } else {
-              this.timelineData = {}
-            }
 
-            this.voiceListData = this.phoneFollowListData.voiceTapeInfo
-          })
-          .finally(() => {
-            this.confirmLoading = false
-          })
-      
+      list4({
+        rightsId: this.rightsId,
+      })
+        .then((res) => {
+          this.tab4Flag = true
+          var resData = res.data || {}
+          if (resData.docInfo && resData.docInfo.avatarUrl) {
+            resData.docInfo.avatarUrl = this.replaceURL(resData.docInfo.avatarUrl)
+          }
+          if (resData.voiceTapeInfo && resData.voiceTapeInfo.length > 0) {
+            resData.voiceTapeInfo.forEach((element) => {
+              element.callTape = this.replaceURL(element.callTape)
+            })
+          }
+          this.phoneFollowListData = resData
+
+          if (this.phoneFollowListData.rightsUseRecordStatus) {
+            this.timelineData = this.phoneFollowListData.rightsUseRecordStatus
+          } else {
+            this.timelineData = {}
+          }
+
+          this.voiceListData = this.phoneFollowListData.voiceTapeInfo
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
     },
 
+    //处理替换URL地址
+    replaceURL(url) {
+     
+      if(!url){
+        return url
+      }
+
+      var REPRRL=''
+     
+
+      if (currentEnv == 'test') {
+        //测试环境
+        REPRRL='http://192.168.1.121:8089/api'
+      } else if (currentEnv == 'show') {
+        //演示环境
+        REPRRL='http://172.16.38.2:8088/api'
+      } else if (currentEnv == 'online') {
+        //线上环境
+        return url
+      }
+
+      return url
+        .replace('https://develop.mclouds.org.cn', REPRRL)	
+        .replace('http://develop.mclouds.org.cn:8009', REPRRL)	
+        .replace('https://hmg.mclouds.org.cn', REPRRL)
+        .replace('https://ys.mclouds.org.cn', REPRRL)
+    },
 
     handleCancel() {
       this.visible = false
@@ -1138,7 +1171,6 @@ export default {
         }
       }
     }
- 
 
     &.content4 {
       display: flex;
@@ -1365,7 +1397,7 @@ export default {
             flex-direction: row;
             align-items: center;
 
-            &:hover{
+            &:hover {
               cursor: pointer;
             }
             // justify-content: center;

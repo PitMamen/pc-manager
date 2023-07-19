@@ -144,6 +144,9 @@ export default {
             this.$message.success('操作成功!')
             this.visible = false
             this.$emit('ok')
+          }else{
+            this.$message.error(res.message)
+
           }
         })
         .finally((res) => {
