@@ -912,6 +912,10 @@ export default {
     //处理替换URL地址
     replaceURL(url) {
      
+      if(!url){
+        return url
+      }
+
       var REPRRL=''
      
 
