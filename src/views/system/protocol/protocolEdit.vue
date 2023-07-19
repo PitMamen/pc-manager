@@ -205,7 +205,7 @@ export default {
 
     getContractOut() {
       let queryData = {
-        hospitalCode: this.deptId,
+        // hospitalCode: this.deptId,
         categoryId: this.protocolType,
       }
       getContract(queryData)
@@ -229,7 +229,7 @@ export default {
     },
     goSave() {
       let queryData = {
-        hospitalCode: this.deptId,
+        // hospitalCode: this.deptId,
         categoryId: this.protocolType,
         content: this.content,
       }
@@ -251,7 +251,7 @@ export default {
         return
       }
       let queryData = {
-        hospitalCode: this.deptId,
+        // hospitalCode: this.deptId,
         categoryId: this.protocolType,
       }
       downloadPdfContract(queryData)
@@ -292,7 +292,7 @@ export default {
         return
       }
       let queryData = {
-        hospitalCode: this.deptId,
+        // hospitalCode: this.deptId,
         categoryId: this.protocolType,
       }
       reportPdfContract(queryData)

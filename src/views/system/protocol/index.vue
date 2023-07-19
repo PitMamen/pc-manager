@@ -1,6 +1,6 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper" v-if="hasPerm('sysConfig:page')">
+    <!-- <div class="table-page-search-wrapper" v-if="hasPerm('sysConfig:page')">
       <a-form layout="inline">
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
@@ -18,7 +18,7 @@
           </a-col>
         </a-row>
       </a-form>
-    </div>
+    </div> -->
 
     <div class="wrap-tab">
       <!-- <a-tabs default-active-key="2" v-model="activeKey" @change="tabChange"> -->
