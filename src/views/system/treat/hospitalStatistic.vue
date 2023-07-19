@@ -1,218 +1,118 @@
 <template>
-  <a-card  class="sys-card" :bordered="false">
+  <a-card class="sys-card" :bordered="false">
     <a-spin :spinning="confirmLoading">
-    <div class="table-page-search-wrapper" >
-      <div class="search-row">
-        <span class="name">问卷名称:</span>
-        <a-select
-          class="sitemore"
-          allow-clear
-          v-model="queryParamsStatisit.messageOriginalId"
-          style="width: 280px; height: 28px"
-          placeholder="请选择问卷名称"
-        >
-          <a-select-option v-for="(item, index) in quesData" :value="item.questionnaireId" :key="index"  :title="item.questionnaireName">{{
-            item.questionnaireName
-          }}</a-select-option>
+      <div class="table-page-search-wrapper">
+        <div class="search-row">
+          <span class="name">问卷名称:</span>
+          <a-select
+            class="sitemore"
+            allow-clear
+            v-model="queryParamsStatisit.messageOriginalId"
+            style="width: 280px; height: 28px"
+            placeholder="请选择问卷名称"
           >
-        </a-select>
-      </div>
+            <a-select-option
+              v-for="(item, index) in quesData"
+              :value="item.questionnaireId"
+              :key="index"
+              :title="item.questionnaireName"
+              >{{ item.questionnaireName }}</a-select-option
+            >
+            >
+          </a-select>
+        </div>
 
-      <div class="search-row">
-        <span class="name">科室:</span>
-        <a-select
-          class="sitemore"
-          style="min-width: 180px; height: 28px"
-          :collapse-tags="true"
-          show-search
-          v-model="queryParamsStatisit.executeDepartmentIds"
-          :filter-option="false"
-          :not-found-content="fetching ? undefined : null"
-          allow-clear
-          placeholder="请选择科室"
-          @change="onDepartmentSelectChange"
-          @search="onDepartmentSelectSearch"
-        >
-          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option
-            v-for="(item, index) in originData"
-            :title="item.department_name"
-            :key="index"
-            :value="item.department_id"
-            >{{ item.department_name }}</a-select-option
+        <div class="search-row">
+          <span class="name">科室:</span>
+          <a-select
+            class="sitemore"
+            style="min-width: 180px; height: 28px"
+            :collapse-tags="true"
+            show-search
+            v-model="queryParamsStatisit.executeDepartmentIds"
+            :filter-option="false"
+            :not-found-content="fetching ? undefined : null"
+            allow-clear
+            placeholder="请选择科室"
+            @change="onDepartmentSelectChange"
+            @search="onDepartmentSelectSearch"
           >
-        </a-select>
+            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+            <a-select-option
+              v-for="(item, index) in originData"
+              :title="item.department_name"
+              :key="index"
+              :value="item.department_id"
+              >{{ item.department_name }}</a-select-option
+            >
+          </a-select>
+        </div>
+
+        <div class="search-row" style="margin-left: 15px">
+          <span class="name">出院时间:</span>
+          <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important; width: 185px" />
+        </div>
+
+        <div class="action-row">
+          <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+            <a-button type="primary" icon="search" @click="searchOut()">查询</a-button>
+            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+            <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="exportOut()"
+              >导出</a-button
+            >
+          </span>
+        </div>
       </div>
 
-      <div class="search-row">
-        <span class="name">姓名:</span>
-        <a-input
-          v-model="queryParamsStatisit.queryStr"
-          allow-clear
-          placeholder="输入姓名查询"
-          style="width: 180px"
-          @blur="$refs.table.refresh(true)"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
-      </div>
-
-      <div class="search-row">
-        <span class="name">住院号:</span>
-        <a-input
-          v-model="queryParamsStatisit.zyh"
-          allow-clear
-          placeholder="输入住院号查询"
-          style="width: 180px"
-          @blur="$refs.table.refresh(true)"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        />
-      </div>
-
-      <div class="search-row" style="margin-left: 15px;">
-        <span class="name">时间:</span>
-        <a-range-picker :value="createValue" @change="onChange" style="height: 28px !important; width: 185px" />
-      </div>
-
-      <div  class="action-row">
-        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="searchOut()">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
-          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="exportOut()"
-            >导出</a-button
-          >
+      <!-- :scroll="{ y: 700, x: 0 }"  -->
+      <!--  style="overflow-y: auto" -->
+      <s-table
+        class="table-hover-hidden"
+        ref="tableStat"
+        size="default"
+        :columns="columnsStat"
+        :scroll="{ x: true }"
+        :data="loadDataStat"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+        <span slot="sfaction" slot-scope="text, record">
+          <a @click="$refs.followDetail.checkDetail(record, '失访', 4)">{{ record.lostNum }}</a>
+          <!-- '失访' -->
         </span>
-      </div>
-    </div>
 
-    <div class="tab-all-content" >
-      <div class="tab-wx" @click="cyrsClick()">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">出院人数</span>
-        </div>
+        <span slot="wxsfaction" slot-scope="text, record">
+          <a @click="$refs.followDetail.checkDetail(record, '无需随访', 3)">{{ record.noStatNum }}</a>
+          <!-- '无需随访' -->
+        </span>
 
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">{{ tableListData.total || 0 }}人</span>
-        </div>
-      </div>
+        <span slot="ysfaction" slot-scope="text, record">
+          <a @click="$refs.followDetail.checkDetail(record, '应随访', 2)">{{ record.needStat }}</a>
+          <!-- '应随访' -->
+        </span>
 
-      <div class="tab-alipay" style="margin-left: 20px" @click="wxClick()">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">微信登记人数</span>
-        </div>
+        <span slot="sjsfaction" slot-scope="text, record">
+          <a @click="$refs.followDetail.checkDetail(record, '实际随访', 1)">{{ record.successNum }}</a>
+          <!-- '实际随访' -->
+        </span>
+      </s-table>
 
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">{{ tableListData.wxTotal || 0 }}人</span>
-        </div>
-      </div>
-
-      <div class="no-followup" style="margin-left: 20px" @click="sfClick()">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">无需随访人数</span>
-        </div>
-
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">{{ tableListData.noStatNum || 0 }}人</span>
-        </div>
-      </div>
-
-      <div class="need-followup" style="margin-left: 20px" @click="ysfClick()">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">应随访人数</span>
-        </div>
-
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">{{ tableListData.needStat || 0 }}人</span>
-        </div>
-      </div>
-
-      <div class="sj-followup" style="margin-left: 20px" @click="sjsfClick()">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">实际随访人数</span>
-        </div>
-
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >{{ tableListData.successNum || 0 }}人</span
-          >
-        </div>
-      </div>
-
-
-
-      <div class="sfls-followup" style="margin-left: 20px" @click="sfrsClick()">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">失访人数</span>
-        </div>
-
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">{{
-            tableListData.lostNum || 0
-          }}人</span>
-        </div>
-      </div>
-
-
-
-
-
-
-
-
-      <div class="sfl-followup" style="margin-left: 20px">
-        <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">随访率</span>
-        </div>
-
-        <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px"></span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">{{
-            tableListData.successRate || '0.0%'
-          }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- :scroll="{ y: 700, x: 0 }"  -->
-    <!--  style="overflow-y: auto" -->
-    <s-table
-      class="table-hover-hidden"
-      ref="tableStat"
-      size="default"
-      :columns="columnsStat"
-      :scroll="{ x: true }"
-      :data="loadDataStat"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-      <span slot="action" slot-scope="text, record">
-        <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 备注</a>
-      </span>
-    </s-table>
-
-    <goMarking ref="goMarking" @ok="handleOk" />
-  </a-spin>
+      <follow-Detail ref="followDetail" @ok="handleOk" />
+    </a-spin>
   </a-card>
 </template>
-    
-    <script>
+      
+      <script>
 import moment from 'moment'
 import { STable } from '@/components'
 import {
   getDepartmentListForSelect,
   questionnaires,
-  qryFollowStatList,
-  getFollowStat,
   exportFollowStatListm,
+  qryFollowStatByGroup,
+  exportFollowStatByGroup,
 } from '@/api/modular/system/posManage'
-import goMarking from './goMarking'
+import followDetail from './followDetail'
 import Vue from 'vue'
 import { currentEnv } from '@/utils/util'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -222,7 +122,7 @@ import { formatDate, getDateNow, getlastMonthToday, getCurrentMonthLast } from '
 export default {
   components: {
     STable,
-    goMarking,
+    followDetail,
   },
 
   data() {
@@ -232,7 +132,6 @@ export default {
       originData: [],
       createValue: [],
       quesData: [],
-      tableListData: [],
       /** 统计类别数据*/
       labelCol: {
         xs: { span: 24 },
@@ -249,113 +148,84 @@ export default {
         endExecuteTime: getCurrentMonthLast(),
         executeDepartmentIds: [],
         messageOriginalId: undefined,
-        queryStr: undefined,
-        zyh: undefined,
-        openidFlag:'', //是否关注微信公众号
-        specFlag:'', //随访标识  1 无需随访 0 应随访
-        successFlag:'', //随访成功标识 1 实际随访人数  0  失访人数
-
-
       },
 
       // 表头
       columnsStat: [
         {
-          title: '姓名',
-          dataIndex: 'name',
+          title: '科室',
+          dataIndex: 'cyksmc',
           // width:80,
           ellipsis: true,
         },
         {
-          title: '性别',
-          dataIndex: 'sex',
+          title: '出院人数',
+          dataIndex: 'total',
+          align: 'center',
           // width: 70,
         },
 
         {
-          title: '电话',
-          dataIndex: 'phone',
+          title: '微信登记人数',
+          dataIndex: 'wxTotal',
+          align: 'center',
           // width:150,
           ellipsis: true,
         },
         {
-          title: '年龄',
-          dataIndex: 'age',
+          title: '无需随访人数',
+          dataIndex: 'noStatNum',
+          align: 'center',
           // width: 80,
+          scopedSlots: { customRender: 'wxsfaction' },
         },
         {
-          title: '出院科室',
-          dataIndex: 'cyksmc',
+          title: '应随访人数',
+          dataIndex: 'needStat',
+          align: 'center',
           // width: 150,
           ellipsis: true,
+          scopedSlots: { customRender: 'ysfaction' },
         },
         {
-          title: '住院号',
-          dataIndex: 'zyh',
+          title: '实际随访人数',
+          dataIndex: 'successNum',
+          align: 'center',
           // width: 100,
+          scopedSlots: { customRender: 'sjsfaction' },
         },
         {
-          title: '床号',
-          dataIndex: 'ch',
+          title: '失访人数',
+          dataIndex: 'lostNum',
           // width:80,
+          align: 'center',
           ellipsis: true,
+          scopedSlots: { customRender: 'sfaction' },
         },
 
         {
-          title: '随访内容',
-          dataIndex: 'questName',
+          title: '随访率',
+          dataIndex: 'successRate',
           // width: 150,
           ellipsis: true,
         },
-        {
-          title: '出院时间',
-          dataIndex: 'cysj',
-          // width:180,
-          ellipsis: true,
-        },
 
-        {
-          title: '微信登记',
-          dataIndex: 'openidFlag',
-          align: 'right',
-          // width: 80,
-          //   ellipsis: true,
-        },
-        {
-          title: '推送次数',
-          dataIndex: 'totalTask',
-          // width: 80,
-          align: 'right',
-        },
-        {
-          title: '成功次数',
-          dataIndex: 'successTotalTask',
-          align: 'right',
-          // width: 80,
-        },
-        {
-          title: '备注',
-          dataIndex: 'specFlag',
-          ellipsis: true,
-        },
-
-        {
-          title: '操作',
-          fixed: 'right',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
-        },
+        //   {
+        //     title: '操作',
+        //     fixed: 'right',
+        //     dataIndex: 'action',
+        //     scopedSlots: { customRender: 'action' },
+        //   },
       ],
 
       user: {},
       fetching: false,
-
       dateFormat: 'YYYY-MM-DD',
 
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
         this.confirmLoading = true
-        return qryFollowStatList(Object.assign(parameter, this.queryParamsStatisit))
+        return qryFollowStatByGroup(Object.assign(parameter, this.queryParamsStatisit))
           .then((res) => {
             if (res.code == 0) {
               var data = {
@@ -366,6 +236,15 @@ export default {
                 totalPage: res.data.totalPage,
                 rows: res.data.rows,
               }
+
+              if (data.rows && data.rows.length > 0) {
+                data.rows.forEach((item, index) => {
+                  this.$set(item, 'messageOriginalId', this.queryParamsStatisit.messageOriginalId)
+                  this.$set(item, 'beginExecuteTime', this.queryParamsStatisit.beginExecuteTime)
+                  this.$set(item, 'endExecuteTime', this.queryParamsStatisit.endExecuteTime)
+                })
+              }
+
               return data
             }
           })
@@ -394,71 +273,8 @@ export default {
         this.$message.error('请选择问卷名称')
         return
       }
-      this.getFollowStatOut()
-      this.queryParamsStatisit.successFlag = ''
-      this.queryParamsStatisit.openidFlag = ''
-      this.queryParamsStatisit.specFlag = ''
       this.$refs.tableStat.refresh(true)
     },
-
-    // 出院人数卡片点击
-    cyrsClick(){
-      // openidFlag:'', //是否关注微信公众号
-      //   specFlag:'', //随访标识  1 无需随访 0 应随访
-      //   successFlag:'', //随访成功标识 1 实际随访人数  0  失访人数
-      this.queryParamsStatisit.openidFlag = ''
-      this.queryParamsStatisit.specFlag = ''
-      this.queryParamsStatisit.successFlag = ''
-      this.$refs.tableStat.refresh(true)
-    },
-
-
-    // 微信点击
-    wxClick(){
-      this.queryParamsStatisit.openidFlag = 1
-      this.queryParamsStatisit.specFlag = ''
-      this.queryParamsStatisit.successFlag = ''
-      this.$refs.tableStat.refresh(true)
-    },
-
-    // 无需随访卡片点击
-    sfClick(){
-      this.queryParamsStatisit.specFlag = 1
-      this.queryParamsStatisit.openidFlag = ''
-      this.queryParamsStatisit.successFlag = ''
-      this.$refs.tableStat.refresh(true)
-
-    },
-
-    // 应随访卡片点击
-    ysfClick(){
-      this.queryParamsStatisit.specFlag = 0
-      this.queryParamsStatisit.openidFlag = ''
-      this.queryParamsStatisit.successFlag = ''
-      this.$refs.tableStat.refresh(true)
-
-    },
-
-    // 实际随访卡片 点击
-    sjsfClick(){
-      this.queryParamsStatisit.successFlag = 1
-      this.queryParamsStatisit.openidFlag = ''
-      this.queryParamsStatisit.specFlag = ''
-      this.$refs.tableStat.refresh(true)
-
-    },
-
-    // 失访人数卡片点击
-    sfrsClick(){
-      this.queryParamsStatisit.successFlag = 0
-      this.queryParamsStatisit.openidFlag = ''
-      this.queryParamsStatisit.specFlag = ''
-      this.$refs.tableStat.refresh(true)
-
-    },
-
-
-
 
     /**
      * 随访问卷列表
@@ -474,7 +290,7 @@ export default {
     //导出
     exportOut() {
       let params = JSON.parse(JSON.stringify(this.queryParamsStatisit))
-      exportFollowStatListm(params)
+      exportFollowStatByGroup(params)
         .then((res) => {
           this.downloadfile(res)
         })
@@ -501,15 +317,6 @@ export default {
         document.body.removeChild(downloadElement) // 下载完成移除元素
         window.URL.revokeObjectURL(href)
       }
-    },
-
-    //统计
-    getFollowStatOut() {
-      getFollowStat(this.queryParamsStatisit).then((res) => {
-        if (res.code == 0) {
-          this.tableListData = res.data
-        }
-      })
     },
 
     /** 统计列表方法*/
@@ -576,9 +383,9 @@ export default {
   },
 }
 </script>
-  
-  
-    <style lang="less" scoped >
+    
+    
+      <style lang="less" scoped >
 .ant-select-selection--multiple {
   min-height: 28px;
   cursor: text;
@@ -812,10 +619,6 @@ export default {
     }
   }
 
-
-
-
-
   .sfls-followup {
     display: flex;
     flex-direction: column;
@@ -823,7 +626,7 @@ export default {
     margin-bottom: 10px;
     width: 120px;
     height: 68px;
-    background: #58CDAE;
+    background: #58cdae;
     border-radius: 2px;
     .content-dis {
       margin-left: 15px;
@@ -840,18 +643,6 @@ export default {
       background: #e6e6e6;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 .table-page-search-wrapper {
@@ -966,5 +757,6 @@ export default {
   }
 }
 </style>
-
-
+  
+  
+  
