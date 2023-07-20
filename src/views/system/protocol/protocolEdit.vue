@@ -115,7 +115,6 @@ export default {
     // this.editor = editor
   },
 
-
   methods: {
     //初始化方法
     edit(record) {},
@@ -158,8 +157,8 @@ export default {
         // 'emoticon',
         'image',
         // 'video',
-        'table',
-        'code',
+        // 'table',
+        // 'code',
         'splitLine',
         'undo',
         'redo',
@@ -309,6 +308,9 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+/deep/ .w-e-panel-container {
+  margin-top: -110px !important;
+}
 .wrap-pro {
   .wrap-btn {
     display: flex;
