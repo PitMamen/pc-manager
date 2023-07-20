@@ -1,6 +1,6 @@
 <template>
-  <a-card  class="sys-card" :bordered="false">
-    <a-spin :spinning="confirmLoading">
+  <a-card  class="sys-card" >
+    <!-- <a-spin :spinning="confirmLoading"> -->
     <div class="table-page-search-wrapper" >
       <div class="search-row">
         <span class="name">问卷名称:</span>
@@ -179,27 +179,27 @@
         </div>
       </div>
     </div>
-
+    
     <!-- :scroll="{ y: 700, x: 0 }"  -->
     <!--  style="overflow-y: auto" -->
     <s-table
-      class="table-hover-hidden"
-      ref="tableStat"
-      size="default"
-      :columns="columnsStat"
-      :scroll="{ x: true }"
-      :data="loadDataStat"
-      :alert="true"
-      :rowKey="(record) => record.code"
+    class="table-hover-hidden"
+    ref="tableStat"
+    size="default"
+    :columns="columnsStat"
+    :scroll="{ x: true }"
+    :data="loadDataStat"
+    :alert="true"
+    :rowKey="(record) => record.code"
     >
-      <span slot="action" slot-scope="text, record">
-        <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 备注</a>
-      </span>
-    </s-table>
-
-    <goMarking ref="goMarking" @ok="handleOk" />
-  </a-spin>
-  </a-card>
+    <span slot="action" slot-scope="text, record">
+      <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 备注</a>
+    </span>
+  </s-table>
+  <goMarking ref="goMarking" @ok="handleOk" />
+  
+  <!-- </a-spin> -->
+</a-card>
 </template>
     
     <script>
@@ -378,7 +378,6 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    // this.confirmLoading = true
 
     this.getDepartmentSelectList(undefined)
     this.questionnairesOut()

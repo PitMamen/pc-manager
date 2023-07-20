@@ -14,7 +14,7 @@
           <span class="span-item-name" style="width: 70px !important"> 姓名 :</span>
           <a-input
             v-model="queryParamsStatisit.queryStr"
-            style="width: 148px; margin-left: 10px"
+            style="width: 148px; margin-left: 10px !important"
             allow-clear
             placeholder="请输入姓名"
             @blur="searchOut()"
@@ -23,7 +23,7 @@
           <span class="span-item-name" style="margin-left: 30px; width: 70px !important"> 住院号 :</span>
           <a-input
             v-model="queryParamsStatisit.zyh"
-            style="width: 148px; margin-left: 10px"
+            style="width: 148px; margin-left: 10px !important"
             allow-clear
             placeholder="请输入住院号"
             @blur="searchOut()"
@@ -97,30 +97,30 @@ export default {
         {
           title: '性别',
           dataIndex: 'sex',
-          // width: 70,
+          width: 60,
         },
 
         {
           title: '电话',
           dataIndex: 'phone',
-          // width:150,
+          width:120,
           ellipsis: true,
         },
         {
           title: '年龄',
           dataIndex: 'age',
-          // width: 80,
+          width: 60,
         },
         {
           title: '出院科室',
           dataIndex: 'cyksmc',
-        //   width: 150,
+          width: 150,
           ellipsis: true,
         },
         {
           title: '住院号',
           dataIndex: 'zyh',
-          // width: 100,
+          width: 80,
           ellipsis: true,
         },
         {
