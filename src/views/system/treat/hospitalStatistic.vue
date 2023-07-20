@@ -1,6 +1,5 @@
 <template>
   <a-card class="sys-card" :bordered="false">
-    <a-spin :spinning="confirmLoading">
       <div class="table-page-search-wrapper">
         <div class="search-row">
           <span class="name">问卷名称:</span>
@@ -98,7 +97,6 @@
       </s-table>
 
       <follow-Detail ref="followDetail" @ok="handleOk" />
-    </a-spin>
   </a-card>
 </template>
       
