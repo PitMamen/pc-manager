@@ -5,7 +5,7 @@
         <span class="name">所属机构:</span>
         <a-tree-select
           v-model="queryParams.hospitalCode"
-          style="min-width: 120px"
+          style="min-width: 230px"
           :tree-data="treeData"
           placeholder="请选择"
           tree-default-expand-all
