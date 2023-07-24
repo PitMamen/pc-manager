@@ -6,7 +6,7 @@
       <div class="box-divider" />
       <div class="div-line">
         <div class="div-cell">
-          <div class="div-cell-name" @click="goSearch()"><span style="color: #F90505;margin-top: 3px;">*</span>药品名称：</div>
+          <div class="div-cell-name"><span style="color: #F90505;margin-top: 3px;">*</span>药品名称：</div>
           <div class="div-cell-value">
             <a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入药品名称" style="width: 210px" />
           </div>
@@ -105,7 +105,8 @@
         </div>
         <div class="div-cell">
           <div style="width: 20px;"></div>
-          <a-input v-model="queryParam.keyWord" allow-clear placeholder="未匹配药品，请点击匹配" style="width: 270px" />
+          <a-input v-model="queryParam.keyWord" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
+            style="width: 270px" />
           <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
           <div class="div-cell-value"><a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入检索码"
               style="width: 210px" /></div> -->
