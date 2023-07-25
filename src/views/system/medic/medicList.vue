@@ -40,21 +40,6 @@
 
     <s-table :scroll="{ x: true }" ref="table" size="default" :columns="columns" :data="loadData" :alert="true"
       :rowKey="(record) => record.id">
-      <span slot="parent_disarmament_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="departmentNames" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="his_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_introduce" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
 
@@ -63,25 +48,22 @@
             <a-switch size="small" :checked="record.enableStatus" />
           </a-popconfirm>
 
-          <a @click="$refs.editForm.edit(record, '3')"><a-icon type="hdd" style="margin-left:10px" />详情</a>
+          <a @click="goDetail()"><a-icon type="edit" style="margin-left:10px" />详情</a>
 
         </template>
       </span>
     </s-table>
-    <edit-form ref="editForm" @ok="handleOk" />
   </a-card>
 </template>
 
 <script>
 import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
-import editForm from './editForm'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
   components: {
     STable,
     Ellipsis,
-    editForm,
   },
   data() {
     return {
@@ -214,6 +196,9 @@ export default {
   methods: {
 
     goAdd() {
+      this.$router.push({ path: './medicDetail' })
+    },
+    goDetail() {
       this.$router.push({ path: './medicDetail' })
     },
     statusCheck() { },
