@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="record.merchantId ? '生产厂商详情' : '新增生产厂商'"
+    :title="record.id ? '生产厂商详情' : '新增生产厂商'"
     :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -204,23 +204,11 @@ export default {
         this.$message.error('请输入厂商名称')
         return
       }
-
-    //   var postData = {
-    //     tenantId: this.checkData.tenantId,
-    //     name: this.checkData.name,
-    //     channel: this.checkData.channel,
-    //     paramJson: JSON.stringify(object) ? JSON.stringify(object) : '',
-    //     hospitalCode: this.checkData.hospitalCode,
-    //     insideId: this.checkData.insideId,
-    //     namePy: this.checkData.namePy,
-    //     merchantId: this.checkData.merchantId,
-    //     status: 1,
-    //   }
       this.confirmLoading = true
 
       if (this.record.id) {
         //修改
-
+        this.saveFactoryOut(this.checkData)
       } else {
         //新增
         this.saveFactoryOut(this.checkData)
@@ -230,7 +218,7 @@ export default {
     saveFactoryOut(postData) {
         saveFactory(postData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('新增成功！')
+          this.$message.success('操作成功！')
           this.visible = false
           this.$emit('ok', '')
         } else {

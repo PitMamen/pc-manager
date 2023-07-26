@@ -3,7 +3,7 @@
   <a-spin :spinning="confirmLoading">
     <div class="topButton">
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
-     
+
       <a-button
         :type="orderDetailDataList.status.value == 1 ? 'danger' : 'primary'"
         style="margin-left: 15px"
@@ -13,7 +13,13 @@
         >{{ getType(orderDetailDataList.status.value) }}</a-button
       >
 
-      <a-button v-if="orderDetailDataList.deliverType==2&&orderDetailDataList.status.value==8" style="margin-left: 10px;" type="primary"  @click="godistribution()">发货配送</a-button>
+      <a-button
+        v-if="orderDetailDataList.deliverType == 2 && orderDetailDataList.status.value == 8"
+        style="margin-left: 10px"
+        type="primary"
+        @click="godistribution()"
+        >发货配送</a-button
+      >
 
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 45px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
@@ -128,9 +134,7 @@
 
         <div class="div-pro-line">
           <span class="span-item-name">退款单号 :</span>
-          <a style="color: #409eff"  class="span-item-value">{{
-            orderDetailDataList.refundId || '-'
-          }}</a>
+          <a style="color: #409eff" class="span-item-value">{{ orderDetailDataList.refundId || '-' }}</a>
         </div>
       </div>
 
@@ -154,13 +158,18 @@
       <div class="div-up-content" style="padding-bottom: 10px">
         <div class="div-pro-line">
           <span class="span-item-name">复诊订单号 :</span>
-          <span style="color: #409eff;cursor:pointer" class="span-item-value" @click="goExamine(orderDetailDataList.appPrePrescriptionOrderId)">{{ orderDetailDataList.appPrePrescriptionOrderId || '-' }} </span>
+          <span
+            style="color: #409eff; cursor: pointer"
+            class="span-item-value"
+            @click="goExamine(orderDetailDataList.appPrePrescriptionOrderId)"
+            >{{ orderDetailDataList.appPrePrescriptionOrderId || '-' }}
+          </span>
         </div>
 
         <div class="div-pro-line">
-            <span class="span-item-name">处方流转 :</span>
-           <span class="span-item-value">{{ orderDetailDataList.flowHospitalName || '-' }}</span>
-          </div>
+          <span class="span-item-name">处方流转 :</span>
+          <span class="span-item-value">{{ orderDetailDataList.flowHospitalName || '-' }}</span>
+        </div>
       </div>
     </div>
 
@@ -285,7 +294,7 @@
 
         <div class="div-pro-line" style="margin-left: 20px; width: 40%">
           <span class="span-item-name" style="color: #1a1a1a"> 收货地址 :</span>
-          <span class="span-item-value" style="width: 80%;display: inline-flex; color: #1a1a1a">{{
+          <span class="span-item-value" style="width: 80%; display: inline-flex; color: #1a1a1a">{{
             addressInfo ? addressInfo.address : '-'
           }}</span>
         </div>
@@ -348,6 +357,7 @@
       </div>
     </div>
 
+    <!-- 取消订单 弹框 -->
     <a-modal
       class="ant-modal"
       :confirmLoading="smallLoading"
@@ -366,6 +376,35 @@
         <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
       </div>
     </a-modal>
+
+
+<!-- 自营处方确认退款弹框 -->
+    <a-modal
+      class="ant-modal"
+      :confirmLoading="smallLoading"
+      style="margin-top: 90px; width: 488px !important; height: 218px"
+      :title="comfriRefund"
+      :visible="visible_refund"
+      @ok="handleRefundComf"
+      @cancel="handleCancelUpdPwd"
+    >
+      <template slot="footer">
+        <a-button type="primary" @click="handleRefundComf">确定</a-button>
+        <a-button @click="handleCancelUpdPwd">关闭</a-button>
+      </template>
+      <div class="display-item" style="margin-left: 30%; margin-top: 40px; margin-bottom: 40px">
+        <span style="margin-top: 10px"> 确认是否对该处方订单进行退款操作?</span>
+        <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
+      </div>
+    </a-modal>
+
+
+
+
+
+
+
+
 
     <cont-Detail ref="continuationDetail" @ok="handleOk" />
     <Distributionmodal ref="Distributionmodal" @ok="handleOk" />
@@ -393,7 +432,7 @@ export default {
   components: {
     STable,
     Distributionmodal,
-    orderRefund
+    orderRefund,
   },
 
   data() {
@@ -408,7 +447,9 @@ export default {
       addressInfo: {},
       expressInfos: [],
       visible_model: false,
+      visible_refund: false,
       dealResultTitle: '订单取消',
+      comfriRefund: '确认退款',
       confirmLoading: false,
       smallLoading: false,
       orderId: '',
@@ -569,7 +610,6 @@ export default {
         })
     },
 
-
     //处方信息接口
     getMedicalOrdersInfoOut(orderID) {
       this.confirmLoading = true
@@ -591,17 +631,14 @@ export default {
       // this.$router.back()
     },
 
-
     // 发货配送
-    godistribution(){
+    godistribution() {
       this.$refs.Distributionmodal.editmodal(this.orderId)
     },
 
-
-
     //点击复诊单号 进入复诊续方详情界面
     goExamine(id) {
-      console.log("DDDD:",id)
+      console.log('DDDD:', id)
       if (!id) {
         return
       }
@@ -615,7 +652,7 @@ export default {
     },
 
     getType(value) {
-      if (value == 4 || value == 8 || value == 101) {
+      if (value == 2|| value == 4 || value == 8 || value == 101) {
         return '申请退款'
       } else if (value == 1) {
         return '取消订单'
@@ -626,6 +663,12 @@ export default {
 
     //按钮显示与隐藏
     showHide(value) {
+      if (this.orderDetailDataList.orderType == 'consultOrderPrescription' && (value == 2 || value == 8)) {
+        return true
+      } else {
+        return false
+      }
+
       return false
       if (value == 2 || value == 5 || value == 102 || value == 103) {
         //已完成 已取消  退款中 退款成功 不显示可操作的按钮
@@ -640,11 +683,25 @@ export default {
       if (value == 1) {
         //取消订单
         this.visible_model = true //显示 弹框
+      }else if(value==2||value==8){
+        // 自营处方退款 弹框
+        this.visible_refund=true
       } else {
         // 申请退款
         this.$refs.orderRefund.refund(this.orderId, this.payMode)
       }
     },
+
+
+
+
+    // 自营处方订单确认退款
+      handleRefundComf(){
+        this.smallLoading = true
+      },
+
+
+
 
     //提交取消订单
     handleComf() {
@@ -665,6 +722,7 @@ export default {
         })
         .finally((res) => {
           this.visible_model = false
+          this.visible_refund=false
           this.smallLoading = false
         })
     },
@@ -672,6 +730,7 @@ export default {
     //取消
     handleCancelUpdPwd() {
       this.visible_model = false
+      this.visible_refund=false
     },
   },
 }
