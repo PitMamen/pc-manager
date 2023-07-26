@@ -4655,6 +4655,23 @@ export function getTbBizMerchantPageList(data) {
     data: data,
   })
 }
+//处方流转配置列表接口
+export function getCflzMerchantPageList(data) {
+  return axios({
+    url: '/uam-api/tdPrescriptionFlowConfig/getTdPrescriptionFlowPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+//处方流转配置
+export function prescriptionFlowConfig(data) {
+  return axios({
+    url: '/uam-api/tdPrescriptionFlowConfig/prescriptionFlowConfig',
+    method: 'post',
+    data: data,
+  })
+}
 
 //收款配置
 export function tbBizMerchantConfig(data) {
