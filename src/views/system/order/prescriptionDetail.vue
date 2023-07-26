@@ -157,10 +157,10 @@
           <span style="color: #409eff;cursor:pointer" class="span-item-value" @click="goExamine(orderDetailDataList.appPrePrescriptionOrderId)">{{ orderDetailDataList.appPrePrescriptionOrderId || '-' }} </span>
         </div>
 
-        <!-- <div class="div-pro-line">
-            <span class="span-item-name">备注说明 :</span>
-            <span style="color: #409eff" class="span-item-value">请输入</span>
-          </div> -->
+        <div class="div-pro-line">
+            <span class="span-item-name">处方流转 :</span>
+           <span class="span-item-value">{{ orderDetailDataList.flowHospitalName || '-' }}</span>
+          </div>
       </div>
     </div>
 
@@ -369,6 +369,7 @@
 
     <cont-Detail ref="continuationDetail" @ok="handleOk" />
     <Distributionmodal ref="Distributionmodal" @ok="handleOk" />
+    <orderRefund ref="orderRefund" @ok="handleOk" />
   </a-spin>
 </template>
     
@@ -384,6 +385,7 @@ import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { formatDate, formatDateFull } from '@/utils/util'
 import Distributionmodal from './Distributionmodal'
+import orderRefund from './orderRefund'
 import { json } from 'body-parser'
 import { STable } from '@/components'
 
@@ -391,6 +393,7 @@ export default {
   components: {
     STable,
     Distributionmodal,
+    orderRefund
   },
 
   data() {

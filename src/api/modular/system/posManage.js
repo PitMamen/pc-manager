@@ -4845,3 +4845,31 @@ export function checkCaPassword(data) {
     params: data,
   })
 }
+
+// 厂商修改状态
+export function modifyfactoryStatus(data) {
+  return axios({
+    url: '/medical-api/factory/status',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 厂商信息 详情
+export function factoryDetail(data) {
+  return axios({
+    url: '/medical-api/factory/detail/?id='+data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+// 保存厂商
+export function saveFactory(data) {
+  return axios({
+    url: '/medical-api/factory/save',
+    method: 'post',
+    data: data,
+  })
+}

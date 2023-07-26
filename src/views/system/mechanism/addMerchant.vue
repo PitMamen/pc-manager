@@ -22,12 +22,21 @@
               v-model="checkData.channel"
               placeholder="请选择商户类型"
               allow-clear
-              style="width: 120px; height: 28px"
+              style="width: 75%; height: 28px"
+              class="ant-select-selection--single"
             >
               <a-select-option v-for="item in payeeType" :key="item.code" :value="item.code">{{
                 item.name
               }}</a-select-option>
             </a-select>
+
+            <a-checkbox
+              @change="checkBill"
+              v-model="isChecked"
+              :checked="isChecked"
+              style="margin-left: -50px"
+            />
+            <div style="margin-left: 10px">参与对账</div>
           </div>
 
           <div class="div-content">
@@ -68,16 +77,18 @@
 
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-tree-select
-            :dropdown-style="{'margin-top':'215px','height': '140px',overflow: 'auto'}"
-              style="min-width: 120px"
-              :tree-data="treeData"
-              placeholder="请选择机构"
-              @select="treeSelect"
-              tree-default-expand-all
-              v-model="hospitalName"
-            >
-            </a-tree-select>
+            <div style="width: 85% !important">
+              <a-tree-select
+                :dropdown-style="{ 'margin-top': '215px', height: '140px', overflow: 'auto' }"
+                :tree-data="treeData"
+                placeholder="请选择机构"
+                @select="treeSelect"
+                tree-default-expand-all
+                v-model="hospitalName"
+                class="ant-select-selection--bb"
+              >
+              </a-tree-select>
+            </div>
           </div>
 
           <div class="div-title">
@@ -86,7 +97,7 @@
           </div>
 
           <div class="div-content" v-for="(item, index) in paramJsonList" :key="index" :value="item.key">
-            <span style="color: red;margin-right: 5px;">*</span>
+            <span style="color: red; margin-right: 5px">*</span>
             <a-input
               v-model="item.key"
               style="display: inline-block; width: 25%"
@@ -104,13 +115,17 @@
 
             <div style="cursor: pointer" @click="deleteMer(index)">
               <!-- <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_delete.jpg" /> -->
-             
-              <span style="width: 50px; color: #1890ff; margin-left: 5px">  <a-icon type="delete" style="width: 18px; height: 18px; margin-left: 5px"></a-icon>删除</span>
+
+              <span style="width: 50px; color: #1890ff; margin-left: 5px">
+                <a-icon type="delete" style="width: 18px; height: 18px; margin-left: 5px"></a-icon>删除</span
+              >
             </div>
 
             <div style="cursor: pointer" @click="addMer(index)" v-if="index == paramJsonList.length - 1">
               <!-- <img style="width: 18px; height: 18px; margin-left: 5px" src="~@/assets/icons/icon_add_rule.png" /> -->
-              <span style="width: 50px; color: #1890ff; margin-left: 5px"> <a-icon type="plus" style="width: 18px; height: 18px; margin-left: 5px"></a-icon>新增</span>
+              <span style="width: 50px; color: #1890ff; margin-left: 5px">
+                <a-icon type="plus" style="width: 18px; height: 18px; margin-left: 5px"></a-icon>新增</span
+              >
             </div>
           </div>
         </div>
@@ -130,12 +145,12 @@ export default {
   components: {},
   data() {
     return {
-      hospitalName:'',
+      hospitalName: '',
       visible: false,
       record: {},
       headers: {},
       confirmLoading: false,
-      findItemData:{},
+      findItemData: {},
       // 高级搜索 展开/关闭
       danandataList: [],
       treeData: [],
@@ -146,12 +161,13 @@ export default {
         namePy: '',
         hospitalCode: undefined, //
         paramJson: '',
-        tenantId:'',
+        tenantId: '',
       },
       paramJsonList: [{ key: '', value: '' }],
       fetching: false,
       accountChecked: false, //客服坐席
       wecomChecked: false, //企稳账号
+      isChecked: false,
 
       payeeType: [
         {
@@ -167,11 +183,9 @@ export default {
   },
   created() {},
   methods: {
-
-
-    treeSelect(hospitalId){
-   //根据选中的 反向查询
-   for (let index = 0; index < this.treeData.length; index++) {
+    treeSelect(hospitalId) {
+      //根据选中的 反向查询
+      for (let index = 0; index < this.treeData.length; index++) {
         if (hospitalId == this.treeData[index].hospitalId) {
           this.findItemData = JSON.parse(JSON.stringify(this.treeData[index]))
           break
@@ -188,10 +202,11 @@ export default {
       // console.log("HHHH:",this.findItemData)
       this.checkData.hospitalCode = this.findItemData.hospitalCode
       this.checkData.tenantId = this.findItemData.hospitalId
-
     },
 
-
+    checkBill(e) {
+      this.isChecked = e.target.checked
+    },
 
     clearData() {
       this.record = {}
@@ -203,7 +218,7 @@ export default {
         namePy: '',
         hospitalCode: undefined, //机构
         paramJson: '',
-        tenantId:'',
+        tenantId: '',
       }
       this.hospitalName = ''
       this.accountChecked = false
@@ -211,7 +226,7 @@ export default {
     },
 
     deleteMer(index) {
-      if(this.paramJsonList.length==1){
+      if (this.paramJsonList.length == 1) {
         this.$message.error('请至少配置一个参数!')
         return
       }
@@ -219,7 +234,7 @@ export default {
     },
 
     addMer() {
-      if(this.paramJsonList&&this.paramJsonList.length>=10){
+      if (this.paramJsonList && this.paramJsonList.length >= 10) {
         this.$message.error('最多只能添加10个参数!')
         return
       }
@@ -250,7 +265,7 @@ export default {
         }
         this.paramJsonList = keyData
       }
-      console.log('KKK22:', this.paramJsonList)
+      this.isChecked = record.billFlag == 1 ? true : false
       this.queryHospitalListOut()
     },
 
@@ -298,7 +313,7 @@ export default {
     handleSubmit() {
       var object = {}
       for (let index = 0; index < this.paramJsonList.length; index++) {
-        if(!this.paramJsonList[index].key||!this.paramJsonList[index].value){
+        if (!this.paramJsonList[index].key || !this.paramJsonList[index].value) {
           this.$message.error('参数不能为空！')
           return
         }
@@ -322,30 +337,30 @@ export default {
         return
       }
 
-
       if (isStringEmpty(this.checkData.namePy)) {
         this.$message.error('请输入拼音码')
         return
       }
 
       var postData = {
-        tenantId:this.checkData.tenantId,
+        tenantId: this.checkData.tenantId,
         name: this.checkData.name,
         channel: this.checkData.channel,
         paramJson: JSON.stringify(object) ? JSON.stringify(object) : '',
         hospitalCode: this.checkData.hospitalCode,
         insideId: this.checkData.insideId,
         namePy: this.checkData.namePy,
-        merchantId:this.checkData.merchantId,
-        status:1,
+        merchantId: this.checkData.merchantId,
+        status: 1,
+        billFlag: this.isChecked?1:0,
       }
+      console.log('qqqq:', this.isChecked, postData)
       this.confirmLoading = true
-      // console.log("JJJJ:",postData.channel)
 
       if (this.record.insideId) {
         postData.insideId = this.record.insideId
         //修改
-        // this.modifyTbMerchantOut(postData)
+        this.modifyTbMerchantOut(postData)
       } else {
         //新增
         this.addMerchantOut(postData)
@@ -365,6 +380,7 @@ export default {
       })
     },
     modifyTbMerchantOut(postData) {
+      console.log('神经:', postData)
       modifyTbMerchant(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
@@ -393,7 +409,6 @@ export default {
  
 
   <style lang="less" scoped>
-
 // .ant-select-tree-dropdown {
 //   max-height: 860vh !important;
 //   top: 200px !important;
@@ -432,7 +447,7 @@ export default {
   margin-top: 10px;
 
   .div-part-left {
-    float: left;
+    // float: left;
     width: 100%;
     overflow: hidden;
     height: 100%;
@@ -465,6 +480,14 @@ export default {
       }
     }
 
+    /deep/.ant-select-selection--bb {
+      width: 350px;
+    }
+
+    /deep/.ant-select-selection--single {
+      width: 250px;
+    }
+
     .span-item-name {
       display: inline-block;
       color: #4d4d4d;
@@ -475,14 +498,14 @@ export default {
     }
 
     .span-item-value {
-      flex: 1;
+      width: 250px;
       color: #4d4d4d;
       text-align: left;
       font-size: 12px;
       display: inline-block;
     }
     .ant-select {
-      flex: 1;
+      // flex: 1;
       font-size: 12px !important;
     }
 
