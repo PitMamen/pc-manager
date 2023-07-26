@@ -219,7 +219,7 @@ export default {
           data.rows.forEach((item, index) => {
             this.$set(item, 'xh', (data.pageNo - 1) * data.pageSize + (index + 1))
             this.$set(item, 'enableStatus', item.status ? item.status == 1 : false)
-            this.$set(item, 'type', item.factoryType ? item.factoryType.description : '')
+            this.$set(item, 'type', this.getType(item.factoryType))
           })
           return data
         })
@@ -255,6 +255,20 @@ export default {
       console.log('onChange ', value, arguments)
       this.setState({ value })
     },
+
+
+    getType(value){
+       if(value==1){
+        return '药品供应商'
+       }else if(value==2){
+        return '设备器械商'
+       }else if(value==3){
+        return '服务提供商'
+       }else if(value==4){
+        return '数字疗法厂商'
+       }
+    },
+
 
     /**
      * 所属机构接口

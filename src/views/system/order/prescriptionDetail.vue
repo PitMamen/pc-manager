@@ -418,6 +418,7 @@ import {
   cancelOrder,
   getMedicalChufangDetail,
   getMedicalOrdersInfo,
+  applyRefund,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -698,6 +699,24 @@ export default {
     // 自营处方订单确认退款
       handleRefundComf(){
         this.smallLoading = true
+        var requestData = {
+        orderId: this.orderId,
+      }
+
+      applyRefund(requestData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.visible = false
+            this.$message.success('操作成功!')
+            this.$emit('ok')
+          } else {
+            this.$message.error('操作失败：' + res.message)
+          }
+        })
+        .finally((res) => {
+          this.visible_refund=false
+          this.smallLoading = false
+        })
       },
 
 
@@ -722,7 +741,6 @@ export default {
         })
         .finally((res) => {
           this.visible_model = false
-          this.visible_refund=false
           this.smallLoading = false
         })
     },

@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="record.id ? '生产厂商详情' : '新增生产厂商'"
+    :title="record.id ? '修改生产厂商' : '新增生产厂商'"
     :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
