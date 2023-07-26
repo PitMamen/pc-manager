@@ -126,6 +126,8 @@ import {
   getPage,
   accessHospitals,
   tradeBillExport,
+  statFactoryReport,
+  exportDataTreatReport,
 } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'

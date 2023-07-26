@@ -4,7 +4,7 @@
 
       <div class="search-row">
         <span class="name">关键字查询:</span>
-        <a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
+        <a-input v-model="queryParam.queryText" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -14,14 +14,14 @@
       </div>
       <div class="search-row">
         <span class="name">类别:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        <a-select v-model="queryParam.drugTypeId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
       <div class="search-row">
         <span class="name">剂型:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        <a-select v-model="queryParam.dosageFormId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in dosageDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
 
@@ -48,7 +48,7 @@
             <a-switch size="small" :checked="record.enableStatus" />
           </a-popconfirm>
 
-          <a @click="goDetail()"><a-icon type="edit" style="margin-left:10px" />详情</a>
+          <a @click="goDetail(record)"><a-icon type="edit" style="margin-left:10px" />详情</a>
 
         </template>
       </span>
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
+import { accessHospitals as list2, qryComplaintByPage, saveComplaint, medicinePage, updateMedicStatus, medicineDetail } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
@@ -68,67 +68,75 @@ export default {
   data() {
     return {
       // 查询参数  审核状态 1未审核2已审核3未登记
+      // queryParam: {
+      //   status: '',
+      //   beginDate: '',
+      //   endDate: '',
+      //   hospitalCode: '',
+      //   keyWord: '',
+      // },
       queryParam: {
-        status: '',
-        beginDate: '',
-        endDate: '',
-        hospitalCode: '',
-        keyWord: '',
+        dosageFormId: '',//剂型
+        drugTypeId: '',//类别
+        // pageNo: 0,
+        // pageSize: 0,
+        queryText: "",//关键字
+        status: ''//字典:0启用/1停用
       },
       queryParamOrigin: {
-        status: '',
-        beginDate: '',
-        endDate: '',
-        hospitalCode: '',
-        keyWord: '',
+        dosageFormId: '',//剂型
+        drugTypeId: '',//类别
+        // pageNo: 0,
+        // pageSize: 0,
+        queryText: "",//关键字
+        status: ''//字典:0启用/1停用
       },
-      createValue: [],
       // 表头
       columns: [
         {
           title: '批准文号',
-          dataIndex: 'orderId',
-          scopedSlots: { customRender: 'orderId' },
+          dataIndex: 'approvalNumber',
+          scopedSlots: { customRender: 'approvalNumber' },
         },
         {
           title: '药品通用名',
-          dataIndex: 'broadClassifyName',
-          scopedSlots: { customRender: 'broadClassifyName' },
+          dataIndex: 'genericName',
+          scopedSlots: { customRender: 'genericName' },
         },
         {
           title: '药品商用名',
-          dataIndex: 'userName',
-          scopedSlots: { customRender: 'userName' },
+          dataIndex: 'tradeName',
+          scopedSlots: { customRender: 'tradeName' },
         },
         {
           title: '药品规格',
-          dataIndex: 'userPhone',
-          scopedSlots: { customRender: 'userPhone' },
+          dataIndex: 'specification',
+          scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
-          dataIndex: 'eventDesc',
-          scopedSlots: { customRender: 'eventDesc' },
+          dataIndex: 'dosageFormDesc',
+          scopedSlots: { customRender: 'dosageFormDesc' },
         },
         {
           title: '类型',
-          dataIndex: 'hospitalName',
-          scopedSlots: { customRender: 'hospitalName' },
+          dataIndex: 'drugTypeDesc',
+          scopedSlots: { customRender: 'drugTypeDesc' },
         },
         {
           title: '医保类型',
-          dataIndex: 'uploadUserName',
-          scopedSlots: { customRender: 'uploadUserName' },
+          dataIndex: 'healthInsuranceCategory',
+          scopedSlots: { customRender: 'healthInsuranceCategory' },
         },
         {
           title: '生产厂商',
-          dataIndex: 'createTime',
-          scopedSlots: { customRender: 'createTime' },
+          dataIndex: 'manufacturerName',
+          scopedSlots: { customRender: 'manufacturerName' },
         },
         {
           title: '价格',
-          dataIndex: 'createTimde',
-          scopedSlots: { customRender: 'createTidme' },
+          dataIndex: 'unitPrice',
+          scopedSlots: { customRender: 'unitPrice' },
         },
 
         {
@@ -141,47 +149,61 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryComplaintByPage(Object.assign(parameter, this.queryParam)).then((res) => {
+        return medicinePage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            res.data.rows.forEach((element) => {
-              this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
-              // this.$set(element, 'status', 2)
-              this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
-              // 1未审核2已审核3未登记
-              if (element.status == 1) {
-                this.$set(element, 'statusText', '未审核')
-              } else if (element.status == 2) {
-                this.$set(element, 'statusText', '已审核')
-              } else {
-                this.$set(element, 'statusText', '未登记')
-              }
-            })
-            // console.log(JSON.stringify(res.data.rows))
-            return res.data
+            var data = {
+              pageNo: parameter.current,
+              pageSize: parameter.size,
+              totalRows: res.data.total,
+              totalPage: res.data.total / parameter.size,
+              rows: res.data.records,
+            }
+
+            if (res.data.records.length > 0) {
+              data.rows.forEach((item, index) => {
+                this.$set(item, 'enableStatus', item.status == 0 ? true : false)
+                // this.$set(item, 'enableStatus', item.status == 1)
+                // var type = ''
+                // if (item.department_type == 1) {
+                //   type = '门诊科室'
+                // } else if (item.department_type == 2) {
+                //   type = '急诊科室'
+                // } else if (item.department_type == 3) {
+                //   type = '住院科室'
+                // } else if (item.department_type == 4) {
+                //   type = '医技科室'
+                // } else if (item.department_type == 5) {
+                //   type = '药剂科室'
+                // } else if (item.department_type == 6) {
+                //   type = '后勤物资'
+                // } else if (item.department_type == 7) {
+                //   type = '机关科室'
+                // }
+                // this.$set(item, 'departmenttype', type)
+              })
+            }
+            return data
           } else {
             this.$message.error(res.message)
           }
         })
       },
 
-      treeData: [],
-      // 审核状态 1未审核2已审核3未登记
+      typeDatas: [{ id: '', name: '全部' }],
+      dosageDatas: [{ id: '', name: '全部' }],
+      // 状态（字典:0启用/1停用）
       selects: [
         {
           id: '',
           name: '全部',
         },
         {
+          id: 0,
+          name: '启用',
+        },
+        {
           id: 1,
-          name: '未审核',
-        },
-        {
-          id: 2,
-          name: '已审核',
-        },
-        {
-          id: 3,
-          name: '未登记',
+          name: '停用',
         },
       ],
     }
@@ -190,26 +212,53 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.getTreeData()
-    this.queryParam = { ...this.queryParam, ...this.$route.query }
+    // this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
 
     goAdd() {
-      this.$router.push({ path: './medicDetail' })
+      this.$router.push({ path: './medicNew' })
     },
-    goDetail() {
-      this.$router.push({ path: './medicDetail' })
+    goDetail(record) {
+      // this.$router.push({ path: './medicDetail' })
+      this.$router.push({
+        path: './medicDetail',
+        query: {
+          id: record.id,
+        },
+      })
     },
-    statusCheck() { },
+    // updateStatus
+    // statusCheck() { },
+    statusCheck(record) {
+      let queryParam = {
+        id: record.id,
+        status: record.status == 0 ? 1 : 0,
+      }
+      this.confirmLoading = true
+      updateMedicStatus(queryParam)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            record.status = !record.status
+            record.enableStatus = !record.enableStatus
+            this.$message.success('操作成功')
+          } else {
+            this.$message.error('操作失败:' + res.message)
+          }
+          setTimeout(() => {
+            this.handleOk()
+          }, 500)
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     /**
      * 重置
      */
     reset() {
-      this.createValue = []
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-      this.queryParam.hospitalCode = this.treeData[0].value
       this.handleOk()
     },
     handleOk() {

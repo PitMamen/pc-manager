@@ -4816,6 +4816,55 @@ export function institutionClassify(data) {
     data: data,
   })
 }
+// 药品SKU列表接口
+export function medicinePage(data) {
+  return axios({
+    url: '/info-api/medicine/page',
+    method: 'post',
+    data: data,
+  })
+}
+// 药品启用/停用
+export function updateMedicStatus(data) {
+  return axios({
+    url: '/info-api/medicine/updateStatus',
+    method: 'post',
+    data: data,
+  })
+}
+// 药品详情
+export function medicineDetail(data) {
+  return axios({
+    url: '/info-api/medicine/detail',
+    method: 'get',
+    params: data,
+  })
+}
+
+///datatreat/statFactoryDetail  数字厂商结算统计明细
+export function statFactoryDetail(data) {
+  return axios({
+    url: '/medical-api/datatreat/statFactoryDetail',
+    method: 'post',
+    data: data,
+  })
+}
+//  /datatreat/statFactoryReport 数字厂商结算统计
+export function statFactoryReport(data) {
+  return axios({
+    url: '/medical-api/datatreat/statFactoryReport',
+    method: 'post',
+    data: data,
+  })
+}
+//  /excel/exportDataTreatReport 数字厂商结算统计导出
+export function exportDataTreatReport(data) {
+  return axios({
+    url: '/medical-api/datatreat/exportDataTreatReport',
+    method: 'post',
+    data: data,
+  })
+}
 
 //设置医生证件信息
 export function setCertificateForUserId(data) {

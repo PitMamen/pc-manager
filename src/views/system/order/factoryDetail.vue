@@ -133,6 +133,7 @@ import {
   tradeRecordPage,
   tradeRecordChannelSummary,
   tradeRecordExport,
+  statFactoryDetail,
 } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
