@@ -361,7 +361,12 @@ export default {
       console.log('watch-------------------medicDetail Be', to, from)
       if (to.path.indexOf('medicDetail') > -1) {
         console.log('watch-------------------medicDetail', to, from)
-        this.initData()
+        if (this.$route.query.id) {//修改
+          // this.medicId = this.$route.query.id
+          // this.initData()
+        } else {//新增
+
+        }
       }
     },
   },
@@ -379,8 +384,15 @@ export default {
       this.initEditor()
     })
   },
+  // activated() {
+  //   console.log('*************medicDetail Activited')
+  // if (this.$route.query.id) {//修改
+  //         this.medicId = this.$route.query.id
+  //         this.getDetaiData()
+  //       } else {//新增
 
-
+  //       }
+  // },
   methods: {
     initData() {
       if (this.$route.query.id) {//修改

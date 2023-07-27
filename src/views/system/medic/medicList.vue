@@ -4,7 +4,7 @@
 
       <div class="search-row">
         <span class="name">关键字查询:</span>
-        <a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
+        <a-input v-model="queryParam.queryText" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -14,15 +14,28 @@
       </div>
       <div class="search-row">
         <span class="name">类别:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+
+        <a-auto-complete v-model="queryParam.drugTypeDesc" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+          @search="handleSearch">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in typeDatas" :title="item" :key="index + ''" :value="item">{{ item
+            }}</a-select-option>
+          </template>
+        </a-auto-complete>
+
       </div>
       <div class="search-row">
         <span class="name">剂型:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+
+        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+          @search="handleSearchDosage">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in dosageDatas" :title="item.dosage_form_desc" :key="index + ''" :value="item.dosage_form_id">{{
+              item.dosage_form_desc
+            }}</a-select-option>
+          </template>
+        </a-auto-complete>
+
       </div>
 
       <div class="action-row" style="margin-top: -10px">
@@ -40,21 +53,6 @@
 
     <s-table :scroll="{ x: true }" ref="table" size="default" :columns="columns" :data="loadData" :alert="true"
       :rowKey="(record) => record.id">
-      <span slot="parent_disarmament_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="departmentNames" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="his_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_introduce" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
 
@@ -63,90 +61,93 @@
             <a-switch size="small" :checked="record.enableStatus" />
           </a-popconfirm>
 
-          <a @click="$refs.editForm.edit(record, '3')"><a-icon type="hdd" style="margin-left:10px" />详情</a>
+          <a @click="goDetail(record)"><a-icon type="edit" style="margin-left:10px" />详情</a>
 
         </template>
       </span>
     </s-table>
-    <edit-form ref="editForm" @ok="handleOk" />
   </a-card>
 </template>
 
 <script>
-import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
+import { medicinePage, updateMedicStatus, getMedicineCategoryList, getDosageFormIdList } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
-import editForm from './editForm'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
   components: {
     STable,
     Ellipsis,
-    editForm,
   },
   data() {
     return {
       // 查询参数  审核状态 1未审核2已审核3未登记
+      // queryParam: {
+      //   status: '',
+      //   beginDate: '',
+      //   endDate: '',
+      //   hospitalCode: '',
+      //   keyWord: '',
+      // },
       queryParam: {
-        status: '',
-        beginDate: '',
-        endDate: '',
-        hospitalCode: '',
-        keyWord: '',
+        dosageFormId: '',//剂型
+        drugTypeDesc: '',//类别  drugTypeId
+        // pageNo: 0,
+        // pageSize: 0,
+        queryText: "",//关键字
+        status: ''//字典:0启用/1停用
       },
       queryParamOrigin: {
-        status: '',
-        beginDate: '',
-        endDate: '',
-        hospitalCode: '',
-        keyWord: '',
+        dosageFormId: '',//剂型
+        drugTypeDesc: '',//类别
+        queryText: "",//关键字
+        status: ''//字典:0启用/1停用
       },
-      createValue: [],
       // 表头
       columns: [
         {
           title: '批准文号',
-          dataIndex: 'orderId',
-          scopedSlots: { customRender: 'orderId' },
+          dataIndex: 'approvalNumber',
+          scopedSlots: { customRender: 'approvalNumber' },
         },
         {
           title: '药品通用名',
-          dataIndex: 'broadClassifyName',
-          scopedSlots: { customRender: 'broadClassifyName' },
+          dataIndex: 'genericName',
+          scopedSlots: { customRender: 'genericName' },
         },
         {
           title: '药品商用名',
-          dataIndex: 'userName',
-          scopedSlots: { customRender: 'userName' },
+          dataIndex: 'tradeName',
+          scopedSlots: { customRender: 'tradeName' },
         },
         {
           title: '药品规格',
-          dataIndex: 'userPhone',
-          scopedSlots: { customRender: 'userPhone' },
+          dataIndex: 'specification',
+          scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
-          dataIndex: 'eventDesc',
-          scopedSlots: { customRender: 'eventDesc' },
+          dataIndex: 'dosageFormDesc',
+          scopedSlots: { customRender: 'dosageFormDesc' },
         },
         {
           title: '类型',
-          dataIndex: 'hospitalName',
-          scopedSlots: { customRender: 'hospitalName' },
+          dataIndex: 'drugTypeDesc',
+          scopedSlots: { customRender: 'drugTypeDesc' },
         },
         {
           title: '医保类型',
-          dataIndex: 'uploadUserName',
-          scopedSlots: { customRender: 'uploadUserName' },
+          dataIndex: 'healthInsuranceCategory',
+          scopedSlots: { customRender: 'healthInsuranceCategory' },
         },
         {
           title: '生产厂商',
-          dataIndex: 'createTime',
-          scopedSlots: { customRender: 'createTime' },
+          dataIndex: 'manufacturerName',
+          scopedSlots: { customRender: 'manufacturerName' },
         },
         {
           title: '价格',
-          dataIndex: 'createTimde',
-          scopedSlots: { customRender: 'createTidme' },
+          dataIndex: 'unitPrice',
+          scopedSlots: { customRender: 'unitPrice' },
         },
 
         {
@@ -159,47 +160,43 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryComplaintByPage(Object.assign(parameter, this.queryParam)).then((res) => {
+        return medicinePage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            res.data.rows.forEach((element) => {
-              this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
-              // this.$set(element, 'status', 2)
-              this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
-              // 1未审核2已审核3未登记
-              if (element.status == 1) {
-                this.$set(element, 'statusText', '未审核')
-              } else if (element.status == 2) {
-                this.$set(element, 'statusText', '已审核')
-              } else {
-                this.$set(element, 'statusText', '未登记')
-              }
-            })
-            // console.log(JSON.stringify(res.data.rows))
-            return res.data
+            var data = {
+              pageNo: parameter.current,
+              pageSize: parameter.size,
+              totalRows: res.data.total,
+              totalPage: res.data.total / parameter.size,
+              rows: res.data.records,
+            }
+
+            if (res.data.records.length > 0) {
+              data.rows.forEach((item, index) => {
+                this.$set(item, 'enableStatus', item.status == 0 ? true : false)
+              })
+            }
+            return data
           } else {
             this.$message.error(res.message)
           }
         })
       },
 
-      treeData: [],
-      // 审核状态 1未审核2已审核3未登记
+      typeDatas: [{ id: '', name: '全部' }],
+      dosageDatas: [{ id: '', name: '全部' }],
+      // 状态（字典:0启用/1停用）
       selects: [
         {
           id: '',
           name: '全部',
         },
         {
+          id: 0,
+          name: '启用',
+        },
+        {
           id: 1,
-          name: '未审核',
-        },
-        {
-          id: 2,
-          name: '已审核',
-        },
-        {
-          id: 3,
-          name: '未登记',
+          name: '停用',
         },
       ],
     }
@@ -208,23 +205,78 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.getTreeData()
-    this.queryParam = { ...this.queryParam, ...this.$route.query }
+    // this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
+    getTypes(name) {
+      getMedicineCategoryList({ name: name })
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            this.typeDatas = res.data
+          }
+        })
+    },
+    getDosages(name) {
+      getDosageFormIdList({ name: name })
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            this.dosageDatas = res.data
+          }
+        })
+    },
+
+    handleSearch(name) {
+      this.getTypes(name)
+    },
+
+    handleSearchDosage(name) {
+      this.getDosages(name)
+    },
+    // getTypes() { },
 
     goAdd() {
-      this.$router.push({ path: './medicDetail' })
+      this.$router.push({ path: './medicNew' })
     },
-    statusCheck() { },
+    goDetail(record) {
+      // this.$router.push({ path: './medicDetail' })
+      this.$router.push({
+        path: './medicDetail',
+        query: {
+          id: record.id,
+        },
+      })
+    },
+    // updateStatus
+    // statusCheck() { },
+    statusCheck(record) {
+      let queryParam = {
+        id: record.id,
+        status: record.status == 0 ? 1 : 0,
+      }
+      this.confirmLoading = true
+      updateMedicStatus(queryParam)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            record.status = !record.status
+            record.enableStatus = !record.enableStatus
+            this.$message.success('操作成功')
+          } else {
+            this.$message.error('操作失败:' + res.message)
+          }
+          setTimeout(() => {
+            this.handleOk()
+          }, 500)
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     /**
      * 重置
      */
     reset() {
-      this.createValue = []
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-      this.queryParam.hospitalCode = this.treeData[0].value
       this.handleOk()
     },
     handleOk() {

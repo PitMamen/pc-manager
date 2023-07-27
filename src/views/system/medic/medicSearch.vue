@@ -1,87 +1,88 @@
 <template>
   <a-card :bordered="false">
-    <div class="table-page-search-wrapper">
 
-      <div class="search-row">
-        <span class="name">关键字查询:</span>
-        <a-input v-model="queryParam.keyWord" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
-      </div>
-      <div class="search-row">
-        <span class="name">状态:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
-      </div>
-      <div class="search-row">
-        <span class="name">类别:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
-      </div>
-      <div class="search-row">
-        <span class="name">剂型:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+    <div class="div-top">
+
+      <div class="div-search">
+        <a-input v-model="queryParam.keyWord" @click="goSearch()" allow-clear placeholder="请输入药品编码/药品名/商品名/首拼码/批准文号进行查询"
+          style="width: 380px" />
+        <a-button icon="search" type="primary" @click="goAdd()">搜索</a-button>
+        <!-- <a-icon type="search" /> -->
       </div>
 
-      <div class="action-row" style="margin-top: -10px">
+      <div style="flex: 1;"></div>
+      <div>当前匹配药品：暂无</div>
+    </div>
+
+    <div class="div-row">
+      <div style="display:flex;flex-direction: row;align-items: center;flex: 1">
+        <img style="width: 15px;height: 15px;" src="@/assets/icons/wenzhen/shaixuan.png" />
+        <span style="margin-left: 5px;">筛选条件</span>
+      </div>
+
+      <div class="div-btn">
+        <img class="btn-pic" src="@/assets/icons/wenzhen/qk_not.png" />
+        <span class="span-btn" style="margin-left: 5px;">清空筛选</span>
+      </div>
+
+    </div>
+
+    <div class="table-page-search-wrapper" style="margin-top: 20px;">
+
+      <div class="search-row">
+        <span class="name">药品剂型:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+      <div class="search-row">
+        <span class="name">生产厂商:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 200px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+      <div class="search-row">
+        <span class="name">商品分类:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+      <div class="search-row">
+        <span class="name">医保类型:</span>
+        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select>
+      </div>
+
+      <!-- <div class="action-row" style="margin-top: -10px">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
 
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
-      </div>
+      </div> -->
     </div>
 
-    <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="goAdd()">新增</a-button>
-    </div>
 
     <s-table :scroll="{ x: true }" ref="table" size="default" :columns="columns" :data="loadData" :alert="true"
       :rowKey="(record) => record.id">
-      <span slot="parent_disarmament_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="departmentNames" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="his_name" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
-      <span slot="ward_introduce" slot-scope="text">
-        <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
-      </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-
-          <a-popconfirm placement="topRight" :title="record.enableStatus ? '确认停用？' : '确认启用？'"
-            @confirm="() => statusCheck(record)">
-            <a-switch size="small" :checked="record.enableStatus" />
-          </a-popconfirm>
-
-          <a @click="$refs.editForm.edit(record, '3')"><a-icon type="hdd" style="margin-left:10px" />详情</a>
-
+          <a @click="goDetail()">选择</a>
         </template>
       </span>
     </s-table>
-    <edit-form ref="editForm" @ok="handleOk" />
   </a-card>
 </template>
 
 <script>
 import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
-import editForm from './editForm'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
   components: {
     STable,
     Ellipsis,
-    editForm,
   },
   data() {
     return {
@@ -104,29 +105,41 @@ export default {
       // 表头
       columns: [
         {
+          title: '操作',
+          // width: '150px',
+          // fixed: 'right',
+          dataIndex: 'action',
+          scopedSlots: { customRender: 'action' },
+        },
+        {
           title: '批准文号',
           dataIndex: 'orderId',
           scopedSlots: { customRender: 'orderId' },
         },
         {
-          title: '药品通用名',
+          title: '监管编码',
           dataIndex: 'broadClassifyName',
           scopedSlots: { customRender: 'broadClassifyName' },
         },
         {
-          title: '药品商用名',
+          title: '商品名称',
           dataIndex: 'userName',
           scopedSlots: { customRender: 'userName' },
         },
         {
-          title: '药品规格',
+          title: '药品名称',
           dataIndex: 'userPhone',
           scopedSlots: { customRender: 'userPhone' },
         },
         {
-          title: '剂型',
+          title: '药品规格',
           dataIndex: 'eventDesc',
           scopedSlots: { customRender: 'eventDesc' },
+        },
+        {
+          title: '剂型',
+          dataIndex: 'hospitalName',
+          scopedSlots: { customRender: 'hospitalName' },
         },
         {
           title: '类型',
@@ -134,7 +147,7 @@ export default {
           scopedSlots: { customRender: 'hospitalName' },
         },
         {
-          title: '医保类型',
+          title: '药理分类',
           dataIndex: 'uploadUserName',
           scopedSlots: { customRender: 'uploadUserName' },
         },
@@ -142,19 +155,6 @@ export default {
           title: '生产厂商',
           dataIndex: 'createTime',
           scopedSlots: { customRender: 'createTime' },
-        },
-        {
-          title: '价格',
-          dataIndex: 'createTimde',
-          scopedSlots: { customRender: 'createTidme' },
-        },
-
-        {
-          title: '操作',
-          // width: '150px',
-          fixed: 'right',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
         },
       ],
       // 加载数据方法 必须为 Promise 对象
@@ -214,6 +214,9 @@ export default {
   methods: {
 
     goAdd() { },
+    goDetail() {
+      this.$router.push({ path: './medicDetail' })
+    },
     statusCheck() { },
 
     /**
@@ -232,12 +235,61 @@ export default {
 }
 </script>
 
-<style lang="less">
-button {
-  margin-right: 8px;
-}
-</style>
 <style lang="less" scoped>
+.div-top {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+
+  .div-search {
+    border: 1px solid #1890FF;
+    background-color: #1890FF;
+    // background-color: #409EFF;
+    border-radius: 3px;
+    margin-left: 30%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+}
+
+.div-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 20px;
+  background-color: #F5F5F5;
+  padding: 15px 20px 15px 10px;
+
+  .div-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .btn-pic {
+      width: 15px;
+      height: 15px;
+    }
+
+    // 动态切换背景图片  hover切换背景图片   hover切换图片
+    &:hover {
+      color: #409EFF;
+      cursor: pointer;
+
+      .btn-pic {
+        content: url(../../../assets/icons/wenzhen/qk.png)
+      }
+    }
+  }
+
+  // .span-btn {
+  //   &:hover {
+  //     color: #409EFF;
+  //   }
+  // }
+}
+
 .table-page-search-wrapper {
   padding-bottom: 10px;
   border-bottom: 1px solid #e8e8e8;
@@ -257,11 +309,6 @@ button {
       margin-right: 10px;
     }
   }
-}
-
-.table-operator {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 </style>
 

@@ -193,6 +193,14 @@ export default {
           dataIndex: 'phone',
           ellipsis: true,
         },
+
+        {
+          title: '订单类型',
+          dataIndex: 'orderTypeDesc',
+          ellipsis: true,
+        },
+
+
         {
           title: '套餐名称',
           dataIndex: 'commodityName',
@@ -227,6 +235,14 @@ export default {
           dataIndex: 'payMode',
           ellipsis: true,
         },
+
+        {
+          title: '收款方',
+          dataIndex: 'payeeName',
+          ellipsis: true,
+        },
+
+
         {
           title: '支付流水号',
           dataIndex: 'agtOrdNum',
