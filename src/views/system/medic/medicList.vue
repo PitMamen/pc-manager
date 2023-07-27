@@ -14,15 +14,28 @@
       </div>
       <div class="search-row">
         <span class="name">类别:</span>
-        <a-select v-model="queryParam.drugTypeId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+
+        <a-auto-complete v-model="queryParam.drugTypeDesc" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+          @search="handleSearch">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in typeDatas" :title="item" :key="index + ''" :value="item">{{ item
+            }}</a-select-option>
+          </template>
+        </a-auto-complete>
+
       </div>
       <div class="search-row">
         <span class="name">剂型:</span>
-        <a-select v-model="queryParam.dosageFormId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in dosageDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+
+        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+          @search="handleSearchDosage">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in dosageDatas" :title="item.dosage_form_desc" :key="index + ''" :value="item.dosage_form_id">{{
+              item.dosage_form_desc
+            }}</a-select-option>
+          </template>
+        </a-auto-complete>
+
       </div>
 
       <div class="action-row" style="margin-top: -10px">
@@ -57,7 +70,7 @@
 </template>
 
 <script>
-import { accessHospitals as list2, qryComplaintByPage, saveComplaint, medicinePage, updateMedicStatus, medicineDetail } from '@/api/modular/system/posManage'
+import { medicinePage, updateMedicStatus, getMedicineCategoryList, getDosageFormIdList } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
@@ -77,7 +90,7 @@ export default {
       // },
       queryParam: {
         dosageFormId: '',//剂型
-        drugTypeId: '',//类别
+        drugTypeDesc: '',//类别  drugTypeId
         // pageNo: 0,
         // pageSize: 0,
         queryText: "",//关键字
@@ -85,9 +98,7 @@ export default {
       },
       queryParamOrigin: {
         dosageFormId: '',//剂型
-        drugTypeId: '',//类别
-        // pageNo: 0,
-        // pageSize: 0,
+        drugTypeDesc: '',//类别
         queryText: "",//关键字
         status: ''//字典:0启用/1停用
       },
@@ -162,24 +173,6 @@ export default {
             if (res.data.records.length > 0) {
               data.rows.forEach((item, index) => {
                 this.$set(item, 'enableStatus', item.status == 0 ? true : false)
-                // this.$set(item, 'enableStatus', item.status == 1)
-                // var type = ''
-                // if (item.department_type == 1) {
-                //   type = '门诊科室'
-                // } else if (item.department_type == 2) {
-                //   type = '急诊科室'
-                // } else if (item.department_type == 3) {
-                //   type = '住院科室'
-                // } else if (item.department_type == 4) {
-                //   type = '医技科室'
-                // } else if (item.department_type == 5) {
-                //   type = '药剂科室'
-                // } else if (item.department_type == 6) {
-                //   type = '后勤物资'
-                // } else if (item.department_type == 7) {
-                //   type = '机关科室'
-                // }
-                // this.$set(item, 'departmenttype', type)
               })
             }
             return data
@@ -215,6 +208,31 @@ export default {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
+    getTypes(name) {
+      getMedicineCategoryList({ name: name })
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            this.typeDatas = res.data
+          }
+        })
+    },
+    getDosages(name) {
+      getDosageFormIdList({ name: name })
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            this.dosageDatas = res.data
+          }
+        })
+    },
+
+    handleSearch(name) {
+      this.getTypes(name)
+    },
+
+    handleSearchDosage(name) {
+      this.getDosages(name)
+    },
+    // getTypes() { },
 
     goAdd() {
       this.$router.push({ path: './medicNew' })

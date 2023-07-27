@@ -4841,6 +4841,24 @@ export function medicineDetail(data) {
   })
 }
 
+// 药品类型下拉列表
+export function getMedicineCategoryList(data) {
+  return axios({
+    url: '/info-api/standardMedicine/getMedicineCategoryList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 药品剂型下拉列表
+export function getDosageFormIdList(data) {
+  return axios({
+    url: '/info-api/standardMedicine/getDosageFormIdList',
+    method: 'post',
+    data: data,
+  })
+}
+
 ///datatreat/statFactoryDetail  数字厂商结算统计明细
 export function statFactoryDetail(data) {
   return axios({
@@ -4860,9 +4878,10 @@ export function statFactoryReport(data) {
 //  /excel/exportDataTreatReport 数字厂商结算统计导出
 export function exportDataTreatReport(data) {
   return axios({
-    url: '/medical-api/datatreat/exportDataTreatReport',
+    url: '/medical-api/excel/exportDataTreatReport',
     method: 'post',
     data: data,
+    responseType: 'blob'
   })
 }
 
