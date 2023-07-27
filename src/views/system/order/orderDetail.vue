@@ -170,6 +170,9 @@
         :pagination="false"
         :rowKey="(record) => record.code"
       >
+      <span slot="action" slot-scope="text, record">
+        <a @click="send(record)"><a-icon style="margin-right: 5px" type="arrow-right"></a-icon>发货</a>
+      </span>
       </a-table>
     </div>
 
@@ -246,6 +249,7 @@
     </a-modal>
 
     <order-Refund ref="orderRefund" @ok="handleOk" />
+    <send-Modal ref="sendModal" @ok="handleOk" />
   </a-spin>
 </template>
   
@@ -258,12 +262,14 @@ import { formatDate, formatDateFull } from '@/utils/util'
 import orderRefund from './orderRefund'
 import { json } from 'body-parser'
 import { STable } from '@/components'
+import sendModal from './sendModal'
 
 
 export default {
   components: {
     STable,
     orderRefund,
+    sendModal,
   },
 
   data() {
@@ -321,7 +327,7 @@ export default {
         {
           title: '操作',
           dataIndex: 'action',
-          //   scopedSlots: { customRender: 'action' },
+            scopedSlots: { customRender: 'action' },
         },
       ],
 
@@ -447,7 +453,10 @@ export default {
       })
     },
 
-
+    //数字疗法 发货和查看
+    send(record){
+      this.$refs.sendModal.editmodal(record,this.orderId)
+    },
 
     getType(value) {
       if (value == 4 || value == 8 || value == 101) {

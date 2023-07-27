@@ -4227,8 +4227,22 @@ export function orderList(data) {
     data: data,
   })
 }
-
-
+//订单列表 数字商品
+export function datatreatOrderList(data) {
+  return axios({
+    url: '/medical-api/datatreat/orderList',
+    method: 'post',
+    data: data,
+  })
+}
+// 数字商品发货
+export function datatreatupdateExpressInfo(data) {
+  return axios({
+    url: '/medical-api/datatreat/updateExpressInfo',
+    method: 'post',
+    data: data,
+  })
+}
 //订单详情
 export function getOrderDetail(data) {
   return axios({
