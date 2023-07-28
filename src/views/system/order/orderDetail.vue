@@ -170,8 +170,11 @@
         :pagination="false"
         :rowKey="(record) => record.code"
       >
-      <span slot="action" slot-scope="text, record">
-        <a @click="send(record)"><a-icon style="margin-right: 5px" type="arrow-right"></a-icon>发货</a>
+      <span v-if=" record.projectTypeCode==107 && orderDetailDataList.status.value == 8" slot="action" slot-scope="text, record">
+        <a @click="send(record)">发货</a>
+      </span>
+      <span v-if="record.projectTypeCode==107 && orderDetailDataList.status.value == 2" slot="action" slot-scope="text, record">
+        <a @click="send(record)">查看</a>
       </span>
       </a-table>
     </div>
@@ -455,7 +458,7 @@ export default {
 
     //数字疗法 发货和查看
     send(record){
-      this.$refs.sendModal.editmodal(record,this.orderId)
+      this.$refs.sendModal.editmodal(record, this.orderDetailDataList)
     },
 
     getType(value) {

@@ -23,6 +23,7 @@
               v-model="checkData.dataTreatAccount"
               style="display: inline-block"
               allow-clear
+              :readOnly="isDetail"
               placeholder="请输入账号"
             />
           </div>
@@ -34,6 +35,7 @@
               v-model="checkData.dataTreatPwd"
               style="display: inline-block"
               allow-clear
+              :readOnly="isDetail"
               placeholder="请输入密码"
             />
           </div>
@@ -45,6 +47,7 @@
               v-model="checkData.dataTreatCdk"
               style="display: inline-block"
               allow-clear
+              :readOnly="isDetail"
               placeholder="请输入激活码"
             />
           </div>
@@ -55,6 +58,7 @@
               style="width: 170px"
               :value="checkData.dataTreatDeliverDate ? moment(checkData.dataTreatDeliverDate, 'YYYY-MM-DD') : undefined"
               @change="onDatePickerChange"
+              :readOnly="isDetail"
             />
           </div>
           <div class="div-content">
@@ -68,15 +72,14 @@
               :file-list="fileListDetail"
               @preview="handlePreviewDetail"
               @change="handleChangeDetail"
+              :disabled="isDetail"
             >
-              <div v-if="fileListDetail.length < 6">
+              <div v-if="fileListDetail.length < fileListNum">
                 <a-icon type="plus" />
                 <div >Upload</div>
               </div>
             </a-upload>
-            <a-modal :visible="previewVisibleDetail" :footer="null" @cancel="handleCancelDetail">
-              <img alt="example" style="width: 100%" :src="previewImageDetail" />
-            </a-modal>
+          
               
             </div>
           </div>
@@ -103,7 +106,9 @@ export default {
       record: {},
       headers: {},
       confirmLoading: false,
+      isDetail:false,
       fileListDetail:[],
+      fileListNum:6,
       checkData: {
         dataTreatDeliverDate: formatDate(new Date()),
         dataTreatAccount: '',
@@ -139,16 +144,48 @@ export default {
       myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
       return `${myyear}-${mymonth}-${myweekday}`
     },
-
-    // 配送
-    editmodal(record,orderId) {
+  // 新增
+  addmodal(record,orderDetail) {
+      console.log(orderDetail)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
       this.confirmLoading = false
       this.record = record
-      this.checkData.orderId=orderId
+      this.checkData.orderId=orderDetail.orderId
+      this.isDetail=false
+    },
+    // 查看
+    editmodal(record,orderDetail) {
+      console.log(orderDetail)
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+      this.clearData()
+      this.visible = true
+      this.confirmLoading = false
+      this.record = record
+      this.isDetail=true
+     
+      this.checkData = {
+        dataTreatDeliverDate: orderDetail.deliverInfo.dataTreatDeliverDate? this.formatDate(new Date(orderDetail.deliverInfo.dataTreatDeliverDate)):this.formatDate(new Date()),
+        dataTreatAccount: orderDetail.deliverInfo.dataTreatAccount || '' ,
+        dataTreatPwd: orderDetail.deliverInfo.dataTreatPwd || '' ,
+        dataTreatCdk:orderDetail.deliverInfo.dataTreatCdk || '' ,
+        dataTreatDeliverImg:orderDetail.deliverInfo.dataTreatDeliverImg || '' ,
+        orderId:orderDetail.orderId 
+      }
+      if(orderDetail.deliverInfo.dataTreatDeliverImg){
+        orderDetail.deliverInfo.dataTreatDeliverImg.split(',').forEach((item, index) => {
+        this.fileListDetail.push({
+          uid: 0 - index + '',
+          name: 'img' + index,
+          status: 'done',
+          url: item,
+        })
+      })
+      }
+     this.fileListNum=this.fileListDetail.length
       
+      console.log(this.checkData)
     },
     async handlePreviewDetail(file) {
       if (!file.url && !file.preview) {
@@ -204,7 +241,9 @@ export default {
     updateExpressInfoOut() {
       this.confirmLoading = true
 
-      this.checkData.dataTreatDeliverImg=this.fileListDetail.map(item=>{return item.response.data.fileLinkUrl}).join(',')
+    
+
+      this.checkData.dataTreatDeliverImg=this.fileListDetail.map(item=>{return  item.response?item.response.data.fileLinkUrl:item.url}).join(',')
 
       datatreatupdateExpressInfo(this.checkData).then((res) => {
         if (res.code == 0) {

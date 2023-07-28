@@ -89,7 +89,7 @@
   <script>
 import { STable } from '@/components'
 
-import { accessHospitals, getCflzMerchantPageList ,prescriptionFlowConfig} from '@/api/modular/system/posManage'
+import { accessHospitalsNew, getCflzMerchantPageList ,prescriptionFlowConfig} from '@/api/modular/system/posManage'
 import collectionfig from './collectionfig'
 
 export default {
@@ -220,7 +220,7 @@ export default {
         orgTypes: '2,3',
       }
       this.confirmLoading = true
-      accessHospitals(queryData)
+      accessHospitalsNew(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {

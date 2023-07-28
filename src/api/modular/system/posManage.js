@@ -2674,7 +2674,16 @@ export function accessHospitals(data) {
   })
 }
 
-
+/**
+ * 可访问机构列表 处方流转
+ */
+export function accessHospitalsNew(data) {
+  return axios({
+    url: '/uam-api/hospital/accessHospitalsNew',
+    method: 'get',
+    params: data,
+  })
+}
 
 
 /**
