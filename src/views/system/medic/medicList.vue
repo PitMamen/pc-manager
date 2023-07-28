@@ -14,25 +14,30 @@
       </div>
       <div class="search-row">
         <span class="name">类别:</span>
+        <a-select v-model="queryParam.medicineTypes" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.value">{{ item.name }}</a-select-option>
+        </a-select>
 
-        <a-auto-complete v-model="queryParam.drugTypeDesc" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+        <!-- <a-auto-complete v-model="queryParam.medicineTypes" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
           @search="handleSearch">
           <template slot="dataSource">
             <a-select-option v-for="(item, index) in typeDatas" :title="item" :key="index + ''" :value="item">{{ item
             }}</a-select-option>
           </template>
-        </a-auto-complete>
+        </a-auto-complete> -->
 
       </div>
       <div class="search-row">
         <span class="name">剂型:</span>
 
-        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
-          @search="handleSearchDosage">
+        <!-- a-auto-complete的a-select-option 的:value 需要为字符串，数字报错 -->
+        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title"
+          @select="handleOk" @search="handleSearchDosage">
           <template slot="dataSource">
-            <a-select-option v-for="(item, index) in dosageDatas" :title="item.dosage_form_desc" :key="index + ''" :value="item.dosage_form_id">{{
-              item.dosage_form_desc
-            }}</a-select-option>
+            <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
+              :value="item.id + ''">{{
+                item.value
+              }}</a-select-option>
           </template>
         </a-auto-complete>
 
@@ -70,7 +75,14 @@
 </template>
 
 <script>
-import { medicinePage, updateMedicStatus, getMedicineCategoryList, getDosageFormIdList } from '@/api/modular/system/posManage'
+import {
+  medicinePage,
+  updateMedicStatus,
+  getMedicineCategoryList,
+  getDosageFormIdList,
+  getDictData,
+  getDosageList
+} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
@@ -90,7 +102,7 @@ export default {
       // },
       queryParam: {
         dosageFormId: '',//剂型
-        drugTypeDesc: '',//类别  drugTypeId
+        medicineTypes: '',//类别  
         // pageNo: 0,
         // pageSize: 0,
         queryText: "",//关键字
@@ -98,7 +110,7 @@ export default {
       },
       queryParamOrigin: {
         dosageFormId: '',//剂型
-        drugTypeDesc: '',//类别
+        medicineTypes: '',//类别  
         queryText: "",//关键字
         status: ''//字典:0启用/1停用
       },
@@ -131,8 +143,8 @@ export default {
         },
         {
           title: '类型',
-          dataIndex: 'drugTypeDesc',
-          scopedSlots: { customRender: 'drugTypeDesc' },
+          dataIndex: 'medicineTypes',
+          scopedSlots: { customRender: 'medicineTypes' },
         },
         {
           title: '医保类型',
@@ -182,8 +194,8 @@ export default {
         })
       },
 
-      typeDatas: [{ id: '', name: '全部' }],
-      dosageDatas: [{ id: '', name: '全部' }],
+      typeDatas: [],
+      dosageDatas: [],
       // 状态（字典:0启用/1停用）
       selects: [
         {
@@ -206,33 +218,58 @@ export default {
    */
   created() {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
+    this.getDictDataOut()
   },
   methods: {
-    getTypes(name) {
-      getMedicineCategoryList({ name: name })
+    // getTypes(name) {
+    //   getMedicineCategoryList({ name: name })
+    //     .then((res) => {
+    //       if (res.code == 0 && res.success) {
+    //         this.typeDatas = res.data
+    //       }
+    //     })
+    // },
+
+    getDictDataOut() {
+      getDictData('medicine_types')
         .then((res) => {
-          if (res.code == 0 && res.success) {
+          if (res.code == 0 && res.data.length > 0) {
             this.typeDatas = res.data
+            this.typeDatas.forEach(element => {
+              this.$set(element, 'name', element.value)
+            });
+            this.typeDatas.unshift({ value: '', name: '全部', id: '' })
           }
         })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
     },
+
     getDosages(name) {
-      getDosageFormIdList({ name: name })
+      debugger
+      let param = {
+        pageNo: 1,
+        pageSize: 10000,
+        value: name
+      }
+      getDosageList(param)
         .then((res) => {
           if (res.code == 0 && res.success) {
-            this.dosageDatas = res.data
+            debugger
+            this.dosageDatas = res.data.records
+            console.log('dosageDatas-------', this.dosageDatas);
           }
         })
     },
 
-    handleSearch(name) {
-      this.getTypes(name)
-    },
+    // handleSearch(name) {
+    //   this.getTypes(name)
+    // },
 
     handleSearchDosage(name) {
       this.getDosages(name)
     },
-    // getTypes() { },
 
     goAdd() {
       this.$router.push({ path: './medicNew' })

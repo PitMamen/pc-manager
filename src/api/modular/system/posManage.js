@@ -4882,6 +4882,15 @@ export function getDosageFormIdList(data) {
   })
 }
 
+// 药品剂型下拉列表
+export function getDosageList(data) {
+  return axios({
+    url: '/info-api/sysDosageForm/page',
+    method: 'post',
+    data: data,
+  })
+}
+
 ///datatreat/statFactoryDetail  数字厂商结算统计明细
 export function statFactoryDetail(data) {
   return axios({
