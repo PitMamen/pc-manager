@@ -14,15 +14,33 @@
       </div>
       <div class="search-row">
         <span class="name">类别:</span>
-        <a-select v-model="queryParam.drugTypeId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        <a-select v-model="queryParam.medicineTypes" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.value">{{ item.name }}</a-select-option>
         </a-select>
+
+        <!-- <a-auto-complete v-model="queryParam.medicineTypes" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+          @search="handleSearch">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in typeDatas" :title="item" :key="index + ''" :value="item">{{ item
+            }}</a-select-option>
+          </template>
+        </a-auto-complete> -->
+
       </div>
       <div class="search-row">
         <span class="name">剂型:</span>
-        <a-select v-model="queryParam.dosageFormId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in dosageDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+
+        <!-- a-auto-complete的a-select-option 的:value 需要为字符串，数字报错 -->
+        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title"
+          @select="handleOk" @search="handleSearchDosage">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
+              :value="item.id + ''">{{
+                item.value
+              }}</a-select-option>
+          </template>
+        </a-auto-complete>
+
       </div>
 
       <div class="action-row" style="margin-top: -10px">
@@ -57,7 +75,14 @@
 </template>
 
 <script>
-import { accessHospitals as list2, qryComplaintByPage, saveComplaint, medicinePage, updateMedicStatus, medicineDetail } from '@/api/modular/system/posManage'
+import {
+  medicinePage,
+  updateMedicStatus,
+  getMedicineCategoryList,
+  getDosageFormIdList,
+  getDictData,
+  getDosageList
+} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
@@ -77,7 +102,7 @@ export default {
       // },
       queryParam: {
         dosageFormId: '',//剂型
-        drugTypeId: '',//类别
+        medicineTypes: '',//类别  
         // pageNo: 0,
         // pageSize: 0,
         queryText: "",//关键字
@@ -85,9 +110,7 @@ export default {
       },
       queryParamOrigin: {
         dosageFormId: '',//剂型
-        drugTypeId: '',//类别
-        // pageNo: 0,
-        // pageSize: 0,
+        medicineTypes: '',//类别  
         queryText: "",//关键字
         status: ''//字典:0启用/1停用
       },
@@ -120,8 +143,8 @@ export default {
         },
         {
           title: '类型',
-          dataIndex: 'drugTypeDesc',
-          scopedSlots: { customRender: 'drugTypeDesc' },
+          dataIndex: 'medicineTypes',
+          scopedSlots: { customRender: 'medicineTypes' },
         },
         {
           title: '医保类型',
@@ -162,24 +185,6 @@ export default {
             if (res.data.records.length > 0) {
               data.rows.forEach((item, index) => {
                 this.$set(item, 'enableStatus', item.status == 0 ? true : false)
-                // this.$set(item, 'enableStatus', item.status == 1)
-                // var type = ''
-                // if (item.department_type == 1) {
-                //   type = '门诊科室'
-                // } else if (item.department_type == 2) {
-                //   type = '急诊科室'
-                // } else if (item.department_type == 3) {
-                //   type = '住院科室'
-                // } else if (item.department_type == 4) {
-                //   type = '医技科室'
-                // } else if (item.department_type == 5) {
-                //   type = '药剂科室'
-                // } else if (item.department_type == 6) {
-                //   type = '后勤物资'
-                // } else if (item.department_type == 7) {
-                //   type = '机关科室'
-                // }
-                // this.$set(item, 'departmenttype', type)
               })
             }
             return data
@@ -189,8 +194,8 @@ export default {
         })
       },
 
-      typeDatas: [{ id: '', name: '全部' }],
-      dosageDatas: [{ id: '', name: '全部' }],
+      typeDatas: [],
+      dosageDatas: [],
       // 状态（字典:0启用/1停用）
       selects: [
         {
@@ -213,8 +218,58 @@ export default {
    */
   created() {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
+    this.getDictDataOut()
   },
   methods: {
+    // getTypes(name) {
+    //   getMedicineCategoryList({ name: name })
+    //     .then((res) => {
+    //       if (res.code == 0 && res.success) {
+    //         this.typeDatas = res.data
+    //       }
+    //     })
+    // },
+
+    getDictDataOut() {
+      getDictData('medicine_types')
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.typeDatas = res.data
+            this.typeDatas.forEach(element => {
+              this.$set(element, 'name', element.value)
+            });
+            this.typeDatas.unshift({ value: '', name: '全部', id: '' })
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    getDosages(name) {
+      debugger
+      let param = {
+        pageNo: 1,
+        pageSize: 10000,
+        value: name
+      }
+      getDosageList(param)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            debugger
+            this.dosageDatas = res.data.records
+            console.log('dosageDatas-------', this.dosageDatas);
+          }
+        })
+    },
+
+    // handleSearch(name) {
+    //   this.getTypes(name)
+    // },
+
+    handleSearchDosage(name) {
+      this.getDosages(name)
+    },
 
     goAdd() {
       this.$router.push({ path: './medicNew' })

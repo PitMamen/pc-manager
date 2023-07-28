@@ -58,14 +58,40 @@
           </div>
 
           <div class="div-content">
-            <span class="span-item-name">项目类型:</span>
-            <a-select v-model="checkData.projectType" allow-clear placeholder="请选择项目类型">
+            <span class="span-item-name"><span style="color: red">*</span>项目类型:</span>
+            <a-select v-model="checkData.projectType" allow-clear placeholder="请选择项目类型"  @select="onProjectTypeSelect">
               <a-select-option v-for="item in projectTypeData" :key="item.code" :value="item.code">{{
                 item.value
               }}</a-select-option>
             </a-select>
           </div>
-
+          <div class="div-content" v-if="checkData.projectType == 107">
+            <span class="span-item-name"><span style="color: red">*</span>系统类型:</span>
+            <a-select v-model="checkData.systemType" allow-clear placeholder="请选择系统类型" >
+              <a-select-option v-for="item in systemTypeData" :key="item.code" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div class="div-content" v-if="checkData.projectType == 107">
+            <span class="span-item-name">链接地址:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.systemAddress"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="300"
+              placeholder="请输入小程序APPID/网站地址/APP下载地址等"
+            />
+          </div>
+          <div class="div-content" v-if="checkData.projectType == 107">
+            <span class="span-item-name"><span style="color: red">*</span>发货方式:</span>
+            <a-select v-model="checkData.sendType" allow-clear placeholder="请选择发货方式" >
+              <a-select-option v-for="item in sendTypeData" :key="item.code" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </div>
           <div class="div-content">
             <span class="span-item-name">生产厂商:</span>
             <a-select v-model="checkData.factoryId" allow-clear placeholder="请选择生产厂商">
@@ -103,11 +129,11 @@
             <a-textarea
               style="height: 80px; min-height: 80px; margin-top: 10px; margin-left: 0px; width: 80%"
               v-model="checkData.remark"
-              :maxLength="120"
+              :maxLength="500"
               placeholder="请输入备注说明"
               v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入备注说明！' }] }]"
             />
-            <span class="m-count-pxk">{{ checkData.remark ? checkData.remark.length : 0 }}/120</span>
+            <span class="m-count-pxk">{{ checkData.remark ? checkData.remark.length : 0 }}/500</span>
           </div>
         </div>
       </div>
@@ -153,8 +179,16 @@ export default {
         suggestPrice: '',
         remark: '',
         status:1,
+        systemType: '',
+        sendType:'',
+        systemAddress:''
       },
-
+      systemTypeData:[
+        {code:1,value:'APP'},{code:2,value:'小程序'},{code:3,value:'网站'}
+      ],
+      sendTypeData:[
+        {code:1,value:'账号密码分配'},{code:2,value:'激活码重置'}
+      ],
       factoryquery: {
         // address: '',
         // contactName: '',
@@ -256,7 +290,12 @@ export default {
       console.log('projectImg:' + this.checkData.projectImg)
     },
 
-
+    onProjectTypeSelect(value){
+      console.log(value)
+      if(value == 107){
+        //如果是数字疗法 显示相关选项
+      }
+    },
     /**
      * 提交
      */
@@ -271,12 +310,28 @@ export default {
         this.$message.error('请输入项目规格')
         return
       }
-
+      if (isStringEmpty(this.checkData.projectType)) {
+        this.$message.error('请选择项目类型')
+        return
+      }
+      if(this.checkData.projectType == 107){
+        if (isStringEmpty(this.checkData.systemType)) {
+        this.$message.error('请选择系统类型')
+        return
+        }
+        if (isStringEmpty(this.checkData.sendType)) {
+        this.$message.error('请选择发货方式')
+        return
+        }
+      }
       if (isStringEmpty(this.checkData.unit)) {
         this.$message.error('请输入生产单位')
         return
       }
 
+
+
+ 
        this.saveServiceItemOut()
 
     },

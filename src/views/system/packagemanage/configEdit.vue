@@ -10,50 +10,34 @@
         <div class="div-up-content">
           <div class="div-up-left">
             <span class="span-item-name" style="margin-left: 0px"> 套餐名称 :</span>
-            <span
-              class="span-item-value"
-              :title="record.packageName"
-              style="max-width: 180px; font-weight: bold; font-size: 16px"
-            >
-              {{ record.packageName }}</span
-            >
+            <span class="span-item-value" :title="record.packageName"
+              style="max-width: 180px; font-weight: bold; font-size: 16px">
+              {{ record.packageName }}</span>
 
             <span class="span-item-name"> 套餐分类 :</span>
             <span class="span-item-value" :title="record.packageClassifyName" style="max-width: 100px">
-              {{ record.packageClassifyName }}</span
-            >
+              {{ record.packageClassifyName }}</span>
 
             <span class="span-item-name"> 所属学科 :</span>
             <span class="span-item-value" :title="record.subjectClassifyName" style="max-width: 100px">
-              {{ record.subjectClassifyName }}</span
-            >
+              {{ record.subjectClassifyName }}</span>
 
             <span class="span-item-name" v-if="record.doctorNames && record.doctorNames.length > 0"> 参与医生 :</span>
-            <span
-              class="span-item-value"
-              :title="record.doctorNames"
-              style="max-width: 180px; font-weight: bold; font-size: 16px"
-            >
-              {{ record.doctorNames }}</span
-            >
+            <span class="span-item-value" :title="record.doctorNames"
+              style="max-width: 180px; font-weight: bold; font-size: 16px">
+              {{ record.doctorNames }}</span>
 
             <span class="span-item-name" v-if="record.nurseNames && record.nurseNames.length > 0"> 参与护士 :</span>
-            <span
-              class="span-item-value"
-              :title="record.nurseNames"
-              style="max-width: 180px; font-weight: bold; font-size: 16px"
-            >
-              {{ record.nurseNames }}</span
-            >
+            <span class="span-item-value" :title="record.nurseNames"
+              style="max-width: 180px; font-weight: bold; font-size: 16px">
+              {{ record.nurseNames }}</span>
           </div>
           <div class="div-up-right">
             <span v-if="record.giftFlag == 1" class="span-item-name" style="font-weight: bold; margin-right: -30px">
-              导流包</span
-            >
+              导流包</span>
             <span class="span-item-name" style="font-weight: bold"> 套餐起价 :</span>
             <span class="span-item-value" style="font-weight: bold; font-size: 16px">
-              {{ record.startPrice || 0 + '元' }}</span
-            >
+              {{ record.startPrice || 0 + '元' }}</span>
           </div>
         </div>
       </div>
@@ -64,18 +48,9 @@
           <span class="span-title">可选项目</span>
         </div>
 
-        <div
-          class="div-choose-ke"
-          v-for="(itemOut, indexOut) in configData.tasksKe"
-          :key="indexOut"
-          :value="itemOut.id"
-        >
-          <div
-            class="div-choose-item"
-            v-for="(itemTask, indexTask) in itemOut.itemsKe"
-            :key="indexTask"
-            :value="itemTask.taskId"
-          >
+        <div class="div-choose-ke" v-for="(itemOut, indexOut) in configData.tasksKe" :key="indexOut" :value="itemOut.id">
+          <div class="div-choose-item" v-for="(itemTask, indexTask) in itemOut.itemsKe" :key="indexTask"
+            :value="itemTask.taskId">
             <div class="mission-top">
               <div class="mission-top-left" style="height: 30px">
                 <a-select class="mid-select-one" v-model="itemTask.typeCode" disabled allow-clear placeholder="请选择">
@@ -84,16 +59,9 @@
                   }}</a-select-option>
                 </a-select>
 
-                <a-auto-complete
-                  class="global-search"
-                  size="large"
-                  style="font-size: 12px; margin-left: 1%"
-                  placeholder="请选择项目"
-                  v-model="itemTask.serviceItemId"
-                  option-label-prop="title"
-                  @select="onSelect(indexOut, itemTask)"
-                  @search="handleSearch"
-                >
+                <a-auto-complete class="global-search" size="large" style="font-size: 12px; margin-left: 1%"
+                  placeholder="请选择项目" v-model="itemTask.serviceItemId" option-label-prop="title"
+                  @select="onSelect(indexOut, itemTask)" @search="handleSearch">
                   <template slot="dataSource">
                     <a-select-option v-for="item in serviceData" :key="item.id + ''" :title="item.projectName">
                       {{ item.projectName }}
@@ -105,100 +73,53 @@
 
                 <a-input-number
                   :disabled="record.classifyCode == 101 || record.classifyCode == 102 || record.classifyCode == 103"
-                  style="display: inline-block; margin-left: 1%; width: 60px"
-                  v-model="itemTask.quantity"
-                  :min="1"
-                  :max="1000"
-                  :maxLength="30"
-                  allow-clear
-                  placeholder=""
-                />
+                  style="display: inline-block; margin-left: 1%; width: 60px" v-model="itemTask.quantity" :min="1"
+                  :max="1000" :maxLength="30" allow-clear placeholder="" />
                 <span style="margin-left: 5px">次</span>
 
-                <a-input-number
-                  style="display: inline-block; margin-left: 1%; width: 60px"
-                  v-model="itemTask.saleAmount"
-                  @blur="countMinPrice"
-                  :min="0"
-                  :max="999999"
-                  :maxLength="30"
-                  allow-clear
-                  placeholder=""
-                />
+                <a-input-number style="display: inline-block; margin-left: 1%; width: 60px" v-model="itemTask.saleAmount"
+                  @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
                 <span style="margin-left: 5px">元</span>
 
-                <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
-                  >服务时长</span
-                >
-                <a-input-number
-                  v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
-                  style="display: inline-block; margin-left: 5px; width: 60px"
-                  v-model="itemTask.serviceTime"
-                  :min="1"
-                  :max="1000"
-                  :maxLength="30"
-                  allow-clear
-                  placeholder=""
-                />
+                <div v-show="itemTask.needShare"
+                  style="display: flex;flex-direction: row;align-items: center;margin-left:15px">
+                  <span style="width: 62px;">厂家分成：</span>
+                  <a-input-number style="display: inline-block; margin-left: 2px; width: 60px" v-model="itemTask.shareNum"
+                    @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
+                  <span style="margin-left: 5px">元</span>
+                </div>
+
+                <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">服务时长</span>
+                <a-input-number v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
+                  style="display: inline-block; margin-left: 5px; width: 60px" v-model="itemTask.serviceTime" :min="1"
+                  :max="1000" :maxLength="30" allow-clear placeholder="" />
                 <span style="margin-left: 5px" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">分钟</span>
 
-                <a-checkbox
-                  @click="goCheckChatNum(itemTask)"
-                  v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
-                  :checked="itemTask.needChatNum"
-                  style="margin-left: 1%"
-                />
-                <span style="margin-left: 5px" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
-                  >限制条数</span
-                >
-                <a-input-number
-                  v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
-                  style="display: inline-block; margin-left: 5px; width: 60px"
-                  v-model="itemTask.chatNum"
-                  :min="1"
-                  :max="1000"
-                  :maxLength="30"
-                  allow-clear
-                  placeholder=""
-                />
+                <a-checkbox @click="goCheckChatNum(itemTask)"
+                  v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101" :checked="itemTask.needChatNum"
+                  style="margin-left: 1%" />
+                <span style="margin-left: 5px" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101">限制条数</span>
+                <a-input-number v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
+                  style="display: inline-block; margin-left: 5px; width: 60px" v-model="itemTask.chatNum" :min="1"
+                  :max="1000" :maxLength="30" allow-clear placeholder="" />
 
-                <a-checkbox
-                  @click="goCheckServicePeriod(itemTask)"
-                  v-show="itemTask.typeCode != 104"
-                  :checked="itemTask.needServicePeriod"
-                  style="margin-left: 1%"
-                />
+                <a-checkbox @click="goCheckServicePeriod(itemTask)" v-show="itemTask.typeCode != 104"
+                  :checked="itemTask.needServicePeriod" style="margin-left: 1%" />
                 <span style="margin-left: 5px" v-show="itemTask.typeCode != 104">服务时效</span>
-                <a-input-number
-                  style="display: inline-block; margin-left: 5px; width: 60px"
-                  v-model="itemTask.timeQuantity"
-                  v-show="itemTask.typeCode != 104"
-                  :min="1"
-                  :max="1000"
-                  :maxLength="30"
-                  allow-clear
-                  placeholder=""
-                />
+                <a-input-number style="display: inline-block; margin-left: 5px; width: 60px"
+                  v-model="itemTask.timeQuantity" v-show="itemTask.typeCode != 104" :min="1" :max="1000" :maxLength="30"
+                  allow-clear placeholder="" />
 
-                <a-select
-                  class="mid-select-two"
-                  style="margin-left: 5px"
-                  v-show="itemTask.typeCode != 104"
-                  v-model="itemTask.servicePeriodUnit"
-                  allow-clear
-                  placeholder="请选择"
-                >
+                <a-select class="mid-select-two" style="margin-left: 5px" v-show="itemTask.typeCode != 104"
+                  v-model="itemTask.servicePeriodUnit" allow-clear placeholder="请选择">
                   <a-select-option v-for="(item, index) in repeatTimeUnitTypesData" :key="index" :value="item.value">{{
                     item.description
                   }}</a-select-option>
                 </a-select>
 
                 <!-- v-if="itemTask.itemStatus == 0" -->
-                <img
-                  v-if="itemTask.itemStatus == 0"
-                  style="width: 63px; height: 55px; margin-left: 100px"
-                  src="@/assets/icons/offline.png"
-                />
+                <img v-if="itemTask.itemStatus == 0" style="width: 63px; height: 55px; margin-left: 100px"
+                  src="@/assets/icons/offline.png" />
               </div>
 
               <!-- itemImg -->
@@ -216,55 +137,35 @@
               <div class="mission-bottom-left">
                 <span class="span-titl" style="margin-left: 1%">项目规格：</span>
                 <!-- style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" :title="itemTask.normsModel" -->
-                <span
-                  class="span-titl"
+                <span class="span-titl"
                   style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                  :title="itemTask.normsModel"
-                  >{{ itemTask.normsModel }}</span
-                >
+                  :title="itemTask.normsModel">{{ itemTask.normsModel }}</span>
 
                 <span class="span-titl" style="margin-left: 2%">项目建议价格：</span>
-                <span
-                  class="span-titl"
+                <span class="span-titl"
                   style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                  :title="itemTask.suggestPrice"
-                >
-                  {{ itemTask.suggestPrice }}</span
-                >
+                  :title="itemTask.suggestPrice">
+                  {{ itemTask.suggestPrice }}</span>
 
                 <span class="span-titl" style="margin-left: 2%">生产商：</span>
-                <span
-                  class="span-titl"
+                <span class="span-titl"
                   style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                  :title="itemTask.factoryName"
-                >
-                  {{ itemTask.factoryName }}</span
-                >
+                  :title="itemTask.factoryName">
+                  {{ itemTask.factoryName }}</span>
               </div>
 
               <div class="end-btn-task">
-                <a-popconfirm
-                  title="确定删除吗？"
-                  ok-text="确定"
-                  cancel-text="取消"
-                  @confirm="delItemsKe(indexOut, indexTask, itemTask)"
-                >
+                <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消"
+                  @confirm="delItemsKe(indexOut, indexTask, itemTask)">
                   <span class="span-end" style="margin-left: 2%; width: 92px">刪除项目</span>
                 </a-popconfirm>
 
                 <!-- v-show="record.classifyCode != 101 && record.classifyCode != 102 && record.classifyCode != 103" -->
-                <span
-                  v-show="
-                    indexTask == configData.tasksKe[indexOut].itemsKe.length - 1 &&
-                    record.classifyCode != 101 &&
-                    record.classifyCode != 102 &&
-                    record.classifyCode != 103
-                  "
-                  class="span-end"
-                  style="margin-left: 10%; width: 92px"
-                  @click="addItemsKe(indexOut)"
-                  >新增项目</span
-                >
+                <span v-show="indexTask == configData.tasksKe[indexOut].itemsKe.length - 1 &&
+                  record.classifyCode != 101 &&
+                  record.classifyCode != 102 &&
+                  record.classifyCode != 103
+                  " class="span-end" style="margin-left: 10%; width: 92px" @click="addItemsKe(indexOut)">新增项目</span>
               </div>
             </div>
           </div>
@@ -278,13 +179,8 @@
               </a-popconfirm>
 
               <!-- <span class="span-end" style="margin-left: 2%; width: 92px" @click="delTasksKe(indexOut)">刪除选择</span> -->
-              <span
-                class="span-end"
-                v-show="indexOut == configData.tasksKe.length - 1"
-                style="margin-left: 10%; width: 92px"
-                @click="addTasksKe()"
-                >新增选择</span
-              >
+              <span class="span-end" v-show="indexOut == configData.tasksKe.length - 1"
+                style="margin-left: 10%; width: 92px" @click="addTasksKe()">新增选择</span>
             </div>
           </div>
         </div>
@@ -293,26 +189,18 @@
         </div>
       </div>
 
-      <div
-        class="div-pro-middle"
-        v-show="
-          record.classifyCode != 101 &&
-          record.classifyCode != 102 &&
-          record.classifyCode != 103 &&
-          record.broadClassify != 4
-        "
-      >
+      <div class="div-pro-middle" v-show="record.classifyCode != 101 &&
+        record.classifyCode != 102 &&
+        record.classifyCode != 103 &&
+        record.broadClassify != 4
+        ">
         <div class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">必选项目</span>
         </div>
 
-        <div
-          class="div-choose-item"
-          v-for="(itemTask, indexTask) in configData.tasksBi"
-          :key="indexTask"
-          :value="itemTask.taskId"
-        >
+        <div class="div-choose-item" v-for="(itemTask, indexTask) in configData.tasksBi" :key="indexTask"
+          :value="itemTask.taskId">
           <div class="mission-top">
             <div class="mission-top-left" style="height: 30px">
               <a-select class="mid-select-one" v-model="itemTask.typeCode" disabled allow-clear placeholder="请选择">
@@ -321,16 +209,9 @@
                 }}</a-select-option>
               </a-select>
 
-              <a-auto-complete
-                class="global-search"
-                size="large"
-                style="font-size: 12px; margin-left: 1%"
-                placeholder="请选择项目"
-                v-model="itemTask.serviceItemId"
-                option-label-prop="title"
-                @select="onSelectBi(itemTask)"
-                @search="handleSearch"
-              >
+              <a-auto-complete class="global-search" size="large" style="font-size: 12px; margin-left: 1%"
+                placeholder="请选择项目" v-model="itemTask.serviceItemId" option-label-prop="title"
+                @select="onSelectBi(itemTask)" @search="handleSearch">
                 <template slot="dataSource">
                   <a-select-option v-for="item in serviceData" :key="item.id + ''" :title="item.projectName">
                     {{ item.projectName }}
@@ -340,90 +221,43 @@
 
               <span style="margin-left: 1%">*</span>
 
-              <a-input-number
-                style="display: inline-block; margin-left: 1%; width: 60px"
-                v-model="itemTask.quantity"
-                :min="1"
-                :max="1000"
-                :maxLength="30"
-                allow-clear
-                placeholder=""
-              />
+              <a-input-number style="display: inline-block; margin-left: 1%; width: 60px" v-model="itemTask.quantity"
+                :min="1" :max="1000" :maxLength="30" allow-clear placeholder="" />
               <span style="margin-left: 5px">次</span>
 
-              <a-input-number
-                style="display: inline-block; margin-left: 1%; width: 60px"
-                v-model="itemTask.saleAmount"
-                @blur="countMinPrice"
-                :min="0"
-                :max="999999"
-                :maxLength="30"
-                allow-clear
-                placeholder=""
-              />
+              <a-input-number style="display: inline-block; margin-left: 1%; width: 60px" v-model="itemTask.saleAmount"
+                @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
               <span style="margin-left: 5px">元</span>
 
-              <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
-                >服务时长</span
-              >
-              <a-input-number
-                v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
-                style="display: inline-block; margin-left: 5px; width: 60px"
-                v-model="itemTask.serviceTime"
-                :min="1"
-                :max="1000"
-                :maxLength="30"
-                allow-clear
-                placeholder=""
-              />
+              <div v-show="itemTask.needShare"
+                style="display: flex;flex-direction: row;align-items: center;margin-left:15px">
+                <span style="width: 62px;">厂家分成：</span>
+                <a-input-number style="display: inline-block; margin-left: 2px; width: 60px" v-model="itemTask.shareNum"
+                  @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
+                <span style="margin-left: 5px">元</span>
+              </div>
+
+              <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">服务时长</span>
+              <a-input-number v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
+                style="display: inline-block; margin-left: 5px; width: 60px" v-model="itemTask.serviceTime" :min="1"
+                :max="1000" :maxLength="30" allow-clear placeholder="" />
               <span style="margin-left: 5px" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">分钟</span>
 
-              <a-checkbox
-                @click="goCheckChatNum(itemTask)"
-                v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
-                :checked="itemTask.needChatNum"
-                style="margin-left: 1%"
-              />
-              <span style="margin-left: 5px" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
-                >限制条数</span
-              >
-              <a-input-number
-                v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
-                style="display: inline-block; margin-left: 5px; width: 60px"
-                v-model="itemTask.chatNum"
-                :min="1"
-                :max="1000"
-                :maxLength="30"
-                allow-clear
-                placeholder=""
-              />
+              <a-checkbox @click="goCheckChatNum(itemTask)" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
+                :checked="itemTask.needChatNum" style="margin-left: 1%" />
+              <span style="margin-left: 5px" v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101">限制条数</span>
+              <a-input-number v-show="itemTask.typeCode != 104 && itemTask.typeCode == 101"
+                style="display: inline-block; margin-left: 5px; width: 60px" v-model="itemTask.chatNum" :min="1"
+                :max="1000" :maxLength="30" allow-clear placeholder="" />
 
-              <a-checkbox
-                @click="goCheckServicePeriod(itemTask)"
-                v-show="itemTask.typeCode != 104"
-                :checked="itemTask.needServicePeriod"
-                style="margin-left: 1%"
-              />
+              <a-checkbox @click="goCheckServicePeriod(itemTask)" v-show="itemTask.typeCode != 104"
+                :checked="itemTask.needServicePeriod" style="margin-left: 1%" />
               <span style="margin-left: 5px" v-show="itemTask.typeCode != 104">服务时效</span>
-              <a-input-number
-                style="display: inline-block; margin-left: 5px; width: 60px"
-                v-model="itemTask.timeQuantity"
-                v-show="itemTask.typeCode != 104"
-                :min="1"
-                :max="1000"
-                :maxLength="30"
-                allow-clear
-                placeholder=""
-              />
+              <a-input-number style="display: inline-block; margin-left: 5px; width: 60px" v-model="itemTask.timeQuantity"
+                v-show="itemTask.typeCode != 104" :min="1" :max="1000" :maxLength="30" allow-clear placeholder="" />
 
-              <a-select
-                class="mid-select-two"
-                style="margin-left: 5px"
-                v-show="itemTask.typeCode != 104"
-                v-model="itemTask.servicePeriodUnit"
-                allow-clear
-                placeholder="请选择"
-              >
+              <a-select class="mid-select-two" style="margin-left: 5px" v-show="itemTask.typeCode != 104"
+                v-model="itemTask.servicePeriodUnit" allow-clear placeholder="请选择">
                 <a-select-option v-for="(item, index) in repeatTimeUnitTypesData" :key="index" :value="item.value">{{
                   item.description
                 }}</a-select-option>
@@ -451,49 +285,30 @@
             <div class="mission-bottom-left">
               <span class="span-titl" style="margin-left: 1%">项目规格：</span>
               <!-- style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap" :title="itemTask.normsModel" -->
-              <span
-                class="span-titl"
+              <span class="span-titl"
                 style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                :title="itemTask.normsModel"
-                >{{ itemTask.normsModel }}</span
-              >
+                :title="itemTask.normsModel">{{ itemTask.normsModel }}</span>
 
               <span class="span-titl" style="margin-left: 2%">项目建议价格：</span>
-              <span
-                class="span-titl"
+              <span class="span-titl"
                 style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                :title="itemTask.suggestPrice"
-              >
-                {{ itemTask.suggestPrice }}</span
-              >
+                :title="itemTask.suggestPrice">
+                {{ itemTask.suggestPrice }}</span>
 
               <span class="span-titl" style="margin-left: 2%">生产商：</span>
-              <span
-                class="span-titl"
+              <span class="span-titl"
                 style="margin-left: 5px; width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
-                :title="itemTask.factoryName"
-              >
-                {{ itemTask.factoryName }}</span
-              >
+                :title="itemTask.factoryName">
+                {{ itemTask.factoryName }}</span>
             </div>
 
             <div class="end-btn-task">
-              <a-popconfirm
-                title="确定删除吗？"
-                ok-text="确定"
-                cancel-text="取消"
-                @confirm="delItemsBi(indexTask, itemTask)"
-              >
+              <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="delItemsBi(indexTask, itemTask)">
                 <span class="span-end" style="margin-left: 2%; width: 92px">刪除项目</span>
               </a-popconfirm>
 
-              <span
-                v-show="indexTask == configData.tasksBi.length - 1"
-                class="span-end"
-                style="margin-left: 10%; width: 92px"
-                @click="addItemsBi()"
-                >新增项目</span
-              >
+              <span v-show="indexTask == configData.tasksBi.length - 1" class="span-end"
+                style="margin-left: 10%; width: 92px" @click="addItemsBi()">新增项目</span>
             </div>
           </div>
         </div>
@@ -861,6 +676,16 @@ export default {
       for (let index = 0; index < findItem.itemAttr.length; index++) {
         findItem.itemAttr[index]
       }
+
+      // 处理厂家分成
+      let shareItem = findItem.itemAttr.find((item) => item.attrName == 'ITEM_ATTR_DEVIDE')
+      if (shareItem) {
+        this.$set(itemTask, 'needShare', true)
+        this.$set(itemTask, 'shareNum', 0)
+      } else {
+        this.$set(itemTask, 'needShare', false)
+      }
+
     },
 
     onSelectBi(itemTask) {
@@ -903,6 +728,15 @@ export default {
       //处理findItem的可配置项
       for (let index = 0; index < findItem.itemAttr.length; index++) {
         findItem.itemAttr[index]
+      }
+
+      // 处理厂家分成
+      let shareItem = findItem.itemAttr.find((item) => item.attrName == 'ITEM_ATTR_DEVIDE')
+      if (shareItem) {
+        this.$set(itemTask, 'needShare', true)
+        this.$set(itemTask, 'shareNum', 0)
+      } else {
+        this.$set(itemTask, 'needShare', false)
       }
     },
 
@@ -1056,7 +890,7 @@ export default {
             }
           }
         })
-        .finally((res) => {})
+        .finally((res) => { })
     },
 
     getDetailData() {
@@ -1147,6 +981,18 @@ export default {
                 }
               }
 
+              //处理厂家分成
+              debugger
+              let findItemFactory = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_DEVIDE')
+              if (findItemFactory && findItemFactory.serviceValue) {
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'shareNum', findItemFactory.serviceValue)
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'needShare', true)
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'attrIdShareNum', findItemFactory.id)
+              } else {
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'shareNum', undefined)
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'needShare', false)
+              }
+
               //服务时效 都有  需要勾选
               // needServicePeriod: 1, //单独处理  服务时效
               // servicePeriodUnit: 1, //单独处理
@@ -1225,6 +1071,17 @@ export default {
                 }
               }
 
+              //处理厂家分成
+              let findItemFactory = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_DEVIDE')
+              if (findItemFactory && findItemFactory.serviceValue) {
+                this.$set(this.configData.tasksBi[indexIn], 'shareNum', findItemFactory.serviceValue)
+                this.$set(this.configData.tasksBi[indexIn], 'needShare', true)
+                this.$set(this.configData.tasksBi[indexIn], 'attrIdShareNum', findItemFactory.id)
+              } else {
+                this.$set(this.configData.tasksBi[indexIn], 'shareNum', undefined)
+                this.$set(this.configData.tasksBi[indexIn], 'needShare', false)
+              }
+
               //服务时效 都有  需要勾选
               // needServicePeriod: 1, //单独处理  服务时效
               // servicePeriodUnit: 1, //单独处理
@@ -1282,7 +1139,7 @@ export default {
 
           //套餐为 导流包 允许价格输入0元
           if (this.record.giftFlag != 1 && !itemTask.saleAmount) {
-            console.log("FFFF:",itemTask.saleAmount)
+            console.log("FFFF:", itemTask.saleAmount)
             this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务价格】')
             return
           }
@@ -1296,6 +1153,12 @@ export default {
           //限制条数 图文咨询特有  且需要勾选
           if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
             this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【限制条数】')
+            return
+          }
+
+          // if (itemTask.needShare && itemTask.shareNum == 0) {
+          if (itemTask.needShare && itemTask.shareNum < 0) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【厂家分成】')
             return
           }
 
@@ -1347,7 +1210,7 @@ export default {
           }
 
           //套餐为 导流包 允许价格输入0元
-          if (this.record.giftFlag != 1 &&!itemTask.saleAmount) {
+          if (this.record.giftFlag != 1 && !itemTask.saleAmount) {
             this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【服务价格】')
             return
           }
@@ -1361,6 +1224,12 @@ export default {
           //限制条数 图文咨询特有  且需要勾选
           if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
             this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【限制条数】')
+            return
+          }
+
+          // if (itemTask.needShare && itemTask.shareNum == 0) {
+          if (itemTask.needShare && itemTask.shareNum < 0) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【厂家分成】')
             return
           }
 
@@ -1501,6 +1370,26 @@ export default {
               }
             }
 
+            //处理厂家分成
+            if (element.needShare) {
+              if (element.attrIdShareNum) {
+                uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: element.shareNum,
+                  unit: '元',
+                  id: element.attrIdShareNum,
+                })
+              } else {
+                uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: element.shareNum,
+                  unit: '元',
+                })
+              }
+            }
+
             //服务时效 都有  需要勾选
             if (element.needServicePeriod) {
               let unitStr = element.servicePeriodUnit == 1 ? '天' : '小时'
@@ -1604,6 +1493,26 @@ export default {
               }
             }
 
+            //处理厂家分成
+            if (item.needShare) {
+              if (item.attrIdShareNum) {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: item.shareNum,
+                  unit: '元',
+                  id: item.attrIdShareNum,
+                })
+              } else {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: item.shareNum,
+                  unit: '元',
+                })
+              }
+            }
+
             //服务时效 都有  需要勾选
             if (item.needServicePeriod) {
               let unitStr = item.servicePeriodUnit == 1 ? '天' : '小时'
@@ -1671,6 +1580,7 @@ export default {
   .div-add-empty {
     width: 100%;
     margin-top: 18px;
+
     .span-empty {
       padding: 4px 15px;
       // background-color: yellow;
@@ -1704,6 +1614,7 @@ export default {
       height: 100%;
       background-color: #1890ff;
     }
+
     .span-title {
       font-size: 12px;
       margin-left: 10px;
@@ -1735,6 +1646,7 @@ export default {
         flex-direction: row;
         align-items: center;
       }
+
       .span-item-name {
         display: inline-block;
         margin-left: 50px;
@@ -1742,6 +1654,7 @@ export default {
         font-size: 12px;
         text-align: left;
       }
+
       .span-item-value {
         // width: 38%;
         color: #333;
@@ -1760,10 +1673,12 @@ export default {
 
   .div-pro-middle {
     margin-top: 1%;
+
     .div-choose-item {
       border: 1px solid #e6e6e6;
       border-radius: 6px;
       margin-top: 10px;
+
       .mission-top {
         margin-top: 10px;
         width: 100%;
@@ -1776,15 +1691,18 @@ export default {
           flex-direction: row;
           align-items: center;
           margin-right: 15px;
+
           &:hover {
             cursor: pointer;
           }
         }
+
         .mission-top-left {
           display: flex;
           flex-direction: row;
           align-items: center;
           flex: 1;
+
           /deep/ .ant-time-picker-input {
             height: 28px !important;
           }
@@ -1793,6 +1711,7 @@ export default {
             width: 10% !important;
             margin-left: 1% !important;
           }
+
           .mid-select-two.ant-select {
             width: 10% !important;
             margin-left: 1% !important;
@@ -1862,6 +1781,7 @@ export default {
             width: 12% !important;
             margin-left: 1% !important;
           }
+
           .mid-select-two.ant-select {
             width: 80px !important;
             margin-left: 1% !important;
@@ -1876,6 +1796,7 @@ export default {
         height: 1px;
       }
     }
+
     .div-choose-ke {
       border-radius: 6px;
       padding: 10px;
@@ -1962,6 +1883,7 @@ export default {
             width: 12% !important;
             margin-left: 1% !important;
           }
+
           .mid-select-two.ant-select {
             width: 80px !important;
             margin-left: 1% !important;

@@ -60,7 +60,8 @@
     >
       <span slot="action" slot-scope="text, record">
         <a @click="$refs.modifyProject.modifyModel(record)"><a-icon type="edit" style="margin-right: 0" />修改</a>
-        <!-- <a-divider type="vertical" /> -->
+        <a-divider type="vertical" />
+        <a @click="$refs.addSpecification.editModel(record)"><a-icon type="read" style="margin-right: 0" />说明书</a>
       </span>
 
       <span slot="statuas" slot-scope="text, record">
@@ -81,6 +82,7 @@
     </s-table>
 
     <add-Project ref="addProject" @ok="handleOk" />
+    <add-specification ref="addSpecification" @ok="handleOk" />
     <modify-Project ref="modifyProject" @ok="handleOk" />
   </a-card>
 </template>
@@ -96,12 +98,14 @@ import {
   saveServiceItem,
 } from '@/api/modular/system/posManage'
 import addProject from './addProject'
+import addSpecification from './addSpecification'
 import modifyProject from './modifyProject'
 export default {
   components: {
     STable,
     addProject,
     modifyProject,
+    addSpecification
   },
   data() {
     return {
@@ -204,7 +208,7 @@ export default {
 
         {
           title: '操作',
-          width: 80,
+          width: 140,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },

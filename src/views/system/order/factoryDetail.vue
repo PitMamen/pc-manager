@@ -3,122 +3,83 @@
     <div class="table-page-search-wrapper">
       <div class="action-row" style="margin-top: -10px !important; margin-left: -18px">
         <a-button type="link" icon="left" @click="goBack()">返回</a-button>
-        <span style="font-size: 14px; color: #4d4d4d">{{ reconData }}对账单</span>
+        <span style="font-size: 14px; color: #4d4d4d">{{ passItem.statMonth + '/' + passItem.hospitalName + '/' +
+          passItem.serviceItemName }}</span>
       </div>
     </div>
 
-    <!-- <div class="recon-content">
-      <div style="margin-top: 5px; color: #4d4d4d">对账状态：</div>
-      <div :class="getStyle(statusShow)">{{ statusShow }}</div>
-      <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
-        >导出</a-button
-      >
-    </div> -->
-
-
-
     <div class="tab-all-content">
-      <!-- 订单总额 -->
+      <!-- 收款金额 -->
       <div class="tab-total">
         <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[0].title }}</span>
+          <span style="font-size: 12px; margin-top: 3px">收款金额</span>
           <div style="float: right">
-            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 133px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span>
-          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >(差异：{{ SummaryDataList[0].diffFee }})</span
-          > -->
+          <span style="font-size: 24px; margin-top: -14px">{{ resData.inTotalMoney }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[0].totalCount }}</span>
-          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[0].diffCount }})</span> -->
+          <span style="font-size: 12px">总笔数：{{ resData.inTotalNum }}</span>
         </div>
       </div>
 
-      <!-- 微信支付 -->
+      <!-- 退款金额 -->
       <div class="tab-wx">
         <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[1].title }}</span>
+          <!-- <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" /> -->
+          <span style="font-size: 12px; margin-top: 3px">退款金额</span>
           <div style="float: right">
-            <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 133px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[1].totalFee }}</span>
-          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >(差异：{{ SummaryDataList[1].diffFee }})</span
-          > -->
+          <span style="font-size: 24px; margin-top: -14px">{{ resData.refundTotalMoney }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[1].totalCount }}</span>
-          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[1].diffCount }})</span> -->
+          <span style="font-size: 12px">总笔数：{{ resData.refundTotalNum }}</span>
         </div>
       </div>
 
-      <!-- 支付宝支付 -->
+      <!-- 结算金额 -->
       <div class="tab-alipay">
         <div class="content-dis">
-          <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[2].title }}</span>
+          <span style="font-size: 12px; margin-top: 3px">结算金额</span>
           <div style="float: right">
-            <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 133px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[2].totalFee }}</span>
-          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >(差异：{{ SummaryDataList[2].diffFee }})</span
-          > -->
+          <span style="font-size: 24px; margin-top: -14px">{{ resData.realTotalMoney }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[2].totalCount }}</span>
-          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[2].diffCount }})</span> -->
+          <span style="font-size: 12px">总笔数：{{ resData.totalNum }}</span>
         </div>
       </div>
     </div>
 
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.channel == 'all' }" @click="onRadioClick('all')">
-        <!-- <span style="margin-left: 3px">全部({{ numberData.all }})</span> -->
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 1 }" @click="onRadioClick(1)">
         <span style="margin-left: 3px">收款单</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.channel == 'wechat' }"
-        @click="onRadioClick('wechat')">
-        <!-- <span style="margin-left: 3px">微信支付({{ numberData.wechat }}) </span> -->
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.type == 2 }" @click="onRadioClick(2)">
         <span style="margin-left: 3px">退款单 </span>
       </div>
-      <!-- <div
-        class="radio-item"
-        :class="{ 'checked-btn': queryParamsTemp.channel == 'alipay' }"
-        @click="onRadioClick('alipay')"
-      >
-        <span style="margin-left: 3px">支付宝支付({{ numberData.zhifub }})</span>
-      </div> -->
 
-      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
-            <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
-          </div> -->
     </div>
 
     <s-table :scroll="{ x: true }" style="margin-top: 20px;" ref="table" size="default" :columns="columns"
       :data="loadData" :alert="true" :rowKey="(record) => record.code">
-      <span slot="billStatus" slot-scope="text, record" :class="getColor(record.billStatus)">
-        {{ record.billStatusDesc }}
-      </span>
-
-      <span slot="ordrstatus" slot-scope="text, record" style="color: #409eff">
-        {{ record.orderStatusDesc }}
+      <span slot="billStatus" slot-scope="text, record">
+        <span class="fee-in" v-if="record.type == 1">收款</span>
+        <span class="fee-refund" v-else>退款</span>
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
@@ -135,7 +96,7 @@ import {
   tradeRecordExport,
   statFactoryDetail,
 } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { formatDateFull, formatDate } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 
@@ -150,20 +111,15 @@ export default {
   data() {
     return {
       dateFormat: 'YYYY-MM-DD',
-      orderTimeValue: [],
-      SummaryDataList: [],
       confirmLoading: false,
       currentTab: 0,
-      numberData: {
-        all: 0,
-        wechat: 0,
-        zhifub: 0,
-      },
+
       queryParams: {
-        billDate: '',
-        channel: 'all',
-        payeeId: 0,
-        hospitalCode: undefined,
+        factoryId: "",
+        hospitalCode: [],
+        serviceItemId: 17,
+        statMonth: "",
+        type: 1//查询类型 1收入2退费
       },
 
       reconData: '', //对账 日期
@@ -180,12 +136,12 @@ export default {
         },
         {
           title: '用户姓名',
-          dataIndex: 'name',
+          dataIndex: 'userName',
           ellipsis: true,
         },
         {
           title: '手机号',
-          dataIndex: 'phone',
+          dataIndex: 'userPhone',
           ellipsis: true,
         },
         {
@@ -195,44 +151,45 @@ export default {
         },
         {
           title: '商品名称',
-          dataIndex: 'hospitalName',
+          dataIndex: 'serviceItemName',
           ellipsis: true,
         },
         {
           title: '订单金额',
-          dataIndex: 'orderTotal',
-          align: 'right',
-          ellipsis: true,
-        },
-        {
-          title: '厂商分成',
           dataIndex: 'payTotal',
           align: 'right',
           ellipsis: true,
         },
         {
+          title: '厂商分成',
+          dataIndex: 'money',
+          align: 'right',
+          ellipsis: true,
+        },
+        {
           title: '下单时间',
-          dataIndex: 'orderTime',
+          // dataIndex: 'payTime',
+          dataIndex: 'payTimeStr',
           ellipsis: true,
           //   width: 160,
         },
 
         {
           title: '支付方式',
-          dataIndex: 'payMode',
+          dataIndex: 'payWay',
           ellipsis: true,
         },
 
         {
           title: '订单状态',
-          dataIndex: 'orderStatusDesc',
+          dataIndex: 'orderStatus',
           ellipsis: true,
-          scopedSlots: { customRender: 'ordrstatus' },
+          scopedSlots: { customRender: 'orderStatus' },
         },
         {
           title: '订单类型',
-          dataIndex: 'billStatusDesc',
-          ellipsis: true,
+          // dataIndex: 'billStatusDesc',
+          // ellipsis: true,
           scopedSlots: { customRender: 'billStatus' },
         },
       ],
@@ -240,24 +197,25 @@ export default {
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         this.queryParamsTemp.payeeId = this.currentTab
-        return tradeRecordPage(Object.assign(parameter, this.queryParams))
+        return statFactoryDetail(Object.assign(parameter, this.queryParams))
           .then((res) => {
-            if (res.code == 0 && res.data.records.length > 0) {
-              //组装控件需要的数据结构
-              var data = {
-                pageNo: parameter.pageNo,
-                pageSize: parameter.pageSize,
-                totalRows: res.data.total,
-                totalPage: res.data.total / parameter.pageSize,
-                rows: res.data.records,
+            if (res.code == 0) {
+
+
+              this.resData = res.data
+
+              //组装控件需要的数据结构 //查询类型 1收入2退费
+              var data = {}
+              if (this.queryParams.type == 1) {
+                data = res.data.inData
+              } else {
+                data = res.data.refundData
               }
 
               //设置序号
               data.rows.forEach((item, index) => {
-                // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
-                // this.$set(item, 'status', 1)
-                // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                // item.nameDes = item.name
+                this.$set(item, 'payTimeStr', formatDateFull(item.payTime))
+                this.$set(item, 'type', this.queryParams.type)
               })
             } else {
               data = []
@@ -269,78 +227,54 @@ export default {
             this.confirmLoading = false
           })
       },
+
+      passItem: {},
+      resData: {},
     }
   },
 
-  activated() {
-    if (this.$route.query) {
-      this.reconData = this.$route.query.billDate
-      this.statusShow = this.$route.query.state
-      this.currentTab = this.$route.query.payeeId
-      console.log("hospitalCode:", this.$route.query.hospitalCode)
-      this.queryParams.billDate = this.reconData
-      this.queryParams.payeeId = this.currentTab
-      this.queryParams.hospitalCode = this.$route.query.hospitalCode
-      this.getTabOut()
-      this.tradeRecordChannelSummaryOut()
-      this.$refs.table.refresh()
+  // activated() {
+  //   if (this.$route.query) {
+  //     this.reconData = this.$route.query.billDate
+  //     this.statusShow = this.$route.query.state
+  //     this.currentTab = this.$route.query.payeeId
+  //     console.log("hospitalCode:", this.$route.query.hospitalCode)
+  //     this.queryParams.billDate = this.reconData
+  //     this.queryParams.payeeId = this.currentTab
+  //     this.queryParams.hospitalCode = this.$route.query.hospitalCode
+  //     this.getTabOut()
+  //     this.tradeRecordChannelSummaryOut()
+  //     this.$refs.table.refresh()
 
-      // var orderId = this.$route.query.orderId
-      // this.init(orderId)
-    }
-  },
+  //     // var orderId = this.$route.query.orderId
+  //     // this.init(orderId)
+  //   }
+  // },
 
   watch: {
     $route(to, from) {
-      if (to.path.indexOf('reconDetail') > -1) {
-        this.reconData = this.$route.query.billDate
-        this.statusShow = this.$route.query.state
-        this.currentTab = this.$route.query.payeeId
-        this.queryParams.billDate = this.reconData
-        this.queryParams.payeeId = this.currentTab
-        this.queryParams.hospitalCode = this.$route.query.hospitalCode
-        this.getTabOut()
-        this.tradeRecordChannelSummaryOut()
-        this.$refs.table.refresh()
+      if (to.path.indexOf('factoryDetail') > -1) {
+        this.initData()
       }
     },
   },
 
   created() {
-    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.initData()
+
   },
 
   methods: {
-    //汇总信息
-    tradeRecordChannelSummaryOut() {
-      tradeRecordChannelSummary(this.queryParams).then((res) => {
-        if (res.code == 0) {
-          this.SummaryDataList = res.data
-        }
-      })
-    },
-
-
-    getColor(value) {
-      if (value == 0) {
-        return 'span-gray'
-      } else if (value == 2) {
-        return 'span-red'
-      } else if (value == 1) {
-        return 'span-blue'
-      }
-    },
-
-    getStyle(value) {
-      if (value == '无差异') {
-        return 'green-color'
-      } else if (value == '有差异') {
-        return 'red-color'
-      }
-    },
-
-    isLoading() {
-      return this.confirmLoading
+    initData() {
+      this.passItem = JSON.parse(this.$route.query.dataStr)
+      this.queryParams.factoryId = this.passItem.factoryId
+      this.queryParams.hospitalCode = []
+      this.queryParams.hospitalCode.push(this.passItem.hospitalCode)
+      this.queryParams.serviceItemId = this.passItem.serviceItemId
+      this.queryParams.statMonth = this.passItem.statMonth
+      // this.queryParams.type = this.passItem.type
+      console.log('-----------------passItem', this.passItem)
+      this.handleOk()
     },
 
     //导出
@@ -376,33 +310,9 @@ export default {
 
     //返回
     goBack() {
-      this.$bus.$emit('orderRefresh', '刷新数据')
+      // this.$bus.$emit('orderRefresh', '刷新数据')
       this.$router.go(-1)
       // this.$router.back()
-    },
-
-    //订单分组
-    getTabOut() {
-      tradeRecordTab(this.queryParams)
-        .then((res) => {
-          if (res.code == 0) {
-            for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].channel == 'all') {
-                //全部
-                this.numberData.all = res.data[index].total
-              } else if (res.data[index].channel == 'wechat') {
-                //微信
-                this.numberData.wechat = res.data[index].total
-              } else if (res.data[index].channel == 'alipay') {
-                //支付宝
-                this.numberData.zhifub = res.data[index].total
-              }
-            }
-          }
-        })
-        .catch((err) => {
-          this.$message.error('请求错误：' + err.message)
-        })
     },
 
     onRadioClick(type) {
@@ -410,33 +320,16 @@ export default {
       if (this.confirmLoading) {
         return
       }
-      this.queryParams.channel = type
-      this.queryParamsTemp.channel = type
-      // this.getTabOut()
-      this.tradeRecordChannelSummaryOut()
-      this.$refs.table.refresh()
-    },
 
-    formatDate(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      return `${myyear}-${mymonth}-${myweekday}`
-    },
+      if (type == this.queryParams.type) {
+        return
+      }
 
-    //下单时间
-    onChangeOrder(momentArr, dateArr) {
-      this.orderTimeValue = momentArr
-      this.queryParams.refundStartTime = dateArr[0]
-      this.queryParams.refundEndTime = dateArr[1]
+      this.queryParams.type = type
+      this.handleOk()
     },
 
     handleOk() {
-      this.getTabOut()
-      this.tradeRecordChannelSummaryOut()
       this.$refs.table.refresh()
     },
   },
@@ -444,6 +337,22 @@ export default {
 </script>
        
 <style lang="less" scoped>
+.fee-in {
+  color: #0e9b0b;
+  border: #0e9b0b 1px solid;
+  padding: 1px 7px;
+  border-radius: 3px;
+  background-color: #ecf5ff;
+}
+
+.fee-refund {
+  color: #f21010;
+  border: #f21010 1px solid;
+  padding: 1px 7px;
+  border-radius: 3px;
+  background-color: #ecf5ff;
+}
+
 .green-color {
   color: #0e9b0b;
   margin-top: 5px;

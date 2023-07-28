@@ -2674,7 +2674,16 @@ export function accessHospitals(data) {
   })
 }
 
-
+/**
+ * 可访问机构列表 处方流转
+ */
+export function accessHospitalsNew(data) {
+  return axios({
+    url: '/uam-api/hospital/accessHospitalsNew',
+    method: 'get',
+    params: data,
+  })
+}
 
 
 /**
@@ -4245,12 +4254,26 @@ export function preShipList(data) {
   return axios({
     url: '/medical-api/admorder/preShipList',
     method: 'post',
-    data: data,
+    data: data
   })
 }
 
-
-
+//订单列表 数字商品
+export function datatreatOrderList(data) {
+  return axios({
+    url: '/medical-api/datatreat/orderList',
+    method: 'post',
+    data: data,
+  })
+}
+// 数字商品发货
+export function datatreatupdateExpressInfo(data) {
+  return axios({
+    url: '/medical-api/datatreat/updateExpressInfo',
+    method: 'post',
+    data: data,
+  })
+}
 //订单详情
 export function getOrderDetail(data) {
   return axios({
@@ -4863,6 +4886,33 @@ export function medicineDetail(data) {
   })
 }
 
+// 药品类型下拉列表
+export function getMedicineCategoryList(data) {
+  return axios({
+    url: '/info-api/standardMedicine/getMedicineCategoryList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 药品剂型下拉列表
+export function getDosageFormIdList(data) {
+  return axios({
+    url: '/info-api/standardMedicine/getDosageFormIdList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 药品剂型下拉列表
+export function getDosageList(data) {
+  return axios({
+    url: '/info-api/sysDosageForm/page',
+    method: 'post',
+    data: data,
+  })
+}
+
 ///datatreat/statFactoryDetail  数字厂商结算统计明细
 export function statFactoryDetail(data) {
   return axios({
@@ -4882,9 +4932,10 @@ export function statFactoryReport(data) {
 //  /excel/exportDataTreatReport 数字厂商结算统计导出
 export function exportDataTreatReport(data) {
   return axios({
-    url: '/medical-api/datatreat/exportDataTreatReport',
+    url: '/medical-api/excel/exportDataTreatReport',
     method: 'post',
     data: data,
+    responseType: 'blob'
   })
 }
 
@@ -4946,7 +4997,7 @@ export function modifyfactoryStatus(data) {
 // 厂商信息 详情
 export function factoryDetail(data) {
   return axios({
-    url: '/medical-api/factory/detail/?id='+data,
+    url: '/medical-api/factory/detail/?id=' + data,
     method: 'get',
     // params: data,
   })

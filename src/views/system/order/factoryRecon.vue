@@ -3,21 +3,22 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">生产厂商:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        <a-select v-model="queryParams.factoryId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in factoryListData" :key="item.id" :value="item.id">{{ item.factoryName
+          }}</a-select-option>
         </a-select>
       </div>
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select v-model="queryParams.hospitalCode" style="min-width: 120px" :tree-data="treeData" placeholder="请选择"
-          allow-clear tree-default-expand-all>
+        <a-tree-select v-model="queryParams.hospitalCode" multiple style="min-width: 120px" :tree-data="treeData"
+          placeholder="请选择" allow-clear tree-default-expand-all>
         </a-tree-select>
       </div>
 
       <div class="search-row">
         <span class="name">对账月份:</span>
         <a-month-picker placeholder="选择月份" :allow-clear="false" :disabled-date="disabledDate" :default-value="nowMonth"
-          :format="monthFormat" v-model="queryParams.billMonth" />
+          :format="monthFormat" v-model="queryParams.statMonth" />
       </div>
 
       <div class="action-row">
@@ -30,86 +31,74 @@
     </div>
 
     <div class="tab-all-content">
-      <!-- 订单总额 -->
+      <!-- 收款金额 -->
       <div class="tab-total">
         <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[0].title }}</span>
+          <span style="font-size: 12px; margin-top: 3px">收款金额</span>
           <div style="float: right">
-            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 133px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span>
-          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[0].diffFee }})</span> -->
+          <span style="font-size: 24px; margin-top: -14px">{{ resData.inTotalMoney }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[0].totalCount }}</span>
-          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[0].diffCount }})</span> -->
+          <span style="font-size: 12px">总笔数：{{ resData.inTotalNum }}</span>
         </div>
       </div>
 
-      <!-- 微信支付 -->
+      <!-- 退款金额 -->
       <div class="tab-wx">
         <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[1].title }}</span>
+          <span style="font-size: 12px;  margin-top: 3px">退款金额</span>
           <div style="float: right">
-            <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 133px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[1].totalFee }}</span>
-          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[1].diffFee }})</span> -->
+          <span style="font-size: 24px; margin-top: -14px">{{ resData.refundTotalMoney }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[1].totalCount }}</span>
-          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[1].diffCount }})</span> -->
+          <span style="font-size: 12px">总笔数：{{ resData.refundTotalNum }}</span>
         </div>
       </div>
 
-      <!-- 支付宝支付 -->
+      <!-- 结算金额 -->
       <div class="tab-alipay">
         <div class="content-dis">
-          <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[2].title }}</span>
+          <span style="font-size: 12px;  margin-top: 3px">结算金额</span>
           <div style="float: right">
-            <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 133px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[2].totalFee }}</span>
-          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px">(差异：{{ SummaryDataList[2].diffFee }})</span> -->
+          <span style="font-size: 24px; margin-top: -14px">{{ resData.realTotalMoney }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[2].totalCount }}</span>
-          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[2].diffCount }})</span> -->
+          <span style="font-size: 12px">总笔数：{{ resData.totalNum }}</span>
         </div>
       </div>
     </div>
 
-    <div class="div-radio">
+    <!-- <div class="div-radio">
       <div v-for="(item, index) in tabDataList" :key="index" :value="item.payeeId" class="radio-item"
         :class="{ 'checked-btn': item.isChecked }" @click="onRadioClick(index)">
-        <!-- <span style="margin-left: 3px">{{ item.payeeName + '（' + item.total + '）' }}</span> -->
         <span style="margin-left: 3px">{{ item.payeeName }}</span>
       </div>
-    </div>
+    </div> -->
 
-    <s-table :scroll="{ x: true }" ref="table" style="margin-top: 20px;" size="default" :columns="columns"
-      :data="loadData" :alert="true" :rowKey="(record) => record.code">
+    <s-table bordered :scroll="{ x: true }" ref="table" style="margin-top: 20px;" :pageSize="10000"
+      :showPagination="false" size="default" :columns="columns" :data="loadData" :alert="true"
+      :rowKey="(record) => record.code">
       <span slot="action" slot-scope="text, record">
-        <a @click="goExamine(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
+        <a @click="goExamine(record)"><a-icon type="edit" style="margin-left:10px" />详情</a>
       </span>
-
-      <span slot="state" slot-scope="text, record" :class="getColor(record.state)">
-        {{ record.stateShow }}
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
@@ -120,19 +109,14 @@
 import { STable } from '@/components'
 import moment from 'moment'
 import {
-  tradeBillSummary,
-  tradeBillPage,
-  tradeBillTab,
-  getPage,
   accessHospitals,
-  tradeBillExport,
   statFactoryReport,
   exportDataTreatReport,
+  qryFactoryList,
 } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
+import { getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
-import { getState } from 'core-js/modules/web.url-search-params'
 
 export default {
   components: {
@@ -162,10 +146,11 @@ export default {
       },
       queryParams: {
         hospitalCode: undefined,
-        billMonth: getMonthNow(),
+        factoryId: undefined,
+        statMonth: getMonthNow(),//statMonth
         // pageNo: 0,
         // pageSize: 10,
-        payeeId: 0,
+        // type: 1,//查询类型 1收入2退费
       },
       selects: [
         {
@@ -191,66 +176,74 @@ export default {
       // 表头
       columns: [
         {
-          title: '对账日期',
-          dataIndex: 'billDate',
+          title: '机构名称',
+          dataIndex: 'hospitalName',
           ellipsis: true,
-        },
-        {
-          title: '微信金额',
-          dataIndex: 'wechatTotal',
-          align: 'right',
-        },
-        {
-          title: '微信单数',
-          dataIndex: 'wechatCount',
           align: 'center',
         },
         {
-          title: '支付宝金额',
-          dataIndex: 'alipayTotal',
-          align: 'right',
+          title: '产品名称',
+          dataIndex: 'serviceItemName',
+          align: 'center',
         },
         {
-          title: '支付宝单数',
+          title: '单位',
+          dataIndex: 'unit',
+          align: 'center',
+        },
+        {
+          title: '结算金额',
+          dataIndex: 'alipayTotal',
+          align: 'center',
+        },
+        {
+          title: '收入',
           dataIndex: 'alipayCount',
           align: 'center',
+          children: [
+            {
+              title: '交易笔数',
+              dataIndex: 'inNum',
+              align: 'center'
+            },
+            {
+              title: '平均价格',
+              dataIndex: 'avgPrice',
+              align: 'center'
+            },
+            {
+              title: '收款金额',
+              dataIndex: 'inMoney',
+              align: 'center'
+            },
+          ],
         },
         {
-          title: '总单数',
+          title: '退款',
           dataIndex: 'platformCount',
           align: 'center',
-        },
-        {
-          title: '应收总金额',
-          dataIndex: 'platformTotal',
-          align: 'right',
-        },
-        {
-          title: '实收总金额',
-          dataIndex: 'channelTotal',
-          align: 'right',
-        },
-        {
-          title: '差异金额',
-          dataIndex: 'diffTotal',
-          align: 'right',
-        },
-
-        {
-          title: '差异笔数',
-          dataIndex: 'diffCount',
-          align: 'center',
-        },
-        {
-          title: '差异状态',
-          dataIndex: 'state',
-          scopedSlots: { customRender: 'state' },
+          children: [
+            {
+              title: '交易笔数',
+              dataIndex: 'refundNum',
+              align: 'center'
+            },
+            {
+              title: '平均价格',
+              dataIndex: 'refundAvgPrice',
+              align: 'center'
+            },
+            {
+              title: '退款金额',
+              dataIndex: 'refundMoney',
+              align: 'center'
+            },
+          ],
         },
         {
           title: '操作',
-          fixed: 'right',
-          with: 130,
-          dataIndex: 'action',
+          align: 'center',
+          // dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
       ],
@@ -258,26 +251,24 @@ export default {
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         // this.queryParamsTemp.payeeId = this.currentTab
-        return tradeBillPage(Object.assign(parameter, this.queryParams))
+        return statFactoryReport(Object.assign(parameter, this.queryParams))
           .then((res) => {
-            if (res.code == 0 && res.data.records.length > 0) {
+            if (res.code == 0) {
+
+              this.resData = res.data
+
               //组装控件需要的数据结构
               var data = {
-                pageNo: parameter.pageNo,
-                pageSize: parameter.pageSize,
-                totalRows: res.data.total,
-                totalPage: res.data.total / parameter.pageSize,
-                rows: res.data.records,
+                pageNo: 1,
+                // pageSize: 10000,
+                totalRows: res.data.dataList.length,
+                // totalPage: res.data.dataList,
+                rows: res.data.dataList,
               }
 
               //设置序号
               data.rows.forEach((item, index) => {
-                this.$set(item, 'stateShow', item.state == 0 ? '无差异' : '有差异')
-
-                // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
                 // this.$set(item, 'status', 1)
-                // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                // item.nameDes = item.name
               })
             } else {
               data = []
@@ -289,80 +280,58 @@ export default {
             this.confirmLoading = false
           })
       },
+
+      resData: {},
+
+      factoryListData: [],
     }
   },
 
-  activated() {
-    this.queryParams.payeeId = this.currentTab
-    this.queryParamsTemp.payeeId = this.currentTab
-  },
-
   created() {
-    this.queryParams.billMonth = moment(getMonthNow(), this.monthFormat)
+    this.queryParams.statMonth = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryHospitalListOut()
 
-    // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-    this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
-    // this.getTabOut()
-    this.gettradeBillSummaryOut()
-
-    // getCommodityClassify({}).then((res) => {
-    //   if (res.code == 0) {
-    //     this.packgeList = res.data
-    //   } else {
-    //     // this.$message.error('获取计划列表失败：' + res.message)
-    //   }
-    // })
+    this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
+    this.qryFactoryListOut()
   },
 
   methods: {
+
+    /**
+ *
+ * 生产厂商信息查询
+ */
+    qryFactoryListOut() {
+      qryFactoryList({ factoryType: 3 })
+        .then((res) => {
+          debugger
+          if (res.code == 0 && res.data.rows.length > 0) {
+            this.factoryListData = res.data.rows
+            debugger
+            this.queryParams.factoryId = this.factoryListData[0].id
+            this.handleOk()
+          }
+        })
+    },
 
     disabledDate(current) {
       // Can not select days before today and today
       return current && current > moment().endOf('day')
     },
 
-    //详情
+    //详情  传对象  这里需要把 生产厂商 查询月份 带入到详情
     goExamine(record) {
-      // this.$refs.orderDetail.orderDetail(record)
+      let data = JSON.parse(JSON.stringify(record))
+      this.$set(data, 'factoryId', this.queryParams.factoryId)
+      this.$set(data, 'statMonth', this.queryParams.statMonth)
+      this.$set(data, 'type', this.queryParams.type)
       this.$router.push({
         path: '/order/factoryDetail',
         query: {
-          billDate: record.billDate,
-          state: record.stateShow,
-          payeeId: this.currentTab,
-          hospitalCode: this.queryParams.hospitalCode
+          dataStr: JSON.stringify(data),
         },
       })
-    },
-
-    getType(record) {
-      if (record.value == 1) {
-        return '运营审核'
-      } else if (record.value == 2) {
-        return '财务审核'
-      } else if (record.value == 3) {
-        return '审核拒绝'
-      } else if (record.value == 4) {
-        return '退款中'
-      } else if (record.value == 5) {
-        return '退款失败'
-      } else if (record.value == 6) {
-        return '已完成'
-      }
-    },
-
-    getColor(value) {
-      if (value == 0) {
-        return 'span-green'
-      } else {
-        return 'span-red'
-      }
-    },
-
-    isLoading() {
-      return this.confirmLoading
     },
 
     queryHospitalListOut() {
@@ -401,9 +370,9 @@ export default {
 
     //导出
     leadingOut() {
-      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
+      this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
-      tradeBillExport(params)
+      exportDataTreatReport(params)
         .then((res) => {
           this.downloadfile(res)
         })
@@ -431,68 +400,29 @@ export default {
       window.URL.revokeObjectURL(href)
     },
 
-    // //订单分组
-    // getTabOut() {
-    //   tradeBillTab(this.queryParams)
-    //     .then((res) => {
-    //       if (res.code == 0) {
-    //         // for (let index = 0; index < res.data.length; index++) {
-    //         //   if (res.data[index].payeeId == 0) {
-    //         //     //全部
-    //         //     this.numberData.quanbu = res.data[index].total
-    //         //   } else if (res.data[index].payeeId == 1) {
-    //         //     //运营
-    //         //     this.numberData.yy = res.data[index].total
-    //         //   } else if (res.data[index].payeeId == -1) {
-    //         //     //医院
-    //         //     this.numberData.yiyuan = res.data[index].total
-    //         //   }
-    //         // }
 
-    //         if (res.code == 0) {
-    //           this.tabDataList = res.data
-    //           this.tabDataList.forEach((item) => {
-    //             this.$set(item, 'isChecked', false)
-    //           })
-    //           this.queryParams.payeeId = this.tabDataList[0].payeeId
-    //           this.$set(this.tabDataList[0], 'isChecked', true)
-    //           // if (needGet) {
-    //           //   this.getTotalList(needGet)
-    //           // }
-    //         } else {
-    //           // this.$message.error('获取计划列表失败：' + res.message)
-    //         }
-    //       }
-    //     })
-    //     .catch((err) => {
-    //       this.$message.error('请求错误：' + err.message)
-    //     })
-    // },
 
-    //汇总信息
-    gettradeBillSummaryOut() {
-      tradeBillSummary(this.queryParams).then((res) => {
-        if (res.code == 0) {
-          this.SummaryDataList = res.data
-        }
-      })
-    },
+
 
     onRadioClick(index) {
       //如果在加载中  不让点击
       if (this.confirmLoading) {
         return
       }
-      if (index == 2) {
+
+      if (index == this.radioIndex) {
         return
       }
+      this.radioIndex = index
+      // type: 1,//查询类型 1收入2退费
+      this.queryParams.type = index == 0 ? 1 : 2
+
+
       this.tabDataList.forEach((item) => {
         this.$set(item, 'isChecked', false)
       })
       this.$set(this.tabDataList[index], 'isChecked', true)
-      this.queryParams.payeeId = this.tabDataList[index].payeeId
-      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
-      this.gettradeBillSummaryOut()
+      // this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
       this.$refs.table.refresh()
     },
 
@@ -507,9 +437,9 @@ export default {
     },
 
     handleOk() {
-      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
+      debugger
+      this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
       // this.getTabOut()
-      this.gettradeBillSummaryOut()
       this.$refs.table.refresh()
     },
   },
@@ -594,6 +524,10 @@ export default {
 
     .ant-select-selection--single {
       height: 28px !important;
+    }
+
+    /deep/ .ant-select-selection__choice {
+      margin-top: 1px !important;
     }
   }
 }
