@@ -4,9 +4,9 @@
     <div class="div-top">
 
       <div class="div-search">
-        <a-input v-model="queryParam.keyWord" @click="goSearch()" allow-clear placeholder="请输入药品编码/药品名/商品名/首拼码/批准文号进行查询"
+        <a-input v-model="queryParam.keyWords" allow-clear placeholder="请输入药品编码/药品名/商品名/首拼码/批准文号进行查询"
           style="width: 380px" />
-        <a-button icon="search" type="primary" @click="goAdd()">搜索</a-button>
+        <a-button icon="search" type="primary" @click="handleOk">搜索</a-button>
         <!-- <a-icon type="search" /> -->
       </div>
 
@@ -20,7 +20,7 @@
         <span style="margin-left: 5px;">筛选条件</span>
       </div>
 
-      <div class="div-btn">
+      <div class="div-btn" @click="reset">
         <img class="btn-pic" src="@/assets/icons/wenzhen/qk_not.png" />
         <span class="span-btn" style="margin-left: 5px;">清空筛选</span>
       </div>
@@ -31,26 +31,48 @@
 
       <div class="search-row">
         <span class="name">药品剂型:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title"
+          @select="handleOk" @search="handleSearchDosage">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
+              :value="item.id + ''">{{
+                item.value
+              }}</a-select-option>
+          </template>
+        </a-auto-complete>
+        <!-- <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+        </a-select> -->
       </div>
       <div class="search-row">
         <span class="name">生产厂商:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 200px; height: 28px">
+        <a-auto-complete v-model="queryParam.manufacturerCode" placeholder="请输入选择" option-label-prop="title"
+          @select="handleOk" @search="handleSearchManu">
+          <template slot="dataSource">
+            <a-select-option v-for="(item, index) in manuDatas" :title="item.factoryName" :key="index + ''"
+              :value="item.id + ''">{{
+                item.factoryName
+              }}</a-select-option>
+          </template>
+        </a-auto-complete>
+        <!-- <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 200px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+        </a-select> -->
       </div>
       <div class="search-row">
-        <span class="name">商品分类:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select>
+        <span class="name">药理分类:</span>
+        <a-tree-select v-model="queryParam.pharmacologyCategory" style="min-width: 120px"
+          :tree-data="yaoliTree" placeholder="请选择" allow-clear tree-default-expand-all>
+        </a-tree-select>
+        <!-- <a-select v-model="queryParam.pharmacologyCategory" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in yaoliTree" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        </a-select> -->
       </div>
       <div class="search-row">
         <span class="name">医保类型:</span>
-        <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+        <a-select v-model="queryParam.healthInsuranceCategory" placeholder="请选择" allow-clear
+          style="width: 120px; height: 28px">
+          <a-select-option v-for="item in yibaoDatas" :key="item" :value="item">{{ item }}</a-select-option>
         </a-select>
       </div>
 
@@ -76,7 +98,7 @@
 </template>
 
 <script>
-import { accessHospitals as list2, qryComplaintByPage, saveComplaint } from '@/api/modular/system/posManage'
+import { qryComplaintByPage, getDosageList, qryFactoryList, getHealthInsuranceCategoryList, getCategoryList, getStandardMedicList } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
@@ -87,21 +109,28 @@ export default {
   data() {
     return {
       // 查询参数  审核状态 1未审核2已审核3未登记
+
       queryParam: {
-        status: '',
-        beginDate: '',
-        endDate: '',
-        hospitalCode: '',
-        keyWord: '',
+        dosageFormId: undefined,//药品剂型
+        pharmacologyCategory: undefined,//药理分类
+        healthInsuranceCategory: undefined,//医保类型
+        keyWords: "",
+        manufacturerCode: "",
+        // pageNo: 0,
+        // pageSize: 0
       },
       queryParamOrigin: {
-        status: '',
-        beginDate: '',
-        endDate: '',
-        hospitalCode: '',
-        keyWord: '',
+        dosageFormId: undefined,//药品剂型
+        pharmacologyCategory: undefined,//药理分类
+        healthInsuranceCategory: undefined,//医保类型
+        keyWords: "",
+        manufacturerCode: "",
       },
       createValue: [],
+      dosageDatas: [],
+      manuDatas: [],
+      yaoliTree: [],
+      yibaoDatas: [],
       // 表头
       columns: [
         {
@@ -113,8 +142,8 @@ export default {
         },
         {
           title: '批准文号',
-          dataIndex: 'orderId',
-          scopedSlots: { customRender: 'orderId' },
+          dataIndex: 'approvalNumber',
+          scopedSlots: { customRender: 'approvalNumber' },
         },
         {
           title: '监管编码',
@@ -123,23 +152,23 @@ export default {
         },
         {
           title: '商品名称',
-          dataIndex: 'userName',
-          scopedSlots: { customRender: 'userName' },
+          dataIndex: 'productName',
+          scopedSlots: { customRender: 'productName' },
         },
         {
           title: '药品名称',
-          dataIndex: 'userPhone',
-          scopedSlots: { customRender: 'userPhone' },
+          dataIndex: 'productName',
+          scopedSlots: { customRender: 'productName' },
         },
         {
           title: '药品规格',
-          dataIndex: 'eventDesc',
-          scopedSlots: { customRender: 'eventDesc' },
+          dataIndex: 'specification',
+          scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
-          dataIndex: 'hospitalName',
-          scopedSlots: { customRender: 'hospitalName' },
+          dataIndex: 'dosageFormDesc',
+          scopedSlots: { customRender: 'dosageFormDesc' },
         },
         {
           title: '类型',
@@ -148,35 +177,37 @@ export default {
         },
         {
           title: '药理分类',
-          dataIndex: 'uploadUserName',
-          scopedSlots: { customRender: 'uploadUserName' },
+          dataIndex: 'pharmacologyCategory',
+          scopedSlots: { customRender: 'pharmacologyCategory' },
         },
         {
           title: '生产厂商',
-          dataIndex: 'createTime',
-          scopedSlots: { customRender: 'createTime' },
+          dataIndex: 'manufacturerName',
+          scopedSlots: { customRender: 'manufacturerName' },
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return qryComplaintByPage(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getStandardMedicList(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            res.data.rows.forEach((element) => {
-              this.$set(element, 'uploadTime', element.uploadTime ? formatDateFull(element.uploadTime) : '')
-              // this.$set(element, 'status', 2)
-              this.$set(element, 'createTime', element.createTime ? formatDateFull(element.createTime) : '')
-              // 1未审核2已审核3未登记
-              if (element.status == 1) {
-                this.$set(element, 'statusText', '未审核')
-              } else if (element.status == 2) {
-                this.$set(element, 'statusText', '已审核')
-              } else {
-                this.$set(element, 'statusText', '未登记')
-              }
+
+            let data = {
+              pageNo: parameter.pageNo,
+              pageSize: parameter.pageSize,
+              totalRows: res.data.total,
+              totalPage: res.data.total / parameter.pageSize,
+              rows: res.data.records,
+            }
+
+            //设置序号
+            data.rows.forEach((item, index) => {
+              // this.$set(item, 'xh', (data.pageNo - 1) * data.pageSize + (index + 1))
+              // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
             })
-            // console.log(JSON.stringify(res.data.rows))
-            return res.data
+
+            return data
           } else {
+            return {}
             this.$message.error(res.message)
           }
         })
@@ -208,26 +239,117 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.getTreeData()
-    this.queryParam = { ...this.queryParam, ...this.$route.query }
+    // this.queryParam = { ...this.queryParam, ...this.$route.query }
+    this.getHealthInsuranceCategoryListOut()
+    this.getCategoryListOut()
   },
   methods: {
 
-    goAdd() { },
+    getDosages(name) {
+      debugger
+      let param = {
+        pageNo: 1,
+        pageSize: 10000,
+        value: name
+      }
+      getDosageList(param)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            debugger
+            this.dosageDatas = res.data.records
+            console.log('dosageDatas-------', this.dosageDatas);
+          }
+        })
+    },
+
+    getHealthInsuranceCategoryListOut() {
+      getHealthInsuranceCategoryList()
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            this.yibaoDatas = res.data
+            console.log('dosageDatas-------', this.dosageDatas);
+          }
+        })
+    },
+    getCategoryListOut() {
+      let param = {
+        // id: 0,
+        // pid: 0,
+        remark: "",
+        // status: 0,
+        // value: ""
+      }
+      getCategoryList(param)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            this.yaoliTree = res.data
+            console.log('yaoliTree-------111', JSON.stringify(res.data));
+            // this.processTreeData(JSON.parse(JSON.stringify(this.yaoliTree)))
+            this.processTreeData(this.yaoliTree)
+            console.log('yaoliTree-------', JSON.stringify(this.yaoliTree));
+          }
+        })
+    },
+    processTreeData(array) {
+      array.forEach(item => {
+        this.$set(item, 'key', item.id)
+        this.$set(item, 'title', item.value)
+        this.$set(item, 'value', item.id)
+        // this.$set(item, 'children', item.hospitals)
+        if (item.children && item.children.length > 0) {
+          this.processTreeData(item.children)
+        }
+      });
+    },
+
+    // handleSearch(name) {
+    //   this.getTypes(name)
+    // },
+
+    handleSearchDosage(name) {
+      this.getDosages(name)
+    },
+
+
+    /**
+     * 厂商信息查询
+     */
+    qryFactoryListOut(name) {
+      let param = {
+        pageNo: 1,
+        pageSize: 10000,
+        factoryType: 3,
+        queryText: name
+      }
+      qryFactoryList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.rows.length > 0) {
+            this.manuDatas = res.data.rows
+            // this.queryParams.factoryId = this.factoryListData[0].id
+            // this.handleOk()
+          }
+        })
+    },
+
+
+
+    // handleSearch(name) {
+    //   this.getTypes(name)
+    // },
+
+    handleSearchManu(name) {
+      this.qryFactoryListOut(name)
+    },
+
+    reset() {
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.handleOk()
+    },
+
     goDetail() {
       this.$router.push({ path: './medicDetail' })
     },
-    statusCheck() { },
 
-    /**
-     * 重置
-     */
-    reset() {
-      this.createValue = []
-      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-      this.queryParam.hospitalCode = this.treeData[0].value
-      this.handleOk()
-    },
     handleOk() {
       this.$refs.table.refresh()
     },
@@ -308,6 +430,10 @@ export default {
     .name {
       margin-right: 10px;
     }
+  }
+
+  /deep/ .ant-select-selection__choice {
+    margin-top: 1px !important;
   }
 }
 </style>
