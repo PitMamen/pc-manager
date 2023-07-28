@@ -4219,6 +4219,18 @@ export function getOrderStatusGroupByData(data) {
   })
 }
 
+
+// 处方发货 tab分组
+export function getPreShipStatusGroupByData(data) {
+  return axios({
+    url: '/medical-api/admorder/getPreShipStatusGroupByData',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 //订单列表
 export function orderList(data) {
   return axios({
@@ -4227,6 +4239,16 @@ export function orderList(data) {
     data: data,
   })
 }
+
+// 处方发货列表
+export function preShipList(data) {
+  return axios({
+    url: '/medical-api/admorder/preShipList',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 //订单详情

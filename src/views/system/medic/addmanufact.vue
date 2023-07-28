@@ -40,6 +40,7 @@
           <div class="div-content">
             <span class="span-item-name">拼音码:</span>
             <a-input
+              :disabled="!record.id"
               class="span-item-value"
               v-model="checkData.pyCode"
               style="display: inline-block"

@@ -164,7 +164,7 @@ export default {
           name: '取消',
         },
         {
-          id: 6,
+          id: 5,
           name: '终止',
         },
       ],
@@ -202,7 +202,7 @@ export default {
         {
           title: '住院号',
           dataIndex: 'zyh',
-          width: 100,
+          width: 130,
         },
         {
           title: '出院时间',
