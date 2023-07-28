@@ -65,7 +65,33 @@
                 }}</a-select-option>
               </a-select>
             </div>
-  
+            <div class="div-content" v-if="checkData.projectType == 107">
+            <span class="span-item-name"><span style="color: red">*</span>系统类型:</span>
+            <a-select v-model="checkData.systemType" allow-clear placeholder="请选择系统类型" >
+              <a-select-option v-for="item in systemTypeData" :key="item.code" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div class="div-content" v-if="checkData.projectType == 107">
+            <span class="span-item-name">链接地址:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.systemAddress"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="300"
+              placeholder="请输入小程序APPID/网站地址/APP下载地址等"
+            />
+          </div>
+          <div class="div-content" v-if="checkData.projectType == 107">
+            <span class="span-item-name"><span style="color: red">*</span>发货方式:</span>
+            <a-select v-model="checkData.sendType" allow-clear placeholder="请选择发货方式" >
+              <a-select-option v-for="item in sendTypeData" :key="item.code" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
+          </div>
             <div class="div-content">
               <span class="span-item-name">生产厂商:</span>
               <a-select v-model="checkData.factoryId" allow-clear placeholder="请选择生产厂商">
@@ -142,6 +168,12 @@
         advanced: false,
         fileList: [],
         danandataList: [],
+        systemTypeData:[
+        {code:1,value:'APP'},{code:2,value:'小程序'},{code:3,value:'网站'}
+      ],
+      sendTypeData:[
+        {code:1,value:'账号密码分配'},{code:2,value:'激活码重置'}
+      ],
         checkData: {
           projectImg: '',
           projectName: '',
@@ -152,6 +184,10 @@
           suggestPrice: '',
           remark: '',
           id:'',
+          systemType: '',
+        sendType:'',
+        systemAddress:'',
+        projectDesc:'',
         },
   
         factoryquery: {
@@ -175,6 +211,10 @@
         this.checkData.unit =''
         this.checkData.remark = ''
         this.checkData.id = ''
+        this.checkData.systemType = ''
+        this.checkData.sendType = ''
+        this.checkData.systemAddress = ''
+        this.checkData.projectDesc = ''
       },
       //新增
       modifyModel(record) {
@@ -195,6 +235,10 @@
         this.checkData.unit = record.unit
         this.checkData.remark = record.remark
         this.checkData.id = record.id
+        this.checkData.systemType =  record.systemType
+        this.checkData.sendType =  record.sendType
+        this.checkData.systemAddress =  record.systemAddress
+        this.checkData.projectDesc =  record.projectDesc
 
   
        
@@ -292,7 +336,20 @@
           this.$message.error('请输入项目规格')
           return
         }
-  
+        if (isStringEmpty(this.checkData.projectType)) {
+        this.$message.error('请选择项目类型')
+        return
+      }
+      if(this.checkData.projectType == 107){
+        if (isStringEmpty(this.checkData.systemType)) {
+        this.$message.error('请选择系统类型')
+        return
+        }
+        if (isStringEmpty(this.checkData.sendType)) {
+        this.$message.error('请选择发货方式')
+        return
+        }
+      }
         if (isStringEmpty(this.checkData.unit)) {
           this.$message.error('请输入生产单位')
           return

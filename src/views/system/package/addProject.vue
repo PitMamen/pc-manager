@@ -170,6 +170,7 @@ export default {
       fileList: [],
       danandataList: [],
       checkData: {
+        projectDesc:'',
         projectImg: '',
         projectName: '',
         normsModel: '',
