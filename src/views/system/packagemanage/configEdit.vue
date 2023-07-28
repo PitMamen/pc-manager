@@ -81,6 +81,14 @@
                   @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
                 <span style="margin-left: 5px">元</span>
 
+                <div v-show="itemTask.needShare"
+                  style="display: flex;flex-direction: row;align-items: center;margin-left:15px">
+                  <span style="width: 62px;">厂家分成：</span>
+                  <a-input-number style="display: inline-block; margin-left: 2px; width: 60px" v-model="itemTask.shareNum"
+                    @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
+                  <span style="margin-left: 5px">元</span>
+                </div>
+
                 <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">服务时长</span>
                 <a-input-number v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
                   style="display: inline-block; margin-left: 5px; width: 60px" v-model="itemTask.serviceTime" :min="1"
@@ -220,6 +228,14 @@
               <a-input-number style="display: inline-block; margin-left: 1%; width: 60px" v-model="itemTask.saleAmount"
                 @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
               <span style="margin-left: 5px">元</span>
+
+              <div v-show="itemTask.needShare"
+                style="display: flex;flex-direction: row;align-items: center;margin-left:15px">
+                <span style="width: 62px;">厂家分成：</span>
+                <a-input-number style="display: inline-block; margin-left: 2px; width: 60px" v-model="itemTask.shareNum"
+                  @blur="countMinPrice" :min="0" :max="999999" :maxLength="30" allow-clear placeholder="" />
+                <span style="margin-left: 5px">元</span>
+              </div>
 
               <span style="margin-left: 1%" v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103">服务时长</span>
               <a-input-number v-show="itemTask.typeCode == 102 || itemTask.typeCode == 103"
@@ -660,6 +676,16 @@ export default {
       for (let index = 0; index < findItem.itemAttr.length; index++) {
         findItem.itemAttr[index]
       }
+
+      // 处理厂家分成
+      let shareItem = findItem.itemAttr.find((item) => item.attrName == 'ITEM_ATTR_DEVIDE')
+      if (shareItem) {
+        this.$set(itemTask, 'needShare', true)
+        this.$set(itemTask, 'shareNum', 0)
+      } else {
+        this.$set(itemTask, 'needShare', false)
+      }
+
     },
 
     onSelectBi(itemTask) {
@@ -702,6 +728,15 @@ export default {
       //处理findItem的可配置项
       for (let index = 0; index < findItem.itemAttr.length; index++) {
         findItem.itemAttr[index]
+      }
+
+      // 处理厂家分成
+      let shareItem = findItem.itemAttr.find((item) => item.attrName == 'ITEM_ATTR_DEVIDE')
+      if (shareItem) {
+        this.$set(itemTask, 'needShare', true)
+        this.$set(itemTask, 'shareNum', 0)
+      } else {
+        this.$set(itemTask, 'needShare', false)
       }
     },
 
@@ -946,6 +981,18 @@ export default {
                 }
               }
 
+              //处理厂家分成
+              debugger
+              let findItemFactory = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_DEVIDE')
+              if (findItemFactory && findItemFactory.serviceValue) {
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'shareNum', findItemFactory.serviceValue)
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'needShare', true)
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'attrIdShareNum', findItemFactory.id)
+              } else {
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'shareNum', undefined)
+                this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'needShare', false)
+              }
+
               //服务时效 都有  需要勾选
               // needServicePeriod: 1, //单独处理  服务时效
               // servicePeriodUnit: 1, //单独处理
@@ -1024,6 +1071,17 @@ export default {
                 }
               }
 
+              //处理厂家分成
+              let findItemFactory = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_DEVIDE')
+              if (findItemFactory && findItemFactory.serviceValue) {
+                this.$set(this.configData.tasksBi[indexIn], 'shareNum', findItemFactory.serviceValue)
+                this.$set(this.configData.tasksBi[indexIn], 'needShare', true)
+                this.$set(this.configData.tasksBi[indexIn], 'attrIdShareNum', findItemFactory.id)
+              } else {
+                this.$set(this.configData.tasksBi[indexIn], 'shareNum', undefined)
+                this.$set(this.configData.tasksBi[indexIn], 'needShare', false)
+              }
+
               //服务时效 都有  需要勾选
               // needServicePeriod: 1, //单独处理  服务时效
               // servicePeriodUnit: 1, //单独处理
@@ -1098,6 +1156,12 @@ export default {
             return
           }
 
+          // if (itemTask.needShare && itemTask.shareNum == 0) {
+          if (itemTask.needShare && itemTask.shareNum < 0) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【厂家分成】')
+            return
+          }
+
           if (itemTask.needServicePeriod && !itemTask.timeQuantity) {
             this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务时效】')
             return
@@ -1160,6 +1224,12 @@ export default {
           //限制条数 图文咨询特有  且需要勾选
           if (itemTask.needChatNum && itemTask.typeCode == 101 && !itemTask.chatNum) {
             this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【限制条数】')
+            return
+          }
+
+          // if (itemTask.needShare && itemTask.shareNum == 0) {
+          if (itemTask.needShare && itemTask.shareNum < 0) {
+            this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【厂家分成】')
             return
           }
 
@@ -1300,6 +1370,26 @@ export default {
               }
             }
 
+            //处理厂家分成
+            if (element.needShare) {
+              if (element.attrIdShareNum) {
+                uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: element.shareNum,
+                  unit: '元',
+                  id: element.attrIdShareNum,
+                })
+              } else {
+                uploadData.pkgs[indexItem].items[indexElement].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: element.shareNum,
+                  unit: '元',
+                })
+              }
+            }
+
             //服务时效 都有  需要勾选
             if (element.needServicePeriod) {
               let unitStr = element.servicePeriodUnit == 1 ? '天' : '小时'
@@ -1399,6 +1489,26 @@ export default {
                   ruleTypeName: '限制条数',
                   serviceValue: item.chatNum,
                   unit: '条',
+                })
+              }
+            }
+
+            //处理厂家分成
+            if (item.needShare) {
+              if (item.attrIdShareNum) {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: item.shareNum,
+                  unit: '元',
+                  id: item.attrIdShareNum,
+                })
+              } else {
+                uploadData.pkgs[pkgsLength].items[indexItem].itemsAttr.push({
+                  ruleType: 'ITEM_ATTR_DEVIDE',
+                  ruleTypeName: '厂家分成',
+                  serviceValue: item.shareNum,
+                  unit: '元',
                 })
               }
             }
