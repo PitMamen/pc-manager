@@ -170,12 +170,11 @@
         :pagination="false"
         :rowKey="(record) => record.code"
       >
-      <span v-if=" record.projectTypeCode==107 && orderDetailDataList.status.value == 8" slot="action" slot-scope="text, record">
-        <a @click="send(record)">发货</a>
+      <span v-if=" record.projectTypeCode==107" slot="action" slot-scope="text, record">
+        <a  v-if="  orderDetailDataList.status.value == 8" @click="send(record)">发货</a>
+        <a v-if="  orderDetailDataList.status.value == 2" @click="send(record)">查看</a>
       </span>
-      <span v-if="record.projectTypeCode==107 && orderDetailDataList.status.value == 2" slot="action" slot-scope="text, record">
-        <a @click="send(record)">查看</a>
-      </span>
+     
       </a-table>
     </div>
 
