@@ -303,7 +303,7 @@ export default {
  * 生产厂商信息查询
  */
     qryFactoryListOut() {
-      qryFactoryList({ factoryType: 3 })
+      qryFactoryList({ factoryType: 4 })
         .then((res) => {
           debugger
           if (res.code == 0 && res.data.rows.length > 0) {

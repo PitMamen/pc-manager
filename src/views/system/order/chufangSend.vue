@@ -325,6 +325,7 @@
           path: path,
           query: {
             orderId: record.orderId,
+            showTab:'false',
           },
         })
       },

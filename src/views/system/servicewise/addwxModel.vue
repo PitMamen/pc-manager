@@ -14,7 +14,7 @@
           <div class="div-line-wrap">
             <div class="div-left">
               <span class="span-item-name">公众号 :</span>
-              <a-select v-model="checkData.wxAppId" allow-clear placeholder="请选择" @change="onWXProgramChange">
+              <a-select v-model="checkData.wxAppId" allow-clear @select="onSelectAppId" placeholder="请选择" @change="onWXProgramChange">
                 <a-select-option v-for="(item, index) in wxgzhData" :key="index" :value="item.wxAppId">{{
                   item.wxPublicName
                 }}</a-select-option>
@@ -22,7 +22,7 @@
             </div>
             <div class="div-left" style="padding-left: 20px;">
          <span class="span-item-name">模 板 I D :</span>
-              <a-select v-model="checkData.templateId" @focus="onModelFocus" allow-clear placeholder="请选择" @change="onTemplateChange">
+              <a-select v-model="checkData.templateId" @select="onSelectTemplateId" @focus="onModelFocus" allow-clear placeholder="请选择" @change="onTemplateChange">
                 <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.templateId">{{
                   item.title
                 }}</a-select-option>
@@ -208,6 +208,7 @@ import {
 } from '@/api/modular/system/posManage'
 import addQuestion from '../package/addQuestion'
 import addTeach from '../package/addTeach'
+import Vue from 'vue'
 export default {
   components: { addQuestion, addTeach },
   data() {
@@ -284,9 +285,16 @@ export default {
       getWxConfigureList({}).then((res) => {
         if (res.code == 0) {
           this.wxgzhData = res.data
+          // this.wxgzhData.shift()  去重的测试数据，因测试环境后台有重复数据
           //默认值需求  默认公众号
-          this.checkData.wxAppId = this.wxgzhData[0].wxAppId
-          this.onWXProgramChange( this.checkData.wxAppId)
+          debugger
+          let cacheId = Vue.ls.get('cache_wxAppId')
+          let getOne = this.wxgzhData.find((item) => item.wxAppId == cacheId)
+          if (cacheId && getOne) {
+            this.checkData.wxAppId = cacheId
+            this.onWXProgramChange( this.checkData.wxAppId)
+          }
+          // this.checkData.wxAppId = this.wxgzhData[0].wxAppId
         }
       })
 
@@ -317,8 +325,6 @@ export default {
       getWxConfigureList({}).then((res) => {
         if (res.code == 0) {
           this.wxgzhData = res.data
-
-         
             //查询详情
             
             getWxTemplateById(this.id).then((res) => {
@@ -381,6 +387,17 @@ export default {
 
     handleChange(code) {},
 
+    onSelectAppId(wxAppId){
+      debugger
+      console.log('oooooooooo cache set wxAppId',wxAppId)
+      Vue.ls.set('cache_wxAppId', wxAppId)
+    },
+
+    onSelectTemplateId(templateId){
+      console.log('oooooooooo cache set templateId',templateId)
+      Vue.ls.set('cache_templateId', templateId)
+    },
+
     //选择公众号
     onWXProgramChange(value) {
       console.log(value)
@@ -407,27 +424,40 @@ export default {
           } else {
             //新增
             this.templateData = res.data
+            
+            let cacheId = Vue.ls.get('cache_templateId')
+            let getOne = this.templateData.find((item) => item.templateId == cacheId)
+            if (cacheId && getOne) {
+              this.checkData.templateId =  cacheId
+              this.onTemplateChange(this.checkData.templateId)
+            }
+            
+            let fieldListData = Vue.ls.get('cache_fieldList')
+            if (fieldListData && cacheId && fieldListData.templateId == cacheId) {
+              this.fieldList = fieldListData.fieldList
+            }
+
             //默认值需求  默认模板
             // this.checkData.templateId =  this.templateData[0].templateId
-            let hasOne = {}
-            this.templateData.forEach((element) => {
-              if (element.title == '随访提醒') {
-                hasOne = JSON.parse(JSON.stringify(element))
-              }
-            })
-            this.checkData.templateId =  hasOne.templateId
-            this.onTemplateChange(this.checkData.templateId)
-             //默认值需求  默认模板字段内容
-             this.fieldList[0].property = '自定义传参'
-             this.fieldList[0].content = '湘雅二医院提醒您：为您提供了消息提醒，请您查看！'
-             this.fieldList[1].property = '档案字段'
-             this.fieldList[1].content = '姓名'
-             this.fieldList[2].property = '自定义传参'
-             this.fieldList[2].content = '${nowDate}'
-             this.fieldList[3].property = '自定义传参'
-             this.fieldList[3].content = '为您提供宣教文章，请您点击查看！'
-             this.fieldList[4].property = '自定义传参'
-             this.fieldList[4].content = '为您提供宣教文章，请您点击查看！'
+            // let hasOne = {}
+            // this.templateData.forEach((element) => {
+            //   if (element.title == '随访提醒') {
+            //     hasOne = JSON.parse(JSON.stringify(element))
+            //   }
+            // })
+            // this.checkData.templateId =  hasOne.templateId
+            // this.onTemplateChange(this.checkData.templateId)
+            //  //默认值需求  默认模板字段内容
+            //  this.fieldList[0].property = '自定义传参'
+            //  this.fieldList[0].content = '湘雅二医院提醒您：为您提供了消息提醒，请您查看！'
+            //  this.fieldList[1].property = '档案字段'
+            //  this.fieldList[1].content = '姓名'
+            //  this.fieldList[2].property = '自定义传参'
+            //  this.fieldList[2].content = '${nowDate}'
+            //  this.fieldList[3].property = '自定义传参'
+            //  this.fieldList[3].content = '为您提供宣教文章，请您点击查看！'
+            //  this.fieldList[4].property = '自定义传参'
+            //  this.fieldList[4].content = '为您提供宣教文章，请您点击查看！'
           }
         }
       })
@@ -571,6 +601,10 @@ export default {
       } else {
         //新增
         this.add(postData)
+        //缓存需求   缓存模版内容与模版id需要一致
+        let data = {templateId:this.checkData.templateId,fieldList:this.fieldList}
+        Vue.ls.set('cache_fieldList', data)
+        console.log('oooooooooo cache set fieldLis',data)
       }
     },
 

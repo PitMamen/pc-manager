@@ -25,6 +25,53 @@
             </a-select>
           </div>
 
+          <div class="div-content" v-show="checkData.factoryType==4">
+            <span class="span-item-name"><span style="color: red">*</span>发货方式:</span>
+            <a-select
+              v-model="checkData.factoryDeliveryType"
+              placeholder="请选择发货方式"
+              allow-clear
+              style="width: 120px; height: 28px"
+            >
+              <a-select-option v-for="item in sendList" :key="item.value" :value="item.value">{{
+                item.name
+              }}</a-select-option>
+            </a-select>
+          </div>
+          <div class="div-content" v-show="checkData.factoryType==4 && checkData.factoryDeliveryType==1">
+            <span class="span-item-name"><span style="color: red">*</span>接口地址:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.requestUrl"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="150"
+              placeholder="请输入"
+            />
+          </div>
+          <div class="div-content" v-show="checkData.factoryType==4 && checkData.factoryDeliveryType==1">
+            <span class="span-item-name">AppID:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.appId"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="150"
+              placeholder="请输入"
+            />
+          </div>
+          <div class="div-content" v-show="checkData.factoryType==4 && checkData.factoryDeliveryType==1">
+            <span class="span-item-name">AppSercret:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.appSercret"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="150"
+              placeholder="请输入"
+            />
+          </div>
+
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>厂商名称:</span>
             <a-input
@@ -124,7 +171,12 @@ export default {
         address: '', //
         contactName: '',
         contactTel: '',
-        remark:''
+        remark:'',
+
+        factoryDeliveryType:undefined,
+        requestUrl:undefined,
+        appId:undefined,
+        appSercret:undefined,
       },
 
       typeList: [
@@ -145,6 +197,17 @@ export default {
           name: '数字疗法厂商',
         },
       ],
+      //1接口自动发货/2手动发货
+      sendList: [
+        {
+          value: 1,
+          name: '接口自动发货',
+        },
+        {
+          value: 2,
+          name: '手动发货',
+        }
+      ],
     }
   },
   created() {},
@@ -158,7 +221,11 @@ export default {
         address: '', //
         contactName: '',
         contactTel: '',
-        remark:''
+        remark:'',
+        factoryDeliveryType:undefined,
+        requestUrl:undefined,
+        appId:undefined,
+        appSercret:undefined,
       }
     },
 
@@ -200,7 +267,14 @@ export default {
         return
       }
 
-
+      if (this.checkData.factoryType == 4 && isStringEmpty(this.checkData.factoryDeliveryType)) {
+        this.$message.error('请选择发货方式')
+        return
+      }
+      if (this.checkData.factoryType == 4 && this.checkData.factoryDeliveryType == 1 && isStringEmpty(this.checkData.requestUrl)) {
+        this.$message.error('请输入接口地址')
+        return
+      }
       if (isStringEmpty(this.checkData.factoryName)) {
         this.$message.error('请输入厂商名称')
         return
@@ -217,7 +291,14 @@ export default {
     },
 
     saveFactoryOut(postData) {
-        saveFactory(postData).then((res) => {
+      let param = JSON.parse(JSON.stringify(postData))
+      if (param.factoryType!=4) {
+        delete param.factoryDeliveryType
+        delete param.requestUrl
+        delete param.appId
+        delete param.appSercret
+      }
+        saveFactory(param).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功！')
           this.visible = false
@@ -320,7 +401,7 @@ export default {
       font-size: 12px;
       text-align: right;
       margin-right: 10px;
-      width: 65px;
+      width: 70px;
     }
 
     .span-item-value {

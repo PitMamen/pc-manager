@@ -26,7 +26,7 @@
           <div class="div-line-wrap">
             <div class="div-total-one">
               <span class="span-item-name"><span style="color: red">*</span> 所属类别 :</span>
-              <a-select v-model="checkData.categoryId" allow-clear placeholder="请选择类别">
+              <a-select v-model="checkData.categoryId" @select="onSelectType" allow-clear placeholder="请选择类别">
                 <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.id">{{
                   item.categoryName
                 }}</a-select-option>
@@ -295,6 +295,11 @@ export default {
       this.getDiseasesOut(departmentId)
     },
 
+    onSelectType(typeId){
+      console.log('oooooooooo',typeId)
+      Vue.ls.set('cache_article_type', typeId)
+    },
+
     async handlePreview(file) {
       if (!file.url && !file.preview) {
         file.preview = await this.getBase64(file.originFileObj)
@@ -377,7 +382,14 @@ export default {
       getArticleCategoryList({ pageNo: 1, pageSize: 10000 }).then((res) => {
         if (res.code == 0) {
           this.typeData = res.data.records
-          this.checkData.categoryId = this.typeData[0].id
+          //记住文章选项
+          let cacheType = Vue.ls.get('cache_article_type')
+          let getOne = this.typeData.find((item) => item.id == cacheType)
+          if (cacheType && getOne) {
+            this.checkData.categoryId = cacheType
+          }
+
+          // this.checkData.categoryId = this.typeData[0].id
         } else {
           this.$message.error('获取失败：' + res.message)
         }

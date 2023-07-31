@@ -377,8 +377,7 @@
       </div>
     </a-modal>
 
-
-<!-- 自营处方确认退款弹框 -->
+    <!-- 自营处方确认退款弹框 -->
     <a-modal
       class="ant-modal"
       :confirmLoading="smallLoading"
@@ -397,14 +396,6 @@
         <!-- <span style="margin-top: 10px; margin-left: 10px"> {{ totalCount }}</span> -->
       </div>
     </a-modal>
-
-
-
-
-
-
-
-
 
     <cont-Detail ref="continuationDetail" @ok="handleOk" />
     <Distributionmodal ref="Distributionmodal" @ok="handleOk" />
@@ -455,6 +446,7 @@ export default {
       smallLoading: false,
       orderId: '',
       payMode: '',
+      isChufang: 'true',
 
       goodsItemsDataColumns: [
         {
@@ -539,6 +531,8 @@ export default {
   activated() {
     if (this.$route.query.orderId) {
       var orderId = this.$route.query.orderId
+      var showTab = this.$route.query.showTab
+      this.isChufang = showTab
       this.init(orderId)
     }
   },
@@ -653,7 +647,7 @@ export default {
     },
 
     getType(value) {
-      if (value == 2|| value == 4 || value == 8 || value == 101) {
+      if (value == 2 || value == 4 || value == 8 || value == 101) {
         return '申请退款'
       } else if (value == 1) {
         return '取消订单'
@@ -664,10 +658,14 @@ export default {
 
     //按钮显示与隐藏
     showHide(value) {
-      if (this.orderDetailDataList.orderType == 'consultOrderPrescription' && (value == 2 || value == 8)) {
-        return true
-      } else {
+      if (this.isChufang=='false') {
         return false
+      } else {
+        if (this.orderDetailDataList.orderType == 'consultOrderPrescription' && (value == 2 || value == 8)) {
+          return true
+        } else {
+          return false
+        }
       }
 
       return false
@@ -684,22 +682,19 @@ export default {
       if (value == 1) {
         //取消订单
         this.visible_model = true //显示 弹框
-      }else if(value==2||value==8){
+      } else if (value == 2 || value == 8) {
         // 自营处方退款 弹框
-        this.visible_refund=true
+        this.visible_refund = true
       } else {
         // 申请退款
         this.$refs.orderRefund.refund(this.orderId, this.payMode)
       }
     },
 
-
-
-
     // 自营处方订单确认退款
-      handleRefundComf(){
-        this.smallLoading = true
-        var requestData = {
+    handleRefundComf() {
+      this.smallLoading = true
+      var requestData = {
         orderId: this.orderId,
       }
 
@@ -714,13 +709,10 @@ export default {
           }
         })
         .finally((res) => {
-          this.visible_refund=false
+          this.visible_refund = false
           this.smallLoading = false
         })
-      },
-
-
-
+    },
 
     //提交取消订单
     handleComf() {
@@ -748,7 +740,7 @@ export default {
     //取消
     handleCancelUpdPwd() {
       this.visible_model = false
-      this.visible_refund=false
+      this.visible_refund = false
     },
   },
 }
