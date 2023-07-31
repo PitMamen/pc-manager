@@ -13,12 +13,12 @@
         </a-select>
       </div>
       <div class="search-row">
-        <span class="name">类别:</span>
-        <a-select v-model="queryParam.medicineTypes" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.value">{{ item.name }}</a-select-option>
+        <span class="name">类型:</span>
+        <a-select v-model="queryParam.drugTypeId" placeholder="请选择类型" allow-clear style="width: 120px; height: 28px">
+          <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.code">{{ item.name }}</a-select-option>
         </a-select>
 
-        <!-- <a-auto-complete v-model="queryParam.medicineTypes" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
+        <!-- <a-auto-complete v-model="queryParam.drugTypeId" placeholder="请输入选择" option-label-prop="title" @select="handleOk"
           @search="handleSearch">
           <template slot="dataSource">
             <a-select-option v-for="(item, index) in typeDatas" :title="item" :key="index + ''" :value="item">{{ item
@@ -102,7 +102,7 @@ export default {
       // },
       queryParam: {
         dosageFormId: '',//剂型
-        medicineTypes: '',//类别  
+        drugTypeId: '',//类型 
         // pageNo: 0,
         // pageSize: 0,
         queryText: "",//关键字
@@ -110,7 +110,7 @@ export default {
       },
       queryParamOrigin: {
         dosageFormId: '',//剂型
-        medicineTypes: '',//类别  
+        drugTypeId: '',//类别  
         queryText: "",//关键字
         status: ''//字典:0启用/1停用
       },
@@ -141,10 +141,12 @@ export default {
           dataIndex: 'dosageFormDesc',
           scopedSlots: { customRender: 'dosageFormDesc' },
         },
+
+        // drugTypeId
         {
           title: '类型',
-          dataIndex: 'medicineTypes',
-          scopedSlots: { customRender: 'medicineTypes' },
+          dataIndex: 'drugTypeDesc',
+          scopedSlots: { customRender: 'drugTypeDesc' },
         },
         {
           title: '医保类型',
@@ -238,7 +240,7 @@ export default {
             this.typeDatas.forEach(element => {
               this.$set(element, 'name', element.value)
             });
-            this.typeDatas.unshift({ value: '', name: '全部', id: '' })
+            this.typeDatas.unshift({ value: '', name: '全部', id: '', code: '' })
           }
         })
         .finally((res) => {
