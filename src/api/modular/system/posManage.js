@@ -4904,6 +4904,33 @@ export function getDosageFormIdList(data) {
   })
 }
 
+//医保类型下拉列表
+export function getHealthInsuranceCategoryList(data) {
+  return axios({
+    url: '/info-api/standardMedicine/getHealthInsuranceCategoryList',
+    method: 'post',
+    data: data,
+  })
+}
+
+//监管平台药品分页列表
+export function getStandardMedicList(data) {
+  return axios({
+    url: '/info-api/standardMedicine/page',
+    method: 'post',
+    data: data,
+  })
+}
+
+//药理分类下拉列表
+export function getCategoryList(data) {
+  return axios({
+    url: '/info-api/sysPharmacologyType/page',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 药品剂型下拉列表
 export function getDosageList(data) {
   return axios({
