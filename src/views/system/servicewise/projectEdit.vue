@@ -1204,7 +1204,8 @@ export default {
         stopTaskDetailDtos: [],
         messageType: this.msgData[1].value,
         taskExecType: this.taskExecData[0].value,
-        metaConfigureDetailId: this.dateFieldsData[3].value,
+        // metaConfigureDetailId: this.dateFieldsData[3].value,
+        metaConfigureDetailId: undefined,
         timeUnit: this.timeUnitTypesData[0].value,
         itemTemplateList: [],
       })
