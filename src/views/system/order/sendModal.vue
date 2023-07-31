@@ -164,17 +164,19 @@ export default {
       this.confirmLoading = false
       this.record = record
       this.isDetail=true
+
+      var deliverInfo=orderDetail.deliverInfo || {}
      
       this.checkData = {
-        dataTreatDeliverDate: orderDetail.deliverInfo.dataTreatDeliverDate? this.formatDate(new Date(orderDetail.deliverInfo.dataTreatDeliverDate)):this.formatDate(new Date()),
-        dataTreatAccount: orderDetail.deliverInfo.dataTreatAccount || '' ,
-        dataTreatPwd: orderDetail.deliverInfo.dataTreatPwd || '' ,
-        dataTreatCdk:orderDetail.deliverInfo.dataTreatCdk || '' ,
-        dataTreatDeliverImg:orderDetail.deliverInfo.dataTreatDeliverImg || '' ,
+        dataTreatDeliverDate:deliverInfo.dataTreatDeliverDate? this.formatDate(new Date(deliverInfo.dataTreatDeliverDate)):this.formatDate(new Date()),
+        dataTreatAccount: deliverInfo.dataTreatAccount || '' ,
+        dataTreatPwd: deliverInfo.dataTreatPwd || '' ,
+        dataTreatCdk:deliverInfo.dataTreatCdk || '' ,
+        dataTreatDeliverImg:deliverInfo.dataTreatDeliverImg || '' ,
         orderId:orderDetail.orderId 
       }
-      if(orderDetail.deliverInfo.dataTreatDeliverImg){
-        orderDetail.deliverInfo.dataTreatDeliverImg.split(',').forEach((item, index) => {
+      if(deliverInfo.dataTreatDeliverImg){
+        deliverInfo.dataTreatDeliverImg.split(',').forEach((item, index) => {
         this.fileListDetail.push({
           uid: 0 - index + '',
           name: 'img' + index,
@@ -207,7 +209,7 @@ export default {
     },
     onDatePickerChange(date, dateString) {
       console.log(date, dateString)
-      this.checkData.expressDate = dateString
+      this.checkData.dataTreatDeliverDate = dateString
     },
 
     handleSubmit() {
