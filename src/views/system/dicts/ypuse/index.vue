@@ -19,16 +19,15 @@
         </span>
       </div>
     </div>
-    <div class="table-operator" style="overflow: hidden"></div>
     <div class="table-wrap">
       <div class="column column1">
         <table1 ref="table1"></table1>
       </div>
       <div class="column column2">
-        <table1 ref="table2"></table1>
+        <table2 ref="table2"></table2>
       </div>
       <div class="column column3">
-        <table1 ref="table3"></table1>
+        <table3 ref="table3"></table3>
       </div>
     </div>
   </a-card>
@@ -51,7 +50,8 @@ export default {
     return {
       // 查询参数
       queryParam: {},
-      treeData: []
+      treeData: [],
+      hospitalCode: ''
     }
   },
   /**
@@ -89,9 +89,10 @@ export default {
           } else {
             this.treeData = res.data
           }
-          return []
+          this.hospitalCode = (this.treeData||[])[0].value
         })
         .finally((res) => {
+          this.reset()
           this.confirmLoading = false
         })
     },
@@ -99,7 +100,9 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParam = {}
+      this.queryParam = {
+        hospitalCode: this.hospitalCode
+      }
       this.search()
     },
     search() {
@@ -146,10 +149,11 @@ button {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  padding-top: 20px;
   .column {
-    &.column1 {}
-    &.column2 {}
-    &.column3 {}
+    width: calc(33.33333% - 7px);
+    height: calc(100vh - 190px);
+    overflow-y: auto;
   }
 }
 </style>
