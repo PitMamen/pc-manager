@@ -1,10 +1,10 @@
 <template>
   <a-card :bordered="false" class="table-card">
     <div class="table-title">
-      <div class="name">药品用法</div>
+      <div class="name">使用频次</div>
     </div>
     <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addForm.add()">新增</a-button>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addForm.add(queryParam.hospitalCode)">新增</a-button>
     </div>
     <s-table
       ref="table"
@@ -17,7 +17,7 @@
       :rowKey="(record) => record.id"
     >
       <span slot="value" slot-scope="text">
-        <ellipsis :length="50" tooltip>{{ text }}</ellipsis>
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
       </span>
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
@@ -59,7 +59,7 @@ export default {
       // 表头
       columns: [
         {
-          title: '药品用法',
+          title: '使用频次',
           dataIndex: 'value',
           scopedSlots: { customRender: 'value' }
         },
