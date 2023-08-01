@@ -4886,6 +4886,24 @@ export function medicineDetail(data) {
   })
 }
 
+// 添加药品SKU
+export function addMedicineSku(data) {
+  return axios({
+    url: '/info-api/medicine/addMedicineSku',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 修改药品SKU
+export function modifyMedicineSku(data) {
+  return axios({
+    url: '/info-api/medicine/modifyMedicineSku',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 药品类型下拉列表
 export function getMedicineCategoryList(data) {
   return axios({
@@ -4903,15 +4921,40 @@ export function getDosageFormIdList(data) {
     data: data,
   })
 }
-
-//医保类型下拉列表
-export function getHealthInsuranceCategoryList(data) {
+// 药品单位分页列表   剂量单位 包装单位  都用这个列表
+export function getUnitList(data) {
   return axios({
-    url: '/info-api/standardMedicine/getHealthInsuranceCategoryList',
+    url: '/info-api/sysDoseUnit/page',
     method: 'post',
     data: data,
   })
 }
+
+// 药品默认用法列表
+export function getUseList(data) {
+  return axios({
+    url: '/info-api/sysInstr/page',
+    method: 'post',
+    data: data,
+  })
+}
+// 药品默认频次列表
+export function getFreqList(data) {
+  return axios({
+    url: '/info-api/sysFreq/page',
+    method: 'post',
+    data: data,
+  })
+}
+
+// //医保类型下拉列表
+// export function getHealthInsuranceCategoryList(data) {
+//   return axios({
+//     url: '/info-api/standardMedicine/getHealthInsuranceCategoryList',
+//     method: 'post',
+//     data: data,
+//   })
+// }
 
 //监管平台药品分页列表
 export function getStandardMedicList(data) {

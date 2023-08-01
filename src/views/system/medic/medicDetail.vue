@@ -357,7 +357,6 @@ export default {
 
   watch: {
     $route(to, from) {//TODO watch不回调需要找原因
-      debugger
       console.log('watch-------------------medicDetail Be', to, from)
       if (to.path.indexOf('medicDetail') > -1) {
         console.log('watch-------------------medicDetail', to, from)
@@ -371,7 +370,6 @@ export default {
    */
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    debugger
     this.initData()
   },
   mounted() {
@@ -467,7 +465,6 @@ export default {
         id: this.medicId
       }
       this.confirmLoading = true
-      debugger
       medicineDetail(queryData)
         .then((res) => {
           if (res.code == 0 && res.success) {

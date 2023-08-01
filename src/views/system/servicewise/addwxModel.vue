@@ -433,6 +433,7 @@ export default {
             }
             
             let fieldListData = Vue.ls.get('cache_fieldList')
+            console.log('oooooooooo cache get fieldListData',fieldListData)
             if (fieldListData && cacheId && fieldListData.templateId == cacheId) {
               this.fieldList = fieldListData.fieldList
             }
@@ -600,6 +601,7 @@ export default {
         this.modify(postData)
       } else {
         //新增
+        debugger
         this.add(postData)
         //缓存需求   缓存模版内容与模版id需要一致
         let data = {templateId:this.checkData.templateId,fieldList:this.fieldList}
