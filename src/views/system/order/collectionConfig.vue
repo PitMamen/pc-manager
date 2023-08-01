@@ -86,7 +86,7 @@ export default {
           ellipsis: true,
         },
         {
-          title: '在线咨询',
+          title: '雅医咨询服务',
           dataIndex: 'consultOrder',
           children: [
             {
@@ -106,7 +106,7 @@ export default {
           ],
         },
         {
-          title: '专科服务',
+          title: '雅医专科服务',
           dataIndex: 'srvPackOrder',
           children: [
             {
@@ -126,7 +126,7 @@ export default {
           ],
         },
         {
-          title: '复诊续方',
+          title: '雅医电子处方',
           dataIndex: 'appPreRegister',
           children: [
             {
@@ -146,7 +146,7 @@ export default {
           ],
         },
         {
-          title: '在线咨询处方',
+          title: '本院复诊挂号',
           dataIndex: 'consultOrderPrescription',
           children: [
             {

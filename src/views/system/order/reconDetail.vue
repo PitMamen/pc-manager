@@ -402,7 +402,7 @@ export default {
     //返回
     goBack() {
       this.$bus.$emit('orderRefresh', '刷新数据')
-      this.$router.go(-1)
+      this.$router.go(-2)
       // this.$router.back()
     },
 
