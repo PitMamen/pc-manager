@@ -45,7 +45,7 @@
 
       <div class="action-row" style="margin-top: -10px">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button type="primary" icon="search" @click="handleOk">查询</a-button>
 
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
@@ -319,6 +319,11 @@ export default {
       this.handleOk()
     },
     handleOk() {
+      let num = Number(this.queryParam.dosageFormId)
+        if (isNaN(num)) {
+          this.$message.error('剂型选择有误，请重新输入选择')
+          return
+        }
       this.$refs.table.refresh()
     },
   },

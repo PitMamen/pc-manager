@@ -302,7 +302,7 @@
             </div>
 
             <!-- @select="onTaskExecTypeSelect" -->
-            <a-select class="mid-select-two" v-model="itemTask.taskExecType" allow-clear placeholder="请选择执行周期">
+            <a-select class="mid-select-two" v-model="itemTask.taskExecType" allow-clear @select="onSelectExecType" placeholder="请选择执行周期">
               <a-select-option v-for="(item, index) in taskExecData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -1196,16 +1196,36 @@ export default {
     },
 
     addMission() {
+
+      let tempMessageType = undefined
+      let cacheMessageType = Vue.ls.get('cache_messageType')
+      console.log('oooooooooo cacheMessageType',cacheMessageType)
+      let getOne = this.msgData.find((item) => item.value == cacheMessageType)
+      if (cacheMessageType && getOne) {
+        tempMessageType = cacheMessageType
+      }
+
+      let tempExecType = undefined
+      let cacheExecType = Vue.ls.get('cache_execType')
+      console.log('oooooooooo cacheExecType',cacheExecType)
+      let getOneExcute = this.msgData.find((item) => item.value == cacheExecType)
+      if (cacheExecType && getOneExcute) {
+        tempExecType = cacheExecType
+      }
+
       //stopType 任务终止类型;1:制定日期2:出现在特殊名单3:指定次数
       this.projectData.tasks.push({
         isChecked: true,
         timeQuantity: 1,
         overdueTimeUnit: 24,
         stopTaskDetailDtos: [],
-        messageType: this.msgData[1].value,
-        taskExecType: this.taskExecData[0].value,
-        metaConfigureDetailId: this.dateFieldsData[3].value,
-        timeUnit: this.timeUnitTypesData[0].value,
+        // messageType: this.msgData[1].value,
+        // taskExecType: this.taskExecData[0].value,
+        messageType: tempMessageType,
+        taskExecType: tempExecType,
+        // metaConfigureDetailId: this.dateFieldsData[3].value,
+        metaConfigureDetailId: undefined,
+        // timeUnit: this.timeUnitTypesData[0].value,
         itemTemplateList: [],
       })
       this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
@@ -1232,6 +1252,8 @@ export default {
     onTypeSelect(indexTask, itemTask) {
       // this.getWxTemplateListOut()
       console.log('onTypeSelect', itemTask)
+      console.log('onTypeSelect', itemTask)
+      Vue.ls.set('cache_messageType', itemTask.messageType)
       if (itemTask.messageType == 1) {
         //电话消息不需要时间
         console.log('pushTimePoint delete', itemTask.pushTimePoint)
@@ -1250,6 +1272,11 @@ export default {
 
       //将模版置空
       itemTask.messageContentId = ''
+    },
+
+    onSelectExecType(typeId){
+      console.log('onSelectExecType', typeId)
+      Vue.ls.set('cache_execType', typeId)
     },
 
     /**
