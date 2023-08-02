@@ -185,7 +185,7 @@
 
         <div class="div-pro-line">
           <span class="span-item-name">开具时间 :</span>
-          <span class="span-item-value">{{ medicalInfoList.prescriptionTime || '-' }}</span>
+          <span class="span-item-value">{{ medicalInfoList.createTime || '-' }}</span>
         </div>
 
         <div class="div-pro-line">

@@ -67,7 +67,7 @@
               @select="onSelectDosage" @search="handleSearchDosage" style="width: 210px; height: 28px">
               <template slot="dataSource">
                 <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
+                  :value="item.code + ''">{{
                     item.value
                   }}</a-select-option>
               </template>
@@ -139,18 +139,13 @@
           </div>
         </div>
         <div class="div-cell">
-          <!-- <div style="width: 20px;"></div>
-          <a-input v-model="medicData.keyWord" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
-            style="width: 270px" /> -->
 
           <div class="div-cell-name">监管编码：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
+          <div class="div-cell-value temp">
+            <!-- <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配" -->
+            <a-input v-model="medicData.supervisionCode" @click="goChoose" allow-clear placeholder="未匹配药品，请点击匹配"
               style="width: 210px" />
           </div>
-          <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"><a-input v-model="medicData.keyWord" allow-clear placeholder="请输入检索码"
-              style="width: 210px" /></div> -->
         </div>
 
       </div>
@@ -371,6 +366,7 @@
       <a-button type="primary" @click="submitData()">保存</a-button>
       <a-button style="margin-left: 10px" @click="cancel()">返回</a-button>
     </div>
+    <chooseMedic ref="chooseMedic" @choose="handleChoose" />
   </a-card>
 </template>
 
@@ -383,12 +379,14 @@ import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
+import chooseMedic from './chooseMedic'
 
 import E from 'wangeditor'
 export default {
   components: {
     STable,
     Ellipsis,
+    chooseMedic,
   },
   data() {
     return {
@@ -446,7 +444,7 @@ export default {
 
         approvalNumber: "",//批准文号
         supervisionCode: "",//监管编码
-        code: "",//药品代码   又叫 HIS编码  药品编码?
+        code: "",//药品代码   又叫 HIS编码  药品编码
 
         // id: 0,//主键ID，修改时传
 
@@ -530,27 +528,11 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route(to, from) {//TODO watch不回调需要找原因
-  //     console.log('watch-------------------medicNew Be', to, from)
-  //     if (to.path.indexOf('medicNew') > -1) {
-  //       console.log('watch-------------------medicNew', to, from)
-  //       if (this.$route.query.id) {//修改
-  //         // this.medicId = this.$route.query.id
-  //         // this.initData()
-  //       } else {//新增
-
-  //       }
-  //     }
-  //   },
-  // },
-
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    this.initData()
     this.getMedicTypes()
     this.getTreatTypes()
     this.getYiBaoDatas()
@@ -585,27 +567,95 @@ export default {
   //       }
   // },
   methods: {
-    initData() {
-      // if (this.$route.query.id) {//修改
-      //   this.medicId = this.$route.query.id
-      //   this.getDetaiData()
-      // } else {//新增
+    goChoose() {
+      let queryText = ''
+      if (this.medicData.code) {
+        queryText = this.medicData.code
+      } else if (this.medicData.genericName) {
+        queryText = this.medicData.genericName
+      } else if (this.medicData.tradeName) {
+        queryText = this.medicData.tradeName
+      } else if (this.medicData.approvalNumber) {
+        queryText = this.medicData.approvalNumber
+      }
 
+      let name = undefined
+      if (this.medicData.genericName) {
+        name = this.medicData.genericName
+      }
+
+      this.$refs.chooseMedic.choose(queryText, name)
+    },
+
+    handleChoose(record) {
+      console.log('handleChoose', JSON.stringify(record))
+      //TODO 填充药品数据
+      this.inputData(record)
+    },
+
+    /**
+     * 填充数据
+     */
+    inputData(record) {
+      //药品名称
+      if (record.productName) {
+        this.medicData.genericName = record.productName
+      }
+
+      //两个检索码都不用填充
+
+      //生产厂商
+      if (record.manufacturerCode && record.manufacturerName) {
+        this.medicData.manufacturerId = record.manufacturerCode
+        this.medicData.manufacturerName = record.manufacturerName
+        this.manuDatas = []
+        this.manuDatas.push({ id: this.medicData.manufacturerId + '', factoryName: this.medicData.manufacturerName })
+      }
+
+      // 商品名称
+      if (record.productName) {
+        this.medicData.tradeName = record.productName
+      }
+
+      // 药品类型
+      if (record.medicineCategoryCode) {
+        this.medicData.drugTypeId = record.medicineCategoryCode
+      }
+
+      //药品剂型
+      if (record.dosageFormId && record.dosageFormDesc) {
+        this.medicData.dosageFormId = record.dosageFormId
+        this.medicData.dosageFormDesc = record.dosageFormDesc
+        this.manuDadosageDatastas = []
+        this.dosageDatas.push({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+      }
+
+      //医保类型
+      if (record.healthInsuranceCategoryId) {
+        this.medicData.healthInsuranceCategoryId = record.healthInsuranceCategoryId
+      }
+      //药理分类
+      if (record.pharmacologyCategoryId) {
+        this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
+      }
+      //医保编码
+      if (record.healthInsuranceCoding) {
+        this.medicData.healthInsuranceCoding = record.healthInsuranceCoding
+      }
+      //批准文号
+      if (record.approvalNumber) {
+        this.medicData.approvalNumber = record.approvalNumber
+      }
+
+      //HIS编码
+      // if (record.code) {
+      //   this.medicData.code = record.code
       // }
 
-    },
-    inputData(record) {
-      if (record.genericName) {
-        // this.medicData.genericName =record.genericCgenericAcronymcronym
-        this.medicData.genericName = record.genericName
+      //监管编码
+      if (record.code) {
+        this.medicData.supervisionCode = record.code
       }
-      //TODO 药品名称检索码 genericAcronym
-      if (record.manufacturerCode && record.manufacturerName) {
-        this.medicData.genericName = record.genericAcronym
-        this.medicData.genericName = record.genericName
-      }
-
-
     },
 
     onSelectManu(manufacturerId) {
@@ -622,7 +672,7 @@ export default {
       console.log('onSelectType drugTypeDesc', getOne.value)
     },
     onSelectDosage(dosageFormId) {
-      let getOne = this.dosageDatas.find((item) => item.id == dosageFormId)
+      let getOne = this.dosageDatas.find((item) => item.code == dosageFormId)
       this.medicData.dosageFormDesc = getOne.value
       console.log('onSelectDosage dosageFormId', dosageFormId)
       console.log('onSelectDosage dosageFormDesc', getOne.value)
@@ -1317,6 +1367,12 @@ button {
       }
 
       .div-cell-value {}
+
+      .temp {
+        /deep/ .ant-input {
+          color: #409EFF;
+        }
+      }
     }
 
     .div-shu-cell {

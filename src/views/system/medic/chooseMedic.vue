@@ -1,101 +1,91 @@
 <template>
-  <a-card :bordered="false">
+  <!-- :width="488" -->
+  <a-modal title="药品匹配" :footer="null" :width="1260" :visible="visible" :confirmLoading="confirmLoading"
+    @ok="handleSubmit" @cancel="handleCancel" :maskClosable="false">
+    <a-card :bordered="false">
 
-    <div class="div-top">
-      <div class="div-search">
-        <a-input v-model="queryParam.keyWords" allow-clear placeholder="请输入药品编码/药品名/商品名/首拼码/批准文号进行查询"
-          style="width: 380px" />
-        <a-button icon="search" type="primary" @click="handleOk">搜索</a-button>
-        <!-- <a-icon type="search" /> -->
+      <div class="div-top">
+        <div class="div-search">
+          <a-input v-model="queryParam.keyWords" allow-clear placeholder="请输入药品编码/药品名/商品名/首拼码/批准文号进行查询"
+            style="width: 380px" />
+          <a-button icon="search" type="primary" @click="handleOk">搜索</a-button>
+          <!-- <a-icon type="search" /> -->
+        </div>
+
+        <div style="flex: 1;"></div>
+        <div>当前匹配药品：{{ medicName }}</div>
       </div>
 
-      <div style="flex: 1;"></div>
-      <div>当前匹配药品：暂无</div>
-    </div>
+      <div class="div-row">
+        <div style="display:flex;flex-direction: row;align-items: center;flex: 1">
+          <img style="width: 15px;height: 15px;" src="@/assets/icons/wenzhen/shaixuan.png" />
+          <span style="margin-left: 5px;">筛选条件</span>
+        </div>
 
-    <div class="div-row">
-      <div style="display:flex;flex-direction: row;align-items: center;flex: 1">
-        <img style="width: 15px;height: 15px;" src="@/assets/icons/wenzhen/shaixuan.png" />
-        <span style="margin-left: 5px;">筛选条件</span>
+        <div class="div-btn" @click="reset">
+          <img class="btn-pic" src="@/assets/icons/wenzhen/qk_not.png" />
+          <span class="span-btn" style="margin-left: 5px;">清空筛选</span>
+        </div>
+
       </div>
 
-      <div class="div-btn" @click="reset">
-        <img class="btn-pic" src="@/assets/icons/wenzhen/qk_not.png" />
-        <span class="span-btn" style="margin-left: 5px;">清空筛选</span>
+      <div class="table-page-search-wrapper" style="margin-top: 20px;">
+
+        <div class="search-row">
+          <span class="name">药品剂型:</span>
+          <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title"
+            @select="handleOk" @search="handleSearchDosage">
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
+                :value="item.id + ''">{{
+                  item.value
+                }}</a-select-option>
+            </template>
+          </a-auto-complete>
+        </div>
+        <div class="search-row">
+          <span class="name">生产厂商:</span>
+          <a-auto-complete v-model="queryParam.manufacturerCode" placeholder="请输入选择" option-label-prop="title"
+            @select="handleOk" @search="handleSearchManu">
+            <template slot="dataSource">
+              <a-select-option v-for="(item, index) in manuDatas" :title="item.factoryName" :key="index + ''"
+                :value="item.id + ''">{{
+                  item.factoryName
+                }}</a-select-option>
+            </template>
+          </a-auto-complete>
+        </div>
+        <div class="search-row">
+          <span class="name">药理分类:</span>
+          <a-tree-select v-model="queryParam.pharmacologyCategory" style="min-width: 120px" :tree-data="yaoliTree"
+            placeholder="请选择" allow-clear tree-default-expand-all>
+          </a-tree-select>
+        </div>
+        <div class="search-row">
+          <span class="name">医保类型:</span>
+          <a-select v-model="queryParam.healthInsuranceCategory" placeholder="请选择" allow-clear
+            style="width: 120px; height: 28px">
+            <a-select-option v-for="item in yibaoDatas" :key="item.id" :value="item.code">{{ item.value
+            }}</a-select-option>
+          </a-select>
+        </div>
+
       </div>
 
-    </div>
 
-    <div class="table-page-search-wrapper" style="margin-top: 20px;">
-
-      <div class="search-row">
-        <span class="name">药品剂型:</span>
-        <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title"
-          @select="handleOk" @search="handleSearchDosage">
-          <template slot="dataSource">
-            <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
-              :value="item.id + ''">{{
-                item.value
-              }}</a-select-option>
+      <s-table :scroll="{ x: true }" ref="table" size="default" :columns="columns" :data="loadData" :alert="true"
+        :rowKey="(record) => record.id">
+        <span slot="action" slot-scope="text, record">
+          <template v-if="true">
+            <a @click="goDetail(record)">选择</a>
           </template>
-        </a-auto-complete>
-        <!-- <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select> -->
-      </div>
-      <div class="search-row">
-        <span class="name">生产厂商:</span>
-        <a-auto-complete v-model="queryParam.manufacturerCode" placeholder="请输入选择" option-label-prop="title"
-          @select="handleOk" @search="handleSearchManu">
-          <template slot="dataSource">
-            <a-select-option v-for="(item, index) in manuDatas" :title="item.factoryName" :key="index + ''"
-              :value="item.id + ''">{{
-                item.factoryName
-              }}</a-select-option>
-          </template>
-        </a-auto-complete>
-        <!-- <a-select v-model="queryParam.status" placeholder="请选择状态" allow-clear style="width: 200px; height: 28px">
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select> -->
-      </div>
-      <div class="search-row">
-        <span class="name">药理分类:</span>
-        <a-tree-select v-model="queryParam.pharmacologyCategory" style="min-width: 120px" :tree-data="yaoliTree"
-          placeholder="请选择" allow-clear tree-default-expand-all>
-        </a-tree-select>
-        <!-- <a-select v-model="queryParam.pharmacologyCategory" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in yaoliTree" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-        </a-select> -->
-      </div>
-      <div class="search-row">
-        <span class="name">医保类型:</span>
-        <a-select v-model="queryParam.healthInsuranceCategory" placeholder="请选择" allow-clear
-          style="width: 120px; height: 28px">
-          <a-select-option v-for="item in yibaoDatas" :key="item.id" :value="item.code">{{ item.value }}</a-select-option>
-        </a-select>
-      </div>
-
-      <!-- <div class="action-row" style="margin-top: -10px">
-        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
-      </div> -->
-    </div>
-
-
-    <s-table :scroll="{ x: true }" ref="table" size="default" :columns="columns" :data="loadData" :alert="true"
-      :rowKey="(record) => record.id">
-      <span slot="action" slot-scope="text, record">
-        <template v-if="true">
-          <a @click="goDetail(record)">选择</a>
-        </template>
-      </span>
-    </s-table>
-  </a-card>
+      </s-table>
+    </a-card>
+  </a-modal>
 </template>
-
+    
+    
 <script>
 import { qryComplaintByPage, getDosageList, qryFactoryList, getHealthInsuranceCategoryList, getDictData, getCategoryList, getStandardMedicList } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
@@ -108,7 +98,8 @@ export default {
   data() {
     return {
       // 查询参数  审核状态 1未审核2已审核3未登记
-
+      visible: false,
+      confirmLoading: false,
       queryParam: {
         dosageFormId: undefined,//药品剂型
         pharmacologyCategory: undefined,//药理分类
@@ -234,6 +225,7 @@ export default {
         },
       ],
       passData: {},
+      medicName: '',
     }
   },
   /**
@@ -242,16 +234,24 @@ export default {
   created() {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
     // this.getHealthInsuranceCategoryListOut()
-    this.passData = JSON.parse(this.$route.query.dataStr)
+    // this.passData = JSON.parse(this.$route.query.dataStr)
 
-    this.queryParam.keyWords = this.passData.queryText
+    // this.queryParam.keyWords = this.passData.queryText
     this.getYiBaoDatas()
     this.getCategoryListOut()
   },
   methods: {
 
+    choose(queryText, medicName) {
+      this.medicName = medicName ? medicName : '暂无'
+      this.queryParam.keyWords = queryText
+      // this.clearData()
+      this.visible = true
+      this.confirmLoading = false
+      this.handleOk()
+    },
+
     getDosages(name) {
-      debugger
       let param = {
         pageNo: 1,
         pageSize: 10000,
@@ -260,22 +260,11 @@ export default {
       getDosageList(param)
         .then((res) => {
           if (res.code == 0 && res.success) {
-            debugger
             this.dosageDatas = res.data.records
             console.log('dosageDatas-------', this.dosageDatas);
           }
         })
     },
-
-    // getHealthInsuranceCategoryListOut() {
-    //   getHealthInsuranceCategoryList()
-    //     .then((res) => {
-    //       if (res.code == 0 && res.success) {
-    //         this.yibaoDatas = res.data
-    //         console.log('dosageDatas-------', this.dosageDatas);
-    //       }
-    //     })
-    // },
 
     /**
  * 查询医保类型
@@ -368,31 +357,34 @@ export default {
     },
 
     goDetail(record) {
+      this.$emit('choose', record)
+      this.handleCancel()
+
       //都倾向于异步跟新  发bus异步消息到原修改页面并关闭此页面
-      if (this.passData.jumpType == 'add_sku') {//新增
-        // this.$router.push({
-        //   path: './medicNew',
-        //   query: {
-        //     dataStr: JSON.stringify(record),
-        //   },
-        // })
-        this.$bus.$emit('medicNewEvent', record)
+      // if (this.passData.jumpType == 'add_sku') {//新增
+      //   // this.$router.push({
+      //   //   path: './medicNew',
+      //   //   query: {
+      //   //     dataStr: JSON.stringify(record),
+      //   //   },
+      //   // })
+      //   this.$bus.$emit('medicNewEvent', record)
 
-      } else if (this.passData.jumpType == 'edit_sku') {//修改
-        this.$set(record, 'editId', this.passData.medicId)//修改需要传medicId进来
-        this.$set(record, 'goType', 1)//修改需要传medicId进来
-        // this.$bus.$emit('medicEditEvent', record)
-        //TODO 在这里直接打开新的修改页面，或者传参到原来的修改页面，或者发bus异步消息到原修改页面并关闭此页面
-        this.$router.push({
-          path: './medicDetail',
-          query: {
-            // queryText: queryText,
-            dataStr: JSON.stringify(record),
-          },
-        })
-      }
+      // } else if (this.passData.jumpType == 'edit_sku') {//修改
+      //   this.$set(record, 'editId', this.passData.medicId)//修改需要传medicId进来
+      //   this.$set(record, 'goType', 1)//修改需要传medicId进来
+      //   // this.$bus.$emit('medicEditEvent', record)
+      //   //TODO 在这里直接打开新的修改页面，或者传参到原来的修改页面，或者发bus异步消息到原修改页面并关闭此页面
+      //   this.$router.push({
+      //     path: './medicDetail',
+      //     query: {
+      //       // queryText: queryText,
+      //       dataStr: JSON.stringify(record),
+      //     },
+      //   })
+      // }
 
-      this.$router.go(-1)
+      // this.$router.go(-1)
       // this.$router.push('/')
       // window.close();
 
@@ -401,10 +393,16 @@ export default {
     handleOk() {
       this.$refs.table.refresh()
     },
+
+    handleCancel() {
+      this.visible = false
+    },
+    handleSubmit() { },
   },
 }
 </script>
-
+  
+  
 <style lang="less" scoped>
 .div-top {
   display: flex;
@@ -485,6 +483,4 @@ export default {
   }
 }
 </style>
-
-
-
+    
