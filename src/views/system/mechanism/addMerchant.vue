@@ -22,7 +22,7 @@
               v-model="checkData.channel"
               placeholder="请选择商户类型"
               allow-clear
-              style="width: 75%; height: 28px"
+              style=" height: 28px"
               class="ant-select-selection--single"
             >
               <a-select-option v-for="item in payeeType" :key="item.code" :value="item.code">{{
@@ -34,7 +34,7 @@
               @change="checkBill"
               v-model="isChecked"
               :checked="isChecked"
-              style="margin-left: -50px"
+              style="margin-left: 10px"
             />
             <div style="margin-left: 10px">参与对账</div>
           </div>
