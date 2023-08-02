@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { pinyin } from 'pinyin-pro'
+// import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
 import { add1 as add } from '@/api/modular/system/ypuse'
 export default {

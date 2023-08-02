@@ -4645,6 +4645,20 @@ export function getTbMerchantPageList(data) {
     data: data
   })
 }
+
+
+export function allMerchants(data) {
+  return axios({
+    url: '/order-api/tbMerchant/allMerchants',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+
+
 //病种列表  
 export function getDiseaseTypePageList(data) {
   return axios({

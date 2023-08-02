@@ -105,7 +105,7 @@
     
     
     <script>
-import { getTbMerchantPageList, tbBizMerchantConfig } from '@/api/modular/system/posManage'
+import { allMerchants, tbBizMerchantConfig } from '@/api/modular/system/posManage'
 
 export default {
   components: {},
@@ -238,7 +238,7 @@ export default {
 
     getTbMerchantPageListOut() {
       this.confirmLoading = true
-      getTbMerchantPageList(this.queryParams).then((res) => {
+      allMerchants(this.queryParams).then((res) => {
         if (res.code == 0) {
           this.merchantDataList = res.data.records
         } else {
