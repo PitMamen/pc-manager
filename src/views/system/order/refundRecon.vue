@@ -446,9 +446,9 @@ export default {
       if (this.confirmLoading) {
         return
       }
-      if (index == 2) {
-        return
-      }
+      // if (index == 2) {
+      //   return
+      // }
       this.tabDataList.forEach((item) => {
         this.$set(item, 'isChecked', false)
       })
