@@ -1,7 +1,7 @@
 <template>
   <a-modal
     :title="titleTab"
-   
+     width="450px"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -55,15 +55,15 @@
             <span class="span-item-name"><span style="color: red">*</span>发货日期:</span>
             <a-date-picker
               class="span-item-value"
-              style="width: 170px"
+              style="width: 328px"
               :value="checkData.dataTreatDeliverDate ? moment(checkData.dataTreatDeliverDate, 'YYYY-MM-DD') : undefined"
               @change="onDatePickerChange"
-              :readOnly="isDetail"
+              :disabled="isDetail"
             />
           </div>
-          <div class="div-content">
+          <div class="div-content" style="align-items: start;">
             <span class="span-item-name">卡密图片:</span>
-            <div >
+            <div style="width: 350px;">
               <a-upload
               action="/api/content-api/fileUpload/uploadImgFile"
               :headers="headers"
@@ -80,7 +80,9 @@
               </div>
             </a-upload>
           
-              
+            <a-modal :visible="previewVisible" :footer="null" @cancel="previewhandleCancel">
+            <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
             </div>
           </div>
         </div>
@@ -107,6 +109,8 @@ export default {
       headers: {},
       confirmLoading: false,
       isDetail:false,
+      previewImage:'',
+      previewVisible:false,
       fileListDetail:[],
       fileListNum:6,
       checkData: {
@@ -154,6 +158,7 @@ export default {
       this.record = record
       this.checkData.orderId=orderDetail.orderId
       this.isDetail=false
+      console.log('图片长度',this.fileListNum)
     },
     // 查看
     editmodal(record,orderDetail) {
@@ -190,11 +195,14 @@ export default {
       console.log(this.checkData)
     },
     async handlePreviewDetail(file) {
-      if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
-      }
-      this.previewImageDetail = file.url || file.preview
-      this.previewVisibleDetail = true
+      console.log(file)
+      
+      this.previewImage = file.response?file.response.data.fileLinkUrl:file.url
+      this.previewVisible = true
+    },
+    previewhandleCancel(){
+      this.previewImage = ''
+      this.previewVisible = false
     },
 
     handleChangeDetail(changeObj) {
@@ -206,6 +214,7 @@ export default {
         this.fileListDetail = changeObj.fileList
       }
       console.log(this.fileListDetail)
+      console.log('图片长度',this.fileListNum)
     },
     onDatePickerChange(date, dateString) {
       console.log(date, dateString)
@@ -309,7 +318,7 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 510px;
+  height: 440px;
   margin-top: 10px;
 
   .div-part-left {
@@ -326,14 +335,14 @@ export default {
   }
 
   .div-content {
-    margin-top: 30px;
-    margin-bottom: 10px;
+   
+    margin-bottom: 20px;
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     overflow: hidden;
-    margin-left: 25px;
+   
     /deep/.ant-select-selection--multiple {
       li {
         margin-top: 1px !important;
@@ -356,7 +365,7 @@ export default {
       color: #4d4d4d;
       text-align: left;
       font-size: 12px;
-      width: 300px;
+      width: 328px;
       display: inline-block;
     }
     .ant-select {

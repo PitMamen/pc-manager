@@ -76,7 +76,6 @@ button {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding-top: 20px;
   .column {
     width: calc(33.33333% - 7px);
     height: calc(100vh - 121px);

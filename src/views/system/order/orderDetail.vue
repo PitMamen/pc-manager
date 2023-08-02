@@ -172,7 +172,7 @@
       >
       <span v-if=" record.projectTypeCode==107" slot="action" slot-scope="text, record">
         <a  v-if="  orderDetailDataList.status.value == 8" @click="sendFH(record)">发货</a>
-        <a v-if="  orderDetailDataList.status.value == 2" @click="checkFH(record)">查看</a>
+        <a v-if="  orderDetailDataList.status.value == 2 || orderDetailDataList.status.value == 101" @click="checkFH(record)">查看</a>
       </span>
      
       </a-table>

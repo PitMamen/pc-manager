@@ -38,6 +38,7 @@
             style="width: 100%"
             :tree-data="treeData"
             placeholder="请选择"
+            allow-clear
             tree-default-expand-all
           >
           </a-tree-select>
@@ -56,6 +57,7 @@
             style="width: 100%"
             :tree-data="treeData"
             placeholder="请选择"
+            allow-clear
             tree-default-expand-all
             
           >
@@ -248,6 +250,9 @@ export default {
     },
     showEdit(record){
       this.initSaveData()
+      var configData=record.configData || {}
+      this.saveData.apppreprescriptionHospitalCode=configData.apppreprescription_hospital_code
+      this.saveData.consultorderprescriptionHospitalCode=configData.consultorderprescription_hospital_code
       this.saveData.hospitalCode = record.hospitalCode
     },
     saveBtn(record) {
@@ -255,17 +260,16 @@ export default {
        
         return
       }
+      var post=this.saveData
       if(!this.saveData.consultorderprescriptionHospitalCode){
-        this.$message.info('请选择在线咨询处方机构')
-        return
+        post.consultorderprescriptionHospitalCode=''
       }
       if(!this.saveData.apppreprescriptionHospitalCode){
-        this.$message.info('请选择本院复诊处方机构')
-        return
+        post.apppreprescriptionHospitalCode=''
       }
       
       this.confirmLoading = true
-      prescriptionFlowConfig(this.saveData)
+      prescriptionFlowConfig(post)
         .then((res) => {
           if (res.code == 0 ) {
            
