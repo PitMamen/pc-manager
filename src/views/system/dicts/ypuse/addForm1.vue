@@ -43,8 +43,8 @@
               allow-clear
               placeholder="请选择监管代码"
             >
-              <a-select-option v-for="item in selects" :key="item.code" :value="item.code">{{
-                item.value
+              <a-select-option v-for="item in selects" :key="item.id" :value="item.code+ '-' +item.value">{{
+                item.code+ '-' +item.value
               }}</a-select-option>
             </a-select>
           </div>
@@ -63,7 +63,7 @@
             class="div-service-user"
             style="margin-top: -7px; margin-left: 0px; position: relative; height: 52%;margin-bottom: 10px;"
           >
-            <span style="margin-top: 10px; width: 60px; margin-left: 9px;">备注说明:</span>
+            <span style="margin-top: 10px; width: 60px; margin-left: 9px; color: #4d4d4d;">备注说明:</span>
             <a-textarea
               v-model="formData.remark"
               placeholder="请输入备注说明"
@@ -82,6 +82,7 @@
 import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
 import { add1 as add } from '@/api/modular/system/ypuse'
+import { getDictData } from '@/api/modular/system/posManage'
 export default {
   data() {
     return {
@@ -98,7 +99,13 @@ export default {
       this.visible = true
       this.getSelects()
     },
-    getSelects() {},
+    getSelects() {
+      getDictData('medicine_road_code').then(res => {
+        if (res.code===0 && res.data.length>0) {
+          this.selects = res.data
+        }
+      })
+    },
     onChange(event) {
       this.formData.value = this.formData.value.trim();
       this.$set(this.formData, 'value', this.formData.value)
