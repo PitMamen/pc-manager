@@ -54,7 +54,7 @@
         <div class="div-content">
           <span class="span-item-name">雅医电子处方:</span>
           <a-select
-            v-model="checkData.appPreRegisterID"
+            v-model="checkData.consultOrderPrescriptionID"
             placeholder="请选择商户"
             allow-clear
             style="width: 120px; height: 28px"
@@ -68,7 +68,7 @@
         <div class="div-content">
           <span class="span-item-name">本院复诊挂号:</span>
           <a-select
-            v-model="checkData.consultOrderPrescriptionID"
+            v-model="checkData.appPreRegisterID"
             placeholder="请选择商户"
             allow-clear
             style="width: 120px; height: 28px"
