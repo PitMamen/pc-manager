@@ -82,7 +82,7 @@
           <div class="div-cell-name">治疗类型：</div>
           <div class="div-cell-value"> <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
               placeholder="请选择" allow-clear style="width: 210px; height: 28px">
-              <a-select-option v-for="item in treatTypeDatas" :key="item.id" :value="item.code">{{ item.value
+              <a-select-option v-for="item in treatTypeDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
             </a-select>
           </div>
@@ -165,7 +165,7 @@
         <div class="div-shu-cell" style="width: 100px;">
           <div><span style="color: #F90505;">*</span>含量系数</div>
           <div style="margin-top: 10px;">
-            <a-input v-model="medicData.contentCoefficient" allow-clear placeholder="请输入" />
+            <a-input v-model="medicData.contentCoefficient" allow-clear placeholder="请输入" @change="countSpecDesc" />
           </div>
         </div>
 
@@ -185,7 +185,7 @@
         <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
           <div><span style="color: #F90505;">*</span>包装数量</div>
           <div style="margin-top: 10px;">
-            <a-input v-model="medicData.minPkgNum" allow-clear placeholder="请输入" />
+            <a-input v-model="medicData.minPkgNum" allow-clear placeholder="请输入" @change="countSpecDesc" />
           </div>
         </div>
 
@@ -224,7 +224,7 @@
         <div class="div-shu-cell" style="width: 200px;margin-left: 20px;">
           <div>参考价格</div>
           <div style="margin-top: 10px;">
-            <a-input v-model="medicData.retailPrice" allow-clear placeholder="请输入" />
+            <a-input type="number" v-model="medicData.retailPrice" allow-clear placeholder="请输入" />
           </div>
         </div>
 
@@ -310,13 +310,22 @@
           </div>
 
           <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <a-select v-model="medicData.defDirectionId" placeholder="请选择" @select="onSelectUse" allow-clear
+            <!-- <a-select v-model="medicData.defDirectionId" placeholder="请选择" @select="onSelectUse" allow-clear
               style="width: 300px; ">
-              <!-- <a-select-option v-for="item in defaultUseDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option> -->
               <a-select-option v-for="item in defaultUseDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <!-- @select="onSelectDosage" @search="handleSearchDosage" style="width: 300px; height: 28px"> -->
+            <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectUse" @search="getDefaultUseDatas" style="width: 300px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in defaultUseDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
@@ -345,11 +354,21 @@
           </div>
 
           <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <a-select v-model="medicData.defFreqId" placeholder="请选择" @select="onSelectFreq" allow-clear
+            <!-- <a-select v-model="medicData.defFreqId" placeholder="请选择" @select="onSelectFreq" allow-clear
               style="width: 300px; ">
               <a-select-option v-for="item in defaultFreqDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectFreq" @search="getDefaultFreqDatas" style="width: 300px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in defaultFreqDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
@@ -362,7 +381,7 @@
     <div class="div-box" style="margin-top: 15px;">
       <div class="box-title">使用说明书</div>
       <div class="box-divider" />
-      <div id="div11" style="padding: 10px;"></div>
+      <div id="div11" style="padding: 10px;z-index:1"></div>
       <!-- <div class="div-line"></div> -->
     </div>
 
@@ -377,7 +396,7 @@
 <script>
 import {
   medicineDetail, qryFactoryList, getDictData, getUseList, getFreqList,
-  getDosageList, getUnitList, getCategoryList, addMedicineSku
+  getDosageList, getUnitList, getCategoryList, addMedicineSku, getTreatTypeList
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
@@ -566,6 +585,10 @@ export default {
     this.getDefaultFreqDatas()
   },
   mounted() {
+    this.$bus.$on('medicNewEvent', (record) => {
+      console.log('medicNewEvent', JSON.stringify(record))
+      //TODO 填充药品数据
+    })
     this.$nextTick(() => {
       this.initEditor()
     })
@@ -610,7 +633,7 @@ export default {
       console.log('onSelectDosage dosageFormDesc', getOne.value)
     },
     onSelectTreatType(treatTypeId) {
-      let getOne = this.treatTypeDatas.find((item) => item.code == treatTypeId)
+      let getOne = this.treatTypeDatas.find((item) => item.id == treatTypeId)
       this.medicData.treatTypeDesc = getOne.value
       console.log('onSelectTreatType treatTypeId', treatTypeId)
       console.log('onSelectTreatType treatTypeDesc', getOne.value)
@@ -634,6 +657,7 @@ export default {
       this.medicData.baseUnitName = getOne.value
       console.log('onSelectBase baseUnitId', baseUnitId)
       console.log('onSelectBase treatTypeDesc', getOne.value)
+      this.countSpecDesc()
     },
     onSelectExpense(expenseId) {
       let getOne = this.expenseDatas.find((item) => item.code == expenseId)
@@ -647,6 +671,7 @@ export default {
       this.medicData.dosUom = getOne.value
       console.log('onSelectJi dosUomId', dosUomId)
       console.log('onSelectJi dosUom', getOne.value)
+      this.countSpecDesc()
     },
 
     onSelectBao(packingUnitId) {
@@ -654,6 +679,7 @@ export default {
       this.medicData.packingUnit = getOne.value
       console.log('onSelectBao packingUnitId', packingUnitId)
       console.log('onSelectBao packingUnit', getOne.value)
+      this.countSpecDesc()
     },
 
     onSelectSpiritual(psychotropicId) {
@@ -666,7 +692,7 @@ export default {
     onSelectAnesthesia(stupefacientId) {
       let getOne = this.typeAnesthesiaDatas.find((item) => item.code == stupefacientId)
       this.medicData.stupefacientDesc = getOne.value
-      console.log('onSelectAnesthesia stupefacientId', psychotropicId)
+      console.log('onSelectAnesthesia stupefacientId', stupefacientId)
       console.log('onSelectAnesthesia stupefacientDesc', getOne.value)
     },
     onSelectBacteria(antibacterialId) {
@@ -677,17 +703,26 @@ export default {
     },
 
     onSelectUse(defDirectionId) {
-      let getOne = this.defaultUseDatas.find((item) => item.code == defDirectionId)
+      let getOne = this.defaultUseDatas.find((item) => item.id == defDirectionId)
       this.medicData.defDirectionName = getOne.value
       console.log('onSelectUse defDirectionId', defDirectionId)
       console.log('onSelectUse defDirectionName', getOne.value)
     },
 
     onSelectFreq(defFreqId) {
-      let getOne = this.defaultFreqDatas.find((item) => item.code == defFreqId)
+      let getOne = this.defaultFreqDatas.find((item) => item.id == defFreqId)
       this.medicData.defFreqName = getOne.value
       console.log('onSelectFreq defFreqId', defFreqId)
       console.log('onSelectFreq defFreqName', getOne.value)
+    },
+
+    /**
+     * 计算拼接描述
+     * 公式如下：含量系数含量单位*包装数量基本单位/包装单位
+     */
+    countSpecDesc() {
+      this.medicData.specDesc = this.medicData.contentCoefficient + this.medicData.dosUom + '*' +
+        this.medicData.minPkgNum + this.medicData.baseUnitName + '/' + this.medicData.packingUnit
     },
 
     /**
@@ -697,7 +732,7 @@ export default {
     handleSearchManu(name) {
       let param = {
         pageNo: 1,
-        pageSize: 10000,
+        pageSize: 10,
         factoryType: 3,
         queryText: name
       }
@@ -714,7 +749,7 @@ export default {
     handleSearchDosage(name) {
       let param = {
         pageNo: 1,
-        pageSize: 10000,
+        pageSize: 10,
         value: name
       }
       getDosageList(param)
@@ -741,20 +776,39 @@ export default {
         })
     },
 
+    // /**
+    //  * 查询治疗类型
+    //  */
+    // getTreatTypes() {//查字典
+    //   getDictData('$BV$HIS$MEDICINE_TREAT_TYPE')
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         this.treatTypeDatas = res.data
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
     /**
      * 查询治疗类型
      */
     getTreatTypes() {//查字典
-      getDictData('$BV$HIS$MEDICINE_TREAT_TYPE')
+      let param = {
+        pageNo: 1,
+        pageSize: 1000,
+      }
+      getTreatTypeList(param)
         .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.treatTypeDatas = res.data
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.treatTypeDatas = res.data.records
           }
         })
         .finally((res) => {
           // this.confirmLoading = false
         })
     },
+
     /**
      * 查询医保类型
      */
@@ -870,11 +924,12 @@ export default {
     /**
      * 默认用法列表
      */
-    getDefaultUseDatas() {
+    getDefaultUseDatas(value) {
       let params = {
         status: 0,//状态0正常 1停用 2删除
         pageNo: 1,
-        pageSize: 10000,
+        value: value,
+        pageSize: 10,
       }
       getUseList(params)
         .then((res) => {
@@ -889,11 +944,12 @@ export default {
     /**
      * 默认频次列表
      */
-    getDefaultFreqDatas() {
+    getDefaultFreqDatas(value) {
       let params = {
         status: 0,//状态0正常 1停用 2删除
         pageNo: 1,
-        pageSize: 10000,
+        value: value,
+        pageSize: 10,
       }
       getFreqList(params)
         .then((res) => {
@@ -1088,7 +1144,7 @@ export default {
         this.$message.error('请输入药品名称')
         return
       }
-      if (!tempData.manufacturerId) {
+      if (!tempData.manufacturerId || !tempData.manufacturerName) {
         this.$message.error('请输入选择生产厂商')
         return
       }
@@ -1100,7 +1156,7 @@ export default {
         this.$message.error('请选择药品类型')
         return
       }
-      if (!tempData.dosageFormId) {
+      if (!tempData.dosageFormId || !tempData.dosageFormDesc) {
         this.$message.error('请输入选择药品剂型')
         return
       }
@@ -1158,8 +1214,8 @@ export default {
           this.$message.error('请选择麻醉药品类型')
           return
         }
-        if (!tempData.defDirectionId) {
-          this.$message.error('请选择麻醉药品默认用法')
+        if (!tempData.defDirectionId || !tempData.defDirectionName) {
+          this.$message.error('请输入选择麻醉药品默认用法')
           return
         }
       }
@@ -1168,8 +1224,8 @@ export default {
           this.$message.error('请选择抗菌药品类型')
           return
         }
-        if (!tempData.defFreqId) {
-          this.$message.error('请选择抗菌药品默认频次')
+        if (!tempData.defFreqId || !tempData.defFreqName) {
+          this.$message.error('请输入选择抗菌药品默认频次')
           return
         }
       }
@@ -1199,7 +1255,7 @@ export default {
         tempData.packingUnitId = parseInt(tempData.packingUnitId)
       }
       if (tempData.pharmacologyCategoryId) {
-        tempData.pharmacologyCategoryId = parseInt(tempData.manufacturerId)
+        tempData.pharmacologyCategoryId = parseInt(tempData.pharmacologyCategoryId)
       }
       if (tempData.treatTypeId) {
         tempData.treatTypeId = parseInt(tempData.treatTypeId)
