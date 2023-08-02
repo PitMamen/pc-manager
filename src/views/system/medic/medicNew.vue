@@ -585,6 +585,10 @@ export default {
     this.getDefaultFreqDatas()
   },
   mounted() {
+    this.$bus.$on('medicNewEvent', (record) => {
+      console.log('medicNewEvent', JSON.stringify(record))
+      //TODO 填充药品数据
+    })
     this.$nextTick(() => {
       this.initEditor()
     })
