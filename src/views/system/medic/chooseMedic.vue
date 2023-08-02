@@ -1,6 +1,7 @@
 <template>
-  <a-modal title="药品匹配" :width="488" :visible="visible" :confirmLoading="confirmLoading" @ok="handleSubmit"
-    @cancel="handleCancel" :maskClosable="false">
+  <!-- :width="488" -->
+  <a-modal title="药品匹配" :footer="null" :width="1260" :visible="visible" :confirmLoading="confirmLoading"
+    @ok="handleSubmit" @cancel="handleCancel" :maskClosable="false">
     <a-card :bordered="false">
 
       <div class="div-top">
@@ -12,7 +13,7 @@
         </div>
 
         <div style="flex: 1;"></div>
-        <div>当前匹配药品：暂无</div>
+        <div>当前匹配药品：{{ medicName }}</div>
       </div>
 
       <div class="div-row">
@@ -224,6 +225,7 @@ export default {
         },
       ],
       passData: {},
+      medicName: '',
     }
   },
   /**
@@ -232,22 +234,24 @@ export default {
   created() {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
     // this.getHealthInsuranceCategoryListOut()
-    this.passData = JSON.parse(this.$route.query.dataStr)
+    // this.passData = JSON.parse(this.$route.query.dataStr)
 
-    this.queryParam.keyWords = this.passData.queryText
+    // this.queryParam.keyWords = this.passData.queryText
     this.getYiBaoDatas()
     this.getCategoryListOut()
   },
   methods: {
 
-    choose() {
+    choose(queryText, medicName) {
+      this.medicName = medicName ? medicName : '暂无'
+      this.queryParam.keyWords = queryText
       // this.clearData()
       this.visible = true
       this.confirmLoading = false
+      this.handleOk()
     },
 
     getDosages(name) {
-      debugger
       let param = {
         pageNo: 1,
         pageSize: 10000,
@@ -256,7 +260,6 @@ export default {
       getDosageList(param)
         .then((res) => {
           if (res.code == 0 && res.success) {
-            debugger
             this.dosageDatas = res.data.records
             console.log('dosageDatas-------', this.dosageDatas);
           }
@@ -354,31 +357,34 @@ export default {
     },
 
     goDetail(record) {
+      this.$emit('choose', record)
+      this.handleCancel()
+
       //都倾向于异步跟新  发bus异步消息到原修改页面并关闭此页面
-      if (this.passData.jumpType == 'add_sku') {//新增
-        // this.$router.push({
-        //   path: './medicNew',
-        //   query: {
-        //     dataStr: JSON.stringify(record),
-        //   },
-        // })
-        this.$bus.$emit('medicNewEvent', record)
+      // if (this.passData.jumpType == 'add_sku') {//新增
+      //   // this.$router.push({
+      //   //   path: './medicNew',
+      //   //   query: {
+      //   //     dataStr: JSON.stringify(record),
+      //   //   },
+      //   // })
+      //   this.$bus.$emit('medicNewEvent', record)
 
-      } else if (this.passData.jumpType == 'edit_sku') {//修改
-        this.$set(record, 'editId', this.passData.medicId)//修改需要传medicId进来
-        this.$set(record, 'goType', 1)//修改需要传medicId进来
-        // this.$bus.$emit('medicEditEvent', record)
-        //TODO 在这里直接打开新的修改页面，或者传参到原来的修改页面，或者发bus异步消息到原修改页面并关闭此页面
-        this.$router.push({
-          path: './medicDetail',
-          query: {
-            // queryText: queryText,
-            dataStr: JSON.stringify(record),
-          },
-        })
-      }
+      // } else if (this.passData.jumpType == 'edit_sku') {//修改
+      //   this.$set(record, 'editId', this.passData.medicId)//修改需要传medicId进来
+      //   this.$set(record, 'goType', 1)//修改需要传medicId进来
+      //   // this.$bus.$emit('medicEditEvent', record)
+      //   //TODO 在这里直接打开新的修改页面，或者传参到原来的修改页面，或者发bus异步消息到原修改页面并关闭此页面
+      //   this.$router.push({
+      //     path: './medicDetail',
+      //     query: {
+      //       // queryText: queryText,
+      //       dataStr: JSON.stringify(record),
+      //     },
+      //   })
+      // }
 
-      this.$router.go(-1)
+      // this.$router.go(-1)
       // this.$router.push('/')
       // window.close();
 

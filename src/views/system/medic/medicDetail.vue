@@ -145,7 +145,8 @@
 
           <div class="div-cell-name temp">监管编码：</div>
           <div class="div-cell-value">
-            <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
+            <!-- <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配" -->
+            <a-input v-model="medicData.supervisionCode" @click="goChoose" allow-clear placeholder="未匹配药品，请点击匹配"
               style="width: 210px" />
           </div>
           <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
@@ -390,6 +391,7 @@
       <a-button type="primary" @click="submitData()">保存</a-button>
       <a-button style="margin-left: 10px" @click="cancel()">返回</a-button>
     </div>
+    <chooseMedic ref="chooseMedic" @choose="handleChoose" />
   </a-card>
 </template>
 
@@ -402,12 +404,14 @@ import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
+import chooseMedic from './chooseMedic'
 
 import E from 'wangeditor'
 export default {
   components: {
     STable,
     Ellipsis,
+    chooseMedic,
   },
   data() {
     return {
@@ -580,6 +584,32 @@ export default {
   },
 
   methods: {
+
+    goChoose() {
+      let queryText = ''
+      if (this.medicData.code) {
+        queryText = this.medicData.code
+      } else if (this.medicData.genericName) {
+        queryText = this.medicData.genericName
+      } else if (this.medicData.tradeName) {
+        queryText = this.medicData.tradeName
+      } else if (this.medicData.approvalNumber) {
+        queryText = this.medicData.approvalNumber
+      }
+
+      let name = undefined
+      if (this.medicData.genericName) {
+        name = this.medicData.genericName
+      }
+      this.$refs.chooseMedic.choose(queryText, name)
+    },
+
+    handleChoose(record) {
+      console.log('handleChoose', JSON.stringify(record))
+      //TODO 填充药品数据
+      this.inputData(record)
+    },
+
     async initData() {
       await this.getMedicTypes()
       await this.getTreatTypes()

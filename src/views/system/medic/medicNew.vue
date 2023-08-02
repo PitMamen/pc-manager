@@ -139,18 +139,13 @@
           </div>
         </div>
         <div class="div-cell">
-          <!-- <div style="width: 20px;"></div>
-          <a-input v-model="medicData.keyWord" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
-            style="width: 270px" /> -->
 
           <div class="div-cell-name">监管编码：</div>
           <div class="div-cell-value temp">
-            <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
+            <!-- <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配" -->
+            <a-input v-model="medicData.supervisionCode" @click="goChoose" allow-clear placeholder="未匹配药品，请点击匹配"
               style="width: 210px" />
           </div>
-          <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"><a-input v-model="medicData.keyWord" allow-clear placeholder="请输入检索码"
-              style="width: 210px" /></div> -->
         </div>
 
       </div>
@@ -371,6 +366,7 @@
       <a-button type="primary" @click="submitData()">保存</a-button>
       <a-button style="margin-left: 10px" @click="cancel()">返回</a-button>
     </div>
+    <chooseMedic ref="chooseMedic" @choose="handleChoose" />
   </a-card>
 </template>
 
@@ -383,12 +379,14 @@ import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
+import chooseMedic from './chooseMedic'
 
 import E from 'wangeditor'
 export default {
   components: {
     STable,
     Ellipsis,
+    chooseMedic,
   },
   data() {
     return {
@@ -530,27 +528,11 @@ export default {
     }
   },
 
-  // watch: {
-  //   $route(to, from) {//TODO watch不回调需要找原因
-  //     console.log('watch-------------------medicNew Be', to, from)
-  //     if (to.path.indexOf('medicNew') > -1) {
-  //       console.log('watch-------------------medicNew', to, from)
-  //       if (this.$route.query.id) {//修改
-  //         // this.medicId = this.$route.query.id
-  //         // this.initData()
-  //       } else {//新增
-
-  //       }
-  //     }
-  //   },
-  // },
-
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    this.initData()
     this.getMedicTypes()
     this.getTreatTypes()
     this.getYiBaoDatas()
@@ -585,14 +567,30 @@ export default {
   //       }
   // },
   methods: {
-    initData() {
-      // if (this.$route.query.id) {//修改
-      //   this.medicId = this.$route.query.id
-      //   this.getDetaiData()
-      // } else {//新增
+    goChoose() {
+      let queryText = ''
+      if (this.medicData.code) {
+        queryText = this.medicData.code
+      } else if (this.medicData.genericName) {
+        queryText = this.medicData.genericName
+      } else if (this.medicData.tradeName) {
+        queryText = this.medicData.tradeName
+      } else if (this.medicData.approvalNumber) {
+        queryText = this.medicData.approvalNumber
+      }
 
-      // }
+      let name = undefined
+      if (this.medicData.genericName) {
+        name = this.medicData.genericName
+      }
 
+      this.$refs.chooseMedic.choose(queryText, name)
+    },
+
+    handleChoose(record) {
+      console.log('handleChoose', JSON.stringify(record))
+      //TODO 填充药品数据
+      this.inputData(record)
     },
 
     /**
@@ -1369,6 +1367,7 @@ button {
       }
 
       .div-cell-value {}
+
       .temp {
         /deep/ .ant-input {
           color: #409EFF;
