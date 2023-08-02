@@ -265,7 +265,6 @@ export default {
       this.visible = true
       this.reset()
       this.record = record
-      console.log("Ddd:",record.id)
       this.queryParam.planId = record.id
       this.title = record.planName+'随访方案'
       this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]

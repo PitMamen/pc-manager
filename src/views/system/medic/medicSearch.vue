@@ -373,23 +373,30 @@ export default {
     goDetail(record) {
       //都倾向于异步跟新  发bus异步消息到原修改页面并关闭此页面
       if (this.passData.jumpType == 'add_sku') {//新增
-        this.$router.push({
-          path: './medicNew',
-          query: {
-            dataStr: JSON.stringify(record),
-          },
-        })
+        // this.$router.push({
+        //   path: './medicNew',
+        //   query: {
+        //     dataStr: JSON.stringify(record),
+        //   },
+        // })
+        this.$bus.$emit('medicNewEvent', record)
+
       } else if (this.passData.jumpType == 'edit_sku') {//修改
         this.$set(record, 'editId', this.passData.medicId)//修改需要传medicId进来
+        this.$bus.$emit('medicEditEvent', record)
         //TODO 在这里直接打开新的修改页面，或者传参到原来的修改页面，或者发bus异步消息到原修改页面并关闭此页面
-        this.$router.push({
-          path: './medicDetail',
-          query: {
-            // queryText: queryText,
-            dataStr: JSON.stringify(record),
-          },
-        })
+        // this.$router.push({
+        //   path: './medicDetail',
+        //   query: {
+        //     // queryText: queryText,
+        //     dataStr: JSON.stringify(record),
+        //   },
+        // })
       }
+      
+      this.$router.go(-1)
+      // this.$router.push('/')
+      // window.close();
 
     },
 

@@ -4645,6 +4645,20 @@ export function getTbMerchantPageList(data) {
     data: data
   })
 }
+
+
+export function allMerchants(data) {
+  return axios({
+    url: '/order-api/tbMerchant/allMerchants',
+    method: 'post',
+    data: data
+  })
+}
+
+
+
+
+
 //病种列表  
 export function getDiseaseTypePageList(data) {
   return axios({
@@ -4878,11 +4892,11 @@ export function updateMedicStatus(data) {
   })
 }
 // 药品详情
-export function medicineDetail(data) {
+export function medicineDetail(id) {
   return axios({
-    url: '/info-api/medicine/detail',
-    method: 'get',
-    params: data,
+    url: '/info-api/medicine/getMedicineById/' + id,
+    method: 'post',
+    // params: data,
   })
 }
 
@@ -4908,6 +4922,15 @@ export function modifyMedicineSku(data) {
 export function getMedicineCategoryList(data) {
   return axios({
     url: '/info-api/standardMedicine/getMedicineCategoryList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 治疗类型下拉列表
+export function getTreatTypeList(data) {
+  return axios({
+    url: '/info-api/sysTreatType/page',
     method: 'post',
     data: data,
   })
