@@ -4,8 +4,8 @@
 
       <div class="search-row">
         <span class="name">关键字查询:</span>
-        <a-input @keyup.enter="handleOk" v-model="queryParam.queryText" allow-clear
-          placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
+        <a-input @keyup.enter="handleOk" v-model="queryParam.queryText" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询"
+          style="width: 270px" />
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -280,8 +280,14 @@ export default {
       this.$router.push({
         path: './medicDetail',
         query: {
-          id: record.id,
+          // queryText: queryText,
+          dataStr: JSON.stringify({ editId: record.id, goType: 2 }),
         },
+
+        // path: './medicDetail',
+        // query: {
+        //   id: record.id,
+        // },
       })
     },
     // updateStatus

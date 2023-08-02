@@ -67,7 +67,7 @@
               @select="onSelectDosage" @search="handleSearchDosage" style="width: 210px; height: 28px">
               <template slot="dataSource">
                 <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
+                  :value="item.code + ''">{{
                     item.value
                   }}</a-select-option>
               </template>
@@ -143,7 +143,7 @@
           <a-input v-model="medicData.keyWord" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
             style="width: 270px" /> -->
 
-          <div class="div-cell-name">监管编码：</div>
+          <div class="div-cell-name temp">监管编码：</div>
           <div class="div-cell-value">
             <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
               style="width: 210px" />
@@ -546,6 +546,7 @@ export default {
       defaultFreqDatas: [],
 
       editor: {},
+      passData: {},
     }
   },
 
@@ -567,10 +568,12 @@ export default {
 
   },
   mounted() {
-    this.$bus.$on('medicEditEvent', (record) => {
-      console.log('medicEditEvent', JSON.stringify(record))
-      //TODO 填充药品数据
-    })
+    // this.$bus.$on('medicEditEvent', (record) => {
+    //   console.log('medicEditEvent', JSON.stringify(record))
+    //   if (record.editId == this.medicId) {
+    //     this.inputData(record)
+    //   }
+    // })
     this.$nextTick(() => {
       this.initEditor()
     })
@@ -591,11 +594,80 @@ export default {
       await this.getBacteriaDatas()
       await this.getDefaultUseDatas()
       await this.getDefaultFreqDatas()
-      if (this.$route.query.id) {//修改
-        this.medicId = this.$route.query.id
-        this.getDetaiData()
+      //列表passData只传editId  搜索填充传填充数据和 editId  editId也就是列表的每条数据的id
+      this.passData = JSON.parse(this.$route.query.dataStr)
+      this.medicId = this.passData.editId
+      this.getDetaiData()
+      // if (this.$route.query.id) {//修改
+      //   this.medicId = this.$route.query.id
+      //   this.getDetaiData()
+      // }
+
+    },
+
+    /**
+ * 填充数据
+ */
+    inputData(record) {
+      //药品名称
+      if (record.productName) {
+        this.medicData.genericName = record.productName
       }
 
+      //两个检索码都不用填充
+
+      //生产厂商
+      if (record.manufacturerCode && record.manufacturerName) {
+        this.medicData.manufacturerId = record.manufacturerCode
+        this.medicData.manufacturerName = record.manufacturerName
+        this.manuDatas = []
+        this.manuDatas.push({ id: this.medicData.manufacturerId + '', factoryName: this.medicData.manufacturerName })
+      }
+
+      // 商品名称
+      if (record.productName) {
+        this.medicData.tradeName = record.productName
+      }
+
+      // 药品类型
+      if (record.medicineCategoryCode) {
+        this.medicData.drugTypeId = record.medicineCategoryCode
+      }
+
+      //药品剂型
+      if (record.dosageFormId && record.dosageFormDesc) {
+        this.medicData.dosageFormId = record.dosageFormId
+        this.medicData.dosageFormDesc = record.dosageFormDesc
+        this.manuDadosageDatastas = []
+        this.dosageDatas.push({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+      }
+
+      //医保类型
+      if (record.healthInsuranceCategoryId) {
+        this.medicData.healthInsuranceCategoryId = record.healthInsuranceCategoryId
+      }
+      //药理分类
+      if (record.pharmacologyCategoryId) {
+        this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
+      }
+      //医保编码
+      if (record.healthInsuranceCoding) {
+        this.medicData.healthInsuranceCoding = record.healthInsuranceCoding
+      }
+      //批准文号
+      if (record.approvalNumber) {
+        this.medicData.approvalNumber = record.approvalNumber
+      }
+
+      //HIS编码
+      // if (record.code) {
+      //   this.medicData.code = record.code
+      // }
+
+      //监管编码
+      if (record.code) {
+        this.medicData.supervisionCode = record.code
+      }
     },
 
     getDetaiData() {
@@ -612,23 +684,27 @@ export default {
             //********处理详情数据
             //组装厂商列表
             if (tempMedicData.manufacturerId && tempMedicData.manufacturerName) {
+              this.manuDatas = []
               this.manuDatas.push({ id: tempMedicData.manufacturerId + '', factoryName: tempMedicData.manufacturerName })
               tempMedicData.manufacturerId = tempMedicData.manufacturerId + ''
             }
             //组装药品剂型
             if (tempMedicData.dosageFormId && tempMedicData.dosageFormDesc) {
-              this.dosageDatas.push({ id: tempMedicData.dosageFormId + '', value: tempMedicData.dosageFormDesc })
+              this.dosageDatas = []
+              this.dosageDatas.push({ code: tempMedicData.dosageFormId + '', value: tempMedicData.dosageFormDesc })
               tempMedicData.dosageFormId = tempMedicData.dosageFormId + ''
             }
 
             //组装默认用法
             if (tempMedicData.defDirectionId && tempMedicData.defDirectionName) {
+              this.defaultUseDatas = []
               this.defaultUseDatas.push({ id: tempMedicData.defDirectionId + '', value: tempMedicData.defDirectionName })
               tempMedicData.defDirectionId = tempMedicData.defDirectionId + ''
             }
 
             //组装默认频次
             if (tempMedicData.defFreqId && tempMedicData.defFreqName) {
+              this.defaultFreqDatas = []
               this.defaultFreqDatas.push({ id: tempMedicData.defFreqId + '', value: tempMedicData.defFreqName })
               tempMedicData.defFreqId = tempMedicData.defFreqId + ''
               console.log('ggggg', tempMedicData.defFreqId)
@@ -650,6 +726,12 @@ export default {
 
             this.medicData = tempMedicData
             console.log('processed----------- medicData', JSON.stringify(this.medicData))
+
+            //这里处理填充数据
+            if (this.passData.goType == 1) {
+              this.inputData()
+
+            }
           }
         })
         .finally((res) => {
@@ -1154,7 +1236,7 @@ export default {
         path: './medicSearch',
         query: {
           // queryText: queryText,
-          dataStr: JSON.stringify({ queryText: queryText, jumpType: 'add_sku' }),
+          dataStr: JSON.stringify({ queryText: queryText, jumpType: 'edit_sku', medicId: this.medicId }),
         },
       })
     },
@@ -1346,6 +1428,12 @@ button {
       }
 
       .div-cell-value {}
+
+      .temp {
+        /deep/ .ant-input {
+          color: #409EFF;
+        }
+      }
     }
 
     .div-shu-cell {
