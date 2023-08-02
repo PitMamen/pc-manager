@@ -131,14 +131,14 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'wechat3',
+              dataIndex: 'wechat4',
               align:'center'
               //   key: 'wechat',
               // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'alipay3',
+              dataIndex: 'alipay4',
               align:'center'
               //   key: 'alipay',
               // width: 100,
@@ -151,14 +151,14 @@ export default {
           children: [
             {
               title: '微信支付',
-              dataIndex: 'wechat4',
+              dataIndex: 'wechat3', 
               align:'center'
               //   key: 'wechat',
               // width: 100,
             },
             {
               title: '支付宝支付',
-              dataIndex: 'alipay4',
+              dataIndex: 'alipay3',
               align:'center'
               //   key: 'alipay',
               // width: 100,

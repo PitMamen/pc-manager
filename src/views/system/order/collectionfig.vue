@@ -24,7 +24,7 @@
         </div>
 
         <div class="div-content">
-          <span class="span-item-name">在线咨询:</span>
+          <span class="span-item-name">雅医咨询服务:</span>
           <a-select
             v-model="checkData.consultID"
             placeholder="请选择商户"
@@ -38,7 +38,7 @@
         </div>
 
         <div class="div-content">
-          <span class="span-item-name">专科服务:</span>
+          <span class="span-item-name">雅医专科服务:</span>
           <a-select
             v-model="checkData.srvPackID"
             placeholder="请选择商户"
@@ -52,7 +52,7 @@
         </div>
 
         <div class="div-content">
-          <span class="span-item-name">复诊续方:</span>
+          <span class="span-item-name">雅医电子处方:</span>
           <a-select
             v-model="checkData.appPreRegisterID"
             placeholder="请选择商户"
@@ -66,7 +66,7 @@
         </div>
 
         <div class="div-content">
-          <span class="span-item-name">在线咨询处方:</span>
+          <span class="span-item-name">本院复诊挂号:</span>
           <a-select
             v-model="checkData.consultOrderPrescriptionID"
             placeholder="请选择商户"
