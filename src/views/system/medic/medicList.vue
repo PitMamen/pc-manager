@@ -4,7 +4,8 @@
 
       <div class="search-row">
         <span class="name">关键字查询:</span>
-        <a-input v-model="queryParam.queryText" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
+        <a-input @keyup.enter="handleOk" v-model="queryParam.queryText" allow-clear
+          placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -319,10 +320,10 @@ export default {
     handleOk() {
       let num = Number(this.queryParam.dosageFormId)
       //判断数据类型   判断数字数据类型
-        if (isNaN(num)) {
-          this.$message.error('剂型选择有误，请重新输入选择')
-          return
-        }
+      if (isNaN(num)) {
+        this.$message.error('剂型选择有误，请重新输入选择')
+        return
+      }
       this.$refs.table.refresh()
     },
   },

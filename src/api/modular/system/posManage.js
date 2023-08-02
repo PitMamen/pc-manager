@@ -4892,11 +4892,11 @@ export function updateMedicStatus(data) {
   })
 }
 // 药品详情
-export function medicineDetail(data) {
+export function medicineDetail(id) {
   return axios({
-    url: '/info-api/medicine/detail',
-    method: 'get',
-    params: data,
+    url: '/info-api/medicine/getMedicineById/' + id,
+    method: 'post',
+    // params: data,
   })
 }
 
