@@ -1,7 +1,7 @@
 <template>
   <a-modal
     class="ant-pxk-footer"
-    title="新增单位"
+    title="新增分类"
     :width="400"
     :visible="visible"
     :maskClosable="false"
@@ -13,10 +13,18 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>药品单位:</span>
+            <span class="span-item-name"><span style="color: red">*</span>上级分类:</span>
+            <div style="display: inline-block; width: 81%;">
+              <div
+                style="font-size: 12px; color: #000000a6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+              >{{ formData.pvalue }}</div>
+            </div>
+          </div>
+          <div class="div-content">
+            <span class="span-item-name"><span style="color: red">*</span>药理分类:</span>
             <a-input
               v-model="formData.value"
-              placeholder="请输入药品单位"
+              placeholder="请输入药理分类"
               class="span-item-value"
               style="display: inline-block"
               :maxLength="20"
@@ -58,7 +66,7 @@
 <script>
 import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
-import { add2 as add } from '@/api/modular/system/ypuse'
+import { add3 as add } from '@/api/modular/system/ypclassify'
 export default {
   data() {
     return {
@@ -69,8 +77,9 @@ export default {
   },
   methods: {
     // 初始化方法
-    add(code) {
-      this.formData.hospitalCode = code
+    add(item) {
+      this.formData.pid = item.id
+      this.formData.pvalue = item.value
       this.visible = true
     },
     onChange(event) {
@@ -80,7 +89,7 @@ export default {
     },
     validate() {
       if (isStringEmpty(this.formData.value)) {
-        this.$message.error('请输入药品单位')
+        this.$message.error('请输入药理分类')
         return Promise.reject()
       }
       return Promise.resolve(this.formData)

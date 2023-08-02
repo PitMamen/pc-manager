@@ -1,7 +1,7 @@
 <template>
   <a-modal
     class="ant-pxk-footer"
-    title="修改单位"
+    title="修改类型"
     :width="400"
     :visible="visible"
     :maskClosable="false"
@@ -13,10 +13,10 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>药品单位:</span>
+            <span class="span-item-name"><span style="color: red">*</span>治疗类型:</span>
             <a-input
               v-model="formData.value"
-              placeholder="请输入药品单位"
+              placeholder="请输入治疗类型"
               class="span-item-value"
               style="display: inline-block"
               :maxLength="20"
@@ -57,7 +57,7 @@
 <script>
 import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
-import { update2 as update } from '@/api/modular/system/ypuse'
+import { update1 as update } from '@/api/modular/system/ypclassify'
 export default {
   data() {
     return {
@@ -79,7 +79,7 @@ export default {
     },
     validate() {
       if (isStringEmpty(this.formData.value)) {
-        this.$message.error('请输入药品单位')
+        this.$message.error('请输入治疗类型')
         return Promise.reject()
       }
       return Promise.resolve(this.formData)
