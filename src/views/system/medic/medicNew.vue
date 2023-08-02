@@ -13,7 +13,7 @@
         </div>
         <div class="div-cell">
           <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"> <a-input disabled v-model="medicData.genericCcronym" allow-clear placeholder="自动生成"
+          <div class="div-cell-value"> <a-input disabled v-model="medicData.genericAcronym" allow-clear placeholder="自动生成"
               style="width: 210px" /></div>
         </div>
         <div class="div-cell">
@@ -310,13 +310,6 @@
           </div>
 
           <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <!-- <a-select v-model="medicData.defDirectionId" placeholder="请选择" @select="onSelectUse" allow-clear
-              style="width: 300px; ">
-              <a-select-option v-for="item in defaultUseDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select> -->
-
-            <!-- @select="onSelectDosage" @search="handleSearchDosage" style="width: 300px; height: 28px"> -->
             <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择" option-label-prop="title"
               @select="onSelectUse" @search="getDefaultUseDatas" style="width: 300px; height: 28px">
               <template slot="dataSource">
@@ -343,9 +336,6 @@
 
         <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
           <div class="div-shu-cell-ori">
-            <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
-              <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-            </a-select> -->
             <a-select v-model="medicData.antibacterialId" placeholder="请选择" @select="onSelectBacteria" allow-clear
               style="width: 300px; height: 28px">
               <a-select-option v-for="item in typeBacteriaDatas" :key="item.id" :value="item.code">{{ item.value
@@ -354,12 +344,6 @@
           </div>
 
           <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <!-- <a-select v-model="medicData.defFreqId" placeholder="请选择" @select="onSelectFreq" allow-clear
-              style="width: 300px; ">
-              <a-select-option v-for="item in defaultFreqDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select> -->
-
             <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择" option-label-prop="title"
               @select="onSelectFreq" @search="getDefaultFreqDatas" style="width: 300px; height: 28px">
               <template slot="dataSource">
@@ -371,9 +355,6 @@
             </a-auto-complete>
           </div>
         </div>
-
-
-
 
       </div>
     </div>
@@ -440,7 +421,7 @@ export default {
       medicData: {
         //******基本信息模块字段
         genericName: "",//药品名称
-        genericCcronym: "",//药品名称检索码
+        genericAcronym: "",//药品名称检索码
         manufacturerId: undefined,//生产厂商id(接口获取)
         manufacturerName: "",//生产厂商
 
@@ -549,20 +530,20 @@ export default {
     }
   },
 
-  watch: {
-    $route(to, from) {//TODO watch不回调需要找原因
-      console.log('watch-------------------medicNew Be', to, from)
-      if (to.path.indexOf('medicNew') > -1) {
-        console.log('watch-------------------medicNew', to, from)
-        if (this.$route.query.id) {//修改
-          // this.medicId = this.$route.query.id
-          // this.initData()
-        } else {//新增
+  // watch: {
+  //   $route(to, from) {//TODO watch不回调需要找原因
+  //     console.log('watch-------------------medicNew Be', to, from)
+  //     if (to.path.indexOf('medicNew') > -1) {
+  //       console.log('watch-------------------medicNew', to, from)
+  //       if (this.$route.query.id) {//修改
+  //         // this.medicId = this.$route.query.id
+  //         // this.initData()
+  //       } else {//新增
 
-        }
-      }
-    },
-  },
+  //       }
+  //     }
+  //   },
+  // },
 
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
@@ -588,6 +569,7 @@ export default {
     this.$bus.$on('medicNewEvent', (record) => {
       console.log('medicNewEvent', JSON.stringify(record))
       //TODO 填充药品数据
+      this.inputData(record)
     })
     this.$nextTick(() => {
       this.initEditor()
@@ -610,6 +592,19 @@ export default {
       // } else {//新增
 
       // }
+
+    },
+    inputData(record) {
+      if (record.genericName) {
+        // this.medicData.genericName =record.genericCgenericAcronymcronym
+        this.medicData.genericName = record.genericName
+      }
+      //TODO 药品名称检索码 genericAcronym
+      if (record.manufacturerCode && record.manufacturerName) {
+        this.medicData.genericName = record.genericAcronym
+        this.medicData.genericName = record.genericName
+      }
+
 
     },
 

@@ -13,7 +13,7 @@
         </div>
         <div class="div-cell">
           <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"> <a-input v-model="medicData.genericCcronym" allow-clear placeholder="自动生成"
+          <div class="div-cell-value"> <a-input v-model="medicData.genericAcronym" allow-clear placeholder="自动生成"
               style="width: 210px" /></div>
         </div>
         <div class="div-cell">
@@ -396,7 +396,7 @@
 <script>
 import {
   medicineDetail, qryFactoryList, getDictData, getUseList, getFreqList,
-  getDosageList, getUnitList, getCategoryList, addMedicineSku, getTreatTypeList
+  getDosageList, getUnitList, getCategoryList, addMedicineSku, getTreatTypeList, modifyMedicineSku
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
@@ -551,15 +551,9 @@ export default {
 
   watch: {
     $route(to, from) {//TODO watch不回调需要找原因
-      console.log('watch-------------------medicNew Be', to, from)
-      if (to.path.indexOf('medicNew') > -1) {
-        console.log('watch-------------------medicNew', to, from)
-        if (this.$route.query.id) {//修改
-          // this.medicId = this.$route.query.id
-          // this.initData()
-        } else {//新增
-
-        }
+      console.log('watch****************medicDetail Be', to, from)
+      if (to.path.indexOf('medicDetail') > -1) {
+        this.initData()
       }
     },
   },
@@ -570,19 +564,7 @@ export default {
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     this.initData()
-    this.getMedicTypes()
-    this.getTreatTypes()
-    this.getYiBaoDatas()
-    this.getCategoryListOut()
-    this.getBaseUnitDatas()
-    this.getExpenseDatas()
-    this.getUnitDatas()
 
-    this.getSpiritualDatas()
-    this.getAnesthesiaDatas()
-    this.getBacteriaDatas()
-    this.getDefaultUseDatas()
-    this.getDefaultFreqDatas()
   },
   mounted() {
     this.$bus.$on('medicEditEvent', (record) => {
@@ -593,24 +575,86 @@ export default {
       this.initEditor()
     })
   },
-  // activated() {
-  //   console.log('*************medicDetail Activited')
-  // if (this.$route.query.id) {//修改
-  //         this.medicId = this.$route.query.id
-  //         this.getDetaiData()
-  //       } else {//新增
 
-  //       }
-  // },
   methods: {
-    initData() {
-      // if (this.$route.query.id) {//修改
-      //   this.medicId = this.$route.query.id
-      //   this.getDetaiData()
-      // } else {//新增
+    async initData() {
+      await this.getMedicTypes()
+      await this.getTreatTypes()
+      await this.getYiBaoDatas()
+      await this.getCategoryListOut()
+      await this.getBaseUnitDatas()
+      await this.getExpenseDatas()
+      await this.getUnitDatas()
 
-      // }
+      await this.getSpiritualDatas()
+      await this.getAnesthesiaDatas()
+      await this.getBacteriaDatas()
+      await this.getDefaultUseDatas()
+      await this.getDefaultFreqDatas()
+      if (this.$route.query.id) {//修改
+        this.medicId = this.$route.query.id
+        this.getDetaiData()
+      }
 
+    },
+
+    getDetaiData() {
+      let queryData = {
+        id: this.medicId
+      }
+      this.confirmLoading = true
+      medicineDetail(this.medicId)
+        .then((res) => {
+          if (res.code == 0 && res.success) {
+            let tempMedicData = res.data
+
+
+            //********处理详情数据
+            //组装厂商列表
+            if (tempMedicData.manufacturerId && tempMedicData.manufacturerName) {
+              this.manuDatas.push({ id: tempMedicData.manufacturerId + '', factoryName: tempMedicData.manufacturerName })
+              tempMedicData.manufacturerId = tempMedicData.manufacturerId + ''
+            }
+            //组装药品剂型
+            if (tempMedicData.dosageFormId && tempMedicData.dosageFormDesc) {
+              this.dosageDatas.push({ id: tempMedicData.dosageFormId + '', value: tempMedicData.dosageFormDesc })
+              tempMedicData.dosageFormId = tempMedicData.dosageFormId + ''
+            }
+
+            //组装默认用法
+            if (tempMedicData.defDirectionId && tempMedicData.defDirectionName) {
+              this.defaultUseDatas.push({ id: tempMedicData.defDirectionId + '', value: tempMedicData.defDirectionName })
+              tempMedicData.defDirectionId = tempMedicData.defDirectionId + ''
+            }
+
+            //组装默认频次
+            if (tempMedicData.defFreqId && tempMedicData.defFreqName) {
+              this.defaultFreqDatas.push({ id: tempMedicData.defFreqId + '', value: tempMedicData.defFreqName })
+              tempMedicData.defFreqId = tempMedicData.defFreqId + ''
+              console.log('ggggg', tempMedicData.defFreqId)
+              console.log('ggggg77777', this.defaultFreqDatas)
+            }
+
+            //处理打钩
+            this.isChufang = tempMedicData.ethicalsSign == 1 ? true : false
+            this.isPoisonous = tempMedicData.drugSign == 1 ? true : false
+            this.isExpensive = tempMedicData.valuableSign == 1 ? true : false
+
+            this.isSpiritual = tempMedicData.psychotropicId ? true : false
+            this.isAnesthesia = tempMedicData.stupefacientId ? true : false
+            this.isBacteria = tempMedicData.antibacterialId ? true : false
+
+            //处理富文本
+            this.editor.txt.html(tempMedicData.note)
+            //********处理详情数据
+
+            this.medicData = tempMedicData
+            console.log('processed----------- medicData', JSON.stringify(this.medicData))
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     onSelectManu(manufacturerId) {
@@ -1088,26 +1132,6 @@ export default {
       this.editor = editor
     },
 
-    getDetaiData() {
-      let queryData = {
-        id: this.medicId
-      }
-      this.confirmLoading = true
-      medicineDetail(queryData)
-        .then((res) => {
-          if (res.code == 0 && res.success) {
-            this.medicData = res.data
-          } else {
-          }
-          // setTimeout(() => {
-          //   this.handleOk()
-          // }, 500)
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
     goAgin() {
       // 随访名单更新时需重新匹配：0不匹配1匹配
       this.isAgain = !this.isAgain
@@ -1262,8 +1286,8 @@ export default {
       }
 
 
-      console.log('submitData tempData', tempData)
-      addMedicineSku(tempData)
+      console.log('submitData tempData edit', tempData)
+      modifyMedicineSku(tempData)
         .then((res) => {
           if (res.code == 0) {
             this.$message.success('保存成功')
