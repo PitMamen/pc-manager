@@ -4927,6 +4927,15 @@ export function getMedicineCategoryList(data) {
   })
 }
 
+// 治疗类型下拉列表
+export function getTreatTypeList(data) {
+  return axios({
+    url: '/info-api/sysTreatType/page',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 药品剂型下拉列表
 export function getDosageFormIdList(data) {
   return axios({
