@@ -232,7 +232,7 @@ export default {
     //     })
     // },
 
-    getDictDataOut() {
+    getDictDataOut() {//查字典
       getDictData('medicine_types')
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
@@ -249,7 +249,6 @@ export default {
     },
 
     getDosages(name) {
-      debugger
       let param = {
         pageNo: 1,
         pageSize: 10000,
@@ -258,7 +257,6 @@ export default {
       getDosageList(param)
         .then((res) => {
           if (res.code == 0 && res.success) {
-            debugger
             this.dosageDatas = res.data.records
             console.log('dosageDatas-------', this.dosageDatas);
           }
@@ -320,6 +318,7 @@ export default {
     },
     handleOk() {
       let num = Number(this.queryParam.dosageFormId)
+      //判断数据类型   判断数字数据类型
         if (isNaN(num)) {
           this.$message.error('剂型选择有误，请重新输入选择')
           return

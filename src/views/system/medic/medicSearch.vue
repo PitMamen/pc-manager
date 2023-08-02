@@ -61,8 +61,8 @@
       </div>
       <div class="search-row">
         <span class="name">药理分类:</span>
-        <a-tree-select v-model="queryParam.pharmacologyCategory" style="min-width: 120px"
-          :tree-data="yaoliTree" placeholder="请选择" allow-clear tree-default-expand-all>
+        <a-tree-select v-model="queryParam.pharmacologyCategory" style="min-width: 120px" :tree-data="yaoliTree"
+          placeholder="请选择" allow-clear tree-default-expand-all>
         </a-tree-select>
         <!-- <a-select v-model="queryParam.pharmacologyCategory" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
           <a-select-option v-for="item in yaoliTree" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
@@ -72,7 +72,7 @@
         <span class="name">医保类型:</span>
         <a-select v-model="queryParam.healthInsuranceCategory" placeholder="请选择" allow-clear
           style="width: 120px; height: 28px">
-          <a-select-option v-for="item in yibaoDatas" :key="item" :value="item">{{ item }}</a-select-option>
+          <a-select-option v-for="item in yibaoDatas" :key="item.id" :value="item.code">{{ item.value }}</a-select-option>
         </a-select>
       </div>
 
@@ -90,7 +90,7 @@
       :rowKey="(record) => record.id">
       <span slot="action" slot-scope="text, record">
         <template v-if="true">
-          <a @click="goDetail()">选择</a>
+          <a @click="goDetail(record)">选择</a>
         </template>
       </span>
     </s-table>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { qryComplaintByPage, getDosageList, qryFactoryList, getHealthInsuranceCategoryList, getCategoryList, getStandardMedicList } from '@/api/modular/system/posManage'
+import { qryComplaintByPage, getDosageList, qryFactoryList, getHealthInsuranceCategoryList, getDictData, getCategoryList, getStandardMedicList } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 export default {
@@ -157,8 +157,8 @@ export default {
         },
         {
           title: '药品名称',
-          dataIndex: 'productName',
-          scopedSlots: { customRender: 'productName' },
+          dataIndex: 'productName2',
+          scopedSlots: { customRender: 'productName2' },
         },
         {
           title: '药品规格',
@@ -201,6 +201,7 @@ export default {
 
             //设置序号
             data.rows.forEach((item, index) => {
+              this.$set(item, 'productName2', item.productName)
               // this.$set(item, 'xh', (data.pageNo - 1) * data.pageSize + (index + 1))
               // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
             })
@@ -233,6 +234,7 @@ export default {
           name: '未登记',
         },
       ],
+      passData: {},
     }
   },
   /**
@@ -240,7 +242,13 @@ export default {
    */
   created() {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
-    this.getHealthInsuranceCategoryListOut()
+    // this.getHealthInsuranceCategoryListOut()
+    this.passData = JSON.parse(this.$route.query.dataStr)
+    if (this.passData.jumpType == 'add_sku') {//新增
+    } else if (this.passData.jumpType == 'edit_sku') {//修改
+    }
+    this.queryParam.keyWords = this.passData.queryText
+    this.getYiBaoDatas()
     this.getCategoryListOut()
   },
   methods: {
@@ -262,15 +270,31 @@ export default {
         })
     },
 
-    getHealthInsuranceCategoryListOut() {
-      getHealthInsuranceCategoryList()
+    // getHealthInsuranceCategoryListOut() {
+    //   getHealthInsuranceCategoryList()
+    //     .then((res) => {
+    //       if (res.code == 0 && res.success) {
+    //         this.yibaoDatas = res.data
+    //         console.log('dosageDatas-------', this.dosageDatas);
+    //       }
+    //     })
+    // },
+
+    /**
+ * 查询医保类型
+ */
+    getYiBaoDatas() {//查字典
+      getDictData('$BV$HIS$MEDICINE_HEALTH_INSURANCE')
         .then((res) => {
-          if (res.code == 0 && res.success) {
+          if (res.code == 0 && res.data.length > 0) {
             this.yibaoDatas = res.data
-            console.log('dosageDatas-------', this.dosageDatas);
           }
         })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
     },
+
     getCategoryListOut() {
       let param = {
         // id: 0,
@@ -346,8 +370,27 @@ export default {
       this.handleOk()
     },
 
-    goDetail() {
-      this.$router.push({ path: './medicDetail' })
+    goDetail(record) {
+      //都倾向于异步跟新  发bus异步消息到原修改页面并关闭此页面
+      if (this.passData.jumpType == 'add_sku') {//新增
+        this.$router.push({
+          path: './medicNew',
+          query: {
+            dataStr: JSON.stringify(record),
+          },
+        })
+      } else if (this.passData.jumpType == 'edit_sku') {//修改
+        this.$set(record, 'editId', this.passData.medicId)//修改需要传medicId进来
+        //TODO 在这里直接打开新的修改页面，或者传参到原来的修改页面，或者发bus异步消息到原修改页面并关闭此页面
+        this.$router.push({
+          path: './medicDetail',
+          query: {
+            // queryText: queryText,
+            dataStr: JSON.stringify(record),
+          },
+        })
+      }
+
     },
 
     handleOk() {
