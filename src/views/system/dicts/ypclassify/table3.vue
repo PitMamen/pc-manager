@@ -29,6 +29,7 @@
       :alert="true"
       :showPagination="false"
       :showSizeChanger="false"
+      :defaultExpandAllRows="true"
       :rowKey="(record) => record.id"
     >
       <span slot="value" slot-scope="text">
@@ -179,8 +180,7 @@ button {
 </style>
 <style lang="less" scoped>
 .table-page-search-wrapper {
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e8e8e8;
+  padding: 10px 0;
   .action-row {
     display: inline-block;
     vertical-align: middle;
