@@ -98,3 +98,14 @@ export function list1 (parameter) {
     data: parameter
   })
 }
+
+/**
+ * 删除
+ */
+ export function deletes (id) {
+  return axios({
+    url: '/info-api/sysPharmacologyType/deleteById/' + id,
+    method: 'get'
+  })
+}
+
