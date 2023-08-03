@@ -137,6 +137,7 @@ export default {
         return
       }
       this.confirmLoading = true
+      this.cornList = []
       corn({
         corn: this.formData.corn
       }).then(res => {
