@@ -48,7 +48,7 @@
           <a-popconfirm
             title="确定删除吗？"
             placement="topRight"
-            @confirm="() => update(record)"
+            @confirm="() => deletes(record)"
           >
             <a>删除</a>
           </a-popconfirm>
@@ -123,7 +123,7 @@ export default {
    */
   created() {},
   methods: {
-    update(item) {
+    deletes(item) {
       deletes(item.id).then((res) => {
         if (res.code === 0) {
           this.$message.success(`删除成功!`)
