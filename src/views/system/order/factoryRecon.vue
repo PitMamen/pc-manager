@@ -193,7 +193,7 @@ export default {
         },
         {
           title: '结算金额',
-          dataIndex: 'alipayTotal',
+          dataIndex: 'realMoney',
           align: 'center',
         },
         {
@@ -305,10 +305,8 @@ export default {
     qryFactoryListOut() {
       qryFactoryList({ factoryType: 4 })
         .then((res) => {
-          debugger
           if (res.code == 0 && res.data.rows.length > 0) {
             this.factoryListData = res.data.rows
-            debugger
             this.queryParams.factoryId = this.factoryListData[0].id
             this.handleOk()
           }
@@ -382,7 +380,6 @@ export default {
     },
 
     downloadfile(res) {
-      debugger
       var blob = new Blob([res.data], { type: 'application/msexcel; charset=UTF-8' })
       var contentDisposition = res.headers['content-disposition']
       var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
@@ -437,10 +434,9 @@ export default {
     },
 
     handleOk() {
-      debugger
       this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
       // this.getTabOut()
-      this.$refs.table.refresh()
+      this.$refs.table.refresh(true)
     },
   },
 }

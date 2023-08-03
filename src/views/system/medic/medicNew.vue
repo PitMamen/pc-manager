@@ -577,6 +577,14 @@ export default {
       editor: {},
     }
   },
+  // watch: {
+  //   $route(to, from) {//TODO watch不回调需要找原因
+  //     console.log('watch****************medicDetail Be', to, from)
+  //     if (to.path.indexOf('medicNew') > -1) {
+  //       this.initData()
+  //     }
+  //   },
+  // },
 
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
@@ -598,11 +606,11 @@ export default {
     this.getDefaultFreqDatas()
   },
   mounted() {
-    this.$bus.$on('medicNewEvent', (record) => {
-      console.log('medicNewEvent', JSON.stringify(record))
-      //TODO 填充药品数据
-      this.inputData(record)
-    })
+    // this.$bus.$on('medicNewEvent', (record) => {
+    //   console.log('medicNewEvent', JSON.stringify(record))
+    //   //TODO 填充药品数据
+    //   this.inputData(record)
+    // })
     this.$nextTick(() => {
       this.initEditor()
     })
@@ -617,6 +625,92 @@ export default {
   //       }
   // },
   methods: {
+
+    clearData() {
+      this.medicData = {
+        //******基本信息模块字段
+        genericName: "",//药品名称
+        genericAcronym: "",//药品名称检索码
+        manufacturerId: undefined,//生产厂商id(接口获取)
+        manufacturerName: "",//生产厂商
+
+        tradeName: "",//商品名称
+        tradeAcronym: "",//商品名称检索码
+        drugTypeDesc: "",//药品类型
+        drugTypeId: undefined,//药品类型id(字典表中，必须是整型)
+
+        dosageFormDesc: "",//药品剂型
+        dosageFormId: undefined,//药品剂型id(接口)
+
+        treatTypeDesc: "",//治疗类型
+        treatTypeId: undefined,//治疗类型id(接口)
+
+        healthInsuranceCategory: "",//医保类型
+        healthInsuranceCategoryId: undefined,//医保类型(字典表中)
+
+        pharmacologyCategory: "",//药理分类
+        pharmacologyCategoryId: undefined,//药理分类id(接口)
+        healthInsuranceCoding: "",//医保编码
+        barCode: "",//商品条形码
+
+        approvalNumber: "",//批准文号
+        supervisionCode: "",//监管编码
+        code: "",//药品代码   又叫 HIS编码  药品编码
+
+        // id: 0,//主键ID，修改时传
+
+
+        //******基本信息模块字段
+
+        //******规格计费模块字段
+        contentCoefficient: undefined,//含量系数
+
+        dosUom: "",//剂量单位
+        dosUomId: undefined,//剂量单位id(接口)
+
+        minPkgNum: "",//包装数量
+
+        baseUnitId: undefined,//基本单位id(字典表中)
+        baseUnitName: "",//基本单位
+
+        packingUnit: "",//包装单位
+        packingUnitId: undefined,//接口（表sys_dose_unit）
+
+        specDesc: "",//规格描述
+        retailPrice: "",//参考价格
+
+        expenseDesc: '',//计费方式
+        expenseId: undefined,//计费方式id(字典表中)
+
+        //******规格计费模块字段
+
+
+        //******处方开具模块字段
+        ethicalsSign: "2",//处方药品：1是 2否
+        valuableSign: "2",//贵重药品：1是 2否
+        drugSign: "2",//剧毒药品：1是 2否
+
+        psychotropicDesc: "",//精神药品
+        psychotropicId: undefined,//精神药品id(字典表中)
+        defDosage: "",//默认剂量
+
+        stupefacientDesc: "",//麻醉药品
+        stupefacientId: undefined,//麻醉药品id(字典表中)
+        defDirectionId: undefined,//默认用法id(接口)
+        defDirectionName: "",//默认用法
+
+        antibacterialDesc: "",//抗菌药品
+        antibacterialId: undefined,//抗菌药品id(字典表中)
+        defFreqId: undefined,//默认频次id(接口)
+        defFreqName: "",//默认频次
+        //******处方开具模块字段
+
+        //******使用说明书模块字段
+        note: "",//使用说明
+        //******使用说明书模块字段
+      }
+    },
+
     goChoose() {
       let queryText = ''
       if (this.medicData.code) {
@@ -1472,6 +1566,7 @@ export default {
           if (res.code == 0) {
             this.$message.success('保存成功')
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+            this.clearData()
             this.$router.go(-1)
           }
         })
