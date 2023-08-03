@@ -67,7 +67,7 @@
               @select="onSelectDosage" @search="handleSearchDosage" style="width: 210px; height: 28px">
               <template slot="dataSource">
                 <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
-                  :value="item.code + ''">{{
+                  :value="item.id + ''">{{
                     item.value
                   }}</a-select-option>
               </template>
@@ -816,7 +816,7 @@ export default {
       console.log('onSelectType drugTypeDesc', getOne.value)
     },
     onSelectDosage(dosageFormId) {
-      let getOne = this.dosageDatas.find((item) => item.code == dosageFormId)
+      let getOne = this.dosageDatas.find((item) => item.id == dosageFormId)
       this.medicData.dosageFormDesc = getOne.value
       console.log('onSelectDosage dosageFormId', dosageFormId)
       console.log('onSelectDosage dosageFormDesc', getOne.value)

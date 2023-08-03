@@ -67,7 +67,7 @@
               @select="onSelectDosage" @search="handleSearchDosage" style="width: 210px; height: 28px">
               <template slot="dataSource">
                 <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
-                  :value="item.code + ''">{{
+                  :value="item.id + ''">{{
                     item.value
                   }}</a-select-option>
               </template>
@@ -718,7 +718,7 @@ export default {
         this.medicData.dosageFormId = record.dosageFormId
         this.medicData.dosageFormDesc = record.dosageFormDesc
         this.manuDadosageDatastas = []
-        this.dosageDatas.push({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+        this.dosageDatas.push({ id: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
       }
 
       //医保类型
@@ -770,7 +770,7 @@ export default {
             //组装药品剂型
             if (tempMedicData.dosageFormId && tempMedicData.dosageFormDesc) {
               this.dosageDatas = []
-              this.dosageDatas.push({ code: tempMedicData.dosageFormId + '', value: tempMedicData.dosageFormDesc })
+              this.dosageDatas.push({ id: tempMedicData.dosageFormId + '', value: tempMedicData.dosageFormDesc })
               tempMedicData.dosageFormId = tempMedicData.dosageFormId + ''
             }
 

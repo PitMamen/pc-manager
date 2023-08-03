@@ -175,7 +175,6 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        debugger
         console.log('ddd',parameter)
         return medicinePage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
