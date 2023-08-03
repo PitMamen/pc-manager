@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { list3 as list, update3 as update } from '@/api/modular/system/ypclassify'
+import { list3 as list, deletes } from '@/api/modular/system/ypclassify'
 import { STable, Ellipsis } from '@/components'
 import addForm from './addForm3'
 import editForm from './editForm3'
@@ -124,10 +124,7 @@ export default {
   created() {},
   methods: {
     update(item) {
-      update({
-        id: item.id,
-        status: 2
-      }).then((res) => {
+      deletes(item.id).then((res) => {
         if (res.code === 0) {
           this.$message.success(`删除成功!`)
           this.handleOk()
