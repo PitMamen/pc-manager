@@ -80,7 +80,7 @@ export default {
   methods: {
     // 初始化方法
     edit(item) {
-      this.formData = item
+      this.formData = JSON.parse(JSON.stringify(item))
       this.visible = true
     },
     onChange(event) {
