@@ -1218,7 +1218,7 @@ export default {
 <style lang="less" scoped>
 .ant-select-tree-dropdown {
   max-height: 40vh !important;
-  top: 420px !important;
+  // top: 420px !important;
 }
 </style>
 
