@@ -3,8 +3,22 @@
     <div class="table-title">
       <div class="name">药理分类</div>
     </div>
-    <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addForm.add()">新增</a-button>
+    <div class="table-page-search-wrapper">
+      <div class="search-row">
+        <span class="name">关键字:</span>
+        <a-input
+          v-model="queryParam.value"
+          placeholder="请输入药理分类名称"
+          style="width: 140px"
+          allow-clear
+        />
+      </div>
+      <div class="action-row">
+        <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+        </span>
+      </div>
     </div>
     <s-table
       ref="table"
@@ -13,23 +27,32 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
+      :showPagination="false"
       :showSizeChanger="false"
+      :defaultExpandAllRows="true"
       :rowKey="(record) => record.id"
     >
       <span slot="value" slot-scope="text">
         <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
       </span>
-      <span slot="status" slot-scope="text, record">
-        <a-popconfirm
-          placement="topRight"
-          :title="record.status === 0 ? '确认关闭？' : '确认开启？'"
-          @confirm="() => update(record)"
-        >
-          <a-switch size="small" :checked="record.status === 0" />
-        </a-popconfirm>
-      </span>
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.editForm.edit(record)"><a-icon type="edit" style="margin-right: 0" />修改</a>
+        <template v-if="record.level < 3">
+          <a @click="$refs.addForm.add(record)">新增</a>
+        </template>
+        <template v-if="record.level !== 0">
+          <a-divider type="vertical" v-if="record.level < 3" />
+          <a @click="$refs.editForm.edit(record)">编辑</a>
+        </template>
+        <template v-if="record.level !== 0">
+          <a-divider type="vertical" />
+          <a-popconfirm
+            title="确定删除吗？"
+            placement="topRight"
+            @confirm="() => deletes(record)"
+          >
+            <a>删除</a>
+          </a-popconfirm>
+        </template>
       </span>
     </s-table>
     <add-form ref="addForm" @ok="handleOk" />
@@ -38,7 +61,7 @@
 </template>
 
 <script>
-import { list3 as list, update3 as update } from '@/api/modular/system/ypclassify'
+import { list3 as list, deletes } from '@/api/modular/system/ypclassify'
 import { STable, Ellipsis } from '@/components'
 import addForm from './addForm3'
 import editForm from './editForm3'
@@ -64,14 +87,8 @@ export default {
           scopedSlots: { customRender: 'value' }
         },
         {
-          title: '状态',
-          width: '60px',
-          dataIndex: 'status',
-          scopedSlots: { customRender: 'status' }
-        },
-        {
           title: '操作',
-          width: '80px',
+          width: '140px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' }
         }
@@ -80,10 +97,18 @@ export default {
       loadData: (parameter) => {
         return list(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-            if (res.data && res.data.records) {
-              res.data.rows = res.data.records
+            const rows = [
+              {
+                id: 0,
+                value: '全部',
+                children: res.data || []
+              }
+            ]
+            this.recursiveGene(rows, { level: -1 })
+            return {
+              rows,
+              total: 1
             }
-            return res.data
           } else {
             this.$message.error(res.message)
           }
@@ -98,18 +123,24 @@ export default {
    */
   created() {},
   methods: {
-    update(item) {
-      update({
-        id: item.id,
-        status: item.status === 0 ? 1 : 0,
-      }).then((res) => {
+    deletes(item) {
+      deletes(item.id).then((res) => {
         if (res.code === 0) {
-          this.$message.success(`${item.status === 0 ? '关闭' : '开启'}成功!`)
+          this.$message.success(`删除成功!`)
           this.handleOk()
         } else {
-          this.$message.error(`${item.status === 0 ? '关闭' : '开启'}失败：` + res.message)
+          this.$message.error(`删除失败：` + res.message)
         }
       })
+    },
+    recursiveGene(list, pitem) {
+      if (list && list.length>0) {
+        list.forEach(item => {
+          item.pvalue = pitem.value
+          item.level = pitem.level + 1
+          this.recursiveGene(item.children, item)
+        })
+      }
     },
     refresh(flush, params) {
       this.queryParam = { ...this.queryParam, ...params }
@@ -120,6 +151,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.table.refresh(flush)
       })
+    },
+    reset() {
+      this.queryParam = {}
+      this.$refs.table.refresh(true)
     },
     toggleAdvanced() {
       this.advanced = !this.advanced
@@ -142,8 +177,7 @@ button {
 </style>
 <style lang="less" scoped>
 .table-page-search-wrapper {
-  padding-bottom: 20px;
-  border-bottom: 1px solid #e8e8e8;
+  padding: 10px 0;
   .action-row {
     display: inline-block;
     vertical-align: middle;
@@ -168,6 +202,9 @@ button {
   border: 1px solid #E6E6E6;
   /deep/ .ant-card-body {
     padding: 5px !important;
+  }
+  /deep/ .ant-table-pagination {
+    display: none;
   }
   .table-title {
     padding-bottom: 7px;

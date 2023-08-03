@@ -80,11 +80,22 @@
         </div>
         <div class="div-cell">
           <div class="div-cell-name">治疗类型：</div>
-          <div class="div-cell-value"> <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
+          <div class="div-cell-value">
+            <!-- <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
               placeholder="请选择" allow-clear style="width: 210px; height: 28px">
               <a-select-option v-for="item in treatTypeDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.treatTypeId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectTreatType" @search="handleSearchTreat" style="width: 210px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in treatTypeDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
         <div class="div-cell">
@@ -103,13 +114,21 @@
         <div class="div-cell">
           <div class="div-cell-name">药理分类：</div>
           <div class="div-cell-value">
-            <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 210px; height: 28px">
-              <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-            </a-select> -->
-            <a-tree-select v-model="medicData.pharmacologyCategoryId" @select="onSeletTree"
+
+            <!-- <a-tree-select v-model="medicData.pharmacologyCategoryId" @select="onSeletTree"
               style="width: 210px; height: 28px" :tree-data="yaoliTree" placeholder="请选择" allow-clear
               tree-default-expand-all>
-            </a-tree-select>
+            </a-tree-select> -->
+
+            <a-auto-complete v-model="medicData.pharmacologyCategoryId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSeletTreeYaoli" @search="handleSearchYaoli" style="width: 210px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in yaoliDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
         <div class="div-cell">
@@ -139,18 +158,13 @@
           </div>
         </div>
         <div class="div-cell">
-          <!-- <div style="width: 20px;"></div>
-          <a-input v-model="medicData.keyWord" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
-            style="width: 270px" /> -->
 
           <div class="div-cell-name">监管编码：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
+          <div class="div-cell-value temp">
+            <!-- <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配" -->
+            <a-input v-model="medicData.supervisionCode" @click="goChoose" allow-clear placeholder="未匹配药品，请点击匹配"
               style="width: 210px" />
           </div>
-          <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"><a-input v-model="medicData.keyWord" allow-clear placeholder="请输入检索码"
-              style="width: 210px" /></div> -->
         </div>
 
       </div>
@@ -172,15 +186,25 @@
         <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
           <div><span style="color: #F90505;">*</span>剂量单位</div>
           <div style="margin-top: 10px;">
-            <a-select v-model="medicData.dosUomId" @select="onSelectJi" placeholder="请选择" allow-clear
+            <!-- <a-select v-model="medicData.dosUomId" @select="onSelectJi" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in unitJiDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.dosUomId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectJi" @search="handleSearchJi" style="width: 110px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in unitJiDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
-        <div style="margin-top: 30px;margin-left: 10px;">*</div>
+        <div style="margin-top: 30px;margin-left: 20px;">*</div>
 
         <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
           <div><span style="color: #F90505;">*</span>包装数量</div>
@@ -193,24 +217,44 @@
         <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
           <div><span style="color: #F90505;">*</span>基本单位</div>
           <div style="margin-top: 10px;">
-            <a-select v-model="medicData.baseUnitId" @select="onSelectBase" placeholder="请选择" allow-clear
+            <!-- <a-select v-model="medicData.baseUnitId" @select="onSelectBase" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in baseUnitDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.baseUnitId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectBase" @search="handleSearchBase" style="width: 110px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in baseUnitDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
-        <div style="margin-top: 30px;margin-left: 10px;">/</div>
+        <div style="margin-top: 30px;margin-left: 20px;">/</div>
 
         <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
           <div><span style="color: #F90505;">*</span>包装单位</div>
           <div style="margin-top: 10px;">
-            <a-select v-model="medicData.packingUnitId" @select="onSelectBao" placeholder="请选择" allow-clear
+            <!-- <a-select v-model="medicData.packingUnitId" @select="onSelectBao" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in unitBaoDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.packingUnitId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectBao" @search="handleSearchBao" style="width: 110px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in unitBaoDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
@@ -371,24 +415,27 @@
       <a-button type="primary" @click="submitData()">保存</a-button>
       <a-button style="margin-left: 10px" @click="cancel()">返回</a-button>
     </div>
+    <chooseMedic ref="chooseMedic" @choose="handleChoose" />
   </a-card>
 </template>
 
 <script>
 import {
   medicineDetail, qryFactoryList, getDictData, getUseList, getFreqList,
-  getDosageList, getUnitList, getCategoryList, addMedicineSku, getTreatTypeList
+  getDosageList, getUnitList, getCategoryList, getMedicCategoryList, addMedicineSku, getTreatTypeList
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
+import chooseMedic from './chooseMedic'
 
 import E from 'wangeditor'
 export default {
   components: {
     STable,
     Ellipsis,
+    chooseMedic,
   },
   data() {
     return {
@@ -446,7 +493,7 @@ export default {
 
         approvalNumber: "",//批准文号
         supervisionCode: "",//监管编码
-        code: "",//药品代码   又叫 HIS编码  药品编码?
+        code: "",//药品代码   又叫 HIS编码  药品编码
 
         // id: 0,//主键ID，修改时传
 
@@ -502,6 +549,7 @@ export default {
       },
       manuDatas: [],
       yaoliTree: [],
+      yaoliDatas: [],
       typeDatas: [],
       dosageDatas: [],
       treatTypeDatas: [],
@@ -529,18 +577,11 @@ export default {
       editor: {},
     }
   },
-
   // watch: {
   //   $route(to, from) {//TODO watch不回调需要找原因
-  //     console.log('watch-------------------medicNew Be', to, from)
+  //     console.log('watch****************medicDetail Be', to, from)
   //     if (to.path.indexOf('medicNew') > -1) {
-  //       console.log('watch-------------------medicNew', to, from)
-  //       if (this.$route.query.id) {//修改
-  //         // this.medicId = this.$route.query.id
-  //         // this.initData()
-  //       } else {//新增
-
-  //       }
+  //       this.initData()
   //     }
   //   },
   // },
@@ -550,14 +591,13 @@ export default {
    */
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    this.initData()
     this.getMedicTypes()
-    this.getTreatTypes()
+    // this.getTreatTypes()
     this.getYiBaoDatas()
-    this.getCategoryListOut()
-    this.getBaseUnitDatas()
+    // this.getCategoryListOut()
+    // this.getBaseUnitDatas()
     this.getExpenseDatas()
-    this.getUnitDatas()
+    // this.getUnitDatas()
 
     this.getSpiritualDatas()
     this.getAnesthesiaDatas()
@@ -566,11 +606,11 @@ export default {
     this.getDefaultFreqDatas()
   },
   mounted() {
-    this.$bus.$on('medicNewEvent', (record) => {
-      console.log('medicNewEvent', JSON.stringify(record))
-      //TODO 填充药品数据
-      this.inputData(record)
-    })
+    // this.$bus.$on('medicNewEvent', (record) => {
+    //   console.log('medicNewEvent', JSON.stringify(record))
+    //   //TODO 填充药品数据
+    //   this.inputData(record)
+    // })
     this.$nextTick(() => {
       this.initEditor()
     })
@@ -585,27 +625,181 @@ export default {
   //       }
   // },
   methods: {
-    initData() {
-      // if (this.$route.query.id) {//修改
-      //   this.medicId = this.$route.query.id
-      //   this.getDetaiData()
-      // } else {//新增
 
+    clearData() {
+      this.medicData = {
+        //******基本信息模块字段
+        genericName: "",//药品名称
+        genericAcronym: "",//药品名称检索码
+        manufacturerId: undefined,//生产厂商id(接口获取)
+        manufacturerName: "",//生产厂商
+
+        tradeName: "",//商品名称
+        tradeAcronym: "",//商品名称检索码
+        drugTypeDesc: "",//药品类型
+        drugTypeId: undefined,//药品类型id(字典表中，必须是整型)
+
+        dosageFormDesc: "",//药品剂型
+        dosageFormId: undefined,//药品剂型id(接口)
+
+        treatTypeDesc: "",//治疗类型
+        treatTypeId: undefined,//治疗类型id(接口)
+
+        healthInsuranceCategory: "",//医保类型
+        healthInsuranceCategoryId: undefined,//医保类型(字典表中)
+
+        pharmacologyCategory: "",//药理分类
+        pharmacologyCategoryId: undefined,//药理分类id(接口)
+        healthInsuranceCoding: "",//医保编码
+        barCode: "",//商品条形码
+
+        approvalNumber: "",//批准文号
+        supervisionCode: "",//监管编码
+        code: "",//药品代码   又叫 HIS编码  药品编码
+
+        // id: 0,//主键ID，修改时传
+
+
+        //******基本信息模块字段
+
+        //******规格计费模块字段
+        contentCoefficient: undefined,//含量系数
+
+        dosUom: "",//剂量单位
+        dosUomId: undefined,//剂量单位id(接口)
+
+        minPkgNum: "",//包装数量
+
+        baseUnitId: undefined,//基本单位id(字典表中)
+        baseUnitName: "",//基本单位
+
+        packingUnit: "",//包装单位
+        packingUnitId: undefined,//接口（表sys_dose_unit）
+
+        specDesc: "",//规格描述
+        retailPrice: "",//参考价格
+
+        expenseDesc: '',//计费方式
+        expenseId: undefined,//计费方式id(字典表中)
+
+        //******规格计费模块字段
+
+
+        //******处方开具模块字段
+        ethicalsSign: "2",//处方药品：1是 2否
+        valuableSign: "2",//贵重药品：1是 2否
+        drugSign: "2",//剧毒药品：1是 2否
+
+        psychotropicDesc: "",//精神药品
+        psychotropicId: undefined,//精神药品id(字典表中)
+        defDosage: "",//默认剂量
+
+        stupefacientDesc: "",//麻醉药品
+        stupefacientId: undefined,//麻醉药品id(字典表中)
+        defDirectionId: undefined,//默认用法id(接口)
+        defDirectionName: "",//默认用法
+
+        antibacterialDesc: "",//抗菌药品
+        antibacterialId: undefined,//抗菌药品id(字典表中)
+        defFreqId: undefined,//默认频次id(接口)
+        defFreqName: "",//默认频次
+        //******处方开具模块字段
+
+        //******使用说明书模块字段
+        note: "",//使用说明
+        //******使用说明书模块字段
+      }
+    },
+
+    goChoose() {
+      let queryText = ''
+      if (this.medicData.code) {
+        queryText = this.medicData.code
+      } else if (this.medicData.genericName) {
+        queryText = this.medicData.genericName
+      } else if (this.medicData.tradeName) {
+        queryText = this.medicData.tradeName
+      } else if (this.medicData.approvalNumber) {
+        queryText = this.medicData.approvalNumber
+      }
+
+      let name = undefined
+      if (this.medicData.genericName) {
+        name = this.medicData.genericName
+      }
+
+      this.$refs.chooseMedic.choose(queryText, name)
+    },
+
+    handleChoose(record) {
+      console.log('handleChoose', JSON.stringify(record))
+      //TODO 填充药品数据
+      this.inputData(record)
+    },
+
+    /**
+     * 填充数据
+     */
+    inputData(record) {
+      //药品名称
+      if (record.productName) {
+        this.medicData.genericName = record.productName
+      }
+
+      //两个检索码都不用填充
+
+      //生产厂商
+      if (record.manufacturerCode && record.manufacturerName) {
+        this.medicData.manufacturerId = record.manufacturerCode
+        this.medicData.manufacturerName = record.manufacturerName
+        this.manuDatas = []
+        this.manuDatas.push({ id: this.medicData.manufacturerId + '', factoryName: this.medicData.manufacturerName })
+      }
+
+      // 商品名称
+      if (record.productName) {
+        this.medicData.tradeName = record.productName
+      }
+
+      // 药品类型
+      if (record.medicineCategoryCode) {
+        this.medicData.drugTypeId = record.medicineCategoryCode
+      }
+
+      //药品剂型
+      if (record.dosageFormId && record.dosageFormDesc) {
+        this.medicData.dosageFormId = record.dosageFormId
+        this.medicData.dosageFormDesc = record.dosageFormDesc
+        this.manuDadosageDatastas = []
+        this.dosageDatas.push({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+      }
+
+      //医保类型
+      if (record.healthInsuranceCategoryId) {
+        this.medicData.healthInsuranceCategoryId = record.healthInsuranceCategoryId
+      }
+      //药理分类
+      if (record.pharmacologyCategoryId) {
+        this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
+      }
+      //医保编码
+      if (record.healthInsuranceCoding) {
+        this.medicData.healthInsuranceCoding = record.healthInsuranceCoding
+      }
+      //批准文号
+      if (record.approvalNumber) {
+        this.medicData.approvalNumber = record.approvalNumber
+      }
+
+      //HIS编码
+      // if (record.code) {
+      //   this.medicData.code = record.code
       // }
 
-    },
-    inputData(record) {
-      if (record.genericName) {
-        // this.medicData.genericName =record.genericCgenericAcronymcronym
-        this.medicData.genericName = record.genericName
+      //监管编码
+      if (record.code) {
+        this.medicData.supervisionCode = record.code
       }
-      //TODO 药品名称检索码 genericAcronym
-      if (record.manufacturerCode && record.manufacturerName) {
-        this.medicData.genericName = record.genericAcronym
-        this.medicData.genericName = record.genericName
-      }
-
-
     },
 
     onSelectManu(manufacturerId) {
@@ -640,15 +834,22 @@ export default {
       console.log('onSelectYibao healthInsuranceCategory', getOne.value)
     },
 
-    onSeletTree(s, ss, sss) {
-      this.medicData.pharmacologyCategory = ss.title
-      console.log('onSeletTree s', s)
-      console.log('onSeletTree ss', ss)
-      console.log('onSeletTree sss', sss)
+    // onSeletTree(s, ss, sss) {
+    //   this.medicData.pharmacologyCategory = ss.title
+    //   console.log('onSeletTree s', s)
+    //   console.log('onSeletTree ss', ss)
+    //   console.log('onSeletTree sss', sss)
+    // },
+
+    onSeletTreeYaoli(pharmacologyCategoryId) {
+      let getOne = this.yaoliDatas.find((item) => item.id == pharmacologyCategoryId)
+      this.medicData.pharmacologyCategory = getOne.value
+      console.log('onSeletTreeYaoli pharmacologyCategoryId', pharmacologyCategoryId)
+      console.log('onSeletTreeYaoli pharmacologyCategory', getOne.value)
     },
 
     onSelectBase(baseUnitId) {
-      let getOne = this.baseUnitDatas.find((item) => item.code == baseUnitId)
+      let getOne = this.baseUnitDatas.find((item) => item.id == baseUnitId)
       this.medicData.baseUnitName = getOne.value
       console.log('onSelectBase baseUnitId', baseUnitId)
       console.log('onSelectBase treatTypeDesc', getOne.value)
@@ -716,8 +917,16 @@ export default {
      * 公式如下：含量系数含量单位*包装数量基本单位/包装单位
      */
     countSpecDesc() {
-      this.medicData.specDesc = this.medicData.contentCoefficient + this.medicData.dosUom + '*' +
-        this.medicData.minPkgNum + this.medicData.baseUnitName + '/' + this.medicData.packingUnit
+      console.log('gfgggg dosUom', this.medicData.dosUom)
+      console.log('gfgggg minPkgNum', this.medicData.minPkgNum)
+      console.log('gfgggg baseUnitName', this.medicData.baseUnitName)
+      console.log('gfgggg packingUnit', this.medicData.packingUnit)
+
+      // this.medicData.specDesc = this.medicData.contentCoefficient ? this.medicData.contentCoefficient : "" + this.medicData.dosUom + '*' +
+      //   this.medicData.minPkgNum + this.medicData.baseUnitName + '/' + this.medicData.packingUnit
+
+      this.medicData.specDesc = `${this.medicData.contentCoefficient ? this.medicData.contentCoefficient : ""}${this.medicData.dosUom}*${this.medicData.minPkgNum}${this.medicData.baseUnitName}/${this.medicData.packingUnit}`
+      console.log('gfgggg 888888 specDesc', this.medicData.specDesc)
     },
 
     /**
@@ -743,6 +952,7 @@ export default {
 
     handleSearchDosage(name) {
       let param = {
+        status: 0,
         pageNo: 1,
         pageSize: 10,
         value: name
@@ -753,6 +963,99 @@ export default {
             this.dosageDatas = res.data.records
             console.log('dosageDatas-------', this.dosageDatas);
           }
+        })
+    },
+
+    handleSearchYaoli(name) {
+      let param = {
+        // status: 0,
+        // pageNo: 1,
+        // pageSize: 10,
+        value: name
+      }
+      getMedicCategoryList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.yaoliDatas = res.data
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchTreat(name) {
+      let param = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getTreatTypeList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.treatTypeDatas = res.data.records
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchBao(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.unitBaoDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchJi(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.unitJiDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchBase(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.baseUnitDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
         })
     },
 
@@ -788,21 +1091,21 @@ export default {
     /**
      * 查询治疗类型
      */
-    getTreatTypes() {//查字典
-      let param = {
-        pageNo: 1,
-        pageSize: 1000,
-      }
-      getTreatTypeList(param)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.treatTypeDatas = res.data.records
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
-    },
+    // getTreatTypes() {//查字典
+    //   let param = {
+    //     pageNo: 1,
+    //     pageSize: 1000,
+    //   }
+    //   getTreatTypeList(param)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.records.length > 0) {
+    //         this.treatTypeDatas = res.data.records
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
 
     /**
      * 查询医保类型
@@ -818,20 +1121,20 @@ export default {
           // this.confirmLoading = false
         })
     },
-    /**
-     * 查询基本单位列表
-     */
-    getBaseUnitDatas() {//查字典
-      getDictData('$BV$HIS$MEDICINE_BASEUNIT')
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.baseUnitDatas = res.data
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
-    },
+    // /**
+    //  * 查询基本单位列表
+    //  */
+    // getBaseUnitDatas() {//查字典
+    //   getDictData('$BV$HIS$MEDICINE_BASEUNIT')
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         this.baseUnitDatas = res.data
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
     /**
      * 查询计费方式列表
      */
@@ -895,26 +1198,26 @@ export default {
     },
 
 
-    /**
-     * 剂量单位 包装单位  都用这个列表
-     */
-    getUnitDatas() {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10000,
-      }
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.unitJiDatas = res.data.records
-            this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
-    },
+    // /**
+    //  * 剂量单位 包装单位  都用这个列表
+    //  */
+    // getUnitDatas() {
+    //   let params = {
+    //     status: 0,
+    //     pageNo: 1,
+    //     pageSize: 10000,
+    //   }
+    //   getUnitList(params)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.records.length > 0) {
+    //         this.unitJiDatas = res.data.records
+    //         this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
 
     /**
      * 默认用法列表
@@ -957,21 +1260,21 @@ export default {
         })
     },
 
-    getCategoryListOut() {
-      let param = {
-        remark: "",
-      }
-      getCategoryList(param)
-        .then((res) => {
-          if (res.code == 0 && res.success) {
-            this.yaoliTree = res.data
-            console.log('yaoliTree-------111', JSON.stringify(res.data));
-            // this.processTreeData(JSON.parse(JSON.stringify(this.yaoliTree)))
-            this.processTreeData(this.yaoliTree)
-            console.log('yaoliTree-------', JSON.stringify(this.yaoliTree));
-          }
-        })
-    },
+    // getCategoryListOut() {
+    //   let param = {
+    //     remark: "",
+    //   }
+    //   getCategoryList(param)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.success) {
+    //         this.yaoliTree = res.data
+    //         console.log('yaoliTree-------111', JSON.stringify(res.data));
+    //         // this.processTreeData(JSON.parse(JSON.stringify(this.yaoliTree)))
+    //         this.processTreeData(this.yaoliTree)
+    //         console.log('yaoliTree-------', JSON.stringify(this.yaoliTree));
+    //       }
+    //     })
+    // },
 
     processTreeData(array) {
       array.forEach(item => {
@@ -1263,6 +1566,7 @@ export default {
           if (res.code == 0) {
             this.$message.success('保存成功')
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+            this.clearData()
             this.$router.go(-1)
           }
         })
@@ -1317,6 +1621,12 @@ button {
       }
 
       .div-cell-value {}
+
+      .temp {
+        /deep/ .ant-input {
+          color: #409EFF;
+        }
+      }
     }
 
     .div-shu-cell {

@@ -60,6 +60,17 @@
             </a-select>
           </div>
           <div class="div-content">
+            <span class="span-item-name">HIS编码:</span>
+            <a-input
+              v-model="formData.code"
+              placeholder="请输入HIS编码"
+              class="span-item-value"
+              style="display: inline-block"
+              :maxLength="20"
+              allow-clear
+            />
+          </div>
+          <div class="div-content">
             <span class="span-item-name" style="position: relative; left: -5px; white-space: nowrap;">corn表达式:</span>
             <a-input
               v-model="formData.corn"
@@ -109,7 +120,7 @@ export default {
   methods: {
     // 初始化方法
     edit(item) {
-      this.formData = item
+      this.formData = JSON.parse(JSON.stringify(item))
       this.visible = true
       this.getSelects()
     },

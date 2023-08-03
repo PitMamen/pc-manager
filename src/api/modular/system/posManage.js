@@ -4996,6 +4996,14 @@ export function getCategoryList(data) {
     data: data,
   })
 }
+//药理分类下拉列表
+export function getMedicCategoryList(data) {
+  return axios({
+    url: '/info-api/sysPharmacologyType/getLastLv',
+    method: 'post',
+    data: data,
+  })
+}
 
 // 药品剂型下拉列表
 export function getDosageList(data) {
