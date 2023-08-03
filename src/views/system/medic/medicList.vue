@@ -4,8 +4,8 @@
 
       <div class="search-row">
         <span class="name">关键字查询:</span>
-        <a-input @keyup.enter="handleOkRefresh" v-model="queryParam.queryText" allow-clear placeholder="请输入药品通用名/商品名/名称首字母查询"
-          style="width: 270px" />
+        <a-input @keyup.enter="handleOkRefresh" v-model="queryParam.queryText" allow-clear
+          placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -115,11 +115,19 @@ export default {
         queryText: "",//关键字
         status: ''//字典:0启用/1停用
       },
-      // 表头
+
+      /**
+       * 固定列宽省略号可以用ellipsis
+       *    <span slot="name" slot-scope="text">
+              <ellipsis :length="10" tooltip>{{text}}</ellipsis>
+            </span>
+       * 
+       */
       columns: [
         {
           title: '批准文号',
           dataIndex: 'approvalNumber',
+          width: '120px',
           scopedSlots: { customRender: 'approvalNumber' },
         },
         {
@@ -134,11 +142,13 @@ export default {
         },
         {
           title: '药品规格',
+          width: '120px',
           dataIndex: 'specification',
           scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
+          width: '90px',
           dataIndex: 'dosageFormDesc',
           scopedSlots: { customRender: 'dosageFormDesc' },
         },
@@ -146,11 +156,13 @@ export default {
         // drugTypeId
         {
           title: '类型',
+          width: '60px',
           dataIndex: 'drugTypeDesc',
           scopedSlots: { customRender: 'drugTypeDesc' },
         },
         {
           title: '医保类型',
+          width: '90px',
           dataIndex: 'healthInsuranceCategory',
           scopedSlots: { customRender: 'healthInsuranceCategory' },
         },
@@ -161,6 +173,7 @@ export default {
         },
         {
           title: '价格',
+          width: '90px',
           dataIndex: 'unitPrice',
           scopedSlots: { customRender: 'unitPrice' },
         },
@@ -175,7 +188,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        console.log('ddd',parameter)
+        console.log('ddd', parameter)
         return medicinePage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
             var data = {

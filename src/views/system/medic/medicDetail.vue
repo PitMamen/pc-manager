@@ -296,22 +296,28 @@
       <div class="box-title">处方开具</div>
       <div class="box-divider" />
       <div class="div-line" style="margin-bottom: 10px;">
-        <a-checkbox @click="goChufang()" :checked="isChufang" style="margin-left: 20px;" />
-        <span style="margin-left: 10px;color:#409EFF ;">处方药品</span>
+        <div class="div-shu-cell-ori check" @click="goChufang()">
+          <a-checkbox :checked="isChufang" style="margin-left: 20px;" />
+          <span style="margin-left: 10px;color:#409EFF ;">处方药品</span>
+        </div>
 
-        <a-checkbox @click="goExpensive()" :checked="isExpensive" style="margin-left: 20px;" />
-        <span style="margin-left: 10px;color:#409EFF ;">贵重药品</span>
+        <div class="div-shu-cell-ori check" @click="goExpensive()">
+          <a-checkbox :checked="isExpensive" style="margin-left: 20px;" />
+          <span style="margin-left: 10px;color:#409EFF ;">贵重药品</span>
+        </div>
 
-        <a-checkbox @click="goPoisonous()" :checked="isPoisonous" style="margin-left: 20px;" />
-        <span style="margin-left: 10px;color:#409EFF ;">剧毒药品</span>
+        <div class="div-shu-cell-ori check" @click="goPoisonous()">
+          <a-checkbox :checked="isPoisonous" style="margin-left: 20px;" />
+          <span style="margin-left: 10px;color:#409EFF ;">剧毒药品</span>
+        </div>
       </div>
 
       <div class="div-line" style="margin-bottom: 10px;margin-top: 10px;">
 
 
         <div class="div-shu-cell" style="width: 100px;">
-          <div class="div-shu-cell-ori">
-            <a-checkbox @click="goSpiritual()" :checked="isSpiritual" style="margin-left: 20px;" />
+          <div class="div-shu-cell-ori check" @click="goSpiritual()">
+            <a-checkbox :checked="isSpiritual" style="margin-left: 20px;" />
             <span style="margin-left: 10px;color:#409EFF ;">精神药品</span>
           </div>
 
@@ -325,21 +331,21 @@
             <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
               <a-select-option v-for="item in typeSpiritualDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
             </a-select> -->
-            <a-select v-model="medicData.psychotropicId" placeholder="请选择" @select="onSelectSpiritual" allow-clear
-              style="width: 300px; height: 28px">
+            <a-select :disabled="!isSpiritual" v-model="medicData.psychotropicId" placeholder="请选择"
+              @select="onSelectSpiritual" allow-clear style="width: 300px; height: 28px">
               <a-select-option v-for="item in typeSpiritualDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
             </a-select>
           </div>
 
           <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <a-input v-model="medicData.defDosage" allow-clear placeholder="请输入" />
+            <a-input :disabled="!isSpiritual" v-model="medicData.defDosage" allow-clear placeholder="请输入" />
           </div>
         </div>
 
         <div class="div-shu-cell" style="width: 100px;">
-          <div class="div-shu-cell-ori">
-            <a-checkbox @click="goAnesthesia()" :checked="isAnesthesia" style="margin-left: 20px;" />
+          <div class="div-shu-cell-ori check" @click="goAnesthesia()">
+            <a-checkbox :checked="isAnesthesia" style="margin-left: 20px;" />
             <span style="margin-left: 10px;color:#409EFF ;">麻醉药品</span>
           </div>
 
@@ -351,8 +357,8 @@
         <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
           <div class="div-shu-cell-ori">
 
-            <a-select v-model="medicData.stupefacientId" placeholder="请选择" @select="onSelectAnesthesia" allow-clear
-              style="width: 300px; height: 28px">
+            <a-select :disabled="!isAnesthesia" v-model="medicData.stupefacientId" placeholder="请选择"
+              @select="onSelectAnesthesia" allow-clear style="width: 300px; height: 28px">
               <a-select-option v-for="item in typeAnesthesiaDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
             </a-select>
@@ -366,8 +372,9 @@
             </a-select> -->
 
             <!-- @select="onSelectDosage" @search="handleSearchDosage" style="width: 300px; height: 28px"> -->
-            <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectUse" @search="getDefaultUseDatas" style="width: 300px; height: 28px">
+            <a-auto-complete :disabled="!isAnesthesia" v-model="medicData.defDirectionId" placeholder="请输入选择"
+              option-label-prop="title" @select="onSelectUse" @search="getDefaultUseDatas"
+              style="width: 300px; height: 28px">
               <template slot="dataSource">
                 <a-select-option v-for="(item, index) in defaultUseDatas" :title="item.value" :key="index + ''"
                   :value="item.id + ''">{{
@@ -380,8 +387,8 @@
 
 
         <div class="div-shu-cell" style="width: 100px;">
-          <div class="div-shu-cell-ori">
-            <a-checkbox @click="goBacteria()" :checked="isBacteria" style="margin-left: 20px;" />
+          <div class="div-shu-cell-ori check" @click="goBacteria()">
+            <a-checkbox :checked="isBacteria" style="margin-left: 20px;" />
             <span style="margin-left: 10px;color:#409EFF ;">抗菌药品</span>
           </div>
 
@@ -395,8 +402,8 @@
             <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
               <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
             </a-select> -->
-            <a-select v-model="medicData.antibacterialId" placeholder="请选择" @select="onSelectBacteria" allow-clear
-              style="width: 300px; height: 28px">
+            <a-select :disabled="!isBacteria" v-model="medicData.antibacterialId" placeholder="请选择"
+              @select="onSelectBacteria" allow-clear style="width: 300px; height: 28px">
               <a-select-option v-for="item in typeBacteriaDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
             </a-select>
@@ -409,8 +416,9 @@
               }}</a-select-option>
             </a-select> -->
 
-            <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectFreq" @search="getDefaultFreqDatas" style="width: 300px; height: 28px">
+            <a-auto-complete :disabled="!isBacteria" v-model="medicData.defFreqId" placeholder="请输入选择"
+              option-label-prop="title" @select="onSelectFreq" @search="getDefaultFreqDatas"
+              style="width: 300px; height: 28px">
               <template slot="dataSource">
                 <a-select-option v-for="(item, index) in defaultFreqDatas" :title="item.value" :key="index + ''"
                   :value="item.id + ''">{{
@@ -446,7 +454,7 @@
 <script>
 import {
   medicineDetail, qryFactoryList, getDictData, getUseList, getFreqList,
-  getDosageList, getUnitList, getCategoryList, getMedicCategoryList,addMedicineSku, getTreatTypeList, modifyMedicineSku
+  getDosageList, getUnitList, getCategoryList, getMedicCategoryList, addMedicineSku, getTreatTypeList, modifyMedicineSku
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
@@ -1651,6 +1659,12 @@ button {
         /deep/ .ant-input {
           color: #409EFF;
         }
+      }
+    }
+
+    .check {
+      &:hover {
+        cursor: pointer
       }
     }
 
