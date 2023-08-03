@@ -1,8 +1,10 @@
 <template>
-  <!-- :width="488" -->
+  <!-- :width="488"  :width="1260"  -->
+  <!-- <a-modal title="药品匹配" :footer="null" :visible="visible" centered :confirmLoading="confirmLoading" @ok="handleSubmit" -->
   <a-modal title="药品匹配" :footer="null" :width="1260" :visible="visible" :confirmLoading="confirmLoading"
-    @ok="handleSubmit" @cancel="handleCancel" :maskClosable="false">
-    <a-card :bordered="false">
+    @cancel="handleCancel" :maskClosable="false">
+    <!-- <a-card :bordered="false" style="min-height:100vh"> -->
+    <a-card :bordered="false" style="min-height:500px">
 
       <div class="div-top">
         <div class="div-search">
@@ -97,6 +99,7 @@ export default {
   },
   data() {
     return {
+      bodystyle: { width: '100%' },
       // 查询参数  审核状态 1未审核2已审核3未登记
       visible: false,
       confirmLoading: false,
@@ -404,6 +407,18 @@ export default {
   
   
 <style lang="less" scoped>
+/deep/ .ant-modal-content {
+  width: 100vw !important;
+}
+// /deep/ .ant-modal {
+//   width: 100% !important;
+// }
+</style>
+<style lang="less" scoped>
+/deep/ .ant-modal {
+  width: 100% !important;
+}
+
 .div-top {
   display: flex;
   align-items: center;

@@ -80,11 +80,22 @@
         </div>
         <div class="div-cell">
           <div class="div-cell-name">治疗类型：</div>
-          <div class="div-cell-value"> <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
+          <div class="div-cell-value">
+            <!-- <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
               placeholder="请选择" allow-clear style="width: 210px; height: 28px">
               <a-select-option v-for="item in treatTypeDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.treatTypeId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectTreatType" @search="handleSearchTreat" style="width: 210px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in treatTypeDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
         <div class="div-cell">
@@ -103,13 +114,21 @@
         <div class="div-cell">
           <div class="div-cell-name">药理分类：</div>
           <div class="div-cell-value">
-            <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 210px; height: 28px">
-              <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-            </a-select> -->
-            <a-tree-select v-model="medicData.pharmacologyCategoryId" @select="onSeletTree"
+
+            <!-- <a-tree-select v-model="medicData.pharmacologyCategoryId" @select="onSeletTree"
               style="width: 210px; height: 28px" :tree-data="yaoliTree" placeholder="请选择" allow-clear
               tree-default-expand-all>
-            </a-tree-select>
+            </a-tree-select> -->
+
+            <a-auto-complete v-model="medicData.pharmacologyCategoryId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSeletTreeYaoli" @search="handleSearchYaoli" style="width: 210px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in yaoliDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
         <div class="div-cell">
@@ -167,15 +186,25 @@
         <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
           <div><span style="color: #F90505;">*</span>剂量单位</div>
           <div style="margin-top: 10px;">
-            <a-select v-model="medicData.dosUomId" @select="onSelectJi" placeholder="请选择" allow-clear
+            <!-- <a-select v-model="medicData.dosUomId" @select="onSelectJi" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in unitJiDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.dosUomId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectJi" @search="handleSearchJi" style="width: 110px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in unitJiDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
-        <div style="margin-top: 30px;margin-left: 10px;">*</div>
+        <div style="margin-top: 30px;margin-left: 20px;">*</div>
 
         <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
           <div><span style="color: #F90505;">*</span>包装数量</div>
@@ -188,24 +217,44 @@
         <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
           <div><span style="color: #F90505;">*</span>基本单位</div>
           <div style="margin-top: 10px;">
-            <a-select v-model="medicData.baseUnitId" @select="onSelectBase" placeholder="请选择" allow-clear
+            <!-- <a-select v-model="medicData.baseUnitId" @select="onSelectBase" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in baseUnitDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.baseUnitId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectBase" @search="handleSearchBase" style="width: 110px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in baseUnitDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
-        <div style="margin-top: 30px;margin-left: 10px;">/</div>
+        <div style="margin-top: 30px;margin-left: 20px;">/</div>
 
         <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
           <div><span style="color: #F90505;">*</span>包装单位</div>
           <div style="margin-top: 10px;">
-            <a-select v-model="medicData.packingUnitId" @select="onSelectBao" placeholder="请选择" allow-clear
+            <!-- <a-select v-model="medicData.packingUnitId" @select="onSelectBao" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in unitBaoDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
-            </a-select>
+            </a-select> -->
+
+            <a-auto-complete v-model="medicData.packingUnitId" placeholder="请输入选择" option-label-prop="title"
+              @select="onSelectBao" @search="handleSearchBao" style="width: 110px; height: 28px">
+              <template slot="dataSource">
+                <a-select-option v-for="(item, index) in unitBaoDatas" :title="item.value" :key="index + ''"
+                  :value="item.id + ''">{{
+                    item.value
+                  }}</a-select-option>
+              </template>
+            </a-auto-complete>
           </div>
         </div>
 
@@ -373,7 +422,7 @@
 <script>
 import {
   medicineDetail, qryFactoryList, getDictData, getUseList, getFreqList,
-  getDosageList, getUnitList, getCategoryList, addMedicineSku, getTreatTypeList
+  getDosageList, getUnitList, getCategoryList, getMedicCategoryList, addMedicineSku, getTreatTypeList
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
@@ -500,6 +549,7 @@ export default {
       },
       manuDatas: [],
       yaoliTree: [],
+      yaoliDatas: [],
       typeDatas: [],
       dosageDatas: [],
       treatTypeDatas: [],
@@ -534,12 +584,12 @@ export default {
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     this.getMedicTypes()
-    this.getTreatTypes()
+    // this.getTreatTypes()
     this.getYiBaoDatas()
-    this.getCategoryListOut()
-    this.getBaseUnitDatas()
+    // this.getCategoryListOut()
+    // this.getBaseUnitDatas()
     this.getExpenseDatas()
-    this.getUnitDatas()
+    // this.getUnitDatas()
 
     this.getSpiritualDatas()
     this.getAnesthesiaDatas()
@@ -690,15 +740,22 @@ export default {
       console.log('onSelectYibao healthInsuranceCategory', getOne.value)
     },
 
-    onSeletTree(s, ss, sss) {
-      this.medicData.pharmacologyCategory = ss.title
-      console.log('onSeletTree s', s)
-      console.log('onSeletTree ss', ss)
-      console.log('onSeletTree sss', sss)
+    // onSeletTree(s, ss, sss) {
+    //   this.medicData.pharmacologyCategory = ss.title
+    //   console.log('onSeletTree s', s)
+    //   console.log('onSeletTree ss', ss)
+    //   console.log('onSeletTree sss', sss)
+    // },
+
+    onSeletTreeYaoli(pharmacologyCategoryId) {
+      let getOne = this.yaoliDatas.find((item) => item.id == pharmacologyCategoryId)
+      this.medicData.pharmacologyCategory = getOne.value
+      console.log('onSeletTreeYaoli pharmacologyCategoryId', pharmacologyCategoryId)
+      console.log('onSeletTreeYaoli pharmacologyCategory', getOne.value)
     },
 
     onSelectBase(baseUnitId) {
-      let getOne = this.baseUnitDatas.find((item) => item.code == baseUnitId)
+      let getOne = this.baseUnitDatas.find((item) => item.id == baseUnitId)
       this.medicData.baseUnitName = getOne.value
       console.log('onSelectBase baseUnitId', baseUnitId)
       console.log('onSelectBase treatTypeDesc', getOne.value)
@@ -766,8 +823,16 @@ export default {
      * 公式如下：含量系数含量单位*包装数量基本单位/包装单位
      */
     countSpecDesc() {
-      this.medicData.specDesc = this.medicData.contentCoefficient + this.medicData.dosUom + '*' +
-        this.medicData.minPkgNum + this.medicData.baseUnitName + '/' + this.medicData.packingUnit
+      console.log('gfgggg dosUom', this.medicData.dosUom)
+      console.log('gfgggg minPkgNum', this.medicData.minPkgNum)
+      console.log('gfgggg baseUnitName', this.medicData.baseUnitName)
+      console.log('gfgggg packingUnit', this.medicData.packingUnit)
+
+      // this.medicData.specDesc = this.medicData.contentCoefficient ? this.medicData.contentCoefficient : "" + this.medicData.dosUom + '*' +
+      //   this.medicData.minPkgNum + this.medicData.baseUnitName + '/' + this.medicData.packingUnit
+
+      this.medicData.specDesc = `${this.medicData.contentCoefficient ? this.medicData.contentCoefficient : ""}${this.medicData.dosUom}*${this.medicData.minPkgNum}${this.medicData.baseUnitName}/${this.medicData.packingUnit}`
+      console.log('gfgggg 888888 specDesc', this.medicData.specDesc)
     },
 
     /**
@@ -793,6 +858,7 @@ export default {
 
     handleSearchDosage(name) {
       let param = {
+        status: 0,
         pageNo: 1,
         pageSize: 10,
         value: name
@@ -803,6 +869,99 @@ export default {
             this.dosageDatas = res.data.records
             console.log('dosageDatas-------', this.dosageDatas);
           }
+        })
+    },
+
+    handleSearchYaoli(name) {
+      let param = {
+        // status: 0,
+        // pageNo: 1,
+        // pageSize: 10,
+        value: name
+      }
+      getMedicCategoryList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.yaoliDatas = res.data
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchTreat(name) {
+      let param = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getTreatTypeList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.treatTypeDatas = res.data.records
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchBao(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.unitBaoDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchJi(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.unitJiDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchBase(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.baseUnitDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
         })
     },
 
@@ -838,21 +997,21 @@ export default {
     /**
      * 查询治疗类型
      */
-    getTreatTypes() {//查字典
-      let param = {
-        pageNo: 1,
-        pageSize: 1000,
-      }
-      getTreatTypeList(param)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.treatTypeDatas = res.data.records
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
-    },
+    // getTreatTypes() {//查字典
+    //   let param = {
+    //     pageNo: 1,
+    //     pageSize: 1000,
+    //   }
+    //   getTreatTypeList(param)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.records.length > 0) {
+    //         this.treatTypeDatas = res.data.records
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
 
     /**
      * 查询医保类型
@@ -868,20 +1027,20 @@ export default {
           // this.confirmLoading = false
         })
     },
-    /**
-     * 查询基本单位列表
-     */
-    getBaseUnitDatas() {//查字典
-      getDictData('$BV$HIS$MEDICINE_BASEUNIT')
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.baseUnitDatas = res.data
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
-    },
+    // /**
+    //  * 查询基本单位列表
+    //  */
+    // getBaseUnitDatas() {//查字典
+    //   getDictData('$BV$HIS$MEDICINE_BASEUNIT')
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         this.baseUnitDatas = res.data
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
     /**
      * 查询计费方式列表
      */
@@ -945,26 +1104,26 @@ export default {
     },
 
 
-    /**
-     * 剂量单位 包装单位  都用这个列表
-     */
-    getUnitDatas() {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10000,
-      }
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.unitJiDatas = res.data.records
-            this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        })
-    },
+    // /**
+    //  * 剂量单位 包装单位  都用这个列表
+    //  */
+    // getUnitDatas() {
+    //   let params = {
+    //     status: 0,
+    //     pageNo: 1,
+    //     pageSize: 10000,
+    //   }
+    //   getUnitList(params)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.records.length > 0) {
+    //         this.unitJiDatas = res.data.records
+    //         this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       // this.confirmLoading = false
+    //     })
+    // },
 
     /**
      * 默认用法列表
@@ -1007,21 +1166,21 @@ export default {
         })
     },
 
-    getCategoryListOut() {
-      let param = {
-        remark: "",
-      }
-      getCategoryList(param)
-        .then((res) => {
-          if (res.code == 0 && res.success) {
-            this.yaoliTree = res.data
-            console.log('yaoliTree-------111', JSON.stringify(res.data));
-            // this.processTreeData(JSON.parse(JSON.stringify(this.yaoliTree)))
-            this.processTreeData(this.yaoliTree)
-            console.log('yaoliTree-------', JSON.stringify(this.yaoliTree));
-          }
-        })
-    },
+    // getCategoryListOut() {
+    //   let param = {
+    //     remark: "",
+    //   }
+    //   getCategoryList(param)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.success) {
+    //         this.yaoliTree = res.data
+    //         console.log('yaoliTree-------111', JSON.stringify(res.data));
+    //         // this.processTreeData(JSON.parse(JSON.stringify(this.yaoliTree)))
+    //         this.processTreeData(this.yaoliTree)
+    //         console.log('yaoliTree-------', JSON.stringify(this.yaoliTree));
+    //       }
+    //     })
+    // },
 
     processTreeData(array) {
       array.forEach(item => {
