@@ -815,7 +815,7 @@ export default {
               tempMedicData.baseUnitId = tempMedicData.baseUnitId + ''
             }
 
-            //基本单位
+            //包装单位
             if (tempMedicData.packingUnitId && tempMedicData.packingUnit) {
               this.unitBaoDatas = []
               this.unitBaoDatas.push({ id: tempMedicData.packingUnitId + '', value: tempMedicData.packingUnit })
@@ -1569,30 +1569,30 @@ export default {
           this.$message.error('请选择精神药品类型')
           return
         }
-        if (!tempData.defDosage) {
-          this.$message.error('请输入默认剂量')
-          return
-        }
+        // if (!tempData.defDosage) {
+        //   this.$message.error('请输入默认剂量')
+        //   return
+        // }
       }
       if (this.isAnesthesia) {
         if (!tempData.stupefacientId) {
           this.$message.error('请选择麻醉药品类型')
           return
         }
-        if (!tempData.defDirectionId || !tempData.defDirectionName) {
-          this.$message.error('请输入选择麻醉药品默认用法')
-          return
-        }
+        // if (!tempData.defDirectionId || !tempData.defDirectionName) {
+        //   this.$message.error('请输入选择麻醉药品默认用法')
+        //   return
+        // }
       }
       if (this.isBacteria) {
         if (!tempData.antibacterialId) {
           this.$message.error('请选择抗菌药品类型')
           return
         }
-        if (!tempData.defFreqId || !tempData.defFreqName) {
-          this.$message.error('请输入选择抗菌药品默认频次')
-          return
-        }
+        // if (!tempData.defFreqId || !tempData.defFreqName) {
+        //   this.$message.error('请输入选择抗菌药品默认频次')
+        //   return
+        // }
       }
 
 
