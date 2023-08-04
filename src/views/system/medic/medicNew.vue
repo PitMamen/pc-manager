@@ -334,7 +334,7 @@
             </div>
 
             <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-              <a-input :disabled="!isSpiritual" v-model="medicData.defDosage" allow-clear placeholder="请输入" />
+              <a-input v-model="medicData.defDosage" allow-clear placeholder="请输入" />
             </div>
           </div>
 
@@ -360,7 +360,7 @@
             </div>
 
             <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-              <a-auto-complete :disabled="!isAnesthesia" v-model="medicData.defDirectionId" placeholder="请输入选择"
+              <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择"
                 option-label-prop="title" @select="onSelectUse" @search="getDefaultUseDatas"
                 style="width: 300px; height: 28px">
                 <template slot="dataSource">
@@ -395,7 +395,7 @@
             </div>
 
             <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-              <a-auto-complete :disabled="!isBacteria" v-model="medicData.defFreqId" placeholder="请输入选择"
+              <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择"
                 option-label-prop="title" @select="onSelectFreq" @search="getDefaultFreqDatas"
                 style="width: 300px; height: 28px">
                 <template slot="dataSource">
@@ -947,7 +947,7 @@ export default {
       let param = {
         pageNo: 1,
         pageSize: 10,
-        factoryType: 3,
+        factoryType: 1,
         queryText: name
       }
       qryFactoryList(param)
@@ -1320,7 +1320,7 @@ export default {
       if (!this.isSpiritual) {
         this.medicData.psychotropicId = ''
         this.medicData.psychotropicDesc = ''
-        this.medicData.defDosage = ""
+        // this.medicData.defDosage = ""
       }
     },
     goAnesthesia() {
@@ -1328,8 +1328,8 @@ export default {
       if (!this.isAnesthesia) {
         this.medicData.stupefacientId = ''
         this.medicData.stupefacientDesc = ''
-        this.medicData.defDirectionId = ''
-        this.medicData.defDirectionName = ''
+        // this.medicData.defDirectionId = ''
+        // this.medicData.defDirectionName = ''
 
         // stupefacientDesc: "",//麻醉药品
         // stupefacientId: undefined,//麻醉药品id(字典表中)
@@ -1342,8 +1342,8 @@ export default {
       if (!this.isBacteria) {
         this.medicData.antibacterialId = ''
         this.medicData.antibacterialDesc = ''
-        this.medicData.defFreqId = ''
-        this.medicData.defFreqName = ''
+        // this.medicData.defFreqId = ''
+        // this.medicData.defFreqName = ''
 
         // antibacterialDesc: "",//抗菌药品
         //   antibacterialId: undefined,//抗菌药品id(字典表中)
