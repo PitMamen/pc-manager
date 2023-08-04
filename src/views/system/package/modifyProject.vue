@@ -236,7 +236,7 @@
         this.confirmLoading = false
 
         this.getDictDataForCodeOut()
-        this.qryFactoryListOut()
+       
         this.checkData.projectImg  = record.projectImg
         this.checkData.projectName = record.projectName
         this.checkData.normsModel = record.normsModel
@@ -250,7 +250,7 @@
         this.checkData.sendType =  record.sendType
         this.checkData.systemAddress =  record.systemAddress
         this.checkData.projectDesc =  record.projectDesc
-
+        this.qryFactoryListOut(record.factoryName)
   
        
       },
