@@ -9,7 +9,7 @@
     :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-part">
+      <div class="div-part aaa">
         <div class="recordType">
           <div style="padding: 10px 10px" :class="{ 'checked-btn': currentTab == 'base' }" @click="checketab('base')">
             <a-icon type="home" style="margin-right: 5px"></a-icon><span>基本信息</span>
@@ -128,7 +128,9 @@
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
             <a-tree-select
               v-model="checkData.hospitalCode"
-              style="min-width: 120px"
+              style="min-width: 120px;"
+              dropdownClassName="abc"
+              
               :tree-data="treeData"
               placeholder="请选择"
             >
@@ -1218,12 +1220,12 @@ export default {
 
 
 
-<style scoped>
-.ant-select-tree-dropdown {
-  max-height: 60vh !important;
+<style >
+ .abc.ant-select-tree-dropdown {
+  max-height: 28vh !important;
   top: 635px !important;
 }
-</style>
+</style> 
 
 
 
