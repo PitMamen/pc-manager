@@ -400,7 +400,9 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh(true)
+      if (this.$refs.table) {
+        this.$refs.table.refresh(true)
+      }
     },
 
     handleCancel() {
@@ -416,6 +418,7 @@ export default {
 /deep/ .ant-modal-content {
   width: 100vw !important;
 }
+
 // /deep/ .ant-modal {
 //   width: 100% !important;
 // }

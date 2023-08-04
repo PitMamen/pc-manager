@@ -360,9 +360,8 @@
             </div>
 
             <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-              <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择"
-                option-label-prop="title" @select="onSelectUse" @search="getDefaultUseDatas"
-                style="width: 300px; height: 28px">
+              <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectUse" @search="getDefaultUseDatas" style="width: 300px; height: 28px">
                 <template slot="dataSource">
                   <a-select-option v-for="(item, index) in defaultUseDatas" :title="item.value" :key="index + ''"
                     :value="item.id + ''">{{
@@ -395,9 +394,8 @@
             </div>
 
             <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-              <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择"
-                option-label-prop="title" @select="onSelectFreq" @search="getDefaultFreqDatas"
-                style="width: 300px; height: 28px">
+              <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectFreq" @search="getDefaultFreqDatas" style="width: 300px; height: 28px">
                 <template slot="dataSource">
                   <a-select-option v-for="(item, index) in defaultFreqDatas" :title="item.value" :key="index + ''"
                     :value="item.id + ''">{{
@@ -759,38 +757,78 @@ export default {
       //两个检索码都不用填充
 
       //生产厂商
-      if (record.manufacturerCode && record.manufacturerName) {
-        this.medicData.manufacturerId = record.manufacturerCode
-        this.medicData.manufacturerName = record.manufacturerName
-        this.manuDatas = []
-        this.manuDatas.push({ id: this.medicData.manufacturerId + '', factoryName: this.medicData.manufacturerName })
+      // if (record.manufacturerCode && record.manufacturerName) {
+      //   this.medicData.manufacturerId = record.manufacturerCode
+      //   this.medicData.manufacturerName = record.manufacturerName
+      //   this.manuDatas = []
+      //   this.manuDatas.push({ id: this.medicData.manufacturerId + '', factoryName: this.medicData.manufacturerName })
+      // }
+      if (record.manufacturerName) {
+        this.handleSearchManu2(record.manufacturerName)
       }
+
 
       // 商品名称
       if (record.productName) {
         this.medicData.tradeName = record.productName
       }
 
-      // 药品类型
-      if (record.medicineCategoryCode) {
-        this.medicData.drugTypeId = record.medicineCategoryCode
+      // 药品类型  非输入搜索型，直接循环查找
+      // if (record.medicineCategoryCode) {
+      //   this.medicData.drugTypeId = record.medicineCategoryCode
+      // }
+      if (record.pharmacologyCategory) {
+        let queryStr = ''
+        if (record.pharmacologyCategory == '中药') {
+          queryStr = '中药'
+        } else if (record.pharmacologyCategory == '中成药') {
+          queryStr = '中成药'
+        } else {
+          queryStr = '西药'
+        }
+        let getOne = this.typeDatas.find((item) => item.value == queryStr)
+        this.medicData.drugTypeId = getOne.code
+        this.medicData.drugTypeDesc = getOne.value
       }
 
       //药品剂型
-      if (record.dosageFormId && record.dosageFormDesc) {
-        this.medicData.dosageFormId = record.dosageFormId
-        this.medicData.dosageFormDesc = record.dosageFormDesc
-        this.manuDadosageDatastas = []
-        this.dosageDatas.push({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+      // if (record.dosageFormId && record.dosageFormDesc) {
+      //   this.medicData.dosageFormId = record.dosageFormId
+      //   this.medicData.dosageFormDesc = record.dosageFormDesc
+      //   this.manuDadosageDatastas = []
+      //   console.log('', JSON.stringify({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc }))
+      //   this.dosageDatas.push({ id: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+      // }
+      if (record.dosageFormDesc) {
+        this.handleSearchDosage2(record.dosageFormDesc)
+      }
+
+      //治疗类型
+      // if (record.pharmacologyChildCategory && record.dosageFormDesc) {
+      //   this.medicData.dosageFormId = record.dosageFormId
+      //   this.medicData.dosageFormDesc = record.dosageFormDesc
+      //   this.manuDadosageDatastas = []
+      //   console.log('', JSON.stringify({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc }))
+      //   this.dosageDatas.push({ id: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
+      // }
+      if (record.pharmacologyChildCategory) {
+        this.handleSearchTreat2(record.pharmacologyChildCategory)
       }
 
       //医保类型
-      if (record.healthInsuranceCategoryId) {
-        this.medicData.healthInsuranceCategoryId = record.healthInsuranceCategoryId
+      if (record.healthInsuranceCategory) {
+        let getOne = this.yibaoDatas.find((item) => item.value == record.healthInsuranceCategory)
+        if (getOne) {
+          this.medicData.healthInsuranceCategoryId = getOne.code
+          this.medicData.healthInsuranceCategory = getOne.value
+        }
+
+        // this.medicData.healthInsuranceCategoryId = record.healthInsuranceCategoryId
       }
-      //药理分类
-      if (record.pharmacologyCategoryId) {
-        this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
+      //药理分类  药理分类取的树的最后一层
+      if (record.medicineCategory) {
+        this.handleSearchYaoli2(record.medicineCategory)
+        // this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
       }
       //医保编码
       if (record.healthInsuranceCoding) {
@@ -810,6 +848,28 @@ export default {
       if (record.code) {
         this.medicData.supervisionCode = record.code
       }
+
+      //剂量单位
+      if (record.minDosageUnit) {
+        this.handleSearchJi2(record.minDosageUnit)
+        // this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
+      }
+
+      //包装数量
+      if (record.packingCoefficient) {
+        this.medicData.minPkgNum = record.packingCoefficient
+      }
+
+      //基本单位  后台说跟剂量单位一样的字段
+      if (record.minDosageUnit) {
+        this.handleSearchBase2(record.minDosageUnit)
+      }
+
+      //包装单位  
+      if (record.minPkgUnit) {
+        this.handleSearchBao2(record.minPkgUnit)
+      }
+      this.countSpecDesc()
     },
 
     onSelectManu(manufacturerId) {
@@ -959,6 +1019,27 @@ export default {
           }
         })
     },
+    /**
+     * 搜索厂商
+     * @param {} name 
+     */
+    handleSearchManu2(name) {
+      let param = {
+        pageNo: 1,
+        pageSize: 10,
+        factoryType: 1,
+        queryText: name
+      }
+      qryFactoryList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.rows.length > 0) {
+            this.manuDatas = res.data.rows
+            this.medicData.manufacturerId = this.manuDatas[0].id + ''
+            this.medicData.manufacturerName = this.manuDatas[0].factoryName
+            this.countSpecDesc()
+          }
+        })
+    },
 
     handleSearchDosage(name) {
       let param = {
@@ -972,6 +1053,23 @@ export default {
           if (res.code == 0 && res.success) {
             this.dosageDatas = res.data.records
             console.log('dosageDatas-------', this.dosageDatas);
+          }
+        })
+    },
+    handleSearchDosage2(name) {
+      let param = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getDosageList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.dosageDatas = res.data.records
+            this.medicData.dosageFormId = this.dosageDatas[0].id + ''
+            this.medicData.dosageFormDesc = this.dosageDatas[0].value
+            this.countSpecDesc()
           }
         })
     },
@@ -993,6 +1091,26 @@ export default {
           // this.confirmLoading = false
         })
     },
+    handleSearchYaoli2(name) {
+      let param = {
+        // status: 0,
+        // pageNo: 1,
+        // pageSize: 10,
+        value: name
+      }
+      getMedicCategoryList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.yaoliDatas = res.data
+            this.medicData.pharmacologyCategoryId = this.yaoliDatas[0].id + ''
+            this.medicData.pharmacologyCategory = this.yaoliDatas[0].value
+            this.countSpecDesc()
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
 
     handleSearchTreat(name) {
       let param = {
@@ -1005,6 +1123,27 @@ export default {
         .then((res) => {
           if (res.code == 0 && res.data.records.length > 0) {
             this.treatTypeDatas = res.data.records
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchTreat2(name) {
+      let param = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getTreatTypeList(param)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.treatTypeDatas = res.data.records
+            this.medicData.treatTypeId = this.treatTypeDatas[0].id + ''
+            this.medicData.treatTypeDesc = this.treatTypeDatas[0].value
+            this.countSpecDesc()
           }
         })
         .finally((res) => {
@@ -1031,6 +1170,27 @@ export default {
         })
     },
 
+    handleSearchBao2(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.unitBaoDatas = res.data.records
+            this.medicData.packingUnitId = this.unitBaoDatas[0].id + ''
+            this.medicData.packingUnit = this.unitBaoDatas[0].value
+            this.countSpecDesc()
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
     handleSearchJi(name) {
       let params = {
         status: 0,
@@ -1043,6 +1203,26 @@ export default {
           if (res.code == 0 && res.data.records.length > 0) {
             this.unitJiDatas = res.data.records
             // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+    handleSearchJi2(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.unitJiDatas = res.data.records
+            this.medicData.dosUomId = this.unitJiDatas[0].id + ''
+            this.medicData.dosUom = this.unitJiDatas[0].value
+            this.countSpecDesc()
           }
         })
         .finally((res) => {
@@ -1062,6 +1242,29 @@ export default {
           if (res.code == 0 && res.data.records.length > 0) {
             this.baseUnitDatas = res.data.records
             // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        })
+    },
+
+    handleSearchBase2(name) {
+      let params = {
+        status: 0,
+        pageNo: 1,
+        pageSize: 10,
+        value: name
+      }
+      getUnitList(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.records.length > 0) {
+            this.baseUnitDatas = res.data.records
+            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
+
+            this.medicData.baseUnitId = this.baseUnitDatas[0].id + ''
+            this.medicData.baseUnitName = this.baseUnitDatas[0].value
+            this.countSpecDesc()
           }
         })
         .finally((res) => {
