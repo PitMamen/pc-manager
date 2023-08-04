@@ -127,7 +127,7 @@ export default {
         {
           title: '批准文号',
           dataIndex: 'approvalNumber',
-          width: '120px',
+          width: '150px',
           scopedSlots: { customRender: 'approvalNumber' },
         },
         {
@@ -142,13 +142,13 @@ export default {
         },
         {
           title: '药品规格',
-          width: '120px',
+          width: '220px',
           dataIndex: 'specification',
           scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
-          width: '90px',
+          width: '120px',
           dataIndex: 'dosageFormDesc',
           scopedSlots: { customRender: 'dosageFormDesc' },
         },
@@ -156,7 +156,7 @@ export default {
         // drugTypeId
         {
           title: '类型',
-          width: '60px',
+          width: '90px',
           dataIndex: 'drugTypeDesc',
           scopedSlots: { customRender: 'drugTypeDesc' },
         },
