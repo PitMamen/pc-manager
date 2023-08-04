@@ -34,6 +34,17 @@ export function list1 (parameter) {
 }
 
 /**
+ * select1
+ */
+ export function select1 (parameter) {
+  return axios({
+    url: '/info-api/sysInstr/getMedInstitutionInstr',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 列表
  */
  export function list2 (parameter) {
@@ -105,6 +116,17 @@ export function list1 (parameter) {
  export function update3 (parameter) {
   return axios({
     url: '/info-api/sysFreq/modify',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
+ * select3
+ */
+ export function select3 (parameter) {
+  return axios({
+    url: '/info-api/sysFreq/getMedInstitutionFrequency',
     method: 'post',
     data: parameter
   })

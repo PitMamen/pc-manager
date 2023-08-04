@@ -128,18 +128,20 @@ export default {
       columns: [
         {
           title: '操作',
-          // width: '150px',
+          width: '90px',
           // fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
         {
           title: '批准文号',
+          width: '150px',
           dataIndex: 'approvalNumber',
           scopedSlots: { customRender: 'approvalNumber' },
         },
         {
           title: '监管编码',
+          width: '90px',
           dataIndex: 'broadClassifyName',
           scopedSlots: { customRender: 'broadClassifyName' },
         },
@@ -156,20 +158,24 @@ export default {
         {
           title: '药品规格',
           dataIndex: 'specification',
+          width: '90px',
           scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
+          width: '120px',
           dataIndex: 'dosageFormDesc',
           scopedSlots: { customRender: 'dosageFormDesc' },
         },
         {
           title: '类型',
+          width: '90px',
           dataIndex: 'hospitalName',
           scopedSlots: { customRender: 'hospitalName' },
         },
         {
           title: '药理分类',
+          width: '90px',
           dataIndex: 'pharmacologyCategory',
           scopedSlots: { customRender: 'pharmacologyCategory' },
         },
@@ -394,7 +400,7 @@ export default {
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh(true)
     },
 
     handleCancel() {

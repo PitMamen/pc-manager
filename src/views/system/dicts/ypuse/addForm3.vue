@@ -55,8 +55,8 @@
               allow-clear
               placeholder="请选择监管代码"
             >
-              <a-select-option v-for="item in selects" :key="item.id" :value="item.code+ '-' +item.value+ '-' +item.remark">{{
-                item.code+ '-' +item.value+ '-' +item.remark
+              <a-select-option v-for="item in selects" :key="item.id" :value="item.no">{{
+                item.no+ '-' +item.code+ '-' +item.value
               }}</a-select-option>
             </a-select>
           </div>
@@ -106,8 +106,7 @@
 <script>
 import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
-import { add3 as add, info3 as corn } from '@/api/modular/system/ypuse'
-import { getDictData } from '@/api/modular/system/posManage'
+import { add3 as add, info3 as corn, select3 as selects } from '@/api/modular/system/ypuse'
 export default {
   data() {
     return {
@@ -126,9 +125,14 @@ export default {
       this.getSelects()
     },
     getSelects() {
-      getDictData('medicine_freq_code').then(res => {
-        if (res.code===0 && res.data.length>0) {
-          this.selects = res.data
+      selects({
+        pageNo: 1,
+        pageSize: 99999
+      }).then(res => {
+        if (res.code === 0) {
+          if (res.data && res.data.records) {
+            this.selects = res.data.records
+          }
         }
       })
     },
@@ -138,6 +142,7 @@ export default {
         return
       }
       this.confirmLoading = true
+      this.cornList = []
       corn({
         corn: this.formData.corn
       }).then(res => {

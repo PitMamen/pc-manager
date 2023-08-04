@@ -43,8 +43,8 @@
               allow-clear
               placeholder="请选择监管代码"
             >
-              <a-select-option v-for="item in selects" :key="item.id" :value="item.code+ '-' +item.value">{{
-                item.code+ '-' +item.value
+              <a-select-option v-for="item in selects" :key="item.id" :value="item.code">{{
+                item.code+ '-' +item.value+ '-' +item.remark
               }}</a-select-option>
             </a-select>
           </div>
@@ -81,8 +81,7 @@
 <script>
 import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
-import { add1 as add } from '@/api/modular/system/ypuse'
-import { getDictData } from '@/api/modular/system/posManage'
+import { add1 as add, select1 as selects } from '@/api/modular/system/ypuse'
 export default {
   data() {
     return {
@@ -100,9 +99,14 @@ export default {
       this.getSelects()
     },
     getSelects() {
-      getDictData('medicine_road_code').then(res => {
-        if (res.code===0 && res.data.length>0) {
-          this.selects = res.data
+      selects({
+        pageNo: 1,
+        pageSize: 99999
+      }).then(res => {
+        if (res.code === 0) {
+          if (res.data && res.data.records) {
+            this.selects = res.data.records
+          }
         }
       })
     },

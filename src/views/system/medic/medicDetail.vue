@@ -1,452 +1,464 @@
 <template>
-  <a-card :bordered="false" :loading="loading">
-    <!-- 基本信息 -->
-    <div class="div-box">
-      <div class="box-title">基本信息</div>
-      <div class="box-divider" />
-      <div class="div-line">
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;margin-top: 3px;">*</span>药品名称：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.genericName" allow-clear placeholder="请输入药品名称" style="width: 210px" />
+  <a-spin :spinning="confirmLoading">
+    <a-card :bordered="false" :loading="loading">
+      <!-- 基本信息 -->
+      <div class="div-box">
+        <div class="box-title">基本信息</div>
+        <div class="box-divider" />
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;margin-top: 3px;">*</span>药品名称：</div>
+            <div class="div-cell-value">
+              <a-input v-model="medicData.genericName" allow-clear placeholder="请输入药品名称" style="width: 210px" />
+            </div>
           </div>
-        </div>
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"> <a-input v-model="medicData.genericAcronym" allow-clear placeholder="自动生成"
-              style="width: 210px" /></div>
-        </div>
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;">*</span>生产厂商：</div>
-          <div class="div-cell-value">
-            <a-auto-complete v-model="medicData.manufacturerId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectManu" @search="handleSearchManu" style="width: 210px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in manuDatas" :title="item.factoryName" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.factoryName
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
-            <!-- <a-select v-model="medicData.manufacturerName" placeholder="请选择" allow-clear
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
+            <div class="div-cell-value"> <a-input v-model="medicData.genericAcronym" allow-clear placeholder="自动生成"
+                style="width: 210px" /></div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;">*</span>生产厂商：</div>
+            <div class="div-cell-value">
+              <a-auto-complete v-model="medicData.manufacturerId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectManu" @search="handleSearchManu" style="width: 210px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in manuDatas" :title="item.factoryName" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.factoryName
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+              <!-- <a-select v-model="medicData.manufacturerName" placeholder="请选择" allow-clear
               style="width: 210px; height: 28px">
               <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
             </a-select> -->
+            </div>
           </div>
         </div>
-      </div>
-      <div class="div-line">
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;">*</span>商品名称：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.tradeName" allow-clear placeholder="请输入商品名称" style="width: 210px" />
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;">*</span>商品名称：</div>
+            <div class="div-cell-value">
+              <a-input v-model="medicData.tradeName" allow-clear placeholder="请输入商品名称" style="width: 210px" />
+            </div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
+            <div class="div-cell-value"><a-input v-model="medicData.tradeAcronym" allow-clear placeholder="自动生成"
+                style="width: 210px" /></div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;">*</span>药品类型：</div>
+            <div class="div-cell-value">
+              <a-select v-model="medicData.drugTypeId" placeholder="请选择" @select="onSelectType" allow-clear
+                style="width: 210px; height: 28px">
+                <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.code">{{ item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
           </div>
         </div>
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
-          <div class="div-cell-value"><a-input v-model="medicData.tradeAcronym" allow-clear placeholder="自动生成"
-              style="width: 210px" /></div>
-        </div>
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;">*</span>药品类型：</div>
-          <div class="div-cell-value">
-            <a-select v-model="medicData.drugTypeId" placeholder="请选择" @select="onSelectType" allow-clear
-              style="width: 210px; height: 28px">
-              <a-select-option v-for="item in typeDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select>
-          </div>
-        </div>
-      </div>
 
-      <div class="div-line">
-        <div class="div-cell">
-          <div class="div-cell-name"><span style="color: #F90505;">*</span>药品剂型：</div>
-          <div class="div-cell-value">
-            <a-auto-complete v-model="medicData.dosageFormId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectDosage" @search="handleSearchDosage" style="width: 210px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #F90505;">*</span>药品剂型：</div>
+            <div class="div-cell-value">
+              <a-auto-complete v-model="medicData.dosageFormId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectDosage" @search="handleSearchDosage" style="width: 210px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
 
-            <!-- <a-select v-model="medicData.dosageFormDesc" placeholder="请选择" allow-clear style="width: 210px; height: 28px">
+              <!-- <a-select v-model="medicData.dosageFormDesc" placeholder="请选择" allow-clear style="width: 210px; height: 28px">
               <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
             </a-select> -->
+            </div>
           </div>
-        </div>
-        <div class="div-cell">
-          <div class="div-cell-name">治疗类型：</div>
-          <div class="div-cell-value">
-            <!-- <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
+          <div class="div-cell">
+            <div class="div-cell-name">治疗类型：</div>
+            <div class="div-cell-value">
+              <!-- <a-select v-model="medicData.treatTypeId" @select="onSelectTreatType"
               placeholder="请选择" allow-clear style="width: 210px; height: 28px">
               <a-select-option v-for="item in treatTypeDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
             </a-select> -->
 
-            <a-auto-complete v-model="medicData.treatTypeId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectTreatType" @search="handleSearchTreat" style="width: 210px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in treatTypeDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+              <a-auto-complete v-model="medicData.treatTypeId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectTreatType" @search="handleSearchTreat" style="width: 210px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in treatTypeDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">医保类型：</div>
+            <div class="div-cell-value">
+              <a-select v-model="medicData.healthInsuranceCategoryId" @select="onSelectYibao" placeholder="请选择"
+                allow-clear style="width: 210px; height: 28px">
+                <a-select-option v-for="item in yibaoDatas" :key="item.id" :value="item.code">{{ item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
           </div>
         </div>
-        <div class="div-cell">
-          <div class="div-cell-name">医保类型：</div>
-          <div class="div-cell-value">
-            <a-select v-model="medicData.healthInsuranceCategoryId" @select="onSelectYibao" placeholder="请选择" allow-clear
-              style="width: 210px; height: 28px">
-              <a-select-option v-for="item in yibaoDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select>
-          </div>
-        </div>
-      </div>
 
-      <div class="div-line">
-        <div class="div-cell">
-          <div class="div-cell-name">药理分类：</div>
-          <div class="div-cell-value">
-            <!-- <a-tree-select v-model="medicData.pharmacologyCategoryId" @select="onSeletTree"
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name">药理分类：</div>
+            <div class="div-cell-value">
+              <!-- <a-tree-select v-model="medicData.pharmacologyCategoryId" @select="onSeletTree"
               style="width: 210px; height: 28px" :tree-data="yaoliTree" placeholder="请选择" allow-clear
               tree-default-expand-all>
             </a-tree-select> -->
 
-            <a-auto-complete v-model="medicData.pharmacologyCategoryId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSeletTreeYaoli" @search="handleSearchYaoli" style="width: 210px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in yaoliDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+              <a-auto-complete v-model="medicData.pharmacologyCategoryId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSeletTreeYaoli" @search="handleSearchYaoli" style="width: 210px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in yaoliDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">医保编码：</div>
+            <div class="div-cell-value"><a-input v-model="medicData.healthInsuranceCoding" allow-clear
+                placeholder="请输入医保编码" style="width: 210px" /></div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">商品条形码：</div>
+            <div class="div-cell-value">
+              <a-input v-model="medicData.barCode" allow-clear placeholder="请输入商品条形码" style="width: 210px" />
+            </div>
           </div>
         </div>
-        <div class="div-cell">
-          <div class="div-cell-name">医保编码：</div>
-          <div class="div-cell-value"><a-input v-model="medicData.healthInsuranceCoding" allow-clear placeholder="请输入医保编码"
-              style="width: 210px" /></div>
-        </div>
-        <div class="div-cell">
-          <div class="div-cell-name">商品条形码：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.barCode" allow-clear placeholder="请输入商品条形码" style="width: 210px" />
-          </div>
-        </div>
-      </div>
 
-      <div class="div-line" style="margin-bottom: 10px;">
-        <div class="div-cell">
-          <div class="div-cell-name">批准文号：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.approvalNumber" allow-clear placeholder="请输入批准文号" style="width: 210px" />
+        <div class="div-line" style="margin-bottom: 10px;">
+          <div class="div-cell">
+            <div class="div-cell-name">批准文号：</div>
+            <div class="div-cell-value">
+              <a-input v-model="medicData.approvalNumber" allow-clear placeholder="请输入批准文号" style="width: 210px" />
+            </div>
           </div>
-        </div>
-        <div class="div-cell">
-          <div class="div-cell-name">HIS编码：</div>
-          <div class="div-cell-value">
-            <a-input v-model="medicData.code" allow-clear placeholder="请输入HIS编码" style="width: 210px" />
+          <div class="div-cell">
+            <div class="div-cell-name">HIS编码：</div>
+            <div class="div-cell-value">
+              <a-input v-model="medicData.code" allow-clear placeholder="请输入HIS编码" style="width: 210px" />
+            </div>
           </div>
-        </div>
-        <div class="div-cell">
-          <!-- <div style="width: 20px;"></div>
+          <div class="div-cell">
+            <!-- <div style="width: 20px;"></div>
           <a-input v-model="medicData.keyWord" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配"
             style="width: 270px" /> -->
 
-          <div class="div-cell-name temp">监管编码：</div>
-          <div class="div-cell-value">
-            <!-- <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配" -->
-            <a-input v-model="medicData.supervisionCode" @click="goChoose" allow-clear placeholder="未匹配药品，请点击匹配"
-              style="width: 210px" />
-          </div>
-          <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
+            <div class="div-cell-name temp">监管编码：</div>
+            <div class="div-cell-value">
+              <!-- <a-input v-model="medicData.supervisionCode" @click="goSearch()" allow-clear placeholder="未匹配药品，请点击匹配" -->
+              <a-input v-model="medicData.supervisionCode" @click="goChoose" allow-clear placeholder="未匹配药品，请点击匹配"
+                style="width: 210px" />
+            </div>
+            <!-- <div class="div-cell-name"><span style="color: #F90505;">*</span>检索码：</div>
           <div class="div-cell-value"><a-input v-model="medicData.keyWord" allow-clear placeholder="请输入检索码"
               style="width: 210px" /></div> -->
-        </div>
-
-      </div>
-    </div>
-
-    <!-- 规格计费 -->
-    <div class="div-box" style="margin-top: 15px;">
-      <div class="box-title">规格计费</div>
-      <div class="box-divider" />
-      <!-- 上下两行一一对应，才能保证宽度一致对其 -->
-      <div class="div-line" style="padding: 20px;margin-top: 0; ">
-        <div class="div-shu-cell" style="width: 100px;">
-          <div><span style="color: #F90505;">*</span>含量系数</div>
-          <div style="margin-top: 10px;">
-            <a-input v-model="medicData.contentCoefficient" allow-clear placeholder="请输入" @change="countSpecDesc" />
           </div>
-        </div>
 
-        <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
-          <div><span style="color: #F90505;">*</span>剂量单位</div>
-          <div style="margin-top: 10px;">
-            <!-- <a-select v-model="medicData.dosUomId" @select="onSelectJi" placeholder="请选择" allow-clear
+        </div>
+      </div>
+
+      <!-- 规格计费 -->
+      <div class="div-box" style="margin-top: 15px;">
+        <div class="box-title">规格计费</div>
+        <div class="box-divider" />
+        <!-- 上下两行一一对应，才能保证宽度一致对其 -->
+        <div class="div-line" style="padding: 20px;margin-top: 0; ">
+          <div class="div-shu-cell" style="width: 100px;">
+            <div><span style="color: #F90505;">*</span>含量系数</div>
+            <div style="margin-top: 10px;">
+              <a-input v-model="medicData.contentCoefficient" allow-clear placeholder="请输入" @change="countSpecDesc" />
+            </div>
+          </div>
+
+          <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
+            <div><span style="color: #F90505;">*</span>剂量单位</div>
+            <div style="margin-top: 10px;">
+              <!-- <a-select v-model="medicData.dosUomId" @select="onSelectJi" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in unitJiDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
             </a-select> -->
 
-            <a-auto-complete v-model="medicData.dosUomId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectJi" @search="handleSearchJi" style="width: 110px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in unitJiDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+              <a-auto-complete v-model="medicData.dosUomId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectJi" @search="handleSearchJi" style="width: 110px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in unitJiDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
           </div>
-        </div>
 
-        <div style="margin-top: 30px;margin-left: 10px;">*</div>
+          <div style="margin-top: 30px;margin-left: 10px;">*</div>
 
-        <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
-          <div><span style="color: #F90505;">*</span>包装数量</div>
-          <div style="margin-top: 10px;">
-            <a-input v-model="medicData.minPkgNum" allow-clear placeholder="请输入" @change="countSpecDesc" />
+          <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
+            <div><span style="color: #F90505;">*</span>包装数量</div>
+            <div style="margin-top: 10px;">
+              <a-input v-model="medicData.minPkgNum" allow-clear placeholder="请输入" @change="countSpecDesc" />
+            </div>
           </div>
-        </div>
 
 
-        <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
-          <div><span style="color: #F90505;">*</span>基本单位</div>
-          <div style="margin-top: 10px;">
-            <!-- <a-select v-model="medicData.baseUnitId" @select="onSelectBase" placeholder="请选择" allow-clear
+          <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
+            <div><span style="color: #F90505;">*</span>基本单位</div>
+            <div style="margin-top: 10px;">
+              <!-- <a-select v-model="medicData.baseUnitId" @select="onSelectBase" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in baseUnitDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
             </a-select> -->
 
-            <a-auto-complete v-model="medicData.baseUnitId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectBase" @search="handleSearchBase" style="width: 110px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in baseUnitDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+              <a-auto-complete v-model="medicData.baseUnitId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectBase" @search="handleSearchBase" style="width: 110px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in baseUnitDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
           </div>
-        </div>
 
-        <div style="margin-top: 30px;margin-left: 20px;">/</div>
+          <div style="margin-top: 30px;margin-left: 20px;">/</div>
 
-        <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
-          <div><span style="color: #F90505;">*</span>包装单位</div>
-          <div style="margin-top: 10px;">
-            <!-- <a-select v-model="medicData.packingUnitId" @select="onSelectBao" placeholder="请选择" allow-clear
+          <div class="div-shu-cell" style="width: 100px;margin-left: 10px;">
+            <div><span style="color: #F90505;">*</span>包装单位</div>
+            <div style="margin-top: 10px;">
+              <!-- <a-select v-model="medicData.packingUnitId" @select="onSelectBao" placeholder="请选择" allow-clear
               style="width: 100px; height: 28px">
               <a-select-option v-for="item in unitBaoDatas" :key="item.id" :value="item.id">{{ item.value
               }}</a-select-option>
             </a-select> -->
 
-            <a-auto-complete v-model="medicData.packingUnitId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectBao" @search="handleSearchBao" style="width: 110px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in unitBaoDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+              <a-auto-complete v-model="medicData.packingUnitId" placeholder="请输入选择" option-label-prop="title"
+                @select="onSelectBao" @search="handleSearchBao" style="width: 110px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in unitBaoDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
           </div>
-        </div>
 
-        <div class="div-shu-cell" style="width: 200px;margin-left: 20px;">
-          <div><span style="color: #F90505;">*</span>规格描述</div>
-          <div style="margin-top: 10px;">
-            <a-input v-model="medicData.specDesc" allow-clear placeholder="请输入" />
+          <div class="div-shu-cell" style="width: 200px;margin-left: 20px;">
+            <div><span style="color: #F90505;">*</span>规格描述</div>
+            <div style="margin-top: 10px;">
+              <a-input v-model="medicData.specDesc" allow-clear placeholder="请输入" />
+            </div>
           </div>
-        </div>
 
-        <div class="div-shu-cell" style="width: 200px;margin-left: 20px;">
-          <div>参考价格</div>
-          <div style="margin-top: 10px;">
-            <a-input type="number" v-model="medicData.retailPrice" allow-clear placeholder="请输入" />
+          <div class="div-shu-cell" style="width: 200px;margin-left: 20px;">
+            <div>参考价格</div>
+            <div style="margin-top: 10px;">
+              <a-input type="number" v-model="medicData.retailPrice" allow-clear placeholder="请输入" />
+            </div>
           </div>
-        </div>
 
-        <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
-          <div><span style="color: #F90505;">*</span>计费方式</div>
-          <div style="margin-top: 10px;">
-            <a-select v-model="medicData.expenseId" placeholder="请选择" @select="onSelectExpense" allow-clear
-              style="width: 100px; height: 28px">
-              <a-select-option v-for="item in expenseDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select>
+          <div class="div-shu-cell" style="width: 100px;margin-left: 20px;">
+            <div><span style="color: #F90505;">*</span>计费方式</div>
+            <div style="margin-top: 10px;">
+              <a-select v-model="medicData.expenseId" placeholder="请选择" @select="onSelectExpense" allow-clear
+                style="width: 100px; height: 28px">
+                <a-select-option v-for="item in expenseDatas" :key="item.id" :value="item.code">{{ item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
           </div>
+
         </div>
 
       </div>
-
-    </div>
-    <!-- 处方开具 -->
-    <div class="div-box" style="margin-top: 15px;">
-      <div class="box-title">处方开具</div>
-      <div class="box-divider" />
-      <div class="div-line" style="margin-bottom: 10px;">
-        <a-checkbox @click="goChufang()" :checked="isChufang" style="margin-left: 20px;" />
-        <span style="margin-left: 10px;color:#409EFF ;">处方药品</span>
-
-        <a-checkbox @click="goExpensive()" :checked="isExpensive" style="margin-left: 20px;" />
-        <span style="margin-left: 10px;color:#409EFF ;">贵重药品</span>
-
-        <a-checkbox @click="goPoisonous()" :checked="isPoisonous" style="margin-left: 20px;" />
-        <span style="margin-left: 10px;color:#409EFF ;">剧毒药品</span>
-      </div>
-
-      <div class="div-line" style="margin-bottom: 10px;margin-top: 10px;">
-
-
-        <div class="div-shu-cell" style="width: 100px;">
-          <div class="div-shu-cell-ori">
-            <a-checkbox @click="goSpiritual()" :checked="isSpiritual" style="margin-left: 20px;" />
-            <span style="margin-left: 10px;color:#409EFF ;">精神药品</span>
+      <!-- 处方开具 -->
+      <div class="div-box" style="margin-top: 15px;">
+        <div class="box-title">处方开具</div>
+        <div class="box-divider" />
+        <div class="div-line" style="margin-bottom: 10px;">
+          <div class="div-shu-cell-ori check" @click="goChufang()">
+            <a-checkbox :checked="isChufang" style="margin-left: 20px;" />
+            <span style="margin-left: 10px;color:#409EFF ;">处方药品</span>
           </div>
 
-          <div class="div-shu-cell-ori" style="margin-top: 20px;">
-            <span style="margin-left: 10px ;width: 100px;text-align: right;">默认剂量：</span>
+          <div class="div-shu-cell-ori check" @click="goExpensive()">
+            <a-checkbox :checked="isExpensive" style="margin-left: 20px;" />
+            <span style="margin-left: 10px;color:#409EFF ;">贵重药品</span>
+          </div>
+
+          <div class="div-shu-cell-ori check" @click="goPoisonous()">
+            <a-checkbox :checked="isPoisonous" style="margin-left: 20px;" />
+            <span style="margin-left: 10px;color:#409EFF ;">剧毒药品</span>
           </div>
         </div>
 
-        <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
-          <div class="div-shu-cell-ori">
-            <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
+        <div class="div-line" style="margin-bottom: 10px;margin-top: 10px;">
+
+
+          <div class="div-shu-cell" style="width: 100px;">
+            <div class="div-shu-cell-ori check" @click="goSpiritual()">
+              <a-checkbox :checked="isSpiritual" style="margin-left: 20px;" />
+              <span style="margin-left: 10px;color:#409EFF ;">精神药品</span>
+            </div>
+
+            <div class="div-shu-cell-ori" style="margin-top: 20px;">
+              <span style="margin-left: 10px ;width: 100px;text-align: right;">默认剂量：</span>
+            </div>
+          </div>
+
+          <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
+            <div class="div-shu-cell-ori">
+              <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
               <a-select-option v-for="item in typeSpiritualDatas" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
             </a-select> -->
-            <a-select v-model="medicData.psychotropicId" placeholder="请选择" @select="onSelectSpiritual" allow-clear
-              style="width: 300px; height: 28px">
-              <a-select-option v-for="item in typeSpiritualDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select>
+              <a-select :disabled="!isSpiritual" v-model="medicData.psychotropicId" placeholder="请选择"
+                @select="onSelectSpiritual" allow-clear style="width: 300px; height: 28px">
+                <a-select-option v-for="item in typeSpiritualDatas" :key="item.id" :value="item.code">{{ item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
+
+            <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
+              <!-- <a-input :disabled="!isSpiritual" v-model="medicData.defDosage" allow-clear placeholder="请输入" /> -->
+              <a-input v-model="medicData.defDosage" allow-clear placeholder="请输入" />
+            </div>
           </div>
 
-          <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <a-input v-model="medicData.defDosage" allow-clear placeholder="请输入" />
-          </div>
-        </div>
+          <div class="div-shu-cell" style="width: 100px;">
+            <div class="div-shu-cell-ori check" @click="goAnesthesia()">
+              <a-checkbox :checked="isAnesthesia" style="margin-left: 20px;" />
+              <span style="margin-left: 10px;color:#409EFF ;">麻醉药品</span>
+            </div>
 
-        <div class="div-shu-cell" style="width: 100px;">
-          <div class="div-shu-cell-ori">
-            <a-checkbox @click="goAnesthesia()" :checked="isAnesthesia" style="margin-left: 20px;" />
-            <span style="margin-left: 10px;color:#409EFF ;">麻醉药品</span>
-          </div>
-
-          <div class="div-shu-cell-ori" style="margin-top: 20px;">
-            <span style="margin-left: 10px ;width: 100px;text-align: right;">默认用法：</span>
-          </div>
-        </div>
-
-        <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
-          <div class="div-shu-cell-ori">
-
-            <a-select v-model="medicData.stupefacientId" placeholder="请选择" @select="onSelectAnesthesia" allow-clear
-              style="width: 300px; height: 28px">
-              <a-select-option v-for="item in typeAnesthesiaDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select>
+            <div class="div-shu-cell-ori" style="margin-top: 20px;">
+              <span style="margin-left: 10px ;width: 100px;text-align: right;">默认用法：</span>
+            </div>
           </div>
 
-          <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <!-- <a-select v-model="medicData.defDirectionId" placeholder="请选择" @select="onSelectUse" allow-clear
+          <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
+            <div class="div-shu-cell-ori">
+
+              <a-select :disabled="!isAnesthesia" v-model="medicData.stupefacientId" placeholder="请选择"
+                @select="onSelectAnesthesia" allow-clear style="width: 300px; height: 28px">
+                <a-select-option v-for="item in typeAnesthesiaDatas" :key="item.id" :value="item.code">{{ item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
+
+            <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
+              <!-- <a-select v-model="medicData.defDirectionId" placeholder="请选择" @select="onSelectUse" allow-clear
               style="width: 300px; ">
               <a-select-option v-for="item in defaultUseDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
             </a-select> -->
 
-            <!-- @select="onSelectDosage" @search="handleSearchDosage" style="width: 300px; height: 28px"> -->
-            <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectUse" @search="getDefaultUseDatas" style="width: 300px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in defaultUseDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
-          </div>
-        </div>
-
-
-        <div class="div-shu-cell" style="width: 100px;">
-          <div class="div-shu-cell-ori">
-            <a-checkbox @click="goBacteria()" :checked="isBacteria" style="margin-left: 20px;" />
-            <span style="margin-left: 10px;color:#409EFF ;">抗菌药品</span>
+              <!-- <a-auto-complete :disabled="!isAnesthesia" v-model="medicData.defDirectionId" placeholder="请输入选择" -->
+              <a-auto-complete v-model="medicData.defDirectionId" placeholder="请输入选择"
+                option-label-prop="title" @select="onSelectUse" @search="getDefaultUseDatas"
+                style="width: 300px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in defaultUseDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
           </div>
 
-          <div class="div-shu-cell-ori" style="margin-top: 20px;">
-            <span style="margin-left: 10px ;width: 100px;text-align: right;">默认频次：</span>
-          </div>
-        </div>
 
-        <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
-          <div class="div-shu-cell-ori">
-            <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
+          <div class="div-shu-cell" style="width: 100px;">
+            <div class="div-shu-cell-ori check" @click="goBacteria()">
+              <a-checkbox :checked="isBacteria" style="margin-left: 20px;" />
+              <span style="margin-left: 10px;color:#409EFF ;">抗菌药品</span>
+            </div>
+
+            <div class="div-shu-cell-ori" style="margin-top: 20px;">
+              <span style="margin-left: 10px ;width: 100px;text-align: right;">默认频次：</span>
+            </div>
+          </div>
+
+          <div class="div-shu-cell" style="width: 300px;margin-left: 0;">
+            <div class="div-shu-cell-ori">
+              <!-- <a-select v-model="medicData.status" placeholder="请选择" allow-clear style="width: 300px; ">
               <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
             </a-select> -->
-            <a-select v-model="medicData.antibacterialId" placeholder="请选择" @select="onSelectBacteria" allow-clear
-              style="width: 300px; height: 28px">
-              <a-select-option v-for="item in typeBacteriaDatas" :key="item.id" :value="item.code">{{ item.value
-              }}</a-select-option>
-            </a-select>
-          </div>
+              <a-select :disabled="!isBacteria" v-model="medicData.antibacterialId" placeholder="请选择"
+                @select="onSelectBacteria" allow-clear style="width: 300px; height: 28px">
+                <a-select-option v-for="item in typeBacteriaDatas" :key="item.id" :value="item.code">{{ item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
 
-          <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
-            <!-- <a-select v-model="medicData.defFreqId" placeholder="请选择" @select="onSelectFreq" allow-clear
+            <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
+              <!-- <a-select v-model="medicData.defFreqId" placeholder="请选择" @select="onSelectFreq" allow-clear
               style="width: 300px; ">
               <a-select-option v-for="item in defaultFreqDatas" :key="item.id" :value="item.code">{{ item.value
               }}</a-select-option>
             </a-select> -->
 
-            <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择" option-label-prop="title"
-              @select="onSelectFreq" @search="getDefaultFreqDatas" style="width: 300px; height: 28px">
-              <template slot="dataSource">
-                <a-select-option v-for="(item, index) in defaultFreqDatas" :title="item.value" :key="index + ''"
-                  :value="item.id + ''">{{
-                    item.value
-                  }}</a-select-option>
-              </template>
-            </a-auto-complete>
+              <!-- <a-auto-complete :disabled="!isBacteria" v-model="medicData.defFreqId" placeholder="请输入选择" -->
+              <a-auto-complete v-model="medicData.defFreqId" placeholder="请输入选择"
+                option-label-prop="title" @select="onSelectFreq" @search="getDefaultFreqDatas"
+                style="width: 300px; height: 28px">
+                <template slot="dataSource">
+                  <a-select-option v-for="(item, index) in defaultFreqDatas" :title="item.value" :key="index + ''"
+                    :value="item.id + ''">{{
+                      item.value
+                    }}</a-select-option>
+                </template>
+              </a-auto-complete>
+            </div>
           </div>
+
+
+
+
         </div>
-
-
-
-
       </div>
-    </div>
-    <!-- 使用说明书 -->
-    <div class="div-box" style="margin-top: 15px;">
-      <div class="box-title">使用说明书</div>
-      <div class="box-divider" />
-      <div id="div11" style="padding: 10px;z-index:1"></div>
-      <!-- <div class="div-line"></div> -->
-    </div>
+      <!-- 使用说明书 -->
+      <div class="div-box" style="margin-top: 15px;">
+        <div class="box-title">使用说明书</div>
+        <div class="box-divider" />
+        <div id="div11" style="padding: 10px;z-index:1"></div>
+        <!-- <div class="div-line"></div> -->
+      </div>
 
-    <div class="div-pro-btn">
-      <div style="flex: 1"></div>
-      <a-button type="primary" @click="submitData()">保存</a-button>
-      <a-button style="margin-left: 10px" @click="cancel()">返回</a-button>
-    </div>
-    <chooseMedic ref="chooseMedic" @choose="handleChoose" />
-  </a-card>
+      <div class="div-pro-btn">
+        <div style="flex: 1"></div>
+        <a-button type="primary" @click="submitData()">保存</a-button>
+        <a-button style="margin-left: 10px" @click="cancel()">返回</a-button>
+      </div>
+      <chooseMedic ref="chooseMedic" @choose="handleChoose" />
+    </a-card>
+  </a-spin>
 </template>
 
 <script>
 import {
   medicineDetail, qryFactoryList, getDictData, getUseList, getFreqList,
-  getDosageList, getUnitList, getCategoryList, getMedicCategoryList,addMedicineSku, getTreatTypeList, modifyMedicineSku
+  getDosageList, getUnitList, getCategoryList, getMedicCategoryList, addMedicineSku, getTreatTypeList, modifyMedicineSku
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
@@ -464,6 +476,7 @@ export default {
   data() {
     return {
       loading: false,
+      confirmLoading: false,
       isAgain: false,
       // 审核状态 1未审核2已审核3未登记
       selects: [
@@ -802,7 +815,7 @@ export default {
               tempMedicData.baseUnitId = tempMedicData.baseUnitId + ''
             }
 
-            //基本单位
+            //包装单位
             if (tempMedicData.packingUnitId && tempMedicData.packingUnit) {
               this.unitBaoDatas = []
               this.unitBaoDatas.push({ id: tempMedicData.packingUnitId + '', value: tempMedicData.packingUnit })
@@ -983,7 +996,7 @@ export default {
       let param = {
         pageNo: 1,
         pageSize: 10,
-        factoryType: 3,
+        factoryType: 1,
         queryText: name
       }
       qryFactoryList(param)
@@ -1353,12 +1366,40 @@ export default {
 
     goSpiritual() {
       this.isSpiritual = !this.isSpiritual
+      if (!this.isSpiritual) {
+        this.medicData.psychotropicId = ''
+        this.medicData.psychotropicDesc = ''
+        // this.medicData.defDosage = ""
+      }
     },
     goAnesthesia() {
       this.isAnesthesia = !this.isAnesthesia
+      if (!this.isAnesthesia) {
+        this.medicData.stupefacientId = ''
+        this.medicData.stupefacientDesc = ''
+        // this.medicData.defDirectionId = ''
+        // this.medicData.defDirectionName = ''
+
+        // stupefacientDesc: "",//麻醉药品
+        // stupefacientId: undefined,//麻醉药品id(字典表中)
+        // defDirectionId: undefined,//默认用法id(接口)
+        // defDirectionName:
+      }
     },
     goBacteria() {
       this.isBacteria = !this.isBacteria
+      if (!this.isBacteria) {
+        this.medicData.antibacterialId = ''
+        this.medicData.antibacterialDesc = ''
+        // this.medicData.defFreqId = ''
+        // this.medicData.defFreqName = ''
+
+        // antibacterialDesc: "",//抗菌药品
+        //   antibacterialId: undefined,//抗菌药品id(字典表中)
+        //   defFreqId: undefined,//默认频次id(接口)
+        //   defFreqName: "",//默认频次
+      }
+
     },
 
     initEditor() {
@@ -1367,7 +1408,7 @@ export default {
       }
       var editor = new E('#div11')
 
-      editor.config.height = 430
+      editor.config.height = 300
       editor.config.pasteFilterStyle = false
       console.log('editor', editor)
       console.log('editorconfig', editor.config)
@@ -1528,30 +1569,30 @@ export default {
           this.$message.error('请选择精神药品类型')
           return
         }
-        if (!tempData.defDosage) {
-          this.$message.error('请输入默认剂量')
-          return
-        }
+        // if (!tempData.defDosage) {
+        //   this.$message.error('请输入默认剂量')
+        //   return
+        // }
       }
       if (this.isAnesthesia) {
         if (!tempData.stupefacientId) {
           this.$message.error('请选择麻醉药品类型')
           return
         }
-        if (!tempData.defDirectionId || !tempData.defDirectionName) {
-          this.$message.error('请输入选择麻醉药品默认用法')
-          return
-        }
+        // if (!tempData.defDirectionId || !tempData.defDirectionName) {
+        //   this.$message.error('请输入选择麻醉药品默认用法')
+        //   return
+        // }
       }
       if (this.isBacteria) {
         if (!tempData.antibacterialId) {
           this.$message.error('请选择抗菌药品类型')
           return
         }
-        if (!tempData.defFreqId || !tempData.defFreqName) {
-          this.$message.error('请输入选择抗菌药品默认频次')
-          return
-        }
+        // if (!tempData.defFreqId || !tempData.defFreqName) {
+        //   this.$message.error('请输入选择抗菌药品默认频次')
+        //   return
+        // }
       }
 
 
@@ -1585,18 +1626,21 @@ export default {
         tempData.treatTypeId = parseInt(tempData.treatTypeId)
       }
 
-
+      this.confirmLoading = true
       console.log('submitData tempData edit', tempData)
       modifyMedicineSku(tempData)
         .then((res) => {
+          this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.$router.go(-1)
+          } else {
+            this.$message.error('保存失败：' + res.message)
           }
         })
         .finally((res) => {
-          // this.confirmLoading = false
+          this.confirmLoading = false
         })
     },
 
@@ -1651,6 +1695,12 @@ button {
         /deep/ .ant-input {
           color: #409EFF;
         }
+      }
+    }
+
+    .check {
+      &:hover {
+        cursor: pointer
       }
     }
 
