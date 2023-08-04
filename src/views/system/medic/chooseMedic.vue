@@ -174,7 +174,7 @@ export default {
           scopedSlots: { customRender: 'hospitalName' },
         },
         {
-          title: '药理分类',
+          title: '药品类型',
           width: '90px',
           dataIndex: 'pharmacologyCategory',
           scopedSlots: { customRender: 'pharmacologyCategory' },

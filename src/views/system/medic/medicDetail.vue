@@ -40,7 +40,7 @@
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #F90505;">*</span>商品名称：</div>
             <div class="div-cell-value">
-              <a-input v-model="medicData.tradeName" allow-clear placeholder="请输入商品名称" style="width: 210px" />
+              <a-input :maxLength="300" v-model="medicData.tradeName" allow-clear placeholder="请输入商品名称" style="width: 210px" />
             </div>
           </div>
           <div class="div-cell">
@@ -139,7 +139,7 @@
           <div class="div-cell">
             <div class="div-cell-name">商品条形码：</div>
             <div class="div-cell-value">
-              <a-input v-model="medicData.barCode" allow-clear placeholder="请输入商品条形码" style="width: 210px" />
+              <a-input :maxLength="200" v-model="medicData.barCode" allow-clear placeholder="请输入商品条形码" style="width: 210px" />
             </div>
           </div>
         </div>
