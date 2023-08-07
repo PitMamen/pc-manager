@@ -138,7 +138,7 @@
         <!-- </div> -->
         <div class="div-down">
           <div class="div-service-left-control">
-            <div class="left-control" style="height: 400px">
+            <div class="left-control" style="height: 610px">
               <div class="div-wrap-control" style="margin-top: 2%">
                 <div v-if="quesDataTemp && quesDataTemp.length > 0">
                   <div
