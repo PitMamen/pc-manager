@@ -40,7 +40,8 @@
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #F90505;">*</span>商品名称：</div>
             <div class="div-cell-value">
-              <a-input :maxLength="300" v-model="medicData.tradeName" allow-clear placeholder="请输入商品名称" style="width: 210px" />
+              <a-input :maxLength="300" v-model="medicData.tradeName" allow-clear placeholder="请输入商品名称"
+                style="width: 210px" />
             </div>
           </div>
           <div class="div-cell">
@@ -139,7 +140,8 @@
           <div class="div-cell">
             <div class="div-cell-name">商品条形码：</div>
             <div class="div-cell-value">
-              <a-input :maxLength="200" v-model="medicData.barCode" allow-clear placeholder="请输入商品条形码" style="width: 210px" />
+              <a-input :maxLength="200" v-model="medicData.barCode" allow-clear placeholder="请输入商品条形码"
+                style="width: 210px" />
             </div>
           </div>
         </div>
@@ -185,7 +187,8 @@
           <div class="div-shu-cell" style="width: 100px;">
             <div><span style="color: #F90505;">*</span>含量系数</div>
             <div style="margin-top: 10px;">
-              <a-input v-model="medicData.contentCoefficient" allow-clear placeholder="请输入" @change="countSpecDesc" />
+              <a-input type="number" v-model="medicData.contentCoefficient" allow-clear placeholder="请输入"
+                @change="countSpecDesc" />
             </div>
           </div>
 
@@ -274,7 +277,8 @@
           <div class="div-shu-cell" style="width: 200px;margin-left: 20px;">
             <div>参考价格</div>
             <div style="margin-top: 10px;">
-              <a-input type="number" v-model="medicData.retailPrice" allow-clear placeholder="请输入" />
+              <a-input type="number" @change="onChangPrice" v-model="medicData.retailPrice" allow-clear
+                placeholder="请输入" />
             </div>
           </div>
 
@@ -341,7 +345,7 @@
 
             <div class="div-shu-cell-ori" style="width: 300px;margin-top: 10px;">
               <!-- <a-input :disabled="!isSpiritual" v-model="medicData.defDosage" allow-clear placeholder="请输入" /> -->
-              <a-input v-model="medicData.defDosage" allow-clear placeholder="请输入" />
+              <a-input type="number" v-model="medicData.defDosage" allow-clear placeholder="请输入" />
             </div>
           </div>
 
@@ -459,7 +463,7 @@ import {
   getDosageList, getUnitList, getCategoryList, getMedicCategoryList, addMedicineSku, getTreatTypeList, modifyMedicineSku
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
-import { formatDateFull, formatDate } from '@/utils/util'
+import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import chooseMedic from './chooseMedic'
@@ -1034,6 +1038,31 @@ export default {
       this.medicData.defFreqName = getOne.value
       console.log('onSelectFreq defFreqId', defFreqId)
       console.log('onSelectFreq defFreqName', getOne.value)
+    },
+
+    onChangPrice(event) {
+      debugger
+      console.log('onChangPrice num', event)
+      if (event.pointerId) {
+        console.log('onChangPrice 清除事件', event.pointerId)
+        this.medicData.retailPrice = undefined
+        return
+      }
+      this.medicData.retailPrice = formatDecimal(this.medicData.retailPrice, 2)
+      console.log('onChangPrice this.medicData.retailPrice', this.medicData.retailPrice)
+    },
+
+    onChangXishu(event) {
+      if (event.pointerId) {
+        console.log('onChangXishu 清除事件', event.pointerId)
+        this.medicData.contentCoefficient = undefined
+        return
+      }
+      let index = this.medicData.contentCoefficient.indexOf('-')
+      if (index !== -1) {
+        this.medicData.contentCoefficient = this.medicData.contentCoefficient.replace('-', '',)
+      }
+      this.countSpecDesc()
     },
 
     /**
@@ -1755,6 +1784,10 @@ export default {
       }
       if (!tempData.specDesc) {
         this.$message.error('请输入规格描述')
+        return
+      }
+      if (!tempData.retailPrice) {
+        this.$message.error('请输入参考价格')
         return
       }
 
