@@ -235,3 +235,29 @@ export function isStringEmpty(str) {
 export function isArrayEmpty(arr) {
   return arr == undefined || arr == null || arr.length <= 0
 }
+
+/**
+ *保留小数点后 decimal 位  不四舍五入，直接减掉
+ * @param {} num 要计算的数
+ * @param {} decimal   保留的位数
+ * @returns 
+ */
+export function formatDecimal(num, decimal) {
+  num = num.toString()
+  let index = num.indexOf('.')
+  if (index !== -1) {
+    let arr = num.split('.')
+    // let bannerPics = this.uploadData.bannerList.split(',')
+    if (arr[1].length >= 3) {
+      num = num.substring(0, decimal + index + 1)
+      return parseFloat(num).toFixed(decimal)
+    } else {
+      // num = num.substring(0)
+      return parseFloat(num)
+    }
+  } else {
+    // num = num.substring(0)
+    return parseInt(num)
+  }
+  // return parseFloat(num).toFixed(decimal)
+}
