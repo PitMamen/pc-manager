@@ -118,7 +118,6 @@
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span style="margin-top: 10px"> <span style="color: red">*</span> 机构编码:</span>
           <a-input
-          type="number"
             v-model="queryParams.hospitalCode"
             allow-clear
             placeholder="请输入内容"
@@ -391,52 +390,52 @@ export default {
      */
     handleSubmit() {
        if(! this.queryParams.tenantType){
-        this.$message.$error('请选择租户类型')
+        this.$message.error('请选择租户类型')
         return
        }
 
 
 
       if (!this.queryParams.adminAccount) {
-        this.$message.$error('请输入管理员账号')
+        this.$message.error('请输入管理员账号')
         return
       }
 
       if (!this.queryParams.adminName) {
-        this.$message.$error('请输入管理员姓名')
+        this.$message.error('请输入管理员姓名')
         return
       }
       if (!this.queryParams.email) {
-        this.$message.$error('请输入邮箱地址')
+        this.$message.error('请输入邮箱地址')
         return
       }
       if (!this.queryParams.expireDate) {
-        this.$message.$error('请选择到期日期')
+        this.$message.error('请选择到期日期')
         return
       }
       if (!this.queryParams.hospitalName) {
-        this.$message.$error('请输入机构名称')
+        this.$message.error('请输入机构名称')
         return
       }
       if (!this.queryParams.hospitalCode) {
-        this.$message.$error('请输入机构编码')
+        this.$message.error('请输入机构编码')
         return
       }
       if (!this.queryParams.phone) {
-        this.$message.$error('请输入手机号码')
+        this.$message.error('请输入手机号码')
         return
       }
       if (!this.queryParams.tenantName) {
-        this.$message.$error('请输入租户名称')
+        this.$message.error('请输入租户名称')
         return
       }
 
       if (!this.queryParams.tenantCode) {
-        this.$message.$error('请输入租户编码')
+        this.$message.error('请输入租户编码')
         return
       }
       if (!this.queryParams.applicationIds) {
-        this.$message.$error('请选择对应应用权限')
+        this.$message.error('请选择对应应用权限')
         return
       }
 
