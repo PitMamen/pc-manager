@@ -1,7 +1,7 @@
 <template>
   <a-modal
     class="ant-pxk-footer"
-    title="新增单位"
+    title="新增剂型"
     :width="400"
     :visible="visible"
     :maskClosable="false"
@@ -13,10 +13,10 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span class="span-item-name"><span style="color: red">*</span>药品单位:</span>
+            <span class="span-item-name"><span style="color: red">*</span>药品剂型:</span>
             <a-input
               v-model="formData.value"
-              placeholder="请输入药品单位"
+              placeholder="请输入药品剂型"
               class="span-item-value"
               style="display: inline-block"
               :maxLength="20"
@@ -58,7 +58,7 @@
 <script>
 import { pinyin } from 'pinyin-pro'
 import { isStringEmpty } from '@/utils/util'
-import { add2 as add } from '@/api/modular/system/ypuse'
+import { add2 as add } from '@/api/modular/system/ypclassify'
 export default {
   data() {
     return {
@@ -69,8 +69,7 @@ export default {
   },
   methods: {
     // 初始化方法
-    add(code) {
-      this.formData.hospitalCode = code
+    add() {
       this.visible = true
     },
     onChange(event) {
@@ -80,7 +79,7 @@ export default {
     },
     validate() {
       if (isStringEmpty(this.formData.value)) {
-        this.$message.error('请输入药品单位')
+        this.$message.error('请输入药品剂型')
         return Promise.reject()
       }
       return Promise.resolve(this.formData)

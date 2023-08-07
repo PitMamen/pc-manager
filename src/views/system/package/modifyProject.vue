@@ -94,11 +94,21 @@
           </div>
             <div class="div-content">
               <span class="span-item-name">生产厂商:</span>
-              <a-select v-model="checkData.factoryId" allow-clear placeholder="请选择生产厂商">
-                <a-select-option v-for="(item, index) in factoryListData" :key="index" :value="item.id">{{
-                  item.factoryName
-                }}</a-select-option>
-              </a-select>
+              <a-select 
+            style=" margin-top: 1px;"
+            v-model="checkData.factoryId"  
+            placeholder="请选择生产厂商" 
+            show-search 
+            :filter-option="false"
+            :not-found-content="fetching ? undefined : null"
+            allow-clear  
+            @change="onDepartmentSelectChange"
+            @search="onDepartmentSelectSearch">
+            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in factoryListData" :key="index" :value="item.id">{{
+                item.factoryName
+              }}</a-select-option>
+            </a-select>
             </div>
   
             <div class="div-content">
@@ -160,6 +170,7 @@
       return {
         title: '修改项目',
         visible: false,
+        fetching: false,
         headers: {},
         confirmLoading: false,
         projectTypeData: [],
@@ -225,7 +236,7 @@
         this.confirmLoading = false
 
         this.getDictDataForCodeOut()
-        this.qryFactoryListOut()
+       
         this.checkData.projectImg  = record.projectImg
         this.checkData.projectName = record.projectName
         this.checkData.normsModel = record.normsModel
@@ -239,7 +250,7 @@
         this.checkData.sendType =  record.sendType
         this.checkData.systemAddress =  record.systemAddress
         this.checkData.projectDesc =  record.projectDesc
-
+        this.qryFactoryListOut(record.factoryName)
   
        
       },
@@ -270,25 +281,39 @@
           })
       },
   
-      /**
-       *
-       * 生产厂商信息查询
-       */
-      qryFactoryListOut() {
-        qryFactoryList(this.factoryquery)
-          .then((res) => {
-            if (res.code == 0 && res.data.rows > 0) {
-              this.factoryListData = res.data.rows
-            } else {
-              this.factoryListData = res.data.rows
-            }
-            return []
-          })
-          .finally((res) => {
-            this.confirmLoading = false
-          })
-      },
   
+     /**
+     *
+     * 生产厂商信息查询
+     */
+     qryFactoryListOut(queryText) {
+      qryFactoryList({queryText:queryText,pageNo:1,pageSize:100})
+        .then((res) => {
+          if (res.code == 0 && res.data.rows > 0) {
+            this.factoryListData = res.data.rows
+          } else {
+            this.factoryListData = res.data.rows
+          }
+          return []
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+     //厂商搜索
+     onDepartmentSelectSearch(value) {
+      this.factoryListData = []
+      this.qryFactoryListOut(value)
+    },
+    //厂商选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.factoryListData = []
+        this.qryFactoryListOut(undefined)
+      }
+      
+    },
       beforeUpload(file) {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
         if (!isJpgOrPng) {

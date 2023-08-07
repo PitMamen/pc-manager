@@ -4,7 +4,7 @@
 
       <div class="search-row">
         <span class="name">关键字查询:</span>
-        <a-input @keyup.enter="handleOk" v-model="queryParam.queryText" allow-clear
+        <a-input @keyup.enter="handleOkRefresh" v-model="queryParam.queryText" allow-clear
           placeholder="请输入药品通用名/商品名/名称首字母查询" style="width: 270px" />
       </div>
       <div class="search-row">
@@ -33,7 +33,7 @@
 
         <!-- a-auto-complete的a-select-option 的:value 需要为字符串，数字报错 -->
         <a-auto-complete v-model="queryParam.dosageFormId" placeholder="请输入选择" option-label-prop="title"
-          @select="handleOk" @search="handleSearchDosage">
+          @select="handleOkRefresh" @search="handleSearchDosage">
           <template slot="dataSource">
             <a-select-option v-for="(item, index) in dosageDatas" :title="item.value" :key="index + ''"
               :value="item.id + ''">{{
@@ -46,7 +46,7 @@
 
       <div class="action-row" style="margin-top: -10px">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="handleOk">查询</a-button>
+          <a-button type="primary" icon="search" @click="handleOkRefresh">查询</a-button>
 
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
@@ -115,11 +115,19 @@ export default {
         queryText: "",//关键字
         status: ''//字典:0启用/1停用
       },
-      // 表头
+
+      /**
+       * 固定列宽省略号可以用ellipsis
+       *    <span slot="name" slot-scope="text">
+              <ellipsis :length="10" tooltip>{{text}}</ellipsis>
+            </span>
+       * 
+       */
       columns: [
         {
           title: '批准文号',
           dataIndex: 'approvalNumber',
+          width: '150px',
           scopedSlots: { customRender: 'approvalNumber' },
         },
         {
@@ -134,11 +142,13 @@ export default {
         },
         {
           title: '药品规格',
+          width: '220px',
           dataIndex: 'specification',
           scopedSlots: { customRender: 'specification' },
         },
         {
           title: '剂型',
+          width: '120px',
           dataIndex: 'dosageFormDesc',
           scopedSlots: { customRender: 'dosageFormDesc' },
         },
@@ -146,11 +156,13 @@ export default {
         // drugTypeId
         {
           title: '类型',
+          width: '90px',
           dataIndex: 'drugTypeDesc',
           scopedSlots: { customRender: 'drugTypeDesc' },
         },
         {
           title: '医保类型',
+          width: '90px',
           dataIndex: 'healthInsuranceCategory',
           scopedSlots: { customRender: 'healthInsuranceCategory' },
         },
@@ -161,6 +173,7 @@ export default {
         },
         {
           title: '价格',
+          width: '90px',
           dataIndex: 'unitPrice',
           scopedSlots: { customRender: 'unitPrice' },
         },
@@ -175,6 +188,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        console.log('ddd', parameter)
         return medicinePage(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
             var data = {
@@ -280,8 +294,14 @@ export default {
       this.$router.push({
         path: './medicDetail',
         query: {
-          id: record.id,
+          // queryText: queryText,
+          dataStr: JSON.stringify({ editId: record.id, goType: 2 }),
         },
+
+        // path: './medicDetail',
+        // query: {
+        //   id: record.id,
+        // },
       })
     },
     // updateStatus
@@ -315,7 +335,7 @@ export default {
      */
     reset() {
       this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
-      this.handleOk()
+      this.handleOkRefresh()
     },
     handleOk() {
       let num = Number(this.queryParam.dosageFormId)
@@ -325,6 +345,15 @@ export default {
         return
       }
       this.$refs.table.refresh()
+    },
+    handleOkRefresh() {
+      let num = Number(this.queryParam.dosageFormId)
+      //判断数据类型   判断数字数据类型
+      if (isNaN(num)) {
+        this.$message.error('剂型选择有误，请重新输入选择')
+        return
+      }
+      this.$refs.table.refresh(true)
     },
   },
 }

@@ -94,7 +94,17 @@
           </div>
           <div class="div-content">
             <span class="span-item-name">生产厂商:</span>
-            <a-select v-model="checkData.factoryId" allow-clear placeholder="请选择生产厂商">
+            <a-select 
+            style=" margin-top: 1px;"
+            v-model="checkData.factoryId"  
+            placeholder="请选择生产厂商" 
+            show-search 
+            :filter-option="false"
+            :not-found-content="fetching ? undefined : null"
+            allow-clear  
+            @change="onDepartmentSelectChange"
+            @search="onDepartmentSelectSearch">
+            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
               <a-select-option v-for="(item, index) in factoryListData" :key="index" :value="item.id">{{
                 item.factoryName
               }}</a-select-option>
@@ -159,6 +169,7 @@ export default {
   data() {
     return {
       title: '新增项目',
+      fetching: false,
       visible: false,
       record: {},
       headers: {},
@@ -191,10 +202,7 @@ export default {
         {code:1,value:'账号密码分配'},{code:2,value:'激活码重置'}
       ],
       factoryquery: {
-        // address: '',
-        // contactName: '',
-        // contactTel: '',
-        // pyCode: '',
+        queryText:undefined
       },
     }
   },
@@ -244,8 +252,8 @@ export default {
      *
      * 生产厂商信息查询
      */
-    qryFactoryListOut() {
-      qryFactoryList(this.factoryquery)
+    qryFactoryListOut(queryText) {
+      qryFactoryList({queryText:queryText,pageNo:1,pageSize:100})
         .then((res) => {
           if (res.code == 0 && res.data.rows > 0) {
             this.factoryListData = res.data.rows
@@ -257,6 +265,20 @@ export default {
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+     //厂商搜索
+     onDepartmentSelectSearch(value) {
+      this.factoryListData = []
+      this.qryFactoryListOut(value)
+    },
+    //厂商选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.factoryListData = []
+        this.qryFactoryListOut(undefined)
+      }
+      
     },
 
     beforeUpload(file) {
@@ -364,7 +386,9 @@ export default {
   },
 }
 </script>
+
   <style lang="less" scoped>
+  
 .div-service-user {
   display: flex;
   flex-direction: row;

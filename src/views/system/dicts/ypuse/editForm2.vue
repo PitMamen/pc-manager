@@ -35,6 +35,17 @@
               allow-clear
             />
           </div>
+          <div class="div-content">
+            <span class="span-item-name">HIS编码:</span>
+            <a-input
+              v-model="formData.code"
+              placeholder="请输入HIS编码"
+              class="span-item-value"
+              style="display: inline-block"
+              :maxLength="20"
+              allow-clear
+            />
+          </div>
           <div
             class="div-service-user"
             style="margin-top: -7px; margin-left: 0px; position: relative; height: 52%;margin-bottom: 10px;"
@@ -69,7 +80,7 @@ export default {
   methods: {
     // 初始化方法
     edit(item) {
-      this.formData = item
+      this.formData = JSON.parse(JSON.stringify(item))
       this.visible = true
     },
     onChange(event) {
