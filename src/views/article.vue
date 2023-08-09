@@ -196,7 +196,7 @@
               </div>
               <div style="margin-left: 10px; color: #999999; font-size: 1em">特别提示：</div>
               <div style="margin-left: 10px; color: #999999; font-size: 1em">
-                1、本次处方仅限于中南大学湘雅二医院互联网医院使用，自行下载配药不具有处方效力。
+                1、本次处方仅限于{{preDetailData.medicalInfo.preHead}}使用，自行下载配药不具有处方效力。
               </div>
               <div style="margin-left: 10px; color: #999999; font-size: 1em">
                 2、按照卫生部、国家中医药管理局卫医政发【2011】11号文件规定：为保证患者用药安全，药 品一经发出，不得退换
