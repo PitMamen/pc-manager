@@ -267,10 +267,6 @@ export default {
 
   methods: {
     searchOut() {
-      if (!this.queryParamsStatisit.messageOriginalId) {
-        this.$message.error('请选择问卷名称')
-        return
-      }
       this.$refs.tableStat.refresh(true)
     },
 
