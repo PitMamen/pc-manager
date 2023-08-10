@@ -152,7 +152,7 @@ button {
   padding-top: 20px;
   .column {
     width: calc(33.33333% - 7px);
-    height: calc(100vh - 190px);
+    height: calc(100vh - 230px);
     overflow-y: auto;
   }
 }
