@@ -380,7 +380,7 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
 
     this.getDepartmentSelectList(undefined)
-    this.questionnairesOut()
+    //this.questionnairesOut()
     this.createValue = [
       moment(moment().startOf('month'), this.dateFormat),
       moment(moment().endOf('month'), this.dateFormat),
