@@ -258,7 +258,7 @@ export default {
     // this.confirmLoading = true
 
     this.getDepartmentSelectList(undefined)
-    this.questionnairesOut()
+    //this.questionnairesOut()
     this.createValue = [
       moment(moment().startOf('month'), this.dateFormat),
       moment(moment().endOf('month'), this.dateFormat),
