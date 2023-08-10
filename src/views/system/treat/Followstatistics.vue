@@ -2,7 +2,7 @@
   <a-card  class="sys-card" >
     <!-- <a-spin :spinning="confirmLoading"> -->
     <div class="table-page-search-wrapper" >
-      <div class="search-row">
+      <div class="search-row" v-if="false">
         <span class="name">问卷名称:</span>
         <a-select
           class="sitemore"
