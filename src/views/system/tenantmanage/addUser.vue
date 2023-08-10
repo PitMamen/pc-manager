@@ -16,10 +16,18 @@
           </div>
           <div
             :class="{ 'checked-btn': currentTab == 'photo' }"
-            style="margin-left: 15px; padding: 10px 10px"
             @click="checketab('photo')"
+            style="margin-left: 15px; padding: 10px 10px"
           >
             <a-icon type="idcard" style="margin-right: 5px"></a-icon><span>证件信息</span>
+          </div>
+
+          <div
+            :class="{ 'checked-btn': currentTab == 'signing' }"
+            @click="checketab('signing')"
+            style="margin-left: 15px; padding: 10px 10px"
+          >
+            <a-icon type="file" style="margin-right: 5px"></a-icon><span>临工签约</span>
           </div>
         </div>
 
@@ -128,9 +136,8 @@
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
             <a-tree-select
               v-model="checkData.hospitalCode"
-              style="min-width: 120px;"
+              style="min-width: 120px"
               dropdownClassName="abc"
-              
               :tree-data="treeData"
               placeholder="请选择"
             >
@@ -232,7 +239,7 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/300</span>
+            <span class="m-count">{{ checkData.expertInDisease ? checkData.expertInDisease.length : 0 }}/300</span>
           </div>
           <div class="div-content" style="position: relative">
             <span class="span-item-name" style="text-align: left">详细介绍:</span>
@@ -256,7 +263,7 @@
           <!-- 身份证 -->
           <div class="item-idcard">
             <div>身份证照片：</div>
-            <div style="right: 120px; top: 10px; ">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -296,7 +303,7 @@
           <!-- 职称 -->
           <div class="item-idcard">
             <div style="margin-left: 12px">职称照片：</div>
-            <div style="right: 120px; top: 10px; ">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -337,7 +344,7 @@
           <!-- 资格证 -->
           <div class="item-idcard">
             <div>资格证照片：</div>
-            <div style="right: 120px; top: 10px; ">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -379,7 +386,7 @@
           <!-- 执业证照片 -->
           <div class="item-idcard">
             <div>执业证照片：</div>
-            <div style="right: 120px; top: 10px;">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -416,6 +423,109 @@
                 </div>
               </a-upload>
             </div>
+          </div>
+        </div>
+
+        <div v-if="currentTab == 'signing'" class="signing-infor">
+          <div class="div-title">
+            <div class="div-line-blue"></div>
+            <span class="span-title">01临工签约</span>
+          </div>
+
+          <div class="item-signing">
+            <div class="info-content">
+              <div style="color: #4d4d4d; font-size: 12px">用户姓名: &nbsp; 张删</div>
+              <div style="color: #4d4d4d; font-size: 12px">身份证号: &nbsp; 430181199711081278</div>
+              <div style="color: #4d4d4d; font-size: 12px">手机号: &nbsp; 18874892467</div>
+            </div>
+          </div>
+
+          <div class="item-signing">
+            <div style="margin-top: 10px">注册ID：</div>
+            <a style="margin-top: 10px">541931879</a>
+            <a-button style="margin-top: 5px; margin-left: 20px" type="primary" ghost>注册</a-button>
+          </div>
+
+          <div class="div-title">
+            <div class="div-line-blue"></div>
+            <span class="span-title">02网签提交</span>
+          </div>
+
+          <div class="item-idcard1">
+            <div>身份证照片【正面】：</div>
+            <div style="right: 120px; top: 10px">
+              <a-upload
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="idcardZList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(1, value)"
+                @change="(value) => handleidcardChange(1, value)"
+              >
+                <div v-if="idcardZList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div>
+                </div>
+              </a-upload>
+            </div>
+            <div style="margin-left: 40px">身份证照片【反面】：</div>
+
+            <div style="right: 120px; top: 10px">
+              <a-upload
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="idcardFList"
+                accept="image/jpeg,image/png,image/jpg"
+                :before-upload="beforeUpload"
+                :remove="(value) => deletePhoto(2, value)"
+                @change="(value) => handleidcardChange(2, value)"
+              >
+                <div v-if="idcardFList.length == 0">
+                  <a-icon type="plus" />
+                  <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div>
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <div class="item-signing">
+            <a style="margin-top: 10px">湖南惠用工自由职业者服务协议.pdf</a>
+            <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost>网签提交</a-button>
+          </div>
+        </div>
+
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">03指派发薪任务</span>
+        </div>
+
+        <div class="item-signing">
+          <a-select style="width: 150px" v-model="checkData.userType" allow-clear placeholder="请选择人员类型">
+            <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.code">{{
+              item.value
+            }}</a-select-option>
+          </a-select>
+          <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost>绑定</a-button>
+        </div>
+
+        <div class="div-title" style="margin-top: 15px">
+          <div class="div-line-blue"></div>
+          <span class="span-title">04银行卡账户</span>
+        </div>
+
+        <div class="item-signing">
+          <div class="wrap-content">
+            <div class="card-kuang">
+              <div style="color: #999999; font-size: 12px; padding: 3px">620771114785456547</div>
+              <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                中国银行
+              </div>
+            </div>
+            <img style="width: 20px; height: 20px;margin-left: 10px;margin-top: 4px;" src="~@/assets/icons/bangding1.png" />
+            <a style="font-size: 12px; margin-top: 4px;margin-left: 6px;">绑定</a>
           </div>
         </div>
       </div>
@@ -599,9 +709,9 @@ export default {
       }
       this.currentTab = type
       // if (type == 'base') {
-        // this.getChatList(this.item.orderId)
+      // this.getChatList(this.item.orderId)
       // } else if (type == 'photo') {
-        // this.getphoneRecords(this.item)
+      // this.getphoneRecords(this.item)
       // }
     },
 
@@ -1221,7 +1331,7 @@ export default {
 
 
 <style >
- .abc.ant-select-tree-dropdown {
+.abc.ant-select-tree-dropdown {
   max-height: 28vh !important;
   top: 635px !important;
 }
@@ -1251,7 +1361,6 @@ export default {
   align-items: center;
   flex-direction: row;
   height: 26px;
-  margin-top: 20px;
   margin-bottom: 10px;
 
   .div-line-blue {
@@ -1285,6 +1394,54 @@ export default {
       width: 100%;
       margin-left: 25px;
       margin-bottom: 8px;
+    }
+  }
+
+  .signing-infor {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+
+    .item-idcard1 {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+
+    .item-signing {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-bottom: 8px;
+
+      .info-content {
+        width: 80%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+  }
+
+  .wrap-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 80%;
+
+    .card-kuang {
+      width: 220px;
+      height: 28px;
+      background: #ffffff;
+      border: 1px solid #cccccc;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: row;
     }
   }
 

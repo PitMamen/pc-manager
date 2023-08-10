@@ -84,6 +84,28 @@
               placeholder="请输入小程序APPID/网站地址/APP下载地址等"
             />
           </div>
+
+
+          <div class="div-content" v-if="checkData.projectType == 107&&checkData.systemType==2">
+            <span class="span-item-name">跳转URL:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.sysPath"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="300"
+              placeholder="请输入跳转路径"
+            />
+          </div>
+
+
+
+
+
+
+
+
+
           <div class="div-content" v-if="checkData.projectType == 107">
             <span class="span-item-name"><span style="color: red">*</span>发货方式:</span>
             <a-select v-model="checkData.sendType" allow-clear placeholder="请选择发货方式" >
@@ -199,6 +221,7 @@
         sendType:'',
         systemAddress:'',
         projectDesc:'',
+        sysPath:'',
         },
   
         factoryquery: {
@@ -226,6 +249,7 @@
         this.checkData.sendType = ''
         this.checkData.systemAddress = ''
         this.checkData.projectDesc = ''
+        this.checkData.sysPath = ''
       },
       //新增
       modifyModel(record) {
@@ -250,6 +274,7 @@
         this.checkData.sendType =  record.sendType
         this.checkData.systemAddress =  record.systemAddress
         this.checkData.projectDesc =  record.projectDesc
+        this.checkData.sysPath =  record.sysPath
         this.qryFactoryListOut(record.factoryName)
   
        
@@ -352,6 +377,11 @@
        */
       handleSubmit() {
         console.log(this.checkData)
+
+
+        if(checkData.projectType != 107||checkData.systemType!=2){
+          this.checkData.sysPath = ''
+        }
   
         if (isStringEmpty(this.checkData.projectName)) {
           this.$message.error('请输入项目名称')

@@ -84,6 +84,23 @@
               placeholder="请输入小程序APPID/网站地址/APP下载地址等"
             />
           </div>
+
+
+          <div class="div-content" v-if="checkData.projectType == 107&&checkData.systemType==2">
+            <span class="span-item-name">跳转URL:</span>
+            <a-input
+              class="span-item-value"
+              v-model="checkData.sysPath"
+              style="display: inline-block"
+              allow-clear
+              :maxLength="300"
+              placeholder="请输入跳转路径"
+            />
+          </div>
+
+
+
+
           <div class="div-content" v-if="checkData.projectType == 107">
             <span class="span-item-name"><span style="color: red">*</span>发货方式:</span>
             <a-select v-model="checkData.sendType" allow-clear placeholder="请选择发货方式" >
@@ -193,7 +210,8 @@ export default {
         status:1,
         systemType: '',
         sendType:'',
-        systemAddress:''
+        systemAddress:'',
+        sysPath:'',
       },
       systemTypeData:[
         {code:1,value:'APP'},{code:2,value:'小程序'},{code:3,value:'网站'}
@@ -324,6 +342,10 @@ export default {
      */
     handleSubmit() {
       console.log(this.checkData)
+
+      if(checkData.projectType != 107||checkData.systemType!=2){
+          this.checkData.sysPath = ''
+        }
 
       if (isStringEmpty(this.checkData.projectName)) {
         this.$message.error('请输入项目名称')
