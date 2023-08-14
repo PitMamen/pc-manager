@@ -26,6 +26,7 @@
             :class="{ 'checked-btn': currentTab == 'signing' }"
             @click="checketab('signing')"
             style="margin-left: 15px; padding: 10px 10px"
+            v-if="record.userId"
           >
             <a-icon type="file" style="margin-right: 5px"></a-icon><span>临工签约</span>
           </div>
@@ -533,9 +534,9 @@
         <div class="item-signing">
           <div class="wrap-content">
             <div class="card-kuang">
-              <a-input :bordered="false" :maxLength="19" :type="number"></a-input>
+              <a-input :bordered="false" :maxLength="19" :type="number" v-model="bankList[0].bankCard"></a-input>
               <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
-                建设银行
+                {{bankList[0].bankName}}
               </div>
             </div>
             <img
@@ -545,9 +546,9 @@
             <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
 
             <div class="card-kuang" style="margin-left: auto">
-              <a-input :bordered="false" :maxLength="19" :type="number"></a-input>
+              <a-input :bordered="false" :maxLength="19" :type="number" v-model="bankList[1].bankCard"></a-input>
               <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
-                中国银行
+                {{bankList[1].bankName}}
               </div>
             </div>
             <img
@@ -557,9 +558,9 @@
             <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
 
             <div class="card-kuang">
-              <a-input :bordered="false" :maxLength="19" :type="number"></a-input>
+              <a-input :bordered="false" :maxLength="19" :type="number" v-model="bankList[2].bankCard"></a-input>
               <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
-                长沙银行
+                {{bankList[2].bankName}}
               </div>
             </div>
             <img
