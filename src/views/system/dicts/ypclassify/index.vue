@@ -78,7 +78,7 @@ button {
   justify-content: space-between;
   .column {
     width: calc(33.33333% - 7px);
-    height: calc(100vh - 121px);
+    height: calc(100vh - 161px);
     overflow-y: auto;
   }
 }

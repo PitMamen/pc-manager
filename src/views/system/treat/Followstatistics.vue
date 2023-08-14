@@ -2,7 +2,7 @@
   <a-card  class="sys-card" >
     <!-- <a-spin :spinning="confirmLoading"> -->
     <div class="table-page-search-wrapper" >
-      <div class="search-row">
+      <div class="search-row" v-if="false">
         <span class="name">问卷名称:</span>
         <a-select
           class="sitemore"
@@ -380,7 +380,7 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
 
     this.getDepartmentSelectList(undefined)
-    this.questionnairesOut()
+    //this.questionnairesOut()
     this.createValue = [
       moment(moment().startOf('month'), this.dateFormat),
       moment(moment().endOf('month'), this.dateFormat),
@@ -389,10 +389,6 @@ export default {
 
   methods: {
     searchOut() {
-      if (!this.queryParamsStatisit.messageOriginalId) {
-        this.$message.error('请选择问卷名称')
-        return
-      }
       this.getFollowStatOut()
       this.queryParamsStatisit.successFlag = ''
       this.queryParamsStatisit.openidFlag = ''

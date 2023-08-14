@@ -1,7 +1,7 @@
 <template>
   <a-card class="sys-card" :bordered="false">
       <div class="table-page-search-wrapper">
-        <div class="search-row">
+        <div class="search-row" v-if="false">
           <span class="name">问卷名称:</span>
           <a-select
             class="sitemore"
@@ -258,7 +258,7 @@ export default {
     // this.confirmLoading = true
 
     this.getDepartmentSelectList(undefined)
-    this.questionnairesOut()
+    //this.questionnairesOut()
     this.createValue = [
       moment(moment().startOf('month'), this.dateFormat),
       moment(moment().endOf('month'), this.dateFormat),
@@ -267,10 +267,6 @@ export default {
 
   methods: {
     searchOut() {
-      if (!this.queryParamsStatisit.messageOriginalId) {
-        this.$message.error('请选择问卷名称')
-        return
-      }
       this.$refs.tableStat.refresh(true)
     },
 
