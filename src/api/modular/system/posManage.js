@@ -5113,3 +5113,61 @@ export function saveFactory(data) {
     data: data,
   })
 }
+
+
+
+// 获取临工注册信息
+export function getHvyogoUserInfo(userId) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getHvyogoUserInfo/'+userId,
+    method: 'get',
+    // params: userId,
+  })
+}
+
+// 获取任务列表(临工签约) 
+export function getTaskList(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getTaskList',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 绑定任务
+export function bindTask(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/bindTask',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 临工注册 
+export function register(userId) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/register/'+userId,
+    method: 'get',
+    // params: data,
+  })
+}
+
+// 临工签约  
+export function signing(userId) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/signing/'+userId,
+    method: 'get',
+    // params: userId,
+  })
+}
+
+
+// 银行卡号得到银行名称
+export function getBankNameForCardNo(cardNo) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getBankNameForCardNo/'+cardNo,
+    method: 'get',
+    // params: userId,
+  })
+}
+

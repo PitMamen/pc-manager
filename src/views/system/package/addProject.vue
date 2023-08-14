@@ -343,7 +343,7 @@ export default {
     handleSubmit() {
       console.log(this.checkData)
 
-      if(checkData.projectType != 107||checkData.systemType!=2){
+      if(this.checkData.projectType != 107||this.checkData.systemType!=2){
           this.checkData.sysPath = ''
         }
 

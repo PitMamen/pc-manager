@@ -434,16 +434,18 @@
 
           <div class="item-signing">
             <div class="info-content">
-              <div style="color: #4d4d4d; font-size: 12px">用户姓名: &nbsp; 张删</div>
-              <div style="color: #4d4d4d; font-size: 12px">身份证号: &nbsp; 430181199711081278</div>
-              <div style="color: #4d4d4d; font-size: 12px">手机号: &nbsp; 18874892467</div>
+              <div style="color: #4d4d4d; font-size: 12px">用户姓名: &nbsp; {{ userInfoList.userName }}</div>
+              <div style="color: #4d4d4d; font-size: 12px">身份证号: &nbsp; {{ userInfoList.identificationNo }}</div>
+              <div style="color: #4d4d4d; font-size: 12px">手机号: &nbsp; {{ userInfoList.contactTel }}</div>
             </div>
           </div>
 
           <div class="item-signing">
             <div style="margin-top: 10px">注册ID：</div>
-            <a style="margin-top: 10px">541931879</a>
-            <a-button style="margin-top: 5px; margin-left: 20px" type="primary" ghost>注册</a-button>
+            <a style="margin-top: 10px">{{ hvyogoId }}</a>
+            <a-button style="margin-top: 5px; margin-left: 20px" type="primary" ghost @click="registerOut">{{
+              hvyogoId ? '更新信息' : '注册'
+            }}</a-button>
           </div>
 
           <div class="div-title">
@@ -492,8 +494,18 @@
           </div>
 
           <div class="item-signing">
-            <a style="margin-top: 10px">湖南惠用工自由职业者服务协议.pdf</a>
-            <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost>网签提交</a-button>
+            <a
+              v-if="protocolFile != null"
+              :style="
+                protocolFile != null && protocolFile > -1
+                  ? 'color:#409EFF;margin-top:10px'
+                  : 'color:red;margin-top:10px'
+              "
+              >{{ protocolFile != null && protocolFile > -1 ? '签约成功' : '签约失败' }}</a
+            >
+            <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="signingOut"
+              >网签提交</a-button
+            >
           </div>
         </div>
 
@@ -503,12 +515,14 @@
         </div>
 
         <div class="item-signing">
-          <a-select style="width: 150px" v-model="checkData.userType" allow-clear placeholder="请选择人员类型">
-            <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.code">{{
-              item.value
+          <a-select style="width: 150px" v-model="selectTask" allow-clear placeholder="请指派任务">
+            <a-select-option v-for="(item, index) in taskList" :key="index" :value="item.taskId">{{
+              item.taskName
             }}</a-select-option>
           </a-select>
-          <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost>绑定</a-button>
+          <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="bangdTaskOut"
+            >绑定</a-button
+          >
         </div>
 
         <div class="div-title" style="margin-top: 15px">
@@ -519,13 +533,40 @@
         <div class="item-signing">
           <div class="wrap-content">
             <div class="card-kuang">
-              <div style="color: #999999; font-size: 12px; padding: 3px">620771114785456547</div>
+              <a-input :bordered="false" :maxLength="19" :type="number"></a-input>
+              <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                建设银行
+              </div>
+            </div>
+            <img
+              style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+              src="~@/assets/icons/bangding1.png"
+            />
+            <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
+
+            <div class="card-kuang" style="margin-left: auto">
+              <a-input :bordered="false" :maxLength="19" :type="number"></a-input>
               <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                 中国银行
               </div>
             </div>
-            <img style="width: 20px; height: 20px;margin-left: 10px;margin-top: 4px;" src="~@/assets/icons/bangding1.png" />
-            <a style="font-size: 12px; margin-top: 4px;margin-left: 6px;">绑定</a>
+            <img
+              style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+              src="~@/assets/icons/bangding1.png"
+            />
+            <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
+
+            <div class="card-kuang">
+              <a-input :bordered="false" :maxLength="19" :type="number"></a-input>
+              <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                长沙银行
+              </div>
+            </div>
+            <img
+              style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+              src="~@/assets/icons/bangding1.png"
+            />
+            <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
           </div>
         </div>
       </div>
@@ -544,6 +585,12 @@ import {
   getDoctorUserDetail,
   updateDoctorUser,
   getDictDataForCodeUserType,
+  getHvyogoUserInfo,
+  getTaskList,
+  bindTask,
+  register,
+  signing,
+  getBankNameForCardNo,
   setCertificateForUserId,
   getCaAuthInfoAdminForUserId,
 } from '@/api/modular/system/posManage'
@@ -620,6 +667,15 @@ export default {
       roleList: [], //角色列表
       rylxList: [], //人员类型
       ryzcList: [], //人员职称
+
+      // 签约信息
+      userInfoList: {},
+      bankList: [],
+      hvyogoId: '',
+      taskList: [],
+      selectTask: undefined,
+      id: '',
+      protocolFile: '', //是否签约成功的标识
     }
   },
   created() {},
@@ -671,6 +727,13 @@ export default {
         titleF: '',
         titleZ: '',
       }
+
+      this.userInfoList = {}
+      this.bankList = []
+      this.hvyogoId = ''
+      this.selectTask = undefined
+      this.id = ''
+      this.protocolFile = ''
     },
     //新增
     addModel() {
@@ -686,7 +749,7 @@ export default {
     },
     //修改
     editModel(record) {
-      console.log(record)
+      console.log('cccc', record)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
@@ -700,6 +763,8 @@ export default {
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
+      this.getHvyogoUserInfoOut(606)
+      this.getTaskListOut()
     },
 
     // 顶部tab切换
@@ -965,6 +1030,96 @@ export default {
           }
 
           this.getRolesOut()
+        }
+      })
+    },
+
+    /**
+     * 获取临工签约信息
+     */
+    getHvyogoUserInfoOut(userId) {
+      console.log('Dddd:', userId)
+      getHvyogoUserInfo(userId).then((res) => {
+        if (res.code == 0) {
+          this.userInfoList = res.data.userInfo
+          this.bankList = res.data.bankList
+          this.hvyogoId = res.data.hvyogoId
+          this.id = res.data.id
+          this.protocolFile = res.data.protocolFile
+        }
+      })
+    },
+
+    /**
+     * 签约
+     */
+    signingOut() {
+      console.log('111:', this.record.userId)
+      signing(this.record.userId).then((res) => {
+        if (res.code == 0) {
+          this.$message.success(res.message)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+    },
+
+    /**
+     * 通过银行卡号得到 银行名称
+     */
+    getBankNameForCardNoOut(cardNo) {
+      getBankNameForCardNo(cardNo).then((res) => {
+        if (res.code == 0) {
+          // 成功获取到银行卡名称
+        }else{
+          // 调取失败
+        }
+      })
+    },
+
+    /**
+     * 临工注册/更新信息
+     */
+    registerOut() {
+      console.log('11111:', this.record.userId)
+      //如果 有注册ID  则是更新信息 操作  反之 是注册操作
+      register(this.record.userId).then((res) => {
+        if (res.code == 0) {
+          this.$message.success(res.message)
+        } else {
+          this.$message.error(res.message)
+        }
+      })
+      // if (this.hvyogoId) {
+      // } else {
+      // }
+    },
+
+    // 获取任务列表
+    getTaskListOut() {
+      getTaskList().then((res) => {
+        if (res.code == 0) {
+          this.taskList = res.data
+        }
+      })
+    },
+
+    // 绑定任务
+    bangdTaskOut() {
+      if (!this.selectTask) {
+        this.$message.error('请先选择指定的任务!')
+        return
+      }
+      var requestData = {
+        id: this.id,
+        taskId: this.selectTask,
+      }
+      bindTask(requestData).then((res) => {
+        if (res.code == 0) {
+          this.$message.success(res.message)
+          // this.taskList = res.data
+        } else {
+          this.$message.error(res.message)
         }
       })
     },
@@ -1442,6 +1597,23 @@ export default {
       border-radius: 2px;
       display: flex;
       flex-direction: row;
+      margin-bottom: 15px;
+    }
+
+    /deep/.ant-input:focus {
+      border: none;
+      box-shadow: none;
+    }
+
+    .ant-input {
+      width: 60%;
+      height: 24px !important;
+      padding: 4px 10px;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 12px !important;
+      line-height: 1.5;
+      border: none;
+      box-shadow: none;
     }
   }
 
