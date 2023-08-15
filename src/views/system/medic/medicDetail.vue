@@ -636,12 +636,6 @@ export default {
 
   },
   mounted() {
-    // this.$bus.$on('medicEditEvent', (record) => {
-    //   console.log('medicEditEvent', JSON.stringify(record))
-    //   if (record.editId == this.medicId) {
-    //     this.inputData(record)
-    //   }
-    // })
     this.$nextTick(() => {
       this.initEditor()
     })
@@ -824,6 +818,10 @@ export default {
         this.handleSearchBao2(record.minPkgUnit)
       }
       this.countSpecDesc()
+
+      //缓存导入填充的对象
+      this.$set(record, 'cacheMedicId', this.medicId)
+      Vue.ls.set('cache_inputobj_' + this.medicId, record)
     },
 
     getDetaiData() {
@@ -919,9 +917,9 @@ export default {
             console.log('processed----------- medicData', JSON.stringify(this.medicData))
 
             //这里处理填充数据
-            if (this.passData.goType == 1) {
-              this.inputData()
-
+            let cacheObj = Vue.ls.get('cache_inputobj_' + this.medicId)
+            if (cacheObj) {
+              this.inputData(cacheObj)
             }
           }
         })
@@ -1873,7 +1871,14 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
+            this.$bus.$emit('refreshMedicListEvent', '刷新药品列表')
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+
+            // window.opener = null;
+            // window.open("about:blank", "_top").close()
+
+            // this.$store.dispatch("tagsView/delView", this.$route);
+
             this.$router.go(-1)
           } else {
             this.$message.error('保存失败：' + res.message)

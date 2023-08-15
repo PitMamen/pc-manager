@@ -72,6 +72,11 @@
         <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
         <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
       </span>
+      <span slot="executeDept" slot-scope="text, record">
+        <!-- <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a> -->
+        <ellipsis :length="30" tooltip>{{ record.executeDepartmentName }}</ellipsis>
+        <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
+      </span>
 
       <span slot="execute" slot-scope="text, record">
         <a @click="goExecute(record)">{{record.planUserInfo}}</a>
@@ -94,7 +99,7 @@
 
 
 <script>
-import { STable } from '@/components'
+import { STable,Ellipsis } from '@/components'
 
 import {
   getDepartmentListForSelect,
@@ -110,6 +115,7 @@ export default {
   components: {
     STable,
     planExecute,
+    Ellipsis,
   },
   data() {
     return {
@@ -157,7 +163,8 @@ export default {
         {
           title: '执行科室',
         
-          dataIndex: 'executeDepartmentName',
+          // dataIndex: 'executeDept',
+          scopedSlots: { customRender: 'executeDept' },
         },
         {
           title: '随访名单',

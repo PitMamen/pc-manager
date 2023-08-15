@@ -238,22 +238,24 @@ export function isArrayEmpty(arr) {
 
 /**
  *保留小数点后 decimal 位  不四舍五入，直接减掉
- * @param {} num 要计算的数
+ * @param {} inNum 要计算的数
  * @param {} decimal   保留的位数
  * @returns 
  */
-export function formatDecimal(num, decimal) {
-  num = num.toString()
+export function formatDecimal(inNum, decimal) {
+  let num = inNum.toString()
   let index = num.indexOf('.')
   if (index !== -1) {
     let arr = num.split('.')
     // let bannerPics = this.uploadData.bannerList.split(',')
-    if (arr[1].length >= 3) {
+    if (arr[1].length >= (decimal + 1)) {
       num = num.substring(0, decimal + index + 1)
       return parseFloat(num).toFixed(decimal)
     } else {
+      console.log('fffffffffff', parseFloat(num))
+
       // num = num.substring(0)
-      return parseFloat(num)
+      return inNum
     }
   } else {
     // num = num.substring(0)

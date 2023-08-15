@@ -237,6 +237,15 @@ export default {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
     this.getDictDataOut()
   },
+  mounted() {
+    this.$bus.$on('refreshMedicListEvent', (record) => {
+      console.log('medicEditEvent', record)
+      this.handleOk()
+      // if (record.editId == this.medicId) {
+      //   this.inputData(record)
+      // }
+    })
+  },
   methods: {
     // getTypes(name) {
     //   getMedicineCategoryList({ name: name })
