@@ -302,7 +302,7 @@ export default {
       this.reconData = this.$route.query.billDate
       this.statusShow = this.$route.query.state
       this.currentTab = this.$route.query.payeeId
-      console.log("hospitalCode:",this.$route.query.hospitalCode)
+      console.log("hospitalCode:", this.reconData,this.statusShow,this.currentTab,this.$route.query.hospitalCode)
       this.queryParams.billDate = this.reconData
       this.queryParams.payeeId = this.currentTab
       this.queryParams.hospitalCode = this.$route.query.hospitalCode

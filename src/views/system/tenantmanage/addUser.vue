@@ -442,8 +442,8 @@
           </div>
 
           <div class="item-signing">
-            <div style="margin-top: 10px">注册ID：</div>
-            <a style="margin-top: 10px">{{ hvyogoId }}</a>
+            <div v-if="hvyogoId" style="margin-top: 10px">注册ID：</div>
+            <a v-if="hvyogoId" style="margin-top: 10px">{{ hvyogoId }}</a>
             <a-button style="margin-top: 5px; margin-left: 20px" type="primary" ghost @click="registerOut">{{
               hvyogoId ? '更新信息' : '注册'
             }}</a-button>
@@ -463,13 +463,10 @@
                 :headers="headers"
                 :file-list="idcardZList"
                 accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(1, value)"
-                @change="(value) => handleidcardChange(1, value)"
               >
                 <div v-if="idcardZList.length == 0">
                   <a-icon type="plus" />
-                  <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div>
+                  <!-- <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div> -->
                 </div>
               </a-upload>
             </div>
@@ -482,13 +479,10 @@
                 :headers="headers"
                 :file-list="idcardFList"
                 accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(2, value)"
-                @change="(value) => handleidcardChange(2, value)"
               >
                 <div v-if="idcardFList.length == 0">
                   <a-icon type="plus" />
-                  <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div>
+                  <!-- <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div> -->
                 </div>
               </a-upload>
             </div>
@@ -533,41 +527,101 @@
 
         <div class="item-signing">
           <div class="wrap-content">
-            <div class="card-kuang">
-              <a-input :bordered="false" :maxLength="19" :type="number" v-model="bankList[0].bankCard"></a-input>
-              <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
-                {{bankList[0].bankName}}
+            <!-- 卡1 -->
+            <div class="card-big">
+              <div class="card-kuang">
+                <a-input
+                  :bordered="false"
+                  :maxLength="19"
+                  type="number"
+                  v-model="bank1.bankCard"
+                  @blur="getBankNameForCardNoOut(bank1.bankCard, 1)"
+                  @keyup.enter="getBankNameForCardNoOut(bank1.bankCard, 1)"
+                ></a-input>
+                <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                  {{ bank1.bankName || '' }}
+                </div>
               </div>
+              <img
+                v-if="iscard1Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/jiebang1.png"
+              />
+              <img
+                v-if="!iscard1Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/bangding1.png"
+              />
+              <a
+                style="font-size: 12px; margin-top: 4px; margin-left: 6px"
+                @click="bindBankOut(bank1, iscard1Bind, 1)"
+                >{{ iscard1Bind ? '解绑' : '绑定' }}</a
+              >
             </div>
-            <img
-              style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
-              src="~@/assets/icons/bangding1.png"
-            />
-            <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
 
-            <div class="card-kuang" style="margin-left: auto">
-              <a-input :bordered="false" :maxLength="19" :type="number" v-model="bankList[1].bankCard"></a-input>
-              <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
-                {{bankList[1].bankName}}
+            <!-- 卡2 -->
+            <div v-if="bank2Show" class="card-big" style="margin-left: 15px">
+              <div class="card-kuang" style="margin-left: auto">
+                <a-input
+                  :bordered="false"
+                  :maxLength="19"
+                  type="number"
+                  v-model="bank2.bankCard"
+                  @blur="getBankNameForCardNoOut(bank2.bankCard, 2)"
+                  @keyup.enter="getBankNameForCardNoOut(bank2.bankCard, 2)"
+                ></a-input>
+                <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                  {{ bank2.bankName || '' }}
+                </div>
               </div>
+              <img
+                v-if="iscard2Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/jiebang1.png"
+              />
+              <img
+                v-if="!iscard2Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/bangding1.png"
+              />
+              <a
+                style="font-size: 12px; margin-top: 4px; margin-left: 6px"
+                @click="bindBankOut(bank2, iscard2Bind, 2)"
+                >{{ iscard2Bind ? '解绑' : '绑定' }}</a
+              >
             </div>
-            <img
-              style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
-              src="~@/assets/icons/bangding1.png"
-            />
-            <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
 
-            <div class="card-kuang">
-              <a-input :bordered="false" :maxLength="19" :type="number" v-model="bankList[2].bankCard"></a-input>
-              <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
-                {{bankList[2].bankName}}
+            <!-- 卡3 -->
+            <div v-if="bank3Show" class="card-big" style="margin-top: 20px">
+              <div class="card-kuang">
+                <a-input
+                  :bordered="false"
+                  :maxLength="19"
+                  type="number"
+                  v-model="bank3.bankCard"
+                  @blur="getBankNameForCardNoOut(bank3.bankCard, 3)"
+                  @keyup.enter="getBankNameForCardNoOut(bank3.bankCard, 3)"
+                ></a-input>
+                <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                  {{ bank3.bankName || '' }}
+                </div>
               </div>
+              <img
+                v-if="iscard3Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/jiebang1.png"
+              />
+              <img
+                v-if="!iscard3Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/bangding1.png"
+              />
+              <a
+                style="font-size: 12px; margin-top: 4px; margin-left: 6px"
+                @click="bindBankOut(bank3, iscard3Bind, 3)"
+                >{{ iscard3Bind ? '解绑' : '绑定' }}</a
+              >
             </div>
-            <img
-              style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
-              src="~@/assets/icons/bangding1.png"
-            />
-            <a style="font-size: 12px; margin-top: 4px; margin-left: 6px">绑定</a>
           </div>
         </div>
       </div>
@@ -592,6 +646,7 @@ import {
   register,
   signing,
   getBankNameForCardNo,
+  bindBank,
   setCertificateForUserId,
   getCaAuthInfoAdminForUserId,
 } from '@/api/modular/system/posManage'
@@ -677,6 +732,14 @@ export default {
       selectTask: undefined,
       id: '',
       protocolFile: '', //是否签约成功的标识
+      bank1: {},
+      bank2: {},
+      bank3: {},
+      bank2Show: false,
+      bank3Show: false,
+      iscard1Bind: false,
+      iscard2Bind: false,
+      iscard3Bind: false,
     }
   },
   created() {},
@@ -735,6 +798,10 @@ export default {
       this.selectTask = undefined
       this.id = ''
       this.protocolFile = ''
+      this.bank1 = {}
+      this.bank2 = {}
+      this.bank3 = {}
+      ;(this.bank2Show = false), (this.bank3Show = false)
     },
     //新增
     addModel() {
@@ -764,7 +831,7 @@ export default {
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
-      this.getHvyogoUserInfoOut(606)
+      this.getHvyogoUserInfoOut(record.userId)
       this.getTaskListOut()
     },
 
@@ -1047,6 +1114,46 @@ export default {
           this.hvyogoId = res.data.hvyogoId
           this.id = res.data.id
           this.protocolFile = res.data.protocolFile
+          if (this.bankList.length == 3) {
+            this.bank1 = this.bankList[0]
+            this.bank2 = this.bankList[1]
+            this.bank3 = this.bankList[2]
+            this.iscard1Bind = true
+            this.iscard2Bind = true
+            this.iscard3Bind = true
+          } else if (this.bankList.length == 2) {
+            this.bank1 = this.bankList[0]
+            this.bank2 = this.bankList[1]
+            this.bank3 = {}
+            this.bank2Show = true
+            this.bank3Show = false
+
+            this.iscard1Bind = true
+            this.iscard2Bind = true
+            this.iscard3Bind = false
+          } else if (this.bankList.length == 1) {
+            this.bank1 = this.bankList[0]
+            this.bank2 = {}
+            this.bank3 = {}
+            this.bank2Show = false
+            this.bank3Show = false
+
+            this.iscard1Bind = true
+            this.iscard2Bind = false
+            this.iscard3Bind = false
+          } else {
+            this.bank1 = {}
+            this.bank2 = {}
+            this.bank3 = {}
+            this.bank2Show = false
+            this.bank3Show = false
+
+            this.iscard1Bind = false
+            this.iscard2Bind = false
+            this.iscard3Bind = false
+          }
+
+          console.log('dfff:', this.bank1, this.bank2, this.bank3)
         }
       })
     },
@@ -1056,26 +1163,99 @@ export default {
      */
     signingOut() {
       console.log('111:', this.record.userId)
-      signing(this.record.userId).then((res) => {
-        if (res.code == 0) {
-          this.$message.success(res.message)
-        } else {
-          this.$message.error(res.message)
-        }
-      })
+      this.confirmLoading = true
+      signing(this.record.userId)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     /**
      * 通过银行卡号得到 银行名称
      */
-    getBankNameForCardNoOut(cardNo) {
-      getBankNameForCardNo(cardNo).then((res) => {
-        if (res.code == 0) {
-          // 成功获取到银行卡名称
-        }else{
-          // 调取失败
-        }
-      })
+    getBankNameForCardNoOut(cardNo, type) {
+      console.log('11:', cardNo, type)
+      this.confirmLoading = true
+      getBankNameForCardNo(cardNo)
+        .then((res) => {
+          if (res.code == 0) {
+            // 成功获取到银行卡名称
+            if (type == 1) {
+              this.bank1.bankName = res.data
+            } else if (type == 2) {
+              this.bank2.bankName = res.data
+            } else if (type == 3) {
+              this.bank3.bankName = res.data
+            }
+          } else {
+            // 调取失败
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    // 绑定/解绑银行卡
+    bindBankOut(card, isBind, type) {
+      var postData = {
+        bankCard: card.bankCard,
+        bankName: card.bankName,
+        bindFlag: isBind ? 'unbind' : 'bind',
+        hvyogoId: this.id,
+      }
+
+      if (!isBind && !card.bankName) {
+        this.$message.error('未知银行,不能绑定此卡号!')
+        return
+      }
+      this.confirmLoading = true
+      console.log('55353：', isBind)
+
+      bindBank(postData)
+        .then((res) => {
+          if (res.code == 0) {
+            if (isBind) {
+              if (type == 1) {
+                this.bank1.bankCard = ''
+                this.bank1.bankName = ''
+                this.iscard1Bind = !isBind
+              } else if (type == 2) {
+                this.bank2.bankCard = ''
+                this.bank2.bankName = ''
+                this.iscard2Bind = !isBind
+              } else if (type == 3) {
+                this.bank3.bankCard = ''
+                this.bank3.bankName = ''
+                this.iscard3Bind = !isBind
+              }
+            } else {
+              if (type == 1) {
+                this.bank2Show = true
+                this.iscard1Bind = !isBind
+              } else if (type == 2 ) {
+                this.iscard2Bind = !isBind
+                this.bank3Show = true
+              }else if(type==3){
+                this.iscard3Bind = !isBind
+              }
+            }
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     /**
@@ -1584,21 +1764,36 @@ export default {
     }
   }
 
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
   .wrap-content {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 80%;
+    width: 90%;
 
-    .card-kuang {
-      width: 220px;
+    .card-big {
+      width: 330px;
       height: 28px;
-      background: #ffffff;
-      border: 1px solid #cccccc;
       border-radius: 2px;
       display: flex;
       flex-direction: row;
-      margin-bottom: 15px;
+
+      .card-kuang {
+        width: 240px;
+        height: 28px;
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        border-radius: 2px;
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 15px;
+      }
     }
 
     /deep/.ant-input:focus {
@@ -1607,7 +1802,7 @@ export default {
     }
 
     .ant-input {
-      width: 60%;
+      width: 70%;
       height: 24px !important;
       padding: 4px 10px;
       color: rgba(0, 0, 0, 0.65);

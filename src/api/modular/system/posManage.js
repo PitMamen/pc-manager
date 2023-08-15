@@ -5171,3 +5171,12 @@ export function getBankNameForCardNo(cardNo) {
   })
 }
 
+// 解绑 绑定银行卡
+export function bindBank(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/bindBank',
+    method: 'post',
+    data: data,
+  })
+}
+
