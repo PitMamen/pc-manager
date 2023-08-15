@@ -601,6 +601,9 @@ export default {
 
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
+   * 
+   * medicSearch 页面暂时不需要了，换 chooseMedic 弹窗实现功能
+   * 
    */
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -1822,6 +1825,7 @@ export default {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
+            this.$bus.$emit('refreshMedicListEvent', '刷新药品列表')
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.clearData()
             this.$router.go(-1)
