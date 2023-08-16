@@ -437,7 +437,7 @@
             <div class="info-content">
               <div style="color: #4d4d4d; font-size: 12px">用户姓名: &nbsp; {{ userInfoList.userName }}</div>
               <div style="color: #4d4d4d; font-size: 12px">身份证号: &nbsp; {{ userInfoList.identificationNo }}</div>
-              <div style="color: #4d4d4d; font-size: 12px">手机号: &nbsp; {{ userInfoList.contactTel }}</div>
+              <div style="color: #4d4d4d; font-size: 12px">手机号: &nbsp; {{ userInfoList.phone }}</div>
             </div>
           </div>
 
@@ -498,34 +498,34 @@
               "
               >{{ protocolFile != null && protocolFile > -1 ? '签约成功' : '签约失败' }}</a
             >
-            <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="signingOut"
+            <a-button :disabled="!hvyogoId" style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="signingOut"
               >网签提交</a-button
             >
           </div>
         </div>
 
-        <div class="div-title">
+        <div v-if="currentTab == 'signing'" class="div-title">
           <div class="div-line-blue"></div>
           <span class="span-title">03指派发薪任务</span>
         </div>
 
-        <div class="item-signing">
+        <div v-if="currentTab == 'signing'" class="item-signing">
           <a-select style="width: 150px" v-model="selectTask" allow-clear placeholder="请指派任务">
             <a-select-option v-for="(item, index) in taskList" :key="index" :value="item.taskId">{{
               item.taskName
             }}</a-select-option>
           </a-select>
-          <a-button style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="bangdTaskOut"
+          <a-button :disabled="!hvyogoId" style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="bangdTaskOut"
             >绑定</a-button
           >
         </div>
 
-        <div class="div-title" style="margin-top: 15px">
+        <div v-if="currentTab == 'signing'" class="div-title" style="margin-top: 15px">
           <div class="div-line-blue"></div>
           <span class="span-title">04银行卡账户</span>
         </div>
 
-        <div class="item-signing">
+        <div v-if="currentTab == 'signing'" class="item-signing">
           <div class="wrap-content">
             <!-- 卡1 -->
             <div class="card-big">

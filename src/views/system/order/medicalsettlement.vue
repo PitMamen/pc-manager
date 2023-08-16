@@ -25,7 +25,6 @@
         </a-tree-select>
       </div>
 
-
       <div class="search-row">
         <span class="name">医护人员:</span>
         <a-input
@@ -37,18 +36,18 @@
           @search="$refs.table.refresh(true)"
         />
       </div>
-     
-          <div class="search-row">
+
+      <div class="search-row">
         <span class="name">订单完成时间:</span>
-        <a-month-picker placeholder="选择月份" :allow-clear="false" :disabled-date="disabledDate" :default-value="nowMonth"
-          :format="monthFormat" v-model="queryParams.statMonth" />
+        <a-month-picker
+          placeholder="选择月份"
+          :allow-clear="false"
+          :disabled-date="disabledDate"
+          :default-value="nowMonth"
+          :format="monthFormat"
+          v-model="queryParams.statMonth"
+        />
       </div>
-
-
-
-
-
-
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -58,16 +57,22 @@
       </div>
     </div>
 
-
-    <a-button style="margin-top: 15px;margin-bottom: 15px;" type="primary" icon="safety" ghost @click="$refs.table.refresh(true) ">结算</a-button>
-    <a-button style="margin-left: 20px;margin-top: 15px;margin-bottom: 15px;" type="primary" icon="stop"  ghost @click="$refs.table.refresh(true)">不予结算</a-button>
-
-
-
-
-
-
-
+    <a-button
+      style="margin-top: 15px; margin-bottom: 15px"
+      type="primary"
+      icon="safety"
+      ghost
+      @click="goSettlement('agree')"
+      >结算</a-button
+    >
+    <a-button
+      style="margin-left: 20px; margin-top: 15px; margin-bottom: 15px"
+      type="primary"
+      icon="stop"
+      ghost
+      @click="goSettlement('disagree')"
+      >不予结算</a-button
+    >
 
     <s-table
       bordered
@@ -78,12 +83,15 @@
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <span slot="action" slot-scope="text, record">
         <a-icon type="export" style="color: #1890ff; margin-right: 3px" />
         <a @click="goExamine(record)">详情</a>
       </span>
     </s-table>
+
+    <settlement ref="settlement" @ok="handleOk" />
   </a-card>
 </template>
     
@@ -92,28 +100,32 @@
 import { STable } from '@/components'
 import { getMonthNow } from '@/utils/util'
 import { accessHospitals, getTbBizMerchantPageList } from '@/api/modular/system/posManage'
-import collectionfig from './collectionfig'
+import settlement from './settlement'
 import moment from 'moment'
 export default {
   components: {
     STable,
-    collectionfig,
+    settlement,
   },
   data() {
     return {
-        monthFormat: 'YYYY-MM',
+      monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
+      nowMonth: '',
       fetching: false,
       user: {},
+
+      selectedRowKeys: [],
+      selectedRows: [],
       queryParams: {
         hospitalCode: undefined,
         checkStatus: '',
-        statMonth: getMonthNow(),//statMonth
+        statMonth: getMonthNow(), //statMonth
       },
       queryParamsOrigin: {
         hospitalCode: undefined,
         checkStatus: '',
-        statMonth: getMonthNow(),//statMonth
+        statMonth: getMonthNow(), //statMonth
       },
       treeData: [],
       labelCol: {
@@ -165,21 +177,19 @@ export default {
           ellipsis: true,
         },
 
-
-
         {
           title: '合计',
           dataIndex: 'consultOrder',
           children: [
             {
-              title: '微信支付',
+              title: '待结算笔数',
               dataIndex: 'wechat1',
               align: 'center',
               //   key: 'wechat',
               // width: 100,
             },
             {
-              title: '支付宝支付',
+              title: '待结算金额',
               dataIndex: 'alipay1',
               align: 'center',
               //   key: 'alipay',
@@ -192,14 +202,14 @@ export default {
           dataIndex: 'srvPackOrder',
           children: [
             {
-              title: '微信支付',
+              title: '待结算笔数',
               dataIndex: 'wechat2',
               align: 'center',
               //   key: 'wechat',
               // width: 100,
             },
             {
-              title: '支付宝支付',
+              title: '待结算金额',
               dataIndex: 'alipay2',
               align: 'center',
               //   key: 'alipay',
@@ -212,14 +222,14 @@ export default {
           dataIndex: 'appPreRegister',
           children: [
             {
-              title: '微信支付',
+              title: '待结算笔数',
               dataIndex: 'wechat4',
               align: 'center',
               //   key: 'wechat',
               // width: 100,
             },
             {
-              title: '支付宝支付',
+              title: '待结算金额',
               dataIndex: 'alipay4',
               align: 'center',
               //   key: 'alipay',
@@ -317,10 +327,6 @@ export default {
     this.queryParams.statMonth = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
-
-
-
-
   },
   methods: {
     disabledDate(current) {
@@ -338,7 +344,35 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
+    /**
+     * 全选
+     */
+    onSelectChange(selectedRowKeys, selectedRows) {
+      console.log("vvvv:",selectedRowKeys,selectedRows)
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+    },
 
+
+ //更新选中
+ updateSelect() {
+      this.selectedRowKeys = []
+      this.selectedRows = []
+      this.$refs.table.updateSelect(this.selectedRowKeys, [])
+      this.$refs.table.updateSelect(this.selectedRows, [])
+    },
+
+
+
+
+
+
+
+    // 不予结算/结算 点击
+    goSettlement(type) {
+      console.log('444:', type)
+      this.$refs.settlement.settltmentOut(type)
+    },
 
     queryHospitalListOut() {
       let queryData = {
@@ -401,8 +435,8 @@ export default {
       })
     },
 
-     //详情
-     goExamine(record) {
+    //详情
+    goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
       this.$router.push({
         path: '/order/settlementDetail',
@@ -410,7 +444,7 @@ export default {
           billDate: '2023-08-01',
           state: '无差异',
           payeeId: 0,
-          hospitalCode:this.queryParams.hospitalCode
+          hospitalCode: this.queryParams.hospitalCode,
         },
       })
     },
