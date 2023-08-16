@@ -5180,3 +5180,22 @@ export function bindBank(data) {
   })
 }
 
+
+// 医护结算列表
+export function getOrderSettlementList(data) {
+  return axios({
+    url: '/medical-api/userRightsSettlement/getOrderSettlementList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 结算明细
+export function getOrderSettlementDetailForUserId(data) {
+  return axios({
+    url: '/medical-api/userRightsSettlement/getOrderSettlementDetailForUserId',
+    method: 'post',
+    data: data,
+  })
+}

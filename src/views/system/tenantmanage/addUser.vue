@@ -445,7 +445,7 @@
             <div v-if="hvyogoId" style="margin-top: 10px">注册ID：</div>
             <a v-if="hvyogoId" style="margin-top: 10px">{{ hvyogoId }}</a>
             <a-button style="margin-top: 5px; margin-left: 20px" type="primary" ghost @click="registerOut">{{
-              hvyogoId ? '更新信息' : '注册'
+              hvyogoId ? updateInfo : registering
             }}</a-button>
           </div>
 
@@ -499,7 +499,7 @@
               >{{ protocolFile != null && protocolFile > -1 ? '签约成功' : '签约失败' }}</a
             >
             <a-button :disabled="!hvyogoId" style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="signingOut"
-              >网签提交</a-button
+              >{{wqtj}}</a-button
             >
           </div>
         </div>
@@ -516,7 +516,7 @@
             }}</a-select-option>
           </a-select>
           <a-button :disabled="!hvyogoId" style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="bangdTaskOut"
-            >绑定</a-button
+            >{{ bangding }}</a-button
           >
         </div>
 
@@ -664,6 +664,18 @@ export default {
       actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
       currentTab: 'base',
       visible: false,
+
+      wqtj:'网签提交',
+      bangding:'绑定',
+
+
+      updateInfo:'更新信息',
+      registering:'注册',
+
+
+
+
+
       record: {},
       isDetailTag: false,
       headers: {},
@@ -1114,6 +1126,7 @@ export default {
           this.hvyogoId = res.data.hvyogoId
           this.id = res.data.id
           this.protocolFile = res.data.protocolFile
+          
           if (this.bankList.length == 3) {
             this.bank1 = this.bankList[0]
             this.bank2 = this.bankList[1]
@@ -1121,6 +1134,8 @@ export default {
             this.iscard1Bind = true
             this.iscard2Bind = true
             this.iscard3Bind = true
+            this.bank2Show = true
+            this.bank3Show = true
           } else if (this.bankList.length == 2) {
             this.bank1 = this.bankList[0]
             this.bank2 = this.bankList[1]
@@ -1162,8 +1177,8 @@ export default {
      * 签约
      */
     signingOut() {
-      console.log('111:', this.record.userId)
       this.confirmLoading = true
+      this.wqtj = '请等待...'
       signing(this.record.userId)
         .then((res) => {
           if (res.code == 0) {
@@ -1174,6 +1189,7 @@ export default {
         })
         .finally((res) => {
           this.confirmLoading = false
+          this.wqtj = '网签提交'
         })
     },
 
@@ -1262,18 +1278,25 @@ export default {
      * 临工注册/更新信息
      */
     registerOut() {
-      console.log('11111:', this.record.userId)
       //如果 有注册ID  则是更新信息 操作  反之 是注册操作
+      if(this.hvyogoId){
+        this.updateInfo = '请等待...'
+      }else{
+        this.registering = '请等待...'
+      }
       register(this.record.userId).then((res) => {
         if (res.code == 0) {
           this.$message.success(res.message)
         } else {
           this.$message.error(res.message)
         }
-      })
-      // if (this.hvyogoId) {
-      // } else {
-      // }
+      }) .finally((res) => {
+        if(this.hvyogoId){
+        this.updateInfo = '更新信息'
+      }else{
+        this.registering = '注册'
+      }
+        })
     },
 
     // 获取任务列表
@@ -1295,6 +1318,7 @@ export default {
         id: this.id,
         taskId: this.selectTask,
       }
+      this.bangding = '请等待...'
       bindTask(requestData).then((res) => {
         if (res.code == 0) {
           this.$message.success(res.message)
@@ -1302,7 +1326,9 @@ export default {
         } else {
           this.$message.error(res.message)
         }
-      })
+      }).finally((res) => {
+        this.bangding = '绑定'
+        })
     },
 
     /**

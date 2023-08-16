@@ -99,7 +99,7 @@
     <script>
 import { STable } from '@/components'
 import { getMonthNow } from '@/utils/util'
-import { accessHospitals, getTbBizMerchantPageList } from '@/api/modular/system/posManage'
+import { accessHospitals, getTbBizMerchantPageList,getOrderSettlementList } from '@/api/modular/system/posManage'
 import settlement from './settlement'
 import moment from 'moment'
 export default {
