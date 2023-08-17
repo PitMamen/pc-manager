@@ -1,13 +1,13 @@
 <template>
   <a-card :bordered="false" class="sys-card">
     <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.checkStatus == 0 }" @click="onRadioClick(0)">
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 1 }" @click="onRadioClick(1)">
         <span style="margin-left: 3px">待结算</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.checkStatus == 1 }" @click="onRadioClick(1)">
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 2 }" @click="onRadioClick(2)">
         <span style="margin-left: 3px">已结算</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.checkStatus == 2 }" @click="onRadioClick(2)">
+      <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 3 }" @click="onRadioClick(3)">
         <span style="margin-left: 3px">不予结算</span>
       </div>
     </div>
@@ -28,7 +28,7 @@
       <div class="search-row">
         <span class="name">医护人员:</span>
         <a-input
-          v-model="queryParams.queryText"
+          v-model="queryParams.doctorName"
           allow-clear
           placeholder="输入用户名/医生"
           style="width: 188px; height: 28px"
@@ -45,7 +45,7 @@
           :disabled-date="disabledDate"
           :default-value="nowMonth"
           :format="monthFormat"
-          v-model="queryParams.statMonth"
+          v-model="queryParams.createdTime"
         />
       </div>
 
@@ -99,7 +99,7 @@
     <script>
 import { STable } from '@/components'
 import { getMonthNow } from '@/utils/util'
-import { accessHospitals, getTbBizMerchantPageList,getOrderSettlementList } from '@/api/modular/system/posManage'
+import { accessHospitals, getTbBizMerchantPageList, getOrderSettlementList } from '@/api/modular/system/posManage'
 import settlement from './settlement'
 import moment from 'moment'
 export default {
@@ -119,14 +119,34 @@ export default {
       selectedRows: [],
       queryParams: {
         hospitalCode: undefined,
-        checkStatus: '',
-        statMonth: getMonthNow(), //statMonth
+        settlementStatus: 1,
+        createdTime: getMonthNow(),
+        doctorName: '',
       },
       queryParamsOrigin: {
         hospitalCode: undefined,
-        checkStatus: '',
-        statMonth: getMonthNow(), //statMonth
+        settlementStatus: '',
+        createdTime: getMonthNow(),
+        doctorName: 1,
       },
+
+      selectInfo: {
+        totalMoney: 0, //'总金额'
+        totalCount: 0, // '总订单数'
+        personNumber: 0, //'计算人员数量
+        organNumber: 0, //'机构数量
+
+        consultMoney: 0, //'在线咨询金额
+        consultCount: 0, //'在线咨询订单数
+
+        srvPackOrderMoney: 0, //‘专科服务金额’
+        srvPackOrderCount: 0, // '专科服务订单数'
+
+        createTime: '',
+      },
+
+      selectInfoTemp: {},
+
       treeData: [],
       labelCol: {
         xs: { span: 24 },
@@ -151,28 +171,28 @@ export default {
 
         {
           title: '医生姓名',
-          dataIndex: 'docName',
+          dataIndex: 'doctorName',
           width: 120,
           ellipsis: true,
         },
 
         {
           title: '人员类型',
-          dataIndex: 'peopletype',
+          dataIndex: 'personType',
           width: 120,
           ellipsis: true,
         },
 
         {
           title: '手机号码',
-          dataIndex: 'phone',
+          dataIndex: 'doctorPhone',
           width: 120,
           ellipsis: true,
         },
 
         {
           title: '身份证号码',
-          dataIndex: 'cardNo',
+          dataIndex: 'doctorIdCard',
           width: 120,
           ellipsis: true,
         },
@@ -183,14 +203,14 @@ export default {
           children: [
             {
               title: '待结算笔数',
-              dataIndex: 'wechat1',
+              dataIndex: 'countAll',
               align: 'center',
               //   key: 'wechat',
               // width: 100,
             },
             {
               title: '待结算金额',
-              dataIndex: 'alipay1',
+              dataIndex: 'payTotalAll',
               align: 'center',
               //   key: 'alipay',
               // width: 100,
@@ -203,14 +223,14 @@ export default {
           children: [
             {
               title: '待结算笔数',
-              dataIndex: 'wechat2',
+              dataIndex: 'consultOrderCount',
               align: 'center',
               //   key: 'wechat',
               // width: 100,
             },
             {
               title: '待结算金额',
-              dataIndex: 'alipay2',
+              dataIndex: 'consultOrderSum',
               align: 'center',
               //   key: 'alipay',
               // width: 100,
@@ -223,14 +243,14 @@ export default {
           children: [
             {
               title: '待结算笔数',
-              dataIndex: 'wechat4',
+              dataIndex: 'srvPackOrderCount',
               align: 'center',
               //   key: 'wechat',
               // width: 100,
             },
             {
               title: '待结算金额',
-              dataIndex: 'alipay4',
+              dataIndex: 'srvPackOrderSum',
               align: 'center',
               //   key: 'alipay',
               // width: 100,
@@ -247,7 +267,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getTbBizMerchantPageList(Object.assign(parameter, this.queryParams)).then((res) => {
+        return getOrderSettlementList(Object.assign(parameter, this.queryParams)).then((res) => {
           let data = {}
           if (res.code == 0 && res.data && res.data.records.length > 0) {
             //组装控件需要的数据结构
@@ -258,59 +278,6 @@ export default {
               totalPage: res.data.total / parameter.pageSize,
               rows: res.data.records,
             }
-
-            //设置序号
-            data.rows.forEach((item, index) => {
-              item.configData.forEach((itemChilden, indexChilden) => {
-                //在线咨询
-                if (itemChilden.order_type == 'consultOrder') {
-                  if (itemChilden.channel == 'wechat') {
-                    //微信支付的
-                    this.$set(item, 'wechat1', itemChilden.name)
-                  } else if (itemChilden.channel == 'alipay') {
-                    //支付宝支付的
-                    this.$set(item, 'alipay1', itemChilden.name)
-                  }
-                  //   专科服务
-                } else if (itemChilden.order_type == 'srvPackOrder') {
-                  if (itemChilden.channel == 'wechat') {
-                    //微信支付的
-                    this.$set(item, 'wechat2', itemChilden.name)
-                  } else if (itemChilden.channel == 'alipay') {
-                    //支付宝支付的
-                    this.$set(item, 'alipay2', itemChilden.name)
-                  }
-                  //   复诊续方
-                } else if (itemChilden.order_type == 'appPreRegister') {
-                  if (itemChilden.channel == 'wechat') {
-                    //微信支付的
-                    this.$set(item, 'wechat3', itemChilden.name)
-                  } else if (itemChilden.channel == 'alipay') {
-                    //支付宝支付的
-                    this.$set(item, 'alipay3', itemChilden.name)
-                  }
-                  //   在线咨询处方
-                } else if (itemChilden.order_type == 'consultOrderPrescription') {
-                  if (itemChilden.channel == 'wechat') {
-                    //微信支付的
-                    this.$set(item, 'wechat4', itemChilden.name)
-                  } else if (itemChilden.channel == 'alipay') {
-                    //支付宝支付的
-                    this.$set(item, 'alipay4', itemChilden.name)
-                  }
-                  //   本院复诊处方
-                } else if (itemChilden.order_type == 'appPrePrescription') {
-                  if (itemChilden.channel == 'wechat') {
-                    //微信支付的
-                    this.$set(item, 'wechat5', itemChilden.name)
-                  } else if (itemChilden.channel == 'alipay') {
-                    //支付宝支付的
-                    this.$set(item, 'alipay5', itemChilden.name)
-                  }
-                }
-              })
-              //   this.$set(item, 'key', item.hospitalCode)
-            })
           }
           return data
         })
@@ -324,9 +291,9 @@ export default {
 
   created() {
     this.queryHospitalListOut()
-    this.queryParams.statMonth = moment(getMonthNow(), this.monthFormat)
+    this.queryParams.createdTime = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
-    this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
+    this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
   },
   methods: {
     disabledDate(current) {
@@ -348,30 +315,64 @@ export default {
      * 全选
      */
     onSelectChange(selectedRowKeys, selectedRows) {
-      console.log("vvvv:",selectedRowKeys,selectedRows)
+      console.log('vvvv:', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
+
+      // 计算
+      this.clearSelectData()
+      if (selectedRows && selectedRows.length > 0) {
+        this.selectInfo.personNumber = selectedRows.length
+        this.selectInfo.organNumber = selectedRows.length
+        this.selectInfo.createTime = this.queryParams.createdTime
+        for (let index = 0; index < selectedRows.length; index++) {
+          this.selectInfo.totalMoney += Number(selectedRows[index].payTotalAll)
+          this.selectInfo.totalCount += Number(selectedRows[index].countAll)
+          this.selectInfo.consultMoney += Number(selectedRows[index].consultOrderSum)
+          this.selectInfo.consultCount += Number(selectedRows[index].consultOrderCount)
+          this.selectInfo.srvPackOrderMoney += Number(selectedRows[index].srvPackOrderSum)
+          this.selectInfo.srvPackOrderCount += Number(selectedRows[index].srvPackOrderCount)
+        }
+        this.selectInfo.totalMoney = parseFloat(this.selectInfo.totalMoney).toFixed(2)
+        this.selectInfo.consultMoney = parseFloat(this.selectInfo.consultMoney).toFixed(2)
+        this.selectInfo.srvPackOrderMoney = parseFloat(this.selectInfo.srvPackOrderMoney).toFixed(2)
+
+        this.selectInfoTemp = JSON.parse(JSON.stringify(this.selectInfo))
+        console.log('papapap:', this.selectInfoTemp)
+      } else {
+        console.log('清空！！！！！！')
+        this.clearSelectData()
+      }
     },
 
+    clearSelectData() {
+      this.selectInfo.personNumber = 0
+      this.selectInfo.organNumber = 0
+      this.selectInfo.totalMoney = 0
+      this.selectInfo.totalCount = 0
+      this.selectInfo.consultMoney = 0
+      this.selectInfo.srvPackOrderMoney = 0
+      this.selectInfo.srvPackOrderCount = 0
+      this.selectInfo.consultCount = 0
+      this.selectInfoTemp = {}
+    },
 
- //更新选中
- updateSelect() {
+    //更新选中
+    updateSelect() {
       this.selectedRowKeys = []
       this.selectedRows = []
       this.$refs.table.updateSelect(this.selectedRowKeys, [])
       this.$refs.table.updateSelect(this.selectedRows, [])
     },
 
-
-
-
-
-
-
     // 不予结算/结算 点击
     goSettlement(type) {
-      console.log('444:', type)
-      this.$refs.settlement.settltmentOut(type)
+      if (this.selectedRows.length == 0) {
+        this.$message.error('请先勾选需操作的账单!')
+        return
+      }
+
+      this.$refs.settlement.settltmentOut(this.selectInfoTemp, type)
     },
 
     queryHospitalListOut() {
@@ -414,8 +415,8 @@ export default {
         return
       }
       this.currentTab = type
-      this.queryParams.checkStatus = type
-      this.queryParamsOrigin.checkStatus = type
+      this.queryParams.settlementStatus = type
+      this.queryParamsOrigin.settlementStatus = type
       this.$refs.table.refresh()
     },
 
@@ -441,10 +442,8 @@ export default {
       this.$router.push({
         path: '/order/settlementDetail',
         query: {
-          billDate: '2023-08-01',
-          state: '无差异',
-          payeeId: 0,
-          hospitalCode: this.queryParams.hospitalCode,
+          time: this.queryParams.createdTime,
+          record: record,
         },
       })
     },

@@ -498,8 +498,13 @@
               "
               >{{ protocolFile != null && protocolFile > -1 ? '签约成功' : '签约失败' }}</a
             >
-            <a-button :disabled="!hvyogoId" style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="signingOut"
-              >{{wqtj}}</a-button
+            <a-button
+              :disabled="!hvyogoId"
+              style="margin-top: 5px; margin-left: 10px"
+              type="primary"
+              ghost
+              @click="signingOut"
+              >{{ wqtj }}</a-button
             >
           </div>
         </div>
@@ -515,7 +520,12 @@
               item.taskName
             }}</a-select-option>
           </a-select>
-          <a-button :disabled="!hvyogoId" style="margin-top: 5px; margin-left: 10px" type="primary" ghost @click="bangdTaskOut"
+          <a-button
+            :disabled="!hvyogoId"
+            style="margin-top: 5px; margin-left: 10px"
+            type="primary"
+            ghost
+            @click="bangdTaskOut"
             >{{ bangding }}</a-button
           >
         </div>
@@ -553,6 +563,7 @@
                 src="~@/assets/icons/bangding1.png"
               />
               <a
+                :disabled="!hvyogoId"
                 style="font-size: 12px; margin-top: 4px; margin-left: 6px"
                 @click="bindBankOut(bank1, iscard1Bind, 1)"
                 >{{ iscard1Bind ? '解绑' : '绑定' }}</a
@@ -585,6 +596,7 @@
                 src="~@/assets/icons/bangding1.png"
               />
               <a
+                :disabled="!hvyogoId"
                 style="font-size: 12px; margin-top: 4px; margin-left: 6px"
                 @click="bindBankOut(bank2, iscard2Bind, 2)"
                 >{{ iscard2Bind ? '解绑' : '绑定' }}</a
@@ -617,6 +629,7 @@
                 src="~@/assets/icons/bangding1.png"
               />
               <a
+                :disabled="!hvyogoId"
                 style="font-size: 12px; margin-top: 4px; margin-left: 6px"
                 @click="bindBankOut(bank3, iscard3Bind, 3)"
                 >{{ iscard3Bind ? '解绑' : '绑定' }}</a
@@ -665,16 +678,11 @@ export default {
       currentTab: 'base',
       visible: false,
 
-      wqtj:'网签提交',
-      bangding:'绑定',
+      wqtj: '网签提交',
+      bangding: '绑定',
 
-
-      updateInfo:'更新信息',
-      registering:'注册',
-
-
-
-
+      updateInfo: '更新信息',
+      registering: '注册',
 
       record: {},
       isDetailTag: false,
@@ -1118,7 +1126,6 @@ export default {
      * 获取临工签约信息
      */
     getHvyogoUserInfoOut(userId) {
-      console.log('Dddd:', userId)
       getHvyogoUserInfo(userId).then((res) => {
         if (res.code == 0) {
           this.userInfoList = res.data.userInfo
@@ -1126,8 +1133,7 @@ export default {
           this.hvyogoId = res.data.hvyogoId
           this.id = res.data.id
           this.protocolFile = res.data.protocolFile
-          
-          if (this.bankList.length == 3) {
+          if (this.bankList != null && this.bankList.length == 3) {
             this.bank1 = this.bankList[0]
             this.bank2 = this.bankList[1]
             this.bank3 = this.bankList[2]
@@ -1136,21 +1142,21 @@ export default {
             this.iscard3Bind = true
             this.bank2Show = true
             this.bank3Show = true
-          } else if (this.bankList.length == 2) {
+          } else if (this.bankList != null && this.bankList.length == 2) {
             this.bank1 = this.bankList[0]
             this.bank2 = this.bankList[1]
             this.bank3 = {}
             this.bank2Show = true
-            this.bank3Show = false
+            this.bank3Show = true
 
             this.iscard1Bind = true
             this.iscard2Bind = true
             this.iscard3Bind = false
-          } else if (this.bankList.length == 1) {
+          } else if (this.bankList != null && this.bankList.length == 1) {
             this.bank1 = this.bankList[0]
             this.bank2 = {}
             this.bank3 = {}
-            this.bank2Show = false
+            this.bank2Show = true
             this.bank3Show = false
 
             this.iscard1Bind = true
@@ -1257,10 +1263,10 @@ export default {
               if (type == 1) {
                 this.bank2Show = true
                 this.iscard1Bind = !isBind
-              } else if (type == 2 ) {
+              } else if (type == 2) {
                 this.iscard2Bind = !isBind
                 this.bank3Show = true
-              }else if(type==3){
+              } else if (type == 3) {
                 this.iscard3Bind = !isBind
               }
             }
@@ -1279,23 +1285,25 @@ export default {
      */
     registerOut() {
       //如果 有注册ID  则是更新信息 操作  反之 是注册操作
-      if(this.hvyogoId){
+      if (this.hvyogoId) {
         this.updateInfo = '请等待...'
-      }else{
+      } else {
         this.registering = '请等待...'
       }
-      register(this.record.userId).then((res) => {
-        if (res.code == 0) {
-          this.$message.success(res.message)
-        } else {
-          this.$message.error(res.message)
-        }
-      }) .finally((res) => {
-        if(this.hvyogoId){
-        this.updateInfo = '更新信息'
-      }else{
-        this.registering = '注册'
-      }
+      register(this.record.userId)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          if (this.hvyogoId) {
+            this.updateInfo = '更新信息'
+          } else {
+            this.registering = '注册'
+          }
         })
     },
 
@@ -1319,15 +1327,17 @@ export default {
         taskId: this.selectTask,
       }
       this.bangding = '请等待...'
-      bindTask(requestData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success(res.message)
-          // this.taskList = res.data
-        } else {
-          this.$message.error(res.message)
-        }
-      }).finally((res) => {
-        this.bangding = '绑定'
+      bindTask(requestData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success(res.message)
+            // this.taskList = res.data
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.bangding = '绑定'
         })
     },
 

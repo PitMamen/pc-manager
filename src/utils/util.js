@@ -101,6 +101,27 @@ export function formatDateFull(date) {
   return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
 }
 
+export function formatDateMin(date) {
+  date = new Date(date)
+  let myyear = date.getFullYear()
+  let mymonth = date.getMonth() + 1
+  let myweekday = date.getDate()
+  let oHour = date.getHours()
+  let oMin = date.getMinutes()
+  let oSen = date.getSeconds()
+  mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+  myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+  oHour < 10 ? (oHour = '0' + oHour) : oHour
+  oMin < 10 ? (oMin = '0' + oMin) : oMin
+  oSen < 10 ? (oSen = '0' + oSen) : oSen
+  return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}`
+}
+
+
+
+
+
+
 /**获取当前月份 */
 export function getMonthNow() {
   var myDate = new Date();

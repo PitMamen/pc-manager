@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="isAgree?'结算确认':'不予结算确'"
+    :title="isAgree ? '结算确认' : '不予结算确'"
     :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -8,13 +8,11 @@
     @cancel="handleCancel"
     :maskClosable="false"
   >
-
-  <template slot="footer">
+    <template slot="footer">
       <a-button @click="handleCancel">关闭</a-button>
       <a-button v-if="!isAgree" type="primary" @click="handleSubmit">不予结算</a-button>
-      <a-button v-if="isAgree" type="primary" @click="handleSubmit">确认</a-button>
+      <a-button v-if="isAgree" type="primary" @click="handleSubmit">结算</a-button>
     </template>
-
 
     <a-spin :spinning="confirmLoading">
       <div style="color: #999999; font-size: 12px">尊敬的用户，本轮结算情况如下：</div>
@@ -24,13 +22,13 @@
             <div style="display: flex; flex-direction: row; width: 100%">
               <div class="left-conten">
                 <span class="span-item-name">总金额：</span>
-                <span style="color: #409eff" class="span-item-value">100000</span>
+                <span style="color: #409eff" class="span-item-value">{{ dataInfo.totalMoney }}</span>
                 <span style="color: #999999" class="span-item-value">元</span>
               </div>
 
               <div class="right-conten">
                 <span class="span-item-name1">总订单数：</span>
-                <span style="color: #409eff" class="span-item-value1">100</span>
+                <span style="color: #409eff" class="span-item-value1">{{ dataInfo.totalCount }}</span>
                 <span style="color: #999999" class="span-item-value1">笔</span>
               </div>
             </div>
@@ -38,13 +36,13 @@
             <div style="display: flex; flex-direction: row; width: 100%">
               <div class="left-conten">
                 <span class="span-item-name">结算人员数量：</span>
-                <span style="color: #4d4d4d" class="span-item-value">500</span>
+                <span style="color: #4d4d4d" class="span-item-value">{{ dataInfo.personNumber }}</span>
                 <span style="color: #999999" class="span-item-value">个</span>
               </div>
 
               <div class="right-conten">
                 <span class="span-item-name1">结算医疗机构数量：</span>
-                <span style="color: #4d4d4d" class="span-item-value1">1000</span>
+                <span style="color: #4d4d4d" class="span-item-value1">{{ dataInfo.organNumber }}</span>
                 <span style="color: #999999" class="span-item-value1">家</span>
               </div>
             </div>
@@ -54,13 +52,13 @@
             <div style="display: flex; flex-direction: row; width: 100%">
               <div class="left-conten">
                 <span class="span-item-name">在线咨询金额：</span>
-                <span style="color: #4d4d4d" class="span-item-value">500</span>
+                <span style="color: #4d4d4d" class="span-item-value">{{ dataInfo.consultMoney }}</span>
                 <span style="color: #999999" class="span-item-value">元</span>
               </div>
 
               <div class="right-conten">
                 <span class="span-item-name1">订单数：</span>
-                <span style="color: #4d4d4d" class="span-item-value1">1000 </span>
+                <span style="color: #4d4d4d" class="span-item-value1">{{ dataInfo.consultCount }}</span>
                 <span style="color: #999999" class="span-item-value1">笔</span>
               </div>
             </div>
@@ -68,13 +66,13 @@
             <div style="display: flex; flex-direction: row; width: 100%">
               <div class="left-conten">
                 <span class="span-item-name">专科服务金额：</span>
-                <span style="color: #4d4d4d" class="span-item-value">888</span>
+                <span style="color: #4d4d4d" class="span-item-value">{{ dataInfo.srvPackOrderMoney }}</span>
                 <span style="color: #999999" class="span-item-value">元</span>
               </div>
 
               <div class="right-conten">
                 <span class="span-item-name1">订单数：</span>
-                <span style="color: #4d4d4d" class="span-item-value1">2000 </span>
+                <span style="color: #4d4d4d" class="span-item-value1">{{ dataInfo.srvPackOrderCount }}</span>
                 <span style="color: #999999" class="span-item-value1">笔</span>
               </div>
             </div>
@@ -84,12 +82,12 @@
             <div style="display: flex; flex-direction: row; width: 100%">
               <div class="left-conten">
                 <span style="color: #999999" class="span-item-name">结算人员：</span>
-                <span style="color: #999999" class="span-item-value">张会计</span>
+                <span style="color: #999999" class="span-item-value">{{ user.userName }}</span>
               </div>
 
               <div class="right-conten">
                 <span style="color: #999999" class="span-item-name1">结算时间：</span>
-                <span style="color: #999999" class="span-item-value1">2023-07-18 12:30</span>
+                <span style="color: #999999" class="span-item-value1">{{ currentTime }}</span>
               </div>
             </div>
           </div>
@@ -99,7 +97,8 @@
         请您仔细核对确认后，点击“结算”按钮完成结算操作。
       </div>
       <div v-if="!isAgree" style="color: #999999; font-size: 12px; margin-top: 10px">不予结算原因：</div>
-      <a-textarea v-if="!isAgree"
+      <a-textarea
+        v-if="!isAgree"
         style="height: 80px; min-height: 70px; margin-top: 10px; width: 100%"
         :maxLength="300"
         v-model="auditDesc"
@@ -107,7 +106,9 @@
         v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入原因！' }] }]"
       />
 
-      <div v-if="!isAgree" style="color: #999999; font-size: 12px; margin-top: 10px" >请您仔细核对，一旦确认不予结算后将不可更改，如果您确认无误后请 点击“不予结算”按钮完成操作。</div>
+      <div v-if="!isAgree" style="color: #999999; font-size: 12px; margin-top: 10px">
+        请您仔细核对，一旦确认不予结算后将不可更改，如果您确认无误后请 点击“不予结算”按钮完成操作。
+      </div>
     </a-spin>
   </a-modal>
 </template>
@@ -129,7 +130,7 @@ import {
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
+import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate, formatDateMin  } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -139,60 +140,27 @@ export default {
       record: {},
       confirmLoading: false,
       isAgree: true,
-      auditDesc:'',//不通过原因
-      checkData: {
-        factoryType: undefined,
-        factoryName: '', //商户名称
-        pyCode: '',
-        address: '', //
-        contactName: '',
-        contactTel: '',
-        remark: '',
+      auditDesc: '', //不通过原因
+      user: {},
+      currentTime:'',
 
-        factoryDeliveryType: undefined,
-        requestUrl: undefined,
-        appId: undefined,
-        appSercret: undefined,
-      },
+      dataInfo: {},
     }
   },
   created() {},
   methods: {
-    clearData() {
-      this.record = {}
-      this.checkData = {
-        factoryType: undefined,
-        factoryName: '', //商户名称
-        pyCode: '',
-        address: '', //
-        contactName: '',
-        contactTel: '',
-        remark: '',
-        factoryDeliveryType: undefined,
-        requestUrl: undefined,
-        appId: undefined,
-        appSercret: undefined,
-      }
-    },
+    clearData() {},
 
     //入口
-    settltmentOut(type) {
+    settltmentOut(selectData, type) {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
       this.isAgree = type == 'agree'
-    },
-
-    // 请求 详情
-    detailOut(facid) {
-      factoryDetail(facid).then((res) => {
-        if (res.code == 0) {
-          this.checkData = res.data
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
+      this.dataInfo = selectData
+      this.user = Vue.ls.get(TRUE_USER)
+      this.currentTime = formatDateMin(new Date().getTime())
+      console.log('dsda:', this.currentTime)
     },
 
     handleSubmit() {
