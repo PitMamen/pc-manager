@@ -13,7 +13,7 @@
     </div>
 
     <div class="table-page-search-wrapper">
-      <div class="search-row">
+      <div v-if="currentTab == 1" class="search-row">
         <span class="name">所属机构:</span>
         <a-tree-select
           v-model="queryParams.hospitalCode"
@@ -25,7 +25,7 @@
         </a-tree-select>
       </div>
 
-      <div class="search-row">
+      <div v-if="currentTab == 1" class="search-row">
         <span class="name">医护人员:</span>
         <a-input
           v-model="queryParams.doctorName"
@@ -37,7 +37,7 @@
         />
       </div>
 
-      <div class="search-row">
+      <div v-if="currentTab == 1" class="search-row">
         <span class="name">订单完成时间:</span>
         <a-month-picker
           placeholder="选择月份"
@@ -49,6 +49,11 @@
         />
       </div>
 
+      <div v-if="currentTab == 2 || currentTab == 3" class="search-row">
+        <span class="name">结算时间:</span>
+        <a-range-picker style="width: 190px" :value="orderTimeValue" @change="onChange" />
+      </div>
+
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -56,8 +61,8 @@
         </span>
       </div>
     </div>
-
     <a-button
+      v-if="currentTab == 1"
       style="margin-top: 15px; margin-bottom: 15px"
       type="primary"
       icon="safety"
@@ -66,6 +71,7 @@
       >结算</a-button
     >
     <a-button
+      v-if="currentTab == 1"
       style="margin-left: 20px; margin-top: 15px; margin-bottom: 15px"
       type="primary"
       icon="stop"
@@ -74,7 +80,11 @@
       >不予结算</a-button
     >
 
+
+
+
     <s-table
+      v-if="currentTab == 1"
       bordered
       :scroll="{ x: true }"
       ref="table"
@@ -90,6 +100,60 @@
         <a @click="goExamine(record)">详情</a>
       </span>
     </s-table>
+
+
+
+
+    <div v-if="currentTab == 2 || currentTab == 3" class="div-down">
+      <div class="div-service-left-control">
+        <div class="left-control" style="height: 610px">
+          <div class="div-wrap-control" style="margin-top: 5%">
+            <!-- <div v-if="quesDataTemp && quesDataTemp.length > 0"> -->
+            <div class="div-part" :class="{ checked: true }" :value="结算成功" :key="index">
+              <!-- <span class="span-name" :title="结算成功">
+                      {{ 结算成功 }}
+                    </span> -->
+
+              <!-- <div
+                      style="width: 100%; height: 0.5px; background: #3894FF; margin-top: 5px; margin-bottom: 5px"
+                    ></div> -->
+
+              <div class="div-rate">
+                <span style="color: #999999">结算人员:凌红阳</span>
+                <span style="margin-top: 5px;color: #999999">结算时间:2023-08-08</span>
+                <div style="width: 100%; height: 0.5px; background: #3894ff; margin-top: 5px; "></div>
+
+                <span style="color: #999999;margin-top: 5px; ">结算金额:1008</span>
+                <span style="color: #999999;margin-top: 5px;">订单数量:300</span>
+                <span v-if="currentTab==3" style="display: flex;flex-wrap: wrap;color: #999999;margin-top: 5px;" >原因:把人治死了啊</span>
+              </div>
+            </div>
+            <!-- </div> -->
+            <!-- <div v-else class="no-data">
+                  <img src="~@/assets/icons/no_data.jpg" />
+                  <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+                </div> -->
+          </div>
+        </div>
+      </div>
+      <!-- <div></div> -->
+      <!-- 去掉勾选框 -->
+      <s-table
+        v-if="currentTab == 2 || currentTab == 3"
+        ref="table"
+        size="default"
+        class="card-right-control"
+        :columns="notcolumns"
+        :scroll="{ x: true }"
+        :isShowLoading="false"
+        :data="loadData"
+        :alert="true"
+        :rowKey="(record) => record.code"
+      >
+      </s-table>
+    </div>
+
+   
 
     <settlement ref="settlement" @ok="handleOk" />
   </a-card>
@@ -114,7 +178,8 @@ export default {
       nowMonth: '',
       fetching: false,
       user: {},
-
+      currentTab: 1,
+      orderTimeValue: [],
       selectedRowKeys: [],
       selectedRows: [],
       queryParams: {
@@ -265,6 +330,81 @@ export default {
         },
       ],
 
+// 已结算、不予结算的表头
+ // 表头
+ notcolumns: [
+        {
+          title: '医疗机构',
+          dataIndex: 'hospitalName',
+          width: 120,
+          ellipsis: true,
+        },
+
+        {
+          title: '医生姓名',
+          dataIndex: 'doctorName',
+          width: 120,
+          ellipsis: true,
+        },
+
+
+        {
+          title: '身份证号码',
+          dataIndex: 'doctorIdCard',
+          width: 120,
+          ellipsis: true,
+        },
+
+        {
+          title: '手机号',
+          dataIndex: 'doctorPhone',
+          width: 120,
+          ellipsis: true,
+        },
+
+        {
+          title: '业务类型',
+          dataIndex: 'personType',
+          width: 120,
+          ellipsis: true,
+        },
+
+       
+
+        {
+          title: '结算笔数',
+          dataIndex: 'consultOrder',
+        },
+        {
+          title: '结算金额',
+          dataIndex: 'srvPackOrder',
+        },
+        {
+          title: '结算情况',
+          dataIndex: 'appPreRegister',
+        },
+        {
+          title: '操作',
+          // fixed: 'right',
+          width: 80,
+          scopedSlots: { customRender: 'action' },
+        },
+      ],
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         return getOrderSettlementList(Object.assign(parameter, this.queryParams)).then((res) => {
@@ -294,8 +434,14 @@ export default {
     this.queryParams.createdTime = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
     this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
+    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
   },
   methods: {
+    //更新时间
+    onChange(momentArr, dateArr) {
+      this.orderTimeValue = momentArr
+    },
+
     disabledDate(current) {
       // Can not select days before today and today
       return current && current > moment().endOf('day')
@@ -372,7 +518,7 @@ export default {
         return
       }
 
-      this.$refs.settlement.settltmentOut(this.selectInfoTemp, type)
+      this.$refs.settlement.settltmentOut(this.selectedRows, this.selectInfoTemp, type)
     },
 
     queryHospitalListOut() {
@@ -488,6 +634,171 @@ export default {
     }
     .ant-select-selection--single {
       height: 28px !important;
+    }
+  }
+}
+
+// 结算  、不予结算的
+.div-down {
+  height: 100%;
+  .div-service-left-control {
+    background-color: white;
+    // padding: 20px 0 20px 20px;
+    float: left;
+    height: 100%;
+    min-height: 300px;
+    // border-right: 1px dashed #e6e6e6;
+    // border: 1px solid #e6e6e6;
+    width: 14.5%;
+    overflow: hidden;
+
+    .left-control {
+      display: flex;
+      // padding: 20px 0 20px 20px;
+      // padding: 10px;
+      // border: 1px solid #e6e6e6;
+      flex-direction: column;
+      // width: 100%;
+      // // height: 100%;
+      // min-height: 100%;
+    }
+
+    .div-divider {
+      width: 100%;
+      background-color: #e6e6e6;
+      height: 1px;
+    }
+
+    .span-current-ques {
+      //限制一行
+      overflow: hidden; //溢出隐藏
+      text-overflow: ellipsis; //超出省略号显示
+      white-space: nowrap; //文字不换行
+
+      height: 20px;
+      width: 80%;
+      display: inline-block;
+      font-size: 12px;
+      border-bottom: #1890ff solid 1px;
+      text-align: left;
+      color: #1890ff;
+      font-weight: bold;
+    }
+
+    .div-text-auto {
+      width: 100%;
+      display: inline-block;
+      margin-top: 3%;
+      .ant-input {
+        height: 30px;
+      }
+    }
+
+    .div-wrap-control {
+      // max-height: 420px;
+      margin-bottom: 10px;
+      overflow-y: auto !important;
+      // .checked {
+      //   color: #1890ff !important;
+      // }
+
+      .no-data {
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .checked {
+        // color: #1890ff !important;
+        border: 1px solid #1890ff !important;
+        box-shadow: 0px 0px 4px 1px #409eff !important;
+      }
+
+      .div-part {
+        padding: 8px;
+        background: rgba(0, 1, 3, 0);
+        border: 1px solid #dfe3e5;
+        overflow: hidden;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 8px;
+        // padding-left: 5%;
+        border-bottom: #e6e6e6 1px solid;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .span-name {
+          // margin-top: 3.5%;
+          // display: inline-block;
+          flex: 1;
+          height: 85%;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+
+          // padding-left: 1%;
+          // color: #000;
+          margin-top: 1%;
+          font-size: 12px;
+          text-align: left|center;
+        }
+
+        .div-rate {
+          display: flex;
+          font-size: 12px;
+          flex-direction: column;
+          margin-right: 3%;
+        }
+      }
+    }
+  }
+
+  .card-right-control {
+    // overflow: hidden;
+    // border-left: #eee solid 1px;
+    // border: #eee solid 1px;
+    float: right;
+    width: 84%;
+    margin-top: 10px;
+
+    /deep/ .ant-card-body {
+      padding: 0px 20px !important;
+    }
+
+    .span-red {
+      font-size: 12px;
+      color: #f26161 !important;
+      // background-color: #f26161;
+    }
+
+    .span-gray {
+      padding: 1% 2%;
+      font-size: 12px;
+      color: #69c07d !important;
+      // background-color: #85888e;
+    }
+
+    .ant-select {
+      width: 90px;
+    }
+
+    .table-operator {
+      margin-bottom: 18px;
+    }
+    button {
+      margin-right: 8px;
+    }
+
+    .title {
+      background: #fff;
+      font-size: 18px;
+      font-weight: bold;
+      color: #000;
     }
   }
 }
