@@ -458,6 +458,7 @@
             <div>身份证照片【正面】：</div>
             <div style="right: 120px; top: 10px">
               <a-upload
+                :showUploadList="{ showRemoveIcon: false }"
                 :action="actionUrlCover"
                 list-type="picture-card"
                 :headers="headers"
@@ -474,6 +475,7 @@
 
             <div style="right: 120px; top: 10px">
               <a-upload
+                :showUploadList="{ showRemoveIcon: false }"
                 :action="actionUrlCover"
                 list-type="picture-card"
                 :headers="headers"

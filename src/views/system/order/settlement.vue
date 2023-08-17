@@ -121,16 +121,10 @@
 
 
 <script>
-import {
-  queryHospitalList,
-  modifyTbMerchant,
-  addTbMerchant,
-  factoryDetail,
-  saveFactory,
-} from '@/api/modular/system/posManage'
+import { settlement } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate, formatDateMin  } from '@/utils/util'
+import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate, formatDateMin } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -142,7 +136,9 @@ export default {
       isAgree: true,
       auditDesc: '', //不通过原因
       user: {},
-      currentTime:'',
+      currentTime: '',
+
+      requestData: [],
 
       dataInfo: {},
     }
@@ -152,7 +148,7 @@ export default {
     clearData() {},
 
     //入口
-    settltmentOut(selectData, type) {
+    settltmentOut(selectedRows,selectData, type) {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
@@ -160,11 +156,23 @@ export default {
       this.dataInfo = selectData
       this.user = Vue.ls.get(TRUE_USER)
       this.currentTime = formatDateMin(new Date().getTime())
-      console.log('dsda:', this.currentTime)
+
+      console.log('dsda:', selectedRows)
+      if (this.dataInfo) {
+
+
+
+
+
+      }
+
+      // this.requestData.push({})
+
     },
 
     handleSubmit() {
       console.log('确认结算!!!!!!!')
+      this.settlementOut()
     },
 
     goBack() {
@@ -173,6 +181,22 @@ export default {
 
     handleCancel() {
       this.visible = false
+    },
+
+    settlementOut() {
+      this.confirmLoading = true
+      settlement()
+        .then((res) => {
+          if (res.code == 0) {
+            this.visible = false
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
   },
 }

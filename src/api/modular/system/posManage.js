@@ -5199,3 +5199,14 @@ export function getOrderSettlementDetailForUserId(data) {
     data: data,
   })
 }
+
+
+
+// 结算、不予结算
+export function settlement(data) {
+  return axios({
+    url: '/medical-api/userRightsSettlement/settlement',
+    method: 'post',
+    data: data,
+  })
+}
