@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="isAgree ? '结算确认' : '不予结算确'"
+    :title="isAgree ? '结算确认' : '不予结算确认'"
     :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -138,17 +138,29 @@ export default {
       user: {},
       currentTime: '',
 
-      requestData: [],
+      requestData: {
+        settlementTime: '',
+        settlementType: 2,   //2 结算  3 不予结算
+        userId: [],
+      },
 
       dataInfo: {},
     }
   },
   created() {},
   methods: {
-    clearData() {},
+    clearData() {
+      this.dataInfo={}
+      this.requestData.settlementTime=''
+      this.requestData.settlementType=2
+      this.requestData.userId=[]
+
+    },
+
+
 
     //入口
-    settltmentOut(selectedRows,selectData, type) {
+    settltmentOut(selectedRows, selectData, type) {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
@@ -157,16 +169,17 @@ export default {
       this.user = Vue.ls.get(TRUE_USER)
       this.currentTime = formatDateMin(new Date().getTime())
 
-      console.log('dsda:', selectedRows)
-      if (this.dataInfo) {
 
-
-
-
-
+      this.requestData.settlementType=this.isAgree?2:3
+      this.requestData.settlementTime=selectData.createTime
+ 
+      console.log('dsda:', selectedRows)  
+      if (selectedRows&&selectedRows.length>0) {
+        for (let index = 0; index < selectedRows.length; index++) {
+          this.requestData.userId.push(selectedRows[index].doctorUserId)
+        }
       }
-
-      // this.requestData.push({})
+      console.log("ddd:", this.requestData)
 
     },
 
@@ -185,10 +198,11 @@ export default {
 
     settlementOut() {
       this.confirmLoading = true
-      settlement()
+      settlement(this.requestData)
         .then((res) => {
           if (res.code == 0) {
             this.visible = false
+            this.$emit('ok')
             this.$message.success(res.message)
           } else {
             this.$message.error(res.message)

@@ -3,8 +3,8 @@
     <div class="table-page-search-wrapper">
       <div class="action-row" style="margin-top: -15px !important; margin-left: -18px">
         <a-button type="link" icon="left" @click="goBack()">返回</a-button>
-        <span style="font-size: 14px; color: #4d4d4d">{{ record.doctorName }}待结算详情</span>
-        <span style="font-size: 14px; color: #4d4d4d">【{{time}}】</span>
+        <span style="font-size: 14px; color: #4d4d4d">{{ record.doctorName + status }}详情</span>
+        <span style="font-size: 14px; color: #4d4d4d">【{{ time }}】</span>
       </div>
     </div>
 
@@ -12,9 +12,9 @@
       <!-- 订单总额 -->
       <div class="tab-total">
         <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">待结算</span>
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">待结算</span>
           <div style="float: right; margin-left: 25px">
-            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 119px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
@@ -31,9 +31,9 @@
       <!-- 微信支付 -->
       <div class="tab-wx">
         <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">在线咨询</span>
-          <div style="float: right; margin-left: 25px">
-            <img style="padding-left: 98px; margin-top: -10px" src="@/assets/icons/tc.png" />
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">在线咨询</span>
+          <div style="float: right">
+            <img style="padding-left: 131px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
@@ -49,9 +49,9 @@
       <!-- 支付宝支付 -->
       <div class="tab-alipay">
         <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">专科服务</span>
-          <div style="float: right; margin-left: 25px">
-            <img style="padding-left: 98px; margin-top: -10px" src="@/assets/icons/tc.png" />
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">专科服务</span>
+          <div style="float: right">
+            <img style="padding-left: 131px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
@@ -92,9 +92,7 @@
          <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import {
-  getOrderSettlementDetailForUserId,
-} from '@/api/modular/system/posManage'
+import { getOrderSettlementDetailForUserId } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -114,7 +112,8 @@ export default {
       SummaryDataList: [],
       confirmLoading: false,
       record: {},
-      time:'',
+      status: '',
+      time: '',
       currentTab: 0,
       numberData: {
         all: 0,
@@ -122,20 +121,17 @@ export default {
         zhifub: 0,
       },
       queryParams: {
-        createdTime: '2023-07',
+        createdTime: '',
         doctorName: '',
-        doctorUserId: '1546',
+        doctorUserId: '',
         hospitalCode: '',
         settlementStatus: 1,
       },
 
-      queryParamsTemp:{
-
-      },
+      queryParamsTemp: {},
 
       reconData: '', //对账 日期
       statusShow: '', //状态
-
 
       // 表头
       columns: [
@@ -229,38 +225,45 @@ export default {
 
   activated() {
     if (this.$route.query) {
-      console.log('Sss:', this.$route.query.record)
+      // console.log('Sss:', this.$route.query.record)
       this.record = this.$route.query.record
-      this.queryParams.settlementStatus = 1
       this.queryParams.doctorName = this.record.doctorName
       this.queryParams.doctorUserId = this.record.doctorUserId
       this.queryParams.hospitalCode = this.record.hospitalCode
-      this.queryParams.createdTime = '2023-07'
       this.time = this.$route.query.time
-      console.log("Ssss:",this.$route.query.time)
+      this.queryParams.createdTime = this.time
+      this.status = this.$route.query.status
+      if (this.status == '待结算') {
+        this.queryParams.settlementStatus = 1
+      } else if (this.status == '已结算') {
+        this.queryParams.settlementStatus = 2
+      } else if (this.status == '不予结算') {
+        this.queryParams.settlementStatus = 3
+      }
+      console.log("Ssss:",this.queryParams)
+      this.$refs.table.refresh()
     }
   },
 
-  watch: {
-    $route(to, from) {
-      if (to.path.indexOf('reconDetail') > -1) {
-        this.reconData = this.$route.query.billDate
-        this.statusShow = this.$route.query.state
-        this.currentTab = this.$route.query.payeeId
-        this.queryParams.billDate = this.reconData
-        this.queryParams.payeeId = this.currentTab
-        this.queryParams.hospitalCode = this.$route.query.hospitalCode
-        this.$refs.table.refresh()
-      }
-    },
-  },
+  // watch: {
+  //   $route(to, from) {
+  //     if (to.path.indexOf('reconDetail') > -1) {
+  //       this.reconData = this.$route.query.billDate
+  //       this.statusShow = this.$route.query.state
+  //       this.currentTab = this.$route.query.payeeId
+  //       this.queryParams.billDate = this.reconData
+  //       this.queryParams.payeeId = this.currentTab
+  //       this.queryParams.hospitalCode = this.$route.query.hospitalCode
+  //       this.$refs.table.refresh()
+  //     }
+  //   },
+  // },
 
   created() {
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
   },
 
   methods: {
-
     getColor(value) {
       if (value == 0) {
         return 'span-gray'
@@ -282,7 +285,6 @@ export default {
     isLoading() {
       return this.confirmLoading
     },
-
 
     downloadfile(res) {
       var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
@@ -307,7 +309,6 @@ export default {
       this.$router.go(-1)
       // this.$router.back()
     },
-
 
     onRadioClick(type) {
       //如果在加载中  不让点击

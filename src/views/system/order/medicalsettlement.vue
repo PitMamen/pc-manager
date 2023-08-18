@@ -109,14 +109,7 @@
         <div class="left-control" style="height: 610px">
           <div class="div-wrap-control" style="margin-top: 5%">
             <!-- <div v-if="quesDataTemp && quesDataTemp.length > 0"> -->
-            <div class="div-part" :class="{ checked: true }" :value="结算成功" :key="index">
-              <!-- <span class="span-name" :title="结算成功">
-                      {{ 结算成功 }}
-                    </span> -->
-
-              <!-- <div
-                      style="width: 100%; height: 0.5px; background: #3894FF; margin-top: 5px; margin-bottom: 5px"
-                    ></div> -->
+            <div class="div-part" :class="{ checked: true }" :value="index" :key="index">
 
               <div class="div-rate">
                 <span style="color: #999999">结算人员:凌红阳</span>
@@ -150,6 +143,10 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
+      <span slot="action" slot-scope="text, record">
+        <a-icon type="export" style="color: #1890ff; margin-right: 3px" />
+        <a @click="goExamine(record)">详情</a>
+      </span>
       </s-table>
     </div>
 
@@ -373,11 +370,13 @@ export default {
 
         {
           title: '结算笔数',
-          dataIndex: 'consultOrder',
+          dataIndex: 'countAll',
+          align:'center'
         },
         {
           title: '结算金额',
-          dataIndex: 'srvPackOrder',
+          dataIndex: 'payTotalAll',
+          align:'right'
         },
         {
           title: '结算情况',
@@ -390,20 +389,6 @@ export default {
           scopedSlots: { customRender: 'action' },
         },
       ],
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
@@ -567,29 +552,32 @@ export default {
     },
 
     handleOk() {
+      console.log("刷新数据1!")
+      this.updateSelect()
       this.refresh()
     },
     refresh() {
       this.$refs.table.refresh(true)
     },
 
-    editPlan(record) {
-      this.$router.push({
-        name: 'package_config_edit',
-        query: {
-          recordStr: JSON.stringify(record),
-        },
-      })
-    },
 
     //详情
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
+      var state=''
+      if(this.currentTab==1){
+        state = '待结算'
+      }else if(this.currentTab==2){
+        state = '已结算'
+      }else if(this.currentTab==3){
+        state = '不予结算'
+      }
       this.$router.push({
         path: '/order/settlementDetail',
         query: {
           time: this.queryParams.createdTime,
           record: record,
+          status:state
         },
       })
     },
