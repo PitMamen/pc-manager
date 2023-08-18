@@ -91,7 +91,7 @@
             </div>
           </div>
           <!-- <div> HAHAHHAHAH</div> -->
-          <a-pagination v-if="showPagination" style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
+          <a-pagination v-if="showPagination" simple  style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
                       @change="handleChangePage"/>
         </div>
           
@@ -428,7 +428,7 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
-  height: 78vh;
+  height: calc(100vh - 173px);
   display: flex;
   flex-direction: row;
 
@@ -446,7 +446,7 @@ export default {
   .div-service-left-control {
     display: grid;
     margin-right: 20px;
-    height: calc(100% - 20px);
+    height: calc(100vh - 170px);
     min-height: 300px;
     flex-shrink: 0;
     width: 250px;
