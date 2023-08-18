@@ -572,7 +572,7 @@ export default {
   overflow: hidden;
   display: flex;
   flex-direction: row;
-
+  height: calc(100vh - 124px);
   span {
     font-size: 12px;
   }
@@ -586,13 +586,12 @@ export default {
 
   .div-service-left-control {
     margin-right: 20px;
-    height: 85vh;
-    min-height: 300px;
+    height: calc(100vh - 124px);
     flex-shrink: 0;
     width: 200px;
     overflow: hidden;
 
-    border-right: 1px solid #e6e6e6;
+    border: 1px solid #e6e6e6;
 
     .left-lb-title {
       overflow: hidden;

@@ -138,8 +138,8 @@
         <!-- </div> -->
         <div class="div-down">
           <div class="div-service-left-control">
-            <div class="left-control" style="height: 610px">
-              <div class="div-wrap-control" style="margin-top: 2%">
+            <div class="left-control" >
+              <div class="div-wrap-control" >
                 <div v-if="quesDataTemp && quesDataTemp.length > 0">
                   <div
                     class="div-part"
@@ -960,7 +960,7 @@ export default {
   width: 100%;
   overflow: hidden;
   padding-top: 20px;
-  height: 100%;
+  height: calc(100vh - 90px);
 
   .div-radio {
     margin-top: -20px;
@@ -1023,12 +1023,12 @@ export default {
   }
 
   .div-down {
-    height: 100%;
+    height: calc(100vh - 260px);
     .div-service-left-control {
       background-color: white;
       // padding: 20px 0 20px 20px;
       float: left;
-      height: 100%;
+      
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
@@ -1036,6 +1036,7 @@ export default {
       overflow: hidden;
 
       .left-control {
+        
         display: flex;
         // padding: 20px 0 20px 20px;
         // padding: 10px;
@@ -1079,6 +1080,7 @@ export default {
 
       .div-wrap-control {
         // max-height: 420px;
+        height: calc(100vh - 260px);
         margin-bottom: 10px;
         overflow-y: auto !important;
         // .checked {

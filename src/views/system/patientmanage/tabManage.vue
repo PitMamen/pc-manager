@@ -3,10 +3,13 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-service-control">
         <div class="div-service-left-control">
-          <div style="margin-top: 10px">标签类别</div>
-          <div class="line"></div>
-
-          <div class="left-content" style="margin-right: 10px">
+          <!-- <div style="margin-top: 10px">标签类别</div>
+          <div class="line"></div> -->
+          <div class="bottom-top">
+            <div style="margin-top: 15px">标签类别</div>
+          </div>
+          <div class="line"></div> 
+          <div class="left-content" style="margin-left: 10px;">
             <div class="typeadd" @click="$refs.addTab.addTab()">
               新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
@@ -18,7 +21,7 @@
               >
                 {{ item.tagsTypeName }}
               </div>
-              <div class="content-right">
+              <div class="content-right" style="margin-right: 10px">
                 <a style="color: #409eff; margin-right: 10px" @click="$refs.addTab.editTab(item)">修改</a>
                 <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
                   <a>删除</a>
@@ -261,6 +264,7 @@ export default {
             res.data.records.forEach((item) => {
               item.checked = false
             })
+           
             this.leftListData = res.data.records
             this.params.tagsTypeId = this.leftListData[0].id //默认第一个 id
             this.leftListData[0].checked = true
@@ -380,7 +384,7 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
-  height: 85vh;
+  height: calc(100vh - 121px);
   display: flex;
   flex-direction: row;
 
@@ -397,17 +401,23 @@ export default {
 
   .div-service-left-control {
     margin-right: 20px;
-    height: 100%;
-    min-height: 300px;
+   
     flex-shrink: 0;
     width: 200px;
     overflow: hidden;
 
-    border-right: 1px solid #e6e6e6;
+    border: 1px solid #e6e6e6;
+    .bottom-top {
+        // color: #1890ff;
 
+        height: 33px;
+
+        margin-left: 10%;
+        font-size: 14px;
+      }
     .line {
       height: 1px;
-      margin-top: 20px;
+     
       width: 100%;
       background: #e8e8e8;
     }
@@ -442,9 +452,9 @@ export default {
     }
 
     .left-content {
-      height: 100%;
+      height: calc(100vh - 155px);
       overflow-y: auto;
-      padding: 10px;
+      
     }
     .content-right {
       display: flex;
@@ -456,6 +466,8 @@ export default {
       flex-direction: row-reverse;
       align-items: center;
       margin-bottom: 10px;
+      margin-top: 10px;
+      margin-right: 10px;
       color: #409eff;
     }
     .ksview {
@@ -472,7 +484,7 @@ export default {
   }
   .div-service-right-control {
     flex: 1;
-    width: calc(100% - 220px);
+    width: calc(100vh - 90px);
   }
 }
 

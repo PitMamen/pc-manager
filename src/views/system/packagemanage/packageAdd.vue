@@ -830,12 +830,12 @@ export default {
           this.allocationTypeNurse = 2
 
           this.canConfigTeam = true
-          this.onSelectChange()
+          // this.onSelectChange()
           this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
-          this.onSelectChange()
+          // this.onSelectChange()
           this.getNewRsp()
           break
         case 3:
