@@ -109,11 +109,11 @@
               />
             </span>
             <span slot="act_rate" slot-scope="text, record">
+              <!-- :disabled="isSingle" -->
               <a-input-number
                 style="display: inline-block; margin-left: 1%; width: 50px"
                 v-model="record.achievementRatio"
                 @change="countTotal"
-                :disabled="isSingle"
                 :min="0"
                 :max="100"
                 :maxLength="30"
