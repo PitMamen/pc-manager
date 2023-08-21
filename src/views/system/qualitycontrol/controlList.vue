@@ -435,7 +435,6 @@ export default {
   },
 
   activated() {
-    console.log('点点点')
     this.getSwitchStatusOut()
   },
 

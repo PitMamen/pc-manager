@@ -56,7 +56,7 @@
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button type="primary" icon="search" @click="refresh()">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </span>
       </div>
@@ -80,9 +80,6 @@
       >不予结算</a-button
     >
 
-
-
-
     <s-table
       v-if="currentTab == 1"
       bordered
@@ -101,31 +98,37 @@
       </span>
     </s-table>
 
-
-
-
     <div v-if="currentTab == 2 || currentTab == 3" class="div-down">
       <div class="div-service-left-control">
         <div class="left-control" style="height: 610px">
           <div class="div-wrap-control" style="margin-top: 5%">
-            <!-- <div v-if="quesDataTemp && quesDataTemp.length > 0"> -->
-            <div class="div-part" :class="{ checked: true }" :value="index" :key="index">
+            <div v-if="groupListTemp && groupListTemp.length > 0">
+              <div
+                class="div-part"
+                v-for="(item, index) in groupListTemp"
+                :class="{ 'checked': item.isChecked }"
+                :value="item.user_name"
+                :key="index"
+                @click="onItemClick(item, index)"
+              >
+                <div class="div-rate">
+                  <span style="color: #999999">结算人员:{{ item.user_name }}</span>
+                  <span style="margin-top: 5px; color: #999999">结算时间:{{ item.create_time }}</span>
+                  
+                  <div :style="{'margin-top':'5px',width: '100%', height: '0.5px', background:item.isChecked? '#3894ff':'#CCCCCC'}"></div>
 
-              <div class="div-rate">
-                <span style="color: #999999">结算人员:凌红阳</span>
-                <span style="margin-top: 5px;color: #999999">结算时间:2023-08-08</span>
-                <div style="width: 100%; height: 0.5px; background: #3894ff; margin-top: 5px; "></div>
-
-                <span style="color: #999999;margin-top: 5px; ">结算金额:1008</span>
-                <span style="color: #999999;margin-top: 5px;">订单数量:300</span>
-                <span v-if="currentTab==3" style="display: flex;flex-wrap: wrap;color: #999999;margin-top: 5px;" >原因:把人治死了啊</span>
+                  <span style="color: #999999; margin-top: 5px">结算金额:{{ item.settlement_sum }}</span>
+                  <span style="color: #999999; margin-top: 5px">订单数量:{{ item.co }}</span>
+                  <span v-if="currentTab == 3" style="display: flex; flex-wrap: wrap; color: #999999; margin-top: 5px"
+                    >原因:把人治死了啊</span
+                  >
+                </div>
               </div>
             </div>
-            <!-- </div> -->
-            <!-- <div v-else class="no-data">
-                  <img src="~@/assets/icons/no_data.jpg" />
-                  <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
-                </div> -->
+            <div v-else class="no-data">
+              <img src="~@/assets/icons/no_data.jpg" />
+              <span style="color: #bfbfbf; margin-top: 10px">暂无数据</span>
+            </div>
           </div>
         </div>
       </div>
@@ -143,14 +146,12 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
-      <span slot="action" slot-scope="text, record">
-        <a-icon type="export" style="color: #1890ff; margin-right: 3px" />
-        <a @click="goExamine(record)">详情</a>
-      </span>
+        <span slot="action" slot-scope="text, record">
+          <a-icon type="export" style="color: #1890ff; margin-right: 3px" />
+          <a @click="goExamine(record)">详情</a>
+        </span>
       </s-table>
     </div>
-
-   
 
     <settlement ref="settlement" @ok="handleOk" />
   </a-card>
@@ -160,7 +161,12 @@
     <script>
 import { STable } from '@/components'
 import { getMonthNow } from '@/utils/util'
-import { accessHospitals, getTbBizMerchantPageList, getOrderSettlementList } from '@/api/modular/system/posManage'
+import {
+  accessHospitals,
+  getTbBizMerchantPageList,
+  getOrderSettlementList,
+  getOrderSettlementListGroupBy,
+} from '@/api/modular/system/posManage'
 import settlement from './settlement'
 import moment from 'moment'
 export default {
@@ -179,6 +185,10 @@ export default {
       orderTimeValue: [],
       selectedRowKeys: [],
       selectedRows: [],
+
+      groupList: [],
+      groupListTemp: [],
+
       queryParams: {
         hospitalCode: undefined,
         settlementStatus: 1,
@@ -190,6 +200,12 @@ export default {
         settlementStatus: '',
         createdTime: getMonthNow(),
         doctorName: 1,
+      },
+
+      queryParamsGroup: {
+        endTime: '',
+        settlementType: 2,
+        startTime: '',
       },
 
       selectInfo: {
@@ -327,9 +343,9 @@ export default {
         },
       ],
 
-// 已结算、不予结算的表头
- // 表头
- notcolumns: [
+      // 已结算、不予结算的表头
+      // 表头
+      notcolumns: [
         {
           title: '医疗机构',
           dataIndex: 'hospitalName',
@@ -343,7 +359,6 @@ export default {
           width: 120,
           ellipsis: true,
         },
-
 
         {
           title: '身份证号码',
@@ -366,17 +381,15 @@ export default {
           ellipsis: true,
         },
 
-       
-
         {
           title: '结算笔数',
           dataIndex: 'countAll',
-          align:'center'
+          align: 'center',
         },
         {
           title: '结算金额',
           dataIndex: 'payTotalAll',
-          align:'right'
+          align: 'right',
         },
         {
           title: '结算情况',
@@ -392,20 +405,41 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getOrderSettlementList(Object.assign(parameter, this.queryParams)).then((res) => {
-          let data = {}
-          if (res.code == 0 && res.data && res.data.records.length > 0) {
-            //组装控件需要的数据结构
-            data = {
-              pageNo: parameter.pageNo,
-              pageSize: parameter.pageSize,
-              totalRows: res.data.total,
-              totalPage: res.data.total / parameter.pageSize,
-              rows: res.data.records,
+        if (this.currentTab == 1) {
+          return getOrderSettlementList(Object.assign(parameter, this.queryParams)).then((res) => {
+            let data = {}
+            if (res.code == 0 && res.data && res.data.records.length > 0) {
+              //组装控件需要的数据结构
+              data = {
+                pageNo: parameter.pageNo,
+                pageSize: parameter.pageSize,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
+              }
             }
-          }
-          return data
-        })
+            return data
+          })
+        } else {
+          console.log('1111111111111')
+          return getOrderSettlementList(Object.assign(parameter, this.queryParamsGroup)).then((res) => {
+            let data = {}
+            if (res.code == 0 && res.data && res.data.records.length > 0) {
+              //组装控件需要的数据结构
+              data = {
+                pageNo: parameter.pageNo,
+                pageSize: parameter.pageSize,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
+              }
+            }
+            return data
+          })
+
+
+
+        }
       },
     }
   },
@@ -425,7 +459,29 @@ export default {
     //更新时间
     onChange(momentArr, dateArr) {
       this.orderTimeValue = momentArr
+      this.queryParamsGroup.startTime = dateArr[0]
+      this.queryParamsGroup.endTime = dateArr[1]
     },
+
+
+
+    // 左侧卡片 点击
+    onItemClick(item, indexClick) {
+      console.log("kkk:",item.user_name,indexClick)
+      for (let index = 0; index < this.groupListTemp.length; index++) {
+        this.$set(this.groupListTemp[index], 'isChecked', false)
+      }
+      this.$set(this.groupListTemp[indexClick], 'isChecked', true)
+
+      // this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
+      // this.queryParams.messageContentId = this.choseQues.questionnaireId
+      // this.$refs.table.refresh(true)
+    },
+
+
+
+
+
 
     disabledDate(current) {
       // Can not select days before today and today
@@ -440,6 +496,25 @@ export default {
       mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
       myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
       return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    // 分组
+    getOrderSettlementListGroupByOut() {
+      this.confirmLoading = true
+      getOrderSettlementListGroupBy(this.queryParamsGroup)
+        .then((res) => {
+          if (res.code == 0) {
+            this.groupList = res.data.records
+            this.groupListTemp = res.data.records
+            res.data.records.forEach((item) => {
+              this.$set(this.groupListTemp[0], 'isChecked', true)
+              })
+
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     /**
@@ -548,28 +623,40 @@ export default {
       this.currentTab = type
       this.queryParams.settlementStatus = type
       this.queryParamsOrigin.settlementStatus = type
+      this.queryParamsGroup.settlementType = type
+      if (type != 1) {
+        this.getOrderSettlementListGroupByOut()
+      }
       this.$refs.table.refresh()
     },
 
     handleOk() {
-      console.log("刷新数据1!")
+      console.log('刷新数据1!')
       this.updateSelect()
       this.refresh()
     },
+
+
+
+
+
     refresh() {
+      if(this.currentTab!=1){
+        this.getOrderSettlementListGroupByOut()
+      }
+      this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
       this.$refs.table.refresh(true)
     },
-
 
     //详情
     goExamine(record) {
       // this.$refs.orderDetail.orderDetail(record)
-      var state=''
-      if(this.currentTab==1){
+      var state = ''
+      if (this.currentTab == 1) {
         state = '待结算'
-      }else if(this.currentTab==2){
+      } else if (this.currentTab == 2) {
         state = '已结算'
-      }else if(this.currentTab==3){
+      } else if (this.currentTab == 3) {
         state = '不予结算'
       }
       this.$router.push({
@@ -577,7 +664,7 @@ export default {
         query: {
           time: this.queryParams.createdTime,
           record: record,
-          status:state
+          status: state,
         },
       })
     },

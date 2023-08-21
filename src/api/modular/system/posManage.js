@@ -5201,6 +5201,23 @@ export function getOrderSettlementDetailForUserId(data) {
 }
 
 
+// 医护已结算列表分组统计
+export function getOrderSettlementListGroupBy(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementListGroupBy',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+
+
+
+
+
 
 // 结算、不予结算
 export function settlement(data) {

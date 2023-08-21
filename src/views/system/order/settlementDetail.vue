@@ -224,40 +224,56 @@ export default {
   },
 
   activated() {
-    if (this.$route.query) {
-      // console.log('Sss:', this.$route.query.record)
-      this.record = this.$route.query.record
-      this.queryParams.doctorName = this.record.doctorName
-      this.queryParams.doctorUserId = this.record.doctorUserId
-      this.queryParams.hospitalCode = this.record.hospitalCode
-      this.time = this.$route.query.time
-      this.queryParams.createdTime = this.time
-      this.status = this.$route.query.status
-      if (this.status == '待结算') {
-        this.queryParams.settlementStatus = 1
-      } else if (this.status == '已结算') {
-        this.queryParams.settlementStatus = 2
-      } else if (this.status == '不予结算') {
-        this.queryParams.settlementStatus = 3
-      }
-      console.log("Ssss:",this.queryParams)
-      this.$refs.table.refresh()
-    }
+    // if (this.$route.query) {
+    //   console.log('Sss:', this.$route.query.record)
+    //   this.record = this.$route.query.record
+    //   this.queryParams.doctorName = this.record.doctorName
+    //   this.queryParams.doctorUserId = this.record.doctorUserId
+    //   this.queryParams.hospitalCode = this.record.hospitalCode
+    //   this.time = this.$route.query.time
+    //   this.queryParams.createdTime = this.time
+    //   this.status = this.$route.query.status
+    //   if (this.status == '待结算') {
+    //     this.queryParams.settlementStatus = 1
+    //   } else if (this.status == '已结算') {
+    //     this.queryParams.settlementStatus = 2
+    //   } else if (this.status == '不予结算') {
+    //     this.queryParams.settlementStatus = 3
+    //   }
+    //   console.log("Ssss:",this.queryParams)
+    //   this.$refs.table.refresh()
+    // }
   },
 
-  // watch: {
-  //   $route(to, from) {
-  //     if (to.path.indexOf('reconDetail') > -1) {
-  //       this.reconData = this.$route.query.billDate
-  //       this.statusShow = this.$route.query.state
-  //       this.currentTab = this.$route.query.payeeId
-  //       this.queryParams.billDate = this.reconData
-  //       this.queryParams.payeeId = this.currentTab
-  //       this.queryParams.hospitalCode = this.$route.query.hospitalCode
-  //       this.$refs.table.refresh()
-  //     }
-  //   },
-  // },
+  watch: {
+    $route(to, from) {
+      console.log("ddd:",from)
+      if(from.path=='/order/medicalsettlement'){
+// if (to.path.indexOf('settlementDetail') > -1) {
+  if (this.$route.query) {
+          console.log('Sss:', this.$route.query.record)
+          this.record = this.$route.query.record
+          this.queryParams.doctorName = this.record.doctorName
+          this.queryParams.doctorUserId = this.record.doctorUserId
+          this.queryParams.hospitalCode = this.record.hospitalCode
+          this.time = this.$route.query.time
+          this.queryParams.createdTime = this.time
+          this.status = this.$route.query.status
+          if (this.status == '待结算') {
+            this.queryParams.settlementStatus = 1
+          } else if (this.status == '已结算') {
+            this.queryParams.settlementStatus = 2
+          } else if (this.status == '不予结算') {
+            this.queryParams.settlementStatus = 3
+          }
+          console.log('Ssss:', this.queryParams)
+          this.$refs.table.refresh()
+        }
+      // }
+      }
+      
+    },
+  },
 
   created() {
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
