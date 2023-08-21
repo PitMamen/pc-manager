@@ -5210,6 +5210,15 @@ export function getOrderSettlementListGroupBy(data) {
   })
 }
 
+// 已结算、不予结算列表
+export function getalreadySettlementList(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementList',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 

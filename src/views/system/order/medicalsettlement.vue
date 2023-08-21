@@ -106,7 +106,7 @@
               <div
                 class="div-part"
                 v-for="(item, index) in groupListTemp"
-                :class="{ 'checked': item.isChecked }"
+                :class="{ checked: item.isChecked }"
                 :value="item.user_name"
                 :key="index"
                 @click="onItemClick(item, index)"
@@ -114,13 +114,20 @@
                 <div class="div-rate">
                   <span style="color: #999999">结算人员:{{ item.user_name }}</span>
                   <span style="margin-top: 5px; color: #999999">结算时间:{{ item.create_time }}</span>
-                  
-                  <div :style="{'margin-top':'5px',width: '100%', height: '0.5px', background:item.isChecked? '#3894ff':'#CCCCCC'}"></div>
+
+                  <div
+                    :style="{
+                      'margin-top': '5px',
+                      width: '100%',
+                      height: '0.5px',
+                      background: item.isChecked ? '#3894ff' : '#CCCCCC',
+                    }"
+                  ></div>
 
                   <span style="color: #999999; margin-top: 5px">结算金额:{{ item.settlement_sum }}</span>
                   <span style="color: #999999; margin-top: 5px">订单数量:{{ item.co }}</span>
                   <span v-if="currentTab == 3" style="display: flex; flex-wrap: wrap; color: #999999; margin-top: 5px"
-                    >原因:把人治死了啊</span
+                    >原因:{{ item.description }}</span
                   >
                 </div>
               </div>
@@ -165,10 +172,12 @@ import {
   accessHospitals,
   getTbBizMerchantPageList,
   getOrderSettlementList,
+  getalreadySettlementList,
   getOrderSettlementListGroupBy,
 } from '@/api/modular/system/posManage'
 import settlement from './settlement'
 import moment from 'moment'
+import { getType } from 'ant-design-vue/es/_util/vue-types/utils'
 export default {
   components: {
     STable,
@@ -388,12 +397,12 @@ export default {
         },
         {
           title: '结算金额',
-          dataIndex: 'payTotalAll',
+          dataIndex: 'settlementSum',
           align: 'right',
         },
         {
           title: '结算情况',
-          dataIndex: 'appPreRegister',
+          dataIndex: 'settlementStatus',
         },
         {
           title: '操作',
@@ -422,7 +431,7 @@ export default {
           })
         } else {
           console.log('1111111111111')
-          return getOrderSettlementList(Object.assign(parameter, this.queryParamsGroup)).then((res) => {
+          return getalreadySettlementList(Object.assign(parameter, this.queryParamsGroup)).then((res) => {
             let data = {}
             if (res.code == 0 && res.data && res.data.records.length > 0) {
               //组装控件需要的数据结构
@@ -433,12 +442,13 @@ export default {
                 totalPage: res.data.total / parameter.pageSize,
                 rows: res.data.records,
               }
+
+              data.rows.forEach((item) => {
+                this.$set(item, 'settlementStatus', this.getType(item.settlementType))
+              })
             }
             return data
           })
-
-
-
         }
       },
     }
@@ -463,11 +473,17 @@ export default {
       this.queryParamsGroup.endTime = dateArr[1]
     },
 
-
+    getType(value) {
+      if (value == 2) {
+        return '已结算'
+      } else if (value == 3) {
+        return '不予结算'
+      }
+    },
 
     // 左侧卡片 点击
     onItemClick(item, indexClick) {
-      console.log("kkk:",item.user_name,indexClick)
+      console.log('kkk:', item.user_name, indexClick)
       for (let index = 0; index < this.groupListTemp.length; index++) {
         this.$set(this.groupListTemp[index], 'isChecked', false)
       }
@@ -477,11 +493,6 @@ export default {
       // this.queryParams.messageContentId = this.choseQues.questionnaireId
       // this.$refs.table.refresh(true)
     },
-
-
-
-
-
 
     disabledDate(current) {
       // Can not select days before today and today
@@ -508,8 +519,7 @@ export default {
             this.groupListTemp = res.data.records
             res.data.records.forEach((item) => {
               this.$set(this.groupListTemp[0], 'isChecked', true)
-              })
-
+            })
           }
         })
         .finally((res) => {
@@ -636,12 +646,8 @@ export default {
       this.refresh()
     },
 
-
-
-
-
     refresh() {
-      if(this.currentTab!=1){
+      if (this.currentTab != 1) {
         this.getOrderSettlementListGroupByOut()
       }
       this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
@@ -650,7 +656,8 @@ export default {
 
     //详情
     goExamine(record) {
-      // this.$refs.orderDetail.orderDetail(record)
+      let data = JSON.parse(JSON.stringify(record))
+      this.$set(data, 'time', this.queryParams.createdTime)
       var state = ''
       if (this.currentTab == 1) {
         state = '待结算'
@@ -659,12 +666,11 @@ export default {
       } else if (this.currentTab == 3) {
         state = '不予结算'
       }
+      this.$set(data, 'status', state)
       this.$router.push({
         path: '/order/settlementDetail',
         query: {
-          time: this.queryParams.createdTime,
-          record: record,
-          status: state,
+          dataStr: JSON.stringify(data),
         },
       })
     },

@@ -28,7 +28,6 @@
         </div>
       </div>
 
-      <!-- 微信支付 -->
       <div class="tab-wx">
         <div class="content-dis">
           <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">在线咨询</span>
@@ -46,7 +45,6 @@
         </div>
       </div>
 
-      <!-- 支付宝支付 -->
       <div class="tab-alipay">
         <div class="content-dis">
           <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">专科服务</span>
@@ -172,14 +170,14 @@ export default {
 
         {
           title: '结算金额',
-          dataIndex: 'payTotal',
+          dataIndex: 'realTotalPayMoney',
           align: 'right',
           ellipsis: true,
         },
 
         {
           title: '开单时间',
-          dataIndex: 'payTime',
+          dataIndex: 'orderTime',
           ellipsis: true,
           //   width: 160,
         },
@@ -224,62 +222,62 @@ export default {
   },
 
   activated() {
-    // if (this.$route.query) {
-    //   console.log('Sss:', this.$route.query.record)
-    //   this.record = this.$route.query.record
-    //   this.queryParams.doctorName = this.record.doctorName
-    //   this.queryParams.doctorUserId = this.record.doctorUserId
-    //   this.queryParams.hospitalCode = this.record.hospitalCode
-    //   this.time = this.$route.query.time
-    //   this.queryParams.createdTime = this.time
-    //   this.status = this.$route.query.status
-    //   if (this.status == '待结算') {
-    //     this.queryParams.settlementStatus = 1
-    //   } else if (this.status == '已结算') {
-    //     this.queryParams.settlementStatus = 2
-    //   } else if (this.status == '不予结算') {
-    //     this.queryParams.settlementStatus = 3
-    //   }
-    //   console.log("Ssss:",this.queryParams)
-    //   this.$refs.table.refresh()
-    // }
+    if (this.$route.query) {
+      // console.log('Sss:', this.$route)
+      // this.record = this.$route.query.record
+      // this.queryParams.doctorName = this.record.doctorName
+      // this.queryParams.doctorUserId = this.record.doctorUserId
+      // this.queryParams.hospitalCode = this.record.hospitalCode
+      // this.time = this.$route.query.time
+      // this.queryParams.createdTime = this.time
+      // this.status = this.$route.query.status
+      // if (this.status == '待结算') {
+      //   this.queryParams.settlementStatus = 1
+      // } else if (this.status == '已结算') {
+      //   this.queryParams.settlementStatus = 2
+      // } else if (this.status == '不予结算') {
+      //   this.queryParams.settlementStatus = 3
+      // }
+      // console.log("Ssss:",this.queryParams)
+      // this.$refs.table.refresh()
+    }
   },
 
   watch: {
     $route(to, from) {
-      console.log("ddd:",from)
-      if(from.path=='/order/medicalsettlement'){
-// if (to.path.indexOf('settlementDetail') > -1) {
-  if (this.$route.query) {
-          console.log('Sss:', this.$route.query.record)
-          this.record = this.$route.query.record
-          this.queryParams.doctorName = this.record.doctorName
-          this.queryParams.doctorUserId = this.record.doctorUserId
-          this.queryParams.hospitalCode = this.record.hospitalCode
-          this.time = this.$route.query.time
-          this.queryParams.createdTime = this.time
-          this.status = this.$route.query.status
-          if (this.status == '待结算') {
-            this.queryParams.settlementStatus = 1
-          } else if (this.status == '已结算') {
-            this.queryParams.settlementStatus = 2
-          } else if (this.status == '不予结算') {
-            this.queryParams.settlementStatus = 3
-          }
-          console.log('Ssss:', this.queryParams)
-          this.$refs.table.refresh()
+      // console.log('ddd:', from)
+        if (to.path.indexOf('settlementDetail') > -1) {
+        this.initData()
         }
-      // }
-      }
-      
     },
   },
 
   created() {
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+
+    this.initData()
   },
 
   methods: {
+    initData() {
+      this.record = JSON.parse(this.$route.query.dataStr)
+      console.log("FFFF:",this.record)
+      this.queryParams.doctorName = this.record.doctorName
+      this.queryParams.doctorUserId = this.record.doctorUserId
+      this.queryParams.hospitalCode = this.record.hospitalCode
+      this.time = this.record.time
+      this.queryParams.createdTime = this.time
+      this.status = this.record.status
+      if (this.status == '待结算') {
+        this.queryParams.settlementStatus = 1
+      } else if (this.status == '已结算') {
+        this.queryParams.settlementStatus = 2
+      } else if (this.status == '不予结算') {
+        this.queryParams.settlementStatus = 3
+      }
+      this.$refs.table.refresh()
+    },
+
     getColor(value) {
       if (value == 0) {
         return 'span-gray'

@@ -101,7 +101,7 @@
         v-if="!isAgree"
         style="height: 80px; min-height: 70px; margin-top: 10px; width: 100%"
         :maxLength="300"
-        v-model="auditDesc"
+        v-model="requestData.description"
         placeholder="请输入原因"
         v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入原因！' }] }]"
       />
@@ -134,7 +134,6 @@ export default {
       record: {},
       confirmLoading: false,
       isAgree: true,
-      auditDesc: '', //不通过原因
       user: {},
       currentTime: '',
 
@@ -142,6 +141,7 @@ export default {
         settlementTime: '',
         settlementType: 2,   //2 结算  3 不予结算
         userId: [],
+        description:''
       },
 
       dataInfo: {},
@@ -154,6 +154,7 @@ export default {
       this.requestData.settlementTime=''
       this.requestData.settlementType=2
       this.requestData.userId=[]
+      this.requestData.description=''
 
     },
 
@@ -173,7 +174,7 @@ export default {
       this.requestData.settlementType=this.isAgree?2:3
       this.requestData.settlementTime=selectData.createTime
  
-      console.log('dsda:', selectedRows)  
+      // console.log('dsda:', selectedRows)  
       if (selectedRows&&selectedRows.length>0) {
         for (let index = 0; index < selectedRows.length; index++) {
           this.requestData.userId.push(selectedRows[index].doctorUserId)
@@ -184,7 +185,6 @@ export default {
     },
 
     handleSubmit() {
-      console.log('确认结算!!!!!!!')
       this.settlementOut()
     },
 
