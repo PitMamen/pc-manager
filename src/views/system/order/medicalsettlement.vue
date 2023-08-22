@@ -112,7 +112,7 @@
                 @click="onItemClick(item, index)"
               >
                 <div class="div-rate">
-                  <span style="color: #999999">结算人员:{{ item.user_name }}</span>
+                  <span style="color: #999999">结算人员:{{ item.person_name }}</span>
                   <span style="margin-top: 5px; color: #999999">结算时间:{{ item.create_time }}</span>
 
                   <div
