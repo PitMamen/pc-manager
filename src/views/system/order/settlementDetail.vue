@@ -220,6 +220,7 @@ export default {
                 //设置序号
                 data.rows.forEach((item, index) => {
                   this.$set(item, 'orderTypeDesc', item.orderType.description)
+                  this.$set(item, 'orderId', item.orderIdStr)
                 })
               } else {
                 data = []
@@ -246,7 +247,7 @@ export default {
                 }
                 //设置序号
                 data.rows.forEach((item, index) => {
-                  this.$set(item, 'orderId', item.order_id)
+                  this.$set(item, 'orderId', item.orderIdStr)
                   this.$set(item, 'commodityName', item.commodity_name)
                   this.$set(item, 'orderTotal', item.order_total)
                   this.$set(item, 'orderTypeDesc', item.order_type)

@@ -106,7 +106,7 @@
               <div
                 class="div-part"
                 v-for="(item, index) in groupListTemp"
-                :class="{ 'checked': item.isChecked }"
+                :class="{ checked: item.isChecked }"
                 :value="item.user_name"
                 :key="index"
                 @click="onItemClick(item, index)"
@@ -427,6 +427,10 @@ export default {
                 totalPage: res.data.total / parameter.pageSize,
                 rows: res.data.records,
               }
+
+              data.rows.forEach((item) => {
+                this.$set(item, 'personType', this.getPersonType(item.personType))
+              })
             }
             return data
           })
@@ -445,6 +449,7 @@ export default {
 
               data.rows.forEach((item) => {
                 this.$set(item, 'settlementStatus', this.getType(item.settlementType))
+                this.$set(item, 'personType', this.getorderType(item.orderType))
               })
             }
             return data
@@ -478,6 +483,22 @@ export default {
         return '已结算'
       } else if (value == 3) {
         return '不予结算'
+      }
+    },
+
+    getorderType(string) {
+      if (string == 'consultOrder') {
+        return '在线咨询'
+      } else if (string == 'srvPackOrder') {
+        return '专科服务'
+      }
+    },
+
+    getPersonType(string) {
+      if (string == 'doctor') {
+        return '医生'
+      } else if (string == 'nurse') {
+        return '护士'
       }
     },
 
@@ -531,7 +552,7 @@ export default {
      * 全选
      */
     onSelectChange(selectedRowKeys, selectedRows) {
-      console.log('vvvv:', selectedRowKeys, selectedRows)
+      // console.log('vvvv:', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
 
@@ -539,8 +560,8 @@ export default {
       this.clearSelectData()
       if (selectedRows && selectedRows.length > 0) {
         this.selectInfo.personNumber = selectedRows.length
-        this.selectInfo.organNumber = selectedRows.length
         this.selectInfo.createTime = this.queryParams.createdTime
+        this.selectInfo.organNumber = selectedRows.length  //机构数量
         for (let index = 0; index < selectedRows.length; index++) {
           this.selectInfo.totalMoney += Number(selectedRows[index].payTotalAll)
           this.selectInfo.totalCount += Number(selectedRows[index].countAll)
@@ -548,7 +569,10 @@ export default {
           this.selectInfo.consultCount += Number(selectedRows[index].consultOrderCount)
           this.selectInfo.srvPackOrderMoney += Number(selectedRows[index].srvPackOrderSum)
           this.selectInfo.srvPackOrderCount += Number(selectedRows[index].srvPackOrderCount)
+          
         }
+     
+
         this.selectInfo.totalMoney = parseFloat(this.selectInfo.totalMoney).toFixed(2)
         this.selectInfo.consultMoney = parseFloat(this.selectInfo.consultMoney).toFixed(2)
         this.selectInfo.srvPackOrderMoney = parseFloat(this.selectInfo.srvPackOrderMoney).toFixed(2)
