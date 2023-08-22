@@ -763,6 +763,7 @@ export default {
       )
       delete this.packageData.commodityPkgManageRsps
 
+      console.log('commodityPkgManageReqs',  this.packageData.commodityPkgManageReqs)
       if (this.packageData.commodityPkgManageReqs) {
         this.packageData.commodityPkgManageReqs.forEach((item) => {
           this.$set(item, 'commodityPkgManageItemReqs', JSON.parse(JSON.stringify(item.commodityPkgManageItemRsps)))
@@ -813,6 +814,7 @@ export default {
             nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
         }
+        debugger
         if (nurseItem) {
           this.isNurse = true
           this.allocationTypeNurse = nurseItem.allocationType.value
@@ -1050,12 +1052,12 @@ export default {
 
           this.canConfigTeam = true
           // this.onSelectChange()
-          this.getNewRsp()
+          // this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
           // this.onSelectChange()
-          this.getNewRsp()
+          // this.getNewRsp()
           break
         case 3:
           this.canConfigTeam = false
