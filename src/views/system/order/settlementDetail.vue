@@ -251,8 +251,8 @@ export default {
                   this.$set(item, 'orderTotal', item.order_total)
                   this.$set(item, 'orderTypeDesc', item.order_type)
                   this.$set(item, 'realTotalPayMoney', item.settlement_sum)
-                  this.$set(item, 'endtime', item.end_time)
-                  this.$set(item, 'orderTime', item.order_time)
+                  this.$set(item, 'endtime', item.endTimeStr)
+                  this.$set(item, 'orderTime', item.orderTimeStr)
                 })
               } else {
                 data = []
