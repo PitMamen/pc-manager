@@ -5221,9 +5221,25 @@ export function getalreadySettlementList(data) {
 
 
 
+// 已结算详情
+export function getOrderSettlementDetailsList(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementDetailsList',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 
+// 已结算详情 上面的统计
+export function getListGroupBy(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementDetailsGroupBy',
+    method: 'post',
+    data: data,
+  })
+}
 
 
 

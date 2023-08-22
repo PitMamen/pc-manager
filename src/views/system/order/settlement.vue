@@ -42,7 +42,7 @@
 
               <div class="right-conten">
                 <span class="span-item-name1">结算医疗机构数量：</span>
-                <span style="color: #4d4d4d" class="span-item-value1">{{ dataInfo.organNumber }}</span>
+                <span style="color: #4d4d4d" class="span-item-value1">{{ hospitalCount }}</span>
                 <span style="color: #999999" class="span-item-value1">家</span>
               </div>
             </div>
@@ -136,12 +136,13 @@ export default {
       isAgree: true,
       user: {},
       currentTime: '',
+      hospitalCount:0,
 
       requestData: {
         settlementTime: '',
-        settlementType: 2,   //2 结算  3 不予结算
+        settlementType: 2, //2 结算  3 不予结算
         userId: [],
-        description:''
+        description: '',
       },
 
       dataInfo: {},
@@ -150,15 +151,12 @@ export default {
   created() {},
   methods: {
     clearData() {
-      this.dataInfo={}
-      this.requestData.settlementTime=''
-      this.requestData.settlementType=2
-      this.requestData.userId=[]
-      this.requestData.description=''
-
+      this.dataInfo = {}
+      this.requestData.settlementTime = ''
+      this.requestData.settlementType = 2
+      this.requestData.userId = []
+      this.requestData.description = ''
     },
-
-
 
     //入口
     settltmentOut(selectedRows, selectData, type) {
@@ -170,19 +168,27 @@ export default {
       this.user = Vue.ls.get(TRUE_USER)
       this.currentTime = formatDateMin(new Date().getTime())
 
+      this.requestData.settlementType = this.isAgree ? 2 : 3
+      this.requestData.settlementTime = selectData.createTime
 
-      this.requestData.settlementType=this.isAgree?2:3
-      this.requestData.settlementTime=selectData.createTime
- 
-      // console.log('dsda:', selectedRows)  
-      if (selectedRows&&selectedRows.length>0) {
+      if (selectedRows && selectedRows.length > 0) {
         for (let index = 0; index < selectedRows.length; index++) {
           this.requestData.userId.push(selectedRows[index].doctorUserId)
         }
-      }
-      console.log("ddd:", this.requestData)
 
+        // 机构去重
+        const result = selectedRows.reduce((acc, curr) => {
+          const index = acc.findIndex((item) => item.hospitalCode === curr.hospitalCode)
+          if (index < 0) {
+            acc.push(curr)
+          }
+          return acc
+        }, [])
+
+        this.hospitalCount = result.length
+      }
     },
+
 
     handleSubmit() {
       this.settlementOut()

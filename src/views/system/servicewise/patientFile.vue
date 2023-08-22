@@ -10,7 +10,7 @@
           </div>
           <div class="right-content">
             <div class="content-top">
-              <span style="margin-left: 10px">出院时间：</span>
+              <span style="margin-left: 10px;min-width: 62px;">出院时间：</span>
               <div
                 class="data-item"
                 v-for="(itemData, indexData) in historyList"

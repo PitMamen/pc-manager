@@ -1752,7 +1752,6 @@ export default {
 .div-part {
   width: 100%;
   height: 580px;
-  margin-top: 10px;
 
   .idcard-infor {
     margin-top: 20px;
@@ -1772,7 +1771,7 @@ export default {
   }
 
   .signing-infor {
-    margin-top: 20px;
+    margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;

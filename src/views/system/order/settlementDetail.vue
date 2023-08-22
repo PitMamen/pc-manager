@@ -3,7 +3,7 @@
     <div class="table-page-search-wrapper">
       <div class="action-row" style="margin-top: -15px !important; margin-left: -18px">
         <a-button type="link" icon="left" @click="goBack()">返回</a-button>
-        <span style="font-size: 14px; color: #4d4d4d">{{ record.doctorName + status }}详情</span>
+        <span style="font-size: 14px; color: #4d4d4d">{{ docName + status }}详情</span>
         <span style="font-size: 14px; color: #4d4d4d">【{{ time }}】</span>
       </div>
     </div>
@@ -90,7 +90,11 @@
          <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { getOrderSettlementDetailForUserId } from '@/api/modular/system/posManage'
+import {
+  getOrderSettlementDetailForUserId,
+  getListGroupBy,
+  getOrderSettlementDetailsList,
+} from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
@@ -112,6 +116,7 @@ export default {
       record: {},
       status: '',
       time: '',
+      docName: '',
       currentTab: 0,
       numberData: {
         all: 0,
@@ -124,6 +129,12 @@ export default {
         doctorUserId: '',
         hospitalCode: '',
         settlementStatus: 1,
+      },
+
+      requesDetail: {
+        masterId: 0,
+        orderType: 'srvPackOrder',
+        settlementType: 2,
       },
 
       queryParamsTemp: {},
@@ -184,71 +195,87 @@ export default {
 
         {
           title: '结算时间',
-          dataIndex: 'jssj',
+          dataIndex: 'endtime',
           ellipsis: true,
           //   width: 160,
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        return getOrderSettlementDetailForUserId(Object.assign(parameter, this.queryParamsTemp))
-          .then((res) => {
-            if (res.code == 0 && res.data.records.length > 0) {
-              //组装控件需要的数据结构
-              var data = {
-                pageNo: parameter.pageNo,
-                pageSize: parameter.pageSize,
-                totalRows: res.data.total,
-                totalPage: res.data.total / parameter.pageSize,
-                rows: res.data.records,
+        
+        if (this.queryParams.settlementStatus == 1) {
+          console.log('111111111111111111111')
+          this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
+          return getOrderSettlementDetailForUserId(Object.assign(parameter, this.queryParamsTemp))
+            .then((res) => {
+              if (res.code == 0 && res.data.records.length > 0) {
+                //组装控件需要的数据结构
+                var data = {
+                  pageNo: parameter.pageNo,
+                  pageSize: parameter.pageSize,
+                  totalRows: res.data.total,
+                  totalPage: res.data.total / parameter.pageSize,
+                  rows: res.data.records,
+                }
+                //设置序号
+                data.rows.forEach((item, index) => {
+                  this.$set(item, 'orderTypeDesc', item.orderType.description)
+                  this.$set(item, 'orderId', item.orderIdStr)
+                })
+              } else {
+                data = []
               }
-
-              //设置序号
-              data.rows.forEach((item, index) => {
-                this.$set(item, 'orderTypeDesc', item.orderType.description)
-              })
-            } else {
-              data = []
-            }
-
-            return data
-          })
-          .finally((data) => {
-            this.confirmLoading = false
-          })
+              return data
+            })
+            .finally((data) => {
+              this.confirmLoading = false
+            })
+        }else{
+          console.log('3333333333333')
+          this.queryParamsTemp = JSON.parse(JSON.stringify(this.requesDetail))
+          console.log("ddd:",this.queryParamsTemp)
+          return getOrderSettlementDetailsList(Object.assign(parameter, this.queryParamsTemp))
+            .then((res) => {
+              if (res.code == 0 && res.data.records.length > 0) {
+                //组装控件需要的数据结构
+                var data = {
+                  pageNo: parameter.pageNo,
+                  pageSize: parameter.size,
+                  totalRows: res.data.total,
+                  totalPage: res.data.total / parameter.size,
+                  rows: res.data.records,
+                }
+                //设置序号
+                data.rows.forEach((item, index) => {
+                  this.$set(item, 'orderId', item.orderIdStr)
+                  this.$set(item, 'commodityName', item.commodity_name)
+                  this.$set(item, 'orderTotal', item.order_total)
+                  this.$set(item, 'orderTypeDesc', item.order_type)
+                  this.$set(item, 'realTotalPayMoney', item.settlement_sum)
+                  this.$set(item, 'endtime', item.endTimeStr)
+                  this.$set(item, 'orderTime', item.orderTimeStr)
+                })
+              } else {
+                data = []
+              }
+              return data
+            })
+            .finally((data) => {
+              this.confirmLoading = false
+            })
+        }
       },
     }
   },
 
-  activated() {
-    if (this.$route.query) {
-      // console.log('Sss:', this.$route)
-      // this.record = this.$route.query.record
-      // this.queryParams.doctorName = this.record.doctorName
-      // this.queryParams.doctorUserId = this.record.doctorUserId
-      // this.queryParams.hospitalCode = this.record.hospitalCode
-      // this.time = this.$route.query.time
-      // this.queryParams.createdTime = this.time
-      // this.status = this.$route.query.status
-      // if (this.status == '待结算') {
-      //   this.queryParams.settlementStatus = 1
-      // } else if (this.status == '已结算') {
-      //   this.queryParams.settlementStatus = 2
-      // } else if (this.status == '不予结算') {
-      //   this.queryParams.settlementStatus = 3
-      // }
-      // console.log("Ssss:",this.queryParams)
-      // this.$refs.table.refresh()
-    }
-  },
+  activated() {},
 
   watch: {
     $route(to, from) {
       // console.log('ddd:', from)
-        if (to.path.indexOf('settlementDetail') > -1) {
+      if (to.path.indexOf('settlementDetail') > -1) {
         this.initData()
-        }
+      }
     },
   },
 
@@ -261,13 +288,20 @@ export default {
   methods: {
     initData() {
       this.record = JSON.parse(this.$route.query.dataStr)
-      console.log("FFFF:",this.record)
+      // console.log('FFFF:', this.record)
+      console.log('22222222222222222')
       this.queryParams.doctorName = this.record.doctorName
+      this.docName = this.record.doctorName
       this.queryParams.doctorUserId = this.record.doctorUserId
       this.queryParams.hospitalCode = this.record.hospitalCode
       this.time = this.record.time
       this.queryParams.createdTime = this.time
       this.status = this.record.status
+
+      this.requesDetail.masterId = this.record.id
+      // this.requesDetail.orderType = this.record.orderType
+      this.requesDetail.orderType = 'srvPackOrder'
+
       if (this.status == '待结算') {
         this.queryParams.settlementStatus = 1
       } else if (this.status == '已结算') {
@@ -275,7 +309,45 @@ export default {
       } else if (this.status == '不予结算') {
         this.queryParams.settlementStatus = 3
       }
+      this.requesDetail.settlementType = this.queryParams.settlementStatus
+
+      if (this.queryParams.settlementStatus != 1) {
+        this.getListGroupByOut() //请求统计接口
+        // this.getOrderSettlementDetailsListOut() //请求列表接口
+      }
+
       this.$refs.table.refresh()
+    },
+
+    // 上面的统计
+    getListGroupByOut() {
+      this.confirmLoading = true
+      getListGroupBy(this.requesDetail)
+        .then((res) => {
+          if (res.code == 0) {
+            this.record = res.data
+
+            this.record.payTotalAll = parseFloat(res.data.payTotalAll).toFixed(2)
+            this.record.srvPackOrderSum = parseFloat(res.data.srvPackOrderSum).toFixed(2)
+            // this.record.countAll = res.data.countAll
+            // this.record.consultOrderSum = res.data.consultOrderSum
+            // this.record.consultOrderCount = res.data.consultOrderCount
+            // this.record.srvPackOrderCount = res.data.srvPackOrderCount
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    // 结算与不予结算的 列表详情
+    getOrderSettlementDetailsListOut() {
+      this.confirmLoading = true
+      getOrderSettlementDetailsList(this.requesDetail)
+        .then((res) => {})
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     getColor(value) {
@@ -322,16 +394,6 @@ export default {
     goBack() {
       this.$router.go(-1)
       // this.$router.back()
-    },
-
-    onRadioClick(type) {
-      //如果在加载中  不让点击
-      if (this.confirmLoading) {
-        return
-      }
-      this.queryParams.channel = type
-      this.queryParamsTemp.channel = type
-      this.$refs.table.refresh()
     },
 
     formatDate(date) {
