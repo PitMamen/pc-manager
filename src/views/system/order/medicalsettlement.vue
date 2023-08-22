@@ -106,7 +106,7 @@
               <div
                 class="div-part"
                 v-for="(item, index) in groupListTemp"
-                :class="{ checked: item.isChecked }"
+                :class="{ 'checked': item.isChecked }"
                 :value="item.user_name"
                 :key="index"
                 @click="onItemClick(item, index)"
@@ -392,7 +392,7 @@ export default {
 
         {
           title: '结算笔数',
-          dataIndex: 'countAll',
+          dataIndex: 'orderCount',
           align: 'center',
         },
         {
@@ -403,6 +403,7 @@ export default {
         {
           title: '结算情况',
           dataIndex: 'settlementStatus',
+          align: 'center',
         },
         {
           title: '操作',
@@ -430,7 +431,6 @@ export default {
             return data
           })
         } else {
-          console.log('1111111111111')
           return getalreadySettlementList(Object.assign(parameter, this.queryParamsGroup)).then((res) => {
             let data = {}
             if (res.code == 0 && res.data && res.data.records.length > 0) {
