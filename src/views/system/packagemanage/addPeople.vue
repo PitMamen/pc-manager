@@ -214,6 +214,7 @@ export default {
      * @param {*} deptUsers 
      */
     add(index, type, tenantId, hospitalCode, departmentId, assignments, isSingle) {
+      console.log('AddPeople departmentId', departmentId)
       this.visible = true
       this.index = index
       this.type = type
