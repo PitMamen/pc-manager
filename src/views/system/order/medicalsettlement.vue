@@ -89,7 +89,7 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
-      :rowKey="(record) => record.id"
+      :rowKey="(record) => record.flagId"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <span slot="action" slot-scope="text, record">
@@ -558,22 +558,50 @@ export default {
      */
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+
+
+      if(selectedRowKeys.length == 0){
+        console.log('清空！！！！！！')
+        this.clearSelectData()
+        return
+      }
+
+      var RowsList=[]
+
+      selectedRowKeys.forEach(key=>{
+        this.selectedRows.forEach(item=>{
+          if(key == item.flagId){
+            RowsList.push(item)
+          }
+        })
+      })
+
+      selectedRows.forEach(row=>{
+       var b= this.selectedRows.every(item=>{
+          return item.flagId !== row.flagId
+        }) 
+        if(b){
+          RowsList.push(row)
+        }
+      })
+
+
+      this.selectedRows = RowsList
       // this.updateSelect()
-      console.log('vvvv:',  selectedRowKeys,selectedRows)
+      console.log('vvvv:',  selectedRowKeys,this.selectedRows)
       // 计算
       this.clearSelectData()
-      if (selectedRows && selectedRows.length > 0) {
-        this.selectInfo.personNumber = selectedRows.length
+      if ( this.selectedRows &&  this.selectedRows.length > 0) {
+        this.selectInfo.personNumber =  this.selectedRows.length
         this.selectInfo.createTime = this.queryParams.createdTime
-        this.selectInfo.organNumber = selectedRows.length  //机构数量
-        for (let index = 0; index < selectedRows.length; index++) {
-          this.selectInfo.totalMoney += Number(selectedRows[index].payTotalAll)
-          this.selectInfo.totalCount += Number(selectedRows[index].countAll)
-          this.selectInfo.consultMoney += Number(selectedRows[index].consultOrderSum)
-          this.selectInfo.consultCount += Number(selectedRows[index].consultOrderCount)
-          this.selectInfo.srvPackOrderMoney += Number(selectedRows[index].srvPackOrderSum)
-          this.selectInfo.srvPackOrderCount += Number(selectedRows[index].srvPackOrderCount)
+        this.selectInfo.organNumber =  this.selectedRows.length  //机构数量
+        for (let index = 0; index <  this.selectedRows.length; index++) {
+          this.selectInfo.totalMoney += Number( this.selectedRows[index].payTotalAll)
+          this.selectInfo.totalCount += Number( this.selectedRows[index].countAll)
+          this.selectInfo.consultMoney += Number( this.selectedRows[index].consultOrderSum)
+          this.selectInfo.consultCount += Number( this.selectedRows[index].consultOrderCount)
+          this.selectInfo.srvPackOrderMoney += Number( this.selectedRows[index].srvPackOrderSum)
+          this.selectInfo.srvPackOrderCount += Number( this.selectedRows[index].srvPackOrderCount)
           
         }
      
@@ -584,9 +612,6 @@ export default {
 
         this.selectInfoTemp = JSON.parse(JSON.stringify(this.selectInfo))
         // console.log('papapap:', this.selectInfoTemp)
-      } else {
-        console.log('清空！！！！！！')
-        this.clearSelectData()
       }
     },
 
