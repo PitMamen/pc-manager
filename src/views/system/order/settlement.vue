@@ -143,6 +143,7 @@ export default {
         settlementType: 2, //2 结算  3 不予结算
         userId: [],
         description: '',
+        listSettlementUser:[]
       },
 
       dataInfo: {},
@@ -156,6 +157,7 @@ export default {
       this.requestData.settlementType = 2
       this.requestData.userId = []
       this.requestData.description = ''
+      this.requestData.listSettlementUser = []
     },
 
     //入口
@@ -174,6 +176,11 @@ export default {
       if (selectedRows && selectedRows.length > 0) {
         for (let index = 0; index < selectedRows.length; index++) {
           this.requestData.userId.push(selectedRows[index].doctorUserId)
+          this.requestData.listSettlementUser.push({
+            orderType:selectedRows[index].orderType,
+            userId:selectedRows[index].doctorUserId
+          })
+
         }
 
         // 机构去重
