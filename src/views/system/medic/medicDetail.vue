@@ -627,15 +627,24 @@ export default {
     },
   },
 
+  deactivated() {
+    console.log('medicDetail deactivated')
+  },
+  activated() {
+    console.log('medicDetail activated')
+  },
+
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
+    console.log('medicDetail created')
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     this.initData()
 
   },
   mounted() {
+    console.log('medicDetail mounted')
     this.$nextTick(() => {
       this.initEditor()
     })
