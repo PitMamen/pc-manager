@@ -90,7 +90,7 @@
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.flagId"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange,preserveSelectedRowKeys: true}"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <span slot="action" slot-scope="text, record">
         <a-icon type="export" style="color: #1890ff; margin-right: 3px" />
@@ -215,8 +215,8 @@ export default {
         endTime: '',
         settlementType: 2,
         startTime: '',
-        personName:'',
-        createTime:''
+        personName: '',
+        createTime: '',
       },
 
       selectInfo: {
@@ -430,7 +430,7 @@ export default {
                 rows: res.data.records,
               }
 
-              data.rows.forEach((item,index) => {
+              data.rows.forEach((item, index) => {
                 this.$set(item, 'personType', this.getPersonType(item.personType))
                 // this.$set(item, 'id', (data.pageNo - 1) * data.pageSize + (index + 1))
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
@@ -553,31 +553,55 @@ export default {
         })
     },
 
-
     /**
      * 全选
      */
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
-      this.selectedRows = selectedRows
+
+      if (selectedRowKeys.length == 0) {
+        console.log('清空！！！！！！')
+        this.selectedRows=[]
+        this.clearSelectData()
+        return
+      }
+
+      var RowsList = []
+
+      selectedRowKeys.forEach((key) => {
+        this.selectedRows.forEach((item) => {
+          if (key == item.flagId) {
+            RowsList.push(item)
+          }
+        })
+      })
+
+      selectedRows.forEach((row) => {
+        var b = this.selectedRows.every((item) => {
+          return item.flagId !== row.flagId
+        })
+        if (b) {
+          RowsList.push(row)
+        }
+      })
+
+      this.selectedRows = RowsList
       // this.updateSelect()
-      console.log('vvvv:',  selectedRowKeys,selectedRows)
+      console.log('vvvv:', selectedRowKeys, this.selectedRows)
       // 计算
       this.clearSelectData()
-      if (selectedRows && selectedRows.length > 0) {
-        this.selectInfo.personNumber = selectedRows.length
+      if (this.selectedRows && this.selectedRows.length > 0) {
+        this.selectInfo.personNumber = this.selectedRows.length
         this.selectInfo.createTime = this.queryParams.createdTime
-        this.selectInfo.organNumber = selectedRows.length  //机构数量
-        for (let index = 0; index < selectedRows.length; index++) {
-          this.selectInfo.totalMoney += Number(selectedRows[index].payTotalAll)
-          this.selectInfo.totalCount += Number(selectedRows[index].countAll)
-          this.selectInfo.consultMoney += Number(selectedRows[index].consultOrderSum)
-          this.selectInfo.consultCount += Number(selectedRows[index].consultOrderCount)
-          this.selectInfo.srvPackOrderMoney += Number(selectedRows[index].srvPackOrderSum)
-          this.selectInfo.srvPackOrderCount += Number(selectedRows[index].srvPackOrderCount)
-          
+        this.selectInfo.organNumber = this.selectedRows.length //机构数量
+        for (let index = 0; index < this.selectedRows.length; index++) {
+          this.selectInfo.totalMoney += Number(this.selectedRows[index].payTotalAll)
+          this.selectInfo.totalCount += Number(this.selectedRows[index].countAll)
+          this.selectInfo.consultMoney += Number(this.selectedRows[index].consultOrderSum)
+          this.selectInfo.consultCount += Number(this.selectedRows[index].consultOrderCount)
+          this.selectInfo.srvPackOrderMoney += Number(this.selectedRows[index].srvPackOrderSum)
+          this.selectInfo.srvPackOrderCount += Number(this.selectedRows[index].srvPackOrderCount)
         }
-     
 
         this.selectInfo.totalMoney = parseFloat(this.selectInfo.totalMoney).toFixed(3)
         this.selectInfo.consultMoney = parseFloat(this.selectInfo.consultMoney).toFixed(3)
@@ -585,13 +609,11 @@ export default {
 
         this.selectInfoTemp = JSON.parse(JSON.stringify(this.selectInfo))
         // console.log('papapap:', this.selectInfoTemp)
-      } else {
-        this.clearSelectData()
       }
     },
 
     clearSelectData() {
-      console.log("调用clear！！！！")
+      // console.log('调用clear！！！！')
       this.selectInfo.personNumber = 0
       this.selectInfo.organNumber = 0
       this.selectInfo.totalMoney = 0
@@ -613,6 +635,7 @@ export default {
 
     // 不予结算/结算 点击
     goSettlement(type) {
+      console.log("44444444:",this.selectedRows.length,this.selectedRows)
       if (this.selectedRows.length == 0) {
         this.$message.error('请先勾选需操作的账单!')
         return
