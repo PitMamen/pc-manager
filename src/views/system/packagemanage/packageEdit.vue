@@ -792,7 +792,7 @@ export default {
               this.nameDoc = this.nameDoc + item.name
             }
           })
-
+          this.docDepartmentId = docItem.departmentId
           docItem.allocationType = docItem.allocationType.value
           docItem.teamType = docItem.teamType.value
           newRsps.push(docItem)
@@ -814,7 +814,6 @@ export default {
             nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
         }
-        debugger
         if (nurseItem) {
           this.isNurse = true
           this.allocationTypeNurse = nurseItem.allocationType.value
@@ -827,6 +826,7 @@ export default {
             }
           })
 
+          this.nurseDepartmentId = nurseItem.departmentId
           nurseItem.allocationType = nurseItem.allocationType.value
           nurseItem.teamType = nurseItem.teamType.value
           newRsps.push(nurseItem)
@@ -1266,7 +1266,7 @@ export default {
         //   this.$message.warn('该机构没有可选医生')
         //   return
         // }
-
+        console.log('go AddPeople departmentId', this.docDepartmentId)
         this.$refs.addPeople.add(
           index,
           'doctor',
@@ -1345,6 +1345,7 @@ export default {
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
+      console.log('handleAddPeople departmentId', departmentId)
       this.packageData.commodityPkgManageReqs[index].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       if (index == 0) {
         this.nameDoc = ''
