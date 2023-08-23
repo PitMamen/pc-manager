@@ -89,8 +89,8 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
-      :rowKey="(record) => record.id"
-      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+      :rowKey="(record) => record.flagId"
+      :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange,preserveSelectedRowKeys: true}"
     >
       <span slot="action" slot-scope="text, record">
         <a-icon type="export" style="color: #1890ff; margin-right: 3px" />
@@ -432,7 +432,7 @@ export default {
 
               data.rows.forEach((item,index) => {
                 this.$set(item, 'personType', this.getPersonType(item.personType))
-                this.$set(item, 'id', (data.pageNo - 1) * data.pageSize + (index + 1))
+                // this.$set(item, 'id', (data.pageNo - 1) * data.pageSize + (index + 1))
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               })
             }
@@ -553,6 +553,7 @@ export default {
         })
     },
 
+
     /**
      * 全选
      */
@@ -578,19 +579,19 @@ export default {
         }
      
 
-        this.selectInfo.totalMoney = parseFloat(this.selectInfo.totalMoney).toFixed(2)
-        this.selectInfo.consultMoney = parseFloat(this.selectInfo.consultMoney).toFixed(2)
-        this.selectInfo.srvPackOrderMoney = parseFloat(this.selectInfo.srvPackOrderMoney).toFixed(2)
+        this.selectInfo.totalMoney = parseFloat(this.selectInfo.totalMoney).toFixed(3)
+        this.selectInfo.consultMoney = parseFloat(this.selectInfo.consultMoney).toFixed(3)
+        this.selectInfo.srvPackOrderMoney = parseFloat(this.selectInfo.srvPackOrderMoney).toFixed(3)
 
         this.selectInfoTemp = JSON.parse(JSON.stringify(this.selectInfo))
         // console.log('papapap:', this.selectInfoTemp)
       } else {
-        console.log('清空！！！！！！')
         this.clearSelectData()
       }
     },
 
     clearSelectData() {
+      console.log("调用clear！！！！")
       this.selectInfo.personNumber = 0
       this.selectInfo.organNumber = 0
       this.selectInfo.totalMoney = 0

@@ -129,6 +129,7 @@ export default {
         doctorUserId: '',
         hospitalCode: '',
         settlementStatus: 1,
+        orderType:'',
       },
 
       requesDetail: {
@@ -250,7 +251,7 @@ export default {
                   this.$set(item, 'orderId', item.orderIdStr)
                   this.$set(item, 'commodityName', item.commodity_name)
                   this.$set(item, 'orderTotal', item.order_total)
-                  this.$set(item, 'orderTypeDesc', item.order_type)
+                  this.$set(item, 'orderTypeDesc', this.getorderType(item.order_type))
                   this.$set(item, 'realTotalPayMoney', item.settlement_sum)
                   this.$set(item, 'endtime', item.endTimeStr)
                   this.$set(item, 'orderTime', item.orderTimeStr)
@@ -296,11 +297,12 @@ export default {
       this.queryParams.hospitalCode = this.record.hospitalCode
       this.time = this.record.time
       this.queryParams.createdTime = this.time
+      this.queryParams.orderType =this.record.orderType
       this.status = this.record.status
 
       this.requesDetail.masterId = this.record.id
-      // this.requesDetail.orderType = this.record.orderType
-      this.requesDetail.orderType = 'srvPackOrder'
+      this.requesDetail.orderType = this.record.orderType
+      // this.requesDetail.orderType = 'srvPackOrder'
 
       if (this.status == '待结算') {
         this.queryParams.settlementStatus = 1
@@ -318,6 +320,24 @@ export default {
 
       this.$refs.table.refresh()
     },
+
+
+
+
+    getorderType(string) {
+      if (string == 'consultOrder') {
+        return '在线咨询'
+      } else if (string == 'srvPackOrder') {
+        return '专科服务'
+      }
+    },
+
+
+
+
+
+
+
 
     // 上面的统计
     getListGroupByOut() {
