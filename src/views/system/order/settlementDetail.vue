@@ -252,7 +252,7 @@ export default {
                   this.$set(item, 'commodityName', item.commodity_name)
                   this.$set(item, 'orderTotal', item.order_total)
                   this.$set(item, 'orderTypeDesc', this.getorderType(item.order_type))
-                  this.$set(item, 'realTotalPayMoney', item.settlement_sum)
+                  this.$set(item, 'realTotalPayMoney', item.realPrice)
                   this.$set(item, 'endtime', item.endTimeStr)
                   this.$set(item, 'orderTime', item.orderTimeStr)
                 })

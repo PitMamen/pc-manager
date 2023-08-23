@@ -561,7 +561,7 @@ export default {
 
       if (selectedRowKeys.length == 0) {
         console.log('清空！！！！！！')
-        this.selectedRows=[]
+        this.selectedRowKeys=[]
         this.clearSelectData()
         return
       }
