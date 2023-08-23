@@ -1301,6 +1301,9 @@ export default {
       register(this.record.userId)
         .then((res) => {
           if (res.code == 0) {
+            if(!this.hvyogoId){
+              this.hvyogoId = res.data
+            }
             this.$message.success(res.message)
           } else {
             this.$message.error(res.message)
@@ -1730,7 +1733,7 @@ export default {
 .m-count2 {
   position: absolute;
   font-size: 12px;
-  bottom: 13px;
+  bottom: 22px;
   right: 10px;
 }
 .div-title {
