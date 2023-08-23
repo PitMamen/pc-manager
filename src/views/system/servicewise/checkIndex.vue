@@ -39,7 +39,7 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2%; overflow-y: auto; height: 500px;width: 1000px;margin-right: 50px;"
+        style="margin-top: 2%; overflow-y: auto; width: 1000px;"
         ref="table"
         size="default"
         :scroll="{ y: 400, x: 0 }"
