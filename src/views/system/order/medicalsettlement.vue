@@ -89,7 +89,7 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
-      :rowKey="(record) => record.code"
+      :rowKey="(record) => record.id"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
     >
       <span slot="action" slot-scope="text, record">
@@ -215,6 +215,8 @@ export default {
         endTime: '',
         settlementType: 2,
         startTime: '',
+        personName:'',
+        createTime:''
       },
 
       selectInfo: {
@@ -428,8 +430,10 @@ export default {
                 rows: res.data.records,
               }
 
-              data.rows.forEach((item) => {
+              data.rows.forEach((item,index) => {
                 this.$set(item, 'personType', this.getPersonType(item.personType))
+                this.$set(item, 'id', (data.pageNo - 1) * data.pageSize + (index + 1))
+                // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
               })
             }
             return data
@@ -504,15 +508,16 @@ export default {
 
     // 左侧卡片 点击
     onItemClick(item, indexClick) {
-      console.log('kkk:', item.user_name, indexClick)
       for (let index = 0; index < this.groupListTemp.length; index++) {
         this.$set(this.groupListTemp[index], 'isChecked', false)
       }
       this.$set(this.groupListTemp[indexClick], 'isChecked', true)
+      this.queryParamsGroup.personName = item.person_name
+      this.queryParamsGroup.createTime = item.create_time
 
       // this.choseQues = JSON.parse(JSON.stringify(this.quesData[indexClick]))
       // this.queryParams.messageContentId = this.choseQues.questionnaireId
-      // this.$refs.table.refresh(true)
+      this.$refs.table.refresh(true)
     },
 
     disabledDate(current) {
@@ -552,10 +557,10 @@ export default {
      * 全选
      */
     onSelectChange(selectedRowKeys, selectedRows) {
-      // console.log('vvvv:', selectedRowKeys, selectedRows)
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-
+      // this.updateSelect()
+      console.log('vvvv:',  selectedRowKeys,selectedRows)
       // 计算
       this.clearSelectData()
       if (selectedRows && selectedRows.length > 0) {
@@ -578,7 +583,7 @@ export default {
         this.selectInfo.srvPackOrderMoney = parseFloat(this.selectInfo.srvPackOrderMoney).toFixed(2)
 
         this.selectInfoTemp = JSON.parse(JSON.stringify(this.selectInfo))
-        console.log('papapap:', this.selectInfoTemp)
+        // console.log('papapap:', this.selectInfoTemp)
       } else {
         console.log('清空！！！！！！')
         this.clearSelectData()

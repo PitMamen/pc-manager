@@ -456,8 +456,9 @@
 
           <div class="item-idcard1">
             <div>身份证照片【正面】：</div>
-            <div style="right: 120px; top: 10px">
+            <div class="stle-com" style="right: 120px; top: 10px" @click="gotab()">
               <a-upload
+                :disabled="true"
                 :showUploadList="{ showRemoveIcon: false }"
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -473,8 +474,9 @@
             </div>
             <div style="margin-left: 40px">身份证照片【反面】：</div>
 
-            <div style="right: 120px; top: 10px">
+            <div class="stle-com" style="right: 120px; top: 10px" @click="gotab()">
               <a-upload
+              :disabled="true"
                 :showUploadList="{ showRemoveIcon: false }"
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -1201,6 +1203,10 @@ export default {
         })
     },
 
+    gotab() {
+      this.currentTab = 'photo'
+    },
+
     /**
      * 通过银行卡号得到 银行名称
      */
@@ -1783,6 +1789,12 @@ export default {
       flex-wrap: wrap;
       width: 100%;
       margin-bottom: 8px;
+
+      .stle-com {
+        &:hover {
+          cursor: pointer !important;
+        }
+      }
     }
 
     .item-signing {
