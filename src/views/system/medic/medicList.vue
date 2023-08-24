@@ -156,26 +156,7 @@ export default {
           dataIndex: 'specification',
           scopedSlots: { customRender: 'specification' },
         },
-        {
-          title: '剂型',
-          width: '120px',
-          dataIndex: 'dosageFormDesc',
-          scopedSlots: { customRender: 'dosageFormDesc' },
-        },
 
-        // drugTypeId
-        {
-          title: '类型',
-          width: '90px',
-          dataIndex: 'drugTypeDesc',
-          scopedSlots: { customRender: 'drugTypeDesc' },
-        },
-        {
-          title: '医保类型',
-          width: '90px',
-          dataIndex: 'healthInsuranceCategory',
-          scopedSlots: { customRender: 'healthInsuranceCategory' },
-        },
         {
           title: '生产厂商',
           dataIndex: 'manufacturerName',
@@ -186,6 +167,28 @@ export default {
           width: '90px',
           dataIndex: 'unitPrice',
           scopedSlots: { customRender: 'unitPrice' },
+        },
+
+        // drugTypeId
+        {
+          title: '类型',
+          width: '90px',
+          dataIndex: 'drugTypeDesc',
+          scopedSlots: { customRender: 'drugTypeDesc' },
+        },
+
+        {
+          title: '剂型',
+          width: '120px',
+          dataIndex: 'dosageFormDesc',
+          scopedSlots: { customRender: 'dosageFormDesc' },
+        },
+
+        {
+          title: '医保类型',
+          width: '90px',
+          dataIndex: 'healthInsuranceCategory',
+          scopedSlots: { customRender: 'healthInsuranceCategory' },
         },
 
         {
