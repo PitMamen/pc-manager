@@ -71,6 +71,16 @@
 
         </template>
       </span>
+
+      <span slot="approvalNumber" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
+      <span slot="genericName" slot-scope="text">
+        <ellipsis :length="45" tooltip>{{ text }}</ellipsis>
+      </span>
+      <span slot="tradeName" slot-scope="text">
+        <ellipsis :length="45" tooltip>{{ text }}</ellipsis>
+      </span>
     </s-table>
   </a-card>
 </template>
@@ -127,7 +137,7 @@ export default {
         {
           title: '批准文号',
           dataIndex: 'approvalNumber',
-          width: '150px',
+          // width: '150px',
           scopedSlots: { customRender: 'approvalNumber' },
         },
         {
