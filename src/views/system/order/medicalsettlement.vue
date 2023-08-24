@@ -208,7 +208,7 @@ export default {
         hospitalCode: undefined,
         settlementStatus: '',
         createdTime: getMonthNow(),
-        doctorName: 1,
+        doctorName: '',
       },
 
       queryParamsGroup: {
@@ -733,6 +733,9 @@ export default {
      */
     reset() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
+      this.orderTimeValue=[]
+      this.queryParamsGroup.startTime =''
+      this.queryParamsGroup.endTime = ''
       this.refresh()
     },
   },
