@@ -5,7 +5,7 @@
         <div class="div-service-left-control">
           <a-tree-select
             v-model="queryParam.hospitalCode"
-            style="min-width: 180px; height: 28px"
+            style="width: 170px; height: 28px;margin-left: 10px;margin-top: 10px;"
             :tree-data="treeData"
             placeholder="请选择机构"
             tree-default-expand-all
@@ -13,8 +13,8 @@
           >
           </a-tree-select>
 
-          <div class="left-content" style="margin-right: 10px">
-            <div class="typeadd" @click="$refs.addTeam.addTeam()">
+          <div class="left-content" >
+            <div class="typeadd" @click="$refs.addTeam.addTeam()" style=" margin-right: 10px">
               新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
             <div class="ksview" v-for="(item, index) in leftListData" :key="index">
@@ -25,7 +25,7 @@
               >
                 {{ item.teamName }}
               </div>
-              <div class="content-right">
+              <div class="content-right" style=" margin-right: 10px">
                 <a style="color: #409eff; margin-right: 10px" @click="$refs.modifyTeam.editModel(item)">修改</a>
                 <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
                   <a>删除</a>
@@ -271,6 +271,7 @@ export default {
             res.data.records.forEach((item) => {
               item.checked = false
             })
+           
             this.leftListData = res.data.records
             this.params.id = this.leftListData[0].id //默认第一个 id
             this.leftListData[0].checked = true
@@ -394,7 +395,7 @@ export default {
 .div-service-control {
   width: 100%;
   overflow: hidden;
-  height: 85vh;
+  height: calc(100vh - 124px);
   display: flex;
   flex-direction: row;
 
@@ -411,13 +412,13 @@ export default {
 
   .div-service-left-control {
     margin-right: 20px;
-    height: 100%;
+    height: calc(100vh - 124px);
     min-height: 300px;
     flex-shrink: 0;
     width: 200px;
     overflow: hidden;
 
-    border-right: 1px solid #e6e6e6;
+    border: 1px solid #e6e6e6;
 
     .left-lb-title {
       overflow: hidden;

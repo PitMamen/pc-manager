@@ -276,7 +276,7 @@ export default {
         // this.queryParams.departmentName= ''
       } else {
         // debugger
-        console.log('11111:', this.originData[index].departmentId)
+        // console.log('11111:', this.originData[index].departmentId)
         this.queryParams.depts.push(this.originData[index].departmentId)
         // this.queryParams.depts = this.originData[index].departmentId
         // console.log("ssss:",this.queryParams.depts)

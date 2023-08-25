@@ -5113,3 +5113,142 @@ export function saveFactory(data) {
     data: data,
   })
 }
+
+
+
+// 获取临工注册信息
+export function getHvyogoUserInfo(userId) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getHvyogoUserInfo/'+userId,
+    method: 'get',
+    // params: userId,
+  })
+}
+
+// 获取任务列表(临工签约) 
+export function getTaskList(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getTaskList',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 绑定任务
+export function bindTask(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/bindTask',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 临工注册 
+export function register(userId) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/register/'+userId,
+    method: 'get',
+    // params: data,
+  })
+}
+
+// 临工签约  
+export function signing(userId) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/signing/'+userId,
+    method: 'get',
+    // params: userId,
+  })
+}
+
+
+// 银行卡号得到银行名称
+export function getBankNameForCardNo(cardNo) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getBankNameForCardNo/'+cardNo,
+    method: 'get',
+    // params: userId,
+  })
+}
+
+// 解绑 绑定银行卡
+export function bindBank(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/bindBank',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 医护结算列表
+export function getOrderSettlementList(data) {
+  return axios({
+    url: '/medical-api/userRightsSettlement/getOrderSettlementList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 结算明细
+export function getOrderSettlementDetailForUserId(data) {
+  return axios({
+    url: '/medical-api/userRightsSettlement/getOrderSettlementDetailForUserId',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 医护已结算列表分组统计
+export function getOrderSettlementListGroupBy(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementListGroupBy',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 已结算、不予结算列表
+export function getalreadySettlementList(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 已结算详情
+export function getOrderSettlementDetailsList(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementDetailsList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 已结算详情 上面的统计
+export function getListGroupBy(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getOrderSettlementDetailsGroupBy',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+// 结算、不予结算
+export function settlement(data) {
+  return axios({
+    url: '/medical-api/userRightsSettlement/settlement',
+    method: 'post',
+    data: data,
+  })
+}

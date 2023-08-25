@@ -16,10 +16,19 @@
           </div>
           <div
             :class="{ 'checked-btn': currentTab == 'photo' }"
-            style="margin-left: 15px; padding: 10px 10px"
             @click="checketab('photo')"
+            style="margin-left: 15px; padding: 10px 10px"
           >
             <a-icon type="idcard" style="margin-right: 5px"></a-icon><span>证件信息</span>
+          </div>
+
+          <div
+            :class="{ 'checked-btn': currentTab == 'signing' }"
+            @click="checketab('signing')"
+            style="margin-left: 15px; padding: 10px 10px"
+            v-if="record.userId"
+          >
+            <a-icon type="file" style="margin-right: 5px"></a-icon><span>临工签约</span>
           </div>
         </div>
 
@@ -128,9 +137,8 @@
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
             <a-tree-select
               v-model="checkData.hospitalCode"
-              style="min-width: 120px;"
+              style="min-width: 120px"
               dropdownClassName="abc"
-              
               :tree-data="treeData"
               placeholder="请选择"
             >
@@ -232,7 +240,7 @@
               :auto-size="false"
               placeholder="请输入内容 "
             />
-            <span class="m-count">{{ checkData.expertInDisease?checkData.expertInDisease.length : 0 }}/300</span>
+            <span class="m-count">{{ checkData.expertInDisease ? checkData.expertInDisease.length : 0 }}/300</span>
           </div>
           <div class="div-content" style="position: relative">
             <span class="span-item-name" style="text-align: left">详细介绍:</span>
@@ -256,7 +264,7 @@
           <!-- 身份证 -->
           <div class="item-idcard">
             <div>身份证照片：</div>
-            <div style="right: 120px; top: 10px; ">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -296,7 +304,7 @@
           <!-- 职称 -->
           <div class="item-idcard">
             <div style="margin-left: 12px">职称照片：</div>
-            <div style="right: 120px; top: 10px; ">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -337,7 +345,7 @@
           <!-- 资格证 -->
           <div class="item-idcard">
             <div>资格证照片：</div>
-            <div style="right: 120px; top: 10px; ">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -379,7 +387,7 @@
           <!-- 执业证照片 -->
           <div class="item-idcard">
             <div>执业证照片：</div>
-            <div style="right: 120px; top: 10px;">
+            <div style="right: 120px; top: 10px">
               <a-upload
                 :action="actionUrlCover"
                 :multiple="true"
@@ -418,6 +426,221 @@
             </div>
           </div>
         </div>
+
+        <div v-if="currentTab == 'signing'" class="signing-infor">
+          <div class="div-title">
+            <div class="div-line-blue"></div>
+            <span class="span-title">01临工签约</span>
+          </div>
+
+          <div class="item-signing">
+            <div class="info-content">
+              <div style="color: #4d4d4d; font-size: 12px">用户姓名: &nbsp; {{ userInfoList.userName }}</div>
+              <div style="color: #4d4d4d; font-size: 12px">身份证号: &nbsp; {{ userInfoList.identificationNo }}</div>
+              <div style="color: #4d4d4d; font-size: 12px">手机号: &nbsp; {{ userInfoList.phone }}</div>
+            </div>
+          </div>
+
+          <div class="item-signing">
+            <div v-if="hvyogoId" style="margin-top: 10px">注册ID：</div>
+            <a v-if="hvyogoId" style="margin-top: 10px">{{ hvyogoId }}</a>
+            <a-button style="margin-top: 5px; margin-left: 20px" type="primary" ghost @click="registerOut">{{
+              hvyogoId ? updateInfo : registering
+            }}</a-button>
+          </div>
+
+          <div class="div-title">
+            <div class="div-line-blue"></div>
+            <span class="span-title">02网签提交</span>
+          </div>
+
+          <div class="item-idcard1">
+            <div>身份证照片【正面】：</div>
+            <div class="stle-com" style="right: 120px; top: 10px" @click="gotab()">
+              <a-upload
+                :disabled="true"
+                :showUploadList="{ showRemoveIcon: false }"
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="idcardZList"
+                accept="image/jpeg,image/png,image/jpg"
+              >
+                <div v-if="idcardZList.length == 0">
+                  <a-icon type="plus" />
+                  <!-- <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div> -->
+                </div>
+              </a-upload>
+            </div>
+            <div style="margin-left: 40px">身份证照片【反面】：</div>
+
+            <div class="stle-com" style="right: 120px; top: 10px" @click="gotab()">
+              <a-upload
+              :disabled="true"
+                :showUploadList="{ showRemoveIcon: false }"
+                :action="actionUrlCover"
+                list-type="picture-card"
+                :headers="headers"
+                :file-list="idcardFList"
+                accept="image/jpeg,image/png,image/jpg"
+              >
+                <div v-if="idcardFList.length == 0">
+                  <a-icon type="plus" />
+                  <!-- <div class="ant-upload-text">当前用户没有 上传证件照片 请上传</div> -->
+                </div>
+              </a-upload>
+            </div>
+          </div>
+
+          <div class="item-signing">
+            <a
+              v-if="protocolFile != null"
+              :style="
+                protocolFile != null && protocolFile > -1
+                  ? 'color:#409EFF;margin-top:10px'
+                  : 'color:red;margin-top:10px'
+              "
+              >{{ protocolFile != null && protocolFile > -1 ? '签约成功' : '签约失败' }}</a
+            >
+            <a-button
+              :disabled="!hvyogoId"
+              style="margin-top: 5px; margin-left: 10px"
+              type="primary"
+              ghost
+              @click="signingOut"
+              >{{ wqtj }}</a-button
+            >
+          </div>
+        </div>
+
+        <div v-if="currentTab == 'signing'" class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">03指派发薪任务</span>
+        </div>
+
+        <div v-if="currentTab == 'signing'" class="item-signing">
+          <a-select style="width: 150px" v-model="selectTask" allow-clear placeholder="请指派任务">
+            <a-select-option v-for="(item, index) in taskList" :key="index" :value="item.taskId">{{
+              item.taskName
+            }}</a-select-option>
+          </a-select>
+          <a-button
+            :disabled="!hvyogoId"
+            style="margin-top: 5px; margin-left: 10px"
+            type="primary"
+            ghost
+            @click="bangdTaskOut"
+            >{{ bangding }}</a-button
+          >
+        </div>
+
+        <div v-if="currentTab == 'signing'" class="div-title" style="margin-top: 15px">
+          <div class="div-line-blue"></div>
+          <span class="span-title">04银行卡账户</span>
+        </div>
+
+        <div v-if="currentTab == 'signing'" class="item-signing">
+          <div class="wrap-content">
+            <!-- 卡1 -->
+            <div class="card-big">
+              <div class="card-kuang">
+                <a-input
+                  :bordered="false"
+                  :maxLength="19"
+                  type="number"
+                  v-model="bank1.bankCard"
+                  @blur="getBankNameForCardNoOut(bank1.bankCard, 1)"
+                  @keyup.enter="getBankNameForCardNoOut(bank1.bankCard, 1)"
+                ></a-input>
+                <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                  {{ bank1.bankName || '' }}
+                </div>
+              </div>
+              <img
+                v-if="iscard1Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/jiebang1.png"
+              />
+              <img
+                v-if="!iscard1Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/bangding1.png"
+              />
+              <a
+                :disabled="!hvyogoId"
+                style="font-size: 12px; margin-top: 4px; margin-left: 6px"
+                @click="bindBankOut(bank1, iscard1Bind, 1)"
+                >{{ iscard1Bind ? '解绑' : '绑定' }}</a
+              >
+            </div>
+
+            <!-- 卡2 -->
+            <div v-if="bank2Show" class="card-big" style="margin-left: 15px">
+              <div class="card-kuang" style="margin-left: auto">
+                <a-input
+                  :bordered="false"
+                  :maxLength="19"
+                  type="number"
+                  v-model="bank2.bankCard"
+                  @blur="getBankNameForCardNoOut(bank2.bankCard, 2)"
+                  @keyup.enter="getBankNameForCardNoOut(bank2.bankCard, 2)"
+                ></a-input>
+                <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                  {{ bank2.bankName || '' }}
+                </div>
+              </div>
+              <img
+                v-if="iscard2Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/jiebang1.png"
+              />
+              <img
+                v-if="!iscard2Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/bangding1.png"
+              />
+              <a
+                :disabled="!hvyogoId"
+                style="font-size: 12px; margin-top: 4px; margin-left: 6px"
+                @click="bindBankOut(bank2, iscard2Bind, 2)"
+                >{{ iscard2Bind ? '解绑' : '绑定' }}</a
+              >
+            </div>
+
+            <!-- 卡3 -->
+            <div v-if="bank3Show" class="card-big" style="margin-top: 20px">
+              <div class="card-kuang">
+                <a-input
+                  :bordered="false"
+                  :maxLength="19"
+                  type="number"
+                  v-model="bank3.bankCard"
+                  @blur="getBankNameForCardNoOut(bank3.bankCard, 3)"
+                  @keyup.enter="getBankNameForCardNoOut(bank3.bankCard, 3)"
+                ></a-input>
+                <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
+                  {{ bank3.bankName || '' }}
+                </div>
+              </div>
+              <img
+                v-if="iscard3Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/jiebang1.png"
+              />
+              <img
+                v-if="!iscard3Bind"
+                style="width: 20px; height: 20px; margin-left: 10px; margin-top: 4px"
+                src="~@/assets/icons/bangding1.png"
+              />
+              <a
+                :disabled="!hvyogoId"
+                style="font-size: 12px; margin-top: 4px; margin-left: 6px"
+                @click="bindBankOut(bank3, iscard3Bind, 3)"
+                >{{ iscard3Bind ? '解绑' : '绑定' }}</a
+              >
+            </div>
+          </div>
+        </div>
       </div>
     </a-spin>
   </a-modal>
@@ -434,6 +657,13 @@ import {
   getDoctorUserDetail,
   updateDoctorUser,
   getDictDataForCodeUserType,
+  getHvyogoUserInfo,
+  getTaskList,
+  bindTask,
+  register,
+  signing,
+  getBankNameForCardNo,
+  bindBank,
   setCertificateForUserId,
   getCaAuthInfoAdminForUserId,
 } from '@/api/modular/system/posManage'
@@ -451,6 +681,13 @@ export default {
       actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
       currentTab: 'base',
       visible: false,
+
+      wqtj: '网签提交',
+      bangding: '绑定',
+
+      updateInfo: '更新信息',
+      registering: '注册',
+
       record: {},
       isDetailTag: false,
       headers: {},
@@ -510,6 +747,23 @@ export default {
       roleList: [], //角色列表
       rylxList: [], //人员类型
       ryzcList: [], //人员职称
+
+      // 签约信息
+      userInfoList: {},
+      bankList: [],
+      hvyogoId: '',
+      taskList: [],
+      selectTask: undefined,
+      id: '',
+      protocolFile: '', //是否签约成功的标识
+      bank1: {},
+      bank2: {},
+      bank3: {},
+      bank2Show: false,
+      bank3Show: false,
+      iscard1Bind: false,
+      iscard2Bind: false,
+      iscard3Bind: false,
     }
   },
   created() {},
@@ -561,6 +815,17 @@ export default {
         titleF: '',
         titleZ: '',
       }
+
+      this.userInfoList = {}
+      this.bankList = []
+      this.hvyogoId = ''
+      this.selectTask = undefined
+      this.id = ''
+      this.protocolFile = ''
+      this.bank1 = {}
+      this.bank2 = {}
+      this.bank3 = {}
+      ;(this.bank2Show = false), (this.bank3Show = false)
     },
     //新增
     addModel() {
@@ -576,7 +841,7 @@ export default {
     },
     //修改
     editModel(record) {
-      console.log(record)
+      console.log('cccc', record)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
@@ -590,6 +855,8 @@ export default {
       this.getDictDataForCodeUserTypeOut()
       this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
+      this.getHvyogoUserInfoOut(record.userId)
+      this.getTaskListOut()
     },
 
     // 顶部tab切换
@@ -599,9 +866,9 @@ export default {
       }
       this.currentTab = type
       // if (type == 'base') {
-        // this.getChatList(this.item.orderId)
+      // this.getChatList(this.item.orderId)
       // } else if (type == 'photo') {
-        // this.getphoneRecords(this.item)
+      // this.getphoneRecords(this.item)
       // }
     },
 
@@ -857,6 +1124,232 @@ export default {
           this.getRolesOut()
         }
       })
+    },
+
+    /**
+     * 获取临工签约信息
+     */
+    getHvyogoUserInfoOut(userId) {
+      getHvyogoUserInfo(userId).then((res) => {
+        if (res.code == 0) {
+          this.userInfoList = res.data.userInfo
+          this.bankList = res.data.bankList
+          this.hvyogoId = res.data.hvyogoId
+          this.id = res.data.id
+          this.protocolFile = res.data.protocolFile
+          if (this.bankList != null && this.bankList.length == 3) {
+            this.bank1 = this.bankList[0]
+            this.bank2 = this.bankList[1]
+            this.bank3 = this.bankList[2]
+            this.iscard1Bind = true
+            this.iscard2Bind = true
+            this.iscard3Bind = true
+            this.bank2Show = true
+            this.bank3Show = true
+          } else if (this.bankList != null && this.bankList.length == 2) {
+            this.bank1 = this.bankList[0]
+            this.bank2 = this.bankList[1]
+            this.bank3 = {}
+            this.bank2Show = true
+            this.bank3Show = true
+
+            this.iscard1Bind = true
+            this.iscard2Bind = true
+            this.iscard3Bind = false
+          } else if (this.bankList != null && this.bankList.length == 1) {
+            this.bank1 = this.bankList[0]
+            this.bank2 = {}
+            this.bank3 = {}
+            this.bank2Show = true
+            this.bank3Show = false
+
+            this.iscard1Bind = true
+            this.iscard2Bind = false
+            this.iscard3Bind = false
+          } else {
+            this.bank1 = {}
+            this.bank2 = {}
+            this.bank3 = {}
+            this.bank2Show = false
+            this.bank3Show = false
+
+            this.iscard1Bind = false
+            this.iscard2Bind = false
+            this.iscard3Bind = false
+          }
+
+          console.log('dfff:', this.bank1, this.bank2, this.bank3)
+        }
+      })
+    },
+
+    /**
+     * 签约
+     */
+    signingOut() {
+      this.confirmLoading = true
+      this.wqtj = '请等待...'
+      signing(this.record.userId)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+          this.wqtj = '网签提交'
+        })
+    },
+
+    gotab() {
+      this.currentTab = 'photo'
+    },
+
+    /**
+     * 通过银行卡号得到 银行名称
+     */
+    getBankNameForCardNoOut(cardNo, type) {
+      console.log('11:', cardNo, type)
+      this.confirmLoading = true
+      getBankNameForCardNo(cardNo)
+        .then((res) => {
+          if (res.code == 0) {
+            // 成功获取到银行卡名称
+            if (type == 1) {
+              this.bank1.bankName = res.data
+            } else if (type == 2) {
+              this.bank2.bankName = res.data
+            } else if (type == 3) {
+              this.bank3.bankName = res.data
+            }
+          } else {
+            // 调取失败
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    // 绑定/解绑银行卡
+    bindBankOut(card, isBind, type) {
+      var postData = {
+        bankCard: card.bankCard,
+        bankName: card.bankName,
+        bindFlag: isBind ? 'unbind' : 'bind',
+        hvyogoId: this.id,
+      }
+
+      if (!isBind && !card.bankName) {
+        this.$message.error('未知银行,不能绑定此卡号!')
+        return
+      }
+      this.confirmLoading = true
+      console.log('55353：', isBind)
+
+      bindBank(postData)
+        .then((res) => {
+          if (res.code == 0) {
+            if (isBind) {
+              if (type == 1) {
+                this.bank1.bankCard = ''
+                this.bank1.bankName = ''
+                this.iscard1Bind = !isBind
+              } else if (type == 2) {
+                this.bank2.bankCard = ''
+                this.bank2.bankName = ''
+                this.iscard2Bind = !isBind
+              } else if (type == 3) {
+                this.bank3.bankCard = ''
+                this.bank3.bankName = ''
+                this.iscard3Bind = !isBind
+              }
+            } else {
+              if (type == 1) {
+                this.bank2Show = true
+                this.iscard1Bind = !isBind
+              } else if (type == 2) {
+                this.iscard2Bind = !isBind
+                this.bank3Show = true
+              } else if (type == 3) {
+                this.iscard3Bind = !isBind
+              }
+            }
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    /**
+     * 临工注册/更新信息
+     */
+    registerOut() {
+      //如果 有注册ID  则是更新信息 操作  反之 是注册操作
+      if (this.hvyogoId) {
+        this.updateInfo = '请等待...'
+      } else {
+        this.registering = '请等待...'
+      }
+      register(this.record.userId)
+        .then((res) => {
+          if (res.code == 0) {
+            if(!this.hvyogoId){
+              this.hvyogoId = res.data
+            }
+            this.$message.success(res.message)
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          if (this.hvyogoId) {
+            this.updateInfo = '更新信息'
+          } else {
+            this.registering = '注册'
+          }
+        })
+    },
+
+    // 获取任务列表
+    getTaskListOut() {
+      getTaskList().then((res) => {
+        if (res.code == 0) {
+          this.taskList = res.data
+        }
+      })
+    },
+
+    // 绑定任务
+    bangdTaskOut() {
+      if (!this.selectTask) {
+        this.$message.error('请先选择指定的任务!')
+        return
+      }
+      var requestData = {
+        id: this.id,
+        taskId: this.selectTask,
+      }
+      this.bangding = '请等待...'
+      bindTask(requestData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success(res.message)
+            // this.taskList = res.data
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.bangding = '绑定'
+        })
     },
 
     /**
@@ -1221,7 +1714,7 @@ export default {
 
 
 <style >
- .abc.ant-select-tree-dropdown {
+.abc.ant-select-tree-dropdown {
   max-height: 28vh !important;
   top: 635px !important;
 }
@@ -1240,7 +1733,7 @@ export default {
 .m-count2 {
   position: absolute;
   font-size: 12px;
-  bottom: 13px;
+  bottom: 22px;
   right: 10px;
 }
 .div-title {
@@ -1251,7 +1744,6 @@ export default {
   align-items: center;
   flex-direction: row;
   height: 26px;
-  margin-top: 20px;
   margin-bottom: 10px;
 
   .div-line-blue {
@@ -1269,7 +1761,6 @@ export default {
 .div-part {
   width: 100%;
   height: 580px;
-  margin-top: 10px;
 
   .idcard-infor {
     margin-top: 20px;
@@ -1285,6 +1776,92 @@ export default {
       width: 100%;
       margin-left: 25px;
       margin-bottom: 8px;
+    }
+  }
+
+  .signing-infor {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+
+    .item-idcard1 {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-bottom: 8px;
+
+      .stle-com {
+        &:hover {
+          cursor: pointer !important;
+        }
+      }
+    }
+
+    .item-signing {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      margin-bottom: 8px;
+
+      .info-content {
+        width: 80%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+      }
+    }
+  }
+
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  .wrap-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 90%;
+
+    .card-big {
+      width: 330px;
+      height: 28px;
+      border-radius: 2px;
+      display: flex;
+      flex-direction: row;
+
+      .card-kuang {
+        width: 240px;
+        height: 28px;
+        background: #ffffff;
+        border: 1px solid #cccccc;
+        border-radius: 2px;
+        display: flex;
+        flex-direction: row;
+        margin-bottom: 15px;
+      }
+    }
+
+    /deep/.ant-input:focus {
+      border: none;
+      box-shadow: none;
+    }
+
+    .ant-input {
+      width: 70%;
+      height: 24px !important;
+      padding: 4px 10px;
+      color: rgba(0, 0, 0, 0.65);
+      font-size: 12px !important;
+      line-height: 1.5;
+      border: none;
+      box-shadow: none;
     }
   }
 

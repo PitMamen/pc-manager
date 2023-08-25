@@ -3,109 +3,65 @@
     <div class="table-page-search-wrapper">
       <div class="action-row" style="margin-top: -15px !important; margin-left: -18px">
         <a-button type="link" icon="left" @click="goBack()">返回</a-button>
-        <span style="font-size: 14px; color: #4d4d4d">{{ reconData }}对账单</span>
+        <span style="font-size: 14px; color: #4d4d4d">{{ docName + status }}详情</span>
+        <span style="font-size: 14px; color: #4d4d4d">【{{ time }}】</span>
       </div>
-    </div>
-
-    <div class="recon-content">
-      <div style="margin-top: 5px; color: #4d4d4d">对账状态：</div>
-      <div :class="getStyle(statusShow)">{{ statusShow }}</div>
-      <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
-        >导出</a-button
-      >
-    </div>
-
-    <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.channel == 'all' }" @click="onRadioClick('all')">
-        <span style="margin-left: 3px">全部({{ numberData.all }})</span>
-      </div>
-      <div
-        class="radio-item"
-        :class="{ 'checked-btn': queryParamsTemp.channel == 'wechat' }"
-        @click="onRadioClick('wechat')"
-      >
-        <span style="margin-left: 3px">微信支付({{ numberData.wechat }}) </span>
-      </div>
-      <div
-        class="radio-item"
-        :class="{ 'checked-btn': queryParamsTemp.channel == 'alipay' }"
-        @click="onRadioClick('alipay')"
-      >
-        <span style="margin-left: 3px">支付宝支付({{ numberData.zhifub }})</span>
-      </div>
-
-      <!-- <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
-            <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
-          </div> -->
     </div>
 
     <div class="tab-all-content">
       <!-- 订单总额 -->
       <div class="tab-total">
         <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="container" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[0].title }}</span>
-          <div style="float: right">
-            <img style="padding-left: 110px; margin-top: -10px" src="@/assets/icons/tc.png" />
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">待结算</span>
+          <div style="float: right; margin-left: 25px">
+            <img style="padding-left: 119px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >(差异：{{ SummaryDataList[0].diffFee }})</span
-          >
+          <!-- <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[0].totalFee }}</span> -->
+          <span style="font-size: 24px; margin-top: -14px">{{ record.payTotalAll }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[0].totalCount }}</span>
-          <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[0].diffCount }})</span>
+          <span style="font-size: 12px">总笔数：{{ record.countAll }}</span>
         </div>
       </div>
 
-      <!-- 微信支付 -->
       <div class="tab-wx">
         <div class="content-dis">
-          <a-icon style="width: 14px; height: 16px; margin-top: 7px" type="wechat" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[1].title }}</span>
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">在线咨询</span>
           <div style="float: right">
-            <img style="padding-left: 74px; margin-top: -8px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 131px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[1].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >(差异：{{ SummaryDataList[1].diffFee }})</span
-          >
+          <span style="font-size: 24px; margin-top: -14px">{{ record.consultOrderSum }}</span>
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[1].totalCount }}</span>
-          <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[1].diffCount }})</span>
+          <span style="font-size: 12px">总笔数：{{ record.consultOrderCount }}</span>
         </div>
       </div>
 
-      <!-- 支付宝支付 -->
       <div class="tab-alipay">
         <div class="content-dis">
-          <img style="width: 14px; height: 16px; margin-top: 5px" src="@/assets/icons/zhifubao.png" />
-          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">{{ SummaryDataList[2].title }}</span>
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px">专科服务</span>
           <div style="float: right">
-            <img style="padding-left: 61px; margin-top: -9px" src="@/assets/icons/tc.png" />
+            <img style="padding-left: 131px; margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <div class="content-dis">
-          <span style="font-size: 24px; margin-top: -14px">{{ SummaryDataList[2].totalFee }}</span>
-          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
-            >(差异：{{ SummaryDataList[2].diffFee }})</span
-          >
+          <span style="font-size: 24px; margin-top: -14px">{{ record.srvPackOrderSum }}</span>
+          <!-- <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+              >(差异：{{ SummaryDataList[2].diffFee }})</span -->
         </div>
         <div class="line"></div>
         <div class="content-dis">
-          <span style="font-size: 12px">总笔数：{{ SummaryDataList[2].totalCount }}</span>
-          <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[2].diffCount }})</span>
+          <span style="font-size: 12px">总笔数：{{ record.srvPackOrderCount }}</span>
+          <!-- <span style="font-size: 12px; margin-left: 5px">(差异：{{ SummaryDataList[2].diffCount }})</span> -->
         </div>
       </div>
     </div>
@@ -130,15 +86,14 @@
     <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
 </template>
-       
-       <script>
+         
+         <script>
 import { STable } from '@/components'
 import moment from 'moment'
 import {
-  tradeRecordTab,
-  tradeRecordPage,
-  tradeRecordChannelSummary,
-  tradeRecordExport,
+  getOrderSettlementDetailForUserId,
+  getListGroupBy,
+  getOrderSettlementDetailsList,
 } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
@@ -158,6 +113,10 @@ export default {
       orderTimeValue: [],
       SummaryDataList: [],
       confirmLoading: false,
+      record: {},
+      status: '',
+      time: '',
+      docName: '',
       currentTab: 0,
       numberData: {
         all: 0,
@@ -165,32 +124,30 @@ export default {
         zhifub: 0,
       },
       queryParams: {
-        billDate: '',
-        channel: 'all',
-        payeeId: 0,
-        hospitalCode:undefined,
+        createdTime: '',
+        doctorName: '',
+        doctorUserId: '',
+        hospitalCode: '',
+        settlementStatus: 1,
+        orderType:'',
       },
+
+      requesDetail: {
+        masterId: 0,
+        orderType: 'srvPackOrder',
+        settlementType: 2,
+      },
+
+      queryParamsTemp: {},
 
       reconData: '', //对账 日期
       statusShow: '', //状态
-
-      queryParamsTemp: {},
 
       // 表头
       columns: [
         {
           title: '订单号',
           dataIndex: 'orderId',
-          ellipsis: true,
-        },
-        {
-          title: '用户姓名',
-          dataIndex: 'name',
-          ellipsis: true,
-        },
-        {
-          title: '手机号',
-          dataIndex: 'phone',
           ellipsis: true,
         },
 
@@ -200,6 +157,16 @@ export default {
           ellipsis: true,
         },
 
+        {
+          title: '用户姓名',
+          dataIndex: 'userName',
+          ellipsis: true,
+        },
+        {
+          title: '手机号',
+          dataIndex: 'userPhone',
+          ellipsis: true,
+        },
 
         {
           title: '套餐名称',
@@ -207,144 +174,197 @@ export default {
           ellipsis: true,
         },
         {
-          title: '医院名称',
-          dataIndex: 'hospitalName',
-          ellipsis: true,
-        },
-        {
-          title: '应收',
+          title: '订单金额',
           dataIndex: 'orderTotal',
           align: 'right',
           ellipsis: true,
         },
+
         {
-          title: '实收',
-          dataIndex: 'payTotal',
+          title: '结算金额',
+          dataIndex: 'realTotalPayMoney',
           align: 'right',
           ellipsis: true,
         },
+
         {
-          title: '下单时间',
+          title: '开单时间',
           dataIndex: 'orderTime',
           ellipsis: true,
           //   width: 160,
         },
 
         {
-          title: '支付方式',
-          dataIndex: 'payMode',
+          title: '结算时间',
+          dataIndex: 'endtime',
           ellipsis: true,
-        },
-
-        {
-          title: '收款方',
-          dataIndex: 'payeeName',
-          ellipsis: true,
-        },
-
-
-        {
-          title: '支付流水号',
-          dataIndex: 'agtOrdNum',
-          ellipsis: true,
-        },
-        {
-          title: '订单状态',
-          dataIndex: 'orderStatusDesc',
-          ellipsis: true,
-          scopedSlots: { customRender: 'ordrstatus' },
-        },
-        {
-          title: '差异状态',
-          dataIndex: 'billStatusDesc',
-          ellipsis: true,
-          scopedSlots: { customRender: 'billStatus' },
+          //   width: 160,
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.payeeId = this.currentTab
-        return tradeRecordPage(Object.assign(parameter, this.queryParams))
-          .then((res) => {
-            if (res.code == 0 && res.data.records.length > 0) {
-              //组装控件需要的数据结构
-              var data = {
-                pageNo: parameter.pageNo,
-                pageSize: parameter.pageSize,
-                totalRows: res.data.total,
-                totalPage: res.data.total / parameter.pageSize,
-                rows: res.data.records,
+        
+        if (this.queryParams.settlementStatus == 1) {
+          this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
+          return getOrderSettlementDetailForUserId(Object.assign(parameter, this.queryParamsTemp))
+            .then((res) => {
+              if (res.code == 0 && res.data.records.length > 0) {
+                //组装控件需要的数据结构
+                var data = {
+                  pageNo: parameter.pageNo,
+                  pageSize: parameter.pageSize,
+                  totalRows: res.data.total,
+                  totalPage: res.data.total / parameter.pageSize,
+                  rows: res.data.records,
+                }
+                //设置序号
+                data.rows.forEach((item, index) => {
+                  this.$set(item, 'orderTypeDesc', item.orderType.description)
+                  this.$set(item, 'orderId', item.orderIdStr)
+                })
+              } else {
+                data = []
               }
-
-              //设置序号
-              data.rows.forEach((item, index) => {
-                // this.$set(item, 'serveTime', item.startTime + ' ' + item.endTime)
-                // this.$set(item, 'status', 1)
-                // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                // item.nameDes = item.name
-              })
-            } else {
-              data = []
-            }
-
-            return data
-          })
-          .finally((data) => {
-            this.confirmLoading = false
-          })
+              return data
+            })
+            .finally((data) => {
+              this.confirmLoading = false
+            })
+        }else{
+          this.queryParamsTemp = JSON.parse(JSON.stringify(this.requesDetail))
+          return getOrderSettlementDetailsList(Object.assign(parameter, this.queryParamsTemp))
+            .then((res) => {
+              if (res.code == 0 && res.data.records.length > 0) {
+                //组装控件需要的数据结构
+                var data = {
+                  pageNo: parameter.pageNo,
+                  pageSize: parameter.size,
+                  totalRows: res.data.total,
+                  totalPage: res.data.total / parameter.size,
+                  rows: res.data.records,
+                }
+                //设置序号
+                data.rows.forEach((item, index) => {
+                  this.$set(item, 'orderId', item.orderIdStr)
+                  this.$set(item, 'commodityName', item.commodity_name)
+                  this.$set(item, 'orderTotal', item.order_total)
+                  this.$set(item, 'orderTypeDesc', this.getorderType(item.order_type))
+                  this.$set(item, 'realTotalPayMoney', item.realPrice)
+                  this.$set(item, 'endtime', item.endTimeStr)
+                  this.$set(item, 'orderTime', item.orderTimeStr)
+                })
+              } else {
+                data = []
+              }
+              return data
+            })
+            .finally((data) => {
+              this.confirmLoading = false
+            })
+        }
       },
     }
   },
 
-  activated() {
-    if (this.$route.query) {
-      this.reconData = this.$route.query.billDate
-      this.statusShow = this.$route.query.state
-      this.currentTab = this.$route.query.payeeId
-      console.log("hospitalCode:", this.reconData,this.statusShow,this.currentTab,this.$route.query.hospitalCode)
-      this.queryParams.billDate = this.reconData
-      this.queryParams.payeeId = this.currentTab
-      this.queryParams.hospitalCode = this.$route.query.hospitalCode
-      this.getTabOut()
-      this.tradeRecordChannelSummaryOut()
-      this.$refs.table.refresh()
-
-      // var orderId = this.$route.query.orderId
-      // this.init(orderId)
-    }
-  },
+  activated() {},
 
   watch: {
     $route(to, from) {
-      if (to.path.indexOf('reconDetail') > -1) {
-        this.reconData = this.$route.query.billDate
-        this.statusShow = this.$route.query.state
-        this.currentTab = this.$route.query.payeeId
-        this.queryParams.billDate = this.reconData
-        this.queryParams.payeeId = this.currentTab
-        this.queryParams.hospitalCode = this.$route.query.hospitalCode
-        this.getTabOut()
-        this.tradeRecordChannelSummaryOut()
-        this.$refs.table.refresh()
+      // console.log('ddd:', from)
+      if (to.path.indexOf('settlementDetail') > -1) {
+        this.initData()
       }
     },
   },
 
   created() {
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+
+    this.initData()
   },
 
   methods: {
-    //汇总信息
-    tradeRecordChannelSummaryOut() {
-      tradeRecordChannelSummary(this.queryParams).then((res) => {
-        if (res.code == 0) {
-          this.SummaryDataList = res.data
-        }
-      })
+    initData() {
+      this.record = JSON.parse(this.$route.query.dataStr)
+      // console.log('FFFF:', this.record)
+      this.queryParams.doctorName = this.record.doctorName
+      this.docName = this.record.doctorName
+      this.queryParams.doctorUserId = this.record.doctorUserId
+      this.queryParams.hospitalCode = this.record.hospitalCode
+      this.time = this.record.time
+      this.queryParams.createdTime = this.time
+      this.queryParams.orderType =this.record.orderType
+      this.status = this.record.status
+
+      this.requesDetail.masterId = this.record.id
+      this.requesDetail.orderType = this.record.orderType
+      // this.requesDetail.orderType = 'srvPackOrder'
+
+      if (this.status == '待结算') {
+        this.queryParams.settlementStatus = 1
+      } else if (this.status == '已结算') {
+        this.queryParams.settlementStatus = 2
+      } else if (this.status == '不予结算') {
+        this.queryParams.settlementStatus = 3
+      }
+      this.requesDetail.settlementType = this.queryParams.settlementStatus
+
+      if (this.queryParams.settlementStatus != 1) {
+        this.getListGroupByOut() //请求统计接口
+        // this.getOrderSettlementDetailsListOut() //请求列表接口
+      }
+
+      this.$refs.table.refresh()
     },
 
+
+
+
+    getorderType(string) {
+      if (string == 'consultOrder') {
+        return '在线咨询'
+      } else if (string == 'srvPackOrder') {
+        return '专科服务'
+      }
+    },
+
+
+
+
+
+
+
+
+    // 上面的统计
+    getListGroupByOut() {
+      this.confirmLoading = true
+      getListGroupBy(this.requesDetail)
+        .then((res) => {
+          if (res.code == 0) {
+            this.record = res.data
+
+            this.record.payTotalAll = parseFloat(res.data.payTotalAll).toFixed(2)
+            this.record.srvPackOrderSum = parseFloat(res.data.srvPackOrderSum).toFixed(2)
+            // this.record.countAll = res.data.countAll
+            // this.record.consultOrderSum = res.data.consultOrderSum
+            // this.record.consultOrderCount = res.data.consultOrderCount
+            // this.record.srvPackOrderCount = res.data.srvPackOrderCount
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    // 结算与不予结算的 列表详情
+    getOrderSettlementDetailsListOut() {
+      this.confirmLoading = true
+      getOrderSettlementDetailsList(this.requesDetail)
+        .then((res) => {})
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     getColor(value) {
       if (value == 0) {
@@ -368,19 +388,6 @@ export default {
       return this.confirmLoading
     },
 
-    //导出
-    leadingOut() {
-      let params = JSON.parse(JSON.stringify(this.queryParams))
-      tradeRecordExport(params)
-        .then((res) => {
-          this.downloadfile(res)
-          // eslint-disable-next-line handle-callback-err
-        })
-        .catch((err) => {
-          this.$message.error('导出错误：' + err.message)
-        })
-    },
-
     downloadfile(res) {
       var blob = new Blob([res.data], { type: 'application/octet-stream;charset=UTF-8' })
       var contentDisposition = res.headers['content-disposition']
@@ -401,45 +408,8 @@ export default {
 
     //返回
     goBack() {
-      this.$bus.$emit('orderRefresh', '刷新数据')
-      this.$router.go(-2)
+      this.$router.go(-1)
       // this.$router.back()
-    },
-
-    //订单分组
-    getTabOut() {
-      tradeRecordTab(this.queryParams)
-        .then((res) => {
-          if (res.code == 0) {
-            for (let index = 0; index < res.data.length; index++) {
-              if (res.data[index].channel == 'all') {
-                //全部
-                this.numberData.all = res.data[index].total
-              } else if (res.data[index].channel == 'wechat') {
-                //微信
-                this.numberData.wechat = res.data[index].total
-              } else if (res.data[index].channel == 'alipay') {
-                //支付宝
-                this.numberData.zhifub = res.data[index].total
-              }
-            }
-          }
-        })
-        .catch((err) => {
-          this.$message.error('请求错误：' + err.message)
-        })
-    },
-
-    onRadioClick(type) {
-      //如果在加载中  不让点击
-      if (this.confirmLoading) {
-        return
-      }
-      this.queryParams.channel = type
-      this.queryParamsTemp.channel = type
-      // this.getTabOut()
-      this.tradeRecordChannelSummaryOut()
-      this.$refs.table.refresh()
     },
 
     formatDate(date) {
@@ -460,15 +430,13 @@ export default {
     },
 
     handleOk() {
-      this.getTabOut()
-      this.tradeRecordChannelSummaryOut()
       this.$refs.table.refresh()
     },
   },
 }
 </script>
-       
-       <style lang="less" scoped>
+         
+         <style lang="less" scoped>
 .green-color {
   color: #0e9b0b;
   margin-top: 5px;
@@ -689,16 +657,15 @@ export default {
   height: 1px;
 }
 </style>
-  
-   <style lang="less" scoped>
+    
+     <style lang="less" scoped>
 /deep/.ant-card-body {
   margin-top: -20px;
 }
 </style>
-         
-         <style lang="less" scoped>
+           
+           <style lang="less" scoped>
 .ant-layout-content {
   height: calc(100vh - 82px) !important;
 }
-
 </style>

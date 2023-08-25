@@ -763,6 +763,7 @@ export default {
       )
       delete this.packageData.commodityPkgManageRsps
 
+      console.log('commodityPkgManageReqs',  this.packageData.commodityPkgManageReqs)
       if (this.packageData.commodityPkgManageReqs) {
         this.packageData.commodityPkgManageReqs.forEach((item) => {
           this.$set(item, 'commodityPkgManageItemReqs', JSON.parse(JSON.stringify(item.commodityPkgManageItemRsps)))
@@ -791,7 +792,7 @@ export default {
               this.nameDoc = this.nameDoc + item.name
             }
           })
-
+          this.docDepartmentId = docItem.departmentId
           docItem.allocationType = docItem.allocationType.value
           docItem.teamType = docItem.teamType.value
           newRsps.push(docItem)
@@ -825,6 +826,7 @@ export default {
             }
           })
 
+          this.nurseDepartmentId = nurseItem.departmentId
           nurseItem.allocationType = nurseItem.allocationType.value
           nurseItem.teamType = nurseItem.teamType.value
           newRsps.push(nurseItem)
@@ -1049,13 +1051,13 @@ export default {
           this.allocationTypeNurse = 2
 
           this.canConfigTeam = true
-          this.onSelectChange()
-          this.getNewRsp()
+          // this.onSelectChange()
+          // this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
-          this.getNewRsp()
-          this.onSelectChange()
+          // this.onSelectChange()
+          // this.getNewRsp()
           break
         case 3:
           this.canConfigTeam = false
@@ -1264,7 +1266,7 @@ export default {
         //   this.$message.warn('该机构没有可选医生')
         //   return
         // }
-
+        console.log('go AddPeople departmentId', this.docDepartmentId)
         this.$refs.addPeople.add(
           index,
           'doctor',
@@ -1343,6 +1345,7 @@ export default {
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
+      console.log('handleAddPeople departmentId', departmentId)
       this.packageData.commodityPkgManageReqs[index].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       if (index == 0) {
         this.nameDoc = ''

@@ -71,6 +71,16 @@
 
         </template>
       </span>
+
+      <span slot="approvalNumber" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
+      <span slot="genericName" slot-scope="text">
+        <ellipsis :length="45" tooltip>{{ text }}</ellipsis>
+      </span>
+      <span slot="tradeName" slot-scope="text">
+        <ellipsis :length="45" tooltip>{{ text }}</ellipsis>
+      </span>
     </s-table>
   </a-card>
 </template>
@@ -127,7 +137,7 @@ export default {
         {
           title: '批准文号',
           dataIndex: 'approvalNumber',
-          width: '150px',
+          // width: '150px',
           scopedSlots: { customRender: 'approvalNumber' },
         },
         {
@@ -146,26 +156,7 @@ export default {
           dataIndex: 'specification',
           scopedSlots: { customRender: 'specification' },
         },
-        {
-          title: '剂型',
-          width: '120px',
-          dataIndex: 'dosageFormDesc',
-          scopedSlots: { customRender: 'dosageFormDesc' },
-        },
 
-        // drugTypeId
-        {
-          title: '类型',
-          width: '90px',
-          dataIndex: 'drugTypeDesc',
-          scopedSlots: { customRender: 'drugTypeDesc' },
-        },
-        {
-          title: '医保类型',
-          width: '90px',
-          dataIndex: 'healthInsuranceCategory',
-          scopedSlots: { customRender: 'healthInsuranceCategory' },
-        },
         {
           title: '生产厂商',
           dataIndex: 'manufacturerName',
@@ -176,6 +167,28 @@ export default {
           width: '90px',
           dataIndex: 'unitPrice',
           scopedSlots: { customRender: 'unitPrice' },
+        },
+
+        // drugTypeId
+        {
+          title: '类型',
+          width: '90px',
+          dataIndex: 'drugTypeDesc',
+          scopedSlots: { customRender: 'drugTypeDesc' },
+        },
+
+        {
+          title: '剂型',
+          width: '120px',
+          dataIndex: 'dosageFormDesc',
+          scopedSlots: { customRender: 'dosageFormDesc' },
+        },
+
+        {
+          title: '医保类型',
+          width: '90px',
+          dataIndex: 'healthInsuranceCategory',
+          scopedSlots: { customRender: 'healthInsuranceCategory' },
         },
 
         {
@@ -236,6 +249,15 @@ export default {
   created() {
     // this.queryParam = { ...this.queryParam, ...this.$route.query }
     this.getDictDataOut()
+  },
+  mounted() {
+    this.$bus.$on('refreshMedicListEvent', (record) => {
+      console.log('medicEditEvent', record)
+      this.handleOk()
+      // if (record.editId == this.medicId) {
+      //   this.inputData(record)
+      // }
+    })
   },
   methods: {
     // getTypes(name) {

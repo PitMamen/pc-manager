@@ -101,6 +101,27 @@ export function formatDateFull(date) {
   return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
 }
 
+export function formatDateMin(date) {
+  date = new Date(date)
+  let myyear = date.getFullYear()
+  let mymonth = date.getMonth() + 1
+  let myweekday = date.getDate()
+  let oHour = date.getHours()
+  let oMin = date.getMinutes()
+  let oSen = date.getSeconds()
+  mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+  myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+  oHour < 10 ? (oHour = '0' + oHour) : oHour
+  oMin < 10 ? (oMin = '0' + oMin) : oMin
+  oSen < 10 ? (oSen = '0' + oSen) : oSen
+  return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}`
+}
+
+
+
+
+
+
 /**获取当前月份 */
 export function getMonthNow() {
   var myDate = new Date();
@@ -238,22 +259,24 @@ export function isArrayEmpty(arr) {
 
 /**
  *保留小数点后 decimal 位  不四舍五入，直接减掉
- * @param {} num 要计算的数
+ * @param {} inNum 要计算的数
  * @param {} decimal   保留的位数
  * @returns 
  */
-export function formatDecimal(num, decimal) {
-  num = num.toString()
+export function formatDecimal(inNum, decimal) {
+  let num = inNum.toString()
   let index = num.indexOf('.')
   if (index !== -1) {
     let arr = num.split('.')
     // let bannerPics = this.uploadData.bannerList.split(',')
-    if (arr[1].length >= 3) {
+    if (arr[1].length >= (decimal + 1)) {
       num = num.substring(0, decimal + index + 1)
       return parseFloat(num).toFixed(decimal)
     } else {
+      console.log('fffffffffff', parseFloat(num))
+
       // num = num.substring(0)
-      return parseFloat(num)
+      return inNum
     }
   } else {
     // num = num.substring(0)

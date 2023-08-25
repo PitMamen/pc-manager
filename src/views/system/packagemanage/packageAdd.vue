@@ -826,16 +826,18 @@ export default {
             this.nameNurse = ''
           }
 
+          //TODO 如果其他的切换为咨询的，需要检测医生护士的选择数量，调整为一个医生或者护士
+
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
 
           this.canConfigTeam = true
-          this.onSelectChange()
+          // this.onSelectChange()
           this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
-          this.onSelectChange()
+          // this.onSelectChange()
           this.getNewRsp()
           break
         case 3:

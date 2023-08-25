@@ -3,7 +3,9 @@
     <div class="div-service-phone">
       <div class="div-service-left-phone">
         <div class="draw-bottom">
-          <div class="bottom-top">{{ drawerTitle }}</div>
+          <div class="bottom-top">
+            <div style="margin-top: 15px">{{ drawerTitle }}</div>
+          </div>
           <div class="bottom-down">
             <div
               class="item-out"
@@ -68,11 +70,14 @@
           </div>
         </div>
 
-        <div class="table-operator" style="overflow: hidden;margin-top: 10px;">
-            <a-button icon="plus" style="float: right; margin-right: 0" @click="$refs.addDisease.addDis(queryParams.medicalId)"
-              >新增</a-button
-            >
-          </div>
+        <div class="table-operator" style="overflow: hidden; margin-top: 10px">
+          <a-button
+            icon="plus"
+            style="float: right; margin-right: 0"
+            @click="$refs.addDisease.addDis(queryParams.medicalId)"
+            >新增</a-button
+          >
+        </div>
 
         <s-table
           ref="table"
@@ -87,7 +92,9 @@
           :rowKey="(record) => record.code"
         >
           <span slot="action" slot-scope="text, record">
-            <a style="margin-right: 5px" @click="$refs.addDisease.editDis(record)"> <a-icon style="margin-right: 5px" type="edit"></a-icon>编辑</a>
+            <a style="margin-right: 5px" @click="$refs.addDisease.editDis(record)">
+              <a-icon style="margin-right: 5px" type="edit"></a-icon>编辑</a
+            >
             <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteDiseaseOut(record)">
               <a><a-icon style="margin-right: 5px" type="delete"></a-icon>删除</a>
             </a-popconfirm>
@@ -106,15 +113,11 @@ import { STable } from '@/components'
 import addDisease from './addDisease'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
-import {
-  gettreeMedicalSubjects,
-  getDiseaseTypePageList,
-  deleteDiseaseType,
-} from '@/api/modular/system/posManage'
+import { gettreeMedicalSubjects, getDiseaseTypePageList, deleteDiseaseType } from '@/api/modular/system/posManage'
 export default {
   components: {
     STable,
-      addDisease,
+    addDisease,
   },
   data() {
     return {
@@ -122,7 +125,7 @@ export default {
       drawerWidth: 300,
       drawerTitle: '学科',
       treeData: [],
-      adArryTemp:[],
+      adArryTemp: [],
       queryParams: {
         medicalId: '',
         typeName: '',
@@ -211,23 +214,22 @@ export default {
   },
 
   methods: {
-
-
     //删除病种
     deleteDiseaseOut(record) {
       this.confirmLoading = true
-      deleteDiseaseType(record.id).then((res)=>{
-        if(res.code==0){
-          this.$message.success('操作成功！')
-          this.handleOk()
-        }else {
+      deleteDiseaseType(record.id)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功！')
+            this.handleOk()
+          } else {
             this.$message.error('操作失败：' + res.message)
           }
-      }).finally((res) => {
+        })
+        .finally((res) => {
           this.confirmLoading = false
         })
     },
-
 
     /**
      * 第一次和重置的时候 isRest为true
@@ -263,7 +265,7 @@ export default {
       itemOut.isChecked = !itemOut.isChecked
       if (itemOut.isChecked) {
         var idArray = []
-        idArray.push(itemOut.subjectClassifyId)  //选中一级学科 需要把一级学科的id 带上
+        idArray.push(itemOut.subjectClassifyId) //选中一级学科 需要把一级学科的id 带上
         //当父节点切换之后需要切换tree的选中状态；需要改变请求条件
         this.treeData.forEach((itemOutTemp, indexOutTemp) => {
           if (indexOutTemp != indexOut) {
@@ -275,16 +277,15 @@ export default {
             //处理查询入参
             // this.queryParams.medicalId = itemOutTemp.subjectClassifyId
             this.$set(itemOutTemp, 'isChecked', true)
-         
+
             this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
               this.$set(itemChild, 'isChecked', true)
               idArray.push(itemChild.subjectClassifyId)
-             
             })
             this.adArryTemp = idArray
 
             let ids = idArray.join(',')
-              this.queryParams.medicalId = ids
+            this.queryParams.medicalId = ids
           }
         })
 
@@ -309,14 +310,11 @@ export default {
             this.$set(itemOutTemp, 'isChecked', false)
             this.treeData[indexOutTemp].children.forEach((itemChild, indexChild) => {
               this.$set(itemChild, 'isChecked', false)
-             
             })
           }
-
         })
-        this.queryParams.medicalId =''
+        this.queryParams.medicalId = ''
         this.adArryTemp = []
-
       }
 
       this.goSearch()
@@ -326,24 +324,23 @@ export default {
     onChangeIn(itemChild, indexChild, itemOut, indexOut) {
       itemChild.isChecked = !itemChild.isChecked
       if (itemChild.isChecked) {
-       
         //当父节点切换之后需要切换选中状态；需要改变列表数据；需求改变请求条件
         // if (this.queryParams.medicalId != itemOut.subjectClassifyId) {
-          this.treeData.forEach((itemOutTemp, indexOutTemp) => {
-            if (indexOutTemp != indexOut) {
-              this.$set(itemOutTemp, 'isChecked', false)
-              this.treeData[indexOutTemp].children.forEach((itemChildTemp, indexChildTemp) => {
-                this.$set(itemChildTemp, 'isChecked', false)
-              })
-            } else {
-            }
-          })
+        this.treeData.forEach((itemOutTemp, indexOutTemp) => {
+          if (indexOutTemp != indexOut) {
+            this.$set(itemOutTemp, 'isChecked', false)
+            this.treeData[indexOutTemp].children.forEach((itemChildTemp, indexChildTemp) => {
+              this.$set(itemChildTemp, 'isChecked', false)
+            })
+          } else {
+          }
+        })
 
-          // this.queryParams.medicalId = ''
-          // var idArray = []
-          this.adArryTemp.push(itemChild.subjectClassifyId)
-          this.queryParams.medicalId = this.adArryTemp.join(',')
-          // console.log("KKK111:",this.queryParams.medicalId)
+        // this.queryParams.medicalId = ''
+        // var idArray = []
+        this.adArryTemp.push(itemChild.subjectClassifyId)
+        this.queryParams.medicalId = this.adArryTemp.join(',')
+        // console.log("KKK111:",this.queryParams.medicalId)
         // } else {
         //   this.$set(itemChild, 'isChecked', true)
         // }
@@ -361,9 +358,7 @@ export default {
         })
         this.queryParams.medicalId = this.adArryTemp.join(',')
         // console.log("KKK222:",this.queryParams.medicalId)
-       
       }
-
 
       this.goSearch()
     },
@@ -406,13 +401,13 @@ export default {
         //初始化请求数据
         this.queryParams.medicalId = ''
         var idArray = []
-        idArray.push(this.treeData[0].subjectClassifyId)  //第一次进来 外出的id也要传入
+        idArray.push(this.treeData[0].subjectClassifyId) //第一次进来 外出的id也要传入
         this.treeData[0].children.forEach((item, index) => {
-          idArray.push(item.subjectClassifyId)  // 将里面的一次所有id传入
+          idArray.push(item.subjectClassifyId) // 将里面的一次所有id传入
           this.queryParams.medicalId = idArray.join(',')
         })
         this.adArryTemp = idArray
-        console.log("sss:",this.queryParams.medicalId)
+        console.log('sss:', this.queryParams.medicalId)
       } else {
         // debugger
         //非初始化逻辑，记住了以前选择的父层和子层；子层可能记住了，但是新的树里面没有了，要判断删除请求数据
@@ -470,7 +465,6 @@ export default {
 
       // this.initData(true)
     },
-
 
     /**
      *开始随访
@@ -546,10 +540,11 @@ export default {
 
   .div-service-left-phone {
     background-color: white;
-    padding: 20px 0 20px 20px;
+    padding: 20px 0 20px 0px;
     // margin:  20px 20px;
+    height: calc(100vh - 90px);
     float: left;
-    min-height: 100%;
+
     width: 19%;
     overflow: hidden;
 
@@ -559,21 +554,22 @@ export default {
       flex-direction: column;
       width: 100%;
       // height: 100%;
-      min-height: 100%;
+
       // justify-content: center;
       // align-items: center;
 
       .bottom-top {
         // color: #1890ff;
-        margin-top: 15px;
-        height: 10%;
+
+        height: 37px;
+
         margin-left: 10%;
         font-size: 14px;
       }
       .bottom-down {
         overflow-y: auto;
         margin-top: 10px;
-       height: 500px;
+        height: calc(100vh - 127px);
         margin-bottom: 10px;
         border-top: #e6e6e6 1px solid;
         // border-left: #e6e6e6 1px solid;

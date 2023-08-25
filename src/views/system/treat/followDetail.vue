@@ -97,30 +97,30 @@ export default {
         {
           title: '性别',
           dataIndex: 'sex',
-          width: 60,
+          // width: 60,
         },
 
         {
           title: '电话',
           dataIndex: 'phone',
-          width:120,
+          // width:120,
           ellipsis: true,
         },
         {
           title: '年龄',
           dataIndex: 'age',
-          width: 60,
+          // width: 60,
         },
         {
           title: '出院科室',
           dataIndex: 'cyksmc',
-          width: 150,
+          // width: 150,
           ellipsis: true,
         },
         {
           title: '住院号',
           dataIndex: 'zyh',
-          width: 80,
+          // width: 80,
           ellipsis: true,
         },
         {
@@ -133,7 +133,7 @@ export default {
         {
           title: '随访内容',
           dataIndex: 'questName',
-          // width: 150,
+          width: 150,
           ellipsis: true,
         },
         {
