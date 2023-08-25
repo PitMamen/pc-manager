@@ -170,6 +170,17 @@
           <span class="span-item-name">处方流转 :</span>
           <span class="span-item-value">{{ orderDetailDataList.flowHospitalName || '-' }}</span>
         </div>
+
+
+        <!-- <div class="div-pro-line">
+          <span class="span-item-name">挂号时间 :</span>
+          <span class="span-item-value">{{ orderDetailDataList.appointPeriod || '-' }}</span>
+        </div> -->
+
+
+
+
+
       </div>
     </div>
 

@@ -152,10 +152,10 @@
           <span class="span-item-value">{{ orderDetailDataList.remark || '-' }}</span>
         </div>
 
-        <!-- <div class="div-pro-line">
-            <span class="span-item-name">备注说明 :</span>
-            <span style="color: #409eff" class="span-item-value">请输入</span>
-          </div> -->
+        <div class="div-pro-line">
+            <span class="span-item-name">挂号时间 :</span>
+            <span class="span-item-value">{{ orderDetailDataList.appointPeriod || '-' }}</span>
+          </div>
       </div>
     </div>
 
