@@ -205,7 +205,6 @@ export default {
       loadData: (parameter) => {
         
         if (this.queryParams.settlementStatus == 1) {
-          console.log('111111111111111111111')
           this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
           return getOrderSettlementDetailForUserId(Object.assign(parameter, this.queryParamsTemp))
             .then((res) => {
@@ -232,9 +231,7 @@ export default {
               this.confirmLoading = false
             })
         }else{
-          console.log('3333333333333')
           this.queryParamsTemp = JSON.parse(JSON.stringify(this.requesDetail))
-          console.log("ddd:",this.queryParamsTemp)
           return getOrderSettlementDetailsList(Object.assign(parameter, this.queryParamsTemp))
             .then((res) => {
               if (res.code == 0 && res.data.records.length > 0) {
@@ -290,7 +287,6 @@ export default {
     initData() {
       this.record = JSON.parse(this.$route.query.dataStr)
       // console.log('FFFF:', this.record)
-      console.log('22222222222222222')
       this.queryParams.doctorName = this.record.doctorName
       this.docName = this.record.doctorName
       this.queryParams.doctorUserId = this.record.doctorUserId

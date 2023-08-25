@@ -560,7 +560,6 @@ export default {
       this.selectedRowKeys = selectedRowKeys
 
       if (selectedRowKeys.length == 0) {
-        console.log('清空！！！！！！')
         this.selectedRowKeys=[]
         this.clearSelectData()
         return
@@ -587,7 +586,7 @@ export default {
 
       this.selectedRows = RowsList
       // this.updateSelect()
-      console.log('vvvv:', selectedRowKeys, this.selectedRows)
+      // console.log('vvvv:', selectedRowKeys, this.selectedRows)
       // 计算
       this.clearSelectData()
       if (this.selectedRows && this.selectedRows.length > 0) {
@@ -635,7 +634,6 @@ export default {
 
     // 不予结算/结算 点击
     goSettlement(type) {
-      console.log("44444444:",this.selectedRows.length,this.selectedRows)
       if (this.selectedRows.length == 0) {
         this.$message.error('请先勾选需操作的账单!')
         return
@@ -694,7 +692,6 @@ export default {
     },
 
     handleOk() {
-      console.log('刷新数据1!')
       this.updateSelect()
       this.refresh()
     },

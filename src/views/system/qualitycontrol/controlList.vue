@@ -539,7 +539,7 @@ export default {
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-      console.log("vvv:",selectedRows.length,selectedRows)
+      // console.log("vvv:",selectedRows.length,selectedRows)
     },
 
     /**

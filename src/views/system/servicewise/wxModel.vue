@@ -151,7 +151,7 @@ export default {
             rows: res.data.records,
           }
           data.rows.forEach((item, index) => {
-            console.log('vvvv:', item.templateStatus)
+            // console.log('vvvv:', item.templateStatus)
             this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
             this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
           })
