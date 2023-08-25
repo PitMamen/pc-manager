@@ -467,7 +467,7 @@ export default {
         },
         {
           title: '用法',
-          dataIndex: 'drugUsemethod',
+          dataIndex: 'drugUsemethodName',
           align: 'right',
         },
         {
@@ -477,7 +477,7 @@ export default {
         },
         {
           title: '频次',
-          dataIndex: 'useFrequency',
+          dataIndex: 'useFrequencyName',
           align: 'center',
         },
       ],
