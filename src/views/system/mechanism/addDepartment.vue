@@ -140,6 +140,17 @@
       <span class="m-count">{{ queryParams.departmentIntroduce ? queryParams.departmentIntroduce.length : 0 }}/30</span>
     </div>
 
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
+      <span class="span-item-name" style="margin-top: 5px"> 所属学科 :</span>
+      <a-tree-select
+              v-model="queryParams.subjectCode"
+              style="min-width: 87%; margin-left: 5px;height: 30px;"
+              :tree-data="treeDataSub"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
+    </div>
 
     <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
       <span class="span-item-name" style="margin-top: 5px"> 管理病种 :</span>
@@ -173,6 +184,7 @@ import {
   getDictDataForCodeDepartType,
   getDiseaseTypePageList,
   getTdMedicalSubjectPageListForVer,
+  gettreeMedicalSubjects,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import E from 'wangeditor'
@@ -200,6 +212,7 @@ export default {
       ParentList: [],
       record: {},
       treeData: [],
+      treeDataSub: [],
       treeCodeData: [],
       findItemData: {},
       internetType: false,
@@ -217,6 +230,7 @@ export default {
         departmentId:'',
         managerDiseaseType: undefined,
         supervisionCode:undefined,
+        subjectCode:undefined,
       },
 
       labelCol: {
@@ -260,6 +274,7 @@ export default {
       this.getDictDataForCodeorgDepartTypeOut()
       this.getDiseaseTypePageListOut()
       this.getgetTdMedicalSubjectPageListForVerOut('')
+      this.gettreeMedicalSubjectsOut()
     },
 
 
@@ -469,6 +484,31 @@ export default {
         })
     },
 
+        //学科列表
+    gettreeMedicalSubjectsOut() {
+      gettreeMedicalSubjects().then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.subjectClassifyId)
+              this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'disabled', true)
+
+              item.children.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.subjectClassifyId)
+                this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'title', item1.subjectClassifyName)
+              })
+            })
+
+            this.treeDataSub = res.data
+          } else {
+            this.treeDataSub = res.data
+          }
+      })
+    },
+
     /***
      * 新增租户接口调用
      */
@@ -530,6 +570,7 @@ export default {
       this.queryParams.hisId = ''
       this.queryParams.supervisionCode = undefined
       this.queryParams.departmentType = undefined
+      this.queryParams.subjectCode = undefined
     },
 
     /**

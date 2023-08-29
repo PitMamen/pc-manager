@@ -152,6 +152,18 @@
     </div>
 
     <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
+      <span class="span-item-name" style="margin-top: 5px"> 所属学科 :</span>
+      <a-tree-select
+              v-model="queryParams.subjectCode"
+              style="min-width: 87%; margin-left: 5px;height: 30px;"
+              :tree-data="treeDataSub"
+              placeholder="请选择"
+              tree-default-expand-all
+            >
+            </a-tree-select>
+    </div>
+
+    <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
       <span class="span-item-name" style="margin-top: 5px"> 管理病种 :</span>
 
       <a-select
@@ -184,6 +196,7 @@ import {
   getDictDataForCodeDepartType,
   getDiseaseTypePageList,
   getTdMedicalSubjectPageListForVer,
+  gettreeMedicalSubjects,
 } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
@@ -214,6 +227,7 @@ export default {
       record: {},
       findItemData: {},
       treeData: [],
+      treeDataSub: [],
       diseaseTypeListData: [],
       queryParams: {
         departmentName: '',
@@ -228,6 +242,7 @@ export default {
         supervisionCode:undefined,
         departmentType: undefined,
         managerDiseaseType: undefined,
+        subjectCode:undefined,
       },
 
       labelCol: {
@@ -283,6 +298,7 @@ export default {
       this.queryParams.departmentType = record.department_type
       this.queryParams.departmentId = record.department_id
       this.queryParams.supervisionCode = record.supervision_code
+      this.queryParams.subjectCode = parseInt(record.subject_code)
       this.internetType = record.is_internet_hospital == 1
       this.isFullDiseaseType = record.is_full_disease == 1
       // this.getParentList()
@@ -290,6 +306,7 @@ export default {
       this.getDictDataForCodeorgDepartTypeOut()
       this.getDiseaseTypePageListOut()
       this.getgetTdMedicalSubjectPageListForVerOut('')
+      this.gettreeMedicalSubjectsOut()
     },
 
 
@@ -523,6 +540,31 @@ export default {
         })
     },
 
+            //学科列表
+            gettreeMedicalSubjectsOut() {
+      gettreeMedicalSubjects().then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item, index) => {
+              this.$set(item, 'key', item.subjectClassifyId)
+              this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'title', item.subjectClassifyName)
+              this.$set(item, 'disabled', true)
+
+              item.children.forEach((item1, index1) => {
+                this.$set(item1, 'key', item1.subjectClassifyId)
+                this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'title', item1.subjectClassifyName)
+              })
+            })
+
+            this.treeDataSub = res.data
+          } else {
+            this.treeDataSub = res.data
+          }
+      })
+    },
+
     /***
      * 修改科室接口调用
      */
@@ -557,6 +599,7 @@ export default {
       this.queryParams.hisId = ''
       this.queryParams.supervisionCode=undefined,
       this.queryParams.departmentType = undefined
+      this.queryParams.subjectCode = undefined
      
     },
 
