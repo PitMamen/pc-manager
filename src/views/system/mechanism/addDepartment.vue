@@ -489,15 +489,19 @@ export default {
       gettreeMedicalSubjects().then((res) => {
         if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.subjectClassifyId)
-              this.$set(item, 'value', item.subjectClassifyId)
+              // this.$set(item, 'key', item.subjectClassifyId)
+              // this.$set(item, 'value', item.subjectClassifyId)
+              this.$set(item, 'key', item.subjectCode)
+              this.$set(item, 'value', item.subjectCode)
               this.$set(item, 'title', item.subjectClassifyName)
               this.$set(item, 'title', item.subjectClassifyName)
               this.$set(item, 'disabled', true)
 
               item.children.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.subjectClassifyId)
-                this.$set(item1, 'value', item1.subjectClassifyId)
+                // this.$set(item1, 'key', item1.subjectClassifyId)
+                // this.$set(item1, 'value', item1.subjectClassifyId)
+                this.$set(item1, 'key', item1.subjectCode)
+                this.$set(item1, 'value', item1.subjectCode)
                 this.$set(item1, 'title', item1.subjectClassifyName)
               })
             })
