@@ -302,7 +302,13 @@
             </div>
 
             <!-- @select="onTaskExecTypeSelect" -->
-            <a-select class="mid-select-two" v-model="itemTask.taskExecType" allow-clear @select="onSelectExecType" placeholder="请选择执行周期">
+            <a-select
+              class="mid-select-two"
+              v-model="itemTask.taskExecType"
+              allow-clear
+              @select="onSelectExecType"
+              placeholder="请选择执行周期"
+            >
               <a-select-option v-for="(item, index) in taskExecData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -916,6 +922,9 @@ export default {
           } else if (item.jumpType == 2) {
             item.taskType = '2'
             this.$set(item, 'taskTypeName', '健康宣教')
+          } else if (item.jumpType == '5') {
+            item.taskType = '4'
+            this.$set(item, 'taskTypeName', '病历查阅')
           } else {
             item.taskType = '3'
             this.$set(item, 'taskTypeName', '消息提醒')
@@ -1196,10 +1205,9 @@ export default {
     },
 
     addMission() {
-
       let tempMessageType = undefined
       let cacheMessageType = Vue.ls.get('cache_messageType')
-      console.log('oooooooooo cacheMessageType',cacheMessageType)
+      console.log('oooooooooo cacheMessageType', cacheMessageType)
       let getOne = this.msgData.find((item) => item.value == cacheMessageType)
       if (cacheMessageType && getOne) {
         tempMessageType = cacheMessageType
@@ -1207,7 +1215,7 @@ export default {
 
       let tempExecType = undefined
       let cacheExecType = Vue.ls.get('cache_execType')
-      console.log('oooooooooo cacheExecType',cacheExecType)
+      console.log('oooooooooo cacheExecType', cacheExecType)
       let getOneExcute = this.msgData.find((item) => item.value == cacheExecType)
       if (cacheExecType && getOneExcute) {
         tempExecType = cacheExecType
@@ -1274,7 +1282,7 @@ export default {
       itemTask.messageContentId = ''
     },
 
-    onSelectExecType(typeId){
+    onSelectExecType(typeId) {
       console.log('onSelectExecType', typeId)
       Vue.ls.set('cache_execType', typeId)
     },
@@ -1310,6 +1318,9 @@ export default {
         } else if (chooseOne.jumpType == 2) {
           itemTask.taskType = '2'
           this.$set(itemTask, 'taskTypeName', '健康宣教')
+        } else if (chooseOne.jumpType == 5) {
+          itemTask.taskType = '4'
+          this.$set(itemTask, 'taskTypeName', '病历查阅')
         } else {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
@@ -1322,6 +1333,9 @@ export default {
 
     showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
+      if (itemTask.taskType = '4') {     ////查阅不病历 不做点击效果
+        return
+      }
       this.$refs.taskDetail.showDetail(itemTask)
     },
 

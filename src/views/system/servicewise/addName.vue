@@ -9,14 +9,16 @@
     :confirmLoading="false"
   >
     <a-card :bordered="false" class="card-top-pac1">
-      <div class="table-page-wrapper" style="margin-top: -1%;margin-left: 0px;">
+      <div class="table-page-wrapper" style="margin-top: -1%; margin-left: 0px">
         <div class="div-line-wrap">
-          <span class="span-item-name" style="width:70px !important"><span style="color: red">*</span> 名单描述 :</span>
+          <span class="span-item-name" style="width: 70px !important"
+            ><span style="color: red">*</span> 名单描述 :</span
+          >
           <a-input
+            style="width: 120px"
             v-model="metaName"
             class="span-item-value"
             :maxLength="30"
-           
             allow-clear
             placeholder="请输入内容"
             @blur="changeName()"
@@ -24,19 +26,37 @@
             @search="changeName()"
           />
 
-          <span class="span-item-name" style="margin-left: 30px;width:70px !important"><span style="color: red">*</span> 数据库表 :</span>
+          <span class="span-item-name" style="margin-left: 20px; width: 70px !important"
+            ><span style="color: red">*</span> 数据库表 :</span
+          >
           <a-input
             v-model="queryParam.databaseTableName"
             class="span-item-value"
             :maxLength="30"
-           
+            style="width: 120px"
             allow-clear
             @blur="focus()"
             @keyup.enter="focus()"
             @search="focus()"
           />
 
-          <span class="span-item-name" style="margin-left:  30px;width:100px !important"><span style="color: red">*</span> 支持分类查询 :</span>
+          <span class="span-item-name" style="margin-left: 20px; width: 70px !important"
+            ><span style="color: red">*</span> 同步病历 :</span
+          >
+
+          <a-select v-model="synCasetype" placeholder="请选择入组时需要同步的病历"  allow-clear >
+            <a-select-option
+              v-for="(item, index) in caseList"
+              :title="item.value"
+              :value="item.code"
+              :key="index"
+              >{{ item.value }}</a-select-option
+            >
+          </a-select>
+
+          <span class="span-item-name" style="margin-left: 20px; width: 100px !important"
+            ><span style="color: red">*</span> 支持分类查询 :</span
+          >
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
           <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->
@@ -49,7 +69,7 @@
         </div>
       </div>
       <a-table
-        style="margin-top: 2%; overflow-y: auto; height: 500px;width: 1000px;margin-right: 50px;"
+        style="margin-top: 2%; overflow-y: auto; height: 500px; width: 1000px; margin-right: 50px"
         ref="table"
         size="default"
         :scroll="{ y: 400, x: 0 }"
@@ -98,30 +118,29 @@
           }}</span>
         </span>
 
-
-       <!-- 显示序号 -->
+        <!-- 显示序号 -->
         <span slot="showIndex" slot-scope="text, record">
           <a-input
-           type="number"
-           :min="0"
-           :placeholder="请输入正整数"
-           :disabled="isDisable(record.show)"
-          v-if="record.defaultField != null && record.defaultField.value == 2"
+            type="number"
+            :min="0"
+            :placeholder="请输入正整数"
+            :disabled="isDisable(record.show)"
+            v-if="record.defaultField != null && record.defaultField.value == 2"
             v-model="record.showIndex"
             class="span-item-value"
             :maxLength="30"
-            style="display: inline-block; width:60px; margin-right: 20px;padding-right:0px"
+            style="display: inline-block; width: 60px; margin-right: 20px; padding-right: 0px"
           />
         </span>
 
         <!-- 查询条件 -->
         <span slot="queryCriteria" slot-scope="text, record">
-          <a-checkbox  v-if="record.defaultField != null && record.defaultField.value == 2" v-model="record.isQryC" @change="isQuery(record)"></a-checkbox>
+          <a-checkbox
+            v-if="record.defaultField != null && record.defaultField.value == 2"
+            v-model="record.isQryC"
+            @change="isQuery(record)"
+          ></a-checkbox>
         </span>
-
-        
-
-
       </a-table>
     </a-card>
   </a-modal>
@@ -129,7 +148,7 @@
 
 
 <script>
-import { checkDetail, updateMetaConfigure, saveMetaConfigure } from '@/api/modular/system/posManage'
+import { checkDetail, updateMetaConfigure, saveMetaConfigure, getBycode } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { number } from 'yargs'
 export default {
@@ -144,6 +163,8 @@ export default {
       loadData: [],
       id: '', //表名ID
       isOpen: false,
+      caseList: [],
+      synCasetype: undefined,
       record: {},
       metaName: '',
       queryParam: {
@@ -215,7 +236,6 @@ export default {
           width: 100,
         },
 
-
         {
           title: '查询条件',
           scopedSlots: { customRender: 'queryCriteria' },
@@ -239,6 +259,19 @@ export default {
       this.failShow = false
       this.queryParam.databaseTableName = null
       this.metaName = ''
+      ;(this.synCasetype = undefined), this.getBycodeOut()
+    },
+
+    // 同步病历
+    getBycodeOut() {
+      var request = {
+        code: 'CASE_DATA_TYPE',
+      }
+      getBycode(request).then((res) => {
+        if (res.code == 0) {
+          this.caseList = res.data
+        }
+      })
     },
 
     //根据输入的表名查询 数据
@@ -253,9 +286,9 @@ export default {
             var dataItem = res.data[0]
             this.id = dataItem.id
             this.queryParam.metaName = dataItem.metaName
-          
-            dataItem.detail = dataItem.detail.filter(function(item){
-              return  item.tableField!='id'
+
+            dataItem.detail = dataItem.detail.filter(function (item) {
+              return item.tableField != 'id'
             })
             dataItem.detail.forEach((item, index) => {
               this.$set(item, 'zdbm', item.tableField)
@@ -285,12 +318,12 @@ export default {
     },
 
     // 显示序号 输入框是否禁用
-    isDisable(value){
-     if(value==1){
-      return false
-     }else{
-      return true
-     }
+    isDisable(value) {
+      if (value == 1) {
+        return false
+      } else {
+        return true
+      }
     },
 
     //失去焦点 查询
@@ -324,23 +357,16 @@ export default {
       console.log('sss:', queryParam)
       // this.saveMetaConfigure(queryParam)
     },
-   
+
     /**
      * 显示序号
      */
-     inputIndex(record){
-
-     },
+    inputIndex(record) {},
 
     /**
      * 查询条件
      */
-     isQuery(record){
-
-     },
-
-
-
+    isQuery(record) {},
 
     /**
      * 选择档案字段
@@ -410,7 +436,7 @@ export default {
      */
     Enable() {
       this.isOpen = !this.isOpen
-      console.log("是否支持：",this.isOpen)
+      console.log('是否支持：', this.isOpen)
     },
 
     handleCancel() {
@@ -444,21 +470,21 @@ export default {
           item.fieldArchives = item.fieldArchives != null ? item.fieldArchives.description : '' //档案字段
         }
         // item.fieldArchives = item.fieldArchives  //档案字段
-        item.status=this.isOpen ? 1 : 2,
-        item.fieldType = item.fieldType.value //字段类型
+        ;(item.status = this.isOpen ? 1 : 2), (item.fieldType = item.fieldType.value) //字段类型
         item.showStatus = item.show ? 1 : 2 //是否显示
         item.uniqueIndexStatus = item.wysy ? 1 : 2 //是否唯一索引
         item.metaName = this.metaName //名单描述
-        item.showIndex = item.showIndex  //显示序号
-        item.isQryCondition = item.isQryC ? 1 : 0// 查询条件
+        item.showIndex = item.showIndex //显示序号
+        item.isQryCondition = item.isQryC ? 1 : 0 // 查询条件
       })
 
       let queryData = {
         status: this.isOpen ? 1 : 2, //状态
         databaseTableName: this.queryParam.databaseTableName,
         metaName: this.metaName,
-        qryFlag:  this.isOpen ? 1 : 0, //是否支持分类查询
+        qryFlag: this.isOpen ? 1 : 0, //是否支持分类查询
         detail: detailListTemp,
+        synCasetype: this.synCasetype
       }
       if (this.repeatclickFun()) {
         // console.log('执行调用---')
@@ -466,6 +492,12 @@ export default {
           this.$message.error('请输入名单描述!')
           return
         }
+        
+        if (!queryData.synCasetype||!this.synCasetype) {
+          this.$message.error('请选择需要同步的病历!')
+          return
+        }
+
         this.saveMetaConfigureOut(queryData)
       } else {
         this.$message.error('请勿重复操作!')
@@ -494,39 +526,35 @@ export default {
 </script>
 
 <style lang="less" scoped>
- 
+
 
 .table-page-wrapper {
-  /deep/.ant-spin-nested-loading{
+  /deep/.ant-spin-nested-loading {
     margin-right: 50px !important;
   }
   .div-line-wrap {
-      width: 100%;
-      overflow: hidden;
-      margin-bottom: 20px;
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 20px;
 
-     
-
-        .span-item-name {
-          display: inline-block;
-          color: #000;
-          font-size: 12px;
-          text-align: left;
-          margin-right: 10px;
-         
-        }
-        .span-item-value {
-          width: 200px;
-          color: #333;
-          text-align: left;
-          font-size: 12px;
-          display: inline-block;
-        }
-        .ant-select {
-          width: 295px !important;
-        }
-      
+    .span-item-name {
+      display: inline-block;
+      color: #000;
+      font-size: 12px;
+      text-align: left;
+      margin-right: 10px;
     }
+    .span-item-value {
+      width: 200px;
+      color: #333;
+      text-align: left;
+      font-size: 12px;
+      display: inline-block;
+    }
+    .ant-select {
+      width: 205px !important;
+    }
+  }
   .ant-form-inline {
     .ant-form-item {
       display: flex;
@@ -561,7 +589,7 @@ export default {
 <style lang="less">
 .card-top-pac1 {
   .ant-spin-nested-loading {
-      margin-right: 55px !important;
+    margin-right: 55px !important;
   }
 }
 </style>

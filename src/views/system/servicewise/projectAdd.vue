@@ -22,7 +22,12 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 随访类型 :</span>
-            <a-select v-model="projectData.basePlan.followType" @select="onSelectType" allow-clear placeholder="请选择随访类型">
+            <a-select
+              v-model="projectData.basePlan.followType"
+              @select="onSelectType"
+              allow-clear
+              placeholder="请选择随访类型"
+            >
               <a-select-option v-for="(item, index) in typeData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -298,7 +303,13 @@
               </a-select> -->
             </div>
             <!-- @select="onTaskExecTypeSelect" -->
-            <a-select class="mid-select-two" v-model="itemTask.taskExecType" @select="onSelectExecType" allow-clear placeholder="请选择执行周期">
+            <a-select
+              class="mid-select-two"
+              v-model="itemTask.taskExecType"
+              @select="onSelectExecType"
+              allow-clear
+              placeholder="请选择执行周期"
+            >
               <a-select-option v-for="(item, index) in taskExecData" :key="index" :value="item.value">{{
                 item.description
               }}</a-select-option>
@@ -642,14 +653,14 @@ export default {
         this.sourceData = res.data
         //默认值需求  默认来源名单
         let cacheId = Vue.ls.get('cache_project_sourceId')
-        console.log('oooooooooo cacheSourceId',cacheId)
+        console.log('oooooooooo cacheSourceId', cacheId)
         debugger
         let getOne = this.sourceData.find((item) => item.value == cacheId)
         if (cacheId && getOne) {
           this.projectData.basePlan.metaConfigureId = cacheId
           // this.onSourceSelect()
           this.dateFieldsOut()
-        }else{
+        } else {
           if (this.projectData.tasks.length == 0) {
             this.addMission()
           }
@@ -658,7 +669,6 @@ export default {
         this.isAgain = true //默认勾选重新匹配
         this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0
         //选择来源名单后，必须调取数据了
-
       }
     })
     operationTypes().then((res) => {
@@ -981,10 +991,9 @@ export default {
     },
 
     addMission() {
-
       let tempMessageType = undefined
       let cacheMessageType = Vue.ls.get('cache_messageType')
-      console.log('oooooooooo cacheMessageType',cacheMessageType)
+      console.log('oooooooooo cacheMessageType', cacheMessageType)
       let getOne = this.msgData.find((item) => item.value == cacheMessageType)
       if (cacheMessageType && getOne) {
         tempMessageType = cacheMessageType
@@ -992,7 +1001,7 @@ export default {
 
       let tempExecType = undefined
       let cacheExecType = Vue.ls.get('cache_execType')
-      console.log('oooooooooo cacheExecType',cacheExecType)
+      console.log('oooooooooo cacheExecType', cacheExecType)
       let getOneExcute = this.msgData.find((item) => item.value == cacheExecType)
       if (cacheExecType && getOneExcute) {
         tempExecType = cacheExecType
@@ -1012,14 +1021,14 @@ export default {
         metaConfigureDetailId: undefined,
         // timeUnit: this.timeUnitTypesData[0].value,
         timeUnit: undefined,
-        itemTemplateList:[],
+        itemTemplateList: [],
       })
 
       this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
     },
 
-    onSelectType(typeId){
-      console.log('oooooooooo',typeId)
+    onSelectType(typeId) {
+      console.log('oooooooooo', typeId)
       Vue.ls.set('cache_project_type', typeId)
     },
 
@@ -1027,7 +1036,7 @@ export default {
      * 名单来源选择后需要请求 名单过滤字段列表 时间名滤字段列表
      */
     onSourceSelect(sourceId) {
-      console.log('ppppppppp sourceId set',sourceId)
+      console.log('ppppppppp sourceId set', sourceId)
       Vue.ls.set('cache_project_sourceId', sourceId)
       this.dateFieldsOut()
     },
@@ -1068,7 +1077,7 @@ export default {
       itemTask.messageContentId = ''
     },
 
-    onSelectExecType(typeId){
+    onSelectExecType(typeId) {
       console.log('onSelectExecType', typeId)
       Vue.ls.set('cache_execType', typeId)
     },
@@ -1104,6 +1113,9 @@ export default {
         } else if (chooseOne.jumpType == 2) {
           itemTask.taskType = '2'
           this.$set(itemTask, 'taskTypeName', '健康宣教')
+        } else if (item.jumpType == '5') {
+          itemTask.taskType = '4'
+          this.$set(item, 'taskTypeName', '病历查阅')
         } else {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
@@ -1134,6 +1146,9 @@ export default {
 
     showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
+      if (itemTask.taskType = '4') {   //查阅不病历 不做点击效果
+        return
+      }
       this.$refs.taskDetail.showDetail(itemTask)
     },
 

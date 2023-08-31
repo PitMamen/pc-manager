@@ -16,23 +16,44 @@
             v-model="metaName"
             class="span-item-value"
             :maxLength="30"
-           
+            style="width: 120px"
             allow-clear
             placeholder="请输入内容"
             @blur="focus(record)"
           />
 
-          <span class="span-item-name" style="margin-left: 30px;width:70px !important"><span style="color: red">*</span> 数据库表 :</span>
+          <span class="span-item-name" style="margin-left: 20px;width:70px !important"><span style="color: red">*</span> 数据库表 :</span>
           <a-input
             v-model="record.databaseTableName"
             class="span-item-value"
             disabled
             :maxLength="30"
-            
+            style="width: 120px"
             allow-clear
           />
 
-          <span class="span-item-name" style="margin-left: 30px;width:100px !important"><span style="color: red">*</span> 支持分类查询 :</span>
+          <span class="span-item-name" style="margin-left: 20px; width: 70px !important"
+            ><span style="color: red">*</span> 同步病历 :</span
+          >
+
+          <a-select v-model="synCasetype" placeholder="请选择入组时需要同步的病历"  allow-clear >
+            <a-select-option
+              v-for="(item, index) in caseList"
+              :title="item.value"
+              :value="item.code"
+              :key="index"
+              >{{ item.value }}</a-select-option
+            >
+          </a-select>
+
+
+
+
+
+
+
+
+          <span class="span-item-name" style="margin-left: 20px;width:100px !important"><span style="color: red">*</span> 支持分类查询 :</span>
           <!-- <a-popconfirm class="switch-button" style="margin-left: 1%"> -->
           <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" />
           <!-- </a-popconfirm> -->
@@ -120,7 +141,7 @@
 
 
 <script>
-import { checkDetail, updateMetaConfigure, saveMetaConfigure } from '@/api/modular/system/posManage'
+import { checkDetail, updateMetaConfigure, saveMetaConfigure,getBycode } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 export default {
   components: {
@@ -130,6 +151,8 @@ export default {
     return {
       clickTtime: new Date().getTime(),
       loadData: [],
+      caseList:[],
+      synCasetype:undefined,
       id: '', //表名ID
       isOpen: false,
       record: {},
@@ -137,6 +160,7 @@ export default {
       queryParams: {
         databaseTableName: '',
         metaName: '',
+        id:'',
       },
       labelCol: {
         xs: { span: 24 },
@@ -227,13 +251,17 @@ export default {
       this.record = record
       this.metaName = record.metaName
       this.id = record.id
+      this.synCasetype = undefined
       if( !record.qryFlag){
         this.isOpen = 0
       }else{
         this.isOpen = record.qryFlag.value==1
       }
+      this.getBycodeOut()
 
       this.queryParams.databaseTableName = record.databaseTableName
+      this.queryParams.id = record.id
+      this.queryParams.metaName = record.metaName
       // this.queryParams.metaName = record.metaName
 
       console.log('PPPPPPP:', this.isOpen )
@@ -256,6 +284,7 @@ export default {
           // return dataItem.detail
           this.detailList = dataItem.detail
           this.loadData = dataItem.detail
+          this.synCasetype = dataItem.synCasetype.toString()
         } else {
           //重置数据
           this.detailList = null
@@ -263,6 +292,19 @@ export default {
         }
 
         return []
+      })
+    },
+
+
+    // 同步病历
+    getBycodeOut() {
+      var request = {
+        code: 'CASE_DATA_TYPE',
+      }
+      getBycode(request).then((res) => {
+        if (res.code == 0) {
+          this.caseList = res.data
+        }
       })
     },
 
@@ -439,6 +481,7 @@ export default {
       let queryData = {
         id: this.id,
         detail: detailListTemp,
+        synCasetype:this.synCasetype
       }
       if (this.repeatclickFun()) {
         // console.log('执行调用2222---')
@@ -493,7 +536,7 @@ export default {
           display: inline-block;
         }
         .ant-select {
-          width: 295px !important;
+          width: 205px !important;
         }
       
     }

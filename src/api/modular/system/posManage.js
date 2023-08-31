@@ -5252,3 +5252,34 @@ export function settlement(data) {
     data: data,
   })
 }
+
+
+// 同步病历
+export function getBycode(data) {
+  return axios({
+    url: '/info-api/sysDictData/getByCode',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+// 实名审核列表
+export function getTemporaryPageList(data) {
+  return axios({
+    url: '/account-api/tdUserInfoTemporary/getTemporaryPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 审核
+export function temporaryAudit(data) {
+  return axios({
+    url: '/account-api/tdUserInfoTemporary/temporaryAudit',
+    method: 'post',
+    data: data,
+  })
+}

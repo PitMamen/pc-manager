@@ -131,12 +131,13 @@
 
               <a-radio-group
                 name="radioGroup"
-                style="width: 70%; margin-left: 0%"
+                style="width: 75%; margin-left: 0%"
                 v-model="radioTyPe"
                 @change="radioChange"
               >
                 <a-radio :value="0"> 问卷 </a-radio>
                 <a-radio :value="1" style="margin-left: 16px"> 宣教 </a-radio>
+                <a-radio :value="4" style="margin-left: 16px"> 最新病历 </a-radio>
                 <a-radio :value="2" style="margin-left: 16px"> 不跳转任何内容 </a-radio>
                 <a-radio :value="3" style="margin-left: 16px"> 跳转外网地址 </a-radio>
               </a-radio-group>
@@ -185,6 +186,30 @@
               />
             </div>
           </div>
+
+
+
+          <div class="div-line-wrap" v-show="radioTyPe === 4">
+            <div class="div-total-one">
+              <span class="span-item-name">病历类型 :</span>
+              <a-select v-model="synCasetype" placeholder="请选择病历类型"  allow-clear >
+            <a-select-option
+              v-for="(item, index) in caseList"
+              :title="item.value"
+              :value="item.code"
+              :key="index"
+              >{{ item.value }}</a-select-option
+            >
+          </a-select>
+            </div>
+          </div>
+
+
+
+
+
+
+
         </div>
 
     
@@ -204,7 +229,8 @@ import {
   qryMetaConfigureDetail,
   addWxTemplate,
   getWxTemplateById,
-  modifyWxTemplate
+  modifyWxTemplate,
+  getBycode
 } from '@/api/modular/system/posManage'
 import addQuestion from '../package/addQuestion'
 import addTeach from '../package/addTeach'
@@ -213,6 +239,8 @@ export default {
   components: { addQuestion, addTeach },
   data() {
     return {
+      synCasetype:undefined,
+      caseList:[],
       visible: false,
       confirmLoading: false,
       key: '',
@@ -244,6 +272,7 @@ export default {
   },
   methods: {
     clearData() {
+      this.synCasetype=undefined,
       this.id=''
       this.wxgzhData = []
       this.checkData = {
@@ -275,6 +304,17 @@ export default {
       }
     },
 
+    getBycodeOut() {
+      var request = {
+        code: 'CASE_DATA_TYPE',
+      }
+      getBycode(request).then((res) => {
+        if (res.code == 0) {
+          this.caseList = res.data
+        }
+      })
+    },
+
     //新增
     addModel() {
       this.clearData()
@@ -287,7 +327,6 @@ export default {
           this.wxgzhData = res.data
           // this.wxgzhData.shift()  去重的测试数据，因测试环境后台有重复数据
           //默认值需求  默认公众号
-          debugger
           let cacheId = Vue.ls.get('cache_wxAppId')
           let getOne = this.wxgzhData.find((item) => item.wxAppId == cacheId)
           if (cacheId && getOne) {
@@ -313,6 +352,11 @@ export default {
           this.danandataList = dataList
         }
       })
+
+      this.getBycodeOut()
+
+
+
     },
      //修改  详情
      checkModel(id){
@@ -320,7 +364,7 @@ export default {
       this.visible = true
       this.id = id
       this.confirmLoading=true
-     
+      this.getBycodeOut()
       //获取公众号列表
       getWxConfigureList({}).then((res) => {
         if (res.code == 0) {
@@ -353,6 +397,8 @@ export default {
                 } else if (this.radioTyPe == 3) {
                   this.$set(this.checkData, 'navigatorContent', res.data.jumpValue)
                   // this.checkData.navigatorContent =res.data.jumpValue
+                }else if(this.radioTyPe==4){
+                   this.synCasetype = res.data.jumpId.toString()  //特殊处理  如果是 病历类型(radioTyPe==4) 病历类型取接口的 jumpId
                 }
 
                 this.fieldList = JSON.parse(res.data.templateParamJson)
@@ -578,6 +624,13 @@ export default {
         }
         jumpValue = this.checkData.navigatorContent
         jumpTitle = this.checkData.navigatorContent
+      }else if(this.radioTyPe == 4){
+        if (!this.synCasetype) {
+          this.$message.error('请选择病历类型')
+          return
+        }
+        jumpValue = this.synCasetype
+        jumpId = this.synCasetype   //特殊处理  如果选中的是 病历类型 将选择的病历赋值给 jumpId  查看的时候也是取这个字段
       }
 
       var postData = {
@@ -601,7 +654,6 @@ export default {
         this.modify(postData)
       } else {
         //新增
-        debugger
         this.add(postData)
         //缓存需求   缓存模版内容与模版id需要一致
         let data = {templateId:this.checkData.templateId,fieldList:this.fieldList}
@@ -775,7 +827,7 @@ export default {
         }
 
         .ant-select {
-          width: 22.5% !important;
+          width: 67.5% !important;
           margin-left: 0% !important;
         }
         .ant-radio-wrapper {
