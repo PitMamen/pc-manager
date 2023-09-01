@@ -89,55 +89,94 @@
             </div>
           </div>
 
-          <div class="item-idcard" style="margin-top: 40px">
+          <div class="item-idcard" style="margin-top: 15px">
             <!-- 身份证照片 -->
             <div style="margin-left: 10px; color: #333">身份证照片：</div>
 
+            <a-upload
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="idcardZList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
 
             <a-upload
               :disabled="true"
-                :showUploadList="{ showRemoveIcon: false }"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="idcardZList"
-                accept="image/jpeg,image/png,image/jpg"
-              >
-              </a-upload>
-
-
-
-              <a-upload
-              :disabled="true"
-                :showUploadList="{ showRemoveIcon: false }"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="idcardFList"
-                accept="image/jpeg,image/png,image/jpg"
-              >
-              </a-upload>
-
-
-
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="idcardFList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
 
             <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.idcardZ" /> -->
             <!-- <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.idcardF" /> -->
 
             <!-- 职称照片 -->
-            <div style="margin-left: 20%; color: #333">职称照片：</div>
-            <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.titleZ" />
+            <div style="margin-left: 3%; color: #333">职称照片：</div>
+
+            <a-upload
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="titleZList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
+
+            <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.titleZ" /> -->
           </div>
 
-          <div class="item-idcard" style="margin-top: 40px">
+          <div class="item-idcard" style="margin-top: 15px">
             <!-- 资格证照片 -->
             <div style="margin-left: 10px; color: #333">资格证照片：</div>
-            <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.qualificationZ" />
-            <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.qualificationF" />
+
+            <a-upload
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="qualificationZList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
+
+            <a-upload
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="qualificationFList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
+
+            <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.qualificationZ" /> -->
+            <!-- <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.qualificationF" /> -->
 
             <!-- 执业证照片 -->
-            <div style="margin-left: 20%; color: #333">执业证照片：</div>
-            <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.practiceZ" />
+            <div style="margin-left: 3%; color: #333">执业证照片：</div>
 
-            <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.practiceF" />
+            <a-upload
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="practiceZList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
+
+            <a-upload
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="practiceFList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
+
+            <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.practiceZ" /> -->
+            <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.practiceF" /> -->
           </div>
         </div>
       </div>
@@ -230,14 +269,7 @@
   
   
   <script>
-import {
-  getUserExternalInfo,
-  getSavedUserTagsInfo,
-  checkPre,
-  preDetail,
-  checkCaPassword,
-  temporaryAudit,
-} from '@/api/modular/system/posManage'
+import { temporaryAudit } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -249,6 +281,11 @@ export default {
       titleSmall: '输入密码',
       idcardZList: [],
       idcardFList: [],
+      titleZList: [],
+      qualificationZList: [],
+      qualificationFList: [],
+      practiceZList: [],
+      practiceFList: [],
       previsible: false,
       user: {},
       record: {},
@@ -300,25 +337,87 @@ export default {
       this.record = record
       this.queryParams.userId = record.userId
       this.queryParams.authSource = record.authSource
-      this.idcardZList.push({
-        uid: '-1',
-        name: '照片',
-        status: 'done',
-        // url: record.idcardZ,
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      })
 
+      this.idcardZList = []
+      this.idcardFList = []
+      this.titleZList = []
+      this.qualificationZList = []
+      this.qualificationFList = []
+      this.practiceZList = []
+      this.practiceFList = []
 
-      this.idcardFList.push({
-        uid: '-1',
-        name: '照片',
-        status: 'done',
-        // url: record.idcardZ,
-        url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-      })
+      if (record.idcardZ) {
+        this.idcardZList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.idcardF,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
 
+      if (record.idcardF) {
+        this.idcardFList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.idcardF,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
 
+      if (record.titleZ) {
+        //   职称证
+        this.titleZList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.titleZ,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
 
+      if (record.qualificationZ) {
+        // 资格证
+        this.qualificationZList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.qualificationZ,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
+
+      if (record.qualificationF) {
+        this.qualificationFList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.qualificationF,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
+
+      if (record.practiceZ) {
+        //   执业证
+        this.practiceZList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.practiceZ,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
+
+      if (record.practiceF) {
+        this.practiceFList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          // url: record.practiceF,
+          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
     },
 
     lookview(record) {
@@ -364,39 +463,34 @@ export default {
       this.temporaryAuditOut()
     },
 
-    cancelcheckCaPassword() {
-      this.previsible = false
-    },
+    // cancelcheckCaPassword() {
+    //   this.previsible = false
+    // },
 
-    handlecheckCaPassword() {
-      checkCaPassword({ password: this.inputPassword }).then((res) => {
-        if (res.code == 0) {
-          this.previsible = false
-          this.checkPreOut() //密码正确后 提交审核
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-      // this.previsible = false
-    },
+    // handlecheckCaPassword() {
+    //   checkCaPassword({ password: this.inputPassword }).then((res) => {
+    //     if (res.code == 0) {
+    //       this.previsible = false
+    //       this.checkPreOut() //密码正确后 提交审核
+    //     } else {
+    //       this.$message.error(res.message)
+    //     }
+    //   })
+    // },
   },
 }
 </script>
 
 
 <style lang="less" scoped>
-.ant-upload-picture-card-wrapper{
-    display: inline-block;
-    zoom: 1;
-    width: 100px;
+.ant-upload-picture-card-wrapper {
+  display: inline-block;
+  zoom: 1;
+  width: 100px;
 }
 </style>
   
   <style lang="less">
-
-
-
-
 .midline {
   height: 100%;
   width: 1px;
@@ -668,7 +762,7 @@ export default {
       padding-left: 8px;
       flex-direction: row;
       margin-left: 30px;
-      margin-top: 20px;
+      margin-top: 8px;
 
       .div-pro-line {
         width: 30%;
@@ -706,9 +800,9 @@ export default {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      width: 100%;
+      width: 95%;
       margin-left: 25px;
-      margin-bottom: 8px;
+      //   margin-bottom: 8px;
     }
   }
 
