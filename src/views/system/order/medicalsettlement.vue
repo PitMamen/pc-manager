@@ -935,7 +935,7 @@ export default {
       color: #000;
     }
   }
-
+}
 
 .div-radio {
   display: flex;

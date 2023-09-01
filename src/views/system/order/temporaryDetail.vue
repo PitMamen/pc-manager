@@ -61,15 +61,15 @@
     </div>
 
 
-    <div class="div-radio">
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 1 }" @click="onRadioClick(1)">
-        <span style="margin-left: 3px">待结算</span>
+    <div class="div-radio" style="margin-bottom: 10px;">
+      <div class="radio-item" :class="{ 'checked-btn': currentTab == 1 }" @click="onRadioClick(1)">
+        <span style="margin-left: 3px">全部</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 2 }" @click="onRadioClick(2)">
-        <span style="margin-left: 3px">已结算</span>
+      <div class="radio-item" :class="{ 'checked-btn': currentTab == 2 }" @click="onRadioClick(2)">
+        <span style="margin-left: 3px">结算</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 3 }" @click="onRadioClick(3)">
-        <span style="margin-left: 3px">不予结算</span>
+      <div class="radio-item" :class="{ 'checked-btn': currentTab == 3 }" @click="onRadioClick(3)">
+        <span style="margin-left: 3px">提现</span>
       </div>
     </div>
 
