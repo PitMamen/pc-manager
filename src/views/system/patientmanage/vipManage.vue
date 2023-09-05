@@ -5,7 +5,7 @@
         class="ant-tabs-tab-active"
         v-for="(itemTab, indexTab) in tabDatas"
         :tab="itemTab.metaName"
-        :key="itemTab.databaseTableName"
+        :key="itemTab.id"
       >
         <div style="height: 1px"></div>
       </a-tab-pane>
@@ -87,7 +87,7 @@
         <!-- <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
         <!-- <div class="clearfix"> -->
         <!-- @preview="handlePreview" -->
-        <!--               list-type="picture-card"  accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" --> 
+        <!--               list-type="picture-card"  accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -->
         <a-upload
           :action="actionUrl"
           :multiple="false"
@@ -378,8 +378,6 @@ export default {
     this.getDepartmentSelectList(undefined)
   },
   methods: {
-
-
     // beforeUpload(file) {
     //   console.log("HHHH",file)
     //   const isJpgOrPng = file.type === 'xlsx'||file.type ==='xls'
@@ -390,8 +388,8 @@ export default {
     //   return true
     // },
 
-   //下载模板
-   downLoadModalOut() {
+    //下载模板
+    downLoadModalOut() {
       let url
       if (currentEnv == 'test') {
         //测试环境
@@ -471,13 +469,17 @@ export default {
         this.getDepartmentSelectList(undefined)
       }
     },
-    chanage(tableName) {
-      // console.log("VVVV:",tableName)
-      this.tableName = tableName
-      this.queryData.databaseTableName = tableName
-      this.queryTableData.databaseTableName = tableName
-      this.refreshData()
-      this.getTableClumns()
+    chanage(id) {
+      console.log('VVVV:', id)
+      const tableName = this.tabDatas.find((item) => id === item.id)
+      console.log('VVVV111:', tableName.databaseTableName)
+      if (tableName) {
+        this.tableName = tableName.databaseTableName
+        this.queryData.databaseTableName = tableName.databaseTableName
+        this.queryTableData.databaseTableName = tableName.databaseTableName
+        this.refreshData()
+        this.getTableClumns()
+      }
     },
 
     /**

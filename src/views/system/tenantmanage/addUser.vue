@@ -840,12 +840,17 @@ export default {
       this.getProfessionalTitles()
     },
     //修改
-    editModel(record) {
+    editModel(record,type) {
       console.log('cccc', record)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
-      this.currentTab = 'base'
+      if (type=='signing') {
+        this.currentTab = type
+      }else{
+        this.currentTab = 'base'
+
+      }
       this.confirmLoading = false
       this.record = record
       this.photoListCheck.userId = record.userId

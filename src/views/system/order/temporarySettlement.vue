@@ -42,13 +42,27 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goExamine(record)">交易详情</a>
       </span>
+
+      <span slot="userNameaction" slot-scope="text, record">
+        <a @click="$refs.addUser.editModel(record,'signing')">{{record.userName}}</a>
+      </span>
+
+
+      
+
+
+
     </s-table>
+
+    <add-User ref="addUser" @ok="handleOk" />
+
   </a-card>
 </template>
   
   
   <script>
 import { STable } from '@/components'
+import addUser from '../tenantmanage/addUser'
 
 import {
   queryHospitalList,
@@ -62,6 +76,7 @@ import Vue from 'vue'
 export default {
   components: {
     STable,
+    addUser
   },
   data() {
     return {
@@ -111,7 +126,8 @@ export default {
         },
         {
           title: '医生姓名',
-          dataIndex: 'userSex',
+          dataIndex: 'userName',
+          scopedSlots: { customRender: 'userNameaction' },
         },
         {
           title: '身份证号',

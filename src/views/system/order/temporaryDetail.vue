@@ -130,7 +130,7 @@ export default {
       status: '',
       time: '',
       docName: '',
-      currentTab: 0,
+      currentTab: 1,
       numberData: {
         all: 0,
         wechat: 0,

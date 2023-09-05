@@ -33,7 +33,7 @@
               />
             </div>
 
-            <div class="div-pro-line">
+            <div class="div-pro-line" style="margin-left: -25px !important;">
               <span class="span-item-name">姓名 :</span>
               <span class="span-item-value">{{ record.userName }}</span>
             </div>
@@ -50,7 +50,7 @@
               <span class="span-item-value" style="width: 48%">{{ record.phone }}</span>
             </div>
 
-            <div class="div-pro-line" style="margin-left: 8%; margin-top: -2%">
+            <div class="div-pro-line" style=" margin-top: -2%">
               <span class="span-item-name"> 类型 :</span>
               <span class="span-item-value" style="width: 70%">{{ record.personType }}</span>
             </div>
@@ -67,7 +67,7 @@
               <span class="span-item-value" style="width: 48%">{{ record.hospitalName }}</span>
             </div>
 
-            <div class="div-pro-line" style="margin-left: 4%">
+            <div class="div-pro-line" >
               <span class="span-item-name">所属科室 :</span>
               <span class="span-item-value" style="width: 48%">{{ record.departmentName }}</span>
             </div>
@@ -232,7 +232,7 @@
             </div>
           </div>
 
-          <div class="div-service-user">
+          <div v-if="record.isLook" class="div-service-user">
             <span style="color: #000">审核人：</span>
             <span style="color: #000">{{ record.updateName }}</span>
           </div>
@@ -244,7 +244,7 @@
         </div>
       </div>
     </div>
-    <a-modal
+    <!-- <a-modal
       :title="titleSmall"
       :width="300"
       :height="600"
@@ -263,7 +263,7 @@
         <div style="margin-top: 5px">验证密码：</div>
         <a-input allow-clear placeholder="请输入密码" style="width: 180px" />
       </div>
-    </a-modal>
+    </a-modal> -->
   </a-modal>
 </template>
   
@@ -309,6 +309,7 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
+    console.log("ddd:",this.user)
   },
   methods: {
     radioChange(e) {
@@ -351,8 +352,8 @@ export default {
           uid: '-1',
           name: '照片',
           status: 'done',
-          // url: record.idcardF,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          // url: record.idcardZ,
+          url: record.idcardZ,
         })
       }
 
@@ -362,7 +363,7 @@ export default {
           name: '照片',
           status: 'done',
           // url: record.idcardF,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          url: record.idcardF,
         })
       }
 
@@ -372,8 +373,8 @@ export default {
           uid: '-1',
           name: '照片',
           status: 'done',
-          // url: record.titleZ,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          url: record.titleZ,
+          // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         })
       }
 
@@ -383,8 +384,8 @@ export default {
           uid: '-1',
           name: '照片',
           status: 'done',
-          // url: record.qualificationZ,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          url: record.qualificationZ,
+          // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         })
       }
 
@@ -393,8 +394,8 @@ export default {
           uid: '-1',
           name: '照片',
           status: 'done',
-          // url: record.qualificationF,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          url: record.qualificationF,
+          // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         })
       }
 
@@ -404,8 +405,8 @@ export default {
           uid: '-1',
           name: '照片',
           status: 'done',
-          // url: record.practiceZ,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          url: record.practiceZ,
+          // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         })
       }
 
@@ -414,8 +415,8 @@ export default {
           uid: '-1',
           name: '照片',
           status: 'done',
-          // url: record.practiceF,
-          url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+          url: record.practiceF,
+          // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         })
       }
     },
@@ -603,7 +604,7 @@ export default {
 
 .div-appoint-detail-check {
   background-color: white;
-  width: 88%;
+  width: 88% !important;
   height: 97%;
   overflow: hidden;
   display: flex;

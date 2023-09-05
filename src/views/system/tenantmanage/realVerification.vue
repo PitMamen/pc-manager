@@ -105,22 +105,26 @@ export default {
       idArr: [],
       queryParams: {
         hospitalCode: undefined, //所属机构代码
-        authStatus: undefined, //（1\3\9）
+        authStatus: '', //（1\3\9）
         authSource: undefined, //（1\2）
         queryStr: '',
       },
       selects: [
+      {
+          id: '',
+          name: '全部',
+        },
         {
-          id: 1,
+          id: '1',
           name: '待审核',
         },
         {
-          id: 9,
-          name: '通过',
+          id: '3',
+          name: '不通过',
         },
         {
-          id: 3,
-          name: '不通过',
+          id: '9',
+          name: '通过',
         },
       ],
 
@@ -419,7 +423,7 @@ export default {
 
       this.queryParams.hospitalCode = undefined
       this.queryParams.queryStr = ''
-      this.queryParams.authStatus = undefined
+      this.queryParams.authStatus = ''
       this.queryParams.authSource = undefined
 
       this.$refs.table.refresh(true)

@@ -245,11 +245,54 @@
           <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
         </div>
 
+
+        <!-- 开方科室 -->
+        <div class="div-pro-line">
+          <span class="span-item-name">开方科室 :</span>
+          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+        </div>
+
+
+
+
         <div class="div-pro-line">
           <span class="span-item-name">总计 :</span>
           <span class="span-item-value">{{ medicalInfoList.payTotal || '-' }}</span>
         </div>
       </div>
+
+<!-- sssss -->
+
+<div class="div-up-content">
+        <div class="div-pro-line">
+          <span class="span-item-name">审核药师 :</span>
+          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+        </div>
+
+
+        <!-- 开方科室 -->
+        <div class="div-pro-line">
+          <span class="span-item-name">发货时间 :</span>
+          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+        </div>
+
+
+
+
+        <div class="div-pro-line">
+          <span class="span-item-name">发货人员 :</span>
+          <span class="span-item-value">{{ medicalInfoList.payTotal || '-' }}</span>
+        </div>
+      </div>
+
+
+
+
+
+
+
+
+
 
       <a-table
         style="
@@ -472,6 +515,13 @@ export default {
           title: '数量',
           dataIndex: 'num',
         },
+
+        {
+          title: '执行科室',
+          dataIndex: 'num',
+        },
+
+
         {
           title: '价格',
           dataIndex: 'price',
