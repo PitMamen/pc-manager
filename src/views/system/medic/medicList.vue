@@ -81,6 +81,9 @@
       <span slot="tradeName" slot-scope="text">
         <ellipsis :length="45" tooltip>{{ text }}</ellipsis>
       </span>
+      <span slot="manufacturerName" slot-scope="text">
+        <ellipsis :length="45" tooltip>{{ text }}</ellipsis>
+      </span>
     </s-table>
   </a-card>
 </template>

@@ -260,170 +260,194 @@
           </div>
         </div>
 
-        <div v-if="currentTab == 'photo'" class="idcard-infor">
-          <!-- 身份证 -->
-          <div class="item-idcard">
-            <div>身份证照片：</div>
-            <div style="right: 120px; top: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="idcardZList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(1, value)"
-                @change="(value) => handleidcardChange(1, value)"
-              >
-                <div v-if="idcardZList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传身份证正面图片</div>
-                </div>
-              </a-upload>
+        <div v-if="currentTab == 'photo'" class="idcard-warp">
+          <div class="idcard-infor">
+            <!-- 身份证 -->
+            <div class="item-idcard">
+              <div>身份证照片：</div>
+              <div style="right: 120px; top: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="idcardZList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(1, value)"
+                  @change="(value) => handleidcardChange(1, value)"
+                >
+                  <div v-if="idcardZList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传身份证正面图片</div>
+                  </div>
+                </a-upload>
+              </div>
+
+              <div style="right: 120px; top: 10px; margin-left: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="idcardFList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(2, value)"
+                  @change="(value) => handleidcardChange(2, value)"
+                >
+                  <div v-if="idcardFList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传身份证反面图片</div>
+                  </div>
+                </a-upload>
+              </div>
             </div>
 
-            <div style="right: 120px; top: 10px; margin-left: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="idcardFList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(2, value)"
-                @change="(value) => handleidcardChange(2, value)"
-              >
-                <div v-if="idcardFList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传身份证反面图片</div>
-                </div>
-              </a-upload>
+            <!-- 职称 -->
+            <div class="item-idcard">
+              <div style="margin-left: 12px">职称照片：</div>
+              <div style="right: 120px; top: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="zhichengZList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(3, value)"
+                  @change="(value) => handleidcardChange(3, value)"
+                >
+                  <div v-if="zhichengZList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传职称正面图片</div>
+                  </div>
+                </a-upload>
+              </div>
+
+              <div style="right: 120px; top: 10px; margin-left: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  :multiple="true"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="zhichengFList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(4, value)"
+                  @change="(value) => handleidcardChange(4, value)"
+                >
+                  <div v-if="zhichengFList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传职称反面图片</div>
+                  </div>
+                </a-upload>
+              </div>
+            </div>
+
+            <!-- 资格证 -->
+            <div class="item-idcard">
+              <div>资格证照片：</div>
+              <div style="right: 120px; top: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  :multiple="true"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="zhigeZList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(5, value)"
+                  @change="(value) => handleidcardChange(5, value)"
+                >
+                  <div v-if="zhigeZList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传资格证正面图片</div>
+                  </div>
+                </a-upload>
+              </div>
+
+              <div style="right: 120px; top: 10px; margin-left: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  :multiple="true"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="zhigeFList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(6, value)"
+                  @change="(value) => handleidcardChange(6, value)"
+                >
+                  <div v-if="zhigeFList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传资格证反面图片</div>
+                  </div>
+                </a-upload>
+              </div>
+            </div>
+
+            <!-- 执业证照片 -->
+            <div class="item-idcard">
+              <div>执业证照片：</div>
+              <div style="right: 120px; top: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  :multiple="true"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="zhiyeZList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(7, value)"
+                  @change="(value) => handleidcardChange(7, value)"
+                >
+                  <div v-if="zhiyeZList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传执业证正面图片</div>
+                  </div>
+                </a-upload>
+              </div>
+
+              <div style="right: 120px; top: 10px; margin-left: 10px">
+                <a-upload
+                  :action="actionUrlCover"
+                  :multiple="true"
+                  list-type="picture-card"
+                  :headers="headers"
+                  :file-list="zhiyeFList"
+                  accept="image/jpeg,image/png,image/jpg"
+                  :before-upload="beforeUpload"
+                  :remove="(value) => deletePhoto(8, value)"
+                  @change="(value) => handleidcardChange(8, value)"
+                >
+                  <div v-if="zhiyeFList.length == 0">
+                    <a-icon type="plus" />
+                    <div class="ant-upload-text">上传执业证反面图片</div>
+                  </div>
+                </a-upload>
+              </div>
             </div>
           </div>
 
-          <!-- 职称 -->
-          <div class="item-idcard">
-            <div style="margin-left: 12px">职称照片：</div>
-            <div style="right: 120px; top: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="zhichengZList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(3, value)"
-                @change="(value) => handleidcardChange(3, value)"
-              >
-                <div v-if="zhichengZList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传职称正面图片</div>
-                </div>
-              </a-upload>
-            </div>
+          <div v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')" style="width: 2px; height: 478px; background: #e6e6e6"></div>
 
-            <div style="right: 120px; top: 10px; margin-left: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                :multiple="true"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="zhichengFList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(4, value)"
-                @change="(value) => handleidcardChange(4, value)"
-              >
-                <div v-if="zhichengFList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传职称反面图片</div>
-                </div>
-              </a-upload>
+          <div v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')" class="codeview">
+            <img
+              class="code"
+              :src="docCodeImg"/>
+            <div class="codeitem">
+              <div>{{ checkData.userName }}</div>
             </div>
-          </div>
-
-          <!-- 资格证 -->
-          <div class="item-idcard">
-            <div>资格证照片：</div>
-            <div style="right: 120px; top: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                :multiple="true"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="zhigeZList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(5, value)"
-                @change="(value) => handleidcardChange(5, value)"
-              >
-                <div v-if="zhigeZList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传资格证正面图片</div>
-                </div>
-              </a-upload>
+            <div class="codeitem">
+              <div>{{ checkData.professionalTitle }}</div>
+              <div style="margin-left: 10px; margin-right: 10px">|</div>
+              <div>{{ checkData.professionalTitle }}</div>
             </div>
-
-            <div style="right: 120px; top: 10px; margin-left: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                :multiple="true"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="zhigeFList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(6, value)"
-                @change="(value) => handleidcardChange(6, value)"
-              >
-                <div v-if="zhigeFList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传资格证反面图片</div>
-                </div>
-              </a-upload>
-            </div>
-          </div>
-
-          <!-- 执业证照片 -->
-          <div class="item-idcard">
-            <div>执业证照片：</div>
-            <div style="right: 120px; top: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                :multiple="true"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="zhiyeZList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(7, value)"
-                @change="(value) => handleidcardChange(7, value)"
-              >
-                <div v-if="zhiyeZList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传执业证正面图片</div>
-                </div>
-              </a-upload>
-            </div>
-
-            <div style="right: 120px; top: 10px; margin-left: 10px">
-              <a-upload
-                :action="actionUrlCover"
-                :multiple="true"
-                list-type="picture-card"
-                :headers="headers"
-                :file-list="zhiyeFList"
-                accept="image/jpeg,image/png,image/jpg"
-                :before-upload="beforeUpload"
-                :remove="(value) => deletePhoto(8, value)"
-                @change="(value) => handleidcardChange(8, value)"
-              >
-                <div v-if="zhiyeFList.length == 0">
-                  <a-icon type="plus" />
-                  <div class="ant-upload-text">上传执业证反面图片</div>
-                </div>
-              </a-upload>
-            </div>
+            <div style="color: #3894ff;margin-bottom: 14px;">让患者微信扫一扫添加</div>
+           
+            
+            <a :href="docCodeImg" target="_blank" download="preview">
+              <a-button type="primary"  style="width: 128px;">下载图片</a-button>
+            </a>
           </div>
         </div>
 
@@ -476,7 +500,7 @@
 
             <div class="stle-com" style="right: 120px; top: 10px" @click="gotab()">
               <a-upload
-              :disabled="true"
+                :disabled="true"
                 :showUploadList="{ showRemoveIcon: false }"
                 :action="actionUrlCover"
                 list-type="picture-card"
@@ -666,6 +690,7 @@ import {
   bindBank,
   setCertificateForUserId,
   getCaAuthInfoAdminForUserId,
+  getDoctorQrCode
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -764,6 +789,7 @@ export default {
       iscard1Bind: false,
       iscard2Bind: false,
       iscard3Bind: false,
+      docCodeImg:'',
     }
   },
   created() {},
@@ -862,6 +888,8 @@ export default {
       this.getDoctorUserDetailOut(record.userId)
       this.getHvyogoUserInfoOut(record.userId)
       this.getTaskListOut()
+
+     
     },
 
     // 顶部tab切换
@@ -1127,6 +1155,10 @@ export default {
           }
 
           this.getRolesOut()
+
+          if(this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse'){
+            this.getDoctorQrCodeOut()
+          }
         }
       })
     },
@@ -1306,7 +1338,7 @@ export default {
       register(this.record.userId)
         .then((res) => {
           if (res.code == 0) {
-            if(!this.hvyogoId){
+            if (!this.hvyogoId) {
               this.hvyogoId = res.data
             }
             this.$message.success(res.message)
@@ -1328,6 +1360,15 @@ export default {
       getTaskList().then((res) => {
         if (res.code == 0) {
           this.taskList = res.data
+        }
+      })
+    },
+
+     // 获取医生二维码
+     getDoctorQrCodeOut() {
+      getDoctorQrCode({docUserId:this.checkData.userId}).then((res) => {
+        if (res.code == 0) {
+          this.docCodeImg = res.data
         }
       })
     },
@@ -1767,18 +1808,50 @@ export default {
   width: 100%;
   height: 580px;
 
-  .idcard-infor {
+  .idcard-warp {
     margin-top: 20px;
     display: flex;
     flex-wrap: wrap;
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
+  }
+
+  .codeview {
+    display: flex;
+    flex-direction: column;
+    width: 49%;
+    align-items: center;
+    font-size: 12px;
+      color: #1a1a1a;
+
+    .code {
+      width: 190px;
+      height: 190px;
+      margin-bottom: 26px;
+    }
+
+   
+
+    .codeitem {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+  }
+
+  .idcard-infor {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 49%;
 
     .item-idcard {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      width: 100%;
+
       margin-left: 25px;
       margin-bottom: 8px;
     }

@@ -3839,6 +3839,16 @@ export function getDictDataForCodeUserType(data) {
   })
 }
 
+/**
+* 医生二维码
+*/
+export function getDoctorQrCode(data) {
+  return axios({
+    url: '/wx-api/wx/qrcode/'+appId+'/getDoctorQrCode',
+    method: 'get',
+    params: data,
+  })
+}
 
 /**
  * 服务商商下拉框列表
