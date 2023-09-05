@@ -10,14 +10,8 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 套餐名称 :</span>
-            <a-input
-              class="span-item-value"
-              v-model="packageData.packageName"
-              :maxLength="30"
-              style="display: inline-block; width: 60%"
-              allow-clear
-              placeholder="请输入 "
-            />
+            <a-input class="span-item-value" v-model="packageData.packageName" :maxLength="30"
+              style="display: inline-block; width: 60%" allow-clear placeholder="请输入 " />
           </div>
 
           <div class="div-pro-line">
@@ -31,13 +25,8 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 关联学科 :</span>
-            <a-tree-select
-              v-model="packageData.subjectClassifyId"
-              style="min-width: 120px"
-              :tree-data="treeDataSubject"
-              placeholder="请选择"
-              tree-default-expand-all
-            >
+            <a-tree-select v-model="packageData.subjectClassifyId" style="min-width: 120px" :tree-data="treeDataSubject"
+              placeholder="请选择" tree-default-expand-all>
             </a-tree-select>
           </div>
         </div>
@@ -54,37 +43,18 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
-            <a-tree-select
-              @focus="onComFocus"
-              v-model="packageData.hospitalCode"
-              style="min-width: 120px"
-              @select="onSelectChangeCode"
-              :tree-data="treeData"
-              placeholder="请选择"
-              tree-default-expand-all
-            >
+            <a-tree-select @focus="onComFocus" v-model="packageData.hospitalCode" style="min-width: 120px"
+              @select="onSelectChangeCode" :tree-data="treeData" placeholder="请选择" tree-default-expand-all>
             </a-tree-select>
           </div>
 
           <div class="div-pro-line" style="margin-left: -25px !important">
             <a-checkbox @change="changeData" class="span-item-name" style="margin-left: 8px">套餐效期 :</a-checkbox>
-            <a-input
-              :disabled="disabledValue"
-              class="span-item-value"
-              v-model="packageData.pkgValidNum"
-              :maxLength="30"
-              style="display: inline-block; width: 42%; margin-left: -7px"
-              allow-clear
-              placeholder="请输入 "
-            />
+            <a-input :disabled="disabledValue" class="span-item-value" v-model="packageData.pkgValidNum" :maxLength="30"
+              style="display: inline-block; width: 42%; margin-left: -7px" allow-clear placeholder="请输入 " />
 
-            <a-select
-              :disabled="disabledValue"
-              v-model="packageData.pkgValidUnit"
-              style="margin-left: 5px; width: 16.5% !important"
-              allow-clear
-              placeholder="请选择"
-            >
+            <a-select :disabled="disabledValue" v-model="packageData.pkgValidUnit"
+              style="margin-left: 5px; width: 16.5% !important" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
                 item.value
               }}</a-select-option>
@@ -92,30 +62,38 @@
           </div>
         </div>
 
-        <div class="div-pro-line">
-          <div style="display: flex; flex-direction: row; margin-top: 1%;margin-left:4px">
-            <a-checkbox
-              @change="changeDaoliu"
-              :disabled="disabledDaoliu"
-              :checked="daoliubao"
-              class="span-item-name"
-            ></a-checkbox>
-            <div style="margin-left: 3px; color: #000;">导流包 :</div>
-            <div style="margin-left: 15px; color: #000;">限购:</div>
+        <div class="div-up-content">
+          <div class="div-pro-line">
+            <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
+              <a-checkbox @change="changeDaoliu" :disabled="disabledDaoliu" :checked="daoliubao"
+                class="span-item-name"></a-checkbox>
+              <div style="margin-left: 3px; color: #000;">导流包 :</div>
 
-            <a-InputNumber
-              :disabled="isDisabled"
-             
-              v-model="packageData.limitPurchaseTimes"
-              type="number"
-              :min="1"
-              style="display: inline-block; width: 35%; margin-left: 5px; margin-top: -3px"
-              oninput="if(value<=1)value=1"
-            />
-            <div style="margin-left: 10px; color: #000;">次</div>
+              <a-InputNumber placeholder="请输入限购次数" :disabled="isDisabled" v-model="packageData.limitPurchaseTimes"
+                type="number" :min="1" style="display: inline-block; width: 35%; margin-left: 5px; margin-top: -3px"
+                oninput="if(value<=1)value=1" />
+              <div style="margin-left: 10px; color: #000;">次</div>
+            </div>
+
+          </div>
+
+          <!-- gatherHealthFlag -->
+          <div class="div-pro-line" v-if="broadClassify == 2">
+            <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
+              <a-checkbox @change="onGatherChange" :checked="isGather" class="span-item-name"></a-checkbox>
+              <div style="margin-left: 3px; color: #000;">采集健康档案 :</div>
+
+              <a-select mode="multiple" v-model="packageData.gatherHealthId" disabled
+                style="margin-left: 5px; width: 48.5% !important" allow-clear placeholder="请选择">
+                <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
+                  item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
+
+          </div>
         </div>
 
-        </div>
       </div>
 
       <div class="div-pro-middle">
@@ -125,20 +103,12 @@
         </div>
 
         <div class="div-service-pic">
-          <span class="title-des-pic" style="margin-top: 10px"
-            ><span style="color: red">*</span> 封面图片 （只允许上传1张，建议尺寸比例7：4）</span
-          >
+          <span class="title-des-pic" style="margin-top: 10px"><span style="color: red">*</span> 封面图片
+            （只允许上传1张，建议尺寸比例7：4）</span>
           <!-- <div :key="ImgKey" style="margin-top: 1%"> -->
           <div class="clearfix" style="margin-top: 20px">
-            <a-upload
-              :action="actionUrl"
-              :headers="headers"
-              :multiple="true"
-              list-type="picture-card"
-              :file-list="fileList"
-              @preview="handlePreview"
-              @change="handleChange"
-            >
+            <a-upload :action="actionUrl" :headers="headers" :multiple="true" list-type="picture-card"
+              :file-list="fileList" @preview="handlePreview" @change="handleChange">
               <div v-if="fileList.length < 1">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
@@ -151,15 +121,8 @@
 
           <span class="title-des-pic" style="margin-left: 8px"> banner图片 （最多允许上传4张，建议尺寸比例7：4）</span>
           <div class="clearfix" style="margin-top: 20px">
-            <a-upload
-              :action="actionUrl"
-              :headers="headers"
-              :multiple="true"
-              list-type="picture-card"
-              :file-list="fileListBanner"
-              @preview="handlePreviewBanner"
-              @change="handleChangeBanner"
-            >
+            <a-upload :action="actionUrl" :headers="headers" :multiple="true" list-type="picture-card"
+              :file-list="fileListBanner" @preview="handlePreviewBanner" @change="handleChangeBanner">
               <div v-if="fileListBanner.length < 4">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
@@ -170,19 +133,10 @@
             </a-modal>
           </div>
 
-          <span class="title-des-pic"
-            ><span style="color: red">*</span> 详情图片（最多允许上传8张，建议尺寸比例7：4）</span
-          >
+          <span class="title-des-pic"><span style="color: red">*</span> 详情图片（最多允许上传8张，建议尺寸比例7：4）</span>
           <div class="clearfix" style="margin-top: 20px">
-            <a-upload
-              :action="actionUrl"
-              :headers="headers"
-              :multiple="true"
-              list-type="picture-card"
-              :file-list="fileListDetail"
-              @preview="handlePreviewDetail"
-              @change="handleChangeDetail"
-            >
+            <a-upload :action="actionUrl" :headers="headers" :multiple="true" list-type="picture-card"
+              :file-list="fileListDetail" @preview="handlePreviewDetail" @change="handleChangeDetail">
               <div v-if="fileListDetail.length < 8">
                 <a-icon type="plus" />
                 <div class="ant-upload-text">Upload</div>
@@ -208,13 +162,8 @@
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select
-            class="mid-select-two"
-            allow-clear
-            placeholder="请选择"
-            v-model="allocationTypeDoc"
-            :disabled="!isDoctor || broadClassify == 1"
-          >
+          <a-select class="mid-select-two" allow-clear placeholder="请选择" v-model="allocationTypeDoc"
+            :disabled="!isDoctor || broadClassify == 1">
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -227,9 +176,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson(0)" @focus="onAddPersonFocus(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
-              >医生配置</span
-            >
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }">医生配置</span>
           </div>
         </div>
 
@@ -241,13 +188,8 @@
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select
-            class="mid-select-two"
-            allow-clear
-            v-model="allocationTypeNurse"
-            placeholder="请选择"
-            :disabled="!isNurse || broadClassify == 1"
-          >
+          <a-select class="mid-select-two" allow-clear v-model="allocationTypeNurse" placeholder="请选择"
+            :disabled="!isNurse || broadClassify == 1">
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -260,9 +202,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(2)" @click="addPerson(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
-              >护士配置</span
-            >
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }">护士配置</span>
           </div>
         </div>
 
@@ -274,13 +214,7 @@
           <span style="margin-left: 1%">分配方式</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select
-            class="mid-select-two"
-            allow-clear
-            v-model="allocationTypeTeam"
-            placeholder="请选择"
-            :disabled="!isTeam"
-          >
+          <a-select class="mid-select-two" allow-clear v-model="allocationTypeTeam" placeholder="请选择" :disabled="!isTeam">
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
             }}</a-select-option>
@@ -293,9 +227,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addTeam()">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTeam }"
-              >团队配置</span
-            >
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTeam }">团队配置</span>
           </div>
         </div>
 
@@ -305,14 +237,8 @@
           <span style="margin-left: 1%">参与角色</span>
 
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select
-            class="mid-select-two"
-            mode="multiple"
-            v-model="roleIds"
-            allow-clear
-            placeholder="请选择"
-            :disabled="!isTeam"
-          >
+          <a-select class="mid-select-two" mode="multiple" v-model="roleIds" allow-clear placeholder="请选择"
+            :disabled="!isTeam">
             <a-select-option v-for="(item, index) in roleList" :key="index" :value="item.code">{{
               item.value
             }}</a-select-option>
@@ -331,16 +257,8 @@
             <a-checkbox :checked="needPlan" @click="handlePlan">随访方案</a-checkbox>
           </div>
           <!-- v-model="itemTask.personnelAssignmentType" -->
-          <a-select
-            class="mid-select-two"
-            style="min-width: 370px !important"
-            mode="multiple"
-            :disabled="!needPlan"
-            allow-clear
-            @focus="onPersonFocus"
-            v-model="packageData.commodityFollowPlanIds"
-            placeholder="请选择"
-          >
+          <a-select class="mid-select-two" style="min-width: 370px !important" mode="multiple" :disabled="!needPlan"
+            allow-clear @focus="onPersonFocus" v-model="packageData.commodityFollowPlanIds" placeholder="请选择">
             <a-select-option v-for="(item, index) in plans" :key="index" :value="item.id">{{
               item.planName
             }}</a-select-option>
@@ -440,8 +358,9 @@ export default {
       allocationTypeTeam: undefined,
       disabledDaoliu: false,
       isDisabled: false,
-      daoliubao:false,
-      classifyName:'',
+      daoliubao: false,
+      isGather: false,
+      classifyName: '',
 
       /**
        *
@@ -486,8 +405,9 @@ export default {
         packageName: undefined,
         subjectClassifyId: undefined,
         tenantId: undefined,
-        limitPurchaseTimes:1,  //限购
-        giftFlag:0,  //导流包 开关
+        limitPurchaseTimes: 1,  //限购
+        giftFlag: 0,  //导流包 开关
+        gatherHealthFlag: 0, //是否采集 1是 0否
       },
       packageData: {},
     }
@@ -504,7 +424,7 @@ export default {
     },
   },
 
-   
+
 
 
 
@@ -529,9 +449,9 @@ export default {
   methods: {
     moment,
     resetData() {
-      this.disabledDaoliu=false,
-      this.isDisabled=false,
-      this.daoliubao=false,
+      this.disabledDaoliu = false,
+      this.isDisabled = false,
+      this.daoliubao = false,
       this.needPlan = false
       this.canConfigTeam = true
       this.broadClassify = ''
@@ -599,8 +519,8 @@ export default {
     },
 
 
-       //导流包选择 
-       changeDaoliu(value) {
+    //导流包选择 
+    changeDaoliu(value) {
       this.isDaoliuChecked = value.target.checked
       if (value.target.checked) {
         this.daoliubao = true
@@ -614,6 +534,13 @@ export default {
         // this.packageData.pkgValidNum = null
         // this.packageData.pkgValidUnit = null
       }
+    },
+
+    //是否采集健康档案  gatherHealthFlag  是否采集健康档案;0否;1是
+    onGatherChange() {
+      this.isGather = !this.isGather
+      this.packageData.gatherHealthFlag = this.isGather ? 1 : 0
+      console.log('this.packageData.gatherHealthFlag', this.packageData.gatherHealthFlag)
     },
 
     /**
@@ -808,7 +735,7 @@ export default {
         if (this.classifyName == '图文咨询') {
           this.disabledDaoliu = false
           this.isDisabled = false
-        }else{
+        } else {
           this.disabledDaoliu = true
           this.isDisabled = true
         }
@@ -1301,6 +1228,12 @@ export default {
       } else {
         tempData.commodityPkgManageReqs = []
       }
+
+      //只有专科服务套餐才有的字段
+      if (this.broadClassify != 2) {
+        delete tempData.gatherHealthFlag
+      }
+
       console.log('tempData add', JSON.stringify(tempData))
 
       this.confirmLoading = true
@@ -1346,6 +1279,7 @@ export default {
   width: 10% !important;
   margin-left: 1% !important;
 }
+
 .div-package-add {
   background-color: white;
   width: 100%;
@@ -1372,6 +1306,7 @@ export default {
       height: 100%;
       background-color: #1890ff;
     }
+
     .span-title {
       font-size: 12px;
       margin-left: 10px;
@@ -1385,6 +1320,10 @@ export default {
     margin-top: 1%;
     overflow: hidden;
 
+    /deep/ .ant-select-selection--multiple {
+      height: 28px !important;
+    }
+
     .ant-select {
       width: 58.5% !important;
       margin-left: 1.5% !important;
@@ -1396,6 +1335,7 @@ export default {
       font-size: 12px;
       text-align: left;
     }
+
     .span-item-value {
       width: 38%;
       color: #333;
@@ -1453,6 +1393,7 @@ export default {
       }
     }
   }
+
   .div-manage-team {
     margin-top: 10px;
 
@@ -1472,6 +1413,7 @@ export default {
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+
       .item-left {
         display: inline-block;
         width: 105px;
@@ -1482,6 +1424,7 @@ export default {
         width: 12% !important;
         margin-left: 1% !important;
       }
+
       .mid-select-two.ant-select {
         min-width: 120px !important;
         margin-left: 1% !important;
@@ -1491,9 +1434,11 @@ export default {
         display: flex;
         flex-direction: row;
         align-items: center;
+
         .checked-btn {
           color: #999 !important;
         }
+
         &:hover {
           cursor: pointer;
         }
@@ -1528,9 +1473,11 @@ export default {
   /deep/ .ant-select-selection--multiple {
     height: auto !important;
   }
-  /deep/ .ant-select-selection__rendered > ul > li {
+
+  /deep/ .ant-select-selection__rendered>ul>li {
     margin-top: 3px;
   }
+
   /deep/ .ant-select-selection__placeholder {
     line-height: 24px;
   }
