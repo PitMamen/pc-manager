@@ -521,7 +521,8 @@ export default {
 
         {
           title: '生产厂商',
-          dataIndex: 'xx',
+          dataIndex: 'manufacturerName',
+          align:'center'
         },
 
         {
