@@ -965,11 +965,22 @@ export default {
           this.isTeam = false
           this.nameTeam = ''
 
-          if (this.isNurse && this.isDoctor) {
-            //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型
-            this.isNurse = false
-            this.nameNurse = ''
+          // if (this.isNurse && this.isDoctor) {
+          //   //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型
+          //   this.isNurse = false
+          //   this.nameNurse = ''
+          // }
+          //如果切换到资讯类，全部团队置空
+          this.isNurse = false
+          this.isDoctor = false
+          this.nameNurse = ''
+          this.nameDoc = ''
+          console.log('this.packageData.commodityPkgManageReqs', this.packageData.commodityPkgManageReqs)
+          if (this.packageData.commodityPkgManageReqs) {
+            this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs = []
+            this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs = []
           }
+          //TODO 如果其他的切换为咨询的，需要检测医生护士的选择数量，调整为一个医生或者护士
 
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
