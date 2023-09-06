@@ -242,14 +242,14 @@
       <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">执行科室 :</span>
-          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+          <span class="span-item-value">{{ medicalInfoList.execDeptName || '-' }}</span>
         </div>
 
 
         <!-- 开方科室 -->
         <div class="div-pro-line">
           <span class="span-item-name">开方科室 :</span>
-          <span class="span-item-value">{{ medicalInfoList.execDeptName || '-' }}</span>
+          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
         </div>
 
 
@@ -517,6 +517,11 @@ export default {
         {
           title: '数量',
           dataIndex: 'num',
+        },
+
+        {
+          title: '生产厂商',
+          dataIndex: 'xx',
         },
 
         {

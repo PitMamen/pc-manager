@@ -9,6 +9,7 @@
           :tree-data="treeData"
           placeholder="请选择"
           allow-clear
+          tree-default-expand-all
         >
         </a-tree-select>
       </div>
@@ -74,6 +75,7 @@ import {
   searchDoctorUser,
   getCommodityClassify,
   getUserInfoHvyogoPageList,
+  accessHospitals
 } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -263,7 +265,7 @@ export default {
         hospitalName: '',
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      accessHospitals(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
