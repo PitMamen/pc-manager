@@ -69,7 +69,7 @@
           :disabled-date="disabledDate"
           :default-value="nowMonth"
           :format="monthFormat"
-          v-model="queryParams.createdTime"
+          v-model="queryParams.createTime"
         />
       <a-button style="margin-left: 5px" type="primary" icon="search" @click="handleOk()">查询</a-button>
     </div>
@@ -133,9 +133,9 @@ export default {
       record: {},
       currentTab: 'all',
       queryParams: {
-        createdTime: getMonthNow(),
+        createTime: getMonthNow(),
         tabStr: 'all',
-        userId: 2042,
+        userId: '',
       },
       nowMonth: '',
 
@@ -145,70 +145,72 @@ export default {
       columns: [
         {
           title: '交易订单',
-          dataIndex: 'orderId',
+          dataIndex: 'master_id',
           ellipsis: true,
         },
 
         {
           title: '交易类型',
-          dataIndex: 'orderTypeDesc',
+          dataIndex: 'types',
           ellipsis: true,
         },
 
         {
           title: '结算大类',
-          dataIndex: 'userName',
+          dataIndex: 'order_type_name',
           ellipsis: true,
         },
         {
           title: '结算单号',
-          dataIndex: 'userPhone',
+          dataIndex: 'pay_uuid',
           ellipsis: true,
         },
 
         {
           title: '账户',
-          dataIndex: 'commodityName',
+          dataIndex: 'bank_no',
           ellipsis: true,
         },
         {
           title: '交易金额',
-          dataIndex: 'orderTotal',
+          dataIndex: 'settlement_sum',
           align: 'right',
           ellipsis: true,
         },
 
         {
           title: '管理费',
-          dataIndex: 'realTotalPayMoney',
+          dataIndex: 'manager_sum',
           align: 'right',
           ellipsis: true,
         },
 
         {
           title: '钱包余额',
-          dataIndex: 'orderTime',
+          dataIndex: 'can_sum',
           ellipsis: true,
+          align: 'right',
           //   width: 160,
         },
 
         {
           title: '交易结果',
-          dataIndex: 'orderTime',
+          dataIndex: 'status',
           ellipsis: true,
+          align: 'center',
           //   width: 160,
         },
 
         {
           title: '交易时间',
-          dataIndex: 'endtime',
+          dataIndex: 'create_time',
           ellipsis: true,
           //   width: 160,
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
+        this.queryParams.createTime = this.formatDate(this.queryParams.createTime).substring(0, 7)
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         return getPcTradeRecord(Object.assign(parameter, this.queryParamsTemp))
           .then((res) => {
@@ -253,9 +255,9 @@ export default {
   },
 
   created() {
-    this.queryParams.createdTime = moment(getMonthNow(), this.monthFormat)
+    this.queryParams.createTime = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
-    this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
+    this.queryParams.createTime = this.formatDate(this.queryParams.createTime).substring(0, 7)
     // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.initData()
@@ -284,17 +286,11 @@ export default {
       this.$refs.table.refresh()
     },
 
-    //更新时间
-    onChange(momentArr, dateArr) {
-      this.orderTimeValue = momentArr
-      // this.queryParamsGroup.startTime = dateArr[0]  //开始时间
-      // this.queryParamsGroup.endTime = dateArr[1]    //结束时间
-    },
-
     initData() {
       this.record = JSON.parse(this.$route.query.dataStr)
-      console.log('FFFF:', this.record)
+      // console.log('FFFF:', this.record)
       this.queryParams.userId = this.record.userId
+      // this.queryParams.userId = '2047'
 
       this.$refs.table.refresh()
     },
@@ -375,8 +371,8 @@ export default {
     //下单时间
     onChangeOrder(momentArr, dateArr) {
       this.orderTimeValue = momentArr
-      this.queryParams.refundStartTime = dateArr[0]
-      this.queryParams.refundEndTime = dateArr[1]
+      // this.queryParams.refundStartTime = dateArr[0]
+      // this.queryParams.refundEndTime = dateArr[1]
     },
 
     handleOk() {

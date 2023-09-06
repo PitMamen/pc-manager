@@ -528,11 +528,12 @@ export default {
         {
           title: '价格',
           dataIndex: 'price',
+          align:'right'
         },
         {
           title: '用法',
           dataIndex: 'drugUsemethodName',
-          align: 'right',
+          align:'center'
         },
         {
           title: '用量',
@@ -644,6 +645,7 @@ export default {
             this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
             this.payMode = this.orderDetailDataList.payMode
             this.goodsItemsData = res.data.goodsItems
+
             this.addressInfo = res.data.addressInfo
             this.expressInfos = res.data.expressInfos
 
@@ -669,6 +671,11 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.goodsItemsData = res.data
+            if (this.goodsItemsData) {
+              this.goodsItemsData.forEach((item, index) => {
+                this.$set(item, 'useNum', item.useNum+'/'+item.useUnit)    //用量 需带单位
+              })
+            }
           }
         })
         .finally((res) => {
