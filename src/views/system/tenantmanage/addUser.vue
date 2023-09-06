@@ -1172,6 +1172,7 @@ export default {
           this.hvyogoId = res.data.hvyogoId
           this.recordId = res.data.id
           this.protocolFile = res.data.protocolFile
+          this.selectTask=res.data.taskCode
           if (this.bankList != null && this.bankList.length == 3) {
             this.bank1 = this.bankList[0]
             this.bank2 = this.bankList[1]
