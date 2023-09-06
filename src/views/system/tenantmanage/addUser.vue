@@ -780,6 +780,7 @@ export default {
       taskList: [],
       selectTask: undefined,
       id: '',
+      recordId:'',
       protocolFile: '', //是否签约成功的标识
       bank1: {},
       bank2: {},
@@ -846,7 +847,7 @@ export default {
       this.bankList = []
       this.hvyogoId = ''
       this.selectTask = undefined
-      this.id = ''
+      this.recordId = ''
       this.protocolFile = ''
       this.bank1 = {}
       this.bank2 = {}
@@ -1169,7 +1170,7 @@ export default {
           this.userInfoList = res.data.userInfo
           this.bankList = res.data.bankList
           this.hvyogoId = res.data.hvyogoId
-          this.id = res.data.id
+          this.recordId = res.data.id
           this.protocolFile = res.data.protocolFile
           if (this.bankList != null && this.bankList.length == 3) {
             this.bank1 = this.bankList[0]
@@ -1274,7 +1275,7 @@ export default {
         bankCard: card.bankCard,
         bankName: card.bankName,
         bindFlag: isBind ? 'unbind' : 'bind',
-        hvyogoId: this.id,
+        hvyogoId: this.recordId,
       }
 
       if (!isBind && !card.bankName) {
@@ -1338,6 +1339,7 @@ export default {
             if (!this.hvyogoId) {
               this.hvyogoId = res.data
             }
+            this.getHvyogoUserInfoOut(this.record.userId)  //重新调用 刷新数据  获取该条记录的ID
             this.$message.success(res.message)
           } else {
             this.$message.error(res.message)
@@ -1377,9 +1379,11 @@ export default {
         return
       }
       var requestData = {
-        id: this.id,
+        id: this.recordId,
         taskId: this.selectTask,
       }
+
+
       this.bangding = '请等待...'
       bindTask(requestData)
         .then((res) => {
@@ -1688,30 +1692,6 @@ export default {
         this.addUser(postData)
       }
     },
-
-    //修改 医生执照 照片
-    // setCertificateForUserIdOut() {
-    //   setCertificateForUserId(this.photoListCheck).then((res) => {
-    //     if (res.code == 0) {
-    //     }
-    //   })
-    // },
-
-    //获取执照
-    // getCaAuthInfoAdminForUserIdOut() {
-    // this.idcardZList= [],
-    // this.idcardFList= [],
-    // this.zhichengZList= [],
-    // this.zhichengFList= [],
-    // this.zhigeZList= [],
-    // this.zhigeFList= [],
-    // this.zhiyeZList= [],
-    // this.zhiyeFList= [],
-    //   getCaAuthInfoAdminForUserId(this.photoListCheck.userId).then((res) => {
-    //     if (res.code == 0) {
-    //     }
-    //   })
-    // },
 
     addUser(postData) {
       createDoctorUser(postData).then((res) => {
