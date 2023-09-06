@@ -15,11 +15,14 @@
 
       <div class="search-row">
         <span class="name">医护人员:</span>
-        <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
-          <a-select-option v-for="(item, index) in docList" :key="index" :value="item.id">{{
-            item.classifyName
-          }}</a-select-option>
-        </a-select>
+        <a-input
+          v-model="queryParams.userName"
+          allow-clear
+          placeholder="输入用户名/医生"
+          style="width: 140px; height: 28px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
       </div>
 
       <div class="action-row">
@@ -44,7 +47,7 @@
       </span>
 
       <span slot="userNameaction" slot-scope="text, record">
-        <a @click="$refs.addUser.editModel(record,'signing')">{{record.userName}}</a>
+        <a @click="$refs.addUser.editModel(record,'signing')">{{record.user_name}}</a>
       </span>
 
 
@@ -70,6 +73,7 @@ import {
   getDepts,
   searchDoctorUser,
   getCommodityClassify,
+  getUserInfoHvyogoPageList,
 } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -88,9 +92,7 @@ export default {
       docList: [],
       queryParams: {
         hospitalCode: undefined, //所属机构代码
-        notBoundOnly: false, //是否返回未绑定账号的用户
-        status: 0, //（0正常、1停用、2删除）
-        queryText: '',
+        userName: '',
       },
       selects: [
         {
@@ -122,16 +124,16 @@ export default {
       columns: [
         {
           title: '医疗机构',
-          dataIndex: 'userName',
+          dataIndex: 'hospitalName',
         },
         {
           title: '医生姓名',
-          dataIndex: 'userName',
+          dataIndex: 'user_name',
           scopedSlots: { customRender: 'userNameaction' },
         },
         {
           title: '身份证号',
-          dataIndex: 'birthday',
+          dataIndex: 'identification_no',
         },
         {
           title: '电话号码',
@@ -139,15 +141,18 @@ export default {
         },
         {
           title: '临工平台',
-          dataIndex: 'userTypeName',
+          dataIndex: 'hvyogo_id',
         },
         {
           title: '账户数',
-          dataIndex: 'loginName',
+          dataIndex: 'bankCount',
+          align: 'center',
+          
         },
         {
           title: '当前余额',
-          dataIndex: 'hospitalName',
+          dataIndex: 'settlement_sum',
+          align: 'right',
         },
         {
           title: '操作',
@@ -160,21 +165,24 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return searchDoctorUser(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0 && res.data.rows) {
-            res.data.rows.forEach((element) => {
-              if (element.birthday) {
-                var birthday2 =
-                  element.birthday.substring(0, 4) +
-                  '-' +
-                  element.birthday.substring(4, 6) +
-                  '-' +
-                  element.birthday.substring(6)
-                element.birthday = birthday2
+        return getUserInfoHvyogoPageList(Object.assign(parameter, this.queryParams)).then((res) => {
+          let data = {}
+          if (res.code == 0 && res.data.records) {
+            data = {
+                pageNo: parameter.pageNo,
+                pageSize: parameter.pageSize,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
               }
-            })
+
+              
+              data.rows.forEach((item, index) => {
+                this.$set(item, 'userId', item.user_id)
+              })
+
           }
-          return res.data
+          return data
         })
       },
     }
@@ -228,15 +236,6 @@ export default {
     goExamine(record) {
       let data = JSON.parse(JSON.stringify(record))
       this.$set(data, 'time', this.queryParams.createdTime)
-      var state = ''
-      if (this.currentTab == 1) {
-        state = '待结算'
-      } else if (this.currentTab == 2) {
-        state = '已结算'
-      } else if (this.currentTab == 3) {
-        state = '不予结算'
-      }
-      this.$set(data, 'status', state)
       this.$router.push({
         path: '/order/temporaryDetail',
         query: {
@@ -306,8 +305,7 @@ export default {
      */
     reset() {
       this.queryParams.hospitalCode = undefined
-      this.queryParams.queryText = ''
-      this.queryParams.status = 0
+      this.queryParams.userName = ''
 
       this.$refs.table.refresh(true)
     },

@@ -1012,9 +1012,6 @@ export default {
       }
     },
 
-    handleCancelBanner() {
-      this.previewVisibleidcard = false
-    },
 
     //用户详情
     getDoctorUserDetailOut(userId) {

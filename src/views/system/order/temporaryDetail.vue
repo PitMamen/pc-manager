@@ -3,52 +3,59 @@
     <div class="table-page-search-wrapper" style="margin-bottom: 10px">
       <div class="action-row" style="margin-top: -15px !important; margin-left: -18px; width: 100%">
         <a-button type="link" icon="left" @click="goBack()">返回</a-button>
-        <span style="font-size: 14px; color: #4d4d4d">{{ docName + status }}详情</span>
-        <span style="font-size: 14px; color: #4d4d4d">【{{ time }}】</span>
-        <span style="font-size: 14px; color: #4d4d4d; margin-left: 75%">钱包余额：￥</span>
-        <span style="font-size: 14px; color: #1990ec; margin-left: auto">1000000</span>
+        <span style="font-size: 14px; color: #4d4d4d">{{ record.user_name }}交易详情</span>
+        <span style="font-size: 14px; color: #4d4d4d; margin-left: 78%">钱包余额：￥</span>
+        <span style="font-size: 14px; color: #1990ec; margin-left: auto">{{ record.settlement_sum }}</span>
         <div style="display: flex; flex-wrap: wrap; margin-left: auto"></div>
       </div>
     </div>
 
-    <span style="color: #1a1a1a; margin-left: 10px; margin-top: 10px; font-weight: bold">绑定账户</span>
+    <span v-if="bankList.length > 0" style="color: #1a1a1a; margin-left: 10px; margin-top: 10px; font-weight: bold"
+      >绑定账户</span
+    >
 
     <div class="tab-all-content">
       <!-- 订单总额 -->
-      <div class="tab-total">
+      <div class="tab-total" v-if="bankList.length >= 1">
         <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px; width: 73%">中国工商银行</span>
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px; width: 73%">{{ bankList[0].bankName }}</span>
           <div style="float: right; margin-left: 25px">
             <img style="margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <span style="margin-left: 20px; margin-top: -5px; color: #ffffff">储蓄卡</span>
-        <span style="margin-left: 20px; margin-top: 20px; color: #ffffff">4217500*******55755</span>
+        <span style="margin-left: 20px; margin-top: 20px; color: #ffffff">{{
+          bankList[0].bankCard.replace(/(?<=\d{4})\d+(?=\d{4})/, ' **** **** ')
+        }}</span>
       </div>
 
-      <div class="tab-wx">
+      <div class="tab-wx" v-if="bankList.length >= 2">
         <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px; width: 73%">中国工商银行</span>
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px; width: 73%">{{ bankList[1].bankName }}</span>
           <div style="float: right; margin-left: 25px">
             <img style="margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <span style="margin-left: 20px; margin-top: -5px; color: #ffffff">储蓄卡</span>
-        <span style="margin-left: 20px; margin-top: 20px; color: #ffffff">4217500*******55755</span>
+        <span style="margin-left: 20px; margin-top: 20px; color: #ffffff">{{
+          bankList[1].bankCard.replace(/(?<=\d{4})\d+(?=\d{4})/, ' **** **** ')
+        }}</span>
       </div>
 
-      <div class="tab-alipay">
+      <div class="tab-alipay" v-if="bankList.length >= 3">
         <div class="content-dis">
-          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px; width: 73%">中国工商银行</span>
+          <span style="font-size: 12px; margin-left: 2px; margin-top: 3px; width: 73%">{{ bankList[2].bankName }}</span>
           <div style="float: right; margin-left: 25px">
             <img style="margin-top: -10px" src="@/assets/icons/tc.png" />
           </div>
         </div>
 
         <span style="margin-left: 20px; margin-top: -5px; color: #ffffff">储蓄卡</span>
-        <span style="margin-left: 20px; margin-top: 20px; color: #ffffff">4217500*******55755</span>
+        <span style="margin-left: 20px; margin-top: 20px; color: #ffffff">{{
+          bankList[2].bankCard.replace(/(?<=\d{4})\d+(?=\d{4})/, ' **** **** ')
+        }}</span>
       </div>
     </div>
 
@@ -56,28 +63,28 @@
 
     <div style="margin-top: 10px; margin-bottom: 10px" class="search-row">
       <span style="margin-left: 10px; color: #4d4d4d">交易时间：</span>
-      <a-range-picker style="width: 190px; margin-left: 5px" :value="orderTimeValue" @change="onChange" />
-      <a-button style="margin-left: 5px" type="primary" icon="search" @click="refresh()">查询</a-button>
+      <a-month-picker
+          placeholder="选择月份"
+          :allow-clear="false"
+          :disabled-date="disabledDate"
+          :default-value="nowMonth"
+          :format="monthFormat"
+          v-model="queryParams.createdTime"
+        />
+      <a-button style="margin-left: 5px" type="primary" icon="search" @click="handleOk()">查询</a-button>
     </div>
 
-
-    <div class="div-radio" style="margin-bottom: 10px;">
-      <div class="radio-item" :class="{ 'checked-btn': currentTab == 1 }" @click="onRadioClick(1)">
+    <div class="div-radio" style="margin-bottom: 10px">
+      <div class="radio-item" :class="{ 'checked-btn': currentTab == 'all' }" @click="onRadioClick('all')">
         <span style="margin-left: 3px">全部</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': currentTab == 2 }" @click="onRadioClick(2)">
+      <div class="radio-item" :class="{ 'checked-btn': currentTab == 'settle' }" @click="onRadioClick('settle')">
         <span style="margin-left: 3px">结算</span>
       </div>
-      <div class="radio-item" :class="{ 'checked-btn': currentTab == 3 }" @click="onRadioClick(3)">
+      <div class="radio-item" :class="{ 'checked-btn': currentTab == 'withdrawal' }" @click="onRadioClick('withdrawal')">
         <span style="margin-left: 3px">提现</span>
       </div>
     </div>
-
-
-
-
-
-
 
     <s-table
       :scroll="{ x: true }"
@@ -96,7 +103,6 @@
         {{ record.orderStatusDesc }}
       </span>
     </s-table>
-    <orderDetail ref="orderDetail" @ok="handleOk" />
   </a-card>
 </template>
            
@@ -105,56 +111,35 @@ import { STable } from '@/components'
 import moment from 'moment'
 import {
   getOrderSettlementDetailForUserId,
-  getListGroupBy,
-  getOrderSettlementDetailsList,
+  getBankListByUserId,
+  getPcTradeRecord,
 } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { getMonthNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
-import orderDetail from './orderDetail'
 
 export default {
   components: {
     STable,
     addForm,
-    orderDetail,
-    // editForm,
   },
 
   data() {
     return {
+      monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
       orderTimeValue: [],
-      SummaryDataList: [],
       confirmLoading: false,
+      bankList: [],
       record: {},
-      status: '',
-      time: '',
-      docName: '',
-      currentTab: 1,
-      numberData: {
-        all: 0,
-        wechat: 0,
-        zhifub: 0,
-      },
+      currentTab: 'all',
       queryParams: {
-        createdTime: '',
-        doctorName: '',
-        doctorUserId: '',
-        hospitalCode: '',
-        settlementStatus: 1,
-        orderType: '',
+        createdTime: getMonthNow(),
+        tabStr: 'all',
+        userId: 2042,
       },
-
-      requesDetail: {
-        masterId: 0,
-        orderType: 'srvPackOrder',
-        settlementType: 2,
-      },
+      nowMonth: '',
 
       queryParamsTemp: {},
-
-      reconData: '', //对账 日期
-      statusShow: '', //状态
 
       // 表头
       columns: [
@@ -223,99 +208,80 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        if (this.queryParams.settlementStatus == 1) {
-          this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-          return getOrderSettlementDetailForUserId(Object.assign(parameter, this.queryParamsTemp))
-            .then((res) => {
-              if (res.code == 0 && res.data.records.length > 0) {
-                //组装控件需要的数据结构
-                var data = {
-                  pageNo: parameter.pageNo,
-                  pageSize: parameter.pageSize,
-                  totalRows: res.data.total,
-                  totalPage: res.data.total / parameter.pageSize,
-                  rows: res.data.records,
-                }
-                //设置序号
-                data.rows.forEach((item, index) => {
-                  this.$set(item, 'orderTypeDesc', item.orderType.description)
-                  this.$set(item, 'orderId', item.orderIdStr)
-                })
-              } else {
-                data = []
+        this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
+        this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
+        return getPcTradeRecord(Object.assign(parameter, this.queryParamsTemp))
+          .then((res) => {
+            if (res.code == 0 && res.data.records.length > 0) {
+              //组装控件需要的数据结构
+              var data = {
+                pageNo: parameter.pageNo,
+                pageSize: parameter.pageSize,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
               }
-              return data
-            })
-            .finally((data) => {
-              this.confirmLoading = false
-            })
-        } else {
-          this.queryParamsTemp = JSON.parse(JSON.stringify(this.requesDetail))
-          return getOrderSettlementDetailsList(Object.assign(parameter, this.queryParamsTemp))
-            .then((res) => {
-              if (res.code == 0 && res.data.records.length > 0) {
-                //组装控件需要的数据结构
-                var data = {
-                  pageNo: parameter.pageNo,
-                  pageSize: parameter.size,
-                  totalRows: res.data.total,
-                  totalPage: res.data.total / parameter.size,
-                  rows: res.data.records,
-                }
-                //设置序号
-                data.rows.forEach((item, index) => {
-                  this.$set(item, 'orderId', item.orderIdStr)
-                  this.$set(item, 'commodityName', item.commodity_name)
-                  this.$set(item, 'orderTotal', item.order_total)
-                  this.$set(item, 'orderTypeDesc', this.getorderType(item.order_type))
-                  this.$set(item, 'realTotalPayMoney', item.realPrice)
-                  this.$set(item, 'endtime', item.endTimeStr)
-                  this.$set(item, 'orderTime', item.orderTimeStr)
-                })
-              } else {
-                data = []
-              }
-              return data
-            })
-            .finally((data) => {
-              this.confirmLoading = false
-            })
-        }
+              //设置序号
+              data.rows.forEach((item, index) => {
+                // this.$set(item, 'orderTypeDesc', item.orderType.description)
+                // this.$set(item, 'orderId', item.orderIdStr)
+              })
+            } else {
+              data = []
+            }
+            return data
+          })
+          .finally((data) => {
+            this.confirmLoading = false
+          })
       },
     }
   },
 
-  activated() {},
+  activated() {
+    this.getBankListByUserIdOut()
+  },
 
   watch: {
     $route(to, from) {
-      // console.log('ddd:', from)
-      if (to.path.indexOf('settlementDetail') > -1) {
+      console.log('ddd:', from)
+      if (to.path.indexOf('temporaryDetail') > -1) {
+        console.log("11111111111111111")
         this.initData()
       }
     },
   },
 
   created() {
-    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.queryParams.createdTime = moment(getMonthNow(), this.monthFormat)
+    this.nowMonth = moment(getMonthNow(), this.monthFormat)
+    this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
+    // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.initData()
   },
 
   methods: {
+
+
+    disabledDate(current) {
+      // Can not select days before today and today
+      return current && current > moment().endOf('day')
+    },
+
+
+
+
     onRadioClick(type) {
       //如果在加载中  不让点击
       if (this.confirmLoading) {
         return
       }
       this.currentTab = type
-      // this.queryParams.settlementStatus = type
+      this.queryParams.tabStr = type
       // this.queryParamsOrigin.settlementStatus = type
       // this.queryParamsGroup.settlementType = type
-      if (type != 1) {
-        // this.getOrderSettlementListGroupByOut()
-      }
-      // this.$refs.table.refresh()
+      this.$refs.table.refresh()
     },
 
     //更新时间
@@ -327,35 +293,19 @@ export default {
 
     initData() {
       this.record = JSON.parse(this.$route.query.dataStr)
-      // console.log('FFFF:', this.record)
-      this.queryParams.doctorName = this.record.doctorName
-      this.docName = this.record.doctorName
-      this.queryParams.doctorUserId = this.record.doctorUserId
-      this.queryParams.hospitalCode = this.record.hospitalCode
-      this.time = this.record.time
-      this.queryParams.createdTime = this.time
-      this.queryParams.orderType = this.record.orderType
-      this.status = this.record.status
-
-      this.requesDetail.masterId = this.record.id
-      this.requesDetail.orderType = this.record.orderType
-      // this.requesDetail.orderType = 'srvPackOrder'
-
-      if (this.status == '待结算') {
-        this.queryParams.settlementStatus = 1
-      } else if (this.status == '已结算') {
-        this.queryParams.settlementStatus = 2
-      } else if (this.status == '不予结算') {
-        this.queryParams.settlementStatus = 3
-      }
-      this.requesDetail.settlementType = this.queryParams.settlementStatus
-
-      if (this.queryParams.settlementStatus != 1) {
-        this.getListGroupByOut() //请求统计接口
-        // this.getOrderSettlementDetailsListOut() //请求列表接口
-      }
+      console.log('FFFF:', this.record)
+      this.queryParams.userId = this.record.userId
 
       this.$refs.table.refresh()
+    },
+
+    // 获取银行卡列表
+    getBankListByUserIdOut() {
+      getBankListByUserId({ userId: this.record.userId }).then((res) => {
+        if (res.code == 0) {
+          this.bankList = res.data
+        }
+      })
     },
 
     getorderType(string) {
@@ -364,37 +314,6 @@ export default {
       } else if (string == 'srvPackOrder') {
         return '专科服务'
       }
-    },
-
-    // 上面的统计
-    getListGroupByOut() {
-      this.confirmLoading = true
-      getListGroupBy(this.requesDetail)
-        .then((res) => {
-          if (res.code == 0) {
-            this.record = res.data
-
-            this.record.payTotalAll = parseFloat(res.data.payTotalAll).toFixed(2)
-            this.record.srvPackOrderSum = parseFloat(res.data.srvPackOrderSum).toFixed(2)
-            // this.record.countAll = res.data.countAll
-            // this.record.consultOrderSum = res.data.consultOrderSum
-            // this.record.consultOrderCount = res.data.consultOrderCount
-            // this.record.srvPackOrderCount = res.data.srvPackOrderCount
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
-    // 结算与不予结算的 列表详情
-    getOrderSettlementDetailsListOut() {
-      this.confirmLoading = true
-      getOrderSettlementDetailsList(this.requesDetail)
-        .then((res) => {})
-        .finally((res) => {
-          this.confirmLoading = false
-        })
     },
 
     getColor(value) {

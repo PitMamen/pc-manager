@@ -5293,3 +5293,32 @@ export function temporaryAudit(data) {
     data: data,
   })
 }
+
+
+// 临工结算列表
+export function getUserInfoHvyogoPageList(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getUserInfoHvyogoPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 银行卡
+export function getBankListByUserId(data) {
+  return axios({
+    url: '/account-api/tfUserInfoHvyogo/getBankListByUserId',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 交易明细列表
+export function getPcTradeRecord(data) {
+  return axios({
+    url: '/account-api/accountOrderSettlementMaster/getPcTradeRecord',
+    method: 'post',
+    data: data,
+  })
+}

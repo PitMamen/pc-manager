@@ -249,7 +249,7 @@
         <!-- 开方科室 -->
         <div class="div-pro-line">
           <span class="span-item-name">开方科室 :</span>
-          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+          <span class="span-item-value">{{ medicalInfoList.execDeptName || '-' }}</span>
         </div>
 
 
@@ -266,14 +266,14 @@
 <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">审核药师 :</span>
-          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+          <span class="span-item-value">{{ medicalInfoList.checkUserName || '-' }}</span>
         </div>
 
 
         <!-- 开方科室 -->
         <div class="div-pro-line">
           <span class="span-item-name">发货时间 :</span>
-          <span class="span-item-value">{{ medicalInfoList.deptName || '-' }}</span>
+          <span class="span-item-value">{{ shipTime || '-' }}</span>
         </div>
 
 
@@ -281,7 +281,7 @@
 
         <div class="div-pro-line">
           <span class="span-item-name">发货人员 :</span>
-          <span class="span-item-value">{{ medicalInfoList.payTotal || '-' }}</span>
+          <span class="span-item-value">{{ shipUserName || '-' }}</span>
         </div>
       </div>
 
@@ -502,6 +502,9 @@ export default {
       payMode: '',
       isChufang: 'true',
 
+      shipTime:'', //发货时间
+      shipUserName:'',  //发货人
+
       goodsItemsDataColumns: [
         {
           title: '药品名称',
@@ -518,7 +521,7 @@ export default {
 
         {
           title: '执行科室',
-          dataIndex: 'num',
+          dataIndex: 'takeMedicineLocDesc',
         },
 
 
@@ -643,6 +646,13 @@ export default {
             this.goodsItemsData = res.data.goodsItems
             this.addressInfo = res.data.addressInfo
             this.expressInfos = res.data.expressInfos
+
+            if (res.data.expressInfos&&res.data.expressInfos.length) {
+              this.shipTime = res.data.expressInfos[0].shipTime
+              this.shipUserName = res.data.expressInfos[0].shipUserName
+            }
+
+
             // this.rightItemsData = res.data.rightItems
             this.getOrderDetailChufangOut(reponseDataList.outOrderNo)
             this.getMedicalOrdersInfoOut(reponseDataList.outOrderNo)
