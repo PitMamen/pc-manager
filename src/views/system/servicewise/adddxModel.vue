@@ -513,7 +513,6 @@ export default {
           return
         }
       }
-
       var jumpValue = ''
       var jumpTitle = ''
       var jumpId = ''

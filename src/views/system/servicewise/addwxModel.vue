@@ -192,7 +192,7 @@
           <div class="div-line-wrap" v-show="radioTyPe === 4">
             <div class="div-total-one">
               <span class="span-item-name">病历类型 :</span>
-              <a-select v-model="synCasetype" placeholder="请选择病历类型"  allow-clear >
+              <a-select  @select="selectContent" v-model="synCasetype" placeholder="请选择病历类型"  allow-clear >
             <a-select-option
               v-for="(item, index) in caseList"
               :title="item.value"
@@ -239,6 +239,7 @@ export default {
   components: { addQuestion, addTeach },
   data() {
     return {
+      bingliTitle:'',
       synCasetype:undefined,
       caseList:[],
       visible: false,
@@ -274,6 +275,7 @@ export default {
     clearData() {
       this.synCasetype=undefined,
       this.id=''
+      this.bingliTitle='',
       this.wxgzhData = []
       this.checkData = {
         smsConfigureId: '', //短信平台配置ID
@@ -313,6 +315,14 @@ export default {
           this.caseList = res.data
         }
       })
+    },
+
+    selectContent(code){
+      const target = this.caseList.find(item => code === item.code)
+      if (target) {
+        this.bingliTitle = target.value
+      }
+      // console.log("HHHHHH:",target)
     },
 
     //新增
@@ -629,9 +639,13 @@ export default {
           this.$message.error('请选择病历类型')
           return
         }
+
+        jumpTitle = this.bingliTitle
         jumpValue = this.synCasetype
         jumpId = this.synCasetype   //特殊处理  如果选中的是 病历类型 将选择的病历赋值给 jumpId  查看的时候也是取这个字段
       }
+
+      console.log("ffff:",jumpTitle)
 
       var postData = {
         wxAppId: this.checkData.wxAppId,
