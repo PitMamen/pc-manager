@@ -67,12 +67,12 @@
             <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
               <a-checkbox @change="changeDaoliu" :disabled="disabledDaoliu" :checked="daoliubao"
                 class="span-item-name"></a-checkbox>
-              <div style="margin-left: 3px; color: #000;">导流包 :</div>
+              <div style="margin-left: 3px; color: #000;">导流包</div>
 
               <a-InputNumber placeholder="请输入限购次数" :disabled="isDisabled" v-model="packageData.limitPurchaseTimes"
-                type="number" :min="1" style="display: inline-block; width: 35%; margin-left: 5px; margin-top: -3px"
+                type="number" :min="1" style="display: inline-block; width: 59%; margin-left: 5px; margin-top: -3px"
                 oninput="if(value<=1)value=1" />
-              <div style="margin-left: 10px; color: #000;">次</div>
+              <!-- <div style="margin-left: 10px; color: #000;">次</div> -->
             </div>
 
           </div>
