@@ -654,7 +654,6 @@ export default {
         //默认值需求  默认来源名单
         let cacheId = Vue.ls.get('cache_project_sourceId')
         console.log('oooooooooo cacheSourceId', cacheId)
-        debugger
         let getOne = this.sourceData.find((item) => item.value == cacheId)
         if (cacheId && getOne) {
           this.projectData.basePlan.metaConfigureId = cacheId
@@ -1113,9 +1112,10 @@ export default {
         } else if (chooseOne.jumpType == 2) {
           itemTask.taskType = '2'
           this.$set(itemTask, 'taskTypeName', '健康宣教')
-        } else if (item.jumpType == '5') {
+        } else if (chooseOne.jumpType == '5') {
+          // debugger
           itemTask.taskType = '4'
-          this.$set(item, 'taskTypeName', '病历查阅')
+          this.$set(itemTask, 'taskTypeName', '病历查阅')
         } else {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
