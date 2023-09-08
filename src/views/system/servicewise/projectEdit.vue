@@ -1334,6 +1334,7 @@ export default {
     showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
       if (itemTask.taskType = '4') {     ////查阅不病历 不做点击效果
+        console.log("不让点击!!!!!")
         return
       }
       this.$refs.taskDetail.showDetail(itemTask)

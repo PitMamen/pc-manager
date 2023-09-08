@@ -180,14 +180,20 @@ export default {
         {
           title: '所属机构',
           dataIndex: 'hospitalName',
+          width: 150,
+          ellipsis: true,
         },
         {
           title: '所属科室',
           dataIndex: 'departmentName',
+          width: 150,
+          ellipsis: true,
         },
         {
           title: '所属病区',
           dataIndex: 'areaId',
+          width: 150,
+          ellipsis: true,
         },
         {
           title: '申请时间',
@@ -206,7 +212,7 @@ export default {
         {
           title: '操作',
           fixed: 'right',
-          width: 150,
+          width: 120,
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
