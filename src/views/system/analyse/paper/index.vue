@@ -55,7 +55,8 @@
                 <span style="margin-left: 2px; color: #409eff">{{ item.spotAll }}</span>
                 <span style="color: #999999; margin-left: 10px">回收:</span>
                 <span style="margin-left: 5px; color: #409eff">{{ item.spotOk }}</span>
-                <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span>
+                <!-- 优化需求，回收率隐藏，因为显示不下 -->
+                <!-- <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span> -->
               </div>
 
 

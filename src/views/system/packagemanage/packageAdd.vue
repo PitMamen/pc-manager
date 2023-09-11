@@ -754,7 +754,7 @@ export default {
           //   this.nameNurse = ''
 
           // }
-          //如果切换到资讯类，全部团队置空
+          //如果切换到咨询类，全部团队置空
           this.isNurse = false
           this.isDoctor = false
           this.nameNurse = ''
