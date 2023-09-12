@@ -69,6 +69,7 @@
         </div>
       </div>
       <div class="div-service-control">
+        <a-spin :spinning="confirmLoading2">
         <div class="div-service-left-control">
           <div class="left-content">
             <div
@@ -94,7 +95,7 @@
           <a-pagination v-if="showPagination" simple  style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
                       @change="handleChangePage"/>
         </div>
-          
+      </a-spin>
         
 
         <div class="div-service-right-control">
