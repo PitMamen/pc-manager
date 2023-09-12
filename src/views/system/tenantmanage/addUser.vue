@@ -573,8 +573,8 @@
                   :maxLength="19"
                   type="number"
                   v-model="bank1.bankCard"
-                  @blur="getBankNameForCardNoOut(bank1.bankCard, 1)"
-                  @keyup.enter="getBankNameForCardNoOut(bank1.bankCard, 1)"
+                  @blur="getBankNameForCardNoOut(bank1.bankCard, 1,bank1.bankCard)"
+                  @keyup.enter="getBankNameForCardNoOut(bank1.bankCard, 1,bank1.bankCard)"
                 ></a-input>
                 <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                   {{ bank1.bankName || '' }}
@@ -606,8 +606,8 @@
                   :maxLength="19"
                   type="number"
                   v-model="bank2.bankCard"
-                  @blur="getBankNameForCardNoOut(bank2.bankCard, 2)"
-                  @keyup.enter="getBankNameForCardNoOut(bank2.bankCard, 2)"
+                  @blur="getBankNameForCardNoOut(bank2.bankCard, 2,bank2.bankCard)"
+                  @keyup.enter="getBankNameForCardNoOut(bank2.bankCard, 2,bank2.bankCard)"
                 ></a-input>
                 <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                   {{ bank2.bankName || '' }}
@@ -639,8 +639,8 @@
                   :maxLength="19"
                   type="number"
                   v-model="bank3.bankCard"
-                  @blur="getBankNameForCardNoOut(bank3.bankCard, 3)"
-                  @keyup.enter="getBankNameForCardNoOut(bank3.bankCard, 3)"
+                  @blur="getBankNameForCardNoOut(bank3.bankCard, 3,bank3.bankCard)"
+                  @keyup.enter="getBankNameForCardNoOut(bank3.bankCard, 3,bank3.bankCard)"
                 ></a-input>
                 <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                   {{ bank3.bankName || '' }}
@@ -1246,8 +1246,10 @@ export default {
     /**
      * 通过银行卡号得到 银行名称
      */
-    getBankNameForCardNoOut(cardNo, type) {
-      console.log('11:', cardNo, type)
+    getBankNameForCardNoOut(cardNo, type,card) {
+      if (!card) {
+        return
+      }
       this.confirmLoading = true
       getBankNameForCardNo(cardNo)
         .then((res) => {
