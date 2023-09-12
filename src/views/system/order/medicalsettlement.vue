@@ -100,7 +100,7 @@
 
     <div v-if="currentTab == 2 || currentTab == 3" class="div-down">
       <div class="div-service-left-control">
-        <div class="left-control" style="height: 610px">
+        <div class="left-control" style="height: 380px">
           <div class="div-wrap-control" style="margin-top: 5%">
             <div v-if="groupListTemp && groupListTemp.length > 0">
               <div
@@ -855,7 +855,7 @@ export default {
         background: rgba(0, 1, 3, 0);
         border: 1px solid #dfe3e5;
         overflow: hidden;
-        width: 95%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         margin-bottom: 8px;
@@ -960,8 +960,8 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
-    color: #1890ff;
+    // background-color: #eff7ff;
+    // color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }
 

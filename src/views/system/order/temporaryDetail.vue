@@ -225,7 +225,7 @@ export default {
               }
               //设置序号
               data.rows.forEach((item, index) => {
-                // this.$set(item, 'orderTypeDesc', item.orderType.description)
+                this.$set(item, 'pay_uuid', item.master_id)
                 // this.$set(item, 'orderId', item.orderIdStr)
               })
             } else {
