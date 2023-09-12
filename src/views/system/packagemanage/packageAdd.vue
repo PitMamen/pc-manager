@@ -79,7 +79,7 @@
 
           <!-- gatherHealthFlag -->
           <div class="div-pro-line" v-if="broadClassify == 2">
-            
+
             <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
               <a-checkbox @change="onGatherChange" :checked="isGather" class="span-item-name"></a-checkbox>
               <div style="margin-left: 3px; color: #000;">采集健康档案 :</div>
