@@ -116,6 +116,7 @@ import {
 } from '@/api/modular/system/posManage'
 import { getMonthNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
+import events from '@/components/MultiTab/events'
 
 export default {
   components: {
@@ -354,7 +355,10 @@ export default {
 
     //返回
     goBack() {
-      this.$router.go(-1)
+      // this.$router.go(-2)
+      events.$emit('close')
+
+
       // this.$router.back()
     },
 

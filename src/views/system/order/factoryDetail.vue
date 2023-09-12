@@ -99,6 +99,8 @@ import {
 import { formatDateFull, formatDate } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
+import events from '@/components/MultiTab/events'
+
 
 export default {
   components: {
@@ -310,8 +312,9 @@ export default {
 
     //返回
     goBack() {
+      events.$emit('close')
       // this.$bus.$emit('orderRefresh', '刷新数据')
-      this.$router.go(-1)
+      // this.$router.go(-1)
       // this.$router.back()
     },
 

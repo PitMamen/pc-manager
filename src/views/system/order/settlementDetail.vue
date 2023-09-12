@@ -98,6 +98,7 @@ import {
 import { getDateNow, getCurrentMonthLast } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
+import events from '@/components/MultiTab/events'
 
 export default {
   components: {
@@ -408,7 +409,8 @@ export default {
 
     //返回
     goBack() {
-      this.$router.go(-1)
+      events.$emit('close')
+      // this.$router.go(-1)
       // this.$router.back()
     },
 
