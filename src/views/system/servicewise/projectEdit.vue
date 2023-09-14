@@ -82,6 +82,13 @@
             <span class="span-titl" style="margin-left: 1%">每个患者仅匹配一次</span>
           </div>
         </div>
+
+        <div class="div-up-content">
+          <div class="div-pro-line">
+            <a-checkbox @click="goReExecute()" :checked="isReExecute" style="margin-left: 1%" />
+            <span class="span-titl" style="margin-left: 1%">超时任务重新生产并执行</span>
+          </div>
+        </div>
       </div>
 
       <div class="div-pro-middle">
@@ -600,6 +607,7 @@ export default {
       //重复匹配状态：0不重复1可以重
       isOnce: false,
       indexTaskNow: 0,
+      isReExecute:false,
 
       /**
        *
@@ -719,6 +727,16 @@ export default {
 
   methods: {
     moment,
+
+
+    goReExecute() {
+      // 随访名单更新时需重新匹配：0不匹配1匹配
+      this.isReExecute = !this.isReExecute
+      this.projectData.basePlan.updateMatchStatus = this.isReExecute ? 1 : 0
+    },
+
+
+
     goAgin() {
       // 随访名单更新时需重新匹配：0不匹配1匹配
       this.isAgain = !this.isAgain
@@ -1332,11 +1350,12 @@ export default {
     },
 
     showDetail(itemTask, indexTask) {
-      console.log('showDetail indexTask', indexTask)
-      if (itemTask.taskType = '4') {     ////查阅不病历 不做点击效果
-        console.log("不让点击!!!!!")
-        return
-      }
+      console.log('showDetail indexTask', itemTask.taskTypeName)
+      // if (itemTask.taskTypeName = '病历查阅') {
+      //   ////查阅不病历 不做点击效果
+      //   console.log('不让点击!!!!!')
+      //   return
+      // }
       this.$refs.taskDetail.showDetail(itemTask)
     },
 
