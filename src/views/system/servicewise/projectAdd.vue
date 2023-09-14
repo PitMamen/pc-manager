@@ -1146,9 +1146,9 @@ export default {
 
     showDetail(itemTask, indexTask) {
       console.log('showDetail indexTask', indexTask)
-      if (itemTask.taskType = '4') {   //查阅不病历 不做点击效果
-        return
-      }
+      // if (itemTask.taskType = '4') {   //查阅不病历 不做点击效果
+      //   return
+      // }
       this.$refs.taskDetail.showDetail(itemTask)
     },
 
