@@ -93,7 +93,7 @@
 
           <div class="div-pro-line">
             <a-checkbox @click="goReExecute()" :checked="isReExecute" style="margin-left: 1%" />
-            <span class="span-titl" style="margin-left: 1%">超时任务重新生产并执行</span>
+            <span class="span-titl" style="margin-left: 1%">超时任务重新生成并执行</span>
 
           </div>
 
@@ -646,6 +646,7 @@ export default {
 
           updateMatchStatus: 0, //随访名单更新时需重新匹配：0不匹配1匹配
           repeatMatchStatus: 1, //重复匹配状态：0不重复1可以重
+          execOvertimetaskFlag: 1, //1 执行  0 不执行
         },
         filterRules: [],
         tasks: [],
@@ -755,7 +756,7 @@ export default {
     goReExecute() {
       // 随访名单更新时需重新匹配：0不匹配1匹配
       this.isReExecute = !this.isReExecute
-      this.projectData.basePlan.updateMatchStatus = this.isReExecute ? 1 : 0
+      this.projectData.basePlan.execOvertimetaskFlag = this.isReExecute ? 1 : 0
     },
 
 
