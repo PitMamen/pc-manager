@@ -1,6 +1,6 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs v-model="keyindex" @change="chanage" style="margin-top: -20px">
+    <a-tabs  :activeKey="0"  v-model="keyindex" @change="chanage" style="margin-top: -20px">
       <a-tab-pane
         class="ant-tabs-tab-active"
         v-for="(itemTab, indexTab) in tabDatas"
@@ -169,6 +169,7 @@ export default {
       tableClumns: [],
       chooseArrOrigin: [],
       user: {},
+      tableId:'',
       tabDatas: [],
       originData: [],
       chooseArr: [],
@@ -366,6 +367,7 @@ export default {
           this.keyindex = res.data.rows[0].databaseTableName
           this.tabDatas = res.data.rows
           this.tableName = res.data.rows[0].databaseTableName
+          this.tableId = res.data.rows[0].id
           this.queryData.databaseTableName = res.data.rows[0].databaseTableName
           this.queryTableData.databaseTableName = res.data.rows[0].databaseTableName
           this.refreshData() //查询条件
@@ -472,7 +474,7 @@ export default {
     chanage(id) {
       console.log('VVVV:', id)
       const tableName = this.tabDatas.find((item) => id === item.id)
-      console.log('VVVV111:', tableName.databaseTableName)
+      this.tableId = id
       if (tableName) {
         this.tableName = tableName.databaseTableName
         this.queryData.databaseTableName = tableName.databaseTableName
