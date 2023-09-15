@@ -99,6 +99,7 @@ import {
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDateFull, formatDate } from '@/utils/util'
+import events from '@/components/MultiTab/events'
 export default {
   components: {
     STable,
@@ -315,7 +316,8 @@ export default {
       this.$router.push({ path: './medicNew' })
     },
     goDetail(record) {
-      // this.$router.push({ path: './medicDetail' })
+      //改为打开详情，只能同时打开一个详情页，这里打开详情前先关掉已打开的详情  关闭调试代码
+      // events.$emit('close','/medic/medicDetail')
       this.$router.push({
         path: './medicDetail',
         query: {

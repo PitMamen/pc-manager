@@ -622,11 +622,12 @@ export default {
     $route(to, from) {//TODO watch不回调需要找原因
       console.log('watch****************medicDetail Be', to, from)
       if (to.path.indexOf('medicDetail') > -1) {
-        this.initData()
+        this.initData()//改为打开详情，只能同时打开一个详情页，所以切换tab时不刷新数据   关闭调试代码
       }
     },
   },
 
+  //所以单开一个页面，deactivated的时候缓存已修改的所有数据，wath监听路由的时候判断this.medicId是否已经被打开过缓存过，缓存过就初始化initData后再把缓存显示出来
   deactivated() {
     console.log('medicDetail deactivated')
   },
