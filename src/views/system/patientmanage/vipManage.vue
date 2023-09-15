@@ -609,6 +609,7 @@ export default {
      */
     goPlan(record) {
       this.$set(record, 'userId', record.user_id)
+      this.$set(record, 'followMetaConfigureId', this.tableId)
       this.$refs.visitManage.distribution(record)
     },
 
