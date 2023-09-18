@@ -899,6 +899,17 @@ export function createDoctorUser(parameter) {
 }
 
 /**
+ * 医生初始化套餐信息
+ */
+export function initCommodity(parameter) {
+  return axios({
+    url: '/account-api/userInfo/initCommodity',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 用户管理修改接口（角色不允许修改）
  */
 export function updateUser(parameter) {
@@ -3539,6 +3550,17 @@ export function updatePkgStatus(data) {
 export function getCommodityClassify(data) {
   return axios({
     url: '/medical-api/pkg/getCommodityClassify',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 套餐分类接口(排除咨询/复诊续方大类)
+ */
+export function getManualCommodityClassify(data) {
+  return axios({
+    url: '/medical-api/pkg/getManualCommodityClassify',
     method: 'post',
     data: data,
   })

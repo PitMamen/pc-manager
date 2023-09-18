@@ -223,6 +223,8 @@ export default {
         messageContentId: '',
         hospitalCode: '',
         executeTime: '2022-11-01',
+        followMetaConfigureId: '',///qryMetaConfigure 接口的id
+        followMetaDataId: '',//列表id
       },
 
       queryParamsRecord: {
@@ -261,6 +263,8 @@ export default {
       this.confirmLoading = true
       this.recordList = []
       this.queryParams.userId = record.userId
+      this.queryParams.followMetaDataId = record.id
+      this.queryParams.followMetaConfigureId = record.followMetaConfigureId
       this.queryParamsRecord.userId = record.userId
       this.qryExecuteRecordByUserIdOut()
       this.getmessageTypes()
@@ -504,6 +508,8 @@ export default {
       this.queryParams.messageType = undefined
       this.queryParams.messageContentType = undefined
       this.queryParams.messageContentId = ''
+      this.queryParams.followMetaDataId = ''
+      this.queryParams.followMetaConfigureId = ''
       this.msgDataTemp=[]
     },
 

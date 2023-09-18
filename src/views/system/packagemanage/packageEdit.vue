@@ -32,14 +32,14 @@
         </div>
 
         <div class="div-up-content">
-          <div class="div-pro-line">
+          <!-- <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属租户 :</span>
             <a-select @select="onSelectChange" v-model="packageData.tenantId" allow-clear placeholder="请选择">
               <a-select-option v-for="(item, index) in tenantList" :key="index" :value="item.tenantCode">{{
                 item.tenantName
               }}</a-select-option>
             </a-select>
-          </div>
+          </div> -->
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
@@ -64,10 +64,25 @@
             </a-select>
           </div>
 
+          <div class="div-pro-line" v-if="broadClassify == 2">
+            <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
+              <a-checkbox @change="onGatherChange" :checked="isGather" class="span-item-name"></a-checkbox>
+              <div style="margin-left: 3px; color: #000;">采集健康档案 :</div>
+
+              <a-select mode="multiple" v-model="packageData.gatherHealthIdtest" disabled
+                style="margin-left: 5px; width: 52.5% !important" allow-clear placeholder="请选择">
+                <a-select-option v-for="(item, index) in validateList" :key="index" :value="item.code">{{
+                  item.value
+                }}</a-select-option>
+              </a-select>
+            </div>
+
+          </div>
+
         </div>
 
-        <div class="div-up-content">
-          <div class="div-pro-line">
+        <!-- <div class="div-up-content">
+           <div class="div-pro-line">
             <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
               <a-checkbox @change="changeDaoliu" :disabled="disabledDaoliu" :checked="daoliubao"
                 class="span-item-name"></a-checkbox>
@@ -76,12 +91,12 @@
               <a-InputNumber placeholder="请输入限购次数" :disabled="isDisabled" v-model="packageData.limitPurchaseTimes"
                 type="number" :min="1" style="display: inline-block; width: 59%; margin-left: 5px; margin-top: -3px"
                 oninput="if(value<=1)value=1" />
-              <!-- <div style="margin-left: 10px; color: #000;">次</div> -->
+              
             </div>
 
-          </div>
+          </div> 
 
-          <!-- gatherHealthFlag -->
+         
           <div class="div-pro-line" v-if="broadClassify == 2">
             <div style="display: flex; flex-direction: row;align-items: center; margin-top: 1%;margin-left:4px">
               <a-checkbox @change="onGatherChange" :checked="isGather" class="span-item-name"></a-checkbox>
@@ -96,7 +111,7 @@
             </div>
 
           </div>
-        </div>
+        </div> -->
 
       </div>
 
@@ -291,7 +306,7 @@
 import {
   getPkgDetail,
   getTreeUsersByDeptIdsAndRoles,
-  getCommodityClassify,
+  getManualCommodityClassify,
   queryHospitalList,
   getTenantList,
   qryFollowPlanByFollowType,
@@ -560,7 +575,7 @@ export default {
     },
 
     getCommodityClassifyOut() {
-      getCommodityClassify({}).then((res) => {
+      getManualCommodityClassify({}).then((res) => {
         if (res.code == 0) {
           this.classData = res.data
         } else {
