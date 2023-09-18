@@ -104,7 +104,7 @@
         </a-popconfirm>
 
         <a-icon type="setting" />
-        <a style="margin-left: 5px">配置</a>
+        <a style="margin-left: 5px"  @click="$refs.phoneConfig.editmodal(1)">配置</a>
       </span>
 
       <!-- 视频咨询 -->
@@ -116,7 +116,7 @@
         </a-popconfirm>
 
         <a-icon type="setting" />
-        <a style="margin-left: 5px">配置</a>
+        <a style="margin-left: 5px"  @click="$refs.phoneConfig.editmodal(2)">配置</a>
       </span>
 
       <!-- 门诊随诊 -->
@@ -134,6 +134,7 @@
 
     <fzmz-Config ref="fzmzConfig" @ok="handleOk" />
     <tuWen-Config ref="tuWenConfig" @ok="handleOk" />
+    <phone-Config ref="phoneConfig" @ok="handleOk" />
   </a-card>
 </template>
     
@@ -155,11 +156,13 @@ import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import fzmzConfig from './fzmzConfig.vue'
 import tuWenConfig from './tuWenConfig.vue'
+import phoneConfig from './phoneConfig.vue'
 export default {
   components: {
     STable,
     fzmzConfig,
     tuWenConfig,
+    phoneConfig,
   },
   data() {
     return {
