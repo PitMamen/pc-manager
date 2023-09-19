@@ -9,7 +9,7 @@
     :maskClosable="false"
   >
       <template #footer>
-        <a-button v-if="record.userId" icon="setting"  style="margin-right: 520px;" :type="checkData.initCommodityFlag==0?'primary':'default'" :loading="confirmLoading" @click="handleServiceInit">{{checkData.initCommodityFlag==0?'初始化服务':'已初始化'}}</a-button>
+        <a-button v-if="record.userId && checkData.userType=='doctor'" icon="setting"  style="margin-right: 520px;width: 112px !important;" :type="canInitCommodity?'primary':'default'" :loading="confirmLoading" @click="handleServiceInit">{{checkData.initCommodityFlag==0?'初始化服务':'已初始化'}}</a-button>
         <a-button key="back" @click="handleCancel">取消</a-button>
         <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">确定</a-button>
       </template>
@@ -719,6 +719,7 @@ export default {
       updateInfo: '更新信息',
       registering: '注册',
 
+      canInitCommodity:false,
       record: {},
       isDetailTag: false,
       headers: {},
@@ -1056,6 +1057,12 @@ export default {
           this.zhiyeZList = []
           this.zhiyeFList = []
 
+          this.canInitCommodity=res.data.initCommodityFlag===0 && res.data.userType=='doctor' 
+          && res.data.idcardF && res.data.idcardZ 
+          && (res.data.titleZ || res.data.titleF) 
+          && res.data.qualificationZ && res.data.qualificationF 
+          && res.data.practiceZ && res.data.practiceF 
+          
           // 身份证
           if (this.checkData.idcardF) {
             this.photoListCheck.idcardF = this.checkData.idcardF
@@ -1555,7 +1562,7 @@ export default {
 
     //初始化服务
     handleServiceInit(){
-      if(this.checkData.initCommodityFlag === 0){
+      if(this.canInitCommodity){
         this.confirmLoading=true
         
         initCommodity({doctorUserId:this.record.userId}).then((res) => {
