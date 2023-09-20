@@ -1576,6 +1576,8 @@ export default {
         }
         this.confirmLoading = false
       })
+      }else{
+        this.$message.error('请先提交证件信息')
       }
       
     },
