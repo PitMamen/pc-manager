@@ -1577,7 +1577,10 @@ export default {
         this.confirmLoading = false
       })
       }else{
-        this.$message.error('请先提交证件信息')
+        if(this.checkData.initCommodityFlag===0){
+          this.$message.error('请先提交证件信息')
+        }
+        
       }
       
     },
