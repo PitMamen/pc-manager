@@ -75,7 +75,7 @@
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.fuzhen"
-            :title="record.fuzhen && record.fuzhen.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            :title="record.fuzhen && record.fuzhen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
             placement="topRight"
             @confirm="updatePkgStatusOut(record, 'fuzhen')"
           >
@@ -83,7 +83,7 @@
               v-if="record.fuzhen"
               :disabled="!record.fuzhen"
               size="small"
-              :checked="record.fuzhen ? record.fuzhen.stopStatus == 1 : false"
+              :checked="record.fuzhen ? record.fuzhen.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
@@ -106,7 +106,7 @@
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.tuwen"
-            :title="record.tuwen && record.tuwen.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            :title="record.tuwen && record.tuwen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
             placement="topRight"
             @confirm="updatePkgStatusOut(record, 'tuwen')"
           >
@@ -114,7 +114,7 @@
               v-if="record.tuwen"
               :disabled="!record.tuwen"
               size="small"
-              :checked="record.tuwen ? record.tuwen.stopStatus == 1 : false"
+              :checked="record.tuwen ? record.tuwen.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
@@ -137,7 +137,7 @@
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.dianhua"
-            :title="record.dianhua && record.dianhua.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            :title="record.dianhua && record.dianhua.stopStatus == 2 ? '确认停用？' : '确认启用？'"
             placement="topRight"
             @confirm="updatePkgStatusOut(record, 'dianhua')"
           >
@@ -145,7 +145,7 @@
               v-if="record.dianhua"
               :disabled="!record.dianhua"
               size="small"
-              :checked="record.dianhua ? record.dianhua.stopStatus == 1 : false"
+              :checked="record.dianhua ? record.dianhua.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
@@ -167,7 +167,7 @@
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.shipin"
-            :title="record.shipin && record.shipin.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            :title="record.shipin && record.shipin.stopStatus == 2 ? '确认停用？' : '确认启用？'"
             placement="topRight"
             @confirm="updatePkgStatusOut(record, 'shipin')"
           >
@@ -175,7 +175,7 @@
               v-if="record.shipin"
               :disabled="!record.shipin"
               size="small"
-              :checked="record.shipin ? record.shipin.stopStatus == 1 : false"
+              :checked="record.shipin ? record.shipin.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
@@ -197,7 +197,7 @@
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.menzhen"
-            :title="record.menzhen && record.menzhen.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            :title="record.menzhen && record.menzhen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
             placement="topRight"
             @confirm="updatePkgStatusOut(record, 'menzhen')"
           >
@@ -205,7 +205,7 @@
               v-if="record.menzhen"
               :disabled="!record.menzhen"
               size="small"
-              :checked="record.menzhen ? record.menzhen.stopStatus == 1 : false"
+              :checked="record.menzhen ? record.menzhen.stopStatus == 2 : false"
             />
           </a-popconfirm>
 
@@ -413,31 +413,31 @@ export default {
       if (type == 'fuzhen') {
         data = {
           id: record.fuzhen.commodityId,
-          statusValue: record.fuzhen.stopStatus == 1 ? 2 : 1,
+          statusValue: record.fuzhen.stopStatus == 2 ? 1: 2,
           updateType: 2,
         }
       } else if (type == 'tuwen') {
         data = {
           id: record.tuwen.commodityId,
-          statusValue: record.tuwen.stopStatus == 1 ? 2 : 1,
+          statusValue: record.tuwen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
       } else if (type == 'dianhua') {
         data = {
           id: record.dianhua.commodityId,
-          statusValue: record.dianhua.stopStatus == 1 ? 2 : 1,
+          statusValue: record.dianhua.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
       } else if (type == 'shipin') {
         data = {
           id: record.shipin.commodityId,
-          statusValue: record.shipin.stopStatus == 1 ? 2 : 1,
+          statusValue: record.shipin.stopStatus == 2? 1 : 2,
           updateType: 2,
         }
       } else if (type == 'menzhen') {
         data = {
           id: record.menzhen.commodityId,
-          statusValue: record.menzhen.stopStatus == 1 ? 2 : 1,
+          statusValue: record.menzhen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
       }

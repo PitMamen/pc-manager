@@ -12,7 +12,9 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span style="color: #4d4d4d">{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span>
+            <span style="color: #4d4d4d"
+              >{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span
+            >
 
             <div style="flex-wrap: wrap; margin-left: 240px; display: flex; flex-direction: row">
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
@@ -34,7 +36,7 @@
                 <span class="span-item-name">单价 </span>
                 <a-input-number
                   style="display: inline-block; width: 70px"
-                  v-model="item.price"
+                  v-model="item.saleAmount"
                   :min="0"
                   :max="10000"
                   :maxLength="30"
@@ -48,23 +50,23 @@
                 <a-input
                   :maxLength="20"
                   class="span-item-value"
-                  v-model="item.limit"
+                  v-model="item.serviceStrip"
                   style="display: inline-block; width: 60px"
                   allow-clear
                 />
 
                 <!--  -->
-                <a-checkbox style="margin-left: 20px" @click="limitService(item)" :checked="item.isSerTime" />
+                <a-checkbox style="margin-left: 20px" @click="limitService(item)" :checked="item.isSerLimit" />
                 <span class="span-item-name" style="margin-left: 10px">服务时效</span>
                 <a-input
                   :maxLength="20"
                   class="span-item-value"
-                  v-model="item.timeliness"
+                  v-model="item.serviceTime"
                   style="display: inline-block; width: 60px"
                   allow-clear
                 />
 
-                <a-select v-model="item.unit" style="width: 70px; margin-left: 10px" allow-clear placeholder="单位">
+                <a-select v-model="item.timeUnit" style="width: 70px; margin-left: 10px" allow-clear placeholder="单位">
                   <a-select-option v-for="(item, index) in timeUnitTypesData" :key="index" :value="item.code">{{
                     item.value
                   }}</a-select-option>
@@ -97,7 +99,11 @@
               
               
               <script>
-import { updateExpressInfo,getCommodityPkgDetailByid, saveCommodityPkgCollection } from '@/api/modular/system/posManage'
+import {
+  updateExpressInfo,
+  getCommodityPkgDetailByid,
+  saveCommodityPkgCollection,
+} from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate } from '@/utils/util'
@@ -109,28 +115,38 @@ export default {
     return {
       visible: false,
       titleTab: '复诊续方配置',
-      saleAmount:1,
+      saleAmount: 1,
       islimitTip: true,
       isSertimelimit: true,
       record: {},
       headers: {},
       price: 60,
       confirmLoading: false,
-      pkgs:[],
-      unitSelect:1,
+      pkgs: [],
+      itemsAttr: [],
+      unitSelect: 1,
       timeAttrExpire: {},
       timeAttrLimitnums: {},
 
-      serviceValue1: 1,
-      serviceValue2: 1,
+      serviceTime: 1,
+      timeUnit: 1,
+
+      serviceStrip: 1,
+      StripUnit: 1,
+
       taskList: [
         {
-          price: 20,
+          serviceStrip: 0,
+          StripUnit: 0,
+
+          serviceTime: 0,
+          timeUnit: 1,
+
+          id: '',
+          saleAmount: 1,
+
           isLimit: false,
-          limit: 20,
-          isSerTime: false,
-          timeliness: 24,
-          unit: 1,
+          isSerLimit: false,
         },
       ],
 
@@ -153,12 +169,16 @@ export default {
     clearData() {
       this.taskList = [
         {
-          price: 20,
+          serviceStrip: 0,
+          StripUnit: 0,
+          serviceTime: 0,
+          timeUnit: 1,
+          id: '',
+          projectId:'',
+          saleAmount: 1,
+
           isLimit: false,
-          limit: 20,
-          isSerTime: false,
-          timeliness: 24,
-          unit: 1,
+          isSerLimit: false,
         },
       ]
     },
@@ -170,12 +190,20 @@ export default {
       }
 
       this.taskList.push({
-        price: 20,
+        id: '',
+        projectId:'',
+        ruleType: '',
+        ruleTypeName: '',
+        serviceStrip: '',
+        serviceTime: '',
+
+        timeUnit: '',
+        StripUnit: '',
+
+        saleAmount: 0,
+
         isLimit: false,
-        limit: 20,
-        isSerTime: false,
-        timeliness: 24,
-        unit: 1,
+        isSerLimit: false,
       })
     },
 
@@ -193,8 +221,8 @@ export default {
     },
 
     limitService(item) {
-      item.isSerTime = !item.isSerTime
-      console.log('11111111111:', item.isSerTime)
+      item.isSerLimit = !item.isSerLimit
+      console.log('11111111111:', item.isSerLimit)
     },
 
     // 配送
@@ -203,51 +231,63 @@ export default {
       this.visible = true
       this.titleTab = '图文咨询配置'
       this.record = record
-      console.log("1111:",record)
+      console.log('1111:', record)
       this.getDetailData()
     },
 
-
     getDetailData() {
       getCommodityPkgDetailByid({
-        pkgId:  this.record.tuwen.commodityPkgId
+        pkgId: this.record.tuwen.commodityPkgId,
       })
         .then((res) => {
           if (res.code == 0) {
             //区分新增和修改
             if (res.data.optionalPkgs.length > 0) {
               this.pkgs = res.data.optionalPkgs
-              res.data.optionalPkgs.forEach((item) => {
-                if (item.items.length > 0) {
-                  item.items.forEach((item1) => {
-                    this.saleAmount = item1.saleAmount //单价
-                    if (item1.itemsAttr) {
-                         this.taskList = item1.itemsAttr
+              res.data.optionalPkgs.forEach((item, index) => {
+                if (index == 0) {
+                  //不管是 可选包 还是必选包  只取第一个包展示
+                  if (item.items.length > 0) {
+                    this.taskList.shift()
+                    item.items.forEach((item1,index) => {
 
-                      // item1.itemsAttr.forEach((item2) => {
-                      //   if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
-                      //     //服务时效
-                      //     this.timeAttrExpire = item2
-                      //     this.serviceValue1 = this.timeAttrExpire.serviceValue
-                      //     if (this.timeAttrExpire.unit == '小时') {
-                      //       this.unitSelect = 1
-                      //     } else {
-                      //       this.unitSelect = 2
-                      //     }
-                      //   } else if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-                      //     //限制条数
-                      //     this.timeAttrLimitnums = item2
-                      //     this.serviceValue2 = this.timeAttrLimitnums.serviceValue
-                      //   }
-                      // })
-                    }
-                  })
+                      this.taskList.push({
+                        serviceStrip: 1, //限制条数
+                        StripUnit: 1, //限制条数单位   /条
+                        serviceTime: 1, //限制时效
+                        timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
+                        id: '',
+                        projectId: item1.id,
+                        saleAmount: item1.saleAmount, //单价
+                        isSerLimit: false,
+                        isLimit: false,
+                      })
+
+                      if (item1.itemsAttr) {
+                        item1.itemsAttr.forEach((item2) => {
+                          if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                            //服务时效
+                            this.taskList[index].isSerLimit =true
+                            this.taskList[index].id =item2.id
+                            this.taskList[index].serviceTime =item2.serviceValue
+                            this.taskList[index].timeUnit =item2.unit=='小时'?1:2
+                          } 
+                          
+                          if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                            //限制条数
+                            this.taskList[index].isLimit =true
+                            this.taskList[index].id =item2.id
+                            this.taskList[index].serviceStrip =item2.serviceValue
+                            this.taskList[index].StripUnit =item2.unit
+                          }
+                        })
+                      }
+
+                    
+                    })
+                  }
                 }
               })
-              console.log('1111:', this.timeAttrExpire, this.timeAttrLimitnums)
-            } else {
-              //将详情数据转换成前端要的数据
-              console.log('itemType 修改')
             }
           } else {
             this.$message.error(res.message)
@@ -258,21 +298,78 @@ export default {
         })
     },
 
-
-
-
-
-
-
-
-
-
-
-
-
     handleSubmit() {
-    },
+      var itemsTemp = []
+      if (this.pkgs.length > 1) {
+        this.pkgs.pop()
+      }
 
+      this.taskList.forEach((itemTask, index) => {
+        itemsTemp.push({
+          id: itemTask.projectId||'',
+          idOut: 1,
+          itemImg: 1,
+          quantity: 1,
+          saleAmount: itemTask.saleAmount,
+          serviceItemId: '1',
+          itemsAttr: [],
+        })
+
+        if (itemTask.isSerLimit) {
+          itemsTemp[index].itemsAttr.push({
+            id: 1,
+            ruleType: 'ITEM_ATTR_EXPIRE',
+            ruleTypeName: '服务时效',
+            serviceValue: itemTask.serviceTime,
+            unit: itemTask.timeUnit == 1 ? '小时' : '天',
+          })
+        }
+
+        if (itemTask.isLimit) {
+          itemsTemp[index].itemsAttr.push({
+            id: 1,
+            ruleType: 'ITEM_ATTR_LIMITNUMS',
+            ruleTypeName: '限制条数',
+            serviceValue: itemTask.serviceStrip,
+            unit: '条',
+          })
+        }
+      })
+
+      this.pkgs[0].items = itemsTemp
+
+      this.pkgs.forEach((item) => {
+        delete item.itemImg
+        delete item.totalAmount
+        item.itemType = 1
+
+      })
+
+      console.log('rrr:', this.pkgs)
+
+
+      let uploadData = {
+        pkgs: this.pkgs,
+        id: this.record.tuwen.commodityPkgId,
+      }
+
+      this.confirmLoading = true
+      saveCommodityPkgCollection(uploadData)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.$message.success('保存成功')
+            this.visible = false
+            this.$emit('ok')
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
 
     goBack() {
       window.history.back()
