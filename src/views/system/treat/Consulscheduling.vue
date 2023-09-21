@@ -10,6 +10,7 @@
           placeholder="请选择"
           allow-clear
           tree-default-expand-all
+          @select="selectHospital"
         >
         </a-tree-select>
       </div>
@@ -21,21 +22,19 @@
           style="min-width: 180px; height: 28px"
           :collapse-tags="true"
           show-search
-          v-model="selectDepartmentId"
+          v-model="queryParams.departmentId"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
           placeholder="请选择科室"
-          @change="onDepartmentSelectChange"
-          @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
           <a-select-option
             v-for="(item, index) in originData"
-            :title="item.department_name"
+            :title="item.departmentName"
             :key="index"
-            :value="item.department_id"
-            >{{ item.department_name }}</a-select-option
+            :value="item.departmentId"
+            >{{ item.departmentName }}</a-select-option
           >
         </a-select>
       </div>
@@ -43,7 +42,7 @@
       <div class="search-row">
         <span class="name">医护人员:</span>
         <a-input
-          v-model="queryParams.userName"
+          v-model="queryParams.queryText"
           allow-clear
           placeholder="输入用户名/医生"
           style="width: 140px; height: 28px"
@@ -71,64 +70,156 @@
       :rowKey="(record) => record.code"
     >
       <!-- 复诊续方 -->
-      <!-- :title="record.status.value === 1 ? '确认停用？' : '确认启用？'" -->
       <span slot="fzxfaction" slot-scope="text, record">
-        <a-popconfirm placement="topRight" @confirm="EnableFz(record)">
-          <a-switch size="small" :checked="false" />
 
-          <a-divider type="vertical" />
-        </a-popconfirm>
+        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+          <a-popconfirm
+            v-if="record.fuzhen"
+            :title="record.fuzhen && record.fuzhen.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'fuzhen')"
+          >
+            <a-switch
+              v-if="record.fuzhen"
+              :disabled="!record.fuzhen"
+              size="small"
+              :checked="record.fuzhen ? record.fuzhen.stopStatus == 1 : false"
+            />
+          </a-popconfirm>
 
-        <a-icon type="setting" />
-        <a style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(1)">配置</a>
+          <div v-if="!record.fuzhen" class="tuoyuan" @click="showMessage()">
+            <div class="yuan"></div>
+          </div>
+
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" />
+          <a style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
+        </div>
       </span>
 
       <!-- 图文咨询 -->
       <span slot="twzxaction" slot-scope="text, record">
-        <a-popconfirm placement="topRight" @confirm="EnableTw(record)">
-          <a-switch size="small" :checked="false" />
 
-          <a-divider type="vertical" />
-        </a-popconfirm>
+        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+          <a-popconfirm
+            v-if="record.tuwen"
+            :title="record.tuwen && record.tuwen.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'tuwen')"
+          >
+            <a-switch
+              v-if="record.tuwen"
+              :disabled="!record.tuwen"
+              size="small"
+              :checked="record.tuwen ? record.tuwen.stopStatus == 1 : false"
+            />
+          </a-popconfirm>
 
-        <a-icon type="setting" />
-        <a style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal()">配置</a>
+          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage()">
+            <div class="yuan"></div>
+          </div>
+
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" />
+          <a style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
+        </div>
       </span>
 
       <!-- 电话咨询 -->
       <span slot="dhzxaction" slot-scope="text, record">
-        <a-popconfirm placement="topRight" @confirm="EnableDh(record)">
-          <a-switch size="small" :checked="false" />
 
-          <a-divider type="vertical" />
-        </a-popconfirm>
+        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+          <a-popconfirm
+            v-if="record.dianhua"
+            :title="record.dianhua && record.dianhua.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'dianhua')"
+          >
+            <a-switch
+              v-if="record.dianhua"
+              :disabled="!record.dianhua"
+              size="small"
+              :checked="record.dianhua ? record.dianhua.stopStatus == 1 : false"
+            />
+          </a-popconfirm>
 
-        <a-icon type="setting" />
-        <a style="margin-left: 5px"  @click="$refs.phoneConfig.editmodal(1)">配置</a>
+          <div v-if="!record.dianhua" class="tuoyuan" @click="showMessage()">
+            <div class="yuan"></div>
+          </div>
+
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" />
+          <a style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(1)">配置</a>
+        </div>
       </span>
 
       <!-- 视频咨询 -->
       <span slot="spzxaction" slot-scope="text, record">
-        <a-popconfirm placement="topRight" @confirm="EnableSp(record)">
-          <a-switch size="small" :checked="false" />
+        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+          <a-popconfirm
+            v-if="record.shipin"
+            :title="record.shipin && record.shipin.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'shipin')"
+          >
+            <a-switch
+              v-if="record.shipin"
+              :disabled="!record.shipin"
+              size="small"
+              :checked="record.shipin ? record.shipin.stopStatus == 1 : false"
+            />
+          </a-popconfirm>
 
-          <a-divider type="vertical" />
-        </a-popconfirm>
+          <div v-if="!record.shipin" class="tuoyuan" @click="showMessage()">
+            <div class="yuan"></div>
+          </div>
 
-        <a-icon type="setting" />
-        <a style="margin-left: 5px"  @click="$refs.phoneConfig.editmodal(2)">配置</a>
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" />
+          <a style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(2)">配置</a>
+        </div>
       </span>
 
       <!-- 门诊随诊 -->
       <span slot="mzszaction" slot-scope="text, record">
-        <a-popconfirm placement="topRight" @confirm="EnableMz(record)">
-          <a-switch size="small" :checked="false" />
+        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+          <a-popconfirm
+            v-if="record.menzhen"
+            :title="record.menzhen && record.menzhen.stopStatus == 1 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'menzhen')"
+          >
+            <a-switch
+              v-if="record.menzhen"
+              :disabled="!record.menzhen"
+              size="small"
+              :checked="record.menzhen ? record.menzhen.stopStatus == 1 : false"
+            />
+          </a-popconfirm>
 
-          <a-divider type="vertical" />
-        </a-popconfirm>
+          <div v-if="!record.menzhen" class="tuoyuan" @click="showMessage()">
+            <div class="yuan"></div>
+          </div>
 
-        <a-icon type="setting" />
-        <a style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(2)">配置</a>
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" style="margin-top: 3px" />
+          <a style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
+        </div>
       </span>
     </s-table>
 
@@ -143,14 +234,10 @@
 import { STable } from '@/components'
 
 import {
-  queryHospitalList,
-  getDeptsPersonal,
-  getDepts,
-  searchDoctorUser,
-  getCommodityClassify,
-  getDepartmentListForSelect,
-  getUserInfoHvyogoPageList,
   accessHospitals,
+  getDeptListByType,
+  searchArrangeDoctors,
+  updatePkgStatus,
 } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -172,8 +259,10 @@ export default {
       fetching: false,
       selectDepartmentId: undefined,
       queryParams: {
-        hospitalCode: undefined, //所属机构代码
-        userName: '',
+        departmentId: undefined,
+        hospitalCode: undefined,
+        queryText: '',
+        status: 0,
       },
       labelCol: {
         xs: { span: 24 },
@@ -187,21 +276,27 @@ export default {
       confirmLoading: false,
       form: this.$form.createForm(this),
 
+      requestDeptList: {
+        hospitalCode: '',
+        internet: 1,
+        type: 0,
+      },
+
       // 表头
       columns: [
         {
           title: '医生姓名',
-          dataIndex: 'user_name',
+          dataIndex: 'userName',
           scopedSlots: { customRender: 'userNameaction' },
         },
 
         {
           title: '性别',
-          dataIndex: 'sex',
+          dataIndex: 'userSex',
         },
         {
           title: '年龄',
-          dataIndex: 'age',
+          dataIndex: 'userAge',
         },
         {
           title: '手机号码',
@@ -209,7 +304,7 @@ export default {
         },
         {
           title: '所属机构',
-          dataIndex: 'hvyogo_id',
+          dataIndex: 'hospitalName',
         },
 
         {
@@ -246,32 +341,44 @@ export default {
           scopedSlots: { customRender: 'mzszaction' },
           align: 'center',
         },
-
-        // {
-        //   title: '操作',
-        //   fixed: 'right',
-        //   width: 150,
-        //   dataIndex: 'action',
-        //   scopedSlots: { customRender: 'action' },
-        // },
       ],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getUserInfoHvyogoPageList(Object.assign(parameter, this.queryParams)).then((res) => {
+        return searchArrangeDoctors(Object.assign(parameter, this.queryParams)).then((res) => {
           let data = {}
-          if (res.code == 0 && res.data.records) {
+          if (res.code == 0 && res.data.rows) {
             data = {
               pageNo: parameter.pageNo,
               pageSize: parameter.pageSize,
-              totalRows: res.data.total,
-              totalPage: res.data.total / parameter.pageSize,
-              rows: res.data.records,
+              totalRows: res.data.totalRows,
+              totalPage: res.data.totalRows / parameter.pageSize,
+              rows: res.data.rows,
             }
 
             data.rows.forEach((item, index) => {
-              this.$set(item, 'userId', item.user_id)
+              if (item.arrangeInfos) {
+                item.arrangeInfos.forEach((item1, index) => {
+                  if (item1.arrangeType == 'guide') {
+                    //门诊随诊
+                    this.$set(item, 'menzhen', item1)
+                  } else if (item1.arrangeType == 101) {
+                    //图文咨询
+                    this.$set(item, 'tuwen', item1)
+                  } else if (item1.arrangeType == 102) {
+                    //电话咨询
+                    this.$set(item, 'dianhua', item1)
+                  } else if (item1.arrangeType == 103) {
+                    //视频咨询
+                    this.$set(item, 'shipin', item1)
+                  } else if (item1.arrangeType == 'register') {
+                    //复诊
+                    this.$set(item, 'fuzhen', item1)
+                  }
+                })
+              }
             })
+
           }
           return data
         })
@@ -282,29 +389,67 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
-    this.getDepartmentSelectList(undefined) //所属科室
+    // this.getDepartmentSelectList(undefined) //所属科室
     this.queryHospitalListOut() //所属机构
   },
   methods: {
-    // 复诊续方 开关
-    EnableFz() {
-      console.log('1111111')
+    showMessage() {
+      this.$message.error('请先初始化!')
     },
-    // 图文咨询 开关
-    EnableTw() {
-      console.log('2222222')
-    },
-    // 电话咨询 开关
-    EnableDh() {
-      console.log('3333333')
-    },
-    // 视频咨询 开关
-    EnableSp() {
-      console.log('4444444')
-    },
-    // 门诊随诊 开关
-    EnableMz() {
-      console.log('5555555')
+
+    /**
+      * 
+      * statusValue	integer($int32)
+        状态值：1关2开
+        updateType	integer($int32)
+        修改状态类型：0上架1推荐2停用
+      * 
+      * @param {*} id 
+      * @param {*} statusValue statusValue  传过来的是当前的状态
+      * @param {*} updateType 
+      */
+    updatePkgStatusOut(record, type) {
+      let data = {}
+      if (type == 'fuzhen') {
+        data = {
+          id: record.fuzhen.commodityId,
+          statusValue: record.fuzhen.stopStatus == 1 ? 2 : 1,
+          updateType: 2,
+        }
+      } else if (type == 'tuwen') {
+        data = {
+          id: record.tuwen.commodityId,
+          statusValue: record.tuwen.stopStatus == 1 ? 2 : 1,
+          updateType: 2,
+        }
+      } else if (type == 'dianhua') {
+        data = {
+          id: record.dianhua.commodityId,
+          statusValue: record.dianhua.stopStatus == 1 ? 2 : 1,
+          updateType: 2,
+        }
+      } else if (type == 'shipin') {
+        data = {
+          id: record.shipin.commodityId,
+          statusValue: record.shipin.stopStatus == 1 ? 2 : 1,
+          updateType: 2,
+        }
+      } else if (type == 'menzhen') {
+        data = {
+          id: record.menzhen.commodityId,
+          statusValue: record.menzhen.stopStatus == 1 ? 2 : 1,
+          updateType: 2,
+        }
+      }
+
+      updatePkgStatus(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功')
+          this.refresh()
+        } else {
+          this.$message.error('操作失败：' + res.message)
+        }
+      })
     },
 
     refresh() {
@@ -351,47 +496,31 @@ export default {
         })
     },
 
-    //获取管理的科室 可首拼
-    getDepartmentSelectList(departmentName) {
-      this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
-        this.fetching = false
-        if (res.code == 0) {
-          this.originData = res.data.records
-          this.$refs.tableStat.refresh()
-          // if (this.originData.length == 1) {
-          //   this.queryParamsStatisit.executeDepartmentIds.push(this.originData[0].department_id)
-          // }
-        }
-      })
+    selectHospital(code) {
+      console.log('DDDD:', code)
+      this.requestDeptList.hospitalCode = code
+      this.getDeptListByTypeOut()
     },
-    //科室搜索
-    onDepartmentSelectSearch(value) {
-      console.log('1111:', value)
-      this.originData = []
-      this.getDepartmentSelectList(value)
-    },
-    //科室选择变化
-    onDepartmentSelectChange(value) {
-      if (value == undefined) {
-        this.selectDepartmentId = ''
-        this.queryParamsStatisit.executeDepartmentIds = []
-        return
+
+    getDeptListByTypeOut() {
+      if (this.requestDeptList.hospitalCode) {
+        this.confirmLoading = true
+        getDeptListByType(this.requestDeptList)
+          .then((res) => {
+            this.originData = res.data
+          })
+          .finally((res) => {
+            this.confirmLoading = false
+          })
       }
-      if (value === undefined || value.length == 0) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
-      }
-      this.$refs.tableStat.refresh()
     },
     /**
      * 重置
      */
     reset() {
-      this.selectDepartmentId = undefined
       this.queryParams.hospitalCode = undefined
-      this.queryParams.userName = ''
+      this.queryParams.departmentId = undefined
+      this.queryParams.queryText = ''
 
       this.$refs.table.refresh(true)
     },
@@ -416,6 +545,24 @@ export default {
   //   bottom: 20px;
   // }
 }
+
+.tuoyuan {
+  width: 28px;
+  height: 16px;
+  background: #d9d9d9;
+  border-radius: 10px;
+  margin-top: 1px;
+
+  .yuan {
+    width: 14px;
+    height: 13px;
+    background: #ffffff;
+    border-radius: 50%;
+    margin-left: 2px;
+    margin-top: 1px;
+  }
+}
+
 .table-page-search-wrapper {
   padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;

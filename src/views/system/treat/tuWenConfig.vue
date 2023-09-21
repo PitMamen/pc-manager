@@ -12,9 +12,9 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span style="color: #4d4d4d">张医生|男|42岁|中南大学茅坑</span>
+            <span style="color: #4d4d4d">{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span>
 
-            <div style="flex-wrap: wrap; margin-left: 270px; display: flex; flex-direction: row">
+            <div style="flex-wrap: wrap; margin-left: 240px; display: flex; flex-direction: row">
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
               <a-input-number
                 style="display: inline-block; width: 70px; margin-left: 10px"
@@ -97,7 +97,7 @@
               
               
               <script>
-import { updateExpressInfo } from '@/api/modular/system/posManage'
+import { updateExpressInfo,getCommodityPkgDetailByid, saveCommodityPkgCollection } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate } from '@/utils/util'
@@ -109,19 +109,20 @@ export default {
     return {
       visible: false,
       titleTab: '复诊续方配置',
+      saleAmount:1,
       islimitTip: true,
       isSertimelimit: true,
       record: {},
       headers: {},
       price: 60,
       confirmLoading: false,
-      checkData: {
-        expressDate: formatDate(new Date()),
-        expressName: '',
-        expressNo: '',
-        orderId: 0,
-      },
+      pkgs:[],
+      unitSelect:1,
+      timeAttrExpire: {},
+      timeAttrLimitnums: {},
 
+      serviceValue1: 1,
+      serviceValue2: 1,
       taskList: [
         {
           price: 20,
@@ -196,65 +197,82 @@ export default {
       console.log('11111111111:', item.isSerTime)
     },
 
-    formatDate(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      return `${myyear}-${mymonth}-${myweekday}`
-    },
-
     // 配送
-    editmodal(type) {
+    editmodal(record) {
       this.clearData()
       this.visible = true
       this.titleTab = '图文咨询配置'
-      console.log('333333333333')
-      // this.confirmLoading = false
-      // this.checkData.orderId = orderId
-      // this.getUserTagsTypeListOut()
+      this.record = record
+      console.log("1111:",record)
+      this.getDetailData()
     },
 
-    onDatePickerChange(date, dateString) {
-      console.log(date, dateString)
-      this.checkData.expressDate = dateString
+
+    getDetailData() {
+      getCommodityPkgDetailByid({
+        pkgId:  this.record.tuwen.commodityPkgId
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            //区分新增和修改
+            if (res.data.optionalPkgs.length > 0) {
+              this.pkgs = res.data.optionalPkgs
+              res.data.optionalPkgs.forEach((item) => {
+                if (item.items.length > 0) {
+                  item.items.forEach((item1) => {
+                    this.saleAmount = item1.saleAmount //单价
+                    if (item1.itemsAttr) {
+                         this.taskList = item1.itemsAttr
+
+                      // item1.itemsAttr.forEach((item2) => {
+                      //   if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                      //     //服务时效
+                      //     this.timeAttrExpire = item2
+                      //     this.serviceValue1 = this.timeAttrExpire.serviceValue
+                      //     if (this.timeAttrExpire.unit == '小时') {
+                      //       this.unitSelect = 1
+                      //     } else {
+                      //       this.unitSelect = 2
+                      //     }
+                      //   } else if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                      //     //限制条数
+                      //     this.timeAttrLimitnums = item2
+                      //     this.serviceValue2 = this.timeAttrLimitnums.serviceValue
+                      //   }
+                      // })
+                    }
+                  })
+                }
+              })
+              console.log('1111:', this.timeAttrExpire, this.timeAttrLimitnums)
+            } else {
+              //将详情数据转换成前端要的数据
+              console.log('itemType 修改')
+            }
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
+
+
+
+
+
+
+
+
+
+
+
+
 
     handleSubmit() {
-      console.log(this.checkData)
-      if (isStringEmpty(this.checkData.expressDate)) {
-        this.$message.error('请选择发货日期')
-        return
-      }
-      if (isStringEmpty(this.checkData.expressNo)) {
-        this.$message.error('请输入物流单号')
-        return
-      }
-
-      if (isStringEmpty(this.checkData.expressName)) {
-        this.$message.error('请输入物流公司名称')
-        return
-      }
-
-      this.updateExpressInfoOut()
     },
 
-    //修改类别
-    updateExpressInfoOut() {
-      this.confirmLoading = true
-      updateExpressInfo(this.checkData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('操作成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
-    },
 
     goBack() {
       window.history.back()

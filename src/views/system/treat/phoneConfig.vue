@@ -70,13 +70,18 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                @change=" (time,timestring) => timeChangeStart(time,timestring, 1)"  
+                @change="(time, timestring) => timeChangeStart(time, timestring, 1)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>结束时间</div>
-              <a-time-picker   @change=" (time,timestring) => timeChangeEnd(time,timestring, 1)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 1)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -86,9 +91,19 @@
             <!-- 周二接诊 -->
             <div class="itemtime-content">
               <div>开始时间</div>
-              <a-time-picker    @change=" (time,timestring) => timeChangeStart(time,timestring, 2)" style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeStart(time, timestring, 2)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>结束时间</div>
-              <a-time-picker @change=" (time,timestring) => timeChangeEnd(time,timestring, 2)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 2)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -98,9 +113,19 @@
             <!-- 周三接诊 -->
             <div class="itemtime-content">
               <div>开始时间</div>
-              <a-time-picker    @change=" (time,timestring) => timeChangeStart(time,timestring, 3)" style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeStart(time, timestring, 3)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>结束时间</div>
-              <a-time-picker @change=" (time,timestring) => timeChangeEnd(time,timestring, 3)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 3)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -110,9 +135,19 @@
             <!-- 周四接诊 -->
             <div class="itemtime-content">
               <div>开始时间</div>
-              <a-time-picker    @change=" (time,timestring) => timeChangeStart(time,timestring, 4)" style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeStart(time, timestring, 4)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>结束时间</div>
-              <a-time-picker @change=" (time,timestring) => timeChangeEnd(time,timestring, 4)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 4)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -122,9 +157,19 @@
             <!-- 周五接诊 -->
             <div class="itemtime-content">
               <div>开始时间</div>
-              <a-time-picker    @change=" (time,timestring) => timeChangeStart(time,timestring, 5)" style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeStart(time, timestring, 5)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>结束时间</div>
-              <a-time-picker @change=" (time,timestring) => timeChangeEnd(time,timestring, 5)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 5)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -134,9 +179,19 @@
             <!-- 周六接诊 -->
             <div class="itemtime-content">
               <div>开始时间</div>
-              <a-time-picker    @change=" (time,timestring) => timeChangeStart(time,timestring, 6)" style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeStart(time, timestring, 6)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>结束时间</div>
-              <a-time-picker @change=" (time,timestring) => timeChangeEnd(time,timestring, 6)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 6)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -146,9 +201,19 @@
             <!-- 周日接诊 -->
             <div class="itemtime-content">
               <div>开始时间</div>
-              <a-time-picker    @change=" (time,timestring) => timeChangeStart(time,timestring, 7)" style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeStart(time, timestring, 7)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>结束时间</div>
-              <a-time-picker @change=" (time,timestring) => timeChangeEnd(time,timestring, 7)"  style="width: 95px" :default-value="moment('8:00', 'HH:mm')" format="HH:mm" />
+              <a-time-picker
+                @change="(time, timestring) => timeChangeEnd(time, timestring, 7)"
+                style="width: 95px"
+                :default-value="moment('8:00', 'HH:mm')"
+                format="HH:mm"
+              />
               <div>接诊人数</div>
               <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
             </div>
@@ -304,68 +369,43 @@ export default {
       ]
     },
 
-
-    
-    timeChangeStart(moment, starttimestring,type) {
-
-        // 周一开始时间
-        console.log('ssss:',type,starttimestring)
-        if (type==1) {
-            
-            //周二开始时间
-        }else if(type==2){
-            
-            //周三开始时间
-        }else if(type==3){
-            
-            //周四开始时间
-        }else if(type==4){
-            
-            //周五开始时间
-        }else if(type==5){
-            
-            //周六开始时间
-        }else if(type==6){
-            
-            //周日开始时间
-        }else if(type==7){
-            
-        }
-
-
-
-    },
-    
-    timeChangeEnd(moment, endtimestring,type){
-        console.log('BBBBB:',endtimestring,type)
-          // 周一结束时间
-          if (type==1) {
-            
-            //周二结束时间
-        }else if(type==2){
-            
-            //周三结束时间
-        }else if(type==3){
-            
-            //周四结束时间
-        }else if(type==4){
-            
-            //周五结束时间
-        }else if(type==5){
-            
-            //周六结束时间
-        }else if(type==6){
-            
-            //周日结束时间
-        }else if(type==7){
-            
-        }
-
+    timeChangeStart(moment, starttimestring, type) {
+      // 周一开始时间
+      console.log('ssss:', type, starttimestring)
+      if (type == 1) {
+        //周二开始时间
+      } else if (type == 2) {
+        //周三开始时间
+      } else if (type == 3) {
+        //周四开始时间
+      } else if (type == 4) {
+        //周五开始时间
+      } else if (type == 5) {
+        //周六开始时间
+      } else if (type == 6) {
+        //周日开始时间
+      } else if (type == 7) {
+      }
     },
 
-
-
-
+    timeChangeEnd(moment, endtimestring, type) {
+      console.log('BBBBB:', endtimestring, type)
+      // 周一结束时间
+      if (type == 1) {
+        //周二结束时间
+      } else if (type == 2) {
+        //周三结束时间
+      } else if (type == 3) {
+        //周四结束时间
+      } else if (type == 4) {
+        //周五结束时间
+      } else if (type == 5) {
+        //周六结束时间
+      } else if (type == 6) {
+        //周日结束时间
+      } else if (type == 7) {
+      }
+    },
 
     addTask() {
       if (this.taskList.length >= 5) {

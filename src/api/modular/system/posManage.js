@@ -5344,3 +5344,25 @@ export function getPcTradeRecord(data) {
     data: data,
   })
 }
+
+
+
+// 查询可开启的科室列表
+export function getDeptListByType(data) {
+  return axios({
+    url: '/info-api/departments/getDeptListByType',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 排班列表  
+export function searchArrangeDoctors(data) {
+  return axios({
+    url: '/account-api/accountInfo/searchArrangeDoctors',
+    method: 'post',
+    data: data,
+  })
+}

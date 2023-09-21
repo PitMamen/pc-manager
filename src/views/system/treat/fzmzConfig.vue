@@ -11,14 +11,16 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span style="color: #4D4D4D;">张医生|男|42岁|中南大学茅坑</span>
+            <span style="color: #4d4d4d"
+              >{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span
+            >
           </div>
 
           <div class="div-content" style="margin-top: 20px">
             <span class="span-item-name">单价 </span>
             <a-input-number
               style="display: inline-block; width: 70px"
-              v-model="price"
+              v-model="saleAmount"
               :min="0"
               :max="10000"
               :maxLength="30"
@@ -31,7 +33,7 @@
             <a-input
               :maxLength="20"
               class="span-item-value"
-              v-model="checkData.expressNo"
+              v-model="serviceValue2"
               style="display: inline-block; width: 70px"
               allow-clear
             />
@@ -43,12 +45,12 @@
             <a-input
               :maxLength="20"
               class="span-item-value"
-              v-model="checkData.expressNo"
+              v-model="serviceValue1"
               style="display: inline-block; width: 70px"
               allow-clear
             />
 
-            <a-select style="width: 70px;margin-left: 10px;" allow-clear placeholder="单位">
+            <a-select v-model="unitSelect" style="width: 70px; margin-left: 10px" allow-clear placeholder="单位">
               <a-select-option v-for="(item, index) in timeUnitTypesData" :key="index" :value="item.code">{{
                 item.value
               }}</a-select-option>
@@ -62,7 +64,7 @@
             
             
             <script>
-import { updateExpressInfo } from '@/api/modular/system/posManage'
+import { getCommodityPkgDetailByid, saveCommodityPkgCollection } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate } from '@/utils/util'
@@ -77,15 +79,17 @@ export default {
       islimitTip: true,
       isSertimelimit: true,
       record: {},
+      timeAttrExpire: {},
+      timeAttrLimitnums: {},
+      type: 1,
+      saleAmount: 1,
       headers: {},
       price: 1000,
+      unitSelect: 1,
       confirmLoading: false,
-      checkData: {
-        expressDate: formatDate(new Date()),
-        expressName: '',
-        expressNo: '',
-        orderId: 0,
-      },
+
+      serviceValue1: 1,
+      serviceValue2: 1,
 
       timeUnitTypesData: [
         {
@@ -104,11 +108,6 @@ export default {
   methods: {
     moment,
     clearData() {
-      this.checkData = {
-        expressDate: this.formatDate(new Date()),
-        expressNo: '',
-        expressName: '',
-      }
     },
 
     limitEnable() {
@@ -130,53 +129,116 @@ export default {
     },
 
     // 配送
-    editmodal(type) {
+    editmodal(record, type) {
       this.clearData()
       this.visible = true
       this.titleTab = type == 1 ? '复诊续方配置' : '门诊随诊配置'
-      console.log('1111111111111111111111111')
-      // this.confirmLoading = false
-      // this.checkData.orderId = orderId
-      // this.getUserTagsTypeListOut()
+      this.record = record
+      this.type = type
+
+      this.getDetailData(type)
     },
 
-    onDatePickerChange(date, dateString) {
-      console.log(date, dateString)
-      this.checkData.expressDate = dateString
+    getDetailData(type) {
+      getCommodityPkgDetailByid({
+        pkgId: type == 1 ? this.record.fuzhen.commodityPkgId : this.record.menzhen.commodityPkgId,
+      })
+        .then((res) => {
+          if (res.code == 0) {
+            //区分新增和修改
+            if (res.data.optionalPkgs.length > 0) {
+              this.pkgs = res.data.optionalPkgs
+              res.data.optionalPkgs.forEach((item) => {
+                if (item.items.length > 0) {
+                  item.items.forEach((item1) => {
+                    this.saleAmount = item1.saleAmount //单价
+                    if (item1.itemsAttr) {
+                      item1.itemsAttr.forEach((item2) => {
+                        if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                          //服务时效
+                          this.timeAttrExpire = item2
+                          this.serviceValue1 = this.timeAttrExpire.serviceValue
+                          if (this.timeAttrExpire.unit == '小时') {
+                            this.unitSelect = 1
+                          } else {
+                            this.unitSelect = 2
+                          }
+                        } else if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                          //限制条数
+                          this.timeAttrLimitnums = item2
+                          this.serviceValue2 = this.timeAttrLimitnums.serviceValue
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+              console.log('1111:', this.timeAttrExpire, this.timeAttrLimitnums)
+            } else {
+              //将详情数据转换成前端要的数据
+              console.log('itemType 修改')
+            }
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     handleSubmit() {
-      console.log(this.checkData)
-      if (isStringEmpty(this.checkData.expressDate)) {
-        this.$message.error('请选择发货日期')
-        return
-      }
-      if (isStringEmpty(this.checkData.expressNo)) {
-        this.$message.error('请输入物流单号')
-        return
-      }
+      this.pkgs.forEach((item) => {
+        delete item.itemImg
+        item.itemType = 1
 
-      if (isStringEmpty(this.checkData.expressName)) {
-        this.$message.error('请输入物流公司名称')
-        return
-      }
+        if (item.items) {
+          item.items.forEach((item2) => {
+            this.$set(item2, 'idOut', 1)
+            this.$set(item2, 'itemImg', 1)
+            this.$set(item2, 'saleAmount', this.saleAmount)
+            delete item2.itemInfo
+            delete item2.itemStatus
+            delete item2.serviceItemName
+            delete item2.unit
 
-      this.updateExpressInfoOut()
-    },
-
-    //修改类别
-    updateExpressInfoOut() {
-      this.confirmLoading = true
-      updateExpressInfo(this.checkData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('操作成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
+            if (item2.itemsAttr) {
+              item2.itemsAttr.forEach((item3) => {
+                if (item3.ruleType == 'ITEM_ATTR_EXPIRE') {
+                  this.$set(item3, 'serviceValue', this.serviceValue1) //设置服务时效
+                  this.$set(item3, 'unit', this.unitSelect == 1 ? '小时' : '天') //设置服务时效
+                } else if (item3.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                  this.$set(item3, 'serviceValue', this.serviceValue2) //设置限制条数
+                }
+              })
+            }
+          })
         }
-        this.confirmLoading = false
       })
+
+      console.log('rrr:', this.pkgs)
+
+      let uploadData = {
+        pkgs: this.pkgs,
+        id: this.type == 1 ? this.record.fuzhen.commodityPkgId : this.record.menzhen.commodityPkgId,
+      }
+
+      this.confirmLoading = true
+      saveCommodityPkgCollection(uploadData)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.$message.success('保存成功')
+            this.visible = false
+            this.$emit('ok')
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     goBack() {
@@ -198,10 +260,10 @@ export default {
   }
 }
 
-/deep/.ant-input-number{
-    min-height: 30px !important;
-    font-size: 12px !important;
-    line-height: 1.5;
+/deep/.ant-input-number {
+  min-height: 30px !important;
+  font-size: 12px !important;
+  line-height: 1.5;
 }
 </style>
 
@@ -288,7 +350,6 @@ export default {
       width: 300px;
       display: inline-block;
     }
-
 
     .ant-calendar-picker {
       //   flex: 1;
