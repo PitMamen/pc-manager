@@ -133,6 +133,28 @@ export default {
 
       serviceStrip: 1,
       StripUnit: 1,
+      packages: [
+        {
+          id: '',
+          itmeType: '',
+          items: [
+            {
+              serviceStrip: 0,
+              StripUnit: 0,
+
+              serviceTime: 0,
+              timeUnit: 1,
+
+              id: '',
+              saleAmount: 1,
+
+              isLimit: false,
+              isSerLimit: false,
+            },
+          ],
+        },
+        {},
+      ],
 
       taskList: [
         {
@@ -174,7 +196,7 @@ export default {
           serviceTime: 0,
           timeUnit: 1,
           id: '',
-          projectId:'',
+          projectId: '',
           saleAmount: 1,
 
           isLimit: false,
@@ -191,7 +213,7 @@ export default {
 
       this.taskList.push({
         id: '',
-        projectId:'',
+        projectId: '',
         ruleType: '',
         ruleTypeName: '',
         serviceStrip: '',
@@ -231,7 +253,7 @@ export default {
       this.visible = true
       this.titleTab = '图文咨询配置'
       this.record = record
-      console.log('1111:', record)
+      // console.log('1111:', record)
       this.getDetailData()
     },
 
@@ -244,50 +266,76 @@ export default {
             //区分新增和修改
             if (res.data.optionalPkgs.length > 0) {
               this.pkgs = res.data.optionalPkgs
-              res.data.optionalPkgs.forEach((item, index) => {
-                if (index == 0) {
-                  //不管是 可选包 还是必选包  只取第一个包展示
-                  if (item.items.length > 0) {
-                    this.taskList.shift()
-                    item.items.forEach((item1,index) => {
 
-                      this.taskList.push({
-                        serviceStrip: 1, //限制条数
-                        StripUnit: 1, //限制条数单位   /条
-                        serviceTime: 1, //限制时效
-                        timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
-                        id: '',
-                        projectId: item1.id,
-                        saleAmount: item1.saleAmount, //单价
-                        isSerLimit: false,
-                        isLimit: false,
+              // console.log('tttt:', this.pkgs)
+              this.taskList.shift()
+              res.data.optionalPkgs.forEach((item, indexOut) => {
+                // if (this.pkgs.length>0) {
+                //   this.pkgs.forEach(itemIn => {
+                //     this.$set(itemIn, 'id', item.id)
+                //     this.$set(itemIn, 'itemType', item.itemType)
+                //   this.$set(itemIn, 'itemImg', item.itemImg)
+                //    });
+                // }
+                // if (index == 0) {
+
+                //不管是 可选包 还是必选包  只取第一个包展示
+                if (item.items.length > 0) {
+                  item.items.forEach((item1, index) => {
+                    console.log("2222222:",item1)
+                    this.taskList.push({
+                      serviceStrip: 1, //限制条数
+                      StripUnit: 1, //限制条数单位   /条
+                      serviceTime: 1, //限制时效
+                      timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
+                      id: item1.id,
+                      projectId: item1.id,
+                      saleAmount: item1.saleAmount, //单价
+                      isSerLimit: false,
+                      isLimit: false,
+                    })
+
+                    if (item1.itemsAttr) {
+                      item1.itemsAttr.forEach((item2) => {
+                        console.log("99999:",JSON.stringify(this.taskList[indexOut]),JSON.stringify(this.taskList),indexOut)
+                        if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                          //服务时效
+                          this.taskList[indexOut].isSerLimit = true
+                          this.taskList[indexOut].id = item2.id
+                          this.taskList[indexOut].serviceTime = item2.serviceValue
+                          this.taskList[indexOut].timeUnit = item2.unit == '小时' ? 1 : 2
+                        }
+
+                        if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                          //限制条数
+                          this.taskList[indexOut].isLimit = true
+                          this.taskList[indexOut].id = item2.id
+                          this.taskList[indexOut].serviceStrip = item2.serviceValue
+                          this.taskList[indexOut].StripUnit = item2.unit
+                        }
                       })
 
-                      if (item1.itemsAttr) {
-                        item1.itemsAttr.forEach((item2) => {
-                          if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
-                            //服务时效
-                            this.taskList[index].isSerLimit =true
-                            this.taskList[index].id =item2.id
-                            this.taskList[index].serviceTime =item2.serviceValue
-                            this.taskList[index].timeUnit =item2.unit=='小时'?1:2
-                          } 
-                          
-                          if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-                            //限制条数
-                            this.taskList[index].isLimit =true
-                            this.taskList[index].id =item2.id
-                            this.taskList[index].serviceStrip =item2.serviceValue
-                            this.taskList[index].StripUnit =item2.unit
-                          }
-                        })
-                      }
+                      this.$set(this.taskList[indexOut], 'itemsAttr', item1.itemsAttr)
 
-                    
-                    })
-                  }
+
+
+
+
+
+
+
+                    }
+
+                    console.log("3333:",JSON.stringify(this.taskList))
+                  })
                 }
+                // }
               })
+
+           
+
+
+
             }
           } else {
             this.$message.error(res.message)
@@ -300,13 +348,14 @@ export default {
 
     handleSubmit() {
       var itemsTemp = []
-      if (this.pkgs.length > 1) {
-        this.pkgs.pop()
-      }
+      // if (this.pkgs.length > 1) {
+      //   this.pkgs.pop()
+      // }
 
       this.taskList.forEach((itemTask, index) => {
+        // console.log("MMMM:",itemTask.projectId,itemTask.id)
         itemsTemp.push({
-          id: itemTask.projectId||'',
+          id: itemTask.projectId || '',
           idOut: 1,
           itemImg: 1,
           quantity: 1,
@@ -316,8 +365,10 @@ export default {
         })
 
         if (itemTask.isSerLimit) {
+          let findItem =itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
+          console.log("JJJ:",findItem.id)
           itemsTemp[index].itemsAttr.push({
-            id: 1,
+            id: findItem.id,
             ruleType: 'ITEM_ATTR_EXPIRE',
             ruleTypeName: '服务时效',
             serviceValue: itemTask.serviceTime,
@@ -326,32 +377,58 @@ export default {
         }
 
         if (itemTask.isLimit) {
+          let findItem =itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
+          console.log("MMM:",findItem.id)
           itemsTemp[index].itemsAttr.push({
-            id: 1,
+            id:  findItem.id,
             ruleType: 'ITEM_ATTR_LIMITNUMS',
             ruleTypeName: '限制条数',
             serviceValue: itemTask.serviceStrip,
             unit: '条',
           })
         }
+
+
+        this.pkgs[index].items = JSON.parse(JSON.stringify(itemsTemp))
       })
 
-      this.pkgs[0].items = itemsTemp
+      console.log('哈哈哈:', this.pkgs)
+
+
+    //   this.pkgs.forEach((itemOut,index) => {
+    //     this.pkgs[index].items[0].itemsAttr = itemsTemp
+    // });
+
+
+      // if (this.pkgs.length > 0) {
+      //   this.pkgs[0].items[0].itemsAttr = itemsTemp
+      // } else {
+
+      // }
 
       this.pkgs.forEach((item) => {
         delete item.itemImg
         delete item.totalAmount
         item.itemType = 1
-
       })
 
       console.log('rrr:', this.pkgs)
 
+      let newPkgs = JSON.parse(JSON.stringify(this.pkgs))
+      // let newArr = []
+      // newPkgs.items.forEach((element, index) => {
+      //   newArr.push({ items: [] })
+      //   newArr[index].items.push(element)
+      // })
+
+      // console.log('fff:', newArr)
 
       let uploadData = {
-        pkgs: this.pkgs,
+        pkgs: newPkgs,
         id: this.record.tuwen.commodityPkgId,
       }
+
+      // console.log()
 
       this.confirmLoading = true
       saveCommodityPkgCollection(uploadData)
