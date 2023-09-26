@@ -225,6 +225,7 @@
               <a-input-number
                 v-model="pkgsItem.quantity"
                 :maxLength="20"
+                :min="0"
                 class="span-item-value"
                 style="display: inline-block; width: 60px; margin-left: 10px"
                 allow-clear
@@ -245,8 +246,8 @@
               <!--  -->
               <a-checkbox
                 style="margin-left: 20px"
-                @click="limitEnable(item)"
-                :checked="attreLimitnums.ruleType == 'ITEM_ATTR_LIMITNUMS'"
+                @click="limitEnable(attreLimitnums.isNumLimit)"
+                :checked="attreLimitnums.isNumLimit"
               />
               <span class="span-item-name" style="margin-left: 10px">限制条数</span>
               <a-input
@@ -260,8 +261,8 @@
               <!--  -->
               <a-checkbox
                 style="margin-left: 20px"
-                @click="limitService(item)"
-                :checked="attreTime.ruleType == 'ITEM_ATTR_EXPIRE'"
+                @click="limitService(attreTime.isTimeLimit)"
+                :checked="attreTime.isTimeLimit"
               />
               <span class="span-item-name" style="margin-left: 10px">服务时效</span>
               <a-input
@@ -314,6 +315,7 @@ import {
   getCommodityPkgDetailByid,
   qryServiceItemList,
   saveOrUpdateSnatch,
+  saveCommodityPkgCollection,
 } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -403,8 +405,25 @@ export default {
       isRefresh: false,
       classifyName: '',
 
-      attreTime: {},
-      attreLimitnums: {},
+      pkgsData: {},
+
+      attreTime: {
+        isTimeLimit: false,
+        ruleType: 'ITEM_ATTR_EXPIRE',
+        ruleName: '服务时效',
+        serviceValue: 5,
+        id: '',
+        unit: '小时',
+      },
+
+      attreLimitnums: {
+        isNumLimit: false,
+        ruleType: 'ITEM_ATTR_LIMITNUMS',
+        ruleName: '限制条数',
+        serviceValue: 1,
+        id: '',
+        unit: '条',
+      },
 
       /**
        * 参数
@@ -433,9 +452,10 @@ export default {
         packageName: '',
         skill: '',
         snatchValidNum: 0,
-        snatchValidUnit: 0,
+        snatchValidUnit: 1,
         subjectClassifyId: 0,
         teamImgs: [],
+        pkgManageItemNames: '', //团队成员
       },
     }
   },
@@ -466,18 +486,27 @@ export default {
   methods: {
     moment,
     async init() {
+      console.log('调用！！！！！！！！！！！！！！！！！！')
       // this.commodityPkgId = this.$route.query.commodityPkgId
       // console.log(' 555555:', this.commodityPkgId)
       //await 都是获取常量的方法
       await this.getTenantListOut()
       await this.qryServiceItemListOut('', true)
-      // await this.getDetailData()
+      //   await this.getDetailData()
       await this.queryHospitalListOut()
       await this.getDictDataOut()
       await this.getDictDataOutTEAMROLE()
       await this.getCommodityClassifyOut()
       await this.treeMedicalSubjectsOut()
       //   debugger
+    },
+
+    limitEnable(item) {
+      this.attreLimitnums.isNumLimit = !item
+    },
+
+    limitService(item) {
+      this.attreTime.isTimeLimit = !item
     },
 
     radioChange(e) {
@@ -560,6 +589,7 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             //区分新增和修改
+            this.pkgsData = res.data
             if (res.data.optionalPkgs.length > 0) {
               //   this.pkgs = res.data.optionalPkgs
 
@@ -586,50 +616,6 @@ export default {
                     })
                   }
                 }
-
-                //     //不管是 可选包 还是必选包  只取第一个包展示
-                //     if (item.items.length > 0) {
-                //       item.items.forEach((item1, index) => {
-                //         this.taskList.push({
-                //           serviceStrip: 1, //限制条数
-                //           StripUnit: 1, //限制条数单位   /条
-                //           serviceTime: 1, //限制时效
-                //           timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
-                //           id: item1.id,
-                //           projectId: item1.id,
-                //           saleAmount: item1.saleAmount, //单价
-                //           pkgsId: item.id,
-                //           isSerLimit: false,
-                //           isLimit: false,
-                //         })
-                //         if (item1.itemsAttr) {
-                //           item1.itemsAttr.forEach((item2) => {
-                //             console.log(
-                //               '99999:',
-                //               JSON.stringify(this.taskList[indexOut]),
-                //               JSON.stringify(this.taskList),
-                //               indexOut
-                //             )
-                //             if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
-                //               //服务时效
-                //               this.taskList[indexOut].isSerLimit = true
-                //               this.taskList[indexOut].id = item2.id
-                //               this.taskList[indexOut].serviceTime = item2.serviceValue
-                //               this.taskList[indexOut].timeUnit = item2.unit == '小时' ? 1 : 2
-                //             }
-                //             if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-                //               //限制条数
-                //               this.taskList[indexOut].isLimit = true
-                //               this.taskList[indexOut].id = item2.id
-                //               this.taskList[indexOut].serviceStrip = item2.serviceValue
-                //               this.taskList[indexOut].StripUnit = item2.unit
-                //             }
-                //           })
-                //           this.$set(this.taskList[indexOut], 'itemsAttr', item1.itemsAttr)
-                //         }
-                //         console.log('3333:', JSON.stringify(this.taskList))
-                //       })
-                //     }
               })
 
               console.log('OOO:', this.attreLimitnums, this.attreTime)
@@ -921,7 +907,6 @@ export default {
           if (res.code == 0) {
             this.plans = res.data
             if (isInit) {
-              //   this.processData()
             }
           }
         })
@@ -1008,7 +993,9 @@ export default {
         this.packageData.tenantId,
         this.packageData.hospitalCode,
         this.docDepartmentId,
-        this.packageData.commodityPkgManage[0].commodityPkgManageItemRsps,
+        this.packageData.commodityPkgManage && this.packageData.commodityPkgManage.length > 0
+          ? this.packageData.commodityPkgManage[0].commodityPkgManageItemRsps
+          : '',
         this.broadClassify == 1 ? true : false
       )
     },
@@ -1019,6 +1006,7 @@ export default {
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
+      console.log('ddd:', commodityPkgManageItemReqs)
       if (this.packageData.pkgManageItemNames == null) {
         this.packageData.pkgManageItemNames = ''
       }
@@ -1030,9 +1018,98 @@ export default {
           this.packageData.pkgManageItemNames = this.packageData.pkgManageItemNames + item.userName
         }
       })
+
+      console.log('KKK:', this.packageData.pkgManageItemNames)
+    },
+
+    processData(commodityId, commodityPkgId) {
+      //   console.log('VVV:', this.attreLimitnums, this.attreTime, this.pkgsData)
+
+      this.$set(this.pkgsData, 'pkgs', [])
+      this.$set(this.pkgsData, 'id', commodityPkgId)
+      this.$set(this.pkgsData, 'commodityId', commodityId)
+      this.$set(this.pkgsData, 'packageName', this.packageData.packageName)
+      this.$set(this.pkgsData.pkgs, 'items', [])
+
+      var itemsArray = []
+      var itemArrayTemp = {
+        id: commodityPkgId,
+        itemType: 1,
+        items: [],
+      }
+
+      var arryOut = []
+
+      var newArr = {
+        itemType: 1,
+        quantity: this.pkgsItem.quantity,
+        saleAmount: this.pkgsItem.saleAmount,
+        serviceItemId: '1',
+        serviceItemName: '图文咨询',
+        itemsAttr: [],
+      }
+
+      if (this.attreTime.isTimeLimit) {
+        newArr.itemsAttr.push({
+          id: '',
+          ruleType: 'ITEM_ATTR_EXPIRE',
+          ruleTypeName: '服务时效',
+          serviceValue: this.attreTime.serviceValue,
+          unit: this.attreTime.unit == 1 ? '小时' : '天',
+        })
+      }
+
+      if (this.attreLimitnums.isNumLimit) {
+        newArr.itemsAttr.push({
+          id: '',
+          ruleType: 'ITEM_ATTR_LIMITNUMS',
+          ruleTypeName: '限制条数',
+          serviceValue: this.attreLimitnums.serviceValue,
+          unit: '条',
+        })
+      }
+      //   arryOut.push(newArr)
+    //   itemArrayTemp.items.push(newArr)
+      itemArrayTemp.items.push(newArr)
+
+      itemsArray.push(itemArrayTemp)
+
+      console.log('ddd:', this.pkgsData.pkgs)
+
+      this.pkgsData.pkgs.items.push(arryOut)
+
+      let requestPkgs = {
+        // pkgs: arryOut,
+        pkgs: itemsArray,
+        id: commodityPkgId,
+        commodityId: commodityId,
+        packageName: this.packageData.packageName,
+      }
+
+      console.log('fff:', requestPkgs)
+
+      //   return
+      //  规格配置 保存
+      saveCommodityPkgCollection(requestPkgs)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.$message.success('保存成功')
+            // this.$emit('ok')
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     submitData() {
+        // this.processData()
+
+        // return
       let tempData = JSON.parse(JSON.stringify(this.packageData))
 
       if (!tempData.packageName) {
@@ -1093,30 +1170,43 @@ export default {
         }
       }
 
-      this.$set(tempData, 'commodityPkgManageReqs', tempData.commodityPkgManage[0])
-      this.$set(tempData.commodityPkgManageReqs, 'commodityPkgManageItemReqs', [])
+      this.$set(tempData, 'commodityPkgManageReqs', [])
 
+      let newData = []
+      tempData.commodityPkgManageItemReqs.forEach((item1) => {
+        newData.push({
+          achievementRatio: item1.achievementRatio,
+          deptId: item1.deptId,
+          leaderFlag: item1.leaderFlag,
+          objectId: item1.objectId,
+          weight: item1.weight,
+        })
+      })
+
+      tempData.commodityPkgManageReqs.push({
+        commodityPkgManageItemReqs: newData,
+        pkgManageId: '',
+      })
+
+      //   console.log("dd:",tempData.commodityPkgManageReqs)
       delete tempData.commodityPkgManage
       delete tempData.commodityPkgManageReqs.commodityPkgManageItems
       delete tempData.pkgManageItemNames
       delete tempData.tenantId
 
-      tempData.commodityPkgManageReqs.commodityPkgManageItemReqs = tempData.commodityPkgManageItemReqs
-      tempData.commodityPkgManageReqs.commodityPkgManageItemReqs.forEach((Item) => {
-        delete Item.userName
-      })
-      delete tempData.commodityPkgManageItemReqs
-      console.log('KKKK', tempData)
+      let requestData = JSON.parse(JSON.stringify(tempData))
+
+      console.log('MMMm', JSON.stringify(requestData))
 
       this.confirmLoading = true
       saveOrUpdateSnatch(tempData)
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
+            this.processData(res.data.commodityId, res.data.commodityPkgId)
             this.$message.success('保存成功')
             this.$bus.$emit('pkgEvent', '刷新数据-方案新增')
             this.$router.go(-1)
-            // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
             this.$message.error(res.message)
           }
