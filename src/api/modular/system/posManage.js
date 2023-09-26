@@ -5366,3 +5366,44 @@ export function searchArrangeDoctors(data) {
     data: data,
   })
 }
+
+
+// 抢单团队列表
+export function snatchList(data) {
+  return axios({
+    url: '/medical-api/pkg/snatchList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 套餐详情 
+export function snatchDetail(commodityPkgId) {
+  return axios({
+    url: '/medical-api/pkg/snatchDetail/'+commodityPkgId,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+//团队成员
+
+export function pkgManageItems(commodityId) {
+  return axios({
+    url: '/medical-api/pkg/pkgManageItems/'+commodityId,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+// 修改保存  团队套餐
+export function saveOrUpdateSnatch(data) {
+  return axios({
+    url: '/medical-api/pkg/saveOrUpdateSnatch',
+    method: 'post',
+    data: data,
+  })
+}

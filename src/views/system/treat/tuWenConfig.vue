@@ -20,7 +20,7 @@
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
               <a-input-number
                 style="display: inline-block; width: 70px; margin-left: 10px"
-                v-model="price"
+                v-model="achievementRatio"
                 :min="0"
                 :max="100"
                 :maxLength="30"
@@ -77,13 +77,13 @@
             <div class="div-divider">
               <div class="div-content">
                 <div class="small-content">
-                  <a-button :style="{ 'margin-right': '10px' }" type="primary" ghost @click="deleteTask(index)"
+                  <a-button :style="{ 'margin-right': '10px' }" type="primary" ghost @click="deleteTask(item, index)"
                     >删除</a-button
                   >
                   <a-button
                     style="margin-right: 10px"
                     type="primary"
-                    @click="addTask()"
+                    @click="addTask(item, index)"
                     v-if="index == taskList.length - 1"
                     >新增</a-button
                   >
@@ -103,12 +103,14 @@ import {
   updateExpressInfo,
   getCommodityPkgDetailByid,
   saveCommodityPkgCollection,
+  delCommodityPkgCollectionByid,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate } from '@/utils/util'
 import Vue from 'vue'
 import moment from 'moment'
+import { Item } from 'ant-design-vue/es/vc-menu'
 export default {
   components: {},
   data() {
@@ -127,7 +129,7 @@ export default {
       unitSelect: 1,
       timeAttrExpire: {},
       timeAttrLimitnums: {},
-
+      achievementRatio:0,
       serviceTime: 1,
       timeUnit: 1,
 
@@ -205,11 +207,35 @@ export default {
       ]
     },
 
-    addTask() {
+    addTask(item, index) {
       if (this.taskList.length >= 5) {
         this.$message.error('最多5条')
         return
       }
+
+      this.taskList.forEach((item, index) => {
+        if (item.isSerLimit) {
+          //服务时效
+          this.taskList[index].isSerLimit = true
+          this.taskList[index].ruleType = 'ITEM_ATTR_EXPIRE'
+          this.taskList[index].ruleTypeName = '服务时效'
+          this.taskList[index].id = item.id || ''
+          this.taskList[index].serviceTime = item.serviceValue
+          this.taskList[index].timeUnit = item.unit == '小时' ? 1 : 2
+        }
+
+        if (item.isLimit) {
+          // 条数限制
+          this.taskList[index].ruleType = 'ITEM_ATTR_LIMITNUMS'
+          this.taskList[index].ruleTypeName = '限制条数'
+          this.taskList[index].isLimit = true
+          this.taskList[index].id = item.id || ''
+          this.taskList[index].serviceTime = item.serviceValue
+          this.taskList[index].StripUnit = '条'
+        }
+      })
+
+      // this.$set(this.taskList[index], 'itemsAttr', [])
 
       this.taskList.push({
         id: '',
@@ -218,6 +244,7 @@ export default {
         ruleTypeName: '',
         serviceStrip: '',
         serviceTime: '',
+        pkgId: '',
 
         timeUnit: '',
         StripUnit: '',
@@ -226,25 +253,52 @@ export default {
 
         isLimit: false,
         isSerLimit: false,
+        itemsAttr: [],
       })
+
+      this.pkgs.push({})
     },
 
-    deleteTask(index) {
+    deleteTask(item, index) {
+      console.log('CCCC:', item)
       if (this.taskList.length == 1) {
         this.$message.error('至少配置一项!')
         return
       }
-      this.taskList.splice(index, 1)
+
+      if (!item.pkgsId || item.pkgsId == '') {
+        //如果删除新增的  直接删除视图
+        this.taskList.splice(index, index)
+        return
+      }
+
+      this.delCollectionItemByidOut(item.pkgsId, index)
+      // this.taskList.splice(index, 1)
+    },
+
+    // 单独删除
+    delCollectionItemByidOut(collectionId, index) {
+      console.log('ID:', collectionId)
+      this.confirmLoading = true
+      delCommodityPkgCollectionByid({ collectionId: collectionId })
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.taskList.splice(index, index)
+            this.$message.success('刪除成功')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     limitEnable(item) {
       item.isLimit = !item.isLimit
-      console.log('Dddddddd:', item.isLimit)
     },
 
     limitService(item) {
       item.isSerLimit = !item.isSerLimit
-      console.log('11111111111:', item.isSerLimit)
     },
 
     // 配送
@@ -253,7 +307,8 @@ export default {
       this.visible = true
       this.titleTab = '图文咨询配置'
       this.record = record
-      // console.log('1111:', record)
+      console.log('1111:', record)
+      this.achievementRatio = record.tuwen.achievementRatio
       this.getDetailData()
     },
 
@@ -267,22 +322,11 @@ export default {
             if (res.data.optionalPkgs.length > 0) {
               this.pkgs = res.data.optionalPkgs
 
-              // console.log('tttt:', this.pkgs)
               this.taskList.shift()
               res.data.optionalPkgs.forEach((item, indexOut) => {
-                // if (this.pkgs.length>0) {
-                //   this.pkgs.forEach(itemIn => {
-                //     this.$set(itemIn, 'id', item.id)
-                //     this.$set(itemIn, 'itemType', item.itemType)
-                //   this.$set(itemIn, 'itemImg', item.itemImg)
-                //    });
-                // }
-                // if (index == 0) {
-
                 //不管是 可选包 还是必选包  只取第一个包展示
                 if (item.items.length > 0) {
                   item.items.forEach((item1, index) => {
-                    console.log("2222222:",item1)
                     this.taskList.push({
                       serviceStrip: 1, //限制条数
                       StripUnit: 1, //限制条数单位   /条
@@ -291,13 +335,19 @@ export default {
                       id: item1.id,
                       projectId: item1.id,
                       saleAmount: item1.saleAmount, //单价
+                      pkgsId: item.id,
                       isSerLimit: false,
                       isLimit: false,
                     })
 
                     if (item1.itemsAttr) {
                       item1.itemsAttr.forEach((item2) => {
-                        console.log("99999:",JSON.stringify(this.taskList[indexOut]),JSON.stringify(this.taskList),indexOut)
+                        console.log(
+                          '99999:',
+                          JSON.stringify(this.taskList[indexOut]),
+                          JSON.stringify(this.taskList),
+                          indexOut
+                        )
                         if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
                           //服务时效
                           this.taskList[indexOut].isSerLimit = true
@@ -316,26 +366,12 @@ export default {
                       })
 
                       this.$set(this.taskList[indexOut], 'itemsAttr', item1.itemsAttr)
-
-
-
-
-
-
-
-
                     }
 
-                    console.log("3333:",JSON.stringify(this.taskList))
+                    console.log('3333:', JSON.stringify(this.taskList))
                   })
                 }
-                // }
               })
-
-           
-
-
-
             }
           } else {
             this.$message.error(res.message)
@@ -347,28 +383,49 @@ export default {
     },
 
     handleSubmit() {
-      var itemsTemp = []
       // if (this.pkgs.length > 1) {
       //   this.pkgs.pop()
       // }
+      var itemsTemp = []
 
       this.taskList.forEach((itemTask, index) => {
-        // console.log("MMMM:",itemTask.projectId,itemTask.id)
         itemsTemp.push({
           id: itemTask.projectId || '',
           idOut: 1,
           itemImg: 1,
           quantity: 1,
+          pkgId: '',
           saleAmount: itemTask.saleAmount,
           serviceItemId: '1',
-          itemsAttr: [],
+          itemsAttr: [
+            {
+              id: '',
+              ruleType: 'ITEM_ATTR_EXPIRE',
+              ruleTypeName: '服务时效',
+              unit: '小时',
+              serviceValue: itemTask.serviceTime,
+            },
+            {
+              id: '',
+              ruleType: 'ITEM_ATTR_LIMITNUMS',
+              ruleTypeName: '限制条数',
+              unit: '条',
+              serviceValue: itemTask.serviceStrip,
+            },
+          ],
         })
 
+        console.log('YYY:', itemTask.itemsAttr)
+
         if (itemTask.isSerLimit) {
-          let findItem =itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
-          console.log("JJJ:",findItem.id)
-          itemsTemp[index].itemsAttr.push({
-            id: findItem.id,
+          // debugger
+          let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
+          var id = ''
+          if (findItem) {
+            id = findItem.id
+          }
+          itemsTemp[0].itemsAttr.push({
+            id: id,
             ruleType: 'ITEM_ATTR_EXPIRE',
             ruleTypeName: '服务时效',
             serviceValue: itemTask.serviceTime,
@@ -377,10 +434,13 @@ export default {
         }
 
         if (itemTask.isLimit) {
-          let findItem =itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
-          console.log("MMM:",findItem.id)
-          itemsTemp[index].itemsAttr.push({
-            id:  findItem.id,
+          let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_LIMITNUMS')
+          var id = ''
+          if (findItem) {
+            id = findItem.id
+          }
+          itemsTemp[0].itemsAttr.push({
+            id: id,
             ruleType: 'ITEM_ATTR_LIMITNUMS',
             ruleTypeName: '限制条数',
             serviceValue: itemTask.serviceStrip,
@@ -388,17 +448,16 @@ export default {
           })
         }
 
-
         this.pkgs[index].items = JSON.parse(JSON.stringify(itemsTemp))
+        itemsTemp = []
+        console.log('TTTT:', this.pkgs[index].items.length, index)
       })
 
       console.log('哈哈哈:', this.pkgs)
 
-
-    //   this.pkgs.forEach((itemOut,index) => {
-    //     this.pkgs[index].items[0].itemsAttr = itemsTemp
-    // });
-
+      //   this.pkgs.forEach((itemOut,index) => {
+      //     this.pkgs[index].items[0].itemsAttr = itemsTemp
+      // });
 
       // if (this.pkgs.length > 0) {
       //   this.pkgs[0].items[0].itemsAttr = itemsTemp
