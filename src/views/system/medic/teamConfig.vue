@@ -306,7 +306,7 @@
 import {
   getManualCommodityClassify,
   queryHospitalList,
-  getTenantList,
+  accessTenants,
   qryFollowPlanByFollowType,
   getDictData,
   treeMedicalSubjects,
@@ -406,7 +406,7 @@ export default {
       classifyName: '',
 
       attreTime: {
-        isTimeLimit: false,
+        isTimeLimit:false,
         ruleType: 'ITEM_ATTR_EXPIRE',
         ruleName: '服务时效',
         serviceValue: 5,
@@ -415,7 +415,7 @@ export default {
       },
 
       attreLimitnums: {
-        isNumLimit: false,
+        isNumLimit:false,
         ruleType: 'ITEM_ATTR_LIMITNUMS',
         ruleName: '限制条数',
         serviceValue: 1,
@@ -481,9 +481,13 @@ export default {
           console.log('packageData Detail 1', res.data)
           this.packageData = res.data
 
-        if (res.data.commodityPkgManage&&res.data.commodityPkgManage.length>0) {
-            this.$set(this.packageData,'commodityPkgManageItemReqs',res.data.commodityPkgManage[0].commodityPkgManageItems)
-        }
+          if (res.data.commodityPkgManage && res.data.commodityPkgManage.length > 0) {
+            this.$set(
+              this.packageData,
+              'commodityPkgManageItemReqs',
+              res.data.commodityPkgManage[0].commodityPkgManageItems
+            )
+          }
 
           this.fileList = []
           if (this.packageData.teamImgs) {
@@ -500,23 +504,31 @@ export default {
       })
     },
 
+    onChange(value){
+     console.log("444:",value.target.checked)
+     this.attreTime.isTimeLimit=value.target.checked
+    },
+
+
+
+    // 条数
     limitEnable(item) {
       this.attreLimitnums.isNumLimit = !item
+      console.log("条数：",this.attreLimitnums.isNumLimit)
     },
 
     limitService(item) {
       this.attreTime.isTimeLimit = !item
-    },
 
+      console.log("时效：",  this.attreTime.isTimeLimit)
+    },
     radioChange(e) {
       //   this.globalFlag = e.target.value
       this.packageData.globalFlag = e.target.value
       //   console.log('sss:', this.globalFlag)
     },
 
-
-    clearData(){
-
+    clearData() {
       this.attreLimitnums.isNumLimit = false
       this.attreLimitnums.ruleType = 'ITEM_ATTR_LIMITNUMS'
       this.attreLimitnums.ruleName = '限制条数'
@@ -524,20 +536,13 @@ export default {
       this.attreLimitnums.id = ''
       this.attreLimitnums.unit = '条'
 
-
-
       this.attreTime.isTimeLimit = false
       this.attreTime.ruleType = 'ITEM_ATTR_EXPIRE'
       this.attreTime.ruleName = '限制条数'
       this.attreTime.serviceValue = 1
       this.attreTime.id = ''
       this.attreTime.unit = '小时'
-
     },
-
-
-
-
 
     /**
      * 获取字典接口   服务类型列表
@@ -579,9 +584,9 @@ export default {
       })
         .then((res) => {
           if (res.code == 0) {
-              this.serviceData = res.data.rows
-              this.serviceItemId = this.serviceData[0].projectName
-              this.typeCode = this.serviceData[0].projectName
+            this.serviceData = res.data.rows
+            this.serviceItemId = this.serviceData[0].projectName
+            this.typeCode = this.serviceData[0].projectName
             if (!isFirst) {
               this.confirmLoading = false
             }
@@ -619,13 +624,24 @@ export default {
                     this.pkgsItem.itemsAttr.forEach((attre) => {
                       // 限制条数
                       if (attre.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-                        this.attreLimitnums = attre
+
                         this.attreLimitnums.isNumLimit = true
+                        this.attreLimitnums.serviceValue = attre.serviceValue
+                        this.attreLimitnums.ruleType = attre.ruleType
+                        this.attreLimitnums.ruleName = attre.ruleName
+                        this.attreLimitnums.id = attre.id
+                        this.attreLimitnums.unit = attre.unit
+
                       }
                       // 服务时效
                       if (attre.ruleType == 'ITEM_ATTR_EXPIRE') {
-                        this.attreTime = attre
+
                         this.attreTime.isTimeLimit = true
+                        this.attreTime.serviceValue = attre.serviceValue
+                        this.attreTime.ruleType = attre.ruleType
+                        this.attreTime.ruleName = attre.ruleName
+                        this.attreTime.id = attre.id
+
                         if (attre.unit == '天') {
                           this.attreTime.unit = 2
                         } else {
@@ -637,7 +653,6 @@ export default {
                 }
               })
 
-              console.log('OOO:', this.attreLimitnums, this.attreTime)
             }
           } else {
             this.$message.error(res.message)
@@ -767,16 +782,10 @@ export default {
      */
     getTenantListOut() {
       this.confirmLoading = true
-      getTenantList({
-        metaName: '',
-        status: 1,
-        tenantName: '',
-        pageNo: 1,
-        pageSize: 9999,
-      })
+      accessTenants()
         .then((res) => {
           if (res.code == 0) {
-            this.tenantList = res.data.records
+            this.tenantList = res.data
           }
         })
         .finally((res) => {
@@ -1008,8 +1017,8 @@ export default {
       }
 
       this.$refs.configPeople.add(
-        0,
-        'doctor',
+        1, //修改标致
+        this.packageData.commodityId,
         this.packageData.tenantId,
         this.packageData.hospitalCode,
         this.docDepartmentId,
@@ -1026,9 +1035,10 @@ export default {
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
-      if (this.packageData.pkgManageItemNames == null) {
-        this.packageData.pkgManageItemNames = ''
-      }
+      //   if (this.packageData.pkgManageItemNames == null) {
+      //       this.packageData.pkgManageItemNames = ''
+      //     }
+      this.packageData.pkgManageItemNames = ''
       this.packageData.commodityPkgManageItemReqs = commodityPkgManageItemReqs
       commodityPkgManageItemReqs.forEach((item, indexReqs) => {
         if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1040,13 +1050,33 @@ export default {
     },
 
     processData() {
-      console.log('VVV:', this.attreLimitnums, this.attreTime, this.pkgsData)
+    //   console.log('VVV:', this.attreLimitnums, this.attreTime, this.pkgsData)
 
       let requestPkgs = JSON.parse(JSON.stringify(this.pkgsData))
       this.$set(requestPkgs, 'pkgs', [])
       if (requestPkgs.optionalPkgs) {
         this.$set(requestPkgs.optionalPkgs[0], 'itemType', 1)
         requestPkgs.optionalPkgs[0].items.forEach((item1, index) => {
+        //   if (this.attreTime.isTimeLimit) {
+        //     item1.itemsAttr.push({
+        //       id: '',
+        //       ruleType: 'ITEM_ATTR_EXPIRE',
+        //       ruleTypeName: '服务时效',
+        //       serviceValue: this.attreTime.serviceTime,
+        //       unit: this.attreTime.unit == 1 ? '小时' : '天',
+        //     })
+        //   }
+
+        //   if (this.attreLimitnums.isNumLimit) {
+        //     item1.itemsAttr.push({
+        //       id: '',
+        //       ruleType: 'ITEM_ATTR_LIMITNUMS',
+        //       ruleTypeName: '限制条数',
+        //       serviceValue: this.attreTime.serviceTime,
+        //       unit: '条',
+        //     })
+        //   }
+
           item1.itemsAttr.forEach((itemIn, indexIn) => {
             // 服务时效
             if (itemIn.ruleType && itemIn.ruleType == 'ITEM_ATTR_EXPIRE') {
@@ -1054,13 +1084,37 @@ export default {
                 this.$set(itemIn, 'serviceValue', this.attreTime.serviceValue)
                 this.$set(itemIn, 'unit', this.attreTime.unit == 1 ? '小时' : '天')
               }
-            }
+            } 
+            // else {
+            //     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            //   if (this.attreTime.isTimeLimit) {
+            //     item1.itemsAttr.push({
+            //       id: '',
+            //       ruleType: 'ITEM_ATTR_EXPIRE',
+            //       ruleTypeName: '服务时效',
+            //       serviceValue: this.attreTime.serviceTime,
+            //       unit: this.attreTime.unit == 1 ? '小时' : '天',
+            //     })
+            //   }
+            // }
 
             if (itemIn.ruleType && itemIn.ruleType == 'ITEM_ATTR_LIMITNUMS') {
               if (this.attreLimitnums.isNumLimit) {
                 this.$set(itemIn, 'serviceValue', this.attreLimitnums.serviceValue)
               }
             }
+            //  else {
+            //     console.log("***************************")
+            //   if (this.attreLimitnums.isNumLimit) {
+            //     item1.itemsAttr.push({
+            //       id: '',
+            //       ruleType: 'ITEM_ATTR_LIMITNUMS',
+            //       ruleTypeName: '限制条数',
+            //       serviceValue: this.attreLimitnums.serviceTime,
+            //       unit: '条',
+            //     })
+            //   }
+            // }
 
             console.log('BBB:', itemIn)
           })
@@ -1153,7 +1207,7 @@ export default {
 
       this.$set(tempData, 'commodityPkgManageReqs', [])
 
-      console.log("dddd:", tempData.commodityPkgManageItemReqs)
+      console.log('dddd:', tempData.commodityPkgManageItemReqs)
 
       let newData = []
       tempData.commodityPkgManageItemReqs.forEach((item1) => {
@@ -1179,7 +1233,6 @@ export default {
       let requestData = JSON.parse(JSON.stringify(tempData))
 
       console.log('MMMm', JSON.stringify(requestData))
-
 
       this.confirmLoading = true
       saveOrUpdateSnatch(requestData)

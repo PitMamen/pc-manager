@@ -18,7 +18,7 @@
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
               <a-input-number
                 style="display: inline-block; width: 70px; margin-left: 10px"
-                v-model="price"
+                v-model="achievementRatio"
                 :min="0"
                 :max="100"
                 :maxLength="30"
@@ -31,37 +31,81 @@
           <div class="top-con">
             <div class="itemday-content">
               <span>周一</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[0].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[0])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[0].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
 
             <div class="itemday-content">
               <span>周二</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[1].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[1])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[1].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
 
             <div class="itemday-content">
               <span>周三</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[2].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[2])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[2].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
 
             <div class="itemday-content">
               <span>周四</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[3].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[3])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[3].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
 
             <div class="itemday-content">
               <span>周五</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[4].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[4])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[4].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
 
             <div class="itemday-content">
               <span>周六</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[5].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[5])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[5].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
 
             <div class="itemday-content">
               <span>周日</span>
-              <a-switch style="margin-left: 5px" size="default" :checked="true" />
+              <a-popconfirm
+                placement="topRight"
+                :title="checkData[6].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                @confirm="updateArrangeStatusOut(checkData[6])"
+              >
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[6].workStatus.value == 1" />
+              </a-popconfirm>
             </div>
           </div>
 
@@ -70,6 +114,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
+                :value="moment(checkData[0].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 1)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
@@ -77,13 +122,20 @@
               />
               <div>结束时间</div>
               <a-time-picker
+                :value="moment(checkData[0].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 1)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[0].receiveUserCount"
+              />
             </div>
 
             <div class="line-devier"></div>
@@ -92,6 +144,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
+                :value="moment(checkData[1].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 2)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
@@ -99,13 +152,20 @@
               />
               <div>结束时间</div>
               <a-time-picker
+                :value="moment(checkData[1].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 2)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[1].receiveUserCount"
+              />
             </div>
 
             <div class="line-devier"></div>
@@ -114,6 +174,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
+                :value="moment(checkData[2].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 3)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
@@ -121,13 +182,20 @@
               />
               <div>结束时间</div>
               <a-time-picker
+                :value="moment(checkData[2].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 3)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[2].receiveUserCount"
+              />
             </div>
 
             <div class="line-devier"></div>
@@ -136,6 +204,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
+                :value="moment(checkData[3].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 4)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
@@ -143,13 +212,20 @@
               />
               <div>结束时间</div>
               <a-time-picker
+                :value="moment(checkData[3].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 4)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[3].receiveUserCount"
+              />
             </div>
 
             <div class="line-devier"></div>
@@ -158,6 +234,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
+                :value="moment(checkData[4].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 5)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
@@ -165,13 +242,20 @@
               />
               <div>结束时间</div>
               <a-time-picker
+                :value="moment(checkData[4].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 5)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[4].receiveUserCount"
+              />
             </div>
 
             <div class="line-devier"></div>
@@ -180,6 +264,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
+                :value="moment(checkData[5].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 6)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
@@ -187,13 +272,20 @@
               />
               <div>结束时间</div>
               <a-time-picker
+                :value="moment(checkData[5].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 6)"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[5].receiveUserCount"
+              />
             </div>
 
             <div class="line-devier"></div>
@@ -203,6 +295,7 @@
               <div>开始时间</div>
               <a-time-picker
                 @change="(time, timestring) => timeChangeStart(time, timestring, 7)"
+                :value="moment(checkData[6].receiveStartTime, 'HH:mm')"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
@@ -210,12 +303,19 @@
               <div>结束时间</div>
               <a-time-picker
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 7)"
+                :value="moment(checkData[6].receiveEndTime, 'HH:mm')"
                 style="width: 95px"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input :maxLength="20" class="span-item-value" style="display: inline-block; width: 95px" allow-clear />
+              <a-input
+                :maxLength="20"
+                class="span-item-value"
+                style="display: inline-block; width: 95px"
+                allow-clear
+                v-model="checkData[6].receiveUserCount"
+              />
             </div>
           </div>
 
@@ -231,7 +331,7 @@
                 <span class="span-item-name">单价 </span>
                 <a-input-number
                   style="display: inline-block; width: 70px"
-                  v-model="item.price"
+                  v-model="item.saleAmount"
                   :min="0"
                   :max="10000"
                   :maxLength="30"
@@ -244,57 +344,44 @@
                 <a-input
                   :maxLength="20"
                   class="span-item-value"
-                  v-model="item.limit"
+                  v-model="item.serviceStrip"
                   style="display: inline-block; width: 60px"
                   allow-clear
                 />
 
-                <a-checkbox style="margin-left: 20px" @click="limitService(item)" :checked="item.isSerTime" />
+                <a-checkbox style="margin-left: 20px" @click="limitService(item)" :checked="item.isSerLimit" />
                 <span class="span-item-name" style="margin-left: 10px">服务时效</span>
                 <a-input
                   :maxLength="20"
                   class="span-item-value"
-                  v-model="item.timeliness"
+                  v-model="item.serviceTime"
                   style="display: inline-block; width: 60px"
                   allow-clear
                 />
 
-                <a-select v-model="item.unit" style="width: 70px; margin-left: 10px" allow-clear placeholder="单位">
+                <a-select v-model="item.timeUnit" style="width: 70px; margin-left: 10px" allow-clear placeholder="单位">
                   <a-select-option v-for="(item, index) in timeUnitTypesData" :key="index" :value="item.code">{{
                     item.value
                   }}</a-select-option>
                 </a-select>
 
-                <a-button style="margin-left: auto; margin-right: 10px" type="primary" ghost @click="deleteTask(index)"
+                <a-button
+                  style="margin-left: auto; margin-right: 10px"
+                  type="primary"
+                  ghost
+                  @click="deleteTask(item, index)"
                   >删除</a-button
                 >
 
                 <a-button
                   style="margin-right: 10px"
                   type="primary"
-                  @click="addTask()"
+                  @click="addTask(item, index)"
                   v-if="index == taskList.length - 1"
                   >新增</a-button
                 >
               </div>
             </div>
-
-            <!-- <div class="div-divider">
-                <div class="div-content">
-                  <div class="small-content">
-                    <a-button :style="{ 'margin-right': '10px' }" type="primary" ghost @click="deleteTask(index)"
-                      >删除</a-button
-                    >
-                    <a-button
-                      style="margin-right: 10px"
-                      type="primary"
-                      @click="addTask()"
-                      v-if="index == taskList.length - 1"
-                      >新增</a-button
-                    >
-                  </div>
-                </div>
-              </div> -->
           </div>
         </div>
       </div>
@@ -304,7 +391,15 @@
                 
                 
                 <script>
-import { updateExpressInfo } from '@/api/modular/system/posManage'
+import {
+  updateExpressInfo,
+  getDocArrangeInfo,
+  addArrangeInfo,
+  updateArrangeStatus,
+  getCommodityPkgDetailByid,
+  delCommodityPkgCollectionByid,
+  saveCommodityPkgCollection,
+} from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty, formatDate } from '@/utils/util'
@@ -315,28 +410,29 @@ export default {
   data() {
     return {
       visible: false,
-      titleTab: '复诊续方配置',
+      titleTab: '电话咨询配置',
       islimitTip: true,
       isSertimelimit: true,
       record: {},
       headers: {},
-      price: 60,
+      achievementRatio: 60,
       confirmLoading: false,
-      checkData: {
-        expressDate: formatDate(new Date()),
-        expressName: '',
-        expressNo: '',
-        orderId: 0,
-      },
-
+      checkData: [],
+      type: 1,
+      pkgs: [],
       taskList: [
         {
-          price: 20,
+          serviceStrip: 0,
+          StripUnit: 0,
+
+          serviceTime: 0,
+          timeUnit: 1,
+
+          id: '',
+          saleAmount: 1,
+
           isLimit: false,
-          limit: 20,
-          isSerTime: false,
-          timeliness: 24,
-          unit: 1,
+          isSerLimit: false,
         },
       ],
 
@@ -359,32 +455,58 @@ export default {
     clearData() {
       this.taskList = [
         {
-          price: 20,
+          serviceStrip: 0,
+          StripUnit: 0,
+          serviceTime: 0,
+          timeUnit: 1,
+          id: '',
+          projectId: '',
+          saleAmount: 1,
+
           isLimit: false,
-          limit: 20,
-          isSerTime: false,
-          timeliness: 24,
-          unit: 1,
+          isSerLimit: false,
         },
       ]
     },
 
+    // 修改出诊状态
+    updateArrangeStatusOut(item) {
+      let data = {
+        id: item.id,
+        workStatus: item.workStatus.value == 0 ? 1 : 0,
+      }
+      item.workStatus.value = item.workStatus.value == 0 ? 1 : 0
+
+      updateArrangeStatus(data).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('修改成功!')
+        }
+      })
+    },
+
     timeChangeStart(moment, starttimestring, type) {
-      // 周一开始时间
       console.log('ssss:', type, starttimestring)
+      // 周一开始时间
       if (type == 1) {
+        this.checkData[0].receiveStartTime = starttimestring
         //周二开始时间
       } else if (type == 2) {
+        this.checkData[1].receiveStartTime = starttimestring
         //周三开始时间
       } else if (type == 3) {
+        this.checkData[2].receiveStartTime = starttimestring
         //周四开始时间
       } else if (type == 4) {
+        this.checkData[3].receiveStartTime = starttimestring
         //周五开始时间
       } else if (type == 5) {
+        this.checkData[4].receiveStartTime = starttimestring
         //周六开始时间
       } else if (type == 6) {
+        this.checkData[5].receiveStartTime = starttimestring
         //周日开始时间
       } else if (type == 7) {
+        this.checkData[6].receiveStartTime = starttimestring
       }
     },
 
@@ -392,53 +514,119 @@ export default {
       console.log('BBBBB:', endtimestring, type)
       // 周一结束时间
       if (type == 1) {
+        this.checkData[0].receiveEndTime = endtimestring
         //周二结束时间
       } else if (type == 2) {
+        this.checkData[1].receiveEndTime = endtimestring
         //周三结束时间
       } else if (type == 3) {
+        this.checkData[2].receiveEndTime = endtimestring
         //周四结束时间
       } else if (type == 4) {
+        this.checkData[3].receiveEndTime = endtimestring
         //周五结束时间
       } else if (type == 5) {
+        this.checkData[4].receiveEndTime = endtimestring
         //周六结束时间
       } else if (type == 6) {
+        this.checkData[5].receiveEndTime = endtimestring
         //周日结束时间
       } else if (type == 7) {
+        this.checkData[6].receiveEndTime = endtimestring
       }
     },
 
-    addTask() {
+    addTask(item, index) {
       if (this.taskList.length >= 5) {
         this.$message.error('最多5条')
         return
       }
 
-      this.taskList.push({
-        price: 20,
-        isLimit: false,
-        limit: 20,
-        isSerTime: false,
-        timeliness: 24,
-        unit: 1,
+      this.taskList.forEach((item, index) => {
+        if (item.isSerLimit) {
+          //服务时效
+          this.taskList[index].isSerLimit = true
+          this.taskList[index].ruleType = 'ITEM_ATTR_EXPIRE'
+          this.taskList[index].ruleTypeName = '服务时效'
+          this.taskList[index].id = item.id || ''
+          this.taskList[index].serviceTime = item.serviceValue
+          this.taskList[index].timeUnit = item.unit == '小时' ? 1 : 2
+        }
+
+        if (item.isLimit) {
+          // 条数限制
+          this.taskList[index].ruleType = 'ITEM_ATTR_LIMITNUMS'
+          this.taskList[index].ruleTypeName = '限制条数'
+          this.taskList[index].isLimit = true
+          this.taskList[index].id = item.id || ''
+          this.taskList[index].serviceTime = item.serviceValue
+          this.taskList[index].StripUnit = '条'
+        }
       })
+
+      // this.$set(this.taskList[index], 'itemsAttr', [])
+
+      this.taskList.push({
+        id: '',
+        projectId: '',
+        ruleType: '',
+        ruleTypeName: '',
+        serviceStrip: '',
+        serviceTime: '',
+        pkgId: '',
+
+        timeUnit: '',
+        StripUnit: '',
+
+        saleAmount: 0,
+
+        isLimit: false,
+        isSerLimit: false,
+        itemsAttr: [],
+      })
+
+      this.pkgs.push({})
     },
 
-    deleteTask(index) {
+    deleteTask(item, index) {
+      console.log('CCCC:', item)
       if (this.taskList.length == 1) {
         this.$message.error('至少配置一项!')
         return
       }
-      this.taskList.splice(index, 1)
+
+      if (!item.pkgsId || item.pkgsId == '') {
+        //如果删除新增的  直接删除视图
+        this.taskList.splice(index, index)
+        return
+      }
+
+      this.delCollectionItemByidOut(item.pkgsId, index)
+    },
+
+    // 单独删除
+    delCollectionItemByidOut(collectionId, index) {
+      console.log('ID:', collectionId)
+      this.confirmLoading = true
+      delCommodityPkgCollectionByid({ collectionId: collectionId })
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.taskList.splice(index, index)
+            this.$message.success('刪除成功')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     limitEnable(item) {
       item.isLimit = !item.isLimit
-      console.log('Dddddddd:', item.isLimit)
     },
 
     limitService(item) {
-      item.isSerTime = !item.isSerTime
-      console.log('11111111111:', item.isSerTime)
+      item.isSerLimit = !item.isSerLimit
     },
 
     formatDate(date) {
@@ -451,54 +639,252 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    // 配送
-    editmodal(type) {
+    // 入口
+    editmodal(record, type) {
       this.clearData()
       this.visible = true
+      this.record = record
+      console.log('dd:', record)
+      this.achievementRatio = type == 1 ? record.dianhua.achievementRatio : record.shipin.achievementRatio
+      console.log('UUl:', this.achievementRatio)
+      // if (type==1) {
+      // }
       this.titleTab = type == 1 ? '电话咨询配置' : '视频咨询配置'
-      console.log('4434444444')
-      // this.confirmLoading = false
-      // this.checkData.orderId = orderId
-      // this.getUserTagsTypeListOut()
+      this.getDocArrangeInfoOut(type)
+      this.getCommodityPkgDetailByidOut(type)
     },
 
-    onDatePickerChange(date, dateString) {
-      console.log(date, dateString)
-      this.checkData.expressDate = dateString
-    },
-
-    handleSubmit() {
-      console.log(this.checkData)
-      if (isStringEmpty(this.checkData.expressDate)) {
-        this.$message.error('请选择发货日期')
-        return
-      }
-      if (isStringEmpty(this.checkData.expressNo)) {
-        this.$message.error('请输入物流单号')
-        return
-      }
-
-      if (isStringEmpty(this.checkData.expressName)) {
-        this.$message.error('请输入物流公司名称')
-        return
-      }
-
-      this.updateExpressInfoOut()
-    },
-
-    //修改类别
-    updateExpressInfoOut() {
-      this.confirmLoading = true
-      updateExpressInfo(this.checkData).then((res) => {
+    getCommodityPkgDetailByidOut(type) {
+      getCommodityPkgDetailByid({
+        pkgId: type == 1 ? this.record.dianhua.commodityPkgId : this.record.shipin.commodityPkgId,
+      }).then((res) => {
         if (res.code == 0) {
-          this.$message.success('操作成功！')
-          this.visible = false
-          this.$emit('ok', '')
+          //区分新增和修改
+          if (res.data.optionalPkgs.length > 0) {
+            this.pkgs = res.data.optionalPkgs
+
+            this.taskList.shift()
+            res.data.optionalPkgs.forEach((item, indexOut) => {
+              //不管是 可选包 还是必选包  只取第一个包展示
+              if (item.items.length > 0) {
+                item.items.forEach((item1, index) => {
+                  this.taskList.push({
+                    serviceStrip: 1, //限制条数
+                    StripUnit: 1, //限制条数单位   /条
+                    serviceTime: 1, //限制时效
+                    timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
+                    id: item1.id,
+                    projectId: item1.id,
+                    saleAmount: item1.saleAmount, //单价
+                    pkgsId: item.id,
+                    isSerLimit: false,
+                    isLimit: false,
+                  })
+
+                  if (item1.itemsAttr) {
+                    item1.itemsAttr.forEach((item2) => {
+                      console.log(
+                        '99999:',
+                        JSON.stringify(this.taskList[indexOut]),
+                        JSON.stringify(this.taskList),
+                        indexOut
+                      )
+                      if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                        //服务时效
+                        this.taskList[indexOut].isSerLimit = true
+                        this.taskList[indexOut].id = item2.id
+                        this.taskList[indexOut].serviceTime = item2.serviceValue
+                        this.taskList[indexOut].timeUnit = item2.unit == '小时' ? 1 : 2
+                      }
+
+                      if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                        //限制条数
+                        this.taskList[indexOut].isLimit = true
+                        this.taskList[indexOut].id = item2.id
+                        this.taskList[indexOut].serviceStrip = item2.serviceValue
+                        this.taskList[indexOut].StripUnit = item2.unit
+                      }
+                    })
+
+                    this.$set(this.taskList[indexOut], 'itemsAttr', item1.itemsAttr)
+                  }
+
+                  console.log('3333:', JSON.stringify(this.taskList))
+                })
+              }
+            })
+          }
         } else {
           this.$message.error(res.message)
         }
-        this.confirmLoading = false
       })
+    },
+
+    // 获取排班信息
+    getDocArrangeInfoOut(type) {
+      let requestData = {
+        type: type,
+        userId: this.record.userId,
+      }
+      getDocArrangeInfo(requestData).then((res) => {
+        if (res.code == 0) {
+          this.checkData = res.data
+        }
+      })
+    },
+
+    saveCommodityPkgCollectionOut() {
+      console.log('VVV:', this.pkgs)
+
+      let requestPkgs = JSON.parse(JSON.stringify(this.pkgs))
+
+      var itemsTemp = []
+
+      this.taskList.forEach((itemTask, index) => {
+        itemsTemp.push({
+          id: itemTask.projectId || '',
+          idOut: 1,
+          itemImg: 1,
+          quantity: 1,
+          pkgId: '',
+          saleAmount: itemTask.saleAmount,
+          serviceItemId: '1',
+          itemsAttr: [
+            {
+              id: '',
+              ruleType: 'ITEM_ATTR_EXPIRE',
+              ruleTypeName: '服务时效',
+              unit: '小时',
+              serviceValue: itemTask.serviceTime,
+            },
+            {
+              id: '',
+              ruleType: 'ITEM_ATTR_LIMITNUMS',
+              ruleTypeName: '限制条数',
+              unit: '条',
+              serviceValue: itemTask.serviceStrip,
+            },
+          ],
+        })
+
+        console.log('YYY:', itemTask.itemsAttr)
+
+        if (itemTask.isSerLimit) {
+          // debugger
+          let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
+          var id = ''
+          if (findItem) {
+            id = findItem.id
+          }
+          itemsTemp[0].itemsAttr.push({
+            id: id,
+            ruleType: 'ITEM_ATTR_EXPIRE',
+            ruleTypeName: '服务时效',
+            serviceValue: itemTask.serviceTime,
+            unit: itemTask.timeUnit == 1 ? '小时' : '天',
+          })
+        }
+
+        if (itemTask.isLimit) {
+          let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_LIMITNUMS')
+          var id = ''
+          if (findItem) {
+            id = findItem.id
+          }
+          itemsTemp[0].itemsAttr.push({
+            id: id,
+            ruleType: 'ITEM_ATTR_LIMITNUMS',
+            ruleTypeName: '限制条数',
+            serviceValue: itemTask.serviceStrip,
+            unit: '条',
+          })
+        }
+
+
+        
+
+        requestPkgs[index].items = JSON.parse(JSON.stringify(itemsTemp))
+        itemsTemp = []
+        // console.log('TTTT:', this.pkgs[index].items.length, index)
+      })
+
+     
+
+      requestPkgs.forEach((item) => {
+        delete item.itemImg
+        delete item.totalAmount
+        item.itemType = 1
+      })
+      let newPkgs = JSON.parse(JSON.stringify(requestPkgs))
+
+
+      let uploadData = {
+        pkgs: newPkgs,
+        id: this.record.tuwen.commodityPkgId,
+      }
+
+
+      console.log('哈哈哈:',uploadData)
+
+      return
+
+      this.confirmLoading = true
+      saveCommodityPkgCollection(uploadData)
+        .then((res) => {
+          this.confirmLoading = false
+          if (res.code == 0) {
+            this.$message.success('保存成功')
+            this.visible = false
+            this.$emit('ok')
+            // this.$router.push({ path: './serviceWise?keyindex=1' })
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    handleSubmit() {
+      this.saveCommodityPkgCollectionOut()
+
+      return
+      let requestData = JSON.parse(JSON.stringify(this.checkData))
+      requestData.forEach((item) => {
+        if (item.workStatus.value == 1) {
+          item.workStatus = 1
+        } else {
+          item.workStatus = 0
+        }
+
+        delete item.updatedTime
+        delete item.tenantId
+        delete item.hospitalCode
+        delete item.createdTime
+        delete item.creatorId
+        delete item.id
+        delete item.updaterId
+      })
+      console.log('KKK:', requestData)
+
+      let data = {
+        items: requestData,
+      }
+
+      addArrangeInfo(data)
+        .then((res) => {
+          this.confirmLoading = true
+          if (res.code == 0) {
+            this.saveCommodityPkgCollectionOut()
+            this.$message.success('操作成功!')
+            this.visible = false
+            this.$emit('ok')
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
     },
 
     goBack() {

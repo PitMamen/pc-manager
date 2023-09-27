@@ -306,7 +306,7 @@
 import {
   getManualCommodityClassify,
   queryHospitalList,
-  getTenantList,
+  accessTenants,
   qryFollowPlanByFollowType,
   getDictData,
   treeMedicalSubjects,
@@ -748,16 +748,10 @@ export default {
      */
     getTenantListOut() {
       this.confirmLoading = true
-      getTenantList({
-        metaName: '',
-        status: 1,
-        tenantName: '',
-        pageNo: 1,
-        pageSize: 9999,
-      })
+      accessTenants()
         .then((res) => {
           if (res.code == 0) {
-            this.tenantList = res.data.records
+            this.tenantList = res.data
           }
         })
         .finally((res) => {
@@ -988,8 +982,8 @@ export default {
       }
 
       this.$refs.configPeople.add(
-        0,
-        'doctor',
+        2,  //新增标致 
+        '',
         this.packageData.tenantId,
         this.packageData.hospitalCode,
         this.docDepartmentId,
@@ -1006,10 +1000,11 @@ export default {
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
-      console.log('ddd:', commodityPkgManageItemReqs)
-      if (this.packageData.pkgManageItemNames == null) {
+    //   console.log('ddd:', commodityPkgManageItemReqs)
+    //   if (this.packageData.pkgManageItemNames == null) {
+    //       this.packageData.pkgManageItemNames = ''
+    //     }
         this.packageData.pkgManageItemNames = ''
-      }
       this.packageData.commodityPkgManageItemReqs = commodityPkgManageItemReqs
       commodityPkgManageItemReqs.forEach((item, indexReqs) => {
         if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1069,7 +1064,7 @@ export default {
         })
       }
       //   arryOut.push(newArr)
-    //   itemArrayTemp.items.push(newArr)
+      //   itemArrayTemp.items.push(newArr)
       itemArrayTemp.items.push(newArr)
 
       itemsArray.push(itemArrayTemp)
@@ -1107,9 +1102,9 @@ export default {
     },
 
     submitData() {
-        // this.processData()
+      // this.processData()
 
-        // return
+      // return
       let tempData = JSON.parse(JSON.stringify(this.packageData))
 
       if (!tempData.packageName) {

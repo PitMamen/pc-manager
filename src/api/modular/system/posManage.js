@@ -3577,6 +3577,10 @@ export function getCommodityPkgDetailByid(data) {
   })
 }
 
+
+
+
+
 /**
  * /commodityConfig/delCollectionItemByid 删除套餐规格包明细项目
  */
@@ -5407,3 +5411,55 @@ export function saveOrUpdateSnatch(data) {
     data: data,
   })
 }
+
+
+// 查询排班
+export function getDocArrangeInfo(data) {
+  return axios({
+    url: '/medical-api/tdArrangeWorkTime/getDocArrangeInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 添加排班
+export function addArrangeInfo(data) {
+  return axios({
+    url: '/medical-api/tdArrangeWorkTime/addArrangeInfoNew',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 修改出诊状态
+export function updateArrangeStatus(data) {
+  return axios({
+    url: '/medical-api/tdArrangeWorkTime/updateArrangeStatus',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+
+
+
+// 租户列表
+export function accessTenants(data) {
+  return axios({
+    url: '/uam-api/tenant/accessTenants',
+    method: 'get',
+   params: data,
+  })
+}
+
+
+
+
+

@@ -383,9 +383,6 @@ export default {
     },
 
     handleSubmit() {
-      // if (this.pkgs.length > 1) {
-      //   this.pkgs.pop()
-      // }
       var itemsTemp = []
 
       this.taskList.forEach((itemTask, index) => {

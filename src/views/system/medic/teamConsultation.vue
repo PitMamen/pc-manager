@@ -145,11 +145,11 @@ export default {
         },
         {
           id: 1,
-          name: '是',
+          name: '启用',
         },
         {
           id: 0,
-          name: '否',
+          name: '停用',
         },
       ],
 

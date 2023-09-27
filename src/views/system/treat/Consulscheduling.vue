@@ -96,7 +96,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
+          <a   v-if="!record.fuzhen" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
+          <a  v-if="record.fuzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
         </div>
       </span>
 
@@ -127,7 +128,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
+          <a   v-if="!record.tuwen" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
+          <a    v-if="record.tuwen" style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
         </div>
       </span>
 
@@ -158,7 +160,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(1)">配置</a>
+          <a   v-if="!record.dianhua" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
+          <a  v-if="record.dianhua" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record,1)">配置</a>
         </div>
       </span>
 
@@ -188,7 +191,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(2)">配置</a>
+          <a   v-if="!record.shipin" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
+          <a v-if="record.shipin" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record,2)">配置</a>
         </div>
       </span>
 
@@ -218,7 +222,8 @@
           ></div>
 
           <a-icon type="setting" style="margin-top: 3px" />
-          <a style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
+          <a   v-if="!record.menzhen" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
+          <a  v-if="record.menzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
         </div>
       </span>
     </s-table>
