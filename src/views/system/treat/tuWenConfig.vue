@@ -384,31 +384,34 @@ export default {
 
     handleSubmit() {
       var itemsTemp = []
-
       let arrayAttrTemp = []
-      arrayAttrTemp.push({
-        id: '',
-        ruleType: 'ITEM_ATTR_EXPIRE',
-        ruleTypeName: '服务时效',
-        unit: '小时',
-        serviceValue: 0,
-      })
+      // var itemsAttr = []
 
       arrayAttrTemp.push({
-        id: '',
-        ruleType: 'ITEM_ATTR_LIMITNUMS',
-        ruleTypeName: '限制条数',
-        unit: '条',
-        serviceValue: 0,
-      })
+          id: '',
+          ruleType: 'ITEM_ATTR_EXPIRE',
+          ruleTypeName: '服务时效',
+          unit: '小时',
+          serviceValue: 0,
+        })
 
-      var itemsAttr = []
+        arrayAttrTemp.push({
+          id: '',
+          ruleType: 'ITEM_ATTR_LIMITNUMS',
+          ruleTypeName: '限制条数',
+          unit: '条',
+          serviceValue: 0,
+        })
 
-      itemsAttr.push(arrayAttrTemp)
- console.log("1111111:",itemsAttr)
-      return
+        // itemsAttr.push(arrayAttrTemp)
+        // console.log('1111111:', itemsAttr)
+
+      
+
+      // return
 
       this.taskList.forEach((itemTask, index) => {
+      
         itemsTemp.push({
           id: itemTask.projectId || '',
           idOut: 1,
@@ -417,92 +420,35 @@ export default {
           pkgId: '',
           saleAmount: itemTask.saleAmount,
           serviceItemId: '1',
-          itemsAttr: itemsAttr,
+          itemsAttr: [],
         })
+        // console.log("777777:",itemsTemp.itemsAttr)
+        // return
 
-        console.log('YYY:', itemsTemp.itemsAttr)
+        itemsTemp[index].itemsAttr.push(arrayAttrTemp)
+
+        console.log('8888:', JSON.parse(JSON.stringify(itemsTemp)))
 
         if (itemTask.isSerLimit) {
-          // debugger
-          if (itemTask.id == itemsTemp.itemsAttr[0].id) {
-            itemsTemp[0].itemsAttr[0].id = id
-            itemsTemp[0].itemsAttr[0].ruleType = 'ITEM_ATTR_EXPIRE'
-            itemsTemp[0].itemsAttr[0].ruleTypeName = '服务时效'
-            itemsTemp[0].itemsAttr[0].serviceValue = itemTask.serviceTime
-            itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
-          } else {
-            itemsTemp[0].itemsAttr[0].id = ''
-            itemsTemp[0].itemsAttr[0].ruleType = 'ITEM_ATTR_EXPIRE'
-            itemsTemp[0].itemsAttr[0].ruleTypeName = '服务时效'
-            itemsTemp[0].itemsAttr[0].serviceValue = itemTask.serviceTime
-            itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
-          }
-
-          // let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
-          // var id = ''
-          // if (findItem) {
-          //   id = findItem.id
-          //   itemsTemp[0].itemsAttr[0].id = id
-          //   itemsTemp[0].itemsAttr[0].ruleType = 'ITEM_ATTR_EXPIRE'
-          //   itemsTemp[0].itemsAttr[0].ruleTypeName = '服务时效'
-          //   itemsTemp[0].itemsAttr[0].serviceValue = itemTask.serviceTime
-          //   itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
-          // }else{
-          //   id =''
-          //   itemsTemp[0].itemsAttr[0].id = id
-          //   itemsTemp[0].itemsAttr[0].ruleType = 'ITEM_ATTR_EXPIRE'
-          //   itemsTemp[0].itemsAttr[0].ruleTypeName = '服务时效'
-          //   itemsTemp[0].itemsAttr[0].serviceValue = itemTask.serviceTime
-          //   itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
-          // }
-
-          // itemsTemp[0].itemsAttr.push({
-          //   id: id,
-          //   ruleType: 'ITEM_ATTR_EXPIRE',
-          //   ruleTypeName: '服务时效',
-          //   serviceValue: itemTask.serviceTime,
-          //   unit: itemTask.timeUnit == 1 ? '小时' : '天',
-          // })
+          itemsTemp[index].itemsAttr[index].id = itemTask.id || ''
+          itemsTemp[index].itemsAttr[index].ruleType = 'ITEM_ATTR_EXPIRE'
+          itemsTemp[index].itemsAttr[index].ruleTypeName = '服务时效'
+          itemsTemp[index].itemsAttr[index].serviceValue = itemTask.serviceTime
+          itemsTemp[index].itemsAttr[index].unit = itemTask.timeUnit == 1 ? '小时' : '天'
         }
 
         if (itemTask.isLimit) {
-          if (itemTask.id == itemsTemp.itemsAttr[1].id) {
-            // id = findItem.id
-            itemsTemp[0].itemsAttr[1].id = itemTask.id
-            itemsTemp[0].itemsAttr[1].ruleType = 'ITEM_ATTR_LIMITNUMS'
-            itemsTemp[0].itemsAttr[1].ruleTypeName = '限制条数'
-            itemsTemp[0].itemsAttr[1].serviceValue = itemTask.serviceStrip
-            itemsTemp[0].itemsAttr[1].unit = '条'
-          } else {
-            itemsTemp[0].itemsAttr[1].id = ''
-            itemsTemp[0].itemsAttr[1].ruleType = 'ITEM_ATTR_LIMITNUMS'
-            itemsTemp[0].itemsAttr[1].ruleTypeName = '限制条数'
-            itemsTemp[0].itemsAttr[1].serviceValue = itemTask.serviceStrip
-            itemsTemp[0].itemsAttr[1].unit = '条'
-          }
-
-          // let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_LIMITNUMS')
-          // var id = ''
-          // if (findItem) {
-          //   id = findItem.id
-          //   itemsTemp[0].itemsAttr[1].id = id
-          //   itemsTemp[0].itemsAttr[1].ruleType = 'ITEM_ATTR_LIMITNUMS'
-          //   itemsTemp[0].itemsAttr[1].ruleTypeName = '限制条数'
-          //   itemsTemp[0].itemsAttr[1].serviceValue = itemTask.serviceStrip
-          //   itemsTemp[0].itemsAttr[1].unit = '条'
-          // }else{
-          //   id = ''
-          //   itemsTemp[0].itemsAttr[1].id = id
-          //   itemsTemp[0].itemsAttr[1].ruleType = 'ITEM_ATTR_LIMITNUMS'
-          //   itemsTemp[0].itemsAttr[1].ruleTypeName = '限制条数'
-          //   itemsTemp[0].itemsAttr[1].serviceValue = itemTask.serviceStrip
-          //   itemsTemp[0].itemsAttr[1].unit = '条'
-          // }
+          itemsTemp[index].itemsAttr[index].id = itemTask.id||''
+          itemsTemp[index].itemsAttr[index].ruleType = 'ITEM_ATTR_LIMITNUMS'
+          itemsTemp[index].itemsAttr[index].ruleTypeName = '限制条数'
+          itemsTemp[index].itemsAttr[index].serviceValue = itemTask.serviceStrip
+          itemsTemp[index].itemsAttr[index].unit = '条'
         }
+
 
         this.pkgs[index].items = JSON.parse(JSON.stringify(itemsTemp))
         itemsTemp = []
-        console.log('TTTT:', this.pkgs[index].items.length, index)
+        // console.log('TTTT:', this.pkgs[index].items.length, index)
       })
 
       console.log('哈哈哈:', this.pkgs)
