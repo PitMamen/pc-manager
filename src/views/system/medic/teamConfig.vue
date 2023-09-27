@@ -404,9 +404,10 @@ export default {
       allocationTypeTeam: undefined,
       isRefresh: false,
       classifyName: '',
-
+      projectId: '',
+      pkgsIdPro:'',
       attreTime: {
-        isTimeLimit:false,
+        isTimeLimit: false,
         ruleType: 'ITEM_ATTR_EXPIRE',
         ruleName: '服务时效',
         serviceValue: 5,
@@ -415,7 +416,7 @@ export default {
       },
 
       attreLimitnums: {
-        isNumLimit:false,
+        isNumLimit: false,
         ruleType: 'ITEM_ATTR_LIMITNUMS',
         ruleName: '限制条数',
         serviceValue: 1,
@@ -504,23 +505,21 @@ export default {
       })
     },
 
-    onChange(value){
-     console.log("444:",value.target.checked)
-     this.attreTime.isTimeLimit=value.target.checked
+    onChange(value) {
+      console.log('444:', value.target.checked)
+      this.attreTime.isTimeLimit = value.target.checked
     },
-
-
 
     // 条数
     limitEnable(item) {
       this.attreLimitnums.isNumLimit = !item
-      console.log("条数：",this.attreLimitnums.isNumLimit)
+      console.log('条数：', this.attreLimitnums.isNumLimit)
     },
 
     limitService(item) {
       this.attreTime.isTimeLimit = !item
 
-      console.log("时效：",  this.attreTime.isTimeLimit)
+      console.log('时效：', this.attreTime.isTimeLimit)
     },
     radioChange(e) {
       //   this.globalFlag = e.target.value
@@ -618,24 +617,28 @@ export default {
               //   this.taskList.shift()
               res.data.optionalPkgs.forEach((item, indexOut) => {
                 if (indexOut == 0) {
-                  this.pkgsItem = item.items[0]
-                  console.log('ddd:', this.pkgsItem)
+                    this.pkgsIdPro = item.id
+                  if (item.items && item.items.length > 0) {
+                      
+
+                    
+                    this.pkgsItem = item.items[0]
+                    console.log('ddd:', this.pkgsItem)
+                  }
+
                   if (this.pkgsItem.itemsAttr) {
                     this.pkgsItem.itemsAttr.forEach((attre) => {
                       // 限制条数
                       if (attre.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-
                         this.attreLimitnums.isNumLimit = true
                         this.attreLimitnums.serviceValue = attre.serviceValue
                         this.attreLimitnums.ruleType = attre.ruleType
                         this.attreLimitnums.ruleName = attre.ruleName
                         this.attreLimitnums.id = attre.id
                         this.attreLimitnums.unit = attre.unit
-
                       }
                       // 服务时效
                       if (attre.ruleType == 'ITEM_ATTR_EXPIRE') {
-
                         this.attreTime.isTimeLimit = true
                         this.attreTime.serviceValue = attre.serviceValue
                         this.attreTime.ruleType = attre.ruleType
@@ -652,7 +655,6 @@ export default {
                   }
                 }
               })
-
             }
           } else {
             this.$message.error(res.message)
@@ -1027,8 +1029,8 @@ export default {
           : '',
         this.broadClassify == 1 ? true : false,
         this.packageData.commodityPkgManage && this.packageData.commodityPkgManage.length > 0
-          ?  this.packageData.commodityPkgManage[0].pkgManageId
-          : '',
+          ? this.packageData.commodityPkgManage[0].pkgManageId
+          : ''
       )
     },
 
@@ -1053,93 +1055,54 @@ export default {
     },
 
     processData() {
-    //   console.log('VVV:', this.attreLimitnums, this.attreTime, this.pkgsData)
 
-      let requestPkgs = JSON.parse(JSON.stringify(this.pkgsData))
-      this.$set(requestPkgs, 'pkgs', [])
-      if (requestPkgs.optionalPkgs) {
-        this.$set(requestPkgs.optionalPkgs[0], 'itemType', 1)
-        requestPkgs.optionalPkgs[0].items.forEach((item1, index) => {
-          if (this.attreTime.isTimeLimit) {
-            item1.itemsAttr.push({
-              id: '',
-              ruleType: 'ITEM_ATTR_EXPIRE',
-              ruleTypeName: '服务时效',
-              serviceValue: this.attreTime.serviceTime,
-              unit: this.attreTime.unit == 1 ? '小时' : '天',
-            })
-          }
+      var itemsTemp = []
+      itemsTemp.push({
+        id: this.pkgsIdPro || undefined,
+        itemType: 1,
+        items: [
+          {
+            id: this.pkgsItem.id || '',
+            itemType: 1,
+            quantity: this.pkgsItem.quantity,
+            itemImg: 1,
+            saleAmount: this.pkgsItem.saleAmount,
+            serviceItemId: 1,
+            serviceItemName: '图文咨询',
+            unit: '次',
+            itemsAttr: [
+              {
+                id: this.attreTime.id || undefined,
+                ruleType: 'ITEM_ATTR_EXPIRE',
+                ruleTypeName: '服务时效',
+                unit: this.attreTime.unit==1?'小时':'天',
+                serviceValue:this.attreTime.serviceValue||'',
+              },
+              {
+                id: this.attreLimitnums.id || undefined,
+                ruleType: 'ITEM_ATTR_LIMITNUMS',
+                ruleTypeName: '限制条数',
+                unit: '条',
+                serviceValue:this.attreLimitnums.serviceValue||'',
+              },
+            ],
+          },
+        ],
+      })
 
-          if (this.attreLimitnums.isNumLimit) {
-            item1.itemsAttr.push({
-              id: '',
-              ruleType: 'ITEM_ATTR_LIMITNUMS',
-              ruleTypeName: '限制条数',
-              serviceValue: this.attreTime.serviceTime,
-              unit: '条',
-            })
-          }
-
-          item1.itemsAttr.forEach((itemIn, indexIn) => {
-            // 服务时效
-            if (itemIn.ruleType && itemIn.ruleType == 'ITEM_ATTR_EXPIRE') {
-              if (this.attreTime.isTimeLimit) {
-                this.$set(itemIn, 'serviceValue', this.attreTime.serviceValue)
-                this.$set(itemIn, 'id', this.attreTime.id)
-                this.$set(itemIn, 'unit', this.attreTime.unit == 1 ? '小时' : '天')
-              }
-            } 
-            // else {
-            //     console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-            //   if (this.attreTime.isTimeLimit) {
-            //     item1.itemsAttr.push({
-            //       id: '',
-            //       ruleType: 'ITEM_ATTR_EXPIRE',
-            //       ruleTypeName: '服务时效',
-            //       serviceValue: this.attreTime.serviceTime,
-            //       unit: this.attreTime.unit == 1 ? '小时' : '天',
-            //     })
-            //   }
-            // }
-
-            if (itemIn.ruleType && itemIn.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-              if (this.attreLimitnums.isNumLimit) {
-                this.$set(itemIn, 'id', this.attreLimitnums.id)
-                this.$set(itemIn, 'serviceValue', this.attreLimitnums.serviceValue)
-              }
-            }
-            //  else {
-            //     console.log("***************************")
-            //   if (this.attreLimitnums.isNumLimit) {
-            //     item1.itemsAttr.push({
-            //       id: '',
-            //       ruleType: 'ITEM_ATTR_LIMITNUMS',
-            //       ruleTypeName: '限制条数',
-            //       serviceValue: this.attreLimitnums.serviceTime,
-            //       unit: '条',
-            //     })
-            //   }
-            // }
-
-            console.log('BBB:', itemIn)
-          })
-          console.log('KKK:', item1)
-        })
+      let requestPkgs = {
+        pkgs: itemsTemp,
+        id: this.pkgsData.id,
       }
 
-      requestPkgs.pkgs = JSON.parse(JSON.stringify(requestPkgs.optionalPkgs))
-      delete requestPkgs.optionalPkgs
+      console.log('EEE:', requestPkgs)
 
-      console.log('UUU:', JSON.stringify(requestPkgs))
-      //   return
       //  规格配置 保存
       saveCommodityPkgCollection(requestPkgs)
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
             this.$message.success('保存成功')
-            // this.$emit('ok')
-            // this.$router.push({ path: './serviceWise?keyindex=1' })
           } else {
             this.$message.error(res.message)
           }
@@ -1192,10 +1155,10 @@ export default {
         return
       }
 
-    //   if (!tempData.glory) {
-    //     this.$message.error('请输入团队荣耀')
-    //     return
-    //   }
+      //   if (!tempData.glory) {
+      //     this.$message.error('请输入团队荣耀')
+      //     return
+      //   }
 
       //组装图片
       if (this.fileList.length == 0) {
