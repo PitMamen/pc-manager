@@ -340,7 +340,8 @@
                 <div style="margin-left: 5px; color: #4d4d4d">元</div>
 
                 <a-checkbox style="margin-left: 20px" @click="limitEnable(item)" :checked="item.isLimit" />
-                <span class="span-item-name" style="margin-left: 10px">限制条数</span>
+                <span class="span-item-name" style="margin-left: 10px">服务时长</span>
+              
                 <a-input
                   :maxLength="20"
                   class="span-item-value"
@@ -348,6 +349,7 @@
                   style="display: inline-block; width: 60px"
                   allow-clear
                 />
+                <span class="span-item-name">分钟 </span>
 
                 <a-checkbox style="margin-left: 20px" @click="limitService(item)" :checked="item.isSerLimit" />
                 <span class="span-item-name" style="margin-left: 10px">服务时效</span>
@@ -619,7 +621,6 @@ export default {
       this.type = type
       console.log('dd:', record)
       this.achievementRatio = type == 1 ? record.dianhua.achievementRatio : record.shipin.achievementRatio
-      console.log('UUl:', this.achievementRatio)
       // if (type==1) {
       // }
       this.titleTab = type == 1 ? '电话咨询配置' : '视频咨询配置'
@@ -659,8 +660,8 @@ export default {
 
                 if (item1.itemsAttr) {
                   item1.itemsAttr.forEach((item2) => {
-                    if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
-                      //服务时效
+                    if (item2.ruleType == 'ITEM_ATTR_TIMES') {
+                      //服务时长
                       itemobj.isSerLimit = item2.serviceValue ? true : false
                       itemobj.timeId = item2.id
                       itemobj.serviceTime = item2.serviceValue
@@ -768,8 +769,8 @@ export default {
                 },
                 {
                   id: itemTask.StripId || undefined,
-                  ruleType: 'ITEM_ATTR_LIMITNUMS',
-                  ruleTypeName: '限制条数',
+                  ruleType: 'ITEM_ATTR_TIMES',
+                  ruleTypeName: '服务时长',
                   unit: '条',
                   serviceValue:itemTask.isLimit? itemTask.serviceStrip:'',
                 },
@@ -785,6 +786,7 @@ export default {
         id: this.pkgDetail.id,
         pkgs: itemsTemp,
         doctorUserId: this.record.userId,
+        achievementRatio:this.achievementRatio
       }
 
       this.confirmLoading = true

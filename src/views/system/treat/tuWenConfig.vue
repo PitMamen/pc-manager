@@ -388,6 +388,7 @@ export default {
       let uploadData = {
         pkgs: itemsTemp,
         id: this.pkgDetail.id,
+        achievementRatio:this.achievementRatio
       }
 
 
