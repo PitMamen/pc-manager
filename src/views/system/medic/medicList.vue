@@ -317,7 +317,7 @@ export default {
     },
     goDetail(record) {
       //改为打开详情，只能同时打开一个详情页，这里打开详情前先关掉已打开的详情  关闭调试代码
-      // events.$emit('close','/medic/medicDetail')
+      events.$emit('close','/medic/medicDetail')
       this.$router.push({
         path: './medicDetail',
         query: {
