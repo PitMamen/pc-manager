@@ -129,7 +129,7 @@ export default {
       unitSelect: 1,
       timeAttrExpire: {},
       timeAttrLimitnums: {},
-      achievementRatio:0,
+      achievementRatio: 0,
       serviceTime: 1,
       timeUnit: 1,
 
@@ -385,12 +385,30 @@ export default {
     handleSubmit() {
       var itemsTemp = []
 
+      let arrayAttrTemp = []
+      arrayAttrTemp.push({
+        id: '',
+        ruleType: 'ITEM_ATTR_EXPIRE',
+        ruleTypeName: '服务时效',
+        unit: '小时',
+        serviceValue: 0,
+      })
+
+      arrayAttrTemp.push({
+        id: '',
+        ruleType: 'ITEM_ATTR_LIMITNUMS',
+        ruleTypeName: '限制条数',
+        unit: '条',
+        serviceValue: 0,
+      })
+
+      var itemsAttr = []
+
+      itemsAttr.push(arrayAttrTemp)
+ console.log("1111111:",itemsAttr)
+      return
+
       this.taskList.forEach((itemTask, index) => {
-
-
-          // itemsAttr
-
-
         itemsTemp.push({
           id: itemTask.projectId || '',
           idOut: 1,
@@ -399,43 +417,26 @@ export default {
           pkgId: '',
           saleAmount: itemTask.saleAmount,
           serviceItemId: '1',
-          itemsAttr: [
-            {
-              id: itemTask.id||'',
-              ruleType: 'ITEM_ATTR_EXPIRE',
-              ruleTypeName: '服务时效',
-              unit: '小时',
-              serviceValue: itemTask.serviceTime,
-            },
-            {
-              id: itemTask.id||'',
-              ruleType: 'ITEM_ATTR_LIMITNUMS',
-              ruleTypeName: '限制条数',
-              unit: '条',
-              serviceValue: itemTask.serviceStrip,
-            },
-          ],
+          itemsAttr: itemsAttr,
         })
 
         console.log('YYY:', itemsTemp.itemsAttr)
 
         if (itemTask.isSerLimit) {
           // debugger
-          if (itemTask.id==itemsTemp.itemsAttr[0].id) {
+          if (itemTask.id == itemsTemp.itemsAttr[0].id) {
             itemsTemp[0].itemsAttr[0].id = id
             itemsTemp[0].itemsAttr[0].ruleType = 'ITEM_ATTR_EXPIRE'
             itemsTemp[0].itemsAttr[0].ruleTypeName = '服务时效'
             itemsTemp[0].itemsAttr[0].serviceValue = itemTask.serviceTime
             itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
-          }else{
+          } else {
             itemsTemp[0].itemsAttr[0].id = ''
             itemsTemp[0].itemsAttr[0].ruleType = 'ITEM_ATTR_EXPIRE'
             itemsTemp[0].itemsAttr[0].ruleTypeName = '服务时效'
             itemsTemp[0].itemsAttr[0].serviceValue = itemTask.serviceTime
             itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
           }
-
-
 
           // let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
           // var id = ''
@@ -455,7 +456,6 @@ export default {
           //   itemsTemp[0].itemsAttr[0].unit = itemTask.timeUnit == 1 ? '小时' : '天'
           // }
 
-
           // itemsTemp[0].itemsAttr.push({
           //   id: id,
           //   ruleType: 'ITEM_ATTR_EXPIRE',
@@ -466,21 +466,20 @@ export default {
         }
 
         if (itemTask.isLimit) {
-
-            if (itemTask.id==itemsTemp.itemsAttr[1].id) {
-              // id = findItem.id
+          if (itemTask.id == itemsTemp.itemsAttr[1].id) {
+            // id = findItem.id
             itemsTemp[0].itemsAttr[1].id = itemTask.id
             itemsTemp[0].itemsAttr[1].ruleType = 'ITEM_ATTR_LIMITNUMS'
             itemsTemp[0].itemsAttr[1].ruleTypeName = '限制条数'
             itemsTemp[0].itemsAttr[1].serviceValue = itemTask.serviceStrip
             itemsTemp[0].itemsAttr[1].unit = '条'
-            }else{
-              itemsTemp[0].itemsAttr[1].id = ''
+          } else {
+            itemsTemp[0].itemsAttr[1].id = ''
             itemsTemp[0].itemsAttr[1].ruleType = 'ITEM_ATTR_LIMITNUMS'
             itemsTemp[0].itemsAttr[1].ruleTypeName = '限制条数'
             itemsTemp[0].itemsAttr[1].serviceValue = itemTask.serviceStrip
             itemsTemp[0].itemsAttr[1].unit = '条'
-            }
+          }
 
           // let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_LIMITNUMS')
           // var id = ''
@@ -508,7 +507,6 @@ export default {
 
       console.log('哈哈哈:', this.pkgs)
 
-
       this.pkgs.forEach((item) => {
         delete item.itemImg
         delete item.totalAmount
@@ -531,7 +529,7 @@ export default {
         id: this.record.tuwen.commodityPkgId,
       }
 
-      console.log("BBB:",uploadData)
+      console.log('BBB:', uploadData)
       return
 
       this.confirmLoading = true
