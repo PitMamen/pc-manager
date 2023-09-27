@@ -701,6 +701,46 @@ export default {
       })
     },
 
+
+
+    // 添加排班
+    addArrangeInfoOut(){
+
+      let requestData=[]
+
+      let checkDataTemp = JSON.parse(JSON.stringify(this.checkData))
+      checkDataTemp.forEach((item,index) => {
+        requestData.push({
+          receiveEndTime:item.receiveEndTime,
+          receiveStartTime:item.receiveStartTime,
+          receiveUserCount:item.receiveUserCount,
+          type:this.type,
+          userId:item.userId,
+          weekDay:item.weekDay,
+          workStatus:item.workStatus.value==1?1:0,
+        })
+      });
+
+
+      let uploadData={
+        items:requestData
+      }
+
+      addArrangeInfo(uploadData).then((res)=>{
+        if (res.code==0) {
+          this.saveCommodityPkgCollectionOut()
+           this.$emit('ok')
+          this.$message.success('操作成功!')
+        }
+      })
+
+
+    },
+
+
+
+
+// 保存配置
     saveCommodityPkgCollectionOut() {
       var itemsTemp = []
 
@@ -723,7 +763,7 @@ export default {
                   id: itemTask.timeId || undefined,
                   ruleType: 'ITEM_ATTR_EXPIRE',
                   ruleTypeName: '服务时效',
-                  unit: itemTask.timeUnit,
+                  unit: itemTask.timeUnit==1?'小时':'天',
                   serviceValue:itemTask.isSerLimit? itemTask.serviceTime:'',
                 },
                 {
@@ -747,8 +787,6 @@ export default {
         doctorUserId: this.record.userId,
       }
 
-      console.log('哈哈哈:', uploadData)
-
       this.confirmLoading = true
       saveCommodityPkgCollection(uploadData)
         .then((res) => {
@@ -768,7 +806,8 @@ export default {
     },
 
     handleSubmit() {
-      this.saveCommodityPkgCollectionOut()
+
+      this.addArrangeInfoOut()
 
     },
 
