@@ -420,6 +420,7 @@ export default {
       checkData: [],
       type: 1,
       pkgs: [],
+      pkgDetail: {},
       taskList: [
         {
           serviceStrip: 0,
@@ -429,7 +430,7 @@ export default {
           timeUnit: 1,
 
           id: '',
-          saleAmount: 1,
+          saleAmount: '',
 
           isLimit: false,
           isSerLimit: false,
@@ -461,10 +462,12 @@ export default {
           timeUnit: 1,
           id: '',
           projectId: '',
-          saleAmount: 1,
+          saleAmount: '',
 
           isLimit: false,
           isSerLimit: false,
+          timeId: 0,
+          StripId: 0,
         },
       ]
     },
@@ -542,50 +545,19 @@ export default {
         return
       }
 
-      this.taskList.forEach((item, index) => {
-        if (item.isSerLimit) {
-          //服务时效
-          this.taskList[index].isSerLimit = true
-          this.taskList[index].ruleType = 'ITEM_ATTR_EXPIRE'
-          this.taskList[index].ruleTypeName = '服务时效'
-          this.taskList[index].id = item.id || ''
-          this.taskList[index].serviceTime = item.serviceValue
-          this.taskList[index].timeUnit = item.unit == '小时' ? 1 : 2
-        }
-
-        if (item.isLimit) {
-          // 条数限制
-          this.taskList[index].ruleType = 'ITEM_ATTR_LIMITNUMS'
-          this.taskList[index].ruleTypeName = '限制条数'
-          this.taskList[index].isLimit = true
-          this.taskList[index].id = item.id || ''
-          this.taskList[index].serviceTime = item.serviceValue
-          this.taskList[index].StripUnit = '条'
-        }
-      })
-
-      // this.$set(this.taskList[index], 'itemsAttr', [])
-
       this.taskList.push({
-        id: '',
-        projectId: '',
-        ruleType: '',
-        ruleTypeName: '',
-        serviceStrip: '',
-        serviceTime: '',
-        pkgId: '',
+        serviceStrip: 1, //限制条数
+        StripUnit: 1, //限制条数单位   /条
+        serviceTime: 1, //限制时效
+        timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
 
-        timeUnit: '',
-        StripUnit: '',
+        saleAmount: '', //单价
 
-        saleAmount: 0,
-
-        isLimit: false,
         isSerLimit: false,
-        itemsAttr: [],
+        isLimit: false,
+        timeId: 0,
+        StripId: 0,
       })
-
-      this.pkgs.push({})
     },
 
     deleteTask(item, index) {
@@ -612,7 +584,7 @@ export default {
         .then((res) => {
           this.confirmLoading = false
           if (res.code == 0) {
-            this.taskList.splice(index, index)
+            this.taskList.splice(index, 1)
             this.$message.success('刪除成功')
           }
         })
@@ -644,6 +616,7 @@ export default {
       this.clearData()
       this.visible = true
       this.record = record
+      this.type = type
       console.log('dd:', record)
       this.achievementRatio = type == 1 ? record.dianhua.achievementRatio : record.shipin.achievementRatio
       console.log('UUl:', this.achievementRatio)
@@ -659,61 +632,56 @@ export default {
         pkgId: type == 1 ? this.record.dianhua.commodityPkgId : this.record.shipin.commodityPkgId,
       }).then((res) => {
         if (res.code == 0) {
+          this.pkgDetail = res.data
           //区分新增和修改
           if (res.data.optionalPkgs.length > 0) {
-            this.pkgs = res.data.optionalPkgs
-
             this.taskList.shift()
             res.data.optionalPkgs.forEach((item, indexOut) => {
               //不管是 可选包 还是必选包  只取第一个包展示
+
               if (item.items.length > 0) {
-                item.items.forEach((item1, index) => {
-                  this.taskList.push({
-                    serviceStrip: 1, //限制条数
-                    StripUnit: 1, //限制条数单位   /条
-                    serviceTime: 1, //限制时效
-                    timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
-                    id: item1.id,
-                    projectId: item1.id,
-                    saleAmount: item1.saleAmount, //单价
-                    pkgsId: item.id,
-                    isSerLimit: false,
-                    isLimit: false,
+                var item1 = item.items[0]
+
+                var itemobj = {
+                  serviceStrip: 1, //限制条数
+                  StripUnit: 1, //限制条数单位   /条
+                  serviceTime: 1, //限制时效
+                  timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
+                  id: item1.id,
+                  projectId: item1.id,
+                  saleAmount: item1.saleAmount, //单价
+                  pkgsId: item.id,
+                  isSerLimit: false,
+                  isLimit: false,
+                  timeId: 0,
+                  StripId: 0,
+                }
+
+                if (item1.itemsAttr) {
+                  item1.itemsAttr.forEach((item2) => {
+                    if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                      //服务时效
+                      itemobj.isSerLimit = item2.serviceValue ? true : false
+                      itemobj.timeId = item2.id
+                      itemobj.serviceTime = item2.serviceValue
+                      itemobj.timeUnit = item2.unit == '小时' ? 1 : 2
+                    }
+
+                    if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
+                      //限制条数
+                      itemobj.isLimit = item2.serviceValue ? true : false
+                      itemobj.StripId = item2.id
+                      itemobj.serviceStrip = item2.serviceValue
+                      itemobj.StripUnit = item2.unit
+                    }
                   })
+                }
 
-                  if (item1.itemsAttr) {
-                    item1.itemsAttr.forEach((item2) => {
-                      console.log(
-                        '99999:',
-                        JSON.stringify(this.taskList[indexOut]),
-                        JSON.stringify(this.taskList),
-                        indexOut
-                      )
-                      if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
-                        //服务时效
-                        this.taskList[indexOut].isSerLimit = true
-                        this.taskList[indexOut].id = item2.id
-                        this.taskList[indexOut].serviceTime = item2.serviceValue
-                        this.taskList[indexOut].timeUnit = item2.unit == '小时' ? 1 : 2
-                      }
-
-                      if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-                        //限制条数
-                        this.taskList[indexOut].isLimit = true
-                        this.taskList[indexOut].id = item2.id
-                        this.taskList[indexOut].serviceStrip = item2.serviceValue
-                        this.taskList[indexOut].StripUnit = item2.unit
-                      }
-                    })
-
-                    this.$set(this.taskList[indexOut], 'itemsAttr', item1.itemsAttr)
-                  }
-
-                  console.log('3333:', JSON.stringify(this.taskList))
-                })
+                this.taskList.push(itemobj)
               }
             })
           }
+          console.log('taskList', this.taskList)
         } else {
           this.$message.error(res.message)
         }
@@ -734,99 +702,52 @@ export default {
     },
 
     saveCommodityPkgCollectionOut() {
-      console.log('VVV:', this.pkgs)
-
-      let requestPkgs = JSON.parse(JSON.stringify(this.pkgs))
-
       var itemsTemp = []
 
       this.taskList.forEach((itemTask, index) => {
         itemsTemp.push({
-          id: itemTask.projectId || '',
-          idOut: 1,
-          itemImg: 1,
-          quantity: 1,
-          pkgId: '',
-          saleAmount: itemTask.saleAmount,
-          serviceItemId: '1',
-          itemsAttr: [
+          id: itemTask.pkgsId || undefined,
+          itemType: 1,
+          items: [
             {
-              id: '',
-              ruleType: 'ITEM_ATTR_EXPIRE',
-              ruleTypeName: '服务时效',
-              unit: '小时',
-              serviceValue: itemTask.serviceTime,
-            },
-            {
-              id: '',
-              ruleType: 'ITEM_ATTR_LIMITNUMS',
-              ruleTypeName: '限制条数',
-              unit: '条',
-              serviceValue: itemTask.serviceStrip,
+              id: itemTask.projectId || '',
+              itemType: 1,
+              quantity: 1,
+              itemImg: 1,
+              saleAmount: itemTask.saleAmount,           
+              serviceItemId: this.type === 1 ? 11 : 5,
+              serviceItemName: this.type === 1 ? '电话咨询' : '视频咨询',
+              unit: '次',
+              itemsAttr: [
+                {
+                  id: itemTask.timeId || undefined,
+                  ruleType: 'ITEM_ATTR_EXPIRE',
+                  ruleTypeName: '服务时效',
+                  unit: itemTask.timeUnit,
+                  serviceValue:itemTask.isSerLimit? itemTask.serviceTime:'',
+                },
+                {
+                  id: itemTask.StripId || undefined,
+                  ruleType: 'ITEM_ATTR_LIMITNUMS',
+                  ruleTypeName: '限制条数',
+                  unit: '条',
+                  serviceValue:itemTask.isLimit? itemTask.serviceStrip:'',
+                },
+              ],
             },
           ],
         })
-
-        console.log('YYY:', itemTask.itemsAttr)
-
-        if (itemTask.isSerLimit) {
-          // debugger
-          let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_EXPIRE')
-          var id = ''
-          if (findItem) {
-            id = findItem.id
-          }
-          itemsTemp[0].itemsAttr.push({
-            id: id,
-            ruleType: 'ITEM_ATTR_EXPIRE',
-            ruleTypeName: '服务时效',
-            serviceValue: itemTask.serviceTime,
-            unit: itemTask.timeUnit == 1 ? '小时' : '天',
-          })
-        }
-
-        if (itemTask.isLimit) {
-          let findItem = itemTask.itemsAttr.find((item2) => item2.ruleType == 'ITEM_ATTR_LIMITNUMS')
-          var id = ''
-          if (findItem) {
-            id = findItem.id
-          }
-          itemsTemp[0].itemsAttr.push({
-            id: id,
-            ruleType: 'ITEM_ATTR_LIMITNUMS',
-            ruleTypeName: '限制条数',
-            serviceValue: itemTask.serviceStrip,
-            unit: '条',
-          })
-        }
-
-
-        
-
-        requestPkgs[index].items = JSON.parse(JSON.stringify(itemsTemp))
-        itemsTemp = []
-        // console.log('TTTT:', this.pkgs[index].items.length, index)
       })
 
-     
+      console.log('itemsTemp:', itemsTemp)
 
-      requestPkgs.forEach((item) => {
-        delete item.itemImg
-        delete item.totalAmount
-        item.itemType = 1
-      })
-      let newPkgs = JSON.parse(JSON.stringify(requestPkgs))
-
-
-      let uploadData = {
-        pkgs: newPkgs,
-        id: this.record.tuwen.commodityPkgId,
+      var uploadData = {
+        id: this.pkgDetail.id,
+        pkgs: itemsTemp,
+        doctorUserId: this.record.userId,
       }
 
-
-      console.log('哈哈哈:',uploadData)
-
-      return
+      console.log('哈哈哈:', uploadData)
 
       this.confirmLoading = true
       saveCommodityPkgCollection(uploadData)
@@ -849,42 +770,6 @@ export default {
     handleSubmit() {
       this.saveCommodityPkgCollectionOut()
 
-      return
-      let requestData = JSON.parse(JSON.stringify(this.checkData))
-      requestData.forEach((item) => {
-        if (item.workStatus.value == 1) {
-          item.workStatus = 1
-        } else {
-          item.workStatus = 0
-        }
-
-        delete item.updatedTime
-        delete item.tenantId
-        delete item.hospitalCode
-        delete item.createdTime
-        delete item.creatorId
-        delete item.id
-        delete item.updaterId
-      })
-      console.log('KKK:', requestData)
-
-      let data = {
-        items: requestData,
-      }
-
-      addArrangeInfo(data)
-        .then((res) => {
-          this.confirmLoading = true
-          if (res.code == 0) {
-            this.saveCommodityPkgCollectionOut()
-            this.$message.success('操作成功!')
-            this.visible = false
-            this.$emit('ok')
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
     },
 
     goBack() {
