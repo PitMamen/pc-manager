@@ -1025,7 +1025,10 @@ export default {
         this.packageData.commodityPkgManage && this.packageData.commodityPkgManage.length > 0
           ? this.packageData.commodityPkgManage[0].commodityPkgManageItemRsps
           : '',
-        this.broadClassify == 1 ? true : false
+        this.broadClassify == 1 ? true : false,
+        this.packageData.commodityPkgManage && this.packageData.commodityPkgManage.length > 0
+          ?  this.packageData.commodityPkgManage[0].pkgManageId
+          : '',
       )
     },
 
@@ -1057,31 +1060,32 @@ export default {
       if (requestPkgs.optionalPkgs) {
         this.$set(requestPkgs.optionalPkgs[0], 'itemType', 1)
         requestPkgs.optionalPkgs[0].items.forEach((item1, index) => {
-        //   if (this.attreTime.isTimeLimit) {
-        //     item1.itemsAttr.push({
-        //       id: '',
-        //       ruleType: 'ITEM_ATTR_EXPIRE',
-        //       ruleTypeName: '服务时效',
-        //       serviceValue: this.attreTime.serviceTime,
-        //       unit: this.attreTime.unit == 1 ? '小时' : '天',
-        //     })
-        //   }
+          if (this.attreTime.isTimeLimit) {
+            item1.itemsAttr.push({
+              id: '',
+              ruleType: 'ITEM_ATTR_EXPIRE',
+              ruleTypeName: '服务时效',
+              serviceValue: this.attreTime.serviceTime,
+              unit: this.attreTime.unit == 1 ? '小时' : '天',
+            })
+          }
 
-        //   if (this.attreLimitnums.isNumLimit) {
-        //     item1.itemsAttr.push({
-        //       id: '',
-        //       ruleType: 'ITEM_ATTR_LIMITNUMS',
-        //       ruleTypeName: '限制条数',
-        //       serviceValue: this.attreTime.serviceTime,
-        //       unit: '条',
-        //     })
-        //   }
+          if (this.attreLimitnums.isNumLimit) {
+            item1.itemsAttr.push({
+              id: '',
+              ruleType: 'ITEM_ATTR_LIMITNUMS',
+              ruleTypeName: '限制条数',
+              serviceValue: this.attreTime.serviceTime,
+              unit: '条',
+            })
+          }
 
           item1.itemsAttr.forEach((itemIn, indexIn) => {
             // 服务时效
             if (itemIn.ruleType && itemIn.ruleType == 'ITEM_ATTR_EXPIRE') {
               if (this.attreTime.isTimeLimit) {
                 this.$set(itemIn, 'serviceValue', this.attreTime.serviceValue)
+                this.$set(itemIn, 'id', this.attreTime.id)
                 this.$set(itemIn, 'unit', this.attreTime.unit == 1 ? '小时' : '天')
               }
             } 
@@ -1100,6 +1104,7 @@ export default {
 
             if (itemIn.ruleType && itemIn.ruleType == 'ITEM_ATTR_LIMITNUMS') {
               if (this.attreLimitnums.isNumLimit) {
+                this.$set(itemIn, 'id', this.attreLimitnums.id)
                 this.$set(itemIn, 'serviceValue', this.attreLimitnums.serviceValue)
               }
             }

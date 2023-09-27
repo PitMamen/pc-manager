@@ -199,7 +199,7 @@ export default {
       }
 
 
-      if (!this.saleAmount||this.saleAmount) {
+      if (!this.saleAmount||this.saleAmount<=0) {
         this.$message.error('请输入价格!')
         return
       }

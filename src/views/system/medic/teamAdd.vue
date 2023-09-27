@@ -991,7 +991,8 @@ export default {
         this.packageData.commodityPkgManage && this.packageData.commodityPkgManage.length > 0
           ? this.packageData.commodityPkgManage[0].commodityPkgManageItemRsps
           : '',
-        this.broadClassify == 1 ? true : false
+        this.broadClassify == 1 ? true : false,
+        ''
       )
     },
 

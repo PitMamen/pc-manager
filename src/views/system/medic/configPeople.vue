@@ -139,7 +139,12 @@
   
   
   <script>
-import { getMyDepartments, getTreeUsersByDeptIdsAndRoles, pkgManageItems } from '@/api/modular/system/posManage'
+import {
+  getMyDepartments,
+  getTreeUsersByDeptIdsAndRoles,
+  pkgManageItems,
+  updateSnatchPkgItems,
+} from '@/api/modular/system/posManage'
 import DepartmentList from '../mechanism/departmentList.vue'
 import { Item } from 'ant-design-vue/es/vc-menu'
 export default {
@@ -164,7 +169,7 @@ export default {
       choseUsers: [],
       autoUsers: [],
       visible: false,
-
+      pkgManageId:'',
       selectDepartmentName: '',
       selectDepartmentId: '',
 
@@ -205,42 +210,39 @@ export default {
   methods: {
     //  选队长
     isLeader(record) {
-     if (record.leaderFlag==1) {
-       record.leaderFlag = 0      
-      }else{
-       record.leaderFlag =1      
-     }
+      // 队长只能选择一个
+      this.choseUsers.forEach((item) => {
+        item.leaderFlag = 0
+      })
 
+      if (record.leaderFlag == 0) {
+        record.leaderFlag = 1
+      } else {
+        record.leaderFlag = 0
+      }
     },
 
-
-  // 获取团队成员列表
-  pkgManageItemsOut(commodityId){
-    pkgManageItems(commodityId).then((res)=>{
-      if (res.code==0) {
-        this.choseUsers = res.data
-        this.choseUsers.forEach((item,index) => {
-          this.$set(item,'userName',item.doctorUserName)
-          this.$set(item,'userId',item.doctorUserId)
-           this.$set(item, 'xh', index+1)
-        });
-      }
-    })
-
-  },
-
-
-
-
-
+    // 获取团队成员列表
+    pkgManageItemsOut(commodityId) {
+      pkgManageItems(commodityId).then((res) => {
+        if (res.code == 0) {
+          this.choseUsers = res.data
+          this.choseUsers.forEach((item, index) => {
+            this.$set(item, 'userName', item.doctorUserName)
+            this.$set(item, 'userId', item.doctorUserId)
+            this.$set(item, 'xh', index + 1)
+          })
+        }
+      })
+    },
 
     //
     //  *
     //  * @param {*} index
     //  * @param {*} deptUsers
     //  */
-    add(index, commodityId, tenantId, hospitalCode, departmentId, assignments, isSingle) {
-      console.log('AddPeople departmentId', index)
+    add(index, commodityId, tenantId, hospitalCode, departmentId, assignments, isSingle,pkgManageId) {
+      console.log('AddPeople departmentId', assignments)
       this.visible = true
       this.index = index
       this.tenantId = tenantId
@@ -249,11 +251,12 @@ export default {
       this.isAverage = false
       this.assignments = assignments
       this.isSingle = isSingle
+      this.pkgManageId = pkgManageId
 
       this.getDepartmentSelectList()
-      if (index==1) {  //只有修改的 才需要调用
+      if (index == 1) {
+        //只有修改的 才需要调用
         this.pkgManageItemsOut(commodityId)
-        
       }
     },
 
@@ -431,10 +434,7 @@ export default {
         return
       }
 
-
-        console.log("LLLL：",item.userId)
       this.choseUsers.forEach((ItemUser) => {
-        console.log("LLLL11111：",ItemUser.userId)
         // 防止重复添加
         if (ItemUser.userId == item.userId) {
           console.log('防止重复添加')
@@ -491,9 +491,35 @@ export default {
 
     countTotal() {},
 
-    handleSubmit() {
-      // this.countTotal()
+    updateSnatchPkgItemsOut(pkgManageItemNames) {
+      let itemArray=[]
+      if (this.choseUsers&&this.choseUsers.length>0) {
+        this.choseUsers.forEach(userItem => {
+        itemArray.push({
+          achievementRatio:userItem.achievementRatio,
+          deptId:userItem.deptId,
+          leaderFlag:userItem.leaderFlag,
+          objectId:userItem.userId,
+          weight:0
 
+        })
+      });
+      }
+      let uploadData={
+        commodityPkgManageItemReqs:itemArray,
+        pkgManageId:this.pkgManageId,
+      }
+
+      updateSnatchPkgItems(uploadData).then((res) => {
+        if (res.code == 0) {
+          this.$emit('ok', this.index, pkgManageItemNames, this.choseDepartmentId)
+          this.$message.success('操作成功!')
+          this.visible = false
+        }
+      })
+    },
+
+    handleSubmit() {
       if (this.choseNum == 0) {
         this.$message.error('请选择人员')
         return
@@ -511,8 +537,17 @@ export default {
           weight: 0,
         })
       })
-      this.$emit('ok', this.index, pkgManageItemNames, this.choseDepartmentId)
-      this.visible = false
+      
+    
+      // 只有修改的才调用
+      if (this.index==1) {
+        this.updateSnatchPkgItemsOut(pkgManageItemNames)
+      }else{
+        this.$emit('ok', this.index, pkgManageItemNames, this.choseDepartmentId)
+        this.visible = false
+      }
+
+
     },
     handleCancel() {
       // this.form.resetFields()

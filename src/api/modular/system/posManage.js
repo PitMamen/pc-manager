@@ -5461,5 +5461,15 @@ export function accessTenants(data) {
 
 
 
+// 保存人员
+export function updateSnatchPkgItems(data) {
+  return axios({
+    url: '/medical-api/pkg/updateSnatchPkgItems',
+    method: 'post',
+   data: data,
+  })
+}
+
+
 
 
