@@ -12,9 +12,9 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span style="color: #4d4d4d">张医生|男|42岁|中南大学茅坑</span>
+            <span >{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span>
 
-            <div style="flex-wrap: wrap; margin-left: 63%; display: flex; flex-direction: row">
+            <div style="flex-wrap: wrap; margin-left: 60%; display: flex; flex-direction: row">
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
               <a-input-number
                 style="display: inline-block; width: 70px; margin-left: 10px"

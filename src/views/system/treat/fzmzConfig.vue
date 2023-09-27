@@ -154,9 +154,11 @@ export default {
                     this.saleAmount = item1.saleAmount //单价
                     if (item1.itemsAttr) {
                       item1.itemsAttr.forEach((item2) => {
+
                         if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
                           //服务时效
                           this.timeAttrExpire = item2
+                          this.isSertimelimit=true
                           this.serviceValue1 = this.timeAttrExpire.serviceValue
                           if (this.timeAttrExpire.unit == '小时') {
                             this.unitSelect = 1
@@ -165,6 +167,7 @@ export default {
                           }
                         } else if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
                           //限制条数
+                          this.islimitTip = true
                           this.timeAttrLimitnums = item2
                           this.serviceValue2 = this.timeAttrLimitnums.serviceValue
                         }
