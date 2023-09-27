@@ -209,7 +209,7 @@ import { Item } from 'ant-design-vue/es/vc-menu'
       //  * @param {*} deptUsers 
       //  */
       add(index, type, tenantId, hospitalCode, departmentId, assignments, isSingle) {
-        console.log('AddPeople departmentId', departmentId)
+        console.log('AddPeople departmentId', departmentId,hospitalCode)
         this.visible = true
         this.index = index
         this.type = type

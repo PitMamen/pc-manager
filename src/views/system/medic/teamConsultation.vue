@@ -249,6 +249,15 @@ export default {
     // this.addTdShopmallMainpageMenuOut()
   },
 
+  mounted() {
+    //用局部引用的时候 this.$bus改成Bus，跟上面引用的名字一样
+    this.$bus.$on('pkgEvent', (data) => {
+      console.log('pkgEvent Refres', data)
+      // this.objct = data;
+      this.handleOk()
+    })
+  },
+
   methods: {
 
 
