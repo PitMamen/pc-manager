@@ -107,6 +107,9 @@
                 <div class="ant-upload-text">上传封面图片</div>
               </div>
             </a-upload>
+            <a-modal :visible="previewVisible" :footer="null" @cancel="handleCancel2">
+              <img alt="example" style="width: 100%" :src="previewImage" />
+            </a-modal>
           </div>
 
           <!-- <div class="div-line-wrap">
@@ -143,6 +146,7 @@ export default {
   components: {},
   data() {
     return {
+      previewVisible: false,
       fetching: false,
       visible: false,
       confirmLoading: false,
@@ -170,7 +174,7 @@ export default {
       },
       actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
       fileList: [],
-      previewVisible: false,
+    
       previewImage: '',
       diseaseData: [],
       typeData: [],
@@ -279,7 +283,9 @@ export default {
     goBack() {
       window.history.back()
     },
-
+    handleCancel2() {
+      this.previewVisible = false
+    },
     handleCancel() {
       this.visible = false
     },
