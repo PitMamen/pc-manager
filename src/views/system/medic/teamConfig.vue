@@ -166,7 +166,7 @@
         </div>
 
         <!-- 团队荣耀 -->
-        <span style="margin-top: 20px"><span style="color: red">*</span>团队荣耀:</span>
+        <span style="margin-top: 20px">团队荣耀:</span>
         <div
           class="div-service-user"
           style="margin-top: -7px; margin-left: 0px; position: relative; height: 52%; margin-bottom: 10px"
@@ -1187,10 +1187,10 @@ export default {
         return
       }
 
-      if (!tempData.glory) {
-        this.$message.error('请输入团队荣耀')
-        return
-      }
+    //   if (!tempData.glory) {
+    //     this.$message.error('请输入团队荣耀')
+    //     return
+    //   }
 
       //组装图片
       if (this.fileList.length == 0) {

@@ -17,7 +17,7 @@
           </div>
 
           <div class="div-content" style="margin-top: 20px">
-            <span class="span-item-name">单价 </span>
+            <span class="span-item-name" ><span style="color: red">*</span>单价 </span>
             <a-input-number
               style="display: inline-block; width: 70px"
               v-model="saleAmount"
@@ -29,7 +29,7 @@
           </div>
           <div class="div-content" style="margin-top: 20px">
             <a-checkbox @click="limitEnable()" :checked="islimitTip" />
-            <span class="span-item-name" style="margin-left: 10px">限制条数</span>
+            <span class="span-item-name" style="margin-left: 10px"><span style="color: red">*</span>限制条数</span>
             <a-input
               :maxLength="20"
               class="span-item-value"
@@ -41,7 +41,7 @@
 
           <div class="div-content" style="margin-top: 20px">
             <a-checkbox @click="limitService()" :checked="isSertimelimit" />
-            <span class="span-item-name" style="margin-left: 10px">服务时效</span>
+            <span class="span-item-name" style="margin-left: 10px"><span style="color: red">*</span>服务时效</span>
             <a-input
               :maxLength="20"
               class="span-item-value"
@@ -82,14 +82,14 @@ export default {
       timeAttrExpire: {},
       timeAttrLimitnums: {},
       type: 1,
-      saleAmount: 1,
+      saleAmount: 0,
       headers: {},
       price: 1000,
       unitSelect: 1,
       confirmLoading: false,
 
-      serviceValue1: 1,
-      serviceValue2: 1,
+      serviceValue1: 0,
+      serviceValue2: 0,
 
       timeUnitTypesData: [
         {
@@ -188,6 +188,24 @@ export default {
     },
 
     handleSubmit() {
+      if (!this.serviceValue2||this.serviceValue2<=0) {
+        this.$message.error('请设置限制条数!')
+        return
+      }
+
+      if (!this.serviceValue1||this.serviceValue1<=0) {
+        this.$message.error('请输入服务时效!')
+        return
+      }
+
+
+      if (!this.saleAmount||this.saleAmount) {
+        this.$message.error('请输入价格!')
+        return
+      }
+
+
+
       this.pkgs.forEach((item) => {
         delete item.itemImg
         item.itemType = 1
