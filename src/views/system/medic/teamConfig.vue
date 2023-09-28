@@ -284,9 +284,9 @@
           <div class="div-divider"></div>
 
           <div class="mission-bottom-add">
-            <span class="span-titl" style="margin-left: 1%">项目规格：{{ serviceData[0].normsModel }}</span>
-            <span class="span-titl" style="margin-left: 1%">项目建议价格：{{ serviceData[0].suggestPrice }}</span>
-            <span class="span-titl" style="margin-left: 1%">生产商：{{ serviceData[0].factoryName }}</span>
+            <span class="span-titl" style="margin-left: 1%">项目规格：{{serviceData[0].normsModel||'' }}</span>
+            <span class="span-titl" style="margin-left: 1%">项目建议价格：{{ serviceData[0].suggestPrice ||''}}</span>
+            <span class="span-titl" style="margin-left: 1%">生产商：{{ serviceData[0].factoryName ||''}}</span>
           </div>
         </div>
       </div>
