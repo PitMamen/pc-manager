@@ -523,6 +523,8 @@ export default {
       let data = {
         id: item.id,
         workStatus: item.workStatus == 0 ? 1 : 0,
+        weekDay:item.weekDay,
+        type:this.type
       }
       item.workStatus = item.workStatus == 0 ? 1 : 0
 
@@ -754,9 +756,18 @@ export default {
     // 添加排班
     addArrangeInfoOut() {
       let requestData = []
-
+       var isSReturn = false
+       var isEReturn = false
       let checkDataTemp = JSON.parse(JSON.stringify(this.checkData))
       checkDataTemp.forEach((item, index) => {
+        if (!item.receiveStartTime||item.receiveStartTime=='Invalid date') {
+          isReturn = true
+          return
+        }
+        if (!item.receiveEndTime||item.receiveEndTime=='Invalid date') {
+          isEReturn = true
+          return
+        }
         item.receiveStartTime=moment(item.receiveStartTime).format("HH:mm")
         item.receiveEndTime=moment(item.receiveEndTime).format("HH:mm")
         // console.log("BBB:",item.receiveStartTime,item.receiveEndTime)
@@ -771,6 +782,17 @@ export default {
           workStatus: item.workStatus == 1 ? 1 : 0,
         })
       })
+
+      if (isSReturn) {
+        this.$message.error("请选择开始时间!")
+        return
+      }
+
+      if (isEReturn) {
+        this.$message.error("请选择结束时间!")
+        return
+      }
+
 
       let uploadData = {
         items: requestData,
