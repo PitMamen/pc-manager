@@ -537,6 +537,15 @@ export default {
           weight: 0,
         })
       })
+
+
+      // 队长必选
+      let result = pkgManageItemNames.some(item=>item.leaderFlag==1)
+      if (!result) {
+        this.$message.error("请选择队长!")
+        return
+      }
+
       
     
       // 只有修改的才调用
