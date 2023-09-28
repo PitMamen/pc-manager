@@ -115,7 +115,7 @@
               <div>开始时间</div>
               <a-time-picker
                 v-model="checkData[0].receiveStartTime"
-                @change="timeChangeStart" 
+                @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -146,7 +146,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-              v-model="checkData[1].receiveStartTime"
+                v-model="checkData[1].receiveStartTime"
                 @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -177,7 +177,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-              v-model="checkData[2].receiveStartTime"
+                v-model="checkData[2].receiveStartTime"
                 @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -185,7 +185,7 @@
               />
               <div>结束时间</div>
               <a-time-picker
-              v-model="checkData[2].receiveEndTime"
+                v-model="checkData[2].receiveEndTime"
                 @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -208,7 +208,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-              v-model="checkData[3].receiveStartTime"
+                v-model="checkData[3].receiveStartTime"
                 @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -216,7 +216,7 @@
               />
               <div>结束时间</div>
               <a-time-picker
-              v-model="checkData[3].receiveEndTime"
+                v-model="checkData[3].receiveEndTime"
                 @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -239,7 +239,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-              v-model="checkData[4].receiveStartTime"
+                v-model="checkData[4].receiveStartTime"
                 @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -247,7 +247,7 @@
               />
               <div>结束时间</div>
               <a-time-picker
-              v-model="checkData[4].receiveEndTime"
+                v-model="checkData[4].receiveEndTime"
                 @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -270,7 +270,7 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-              v-model="checkData[5].receiveStartTime"
+                v-model="checkData[5].receiveStartTime"
                 @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -278,7 +278,7 @@
               />
               <div>结束时间</div>
               <a-time-picker
-              v-model="checkData[5].receiveEndTime"
+                v-model="checkData[5].receiveEndTime"
                 @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
@@ -523,8 +523,8 @@ export default {
       let data = {
         id: item.id,
         workStatus: item.workStatus == 0 ? 1 : 0,
-        weekDay:item.weekDay,
-        type:this.type
+        weekDay: item.weekDay,
+        type: this.type,
       }
       item.workStatus = item.workStatus == 0 ? 1 : 0
 
@@ -756,20 +756,27 @@ export default {
     // 添加排班
     addArrangeInfoOut() {
       let requestData = []
-       var isSReturn = false
-       var isEReturn = false
+      var isSReturn = false
+      var isEReturn = false
+      var isStartbigEnd = false
       let checkDataTemp = JSON.parse(JSON.stringify(this.checkData))
       checkDataTemp.forEach((item, index) => {
-        if (!item.receiveStartTime||item.receiveStartTime=='Invalid date') {
-          isReturn = true
+        if (!item.receiveStartTime || item.receiveStartTime == 'Invalid date') {
+          isSReturn = true
           return
         }
-        if (!item.receiveEndTime||item.receiveEndTime=='Invalid date') {
+        if (!item.receiveEndTime || item.receiveEndTime == 'Invalid date') {
           isEReturn = true
           return
         }
-        item.receiveStartTime=moment(item.receiveStartTime).format("HH:mm")
-        item.receiveEndTime=moment(item.receiveEndTime).format("HH:mm")
+
+        if (item.receiveStartTime >= item.receiveEndTime) {
+          isStartbigEnd = true
+          return
+        }
+
+        item.receiveStartTime = moment(item.receiveStartTime).format('HH:mm')
+        item.receiveEndTime = moment(item.receiveEndTime).format('HH:mm')
         // console.log("BBB:",item.receiveStartTime,item.receiveEndTime)
 
         requestData.push({
@@ -784,20 +791,28 @@ export default {
       })
 
       if (isSReturn) {
-        this.$message.error("请选择开始时间!")
+        this.$message.error('请选择开始时间!')
         return
       }
 
       if (isEReturn) {
-        this.$message.error("请选择结束时间!")
+        this.$message.error('请选择结束时间!')
         return
       }
+
+
+      if (isStartbigEnd) {
+        this.$message.error('开始时间不能大于结束时间!')
+        return
+      }
+
+
+
 
 
       let uploadData = {
         items: requestData,
       }
-
 
       addArrangeInfo(uploadData).then((res) => {
         if (res.code == 0) {
