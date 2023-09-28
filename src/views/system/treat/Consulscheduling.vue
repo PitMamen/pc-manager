@@ -421,45 +421,47 @@ export default {
           statusValue: record.fuzhen.stopStatus == 2 ? 1: 2,
           updateType: 2,
         }
+        record.fuzhen.stopStatus = record.fuzhen.stopStatus == 2 ? 1: 2
       } else if (type == 'tuwen') {
         data = {
           id: record.tuwen.commodityId,
           statusValue: record.tuwen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
+        record.tuwen.stopStatus = record.tuwen.stopStatus == 2 ? 1: 2
       } else if (type == 'dianhua') {
         data = {
           id: record.dianhua.commodityId,
           statusValue: record.dianhua.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
+        record.dianhua.stopStatus = record.dianhua.stopStatus == 2 ? 1: 2
       } else if (type == 'shipin') {
         data = {
           id: record.shipin.commodityId,
           statusValue: record.shipin.stopStatus == 2? 1 : 2,
           updateType: 2,
         }
+        record.shipin.stopStatus = record.shipin.stopStatus == 2 ? 1: 2
       } else if (type == 'menzhen') {
         data = {
           id: record.menzhen.commodityId,
           statusValue: record.menzhen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
+        record.menzhen.stopStatus = record.menzhen.stopStatus == 2 ? 1: 2
       }
 
       updatePkgStatus(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
-          this.refresh()
+        //   this.handleOk()
         } else {
           this.$message.error('操作失败：' + res.message)
         }
       })
     },
 
-    refresh() {
-      this.$refs.table.refresh(true)
-    },
     /**
      * 所属机构接口
      */
