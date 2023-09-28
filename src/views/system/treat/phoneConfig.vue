@@ -115,7 +115,7 @@
               <div>开始时间</div>
               <a-time-picker
                 v-model="checkData[0].receiveStartTime"
-                @change="(type, time) => timeChangeStart(1, time)" 
+                @change="timeChangeStart" 
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -123,7 +123,7 @@
               <div>结束时间</div>
               <a-time-picker
                 v-model="checkData[0].receiveEndTime"
-                @change="(type, time) => timeChangeEnd(1, time)"
+                @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -146,8 +146,8 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="checkData[1].receiveStartTime"
-                @change="(type, time) => timeChangeStart(2, time)"
+              v-model="checkData[1].receiveStartTime"
+                @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -155,7 +155,7 @@
               <div>结束时间</div>
               <a-time-picker
                 :value="checkData[1].receiveEndTime"
-                @change="(type, time) => timeChangeEnd(2, time)"
+                @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -177,16 +177,16 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="checkData[2].receiveStartTime"
-                @change="(type, time) => timeChangeStart(3, time)"
+              v-model="checkData[2].receiveStartTime"
+                @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="checkData[2].receiveEndTime"
-                @change="(type, time) => timeChangeEnd(3, time)"
+              v-model="checkData[2].receiveEndTime"
+                @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -208,16 +208,16 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="checkData[3].receiveStartTime"
-                @change="(type, time) => timeChangeStart(4, time)"
+              v-model="checkData[3].receiveStartTime"
+                @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="checkData[3].receiveEndTime"
-                @change="(type, time) => timeChangeEnd(4, time)"
+              v-model="checkData[3].receiveEndTime"
+                @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -239,16 +239,16 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="checkData[4].receiveStartTime"
-                @change="(type, time) => timeChangeStart(5, time)"
+              v-model="checkData[4].receiveStartTime"
+                @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="checkData[4].receiveEndTime"
-                @change="(type, time) => timeChangeEnd(5, time)"
+              v-model="checkData[4].receiveEndTime"
+                @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -270,16 +270,16 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="checkData[5].receiveStartTime"
-                @change="(type, time) => timeChangeStart(6, time)"
+              v-model="checkData[5].receiveStartTime"
+                @change="timeChangeStart"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="checkData[5].receiveEndTime"
-                @change="(type, time) => timeChangeEnd(6, time)"
+              v-model="checkData[5].receiveEndTime"
+                @change="timeChangeEnd"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -301,16 +301,16 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                @change="(type, time) => timeChangeStart(7, time)"
-                :value="checkData[6].receiveStartTime"
+                @change="timeChangeStart"
+                v-model="checkData[6].receiveStartTime"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                @change="(type, time) => timeChangeEnd(7, time)"
-                :value="checkData[6].receiveEndTime"
+                @change="timeChangeEnd"
+                v-model="checkData[6].receiveEndTime"
                 style="width: 95px; text-align-last: center"
                 format="HH:mm"
                 :allowClear="false"
@@ -428,41 +428,41 @@ export default {
       achievementRatio: 60,
       confirmLoading: false,
       checkData: [
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
-        {
-          workStatus:1,
-          receiveStartTime: '08:00',
-            receiveEndTime: '21:00',
-        },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
+        // {
+        //   workStatus:1,
+        //   receiveStartTime: '08:00',
+        //     receiveEndTime: '21:00',
+        // },
       ],
       type: 1,
       pkgs: [],
