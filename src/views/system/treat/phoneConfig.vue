@@ -12,7 +12,7 @@
       <div class="div-part">
         <div class="div-part-left">
           <div class="div-content">
-            <span >{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span>
+            <span>{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span>
 
             <div style="flex-wrap: wrap; margin-left: 60%; display: flex; flex-direction: row">
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
@@ -129,8 +129,10 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
+                type="number"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -159,8 +161,9 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -189,8 +192,9 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -219,8 +223,9 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -249,8 +254,9 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -279,8 +285,9 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -309,8 +316,9 @@
                 format="HH:mm"
               />
               <div>接诊人数</div>
-              <a-input
-                :maxLength="20"
+              <a-input-number
+                :min="0"
+                :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px"
                 allow-clear
@@ -339,9 +347,9 @@
                 />
                 <div style="margin-left: 5px; color: #4d4d4d">元</div>
 
-                <a-checkbox style="margin-left: 20px" @click="limitEnable(item)" :checked="item.isLimit" />
+                <!-- <a-checkbox style="margin-left: 20px" @click="limitEnable(item)" :checked="item.isLimit" /> -->
                 <span class="span-item-name" style="margin-left: 10px">服务时长</span>
-              
+
                 <a-input
                   :maxLength="20"
                   class="span-item-value"
@@ -426,7 +434,7 @@ export default {
       taskList: [
         {
           serviceStrip: 0,
-          StripUnit: 0,
+          StripUnit: '',
 
           serviceTime: 0,
           timeUnit: 1,
@@ -459,7 +467,7 @@ export default {
       this.taskList = [
         {
           serviceStrip: 0,
-          StripUnit: 0,
+          StripUnit: '',
           serviceTime: 0,
           timeUnit: 1,
           id: '',
@@ -549,7 +557,7 @@ export default {
 
       this.taskList.push({
         serviceStrip: 1, //限制条数
-        StripUnit: 1, //限制条数单位   /条
+        StripUnit: '', //限制条数单位   /条
         serviceTime: 1, //限制时效
         timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
 
@@ -645,7 +653,7 @@ export default {
 
                 var itemobj = {
                   serviceStrip: 1, //限制条数
-                  StripUnit: 1, //限制条数单位   /条
+                  StripUnit: '', //限制条数单位   /条
                   serviceTime: 1, //限制时效
                   timeUnit: this.timeUnit == '小时' ? 1 : 2, //时效单位
                   id: item1.id,
@@ -660,20 +668,20 @@ export default {
 
                 if (item1.itemsAttr) {
                   item1.itemsAttr.forEach((item2) => {
-                    if (item2.ruleType == 'ITEM_ATTR_TIMES') {
-                      //服务时长
+                    if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
+                      //服务时效
                       itemobj.isSerLimit = item2.serviceValue ? true : false
                       itemobj.timeId = item2.id
                       itemobj.serviceTime = item2.serviceValue
                       itemobj.timeUnit = item2.unit == '小时' ? 1 : 2
                     }
 
-                    if (item2.ruleType == 'ITEM_ATTR_LIMITNUMS') {
-                      //限制条数
+                    if (item2.ruleType == 'ITEM_ATTR_TIMES') {
+                      //服务时长
                       itemobj.isLimit = item2.serviceValue ? true : false
                       itemobj.StripId = item2.id
                       itemobj.serviceStrip = item2.serviceValue
-                      itemobj.StripUnit = item2.unit
+                      itemobj.StripUnit = '分钟'
                     }
                   })
                 }
@@ -702,46 +710,37 @@ export default {
       })
     },
 
-
-
     // 添加排班
-    addArrangeInfoOut(){
-
-      let requestData=[]
+    addArrangeInfoOut() {
+      let requestData = []
 
       let checkDataTemp = JSON.parse(JSON.stringify(this.checkData))
-      checkDataTemp.forEach((item,index) => {
+      checkDataTemp.forEach((item, index) => {
         requestData.push({
-          receiveEndTime:item.receiveEndTime,
-          receiveStartTime:item.receiveStartTime,
-          receiveUserCount:item.receiveUserCount,
-          type:this.type,
-          userId:item.userId,
-          weekDay:item.weekDay,
-          workStatus:item.workStatus.value==1?1:0,
+          receiveEndTime: item.receiveEndTime,
+          receiveStartTime: item.receiveStartTime,
+          receiveUserCount: item.receiveUserCount,
+          type: this.type,
+          userId: item.userId,
+          weekDay: item.weekDay,
+          workStatus: item.workStatus.value == 1 ? 1 : 0,
         })
-      });
+      })
 
-
-      let uploadData={
-        items:requestData
+      let uploadData = {
+        items: requestData,
       }
 
-      addArrangeInfo(uploadData).then((res)=>{
-        if (res.code==0) {
+      addArrangeInfo(uploadData).then((res) => {
+        if (res.code == 0) {
           this.saveCommodityPkgCollectionOut()
-           this.$emit('ok')
+          this.$emit('ok')
           this.$message.success('操作成功!')
         }
       })
-
-
     },
 
-
-
-
-// 保存配置
+    // 保存配置
     saveCommodityPkgCollectionOut() {
       var itemsTemp = []
 
@@ -755,7 +754,7 @@ export default {
               itemType: 1,
               quantity: 1,
               itemImg: 1,
-              saleAmount: itemTask.saleAmount,           
+              saleAmount: itemTask.saleAmount,
               serviceItemId: this.type === 1 ? 11 : 5,
               serviceItemName: this.type === 1 ? '电话咨询' : '视频咨询',
               unit: '次',
@@ -764,15 +763,15 @@ export default {
                   id: itemTask.timeId || undefined,
                   ruleType: 'ITEM_ATTR_EXPIRE',
                   ruleTypeName: '服务时效',
-                  unit: itemTask.timeUnit==1?'小时':'天',
-                  serviceValue:itemTask.isSerLimit? itemTask.serviceTime:'',
+                  unit: itemTask.timeUnit == 1 ? '小时' : '天',
+                  serviceValue: itemTask.isSerLimit ? itemTask.serviceTime : '',
                 },
                 {
                   id: itemTask.StripId || undefined,
                   ruleType: 'ITEM_ATTR_TIMES',
                   ruleTypeName: '服务时长',
-                  unit: '条',
-                  serviceValue:itemTask.isLimit? itemTask.serviceStrip:'',
+                  unit: '分钟',
+                  serviceValue: itemTask.isLimit ? itemTask.serviceStrip : '',
                 },
               ],
             },
@@ -786,7 +785,7 @@ export default {
         id: this.pkgDetail.id,
         pkgs: itemsTemp,
         doctorUserId: this.record.userId,
-        achievementRatio:this.achievementRatio
+        achievementRatio: this.achievementRatio,
       }
 
       this.confirmLoading = true
@@ -808,9 +807,7 @@ export default {
     },
 
     handleSubmit() {
-
       this.addArrangeInfoOut()
-
     },
 
     goBack() {
