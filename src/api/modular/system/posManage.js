@@ -5413,10 +5413,10 @@ export function saveOrUpdateSnatch(data) {
 }
 
 
-// 查询排班
+// 查询排班  getDocWeekArrangeInfo
 export function getDocArrangeInfo(data) {
   return axios({
-    url: '/medical-api/tdArrangeWorkTime/getDocArrangeInfo',
+    url: '/medical-api/tdArrangeWorkTime/getDocWeekArrangeInfo',
     method: 'post',
     data: data,
   })

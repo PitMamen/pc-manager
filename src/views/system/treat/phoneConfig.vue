@@ -33,10 +33,10 @@
               <span>周一</span>
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[0].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[0].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[0])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[0].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[0].workStatus == 1" />
               </a-popconfirm>
             </div>
 
@@ -44,10 +44,10 @@
               <span>周二</span>
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[1].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[1].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[1])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[1].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[1].workStatus == 1" />
               </a-popconfirm>
             </div>
 
@@ -56,10 +56,10 @@
 
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[2].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[2].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[2])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[2].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[2].workStatus == 1" />
               </a-popconfirm>
             </div>
 
@@ -67,10 +67,10 @@
               <span>周四</span>
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[3].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[3].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[3])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[3].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[3].workStatus == 1" />
               </a-popconfirm>
             </div>
 
@@ -78,10 +78,10 @@
               <span>周五</span>
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[4].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[4].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[4])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[4].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[4].workStatus == 1" />
               </a-popconfirm>
             </div>
 
@@ -90,10 +90,10 @@
 
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[5].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[5].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[5])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[5].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[5].workStatus == 1" />
               </a-popconfirm>
             </div>
 
@@ -101,32 +101,32 @@
               <span>周日</span>
               <a-popconfirm
                 placement="topRight"
-                :title="checkData[6].workStatus.value == 1 ? '确认关闭？' : '确认启用？'"
+                :title="checkData[6].workStatus == 1 ? '确认关闭？' : '确认启用？'"
                 @confirm="updateArrangeStatusOut(checkData[6])"
               >
-                <a-switch style="margin-left: 5px" size="default" :checked="checkData[6].workStatus.value == 1" />
+                <a-switch style="margin-left: 5px" size="default" :checked="checkData[6].workStatus == 1" />
               </a-popconfirm>
             </div>
           </div>
 
           <div class="bottomtime-content">
-            <!-- 周一接诊 -->
+            <!-- 周一接诊    @change="(type, time) => timeChangeStart(1, time)" -->
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="moment(checkData[0].receiveStartTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeStart(time, timestring, 1)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                v-model="checkData[0].receiveStartTime"
+                @change="(type, time) => timeChangeStart(1, time)" 
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="moment(checkData[0].receiveEndTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 1)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                v-model="checkData[0].receiveEndTime"
+                @change="(type, time) => timeChangeEnd(1, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
@@ -134,7 +134,7 @@
                 :max="500"
                 type="number"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[0].receiveUserCount"
               />
@@ -146,26 +146,26 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="moment(checkData[1].receiveStartTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeStart(time, timestring, 2)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[1].receiveStartTime"
+                @change="(type, time) => timeChangeStart(2, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="moment(checkData[1].receiveEndTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 2)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[1].receiveEndTime"
+                @change="(type, time) => timeChangeEnd(2, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[1].receiveUserCount"
               />
@@ -177,26 +177,26 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="moment(checkData[2].receiveStartTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeStart(time, timestring, 3)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[2].receiveStartTime"
+                @change="(type, time) => timeChangeStart(3, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="moment(checkData[2].receiveEndTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 3)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[2].receiveEndTime"
+                @change="(type, time) => timeChangeEnd(3, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[2].receiveUserCount"
               />
@@ -208,26 +208,26 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="moment(checkData[3].receiveStartTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeStart(time, timestring, 4)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[3].receiveStartTime"
+                @change="(type, time) => timeChangeStart(4, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="moment(checkData[3].receiveEndTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 4)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[3].receiveEndTime"
+                @change="(type, time) => timeChangeEnd(4, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[3].receiveUserCount"
               />
@@ -239,26 +239,26 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="moment(checkData[4].receiveStartTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeStart(time, timestring, 5)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[4].receiveStartTime"
+                @change="(type, time) => timeChangeStart(5, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="moment(checkData[4].receiveEndTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 5)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[4].receiveEndTime"
+                @change="(type, time) => timeChangeEnd(5, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[4].receiveUserCount"
               />
@@ -270,26 +270,26 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                :value="moment(checkData[5].receiveStartTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeStart(time, timestring, 6)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[5].receiveStartTime"
+                @change="(type, time) => timeChangeStart(6, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                :value="moment(checkData[5].receiveEndTime, 'HH:mm')"
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 6)"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                :value="checkData[5].receiveEndTime"
+                @change="(type, time) => timeChangeEnd(6, time)"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[5].receiveUserCount"
               />
@@ -301,26 +301,26 @@
             <div class="itemtime-content">
               <div>开始时间</div>
               <a-time-picker
-                @change="(time, timestring) => timeChangeStart(time, timestring, 7)"
-                :value="moment(checkData[6].receiveStartTime, 'HH:mm')"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                @change="(type, time) => timeChangeStart(7, time)"
+                :value="checkData[6].receiveStartTime"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>结束时间</div>
               <a-time-picker
-                @change="(time, timestring) => timeChangeEnd(time, timestring, 7)"
-                :value="moment(checkData[6].receiveEndTime, 'HH:mm')"
-                style="width: 95px;text-align-last: center"
-                :default-value="moment('8:00', 'HH:mm')"
+                @change="(type, time) => timeChangeEnd(7, time)"
+                :value="checkData[6].receiveEndTime"
+                style="width: 95px; text-align-last: center"
                 format="HH:mm"
+                :allowClear="false"
               />
               <div>接诊人数</div>
               <a-input-number
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px;text-align-last: center"
+                style="display: inline-block; width: 95px; text-align-last: center"
                 allow-clear
                 v-model="checkData[6].receiveUserCount"
               />
@@ -427,7 +427,43 @@ export default {
       headers: {},
       achievementRatio: 60,
       confirmLoading: false,
-      checkData: [],
+      checkData: [
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+        {
+          workStatus:1,
+          receiveStartTime: '08:00',
+            receiveEndTime: '21:00',
+        },
+      ],
       type: 1,
       pkgs: [],
       pkgDetail: {},
@@ -442,7 +478,7 @@ export default {
           id: '',
           saleAmount: '',
 
-          isLimit: false,
+          isLimit: true,
           isSerLimit: false,
         },
       ],
@@ -474,7 +510,7 @@ export default {
           projectId: '',
           saleAmount: '',
 
-          isLimit: false,
+          isLimit: true,
           isSerLimit: false,
           timeId: 0,
           StripId: 0,
@@ -486,9 +522,9 @@ export default {
     updateArrangeStatusOut(item) {
       let data = {
         id: item.id,
-        workStatus: item.workStatus.value == 0 ? 1 : 0,
+        workStatus: item.workStatus == 0 ? 1 : 0,
       }
-      item.workStatus.value = item.workStatus.value == 0 ? 1 : 0
+      item.workStatus = item.workStatus == 0 ? 1 : 0
 
       updateArrangeStatus(data).then((res) => {
         if (res.code == 0) {
@@ -497,55 +533,55 @@ export default {
       })
     },
 
-    timeChangeStart(moment, starttimestring, type) {
-      console.log('ssss:', type, starttimestring)
+    timeChangeStart(type, time) {
+      console.log('ssss:', type, time)
       // 周一开始时间
       if (type == 1) {
-        this.checkData[0].receiveStartTime = starttimestring
+        this.checkData[0].receiveStartTime = time = moment(time, 'HH:mm')
         //周二开始时间
       } else if (type == 2) {
-        this.checkData[1].receiveStartTime = starttimestring
+        this.checkData[1].receiveStartTime = time = moment(time, 'HH:mm')
         //周三开始时间
       } else if (type == 3) {
-        this.checkData[2].receiveStartTime = starttimestring
+        this.checkData[2].receiveStartTime = time = moment(time, 'HH:mm')
         //周四开始时间
       } else if (type == 4) {
-        this.checkData[3].receiveStartTime = starttimestring
+        this.checkData[3].receiveStartTime = time = moment(time, 'HH:mm')
         //周五开始时间
       } else if (type == 5) {
-        this.checkData[4].receiveStartTime = starttimestring
+        this.checkData[4].receiveStartTime = time = moment(time, 'HH:mm')
         //周六开始时间
       } else if (type == 6) {
-        this.checkData[5].receiveStartTime = starttimestring
+        this.checkData[5].receiveStartTime = time = moment(time, 'HH:mm')
         //周日开始时间
       } else if (type == 7) {
-        this.checkData[6].receiveStartTime = starttimestring
+        this.checkData[6].receiveStartTime = time = moment(time, 'HH:mm')
       }
     },
 
-    timeChangeEnd(moment, endtimestring, type) {
-      console.log('BBBBB:', endtimestring, type)
+    timeChangeEnd(type, time) {
+      console.log('BBBBB:', type, time)
       // 周一结束时间
       if (type == 1) {
-        this.checkData[0].receiveEndTime = endtimestring
+        this.checkData[0].receiveEndTime = time = moment(time, 'HH:mm')
         //周二结束时间
       } else if (type == 2) {
-        this.checkData[1].receiveEndTime = endtimestring
+        this.checkData[1].receiveEndTime = time = moment(time, 'HH:mm')
         //周三结束时间
       } else if (type == 3) {
-        this.checkData[2].receiveEndTime = endtimestring
+        this.checkData[2].receiveEndTime = time = moment(time, 'HH:mm')
         //周四结束时间
       } else if (type == 4) {
-        this.checkData[3].receiveEndTime = endtimestring
+        this.checkData[3].receiveEndTime = time = moment(time, 'HH:mm')
         //周五结束时间
       } else if (type == 5) {
-        this.checkData[4].receiveEndTime = endtimestring
+        this.checkData[4].receiveEndTime = time = moment(time, 'HH:mm')
         //周六结束时间
       } else if (type == 6) {
-        this.checkData[5].receiveEndTime = endtimestring
+        this.checkData[5].receiveEndTime = time = moment(time, 'HH:mm')
         //周日结束时间
       } else if (type == 7) {
-        this.checkData[6].receiveEndTime = endtimestring
+        this.checkData[6].receiveEndTime = time = moment(time, 'HH:mm')
       }
     },
 
@@ -564,7 +600,7 @@ export default {
         saleAmount: '', //单价
 
         isSerLimit: false,
-        isLimit: false,
+        isLimit: true,
         timeId: 0,
         StripId: 0,
       })
@@ -661,7 +697,7 @@ export default {
                   saleAmount: item1.saleAmount, //单价
                   pkgsId: item.id,
                   isSerLimit: false,
-                  isLimit: false,
+                  isLimit: true,
                   timeId: 0,
                   StripId: 0,
                 }
@@ -678,7 +714,7 @@ export default {
 
                     if (item2.ruleType == 'ITEM_ATTR_TIMES') {
                       //服务时长
-                      itemobj.isLimit = item2.serviceValue ? true : false
+                      itemobj.isLimit = true
                       itemobj.StripId = item2.id
                       itemobj.serviceStrip = item2.serviceValue
                       itemobj.StripUnit = '分钟'
@@ -706,6 +742,11 @@ export default {
       getDocArrangeInfo(requestData).then((res) => {
         if (res.code == 0) {
           this.checkData = res.data
+
+          this.checkData.forEach((item) => {
+            item.receiveStartTime = moment(item.receiveStartTime ? item.receiveStartTime : '09:00', 'HH:mm')
+            item.receiveEndTime = moment(item.receiveEndTime ? item.receiveEndTime : '21:00', 'HH:mm')
+          })
         }
       })
     },
@@ -716,6 +757,10 @@ export default {
 
       let checkDataTemp = JSON.parse(JSON.stringify(this.checkData))
       checkDataTemp.forEach((item, index) => {
+        item.receiveStartTime=moment(item.receiveStartTime).format("HH:mm")
+        item.receiveEndTime=moment(item.receiveEndTime).format("HH:mm")
+        // console.log("BBB:",item.receiveStartTime,item.receiveEndTime)
+
         requestData.push({
           receiveEndTime: item.receiveEndTime,
           receiveStartTime: item.receiveStartTime,
@@ -723,13 +768,14 @@ export default {
           type: this.type,
           userId: item.userId,
           weekDay: item.weekDay,
-          workStatus: item.workStatus.value == 1 ? 1 : 0,
+          workStatus: item.workStatus == 1 ? 1 : 0,
         })
       })
 
       let uploadData = {
         items: requestData,
       }
+
 
       addArrangeInfo(uploadData).then((res) => {
         if (res.code == 0) {
@@ -743,7 +789,6 @@ export default {
     // 保存配置
     saveCommodityPkgCollectionOut() {
       var itemsTemp = []
-
       this.taskList.forEach((itemTask, index) => {
         itemsTemp.push({
           id: itemTask.pkgsId || undefined,
@@ -807,6 +852,20 @@ export default {
     },
 
     handleSubmit() {
+      var isReturn = false
+      this.taskList.forEach((itemTask) => {
+        if (itemTask.isLimit) {
+          console.log('IIIIII:', itemTask.serviceStrip)
+          if (!itemTask.serviceStrip || itemTask.serviceStrip == '' || itemTask.serviceStrip == 0) {
+            isReturn = true
+            return
+          }
+        }
+      })
+      if (isReturn) {
+        this.$message.error('请输入服务时长!')
+        return
+      }
       this.addArrangeInfoOut()
     },
 

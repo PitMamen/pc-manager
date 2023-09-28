@@ -145,9 +145,9 @@
             placeholder="请输入团队介绍"
             v-model="packageData.intro"
             style="height: 80px; min-height: 100px; margin-top: -7px; margin-left: 60px; width: 80%"
-            :maxLength="50"
+            :maxLength="1000"
           />
-          <span style="position: absolute; margin-top: 70px; margin-left: -50px">0/1000</span>
+          <span style="position: absolute; margin-top: 70px; margin-left: -50px">{{ packageData.intro ? packageData.intro.length : 0 }}/1000</span>
         </div>
 
         <!-- 团队擅长 -->
@@ -160,9 +160,9 @@
             v-model="packageData.skill"
             placeholder="请输入团队擅长"
             style="height: 80px; min-height: 100px; margin-top: -7px; margin-left: 60px; width: 80%"
-            :maxLength="50"
+            :maxLength="300"
           />
-          <span style="position: absolute; margin-top: 70px; margin-left: -50px">0/300</span>
+          <span style="position: absolute; margin-top: 70px; margin-left: -50px">{{ packageData.skill ? packageData.skill.length : 0 }}/300</span>
         </div>
 
         <!-- 团队荣耀 -->
@@ -175,9 +175,9 @@
             v-model="packageData.glory"
             placeholder="请输入团队荣耀"
             style="height: 80px; min-height: 100px; margin-top: -7px; margin-left: 60px; width: 80%"
-            :maxLength="50"
+            :maxLength="300"
           />
-          <span style="position: absolute; margin-top: 70px; margin-left: -50px">0/300</span>
+          <span style="position: absolute; margin-top: 70px; margin-left: -50px">{{ packageData.glory ? packageData.glory.length : 0 }}/300</span>
         </div>
       </div>
 
