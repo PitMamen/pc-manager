@@ -116,7 +116,7 @@
               <a-time-picker
                 :value="moment(checkData[0].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 1)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -124,7 +124,7 @@
               <a-time-picker
                 :value="moment(checkData[0].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 1)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -134,7 +134,7 @@
                 :max="500"
                 type="number"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[0].receiveUserCount"
               />
@@ -148,7 +148,7 @@
               <a-time-picker
                 :value="moment(checkData[1].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 2)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -156,7 +156,7 @@
               <a-time-picker
                 :value="moment(checkData[1].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 2)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -165,7 +165,7 @@
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[1].receiveUserCount"
               />
@@ -179,7 +179,7 @@
               <a-time-picker
                 :value="moment(checkData[2].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 3)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -187,7 +187,7 @@
               <a-time-picker
                 :value="moment(checkData[2].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 3)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -196,7 +196,7 @@
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[2].receiveUserCount"
               />
@@ -210,7 +210,7 @@
               <a-time-picker
                 :value="moment(checkData[3].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 4)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -218,7 +218,7 @@
               <a-time-picker
                 :value="moment(checkData[3].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 4)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -227,7 +227,7 @@
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[3].receiveUserCount"
               />
@@ -241,7 +241,7 @@
               <a-time-picker
                 :value="moment(checkData[4].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 5)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -249,7 +249,7 @@
               <a-time-picker
                 :value="moment(checkData[4].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 5)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -258,7 +258,7 @@
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[4].receiveUserCount"
               />
@@ -272,7 +272,7 @@
               <a-time-picker
                 :value="moment(checkData[5].receiveStartTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeStart(time, timestring, 6)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -280,7 +280,7 @@
               <a-time-picker
                 :value="moment(checkData[5].receiveEndTime, 'HH:mm')"
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 6)"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -289,7 +289,7 @@
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[5].receiveUserCount"
               />
@@ -303,7 +303,7 @@
               <a-time-picker
                 @change="(time, timestring) => timeChangeStart(time, timestring, 7)"
                 :value="moment(checkData[6].receiveStartTime, 'HH:mm')"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -311,7 +311,7 @@
               <a-time-picker
                 @change="(time, timestring) => timeChangeEnd(time, timestring, 7)"
                 :value="moment(checkData[6].receiveEndTime, 'HH:mm')"
-                style="width: 95px"
+                style="width: 95px;text-align-last: center"
                 :default-value="moment('8:00', 'HH:mm')"
                 format="HH:mm"
               />
@@ -320,7 +320,7 @@
                 :min="0"
                 :max="500"
                 class="span-item-value"
-                style="display: inline-block; width: 95px"
+                style="display: inline-block; width: 95px;text-align-last: center"
                 allow-clear
                 v-model="checkData[6].receiveUserCount"
               />
