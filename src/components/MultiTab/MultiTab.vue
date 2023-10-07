@@ -19,11 +19,16 @@ export default {
       }
       this.activeKey = val
     }).$on('close', val => {
+      console.log('close------------',val)
       if (!val) {
+        console.log('close------------in',val)
         this.closeThat(this.activeKey)
         return
       }
-      this.closeThat(val)
+      let item = this.fullPathList.find(item => item.indexOf(val) != -1)
+      if (item) {
+        this.closeThat(item)
+      }
     }).$on('rename', ({ key, name }) => {
       console.log('rename', key, name)
       try {
@@ -57,6 +62,10 @@ export default {
     // content menu
     closeThat (e) {
       // 判断是否为最后一个标签页，如果是最后一个，则无法被关闭
+      console.log('closeThat0000000000000000 fullPathList',this.fullPathList)
+      console.log('closeThat0000000000000000 pages',this.pages)
+      console.log('closeThat0000000000000000 activeKey',this.activeKey)
+      console.log('closeThat0000000000000000 e',e)
       if (this.fullPathList.length > 1) {
         this.remove(e)
       } else {

@@ -982,7 +982,6 @@ export default {
               }
 
               //处理厂家分成
-              debugger
               let findItemFactory = itemIn.itemsAttr.find((item) => item.ruleType == 'ITEM_ATTR_DEVIDE')
               if (findItemFactory && findItemFactory.serviceValue) {
                 this.$set(this.configData.tasksKe[indexOut].itemsKe[indexIn], 'shareNum', findItemFactory.serviceValue)

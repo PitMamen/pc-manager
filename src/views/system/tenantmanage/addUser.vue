@@ -8,6 +8,11 @@
     @cancel="handleCancel"
     :maskClosable="false"
   >
+      <template #footer>
+        <a-button v-if="record.userId && checkData.userType=='doctor'" icon="setting"  style="margin-right: 520px;width: 112px !important;" :type="canInitCommodity?'primary':'default'" :loading="confirmLoading" @click="handleServiceInit">{{checkData.initCommodityFlag==0?'初始化服务':'已初始化'}}</a-button>
+        <a-button key="back" @click="handleCancel">取消</a-button>
+        <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">确定</a-button>
+      </template>
     <a-spin :spinning="confirmLoading">
       <div class="div-part aaa">
         <div class="recordType">
@@ -690,6 +695,7 @@ import {
   bindBank,
   setCertificateForUserId,
   getCaAuthInfoAdminForUserId,
+  initCommodity,
   getDoctorQrCode
 } from '@/api/modular/system/posManage'
 
@@ -713,6 +719,7 @@ export default {
       updateInfo: '更新信息',
       registering: '注册',
 
+      canInitCommodity:false,
       record: {},
       isDetailTag: false,
       headers: {},
@@ -1050,6 +1057,12 @@ export default {
           this.zhiyeZList = []
           this.zhiyeFList = []
 
+          this.canInitCommodity=res.data.initCommodityFlag===0 && res.data.userType=='doctor' 
+          && res.data.idcardF && res.data.idcardZ 
+          && (res.data.titleZ || res.data.titleF) 
+          && res.data.qualificationZ && res.data.qualificationF 
+          && res.data.practiceZ && res.data.practiceF 
+          
           // 身份证
           if (this.checkData.idcardF) {
             this.photoListCheck.idcardF = this.checkData.idcardF
@@ -1547,6 +1560,30 @@ export default {
       this.checkData.birthday = dateString
     },
 
+    //初始化服务
+    handleServiceInit(){
+      if(this.canInitCommodity){
+        this.confirmLoading=true
+        
+        initCommodity({doctorUserId:this.record.userId}).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('初始化成功！')
+          
+          this.checkData.initCommodityFlag=1
+         
+        } else {
+          this.$message.error(res.message)
+        }
+        this.confirmLoading = false
+      })
+      }else{
+        if(this.checkData.initCommodityFlag===0){
+          this.$message.error('请先提交证件信息')
+        }
+        
+      }
+      
+    },
     handleSubmit() {
       // 基础信息的提交
       console.log(this.checkData)
@@ -1750,6 +1787,7 @@ export default {
 
 
 <style lang="less" scoped>
+
 .m-count {
   position: absolute;
   font-size: 12px;
@@ -1942,13 +1980,13 @@ export default {
     float: left;
     width: 353px;
     overflow: hidden;
-    height: 100%;
+   
   }
   .div-part-right {
     float: right;
     width: 353px;
     overflow: hidden;
-    height: 100%;
+   
   }
 
   .div-content {

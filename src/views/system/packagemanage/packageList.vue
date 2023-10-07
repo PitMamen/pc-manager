@@ -135,7 +135,7 @@
 <script>
 import { STable } from '@/components'
 
-import { accessHospitals, getPkgList, updatePkgStatus, getCommodityClassify } from '@/api/modular/system/posManage'
+import { accessHospitals, getPkgList, updatePkgStatus, getManualCommodityClassify } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import packageCode from './packageCode'
 import Vue from 'vue'
@@ -322,7 +322,7 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
     this.queryHospitalListOut()
-    getCommodityClassify({}).then((res) => {
+    getManualCommodityClassify({}).then((res) => {
       if (res.code == 0) {
         this.classData = res.data
       } else {

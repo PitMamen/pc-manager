@@ -899,6 +899,17 @@ export function createDoctorUser(parameter) {
 }
 
 /**
+ * 医生初始化套餐信息
+ */
+export function initCommodity(parameter) {
+  return axios({
+    url: '/account-api/userInfo/initCommodity',
+    method: 'post',
+    data: parameter
+  })
+}
+
+/**
  * 用户管理修改接口（角色不允许修改）
  */
 export function updateUser(parameter) {
@@ -3545,6 +3556,17 @@ export function getCommodityClassify(data) {
 }
 
 /**
+ * 套餐分类接口(排除咨询/复诊续方大类)
+ */
+export function getManualCommodityClassify(data) {
+  return axios({
+    url: '/medical-api/pkg/getManualCommodityClassify',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
  * /commodityConfig/getCommodityPkgDetailByid 查询套餐规格详情
  */
 export function getCommodityPkgDetailByid(data) {
@@ -3554,6 +3576,10 @@ export function getCommodityPkgDetailByid(data) {
     params: data,
   })
 }
+
+
+
+
 
 /**
  * /commodityConfig/delCollectionItemByid 删除套餐规格包明细项目
@@ -5322,3 +5348,128 @@ export function getPcTradeRecord(data) {
     data: data,
   })
 }
+
+
+
+// 查询可开启的科室列表
+export function getDeptListByType(data) {
+  return axios({
+    url: '/info-api/departments/getDeptListByType',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 排班列表  
+export function searchArrangeDoctors(data) {
+  return axios({
+    url: '/account-api/accountInfo/searchArrangeDoctors',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 抢单团队列表
+export function snatchList(data) {
+  return axios({
+    url: '/medical-api/pkg/snatchList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 套餐详情 
+export function snatchDetail(commodityPkgId) {
+  return axios({
+    url: '/medical-api/pkg/snatchDetail/'+commodityPkgId,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+//团队成员
+
+export function pkgManageItems(commodityId) {
+  return axios({
+    url: '/medical-api/pkg/pkgManageItems/'+commodityId,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+// 修改保存  团队套餐
+export function saveOrUpdateSnatch(data) {
+  return axios({
+    url: '/medical-api/pkg/saveOrUpdateSnatch',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 查询排班  getDocWeekArrangeInfo
+export function getDocArrangeInfo(data) {
+  return axios({
+    url: '/medical-api/tdArrangeWorkTime/getDocWeekArrangeInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 添加排班
+export function addArrangeInfo(data) {
+  return axios({
+    url: '/medical-api/tdArrangeWorkTime/addArrangeInfoNew',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 修改出诊状态
+export function updateArrangeStatus(data) {
+  return axios({
+    url: '/medical-api/tdArrangeWorkTime/updateArrangeStatus',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+
+
+
+// 租户列表
+export function accessTenants(data) {
+  return axios({
+    url: '/uam-api/tenant/accessTenants',
+    method: 'get',
+   params: data,
+  })
+}
+
+
+
+// 保存人员
+export function updateSnatchPkgItems(data) {
+  return axios({
+    url: '/medical-api/pkg/updateSnatchPkgItems',
+    method: 'post',
+   data: data,
+  })
+}
+
+
+
+

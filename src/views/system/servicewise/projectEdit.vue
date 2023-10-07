@@ -82,6 +82,13 @@
             <span class="span-titl" style="margin-left: 1%">每个患者仅匹配一次</span>
           </div>
         </div>
+
+        <div class="div-up-content">
+          <div class="div-pro-line">
+            <a-checkbox @click="goReExecute()" :checked="isReExecute" style="margin-left: 1%" />
+            <span class="span-titl" style="margin-left: 1%">超时任务重新生成并执行</span>
+          </div>
+        </div>
       </div>
 
       <div class="div-pro-middle">
@@ -600,6 +607,7 @@ export default {
       //重复匹配状态：0不重复1可以重
       isOnce: false,
       indexTaskNow: 0,
+      isReExecute:false,
 
       /**
        *
@@ -624,6 +632,7 @@ export default {
 
           updateMatchStatus: 0, //随访名单更新时需重新匹配：0不匹配1匹配
           repeatMatchStatus: 0, //重复匹配状态：0不重复1可以重
+          execOvertimetaskFlag:0,
         },
         filterRules: [],
         tasks: [],
@@ -719,6 +728,16 @@ export default {
 
   methods: {
     moment,
+
+
+    goReExecute() {
+      // 随访名单更新时需重新匹配：0不匹配1匹配
+      this.isReExecute = !this.isReExecute
+      this.projectData.basePlan.execOvertimetaskFlag = this.isReExecute ? 1 : 0
+    },
+
+
+
     goAgin() {
       // 随访名单更新时需重新匹配：0不匹配1匹配
       this.isAgain = !this.isAgain
@@ -783,6 +802,8 @@ export default {
       this.projectData.basePlan.updateMatchStatus = this.projectData.basePlan.updateMatchStatus.value
       this.projectData.basePlan.repeatMatchStatus = this.projectData.basePlan.repeatMatchStatus.value
       this.isAgain = this.projectData.basePlan.updateMatchStatus == 1 ? true : false
+      this.isReExecute = this.projectData.basePlan.execOvertimetaskFlag == 1 ? true : false
+      // console.log("哈哈哈：", this.isReExecute,this.projectData.basePlan.execOvertimetaskFlag)
       //重复匹配状态：0不重复1可以重   true不重复  false重复   勾上true不重复   不勾false重复
       //repeatMatchStatus为0勾上    updateMatchStatus为1勾上
       console.log('processData--------------------repeatMatchStatus', this.projectData.basePlan.repeatMatchStatus)
@@ -1332,11 +1353,6 @@ export default {
     },
 
     showDetail(itemTask, indexTask) {
-      console.log('showDetail indexTask', indexTask)
-      // if (itemTask.taskType = '4') {     ////查阅不病历 不做点击效果
-      //   console.log("不让点击!!!!!")
-      //   return
-      // }
       this.$refs.taskDetail.showDetail(itemTask)
     },
 

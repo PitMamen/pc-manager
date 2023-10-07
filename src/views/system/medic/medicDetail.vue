@@ -619,14 +619,19 @@ export default {
   },
 
   watch: {
-    $route(to, from) {//TODO watch不回调需要找原因
+    $route(to, from) {
       console.log('watch****************medicDetail Be', to, from)
       if (to.path.indexOf('medicDetail') > -1) {
-        this.initData()
+        let temp = JSON.parse(this.$route.query.dataStr)
+        //判断当前路由跳转数据的medicId跟当前页面的medicId不一样，则需要刷数据；而且打开药品详情页的时候就先关闭已打开的详情页。两条逻辑保证修改药品功能可靠性
+        if (temp.editId != this.medicId) {
+          this.initData()
+        }
       }
     },
   },
 
+  //所以单开一个页面，deactivated的时候缓存已修改的所有数据，wath监听路由的时候判断this.medicId是否已经被打开过缓存过，缓存过就初始化initData后再把缓存显示出来
   deactivated() {
     console.log('medicDetail deactivated')
   },
