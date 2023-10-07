@@ -18,7 +18,9 @@
 
           <div class="div-content" style="margin-top: 20px">
             <span class="span-item-name" ><span style="color: red">*</span>单价 </span>
+            <!-- 门诊  单价不让修改  只做展示 -->
             <a-input-number
+              :disabled="type==2"   
               style="display: inline-block; width: 70px"
               v-model="saleAmount"
               :min="0"
