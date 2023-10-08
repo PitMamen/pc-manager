@@ -1030,7 +1030,8 @@ export default {
 
       var itemsArray = []
       var itemArrayTemp = {
-        id: commodityPkgId,
+        // id: commodityPkgId,
+        id: '', //保存 不用传此id
         itemType: 1,
         items: [],
       }
