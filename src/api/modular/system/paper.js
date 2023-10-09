@@ -23,6 +23,18 @@ export function list1 (parameter) {
 }
 
 /**
+ * 统计问卷每一项的填写情况- 导出问卷
+ */
+export function exportFillQuestionnaireInfo (parameter) {
+  return axios({
+    url: '/follow-api/excel/exportFillQuestionnaireInfo',
+    method: 'post',
+    responseType: 'blob',
+    data: parameter
+  })
+}
+
+/**
  * 分页获取input类型的问卷数据
  */
  export function list3 (parameter) {
