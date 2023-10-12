@@ -8,11 +8,19 @@
     @cancel="handleCancel"
     :maskClosable="false"
   >
-      <template #footer>
-        <a-button v-if="record.userId && checkData.userType=='doctor'" icon="setting"  style="margin-right: 520px;width: 112px !important;" :type="canInitCommodity?'primary':'default'" :loading="confirmLoading" @click="handleServiceInit">{{checkData.initCommodityFlag==0?'初始化服务':'已初始化'}}</a-button>
-        <a-button key="back" @click="handleCancel">取消</a-button>
-        <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">确定</a-button>
-      </template>
+    <template #footer>
+      <a-button
+        v-if="record.userId && (checkData.userType == 'doctor'||checkData.userType=='nurse')"
+        icon="setting"
+        style="margin-right: 520px; width: 112px !important"
+        :type="canInitCommodity ? 'primary' : 'default'"
+        :loading="confirmLoading"
+        @click="handleServiceInit"
+        >{{ checkData.initCommodityFlag == 0 ? '初始化服务' : '已初始化' }}</a-button
+      >
+      <a-button key="back" @click="handleCancel">取消</a-button>
+      <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">确定</a-button>
+    </template>
     <a-spin :spinning="confirmLoading">
       <div class="div-part aaa">
         <div class="recordType">
@@ -124,17 +132,17 @@
 
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>人员类型:</span>
-            <a-select v-model="checkData.userType" allow-clear placeholder="请选择人员类型">
+            <a-select v-model="checkData.userType" @select="typeSelect" allow-clear placeholder="请选择人员类型">
               <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.code">{{
                 item.value
               }}</a-select-option>
             </a-select>
           </div>
-          <div class="div-content">
+          <div class="div-content" v-if="checkData.userType == 'doctor' || checkData.userType == 'nurse'">
             <span class="span-item-name"><span style="color: red">*</span>人员职称:</span>
             <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择人员职称">
-              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{
-                item.description
+              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.code">{{
+                item.value
               }}</a-select-option>
             </a-select>
           </div>
@@ -308,7 +316,7 @@
             </div>
 
             <!-- 职称 -->
-            <div class="item-idcard">
+            <div class="item-idcard" v-if="checkData.userType == 'doctor'">
               <div style="margin-left: 12px">职称照片：</div>
               <div style="right: 120px; top: 10px">
                 <a-upload
@@ -391,7 +399,7 @@
             </div>
 
             <!-- 执业证照片 -->
-            <div class="item-idcard">
+            <div class="item-idcard" v-if="checkData.userType != 'pharmacist'">
               <div>执业证照片：</div>
               <div style="right: 120px; top: 10px">
                 <a-upload
@@ -433,12 +441,16 @@
             </div>
           </div>
 
-          <div v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')" style="width: 2px; height: 478px; background: #e6e6e6"></div>
+          <div
+            v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')"
+            style="width: 2px; height: 478px; background: #e6e6e6"
+          ></div>
 
-          <div v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')" class="codeview">
-            <img
-              class="code"
-              :src="docCodeImg"/>
+          <div
+            v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')"
+            class="codeview"
+          >
+            <img class="code" :src="docCodeImg" />
             <div class="codeitem">
               <div>{{ checkData.userName }}</div>
             </div>
@@ -447,11 +459,10 @@
               <div style="margin-left: 10px; margin-right: 10px">|</div>
               <div>{{ checkData.professionalTitle }}</div>
             </div>
-            <div style="color: #3894ff;margin-bottom: 14px;">让患者微信扫一扫添加</div>
-           
-            
+            <div style="color: #3894ff; margin-bottom: 14px">让患者微信扫一扫添加</div>
+
             <a :href="docCodeImg" target="_blank" download="preview">
-              <a-button type="primary"  style="width: 128px;">下载图片</a-button>
+              <a-button type="primary" style="width: 128px">下载图片</a-button>
             </a>
           </div>
         </div>
@@ -578,8 +589,8 @@
                   :maxLength="19"
                   type="number"
                   v-model="bank1.bankCard"
-                  @blur="getBankNameForCardNoOut(bank1.bankCard, 1,bank1.bankCard)"
-                  @keyup.enter="getBankNameForCardNoOut(bank1.bankCard, 1,bank1.bankCard)"
+                  @blur="getBankNameForCardNoOut(bank1.bankCard, 1, bank1.bankCard)"
+                  @keyup.enter="getBankNameForCardNoOut(bank1.bankCard, 1, bank1.bankCard)"
                 ></a-input>
                 <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                   {{ bank1.bankName || '' }}
@@ -611,8 +622,8 @@
                   :maxLength="19"
                   type="number"
                   v-model="bank2.bankCard"
-                  @blur="getBankNameForCardNoOut(bank2.bankCard, 2,bank2.bankCard)"
-                  @keyup.enter="getBankNameForCardNoOut(bank2.bankCard, 2,bank2.bankCard)"
+                  @blur="getBankNameForCardNoOut(bank2.bankCard, 2, bank2.bankCard)"
+                  @keyup.enter="getBankNameForCardNoOut(bank2.bankCard, 2, bank2.bankCard)"
                 ></a-input>
                 <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                   {{ bank2.bankName || '' }}
@@ -644,8 +655,8 @@
                   :maxLength="19"
                   type="number"
                   v-model="bank3.bankCard"
-                  @blur="getBankNameForCardNoOut(bank3.bankCard, 3,bank3.bankCard)"
-                  @keyup.enter="getBankNameForCardNoOut(bank3.bankCard, 3,bank3.bankCard)"
+                  @blur="getBankNameForCardNoOut(bank3.bankCard, 3, bank3.bankCard)"
+                  @keyup.enter="getBankNameForCardNoOut(bank3.bankCard, 3, bank3.bankCard)"
                 ></a-input>
                 <div style="color: #999999; font-size: 12px; padding: 3px; margin-left: auto; margin-right: 10px">
                   {{ bank3.bankName || '' }}
@@ -696,7 +707,8 @@ import {
   setCertificateForUserId,
   getCaAuthInfoAdminForUserId,
   initCommodity,
-  getDoctorQrCode
+  getDoctorQrCode,
+  getBycode,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -719,7 +731,7 @@ export default {
       updateInfo: '更新信息',
       registering: '注册',
 
-      canInitCommodity:false,
+      canInitCommodity: false,
       record: {},
       isDetailTag: false,
       headers: {},
@@ -787,7 +799,7 @@ export default {
       taskList: [],
       selectTask: undefined,
       id: '',
-      recordId:'',
+      recordId: '',
       protocolFile: '', //是否签约成功的标识
       bank1: {},
       bank2: {},
@@ -797,7 +809,7 @@ export default {
       iscard1Bind: false,
       iscard2Bind: false,
       iscard3Bind: false,
-      docCodeImg:'',
+      docCodeImg: '',
     }
   },
   created() {},
@@ -871,19 +883,18 @@ export default {
       this.getRolesOut()
       this.queryHospitalListOut()
       this.getDictDataForCodeUserTypeOut()
-      this.getProfessionalTitles()
+      // this.getProfessionalTitles()
     },
     //修改
-    editModel(record,type) {
+    editModel(record, type) {
       console.log('cccc', record)
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
-      if (type=='signing') {
+      if (type == 'signing') {
         this.currentTab = type
-      }else{
+      } else {
         this.currentTab = 'base'
-
       }
       this.confirmLoading = false
       this.record = record
@@ -892,12 +903,10 @@ export default {
 
       this.queryHospitalListOut()
       this.getDictDataForCodeUserTypeOut()
-      this.getProfessionalTitles()
+      // this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
       this.getHvyogoUserInfoOut(record.userId)
       this.getTaskListOut()
-
-     
     },
 
     // 顶部tab切换
@@ -1020,7 +1029,6 @@ export default {
       }
     },
 
-
     //用户详情
     getDoctorUserDetailOut(userId) {
       getDoctorUserDetail({
@@ -1057,12 +1065,17 @@ export default {
           this.zhiyeZList = []
           this.zhiyeFList = []
 
-          this.canInitCommodity=res.data.initCommodityFlag===0 && res.data.userType=='doctor' 
-          && res.data.idcardF && res.data.idcardZ 
-          && (res.data.titleZ || res.data.titleF) 
-          && res.data.qualificationZ && res.data.qualificationF 
-          && res.data.practiceZ && res.data.practiceF 
-          
+          this.canInitCommodity =
+            res.data.initCommodityFlag === 0 &&
+            res.data.userType == 'doctor' &&
+            res.data.idcardF &&
+            res.data.idcardZ &&
+            (res.data.titleZ || res.data.titleF) &&
+            res.data.qualificationZ &&
+            res.data.qualificationF &&
+            res.data.practiceZ &&
+            res.data.practiceF
+
           // 身份证
           if (this.checkData.idcardF) {
             this.photoListCheck.idcardF = this.checkData.idcardF
@@ -1167,7 +1180,7 @@ export default {
 
           this.getRolesOut()
 
-          if(this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse'){
+          if (this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse') {
             this.getDoctorQrCodeOut()
           }
         }
@@ -1185,7 +1198,7 @@ export default {
           this.hvyogoId = res.data.hvyogoId
           this.recordId = res.data.id
           this.protocolFile = res.data.protocolFile
-          this.selectTask=res.data.taskCode
+          this.selectTask = res.data.taskCode
           if (this.bankList != null && this.bankList.length == 3) {
             this.bank1 = this.bankList[0]
             this.bank2 = this.bankList[1]
@@ -1259,7 +1272,7 @@ export default {
     /**
      * 通过银行卡号得到 银行名称
      */
-    getBankNameForCardNoOut(cardNo, type,card) {
+    getBankNameForCardNoOut(cardNo, type, card) {
       if (!card) {
         return
       }
@@ -1355,7 +1368,7 @@ export default {
             if (!this.hvyogoId) {
               this.hvyogoId = res.data
             }
-            this.getHvyogoUserInfoOut(this.record.userId)  //重新调用 刷新数据  获取该条记录的ID
+            this.getHvyogoUserInfoOut(this.record.userId) //重新调用 刷新数据  获取该条记录的ID
             this.$message.success(res.message)
           } else {
             this.$message.error(res.message)
@@ -1379,9 +1392,9 @@ export default {
       })
     },
 
-     // 获取医生二维码
-     getDoctorQrCodeOut() {
-      getDoctorQrCode({docUserId:this.checkData.userId}).then((res) => {
+    // 获取医生二维码
+    getDoctorQrCodeOut() {
+      getDoctorQrCode({ docUserId: this.checkData.userId }).then((res) => {
         if (res.code == 0) {
           this.docCodeImg = res.data
         }
@@ -1398,7 +1411,6 @@ export default {
         id: this.recordId,
         taskId: this.selectTask,
       }
-
 
       this.bangding = '请等待...'
       bindTask(requestData)
@@ -1444,6 +1456,28 @@ export default {
         }
       })
     },
+
+    // 人员类型选中时 需要展示不同的人员职称
+    typeSelect(code) {
+      console.log('code===:', code)
+      if (code == 'doctor') {
+        this.getBycodeOut('DOCTOR_TITLE')
+      } else if ((code = 'nurse')) {
+        this.getBycodeOut('NURSE_TITLE')
+      }
+    },
+
+    getBycodeOut(type) {
+      var request = {
+        code: type,
+      }
+      getBycode(request).then((res) => {
+        if (res.code == 0) {
+          this.ryzcList = res.data
+        }
+      })
+    },
+
     //获取角色列表
     getRolesOut() {
       getRoleList({
@@ -1561,28 +1595,25 @@ export default {
     },
 
     //初始化服务
-    handleServiceInit(){
-      if(this.canInitCommodity){
-        this.confirmLoading=true
-        
-        initCommodity({doctorUserId:this.record.userId}).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('初始化成功！')
-          
-          this.checkData.initCommodityFlag=1
-         
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
-      }else{
-        if(this.checkData.initCommodityFlag===0){
+    handleServiceInit() {
+      if (this.canInitCommodity) {
+        this.confirmLoading = true
+
+        initCommodity({ doctorUserId: this.record.userId }).then((res) => {
+          if (res.code == 0) {
+            this.$message.success('初始化成功！')
+
+            this.checkData.initCommodityFlag = 1
+          } else {
+            this.$message.error(res.message)
+          }
+          this.confirmLoading = false
+        })
+      } else {
+        if (this.checkData.initCommodityFlag === 0) {
           this.$message.error('请先提交证件信息')
         }
-        
       }
-      
     },
     handleSubmit() {
       // 基础信息的提交
@@ -1602,22 +1633,29 @@ export default {
         return
       }
 
-      // if (isStringEmpty(this.checkData.email)) {
-      //   this.$message.error('请输入邮箱地址')
-      //   return
-      // }
-      // if (!emailValidity(this.checkData.email)) {
-      //   this.$message.error('请输入正确的邮箱地址')
-      //   return
-      // }
-
       if (isStringEmpty(this.checkData.userType)) {
         this.$message.error('请选择人员类型')
         return
       }
-      if (isStringEmpty(this.checkData.professionalTitle)) {
-        this.$message.error('请选择人员职称')
-        return
+
+      // 只有选择了 医生 或 护士 人员职称才做校验
+      if (this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse') {
+        if (isStringEmpty(this.checkData.professionalTitle)) {
+          this.$message.error('请选择人员职称')
+          return
+        }
+      } else {
+        this.checkData.professionalTitle = ''
+      }
+
+      // 人员类型  和 职称匹配校验
+      if ((this.checkData.userType = 'doctor' || this.checkData.userType == 'nurse')) {
+        // this.ryzcList
+        var findItem = this.ryzcList.find((item) => item.code == this.checkData.professionalTitle)
+        if (!findItem) {
+          this.$message.error('人员类型与职称不匹配!')
+          return
+        }
       }
       if (isStringEmpty(this.checkData.hospitalCode)) {
         this.$message.error('请选择所属机构')
@@ -1691,6 +1729,21 @@ export default {
             registerTypeOptions = 'consult'
           }
         }
+      }
+
+      // 如果选中的是 护士  则不要 职称 证件照
+      if (this.checkData.userType == 'nurse') {
+        this.checkData.titleZ = ''
+        this.checkData.titleF = ''
+      }
+
+      // 如果选中的是 技师  则不要职称证件照 和 职业照
+      if (this.checkData.userType == 'pharmacist') {
+        this.checkData.titleZ = ''
+        this.checkData.titleF = ''
+
+        this.checkData.practiceZ = ''
+        this.checkData.practiceF = ''
       }
 
       var postData = {
@@ -1787,7 +1840,6 @@ export default {
 
 
 <style lang="less" scoped>
-
 .m-count {
   position: absolute;
   font-size: 12px;
@@ -1840,15 +1892,13 @@ export default {
     width: 49%;
     align-items: center;
     font-size: 12px;
-      color: #1a1a1a;
+    color: #1a1a1a;
 
     .code {
       width: 190px;
       height: 190px;
       margin-bottom: 26px;
     }
-
-   
 
     .codeitem {
       display: flex;
@@ -1980,13 +2030,11 @@ export default {
     float: left;
     width: 353px;
     overflow: hidden;
-   
   }
   .div-part-right {
     float: right;
     width: 353px;
     overflow: hidden;
-   
   }
 
   .div-content {

@@ -198,13 +198,29 @@
           </div>
 
 
-
-
           <div class="div-line-wrap" v-show="radioTyPe === 3">
+            <div class="div-total-one">
+              <span class="span-item-name">外网地址 :</span>
+              <a-input
+                v-model="checkData.navigatorContent"
+                class="span-item-value"
+                style="display: inline-block;width: 410px;"
+                allow-clear
+                placeholder="请输入第三方链接 "
+              />
+            </div>
+          </div>
+
+
+
+
+
+
+          <div class="div-line-wrap" v-show="radioTyPe === 5">
             <div class="div-total-one">
               <span class="span-item-name">APPID :</span>
               <a-input
-                v-model="checkData.appidlink"
+                v-model="thirdAppid"
                 class="span-item-value"
                 style="display: inline-block; width: 410px"
                 allow-clear
@@ -215,11 +231,11 @@
 
 
 
-          <div class="div-line-wrap" v-show="radioTyPe === 3">
+          <div class="div-line-wrap" v-show="radioTyPe === 5">
             <div class="div-total-one">
               <span class="span-item-name">跳转链接 :</span>
               <a-input
-                v-model="checkData.navigatorContent"
+                v-model="thirdLink"
                 class="span-item-value"
                 style="display: inline-block; width: 410px"
                 allow-clear
@@ -287,11 +303,12 @@ export default {
         templateTitle: '', //模板標題
         navigatorType: '', //跳转类型
         navigatorContent: '', //跳转内容
-        appidlink: '', //appid
       },
       templateContent: { templateId: '', title: '', primaryIndustry: '', deputyIndustry: '', content: '', example: '' },
       questionContent: { name: '' },
       teachContent: { title: '' },
+      thirdAppid:'', //第三方appid
+      thirdLink:'', //第三方链接
 
       wxgzhData: [], //公众号列表
       templateData: [], //模板列表
@@ -323,7 +340,6 @@ export default {
         templateTitle: '', //模板输入标题
         navigatorType: '', //跳转类型
         navigatorContent: '', //跳转内容
-        appidlink: '', //
       }
       ;(this.templateContent = {
         smsConfigureId: '',
@@ -335,6 +351,8 @@ export default {
       this.radioTyPe = 0
       this.questionContent = { name: '' }
       this.teachContent = { title: '' }
+      this.thirdLink = ''
+      this.thirdAppid = ''
     },
 
     onModelFocus() {
@@ -444,6 +462,11 @@ export default {
                 this.$set(this.checkData, 'navigatorContent', res.data.jumpValue)
               } else if (this.radioTyPe == 4) {
                 this.synCasetype = res.data.jumpId.toString() //特殊处理  如果是 病历类型(radioTyPe==4) 病历类型取接口的 jumpId
+              }else if (this.radioTyPe == 5) { //第三方小程序地址
+
+                this.thirdAppid  = res.data.jumpId
+                this.thirdLink  = res.data.jumpValue
+
               }
 
               this.fieldList = JSON.parse(res.data.templateParamJson)
@@ -666,16 +689,6 @@ export default {
           return
         }
 
-
-        if (!this.checkData.appidlink) {
-          this.$message.error('请输入APPID')
-          return
-        }
-
-
-
-
-
         jumpValue = this.checkData.navigatorContent
         jumpTitle = this.checkData.navigatorContent
       } else if (this.radioTyPe == 4) {
@@ -687,6 +700,18 @@ export default {
         jumpTitle = this.bingliTitle
         jumpValue = this.synCasetype
         jumpId = this.synCasetype //特殊处理  如果选中的是 病历类型 将选择的病历赋值给 jumpId  查看的时候也是取这个字段
+      }else if (this.radioTyPe==5) {
+        if (!this.thirdAppid) {
+          this.$message.error('请输入APPID')
+          return
+        }
+        if (!this.thirdLink) {
+          this.$message.error('请输入第三方跳转地址')
+          return
+        }
+
+        jumpId =  this.thirdAppid
+        jumpValue = this.thirdLink
       }
 
       console.log('ffff:', jumpTitle)
