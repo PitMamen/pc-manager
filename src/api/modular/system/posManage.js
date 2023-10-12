@@ -5471,5 +5471,48 @@ export function updateSnatchPkgItems(data) {
 }
 
 
+// 挂号配置列表
+export function queryDeptRegConfig(data) {
+  return axios({
+    url: '/info-api/departments/queryDeptRegConfig',
+    method: 'post',
+   data: data,
+  })
+}
+
+
+// 保存挂号配置
+export function saveDeptRegConfig(data) {
+  return axios({
+    url: '/info-api/departments/saveDeptRegConfig',
+    method: 'post',
+   data: data,
+  })
+}
+
+
+// 挂号设置状态修改
+export function updateDeptRegConfigStatus(data) {
+  return axios({
+    url: '/info-api/departments/updateDeptRegConfigStatus',
+    method: 'post',
+   data: data,
+  })
+}
+
+
+// 查询科室
+export function qryDepartmentByReq(data) {
+  return axios({
+    url: '/health-api/patient/qryDepartmentByReq',
+    method: 'post',
+   data: data,
+  })
+}
+
+
+
+
+
 
 

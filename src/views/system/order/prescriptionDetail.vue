@@ -124,7 +124,7 @@
       <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">收单商户 :</span>
-          <span class="span-item-value">{{ orderDetailDataList.doctorUserName || '-' }}</span>
+          <span class="span-item-value">{{ orderDetailDataList.hospitalName || '-' }}</span>
         </div>
 
         <div class="div-pro-line">

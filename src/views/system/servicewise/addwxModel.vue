@@ -14,15 +14,28 @@
           <div class="div-line-wrap">
             <div class="div-left">
               <span class="span-item-name">公众号 :</span>
-              <a-select v-model="checkData.wxAppId" allow-clear @select="onSelectAppId" placeholder="请选择" @change="onWXProgramChange">
+              <a-select
+                v-model="checkData.wxAppId"
+                allow-clear
+                @select="onSelectAppId"
+                placeholder="请选择"
+                @change="onWXProgramChange"
+              >
                 <a-select-option v-for="(item, index) in wxgzhData" :key="index" :value="item.wxAppId">{{
                   item.wxPublicName
                 }}</a-select-option>
               </a-select>
             </div>
-            <div class="div-left" style="padding-left: 20px;">
-         <span class="span-item-name">模 板 I D :</span>
-              <a-select v-model="checkData.templateId" @select="onSelectTemplateId" @focus="onModelFocus" allow-clear placeholder="请选择" @change="onTemplateChange">
+            <div class="div-left" style="padding-left: 20px">
+              <span class="span-item-name">模 板 I D :</span>
+              <a-select
+                v-model="checkData.templateId"
+                @select="onSelectTemplateId"
+                @focus="onModelFocus"
+                allow-clear
+                placeholder="请选择"
+                @change="onTemplateChange"
+              >
                 <a-select-option v-for="(item, index) in templateData" :key="index" :value="item.templateId">{{
                   item.title
                 }}</a-select-option>
@@ -42,7 +55,7 @@
                 placeholder="请输入内部编码 "
               />
             </div>
-            <div class="div-left" style="padding-left: 20px;">
+            <div class="div-left" style="padding-left: 20px">
               <span class="span-item-name">模板标题 :</span>
               <a-input
                 v-model="checkData.templateTitle"
@@ -57,7 +70,7 @@
           </div>
           <div class="div-line-wrap">
             <div class="div-total-one">
-              <span class="span-item-name" style="position: relative;top: -43px;">模板内容 :</span>
+              <span class="span-item-name" style="position: relative; top: -43px">模板内容 :</span>
               <a-textarea
                 v-model="templateContent.content"
                 class="span-item-value"
@@ -70,15 +83,15 @@
           </div>
 
           <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-            <div class="div-left" style="width:  205px;margin-left: 65px;">
-              <span class="span-item-name" style="width: 100% !important;"
+            <div class="div-left" style="width: 205px; margin-left: 65px">
+              <span class="span-item-name" style="width: 100% !important"
                 >模板参数{{ index + 1 }} :[{{ item.name }}]</span
               >
             </div>
-            <div class="div-left" style="width: 205px; margin-right: 80px;">
-              <span class="span-item-name" >匹配字段 :</span>
+            <div class="div-left" style="width: 205px; margin-right: 80px">
+              <span class="span-item-name">匹配字段 :</span>
               <a-select
-              style="width: 140px !important;"
+                style="width: 140px !important"
                 v-model="fieldList[index].property"
                 allow-clear
                 placeholder="请选择字段属性"
@@ -89,7 +102,7 @@
                 }}</a-select-option>
               </a-select>
             </div>
-            <div class="div-left" style="width: 205px;">
+            <div class="div-left" style="width: 205px">
               <a-select
                 v-show="item.property === '档案字段' && item.name.indexOf('time') < 0"
                 v-model="fieldList[index].content"
@@ -128,8 +141,17 @@
           <div class="div-line-wrap">
             <div class="div-total-one">
               <span class="span-item-name"> 跳转内容 :</span>
-
-              <a-radio-group
+              <a-select
+                v-model="radioTyPe"
+                placeholder="请选择跳转内容"
+                allow-clear
+                style="width: 120px; height: 28px"
+              >
+                <a-select-option v-for="item in selectList" :key="item.code" :value="item.code">{{
+                  item.value
+                }}</a-select-option>
+              </a-select>
+              <!-- <a-radio-group
                 name="radioGroup"
                 style="width: 75%; margin-left: 0%"
                 v-model="radioTyPe"
@@ -140,7 +162,7 @@
                 <a-radio :value="4" style="margin-left: 16px"> 最新病历 </a-radio>
                 <a-radio :value="2" style="margin-left: 16px"> 不跳转任何内容 </a-radio>
                 <a-radio :value="3" style="margin-left: 16px"> 跳转外网地址 </a-radio>
-              </a-radio-group>
+              </a-radio-group> -->
             </div>
           </div>
 
@@ -151,7 +173,7 @@
                 v-show="questionContent.name"
                 v-model="questionContent.name"
                 class="span-item-value"
-                style="display: inline-block; margin-right: 20px;width: 410px;"
+                style="display: inline-block; margin-right: 20px; width: 410px"
                 allow-clear
                 readOnly
                 placeholder="请选择问卷 "
@@ -166,7 +188,7 @@
                 v-show="teachContent.title"
                 v-model="teachContent.title"
                 class="span-item-value"
-                style="display: inline-block; margin-right: 20px;width: 410px;"
+                style="display: inline-block; margin-right: 20px; width: 410px"
                 readOnly
                 allow-clear
                 placeholder="请选择宣教文章 "
@@ -174,45 +196,53 @@
               <a-button type="primary" @click="selectTeachBtn"> 选择 </a-button>
             </div>
           </div>
+
+
+
+
           <div class="div-line-wrap" v-show="radioTyPe === 3">
             <div class="div-total-one">
-              <span class="span-item-name">外网地址 :</span>
+              <span class="span-item-name">APPID :</span>
               <a-input
-                v-model="checkData.navigatorContent"
+                v-model="checkData.appidlink"
                 class="span-item-value"
-                style="display: inline-block;width: 410px;"
+                style="display: inline-block; width: 410px"
                 allow-clear
-                placeholder="请输入第三方链接 "
+                placeholder="请输入APPID"
               />
             </div>
           </div>
 
 
 
-          <div class="div-line-wrap" v-show="radioTyPe === 4">
+          <div class="div-line-wrap" v-show="radioTyPe === 3">
             <div class="div-total-one">
-              <span class="span-item-name">病历类型 :</span>
-              <a-select  @select="selectContent" v-model="synCasetype" placeholder="请选择病历类型"  allow-clear >
-            <a-select-option
-              v-for="(item, index) in caseList"
-              :title="item.value"
-              :value="item.code"
-              :key="index"
-              >{{ item.value }}</a-select-option
-            >
-          </a-select>
+              <span class="span-item-name">跳转链接 :</span>
+              <a-input
+                v-model="checkData.navigatorContent"
+                class="span-item-value"
+                style="display: inline-block; width: 410px"
+                allow-clear
+                placeholder="请输入第三方链接 "
+              />
             </div>
           </div>
 
-
-
-
-
-
-
+          <div class="div-line-wrap" v-show="radioTyPe === 4">
+            <div class="div-total-one">
+              <span class="span-item-name">病历类型 :</span>
+              <a-select @select="selectContent" v-model="synCasetype" placeholder="请选择病历类型" allow-clear>
+                <a-select-option
+                  v-for="(item, index) in caseList"
+                  :title="item.value"
+                  :value="item.code"
+                  :key="index"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
         </div>
-
-    
 
         <add-question ref="addQuestion" @ok="handleQuestion" />
         <add-teach ref="addTeach" @ok="handleTeach" />
@@ -230,7 +260,7 @@ import {
   addWxTemplate,
   getWxTemplateById,
   modifyWxTemplate,
-  getBycode
+  getBycode,
 } from '@/api/modular/system/posManage'
 import addQuestion from '../package/addQuestion'
 import addTeach from '../package/addTeach'
@@ -239,9 +269,9 @@ export default {
   components: { addQuestion, addTeach },
   data() {
     return {
-      bingliTitle:'',
-      synCasetype:undefined,
-      caseList:[],
+      bingliTitle: '',
+      synCasetype: undefined,
+      caseList: [],
       visible: false,
       confirmLoading: false,
       key: '',
@@ -257,6 +287,7 @@ export default {
         templateTitle: '', //模板標題
         navigatorType: '', //跳转类型
         navigatorContent: '', //跳转内容
+        appidlink: '', //appid
       },
       templateContent: { templateId: '', title: '', primaryIndustry: '', deputyIndustry: '', content: '', example: '' },
       questionContent: { name: '' },
@@ -269,14 +300,20 @@ export default {
       dananfieldList: [], //微信字段列表
       danandataList: [], //档案日期字段列表
       navigateListData: [],
+      selectList: [
+        { code: 0, value: '问卷' },
+        { code: 1, value: '宣教' },
+        { code: 2, value: '不跳转任何内容' },
+        { code: 3, value: '跳转外网地址' },
+        { code: 4, value: '最新病历' },
+        { code: 5, value: '第三方小程序' },
+      ],
     }
   },
   methods: {
     clearData() {
-      this.synCasetype=undefined,
-      this.id=''
-      this.bingliTitle='',
-      this.wxgzhData = []
+      ;(this.synCasetype = undefined), (this.id = '')
+      ;(this.bingliTitle = ''), (this.wxgzhData = [])
       this.checkData = {
         smsConfigureId: '', //短信平台配置ID
         id: '', //短信平台ID
@@ -286,6 +323,7 @@ export default {
         templateTitle: '', //模板输入标题
         navigatorType: '', //跳转类型
         navigatorContent: '', //跳转内容
+        appidlink: '', //
       }
       ;(this.templateContent = {
         smsConfigureId: '',
@@ -299,7 +337,7 @@ export default {
       this.teachContent = { title: '' }
     },
 
-    onModelFocus(){
+    onModelFocus() {
       if (!this.checkData.wxAppId) {
         this.$message.warn('请先选择公众号')
         return
@@ -317,8 +355,8 @@ export default {
       })
     },
 
-    selectContent(code){
-      const target = this.caseList.find(item => code === item.code)
+    selectContent(code) {
+      const target = this.caseList.find((item) => code === item.code)
       if (target) {
         this.bingliTitle = target.value
       }
@@ -341,7 +379,7 @@ export default {
           let getOne = this.wxgzhData.find((item) => item.wxAppId == cacheId)
           if (cacheId && getOne) {
             this.checkData.wxAppId = cacheId
-            this.onWXProgramChange( this.checkData.wxAppId)
+            this.onWXProgramChange(this.checkData.wxAppId)
           }
           // this.checkData.wxAppId = this.wxgzhData[0].wxAppId
         }
@@ -364,62 +402,58 @@ export default {
       })
 
       this.getBycodeOut()
-
-
-
     },
-     //修改  详情
-     checkModel(id){
+    //修改  详情
+    checkModel(id) {
       this.clearData()
       this.visible = true
       this.id = id
-      this.confirmLoading=true
+      this.confirmLoading = true
       this.getBycodeOut()
       //获取公众号列表
       getWxConfigureList({}).then((res) => {
         if (res.code == 0) {
           this.wxgzhData = res.data
-            //查询详情
-            
-            getWxTemplateById(this.id).then((res) => {
-              if (res.code == 0) {
-                this.checkData = res.data
-                this.templateContent.templateId = res.data.templateId
-                this.templateContent.content = res.data.templateContent
-                this.templateContent.title = res.data.templateName
+          //查询详情
 
-                var thisWXData = []
-                this.wxgzhData.forEach((item) => {
-                  if (item.wxAppId === res.data.wxAppId) {
-                    thisWXData.push(item)
-                  }
-                })
-                this.wxgzhData = thisWXData
+          getWxTemplateById(this.id).then((res) => {
+            if (res.code == 0) {
+              this.checkData = res.data
+              this.templateContent.templateId = res.data.templateId
+              this.templateContent.content = res.data.templateContent
+              this.templateContent.title = res.data.templateName
 
-                this.radioTyPe = res.data.jumpType - 1
-                if (this.radioTyPe == 0) {
-                  this.questionContent.questUrl = res.data.jumpValue
-                  this.questionContent.name = res.data.jumpTitle
-                  this.questionContent.id = res.data.jumpId
-                } else if (this.radioTyPe == 1) {
-                  this.teachContent.articleId = res.data.jumpId
-                  this.teachContent.title = res.data.jumpTitle
-                } else if (this.radioTyPe == 3) {
-                  this.$set(this.checkData, 'navigatorContent', res.data.jumpValue)
-                  // this.checkData.navigatorContent =res.data.jumpValue
-                }else if(this.radioTyPe==4){
-                   this.synCasetype = res.data.jumpId.toString()  //特殊处理  如果是 病历类型(radioTyPe==4) 病历类型取接口的 jumpId
+              var thisWXData = []
+              this.wxgzhData.forEach((item) => {
+                if (item.wxAppId === res.data.wxAppId) {
+                  thisWXData.push(item)
                 }
+              })
+              this.wxgzhData = thisWXData
+              console.log('HAHAHA:', res.data.jumpType)
 
-                this.fieldList = JSON.parse(res.data.templateParamJson)
+              this.radioTyPe = res.data.jumpType - 1
+              if (this.radioTyPe == 0) {
+                this.questionContent.questUrl = res.data.jumpValue
+                this.questionContent.name = res.data.jumpTitle
+                this.questionContent.id = res.data.jumpId
+              } else if (this.radioTyPe == 1) {
+                this.teachContent.articleId = res.data.jumpId
+                this.teachContent.title = res.data.jumpTitle
+              } else if (this.radioTyPe == 3) {
+                this.$set(this.checkData, 'navigatorContent', res.data.jumpValue)
+              } else if (this.radioTyPe == 4) {
+                this.synCasetype = res.data.jumpId.toString() //特殊处理  如果是 病历类型(radioTyPe==4) 病历类型取接口的 jumpId
+              }
 
-                this.onWXProgramChange(res.data.wxAppId)
-              }else{
+              this.fieldList = JSON.parse(res.data.templateParamJson)
+
+              this.onWXProgramChange(res.data.wxAppId)
+            } else {
               this.$message.error(res.message)
             }
-            this.confirmLoading=false
-            })
-          
+            this.confirmLoading = false
+          })
         }
       })
 
@@ -438,19 +472,18 @@ export default {
           this.danandataList = dataList
         }
       })
-
-     },
+    },
 
     handleChange(code) {},
 
-    onSelectAppId(wxAppId){
+    onSelectAppId(wxAppId) {
       debugger
-      console.log('oooooooooo cache set wxAppId',wxAppId)
+      console.log('oooooooooo cache set wxAppId', wxAppId)
       Vue.ls.set('cache_wxAppId', wxAppId)
     },
 
-    onSelectTemplateId(templateId){
-      console.log('oooooooooo cache set templateId',templateId)
+    onSelectTemplateId(templateId) {
+      console.log('oooooooooo cache set templateId', templateId)
       Vue.ls.set('cache_templateId', templateId)
     },
 
@@ -480,16 +513,16 @@ export default {
           } else {
             //新增
             this.templateData = res.data
-            
+
             let cacheId = Vue.ls.get('cache_templateId')
             let getOne = this.templateData.find((item) => item.templateId == cacheId)
             if (cacheId && getOne) {
-              this.checkData.templateId =  cacheId
+              this.checkData.templateId = cacheId
               this.onTemplateChange(this.checkData.templateId)
             }
-            
+
             let fieldListData = Vue.ls.get('cache_fieldList')
-            console.log('oooooooooo cache get fieldListData',fieldListData)
+            console.log('oooooooooo cache get fieldListData', fieldListData)
             if (fieldListData && cacheId && fieldListData.templateId == cacheId) {
               this.fieldList = fieldListData.fieldList
             }
@@ -632,9 +665,20 @@ export default {
           this.$message.error('请输入第三方链接')
           return
         }
+
+
+        if (!this.checkData.appidlink) {
+          this.$message.error('请输入APPID')
+          return
+        }
+
+
+
+
+
         jumpValue = this.checkData.navigatorContent
         jumpTitle = this.checkData.navigatorContent
-      }else if(this.radioTyPe == 4){
+      } else if (this.radioTyPe == 4) {
         if (!this.synCasetype) {
           this.$message.error('请选择病历类型')
           return
@@ -642,10 +686,10 @@ export default {
 
         jumpTitle = this.bingliTitle
         jumpValue = this.synCasetype
-        jumpId = this.synCasetype   //特殊处理  如果选中的是 病历类型 将选择的病历赋值给 jumpId  查看的时候也是取这个字段
+        jumpId = this.synCasetype //特殊处理  如果选中的是 病历类型 将选择的病历赋值给 jumpId  查看的时候也是取这个字段
       }
 
-      console.log("ffff:",jumpTitle)
+      console.log('ffff:', jumpTitle)
 
       var postData = {
         wxAppId: this.checkData.wxAppId,
@@ -661,7 +705,7 @@ export default {
         jumpId: jumpId,
         templateParamJson: JSON.stringify(this.fieldList),
       }
-      this.confirmLoading=true
+      this.confirmLoading = true
       if (this.id) {
         //修改
         postData.id = this.id
@@ -670,9 +714,9 @@ export default {
         //新增
         this.add(postData)
         //缓存需求   缓存模版内容与模版id需要一致
-        let data = {templateId:this.checkData.templateId,fieldList:this.fieldList}
+        let data = { templateId: this.checkData.templateId, fieldList: this.fieldList }
         Vue.ls.set('cache_fieldList', data)
-        console.log('oooooooooo cache set fieldLis',data)
+        console.log('oooooooooo cache set fieldLis', data)
       }
     },
 
@@ -680,24 +724,24 @@ export default {
       addWxTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('新增成功！')
-          this.visible=false
+          this.visible = false
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
         }
-        this.confirmLoading=false
+        this.confirmLoading = false
       })
     },
     modify(postData) {
       modifyWxTemplate(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success('修改成功！')
-          this.visible=false
+          this.visible = false
           this.$emit('ok', '')
         } else {
           this.$message.error(res.message)
         }
-        this.confirmLoading=false
+        this.confirmLoading = false
       })
     },
 
@@ -841,7 +885,7 @@ export default {
         }
 
         .ant-select {
-          width: 67.5% !important;
+          width: 54.1% !important;
           margin-left: 0% !important;
         }
         .ant-radio-wrapper {

@@ -111,8 +111,6 @@
             >
             </a-upload>
 
-            <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.idcardZ" /> -->
-            <!-- <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.idcardF" /> -->
 
             <!-- 职称照片 -->
             <div style="margin-left: 3%; color: #333">职称照片：</div>
@@ -126,7 +124,6 @@
             >
             </a-upload>
 
-            <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.titleZ" /> -->
           </div>
 
           <div class="item-idcard" style="margin-top: 15px">
