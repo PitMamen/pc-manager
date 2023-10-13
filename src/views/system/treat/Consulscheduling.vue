@@ -71,7 +71,6 @@
     >
       <!-- 复诊续方 -->
       <span slot="fzxfaction" slot-scope="text, record">
-
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.fuzhen"
@@ -81,7 +80,7 @@
           >
             <a-switch
               v-if="record.fuzhen"
-              :disabled="!record.fuzhen"
+              :disabled="!record.fuzhen||record.userType == 'nurse'"
               size="small"
               :checked="record.fuzhen ? record.fuzhen.stopStatus == 2 : false"
             />
@@ -96,14 +95,13 @@
           ></div>
 
           <a-icon type="setting" />
-          <a   v-if="!record.fuzhen" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
-          <a  v-if="record.fuzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
+          <a v-if="!record.fuzhen" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a :disabled="record.userType == 'nurse'" v-if="record.fuzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
         </div>
       </span>
 
       <!-- 图文咨询 -->
       <span slot="twzxaction" slot-scope="text, record">
-
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.tuwen"
@@ -128,14 +126,13 @@
           ></div>
 
           <a-icon type="setting" />
-          <a   v-if="!record.tuwen" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
-          <a    v-if="record.tuwen" style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
+          <a v-if="!record.tuwen" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="record.tuwen" style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
         </div>
       </span>
 
       <!-- 电话咨询 -->
       <span slot="dhzxaction" slot-scope="text, record">
-
         <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
           <a-popconfirm
             v-if="record.dianhua"
@@ -144,8 +141,8 @@
             @confirm="updatePkgStatusOut(record, 'dianhua')"
           >
             <a-switch
+              :disabled="record.userType == 'nurse' || !record.dianhua"
               v-if="record.dianhua"
-              :disabled="!record.dianhua"
               size="small"
               :checked="record.dianhua ? record.dianhua.stopStatus == 2 : false"
             />
@@ -160,8 +157,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a   v-if="!record.dianhua" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
-          <a  v-if="record.dianhua" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record,1)">配置</a>
+          <a v-if="!record.dianhua" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a :disabled="record.userType == 'nurse'" v-if="record.dianhua" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record, 1)">配置</a>
         </div>
       </span>
 
@@ -176,7 +173,7 @@
           >
             <a-switch
               v-if="record.shipin"
-              :disabled="!record.shipin"
+              :disabled="!record.shipin||record.userType == 'nurse'"
               size="small"
               :checked="record.shipin ? record.shipin.stopStatus == 2 : false"
             />
@@ -191,8 +188,8 @@
           ></div>
 
           <a-icon type="setting" />
-          <a   v-if="!record.shipin" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
-          <a v-if="record.shipin" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record,2)">配置</a>
+          <a v-if="!record.shipin" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a :disabled="record.userType == 'nurse'"  v-if="record.shipin" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record, 2)">配置</a>
         </div>
       </span>
 
@@ -207,7 +204,7 @@
           >
             <a-switch
               v-if="record.menzhen"
-              :disabled="!record.menzhen"
+              :disabled="!record.menzhen||record.userType == 'nurse'"
               size="small"
               :checked="record.menzhen ? record.menzhen.stopStatus == 2 : false"
             />
@@ -222,8 +219,8 @@
           ></div>
 
           <a-icon type="setting" style="margin-top: 3px" />
-          <a   v-if="!record.menzhen" @click="showMessage()" style="margin-left: 5px;color:#4D4D4D" >配置</a>
-          <a  v-if="record.menzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
+          <a v-if="!record.menzhen" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a  :disabled="record.userType == 'nurse'"  v-if="record.menzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
         </div>
       </span>
     </s-table>
@@ -364,6 +361,7 @@ export default {
             data.rows.forEach((item, index) => {
               if (item.arrangeInfos) {
                 item.arrangeInfos.forEach((item1, index) => {
+                  // this.$set(item, 'userType', 'nurse')
                   if (item1.arrangeType == 'guide') {
                     //门诊随诊
                     this.$set(item, 'menzhen', item1)
@@ -383,7 +381,6 @@ export default {
                 })
               }
             })
-
           }
           return data
         })
@@ -418,44 +415,44 @@ export default {
       if (type == 'fuzhen') {
         data = {
           id: record.fuzhen.commodityId,
-          statusValue: record.fuzhen.stopStatus == 2 ? 1: 2,
+          statusValue: record.fuzhen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
-        record.fuzhen.stopStatus = record.fuzhen.stopStatus == 2 ? 1: 2
+        record.fuzhen.stopStatus = record.fuzhen.stopStatus == 2 ? 1 : 2
       } else if (type == 'tuwen') {
         data = {
           id: record.tuwen.commodityId,
           statusValue: record.tuwen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
-        record.tuwen.stopStatus = record.tuwen.stopStatus == 2 ? 1: 2
+        record.tuwen.stopStatus = record.tuwen.stopStatus == 2 ? 1 : 2
       } else if (type == 'dianhua') {
         data = {
           id: record.dianhua.commodityId,
           statusValue: record.dianhua.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
-        record.dianhua.stopStatus = record.dianhua.stopStatus == 2 ? 1: 2
+        record.dianhua.stopStatus = record.dianhua.stopStatus == 2 ? 1 : 2
       } else if (type == 'shipin') {
         data = {
           id: record.shipin.commodityId,
-          statusValue: record.shipin.stopStatus == 2? 1 : 2,
+          statusValue: record.shipin.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
-        record.shipin.stopStatus = record.shipin.stopStatus == 2 ? 1: 2
+        record.shipin.stopStatus = record.shipin.stopStatus == 2 ? 1 : 2
       } else if (type == 'menzhen') {
         data = {
           id: record.menzhen.commodityId,
           statusValue: record.menzhen.stopStatus == 2 ? 1 : 2,
           updateType: 2,
         }
-        record.menzhen.stopStatus = record.menzhen.stopStatus == 2 ? 1: 2
+        record.menzhen.stopStatus = record.menzhen.stopStatus == 2 ? 1 : 2
       }
 
       updatePkgStatus(data).then((res) => {
         if (res.code == 0) {
           this.$message.success('操作成功')
-        //   this.handleOk()
+          //   this.handleOk()
         } else {
           this.$message.error('操作失败：' + res.message)
         }

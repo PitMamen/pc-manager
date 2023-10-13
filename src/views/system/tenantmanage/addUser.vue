@@ -10,7 +10,7 @@
   >
     <template #footer>
       <a-button
-        v-if="record.userId && (checkData.userType == 'doctor'||checkData.userType=='nurse')"
+        v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')"
         icon="setting"
         style="margin-right: 520px; width: 112px !important"
         :type="canInitCommodity ? 'primary' : 'default'"
@@ -19,7 +19,7 @@
         >{{ checkData.initCommodityFlag == 0 ? '初始化服务' : '已初始化' }}</a-button
       >
       <a-button key="back" @click="handleCancel">取消</a-button>
-      <a-button key="submit" type="primary" :loading="loading" @click="handleSubmit">确定</a-button>
+      <a-button key="submit" type="primary" :loading="confirmLoading" @click="handleSubmit">确定</a-button>
     </template>
     <a-spin :spinning="confirmLoading">
       <div class="div-part aaa">
@@ -810,6 +810,7 @@ export default {
       iscard2Bind: false,
       iscard3Bind: false,
       docCodeImg: '',
+      userTypeTemp: '',
     }
   },
   created() {},
@@ -819,6 +820,7 @@ export default {
       this.record = {}
       this.isDetailTag = false
       this.checkData = {
+        userTypeTemp: '',
         avatarUrl: '', //头像
         userName: '',
         loginName: '', //账号
@@ -1055,6 +1057,7 @@ export default {
           // titleZ: '',
 
           this.checkData = res.data
+          this.userTypeTemp = res.data.userType
 
           this.idcardZList = []
           this.idcardFList = []
@@ -1653,7 +1656,13 @@ export default {
         // this.ryzcList
         var findItem = this.ryzcList.find((item) => item.code == this.checkData.professionalTitle)
         if (!findItem) {
+          if (this.userTypeTemp == 'doctor') {
+            this.getBycodeOut('DOCTOR_TITLE')
+          } else if ((this.userTypeTemp = 'nurse')) {
+            this.getBycodeOut('NURSE_TITLE')
+          }
           this.$message.error('人员类型与职称不匹配!')
+          this.checkData.professionalTitle = undefined
           return
         }
       }

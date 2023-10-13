@@ -91,7 +91,7 @@
             </a-select>
           </div>
 
-          <div class="div-pro-line" >
+          <div class="div-pro-line">
             <div style="display: flex; flex-direction: row; align-items: center; margin-top: 1%; margin-left: 4px">
               <a-checkbox @change="onGatherChange" :checked="isGather" class="span-item-name"></a-checkbox>
               <div style="margin-left: 3px; color: #000">采集健康档案 :</div>
@@ -111,8 +111,6 @@
             </div>
           </div>
         </div>
-
-  
       </div>
 
       <div class="div-pro-middle">
@@ -259,6 +257,40 @@
 
             <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
               >护士配置</span
+            >
+          </div>
+        </div>
+
+        <!-- 技师参与 -->
+        <div class="manage-item">
+          <div class="item-left">
+            <a-checkbox :checked="isTechnician" @click="goCheck(4)">技师参与</a-checkbox>
+          </div>
+
+          <span style="margin-left: 1%">分配方式</span>
+
+          <!-- v-model="itemTask.personnelAssignmentType" -->
+          <a-select
+            class="mid-select-two"
+            allow-clear
+            v-model="allocationTypeTechnician"
+            placeholder="请选择"
+            :disabled="!isTechnician || broadClassify == 1"
+          >
+            <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
+              item.description
+            }}</a-select-option>
+          </a-select>
+          <!-- @change="onChange" -->
+
+          <span style="margin-left: 2%; width: 60px">参与技师:</span>
+          <span class="span-names">{{ nameTechnician }}</span>
+
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(3)" @click="addPerson(2)">
+            <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
+
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
+              >技师配置</span
             >
           </div>
         </div>
@@ -415,6 +447,7 @@ export default {
       confirmLoading: false,
       isDoctor: false,
       isNurse: false,
+      isTechnician: false,
       isTeam: false,
       needPlan: false,
       canConfigTeam: true,
@@ -430,10 +463,12 @@ export default {
       docDepartmentId: undefined,
       nurseDepartmentId: undefined,
       nameDoc: '',
+      nameTechnician: '',
       nameNurse: '',
       nameTeam: '',
       allocationTypeDoc: undefined,
       allocationTypeNurse: undefined,
+      allocationTypeTechnician: undefined,
       allocationTypeTeam: undefined,
       disabledDaoliu: false,
       isDisabled: false,
@@ -505,11 +540,11 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-   
+
     this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
-   
+
     // this.getTenantListOut()
-    this.packageData.tenantId=this.user.tenantId
+    this.packageData.tenantId = this.user.tenantId
     this.queryHospitalListOut()
     this.getDictDataOut()
     this.treeMedicalSubjectsOut()
@@ -540,9 +575,11 @@ export default {
       this.nameTeam = ''
       this.isDoctor = false
       this.isNurse = false
+      this.isTechnician = false
       this.isTeam = false
       this.allocationTypeDoc = undefined
       this.allocationTypeNurse = undefined
+      this.allocationTypeTechnician = undefined
       this.allocationTypeTeam = undefined
       this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
     },
@@ -821,14 +858,8 @@ export default {
           this.isTeam = false
           this.nameTeam = ''
 
-          // if (this.isNurse && this.isDoctor) {
-          //   //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型
-          //   this.isNurse = false
-          //   this.nameNurse = ''
-
-          // }
-          //如果切换到咨询类，全部团队置空
           this.isNurse = false
+          this.isTechnician = false
           this.isDoctor = false
           this.nameNurse = ''
           this.nameDoc = ''
@@ -842,6 +873,7 @@ export default {
 
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
+          this.allocationTypeTechnician = 2
 
           this.canConfigTeam = true
           // this.onSelectChange()
@@ -943,7 +975,7 @@ export default {
 
     /**
      *
-     * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队
+     * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队  4技师
      */
     goCheck(type) {
       console.log('goCheck:' + type)
@@ -958,6 +990,12 @@ export default {
         if (this.broadClassify == 1 && this.isNurse) {
           this.isDoctor = false
           this.nameDoc = ''
+        }
+      } else if (type == 4) {
+        this.isTechnician = !isTechnician
+        if (this.broadClassify == 1 && this.isTechnician) {
+          this.isTechnician = false
+          this.nameTechnician = ''
         }
       } else {
         if (this.broadClassify == 1) {
@@ -998,11 +1036,16 @@ export default {
         this.$message.warn('请先选择护士参与分配方式')
         return
       }
+
+      if (type == 3 && !this.allocationTypeTechnician) {
+        this.$message.warn('请先选择技师参与分配方式')
+        return
+      }
     },
 
     /**
      *
-     * @param {*} index 0 医生  1 护士
+     * @param {*} index 0 医生  1 护士  2技师
      */
     addPerson(index) {
       if (!this.packageData.tenantId) {
@@ -1058,7 +1101,7 @@ export default {
         //     false
         //   )
         // }
-      } else {
+      } else if (index == 1) {
         if (!this.isNurse) {
           return
         }
@@ -1102,6 +1145,28 @@ export default {
         //     false
         //   )
         // }
+      }else if (index==2) {
+        if (!this.isTechnician) {
+          return
+        }
+        if (!this.allocationTypeTechnician) {
+          this.$message.warn('请先选择技师参与分配方式')
+          return
+        }
+        // if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
+        //   this.$message.warn('该机构没有可选护士')
+        //   return
+        // }
+
+        this.$refs.addPeople.add(
+          index,
+          'medTechnician',
+          this.packageData.tenantId,
+          this.packageData.hospitalCode,
+          this.nurseDepartmentId,
+          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          this.broadClassify == 1 ? true : false
+        )
       }
     },
 
@@ -1267,6 +1332,24 @@ export default {
           tempData.commodityPkgManageReqs[1].departmentId = this.nurseDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[1])
         }
+
+        if (this.isTechnician) {
+          if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
+            this.$message.error('请选择技师！')
+            return
+          } else {
+            tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.forEach((item) => {
+              delete item.userName
+            })
+          }
+
+          tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeTechnician
+          tempData.commodityPkgManageReqs[1].teamType = 2
+          tempData.commodityPkgManageReqs[1].departmentId = this.nurseDepartmentId
+          commodityNew.push(tempData.commodityPkgManageReqs[1])
+        }
+
+
 
         if (this.isTeam) {
           if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
