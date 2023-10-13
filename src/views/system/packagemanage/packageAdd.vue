@@ -1187,13 +1187,13 @@ export default {
         return
       }
       this.$refs.addTeam.edit(
-        this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
+        this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode
       )
     },
 
     handleAddTeam(commodityPkgManageItemReqs) {
-      this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs = commodityPkgManageItemReqs
+      this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       this.nameTeam = ''
       commodityPkgManageItemReqs.forEach((item, indexReqs) => {
         if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1311,29 +1311,29 @@ export default {
 
         // 技师
         if (this.isTechnician) {
-          if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
+          if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择技师！')
             return
           } else {
-            tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.forEach((item) => {
+            tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.forEach((item) => {
               delete item.userName
             })
           }
 
-          tempData.commodityPkgManageReqs[1].allocationType = this.allocationTypeTechnician
-          tempData.commodityPkgManageReqs[1].teamType = 6
-          tempData.commodityPkgManageReqs[1].departmentId = this.technicianmentId
-          commodityNew.push(tempData.commodityPkgManageReqs[1])
+          tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTechnician
+          tempData.commodityPkgManageReqs[2].teamType = 6
+          tempData.commodityPkgManageReqs[2].departmentId = this.technicianmentId
+          commodityNew.push(tempData.commodityPkgManageReqs[2])
         }
 
 
 
         if (this.isTeam) {
-          if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
+          if (tempData.commodityPkgManageReqs[3].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择团队！')
             return
           } else {
-            tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.forEach((item) => {
+            tempData.commodityPkgManageReqs[3].commodityPkgManageItemReqs.forEach((item) => {
               delete item.userName
             })
           }
@@ -1342,9 +1342,9 @@ export default {
             this.$message.error('请选择角色！')
             return
           }
-          tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTeam
-          tempData.commodityPkgManageReqs[2].teamType = 3
-          commodityNew.push(tempData.commodityPkgManageReqs[2])
+          tempData.commodityPkgManageReqs[3].allocationType = this.allocationTypeTeam
+          tempData.commodityPkgManageReqs[3].teamType = 3
+          commodityNew.push(tempData.commodityPkgManageReqs[3])
           let reqs = []
           this.roleIds.forEach((item1) => {
             reqs.push({

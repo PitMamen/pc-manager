@@ -305,7 +305,7 @@
         <!-- 技师参与 -->
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(4)">技师参与</a-checkbox>
+            <a-checkbox :checked="isTechnician" @click="goCheck(4)">技师参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -314,9 +314,9 @@
           <a-select
             class="mid-select-two"
             allow-clear
-            v-model="allocationTypeNurse"
+            v-model="allocationTypeTechnician"
             placeholder="请选择"
-            :disabled="!isNurse || broadClassify == 1"
+            :disabled="!isTechnician || broadClassify == 1"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -325,12 +325,12 @@
           <!-- @change="onChange" -->
 
           <span style="margin-left: 2%; width: 60px">参与技师:</span>
-          <span class="span-names">{{ nameNurse }}</span>
+          <span class="span-names">{{ nameTechnician }}</span>
 
-          <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(2)" @click="addPerson(1)">
+          <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(3)" @click="addPerson(2)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
               >技师配置</span
             >
           </div>
@@ -496,6 +496,7 @@ export default {
       confirmLoading: false,
       isDoctor: false,
       isNurse: false,
+      isTechnician: false,
       isTeam: false,
       needPlan: false,
       canConfigTeam: true,
@@ -510,12 +511,15 @@ export default {
       roleIds: [],
       docDepartmentId: undefined,
       nurseDepartmentId: undefined,
+      technicianmentId: undefined,
       nameDoc: '',
       nameNurse: '',
+      nameTechnician: '',
       nameTeam: '',
       commodityPkgId: undefined,
       allocationTypeDoc: undefined,
       allocationTypeNurse: undefined,
+      allocationTypeTechnician: undefined,
       allocationTypeTeam: undefined,
       isRefresh: false,
       classifyName: '',
@@ -900,10 +904,38 @@ export default {
           nurseItem.allocationType = nurseItem.allocationType.value
           nurseItem.teamType = nurseItem.teamType.value
           newRsps.push(nurseItem)
+        }
+
+        // 技师
+        let technicianItem = undefined
+        for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 6) {
+            technicianItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+          }
+        }
+        if (technicianItem) {
+          this.isTechnician = true
+          this.allocationTypeTechnician = technicianItem.allocationType.value
+          this.nameTechnician = ''
+          technicianItem.commodityPkgManageItemReqs.forEach((item, index) => {
+            if (index != technicianItem.commodityPkgManageItemReqs.length - 1) {
+              this.nameTechnician = this.nameTechnician + item.name + ','
+            } else {
+              this.nameTechnician = this.nameTechnician + item.name
+            }
+          })
+
+          this.technicianmentId = technicianItem.departmentId
+          technicianItem.allocationType = technicianItem.allocationType.value
+          technicianItem.teamType = technicianItem.teamType.value
+          newRsps.push(technicianItem)
         } else {
           this.allocationTypeNurse = undefined
+          this.allocationTypeTechnician = undefined
           this.nameNurse = ''
+          this.nameTechnician = ''
           this.isNurse = false
+          this.isTechnician = false
           newRsps.push({
             allocationType: undefined,
             commodityPkgManageItemReqs: [],
@@ -1111,15 +1143,12 @@ export default {
           this.isTeam = false
           this.nameTeam = ''
 
-          // if (this.isNurse && this.isDoctor) {
-          //   //如果护士医生都选了 由于只能选一个类型 需要去掉一个类型
-          //   this.isNurse = false
-          //   this.nameNurse = ''
-          // }
           //如果切换到咨询类，全部团队置空
           this.isNurse = false
           this.isDoctor = false
+          this.isTechnician = false
           this.nameNurse = ''
+          this.nameTechnician = ''
           this.nameDoc = ''
           console.log('this.packageData.commodityPkgManageReqs', this.packageData.commodityPkgManageReqs)
           if (this.packageData.commodityPkgManageReqs) {
@@ -1130,6 +1159,7 @@ export default {
 
           this.allocationTypeDoc = 2
           this.allocationTypeNurse = 2
+          this.allocationTypeTechnician = 2
 
           this.canConfigTeam = true
           // this.onSelectChange()
@@ -1189,6 +1219,7 @@ export default {
       this.deptUsersNurse = []
       this.nameDoc = ''
       this.nameNurse = ''
+      this.nameTechnician = ''
       this.plans = []
 
       if (this.packageData.tenantId) {
@@ -1204,6 +1235,7 @@ export default {
         this.deptUsersNurse = []
         this.nameDoc = ''
         this.nameNurse = ''
+        this.nameTechnician = ''
         this.plans = []
         // this.getTreeUsersDoc(false)
         // this.getTreeUsersNurse(false)
@@ -1272,29 +1304,37 @@ export default {
         this.isDoctor = !this.isDoctor
         if (this.broadClassify == 1 && this.isDoctor) {
           this.isNurse = false
+          this.isTechnician = false
           this.nameNurse = ''
+          this.nameTechnician = ''
         }
       } else if (type == 2) {
         this.isNurse = !this.isNurse
         if (this.broadClassify == 1 && this.isNurse) {
           this.isDoctor = false
+          this.isTechnician = false
           this.nameDoc = ''
+          this.nameTechnician = ''
         }
-      }else if (type == 4) {
-        this.is = !this.isNurse
-        if (this.broadClassify == 1 && this.isNurse) {
+      } else if (type == 4) {
+        this.isTechnician = !this.isTechnician
+        if (this.broadClassify == 1 && this.isTechnician) {
           this.isDoctor = false
+          this.isNurse = false
           this.nameDoc = ''
+          this.nameNurse = ''
         }
       } else {
         if (this.broadClassify == 1) {
           return
         }
         this.isTeam = !this.isTeam
-        // this.isNurse = false
         // this.isTeam = true
+        // this.isNurse = false
+        // this.isTechnician = false
         // this.packageData.commodityPkgManageReqs.commodityPkgManageItemReqs = []
         // this.nameDoc = ''
+        // this.nameTechnician = ''
         // this.nameNurse = ''
         // this.nameTeam = ''
       }
@@ -1325,11 +1365,16 @@ export default {
         this.$message.warn('请先选择护士参与分配方式')
         return
       }
+
+      if (type == 3 && !this.allocationTypeTechnician) {
+        this.$message.warn('请先选择技师参与分配方式')
+        return
+      }
     },
 
     /**
      *
-     * @param {*} index 0 医生  1 护士
+     * @param {*} index 0 医生  1 护士  2技师
      */
     addPerson(index) {
       if (!this.packageData.tenantId) {
@@ -1363,29 +1408,7 @@ export default {
           this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
           this.broadClassify == 1 ? true : false
         )
-
-        // if (this.broadClassify == 1) {
-        //   this.$refs.addPeople.add(
-        //     index,
-        //     'doctor',
-        //     this.packageData.tenantId,
-        //     this.packageData.hospitalCode,
-        //     this.docDepartmentId,
-        //     this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-        //     true
-        //   )
-        // } else {
-        //   this.$refs.addPeople.add(
-        //     index,
-        //     'doctor',
-        //     this.packageData.tenantId,
-        //     this.packageData.hospitalCode,
-        //     this.docDepartmentId,
-        //     this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
-        //     false
-        //   )
-        // }
-      } else {
+      } else if (index == 1) {
         if (!this.isNurse) {
           return
         }
@@ -1393,11 +1416,6 @@ export default {
           this.$message.warn('请先选择护士参与分配方式')
           return
         }
-        // if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
-        //   this.$message.warn('该机构没有可选护士')
-        //   return
-        // }
-
         this.$refs.addPeople.add(
           index,
           'nurse',
@@ -1407,32 +1425,38 @@ export default {
           this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
           this.broadClassify == 1 ? true : false
         )
-
-        // if (this.broadClassify == 1) {
-        //   this.$refs.addPeople.add(
-        //     index,
-        //     this.deptUsersNurse,
-        //     this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-        //     true
-        //   )
-        // } else {
-        //   this.$refs.addPeople.add(
-        //     index,
-        //     this.deptUsersNurse,
-        //     this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
-        //     false
-        //   )
+      } else if (index == 2) {
+        if (!this.isTechnician) {
+          return
+        }
+        if (!this.allocationTypeTechnician) {
+          this.$message.warn('请先选择技师参与分配方式')
+          return
+        }
+        // if (!this.deptUsersNurse || !this.deptUsersNurse.users || this.deptUsersNurse.users.length == 0) {
+        //   this.$message.warn('该机构没有可选护士')
+        //   return
         // }
+
+        this.$refs.addPeople.add(
+          index,
+          'medTechnician',
+          this.packageData.tenantId,
+          this.packageData.hospitalCode,
+          this.technicianmentId,
+          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          this.broadClassify == 1 ? true : false
+        )
       }
     },
 
     /**
      *
-     * @param {*} index 0 医生  1 护士
+     * @param {*} index 0 医生  1 护士  2技师
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
-      console.log('handleAddPeople departmentId', departmentId)
+      // console.log('handleAddPeople departmentId', commodityPkgManageItemReqs)
       this.packageData.commodityPkgManageReqs[index].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       if (index == 0) {
         this.nameDoc = ''
@@ -1444,7 +1468,7 @@ export default {
           }
         })
         this.docDepartmentId = departmentId
-      } else {
+      } else if (index == 1) {
         this.nameNurse = ''
         commodityPkgManageItemReqs.forEach((item, indexReqs) => {
           if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1454,7 +1478,19 @@ export default {
           }
         })
         this.nurseDepartmentId = departmentId
+      }else if (index==2) {
+        this.nameTechnician = ''
+        commodityPkgManageItemReqs.forEach((item, indexReqs) => {
+          if (indexReqs != commodityPkgManageItemReqs.length - 1) {
+            this.nameTechnician = this.nameTechnician + item.userName + ','
+          } else {
+            this.nameTechnician = this.nameTechnician + item.userName
+          }
+        })
+        this.technicianmentId = departmentId
+
       }
+      // console.log("888:", this.packageData.commodityPkgManageReqs)
     },
 
     addTeam() {
@@ -1470,13 +1506,13 @@ export default {
         return
       }
       this.$refs.addTeam.edit(
-        this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
+        this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode
       )
     },
 
     handleAddTeam(commodityPkgManageItemReqs) {
-      this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs = commodityPkgManageItemReqs
+      this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs = commodityPkgManageItemReqs
       this.nameTeam = ''
       commodityPkgManageItemReqs.forEach((item, indexReqs) => {
         if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1568,6 +1604,7 @@ export default {
         }
       }
 
+      console.log("XXXX:",tempData.commodityPkgManageReqs)
       if (this.canConfigTeam) {
         //组装团队
         let commodityNew = []
@@ -1603,12 +1640,29 @@ export default {
           commodityNew.push(tempData.commodityPkgManageReqs[1])
         }
 
-        if (this.isTeam) {
+        // 技师
+        if (this.isTechnician) {
           if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
-            this.$message.error('请选择团队！')
+            this.$message.error('请选择技师！')
             return
           } else {
             tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.forEach((item) => {
+              delete item.userName
+            })
+          }
+
+          tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTechnician
+          tempData.commodityPkgManageReqs[2].teamType = 6
+          tempData.commodityPkgManageReqs[2].departmentId = this.technicianmentId
+          commodityNew.push(tempData.commodityPkgManageReqs[2])
+        }
+
+        if (this.isTeam) {
+          if (tempData.commodityPkgManageReqs[3].commodityPkgManageItemReqs.length == 0) {
+            this.$message.error('请选择团队！')
+            return
+          } else {
+            tempData.commodityPkgManageReqs[3].commodityPkgManageItemReqs.forEach((item) => {
               delete item.userName
             })
           }
@@ -1617,9 +1671,9 @@ export default {
             this.$message.error('请选择角色！')
             return
           }
-          tempData.commodityPkgManageReqs[2].allocationType = this.allocationTypeTeam
-          tempData.commodityPkgManageReqs[2].teamType = 3
-          commodityNew.push(tempData.commodityPkgManageReqs[2])
+          tempData.commodityPkgManageReqs[3].allocationType = this.allocationTypeTeam
+          tempData.commodityPkgManageReqs[3].teamType = 3
+          commodityNew.push(tempData.commodityPkgManageReqs[3])
           let reqs = []
           this.roleIds.forEach((item1) => {
             reqs.push({
@@ -1647,6 +1701,10 @@ export default {
       } else {
         tempData.commodityPkgManageReqs = []
       }
+
+
+    console.log("YYYY:",tempData.commodityPkgManageReqs)
+      //  return
 
       //只有专科服务套餐才有的字段
       if (this.broadClassify != 2) {
