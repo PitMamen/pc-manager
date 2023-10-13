@@ -1652,7 +1652,8 @@ export default {
       }
 
       // 人员类型  和 职称匹配校验
-      if ((this.checkData.userType = 'doctor' || this.checkData.userType == 'nurse')) {
+      console.log("LLL:",this.checkData.userType)
+      if ((this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse')) {
         // this.ryzcList
         var findItem = this.ryzcList.find((item) => item.code == this.checkData.professionalTitle)
         if (!findItem) {

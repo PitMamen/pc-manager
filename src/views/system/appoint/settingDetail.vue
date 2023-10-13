@@ -24,7 +24,6 @@
               v-model="checkData.chiefDocCnt"
               style="display: inline-block; width: 70px"
               :precision="0"
-              :min="0"
               :max="10000"
               :maxLength="30"
               defaultValue="1"
@@ -38,7 +37,6 @@
               v-model="checkData.deputyChiefDocCnt"
               style="display: inline-block; width: 70px"
               :precision="0"
-              :min="0"
               :max="10000"
               :maxLength="30"
               defaultValue="1"
@@ -52,7 +50,6 @@
               v-model="checkData.attendingDocCnt"
               style="display: inline-block; width: 70px"
               :precision="0"
-              :min="0"
               :max="10000"
               :maxLength="30"
               defaultValue="1"
@@ -66,7 +63,6 @@
               v-model="checkData.patCnt"
               style="display: inline-block; width: 70px"
               :precision="0"
-              :min="0"
               :max="10000"
               :maxLength="30"
               defaultValue="1"
@@ -135,21 +131,34 @@ export default {
       this.checkData.deputyChiefDocCnt = record.deputyChiefDocCnt
       this.checkData.chiefDocCnt = record.chiefDocCnt
       this.checkData.attendingDocCnt = record.attendingDocCnt
+      this.checkData.patCnt = record.patCnt
 
       // this.getDetailData(type)
     },
 
     handleSubmit() {
-       this.confirmLoading = true
-      saveDeptRegConfig(this.checkData).then((res)=>{
-         if (res.code==0) {
+      if (
+        this.checkData.patCnt <= 0 ||
+        this.checkData.attendingDocCnt <= 0 ||
+        this.checkData.chiefDocCnt <= 0 ||
+        this.checkData.deputyChiefDocCnt <= 0
+      ) {
+        this.$message.error('挂号数必须大于0!')
+        return
+      }
+
+      this.confirmLoading = true
+      saveDeptRegConfig(this.checkData)
+        .then((res) => {
+          if (res.code == 0) {
             this.$emit('ok')
             this.$message.success('操作成功!')
             this.visible = false
-         }
-      }).finally((zz)=>{
-        this.confirmLoading = false
-      })
+          }
+        })
+        .finally((zz) => {
+          this.confirmLoading = false
+        })
     },
 
     handleCancel() {

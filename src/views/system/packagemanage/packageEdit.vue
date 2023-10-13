@@ -305,7 +305,7 @@
         <!-- 技师参与 -->
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)">技师参与</a-checkbox>
+            <a-checkbox :checked="isNurse" @click="goCheck(4)">技师参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -1265,7 +1265,7 @@ export default {
 
     /**
      *
-     * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队
+     * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队  4技师
      */
     goCheck(type) {
       if (type == 1) {
@@ -1276,6 +1276,12 @@ export default {
         }
       } else if (type == 2) {
         this.isNurse = !this.isNurse
+        if (this.broadClassify == 1 && this.isNurse) {
+          this.isDoctor = false
+          this.nameDoc = ''
+        }
+      }else if (type == 4) {
+        this.is = !this.isNurse
         if (this.broadClassify == 1 && this.isNurse) {
           this.isDoctor = false
           this.nameDoc = ''
