@@ -158,10 +158,10 @@ export default {
           if (res.code == 0 && res.data.records) {
             data = {
               pageNo: parameter.pageNo,
-              pageSize: parameter.pageSize,
-              totalRows: res.data.totalRows,
-              totalPage: res.data.totalRows / parameter.pageSize,
-              rows: res.data.records,
+                  pageSize: parameter.pageSize,
+                  totalRows: res.data.total,
+                  totalPage: res.data.total / parameter.pageSize,
+                  rows: res.data.records,
             }
 
           }
