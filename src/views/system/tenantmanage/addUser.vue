@@ -1183,8 +1183,15 @@ export default {
 
           this.getRolesOut()
 
+          if (this.checkData.userType == 'doctor') {
+            this.getBycodeOut('DOCTOR_TITLE')
+          } else if ((this.checkData.userType = 'nurse')) {
+            this.getBycodeOut('NURSE_TITLE')
+          }
+
           if (this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse') {
             this.getDoctorQrCodeOut()
+            
           }
         }
       })
