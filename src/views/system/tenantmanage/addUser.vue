@@ -141,7 +141,7 @@
           <div class="div-content" v-if="checkData.userType == 'doctor' || checkData.userType == 'nurse'">
             <span class="span-item-name"><span style="color: red">*</span>人员职称:</span>
             <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择人员职称">
-              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.code">{{
+              <a-select-option v-for="(item, index) in ryzcList" :key="index" :value="item.value">{{
                 item.value
               }}</a-select-option>
             </a-select>
@@ -1659,10 +1659,10 @@ export default {
       }
 
       // 人员类型  和 职称匹配校验
-      console.log("LLL:",this.checkData.userType)
+      console.log("LLL:",this.checkData.professionalTitle)
       if ((this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse')) {
         // this.ryzcList
-        var findItem = this.ryzcList.find((item) => item.code == this.checkData.professionalTitle)
+        var findItem = this.ryzcList.find((item) => item.value == this.checkData.professionalTitle)
         if (!findItem) {
           if (this.userTypeTemp == 'doctor') {
             this.getBycodeOut('DOCTOR_TITLE')
@@ -1674,6 +1674,7 @@ export default {
           return
         }
       }
+
       if (isStringEmpty(this.checkData.hospitalCode)) {
         this.$message.error('请选择所属机构')
         return
@@ -1791,7 +1792,7 @@ export default {
         postData.registerTypeOptions = registerTypeOptions //服务选项
       }
 
-      console.log('postData', postData)
+      // console.log('postData', postData)
       this.confirmLoading = true
       if (this.record.userId) {
         //修改
