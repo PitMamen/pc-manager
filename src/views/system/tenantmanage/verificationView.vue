@@ -156,6 +156,7 @@
             <div v-if="record.personType=='doctor'||record.personType=='nurse'" style="margin-left: 3%; color: #333">执业证照片：</div>
 
             <a-upload
+            v-if="record.personType=='doctor'||record.personType=='nurse'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
@@ -165,6 +166,7 @@
             </a-upload>
 
             <a-upload
+            v-if="record.personType=='doctor'||record.personType=='nurse'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
