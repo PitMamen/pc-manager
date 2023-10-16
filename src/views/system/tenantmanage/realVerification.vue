@@ -301,6 +301,10 @@ export default {
         return '医生'
       } else if (string == 'nurse') {
         return '护士'
+      }else if (string == 'pharmacist') {
+        return '药剂师'
+      }else if (string == 'medTechnician') {
+        return '技师'
       }
     },
 

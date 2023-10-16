@@ -113,9 +113,10 @@
 
 
             <!-- 职称照片 -->
-            <div style="margin-left: 3%; color: #333">职称照片：</div>
+            <div v-if="record.personType=='doctor'" style="margin-left: 3%; color: #333">职称照片：</div>
 
             <a-upload
+            v-if="record.personType=='doctor'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
@@ -152,7 +153,7 @@
             <!-- <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.qualificationF" /> -->
 
             <!-- 执业证照片 -->
-            <div style="margin-left: 3%; color: #333">执业证照片：</div>
+            <div v-if="record.personType=='doctor'||record.personType=='nurse'" style="margin-left: 3%; color: #333">执业证照片：</div>
 
             <a-upload
               :disabled="true"
