@@ -55,7 +55,7 @@
         <div class="action-row">
           <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
             <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+            <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset(true)">重置</a-button>
           </span>
         </div>
       </div>
@@ -201,8 +201,8 @@
           },
           {
             title: '挂号时间',
-            dataIndex: 'serveTime',
-            width: 160,
+            dataIndex: 'visitStr',
+            ellipsis: true,
           },
   
           {
@@ -230,27 +230,27 @@
         ],
         // 加载数据方法 必须为 Promise 对象
         loadData: (parameter) => {
-          if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
-            if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
-              this.$message.error('请选择开始时间小于结束时间')
-              delete this.queryParams.orderStartTime
-              delete this.queryParams.orderEndTime
-              this.$refs.table.refresh()
-              return
-            }
-            if (this.queryParams.orderStartTime) {
-              let start = this.formatDate(this.queryParams.orderStartTime)
-              this.queryParams.orderStartTime = start
-            }
+          // if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
+          //   if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
+          //     this.$message.error('请选择开始时间小于结束时间')
+          //     delete this.queryParams.orderStartTime
+          //     delete this.queryParams.orderEndTime
+          //     this.$refs.table.refresh()
+          //     return
+          //   }
+          //   if (this.queryParams.orderStartTime) {
+          //     let start = this.formatDate(this.queryParams.orderStartTime)
+          //     this.queryParams.orderStartTime = start
+          //   }
   
-            if (this.queryParams.orderEndTime) {
-              let end = this.formatDate(this.queryParams.orderEndTime)
-              this.queryParams.orderEndTime = end 
-            }
-          } else {
-            delete this.queryParams.orderStartTime
-            delete this.queryParams.orderEndTime
-          }
+          //   if (this.queryParams.orderEndTime) {
+          //     let end = this.formatDate(this.queryParams.orderEndTime)
+          //     this.queryParams.orderEndTime = end 
+          //   }
+          // } else {
+          //   delete this.queryParams.orderStartTime
+          //   delete this.queryParams.orderEndTime
+          // }
   
           this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
           this.queryParamsTemp.orderStatus = this.currentTab
@@ -287,7 +287,7 @@
     },
   
     activated() {
-      this.reset()
+      this.reset(false)
       this.queryParams.orderStatus = this.currentTab
       this.queryParamsTemp.orderStatus = this.currentTab
     },
@@ -313,31 +313,6 @@
     },
   
     methods: {
-      //详情
-      goDetail(record) {
-        // var path = ''
-        // if (record.orderType == 'appPreRegister') {
-        //   //复诊续方
-        //   path = '/order/continuationDetail'
-        //   //有赞商城
-        // } else if (record.orderType == 'youzanOrder') {
-        //   path = '/order/yzOrderDetail'
-        //   //处方订单
-        // }else if(record.orderType == 'appPrePrescription'||record.orderType =='consultOrderPrescription'){
-        //   path = '/order/prescriptionDetail'
-        // } else {
-        //   path = '/order/orderDetail'
-        // }
-        // this.$router.push({
-        //   path: path,
-        //   query: {
-        //     orderId: record.orderId,
-        //   },
-        // })
-      },
-
-
-
       qryDepartmentByReqOut(){
         
         qryDepartmentByReq({departmentType:1}).then((res)=>{
@@ -373,54 +348,24 @@
         } 
       },
   
-      // getClass(status) {
-      //   if (status.value == 2) {
-      //     return 'span-red'
-      //   } else if (status.value == 1) {
-      //     return 'span-gray'
-      //   }
-      // },
   
-      // queryHospitalListOut() {
-      //   //   let queryData = {
-      //   //     tenantId: '',
-      //   //     status: 1,
-      //   //     hospitalName: '',
-      //   //   }
-      //   this.confirmLoading = true
-      //   accessHospitals()
-      //     .then((res) => {
-      //       if (res.code == 0 && res.data.length > 0) {
-      //         res.data.forEach((item, index) => {
-      //           this.$set(item, 'key', item.hospitalCode)
-      //           this.$set(item, 'value', item.hospitalCode)
-      //           this.$set(item, 'title', item.hospitalName)
-      //           this.$set(item, 'children', item.hospitals)
-  
-      //           item.hospitals.forEach((item1, index1) => {
-      //             this.$set(item1, 'key', item1.hospitalCode)
-      //             this.$set(item1, 'value', item1.hospitalCode)
-      //             this.$set(item1, 'title', item1.hospitalName)
-      //           })
-      //         })
-  
-      //         this.treeData = res.data
-      //       } else {
-      //         this.treeData = res.data
-      //       }
-      //       return []
-      //     })
-      //     .finally((res) => {
-      //       this.confirmLoading = false
-      //     })
-      // },
-  
-      reset() {
+      reset(clearTime) {
         this.queryParams.combinedCondition = ''
         this.queryParams.doctorName = ''
         this.queryParams.departmentId = undefined
-        // this.queryParams.orderEndTime = ''
-        // this.queryParams.orderStartTime = ''
+
+        if (clearTime) {
+        this.createValue = []
+        this.orderTimeValue = []
+      } else {
+        this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+
+        this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+      }
+      this.queryParams.orderStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.orderEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
+      this.queryParams.appointStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.appointEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
         this.queryParams.orderStatus = ''
         this.queryParams.orderType = 'outpatientRegister'
         this.handleOk()
@@ -476,8 +421,8 @@
   
       onChange(momentArr, dateArr) {
         this.createValue = momentArr
-        this.queryParams.orderStartTime = dateArr[0]
-        this.queryParams.orderEndTime = dateArr[1]
+        this.queryParams.orderStartTime = dateArr[0]+ ' 00:00:00'
+        this.queryParams.orderEndTime = dateArr[1]+ ' 23:59:59'
       },
   
 
@@ -507,8 +452,8 @@
     //   }
 
       this.orderTimeValue = momentArr
-      this.queryParams.appointStartTime = dateArr2[0]
-      this.queryParams.appointEndTime = dateArr2[1] 
+      this.queryParams.appointStartTime = dateArr2[0]+' 00:00:00'
+      this.queryParams.appointEndTime = dateArr2[1] + ' 23:59:59'
     },
 
 
