@@ -236,7 +236,9 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
+            <a-checkbox :disabled="isNurse || isTechnician" :checked="isDoctor" @click="goCheck(1)"
+              >医生参与</a-checkbox
+            >
             <!-- <span style="margin-left: 8px">医生参与</span> -->
           </div>
 
@@ -248,7 +250,7 @@
             allow-clear
             placeholder="请选择"
             v-model="allocationTypeDoc"
-            :disabled="!isDoctor || broadClassify == 1"
+            :disabled="!isDoctor || broadClassify == 1 || isNurse || isTechnician"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -262,7 +264,10 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson(0)" @focus="onAddPersonFocus(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
+            <span
+              :disabled="isNurse || isTechnician"
+              style="width: 50px; color: #1890ff; margin-left: 2%"
+              :class="{ 'checked-btn': !isDoctor }"
               >医生配置</span
             >
           </div>
@@ -270,7 +275,9 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isNurse" @click="goCheck(2)">护士参与</a-checkbox>
+            <a-checkbox :disabled="isDoctor || isTechnician" :checked="isNurse" @click="goCheck(2)"
+              >护士参与</a-checkbox
+            >
             <!-- <span style="margin-left: 8px">护士参与</span> -->
           </div>
 
@@ -282,7 +289,7 @@
             allow-clear
             v-model="allocationTypeNurse"
             placeholder="请选择"
-            :disabled="!isNurse || broadClassify == 1"
+            :disabled="!isNurse || broadClassify == 1 || isDoctor || isTechnician"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -296,7 +303,10 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(2)" @click="addPerson(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
+            <span
+              :disabled="isDoctor || isTechnician"
+              style="width: 50px; color: #1890ff; margin-left: 2%"
+              :class="{ 'checked-btn': !isNurse }"
               >护士配置</span
             >
           </div>
@@ -305,7 +315,9 @@
         <!-- 技师参与 -->
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :checked="isTechnician" @click="goCheck(4)">技师参与</a-checkbox>
+            <a-checkbox :disabled="isDoctor || isNurse" :checked="isTechnician" @click="goCheck(4)"
+              >技师参与</a-checkbox
+            >
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -316,7 +328,7 @@
             allow-clear
             v-model="allocationTypeTechnician"
             placeholder="请选择"
-            :disabled="!isTechnician || broadClassify == 1"
+            :disabled="!isTechnician || broadClassify == 1 || isDoctor || isNurse"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -330,7 +342,10 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(3)" @click="addPerson(2)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
+            <span
+              :disabled="isDoctor || isNurse"
+              style="width: 50px; color: #1890ff; margin-left: 2%"
+              :class="{ 'checked-btn': !isTechnician }"
               >技师配置</span
             >
           </div>
@@ -888,9 +903,11 @@ export default {
             nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
         }
+        console.log("YYY:",nurseItem)
         if (nurseItem) {
           this.isNurse = true
-          this.allocationTypeNurse = nurseItem.allocationType.value
+          // this.allocationTypeNurse = nurseItem.allocationType.value
+          this.allocationTypeNurse = 2
           this.nameNurse = ''
           nurseItem.commodityPkgManageItemReqs.forEach((item, index) => {
             if (index != nurseItem.commodityPkgManageItemReqs.length - 1) {
@@ -900,8 +917,11 @@ export default {
             }
           })
 
+          console.log('MMM:', this.nameNurse)
+
           this.nurseDepartmentId = nurseItem.departmentId
-          nurseItem.allocationType = nurseItem.allocationType.value
+          // nurseItem.allocationType = nurseItem.allocationType.value
+          nurseItem.allocationType = 2
           nurseItem.teamType = nurseItem.teamType.value
           newRsps.push(nurseItem)
         }
@@ -916,6 +936,7 @@ export default {
         if (technicianItem) {
           this.isTechnician = true
           this.allocationTypeTechnician = technicianItem.allocationType.value
+          this.allocationTypeTechnician = 2
           this.nameTechnician = ''
           technicianItem.commodityPkgManageItemReqs.forEach((item, index) => {
             if (index != technicianItem.commodityPkgManageItemReqs.length - 1) {
@@ -932,8 +953,8 @@ export default {
         } else {
           this.allocationTypeNurse = undefined
           this.allocationTypeTechnician = undefined
-          this.nameNurse = ''
-          this.nameTechnician = ''
+          // this.nameNurse = ''
+          // this.nameTechnician = ''
           this.isNurse = false
           this.isTechnician = false
           newRsps.push({
@@ -1300,9 +1321,10 @@ export default {
      * @param {*} type 1 勾选医生  2 勾选护士 3 勾选团队  4技师
      */
     goCheck(type) {
+      // this.broadClassify == 1 &&
       if (type == 1) {
         this.isDoctor = !this.isDoctor
-        if (this.broadClassify == 1 && this.isDoctor) {
+        if (this.isDoctor) {
           this.isNurse = false
           this.isTechnician = false
           this.nameNurse = ''
@@ -1310,15 +1332,17 @@ export default {
         }
       } else if (type == 2) {
         this.isNurse = !this.isNurse
-        if (this.broadClassify == 1 && this.isNurse) {
+        if (this.isNurse) {
           this.isDoctor = false
           this.isTechnician = false
           this.nameDoc = ''
           this.nameTechnician = ''
         }
+
+        console.log('VVV:', this.nameDoc, this.broadClassify)
       } else if (type == 4) {
         this.isTechnician = !this.isTechnician
-        if (this.broadClassify == 1 && this.isTechnician) {
+        if (this.isTechnician) {
           this.isDoctor = false
           this.isNurse = false
           this.nameDoc = ''
@@ -1478,7 +1502,7 @@ export default {
           }
         })
         this.nurseDepartmentId = departmentId
-      }else if (index==2) {
+      } else if (index == 2) {
         this.nameTechnician = ''
         commodityPkgManageItemReqs.forEach((item, indexReqs) => {
           if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1488,7 +1512,6 @@ export default {
           }
         })
         this.technicianmentId = departmentId
-
       }
       // console.log("888:", this.packageData.commodityPkgManageReqs)
     },
@@ -1604,7 +1627,7 @@ export default {
         }
       }
 
-      console.log("XXXX:",tempData.commodityPkgManageReqs)
+      console.log('XXXX:', tempData.commodityPkgManageReqs)
       if (this.canConfigTeam) {
         //组装团队
         let commodityNew = []
@@ -1622,9 +1645,7 @@ export default {
           tempData.commodityPkgManageReqs[0].teamType = 1
           tempData.commodityPkgManageReqs[0].departmentId = this.docDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[0])
-        }
-
-        if (this.isNurse) {
+        } else if (this.isNurse) {
           if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择护士！')
             return
@@ -1641,7 +1662,7 @@ export default {
         }
 
         // 技师
-        if (this.isTechnician) {
+        else if (this.isTechnician) {
           if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择技师！')
             return
@@ -1702,8 +1723,7 @@ export default {
         tempData.commodityPkgManageReqs = []
       }
 
-
-    console.log("YYYY:",tempData.commodityPkgManageReqs)
+      console.log('YYYY:', tempData.commodityPkgManageReqs)
       //  return
 
       //只有专科服务套餐才有的字段

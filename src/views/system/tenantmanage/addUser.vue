@@ -1068,16 +1068,28 @@ export default {
           this.zhiyeZList = []
           this.zhiyeFList = []
 
-          this.canInitCommodity =
-            res.data.initCommodityFlag === 0 &&
-            res.data.userType == 'doctor' &&
-            res.data.idcardF &&
-            res.data.idcardZ &&
-            (res.data.titleZ || res.data.titleF) &&
-            res.data.qualificationZ &&
-            res.data.qualificationF &&
-            res.data.practiceZ &&
-            res.data.practiceF
+
+          if (res.data.initCommodityFlag === 0&& res.data.userType == 'doctor'&&res.data.idcardF&&res.data.idcardZ&&res.data.titleF&&res.data.titleZ&&res.data.practiceZ&&res.data.practiceF) {
+            this.canInitCommodity = true
+          }else if (res.data.initCommodityFlag === 0&& res.data.userType == 'nurse'&&res.data.idcardF&&res.data.idcardZ&&res.data.practiceZ&&res.data.practiceF&&this.checkData.qualificationZ&&this.checkData.qualificationF) {
+            this.canInitCommodity = true
+          }else{
+            this.canInitCommodity = false
+
+          }
+
+         
+
+          // this.canInitCommodity =
+          //   res.data.initCommodityFlag === 0 &&
+          //   res.data.userType == 'doctor' &&
+          //   res.data.idcardF &&
+          //   res.data.idcardZ &&
+          //   (res.data.titleZ || res.data.titleF) &&
+          //   res.data.qualificationZ &&
+          //   res.data.qualificationF &&
+          //   res.data.practiceZ &&
+          //   res.data.practiceF
 
           // 身份证
           if (this.checkData.idcardF) {
