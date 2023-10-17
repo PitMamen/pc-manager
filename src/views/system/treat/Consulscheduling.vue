@@ -86,7 +86,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.fuzhen" class="tuoyuan" @click="showMessage()">
+          <div v-if="!record.fuzhen" class="tuoyuan" @click="showMessage(record,1)">
             <div class="yuan"></div>
           </div>
 
@@ -95,7 +95,7 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.fuzhen" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.fuzhen" @click="showMessage(record,1)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a :disabled="record.userType == 'nurse'" v-if="record.fuzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 1)">配置</a>
         </div>
       </span>
@@ -117,7 +117,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage()">
+          <div v-if="!record.tuwen" class="tuoyuan" @click="showMessage(record,2)">
             <div class="yuan"></div>
           </div>
 
@@ -126,7 +126,7 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.tuwen" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.tuwen" @click="showMessage(record,2)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a v-if="record.tuwen" style="margin-left: 5px" @click="$refs.tuWenConfig.editmodal(record)">配置</a>
         </div>
       </span>
@@ -148,7 +148,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.dianhua" class="tuoyuan" @click="showMessage()">
+          <div v-if="!record.dianhua" class="tuoyuan" @click="showMessage(record,3)">
             <div class="yuan"></div>
           </div>
 
@@ -157,7 +157,7 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.dianhua" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.dianhua" @click="showMessage(record,3)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a :disabled="record.userType == 'nurse'" v-if="record.dianhua" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record, 1)">配置</a>
         </div>
       </span>
@@ -179,7 +179,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.shipin" class="tuoyuan" @click="showMessage()">
+          <div v-if="!record.shipin" class="tuoyuan" @click="showMessage(record,4)">
             <div class="yuan"></div>
           </div>
 
@@ -188,7 +188,7 @@
           ></div>
 
           <a-icon type="setting" />
-          <a v-if="!record.shipin" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.shipin" @click="showMessage(record,4)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a :disabled="record.userType == 'nurse'"  v-if="record.shipin" style="margin-left: 5px" @click="$refs.phoneConfig.editmodal(record, 2)">配置</a>
         </div>
       </span>
@@ -210,7 +210,7 @@
             />
           </a-popconfirm>
 
-          <div v-if="!record.menzhen" class="tuoyuan" @click="showMessage()">
+          <div v-if="!record.menzhen" class="tuoyuan" @click="showMessage(record,5)">
             <div class="yuan"></div>
           </div>
 
@@ -219,7 +219,7 @@
           ></div>
 
           <a-icon type="setting" style="margin-top: 3px" />
-          <a v-if="!record.menzhen" @click="showMessage()" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="!record.menzhen" @click="showMessage(record,5)" style="margin-left: 5px; color: #4d4d4d">配置</a>
           <a  :disabled="record.userType == 'nurse'"  v-if="record.menzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
         </div>
       </span>
@@ -395,8 +395,17 @@ export default {
     this.queryHospitalListOut() //所属机构
   },
   methods: {
-    showMessage() {
-      this.$message.error('请先初始化!')
+    showMessage(record,type) {
+      // console.log("dddd:",record)
+      if (record.userType != 'nurse') {
+        this.$message.error('请先初始化!')
+      }else{
+        if (type==2&&!record.tuwen) {
+          this.$message.error('请先初始化!')
+        }
+      }
+
+    
     },
 
     /**

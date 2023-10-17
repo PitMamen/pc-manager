@@ -866,8 +866,13 @@ export default {
       })
         .then((res) => {
           if (res.code == 0) {
-            if (!this.record.doctorNames || this.record.doctorNames.length == 0) {
-              //如果没有配置医生 则过滤掉图文、电话、视频咨询
+            if (!this.record.nurseNames
+            &&this.record.nurseNames.length==0
+            &&!this.record.doctorNames 
+            && this.record.doctorNames.length == 0
+            &&!this.record.techniciansNames
+            &&this.record.techniciansNames.length==0) {
+              //如果没有配置医生、护士、技师 则过滤掉图文、电话、视频咨询
               res.data.rows = res.data.rows.filter((item) => {
                 return item.projectType !== 101 && item.projectType !== 102 && item.projectType !== 103
               })
