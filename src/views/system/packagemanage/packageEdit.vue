@@ -899,15 +899,17 @@ export default {
         //护士
         let nurseItem = undefined
         for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 2) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType) {
+            if (this.packageData.commodityPkgManageReqs[index].teamType.value == 2) {
             nurseItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
+          }
+          
         }
         console.log("YYY:",nurseItem)
         if (nurseItem) {
           this.isNurse = true
-          // this.allocationTypeNurse = nurseItem.allocationType.value
-          this.allocationTypeNurse = 2
+          this.allocationTypeNurse = nurseItem.allocationType.value
           this.nameNurse = ''
           nurseItem.commodityPkgManageItemReqs.forEach((item, index) => {
             if (index != nurseItem.commodityPkgManageItemReqs.length - 1) {
@@ -920,23 +922,33 @@ export default {
           console.log('MMM:', this.nameNurse)
 
           this.nurseDepartmentId = nurseItem.departmentId
-          // nurseItem.allocationType = nurseItem.allocationType.value
-          nurseItem.allocationType = 2
+          nurseItem.allocationType = nurseItem.allocationType.value
           nurseItem.teamType = nurseItem.teamType.value
           newRsps.push(nurseItem)
+        }else{
+          this.allocationTypeNurse = undefined
+          this.nameNurse = ''
+          this.isNurse = false
+          newRsps.push({
+            allocationType: undefined,
+            commodityPkgManageItemReqs: [],
+            teamType: undefined,
+          })
         }
 
         // 技师
         let technicianItem = undefined
         for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 6) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType) {
+            if (this.packageData.commodityPkgManageReqs[index].teamType.value == 6) {
             technicianItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
+          }
+          
         }
         if (technicianItem) {
           this.isTechnician = true
           this.allocationTypeTechnician = technicianItem.allocationType.value
-          this.allocationTypeTechnician = 2
           this.nameTechnician = ''
           technicianItem.commodityPkgManageItemReqs.forEach((item, index) => {
             if (index != technicianItem.commodityPkgManageItemReqs.length - 1) {
@@ -951,11 +963,8 @@ export default {
           technicianItem.teamType = technicianItem.teamType.value
           newRsps.push(technicianItem)
         } else {
-          this.allocationTypeNurse = undefined
           this.allocationTypeTechnician = undefined
-          // this.nameNurse = ''
-          // this.nameTechnician = ''
-          this.isNurse = false
+          this.nameTechnician = ''
           this.isTechnician = false
           newRsps.push({
             allocationType: undefined,
@@ -966,9 +975,12 @@ export default {
         //团队
         let teamItem = undefined
         for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 3) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType) {
+            if (this.packageData.commodityPkgManageReqs[index].teamType.value == 3) {
             teamItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
           }
+          }
+          
         }
         if (teamItem) {
           this.isTeam = true
@@ -1000,8 +1012,10 @@ export default {
         //团队
         let roleItem = undefined
         for (let index = 0; index < this.packageData.commodityPkgManageReqs.length; index++) {
-          if (this.packageData.commodityPkgManageReqs[index].teamType.value == 4) {
+          if (this.packageData.commodityPkgManageReqs[index].teamType) {
+            if (this.packageData.commodityPkgManageReqs[index].teamType.value == 4) {
             roleItem = JSON.parse(JSON.stringify(this.packageData.commodityPkgManageReqs[index]))
+          }
           }
         }
         if (roleItem) {
