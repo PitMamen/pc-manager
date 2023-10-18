@@ -52,7 +52,7 @@
 
             <div class="div-pro-line" style=" margin-top: -2%">
               <span class="span-item-name"> 类型 :</span>
-              <span class="span-item-value" style="width: 70%">{{ record.personType }}</span>
+              <span class="span-item-value" style="width: 70%">{{ record.personTypeshow }}</span>
             </div>
           </div>
 
@@ -338,7 +338,6 @@ export default {
       this.record = record
       this.queryParams.userId = record.userId
       this.queryParams.authSource = record.authSource
-
       this.idcardZList = []
       this.idcardFList = []
       this.titleZList = []

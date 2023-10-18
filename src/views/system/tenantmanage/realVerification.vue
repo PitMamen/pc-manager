@@ -171,7 +171,7 @@ export default {
         },
         {
           title: '人员类型',
-          dataIndex: 'personType',
+          dataIndex: 'personTypeshow',
         },
         {
           title: '登录账号',
@@ -231,7 +231,7 @@ export default {
               }
 
               data.rows.forEach((item) => {
-                this.$set(item, 'personType', this.getPersonType(item.personType))
+                this.$set(item, 'personTypeshow', this.getPersonType(item.personType))
                 this.$set(item, 'isLook', this.isLook(item.authStatusStr))
               })
 
