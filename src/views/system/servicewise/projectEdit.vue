@@ -946,6 +946,9 @@ export default {
           } else if (item.jumpType == '5') {
             item.taskType = '4'
             this.$set(item, 'taskTypeName', '病历查阅')
+          }else if (item.jumpType == '6') {
+            item.taskType = '6'
+            this.$set(item, 'taskTypeName', '消息提醒')
           } else {
             item.taskType = '3'
             this.$set(item, 'taskTypeName', '消息提醒')
@@ -1342,7 +1345,10 @@ export default {
         } else if (chooseOne.jumpType == 5) {
           itemTask.taskType = '4'
           this.$set(itemTask, 'taskTypeName', '病历查阅')
-        } else {
+        } else if (chooseOne.jumpType == 6) {
+          itemTask.taskType = '6'
+          this.$set(itemTask, 'taskTypeName', '消息提醒')
+        }else {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
         }

@@ -1155,6 +1155,10 @@ export default {
           // debugger
           itemTask.taskType = '4'
           this.$set(itemTask, 'taskTypeName', '病历查阅')
+        }else if (chooseOne.jumpType == '6') {
+          // debugger
+          itemTask.taskType = '6'
+          this.$set(itemTask, 'taskTypeName', '消息提醒')
         } else {
           itemTask.taskType = '3'
           this.$set(itemTask, 'taskTypeName', '消息提醒')
