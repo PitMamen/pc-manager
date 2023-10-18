@@ -1057,6 +1057,7 @@ export default {
           // titleZ: '',
 
           this.checkData = res.data
+          this.checkData.userType = res.data.userType
           this.userTypeTemp = res.data.userType
 
           this.idcardZList = []
@@ -1197,7 +1198,7 @@ export default {
 
           if (this.checkData.userType == 'doctor') {
             this.getBycodeOut('DOCTOR_TITLE')
-          } else if ((this.checkData.userType = 'nurse')) {
+          } else if ((this.checkData.userType == 'nurse')) {
             this.getBycodeOut('NURSE_TITLE')
           }
 
@@ -1484,7 +1485,7 @@ export default {
       console.log('code===:', code)
       if (code == 'doctor') {
         this.getBycodeOut('DOCTOR_TITLE')
-      } else if ((code = 'nurse')) {
+      } else if (code == 'nurse') {
         this.getBycodeOut('NURSE_TITLE')
       }
     },
