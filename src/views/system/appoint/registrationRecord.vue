@@ -420,6 +420,13 @@
       },
   
       onChange(momentArr, dateArr) {
+        if (dateArr[0] == '' && dateArr[1] == '') {
+        this.queryParams.orderStartTime = ''
+        this.queryParams.orderEndTime = ''
+        return
+      }
+
+
         this.createValue = momentArr
         this.queryParams.orderStartTime = dateArr[0]+ ' 00:00:00'
         this.queryParams.orderEndTime = dateArr[1]+ ' 23:59:59'
@@ -450,6 +457,11 @@
     //     this.queryParams.createEndTime = ''
     //     return
     //   }
+    if (dateArr2[0] == '' && dateArr2[1] == '') {
+        this.queryParams.appointStartTime = ''
+        this.queryParams.appointEndTime = ''
+        return
+      }
 
       this.orderTimeValue = momentArr
       this.queryParams.appointStartTime = dateArr2[0]+' 00:00:00'
