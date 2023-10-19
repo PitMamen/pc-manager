@@ -180,7 +180,7 @@
           
           {
             title: '挂号科室',
-            dataIndex: 'commodityName',
+            dataIndex: 'deptName',
   
             ellipsis: true,
           },
