@@ -142,6 +142,7 @@
               <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
                 <a-button type="primary" icon="search" @click="search()">查询</a-button>
                 <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="initQuerys()">重置</a-button>
+                <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportOut()">导出</a-button>
               </span>
             </div>
           </div>
@@ -191,7 +192,7 @@
 
 <script>
 import { getDepts, getDeptsPersonal, getDepartmentListForSelect } from '@/api/modular/system/posManage'
-import { list1, list2, overview, pie, bar } from '@/api/modular/system/paper'
+import { list1, list2, overview, pie, bar,exportFillQuestionnaireInfo } from '@/api/modular/system/paper'
 import { Ellipsis, Pies, Bars } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
 import { Empty } from 'ant-design-vue'
@@ -467,6 +468,46 @@ export default {
           this.$message.error(res.message)
         }
       })
+    },
+
+    //导出
+    exportOut(){
+
+     
+      var reqdata=this.getQuerys('key')
+      if(!reqdata.executeTimeStart || !reqdata.executeTimeEnd){
+        this.$message.info('请选择时间')
+        return
+      }
+
+      exportFillQuestionnaireInfo(reqdata)
+        .then((res) => {
+         
+            this.downloadfile(res)
+          
+        }).catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+        
+    },
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream; charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      if (result) {
+        var filename = result[1]
+        var downloadElement = document.createElement('a')
+        var href = window.URL.createObjectURL(blob) // 创建下载的链接
+        var reg = /^["](.*)["]$/g
+        downloadElement.style.display = 'none'
+        downloadElement.href = href
+        downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() // 点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href)
+      }
     },
     paperClick(paper) {
       this.currentPaper = paper
