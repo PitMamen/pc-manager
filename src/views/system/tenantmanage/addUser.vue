@@ -1679,7 +1679,7 @@ export default {
         if (!findItem) {
           if (this.userTypeTemp == 'doctor') {
             this.getBycodeOut('DOCTOR_TITLE')
-          } else if ((this.userTypeTemp = 'nurse')) {
+          } else if ((this.userTypeTemp == 'nurse')) {
             this.getBycodeOut('NURSE_TITLE')
           }
           this.$message.error('人员类型与职称不匹配!')
