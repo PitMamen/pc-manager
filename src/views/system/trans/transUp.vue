@@ -170,8 +170,8 @@ export default {
         },
         {
           title: "性别",
-          dataIndex: "userName",
-          scopedSlots: { customRender: "userName" },
+          dataIndex: "userdName",
+          scopedSlots: { customRender: "userNamde" },
         },
         {
           title: "年龄",
@@ -318,14 +318,14 @@ export default {
       this.$message.success("去打印");
     },
 
-    addTransUp(){
+    addTransUp() {
       this.$router.push({
-        name: 'transupDetail',
+        name: "transupDetail",
         // path: '/servicewise/projectEdit',
         // query: {
         //   planId: record.id,
         // },
-      })
+      });
     },
 
     getOrgList() {
