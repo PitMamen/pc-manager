@@ -38,6 +38,7 @@
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">
+              <div style="flex: 1"></div>
               <span style="color: #f90505; margin-top: 3px">*</span>患者姓名：
             </div>
             <div class="div-cell-value">
@@ -46,12 +47,13 @@
                 v-model="medicData.genericName"
                 allow-clear
                 placeholder="请输入患者姓名"
-                style="width: 160px"
+                style="width: 100%"
               />
             </div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">
+              <div style="flex: 1"></div>
               <a-select
                 v-model="medicData.drugTypeId"
                 placeholder="身份证"
@@ -72,20 +74,23 @@
               <a-input
                 v-model="medicData.genericAcronym"
                 allow-clear
-                style="width: 160px"
+                style="width: 100%"
                 placeholder="请输入"
               />
             </div>
           </div>
           <div class="div-cell">
-            <div class="div-cell-name">性别：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              性别：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.drugTypeId"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
-                style="height: 28px; width: 160px"
+                style="height: 28px; width: 100%"
               >
                 <a-select-option
                   v-for="item in typeDatas"
@@ -99,11 +104,12 @@
 
           <div class="div-cell">
             <div class="div-cell-name">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>出生日期：
             </div>
             <div class="div-cell-value">
               <a-date-picker
-                style="width: 160px"
+                style="width: 100%"
                 :default-value="nowDateBegin"
                 format="YYYY-MM-DD"
                 v-model="dateValue"
@@ -115,6 +121,7 @@
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>本人电话：
             </div>
             <div class="div-cell-value">
@@ -122,44 +129,53 @@
                 v-model="medicData.tradeName"
                 allow-clear
                 placeholder="请输入本人电话"
-                style="width: 160px"
+                style="width: 100%"
               />
             </div>
           </div>
 
           <div class="div-cell">
-            <div class="div-cell-name">联系人姓名：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              系人姓名：
+            </div>
             <div class="div-cell-value">
               <a-input
                 v-model="medicData.tradeName"
                 allow-clear
                 placeholder="请输入联系人姓名"
-                style="width: 160px"
+                style="width: 100%"
               />
             </div>
           </div>
 
           <div class="div-cell">
-            <div class="div-cell-name">联系人电话：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              联系人电话：
+            </div>
             <div class="div-cell-value">
               <a-input
                 v-model="medicData.tradeName"
                 allow-clear
                 placeholder="请输入联系人电话"
-                style="width: 160px"
+                style="width: 100%"
               />
             </div>
           </div>
 
           <div class="div-cell">
-            <div class="div-cell-name">国籍：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              国籍：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.drugTypeId"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
-                style="height: 28px; width: 160px"
+                style="height: 28px; width: 100%"
               >
                 <a-select-option
                   v-for="item in typeDatas"
@@ -174,14 +190,17 @@
 
         <div class="div-line">
           <div class="div-cell">
-            <div class="div-cell-name">名族：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              民族：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -193,34 +212,17 @@
             </div>
           </div>
           <div class="div-cell">
-            <div class="div-cell-name">血型：</div>
-            <div class="div-cell-value">
-              <a-select
-                v-model="medicData.healthInsuranceCategoryId"
-                @select="onSelectYibao"
-                placeholder="请选择"
-                allow-clear
-                style="width: 160px; height: 28px"
-              >
-                <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
-                >
-              </a-select>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              血型：
             </div>
-          </div>
-
-          <div class="div-cell">
-            <div class="div-cell-name">RH阴性：</div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -233,14 +235,40 @@
           </div>
 
           <div class="div-cell">
-            <div class="div-cell-name">文化程度：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              RH阴性：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              文化程度：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -255,14 +283,17 @@
 
         <div class="div-line">
           <div class="div-cell">
-            <div class="div-cell-name">职业：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              职业：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -274,14 +305,17 @@
             </div>
           </div>
           <div class="div-cell">
-            <div class="div-cell-name">婚姻状况：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              婚姻状况：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -295,6 +329,7 @@
 
           <div class="div-cell">
             <div class="div-cell-name">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>常住分类：
             </div>
             <div class="div-cell-value">
@@ -303,7 +338,7 @@
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -316,14 +351,17 @@
           </div>
 
           <div class="div-cell">
-            <div class="div-cell-name">医保类别：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              医保类别：
+            </div>
             <div class="div-cell-value">
               <a-select
                 v-model="medicData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -338,28 +376,30 @@
 
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell" style="width: 46%">
-            <div class="div-cell-name">
+            <div class="div-cell-name" style="width: 21.4%">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>户口地址：
             </div>
-            <div class="div-cell-value" style="">
+            <div class="div-cell-value" style="width: 85.1%">
               <a-input
                 v-model="medicData.approvalNumber"
                 allow-clear
                 placeholder="请输入户口地址"
-                style="width: 392px"
+                style=""
               />
             </div>
           </div>
-          <div class="div-cell" style="width: 46%">
-            <div class="div-cell-name">
+          <div class="div-cell" style="width: 46.8%">
+            <div class="div-cell-name" style="width: 19.8%">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>详细地址：
             </div>
-            <div class="div-cell-value">
+            <div class="div-cell-value" style="width: 78.5%">
               <a-input
-                v-model="medicData.code"
+                v-model="medicData.approvalNumber"
                 allow-clear
                 placeholder="请输入详细地址"
-                style="width: 392px"
+                style=""
               />
             </div>
           </div>
@@ -371,9 +411,10 @@
         <div class="box-title">疾病信息</div>
         <div class="box-divider" />
         <!-- 上下两行一一对应，才能保证宽度一致对其 -->
-        <div class="div-line" style="padding: 20px 0; margin-top: 0">
+        <div class="div-line" style="padding: 10px 0; margin-top: 0">
           <div class="div-cell">
             <div class="div-cell-name">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>病情分级：
             </div>
             <div class="div-cell-value">
@@ -382,7 +423,7 @@
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
-                style="width: 160px; height: 28px"
+                style="width: 12vw; height: 28px"
               >
                 <a-select-option
                   v-for="item in yibaoDatas"
@@ -394,11 +435,12 @@
             </div>
           </div>
 
-          <div class="div-cell" style="width: 45%">
-            <div class="div-cell-name">
+          <div class="div-cell" style="width: 70%">
+            <div class="div-cell-name" style="width: 13%">
+              <div style="flex: 1"></div>
               <span style="color: #f90505">*</span>主要诊断：
             </div>
-            <div class="div-cell-value" style="width: 80%">
+            <div class="div-cell-value" style="width: 85.5%">
               <a-select
                 mode="tags"
                 :token-separators="[',']"
@@ -419,6 +461,38 @@
             </div>
           </div>
         </div>
+
+        <div class="div-line" style="margin-top: 0">
+          <div class="div-cell" style="width: 100%; align-items: stretch">
+            <div class="div-cell-name" style="width: 9.2%; align-items: stretch">
+              <div style="flex: 1"></div>
+              病情描述：
+            </div>
+            <div class="div-cell-value" style="width: 82.8%">
+              <a-textarea
+                :rows="4"
+                placeholder="请输入"
+                v-decorator="['brief']"
+              ></a-textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="div-line" style="margin-top: 10px; padding-bottom: 10px">
+          <div class="div-cell" style="width: 100%; align-items: stretch">
+            <div class="div-cell-name" style="width: 9.2%; align-items: stretch">
+              <div style="flex: 1"></div>
+              治疗经过：
+            </div>
+            <div class="div-cell-value" style="width: 82.8%">
+              <a-textarea
+                :rows="4"
+                placeholder="请输入"
+                v-decorator="['brief']"
+              ></a-textarea>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="div-box" style="margin-top: 15px">
@@ -427,114 +501,43 @@
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">
-              <span style="color: #f90505; margin-top: 3px">*</span>药品名称：
-            </div>
-            <div class="div-cell-value">
-              <a-input
-                :maxLength="300"
-                v-model="medicData.genericName"
-                allow-clear
-                placeholder="请输入药品名称"
-                style="width: 210px"
-              />
-            </div>
-          </div>
-          <div class="div-cell">
-            <div class="div-cell-name"><span style="color: #f90505">*</span>检索码：</div>
-            <div class="div-cell-value">
-              <a-input
-                disabled
-                v-model="medicData.genericAcronym"
-                allow-clear
-                placeholder="自动生成"
-                style="width: 210px"
-              />
-            </div>
-          </div>
-          <div class="div-cell">
-            <div class="div-cell-name">
-              <span style="color: #f90505">*</span>生产厂商：
-            </div>
-            <div class="div-cell-value">
-              <a-auto-complete
-                v-model="medicData.manufacturerId"
-                placeholder="请输入选择"
-                option-label-prop="title"
-                @select="onSelectManu"
-                @search="handleSearchManu"
-                style="width: 210px; height: 28px"
-              >
-                <template slot="dataSource">
-                  <a-select-option
-                    v-for="(item, index) in manuDatas"
-                    :title="item.factoryName"
-                    :key="index + ''"
-                    :value="item.id + ''"
-                    >{{ item.factoryName }}</a-select-option
-                  >
-                </template>
-              </a-auto-complete>
-              <!-- <a-select v-model="medicData.manufacturerName" placeholder="请选择" allow-clear
-              style="width: 210px; height: 28px">
-              <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
-            </a-select> -->
-            </div>
-          </div>
-
-          <div class="div-cell">
-            <div class="div-cell-name"><span style="color: #f90505">*</span>检索码：</div>
-            <div class="div-cell-value">
-              <a-input
-                disabled
-                v-model="medicData.genericAcronym"
-                allow-clear
-                placeholder="自动生成"
-                style="width: 210px"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="div-line" style="margin-bottom: 10px">
-          <div class="div-cell">
-            <div class="div-cell-name">
-              <span style="color: #f90505">*</span>商品名称：
-            </div>
-            <div class="div-cell-value">
-              <a-input
-                v-model="medicData.tradeName"
-                allow-clear
-                placeholder="请输入商品名称"
-                style="width: 210px"
-              />
-            </div>
-          </div>
-          <div class="div-cell">
-            <div class="div-cell-name"><span style="color: #f90505">*</span>检索码：</div>
-            <div class="div-cell-value">
-              <a-input
-                disabled
-                v-model="medicData.tradeAcronym"
-                allow-clear
-                placeholder="自动生成"
-                style="width: 210px"
-              />
-            </div>
-          </div>
-          <div class="div-cell">
-            <div class="div-cell-name">
-              <span style="color: #f90505">*</span>药品类型：
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              转入机构：
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.drugTypeId"
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
                 placeholder="请选择"
-                @select="onSelectType"
                 allow-clear
-                style="width: 210px; height: 28px"
+                style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              转诊类型：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
                   :key="item.id"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
@@ -544,17 +547,151 @@
           </div>
 
           <div class="div-cell">
-            <div class="div-cell-name"><span style="color: #f90505">*</span>检索码：</div>
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              转诊原因：
+            </div>
             <div class="div-cell-value">
-              <a-input
-                disabled
-                v-model="medicData.genericAcronym"
+              <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
                 allow-clear
-                placeholder="自动生成"
-                style="width: 210px"
-              />
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
             </div>
           </div>
+
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              转运方式：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+        </div>
+
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              转入科室：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              接受医生：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+
+          <div class="div-cell" style="width: 46%">
+            <div class="div-cell-name" style="width: 20%">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              期望到院时间：
+            </div>
+            <div class="div-cell-value" style="width: 81%">
+              <a-range-picker
+                style="width: 100%"
+                :value="createValue"
+                @change="onChangeOrder"
+              />
+
+              <!-- <a-select
+                v-model="medicData.healthInsuranceCategoryId"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in yibaoDatas"
+                  :key="item.id"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="div-line" style="margin-bottom: 10px">
+          <div class="div-cell" style="width: 100%; align-items: stretch">
+            <div class="div-cell-name" style="width: 9.2%; align-items: stretch">
+              <div style="flex: 1"></div>
+              注意事项：
+            </div>
+            <div class="div-cell-value" style="width: 82.8%">
+              <a-textarea
+                :rows="4"
+                placeholder="请输入"
+                v-decorator="['brief']"
+              ></a-textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="div-line" style="margin-bottom: 10px;margin-top:0">
+          <div style="margin-left:10%">申请人：张三</div>
+          <div style="margin-left:30px">登记日期：20231025</div>
+          <div style="margin-left:30px">申请机构：中心医院</div>
         </div>
       </div>
 
@@ -597,6 +734,7 @@ import { STable, Ellipsis } from "@/components";
 import { formatDecimal } from "@/utils/util";
 import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import Vue from "vue";
+import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
 // import chooseMedic from './chooseMedic'
 
@@ -614,6 +752,7 @@ export default {
       dateValue: "", //
       lineStatus: "error",
       linePositon: 2,
+      createValue: [],
 
       statusData: [
         { code: -1, value: "全部" },
@@ -777,6 +916,11 @@ export default {
    */
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
+    this.createValue = [
+      moment(getDateNow(), this.dateFormat),
+      moment(getCurrentMonthLast(), this.dateFormat),
+    ];
+
     this.getMedicTypes();
     // this.getTreatTypes()
     this.getYiBaoDatas();
@@ -815,9 +959,34 @@ export default {
   //       }
   // },
   methods: {
-
-    handleChange(value){
-      console.log('handleChange',value)
+    handleChange(value) {
+      console.log("handleChange", value);
+    },
+    onChangeOrder(momentArr, dateArr2) {
+      // if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
+      //   this.$message.error("开始时间与结束时间跨度不能超过三个月!");
+      //   this.createValue = [];
+      //   this.queryParams.createStartTime = "";
+      //   this.queryParams.createEndTime = "";
+      //   return;
+      // }
+      // if (dateArr2) {
+      //   if (dateArr2[0] > dateArr2[1]) {
+      //     this.$message.error("开始时间不能大于结束时间");
+      //     this.createValue = [];
+      //     this.queryParams.updateStartTime = "";
+      //     this.queryParams.updateEndTime = "";
+      //     return;
+      //   }
+      // }
+      // if (dateArr2[0] == "" && dateArr2[1] == "") {
+      //   this.queryParams.createStartTime = "";
+      //   this.queryParams.createEndTime = "";
+      //   return;
+      // }
+      // this.createValue = momentArr;
+      // this.queryParams.createStartTime = dateArr2[0] + " 00:00:00";
+      // this.queryParams.createEndTime = dateArr2[1] + " 23:59:59";
     },
 
     clearData() {
@@ -2061,12 +2230,15 @@ button {
       align-items: center;
 
       .div-cell-name {
-        width: 130px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 40%;
         text-align: right;
       }
 
       .div-cell-value {
-        width: 160px;
+        width: 60%;
       }
 
       .temp {
