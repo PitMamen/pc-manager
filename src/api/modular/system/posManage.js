@@ -5511,6 +5511,107 @@ export function qryDepartmentByReq(data) {
 }
 
 
+//组织性质
+export function getOrganizationalNature(data) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/REFERRAL_ORG_NATURE',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+// 机构列表  全量
+
+export function getHospitalForOrgType(data) {
+  return axios({
+    url: '/uam-api/hospital/getHospitalForOrgType',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 转诊组织列表
+export function getreferralOrgList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/referralOrgList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 配置上级机构 
+export function configUpHospitalCode(data) {
+  return axios({
+    url: '/referral-api/referralOrg/configUpHospitalCode',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 上级机构列表
+export function getUpHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/getUpHospitalList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 下辖机构列表
+export function getDownHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/getDownHospitalList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 移除下辖机构
+export function removeDownHospital(data) {
+  return axios({
+    url: '/referral-api/referralOrg/removeDownHospital/'+data,
+    method: 'get',
+    // param: data,
+  })
+}
+
+
+// 新增转诊组织
+export function addReferralOrg(data) {
+  return axios({
+    url: '/referral-api/referralOrg/addReferralOrg',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 修改转诊组织
+export function modifyReferralOrg(data) {
+  return axios({
+    url: '/referral-api/referralOrg/modifyReferralOrg',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 获取转诊组织信息
+export function getReferralOrgInfo(data) {
+  return axios({
+    url: '/referral-api/referralOrg/getReferralOrgInfo/'+data,
+    method: 'get',
+    // param: data,
+  })
+}
+
+
+
+
+
+
 
 
 

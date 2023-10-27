@@ -12,7 +12,7 @@
       <a-button
         v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')"
         icon="setting"
-        style="margin-right: 520px; width: 112px !important"
+        style="margin-right: 60%; width: 112px !important"
         :type="canInitCommodity ? 'primary' : 'default'"
         :loading="confirmLoading"
         @click="handleServiceInit"
