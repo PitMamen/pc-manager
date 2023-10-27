@@ -11,36 +11,55 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-part" style="margin-top: 0px">
         <div class="div-part-left">
-          <div class="left-content1" style="margin-bottom: 20px" v-for="(item, index) in appListOut" :key="index">
+          <div
+            class="left-content1"
+            style="margin-bottom: 20px"
+            v-for="(item, index) in appListOut"
+            :key="index"
+          >
             <div class="div-content" style="margin-left: 0px">
               <a-checkbox
                 style="margin-left: 0px"
                 v-model="item.isChecked"
-                @change="checkBoxselectChange(item)"
-                :disabled="item.applicationId != 1"
+                @change="checkBoxselectChange(item, index)"
+                :disabled="item.applicationId != 1 && item.applicationId != 6"
               ></a-checkbox>
-              <span class="span-item-value" style="font-size: 14px; margin-top: 0px; margin-left: 10px; color: #4d4d4d"
+              <span
+                class="span-item-value"
+                style="
+                  font-size: 14px;
+                  margin-top: 0px;
+                  margin-left: 10px;
+                  color: #4d4d4d;
+                "
                 >{{ item.applicationName }}
               </span>
             </div>
 
             <div class="div-content" style="margin-left: -10px">
-              <span class="span-item-name" style="margin-left: -5px; margin-top: 10px">已选科室:</span>
+              <span class="span-item-name" style="margin-left: -5px; margin-top: 10px"
+                >已选科室:</span
+              >
+              <!-- :value="item.applicationId == 1 ? selectedRowKeys : item.selectedRowKeyids" -->
               <a-select
                 allow-clear
-                :disabled="item.applicationId != 1"
-                :value="item.applicationId == 1 ? selectedRowKeys : item.selectedRowKeyids"
+                :disabled="item.applicationId != 1 && item.applicationId != 6"
+                :value="item.selectedRowKeyids"
                 placeholder="请在表格中勾选科室"
                 dropdownClassName="select-tags-hidden"
                 :maxTagCount="1"
                 :collapse-tags="true"
                 mode="multiple"
                 style="height: 28px; width: 250px; margin-left: 0px; margin-top: 10px"
-                @change="ksSelectChange"
+                @change="ksSelectChange($event, index)"
+                @focus="onSelectFocus(item, index)"
               >
-                <a-select-option v-for="(item, index) in allDepartList" :key="index" :value="item.department_id">{{
-                  item.department_name
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in allDepartList"
+                  :key="index"
+                  :value="item.department_id"
+                  >{{ item.department_name }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -63,7 +82,10 @@
           <s-table
             ref="table"
             size="default"
-            :row-selection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
+            :row-selection="{
+              selectedRowKeys: selectedRowKeys,
+              onChange: onSelectChange,
+            }"
             :columns="columnsDept"
             :data="loadData"
             :alert="true"
@@ -78,19 +100,22 @@
     </a-spin>
   </a-modal>
 </template>
-  
-  
-  <script>
-import { STable } from '@/components'
-import { getDepartmentListForReq, getManagerDepts, updateManagerDepts } from '@/api/modular/system/posManage'
-import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import Vue from 'vue'
+
+<script>
+import { STable } from "@/components";
+import {
+  getDepartmentListForReq,
+  getManagerDepts,
+  updateManagerDepts,
+} from "@/api/modular/system/posManage";
+import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
+import Vue from "vue";
 export default {
   components: { STable },
   data() {
     return {
-      hospitalCode: '',
-      accountId: '',
+      hospitalCode: "",
+      accountId: "",
       isChecked: false,
       visible: false,
       headers: {},
@@ -99,21 +124,26 @@ export default {
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
+      currentIndex: 0, //  正在编辑的item的指针  deptInfos 是当前item的管理科室数组
+      // deptInfos     {
+      //                   "deptId": 1030731,
+      //                   "deptName": "代谢内分泌一病区"
+      //               }
       fileList: [],
       danandataList: [],
       treeData: [],
       checkData: {
-        account: '', //登录账号
-        userId: '', //对应人员
-        name: '',
-        tel: '',
+        account: "", //登录账号
+        userId: "", //对应人员
+        name: "",
+        tel: "",
         role: undefined, //分配角色
-        zuoxi: '', //坐席
+        zuoxi: "", //坐席
       },
 
       queryParamsApp: {
-        applicationName: '',
-        applicationType: '', //1内部应用,2外部应用
+        applicationName: "",
+        applicationType: "", //1内部应用,2外部应用
         status: 1, //1开启,2关闭
       },
 
@@ -124,83 +154,85 @@ export default {
       // 表头
       columnsDept: [
         {
-          title: '科室名称',
-          dataIndex: 'department_name',
+          title: "科室名称",
+          dataIndex: "department_name",
         },
 
         {
-          title: '科室类型',
-          dataIndex: 'department_type_cn',
+          title: "科室类型",
+          dataIndex: "department_type_cn",
         },
       ],
       allDepartList: [],
       queryParams: {
-        departmentName: '',
-        hospitalCode: '',
-        parentDisarmamentId: '',
+        departmentName: "",
+        hospitalCode: "",
+        parentDisarmamentId: "",
         status: 1,
       },
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getDepartmentListForReq(Object.assign(parameter, this.queryParams)).then((res) => {
-          if (res.code == 0) {
-            var data = {
-              pageNo: res.data.current,
-              pageSize: res.data.size,
-              totalRows: res.data.total,
-              totalPage: res.data.total / res.data.size,
-              rows: res.data.records,
+        return getDepartmentListForReq(Object.assign(parameter, this.queryParams)).then(
+          (res) => {
+            if (res.code == 0) {
+              var data = {
+                pageNo: res.data.current,
+                pageSize: res.data.size,
+                totalRows: res.data.total,
+                totalPage: res.data.total / res.data.size,
+                rows: res.data.records,
+              };
+              return data;
             }
-            return data
           }
-        })
+        );
       },
-    }
+    };
   },
   created() {},
   methods: {
     clearData() {},
     //科室管理
     assdepartmanage(record) {
-      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-      this.clearData()
-      this.accountId = record.accountId
-      this.queryParams.hospitalCode = record.hospitalCode
-      this.hospitalCode = record.hospitalCode
-      this.visible = true
-      this.confirmLoading = false
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
+      this.clearData();
+      this.accountId = record.accountId;
+      this.queryParams.hospitalCode = record.hospitalCode;
+      this.hospitalCode = record.hospitalCode;
+      this.visible = true;
+      this.confirmLoading = false;
 
       if (this.$refs.table) {
-        this.reset()
+        this.reset();
       }
       // this.getApplicationlistOut()
-      this.getManagerDeptsOut()
+      this.getManagerDeptsOut();
 
       getDepartmentListForReq({
-        departmentName: '',
+        departmentName: "",
         pageNo: 1,
         pageSize: 10000,
-        parentDisarmamentId: '',
+        parentDisarmamentId: "",
         status: 1,
         hospitalCode: this.hospitalCode,
       }).then((res) => {
         if (res.code == 0) {
-          this.allDepartList = res.data.records
+          this.allDepartList = res.data.records;
         }
-      })
+      });
     },
 
     clearData() {
-      this.selectedRowKeyids = []
-      this.selectedRowKeys = []
-      this.queryParams.departmentName = ''
+      this.selectedRowKeyids = [];
+      this.selectedRowKeys = [];
+      this.queryParams.departmentName = "";
     },
 
     modalChange(record, id) {
       if (id == 1) {
-        return this.selectedRowKeys
+        return this.selectedRowKeys;
       } else {
-        return record.selectedRowKeys
+        return record.selectedRowKeys;
       }
     },
 
@@ -208,112 +240,192 @@ export default {
       getManagerDepts({ accountId: this.accountId }).then((res) => {
         if (res.code == 0) {
           if (res.data.items) {
-            this.appList = res.data.items
+            this.appList = res.data.items;
 
-            this.appListOut = JSON.parse(JSON.stringify(this.appList))
+            this.appListOut = JSON.parse(JSON.stringify(this.appList));
             this.appListOut.forEach((item, index) => {
               // this.$set(item, 'isChecked', item.deptInfos ? true : false)  //根据条件判断
-              this.$set(item, 'isChecked', true) // 这里默认进来的时候 就是选中状态 ，到时候其他应用放开的时候 再根据条件判断
-              this.$set(item, 'selectedRowKeyids', [])
+              this.$set(item, "isChecked", true); // 这里默认进来的时候 就是选中状态 ，到时候其他应用放开的时候 再根据条件判断
+              this.$set(item, "selectedRowKeyids", []);
+
+              //科室全部初始化
               if (item.deptInfos) {
-                if (item.applicationId == 1) {
-                  //只添加 全病程管理的应用
-                  var departList = item.deptInfos
-                  var tempList = this.removeDuplicate(departList)
-                  tempList.forEach((item1, index1) => {
-                    this.selectedRowKeys.push(item1.deptId)
-                  })
-                }
+                // if (item.applicationId == 1) {
+                //只添加 全病程管理的应用
+                var departList = item.deptInfos;
+                var tempList = this.removeDuplicate(departList);
+                tempList.forEach((item1, index1) => {
+                  item.selectedRowKeyids.push(item1.deptId);
+                  // this.selectedRowKeys.push(item1.deptId)
+                });
+                // }
               }
-            })
-            this.updateSelect()
+            });
+
+            //默认第一个获取焦点回显到右侧表格
+            this.selectedRowKeys = JSON.parse(
+              JSON.stringify(this.appListOut[0].selectedRowKeyids)
+            );
+
+            this.updateSelect();
           }
         }
-      })
+      });
     },
 
     //checkbox 选择
-    checkBoxselectChange(item) {
-      this.isChecked = item.isChecked
-      //  console.log("检查：",this.isChecked )
+    checkBoxselectChange(item, index) {
+      console.log("checkBoxselectChange", JSON.parse(JSON.stringify(item)));
+      if (this.currentIndex != index) {
+        this.currentIndex = index;
+      }
+
+      if (item.isChecked) {
+        //勾选的，则切换
+        this.selectedRowKeys = JSON.parse(
+          JSON.stringify(this.appListOut[this.currentIndex].selectedRowKeyids)
+        );
+        this.updateSelect();
+      } else {
+        this.appListOut[this.currentIndex].selectedRowKeyids = [];
+        this.selectedRowKeys = [];
+        this.updateSelect();
+        //取消勾选
+      }
+
+      // this.currentIndex = index;
+      // this.selectedRowKeys = JSON.parse(
+      //   JSON.stringify(this.appListOut[this.currentIndex].selectedRowKeyids)
+      // );
+      // this.updateSelect();
+
+      //全局变量isChecked暂时没有实际作用
     },
 
     onSelectChange(selectedRowKeys) {
-      this.selectedRowKeys = selectedRowKeys
+      this.selectedRowKeys = selectedRowKeys;
+      this.appListOut[this.currentIndex].selectedRowKeyids = JSON.parse(
+        JSON.stringify(selectedRowKeys)
+      );
     },
-    ksSelectChange(values) {
-      console.log(values)
-      this.selectedRowKeys = values
-      this.updateSelect()
+
+    // ksSelectChange(item, index,values) {
+    ksSelectChange(values, index) {
+      //$event 系统参数  index是自定义参数
+      // console.log("ksSelectChange item", item);
+      // console.log("ksSelectChange index", index);
+      console.log("ksSelectChange values", values);
+      console.log("ksSelectChange index", index);
+      this.currentIndex = index;
+      // return
+      this.appListOut[this.currentIndex].selectedRowKeyids = JSON.parse(
+        JSON.stringify(values)
+      );
+      this.selectedRowKeys = JSON.parse(JSON.stringify(values));
+      this.updateSelect();
     },
+
+    onSelectFocus(item, index) {
+      console.log("onSelectFocus index", index);
+      if (this.currentIndex != index) {
+        this.currentIndex = index;
+        this.selectedRowKeys = JSON.parse(
+          JSON.stringify(this.appListOut[this.currentIndex].selectedRowKeyids)
+        );
+        this.updateSelect();
+      }
+    },
+
     onInputChange() {
-      this.$refs.table.refresh(true)
+      this.$refs.table.refresh(true);
     },
     updateSelect() {
-      this.$refs.table.updateSelect(this.selectedRowKeys, [])
+      this.$refs.table.updateSelect(this.selectedRowKeys, []);
     },
 
     //数组元素去重
     removeDuplicate(arry) {
-      const newArry = []
+      const newArry = [];
       if (arry != null && arry.length > 0) {
         arry.forEach((item) => {
           if (!newArry.includes(item)) {
-            newArry.push(item)
+            newArry.push(item);
           }
-        })
+        });
       }
-      return newArry
+      return newArry;
     },
 
     reset() {
-      this.$refs.table.refresh(true)
+      this.$refs.table.refresh(true);
     },
     handleSubmit() {
-      if (this.selectedRowKeys.length == 0) {
-        this.$message.error('请选择科室')
-        return
+      console.log("handleSubmit", JSON.stringify(this.appListOut));
+      // return
+      // if (this.selectedRowKeys.length == 0) {
+      //   this.$message.error('请选择科室')
+      //   return
+      // }
+
+      let num = 0;
+      this.appListOut.forEach((item, index) => {
+        if (item.selectedRowKeyids.length > 0) {
+          num = num + item.selectedRowKeyids.length;
+          item.selectedRowKeyids = this.removeDuplicate(item.selectedRowKeyids);
+        }
+      });
+      if (num == 0) {
+        this.$message.error("您未选择科室");
+        return;
       }
 
-      var temparray = this.removeDuplicate(this.selectedRowKeys)
-      this.confirmLoading = true
-      let selectIds = JSON.parse(JSON.stringify(temparray))
-      var items = []
-      items.push({
-        applicationId: 1,
-        deptIds: selectIds,
-      })
+      // var temparray = this.removeDuplicate(this.selectedRowKeys)
+      // this.confirmLoading = true
+      // let selectIds = JSON.parse(JSON.stringify(temparray))
+      // var items = []
+      // items.push({
+      //   applicationId: 1,
+      //   deptIds: selectIds,
+      // })
 
       var queryParamsData = {
-        // accountId: this.accountId,
         accountId: this.accountId,
-        items: items,
-      }
+        // items: items,
+        items: [],
+      };
+      this.appListOut.forEach((item, index) => {
+        if (item.selectedRowKeyids.length > 0) {
+          queryParamsData.items.push({
+            applicationId: item.applicationId,
+            deptIds: item.selectedRowKeyids,
+          });
+        }
+      });
+
       updateManagerDepts(queryParamsData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('关联科室成功！')
-          this.visible = false
-          this.$emit('ok', '')
+          this.$message.success("关联科室成功！");
+          this.visible = false;
+          this.$emit("ok", "");
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-        this.confirmLoading = false
-      })
+        this.confirmLoading = false;
+      });
     },
 
     goBack() {
-      window.history.back()
+      window.history.back();
     },
 
     handleCancel() {
-      this.visible = false
+      this.visible = false;
     },
   },
-}
+};
 </script>
 
-  <style lang="less" scoped>
-
+<style lang="less" scoped>
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
@@ -459,4 +571,3 @@ export default {
   }
 }
 </style>
-  
