@@ -1,7 +1,7 @@
 <template>
   <a-modal
     title="管理科室"
-    :width="760"
+    :width="900"
     :visible="visible"
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
@@ -456,13 +456,13 @@ export default {
 
   .div-part-left {
     float: left;
-    width: 50%;
+    width: 45%;
     overflow: hidden;
     height: 100%;
   }
   .div-part-right {
     float: right;
-    width: 50%;
+    width: 55%;
     overflow: hidden;
     height: 100%;
   }
