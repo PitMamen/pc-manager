@@ -261,7 +261,6 @@ export default {
   margin-top: 10px;
 
   .half-kuang {
-    width: 303px;
     height: 350px;
     margin-left: 20px;
     margin-right: 25px;
