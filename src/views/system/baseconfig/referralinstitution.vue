@@ -131,6 +131,8 @@ export default {
         {
           title: '机构数量',
           dataIndex: 'count',
+          align: 'center',
+        
         },
 
         {
@@ -172,6 +174,7 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        console.log("JJJ:", this.params.id )
         return getDownHospitalList(Object.assign(parameter, this.params)).then((res) => {
           //组装控件需要的数据结构
           var data = {
@@ -198,7 +201,7 @@ export default {
   },
 
   created() {
-    this.getreferralOrgListOut()
+    this.getreferralOrgListOut(true)
     // this.queryHospitalListOut()
   },
 
@@ -253,7 +256,7 @@ export default {
     // },
 
     //分页列表  （左侧）
-    getreferralOrgListOut() {
+    getreferralOrgListOut(isfirst) {
       getreferralOrgList().then((res) => {
         if (res.code == 0) {
           if (res.data && res.data.length > 0) {
@@ -262,8 +265,10 @@ export default {
             })
 
             this.leftListData = res.data
-            this.params.id = this.leftListData[0].id //默认第一个 id
-            this.leftListData[0].checked = true
+            if (isfirst) {
+                this.params.id = this.leftListData[0].id //默认第一个 id
+                this.leftListData[0].checked = true
+            }
           } else {
             this.leftListData = []
             this.params.id = -1 //默认第一个 id
@@ -299,14 +304,14 @@ export default {
       this.$refs.table.refresh()
     },
 
-    //删除团队
+    //移除机构
     goDelete(item) {
       //   this.confirmLoading = true
       deleteUserTagsType(item.id).then((res) => {
         this.confirmLoading = false
         if (res.code == 0) {
           this.$message.success('删除成功')
-          this.getreferralOrgListOut()
+          this.getreferralOrgListOut(false)
           this.handleOk()
         } else {
           this.$message.error('删除失败：' + res.message)
@@ -339,7 +344,7 @@ export default {
     },
 
     refreshLeftList() {
-      this.getreferralOrgListOut() //刷新健康团队列表 (左侧)
+      this.getreferralOrgListOut(false) //刷新健康团队列表 (左侧)
     },
 
     onSelectChange(selectedRowKeys, selectedRows) {

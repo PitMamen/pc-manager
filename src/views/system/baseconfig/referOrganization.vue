@@ -40,13 +40,26 @@
           </div>
 
           <div class="div-content">
-            <a-input allow-clear placeholder="请输入选中机构名称检索" style="width: 186px; margin-left: 10px" />
+            <a-input
+              v-model="inputName"
+              @keyup.enter="searchName"
+              @search="searchName"
+              @blur="searchName"
+              @change="onChanage"
+              allow-clear
+              placeholder="请输入待选机构名称检索"
+              style="width: 186px; margin-left: 10px"
+            />
 
             <a-input
               allow-clear
-              placeholder="请输入待选机构名称检索"
+              placeholder="请输入选中机构名称检索"
               style="width: 186px; margin-left: 44px"
-              v-model="inputName"
+              v-model="noinputName"
+              @keyup.enter="selectName"
+              @search="selectName"
+              @blur="selectName"
+              @change="selectNameChanage"
             />
           </div>
 
@@ -92,7 +105,11 @@ export default {
       natureList: [],
       inputName: '',
       mockData: [],
+      dataSource: [],
+      inputName: '',
+      noinputName: '',
       targetKeys: [],
+      targetData: [],
       // 高级搜索 展开/关闭
       treeData: [],
       checkData: {
@@ -136,6 +153,72 @@ export default {
       }
     },
 
+    selectNameChanage(event) {
+      if (event.target.value == '' || event.type == 'click') {
+        this.getReferralOrgInfoOut()
+      }
+    },
+
+    selectName() {
+      if (this.noinputName) {
+        if (this.targetData && this.targetData.length > 0) {
+          var ss = this.targetData.filter((p) => {
+            return p.hospitalName.indexOf(this.noinputName) > -1
+          })
+          console.log('JJJ:', ss)
+
+          if (ss && ss.length > 0) {
+            const targetKeys = []
+            for (let i = 0; i < ss.length; i++) {
+              targetKeys.push(ss[i].hospitalCode)
+            }
+            this.targetKeys = targetKeys
+          } else {
+            this.targetKeys = JSON.parse(JSON.stringify(this.targetKeys))
+          }
+        }
+      } else {
+        this.targetKeys = JSON.parse(JSON.stringify(this.targetKeys))
+      }
+    },
+
+    onChanage(event) {
+
+        if (event.target.value == '' || event.type == 'click') {
+            this.mockData = JSON.parse(JSON.stringify(this.dataSource))
+      }
+    //   if (event.type == 'click') {
+    //     this.mockData = JSON.parse(JSON.stringify(this.dataSource))
+    //   }
+    },
+
+    searchName() {
+      if (this.inputName) {
+        if (this.dataSource && this.dataSource.length > 0) {
+          var ss = this.dataSource.filter((p) => {
+            return p.title.indexOf(this.inputName) > -1
+          })
+
+          if (ss && ss.length > 0) {
+            const mockData = []
+            for (let i = 0; i < ss.length; i++) {
+              const data = {
+                key: ss[i].key,
+                title: ss[i].title,
+                description: `description of ${ss[i].description}`,
+              }
+              mockData.push(data)
+            }
+            this.mockData = mockData
+          } else {
+            this.mockData = JSON.parse(JSON.stringify(this.dataSource))
+          }
+        }
+      } else {
+        this.mockData = JSON.parse(JSON.stringify(this.dataSource))
+      }
+    },
+
     // 获取组织性质
     getOrganizationalNatureOut() {
       getOrganizationalNature().then((res) => {
@@ -149,11 +232,18 @@ export default {
 
     // 获取转诊组织信息
     getReferralOrgInfoOut() {
+      const targetKeys = []
       getReferralOrgInfo(this.checkData.id).then((res) => {
-        if (res.code==0) {
-            this.targetKeys = res.data.referralOrgRelList
+        if (res.code == 0) {
+          if (res.data.referralOrgRelList) {
+            const dataTemp = res.data.referralOrgRelList
+            this.targetData = res.data.referralOrgRelList
+            for (let i = 0; i < dataTemp.length; i++) {
+              this.targetKeys.push(dataTemp[i].hospitalCode)
+            }
+          }
+          console.log('HHHH:', this.targetData)
         }
-
       })
     },
 
@@ -166,7 +256,7 @@ export default {
           if (res.data) {
             for (let i = 0; i < res.data.length; i++) {
               const data = {
-                key: res.data[i].id.toString(),
+                key: res.data[i].hospitalCode,
                 title: res.data[i].hospitalName,
                 description: `description of ${res.data[i].hospitalName}`,
               }
@@ -175,15 +265,17 @@ export default {
           }
         }
       })
+      this.dataSource = mockData
       this.mockData = mockData
       this.targetKeys = targetKeys
+      console.log('ccccc:', this.mockData)
     },
 
     handleChange(targetKeys, direction, moveKeys) {
       this.targetKeys = targetKeys
       this.checkData.hospitalCodeList = this.targetKeys
 
-      console.log('DDDD:', this.checkData.hospitalCodeList)
+      console.log('DDDD:', this.targetKeys)
     },
 
     //新增
@@ -192,7 +284,7 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.getOrganizationalNatureOut() //获取组织性质列表
-      this.getHospitalForOrgTypeOut()
+      this.getHospitalForOrgTypeOut() //全量结构列表
     },
     //修改
     editModel(record) {

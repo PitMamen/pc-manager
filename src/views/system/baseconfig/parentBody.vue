@@ -75,6 +75,7 @@ export default {
       confirmLoading: false,
       hospitalList: [],
       checkLenght: [],
+      upHospitalNameList: [],
       queryParamType: {
         id: '',
       },
@@ -91,13 +92,16 @@ export default {
   created() {},
   methods: {
     clearData() {
+        this.checkLenght=[]
       this.queryParamType.id = ''
+      this.checkData.hospitalCodeList = []
     },
+
 
     onChanage(event) {
       console.log('FFF：', event.type)
-      if (event.type == 'click') {
-        this.hospitalList = JSON.parse(JSON.stringify(this.hospitalList))
+      if (event.target.value == '' || event.type == 'click') {
+        this.getUpHospitalListOut()
       }
     },
     searchName() {
@@ -112,8 +116,6 @@ export default {
           } else {
             this.hospitalList = JSON.parse(JSON.stringify(this.hospitalList))
           }
-
-          console.log('2222:', ss)
         }
       } else {
         this.hospitalList = JSON.parse(JSON.stringify(this.hospitalList))
@@ -130,6 +132,7 @@ export default {
         this.checkLenght.pop()
 
         this.checkData.hospitalCodeList = this.checkData.hospitalCodeList.filter((local) => local != item.hospitalCode)
+        // console.log("HHHHH:",this.checkData.hospitalCodeList)
       }
     },
 
@@ -139,13 +142,18 @@ export default {
           this.hospitalList = res.data
           this.hospitalList.forEach((item) => {
             this.$set(item, 'isCheck', false)
-            if (this.checkData.hospitalCodeList) {
-              this.checkData.hospitalCodeList.forEach((itemIn) => {
-                if (itemIn.hospitalCode == item.hospitalCode) {
-                  this.$set(item, 'isCheck', true)
+            if (this.upHospitalNameList&&this.upHospitalNameList.length>0) {
+              this.upHospitalNameList.forEach((itemIn) => {
+                if (itemIn == item.hospitalName) {
+                    item.isCheck = true
+                    this.checkLenght.push(item)
+                    console.log("11111111111111111")
+                    this.checkData.hospitalCodeList.push(item.hospitalCode)
                 }
               })
             }
+
+            // console.log("VVV:",this.checkData.hospitalCodeList)
           })
         } else {
           this.$message.error('获取失败：' + res.message)
@@ -158,8 +166,10 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      this.checkData = record
+    //   console.log('RRR:', record)
+      this.checkData.id = record.id
       this.queryParamType.id = record.id
+      this.upHospitalNameList = record.upHospitalName
       this.getUpHospitalListOut()
     },
 
@@ -251,7 +261,6 @@ export default {
   margin-top: 10px;
 
   .half-kuang {
-    width: 303px;
     height: 350px;
     margin-left: 20px;
     margin-right: 25px;
