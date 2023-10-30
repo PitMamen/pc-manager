@@ -137,7 +137,7 @@
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              系人姓名：
+              联系人姓名：
             </div>
             <div class="div-cell-value">
               <a-input
