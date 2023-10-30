@@ -5531,6 +5531,42 @@ export function getHospitalForOrgType(data) {
   })
 }
 
+// 获取档案信息
+export function getPatientBaseInfo(data) {
+  return axios({
+    url: '/referral-api/patient/getPatientBaseInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+// /patient/getRegionInfo  查询区域地区信息
+export function getRegionInfo(data) {
+  return axios({
+    url: '/referral-api/patient/getRegionInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+/// patient/qryPatientBaseList   查询档案列表
+export function qryPatientBaseList(data) {
+  return axios({
+    url: '/referral-api/patient/qryPatientBaseList',
+    method: 'post',
+    data: data,
+  })
+}
+
+///patient/savePatientBaseInfo  保存档案
+export function savePatientBaseInfo(data) {
+  return axios({
+    url: '/referral-api/patient/savePatientBaseInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 转诊组织列表
 export function getreferralOrgList(data) {
   return axios({
