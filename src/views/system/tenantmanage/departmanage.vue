@@ -399,6 +399,11 @@ export default {
             applicationId: item.applicationId,
             deptIds: item.selectedRowKeyids,
           });
+        } else {
+          queryParamsData.items.push({
+            applicationId: item.applicationId,
+            deptIds: [],
+          });
         }
       });
 
