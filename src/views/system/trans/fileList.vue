@@ -4,10 +4,10 @@
       <div class="search-row">
         <span class="name">关键字查询:</span>
         <a-input
-          v-model="queryParam.title"
+          v-model="queryParam.keyWord"
           allow-clear
           placeholder="可输入患者姓名或电话号码查询"
-          style="width: 180px; height: 28px"
+          style="width: 210px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -54,7 +54,9 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template>
-          <a @click="goEdit"><a-icon style="margin-right: 5px" type="edit" />修改</a>
+          <a @click="goEdit(record)"
+            ><a-icon style="margin-right: 5px" type="edit" />修改</a
+          >
         </template>
         <!-- <template v-if="record.status === 2">
           <span style="margin-right: 5px; color: #999"
@@ -92,8 +94,9 @@ import {
   accessHospitals,
   getCommodityClassify,
   getDepartmentListForSelect,
+  qryPatientBaseList,
 } from "@/api/modular/system/posManage";
-import { list } from "@/api/modular/system/rate";
+// import { list } from "@/api/modular/system/rate";
 import { STable, Ellipsis } from "@/components";
 import moment from "moment";
 import Vue from "vue";
@@ -113,7 +116,7 @@ export default {
       visibleDes: false,
       createValue: [],
       // 查询参数
-      queryParam: { executeDepartment: undefined, title: "" },
+      queryParam: { keyWord: undefined },
       statusSelects: [
         {
           id: "",
@@ -136,58 +139,58 @@ export default {
       columns: [
         {
           title: "患者姓名",
-          dataIndex: "userName",
-          scopedSlots: { customRender: "userName" },
+          dataIndex: "name",
+          scopedSlots: { customRender: "name" },
         },
         {
           title: "性别",
-          dataIndex: "userdName",
-          scopedSlots: { customRender: "userNamde" },
+          dataIndex: "sex",
+          scopedSlots: { customRender: "sex" },
         },
         {
           title: "年龄",
-          dataIndex: "userPhone",
-          scopedSlots: { customRender: "userPhone" },
+          dataIndex: "age",
+          scopedSlots: { customRender: "age" },
         },
         {
           title: "身份证号",
-          dataIndex: "commodityName",
-          scopedSlots: { customRender: "commodityName" },
+          dataIndex: "identificationNo",
+          scopedSlots: { customRender: "identificationNo" },
         },
         {
           title: "联系电话",
+          dataIndex: "phone",
+          scopedSlots: { customRender: "phone" },
+        },
+        {
+          title: "家属姓名",
+          dataIndex: "contactor",
+          scopedSlots: { customRender: "contactor" },
+        },
+        {
+          title: "家属电话",
+          dataIndex: "contactTel",
+          scopedSlots: { customRender: "contactTel" },
+        },
+        {
+          title: "医保类型",
+          dataIndex: "insuranceType",
+          scopedSlots: { customRender: "insuranceType" },
+        },
+        {
+          title: "家庭地址",
+          dataIndex: "addressDetail",
+          scopedSlots: { customRender: "addressDetail" },
+        },
+        {
+          title: "当前机构",
           dataIndex: "hospitalName",
           scopedSlots: { customRender: "hospitalName" },
         },
         {
-          title: "家属姓名",
-          dataIndex: "doctorName",
-          scopedSlots: { customRender: "doctorName" },
-        },
-        {
-          title: "家属电话",
-          dataIndex: "classifyName",
-          scopedSlots: { customRender: "classifyName" },
-        },
-        {
-          title: "医保类型",
-          dataIndex: "createTime",
-          scopedSlots: { customRender: "createTime" },
-        },
-        {
-          title: "家庭地位",
-          dataIndex: "checktTime",
-          scopedSlots: { customRender: "checktTime" },
-        },
-        {
-          title: "当前机构",
-          dataIndex: "statdus",
-          scopedSlots: { customRender: "stadtus" },
-        },
-        {
           title: "转诊状态",
-          dataIndex: "status",
-          scopedSlots: { customRender: "status" },
+          dataIndex: "statusName",
+          scopedSlots: { customRender: "statusName" },
         },
         {
           title: "操作",
@@ -199,13 +202,15 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return list(Object.assign(parameter, this.queryParam)).then((res) => {
-          if (res.code === 0) {
-            return res.data;
-          } else {
-            this.$message.error(res.message);
+        return qryPatientBaseList(Object.assign(parameter, this.queryParam)).then(
+          (res) => {
+            if (res.code === 0) {
+              return res.data;
+            } else {
+              this.$message.error(res.message);
+            }
           }
-        });
+        );
       },
       classData: [],
       treeData: [],
@@ -218,7 +223,7 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.queryParam = { ...this.queryParam, ...this.$route.query };
+    // this.queryParam = { ...this.queryParam, ...this.$route.query };
     this.getOrgList();
     this.getClassData();
     this.user = Vue.ls.get(TRUE_USER);
@@ -267,12 +272,12 @@ export default {
     showDes() {
       this.visibleDes = true;
     },
-    onChange(momentArr, dateArr) {
-      console.log("MMM:", dateArr);
-      this.createValue = momentArr;
-      this.queryParam.startTime = dateArr[0];
-      this.queryParam.endTime = dateArr[1];
-    },
+    // onChange(momentArr, dateArr) {
+    //   console.log("MMM:", dateArr);
+    //   this.createValue = momentArr;
+    //   this.queryParam.startTime = dateArr[0];
+    //   this.queryParam.endTime = dateArr[1];
+    // },
 
     formatDate(date) {
       date = new Date(date);
@@ -284,10 +289,10 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`;
     },
 
-    goEdit() {
+    goEdit(record) {
       //TODO
       // this.$message.success("去编辑");
-      this.$refs.infoForm.addTeam({});
+      this.$refs.infoForm.goModify(record);
     },
     goFile() {
       // this.$message.success("去打印");

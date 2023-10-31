@@ -19,7 +19,7 @@
             <div class="div-cell-value">
               <a-input
                 :maxLength="300"
-                v-model="userData.genericName"
+                v-model="userData.name"
                 allow-clear
                 placeholder="请输入患者姓名"
                 style="width: 100%"
@@ -30,15 +30,15 @@
             <div class="div-cell-name">
               <div style="flex: 1"></div>
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.identificationType"
                 placeholder="身份证"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 90px"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
-                  :key="item.id"
+                  v-for="item in zhengjianDatas"
+                  :key="item.code"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
@@ -47,10 +47,10 @@
 
             <div class="div-cell-value">
               <a-input
-                v-model="userData.genericAcronym"
+                v-model="userData.identificationNo"
                 allow-clear
                 style="width: 100%"
-                placeholder="请输入"
+                placeholder="请输入证件编号"
               />
             </div>
           </div>
@@ -64,16 +64,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.sex"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in genderData"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -86,9 +86,9 @@
               <span style="color: #f90505">*</span>出生日期：
             </div>
             <div class="div-cell-value">
+              <!-- :default-value="nowDateBegin" -->
               <a-date-picker
                 style="width: 100%"
-                :default-value="nowDateBegin"
                 format="YYYY-MM-DD"
                 v-model="dateValue"
               />
@@ -105,7 +105,7 @@
             <div class="div-cell-value">
               <a-input
                 :maxLength="300"
-                v-model="userData.genericName"
+                v-model="userData.phone"
                 allow-clear
                 placeholder="请输入本人电话"
                 style="width: 100%"
@@ -121,7 +121,7 @@
             <div class="div-cell-value">
               <a-input
                 :maxLength="300"
-                v-model="userData.genericName"
+                v-model="userData.contactor"
                 allow-clear
                 placeholder="请输入家属姓名"
                 style="width: 100%"
@@ -139,7 +139,7 @@
             <div class="div-cell-value">
               <a-input
                 :maxLength="300"
-                v-model="userData.genericName"
+                v-model="userData.contactTel"
                 allow-clear
                 placeholder="请输入家属电话"
                 style="width: 100%"
@@ -154,16 +154,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.country"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in countryData"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -178,16 +178,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.nation"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in nationData"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -201,16 +201,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.bloodType"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in bloodData"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -226,16 +226,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.rhFlag"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in rhDatas"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -249,16 +249,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.educationLevel"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in eduDatas"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -273,16 +273,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.job"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in jobDatas"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -296,16 +296,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.marry"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in marryDatas"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -322,16 +322,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.liveType"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in liveDatas"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -345,16 +345,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="userData.drugTypeId"
+                v-model="userData.insuranceType"
                 placeholder="请选择"
                 @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
+                  v-for="item in insuranceDatas"
                   :key="item.id"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -362,37 +362,55 @@
           </div>
         </div>
 
-
         <div class="div-line">
-          <div class="div-cell" style="width:90%">
-            <div class="div-cell-name" style="width:20%">
+          <div class="div-cell" style="width: 90%">
+            <div class="div-cell-name" style="width: 20%">
               <div style="flex: 1"></div>
               <span style="color: #f90505; margin-top: 3px">*</span>
               户口地址：
             </div>
-            <div class="div-cell-value" style="width:80%">
-              <a-input
+            <div class="div-cell-value" style="width: 80%">
+              <!-- <a-input
                 :maxLength="300"
-                v-model="userData.genericName"
+                v-model="userData.addressCode"
                 allow-clear
                 placeholder="请输入户口地址"
                 style="width: 100%"
-              />
+              /> -->
+
+              <a-auto-complete
+                v-model="userData.addressCode"
+                placeholder="请输入选择"
+                option-label-prop="title"
+                @select="onSelectBase"
+                @search="handleSearchBase"
+                style="width: 100%; height: 28px"
+              >
+                <template slot="dataSource">
+                  <a-select-option
+                    v-for="(item, index) in addressDatas"
+                    :title="item.townName"
+                    :key="index + ''"
+                    :value="item.addressId + ''"
+                    >{{ item.townName }}</a-select-option
+                  >
+                </template>
+              </a-auto-complete>
             </div>
           </div>
         </div>
 
         <div class="div-line">
-          <div class="div-cell" style="width:90%">
-            <div class="div-cell-name" style="width:20%">
+          <div class="div-cell" style="width: 90%">
+            <div class="div-cell-name" style="width: 20%">
               <div style="flex: 1"></div>
               <span style="color: #f90505; margin-top: 3px">*</span>
               详细户口地址：
             </div>
-            <div class="div-cell-value" style="width:80%">
+            <div class="div-cell-value" style="width: 80%">
               <a-input
                 :maxLength="300"
-                v-model="userData.genericName"
+                v-model="userData.addressDetail"
                 allow-clear
                 placeholder="请输入详细户口地址"
                 style="width: 100%"
@@ -400,123 +418,296 @@
             </div>
           </div>
         </div>
-
-
       </div>
     </a-spin>
   </a-modal>
 </template>
 
 <script>
-import { addTdHealthyTeam, queryHospitalList } from "@/api/modular/system/posManage";
+import {
+  addTdHealthyTeam,
+  queryHospitalList,
+  savePatientBaseInfo,
+  getPatientBaseInfo,
+  getRegionInfo,
+  getDictData,
+} from "@/api/modular/system/posManage";
 
 import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from "@/utils/util";
 import Vue from "vue";
+import moment from "moment";
 export default {
   components: {},
   data() {
     return {
       visible: false,
-      record: {},
+      dateFormat: "YYYY-MM-DD",
+      nowDateBegin: "", //
+      dateValue: undefined, //
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
       fileList: [],
       danandataList: [],
+      typeDatas: [
+        { id: 1, code: "1", value: "张三" },
+        { id: 11, code: "11", value: "王二" },
+      ],
       treeData: [],
+      zhengjianDatas: [],
+      genderData: [],
+      countryData: [],
+      nationData: [],
+      bloodData: [],
+      rhDatas: [],
+      eduDatas: [],
+      jobDatas: [],
+      marryDatas: [],
+      liveDatas: [],
+      insuranceDatas: [],
+      addressDatas: [],
       userData: {
-        description: "",
+        name: undefined,
+        identificationType: "01", //默认身份证
+        identificationNo: undefined,
+        sex: undefined,
+        birthday: undefined,
+        phone: undefined,
+        contactor: undefined,
+        contactTel: undefined,
+        country: undefined,
+        nation: undefined,
+        bloodType: undefined,
+        rhFlag: undefined, //RH阴性
+        educationLevel: undefined, //文化程度
+        job: undefined, //职业
+        marry: undefined, //婚姻状况
+        liveType: undefined, //常住分类
+        insuranceType: undefined, //医保类别
+
+        address: undefined, //户口地址
+        addressCode: undefined, //户口地址编码
+        addressDetail: undefined, //户口详细地址
+
+        createTime: undefined,
+        departmentId: undefined,
         hospitalCode: undefined,
-        teamName: "",
+        id: undefined,
+        tenantId: undefined,
+        updateTime: undefined,
       },
     };
   },
-  created() {},
+
+  created() {
+    //获取 证件类型
+    getDictData("IDENTIFICATION_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.zhengjianDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("sex").then((res) => {
+      if (res.code == 0) {
+        this.genderData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("PART_COUNTRY").then((res) => {
+      if (res.code == 0) {
+        this.countryData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("NATION").then((res) => {
+      if (res.code == 0) {
+        this.nationData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("BLOOD_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.bloodData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("BLOOD_RH").then((res) => {
+      if (res.code == 0) {
+        this.rhDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("EDUCATION_LEVEL").then((res) => {
+      if (res.code == 0) {
+        this.eduDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("JOB_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.jobDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("MARRY_STATUS").then((res) => {
+      if (res.code == 0) {
+        this.marryDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("LIVE_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.liveDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("INSURANCE_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.insuranceDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+  },
+
   methods: {
     clearData() {
-      this.record = {};
-      this.checkData = {
-        description: "",
-        hospitalCode: undefined,
-        teamName: "",
-      };
-    },
-    //修改
-    addTeam(record) {
-      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
-      this.clearData();
-      this.visible = true;
-      this.confirmLoading = false;
-      this.record = record;
-
-      // this.queryHospitalListOut()
+      this.userData = {};
+      this.addressDatas=[]
     },
 
-    /**
-     * 所属机构接口
-     */
-    /**
-     *
-     * @param {}
-     */
-    queryHospitalListOut() {
-      let queryData = {
-        tenantId: "",
-        status: 1,
-        hospitalName: "",
+    onSelectBase(addressId) {
+      let getOne = this.addressDatas.find((item) => item.addressId == addressId);
+      this.userData.address = getOne.townName;
+    },
+
+    handleSearchBase(name) {
+      let params = {
+        keyWord: name,
       };
-      this.confirmLoading = true;
-      queryHospitalList(queryData)
+      getRegionInfo(params)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, "key", item.hospitalCode);
-              this.$set(item, "value", item.hospitalCode);
-              this.$set(item, "title", item.hospitalName);
-              this.$set(item, "children", item.hospitals);
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, "key", item1.hospitalCode);
-                this.$set(item1, "value", item1.hospitalCode);
-                this.$set(item1, "title", item1.hospitalName);
-              });
-            });
-
-            this.treeData = res.data;
-          } else {
-            this.treeData = res.data;
+            this.addressDatas = res.data;
           }
-          return [];
         })
         .finally((res) => {
-          this.confirmLoading = false;
+          // this.confirmLoading = false
         });
     },
 
+    //修改
+    goModify(record) {
+      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
+      // this.nowDateBegin = moment(new Date(), this.dateFormat);
+      // this.dateValue = moment(new Date(), this.dateFormat);
+      this.clearData();
+      this.visible = true;
+      this.confirmLoading = false;
+      // this.userData = JSON.parse(JSON.stringify(record));
+      this.getPatientDataDetail(record);
+
+      // this.dateValue = this.userData.birthday;
+    },
+
+    getPatientDataDetail(record) {
+      // this.confirmLoading = true;
+      getPatientBaseInfo({ id: record.id }).then((res) => {
+        if (res.code == 0) {
+          this.userData = res.data;
+          if (this.userData.birthday) {
+            this.dateValue = moment(this.userData.birthday, "YYYY-MM-DD");
+          }
+
+          if (this.userData.addressCode) {
+            this.addressDatas = [
+              { addressId: this.userData.addressCode, townName: this.userData.address },
+            ];
+          }
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
+    },
+
+    onSelectType(value) {
+      console.log("vvv", value);
+    },
+
     handleSubmit() {
-      console.log(this.checkData);
+      console.log("handleSubmit", JSON.stringify(this.userData));
+      if (this.dateValue) {
+        this.userData.birthday = moment(this.dateValue).format("YYYY-MM-DD");
+      }
+      console.log("handleSubmit After", JSON.stringify(this.userData));
 
-      if (isStringEmpty(this.checkData.hospitalCode)) {
-        this.$message.error("请选择所属机构");
+      if (isStringEmpty(this.userData.name)) {
+        this.$message.error("请输入患者姓名");
         return;
       }
 
-      if (isStringEmpty(this.checkData.teamName)) {
-        this.$message.error("请输入团队名称");
+      if (isStringEmpty(this.userData.identificationType)) {
+        this.$message.error("请选择证件类型");
         return;
       }
-      this.addTeamOut(this.checkData);
+      if (isStringEmpty(this.userData.identificationNo)) {
+        this.$message.error("请输入证件编号");
+        return;
+      }
+      if (isStringEmpty(this.userData.birthday)) {
+        this.$message.error("请选择出生日期");
+        return;
+      }
+      if (isStringEmpty(this.userData.phone)) {
+        this.$message.error("请输入本人电话");
+        return;
+      }
+      if (isStringEmpty(this.userData.liveType)) {
+        this.$message.error("请输选择常住分类");
+        return;
+      }
+      if (isStringEmpty(this.userData.addressCode)) {
+        this.$message.error("请输入选择户口地址");
+        return;
+      }
+      if (isStringEmpty(this.userData.addressDetail)) {
+        this.$message.error("请输输入详细户口地址");
+        return;
+      }
+      this.addTeamOut(this.userData);
     },
 
     selectChange(value) {},
 
     //修改团队
     addTeamOut(postData) {
-      addTdHealthyTeam(postData).then((res) => {
+      savePatientBaseInfo(postData).then((res) => {
         if (res.code == 0) {
-          this.$message.success("新增成功！");
+          this.$message.success("修改成功！");
           this.visible = false;
           this.$emit("ok", "");
         } else {
