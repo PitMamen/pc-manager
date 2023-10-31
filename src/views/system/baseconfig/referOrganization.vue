@@ -241,8 +241,9 @@ export default {
             for (let i = 0; i < dataTemp.length; i++) {
               this.targetKeys.push(dataTemp[i].hospitalCode)
             }
+            this.checkData.hospitalCodeList = this.targetKeys
+            console.log('HHHH:', this.checkData.hospitalCodeList)
           }
-        //   console.log('HHHH:', this.targetData)
         }
       })
     },
