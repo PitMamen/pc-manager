@@ -5609,6 +5609,25 @@ export function getReferralOrgInfo(data) {
 
 
 
+// 转入列表
+export function qryReferralListByPage(data) {
+  return axios({
+    url: '/referral-api/referral/qryReferralListByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 转入批量数量
+export function qryReferralCount(data) {
+  return axios({
+    url: '/referral-api/referral/qryReferralCount',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 

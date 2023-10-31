@@ -37,6 +37,26 @@
               <div class="titles">{{ sysApps[3].applicationName }}</div>
             </div>
           </div>
+
+          <div class="row">
+            <div class="item item5" @click="itemClick(sysApps[4])" v-if="sysApps && sysApps[4]">
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[4].logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[4].logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[4].logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[4].logo === 'icon4'" />
+              <div class="titles">{{ sysApps[4].applicationName }}</div>
+            </div>
+            <div class="item item6" @click="itemClick(sysApps[5])" v-if="sysApps && sysApps[5]">
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[5].logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[5].logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[5].logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[5].logo === 'icon4'" />
+              <div class="titles">{{ sysApps[5].applicationName }}</div>
+            </div>
+          </div>
+
+
+
         </div>
       </div>
     </div>
@@ -396,6 +416,14 @@ export default {
             &.item4 {
               background: #5472ab;
               box-shadow: 0px 3px 5px 0px rgba(84, 114, 171, 0.35);
+            }
+            &.item5 {
+              background: #2886b1;
+              box-shadow: 0px 3px 5px 0px rgba(101, 143, 221, 0.35);
+            }
+            &.item6 {
+              background: #5472ab;
+              box-shadow: 0px 3px 5px 0px rgba(101, 143, 221, 0.35);
             }
             .icon {
               .px2rem(margin-right, 15);
