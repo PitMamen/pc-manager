@@ -603,10 +603,10 @@ export default {
     //   console.log('medicNewEvent', JSON.stringify(record))
     //   //TODO 填充药品数据
     //   this.inputData(record)
+    // // })
+    // this.$nextTick(() => {
+    //   this.initEditor()
     // })
-    this.$nextTick(() => {
-      this.initEditor()
-    })
   },
   // activated() {
   //   console.log('*************medicDetail Activited')

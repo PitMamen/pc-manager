@@ -11,14 +11,21 @@
       <div class="div-pro-btn">
         <!-- <div style="flex: 1"></div> -->
         <!-- v-model="queryParam.title" -->
-        <a-select allow-clear placeholder="请选择状态" style="width: 110px; height: 28px">
+
+        <a-select
+          v-model="sourceCode"
+          placeholder="请选择来源"
+          allow-clear
+          style="height: 28px; width: 110px"
+        >
           <a-select-option
-            v-for="(item, index) in statusData"
-            :key="index"
+            v-for="item in sourceDatas"
+            :key="item.code"
             :value="item.code"
             >{{ item.value }}</a-select-option
           >
         </a-select>
+
         <a-input
           allow-clear
           placeholder="请输入证件号/诊疗卡号/住院号进行搜索选择"
@@ -44,7 +51,7 @@
             <div class="div-cell-value">
               <a-input
                 :maxLength="300"
-                v-model="medicData.genericName"
+                v-model="uploadData.patientBaseinfoReq.name"
                 allow-clear
                 placeholder="请输入患者姓名"
                 style="width: 100%"
@@ -55,15 +62,14 @@
             <div class="div-cell-name">
               <div style="flex: 1"></div>
               <a-select
-                v-model="medicData.drugTypeId"
-                placeholder="身份证"
-                @select="onSelectType"
+                v-model="uploadData.patientBaseinfoReq.identificationType"
+                placeholder="请选择"
                 allow-clear
                 style="height: 28px; width: 90px"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
-                  :key="item.id"
+                  v-for="item in zhengjianDatas"
+                  :key="item.code"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
@@ -72,7 +78,7 @@
 
             <div class="div-cell-value">
               <a-input
-                v-model="medicData.genericAcronym"
+                v-model="uploadData.patientBaseinfoReq.identificationNo"
                 allow-clear
                 style="width: 100%"
                 placeholder="请输入"
@@ -86,16 +92,15 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.drugTypeId"
+                v-model="uploadData.patientBaseinfoReq.sex"
                 placeholder="请选择"
-                @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in genderData"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -110,7 +115,6 @@
             <div class="div-cell-value">
               <a-date-picker
                 style="width: 100%"
-                :default-value="nowDateBegin"
                 format="YYYY-MM-DD"
                 v-model="dateValue"
               />
@@ -126,7 +130,7 @@
             </div>
             <div class="div-cell-value">
               <a-input
-                v-model="medicData.tradeName"
+                v-model="uploadData.patientBaseinfoReq.phone"
                 allow-clear
                 placeholder="请输入本人电话"
                 style="width: 100%"
@@ -141,7 +145,7 @@
             </div>
             <div class="div-cell-value">
               <a-input
-                v-model="medicData.tradeName"
+                v-model="uploadData.patientBaseinfoReq.contactor"
                 allow-clear
                 placeholder="请输入联系人姓名"
                 style="width: 100%"
@@ -156,7 +160,7 @@
             </div>
             <div class="div-cell-value">
               <a-input
-                v-model="medicData.tradeName"
+                v-model="uploadData.patientBaseinfoReq.contactTel"
                 allow-clear
                 placeholder="请输入联系人电话"
                 style="width: 100%"
@@ -171,16 +175,15 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.drugTypeId"
+                v-model="uploadData.patientBaseinfoReq.country"
                 placeholder="请选择"
-                @select="onSelectType"
                 allow-clear
                 style="height: 28px; width: 100%"
               >
                 <a-select-option
-                  v-for="item in typeDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in countryData"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -196,16 +199,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.nation"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in nationData"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -218,16 +221,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.bloodType"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in bloodData"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -241,16 +244,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.rhFlag"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in rhDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -264,16 +267,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.educationLevel"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in eduDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -289,16 +292,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.job"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in jobDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -311,16 +314,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.marry"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in marryDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -334,16 +337,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.liveType"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in liveDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -357,16 +360,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.patientBaseinfoReq.insuranceType"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in insuranceDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -381,12 +384,26 @@
               <span style="color: #f90505">*</span>户口地址：
             </div>
             <div class="div-cell-value" style="width: 85.1%">
-              <a-input
-                v-model="medicData.approvalNumber"
-                allow-clear
-                placeholder="请输入户口地址"
-                style=""
-              />
+              <div class="div-cell-value" style="width: 80%">
+                <a-auto-complete
+                  v-model="uploadData.patientBaseinfoReq.addressCode"
+                  placeholder="请输入选择"
+                  option-label-prop="title"
+                  @select="onSelectBase"
+                  @search="handleSearchBase"
+                  style="width: 100%; height: 28px"
+                >
+                  <template slot="dataSource">
+                    <a-select-option
+                      v-for="(item, index) in addressDatas"
+                      :title="item.townName"
+                      :key="index + ''"
+                      :value="item.addressId + ''"
+                      >{{ item.townName }}</a-select-option
+                    >
+                  </template>
+                </a-auto-complete>
+              </div>
             </div>
           </div>
           <div class="div-cell" style="width: 46.8%">
@@ -396,7 +413,7 @@
             </div>
             <div class="div-cell-value" style="width: 78.5%">
               <a-input
-                v-model="medicData.approvalNumber"
+                v-model="uploadData.patientBaseinfoReq.addressDetail"
                 allow-clear
                 placeholder="请输入详细地址"
                 style=""
@@ -419,16 +436,16 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.diseaseLevel"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 12vw; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
+                  v-for="item in levelDatas"
+                  :key="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -442,20 +459,25 @@
             </div>
             <div class="div-cell-value" style="width: 85.5%">
               <a-select
-                mode="tags"
-                :token-separators="[',']"
-                v-model="medicData.healthInsuranceCategoryId"
-                @select="onSelectYibao"
-                @change="handleChange"
-                placeholder="请选择"
+                style="min-width: 100%; height: 28px"
+                :maxTagCount="3"
+                :collapse-tags="true"
+                show-search
+                v-model="uploadData.diagnoseCode"
+                mode="multiple"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
                 allow-clear
-                style="width: 100%; height: 28px"
+                placeholder="请搜索选择"
+                @change="onDepartmentSelectChange"
+                @search="onDepartmentSelectSearch"
               >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
+                  v-for="(item, index) in diagnoseDatas"
+                  :key="index"
+                  :value="item.icdCode"
+                  >{{ item.name }}</a-select-option
                 >
               </a-select>
             </div>
@@ -471,8 +493,8 @@
             <div class="div-cell-value" style="width: 82.8%">
               <a-textarea
                 :rows="4"
+                v-model="uploadData.diseaseDesc"
                 placeholder="请输入"
-                v-decorator="['brief']"
               ></a-textarea>
             </div>
           </div>
@@ -488,7 +510,7 @@
               <a-textarea
                 :rows="4"
                 placeholder="请输入"
-                v-decorator="['brief']"
+                v-model="uploadData.diseaseDeal"
               ></a-textarea>
             </div>
           </div>
@@ -507,17 +529,17 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.inHospitalCode"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
+                  v-for="item in inHospitalDatas"
+                  :key="item.hospitalCode"
+                  :value="item.hospitalCode"
+                  >{{ item.hospitalName }}</a-select-option
                 >
               </a-select>
             </div>
@@ -530,15 +552,15 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.referralType"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
+                  v-for="item in referralTypeDatas"
+                  :key="item.code"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
@@ -554,15 +576,15 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.referralReason"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
+                  v-for="item in reasonDatas"
+                  :key="item.code"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
@@ -578,15 +600,15 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.referralWay"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
+                  v-for="item in transTypeDatas"
+                  :key="item.code"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
@@ -603,14 +625,14 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
+                  v-for="item in transTypeDatas"
                   :key="item.id"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
@@ -625,14 +647,14 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="medicData.healthInsuranceCategoryId"
+                v-model="uploadData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in yibaoDatas"
+                  v-for="item in transTypeDatas"
                   :key="item.id"
                   :value="item.code"
                   >{{ item.value }}</a-select-option
@@ -651,23 +673,8 @@
               <a-range-picker
                 style="width: 100%"
                 :value="createValue"
-                @change="onChangeOrder"
+                @change="onChange"
               />
-
-              <!-- <a-select
-                v-model="medicData.healthInsuranceCategoryId"
-                @select="onSelectYibao"
-                placeholder="请选择"
-                allow-clear
-                style="width: 100%; height: 28px"
-              >
-                <a-select-option
-                  v-for="item in yibaoDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
-                >
-              </a-select> -->
             </div>
           </div>
         </div>
@@ -682,16 +689,16 @@
               <a-textarea
                 :rows="4"
                 placeholder="请输入"
-                v-decorator="['brief']"
+                v-model="uploadData.notice"
               ></a-textarea>
             </div>
           </div>
         </div>
 
-        <div class="div-line" style="margin-bottom: 10px;margin-top:0">
-          <div style="margin-left:10%">申请人：张三</div>
-          <div style="margin-left:30px">登记日期：20231025</div>
-          <div style="margin-left:30px">申请机构：中心医院</div>
+        <div class="div-line" style="margin-bottom: 10px; margin-top: 0">
+          <div style="margin-left: 10%">申请人：{{ uploadData.reqDocName }}</div>
+          <div style="margin-left: 30px">登记日期：{{ uploadData.regTime }}</div>
+          <div style="margin-left: 30px">申请机构：{{ user.hospitalName }}</div>
         </div>
       </div>
 
@@ -718,20 +725,24 @@
 
 <script>
 import {
-  medicineDetail,
-  qryFactoryList,
+  // medicineDetail,
+  // qryFactoryList,
+  // getUseList,
+  // getFreqList,
+  // getDosageList,
+  // getUnitList,
+  // getCategoryList,
+  // getMedicCategoryList,
+  // addMedicineSku,
+  // getTreatTypeList,
   getDictData,
-  getUseList,
-  getFreqList,
-  getDosageList,
-  getUnitList,
-  getCategoryList,
-  getMedicCategoryList,
-  addMedicineSku,
-  getTreatTypeList,
+  getRegionInfo,
+  searchDiagnosis,
+  upHospitalList,
+  upReferral,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
-import { formatDecimal } from "@/utils/util";
+import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
 import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
@@ -747,156 +758,140 @@ export default {
   },
   data() {
     return {
+      sourceCode: undefined,
+      sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
-      nowDateBegin: "", //
-      dateValue: "", //
+      confirmLoading: false,
+      nowDateBegin: "",
+      dateValue: "",
       lineStatus: "error",
       linePositon: 2,
       createValue: [],
+      user: {},
 
-      statusData: [
-        { code: -1, value: "全部" },
-        { code: 0, value: "待审批" },
+      uploadData: {
+        //基本信息
+        patientBaseinfoReq: {
+          name: undefined,
+          identificationType: "01",
+          identificationNo: undefined,
+          sex: undefined,
+          birthday: undefined,
+          phone: undefined,
+          contactor: undefined,
+          contactTel: undefined,
+          country: undefined,
+          nation: undefined,
+          bloodType: undefined,
+          rhFlag: undefined,
+          educationLevel: undefined,
+          job: undefined,
+          marry: undefined,
+          liveType: undefined,
+          insuranceType: undefined,
 
-        { code: 3, value: "预约成功" },
-        { code: 4, value: "预约失败" },
-        { code: 8, value: "已报到" },
-      ],
+          address: undefined,
+          addressCode: undefined,
+          addressDetail: undefined,
+
+          //页面未用到字段
+          // departmentId: undefined,
+          // hospitalCode: undefined,
+          // tenantId: undefined,
+        },
+
+        //疾病信息
+        diseaseLevel: undefined, //病情分级
+        diagnos: undefined, //主要诊断
+        diagnoseCode: undefined, //主要诊断编码
+        diseaseDeal: undefined, //治疗经过
+        diseaseDesc: undefined, //病情描述
+
+        //转诊信息
+        inHospitalCode: undefined, //转入机构id
+        referralType: undefined,
+        // referralType: {
+        //   //转诊类型 1门诊转诊2住院转诊
+        //   description: undefined,
+        //   value: 0,
+        // },
+        referralReason: undefined, //	转诊原因
+        referralWay: undefined, //转运方式
+        inDept: undefined, //转入科室名称
+        inDeptCode: undefined, //转入科室
+        docId: 0, //接收医生id
+        docName: undefined, //接收医生
+        reachBeginDate: undefined, //期望到院开始日期
+        reachEndDate: undefined, //期望到院结束日期
+        notice: undefined, //注意事项
+
+        //申请信息
+        reqDocId: undefined,
+        reqDocName: undefined,
+        regTime: undefined,
+        outHospitalCode: undefined, //申请机构
+        reqDept: undefined,
+        reqDeptCode: undefined,
+        // reqLeader: undefined,//申请主任  下转才有的
+        // reqLeaderId: undefined,
+
+        status: {
+          //工单状态（1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治）
+          description: undefined,
+          value: 0,
+        },
+        tradeType: {
+          //工单类型（1上转2下转）
+          description: undefined,
+          value: 0,
+        },
+
+        appointDoc: undefined,
+        appointDocId: undefined,
+        appointId: undefined,
+        appointTime: undefined,
+        identificationId: undefined,
+        inCheck: undefined,
+        inCheckId: undefined,
+        inCheckResult: undefined,
+        inCheckTime: undefined,
+        inTenantId: undefined,
+        inUserId: undefined,
+        name: undefined,
+        oldTradeId: undefined,
+        outCheck: undefined,
+        outCheckId: undefined,
+        outCheckResult: undefined,
+        outCheckTime: undefined,
+
+        outTenantId: undefined,
+        outUserId: undefined,
+        phone: undefined,
+      },
+
+      zhengjianDatas: [],
+      genderData: [],
+      countryData: [],
+      nationData: [],
+      bloodData: [],
+      rhDatas: [],
+      eduDatas: [],
+      jobDatas: [],
+      marryDatas: [],
+      liveDatas: [],
+      insuranceDatas: [],
+      addressDatas: [],
+      levelDatas: [],
+      diagnoseDatas: [],
+      inHospitalDatas: [],
+      reasonDatas: [],
+      transTypeDatas: [],
+      referralTypeDatas: [],
+      fetching: false,
+
+      diagnoseNames: [],
+
       loading: false,
-      isAgain: false,
-      // 审核状态 1未审核2已审核3未登记
-      selects: [
-        {
-          id: "",
-          name: "全部",
-        },
-        {
-          id: 1,
-          name: "未审核",
-        },
-        {
-          id: 2,
-          name: "已审核",
-        },
-        {
-          id: 3,
-          name: "未登记",
-        },
-      ],
-      headers: {
-        Authorization: "",
-      },
-      content: "",
-      medicId: undefined,
-      medicData: {
-        //******基本信息模块字段
-        genericName: "", //药品名称
-        genericAcronym: "", //药品名称检索码
-        manufacturerId: undefined, //生产厂商id(接口获取)
-        manufacturerName: "", //生产厂商
-
-        tradeName: "", //商品名称
-        tradeAcronym: "", //商品名称检索码
-        drugTypeDesc: "", //药品类型
-        drugTypeId: undefined, //药品类型id(字典表中，必须是整型)
-
-        dosageFormDesc: "", //药品剂型
-        dosageFormId: undefined, //药品剂型id(接口)
-
-        treatTypeDesc: "", //治疗类型
-        treatTypeId: undefined, //治疗类型id(接口)
-
-        healthInsuranceCategory: "", //医保类型
-        healthInsuranceCategoryId: undefined, //医保类型(字典表中)
-
-        pharmacologyCategory: "", //药理分类
-        pharmacologyCategoryId: undefined, //药理分类id(接口)
-        healthInsuranceCoding: "", //医保编码
-        barCode: "", //商品条形码
-
-        approvalNumber: "", //批准文号
-        supervisionCode: "", //监管编码
-        code: "", //药品代码   又叫 HIS编码  药品编码
-
-        // id: 0,//主键ID，修改时传
-
-        //******基本信息模块字段
-
-        //******规格计费模块字段
-        contentCoefficient: 1, //含量系数
-
-        dosUom: "", //剂量单位
-        dosUomId: undefined, //剂量单位id(接口)
-
-        minPkgNum: "", //包装数量
-
-        baseUnitId: undefined, //基本单位id(字典表中)
-        baseUnitName: "", //基本单位
-
-        packingUnit: "", //包装单位
-        packingUnitId: undefined, //接口（表sys_dose_unit）
-
-        specDesc: "", //规格描述
-        retailPrice: "", //参考价格
-
-        expenseDesc: "", //计费方式
-        expenseId: undefined, //计费方式id(字典表中)
-
-        //******规格计费模块字段
-
-        //******处方开具模块字段
-        ethicalsSign: "2", //处方药品：1是 2否
-        valuableSign: "2", //贵重药品：1是 2否
-        drugSign: "2", //剧毒药品：1是 2否
-
-        psychotropicDesc: "", //精神药品
-        psychotropicId: undefined, //精神药品id(字典表中)
-        defDosage: "", //默认剂量
-
-        stupefacientDesc: "", //麻醉药品
-        stupefacientId: undefined, //麻醉药品id(字典表中)
-        defDirectionId: undefined, //默认用法id(接口)
-        defDirectionName: "", //默认用法
-
-        antibacterialDesc: "", //抗菌药品
-        antibacterialId: undefined, //抗菌药品id(字典表中)
-        defFreqId: undefined, //默认频次id(接口)
-        defFreqName: "", //默认频次
-        //******处方开具模块字段
-
-        //******使用说明书模块字段
-        note: "", //使用说明
-        //******使用说明书模块字段
-      },
-      manuDatas: [],
-      yaoliTree: [],
-      yaoliDatas: [],
-      typeDatas: [],
-      dosageDatas: [],
-      treatTypeDatas: [],
-      yibaoDatas: [],
-      baseUnitDatas: [],
-      expenseDatas: [],
-      unitJiDatas: [],
-      unitBaoDatas: [],
-
-      confirmLoading: false,
-      isChufang: false,
-      isExpensive: false,
-      isPoisonous: false,
-
-      isSpiritual: false,
-      typeSpiritualDatas: [],
-
-      isAnesthesia: false,
-      typeAnesthesiaDatas: [],
-      defaultUseDatas: [],
-
-      isBacteria: false,
-      typeBacteriaDatas: [],
-      defaultFreqDatas: [],
-
-      editor: {},
     };
   },
   // watch: {
@@ -915,25 +910,167 @@ export default {
    *
    */
   created() {
-    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
+    this.user = Vue.ls.get(TRUE_USER);
+    console.log("this.user", this.user);
+
+    //赋值申请信息
+    this.uploadData.reqDocId = this.user.userId;
+    this.uploadData.reqDocName = this.user.userName;
+    this.uploadData.regTime = formatDate(new Date());
+    console.log("regTime", this.uploadData.regTime);
+    this.uploadData.outHospitalCode = this.user.hospitalCode;
+    // this.uploadData.reqDept = this.user.userName;
+    // this.uploadData.reqDeptCode = this.user.userName;
+
+    //     reqDocId: undefined,
+    //     reqDocName: undefined,
+    //     regTime: undefined,
+    //     outHospitalCode: undefined, //申请机构
+    //     reqDept: undefined,
+    //     reqDeptCode: undefined,
+
     this.createValue = [
       moment(getDateNow(), this.dateFormat),
       moment(getCurrentMonthLast(), this.dateFormat),
     ];
 
-    this.getMedicTypes();
-    // this.getTreatTypes()
-    this.getYiBaoDatas();
-    // this.getCategoryListOut()
-    // this.getBaseUnitDatas()
-    this.getExpenseDatas();
-    // this.getUnitDatas()
+    console.log("uploadData", this.uploadData);
+    console.log("uploadData identificationType", this.uploadData.identificationType);
 
-    this.getSpiritualDatas();
-    this.getAnesthesiaDatas();
-    this.getBacteriaDatas();
-    this.getDefaultUseDatas();
-    this.getDefaultFreqDatas();
+    getDictData("PATIENT_DATA_SOURCE").then((res) => {
+      if (res.code == 0) {
+        this.sourceDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+
+    //获取 证件类型
+    getDictData("IDENTIFICATION_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.zhengjianDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("sex").then((res) => {
+      if (res.code == 0) {
+        this.genderData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("PART_COUNTRY").then((res) => {
+      if (res.code == 0) {
+        this.countryData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("NATION").then((res) => {
+      if (res.code == 0) {
+        this.nationData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("BLOOD_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.bloodData = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("BLOOD_RH").then((res) => {
+      if (res.code == 0) {
+        this.rhDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("EDUCATION_LEVEL").then((res) => {
+      if (res.code == 0) {
+        this.eduDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("JOB_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.jobDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("MARRY_STATUS").then((res) => {
+      if (res.code == 0) {
+        this.marryDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("LIVE_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.liveDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("INSURANCE_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.insuranceDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("DISEASE_LEV").then((res) => {
+      if (res.code == 0) {
+        this.levelDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+
+    getDictData("CONVERT_DIAGNOSTIC_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.referralTypeDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+
+    getDictData("CONVERT_DIAGNOSTIC_RESON").then((res) => {
+      if (res.code == 0) {
+        this.reasonDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+    getDictData("CONVERT_JH_TYPE").then((res) => {
+      if (res.code == 0) {
+        this.transTypeDatas = res.data;
+      } else {
+        this.$message.error(res.message);
+      }
+      this.confirmLoading = false;
+    });
+
+    this.getHospitalDatas();
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -943,11 +1080,11 @@ export default {
     // })
 
     this.nowDateBegin = moment(new Date(), this.dateFormat);
-    this.dateValue = moment(new Date(), this.dateFormat);
+    // this.dateValue = moment(new Date(), this.dateFormat);
 
-    this.$nextTick(() => {
-      this.initEditor();
-    });
+    // this.$nextTick(() => {
+    //   this.initEditor();
+    // });
   },
   // activated() {
   //   console.log('*************medicDetail Activited')
@@ -959,137 +1096,192 @@ export default {
   //       }
   // },
   methods: {
-    handleChange(value) {
-      console.log("handleChange", value);
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.diagnoseDatas = [];
+      this.searchDiagnosisDatas(value);
     },
-    onChangeOrder(momentArr, dateArr2) {
-      // if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
-      //   this.$message.error("开始时间与结束时间跨度不能超过三个月!");
-      //   this.createValue = [];
-      //   this.queryParams.createStartTime = "";
-      //   this.queryParams.createEndTime = "";
-      //   return;
-      // }
-      // if (dateArr2) {
-      //   if (dateArr2[0] > dateArr2[1]) {
-      //     this.$message.error("开始时间不能大于结束时间");
-      //     this.createValue = [];
-      //     this.queryParams.updateStartTime = "";
-      //     this.queryParams.updateEndTime = "";
-      //     return;
-      //   }
-      // }
-      // if (dateArr2[0] == "" && dateArr2[1] == "") {
-      //   this.queryParams.createStartTime = "";
-      //   this.queryParams.createEndTime = "";
-      //   return;
-      // }
-      // this.createValue = momentArr;
-      // this.queryParams.createStartTime = dateArr2[0] + " 00:00:00";
-      // this.queryParams.createEndTime = dateArr2[1] + " 23:59:59";
+
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      console.log("onDepartmentSelectChange value", value);
+      console.log("onDepartmentSelectChange diagnoseCode", this.uploadData.diagnoseCode);
+
+      //组装诊断名字
+      if (this.uploadData.diagnoseCode && this.uploadData.diagnoseCode.length > 0) {
+        this.uploadData.diagnoseCode.forEach((element) => {
+          let getOne = this.diagnoseDatas.find((item) => item.icdCode == element);
+          this.diagnoseNames.push(getOne.name);
+        });
+      }
+
+      if (value === undefined || value.length == 0) {
+        this.diagnoseDatas = [];
+        this.searchDiagnosisDatas("");
+      }
+    },
+
+    searchDiagnosisDatas(value) {
+      this.fetching = true;
+      searchDiagnosis({ keyWord: value }).then((res) => {
+        this.fetching = false;
+        if (res.code == 0) {
+          this.diagnoseDatas = res.data;
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
+    },
+
+    getHospitalDatas() {
+      this.fetching = true;
+      upHospitalList({}).then((res) => {
+        this.fetching = false;
+        if (res.code == 0) {
+          this.inHospitalDatas = res.data;
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
+    },
+
+    onSelectBase(addressId) {
+      let getOne = this.addressDatas.find((item) => item.addressId == addressId);
+      this.userData.address = getOne.townName;
+    },
+
+    handleSearchBase(name) {
+      let params = {
+        keyWord: name,
+      };
+      getRegionInfo(params)
+        .then((res) => {
+          if (res.code == 0 && res.data.length > 0) {
+            this.addressDatas = res.data;
+          }
+        })
+        .finally((res) => {
+          // this.confirmLoading = false
+        });
+    },
+
+    // handleChange(value) {
+    //   console.log("handleChange", value);
+    // },
+
+    onChange(momentArr, dateArr) {
+      this.createValue = momentArr;
+      this.uploadData.reachBeginDate = dateArr[0];
+      this.uploadData.reachEndDate = dateArr[1];
     },
 
     clearData() {
-      this.medicData = {
-        //******基本信息模块字段
-        genericName: "", //药品名称
-        genericAcronym: "", //药品名称检索码
-        manufacturerId: undefined, //生产厂商id(接口获取)
-        manufacturerName: "", //生产厂商
+      this.createValue = [];
+      this.createValue = [
+        moment(getDateNow(), this.dateFormat),
+        moment(getCurrentMonthLast(), this.dateFormat),
+      ];
+      this.uploadData = {
+        //基本信息
+        patientBaseinfoReq: {
+          name: undefined,
+          identificationType: "01",
+          identificationNo: undefined,
+          sex: undefined,
+          birthday: undefined,
+          phone: undefined,
+          contactor: undefined,
+          contactTel: undefined,
+          country: undefined,
+          nation: undefined,
+          bloodType: undefined,
+          rhFlag: undefined,
+          educationLevel: undefined,
+          job: undefined,
+          marry: undefined,
+          liveType: undefined,
+          insuranceType: undefined,
 
-        tradeName: "", //商品名称
-        tradeAcronym: "", //商品名称检索码
-        drugTypeDesc: "", //药品类型
-        drugTypeId: undefined, //药品类型id(字典表中，必须是整型)
+          address: undefined,
+          addressCode: undefined,
+          addressDetail: undefined,
 
-        dosageFormDesc: "", //药品剂型
-        dosageFormId: undefined, //药品剂型id(接口)
+          //页面未用到字段
+          // departmentId: undefined,
+          // hospitalCode: undefined,
+          // tenantId: undefined,
+        },
 
-        treatTypeDesc: "", //治疗类型
-        treatTypeId: undefined, //治疗类型id(接口)
+        //疾病信息
+        diseaseLevel: undefined, //病情分级
+        diagnos: undefined, //主要诊断
+        diagnoseCode: undefined, //主要诊断编码
+        diseaseDeal: undefined, //治疗经过
+        diseaseDesc: undefined, //病情描述
 
-        healthInsuranceCategory: "", //医保类型
-        healthInsuranceCategoryId: undefined, //医保类型(字典表中)
+        //转诊信息
+        inHospitalCode: undefined, //转入机构id
+        referralType: undefined,
+        // referralType: {
+        //   //转诊类型 1门诊转诊2住院转诊
+        //   description: undefined,
+        //   value: 0,
+        // },
+        referralReason: undefined, //	转诊原因
+        referralWay: undefined, //转运方式
+        inDept: undefined, //转入科室名称
+        inDeptCode: undefined, //转入科室
+        docId: 0, //接收医生id
+        docName: undefined, //接收医生
+        reachBeginDate: undefined, //期望到院开始日期
+        reachEndDate: undefined, //期望到院结束日期
+        notice: undefined, //注意事项
 
-        pharmacologyCategory: "", //药理分类
-        pharmacologyCategoryId: undefined, //药理分类id(接口)
-        healthInsuranceCoding: "", //医保编码
-        barCode: "", //商品条形码
+        //申请信息
+        reqDocId: undefined,
+        reqDocName: undefined,
+        regTime: undefined,
+        outHospitalCode: undefined, //申请机构
+        reqDept: undefined,
+        reqDeptCode: undefined,
+        // reqLeader: undefined,//申请主任  下转才有的
+        // reqLeaderId: undefined,
 
-        approvalNumber: "", //批准文号
-        supervisionCode: "", //监管编码
-        code: "", //药品代码   又叫 HIS编码  药品编码
+        status: {
+          //工单状态（1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治）
+          description: undefined,
+          value: 0,
+        },
+        tradeType: {
+          //工单类型（1上转2下转）
+          description: undefined,
+          value: 0,
+        },
 
-        // id: 0,//主键ID，修改时传
+        appointDoc: undefined,
+        appointDocId: undefined,
+        appointId: undefined,
+        appointTime: undefined,
+        identificationId: undefined,
+        inCheck: undefined,
+        inCheckId: undefined,
+        inCheckResult: undefined,
+        inCheckTime: undefined,
+        inTenantId: undefined,
+        inUserId: undefined,
+        name: undefined,
+        oldTradeId: undefined,
+        outCheck: undefined,
+        outCheckId: undefined,
+        outCheckResult: undefined,
+        outCheckTime: undefined,
 
-        //******基本信息模块字段
-
-        //******规格计费模块字段
-        contentCoefficient: undefined, //含量系数
-
-        dosUom: "", //剂量单位
-        dosUomId: undefined, //剂量单位id(接口)
-
-        minPkgNum: "", //包装数量
-
-        baseUnitId: undefined, //基本单位id(字典表中)
-        baseUnitName: "", //基本单位
-
-        packingUnit: "", //包装单位
-        packingUnitId: undefined, //接口（表sys_dose_unit）
-
-        specDesc: "", //规格描述
-        retailPrice: "", //参考价格
-
-        expenseDesc: "", //计费方式
-        expenseId: undefined, //计费方式id(字典表中)
-
-        //******规格计费模块字段
-
-        //******处方开具模块字段
-        ethicalsSign: "2", //处方药品：1是 2否
-        valuableSign: "2", //贵重药品：1是 2否
-        drugSign: "2", //剧毒药品：1是 2否
-
-        psychotropicDesc: "", //精神药品
-        psychotropicId: undefined, //精神药品id(字典表中)
-        defDosage: "", //默认剂量
-
-        stupefacientDesc: "", //麻醉药品
-        stupefacientId: undefined, //麻醉药品id(字典表中)
-        defDirectionId: undefined, //默认用法id(接口)
-        defDirectionName: "", //默认用法
-
-        antibacterialDesc: "", //抗菌药品
-        antibacterialId: undefined, //抗菌药品id(字典表中)
-        defFreqId: undefined, //默认频次id(接口)
-        defFreqName: "", //默认频次
-        //******处方开具模块字段
-
-        //******使用说明书模块字段
-        note: "", //使用说明
-        //******使用说明书模块字段
+        outTenantId: undefined,
+        outUserId: undefined,
+        phone: undefined,
       };
-    },
-
-    goChoose() {
-      let queryText = "";
-      if (this.medicData.code) {
-        queryText = this.medicData.code;
-      } else if (this.medicData.genericName) {
-        queryText = this.medicData.genericName;
-      } else if (this.medicData.tradeName) {
-        queryText = this.medicData.tradeName;
-      } else if (this.medicData.approvalNumber) {
-        queryText = this.medicData.approvalNumber;
-      }
-
-      let name = undefined;
-      if (this.medicData.genericName) {
-        name = this.medicData.genericName;
-      }
-
-      // this.$refs.chooseMedic.choose(queryText, name)
     },
 
     handleChoose(record) {
@@ -1101,1083 +1293,83 @@ export default {
     /**
      * 填充数据
      */
-    inputData(record) {
-      //药品名称
-      if (record.productName) {
-        this.medicData.genericName = record.productName;
-      }
+    inputData(record) {},
 
-      //两个检索码都不用填充
-
-      //生产厂商
-      // if (record.manufacturerCode && record.manufacturerName) {
-      //   this.medicData.manufacturerId = record.manufacturerCode
-      //   this.medicData.manufacturerName = record.manufacturerName
-      //   this.manuDatas = []
-      //   this.manuDatas.push({ id: this.medicData.manufacturerId + '', factoryName: this.medicData.manufacturerName })
-      // }
-      if (record.manufacturerName) {
-        this.handleSearchManu2(record.manufacturerName);
-      }
-
-      // 商品名称
-      if (record.productName) {
-        this.medicData.tradeName = record.productName;
-      }
-
-      // 药品类型  非输入搜索型，直接循环查找
-      // if (record.medicineCategoryCode) {
-      //   this.medicData.drugTypeId = record.medicineCategoryCode
-      // }
-      if (record.pharmacologyCategory) {
-        let queryStr = "";
-        if (record.pharmacologyCategory == "中药") {
-          queryStr = "中药";
-        } else if (record.pharmacologyCategory == "中成药") {
-          queryStr = "中成药";
-        } else {
-          queryStr = "西药";
-        }
-        let getOne = this.typeDatas.find((item) => item.value == queryStr);
-        this.medicData.drugTypeId = getOne.code;
-        this.medicData.drugTypeDesc = getOne.value;
-      }
-
-      //药品剂型
-      // if (record.dosageFormId && record.dosageFormDesc) {
-      //   this.medicData.dosageFormId = record.dosageFormId
-      //   this.medicData.dosageFormDesc = record.dosageFormDesc
-      //   this.manuDadosageDatastas = []
-      //   console.log('', JSON.stringify({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc }))
-      //   this.dosageDatas.push({ id: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
-      // }
-      if (record.dosageFormDesc) {
-        this.handleSearchDosage2(record.dosageFormDesc);
-      }
-
-      //治疗类型
-      // if (record.pharmacologyChildCategory && record.dosageFormDesc) {
-      //   this.medicData.dosageFormId = record.dosageFormId
-      //   this.medicData.dosageFormDesc = record.dosageFormDesc
-      //   this.manuDadosageDatastas = []
-      //   console.log('', JSON.stringify({ code: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc }))
-      //   this.dosageDatas.push({ id: this.medicData.dosageFormId + '', value: this.medicData.dosageFormDesc })
-      // }
-      if (record.pharmacologyChildCategory) {
-        this.handleSearchTreat2(record.pharmacologyChildCategory);
-      }
-
-      //医保类型
-      if (record.healthInsuranceCategory) {
-        let getOne = this.yibaoDatas.find(
-          (item) => item.value == record.healthInsuranceCategory
-        );
-        if (getOne) {
-          this.medicData.healthInsuranceCategoryId = getOne.code;
-          this.medicData.healthInsuranceCategory = getOne.value;
-        }
-
-        // this.medicData.healthInsuranceCategoryId = record.healthInsuranceCategoryId
-      }
-      //药理分类  药理分类取的树的最后一层
-      if (record.medicineCategory) {
-        this.handleSearchYaoli2(record.medicineCategory);
-        // this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
-      }
-      //医保编码
-      if (record.healthInsuranceCoding) {
-        this.medicData.healthInsuranceCoding = record.healthInsuranceCoding;
-      }
-      //批准文号
-      if (record.approvalNumber) {
-        this.medicData.approvalNumber = record.approvalNumber;
-      }
-
-      //HIS编码
-      // if (record.code) {
-      //   this.medicData.code = record.code
-      // }
-
-      //监管编码
-      if (record.code) {
-        this.medicData.supervisionCode = record.code;
-      }
-
-      //剂量单位
-      if (record.minDosageUnit) {
-        this.handleSearchJi2(record.minDosageUnit);
-        // this.medicData.pharmacologyCategoryId = record.pharmacologyCategoryId
-      }
-
-      //包装数量
-      if (record.packingCoefficient) {
-        this.medicData.minPkgNum = record.packingCoefficient;
-      }
-
-      //基本单位  后台说跟剂量单位一样的字段
-      if (record.minDosageUnit) {
-        this.handleSearchBase2(record.minDosageUnit);
-      }
-
-      //包装单位
-      if (record.minPkgUnit) {
-        this.handleSearchBao2(record.minPkgUnit);
-      }
-      this.countSpecDesc();
-    },
-
-    onSelectManu(manufacturerId) {
-      let getOne = this.manuDatas.find((item) => item.id == manufacturerId);
-      this.medicData.manufacturerName = getOne.factoryName;
-      console.log("onSelectManu manufacturerId", manufacturerId);
-      console.log("onSelectManu factoryName", getOne.factoryName);
-    },
-
-    onSelectType(drugTypeId) {
-      let getOne = this.typeDatas.find((item) => item.code == drugTypeId);
-      this.medicData.drugTypeDesc = getOne.value;
-      console.log("onSelectType drugTypeId", drugTypeId);
-      console.log("onSelectType drugTypeDesc", getOne.value);
-    },
-    onSelectDosage(dosageFormId) {
-      let getOne = this.dosageDatas.find((item) => item.id == dosageFormId);
-      this.medicData.dosageFormDesc = getOne.value;
-      console.log("onSelectDosage dosageFormId", dosageFormId);
-      console.log("onSelectDosage dosageFormDesc", getOne.value);
-    },
-    onSelectTreatType(treatTypeId) {
-      let getOne = this.treatTypeDatas.find((item) => item.id == treatTypeId);
-      this.medicData.treatTypeDesc = getOne.value;
-      console.log("onSelectTreatType treatTypeId", treatTypeId);
-      console.log("onSelectTreatType treatTypeDesc", getOne.value);
-    },
     onSelectYibao(healthInsuranceCategoryId) {
-      let getOne = this.yibaoDatas.find((item) => item.code == healthInsuranceCategoryId);
-      this.medicData.healthInsuranceCategory = getOne.value;
-      console.log("onSelectYibao healthInsuranceCategoryId", healthInsuranceCategoryId);
-      console.log("onSelectYibao healthInsuranceCategory", getOne.value);
-    },
-
-    // onSeletTree(s, ss, sss) {
-    //   this.medicData.pharmacologyCategory = ss.title
-    //   console.log('onSeletTree s', s)
-    //   console.log('onSeletTree ss', ss)
-    //   console.log('onSeletTree sss', sss)
-    // },
-
-    onSeletTreeYaoli(pharmacologyCategoryId) {
-      let getOne = this.yaoliDatas.find((item) => item.id == pharmacologyCategoryId);
-      this.medicData.pharmacologyCategory = getOne.value;
-      console.log("onSeletTreeYaoli pharmacologyCategoryId", pharmacologyCategoryId);
-      console.log("onSeletTreeYaoli pharmacologyCategory", getOne.value);
-    },
-
-    onSelectBase(baseUnitId) {
-      let getOne = this.baseUnitDatas.find((item) => item.id == baseUnitId);
-      this.medicData.baseUnitName = getOne.value;
-      console.log("onSelectBase baseUnitId", baseUnitId);
-      console.log("onSelectBase treatTypeDesc", getOne.value);
-      this.countSpecDesc();
-    },
-    onSelectExpense(expenseId) {
-      let getOne = this.expenseDatas.find((item) => item.code == expenseId);
-      this.medicData.expenseDesc = getOne.value;
-      console.log("onSelectExpense expenseId", expenseId);
-      console.log("onSelectExpense expenseDesc", getOne.value);
-    },
-
-    onSelectJi(dosUomId) {
-      let getOne = this.unitJiDatas.find((item) => item.id == dosUomId);
-      this.medicData.dosUom = getOne.value;
-      console.log("onSelectJi dosUomId", dosUomId);
-      console.log("onSelectJi dosUom", getOne.value);
-      this.countSpecDesc();
-    },
-
-    onSelectBao(packingUnitId) {
-      let getOne = this.unitBaoDatas.find((item) => item.id == packingUnitId);
-      this.medicData.packingUnit = getOne.value;
-      console.log("onSelectBao packingUnitId", packingUnitId);
-      console.log("onSelectBao packingUnit", getOne.value);
-      this.countSpecDesc();
-    },
-
-    onSelectSpiritual(psychotropicId) {
-      let getOne = this.typeSpiritualDatas.find((item) => item.code == psychotropicId);
-      this.medicData.psychotropicDesc = getOne.value;
-      console.log("onSelectSpiritual psychotropicId", psychotropicId);
-      console.log("onSelectSpiritual psychotropicDesc", getOne.value);
-    },
-
-    onSelectAnesthesia(stupefacientId) {
-      let getOne = this.typeAnesthesiaDatas.find((item) => item.code == stupefacientId);
-      this.medicData.stupefacientDesc = getOne.value;
-      console.log("onSelectAnesthesia stupefacientId", stupefacientId);
-      console.log("onSelectAnesthesia stupefacientDesc", getOne.value);
-    },
-    onSelectBacteria(antibacterialId) {
-      let getOne = this.typeBacteriaDatas.find((item) => item.code == antibacterialId);
-      this.medicData.antibacterialDesc = getOne.value;
-      console.log("onSelectBacteria antibacterialId", antibacterialId);
-      console.log("onSelectBacteria antibacterialDesc", getOne.value);
-    },
-
-    onSelectUse(defDirectionId) {
-      let getOne = this.defaultUseDatas.find((item) => item.id == defDirectionId);
-      this.medicData.defDirectionName = getOne.value;
-      console.log("onSelectUse defDirectionId", defDirectionId);
-      console.log("onSelectUse defDirectionName", getOne.value);
-    },
-
-    onSelectFreq(defFreqId) {
-      let getOne = this.defaultFreqDatas.find((item) => item.id == defFreqId);
-      this.medicData.defFreqName = getOne.value;
-      console.log("onSelectFreq defFreqId", defFreqId);
-      console.log("onSelectFreq defFreqName", getOne.value);
-    },
-
-    onChangPrice(event) {
-      debugger;
-      console.log("onChangPrice num", event);
-      if (event.pointerId) {
-        console.log("onChangPrice 清除事件", event.pointerId);
-        this.medicData.retailPrice = undefined;
-        return;
-      }
-      this.medicData.retailPrice = formatDecimal(this.medicData.retailPrice, 2);
-      console.log("onChangPrice this.medicData.retailPrice", this.medicData.retailPrice);
-    },
-
-    onChangXishu(event) {
-      if (event.pointerId) {
-        console.log("onChangXishu 清除事件", event.pointerId);
-        this.medicData.contentCoefficient = undefined;
-        return;
-      }
-      let index = this.medicData.contentCoefficient.indexOf("-");
-      if (index !== -1) {
-        this.medicData.contentCoefficient = this.medicData.contentCoefficient.replace(
-          "-",
-          ""
-        );
-      }
-      this.countSpecDesc();
-    },
-
-    /**
-     * 计算拼接描述
-     * 公式如下：含量系数含量单位*包装数量基本单位/包装单位
-     */
-    countSpecDesc() {
-      console.log("gfgggg dosUom", this.medicData.dosUom);
-      console.log("gfgggg minPkgNum", this.medicData.minPkgNum);
-      console.log("gfgggg baseUnitName", this.medicData.baseUnitName);
-      console.log("gfgggg packingUnit", this.medicData.packingUnit);
-
-      // this.medicData.specDesc = this.medicData.contentCoefficient ? this.medicData.contentCoefficient : "" + this.medicData.dosUom + '*' +
-      //   this.medicData.minPkgNum + this.medicData.baseUnitName + '/' + this.medicData.packingUnit
-
-      this.medicData.specDesc = `${
-        this.medicData.contentCoefficient ? this.medicData.contentCoefficient : ""
-      }${this.medicData.dosUom}*${this.medicData.minPkgNum}${
-        this.medicData.baseUnitName
-      }/${this.medicData.packingUnit}`;
-      console.log("gfgggg 888888 specDesc", this.medicData.specDesc);
-    },
-
-    /**
-     * 搜索厂商
-     * @param {} name
-     */
-    handleSearchManu(name) {
-      let param = {
-        pageNo: 1,
-        pageSize: 10,
-        factoryType: 1,
-        queryText: name,
-      };
-      qryFactoryList(param).then((res) => {
-        if (res.code == 0 && res.data.rows.length > 0) {
-          this.manuDatas = res.data.rows;
-          // this.queryParams.factoryId = this.factoryListData[0].id
-          // this.handleOk()
-        }
-      });
-    },
-    /**
-     * 搜索厂商
-     * @param {} name
-     */
-    handleSearchManu2(name) {
-      let param = {
-        pageNo: 1,
-        pageSize: 10,
-        factoryType: 1,
-        queryText: name,
-      };
-      qryFactoryList(param).then((res) => {
-        if (res.code == 0 && res.data.rows.length > 0) {
-          this.manuDatas = res.data.rows;
-          this.medicData.manufacturerId = this.manuDatas[0].id + "";
-          this.medicData.manufacturerName = this.manuDatas[0].factoryName;
-          this.countSpecDesc();
-        }
-      });
-    },
-
-    handleSearchDosage(name) {
-      let param = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getDosageList(param).then((res) => {
-        if (res.code == 0 && res.success) {
-          this.dosageDatas = res.data.records;
-          console.log("dosageDatas-------", this.dosageDatas);
-        }
-      });
-    },
-    handleSearchDosage2(name) {
-      let param = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getDosageList(param).then((res) => {
-        if (res.code == 0 && res.data.records.length > 0) {
-          this.dosageDatas = res.data.records;
-          this.medicData.dosageFormId = this.dosageDatas[0].id + "";
-          this.medicData.dosageFormDesc = this.dosageDatas[0].value;
-          this.countSpecDesc();
-        }
-      });
-    },
-
-    handleSearchYaoli(name) {
-      let param = {
-        // status: 0,
-        // pageNo: 1,
-        // pageSize: 10,
-        value: name,
-      };
-      getMedicCategoryList(param)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.yaoliDatas = res.data;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-    handleSearchYaoli2(name) {
-      let param = {
-        // status: 0,
-        // pageNo: 1,
-        // pageSize: 10,
-        value: name,
-      };
-      getMedicCategoryList(param)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.yaoliDatas = res.data;
-            this.medicData.pharmacologyCategoryId = this.yaoliDatas[0].id + "";
-            this.medicData.pharmacologyCategory = this.yaoliDatas[0].value;
-            this.countSpecDesc();
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchTreat(name) {
-      let param = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getTreatTypeList(param)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.treatTypeDatas = res.data.records;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchTreat2(name) {
-      let param = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getTreatTypeList(param)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.treatTypeDatas = res.data.records;
-            this.medicData.treatTypeId = this.treatTypeDatas[0].id + "";
-            this.medicData.treatTypeDesc = this.treatTypeDatas[0].value;
-            this.countSpecDesc();
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchBao(name) {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.unitBaoDatas = res.data.records;
-            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchBao2(name) {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.unitBaoDatas = res.data.records;
-            this.medicData.packingUnitId = this.unitBaoDatas[0].id + "";
-            this.medicData.packingUnit = this.unitBaoDatas[0].value;
-            this.countSpecDesc();
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchJi(name) {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.unitJiDatas = res.data.records;
-            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-    handleSearchJi2(name) {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.unitJiDatas = res.data.records;
-            this.medicData.dosUomId = this.unitJiDatas[0].id + "";
-            this.medicData.dosUom = this.unitJiDatas[0].value;
-            this.countSpecDesc();
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchBase(name) {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.baseUnitDatas = res.data.records;
-            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    handleSearchBase2(name) {
-      let params = {
-        status: 0,
-        pageNo: 1,
-        pageSize: 10,
-        value: name,
-      };
-      getUnitList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.baseUnitDatas = res.data.records;
-            // this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-
-            this.medicData.baseUnitId = this.baseUnitDatas[0].id + "";
-            this.medicData.baseUnitName = this.baseUnitDatas[0].value;
-            this.countSpecDesc();
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    /**
-     * 查询药品类型
-     */
-    getMedicTypes() {
-      //查字典
-      getDictData("medicine_types")
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.typeDatas = res.data;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    // /**
-    //  * 查询治疗类型
-    //  */
-    // getTreatTypes() {//查字典
-    //   getDictData('$BV$HIS$MEDICINE_TREAT_TYPE')
-    //     .then((res) => {
-    //       if (res.code == 0 && res.data.length > 0) {
-    //         this.treatTypeDatas = res.data
-    //       }
-    //     })
-    //     .finally((res) => {
-    //       // this.confirmLoading = false
-    //     })
-    // },
-    /**
-     * 查询治疗类型
-     */
-    // getTreatTypes() {//查字典
-    //   let param = {
-    //     pageNo: 1,
-    //     pageSize: 1000,
-    //   }
-    //   getTreatTypeList(param)
-    //     .then((res) => {
-    //       if (res.code == 0 && res.data.records.length > 0) {
-    //         this.treatTypeDatas = res.data.records
-    //       }
-    //     })
-    //     .finally((res) => {
-    //       // this.confirmLoading = false
-    //     })
-    // },
-
-    /**
-     * 查询医保类型
-     */
-    getYiBaoDatas() {
-      //查字典
-      getDictData("$BV$HIS$MEDICINE_HEALTH_INSURANCE")
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.yibaoDatas = res.data;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-    // /**
-    //  * 查询基本单位列表
-    //  */
-    // getBaseUnitDatas() {//查字典
-    //   getDictData('$BV$HIS$MEDICINE_BASEUNIT')
-    //     .then((res) => {
-    //       if (res.code == 0 && res.data.length > 0) {
-    //         this.baseUnitDatas = res.data
-    //       }
-    //     })
-    //     .finally((res) => {
-    //       // this.confirmLoading = false
-    //     })
-    // },
-    /**
-     * 查询计费方式列表
-     */
-    getExpenseDatas() {
-      //查字典
-      getDictData("expense_type")
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.expenseDatas = res.data;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    /**
-     * 精神药品列表
-     */
-    getSpiritualDatas() {
-      //查字典
-      getDictData("psychotropic_type")
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.typeSpiritualDatas = res.data;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    /**
-     * 麻醉药品列表
-     */
-    getAnesthesiaDatas() {
-      //查字典
-      getDictData("stupefacien_type")
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            this.typeAnesthesiaDatas = res.data;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    /**
-     * 抗菌药品列表
-     */
-    getBacteriaDatas() {
-      //查字典
-      getDictData("	antibacterial_type")
-        .then((res) => {
-          console.log("this.typeBacteriaDatas ddd", res);
-          if (res.code == 0 && res.data.length > 0) {
-            this.typeBacteriaDatas = res.data;
-            console.log("this.typeBacteriaDatas", this.typeBacteriaDatas);
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    // /**
-    //  * 剂量单位 包装单位  都用这个列表
-    //  */
-    // getUnitDatas() {
-    //   let params = {
-    //     status: 0,
-    //     pageNo: 1,
-    //     pageSize: 10000,
-    //   }
-    //   getUnitList(params)
-    //     .then((res) => {
-    //       if (res.code == 0 && res.data.records.length > 0) {
-    //         this.unitJiDatas = res.data.records
-    //         this.unitBaoDatas = JSON.parse(JSON.stringify(res.data.records))
-    //       }
-    //     })
-    //     .finally((res) => {
-    //       // this.confirmLoading = false
-    //     })
-    // },
-
-    /**
-     * 默认用法列表
-     */
-    getDefaultUseDatas(value) {
-      let params = {
-        status: 0, //状态0正常 1停用 2删除
-        pageNo: 1,
-        value: value,
-        pageSize: 10,
-      };
-      getUseList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.defaultUseDatas = res.data.records;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-    /**
-     * 默认频次列表
-     */
-    getDefaultFreqDatas(value) {
-      let params = {
-        status: 0, //状态0正常 1停用 2删除
-        pageNo: 1,
-        value: value,
-        pageSize: 10,
-      };
-      getFreqList(params)
-        .then((res) => {
-          if (res.code == 0 && res.data.records.length > 0) {
-            this.defaultFreqDatas = res.data.records;
-          }
-        })
-        .finally((res) => {
-          // this.confirmLoading = false
-        });
-    },
-
-    // getCategoryListOut() {
-    //   let param = {
-    //     remark: "",
-    //   }
-    //   getCategoryList(param)
-    //     .then((res) => {
-    //       if (res.code == 0 && res.success) {
-    //         this.yaoliTree = res.data
-    //         console.log('yaoliTree-------111', JSON.stringify(res.data));
-    //         // this.processTreeData(JSON.parse(JSON.stringify(this.yaoliTree)))
-    //         this.processTreeData(this.yaoliTree)
-    //         console.log('yaoliTree-------', JSON.stringify(this.yaoliTree));
-    //       }
-    //     })
-    // },
-
-    processTreeData(array) {
-      array.forEach((item) => {
-        this.$set(item, "key", item.id);
-        this.$set(item, "title", item.value);
-        this.$set(item, "value", item.id);
-        // this.$set(item, 'children', item.hospitals)
-        if (item.children && item.children.length > 0) {
-          this.processTreeData(item.children);
-        }
-      });
-    },
-
-    //   ethicalsSign: "",//处方药品：1是 2否
-    //   valuableSign: "",//贵重药品：1是 2否
-    //   drugSign: "",//剧毒药品：1是 2否
-    goChufang() {
-      this.isChufang = !this.isChufang;
-      this.medicData.ethicalsSign = this.isChufang ? 1 : 2;
-    },
-    goExpensive() {
-      this.isExpensive = !this.isExpensive;
-      this.medicData.valuableSign = this.isExpensive ? 1 : 2;
-    },
-    goPoisonous() {
-      this.isPoisonous = !this.isPoisonous;
-      this.medicData.drugSign = this.isPoisonous ? 1 : 2;
-    },
-
-    goSpiritual() {
-      this.isSpiritual = !this.isSpiritual;
-      if (!this.isSpiritual) {
-        this.medicData.psychotropicId = "";
-        this.medicData.psychotropicDesc = "";
-        // this.medicData.defDosage = ""
-      }
-    },
-    goAnesthesia() {
-      this.isAnesthesia = !this.isAnesthesia;
-      if (!this.isAnesthesia) {
-        this.medicData.stupefacientId = "";
-        this.medicData.stupefacientDesc = "";
-        // this.medicData.defDirectionId = ''
-        // this.medicData.defDirectionName = ''
-
-        // stupefacientDesc: "",//麻醉药品
-        // stupefacientId: undefined,//麻醉药品id(字典表中)
-        // defDirectionId: undefined,//默认用法id(接口)
-        // defDirectionName:
-      }
-    },
-    goBacteria() {
-      this.isBacteria = !this.isBacteria;
-      if (!this.isBacteria) {
-        this.medicData.antibacterialId = "";
-        this.medicData.antibacterialDesc = "";
-        // this.medicData.defFreqId = ''
-        // this.medicData.defFreqName = ''
-
-        // antibacterialDesc: "",//抗菌药品
-        //   antibacterialId: undefined,//抗菌药品id(字典表中)
-        //   defFreqId: undefined,//默认频次id(接口)
-        //   defFreqName: "",//默认频次
-      }
-    },
-
-    initEditor() {
-      if (this.editor.isEnable) {
-        return;
-      }
-      var editor = new E("#div11");
-
-      editor.config.height = 300;
-      editor.config.pasteFilterStyle = false;
-      console.log("editor", editor);
-      console.log("editorconfig", editor.config);
-      editor.config.onchange = (html) => {
-        this.medicData.note = html;
-      };
-      // 默认情况下，显示所有菜单
-      editor.config.menus = [
-        "head",
-        "bold",
-        "fontSize",
-        "fontName",
-        "italic",
-        "underline",
-        "strikeThrough",
-        "indent",
-        "lineHeight",
-        "foreColor",
-        "backColor",
-        "link",
-        "list",
-        "todo",
-        "justify",
-        "quote",
-        // 'emoticon',
-        "image",
-        "video",
-        "table",
-        "code",
-        "splitLine",
-        "undo",
-        "redo",
-      ];
-
-      editor.config.uploadImgHeaders = {
-        Authorization: Vue.ls.get(ACCESS_TOKEN),
-      };
-
-      // 配置 server 接口地址
-      editor.config.uploadFileName = "file";
-      editor.config.uploadImgServer = "/api/content-api/fileUpload/uploadImgFileForEdit";
-      // editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
-
-      // editor.config.showLinkVideo = false
-
-      //教育文章先不支持视频，所以注释
-      editor.config.uploadVideoName = "file";
-      editor.config.uploadVideoServer =
-        "/api/content-api/fileUpload/uploadVideoFileForEdit";
-      editor.config.uploadVideoHeaders = {
-        Authorization: Vue.ls.get(ACCESS_TOKEN),
-      };
-
-      /**
-       * 插入视频写法：
-       *
-       * <iframe frameborder="0" src="https://v.qq.com/txp/iframe/player.html?vid=n0020yrnly7" allowFullScreen="true"></iframe>
-       * <iframe frameborder="0" src="https://vd3.bdstatic.com/mda-nit9wfd413e2xjsh/sc/cae_h264/1664351398486048214/mda-nit9wfd413e2xjsh.mp4?v_from_s=hkapp-haokan-hbf&auth_key=1664420478-0-0-ee34ef2d3450dbb1901bde7ab5ebd63b&bcevod_channel=searchbox_feed&pd=1&cd=0&pt=3&logid=1878163596&vid=7560524968628684931&abtest=104960_1-104959_1&klogid=1878163596" allowFullScreen="true"></iframe>
-       *
-       */
-
-      editor.create();
-      this.editor = editor;
-    },
-
-    goAgin() {
-      // 随访名单更新时需重新匹配：0不匹配1匹配
-      this.isAgain = !this.isAgain;
-      // this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0
-    },
-
-    goSearch() {
-      let queryText = "";
-      if (this.medicData.code) {
-        queryText = this.medicData.code;
-      } else if (this.medicData.genericName) {
-        queryText = this.medicData.genericName;
-      } else if (this.medicData.tradeName) {
-        queryText = this.medicData.tradeName;
-      } else if (this.medicData.approvalNumber) {
-        queryText = this.medicData.approvalNumber;
-      }
-
-      this.$router.push({
-        path: "./medicSearch",
-        query: {
-          // queryText: queryText,
-          dataStr: JSON.stringify({ queryText: queryText, jumpType: "add_sku" }),
-        },
-      });
+      // let getOne = this.yibaoDatas.find((item) => item.code == healthInsuranceCategoryId);
+      // this.medicData.healthInsuranceCategory = getOne.value;
+      // console.log("onSelectYibao healthInsuranceCategoryId", healthInsuranceCategoryId);
+      // console.log("onSelectYibao healthInsuranceCategory", getOne.value);
     },
 
     cancel() {
       this.$router.go(-1);
     },
     submitData() {
-      let tempData = JSON.parse(JSON.stringify(this.medicData));
-      if (!tempData.genericName) {
-        this.$message.error("请输入药品名称");
+      let tempData = JSON.parse(JSON.stringify(this.uploadData));
+      if (!tempData.patientBaseinfoReq.name) {
+        this.$message.error("请输入患者姓名");
         return;
       }
-      if (!tempData.manufacturerId || !tempData.manufacturerName) {
-        this.$message.error("请输入选择生产厂商");
+      if (!tempData.patientBaseinfoReq.identificationType) {
+        this.$message.error("请选择证件类型");
         return;
       }
-      if (!tempData.tradeName) {
-        this.$message.error("请输入商品名称");
+      if (!tempData.patientBaseinfoReq.identificationNo) {
+        this.$message.error("请输入证件号码");
         return;
       }
-      if (!tempData.drugTypeId) {
-        this.$message.error("请选择药品类型");
+      if (!this.dateValue) {
+        this.$message.error("请选择出生日期");
         return;
       }
-      if (!tempData.dosageFormId || !tempData.dosageFormDesc) {
-        this.$message.error("请输入选择药品剂型");
+      if (!tempData.patientBaseinfoReq.phone) {
+        this.$message.error("请输入本人电话");
         return;
       }
-
-      if (!tempData.contentCoefficient) {
-        this.$message.error("含量系数");
+      if (!tempData.patientBaseinfoReq.liveType) {
+        this.$message.error("请选择常住分类");
         return;
       }
-      if (!tempData.dosUomId) {
-        this.$message.error("请选择剂量单位");
+      if (!tempData.patientBaseinfoReq.addressCode) {
+        this.$message.error("请输入选择户口地址");
         return;
       }
-      if (!tempData.minPkgNum) {
-        this.$message.error("请输入包装数量");
+      if (!tempData.patientBaseinfoReq.addressDetail) {
+        this.$message.error("请输入选择详细地址");
         return;
       }
-      if (!tempData.baseUnitId) {
-        this.$message.error("请选择基本单位");
-        return;
-      }
-      if (!tempData.packingUnitId) {
-        this.$message.error("请选择包装单位");
-        return;
-      }
-      if (!tempData.specDesc) {
-        this.$message.error("请输入规格描述");
-        return;
-      }
-      if (!tempData.retailPrice) {
-        this.$message.error("请输入参考价格");
+      if (!tempData.diseaseLevel) {
+        this.$message.error("请选择病情分级");
         return;
       }
 
-      if (!tempData.expenseId) {
-        this.$message.error("请选择计费方式");
+      if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
+        this.$message.error("请输入选择主要诊断");
         return;
       }
 
-      /**
-       *       
-
-      isSpiritual: false,
-      isAnesthesia: false,
-      isBacteria: false,
-       */
-      //处理药品勾选
-      if (this.isSpiritual) {
-        if (!tempData.psychotropicId) {
-          this.$message.error("请选择精神药品类型");
-          return;
-        }
-        // if (!tempData.defDosage) {
-        //   this.$message.error('请输入默认剂量')
-        //   return
-        // }
-      }
-      if (this.isAnesthesia) {
-        if (!tempData.stupefacientId) {
-          this.$message.error("请选择麻醉药品类型");
-          return;
-        }
-        // if (!tempData.defDirectionId || !tempData.defDirectionName) {
-        //   this.$message.error('请输入选择麻醉药品默认用法')
-        //   return
-        // }
-      }
-      if (this.isBacteria) {
-        if (!tempData.antibacterialId) {
-          this.$message.error("请选择抗菌药品类型");
-          return;
-        }
-        // if (!tempData.defFreqId || !tempData.defFreqName) {
-        //   this.$message.error('请输入选择抗菌药品默认频次')
-        //   return
-        // }
+      if (!tempData.diseaseLevel) {
+        this.$message.error("请选择病情分级");
+        return;
       }
 
-      //处理类型转换
-      if (tempData.defDirectionId) {
-        tempData.defDirectionId = parseInt(tempData.defDirectionId);
-      }
-      if (tempData.defFreqId) {
-        tempData.defFreqId = parseInt(tempData.defFreqId);
-      }
-      if (tempData.dosUomId) {
-        tempData.dosUomId = parseInt(tempData.dosUomId);
-      }
-      if (tempData.dosageFormId) {
-        tempData.dosageFormId = parseInt(tempData.dosageFormId);
-      }
-      if (tempData.expenseId) {
-        //接口文档有误  expenseDesc int
-        tempData.expenseId = parseInt(tempData.expenseId);
-      }
-      if (tempData.manufacturerId) {
-        tempData.manufacturerId = parseInt(tempData.manufacturerId);
-      }
+      //单独组装生日
+      this.uploadData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
+        "YYYY-MM-DD"
+      );
+      //单独组装主要诊断
+      this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+      this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
 
-      if (tempData.packingUnitId) {
-        tempData.packingUnitId = parseInt(tempData.packingUnitId);
-      }
-      if (tempData.pharmacologyCategoryId) {
-        tempData.pharmacologyCategoryId = parseInt(tempData.pharmacologyCategoryId);
-      }
-      if (tempData.treatTypeId) {
-        tempData.treatTypeId = parseInt(tempData.treatTypeId);
-      }
-
-      console.log("submitData tempData", tempData);
+      console.log("addTransUp tempData", tempData);
       this.confirmLoading = true;
-      addMedicineSku(tempData)
+      upReferral(tempData)
         .then((res) => {
           this.confirmLoading = false;
           if (res.code == 0) {
             this.$message.success("保存成功");
-            this.$bus.$emit("refreshMedicListEvent", "刷新药品列表");
+            this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.clearData();
             this.$router.go(-1);

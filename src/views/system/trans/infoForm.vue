@@ -162,7 +162,7 @@
               >
                 <a-select-option
                   v-for="item in countryData"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -186,7 +186,7 @@
               >
                 <a-select-option
                   v-for="item in nationData"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -234,7 +234,7 @@
               >
                 <a-select-option
                   v-for="item in rhDatas"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -257,7 +257,7 @@
               >
                 <a-select-option
                   v-for="item in eduDatas"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -281,7 +281,7 @@
               >
                 <a-select-option
                   v-for="item in jobDatas"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -304,7 +304,7 @@
               >
                 <a-select-option
                   v-for="item in marryDatas"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -330,7 +330,7 @@
               >
                 <a-select-option
                   v-for="item in liveDatas"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -353,7 +353,7 @@
               >
                 <a-select-option
                   v-for="item in insuranceDatas"
-                  :key="item.id"
+                  :key="item.code"
                   :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
@@ -370,14 +370,6 @@
               户口地址：
             </div>
             <div class="div-cell-value" style="width: 80%">
-              <!-- <a-input
-                :maxLength="300"
-                v-model="userData.addressCode"
-                allow-clear
-                placeholder="请输入户口地址"
-                style="width: 100%"
-              /> -->
-
               <a-auto-complete
                 v-model="userData.addressCode"
                 placeholder="请输入选择"
@@ -623,14 +615,11 @@ export default {
     goModify(record) {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
       // this.nowDateBegin = moment(new Date(), this.dateFormat);
-      // this.dateValue = moment(new Date(), this.dateFormat);
       this.clearData();
       this.visible = true;
       this.confirmLoading = false;
       // this.userData = JSON.parse(JSON.stringify(record));
       this.getPatientDataDetail(record);
-
-      // this.dateValue = this.userData.birthday;
     },
 
     getPatientDataDetail(record) {

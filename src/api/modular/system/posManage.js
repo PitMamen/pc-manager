@@ -5567,6 +5567,42 @@ export function savePatientBaseInfo(data) {
   })
 }
 
+///referralTrade/getUpReferralList 上转登记列表
+export function getUpReferralList(data) {
+  return axios({
+    url: '/referral-api/referralTrade/getUpReferralList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// /referralOrg/upHospitalList 上转机构列表
+export function upHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/upHospitalList',
+    method: 'get',
+    params: data,
+  })
+}
+
+//组织性质
+export function searchDiagnosis(data) {
+  return axios({
+    url: '/info-api/medicine/searchDiagnosis',
+    method: 'get',
+    params: data,
+  })
+}
+
+// referralTrade/upReferral 上转登记
+export function upReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/upReferral',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 转诊组织列表
 export function getreferralOrgList(data) {
   return axios({
