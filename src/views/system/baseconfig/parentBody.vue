@@ -99,7 +99,21 @@ export default {
 
 
     onChanage(event) {
-      console.log('FFF：', event.type)
+      console.log('FFF：', event.target.value)
+      if (event.target.value) {
+        if (this.hospitalList && this.hospitalList.length > 0) {
+          var ss = this.hospitalList.filter((p) => {
+            return p.hospitalName.indexOf(event.target.value) > -1
+          })
+
+          if (ss && ss.length > 0) {
+            this.hospitalList = ss
+          } else {
+            this.hospitalList = JSON.parse(JSON.stringify(this.hospitalList))
+          }
+        }
+      }
+
       if (event.target.value == '' || event.type == 'click') {
         this.getUpHospitalListOut()
       }

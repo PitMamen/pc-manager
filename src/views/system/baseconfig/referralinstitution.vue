@@ -46,7 +46,6 @@
 
           <s-table
             style="overflow-y: auto; margin-top: 10px"
-            :showPagination="false"
             ref="table"
             size="default"
             :columns="columns"
@@ -55,7 +54,7 @@
             :rowKey="(record) => record.code"
           >
             <span slot="action" slot-scope="text, record">
-              <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="deleteUserTagOut(record)">
+              <a-popconfirm :title="getTile(record)" ok-text="确定" cancel-text="取消" @confirm="deleteUserTagOut(record)">
                 <a><a-icon style="margin-right: 5px" type="delete"></a-icon>移除</a>
               </a-popconfirm>
 
@@ -102,6 +101,8 @@ export default {
       leftListData: [],
       confirmLoading: false,
       tagsTypeId: '',
+      clickorgName:'',
+      clickHospital:'',
       labelCol: {
         xs: { span: 24 },
         sm: { span: 6 },
@@ -209,10 +210,10 @@ export default {
     reset() {
       this.params.id = ''
       this.tagsTypeId = ''
+      this.clickorgName = ''
       this.$refs.table.refresh()
     },
 
-    showUphospital(list) {},
 
     /**
      * 所属机构接口
@@ -255,6 +256,16 @@ export default {
     //     })
     // },
 
+    getTile(record){
+    return "确定从"+this.clickorgName+'组织中删除'+record.hospitalName+'机构吗?'
+    },
+
+
+
+
+
+
+
     //分页列表  （左侧）
     getreferralOrgListOut(isfirst) {
       getreferralOrgList().then((res) => {
@@ -265,6 +276,7 @@ export default {
             })
 
             this.leftListData = res.data
+            this.clickorgName = this.leftListData[0].orgName
             if (isfirst) {
                 this.params.id = this.leftListData[0].id //默认第一个 id
                 this.leftListData[0].checked = true
@@ -293,6 +305,7 @@ export default {
     //选中团队
     onCategoryChange(item) {
       console.log('ddd:', item)
+      this.clickorgName = item.orgName
       this.leftListData.forEach((e) => {
         if (e.id == item.id) {
           e.checked = true

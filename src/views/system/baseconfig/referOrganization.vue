@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :title="checkData.merchantId ? '修改转诊组织' : '新增转诊组织'"
+    :title="checkData.id ? '修改转诊组织' : '新增转诊组织'"
     :width="488"
     :visible="visible"
     :confirmLoading="confirmLoading"
@@ -242,7 +242,7 @@ export default {
               this.targetKeys.push(dataTemp[i].hospitalCode)
             }
           }
-          console.log('HHHH:', this.targetData)
+        //   console.log('HHHH:', this.targetData)
         }
       })
     },
