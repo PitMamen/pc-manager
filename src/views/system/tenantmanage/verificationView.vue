@@ -550,6 +550,7 @@ export default {
       flex-direction: row;
       overflow: hidden;
       width: 100%;
+      height: 20px;
       margin-left: 20px;
       margin-top: 22px;
     }
