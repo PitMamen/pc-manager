@@ -386,7 +386,7 @@
             <div class="div-cell-value" style="width: 85.1%">
               <div class="div-cell-value" style="width: 80%">
                 <a-auto-complete
-                  v-model="uploadData.patientBaseinfoReq.addressCode"
+                  v-model="uploadData.patientBaseinfoReq.address"
                   placeholder="请输入选择"
                   option-label-prop="title"
                   @select="onSelectBase"
@@ -398,7 +398,7 @@
                       v-for="(item, index) in addressDatas"
                       :title="item.townName"
                       :key="index + ''"
-                      :value="item.addressId + ''"
+                      :value="item.townName"
                       >{{ item.townName }}</a-select-option
                     >
                   </template>
@@ -469,8 +469,8 @@
                 :not-found-content="fetching ? undefined : null"
                 allow-clear
                 placeholder="请搜索选择"
-                @change="onDepartmentSelectChange"
-                @search="onDepartmentSelectSearch"
+                @change="onDiagnoseSelectChange"
+                @search="onDiagnoseSelectSearch"
               >
                 <a-spin v-if="fetching" slot="notFoundContent" size="small" />
                 <a-select-option
@@ -561,7 +561,7 @@
                 <a-select-option
                   v-for="item in referralTypeDatas"
                   :key="item.code"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -585,7 +585,7 @@
                 <a-select-option
                   v-for="item in reasonDatas"
                   :key="item.code"
-                  :value="item.code"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -624,7 +624,30 @@
               转入科室：
             </div>
             <div class="div-cell-value">
+              <!-- class="deptselect-single" -->
               <a-select
+                show-search
+                style="width: 100%"
+                v-model="uploadData.inDeptCode"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请输入选择科室"
+                @change="onDepartmentSelectChange"
+                @select="onSelectDept"
+                @search="onDepartmentSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option
+                  v-for="(item, index) in originData"
+                  :title="item.department_name"
+                  :key="index"
+                  :value="item.department_id"
+                  >{{ item.department_name }}</a-select-option
+                >
+              </a-select>
+
+              <!-- <a-select
                 v-model="uploadData.healthInsuranceCategoryId"
                 @select="onSelectYibao"
                 placeholder="请选择"
@@ -637,7 +660,7 @@
                   :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
-              </a-select>
+              </a-select> -->
             </div>
           </div>
           <div class="div-cell">
@@ -647,17 +670,18 @@
             </div>
             <div class="div-cell-value">
               <a-select
-                v-model="uploadData.healthInsuranceCategoryId"
-                @select="onSelectYibao"
+                v-model="uploadData.docId"
+                @select="onSelectInDoctor"
+                @focus="onDocFocus"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
-                  v-for="item in transTypeDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
+                  v-for="item in inDocDatas"
+                  :key="item.userId"
+                  :value="item.userId"
+                  >{{ item.userName }}</a-select-option
                 >
               </a-select>
             </div>
@@ -740,6 +764,8 @@ import {
   searchDiagnosis,
   upHospitalList,
   upReferral,
+  getDepartmentListForSelect,
+  getTreeUsersByDeptIdsAndRoles,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -791,7 +817,7 @@ export default {
           insuranceType: undefined,
 
           address: undefined,
-          addressCode: undefined,
+          addressCode: undefined, // addressCode不要了，后台不存code，用address直接存文字
           addressDetail: undefined,
 
           //页面未用到字段
@@ -819,7 +845,7 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
-        docId: 0, //接收医生id
+        docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
         reachEndDate: undefined, //期望到院结束日期
@@ -887,6 +913,8 @@ export default {
       reasonDatas: [],
       transTypeDatas: [],
       referralTypeDatas: [],
+      originData: [], //科室数组
+      inDocDatas: [], //转入医生数组
       fetching: false,
 
       diagnoseNames: [],
@@ -1071,6 +1099,7 @@ export default {
     });
 
     this.getHospitalDatas();
+    this.getDepartmentSelectList(undefined);
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1096,14 +1125,15 @@ export default {
   //       }
   // },
   methods: {
-    //科室搜索
-    onDepartmentSelectSearch(value) {
+    //诊断搜索
+    onDiagnoseSelectSearch(value) {
       this.diagnoseDatas = [];
       this.searchDiagnosisDatas(value);
     },
 
-    //科室选择变化
-    onDepartmentSelectChange(value) {
+    //诊断选择变化
+    onDiagnoseSelectChange(value) {
+      this.diagnoseNames = [];
       console.log("onDepartmentSelectChange value", value);
       console.log("onDepartmentSelectChange diagnoseCode", this.uploadData.diagnoseCode);
 
@@ -1114,6 +1144,7 @@ export default {
           this.diagnoseNames.push(getOne.name);
         });
       }
+      console.log("onDiagnoseSelectChange diagnoseNames", this.diagnoseNames);
 
       if (value === undefined || value.length == 0) {
         this.diagnoseDatas = [];
@@ -1134,6 +1165,69 @@ export default {
       });
     },
 
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = [];
+      this.getDepartmentSelectList(value);
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.originData = [];
+        this.getDepartmentSelectList(undefined);
+      }
+    },
+
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true;
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
+        this.fetching = false;
+        if (res.code == 0) {
+          this.originData = res.data.records;
+        }
+
+        // if (!departmentName) {
+        //   this.$refs.table.refresh(true);
+        // }
+      });
+    },
+
+    // onSelectDept(){},
+    onSelectDept(department_id) {
+      let getOne = this.originData.find((item) => item.department_id == department_id);
+      this.uploadData.inDept = getOne.department_name;
+      console.log("onSelectDept department_id", department_id);
+      console.log("onSelectDept department_name", getOne.department_name);
+      this.getTreeUsers();
+    },
+
+    onDocFocus() {
+      if (!this.uploadData.inDeptCode) {
+        this.$message.warn("请先选择转入科室");
+        return;
+      }
+    },
+
+    onSelectInDoctor(userId) {
+      let getOne = this.inDocDatas.find((item) => item.userId == userId);
+      this.uploadData.docName = getOne.userName;
+      console.log("onSelectInDoctor docId", userId);
+      console.log("onSelectInDoctor docName", getOne.vauserNamelue);
+    },
+
+    getTreeUsers() {
+      getTreeUsersByDeptIdsAndRoles({
+        roleIds: ["doctor"],
+        departmentIds: [this.uploadData.inDeptCode],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.inDocDatas = res.data[0].users || [];
+        }
+      });
+    },
+
     getHospitalDatas() {
       this.fetching = true;
       upHospitalList({}).then((res) => {
@@ -1148,8 +1242,9 @@ export default {
     },
 
     onSelectBase(addressId) {
-      let getOne = this.addressDatas.find((item) => item.addressId == addressId);
-      this.userData.address = getOne.townName;
+      //addressCode不要了 所以不用赋值
+      // let getOne = this.addressDatas.find((item) => item.addressId == addressId);
+      // this.uploadData.address = getOne.townName;
     },
 
     handleSearchBase(name) {
@@ -1178,7 +1273,7 @@ export default {
     },
 
     clearData() {
-      this.createValue = [];
+      // this.createValue = [];
       this.createValue = [
         moment(getDateNow(), this.dateFormat),
         moment(getCurrentMonthLast(), this.dateFormat),
@@ -1205,7 +1300,7 @@ export default {
           insuranceType: undefined,
 
           address: undefined,
-          addressCode: undefined,
+          addressCode: undefined, //addressCode不要了，后台不存code，用address直接存文字
           addressDetail: undefined,
 
           //页面未用到字段
@@ -1233,7 +1328,7 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
-        docId: 0, //接收医生id
+        docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
         reachEndDate: undefined, //期望到院结束日期
@@ -1331,7 +1426,7 @@ export default {
         this.$message.error("请选择常住分类");
         return;
       }
-      if (!tempData.patientBaseinfoReq.addressCode) {
+      if (!tempData.patientBaseinfoReq.address) {
         this.$message.error("请输入选择户口地址");
         return;
       }
@@ -1349,18 +1444,45 @@ export default {
         return;
       }
 
-      if (!tempData.diseaseLevel) {
-        this.$message.error("请选择病情分级");
+      if (!tempData.inHospitalCode) {
+        this.$message.error("请选择转入机构");
+        return;
+      }
+      if (!tempData.referralType) {
+        this.$message.error("请选择转诊类型");
+        return;
+      }
+      if (!tempData.referralReason) {
+        this.$message.error("请选择转诊原因");
+        return;
+      }
+      if (!tempData.referralWay) {
+        this.$message.error("请选择转运方式");
+        return;
+      }
+
+      if (!tempData.reachBeginDate || !tempData.reachEndDate) {
+        this.$message.error("请选择期望到院时间");
         return;
       }
 
       //单独组装生日
-      this.uploadData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
-        "YYYY-MM-DD"
-      );
+      tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
       //单独组装主要诊断
       this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
       this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+
+      //组装期望到院时间
+      this.$set(
+        tempData,
+        "reachBeginDate",
+        moment(this.uploadData.reachBeginDate).format("YYYY-MM-DD")
+      );
+      this.$set(
+        tempData,
+        "reachEndDate",
+        moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
+      );
 
       console.log("addTransUp tempData", tempData);
       this.confirmLoading = true;
