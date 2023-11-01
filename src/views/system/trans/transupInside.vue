@@ -132,6 +132,7 @@
               <a-input
                 v-model="uploadData.patientBaseinfoReq.phone"
                 allow-clear
+                type="number"
                 placeholder="请输入本人电话"
                 style="width: 100%"
               />
@@ -160,6 +161,7 @@
             </div>
             <div class="div-cell-value">
               <a-input
+                type="number"
                 v-model="uploadData.patientBaseinfoReq.contactTel"
                 allow-clear
                 placeholder="请输入联系人电话"
@@ -561,7 +563,7 @@
                 <a-select-option
                   v-for="item in referralTypeDatas"
                   :key="item.code"
-                  :value="item.value"
+                  :value="item.code"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -961,6 +963,8 @@ export default {
       moment(getDateNow(), this.dateFormat),
       moment(getCurrentMonthLast(), this.dateFormat),
     ];
+    this.uploadData.reachBeginDate = this.createValue[0];
+    this.uploadData.reachEndDate = this.createValue[1];
 
     console.log("uploadData", this.uploadData);
     console.log("uploadData identificationType", this.uploadData.identificationType);

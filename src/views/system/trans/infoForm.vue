@@ -116,7 +116,7 @@
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              <span style="color: #f90505; margin-top: 3px">*</span>家属姓名：
+              家属姓名：
             </div>
             <div class="div-cell-value">
               <a-input
@@ -371,7 +371,7 @@
             </div>
             <div class="div-cell-value" style="width: 80%">
               <a-auto-complete
-                v-model="userData.addressCode"
+                v-model="userData.address"
                 placeholder="请输入选择"
                 option-label-prop="title"
                 @select="onSelectBase"
@@ -383,7 +383,7 @@
                     v-for="(item, index) in addressDatas"
                     :title="item.townName"
                     :key="index + ''"
-                    :value="item.addressId + ''"
+                    :value="item.townName"
                     >{{ item.townName }}</a-select-option
                   >
                 </template>
@@ -588,7 +588,7 @@ export default {
   methods: {
     clearData() {
       this.userData = {};
-      this.addressDatas=[]
+      this.addressDatas = [];
     },
 
     onSelectBase(addressId) {
@@ -631,9 +631,13 @@ export default {
             this.dateValue = moment(this.userData.birthday, "YYYY-MM-DD");
           }
 
-          if (this.userData.addressCode) {
+          if (this.userData.address) {
             this.addressDatas = [
-              { addressId: this.userData.addressCode, townName: this.userData.address },
+              {
+                addressId: this.userData.addressCode,
+                townName: this.userData.address,
+                address: this.userData.address,
+              },
             ];
           }
         } else {
@@ -679,7 +683,7 @@ export default {
         this.$message.error("请输选择常住分类");
         return;
       }
-      if (isStringEmpty(this.userData.addressCode)) {
+      if (isStringEmpty(this.userData.address)) {
         this.$message.error("请输入选择户口地址");
         return;
       }
