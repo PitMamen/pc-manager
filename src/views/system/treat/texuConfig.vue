@@ -821,7 +821,7 @@ export default {
               quantity: 1,
               itemImg: 1,
               saleAmount: itemTask.saleAmount,
-              serviceItemId: 3,
+              serviceItemId: 5,
               serviceItemName: '特需心理咨询',
               unit: '次',
               itemsAttr: [
