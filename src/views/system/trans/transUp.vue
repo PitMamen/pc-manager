@@ -86,7 +86,9 @@
       </span>
       <span slot="action" slot-scope="text, record">
         <template v-if="record.status.value === 1">
-          <a @click="goEdit"><a-icon style="margin-right: 5px" type="edit" />修改</a>
+          <a @click="goEdit(record)"
+            ><a-icon style="margin-right: 5px" type="edit" />修改</a
+          >
         </template>
         <!-- 审核通过的不能修改 -->
         <template v-if="record.status.value === 2">
@@ -311,9 +313,16 @@ export default {
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
       moment(formatDate(new Date().getTime()), this.dateFormat),
-    ]
+    ];
     // this.queryParam.createStartTime = this.createValue[0];
     // this.queryParam.createEndTime = this.createValue[1];
+  },
+  mounted() {
+    this.$bus.$on("refreshTransUpListEvent", (record) => {
+      console.log("refreshTransUpListEvent", record);
+      // this.$refs.table.refresh(true);
+      this.$refs.table.refresh();
+    });
   },
   methods: {
     /**
@@ -378,9 +387,16 @@ export default {
       this.queryParam.createEndTime = dateArr[1];
     },
 
-    goEdit() {
+    goEdit(record) {
       //TODO
-      this.$message.success("去编辑");
+      // this.$message.success("去编辑");
+      this.$router.push({
+        name: "transupDetailmodify",
+        // path: '/servicewise/projectEdit',
+        query: {
+          dataStr: JSON.stringify(record),
+        },
+      });
     },
     goPrint() {
       //TODO
