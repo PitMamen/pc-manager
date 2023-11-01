@@ -5575,6 +5575,14 @@ export function getUpReferralList(data) {
     data: data,
   })
 }
+///referralTrade/modifyUpReferral 上转登记列表
+export function modifyUpReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/modifyUpReferral',
+    method: 'post',
+    data: data,
+  })
+}
 
 // /referralOrg/upHospitalList 上转机构列表
 export function upHospitalList(data) {
