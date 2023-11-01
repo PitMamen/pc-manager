@@ -130,7 +130,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 type="number"
                 class="span-item-value"
@@ -162,7 +162,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px; text-align-last: center"
@@ -193,7 +193,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px; text-align-last: center"
@@ -224,7 +224,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px; text-align-last: center"
@@ -255,7 +255,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px; text-align-last: center"
@@ -286,7 +286,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px; text-align-last: center"
@@ -317,7 +317,7 @@
               />
               <div>接诊人数</div>
               <a-input-number
-                :min="0"
+                :min="1"
                 :max="500"
                 class="span-item-value"
                 style="display: inline-block; width: 95px; text-align-last: center"
@@ -821,7 +821,7 @@ export default {
               quantity: 1,
               itemImg: 1,
               saleAmount: itemTask.saleAmount,
-              serviceItemId: 3,
+              serviceItemId: 5,
               serviceItemName: '特需心理咨询',
               unit: '次',
               itemsAttr: [
