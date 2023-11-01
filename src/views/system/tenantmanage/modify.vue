@@ -294,7 +294,7 @@ export default {
       queryTenantDetail({ tenantId: this.tenantId })
         .then((res) => {
           if (res.code == 0 && res.success) {
-            this.queryParams.applicationIds = res.data.applicationIds
+            this.queryParams.applicationIds = res.data.applicationIds||[]
             this.queryParams.tenantCode = res.data.tenantCode
             this.queryParams.tenantName = res.data.tenantName
             this.queryParams.expireDate = moment(res.data.expireDate, 'YYYY-MM-DD')
@@ -305,7 +305,7 @@ export default {
             this.queryParams.hospitalCode = res.data.hospitalCode
             this.queryParams.hospitalName = res.data.tenantName
             this.queryParams.tenantId = this.tenantId
-            console.log("MMMM:",res.data.tenantType.value)
+            // console.log("MMMM:",res.data.tenantType.value)
             this.queryParams.tenantType = res.data.tenantType.value
             this.getApplicationlistOut()
           }
