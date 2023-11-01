@@ -242,7 +242,6 @@ export default {
               this.targetKeys.push(dataTemp[i].hospitalCode)
             }
             this.checkData.hospitalCodeList = this.targetKeys
-            console.log('HHHH:', this.checkData.hospitalCodeList)
           }
         }
       })
@@ -276,7 +275,7 @@ export default {
       this.targetKeys = targetKeys
       this.checkData.hospitalCodeList = this.targetKeys
 
-      console.log('DDDD:', this.targetKeys)
+    //   console.log('DDDD:', this.targetKeys)
     },
 
     //新增

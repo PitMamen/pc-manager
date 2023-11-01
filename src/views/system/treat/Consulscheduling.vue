@@ -236,7 +236,7 @@
           >
             <a-switch
               v-if="record.texu"
-              :disabled="!record.texu||record.userType == 'nurse'"
+              :disabled="!record.texu"
               size="small"
               :checked="record.texu ? record.texu.stopStatus == 2 : false"
             />
@@ -252,7 +252,7 @@
 
           <a-icon type="setting" />
           <a v-if="!record.texu" @click="showMessage(record,6)" style="margin-left: 5px; color: #4d4d4d">配置</a>
-          <a :disabled="record.userType == 'nurse'"  v-if="record.texu" style="margin-left: 5px" @click="$refs.texuConfig.editmodal(record, 3)">配置</a>
+          <a v-if="record.texu" style="margin-left: 5px" @click="$refs.texuConfig.editmodal(record, 3)">配置</a>
         </div>
       </span>
     </s-table>
