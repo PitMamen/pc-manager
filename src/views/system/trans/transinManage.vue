@@ -52,7 +52,7 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="$refs.recordDetail.detail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
+        <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
 
         <a @click="goPrint" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
 
@@ -256,6 +256,18 @@ export default {
   },
 
   methods: {
+
+
+    goDetail(record){
+        this.$router.push({
+        name: "transinDetail",
+        // path: '/servicewise/projectEdit',
+        // query: {
+        //   planId: record.id,
+        // },
+      });
+    },
+
     goPrint() {
       //TODO
       this.$message.success('去打印')
