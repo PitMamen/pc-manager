@@ -165,6 +165,14 @@
               style="width: 13px; height: 13px"
               src="~@/assets/icons/shangchengxiantiao.svg"/>
 
+              <img v-if="item.id==5"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/manbing.svg"/>
+
+              <img v-if="item.id==6"
+              style="width: 13px; height: 13px"
+              src="~@/assets/icons/yiyuan.svg"/>
+
             <span class="span-item-value" style="font-size:14px;margin-top: -5px;margin-left: 3px;color: #4D4D4D;">{{ item.applicationName }} </span>
           </div>
 
@@ -294,7 +302,7 @@ export default {
       queryTenantDetail({ tenantId: this.tenantId })
         .then((res) => {
           if (res.code == 0 && res.success) {
-            this.queryParams.applicationIds = res.data.applicationIds
+            this.queryParams.applicationIds = res.data.applicationIds||[]
             this.queryParams.tenantCode = res.data.tenantCode
             this.queryParams.tenantName = res.data.tenantName
             this.queryParams.expireDate = moment(res.data.expireDate, 'YYYY-MM-DD')
