@@ -92,16 +92,16 @@ export default {
             {
               title: '微信支付',
               dataIndex: 'wechat1',
-              align:'center'
+              align: 'center',
               //   key: 'wechat',
-              // width: 100,
+              width: 100,
             },
             {
               title: '支付宝支付',
               dataIndex: 'alipay1',
-              align:'center'
+              align: 'center',
               //   key: 'alipay',
-              // width: 100,
+              width: 100,
             },
           ],
         },
@@ -112,56 +112,96 @@ export default {
             {
               title: '微信支付',
               dataIndex: 'wechat2',
-              align:'center'
+              align: 'center',
               //   key: 'wechat',
-              // width: 100,
+              width: 100,
             },
             {
               title: '支付宝支付',
               dataIndex: 'alipay2',
-              align:'center'
+              align: 'center',
               //   key: 'alipay',
-              // width: 100,
+              width: 100,
             },
           ],
         },
         {
           title: '雅医电子处方',
-          dataIndex: 'appPreRegister',
-          children: [
-            {
-              title: '微信支付',
-              dataIndex: 'wechat4',
-              align:'center'
-              //   key: 'wechat',
-              // width: 100,
-            },
-            {
-              title: '支付宝支付',
-              dataIndex: 'alipay4',
-              align:'center'
-              //   key: 'alipay',
-              // width: 100,
-            },
-          ],
-        },
-        {
-          title: '本院复诊挂号',
           dataIndex: 'consultOrderPrescription',
           children: [
             {
               title: '微信支付',
-              dataIndex: 'wechat3', 
-              align:'center'
+              dataIndex: 'wechat4',
+              align: 'center',
               //   key: 'wechat',
-              // width: 100,
+              width: 100,
+            },
+            {
+              title: '支付宝支付',
+              dataIndex: 'alipay4',
+              align: 'center',
+              //   key: 'alipay',
+              width: 100,
+            },
+          ],
+        },
+        {
+          title: '本院复诊在线咨询挂号',
+          dataIndex: 'appPreRegister',
+          children: [
+            {
+              title: '微信支付',
+              dataIndex: 'wechat3',
+              align: 'center',
+              //   key: 'wechat',
+              width: 100,
             },
             {
               title: '支付宝支付',
               dataIndex: 'alipay3',
-              align:'center'
+              align: 'center',
               //   key: 'alipay',
-              // width: 100,
+              width: 100,
+            },
+          ],
+        },
+        {
+          title: '本院复诊门诊挂号',
+          dataIndex: 'outpatientRegister',
+          children: [
+            {
+              title: '微信支付',
+              dataIndex: 'wechat6',
+              align: 'center',
+              //   key: 'wechat',
+              width: 100,
+            },
+            {
+              title: '支付宝支付',
+              dataIndex: 'alipay6',
+              align: 'center',
+              //   key: 'alipay',
+              width: 100,
+            },
+          ],
+        },
+        {
+          title: '本院特需心理咨询',
+          dataIndex: 'psychologyRegister',
+          children: [
+            {
+              title: '微信支付',
+              dataIndex: 'wechat7',
+              align: 'center',
+              //   key: 'wechat',
+              width: 100,
+            },
+            {
+              title: '支付宝支付',
+              dataIndex: 'alipay7',
+              align: 'center',
+              //   key: 'alipay',
+              width: 100,
             },
           ],
         },
@@ -172,16 +212,16 @@ export default {
             {
               title: '微信支付',
               dataIndex: 'wechat5',
-              align:'center'
+              align: 'center',
               // key: 'wechat',
-              // width: 100,
+              width: 100,
             },
             {
               title: '支付宝支付',
               dataIndex: 'alipay5',
-              align:'center'
+              align: 'center',
               // key: 'name',
-              // width: 100,
+              width: 100,
             },
           ],
         },
@@ -228,7 +268,7 @@ export default {
                     //支付宝支付的
                     this.$set(item, 'alipay2', itemChilden.name)
                   }
-                  //   复诊续方
+                  //   本院复诊在线咨询挂号
                 } else if (itemChilden.order_type == 'appPreRegister') {
                   if (itemChilden.channel == 'wechat') {
                     //微信支付的
@@ -237,7 +277,7 @@ export default {
                     //支付宝支付的
                     this.$set(item, 'alipay3', itemChilden.name)
                   }
-                  //   在线咨询处方
+                  //   雅医电子处方
                 } else if (itemChilden.order_type == 'consultOrderPrescription') {
                   if (itemChilden.channel == 'wechat') {
                     //微信支付的
@@ -254,6 +294,24 @@ export default {
                   } else if (itemChilden.channel == 'alipay') {
                     //支付宝支付的
                     this.$set(item, 'alipay5', itemChilden.name)
+                  }
+                  //   本院复诊门诊挂号
+                } else if (itemChilden.order_type == 'outpatientRegister') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat6', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay6', itemChilden.name)
+                  }
+                } //   本院特需心理咨询
+                else if (itemChilden.order_type == 'psychologyRegister') {
+                  if (itemChilden.channel == 'wechat') {
+                    //微信支付的
+                    this.$set(item, 'wechat7', itemChilden.name)
+                  } else if (itemChilden.channel == 'alipay') {
+                    //支付宝支付的
+                    this.$set(item, 'alipay7', itemChilden.name)
                   }
                 }
               })
@@ -393,8 +451,6 @@ export default {
   background-color: #e6e6e6;
   height: 1px;
 }
-
-
 </style>
   
   <!-- tree-select限制高度 -->

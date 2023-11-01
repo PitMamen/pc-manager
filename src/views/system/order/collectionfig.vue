@@ -66,7 +66,7 @@
         </div>
 
         <div class="div-content">
-          <span class="span-item-name">本院复诊挂号:</span>
+          <span class="span-item-name">本院复诊在线咨询挂号:</span>
           <a-select
             v-model="checkData.appPreRegisterID"
             placeholder="请选择商户"
@@ -78,7 +78,32 @@
             }}</a-select-option>
           </a-select>
         </div>
-
+        <div class="div-content">
+          <span class="span-item-name">本院复诊门诊挂号:</span>
+          <a-select
+            v-model="checkData.outpatientRegisterID"
+            placeholder="请选择商户"
+            allow-clear
+            style="width: 120px; height: 28px"
+          >
+            <a-select-option v-for="item in merchantDataList" :key="item.insideId" :value="item.insideId">{{
+              item.name
+            }}</a-select-option>
+          </a-select>
+        </div>
+        <div class="div-content">
+          <span class="span-item-name">本院特需心理咨询:</span>
+          <a-select
+            v-model="checkData.psychologyRegisterID"
+            placeholder="请选择商户"
+            allow-clear
+            style="width: 120px; height: 28px"
+          >
+            <a-select-option v-for="item in merchantDataList" :key="item.insideId" :value="item.insideId">{{
+              item.name
+            }}</a-select-option>
+          </a-select>
+        </div>
         <div class="div-content">
           <span class="span-item-name">本院复诊处方:</span>
           <a-select
@@ -122,6 +147,8 @@ export default {
         appPreRegisterID: undefined,
         consultOrderPrescriptionID: undefined,
         appPrePrescriptionID: undefined,
+        outpatientRegisterID:undefined,
+        psychologyRegisterID:undefined
       },
 
       queryParams: {
@@ -151,6 +178,8 @@ export default {
         appPreRegisterID: undefined,
         consultOrderPrescriptionID: undefined,
         appPrePrescriptionID: undefined,
+        outpatientRegisterID:undefined,
+        psychologyRegisterID:undefined
       }
     },
 
@@ -172,6 +201,10 @@ export default {
           this.checkData.consultOrderPrescriptionID = item.inside_id
         } else if (item.order_type == 'appPrePrescription') {
           this.checkData.appPrePrescriptionID = item.inside_id
+        } else if (item.order_type == 'outpatientRegister') {
+          this.checkData.outpatientRegisterID = item.inside_id
+        } else if (item.order_type == 'psychologyRegister') {
+          this.checkData.psychologyRegisterID = item.inside_id
         }
       })
 
@@ -221,6 +254,20 @@ export default {
         })
       }
 
+      if (this.checkData.outpatientRegisterID) {
+        requestData.push({
+          hospitalCode: this.queryParams.hospitalCode,
+          insideMerchantId: this.checkData.outpatientRegisterID,
+          orderType: 'outpatientRegister',
+        })
+      }
+      if (this.checkData.psychologyRegisterID) {
+        requestData.push({
+          hospitalCode: this.queryParams.hospitalCode,
+          insideMerchantId: this.checkData.psychologyRegisterID,
+          orderType: 'psychologyRegister',
+        })
+      }
       this.confirmLoading = true
       tbBizMerchantConfig(requestData)
         .then((res) => {
