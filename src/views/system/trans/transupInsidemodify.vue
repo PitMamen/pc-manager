@@ -3,7 +3,13 @@
     <a-card :bordered="false" :loading="loading">
       <div class="div-pro-btn">
         <a-button type="primary" @click="submitData()">保存</a-button>
-        <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button>
+        <!-- //工单状态（1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治） -->
+        <a-button
+          style="margin-left: 10px"
+          @click="reSubmit()"
+          v-if="uploadData.status.value == 3"
+          >重新提交</a-button
+        >
         <a-button style="margin-left: 10px" @click="cancel()">打印</a-button>
       </div>
 
@@ -719,7 +725,7 @@
         <div class="div-line" style="margin-bottom: 10px; margin-top: 0">
           <div style="margin-left: 10%">申请人：{{ uploadData.reqDocName }}</div>
           <div style="margin-left: 30px">登记日期：{{ uploadData.regTime }}</div>
-          <div style="margin-left: 30px">申请机构：{{ uploadData.reqDocName }}</div>
+          <div style="margin-left: 30px">申请机构：{{ uploadData.outHospitalName }}</div>
         </div>
       </div>
 
@@ -729,14 +735,22 @@
         :status="lineStatus"
         style="margin-top: 50px"
       >
-        <a-step title="Finished" description="This is a description." />
+        <a-step
+          v-for="item in referralLogList"
+          :key="item.id"
+          :value="item.id"
+          :title="item.dealDetail"
+          :subTitle="item.createTime"
+          :description="item.remark"
+        />
+        <!-- <a-step title="Finished" description="This is a description." />
         <a-step title="In Progress" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
-        <a-step title="Waiting" description="This is a description." />
+        <a-step title="Waiting" description="This is a description." /> -->
       </a-steps>
 
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
@@ -761,6 +775,7 @@ import {
   searchDiagnosis,
   upHospitalList,
   // upReferral,
+  getReferralLogList,
   modifyUpReferral,
   getDepartmentListForSelect,
   getTreeUsersByDeptIdsAndRoles,
@@ -795,7 +810,7 @@ export default {
       nowDateBegin: "",
       dateValue: "",
       lineStatus: "error",
-      linePositon: 2,
+      linePositon: 1,
       createValue: [],
       user: {},
 
@@ -922,6 +937,7 @@ export default {
       fetching: false,
 
       diagnoseNames: [],
+      referralLogList: [],
 
       loading: false,
     };
@@ -1213,6 +1229,15 @@ export default {
       this.uploadData.regTime = this.uploadData.regTime.substring(0, 10);
 
       console.log("this.uploadData", JSON.stringify(this.uploadData));
+
+      getReferralLogList(this.uploadData.tradeId).then((res) => {
+        if (res.code == 0) {
+          this.referralLogList = res.data.concat(res.data).concat(res.data);
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
     },
 
     //诊断搜索
@@ -1491,6 +1516,111 @@ export default {
       this.$router.go(-1);
     },
     submitData() {
+      let tempData = JSON.parse(JSON.stringify(this.uploadData));
+      if (!tempData.patientBaseinfoReq.name) {
+        this.$message.error("请输入患者姓名");
+        return;
+      }
+      if (!tempData.patientBaseinfoReq.identificationType) {
+        this.$message.error("请选择证件类型");
+        return;
+      }
+      if (!tempData.patientBaseinfoReq.identificationNo) {
+        this.$message.error("请输入证件号码");
+        return;
+      }
+      if (!this.dateValue) {
+        this.$message.error("请选择出生日期");
+        return;
+      }
+      if (!tempData.patientBaseinfoReq.phone) {
+        this.$message.error("请输入本人电话");
+        return;
+      }
+      if (!tempData.patientBaseinfoReq.liveType) {
+        this.$message.error("请选择常住分类");
+        return;
+      }
+      if (!tempData.patientBaseinfoReq.address) {
+        this.$message.error("请输入选择户口地址");
+        return;
+      }
+      if (!tempData.patientBaseinfoReq.addressDetail) {
+        this.$message.error("请输入选择详细地址");
+        return;
+      }
+      if (!tempData.diseaseLevel) {
+        this.$message.error("请选择病情分级");
+        return;
+      }
+
+      if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
+        this.$message.error("请输入选择主要诊断");
+        return;
+      }
+
+      if (!tempData.inHospitalCode) {
+        this.$message.error("请选择转入机构");
+        return;
+      }
+      if (!tempData.referralType) {
+        this.$message.error("请选择转诊类型");
+        return;
+      }
+      if (!tempData.referralReason) {
+        this.$message.error("请选择转诊原因");
+        return;
+      }
+      if (!tempData.referralWay) {
+        this.$message.error("请选择转运方式");
+        return;
+      }
+
+      if (!tempData.reachBeginDate || !tempData.reachEndDate) {
+        this.$message.error("请选择期望到院时间");
+        return;
+      }
+
+      //单独组装生日
+      tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
+      //单独组装主要诊断
+      this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+      this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+
+      //组装期望到院时间
+      this.$set(
+        tempData,
+        "reachBeginDate",
+        moment(this.uploadData.reachBeginDate).format("YYYY-MM-DD")
+      );
+      this.$set(
+        tempData,
+        "reachEndDate",
+        moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
+      );
+
+      console.log("addTransUp tempData modify", JSON.stringify(tempData));
+      this.confirmLoading = true;
+      modifyUpReferral(tempData)
+        .then((res) => {
+          this.confirmLoading = false;
+          if (res.code == 0) {
+            this.$message.success("保存成功");
+            this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
+            // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+            // this.clearData();
+            this.$router.go(-1);
+          } else {
+            this.$message.error("保存失败：" + res.message);
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false;
+        });
+    },
+
+    //后台做的动作除了修改数据，还会更改状态
+    reSubmit() {
       let tempData = JSON.parse(JSON.stringify(this.uploadData));
       if (!tempData.patientBaseinfoReq.name) {
         this.$message.error("请输入患者姓名");

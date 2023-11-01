@@ -21,18 +21,40 @@
             v-for="item in sourceDatas"
             :key="item.code"
             :value="item.code"
+            @select="onSelectSource"
             >{{ item.value }}</a-select-option
           >
         </a-select>
+        <a-select
+          show-search
+          style="width: 305px; height: 28px; margin-left: 10px"
+          v-model="patientId"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请输入证件号/诊疗卡号/住院号进行检索"
+          @change="onPatientSelectChange"
+          @select="onSelectPatient"
+          @search="onPatientSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option
+            v-for="(item, index) in patientData"
+            :title="item.name"
+            :key="index"
+            :value="item.id"
+            >{{ item.name }}</a-select-option
+          >
+        </a-select>
 
-        <a-input
+        <!-- <a-input
           allow-clear
           placeholder="请输入证件号/诊疗卡号/住院号进行搜索选择"
           style="width: 305px; height: 28px; margin-left: 10px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
-        />
-        <a-button style="margin-left: 10px" @click="cancel()">查询</a-button>
+        /> -->
+        <a-button style="margin-left: 10px" @click="goSearch">查询</a-button>
         <a-button type="primary" @click="submitData()">保存</a-button>
         <!-- <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button> -->
       </div>
@@ -742,7 +764,6 @@
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
       </a-steps> -->
-
     </a-card>
   </a-spin>
 </template>
@@ -766,6 +787,7 @@ import {
   upReferral,
   getDepartmentListForSelect,
   getTreeUsersByDeptIdsAndRoles,
+  getReferralData,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -785,6 +807,7 @@ export default {
   data() {
     return {
       sourceCode: undefined,
+      patientId: undefined,
       sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
       confirmLoading: false,
@@ -915,6 +938,7 @@ export default {
       referralTypeDatas: [],
       originData: [], //科室数组
       inDocDatas: [], //转入医生数组
+      patientData: [],
       fetching: false,
 
       diagnoseNames: [],
@@ -1189,20 +1213,64 @@ export default {
         if (res.code == 0) {
           this.originData = res.data.records;
         }
-
-        // if (!departmentName) {
-        //   this.$refs.table.refresh(true);
-        // }
       });
     },
 
-    // onSelectDept(){},
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
       this.uploadData.inDept = getOne.department_name;
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
       this.getTreeUsers();
+    },
+
+    //患者搜索
+    onPatientSelectSearch(value) {
+      this.patientData = [];
+      this.getPatientList(value);
+    },
+    //患者选择变化
+    onPatientSelectChange(value) {
+      if (value === undefined) {
+        this.patientData = [];
+        this.getPatientList(undefined);
+      }
+    },
+
+    //获取患者
+    getPatientList(keyword) {
+      this.fetching = true;
+      getReferralData({ queryStr: keyword, source: this.sourceCode }).then((res) => {
+        this.fetching = false;
+        if (res.code == 0) {
+          this.patientData = res.data;
+        }
+      });
+    },
+
+    goSearch() {
+      console.log("goSearch");
+      this.patientData = [];
+      this.getPatientList(undefined);
+    },
+
+    //患者选择
+    onSelectPatient(id) {
+      let getOne = this.patientData.find((item) => item.id == id);
+      //填充数据
+      this.uploadData.patientBaseinfoReq = JSON.parse(JSON.stringify(getOne));
+      //组装数据 生日
+      this.dateValue = moment(
+        this.uploadData.patientBaseinfoReq.birthday,
+        this.dateFormat
+      );
+
+      //户口地址
+      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+    },
+
+    onSelectSource(sourceCode) {
+      this.patientData = [];
     },
 
     onDocFocus() {
@@ -1381,16 +1449,9 @@ export default {
       };
     },
 
-    handleChoose(record) {
-      console.log("handleChoose", JSON.stringify(record));
-      //TODO 填充药品数据
-      this.inputData(record);
-    },
-
     /**
      * 填充数据
      */
-    inputData(record) {},
 
     onSelectYibao(healthInsuranceCategoryId) {
       // let getOne = this.yibaoDatas.find((item) => item.code == healthInsuranceCategoryId);
