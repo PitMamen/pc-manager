@@ -123,6 +123,7 @@ export default {
         regTimeBegin: getDateNow(),
         regTimeEnd: getCurrentMonthLast(),
         status: '',
+        flag:1,
       },
 
       queryParamsTemp: {},
@@ -262,9 +263,9 @@ export default {
         this.$router.push({
         name: "transinDetail",
         // path: '/servicewise/projectEdit',
-        // query: {
-        //   planId: record.id,
-        // },
+        query: {
+          id: record.tradeId,
+        },
       });
     },
 

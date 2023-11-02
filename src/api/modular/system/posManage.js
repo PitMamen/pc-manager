@@ -3870,7 +3870,7 @@ export function getDictDataForCodeUserType(data) {
 */
 export function getDoctorQrCode(data) {
   return axios({
-    url: '/wx-api/wx/qrcode/'+appId+'/getDoctorQrCode',
+    url: '/wx-api/wx/qrcode/' + appId + '/getDoctorQrCode',
     method: 'get',
     params: data,
   })
@@ -5155,7 +5155,7 @@ export function saveFactory(data) {
 // 获取临工注册信息
 export function getHvyogoUserInfo(userId) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/getHvyogoUserInfo/'+userId,
+    url: '/account-api/tfUserInfoHvyogo/getHvyogoUserInfo/' + userId,
     method: 'get',
     // params: userId,
   })
@@ -5182,7 +5182,7 @@ export function bindTask(data) {
 // 临工注册 
 export function register(userId) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/register/'+userId,
+    url: '/account-api/tfUserInfoHvyogo/register/' + userId,
     method: 'get',
     // params: data,
   })
@@ -5191,7 +5191,7 @@ export function register(userId) {
 // 临工签约  
 export function signing(userId) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/signing/'+userId,
+    url: '/account-api/tfUserInfoHvyogo/signing/' + userId,
     method: 'get',
     // params: userId,
   })
@@ -5201,7 +5201,7 @@ export function signing(userId) {
 // 银行卡号得到银行名称
 export function getBankNameForCardNo(cardNo) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/getBankNameForCardNo/'+cardNo,
+    url: '/account-api/tfUserInfoHvyogo/getBankNameForCardNo/' + cardNo,
     method: 'get',
     // params: userId,
   })
@@ -5385,7 +5385,7 @@ export function snatchList(data) {
 // 套餐详情 
 export function snatchDetail(commodityPkgId) {
   return axios({
-    url: '/medical-api/pkg/snatchDetail/'+commodityPkgId,
+    url: '/medical-api/pkg/snatchDetail/' + commodityPkgId,
     method: 'get',
     // params: data,
   })
@@ -5396,7 +5396,7 @@ export function snatchDetail(commodityPkgId) {
 
 export function pkgManageItems(commodityId) {
   return axios({
-    url: '/medical-api/pkg/pkgManageItems/'+commodityId,
+    url: '/medical-api/pkg/pkgManageItems/' + commodityId,
     method: 'get',
     // params: data,
   })
@@ -5455,7 +5455,7 @@ export function accessTenants(data) {
   return axios({
     url: '/uam-api/tenant/accessTenants',
     method: 'get',
-   params: data,
+    params: data,
   })
 }
 
@@ -5466,7 +5466,7 @@ export function updateSnatchPkgItems(data) {
   return axios({
     url: '/medical-api/pkg/updateSnatchPkgItems',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5476,7 +5476,7 @@ export function queryDeptRegConfig(data) {
   return axios({
     url: '/info-api/departments/queryDeptRegConfig',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5486,7 +5486,7 @@ export function saveDeptRegConfig(data) {
   return axios({
     url: '/info-api/departments/saveDeptRegConfig',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5496,7 +5496,7 @@ export function updateDeptRegConfigStatus(data) {
   return axios({
     url: '/info-api/departments/updateDeptRegConfigStatus',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5506,7 +5506,7 @@ export function qryDepartmentByReq(data) {
   return axios({
     url: '/health-api/patient/qryDepartmentByReq',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5652,7 +5652,7 @@ export function getDownHospitalList(data) {
 // 移除下辖机构
 export function removeDownHospital(data) {
   return axios({
-    url: '/referral-api/referralOrg/removeDownHospital/'+data,
+    url: '/referral-api/referralOrg/removeDownHospital/' + data,
     method: 'get',
     // param: data,
   })
@@ -5681,7 +5681,7 @@ export function modifyReferralOrg(data) {
 // 获取转诊组织信息
 export function getReferralOrgInfo(data) {
   return axios({
-    url: '/referral-api/referralOrg/getReferralOrgInfo/'+data,
+    url: '/referral-api/referralOrg/getReferralOrgInfo/' + data,
     method: 'get',
     // param: data,
   })
@@ -5705,6 +5705,15 @@ export function qryReferralCount(data) {
     url: '/referral-api/referral/qryReferralCount',
     method: 'post',
     data: data,
+  })
+}
+
+// 根据id 查询转诊工单
+export function getReferralTradeById(data) {
+  return axios({
+    url: '/referral-api/referral/getReferralTradeById',
+    method: 'get',
+    params: data,
   })
 }
 
