@@ -1,19 +1,16 @@
 <template>
   <a-spin :spinning="confirmLoading">
     <a-card :bordered="false" :loading="loading">
-      <div class="div-pro-btn">
-        <a-button type="primary" @click="submitData()">保存</a-button>
-        <!-- //工单状态（1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治） -->
-        <a-button
-          style="margin-left: 10px"
-          @click="reSubmit()"
-          v-if="uploadData.status.value == 3"
-          >重新提交</a-button
-        >
-        <a-button style="margin-left: 10px" @click="goPrint()">打印</a-button>
-      </div>
-
       <!-- <div class="div-pro-btn">
+        <a-button type="primary" @click="submitData()">保存</a-button>
+        <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button>
+        <a-button style="margin-left: 10px" @click="cancel()">打印</a-button>
+      </div> -->
+
+      <div class="div-pro-btn">
+        <!-- <div style="flex: 1"></div> -->
+        <!-- v-model="queryParam.title" -->
+
         <a-select
           v-model="sourceCode"
           placeholder="请选择来源"
@@ -24,20 +21,43 @@
             v-for="item in sourceDatas"
             :key="item.code"
             :value="item.code"
+            @select="onSelectSource"
             >{{ item.value }}</a-select-option
           >
         </a-select>
+        <a-select
+          show-search
+          style="width: 305px; height: 28px; margin-left: 10px"
+          v-model="patientId"
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          placeholder="请输入证件号/诊疗卡号/住院号进行检索"
+          @change="onPatientSelectChange"
+          @select="onSelectPatient"
+          @search="onPatientSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option
+            v-for="(item, index) in patientData"
+            :title="item.name"
+            :key="index"
+            :value="item.id"
+            >{{ item.name }}</a-select-option
+          >
+        </a-select>
 
-        <a-input
+        <!-- <a-input
           allow-clear
           placeholder="请输入证件号/诊疗卡号/住院号进行搜索选择"
           style="width: 305px; height: 28px; margin-left: 10px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
-        />
-        <a-button style="margin-left: 10px" @click="cancel()">查询</a-button>
+        /> -->
+        <a-button style="margin-left: 10px" @click="goSearch">查询</a-button>
         <a-button type="primary" @click="submitData()">保存</a-button>
-      </div> -->
+        <!-- <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button> -->
+      </div>
 
       <!-- 基本信息 -->
       <div class="div-box">
@@ -725,35 +745,25 @@
         <div class="div-line" style="margin-bottom: 10px; margin-top: 0">
           <div style="margin-left: 10%">申请人：{{ uploadData.reqDocName }}</div>
           <div style="margin-left: 30px">登记日期：{{ uploadData.regTime }}</div>
-          <div style="margin-left: 30px">申请机构：{{ uploadData.outHospitalName }}</div>
+          <div style="margin-left: 30px">申请机构：{{ user.hospitalName }}</div>
         </div>
       </div>
 
-      <a-steps
+      <!-- <a-steps
         progress-dot
         :current="linePositon"
         :status="lineStatus"
         style="margin-top: 50px"
       >
-        <a-step
-          v-for="item in referralLogList"
-          :key="item.id"
-          :value="item.id"
-          :title="item.dealDetail"
-          :subTitle="item.createTime"
-          :description="item.remark"
-        />
-        <!-- <a-step title="Finished" description="This is a description." />
+        <a-step title="Finished" description="This is a description." />
         <a-step title="In Progress" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
         <a-step title="Waiting" description="This is a description." />
-        <a-step title="Waiting" description="This is a description." /> -->
-      </a-steps>
-
-      <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
+        <a-step title="Waiting" description="This is a description." />
+      </a-steps> -->
     </a-card>
   </a-spin>
 </template>
@@ -774,11 +784,10 @@ import {
   getRegionInfo,
   searchDiagnosis,
   upHospitalList,
-  // upReferral,
-  getReferralLogList,
-  modifyUpReferral,
+  upReferral,
   getDepartmentListForSelect,
   getTreeUsersByDeptIdsAndRoles,
+  getReferralData,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -795,22 +804,17 @@ export default {
     Ellipsis,
     // chooseMedic,
   },
-  // props: {
-  //   modifyItem: Object,
-  // },
   data() {
     return {
-      // insideJbxx: this.jbxx,
-      // uploadData: this.modifyItem,
-      // uploadData: {patientBaseinfoReq:{name:}},
       sourceCode: undefined,
+      patientId: undefined,
       sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
       confirmLoading: false,
       nowDateBegin: "",
       dateValue: "",
       lineStatus: "error",
-      linePositon: 1,
+      linePositon: 2,
       createValue: [],
       user: {},
 
@@ -934,10 +938,10 @@ export default {
       referralTypeDatas: [],
       originData: [], //科室数组
       inDocDatas: [], //转入医生数组
+      patientData: [],
       fetching: false,
 
       diagnoseNames: [],
-      referralLogList: [],
 
       loading: false,
     };
@@ -961,21 +965,12 @@ export default {
     this.user = Vue.ls.get(TRUE_USER);
     console.log("this.user", this.user);
 
-    //列表和新增上转数据字段不一样，这里做转换
-    // this.$set(
-    //   this.uploadData,
-    //   "patientBaseinfoReq",
-    //   JSON.parse(JSON.stringify(this.uploadData.patientBaseinfo))
-    // );
-    // delete this.uploadData.patientBaseinfo;
-    // console.log("this.uploadData", JSON.stringify(this.uploadData));
-
     //赋值申请信息
-    // this.uploadData.reqDocId = this.user.userId;
-    // this.uploadData.reqDocName = this.user.userName;
-    // this.uploadData.regTime = formatDate(new Date());
-    // console.log("regTime", this.uploadData.regTime);
-    // this.uploadData.outHospitalCode = this.user.hospitalCode;
+    this.uploadData.reqDocId = this.user.userId;
+    this.uploadData.reqDocName = this.user.userName;
+    this.uploadData.regTime = formatDate(new Date());
+    console.log("regTime", this.uploadData.regTime);
+    this.uploadData.outHospitalCode = this.user.hospitalCode;
     // this.uploadData.reqDept = this.user.userName;
     // this.uploadData.reqDeptCode = this.user.userName;
 
@@ -986,12 +981,12 @@ export default {
     //     reqDept: undefined,
     //     reqDeptCode: undefined,
 
-    // this.createValue = [
-    //   moment(getDateNow(), this.dateFormat),
-    //   moment(getCurrentMonthLast(), this.dateFormat),
-    // ];
-    // this.uploadData.reachBeginDate = this.createValue[0];
-    // this.uploadData.reachEndDate = this.createValue[1];
+    this.createValue = [
+      moment(getDateNow(), this.dateFormat),
+      moment(getCurrentMonthLast(), this.dateFormat),
+    ];
+    this.uploadData.reachBeginDate = this.createValue[0];
+    this.uploadData.reachEndDate = this.createValue[1];
 
     console.log("uploadData", this.uploadData);
     console.log("uploadData identificationType", this.uploadData.identificationType);
@@ -1156,90 +1151,6 @@ export default {
   //       }
   // },
   methods: {
-    refreshData(newData) {
-      this.uploadData = newData;
-      console.log("refreshData", JSON.stringify(newData));
-      //列表和新增上转数据字段不一样，这里做转换
-      this.$set(
-        this.uploadData,
-        "patientBaseinfoReq",
-        JSON.parse(JSON.stringify(this.uploadData.patientBaseinfo))
-      );
-      delete this.uploadData.patientBaseinfo;
-      //组装数据
-      //生日
-      this.dateValue = moment(
-        this.uploadData.patientBaseinfoReq.birthday,
-        this.dateFormat
-      );
-      //户口地址
-      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
-
-      //重新组装主要诊断
-      this.diagnoseDatas = [];
-      debugger;
-      this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(",");
-      console.log("this.uploadData.diagnoseCode", this.uploadData.diagnoseCode);
-      this.diagnoseNames = this.uploadData.diagnos.split(",");
-
-      this.uploadData.diagnoseCode.forEach((element, index) => {
-        this.diagnoseDatas.push({ icdCode: element, name: this.diagnoseNames[index] });
-      });
-
-      //转诊类型
-      this.referralTypeDatas = [];
-      this.referralTypeDatas = [
-        {
-          code: this.uploadData.referralType.value,
-          value: this.uploadData.referralType.description,
-        },
-      ];
-      this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
-
-      //转入科室
-      this.originData = [];
-      this.originData = [
-        {
-          department_name: this.uploadData.inDept,
-          department_id: this.uploadData.inDeptCode,
-        },
-      ];
-      this.inDocDatas = [
-        {
-          userId: this.uploadData.docId,
-          userName: this.uploadData.docName,
-        },
-      ];
-
-      //期望到院时间  string转moment date对象
-      this.createValue = [
-        moment(this.uploadData.reachBeginDate, this.dateFormat),
-        moment(this.uploadData.reachEndDate, this.dateFormat),
-      ];
-      this.uploadData.reachBeginDate = moment(
-        this.uploadData.reachBeginDate,
-        this.dateFormat
-      );
-      this.uploadData.reachEndDate = moment(
-        this.uploadData.reachEndDate,
-        this.dateFormat
-      );
-
-      //申请时间
-      this.uploadData.regTime = this.uploadData.regTime.substring(0, 10);
-
-      console.log("this.uploadData", JSON.stringify(this.uploadData));
-
-      getReferralLogList(this.uploadData.tradeId).then((res) => {
-        if (res.code == 0) {
-          this.referralLogList = res.data.concat(res.data).concat(res.data);
-        } else {
-          this.$message.error(res.message);
-        }
-        this.confirmLoading = false;
-      });
-    },
-
     //诊断搜索
     onDiagnoseSelectSearch(value) {
       this.diagnoseDatas = [];
@@ -1302,20 +1213,64 @@ export default {
         if (res.code == 0) {
           this.originData = res.data.records;
         }
-
-        // if (!departmentName) {
-        //   this.$refs.table.refresh(true);
-        // }
       });
     },
 
-    // onSelectDept(){},
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
       this.uploadData.inDept = getOne.department_name;
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
       this.getTreeUsers();
+    },
+
+    //患者搜索
+    onPatientSelectSearch(value) {
+      this.patientData = [];
+      this.getPatientList(value);
+    },
+    //患者选择变化
+    onPatientSelectChange(value) {
+      if (value === undefined) {
+        this.patientData = [];
+        this.getPatientList(undefined);
+      }
+    },
+
+    //获取患者
+    getPatientList(keyword) {
+      this.fetching = true;
+      getReferralData({ queryStr: keyword, source: this.sourceCode }).then((res) => {
+        this.fetching = false;
+        if (res.code == 0) {
+          this.patientData = res.data;
+        }
+      });
+    },
+
+    goSearch() {
+      console.log("goSearch");
+      this.patientData = [];
+      this.getPatientList(undefined);
+    },
+
+    //患者选择
+    onSelectPatient(id) {
+      let getOne = this.patientData.find((item) => item.id == id);
+      //填充数据
+      this.uploadData.patientBaseinfoReq = JSON.parse(JSON.stringify(getOne));
+      //组装数据 生日
+      this.dateValue = moment(
+        this.uploadData.patientBaseinfoReq.birthday,
+        this.dateFormat
+      );
+
+      //户口地址
+      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+    },
+
+    onSelectSource(sourceCode) {
+      this.patientData = [];
     },
 
     onDocFocus() {
@@ -1494,16 +1449,9 @@ export default {
       };
     },
 
-    handleChoose(record) {
-      console.log("handleChoose", JSON.stringify(record));
-      //TODO 填充药品数据
-      this.inputData(record);
-    },
-
     /**
      * 填充数据
      */
-    inputData(record) {},
 
     onSelectYibao(healthInsuranceCategoryId) {
       // let getOne = this.yibaoDatas.find((item) => item.code == healthInsuranceCategoryId);
@@ -1515,12 +1463,6 @@ export default {
     cancel() {
       this.$router.go(-1);
     },
-
-    goPrint() {
-      //TODO
-      this.$message.success("去打印");
-    },
-
     submitData() {
       let tempData = JSON.parse(JSON.stringify(this.uploadData));
       if (!tempData.patientBaseinfoReq.name) {
@@ -1605,121 +1547,16 @@ export default {
         moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
       );
 
-      console.log("addTransUp tempData modify", JSON.stringify(tempData));
+      console.log("addTransUp tempData", tempData);
       this.confirmLoading = true;
-      modifyUpReferral(tempData)
+      upReferral(tempData)
         .then((res) => {
           this.confirmLoading = false;
           if (res.code == 0) {
             this.$message.success("保存成功");
             this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
-            // this.clearData();
-            this.$router.go(-1);
-          } else {
-            this.$message.error("保存失败：" + res.message);
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false;
-        });
-    },
-
-    //后台做的动作除了修改数据，还会更改状态
-    reSubmit() {
-      let tempData = JSON.parse(JSON.stringify(this.uploadData));
-      if (!tempData.patientBaseinfoReq.name) {
-        this.$message.error("请输入患者姓名");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.identificationType) {
-        this.$message.error("请选择证件类型");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.identificationNo) {
-        this.$message.error("请输入证件号码");
-        return;
-      }
-      if (!this.dateValue) {
-        this.$message.error("请选择出生日期");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.phone) {
-        this.$message.error("请输入本人电话");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.liveType) {
-        this.$message.error("请选择常住分类");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.address) {
-        this.$message.error("请输入选择户口地址");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.addressDetail) {
-        this.$message.error("请输入选择详细地址");
-        return;
-      }
-      if (!tempData.diseaseLevel) {
-        this.$message.error("请选择病情分级");
-        return;
-      }
-
-      if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
-        this.$message.error("请输入选择主要诊断");
-        return;
-      }
-
-      if (!tempData.inHospitalCode) {
-        this.$message.error("请选择转入机构");
-        return;
-      }
-      if (!tempData.referralType) {
-        this.$message.error("请选择转诊类型");
-        return;
-      }
-      if (!tempData.referralReason) {
-        this.$message.error("请选择转诊原因");
-        return;
-      }
-      if (!tempData.referralWay) {
-        this.$message.error("请选择转运方式");
-        return;
-      }
-
-      if (!tempData.reachBeginDate || !tempData.reachEndDate) {
-        this.$message.error("请选择期望到院时间");
-        return;
-      }
-
-      //单独组装生日
-      tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
-      //单独组装主要诊断
-      this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
-      this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
-
-      //组装期望到院时间
-      this.$set(
-        tempData,
-        "reachBeginDate",
-        moment(this.uploadData.reachBeginDate).format("YYYY-MM-DD")
-      );
-      this.$set(
-        tempData,
-        "reachEndDate",
-        moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
-      );
-
-      console.log("addTransUp tempData modify", JSON.stringify(tempData));
-      this.confirmLoading = true;
-      modifyUpReferral(tempData)
-        .then((res) => {
-          this.confirmLoading = false;
-          if (res.code == 0) {
-            this.$message.success("保存成功");
-            this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
-            // this.$bus.$emit('proEvent', '刷新数据-方案新增')
-            // this.clearData();
+            this.clearData();
             this.$router.go(-1);
           } else {
             this.$message.error("保存失败：" + res.message);

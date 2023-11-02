@@ -4,7 +4,7 @@
       <a-tabs v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
           <!-- <transup-insidemodify :modifyItem="passItem" ref="transupInsidemodify" /> -->
-          <transup-insidemodify ref="transupInsidemodify" />
+          <transdown-insidemodify ref="transdownInsidemodify" />
         </a-tab-pane>
 
         <a-tab-pane disabled key="2" tab="上传病历" force-render>
@@ -17,12 +17,12 @@
 </template>
 
 <script>
-import transupInsidemodify from "./transupInsidemodify";
+import transdownInsidemodify from "./transdownInsidemodify";
 import uploadFiles from "./uploadFiles";
 
 export default {
   components: {
-    transupInsidemodify,
+    transdownInsidemodify,
     uploadFiles,
   },
 
