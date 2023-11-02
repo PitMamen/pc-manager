@@ -739,9 +739,9 @@
           v-for="item in referralLogList"
           :key="item.id"
           :value="item.id"
-          :title="item.dealDetail"
-          :subTitle="item.createTime"
-          :description="item.remark"
+          :title="item.dealDetail || '--'"
+          :subTitle="item.nameAndTime || '--'"
+          :description="item.remark || '--'"
         />
         <!-- <a-step title="Finished" description="This is a description." />
         <a-step title="In Progress" description="This is a description." />
@@ -809,7 +809,7 @@ export default {
       confirmLoading: false,
       nowDateBegin: "",
       dateValue: "",
-      lineStatus: "error",
+      lineStatus: "error", //wait process finish error
       linePositon: 1,
       createValue: [],
       user: {},
@@ -1231,7 +1231,28 @@ export default {
 
       getReferralLogList(this.uploadData.tradeId).then((res) => {
         if (res.code == 0) {
-          this.referralLogList = res.data.concat(res.data).concat(res.data);
+          // this.referralLogList = res.data.concat(res.data).concat(res.data);
+          this.referralLogList = res.data;
+          let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
+            return !itemTemp.remark;
+          });
+          console.log("getReferralLogList", haveIndex);
+          if (haveIndex != -1) {
+            this.linePositon = haveIndex - 1; //算出目前的步骤
+            this.lineStatus =
+              this.referralLogList[this.linePositon].deal_result == "成功"
+                ? "process"
+                : "error";
+          }
+
+          //申请人和时间拼在一起
+          this.referralLogList.forEach((element, index) => {
+            this.$set(
+              element,
+              "nameAndTime",
+              element.dealUserName + "    " + element.createTime
+            );
+          });
         } else {
           this.$message.error(res.message);
         }
@@ -1711,7 +1732,7 @@ export default {
 
       console.log("addTransUp tempData modify", JSON.stringify(tempData));
       this.confirmLoading = true;
-      this.$set(tempData, "status", 1);//重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
+      this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
       modifyUpReferral(tempData)
         .then((res) => {
           this.confirmLoading = false;
