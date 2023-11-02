@@ -267,7 +267,9 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
+                console.log('tradeId',item.tradeIdStr)
                 this.$set(item, "statusName", item.status.description);
+                this.$set(item, "tradeId", item.tradeIdStr);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
 
                 if (item.patientBaseinfo) {

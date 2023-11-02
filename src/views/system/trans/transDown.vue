@@ -269,6 +269,7 @@ export default {
               data.rows.forEach((item, index) => {
                 this.$set(item, "statusName", item.status.description);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
+                this.$set(item, "tradeId", item.tradeIdStr);
 
                 if (item.patientBaseinfo) {
                   this.$set(item, "name", item.patientBaseinfo.name);
