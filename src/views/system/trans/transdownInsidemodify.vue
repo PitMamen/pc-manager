@@ -1177,6 +1177,7 @@ export default {
 
       //重新组装主要诊断
       this.diagnoseDatas = [];
+      debugger;
       this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(",");
       console.log("this.uploadData.diagnoseCode", this.uploadData.diagnoseCode);
       this.diagnoseNames = this.uploadData.diagnos.split(",");
@@ -1231,7 +1232,6 @@ export default {
 
       getReferralLogList(this.uploadData.tradeId).then((res) => {
         if (res.code == 0) {
-          // this.referralLogList = res.data.concat(res.data).concat(res.data);
           this.referralLogList = res.data;
           let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
             return !itemTemp.remark;

@@ -5575,7 +5575,27 @@ export function getUpReferralList(data) {
     data: data,
   })
 }
-///referralTrade/modifyUpReferral 上转登记列表
+
+///referralTrade/getReferralLogList 工单进度查询  上转登记进度
+export function getReferralLogList(tradId) {
+  return axios({
+    url: '/referral-api/referralTrade/getReferralLogList/' + tradId,
+    method: 'post',
+    // data: data,
+  })
+}
+
+
+///referralTrade/getReferralData 检索患者信息
+export function getReferralData(data) {
+  return axios({
+    url: '/referral-api/referralTrade/getReferralData/',
+    method: 'get',
+    params: data,
+  })
+}
+
+///referralTrade/modifyUpReferral 修改上转登记
 export function modifyUpReferral(data) {
   return axios({
     url: '/referral-api/referralTrade/modifyUpReferral',

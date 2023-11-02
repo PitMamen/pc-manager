@@ -267,13 +267,18 @@ export default {
 
               //设置序号
               data.rows.forEach((item, index) => {
+                console.log('tradeId',item.tradeIdStr)
                 this.$set(item, "statusName", item.status.description);
-                this.$set(item, "name", item.patientBaseinfo.name);
-                this.$set(item, "sex", item.patientBaseinfo.sex);
-                this.$set(item, "age", this.countAge(item.patientBaseinfo.birthday));
+                this.$set(item, "tradeId", item.tradeIdStr);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
-                this.$set(item, "name", item.patientBaseinfo.name);
-                this.$set(item, "name", item.patientBaseinfo.name);
+
+                if (item.patientBaseinfo) {
+                  this.$set(item, "name", item.patientBaseinfo.name);
+                  this.$set(item, "sex", item.patientBaseinfo.sex);
+                  this.$set(item, "age", this.countAge(item.patientBaseinfo.birthday));
+                  this.$set(item, "name", item.patientBaseinfo.name);
+                  this.$set(item, "name", item.patientBaseinfo.name);
+                }
 
                 //组装到院时间
                 this.$set(

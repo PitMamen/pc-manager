@@ -8,7 +8,7 @@
           class="deptselect-single"
           show-search
           style="width: 180px"
-          v-model="queryParam.executeDepartment"
+          v-model="queryParam.inDeptCode"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
@@ -35,7 +35,7 @@
       <div class="search-row">
         <span class="name">关键字查询:</span>
         <a-input
-          v-model="queryParam.title"
+          v-model="queryParam.keyword"
           allow-clear
           placeholder="可输入关键字查询"
           style="width: 180px; height: 28px"
@@ -73,21 +73,25 @@
       :scroll="{ x: true }"
       :rowKey="(record) => record.id"
     >
+      <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治） -->
       <span slot="status" slot-scope="text, record">
-        <span v-if="record.status === 1">待审核</span>
-        <span v-if="record.status === 2" style="color: #69c07d">通过</span>
+        <span v-if="record.status.value === 1">待审核</span>
+        <span v-if="record.status.value === 2" style="color: #69c07d">通过</span>
         <a
           @click="showDes"
-          v-if="record.status === 3"
+          v-if="record.status.value === 3"
           style="color: #f40b0b; text-decoration: underline"
           >不通过</a
         >
       </span>
       <span slot="action" slot-scope="text, record">
-        <template v-if="record.status === 1">
-          <a @click="goEdit"><a-icon style="margin-right: 5px" type="edit" />修改</a>
+        <template v-if="record.status.value === 1">
+          <a @click="goEdit(record)"
+            ><a-icon style="margin-right: 5px" type="edit" />修改</a
+          >
         </template>
-        <template v-if="record.status === 2">
+        <!-- 审核通过的不能修改 -->
+        <template v-if="record.status.value === 2">
           <span style="margin-right: 5px; color: #999"
             ><a-icon type="edit" :style="{ fontSize: '14px', color: '#999' }" />修改</span
           >
@@ -99,7 +103,7 @@
         </template>
       </span>
     </s-table>
-    <info-form ref="infoForm" @ok="handleOk" />
+    <!-- <info-form ref="infoForm" @ok="handleOk" /> -->
 
     <!-- <a-modal v-model="visibleDes" title="提示" :footer="null" @ok="handleOkDes"> -->
     <a-modal v-model="visibleDes" cancelText="''" title="提示" @ok="handleOkDes">
@@ -121,18 +125,20 @@ import {
   accessHospitals,
   getCommodityClassify,
   getDepartmentListForSelect,
+  getUpReferralList,
 } from "@/api/modular/system/posManage";
 import { list } from "@/api/modular/system/rate";
 import { STable, Ellipsis } from "@/components";
-import infoForm from "./infoForm";
+// import infoForm from "./infoForm";
 import moment from "moment";
 import Vue from "vue";
 import { TRUE_USER } from "@/store/mutation-types";
+import { formatDateFull, formatDate, getlastMonthToday } from "@/utils/util";
 export default {
   components: {
     STable,
     Ellipsis,
-    infoForm,
+    // infoForm,
   },
   data() {
     return {
@@ -142,7 +148,20 @@ export default {
       visibleDes: false,
       createValue: [],
       // 查询参数
-      queryParam: { executeDepartment: undefined, title: "" },
+      queryParam: {
+        createStartTime: getlastMonthToday(),
+        createEndTime: formatDate(new Date().getTime()),
+        // createStartTime: undefined,
+        // createEndTime: undefined,
+        inDeptCode: undefined,
+        keyword: undefined,
+      },
+      queryParamOrigin: {
+        createStartTime: undefined,
+        createEndTime: undefined,
+        inDeptCode: undefined,
+        keyword: undefined,
+      },
       statusSelects: [
         {
           id: "",
@@ -165,58 +184,58 @@ export default {
       columns: [
         {
           title: "患者姓名",
-          dataIndex: "userName",
-          scopedSlots: { customRender: "userName" },
+          dataIndex: "name",
+          scopedSlots: { customRender: "name" },
         },
         {
           title: "性别",
-          dataIndex: "userdName",
-          scopedSlots: { customRender: "userNamde" },
+          dataIndex: "sex",
+          scopedSlots: { customRender: "sex" },
         },
         {
           title: "年龄",
-          dataIndex: "userPhone",
-          scopedSlots: { customRender: "userPhone" },
+          dataIndex: "age",
+          scopedSlots: { customRender: "age" },
         },
         {
           title: "初步诊断",
-          dataIndex: "commodityName",
-          scopedSlots: { customRender: "commodityName" },
+          dataIndex: "diagnos",
+          scopedSlots: { customRender: "diagnos" },
         },
         {
           title: "转诊原因",
-          dataIndex: "hospitalName",
-          scopedSlots: { customRender: "hospitalName" },
+          dataIndex: "referralReason",
+          scopedSlots: { customRender: "referralReason" },
         },
         {
           title: "申请医生",
-          dataIndex: "doctorName",
-          scopedSlots: { customRender: "doctorName" },
+          dataIndex: "reqDocName",
+          scopedSlots: { customRender: "reqDocName" },
         },
         {
           title: "申请科室",
-          dataIndex: "classifyName",
-          scopedSlots: { customRender: "classifyName" },
+          dataIndex: "reqDept",
+          scopedSlots: { customRender: "reqDept" },
         },
         {
           title: "申请时间",
-          dataIndex: "createTime",
-          scopedSlots: { customRender: "createTime" },
+          dataIndex: "regTime",
+          scopedSlots: { customRender: "regTime" },
         },
         {
           title: "期望到院时间",
-          dataIndex: "checktTime",
-          scopedSlots: { customRender: "checktTime" },
+          dataIndex: "inPeriod",
+          scopedSlots: { customRender: "inPeriod" },
         },
         {
           title: "转入机构",
-          dataIndex: "statdus",
-          scopedSlots: { customRender: "stadtus" },
+          dataIndex: "inHospitalCodeName",
+          scopedSlots: { customRender: "inHospitalCodeName" },
         },
         {
           title: "审核结果",
-          dataIndex: "status",
-          scopedSlots: { customRender: "status" },
+          dataIndex: "statusName",
+          scopedSlots: { customRender: "statusName" },
         },
         {
           title: "操作",
@@ -228,13 +247,55 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return list(Object.assign(parameter, this.queryParam)).then((res) => {
-          if (res.code === 0) {
-            return res.data;
-          } else {
-            this.$message.error(res.message);
+        return getUpReferralList(Object.assign(parameter, this.queryParam)).then(
+          (res) => {
+            // if (res.code === 0) {
+            //   return res.data;
+            // } else {
+            //   this.$message.error(res.message);
+            // }
+
+            if (res.code == 0 && res.data.records.length > 0) {
+              //组装控件需要的数据结构
+              var data = {
+                pageNo: parameter.pageNo,
+                pageSize: parameter.pageSize,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
+              };
+
+              //设置序号
+              data.rows.forEach((item, index) => {
+                this.$set(item, "statusName", item.status.description);
+                this.$set(item, "regTime", formatDateFull(item.regTime));
+                this.$set(item, "tradeId", item.tradeIdStr);
+
+                if (item.patientBaseinfo) {
+                  this.$set(item, "name", item.patientBaseinfo.name);
+                  this.$set(item, "sex", item.patientBaseinfo.sex);
+                  this.$set(item, "age", this.countAge(item.patientBaseinfo.birthday));
+                  this.$set(item, "name", item.patientBaseinfo.name);
+                  this.$set(item, "name", item.patientBaseinfo.name);
+                }
+
+                //组装到院时间
+                this.$set(
+                  item,
+                  "inPeriod",
+                  formatDate(item.reachBeginDate) + "~" + formatDate(item.reachEndDate)
+                );
+                // this.$set(item, 'status', 1)
+                // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+                // item.nameDes = item.name
+              });
+            } else {
+              data = [];
+            }
+
+            return data;
           }
-        });
+        );
       },
       classData: [],
       treeData: [],
@@ -254,19 +315,50 @@ export default {
     console.log(this.user);
     this.getDepartmentSelectList(undefined);
     this.createValue = [
-      moment(this.formatDate(new Date()), this.dateFormat),
-      moment(this.formatDate(new Date()), this.dateFormat),
+      moment(getlastMonthToday(), this.dateFormat),
+      moment(formatDate(new Date().getTime()), this.dateFormat),
     ];
+    // this.queryParam.createStartTime = this.createValue[0];
+    // this.queryParam.createEndTime = this.createValue[1];
+  },
+  mounted() {
+    this.$bus.$on("refreshTransUpListEvent", (record) => {
+      console.log("refreshTransUpListEvent", record);
+      // this.$refs.table.refresh(true);
+      this.$refs.table.refresh();
+    });
   },
   methods: {
+    /**
+     * 根据生日计算年龄
+     * @param {*} birthday
+     */
+    countAge(birthday) {
+      // let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
+      var birthday = new Date(birthday);
+      var d = new Date();
+      var age =
+        d.getFullYear() -
+        birthday.getFullYear() -
+        (d.getMonth() < birthday.getMonth() ||
+        (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
+          ? 1
+          : 0);
+      return age;
+    },
+
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true;
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, undefined).then((res) => {
+      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
         this.fetching = false;
         if (res.code == 0) {
           this.originData = res.data.records;
+        }
+
+        if (!departmentName) {
+          this.$refs.table.refresh(true);
         }
       });
     },
@@ -295,23 +387,20 @@ export default {
     onChange(momentArr, dateArr) {
       console.log("MMM:", dateArr);
       this.createValue = momentArr;
-      this.queryParam.startTime = dateArr[0];
-      this.queryParam.endTime = dateArr[1];
+      this.queryParam.createStartTime = dateArr[0];
+      this.queryParam.createEndTime = dateArr[1];
     },
 
-    formatDate(date) {
-      date = new Date(date);
-      let myyear = date.getFullYear();
-      let mymonth = date.getMonth() + 1;
-      let myweekday = date.getDate();
-      mymonth < 10 ? (mymonth = "0" + mymonth) : mymonth;
-      myweekday < 10 ? (myweekday = "0" + myweekday) : myweekday;
-      return `${myyear}-${mymonth}-${myweekday}`;
-    },
-
-    goEdit() {
+    goEdit(record) {
       //TODO
-      this.$message.success("去编辑");
+      // this.$message.success("去编辑");
+      this.$router.push({
+        name: "transdownDetailmodify",
+        // path: '/servicewise/projectEdit',
+        query: {
+          dataStr: JSON.stringify(record),
+        },
+      });
     },
     goPrint() {
       //TODO
@@ -320,7 +409,7 @@ export default {
 
     addTransUp() {
       this.$router.push({
-        name: "transupDetail",
+        name: "transdownDetail",
         // path: '/servicewise/projectEdit',
         // query: {
         //   planId: record.id,
@@ -372,7 +461,8 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParam = {};
+      this.createValue = [];
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin));
       this.$refs.table.refresh(true);
     },
 

@@ -3,7 +3,7 @@
     <div>
       <a-tabs v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
-          <transup-inside ref="transupInside" />
+          <transdown-inside ref="transdownInside" />
         </a-tab-pane>
 
         <a-tab-pane disabled key="2" tab="上传病历" force-render>
@@ -16,12 +16,12 @@
 </template>
 
 <script>
-import transupInside from "./transupInside";
+import transdownInside from "./transdownInside";
 import uploadFiles from "./uploadFiles";
 
 export default {
   components: {
-    transupInside,
+    transdownInside,
     uploadFiles,
   },
 
