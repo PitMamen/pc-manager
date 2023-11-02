@@ -491,7 +491,7 @@
           <div class="div-cell" style="width: 100%; align-items: stretch">
             <div class="div-cell-name" style="width: 9.2%; align-items: stretch">
               <div style="flex: 1"></div>
-              病情描述：
+              检查结果摘要：
             </div>
             <div class="div-cell-value" style="width: 82.8%">
               <a-textarea
@@ -523,6 +523,107 @@
       <div class="div-box" style="margin-top: 15px">
         <div class="box-title">转诊信息</div>
         <div class="box-divider" />
+
+
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              下转类型：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                v-model="downType"
+                @select="checkAndGetOldTradeId"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in downTypeDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              上转申请单：
+            </div>
+            <div class="div-cell-value">
+              <div class="div-id" @click="goUpDetail">
+                <span>{{ uploadData.oldTradeId }}</span>
+              </div>
+              <!-- <a-select
+                v-model="uploadData.referralType"
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in referralTypeDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select> -->
+            </div>
+          </div>
+
+          <!-- 占位的，这个元素没有实际意义 -->
+          <div class="div-cell" v-show="false">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              转诊原因：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in reasonDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+
+          <!-- 占位的，这个元素没有实际意义 -->
+          <div class="div-cell" v-show="false">
+            <div class="div-cell-name">
+              <div style="flex: 1"></div>
+              <span style="color: #f90505">*</span>
+              转运方式：
+            </div>
+            <div class="div-cell-value">
+              <a-select
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in transTypeDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
+            </div>
+          </div>
+        </div>
+
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">
@@ -710,7 +811,7 @@
           <div class="div-cell" style="width: 100%; align-items: stretch">
             <div class="div-cell-name" style="width: 9.2%; align-items: stretch">
               <div style="flex: 1"></div>
-              注意事项：
+              转回意见：
             </div>
             <div class="div-cell-value" style="width: 82.8%">
               <a-textarea
@@ -776,7 +877,8 @@ import {
   upHospitalList,
   // upReferral,
   getReferralLogList,
-  modifyUpReferral,
+  // modifyUpReferral,
+  modifyDownReferral,
   getDepartmentListForSelect,
   getTreeUsersByDeptIdsAndRoles,
 } from "@/api/modular/system/posManage";
@@ -850,7 +952,7 @@ export default {
         diagnos: undefined, //主要诊断
         diagnoseCode: undefined, //主要诊断编码
         diseaseDeal: undefined, //治疗经过
-        diseaseDesc: undefined, //病情描述
+        diseaseDesc: undefined,  //上转时病情描述   下转时是检查结果摘要
 
         //转诊信息
         inHospitalCode: undefined, //转入机构id
@@ -912,6 +1014,7 @@ export default {
         outTenantId: undefined,
         outUserId: undefined,
         phone: undefined,
+        upTradeId: "154154151515",
       },
 
       zhengjianDatas: [],
@@ -935,6 +1038,11 @@ export default {
       originData: [], //科室数组
       inDocDatas: [], //转入医生数组
       fetching: false,
+      downTypeDatas: [
+        { code: 1, value: "下转" },
+        { code: 2, value: "回转" },
+      ],
+      downType: 1,
 
       diagnoseNames: [],
       referralLogList: [],
@@ -1156,6 +1264,40 @@ export default {
   //       }
   // },
   methods: {
+
+        /**
+     * 1 下转    2 回转
+     */
+     checkAndGetOldTradeId() {
+      console.log("checkAndGetOldTradeId");
+      if (
+        this.downType == 2 &&
+        this.uploadData.patientBaseinfoReq.identificationType &&
+        this.uploadData.patientBaseinfoReq.identificationNo
+      ) {
+        queryTradeId({
+          identificationNo: this.uploadData.patientBaseinfoReq.identificationNo,
+          identificationType: this.uploadData.patientBaseinfoReq.identificationType,
+        }).then((res) => {
+          this.fetching = false;
+          if (res.code == 0) {
+            this.uploadData.oldTradeId = res.data || "暂无";
+          } else {
+            this.$message.error(res.message);
+          }
+          this.confirmLoading = false;
+        });
+      }
+    },
+
+    goUpDetail() {
+      if (this.uploadData.upTradeId) {
+        //有则跳转
+      }
+      //TODO
+    },
+
+
     refreshData(newData) {
       this.uploadData = newData;
       console.log("refreshData", JSON.stringify(newData));
@@ -1627,12 +1769,12 @@ export default {
 
       console.log("addTransUp tempData modify", JSON.stringify(tempData));
       this.confirmLoading = true;
-      modifyUpReferral(tempData)
+      modifyDownReferral(tempData)
         .then((res) => {
           this.confirmLoading = false;
           if (res.code == 0) {
             this.$message.success("保存成功");
-            this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
+            this.$bus.$emit("refreshTransDownListEvent", "刷新下转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             // this.clearData();
             this.$router.go(-1);
@@ -1733,12 +1875,12 @@ export default {
       console.log("addTransUp tempData modify", JSON.stringify(tempData));
       this.confirmLoading = true;
       this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
-      modifyUpReferral(tempData)
+      modifyDownReferral(tempData)
         .then((res) => {
           this.confirmLoading = false;
           if (res.code == 0) {
             this.$message.success("保存成功");
-            this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
+            this.$bus.$emit("refreshTransDownListEvent", "刷新下转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             // this.clearData();
             this.$router.go(-1);
@@ -1800,6 +1942,20 @@ button {
 
       .div-cell-value {
         width: 60%;
+
+        .div-id {
+          width: 100%;
+          height: 28px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+          color: #409eff;
+          border: #409eff 1px solid;
+          &:hover {
+            cursor: pointer;
+          }
+        }
       }
 
       .temp {

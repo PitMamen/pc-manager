@@ -5576,6 +5576,15 @@ export function getUpReferralList(data) {
   })
 }
 
+///referralTrade/getDownReferralList 下转登记列表
+export function getDownReferralList(data) {
+  return axios({
+    url: '/referral-api/referralTrade/getDownReferralList',
+    method: 'post',
+    data: data,
+  })
+}
+
 ///referralTrade/getReferralLogList 工单进度查询  上转登记进度
 export function getReferralLogList(tradId) {
   return axios({
@@ -5603,11 +5612,27 @@ export function modifyUpReferral(data) {
     data: data,
   })
 }
+///referralTrade/modifyDownReferral 修改下转登记
+export function modifyDownReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/modifyDownReferral',
+    method: 'post',
+    data: data,
+  })
+}
 
 // /referralOrg/upHospitalList 上转机构列表
 export function upHospitalList(data) {
   return axios({
     url: '/referral-api/referralOrg/upHospitalList',
+    method: 'get',
+    params: data,
+  })
+}
+// /referralTrade/queryTradeId  上转机构列表
+export function queryTradeId(data) {
+  return axios({
+    url: '/referral-api/referralTrade/queryTradeId',
     method: 'get',
     params: data,
   })
@@ -5626,6 +5651,14 @@ export function searchDiagnosis(data) {
 export function upReferral(data) {
   return axios({
     url: '/referral-api/referralTrade/upReferral',
+    method: 'post',
+    data: data,
+  })
+}
+// referralTrade/downReferral 下转登记
+export function downReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/downReferral',
     method: 'post',
     data: data,
   })
