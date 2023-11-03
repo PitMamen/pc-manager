@@ -184,8 +184,8 @@ export default {
     update(){
       this.getCaptcha()
     },
-    
-    isPC() {
+
+  isPC() {
 	    var userAgentInfo = navigator.userAgent;
 	    var Agents = ["Android", "iPhone",
 	                "SymbianOS", "Windows Phone",
@@ -295,7 +295,7 @@ export default {
            //判断是否跳转到第三方网站
            if(this.loginParams.redirectRri){
             window.open(this.loginParams.redirectRri+'?code='+res.data.code+'&state='+res.data.state, '_self')
-            // window.location.replace(this.loginParams.redirectRri+'?code='+res.data.code+'&state='+res.data.state);
+
             Vue.ls.remove(ACCESS_TOKEN)
             return
           }
@@ -474,7 +474,7 @@ export default {
     height: 100%;
     background: #ffffff;
     box-shadow: 0px 5px 10px 0px rgba(217, 239, 255, 0.35);
-    &.mobile {
+  &.mobile {
       margin-left: 0px;
     }
     .right-wrap {
