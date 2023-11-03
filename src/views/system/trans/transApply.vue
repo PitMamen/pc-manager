@@ -168,7 +168,7 @@
           </div>
           <div class="div-cell">
             <div class="div-cell-name">申请机构：</div>
-            <div class="div-cell-value" style="width: 100%">长沙市中心医院</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.outHospitalName || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>注意事项：</div>
@@ -187,6 +187,7 @@
               <div class="div-cell-name">转入科室：</div>
               <!-- <div class="div-cell-value"> -->
               <a-select
+                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 show-search
                 v-model="requestData.inDeptCode"
                 style="width: 35%"
@@ -213,6 +214,7 @@
               <div class="div-cell-name">接收医生：</div>
               <!-- <div class="div-cell-value"> -->
               <a-select
+                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 v-model="requestData.docId"
                 @select="onSelectInDoctor"
                 @focus="onDocFocus"
@@ -229,7 +231,12 @@
             <div class="div-cell">
               <div class="div-cell-name">期望到院时间：</div>
               <div class="div-cell-value">
-                <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+                <a-range-picker
+                  :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+                  style="width: 185px"
+                  :value="createValue"
+                  @change="onChange"
+                />
               </div>
             </div>
           </div>
@@ -240,6 +247,8 @@
             <div class="div-cell-name">收治结论：</div>
             <div class="div-cell-value">
               <a-radio-group
+                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+                v-model="requestData.status"
                 style="margin-left: 10px"
                 name="radioGroup"
                 @change="radioChange"
@@ -265,9 +274,10 @@
 
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell" style="width: 100%">
-            <div class="div-cell-name">收治意见：</div>
+            <div class="div-cell-name" style="margin-top: -82px; margin-left: 5px">收治意见：</div>
             <div class="div-cell-value" style="width: 100%">
               <a-textarea
+                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 v-model="requestData.rejectReason"
                 placeholder="请输入意见"
                 style="height: 80px; min-height: 100px; width: 80%"
@@ -280,11 +290,26 @@
 
       <div class="div-pro-btn">
         <div style="flex: 1"></div>
-        <a-button type="primary" @click="submitData(4)">确认收治</a-button>
-        <a-button type="primary" ghost @click="submitData(5)">不予收治</a-button>
+        <a-button
+          type="primary"
+          :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+          @click="submitData()"
+          >保存</a-button
+        >
         <a-button style="margin-left: 10px" @click="cancel()">打印</a-button>
       </div>
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
+
+      <a-steps progress-dot :current="linePositon" :status="lineStatus" style="margin-top: 50px">
+        <a-step
+          v-for="item in referralLogList"
+          :key="item.id"
+          :value="item.id"
+          :title="item.dealDetail || '--'"
+          :subTitle="item.nameAndTime || '--'"
+          :description="item.remark || '--'"
+        />
+      </a-steps>
     </a-card>
   </a-spin>
 </template>
@@ -295,6 +320,7 @@ import {
   getDepartmentListForSelect,
   getTreeUsersByDeptIdsAndRoles,
   referralExamine,
+  getReferralLogList,
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
@@ -325,6 +351,9 @@ export default {
       originData: [],
       inDocDatas: [],
       inSelectDepartment: [],
+      referralLogList: [],
+      lineStatus: 'error', //wait process finish error
+      linePositon: 1,
 
       requestData: {
         inDept: '', //准入科室名称
@@ -351,12 +380,17 @@ export default {
       //修改
       this.tradeId = this.$route.query.id
       this.requestData.tradeId = this.$route.query.id
-      console.log('CCCC:', this.$route.query.id)
       this.getDetaiData(this.tradeId)
+      this.getReferralLogListOut(this.tradeId)
     }
   },
   methods: {
-    clearData() {},
+    clearData() {
+        this.createValue = [
+        moment(getDateNow(), this.dateFormat),
+        moment(getCurrentMonthLast(), this.dateFormat),
+      ];
+    },
 
     getDetaiData(tradeId) {
       this.confirmLoading = true
@@ -366,6 +400,20 @@ export default {
             if (res.data) {
               this.patientBaseinfo = res.data.patientBaseinfo
               this.dataInfo = res.data
+
+              this.getDepartmentSelectList(this.dataInfo.inDept)
+              this.getTreeUsers(this.dataInfo.inDeptCode)
+
+              this.requestData.status = this.dataInfo.status.value
+              this.requestData.docId = this.dataInfo.docName
+              this.requestData.inDeptCode = this.dataInfo.inDept
+              this.requestData.rejectReason = this.dataInfo.inCheckResult
+              this.createValue = [
+                moment(this.dataInfo.reachBeginDate, this.dateFormat),
+                moment(this.dataInfo.reachEndDate, this.dateFormat),
+              ]
+              this.requestData.reachBeginDate = moment(this.dataInfo.reachBeginDate, this.dateFormat)
+              this.requestData.reachEndDate = moment(this.dataInfo.reachEndDate, this.dateFormat)
             }
           } else {
             this.$message.error(res.message)
@@ -374,6 +422,32 @@ export default {
         .finally((item) => {
           this.confirmLoading = false
         })
+    },
+
+    getReferralLogListOut(tradeId) {
+      getReferralLogList('20231102091052174').then((res) => {
+        if (res.code == 0) {
+          // this.referralLogList = res.data.concat(res.data).concat(res.data);
+          this.referralLogList = res.data
+          let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
+            return !itemTemp.remark
+          })
+          console.log('getReferralLogList', haveIndex)
+          if (haveIndex != -1) {
+            this.linePositon = haveIndex - 1 //算出目前的步骤
+            console.log('YYYl:', this.linePositon)
+            this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
+          }
+
+          //申请人和时间拼在一起
+          this.referralLogList.forEach((element, index) => {
+            this.$set(element, 'nameAndTime', element.dealUserName + '    ' + element.createTime)
+          })
+        } else {
+          this.$message.error(res.message)
+        }
+        this.confirmLoading = false
+      })
     },
 
     onChange(momentArr, dateArr) {
@@ -438,13 +512,13 @@ export default {
       if (getOne) {
         this.requestData.inDept = getOne.department_name
       }
-      this.getTreeUsers()
+      this.getTreeUsers(this.requestData.inDeptCode)
     },
 
-    getTreeUsers() {
+    getTreeUsers(inDeptCode) {
       getTreeUsersByDeptIdsAndRoles({
         roleIds: ['doctor'],
-        departmentIds: [this.requestData.inDeptCode],
+        departmentIds: [inDeptCode],
       }).then((res) => {
         if (res.code == 0) {
           this.inDocDatas = res.data[0].users || []
@@ -475,15 +549,15 @@ export default {
     cancel() {
       this.$router.go(-1)
     },
-    submitData(type) {
+    submitData() {
       this.confirmLoading = true
-      this.requestData.status = type
-      
-       console.log("VVV:",this.requestData)
-      return
+      console.log('VVV:', this.requestData)
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {
+            this.$message.success('操作成功')
+            this.$bus.$emit('refreshtransinManage', '刷新转入管理列表')
+            this.$router.go(-1)
           }
         })
         .finally((error) => {

@@ -1239,6 +1239,7 @@ export default {
           console.log("getReferralLogList", haveIndex);
           if (haveIndex != -1) {
             this.linePositon = haveIndex - 1; //算出目前的步骤
+            console.log("my-ovf:",this.linePositon)
             this.lineStatus =
               this.referralLogList[this.linePositon].deal_result == "成功"
                 ? "process"

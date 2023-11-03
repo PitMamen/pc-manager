@@ -59,21 +59,9 @@
         <a @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />评论</a>
       </span>
 
-      <!-- <span slot="orderStatus" slot-scope="text, record" :class="getColor(record)">
-        {{ getType(record) }}
-      </span> -->
-
-
-      
-      <span slot="actionstatus" slot-scope="text, record" :class="getColor(record)">
+      <span style="cursor: pointer;" slot="actionstatus" slot-scope="text, record" :class="getColor(record)" @click="seekReason(record)">
         {{ getType(record) }}
       </span>
-
-
-
-
-
-
     </s-table>
     <!-- <recordDetail ref="recordDetail" @ok="handleOk" /> -->
   </a-card>
@@ -123,7 +111,7 @@ export default {
         regTimeBegin: getDateNow(),
         regTimeEnd: getCurrentMonthLast(),
         status: '',
-        flag:1,
+        flag: 1,
       },
 
       queryParamsTemp: {},
@@ -244,29 +232,35 @@ export default {
   },
 
   created() {
-    this.createValue = [
-      //下单时间
-      // moment(getlastMonthToday(), this.dateFormat),
-      //   moment(formatDate(new Date().getTime()), this.dateFormat),
-
-      moment(getDateNow(), this.dateFormat),
-      moment(getCurrentMonthLast(), this.dateFormat),
-    ]
+    this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getOrderStatusGroupByDataOut()
   },
 
+  mounted() {
+    this.$bus.$on('refreshtransinManage', (record) => {
+      console.log('refreshtransinManage', record)
+      this.$refs.table.refresh()
+    })
+  },
+
   methods: {
+    seekReason(record) {
+      //    只有是 收治未通过审核的 才允许进入详情界面 查看不审核通过原因
+      if (record.status.value == 5) {
+        this.goDetail(record)
+      }
+    },
 
-
-    goDetail(record){
-        this.$router.push({
-        name: "transinDetail",
+    // 去详情
+    goDetail(record) {
+      this.$router.push({
+        name: 'transinDetail',
         // path: '/servicewise/projectEdit',
         query: {
           id: record.tradeId,
         },
-      });
+      })
     },
 
     goPrint() {
@@ -293,7 +287,7 @@ export default {
         return 'span-green'
       } else if (record.status.value == 5) {
         return 'span-red'
-      }else if (record.status.value == 2) {
+      } else if (record.status.value == 2) {
         return 'span-gray'
       }
     },
@@ -408,51 +402,51 @@ export default {
    
    <style lang="less" scoped>
 .span-blue {
-//   background-color: #ecf5ff;
+  //   background-color: #ecf5ff;
   padding: 2px 10px;
   font-size: 12px;
   color: #3894ff;
-//   border: #3894ff 1px solid;
+  //   border: #3894ff 1px solid;
 }
 
 .span-green {
-//   background-color: #edffed;
+  //   background-color: #edffed;
   padding: 2px 10px;
   font-size: 12px;
   color: #69c07d;
-//   border: #69c07d 1px solid;
+  //   border: #69c07d 1px solid;
 }
 
 .span-green-p {
-//   background-color: #edffed;
+  //   background-color: #edffed;
   padding: 2px 4px;
   font-size: 12px;
   color: #69c07d;
-//   border: #69c07d 1px solid;
+  //   border: #69c07d 1px solid;
 }
 
 .span-red {
-//   background-color: #fff2f1;
+  //   background-color: #fff2f1;
   padding: 2px 10px;
   font-size: 12px;
   color: #f26161;
-//   border: #f26161 1px solid;
+  //   border: #f26161 1px solid;
 }
 
 .span-red-p {
-//   background-color: #fff2f1;
+  //   background-color: #fff2f1;
   padding: 2px 4px;
   font-size: 12px;
   color: #f26161;
-//   border: #f26161 1px solid;
+  //   border: #f26161 1px solid;
 }
 
 .span-gray {
-//   background-color: #fafafa;
+  //   background-color: #fafafa;
   padding: 2px 10px;
   font-size: 12px;
   color: #4d4d4d;
-//   border: #4d4d4d 1px solid;
+  //   border: #4d4d4d 1px solid;
 }
 
 .span-green {
