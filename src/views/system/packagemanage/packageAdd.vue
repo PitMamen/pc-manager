@@ -584,6 +584,7 @@ export default {
       this.allocationTypeTechnician = undefined
       this.allocationTypeTeam = undefined
       this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
+      this.packageData.tenantId = this.user.tenantId
     },
 
     queryHospitalListOut() {
