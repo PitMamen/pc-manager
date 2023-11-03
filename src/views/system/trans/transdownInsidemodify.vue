@@ -524,7 +524,6 @@
         <div class="box-title">转诊信息</div>
         <div class="box-divider" />
 
-
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">
@@ -888,6 +887,7 @@ import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
+import events from "@/components/MultiTab/events";
 // import chooseMedic from './chooseMedic'
 
 import E from "wangeditor";
@@ -952,7 +952,7 @@ export default {
         diagnos: undefined, //主要诊断
         diagnoseCode: undefined, //主要诊断编码
         diseaseDeal: undefined, //治疗经过
-        diseaseDesc: undefined,  //上转时病情描述   下转时是检查结果摘要
+        diseaseDesc: undefined, //上转时病情描述   下转时是检查结果摘要
 
         //转诊信息
         inHospitalCode: undefined, //转入机构id
@@ -1264,11 +1264,10 @@ export default {
   //       }
   // },
   methods: {
-
-        /**
+    /**
      * 1 下转    2 回转
      */
-     checkAndGetOldTradeId() {
+    checkAndGetOldTradeId() {
       console.log("checkAndGetOldTradeId");
       if (
         this.downType == 2 &&
@@ -1297,7 +1296,6 @@ export default {
       //TODO
     },
 
-
     refreshData(newData) {
       this.uploadData = newData;
       console.log("refreshData", JSON.stringify(newData));
@@ -1319,7 +1317,6 @@ export default {
 
       //重新组装主要诊断
       this.diagnoseDatas = [];
-      debugger;
       this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(",");
       console.log("this.uploadData.diagnoseCode", this.uploadData.diagnoseCode);
       this.diagnoseNames = this.uploadData.diagnos.split(",");
@@ -1883,6 +1880,7 @@ export default {
             this.$bus.$emit("refreshTransDownListEvent", "刷新下转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             // this.clearData();
+            events.$emit("close", "/trans/transdownDetailmodify");
             this.$router.go(-1);
           } else {
             this.$message.error("保存失败：" + res.message);
