@@ -139,8 +139,12 @@ export default {
         password: '',
         captcha: '',
         captchaKey: '',
+        applicationId:'',
+        redirectRri:'',
+        state:'',
       },
       sysApps: [],
+
     }
   },
   computed: {
@@ -165,6 +169,12 @@ export default {
   beforeDestroy() {},
 
   created() {
+   
+    console.log(this.$route.query)
+    this.loginParams.applicationId=this.$route.query.application_id || undefined
+    this.loginParams.redirectRri=this.$route.query.redirect_uri || undefined
+    this.loginParams.state=this.$route.query.state || undefined
+     
     this.getCaptcha()
   },
   methods: {
@@ -263,7 +273,17 @@ export default {
             this.$message.error('您账号未绑定系统应用，无法登录')
             return
           }
+         
           this.setSysApps(apps)
+
+           //判断是否跳转到第三方网站
+           if(this.loginParams.redirectRri){
+            window.open(this.loginParams.redirectRri+'?code='+res.data.code+'&state='+res.data.state, '_self')
+            // window.location.replace(this.loginParams.redirectRri+'?code='+res.data.code+'&state='+res.data.state);
+            Vue.ls.remove(ACCESS_TOKEN)
+            return
+          }
+
           if (apps.length === 1) {
             this.itemClick(apps[0])
             return
