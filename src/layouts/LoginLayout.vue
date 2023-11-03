@@ -5,8 +5,20 @@
       <div class="mask" v-if="hasLogin && sysApps && sysApps.length > 1">
         <img class="logo" src="@/assets/login/logo.png" />
         <div class="menus">
-          <div class="row">
-            <div class="item item1" @click="itemClick(sysApps[0])" v-if="sysApps && sysApps[0]">
+          <div class="content">
+            <div class="row" v-for="(itemChild, indexChild) in sysApps" :key="indexChild" :value="itemChild.id">
+            <div :class="getClass(indexChild)" @click="itemClick(itemChild)">
+              <!-- <img class="icon icon1" :src="itemChild.iconshow"/> -->
+              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="itemChild.logo === 'icon1'" />
+              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="itemChild.logo === 'icon2'" />
+              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="itemChild.logo === 'icon3'" />
+              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="itemChild.logo === 'icon4'" />
+              <div class="titles">{{ itemChild.applicationName }}</div>
+            </div>
+          </div>
+          </div>
+          
+          <!-- <div class="item item1" @click="itemClick(sysApps[0])" v-if="sysApps && sysApps[0]">
               <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[0].logo === 'icon1'" />
               <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[0].logo === 'icon2'" />
               <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[0].logo === 'icon3'" />
@@ -53,10 +65,7 @@
               <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[5].logo === 'icon4'" />
               <div class="titles">{{ sysApps[5].applicationName }}</div>
             </div>
-          </div>
-
-
-
+          </div> -->
         </div>
       </div>
     </div>
@@ -96,7 +105,6 @@
             <div class="slot" slot="prefix">
               <img class="password-icon" src="@/assets/login/passwd.png" />
             </div>
-            
           </a-input>
 
           <div style="margin-top: 15px" class="intro">验证码</div>
@@ -108,14 +116,11 @@
               v-model="loginParams.captcha"
               placeholder="请输入验证码"
             >
-            <div class="slot" slot="prefix">
-              <img  class="password-icon" src="@/assets/login/yanzheng.png" />
-            </div>
-            
-            
-          </a-input>
-          <img @click="update()" style="width: 50%; height: 51px;" :src="imageUrl" />
-         
+              <div class="slot" slot="prefix">
+                <img class="password-icon" src="@/assets/login/yanzheng.png" />
+              </div>
+            </a-input>
+            <img @click="update()" style="width: 50%; height: 51px" :src="imageUrl" />
           </div>
 
           <a-button
@@ -190,16 +195,57 @@ export default {
   methods: {
     ...mapActions(['Login', 'getImageOut', 'Logout', 'LogoutApp']),
 
-    update(){
+    update() {
       this.getCaptcha()
     },
 
+    getClass(index){
+      console.log("RRR:",index)
+      if (index==0) {
+        return 'item item1'
+      }else if (index ==1) {
+        return 'item item2'
+      }else if (index ==2) {
+        return 'item item3'
+      }else if (index ==3) {
+        return 'item item4'
+      }else if (index ==4) {
+        return 'item item5'
+      }else if (index ==5) {
+        return 'item item6'
+      }else if (index ==6) {
+        return 'item item2'
+      }
+    },
+
+  getIcon(icon){
+   return 'icon '+icon
+  },
+
+  getSrc(icon){
+    if (icon=='icon1') {
+      return "'@/assets/login/icon1.png'"
+    }else if(icon=='icon2'){
+      return '@/assets/login/icon2.png'
+    }else if(icon=='icon3'){
+      return '@/assets/login/icon3.png'
+    }else if(icon=='icon4'){
+      return '@/assets/login/icon4.png'
+    }
+  },
+
+
+
+
+
     //获取验证码调用
     getCaptcha() {
-      this.getImageOut().then((res) => {
-        this.loginParams.captchaKey = res.data.captchaKey
-        this.imageUrl = res.data.base64Image
-      }) .catch((err) => {
+      this.getImageOut()
+        .then((res) => {
+          this.loginParams.captchaKey = res.data.captchaKey
+          this.imageUrl = res.data.base64Image
+        })
+        .catch((err) => {
           this.$message.error(err)
         })
     },
@@ -229,6 +275,21 @@ export default {
         apps = Vue.ls.get(SYS_APP) || []
       }
       this.sysApps = apps
+      if (this.sysApps&&this.sysApps.length>0) {
+        this.sysApps.forEach(item => {
+          if (item.logo=='icon1') {
+            this.$set(item,"iconshow",'@/assets/login/icon1.png')
+          }else if (item.logo=='icon2') {
+            this.$set(item,"iconshow",'@/assets/login/icon2.png')
+          }else if (item.logo=='icon3') {
+            this.$set(item,"iconshow",'@/assets/login/icon3.png')
+          }else if (item.logo=='icon4') {
+            this.$set(item,"iconshow",'@/assets/login/icon4.png')
+          }
+        });
+            console.log("VVVV:", this.sysApps)
+
+      }
     },
     encryptDes(message) {
       var keyHex = cryptoJs.enc.Utf8.parse('Login783s7Hyee90.k')
@@ -384,9 +445,22 @@ export default {
         .px2rem(padding-right, 82);
         position: absolute;
         width: 100%;
-        top: 50%;
+        top: 25%;
         transform: translateY(-50%);
+
+       
+        .content{
+          position: absolute;
+          height: 400px;
+          overflow: auto;
+        }
+
+
+
+
+
         .row {
+          display: contents;
           .px2rem(margin-bottom, 78);
           overflow: hidden;
           .item {
@@ -402,26 +476,38 @@ export default {
               float: right;
             }
             &.item1 {
+              margin-right: 30px;
+              margin-bottom: 30px;
               background: #2886b1;
               box-shadow: 0px 3px 5px 0px rgba(40, 134, 177, 0.35);
             }
             &.item2 {
+              margin-right: 30px;
+              margin-bottom: 30px;
               background: #4894a2;
               box-shadow: 0px 3px 5px 0px rgba(72, 148, 162, 0.35);
             }
             &.item3 {
+              margin-right: 30px;
+              margin-bottom: 30px;
               background: #3373a5;
               box-shadow: 0px 3px 5px 0px rgba(51, 115, 165, 0.35);
             }
             &.item4 {
+              margin-right: 30px;
+              margin-bottom: 30px;
               background: #5472ab;
               box-shadow: 0px 3px 5px 0px rgba(84, 114, 171, 0.35);
             }
             &.item5 {
+              margin-right: 30px;
+              margin-bottom: 30px;
               background: #2886b1;
               box-shadow: 0px 3px 5px 0px rgba(101, 143, 221, 0.35);
             }
             &.item6 {
+              margin-right: 30px;
+              margin-bottom: 30px;
               background: #5472ab;
               box-shadow: 0px 3px 5px 0px rgba(101, 143, 221, 0.35);
             }
