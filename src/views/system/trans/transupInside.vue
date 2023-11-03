@@ -560,8 +560,8 @@
               >
                 <a-select-option
                   v-for="item in inHospitalDatas"
-                  :key="item.hospitalCode"
-                  :value="item.hospitalCode"
+                  :key="item.upHospitalCode"
+                  :value="item.upHospitalCode"
                   >{{ item.hospitalName }}</a-select-option
                 >
               </a-select>

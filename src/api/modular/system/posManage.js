@@ -5638,6 +5638,15 @@ export function upHospitalList(data) {
     params: data,
   })
 }
+// /referralOrg/downHospitalList 下转机构列表
+export function downHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/downHospitalList',
+    method: 'get',
+    params: data,
+  })
+}
+
 // /referralTrade/queryTradeId  上转机构列表
 export function queryTradeId(data) {
   return axios({
