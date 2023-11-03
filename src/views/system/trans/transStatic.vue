@@ -36,7 +36,7 @@
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()"
             >重置</a-button
           >
-          <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportes()"
+          <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportOut()"
             >导出</a-button
           >
         </span>
@@ -83,6 +83,7 @@ import {
   getCommodityClassify,
   getReferralHospitalList,
   statReferralPatient,
+  exportReferralPatient,
 } from "@/api/modular/system/posManage";
 import { list } from "@/api/modular/system/rate";
 import { STable, Ellipsis } from "@/components";
@@ -220,7 +221,37 @@ export default {
     });
   },
   methods: {
-    exportes() {},
+    //导出
+    exportOut() {
+      let params = JSON.parse(JSON.stringify(this.queryParam))
+      exportReferralPatient(params)
+        .then((res) => {
+          this.downloadfile(res)
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream; charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      if (result) {
+        var filename = result[1]
+        var downloadElement = document.createElement('a')
+        var href = window.URL.createObjectURL(blob) // 创建下载的链接
+        var reg = /^["](.*)["]$/g
+        downloadElement.style.display = 'none'
+        downloadElement.href = href
+        downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() // 点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href)
+      }
+    },
     /**
      * 根据生日计算年龄
      * @param {*} birthday

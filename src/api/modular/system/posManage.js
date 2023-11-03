@@ -5760,6 +5760,17 @@ export function getReferralOrgInfo(data) {
 
 
 
+//导出
+export function exportReferralPatient(data) {
+  return axios({
+    url: '/referral-api/excel/exportReferralPatient',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+  })
+}
+
+
 // 根据操作人员类型获取转诊的机构列表
 export function getReferralHospitalList(data) {
   return axios({
