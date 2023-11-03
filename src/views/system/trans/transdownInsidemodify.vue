@@ -874,7 +874,8 @@ import {
   getDictData,
   getRegionInfo,
   searchDiagnosis,
-  upHospitalList,
+  // upHospitalList,
+  downHospitalList,
   // upReferral,
   getReferralLogList,
   // modifyUpReferral,
@@ -1533,7 +1534,7 @@ export default {
 
     getHospitalDatas() {
       this.fetching = true;
-      upHospitalList({}).then((res) => {
+      downHospitalList({}).then((res) => {
         this.fetching = false;
         if (res.code == 0) {
           this.inHospitalDatas = res.data;
