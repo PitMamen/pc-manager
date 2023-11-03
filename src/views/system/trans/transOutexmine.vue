@@ -262,11 +262,11 @@
   
       goDetail(record){
           this.$router.push({
-          name: "transinDetail",
+          name: "transoutDetail",
           // path: '/servicewise/projectEdit',
-          // query: {
-          //   planId: record.id,
-          // },
+          query: {
+          id: record.tradeId,
+        },
         });
       },
   
