@@ -109,7 +109,7 @@
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              性别：
+              <span style="color: #f90505; margin-top: 3px">*</span>性别：
             </div>
             <div class="div-cell-value">
               <a-select
@@ -131,7 +131,7 @@
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              <span style="color: #f90505">*</span>出生日期：
+              出生日期：
             </div>
             <div class="div-cell-value">
               <a-date-picker
@@ -478,7 +478,7 @@
           <div class="div-cell" style="width: 70%">
             <div class="div-cell-name" style="width: 13%">
               <div style="flex: 1"></div>
-              <span style="color: #f90505">*</span>主要诊断：
+              主要诊断：
             </div>
             <div class="div-cell-value" style="width: 85.5%">
               <a-select
@@ -517,6 +517,7 @@
               <a-textarea
                 :rows="4"
                 v-model="uploadData.diseaseDesc"
+                :maxLength="2000"
                 placeholder="请输入"
               ></a-textarea>
             </div>
@@ -533,6 +534,7 @@
               <a-textarea
                 :rows="4"
                 placeholder="请输入"
+                :maxLength="2000"
                 v-model="uploadData.diseaseDeal"
               ></a-textarea>
             </div>
@@ -737,6 +739,7 @@
               <a-textarea
                 :rows="4"
                 placeholder="请输入"
+                :maxLength="2000"
                 v-model="uploadData.notice"
               ></a-textarea>
             </div>
@@ -814,7 +817,7 @@ export default {
       dateFormat: "YYYY-MM-DD",
       confirmLoading: false,
       nowDateBegin: "",
-      dateValue: "",
+      dateValue: undefined,
       lineStatus: "error",
       linePositon: 2,
       createValue: [],
@@ -1103,6 +1106,12 @@ export default {
     getDictData("CONVERT_DIAGNOSTIC_TYPE").then((res) => {
       if (res.code == 0) {
         this.referralTypeDatas = res.data;
+
+        let getOne = this.referralTypeDatas.find((item) => item.value == "住院转诊");
+        console.log("CONVERT_DIAGNOSTIC_TYPE", getOne);
+        if (getOne) {
+          this.uploadData.referralType = getOne.code;
+        }
       } else {
         this.$message.error(res.message);
       }
@@ -1231,7 +1240,7 @@ export default {
       this.getTreeUsers();
     },
 
-    onDeptGetFocus(){
+    onDeptGetFocus() {
       if (!this.uploadData.inHospitalCode) {
         this.$message.error("请先选择转入机构");
         return;
@@ -1491,10 +1500,14 @@ export default {
         this.$message.error("请输入证件号码");
         return;
       }
-      if (!this.dateValue) {
-        this.$message.error("请选择出生日期");
+      if (!tempData.patientBaseinfoReq.sex) {
+        this.$message.error("请选择性别");
         return;
       }
+      // if (!this.dateValue) {//非必填
+      //   this.$message.error("请选择出生日期");
+      //   return;
+      // }
       if (!tempData.patientBaseinfoReq.phone) {
         this.$message.error("请输入本人电话");
         return;
@@ -1516,10 +1529,10 @@ export default {
         return;
       }
 
-      if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
-        this.$message.error("请输入选择主要诊断");
-        return;
-      }
+      // if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {//非必填
+      //   this.$message.error("请输入选择主要诊断");
+      //   return;
+      // }
 
       if (!tempData.inHospitalCode) {
         this.$message.error("请选择转入机构");
@@ -1544,10 +1557,16 @@ export default {
       }
 
       //单独组装生日
-      tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
+      if (this.dateValue) {
+        tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
+          "YYYY-MM-DD"
+        );
+      }
       //单独组装主要诊断
-      this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
-      this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+      if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
+        this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+        this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+      }
 
       //组装期望到院时间
       this.$set(

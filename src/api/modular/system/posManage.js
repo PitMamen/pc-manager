@@ -5760,6 +5760,26 @@ export function getReferralOrgInfo(data) {
 
 
 
+// 根据操作人员类型获取转诊的机构列表
+export function getReferralHospitalList(data) {
+  return axios({
+    url: '/referral-api/referral/getReferralHospitalList',
+    method: 'get',
+    param: data,
+  })
+}
+
+
+// 转诊人数统计
+export function statReferralPatient(data) {
+  return axios({
+    url: '/referral-api/referral/statReferralPatient',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 // 转入列表
 export function qryReferralListByPage(data) {
   return axios({
