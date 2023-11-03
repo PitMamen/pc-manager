@@ -5770,6 +5770,15 @@ export function getReferralTradeById(data) {
   })
 }
 
+// 转入审核
+export function referralExamine(data) {
+  return axios({
+    url: '/referral-api/referralTrade/referralExamine',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 
