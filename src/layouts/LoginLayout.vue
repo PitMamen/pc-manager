@@ -7,17 +7,17 @@
         <div class="menus">
           <div class="content">
             <div class="row" v-for="(itemChild, indexChild) in sysApps" :key="indexChild" :value="itemChild.id">
-            <div :class="getClass(indexChild)" @click="itemClick(itemChild)">
-              <!-- <img class="icon icon1" :src="itemChild.iconshow"/> -->
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="itemChild.logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="itemChild.logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="itemChild.logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="itemChild.logo === 'icon4'" />
-              <div class="titles">{{ itemChild.applicationName }}</div>
+              <div :class="getClass(indexChild)" @click="itemClick(itemChild)">
+                <!-- <img class="icon icon1" :src="itemChild.iconshow"/> -->
+                <img class="icon icon1" src="@/assets/login/icon1.png" v-if="itemChild.logo === 'icon1'" />
+                <img class="icon icon2" src="@/assets/login/icon2.png" v-if="itemChild.logo === 'icon2'" />
+                <img class="icon icon3" src="@/assets/login/icon3.png" v-if="itemChild.logo === 'icon3'" />
+                <img class="icon icon4" src="@/assets/login/icon4.png" v-if="itemChild.logo === 'icon4'" />
+                <div class="titles">{{ itemChild.applicationName }}</div>
+              </div>
             </div>
           </div>
-          </div>
-          
+
           <!-- <div class="item item1" @click="itemClick(sysApps[0])" v-if="sysApps && sysApps[0]">
               <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[0].logo === 'icon1'" />
               <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[0].logo === 'icon2'" />
@@ -199,44 +199,40 @@ export default {
       this.getCaptcha()
     },
 
-    getClass(index){
-      console.log("RRR:",index)
-      if (index==0) {
+    getClass(index) {
+      console.log('RRR:', index)
+      if (index == 0) {
         return 'item item1'
-      }else if (index ==1) {
+      } else if (index == 1) {
         return 'item item2'
-      }else if (index ==2) {
+      } else if (index == 2) {
         return 'item item3'
-      }else if (index ==3) {
+      } else if (index == 3) {
         return 'item item4'
-      }else if (index ==4) {
+      } else if (index == 4) {
         return 'item item5'
-      }else if (index ==5) {
+      } else if (index == 5) {
         return 'item item6'
-      }else if (index ==6) {
+      } else if (index == 6) {
         return 'item item2'
       }
     },
 
-  getIcon(icon){
-   return 'icon '+icon
-  },
+    getIcon(icon) {
+      return 'icon ' + icon
+    },
 
-  getSrc(icon){
-    if (icon=='icon1') {
-      return "'@/assets/login/icon1.png'"
-    }else if(icon=='icon2'){
-      return '@/assets/login/icon2.png'
-    }else if(icon=='icon3'){
-      return '@/assets/login/icon3.png'
-    }else if(icon=='icon4'){
-      return '@/assets/login/icon4.png'
-    }
-  },
-
-
-
-
+    getSrc(icon) {
+      if (icon == 'icon1') {
+        return "'@/assets/login/icon1.png'"
+      } else if (icon == 'icon2') {
+        return '@/assets/login/icon2.png'
+      } else if (icon == 'icon3') {
+        return '@/assets/login/icon3.png'
+      } else if (icon == 'icon4') {
+        return '@/assets/login/icon4.png'
+      }
+    },
 
     //获取验证码调用
     getCaptcha() {
@@ -275,20 +271,19 @@ export default {
         apps = Vue.ls.get(SYS_APP) || []
       }
       this.sysApps = apps
-      if (this.sysApps&&this.sysApps.length>0) {
-        this.sysApps.forEach(item => {
-          if (item.logo=='icon1') {
-            this.$set(item,"iconshow",'@/assets/login/icon1.png')
-          }else if (item.logo=='icon2') {
-            this.$set(item,"iconshow",'@/assets/login/icon2.png')
-          }else if (item.logo=='icon3') {
-            this.$set(item,"iconshow",'@/assets/login/icon3.png')
-          }else if (item.logo=='icon4') {
-            this.$set(item,"iconshow",'@/assets/login/icon4.png')
+      if (this.sysApps && this.sysApps.length > 0) {
+        this.sysApps.forEach((item) => {
+          if (item.logo == 'icon1') {
+            this.$set(item, 'iconshow', '@/assets/login/icon1.png')
+          } else if (item.logo == 'icon2') {
+            this.$set(item, 'iconshow', '@/assets/login/icon2.png')
+          } else if (item.logo == 'icon3') {
+            this.$set(item, 'iconshow', '@/assets/login/icon3.png')
+          } else if (item.logo == 'icon4') {
+            this.$set(item, 'iconshow', '@/assets/login/icon4.png')
           }
-        });
-            console.log("VVVV:", this.sysApps)
-
+        })
+        console.log('VVVV:', this.sysApps)
       }
     },
     encryptDes(message) {
@@ -406,6 +401,37 @@ export default {
 </script>
 
 <style lang="less" scoped>
+// /deep/.webkit-scrollbar-thumb {
+//   /*滚动条里面小方块*/
+//   border-radius: 10px;
+//   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+//   background: linear-gradient(270deg, #64e6c0 0%, #687ff9 100%);
+// }
+
+// /deep/.webkit-scrollbar-track {
+//   /*滚动条里面轨道*/
+//   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+//   border-radius: 10px;
+//   background: #262335;
+// }
+
+
+.ant-table-body{
+      &::-webkit-scrollbar {
+        height: 5px;
+      }
+      &::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        -webkit-box-shadow: inset 0 0 5px red;
+        background: #ccc;
+      }
+      &::-webkit-scrollbar-track {
+        -webkit-box-shadow: 0;
+        border-radius: 0;
+        background: #191f28;
+      }
+    }
+
 @import '~@/components/px2rem.less';
 #loginLayout {
   width: 100%;
@@ -448,16 +474,11 @@ export default {
         top: 25%;
         transform: translateY(-50%);
 
-       
-        .content{
+        .content {
           position: absolute;
           height: 400px;
           overflow: auto;
         }
-
-
-
-
 
         .row {
           display: contents;

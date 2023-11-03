@@ -264,11 +264,12 @@
 
           <div class="div-cell">
             <div class="div-cell-name">审核人员：</div>
-            <div class="div-cell-value">王治郅</div>
+            <div class="div-cell-value">{{dataInfo.inCheck}}</div>
+            <!-- <div class="div-cell-value">{{user.userName}}</div> -->
           </div>
           <div class="div-cell">
             <div class="div-cell-name">审核日期：</div>
-            <div class="div-cell-value">2023-10-25</div>
+            <div class="div-cell-value">{{dataInfo.inCheckTime}}</div>
           </div>
         </div>
 
@@ -279,7 +280,7 @@
               <a-textarea
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 v-model="requestData.rejectReason"
-                placeholder="请输入意见"
+                placeholder="可在此处输入审核意见"
                 style="height: 80px; min-height: 100px; width: 80%"
                 :maxLength="1000"
               />
@@ -340,6 +341,7 @@ export default {
       headers: {
         Authorization: '',
       },
+      user:{},
       confirmLoading: false,
       tradeId: '',
       dateFormat: 'YYYY-MM-DD',
@@ -371,6 +373,8 @@ export default {
 
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+    this.user = Vue.ls.get(TRUE_USER)
+        console.log("BBBB:",this.user)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     this.getDepartmentSelectList(undefined)
   },

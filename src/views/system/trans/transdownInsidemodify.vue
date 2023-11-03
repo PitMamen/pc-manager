@@ -1854,10 +1854,14 @@ export default {
         this.$message.error("请输入证件号码");
         return;
       }
-      if (!this.dateValue) {
-        this.$message.error("请选择出生日期");
+      if (!tempData.patientBaseinfoReq.sex) {
+        this.$message.error("请选择性别");
         return;
       }
+      // if (!this.dateValue) {//非必填
+      //   this.$message.error("请选择出生日期");
+      //   return;
+      // }
       if (!tempData.patientBaseinfoReq.phone) {
         this.$message.error("请输入本人电话");
         return;
@@ -1879,10 +1883,10 @@ export default {
         return;
       }
 
-      if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
-        this.$message.error("请输入选择主要诊断");
-        return;
-      }
+      // if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
+      //   this.$message.error("请输入选择主要诊断");
+      //   return;
+      // }
 
       if (!tempData.inHospitalCode) {
         this.$message.error("请选择转入机构");
@@ -1906,11 +1910,23 @@ export default {
         return;
       }
 
+      // //单独组装生日
+      // tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
+      // //单独组装主要诊断
+      // this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+      // this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+
       //单独组装生日
-      tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
+      if (this.dateValue) {
+        tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
+          "YYYY-MM-DD"
+        );
+      }
       //单独组装主要诊断
-      this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
-      this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+      if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
+        this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+        this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+      }
 
       //组装期望到院时间
       this.$set(
