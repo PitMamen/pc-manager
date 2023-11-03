@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="confirmLoading">
-    <a-card :bordered="false" >
+    <a-card :bordered="false">
       <!-- 基本信息 -->
       <div class="div-kuang">
         <div class="div-title">
@@ -10,90 +10,90 @@
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505; margin-top: 3px">*</span>患者姓名：</div>
-            <div class="div-cell-value">{{patientBaseinfo.name||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.name || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>身份证：</div>
-            <div class="div-cell-value">{{patientBaseinfo.identificationNo||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.identificationNo || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">性别：</div>
-            <div class="div-cell-value">{{patientBaseinfo.sex||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.sex || '' }}</div>
           </div>
 
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>出生日期：</div>
-            <div class="div-cell-value">{{ patientBaseinfo.birthday||'' }}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.birthday || '' }}</div>
           </div>
         </div>
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>本人电话：</div>
-            <div class="div-cell-value">{{patientBaseinfo.contactTel}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.contactTel }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">联系人姓名：</div>
-            <div class="div-cell-value">{{patientBaseinfo.contactor||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.contactor || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">联系人电话：</div>
-            <div class="div-cell-value">{{patientBaseinfo.contactTel||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.contactTel || '' }}</div>
           </div>
 
           <div class="div-cell">
             <div class="div-cell-name">国籍：</div>
-            <div class="div-cell-value">{{patientBaseinfo.country||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.country || '' }}</div>
           </div>
         </div>
 
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">民族：</div>
-            <div class="div-cell-value">{{patientBaseinfo.nation||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.nation || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">血型：</div>
-            <div class="div-cell-value">{{patientBaseinfo.bloodType||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.bloodType || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">RH阴性：</div>
-            <div class="div-cell-value">{{patientBaseinfo.rhFlag||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.rhFlag || '' }}</div>
           </div>
 
           <div class="div-cell">
             <div class="div-cell-name">文化程度：</div>
-            <div class="div-cell-value">{{patientBaseinfo.educationLevel||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.educationLevel || '' }}</div>
           </div>
         </div>
 
         <div class="div-line">
           <div class="div-cell">
             <div class="div-cell-name">职业：</div>
-            <div class="div-cell-value">{{patientBaseinfo.job||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.job || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">婚姻状况：</div>
-            <div class="div-cell-value">{{patientBaseinfo.marry||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.marry || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>常住分类：</div>
-            <div class="div-cell-value">{{patientBaseinfo.liveType||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.liveType || '' }}</div>
           </div>
 
           <div class="div-cell">
             <div class="div-cell-name">医保类型：</div>
-            <div class="div-cell-value">{{patientBaseinfo.insuranceType||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.insuranceType || '' }}</div>
           </div>
         </div>
 
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>户口住址：</div>
-            <div class="div-cell-value">{{patientBaseinfo.address||''}}</div>
+            <div class="div-cell-value">{{ patientBaseinfo.address || '' }}</div>
           </div>
           <div class="div-cell">
-            <div class="div-cell-name" style="width:90px"><span style="color: #f90505">*</span>户口详细地址：</div>
-            <div class="div-cell-value">{{patientBaseinfo.addressDetail||''}}</div>
+            <div class="div-cell-name" style="width: 90px"><span style="color: #f90505">*</span>户口详细地址：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.addressDetail || '' }}</div>
           </div>
         </div>
       </div>
@@ -107,18 +107,18 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name">病情分级：</div>
-            <div class="div-cell-value">{{ dataInfo.diseaseLevel||'' }}</div>
+            <div class="div-cell-value">{{ dataInfo.diseaseLevel || '' }}</div>
           </div>
           <div class="div-cell" style="width: 80%">
             <div class="div-cell-name">主要诊断：</div>
-            <div class="div-cell-value" style="width: 100%">{{dataInfo.diagnos||''}}</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.diagnos || '' }}</div>
           </div>
         </div>
 
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell" style="width: 80%">
             <div class="div-cell-name">病情描述：</div>
-            <div class="div-cell-value">{{dataInfo.diseaseDesc||''}}</div>
+            <div class="div-cell-value">{{ dataInfo.diseaseDesc || '' }}</div>
           </div>
         </div>
 
@@ -126,7 +126,7 @@
           <div class="div-cell" style="width: 80%">
             <div class="div-cell-name">治疗经过：</div>
             <div class="div-cell-value">
-                {{dataInfo.diseaseDeal||''}}
+              {{ dataInfo.diseaseDeal || '' }}
             </div>
           </div>
         </div>
@@ -141,19 +141,19 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转入机构：</div>
-            <div class="div-cell-value">{{dataInfo.inHospitalName||''}}</div>
+            <div class="div-cell-value">{{ dataInfo.inHospitalName || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转诊类型：</div>
-            <div class="div-cell-value" style="width: 100%">{{dataInfo.referralType.description||''}}</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralType.description || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转诊原因：</div>
-            <div class="div-cell-value" style="width: 100%">{{dataInfo.referralReason||''}}</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralReason || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转运方式：</div>
-            <div class="div-cell-value" style="width: 100%">{{dataInfo.referralWay||''}}</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralWay || '' }}</div>
           </div>
         </div>
 
@@ -164,7 +164,7 @@
           </div>
           <div class="div-cell">
             <div class="div-cell-name">登记日期：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.regTime||'' }}</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.regTime || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">申请机构：</div>
@@ -172,7 +172,7 @@
           </div>
           <div class="div-cell">
             <div class="div-cell-name"><span style="color: #f90505">*</span>注意事项：</div>
-            <div class="div-cell-value" style="width: 100%">{{dataInfo.notice||''}}</div>
+            <div class="div-cell-value" style="width: 100%">{{ dataInfo.notice || '' }}</div>
           </div>
         </div>
 
@@ -185,19 +185,46 @@
           <div class="div-line" style="margin-bottom: 10px">
             <div class="div-cell">
               <div class="div-cell-name">转入科室：</div>
-              <div class="div-cell-value">{{ dataInfo.inDept||'' }}
-                <!-- <a-select placeholder="请选择" allow-clear style="height: 28px; width: 128px">
-                  <a-select-option v-for="item in zhengjianDatas" :key="item.code" :value="item.code">{{
-                    item.value
-                  }}</a-select-option>
-                </a-select> -->
-              </div>
+              <!-- <div class="div-cell-value"> -->
+              <a-select
+                show-search
+                v-model="requestData.inDeptCode"
+                style="width: 35%"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                placeholder="请输入选择科室"
+                @change="onDepartmentSelectChange"
+                @select="onSelectDept"
+                @search="onDepartmentSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option
+                  v-for="(item, index) in originData"
+                  :title="item.department_name"
+                  :key="index"
+                  :value="item.department_id"
+                  >{{ item.department_name }}</a-select-option
+                >
+              </a-select>
+              <!-- </div> -->
             </div>
             <div class="div-cell">
               <div class="div-cell-name">接收医生：</div>
-              <div class="div-cell-value">{{ dataInfo.docName||'' }}
-                <!-- <a-input allow-clear style="width: 100%" placeholder="请输入" /> -->
-              </div>
+              <!-- <div class="div-cell-value"> -->
+              <a-select
+                v-model="requestData.docId"
+                @select="onSelectInDoctor"
+                @focus="onDocFocus"
+                placeholder="请选择"
+                allow-clear
+                style="width: 35%; height: 28px"
+              >
+                <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userId">{{
+                  item.userName
+                }}</a-select-option>
+              </a-select>
+              <!-- </div> -->
             </div>
             <div class="div-cell">
               <div class="div-cell-name">期望到院时间：</div>
@@ -218,10 +245,10 @@
                 @change="radioChange"
                 v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
               >
-                <a-radio :value="1" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important">
+                <a-radio :value="4" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important">
                   通过
                 </a-radio>
-                <a-radio :value="2" style="font-size: 8px; color: #1a1a1a"> 不通过 </a-radio>
+                <a-radio :value="5" style="font-size: 8px; color: #1a1a1a"> 不通过 </a-radio>
               </a-radio-group>
             </div>
           </div>
@@ -241,6 +268,7 @@
             <div class="div-cell-name">收治意见：</div>
             <div class="div-cell-value" style="width: 100%">
               <a-textarea
+                v-model="requestData.rejectReason"
                 placeholder="请输入意见"
                 style="height: 80px; min-height: 100px; width: 80%"
                 :maxLength="1000"
@@ -252,8 +280,8 @@
 
       <div class="div-pro-btn">
         <div style="flex: 1"></div>
-        <a-button type="primary" @click="submitData()">确认收治</a-button>
-        <a-button type="primary" ghost @click="submitData()">不予收治</a-button>
+        <a-button type="primary" @click="submitData(4)">确认收治</a-button>
+        <a-button type="primary" ghost @click="submitData(5)">不予收治</a-button>
         <a-button style="margin-left: 10px" @click="cancel()">打印</a-button>
       </div>
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
@@ -262,9 +290,14 @@
 </template>
   
   <script>
-import { getReferralTradeById } from '@/api/modular/system/posManage'
+import {
+  getReferralTradeById,
+  getDepartmentListForSelect,
+  getTreeUsersByDeptIdsAndRoles,
+  referralExamine,
+} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
-import { formatDecimal,getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import moment from 'moment'
@@ -281,29 +314,43 @@ export default {
       headers: {
         Authorization: '',
       },
-      confirmLoading:false,
+      confirmLoading: false,
       tradeId: '',
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
-      patientBaseinfo:{},
-      dataInfo:{},
-      rangeValue:"1",
+      patientBaseinfo: {},
+      dataInfo: {},
+      rangeValue: '4',
+      fetching: false,
+      originData: [],
+      inDocDatas: [],
+      inSelectDepartment: [],
+
+      requestData: {
+        inDept: '', //准入科室名称
+        inDeptCode: undefined, //转入科室编码
+        reachBeginDate: getDateNow(), //期望到院 结束时间
+        reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
+        rejectReason: '', //收治意见
+        status: 4, // 4 确认收治  5 拒绝收治
+        tradeId: '',
+        docId: undefined,
+        docName: '',
+      },
     }
   },
 
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    this.createValue = [
-      moment(getDateNow(), this.dateFormat),
-      moment(getCurrentMonthLast(), this.dateFormat),
-    ]
+    this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.getDepartmentSelectList(undefined)
   },
   mounted() {},
   activated() {
-    console.log("YYYYYYYYYYYYYYYYYYYY")
     if (this.$route.query.id) {
       //修改
       this.tradeId = this.$route.query.id
+      this.requestData.tradeId = this.$route.query.id
       console.log('CCCC:', this.$route.query.id)
       this.getDetaiData(this.tradeId)
     }
@@ -312,41 +359,106 @@ export default {
     clearData() {},
 
     getDetaiData(tradeId) {
-        this.confirmLoading =true
-      getReferralTradeById({ id: tradeId }).then((res) => {
-        if (res.code == 0) {
-          if (res.data) {
-            this.patientBaseinfo = res.data.patientBaseinfo
-            this.dataInfo = res.data
-          }
-        }else{
+      this.confirmLoading = true
+      getReferralTradeById({ id: tradeId })
+        .then((res) => {
+          if (res.code == 0) {
+            if (res.data) {
+              this.patientBaseinfo = res.data.patientBaseinfo
+              this.dataInfo = res.data
+            }
+          } else {
             this.$message.error(res.message)
-        }
-      }).finally((item)=>{
-        this.confirmLoading =false
-      })
+          }
+        })
+        .finally((item) => {
+          this.confirmLoading = false
+        })
     },
-
 
     onChange(momentArr, dateArr) {
       if (dateArr[0] == '' && dateArr[1] == '') {
-        // this.queryParams.regTimeBegin = ''
-        // this.queryParams.regTimeEnd = ''
+        this.requestData.reachBeginDate = ''
+        this.requestData.reachEndDate = ''
         return
       }
 
       this.createValue = momentArr
-    //   this.queryParams.regTimeBegin = dateArr[0]
-    //   this.queryParams.regTimeEnd = dateArr[1]
+      this.requestData.reachBeginDate = dateArr[0]
+      this.requestData.reachEndDate = dateArr[1]
+    },
+
+    //科室搜索
+    onDepartmentSelectSearch(value) {
+      this.originData = []
+      this.getDepartmentSelectList(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange(value) {
+      if (value === undefined) {
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
+      }
+    },
+
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
+      this.fetching = true
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
+        this.fetching = false
+        if (res.code == 0) {
+          this.originData = res.data.records
+        }
+      })
+    },
+
+    onSelectInDoctor(userId) {
+      let getOne = this.inDocDatas.find((item) => item.userId == userId)
+      //   this.uploadData.docName = getOne.userName;
+      console.log('onSelectInDoctor docId', userId)
+      console.log('onSelectInDoctor docName', getOne.userName)
+      if (getOne) {
+        this.requestData.docName = getOne.userName
+      }
+    },
+
+    onDocFocus() {
+      if (!this.inSelectDepartment) {
+        this.$message.warn('请先选择转入科室')
+        return
+      }
+    },
+
+    onSelectDept(department_id) {
+      let getOne = this.originData.find((item) => item.department_id == department_id)
+      //   this.uploadData.inDept = getOne.department_name;
+      console.log('onSelectDept department_id', department_id)
+      console.log('onSelectDept department_name', getOne.department_name)
+      if (getOne) {
+        this.requestData.inDept = getOne.department_name
+      }
+      this.getTreeUsers()
+    },
+
+    getTreeUsers() {
+      getTreeUsersByDeptIdsAndRoles({
+        roleIds: ['doctor'],
+        departmentIds: [this.requestData.inDeptCode],
+      }).then((res) => {
+        if (res.code == 0) {
+          this.inDocDatas = res.data[0].users || []
+        }
+      })
     },
 
     radioChange(event) {
-      if (event.target.value == 1) {
-        this.rangeValue = 1
-        // this.queryParams.auditStatus = 1
+      if (event.target.value == 4) {
+        this.rangeValue = 4
+        this.requestData.status = 4
       } else {
-        this.rangeValue = 2
-        // this.queryParams.auditStatus =2
+        this.rangeValue = 5
+        this.requestData.status = 5
       }
     },
 
@@ -360,15 +472,24 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-
-
-
-
-
     cancel() {
       this.$router.go(-1)
     },
-    submitData() {},
+    submitData(type) {
+      this.confirmLoading = true
+      this.requestData.status = type
+      
+       console.log("VVV:",this.requestData)
+      return
+      referralExamine(this.requestData)
+        .then((res) => {
+          if (res.code == 0) {
+          }
+        })
+        .finally((error) => {
+          this.confirmLoading = false
+        })
+    },
   },
 }
 </script>
