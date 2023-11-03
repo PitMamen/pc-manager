@@ -1,6 +1,6 @@
 <template>
   <div id="loginLayout">
-    <div class="left">
+    <div class="left" v-show="!isMobile">
       <img class="chahua" src="@/assets/login/chahua.png" />
       <div class="mask" v-if="hasLogin && sysApps && sysApps.length > 1">
         <img class="logo" src="@/assets/login/logo.png" />
@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="right">
+    <div class="right" :class="{mobile: isMobile}">
       <div class="right-wrap">
         <div class="titles">
           <div class="title1">数智化全病程服务管理平台</div>
@@ -144,7 +144,7 @@ export default {
         state:'',
       },
       sysApps: [],
-
+      isMobile: false
     }
   },
   computed: {
@@ -165,6 +165,7 @@ export default {
   },
   mounted() {
     this.setSysApps()
+    this.isMobile = !this.isPC()
   },
   beforeDestroy() {},
 
@@ -183,6 +184,21 @@ export default {
     update(){
       this.getCaptcha()
     },
+    
+    isPC() {
+	    var userAgentInfo = navigator.userAgent;
+	    var Agents = ["Android", "iPhone",
+	                "SymbianOS", "Windows Phone",
+	                "iPad", "iPod"];
+	    var flag = true;
+	    for (var v = 0; v < Agents.length; v++) {
+	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+	            flag = false;
+	            break;
+	        }
+	    }
+	    return flag;
+	},
 
     //获取验证码调用
     getCaptcha() {
@@ -458,6 +474,9 @@ export default {
     height: 100%;
     background: #ffffff;
     box-shadow: 0px 5px 10px 0px rgba(217, 239, 255, 0.35);
+    &.mobile {
+      margin-left: 0px;
+    }
     .right-wrap {
       position: absolute;
       width: 100%;
