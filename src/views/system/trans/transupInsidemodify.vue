@@ -533,15 +533,15 @@
             <div class="div-cell-value">
               <a-select
                 v-model="uploadData.inHospitalCode"
-                @select="onSelectYibao"
+                @select="getDepartmentSelectList(undefined)"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in inHospitalDatas"
-                  :key="item.hospitalCode"
-                  :value="item.hospitalCode"
+                  :key="item.upHospitalCode"
+                  :value="item.upHospitalCode"
                   >{{ item.hospitalName }}</a-select-option
                 >
               </a-select>
@@ -636,6 +636,7 @@
                 :not-found-content="fetching ? undefined : null"
                 allow-clear
                 placeholder="请输入选择科室"
+                @focus="onDeptGetFocus"
                 @change="onDepartmentSelectChange"
                 @select="onSelectDept"
                 @search="onDepartmentSelectSearch"
@@ -777,8 +778,10 @@ import {
   // upReferral,
   getReferralLogList,
   modifyUpReferral,
-  getDepartmentListForSelect,
+  // getDepartmentListForSelect,
+  getDepartmentListForReq,
   getTreeUsersByDeptIdsAndRoles,
+  upReferralDetail,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -1130,7 +1133,7 @@ export default {
     });
 
     this.getHospitalDatas();
-    this.getDepartmentSelectList(undefined);
+    // this.getDepartmentSelectList(undefined);
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1157,102 +1160,114 @@ export default {
   // },
   methods: {
     refreshData(newData) {
-      this.uploadData = newData;
-      console.log("refreshData", JSON.stringify(newData));
-      //列表和新增上转数据字段不一样，这里做转换
-      this.$set(
-        this.uploadData,
-        "patientBaseinfoReq",
-        JSON.parse(JSON.stringify(this.uploadData.patientBaseinfo))
-      );
-      delete this.uploadData.patientBaseinfo;
-      //组装数据
-      //生日
-      this.dateValue = moment(
-        this.uploadData.patientBaseinfoReq.birthday,
-        this.dateFormat
-      );
-      //户口地址
-      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
-
-      //重新组装主要诊断
-      this.diagnoseDatas = [];
-      this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(",");
-      console.log("this.uploadData.diagnoseCode", this.uploadData.diagnoseCode);
-      this.diagnoseNames = this.uploadData.diagnos.split(",");
-
-      this.uploadData.diagnoseCode.forEach((element, index) => {
-        this.diagnoseDatas.push({ icdCode: element, name: this.diagnoseNames[index] });
-      });
-
-      //转诊类型
-      this.referralTypeDatas = [];
-      this.referralTypeDatas = [
-        {
-          code: this.uploadData.referralType.value,
-          value: this.uploadData.referralType.description,
-        },
-      ];
-      this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
-
-      //转入科室
-      this.originData = [];
-      this.originData = [
-        {
-          department_name: this.uploadData.inDept,
-          department_id: this.uploadData.inDeptCode,
-        },
-      ];
-      this.inDocDatas = [
-        {
-          userId: this.uploadData.docId,
-          userName: this.uploadData.docName,
-        },
-      ];
-
-      //期望到院时间  string转moment date对象
-      this.createValue = [
-        moment(this.uploadData.reachBeginDate, this.dateFormat),
-        moment(this.uploadData.reachEndDate, this.dateFormat),
-      ];
-      this.uploadData.reachBeginDate = moment(
-        this.uploadData.reachBeginDate,
-        this.dateFormat
-      );
-      this.uploadData.reachEndDate = moment(
-        this.uploadData.reachEndDate,
-        this.dateFormat
-      );
-
-      //申请时间
-      this.uploadData.regTime = this.uploadData.regTime.substring(0, 10);
-
-      console.log("this.uploadData", JSON.stringify(this.uploadData));
-
-      getReferralLogList(this.uploadData.tradeId).then((res) => {
+      this.confirmLoading = true
+      console.log("refreshData transup", JSON.stringify(newData));
+      upReferralDetail(newData.tradeId).then((res) => {
         if (res.code == 0) {
-          // this.referralLogList = res.data.concat(res.data).concat(res.data);
-          this.referralLogList = res.data;
-          let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
-            return !itemTemp.remark;
-          });
-          console.log("getReferralLogList", haveIndex);
-          if (haveIndex != -1) {
-            this.linePositon = haveIndex - 1; //算出目前的步骤
-            console.log("my-ovf:",this.linePositon)
-            this.lineStatus =
-              this.referralLogList[this.linePositon].deal_result == "成功"
-                ? "process"
-                : "error";
-          }
+          this.uploadData = res.data;
+          this.$set(this.uploadData, "tradeId", res.data.tradeIdStr);
 
-          //申请人和时间拼在一起
-          this.referralLogList.forEach((element, index) => {
-            this.$set(
-              element,
-              "nameAndTime",
-              element.dealUserName + "    " + element.createTime
-            );
+          //列表和新增上转数据字段不一样，这里做转换
+          this.$set(
+            this.uploadData,
+            "patientBaseinfoReq",
+            JSON.parse(JSON.stringify(this.uploadData.patientBaseinfo))
+          );
+          delete this.uploadData.patientBaseinfo;
+          //组装数据
+          //生日
+          this.dateValue = moment(
+            this.uploadData.patientBaseinfoReq.birthday,
+            this.dateFormat
+          );
+          //户口地址
+          this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+
+          //重新组装主要诊断
+          this.diagnoseDatas = [];
+          this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(",");
+          console.log("this.uploadData.diagnoseCode", this.uploadData.diagnoseCode);
+          this.diagnoseNames = this.uploadData.diagnos.split(",");
+
+          this.uploadData.diagnoseCode.forEach((element, index) => {
+            this.diagnoseDatas.push({
+              icdCode: element,
+              name: this.diagnoseNames[index],
+            });
+          });
+
+          //转诊类型
+          this.referralTypeDatas = [];
+          this.referralTypeDatas = [
+            {
+              code: this.uploadData.referralType.value,
+              value: this.uploadData.referralType.description,
+            },
+          ];
+          this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
+
+          //转入科室
+          this.originData = [];
+          this.originData = [
+            {
+              department_name: this.uploadData.inDept,
+              department_id: this.uploadData.inDeptCode,
+            },
+          ];
+          this.inDocDatas = [
+            {
+              userId: this.uploadData.docId,
+              userName: this.uploadData.docName,
+            },
+          ];
+
+          //期望到院时间  string转moment date对象
+          this.createValue = [
+            moment(this.uploadData.reachBeginDate, this.dateFormat),
+            moment(this.uploadData.reachEndDate, this.dateFormat),
+          ];
+          this.uploadData.reachBeginDate = moment(
+            this.uploadData.reachBeginDate,
+            this.dateFormat
+          );
+          this.uploadData.reachEndDate = moment(
+            this.uploadData.reachEndDate,
+            this.dateFormat
+          );
+
+          //申请时间
+          this.uploadData.regTime = this.uploadData.regTime.substring(0, 10);
+
+          console.log("this.uploadData", JSON.stringify(this.uploadData));
+
+          getReferralLogList(this.uploadData.tradeId).then((res) => {
+            if (res.code == 0) {
+              // this.referralLogList = res.data.concat(res.data).concat(res.data);
+              this.referralLogList = res.data;
+              let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
+                return !itemTemp.remark;
+              });
+              console.log("getReferralLogList", haveIndex);
+              if (haveIndex != -1) {
+                this.linePositon = haveIndex - 1; //算出目前的步骤
+                this.lineStatus =
+                  this.referralLogList[this.linePositon].deal_result == "成功"
+                    ? "process"
+                    : "error";
+              }
+
+              //申请人和时间拼在一起
+              this.referralLogList.forEach((element, index) => {
+                this.$set(
+                  element,
+                  "nameAndTime",
+                  element.dealUserName + "    " + element.createTime
+                );
+              });
+            } else {
+              this.$message.error(res.message);
+            }
+            this.confirmLoading = false;
           });
         } else {
           this.$message.error(res.message);
@@ -1317,8 +1332,13 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true;
+      this.originData = [];
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
+      getDepartmentListForReq({
+        hospitalCode: this.uploadData.inHospitalCode,
+        departmentName: departmentName,
+        status: 1,
+      }).then((res) => {
         this.fetching = false;
         if (res.code == 0) {
           this.originData = res.data.records;
@@ -1337,6 +1357,13 @@ export default {
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
       this.getTreeUsers();
+    },
+
+    onDeptGetFocus() {
+      if (!this.uploadData.inHospitalCode) {
+        this.$message.error("请先选择转入机构");
+        return;
+      }
     },
 
     onDocFocus() {

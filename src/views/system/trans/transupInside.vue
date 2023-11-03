@@ -553,15 +553,15 @@
             <div class="div-cell-value">
               <a-select
                 v-model="uploadData.inHospitalCode"
-                @select="onSelectYibao"
+                @select="getDepartmentSelectList(undefined)"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
               >
                 <a-select-option
                   v-for="item in inHospitalDatas"
-                  :key="item.hospitalCode"
-                  :value="item.hospitalCode"
+                  :key="item.upHospitalCode"
+                  :value="item.upHospitalCode"
                   >{{ item.hospitalName }}</a-select-option
                 >
               </a-select>
@@ -656,6 +656,7 @@
                 :not-found-content="fetching ? undefined : null"
                 allow-clear
                 placeholder="请输入选择科室"
+                @focus="onDeptGetFocus"
                 @change="onDepartmentSelectChange"
                 @select="onSelectDept"
                 @search="onDepartmentSelectSearch"
@@ -785,7 +786,8 @@ import {
   searchDiagnosis,
   upHospitalList,
   upReferral,
-  getDepartmentListForSelect,
+  // getDepartmentListForSelect,
+  getDepartmentListForReq,
   getTreeUsersByDeptIdsAndRoles,
   getReferralData,
 } from "@/api/modular/system/posManage";
@@ -1125,7 +1127,7 @@ export default {
     });
 
     this.getHospitalDatas();
-    this.getDepartmentSelectList(undefined);
+    // this.getDepartmentSelectList(undefined);
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1207,8 +1209,13 @@ export default {
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
       this.fetching = true;
+      this.originData = [];
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, "managerDept").then((res) => {
+      getDepartmentListForReq({
+        hospitalCode: this.uploadData.inHospitalCode,
+        departmentName: departmentName,
+        status: 1,
+      }).then((res) => {
         this.fetching = false;
         if (res.code == 0) {
           this.originData = res.data.records;
@@ -1222,6 +1229,13 @@ export default {
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
       this.getTreeUsers();
+    },
+
+    onDeptGetFocus(){
+      if (!this.uploadData.inHospitalCode) {
+        this.$message.error("请先选择转入机构");
+        return;
+      }
     },
 
     //患者搜索

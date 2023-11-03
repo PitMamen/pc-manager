@@ -3,7 +3,6 @@
     <div>
       <a-tabs v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
-          <!-- <transup-insidemodify :modifyItem="passItem" ref="transupInsidemodify" /> -->
           <transdown-insidemodify ref="transdownInsidemodify" />
         </a-tab-pane>
 
@@ -36,8 +35,8 @@ export default {
 
   watch: {
     $route(to, from) {
-      console.log("watch****************transupDetailmodify Be", to, from);
-      if (to.path.indexOf("transupDetailmodify") > -1) {
+      console.log("watch****************transdownDetailmodify Be", to, from);
+      if (to.path.indexOf("transdownDetailmodify") > -1) {
         let temp = JSON.parse(this.$route.query.dataStr);
         // this.$set(
         //   temp,
@@ -48,7 +47,7 @@ export default {
         console.log("temp", JSON.stringify(temp));
         // this.initData();
 
-        this.$refs.transupInsidemodify.refreshData(temp);
+        this.$refs.transdownInsidemodify.refreshData(temp);
         //判断当前路由跳转数据的medicId跟当前页面的medicId不一样，则需要刷数据；而且打开药品详情页的时候就先关闭已打开的详情页。两条逻辑保证修改药品功能可靠性
         // if (temp.tradeId != this.tradeId) {
         //   this.initData()
@@ -59,7 +58,7 @@ export default {
 
   created() {
     console.log(this.$route.query.keyindex);
-    // this.$refs.transupInsidemodify.refreshData(this.passItem);
+    // this.$refs.transdownInsidemodify.refreshData(this.passItem);
 
     if (this.$route.query.keyindex) {
       this.keyindex = this.$route.query.keyindex;
@@ -68,7 +67,7 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.$refs.transupInsidemodify.refreshData(JSON.parse(this.$route.query.dataStr));
+      this.$refs.transdownInsidemodify.refreshData(JSON.parse(this.$route.query.dataStr));
     });
   },
 
@@ -78,7 +77,7 @@ export default {
 
     //   console.log("this.passItem", JSON.stringify(this.passItem));
     //   this.$nextTick(() => {
-    //     this.$refs.transupInsidemodify.refreshData(this.passItem);
+    //     this.$refs.transdownInsidemodify.refreshData(this.passItem);
     //   });
 
     //   // this.tradeId = this.passItem.tradeId;

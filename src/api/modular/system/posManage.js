@@ -5604,6 +5604,15 @@ export function getReferralData(data) {
   })
 }
 
+//  referralTrade/upReferralDetail/{tradeId}  工单记录详情 上转下转详情都是这个接口
+export function upReferralDetail(data) {
+  return axios({
+    url: '/referral-api/referralTrade/upReferralDetail/' + data,
+    method: 'get',
+    // params: data,
+  })
+}
+
 ///referralTrade/modifyUpReferral 修改上转登记
 export function modifyUpReferral(data) {
   return axios({
@@ -5629,6 +5638,15 @@ export function upHospitalList(data) {
     params: data,
   })
 }
+// /referralOrg/downHospitalList 下转机构列表
+export function downHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/downHospitalList',
+    method: 'get',
+    params: data,
+  })
+}
+
 // /referralTrade/queryTradeId  上转机构列表
 export function queryTradeId(data) {
   return axios({
