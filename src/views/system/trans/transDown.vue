@@ -125,7 +125,7 @@ import {
   accessHospitals,
   getCommodityClassify,
   getDepartmentListForSelect,
-  getUpReferralList,
+  getDownReferralList,
 } from "@/api/modular/system/posManage";
 import { list } from "@/api/modular/system/rate";
 import { STable, Ellipsis } from "@/components";
@@ -247,7 +247,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getUpReferralList(Object.assign(parameter, this.queryParam)).then(
+        return getDownReferralList(Object.assign(parameter, this.queryParam)).then(
           (res) => {
             // if (res.code === 0) {
             //   return res.data;
@@ -322,8 +322,8 @@ export default {
     // this.queryParam.createEndTime = this.createValue[1];
   },
   mounted() {
-    this.$bus.$on("refreshTransUpListEvent", (record) => {
-      console.log("refreshTransUpListEvent", record);
+    this.$bus.$on("refreshTransDownListEvent", (record) => {
+      console.log("refreshTransDownListEvent", record);
       // this.$refs.table.refresh(true);
       this.$refs.table.refresh();
     });
