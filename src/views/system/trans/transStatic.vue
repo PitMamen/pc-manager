@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="table-card">
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">医疗机构:</span>
@@ -55,6 +55,8 @@
       :data="loadData"
       :alert="true"
       :scroll="{ x: true }"
+      :showPagination="false"
+      :showSizeChanger="false"
       :rowKey="(record) => record.id"
     >
     </s-table>
@@ -106,7 +108,7 @@ export default {
       queryParam: {
         statBegin: getlastMonthToday(),
         statEnd: formatDate(new Date().getTime()),
-        hospitalCode: undefined,
+        hospitalCode: Vue.ls.get(TRUE_USER).hospitalCode,
       },
       queryParamOrigin: {
         statBegin: undefined,
@@ -176,15 +178,19 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return statReferralPatient(Object.assign(parameter, this.queryParam)).then( res => {
+        return statReferralPatient(Object.assign({}, this.queryParam)).then( res => {
             if (res.code === 0) {
-              return res.data;
+              return {
+                rows: res.data,
+                total: res.data.length
+              };
             } else {
               this.$message.error(res.message);
             }
           }
         );
       },
+      user: {},
       classData: [],
       treeData: [],
       originData: [],
@@ -196,9 +202,9 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.queryParam = { ...this.queryParam, ...this.$route.query };
     this.user = Vue.ls.get(TRUE_USER);
     console.log(this.user);
+    this.queryParam = { ...this.queryParam, ...this.$route.query };
     this.getDepartmentSelectList(undefined);
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
@@ -240,7 +246,10 @@ export default {
       getReferralHospitalList().then((res) => {
         this.fetching = false;
         if (res.code == 0) {
-          this.originData = res.data;
+          this.originData = [{
+            hospitalCode:'',
+             hospitalName:'全部'
+          }].concat(res.data);
         }
       });
     },
@@ -392,5 +401,12 @@ button {
 .table-operator {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+</style>
+<style lang="less" scoped>
+.table-card {
+  /deep/ .ant-table-pagination {
+    display: none;
+  }
 }
 </style>
