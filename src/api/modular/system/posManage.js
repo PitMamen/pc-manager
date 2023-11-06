@@ -3759,6 +3759,17 @@ export function getTreeUsersByDeptIdsAndRoles(data) {
 }
 
 /**
+ * /tdUserTags/getDocListForHospitalAndDepartment 根据科室与角色查询用户树列表
+ */
+export function getDocListForHospitalAndDepartment(data) {
+  return axios({
+    url: '/account-api/tdUserTags/getDocListForHospitalAndDepartment',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  *  /tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy 获取健康管理团队配置
  * 
  * 参数  teamNameOrAbbr
