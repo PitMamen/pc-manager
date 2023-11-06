@@ -201,17 +201,19 @@ export default {
         return
       }
 
-      if (this.titleTab != 1) {
+      if (this.type != 1) {
         if (this.saleAmount < 0) {
           this.$message.error('请输入价格!')
           return
         }
       }else{
+        console.log("FFF:",this.saleAmount,this.saleAmount)
         if (!this.saleAmount || this.saleAmount <= 0) {
           this.$message.error('请输入价格!')
           return
         }
       }
+
 
       this.pkgs.forEach((item) => {
         delete item.itemImg
