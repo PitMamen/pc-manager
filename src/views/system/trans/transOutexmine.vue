@@ -85,6 +85,7 @@
     qryDepartmentByReq,
     qryReferralListByPage,
     qryReferralCount,
+    
   } from '@/api/modular/system/posManage'
   import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
   //   import recordDetail from './recordDetail'
@@ -256,6 +257,13 @@
   
       this.getOrderStatusGroupByDataOut()
     },
+
+    mounted() {
+    this.$bus.$on('transOutexmine', (record) => {
+      console.log('transOutexmine', record)
+      this.$refs.table.refresh()
+    })
+  },
   
     methods: {
   

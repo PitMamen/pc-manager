@@ -297,7 +297,7 @@
           @click="submitData()"
           >保存</a-button
         >
-        <a-button style="margin-left: 10px" @click="cancel()">打印</a-button>
+        <a-button style="margin-left: 10px" @click="print()">打印</a-button>
       </div>
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
 
@@ -394,6 +394,10 @@ export default {
         moment(getDateNow(), this.dateFormat),
         moment(getCurrentMonthLast(), this.dateFormat),
       ];
+    },
+
+    print(){
+        this.$message.success("打印什么?")
     },
 
     getDetaiData(tradeId) {

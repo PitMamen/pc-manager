@@ -5818,6 +5818,26 @@ export function referralExamine(data) {
 }
 
 
+// 转出审核
+export function referralOutExamine(data) {
+  return axios({
+    url: '/referral-api/referralTrade/referralOutExamine',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 转诊统计下钻
+export function statReferralPatientDetail(data) {
+  return axios({
+    url: '/referral-api/referral/statReferralPatientDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
 
 
 

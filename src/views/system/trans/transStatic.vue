@@ -30,22 +30,15 @@
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)"
-            >查询</a-button
-          >
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()"
-            >重置</a-button
-          >
-          <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportes()"
-            >导出</a-button
-          >
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportes()">导出</a-button>
         </span>
       </div>
     </div>
     <!-- <div class="table-operator" style="overflow: hidden"></div> -->
 
-    <div class="table-operator" style="overflow: hidden">
-    </div>
+    <div class="table-operator" style="overflow: hidden"></div>
 
     <s-table
       ref="table"
@@ -55,16 +48,45 @@
       :data="loadData"
       :alert="true"
       :scroll="{ x: true }"
-      :rowKey="(record) => record.id"
+      :rowKey="(record) => record.code"
     >
+
+  <!-- 上转人数 -->
+  <span slot="upNum1" style="cursor:pointer" slot-scope="text, record">
+      <a @click="$refs.staticDetail.detail(record,'上转人数',1)">{{ record.upNum }}</a>
+    </span>
+    <!-- 下转人数 -->
+    <span slot="downNum1"  style="cursor:pointer" slot-scope="text, record">
+      <a @click="$refs.staticDetail.detail(record,'下转人数', 2)">{{ record.downNum }}</a>
+    </span>
+    <!-- 回转人数 -->
+    <span slot="backNum1"  style="cursor:pointer" slot-scope="text, record" >
+      <a @click="$refs.staticDetail.detail(record,'回转人数', 3)">{{ record.backNum }}</a>
+    </span>
+    <!-- 转出人数 -->
+    <span slot="outNum1"  style="cursor:pointer" slot-scope="text, record"> 
+      <a @click="$refs.staticDetail.detail(record,'转出人数', 4)">{{ record.outNum }}</a>
+    </span>
+    <!-- 转出审核不通过 -->
+    <span slot="outUncheckedNum1"  style="cursor:pointer" slot-scope="text, record" >
+      <a @click="$refs.staticDetail.detail(record,'转出审核不通过', 5)">{{ record.outUncheckedNum }}</a>
+    </span>
+    <!-- 接入接收 -->
+    <span slot="inNum1"  style="cursor:pointer" slot-scope="text, record" >
+      <a @click="$refs.staticDetail.detail(record,'接入接收', 6)">{{ record.inNum }}</a>
+    </span>
+    <!-- 转入拒收 -->
+    <span slot="inUncheckedNum1"  style="cursor:pointer" slot-scope="text, record" > 
+      <a @click="$refs.staticDetail.detail(record,'转入拒收', 7)">{{ record.inUncheckedNum }}</a>
+    </span>
+
+
     </s-table>
     <!-- <info-form ref="infoForm" @ok="handleOk" /> -->
 
     <!-- <a-modal v-model="visibleDes" title="提示" :footer="null" @ok="handleOkDes"> -->
     <a-modal v-model="visibleDes" cancelText="''" title="提示" @ok="handleOkDes">
-      <div
-        style="height: 120px; display: flex; flex-direction: column; padding-top: 30px"
-      >
+      <div style="height: 120px; display: flex; flex-direction: column; padding-top: 30px">
         <div style="margin-top;: 30px">不通过原因：小问题，请自行处理。</div>
       </div>
 
@@ -72,6 +94,11 @@
         <a-button @click="handleOkDes">确定</a-button>
       </template>
     </a-modal>
+
+  
+    
+
+    <static-Detail ref="staticDetail" @ok="handleOk" />
   </a-card>
 </template>
 
@@ -81,19 +108,20 @@ import {
   getCommodityClassify,
   getReferralHospitalList,
   statReferralPatient,
-} from "@/api/modular/system/posManage";
-import { list } from "@/api/modular/system/rate";
-import { STable, Ellipsis } from "@/components";
-// import infoForm from "./infoForm";
-import moment from "moment";
-import Vue from "vue";
-import { TRUE_USER } from "@/store/mutation-types";
-import { formatDateFull, formatDate, getlastMonthToday } from "@/utils/util";
+} from '@/api/modular/system/posManage'
+import { list } from '@/api/modular/system/rate'
+import { STable, Ellipsis } from '@/components'
+
+import staticDetail from "./staticDetail";
+import moment from 'moment'
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
+import { formatDateFull, formatDate, getlastMonthToday } from '@/utils/util'
 export default {
   components: {
     STable,
     Ellipsis,
-    // infoForm,
+    staticDetail,
   },
   data() {
     return {
@@ -115,103 +143,126 @@ export default {
       },
       statusSelects: [
         {
-          id: "",
-          name: "全部",
+          id: '',
+          name: '全部',
         },
         {
           id: 1,
-          name: "待审核",
+          name: '待审核',
         },
         {
           id: 2,
-          name: "通过",
+          name: '通过',
         },
         {
           id: 3,
-          name: "不通过",
+          name: '不通过',
         },
       ],
       // 表头
       columns: [
         {
-          title: "机构名称",
-          dataIndex: "hospitalName",
-          scopedSlots: { customRender: "hospitalName" },
+          title: '机构名称',
+          dataIndex: 'hospitalName',
         },
         {
-          title: "上转人数",
-          dataIndex: "upNum",
-          scopedSlots: { customRender: "upNum" },
+          title: '上转人数',
+          dataIndex: 'upNum',
+          align: 'center',
+          scopedSlots: { customRender: 'upNum1' },
         },
         {
-          title: "下转人数",
-          dataIndex: "downNum",
-          scopedSlots: { customRender: "downNum" },
+          title: '下转人数',
+          dataIndex: 'downNum',
+          align: 'center',
+          scopedSlots: { customRender: 'downNum1' },
         },
         {
-          title: "回转人数",
-          dataIndex: "backNum",
-          scopedSlots: { customRender: "backNum" },
+          title: '回转人数',
+          dataIndex: 'backNum',
+          align: 'center',
+          scopedSlots: { customRender: 'backNum1' },
         },
         {
-          title: "转出人数",
-          dataIndex: "outNum",
-          scopedSlots: { customRender: "outNum" },
+          title: '转出人数',
+          dataIndex: 'outNum',
+          align: 'center',
+          scopedSlots: { customRender: 'outNum1' },
         },
         {
-          title: "转出审核不通过",
-          dataIndex: "outUncheckedNum",
-          scopedSlots: { customRender: "outUncheckedNum" },
+          title: '转出审核不通过',
+          dataIndex: 'outUncheckedNum',
+          align: 'center',
+          scopedSlots: { customRender: 'outUncheckedNum1' },
         },
         {
-          title: "转入接收",
-          dataIndex: "inNum",
-          scopedSlots: { customRender: "inNum" },
+          title: '转入接收',
+          dataIndex: 'inNum',
+          align: 'center',
+          scopedSlots: { customRender: 'inNum1' },
         },
         {
-          title: "转入拒收",
-          dataIndex: "inUncheckedNum",
-          scopedSlots: { customRender: "inUncheckedNum" },
+          title: '转入拒收',
+          dataIndex: 'inUncheckedNum',
+          align: 'center',
+          scopedSlots: { customRender: 'inUncheckedNum1' },
         },
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return statReferralPatient(Object.assign(parameter, this.queryParam)).then( res => {
-            if (res.code === 0) {
-              return res.data;
-            } else {
-              this.$message.error(res.message);
-            }
+        return statReferralPatient(Object.assign(parameter, this.queryParam)).then((res) => {
+          if (res.code === 0) {
+             //组装控件需要的数据结构
+             var data = {
+                pageNo: parameter.pageNo,
+                pageSize: parameter.pageSize,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data,
+              }
+
+              if (data.rows && data.rows.length > 0) {
+                data.rows.forEach((item, index) => {
+                  this.$set(item, 'beginTime', this.queryParam.statBegin)
+                  this.$set(item, 'endTime', this.queryParam.statEnd)
+                })
+              }
+
+
+
+            return data
+          } else {
+            this.$message.error(res.message)
           }
-        );
+        })
       },
       classData: [],
       treeData: [],
       originData: [],
       selectedRowKeys: [],
       selectedRows: [],
-    };
+    }
   },
   /**
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.queryParam = { ...this.queryParam, ...this.$route.query };
-    this.user = Vue.ls.get(TRUE_USER);
-    console.log(this.user);
-    this.getDepartmentSelectList(undefined);
+    this.queryParam = { ...this.queryParam, ...this.$route.query }
+    this.user = Vue.ls.get(TRUE_USER)
+    console.log(this.user)
+    this.getDepartmentSelectList(undefined)
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
       moment(formatDate(new Date().getTime()), this.dateFormat),
-    ];
+    ]
   },
   mounted() {
-    this.$bus.$on("refreshTransUpListEvent", (record) => {
-      return;
-      console.log("refreshTransUpListEvent", record);
+    this.$bus.$on('refreshTransUpListEvent', (record) => {
+      return
+      console.log('refreshTransUpListEvent', record)
       // this.$refs.table.refresh(true);
-      this.$refs.table.refresh();
-    });
+      this.$refs.table.refresh()
+    })
   },
   methods: {
     exportes() {},
@@ -221,145 +272,144 @@ export default {
      */
     countAge(birthday) {
       // let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
-      var birthday = new Date(birthday);
-      var d = new Date();
+      var birthday = new Date(birthday)
+      var d = new Date()
       var age =
         d.getFullYear() -
         birthday.getFullYear() -
-        (d.getMonth() < birthday.getMonth() ||
-        (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
+        (d.getMonth() < birthday.getMonth() || (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
           ? 1
-          : 0);
-      return age;
+          : 0)
+      return age
     },
 
     //获取管理的科室 可首拼
     getDepartmentSelectList() {
-      this.fetching = true;
+      this.fetching = true
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
       getReferralHospitalList().then((res) => {
-        this.fetching = false;
+        this.fetching = false
         if (res.code == 0) {
-          this.originData = res.data;
+          this.originData = res.data
         }
-      });
+      })
     },
 
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.originData = [];
-      this.getDepartmentSelectList(value);
+      this.originData = []
+      this.getDepartmentSelectList(value)
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
       if (value === undefined) {
-        this.originData = [];
-        this.getDepartmentSelectList(undefined);
+        this.originData = []
+        this.getDepartmentSelectList(undefined)
       }
-      this.$refs.table.refresh(true);
+      this.$refs.table.refresh(true)
     },
 
     handleOkDes() {
-      this.visibleDes = false;
+      this.visibleDes = false
     },
 
     showDes() {
-      this.visibleDes = true;
+      this.visibleDes = true
     },
     onChange(momentArr, dateArr) {
-      console.log("MMM:", dateArr);
-      this.createValue = momentArr;
-      this.queryParam.statBegin = dateArr[0];
-      this.queryParam.statEnd = dateArr[1];
+      console.log('MMM:', dateArr)
+      this.createValue = momentArr
+      this.queryParam.statBegin = dateArr[0]
+      this.queryParam.statEnd = dateArr[1]
     },
 
     goEdit(record) {
       //TODO
       // this.$message.success("去编辑");
       this.$router.push({
-        name: "transupDetailmodify",
+        name: 'transupDetailmodify',
         // path: '/servicewise/projectEdit',
         query: {
           dataStr: JSON.stringify(record),
         },
-      });
+      })
     },
     goPrint() {
       //TODO
-      this.$message.success("去打印");
+      this.$message.success('去打印')
     },
 
     addTransUp() {
       this.$router.push({
-        name: "transupDetail",
+        name: 'transupDetail',
         // path: '/servicewise/projectEdit',
         // query: {
         //   planId: record.id,
         // },
-      });
+      })
     },
 
     getOrgList() {
       let queryData = {
-        tenantId: "",
+        tenantId: '',
         status: 1,
-        hospitalName: "",
-      };
-      this.confirmLoading = true;
+        hospitalName: '',
+      }
+      this.confirmLoading = true
       accessHospitals(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item, index) => {
-              this.$set(item, "key", item.hospitalCode);
-              this.$set(item, "value", item.hospitalCode);
-              this.$set(item, "title", item.hospitalName);
-              this.$set(item, "children", item.hospitals);
+              this.$set(item, 'key', item.hospitalCode)
+              this.$set(item, 'value', item.hospitalCode)
+              this.$set(item, 'title', item.hospitalName)
+              this.$set(item, 'children', item.hospitals)
 
               item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, "key", item1.hospitalCode);
-                this.$set(item1, "value", item1.hospitalCode);
-                this.$set(item1, "title", item1.hospitalName);
-              });
-            });
+                this.$set(item1, 'key', item1.hospitalCode)
+                this.$set(item1, 'value', item1.hospitalCode)
+                this.$set(item1, 'title', item1.hospitalName)
+              })
+            })
 
-            this.treeData = res.data;
+            this.treeData = res.data
           } else {
-            this.treeData = res.data;
+            this.treeData = res.data
           }
-          return [];
+          return []
         })
         .finally((res) => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
     getClassData() {
       getCommodityClassify({}).then((res) => {
         if (res.code == 0) {
-          this.classData = res.data;
+          this.classData = res.data
         }
-      });
+      })
     },
     /**
      * 重置
      */
     reset() {
-      this.createValue = [];
-      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin));
-      this.$refs.table.refresh(true);
+      this.createValue = []
+      this.queryParam = JSON.parse(JSON.stringify(this.queryParamOrigin))
+      this.$refs.table.refresh(true)
     },
 
     toggleAdvanced() {
-      this.advanced = !this.advanced;
+      this.advanced = !this.advanced
     },
     handleOk() {
-      this.$refs.table.refresh();
+      this.$refs.table.refresh()
     },
     onSelectChange(selectedRowKeys, selectedRows) {
-      this.selectedRowKeys = selectedRowKeys;
-      this.selectedRows = selectedRows;
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
     },
   },
-};
+}
 </script>
 
 <style lang="less">

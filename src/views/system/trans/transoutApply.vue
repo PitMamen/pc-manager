@@ -179,17 +179,17 @@
               <div class="div-cell-name">审核结果：</div>
               <div class="div-cell-value">
                 <a-radio-group
-                  :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+                  :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
                   v-model="requestData.status"
                   style="margin-left: 10px"
                   name="radioGroup"
                   @change="radioChange"
                   v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
                 >
-                  <a-radio :value="4" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important">
+                  <a-radio :value="2" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important">
                     通过
                   </a-radio>
-                  <a-radio :value="5" style="font-size: 8px; color: #1a1a1a"> 不通过 </a-radio>
+                  <a-radio :value="3" style="font-size: 8px; color: #1a1a1a"> 不通过 </a-radio>
                 </a-radio-group>
               </div>
             </div>
@@ -197,11 +197,11 @@
             <div class="div-cell">
               <div class="div-cell-name">审核人员：</div>
               <!-- <div class="div-cell-value">{{user.userName}}</div> -->
-              <div class="div-cell-value">{{dataInfo.inCheck}}</div>
+              <div class="div-cell-value">{{dataInfo.outCheck}}</div>
             </div>
             <div class="div-cell">
               <div class="div-cell-name">审核日期：</div>
-              <div class="div-cell-value">{{dataInfo.inCheckTime}}</div>
+              <div class="div-cell-value">{{dataInfo.outCheckTime}}</div>
             </div>
           </div>
   
@@ -210,7 +210,7 @@
               <div class="div-cell-name" style="margin-top: -82px; margin-left: 5px">收治意见：</div>
               <div class="div-cell-value" style="width: 100%">
                 <a-textarea
-                  :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+                  :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
                   v-model="requestData.rejectReason"
                   placeholder="请输入意见"
                   style="height: 80px; min-height: 100px; width: 80%"
@@ -225,7 +225,7 @@
           <div style="flex: 1"></div>
           <a-button
             type="primary"
-            :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+            :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
             @click="submitData()"
             >保存</a-button
           >
@@ -254,6 +254,7 @@
     getTreeUsersByDeptIdsAndRoles,
     referralExamine,
     getReferralLogList,
+    referralOutExamine,
   } from '@/api/modular/system/posManage'
   import { STable, Ellipsis } from '@/components'
   import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
@@ -295,7 +296,7 @@
           reachBeginDate: getDateNow(), //期望到院 结束时间
           reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
           rejectReason: '', //收治意见
-          status: 4, // 4 确认收治  5 拒绝收治
+          status: 2, // 2 通过  3 不通过
           tradeId: '',
           docId: undefined,
           docName: '',
@@ -343,7 +344,7 @@
                 this.requestData.status = this.dataInfo.status.value
                 this.requestData.docId = this.dataInfo.docName
                 this.requestData.inDeptCode = this.dataInfo.inDept
-                this.requestData.rejectReason = this.dataInfo.inCheckResult
+                this.requestData.rejectReason = this.dataInfo.outCheckResult
                 this.createValue = [
                   moment(this.dataInfo.reachBeginDate, this.dateFormat),
                   moment(this.dataInfo.reachEndDate, this.dateFormat),
@@ -463,12 +464,12 @@
       },
   
       radioChange(event) {
-        if (event.target.value == 4) {
-          this.rangeValue = 4
-          this.requestData.status = 4
+        if (event.target.value == 2) {
+          this.rangeValue = 2
+          this.requestData.status = 2
         } else {
-          this.rangeValue = 5
-          this.requestData.status = 5
+          this.rangeValue = 3
+          this.requestData.status = 3
         }
       },
   
@@ -485,14 +486,21 @@
       cancel() {
         this.$router.go(-1)
       },
+
+      // 提交
       submitData() {
         this.confirmLoading = true
         console.log('VVV:', this.requestData)
-        referralExamine(this.requestData)
+        let temp = {
+          rejectReason:this.requestData.rejectReason,
+          status:this.requestData.status,
+          tradeId:this.requestData.tradeId,
+        }
+        referralOutExamine(temp)
           .then((res) => {
             if (res.code == 0) {
               this.$message.success('操作成功')
-              this.$bus.$emit('refreshtransinManage', '刷新转入管理列表')
+              this.$bus.$emit('transOutexmine', '刷新转出管理列表')
               this.$router.go(-1)
             }
           })
