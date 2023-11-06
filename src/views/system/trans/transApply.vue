@@ -215,14 +215,14 @@
               <!-- <div class="div-cell-value"> -->
               <a-select
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                v-model="requestData.docId"
+                v-model="requestData.docName"
                 @select="onSelectInDoctor"
                 @focus="onDocFocus"
                 placeholder="请选择"
                 allow-clear
                 style="width: 35%; height: 28px"
               >
-                <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userId">{{
+                <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userName">{{
                   item.userName
                 }}</a-select-option>
               </a-select>
@@ -410,7 +410,8 @@ export default {
               this.getTreeUsers(this.dataInfo.inDeptCode)
 
               this.requestData.status = this.dataInfo.status.value
-              this.requestData.docId = this.dataInfo.docName
+              this.requestData.docId = this.dataInfo.docId
+              this.requestData.docName = this.dataInfo.docName
               this.requestData.inDeptCode = this.dataInfo.inDeptCode
               this.requestData.inDept = this.dataInfo.inDept
               this.requestData.rejectReason = this.dataInfo.inCheckResult
@@ -496,10 +497,11 @@ export default {
     onSelectInDoctor(userId) {
       let getOne = this.inDocDatas.find((item) => item.userId == userId)
       //   this.uploadData.docName = getOne.userName;
-      console.log('onSelectInDoctor docId', userId)
-      console.log('onSelectInDoctor docName', getOne.userName)
+      // console.log('onSelectInDoctor docId', getOne.userId)
+      // console.log('onSelectInDoctor docName', getOne.userName)
       if (getOne) {
         this.requestData.docName = getOne.userName
+        this.requestData.docId = getOne.userId
       }
     },
 

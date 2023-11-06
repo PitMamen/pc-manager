@@ -211,7 +211,7 @@ const styles = `
   border: 1px dashed #999999;
 }`;
 
-import printJS from 'print-js';
+// import printJS from 'print-js';
 import {
   getReferralTradeById
 } from "@/api/modular/system/posManage";
