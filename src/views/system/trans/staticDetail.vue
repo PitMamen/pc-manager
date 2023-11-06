@@ -68,7 +68,7 @@ export default {
         },
         {
           title: '转诊类型',
-          dataIndex: 'leixing',
+          dataIndex: 'type',
         },
         {
           title: '转出方式',
@@ -123,7 +123,6 @@ export default {
             //设置序号
             data.rows.forEach((item, index) => {
               item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-              this.$set(item, 'leixing', item.tradeType.description)
             })
           }
           return data
