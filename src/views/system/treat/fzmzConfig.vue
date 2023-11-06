@@ -201,7 +201,7 @@ export default {
         return
       }
 
-      if (this.titleTab != 1) {
+      if (this.type != 1) {
         if (this.saleAmount < 0) {
           this.$message.error('请输入价格!')
           return
@@ -212,6 +212,7 @@ export default {
           return
         }
       }
+
 
       this.pkgs.forEach((item) => {
         delete item.itemImg

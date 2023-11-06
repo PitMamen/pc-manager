@@ -364,7 +364,7 @@ export default {
               this.patientBaseinfo = res.data.patientBaseinfo
               this.dataInfo = res.data
 
-              this.getDepartmentSelectList(this.dataInfo.inDept)
+              // this.getDepartmentSelectList(this.dataInfo.inDept)
               this.getTreeUsers(this.dataInfo.inDeptCode)
 
               this.requestData.status = this.dataInfo.status.value
@@ -398,13 +398,25 @@ export default {
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
             this.linePositon = haveIndex - 1 //算出目前的步骤
-            // console.log('YYYl:', this.linePositon)
-            this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
+            this.lineStatus = this.referralLogList[this.linePositon].deal_result == "成功" ? 'process' : 'error'
+
+            // this.$set(
+            //   this.referralLogList[this.linePositon],
+            //   'createTime',
+            //   this.referralLogList[this.linePositon].createTime
+            // )
           }
 
           //申请人和时间拼在一起
           this.referralLogList.forEach((element, index) => {
-            this.$set(element, 'nameAndTime', element.dealUserName + '    ' + element.createTime)
+            if (element.deal_result == "成功") {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime)
+            } else if (element.deal_result == "失败") {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
+            }
+            // else{
+            //   this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
+            // }
           })
         } else {
           this.$message.error(res.message)

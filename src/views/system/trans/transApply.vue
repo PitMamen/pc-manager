@@ -215,14 +215,14 @@
               <!-- <div class="div-cell-value"> -->
               <a-select
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                v-model="requestData.docId"
+                v-model="requestData.docName"
                 @select="onSelectInDoctor"
                 @focus="onDocFocus"
                 placeholder="请选择"
                 allow-clear
                 style="width: 35%; height: 28px"
               >
-                <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userId">{{
+                <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userName">{{
                   item.userName
                 }}</a-select-option>
               </a-select>
@@ -410,7 +410,8 @@ export default {
               this.getTreeUsers(this.dataInfo.inDeptCode)
 
               this.requestData.status = this.dataInfo.status.value
-              this.requestData.docId = this.dataInfo.docName
+              this.requestData.docId = this.dataInfo.docId
+              this.requestData.docName = this.dataInfo.docName
               this.requestData.inDeptCode = this.dataInfo.inDeptCode
               this.requestData.inDept = this.dataInfo.inDept
               this.requestData.rejectReason = this.dataInfo.inCheckResult
@@ -441,14 +442,28 @@ export default {
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
             this.linePositon = haveIndex - 1 //算出目前的步骤
-            console.log('YYYl:', this.linePositon)
-            this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
+            this.lineStatus = this.referralLogList[this.linePositon].deal_result == "成功" ? 'process' : 'error'
+
+            this.$set(
+              this.referralLogList[this.linePositon],
+              'createTime',
+              this.referralLogList[this.linePositon].createTime 
+            )
           }
 
           //申请人和时间拼在一起
           this.referralLogList.forEach((element, index) => {
-            this.$set(element, 'nameAndTime', element.dealUserName + '    ' + element.createTime)
+            if (element.deal_result=="成功") {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime)
+            }else if (element.deal_result=="失败") {
+                this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
+            }
+            // else{
+            //   this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
+            // }
           })
+
+          console.log("FFFFFFF:",this.referralLogList)
         } else {
           this.$message.error(res.message)
         }
@@ -496,10 +511,11 @@ export default {
     onSelectInDoctor(userId) {
       let getOne = this.inDocDatas.find((item) => item.userId == userId)
       //   this.uploadData.docName = getOne.userName;
-      console.log('onSelectInDoctor docId', userId)
-      console.log('onSelectInDoctor docName', getOne.userName)
+      // console.log('onSelectInDoctor docId', getOne.userId)
+      // console.log('onSelectInDoctor docName', getOne.userName)
       if (getOne) {
         this.requestData.docName = getOne.userName
+        this.requestData.docId = getOne.userId
       }
     },
 
@@ -565,7 +581,6 @@ export default {
       }
       this.confirmLoading = true
       console.log('VVV:', this.requestData)
-      return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {
