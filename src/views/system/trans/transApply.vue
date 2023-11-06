@@ -433,28 +433,40 @@ export default {
 
     getReferralLogListOut(tradeId) {
       getReferralLogList(tradeId).then((res) => {
-        if (res.code == 0) {
-          // this.referralLogList = res.data.concat(res.data).concat(res.data);
-          this.referralLogList = res.data
-          let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
-            return !itemTemp.remark
-          })
-          console.log('getReferralLogList', haveIndex)
-          if (haveIndex != -1) {
-            this.linePositon = haveIndex - 1 //算出目前的步骤
-            console.log('YYYl:', this.linePositon)
-            this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
-          }
+            if (res.code == 0) {
+              // this.referralLogList = res.data.concat(res.data).concat(res.data);
+              this.referralLogList = res.data;
+              let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
+                return !itemTemp.remark;
+              });
+              console.log("getReferralLogList", haveIndex);
+              if (haveIndex != -1) {
+                this.linePositon = haveIndex - 1; //算出目前的步骤
+                this.lineStatus =
+                  this.referralLogList[this.linePositon].deal_result == "成功"
+                    ? "process"
+                    : "error";
 
-          //申请人和时间拼在一起
-          this.referralLogList.forEach((element, index) => {
-            this.$set(element, 'nameAndTime', element.dealUserName + '    ' + element.createTime)
-          })
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
+                this.$set(
+                  this.referralLogList[this.linePositon],
+                  "createTime",
+                  this.referralLogList[this.linePositon].dealImages
+                );
+              }
+
+              //申请人和时间拼在一起
+              this.referralLogList.forEach((element, index) => {
+                this.$set(
+                  element,
+                  "nameAndTime",
+                  element.dealUserName + "\n" + element.createTime
+                );
+              });
+            } else {
+              this.$message.error(res.message);
+            }
+            this.confirmLoading = false;
+          });
     },
 
     onChange(momentArr, dateArr) {
