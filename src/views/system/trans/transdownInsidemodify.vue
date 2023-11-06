@@ -1419,7 +1419,7 @@ export default {
                 this.$set(
                   element,
                   "nameAndTime",
-                  element.dealUserName + "    " + element.createTime
+                  element.dealUserName + "\n" + element.createTime
                 );
               });
             } else {
@@ -2002,6 +2002,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.ant-steps-item-subtitle {
+  white-space: pre-line;
+}
+
 button {
   margin-right: 8px;
 }
