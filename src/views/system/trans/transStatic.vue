@@ -1,5 +1,5 @@
 <template>
-  <a-card :bordered="false">
+  <a-card :bordered="false" class="table-card">
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">医疗机构:</span>
@@ -32,7 +32,7 @@
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
           <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
-          <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportes()">导出</a-button>
+          <a-button icon="export" style="margin-left: 8px; margin-right: 0" @click="exportOut()">导出</a-button>
         </span>
       </div>
     </div>
@@ -48,39 +48,38 @@
       :data="loadData"
       :alert="true"
       :scroll="{ x: true }"
-      :rowKey="(record) => record.code"
+      :showPagination="false"
+      :showSizeChanger="false"
+      :rowKey="(record) => record.id"
     >
-
-  <!-- 上转人数 -->
-  <span slot="upNum1" style="cursor:pointer" slot-scope="text, record">
-      <a @click="$refs.staticDetail.detail(record,'上转人数',1)">{{ record.upNum }}</a>
-    </span>
-    <!-- 下转人数 -->
-    <span slot="downNum1"  style="cursor:pointer" slot-scope="text, record">
-      <a @click="$refs.staticDetail.detail(record,'下转人数', 2)">{{ record.downNum }}</a>
-    </span>
-    <!-- 回转人数 -->
-    <span slot="backNum1"  style="cursor:pointer" slot-scope="text, record" >
-      <a @click="$refs.staticDetail.detail(record,'回转人数', 3)">{{ record.backNum }}</a>
-    </span>
-    <!-- 转出人数 -->
-    <span slot="outNum1"  style="cursor:pointer" slot-scope="text, record"> 
-      <a @click="$refs.staticDetail.detail(record,'转出人数', 4)">{{ record.outNum }}</a>
-    </span>
-    <!-- 转出审核不通过 -->
-    <span slot="outUncheckedNum1"  style="cursor:pointer" slot-scope="text, record" >
-      <a @click="$refs.staticDetail.detail(record,'转出审核不通过', 5)">{{ record.outUncheckedNum }}</a>
-    </span>
-    <!-- 接入接收 -->
-    <span slot="inNum1"  style="cursor:pointer" slot-scope="text, record" >
-      <a @click="$refs.staticDetail.detail(record,'接入接收', 6)">{{ record.inNum }}</a>
-    </span>
-    <!-- 转入拒收 -->
-    <span slot="inUncheckedNum1"  style="cursor:pointer" slot-scope="text, record" > 
-      <a @click="$refs.staticDetail.detail(record,'转入拒收', 7)">{{ record.inUncheckedNum }}</a>
-    </span>
-
-
+      <!-- 上转人数 -->
+      <span slot="upNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '上转人数', 1)">{{ record.upNum }}</a>
+      </span>
+      <!-- 下转人数 -->
+      <span slot="downNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '下转人数', 2)">{{ record.downNum }}</a>
+      </span>
+      <!-- 回转人数 -->
+      <span slot="backNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '回转人数', 3)">{{ record.backNum }}</a>
+      </span>
+      <!-- 转出人数 -->
+      <span slot="outNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '转出人数', 4)">{{ record.outNum }}</a>
+      </span>
+      <!-- 转出审核不通过 -->
+      <span slot="outUncheckedNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '转出审核不通过', 5)">{{ record.outUncheckedNum }}</a>
+      </span>
+      <!-- 接入接收 -->
+      <span slot="inNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '接入接收', 6)">{{ record.inNum }}</a>
+      </span>
+      <!-- 转入拒收 -->
+      <span slot="inUncheckedNum1" style="cursor: pointer" slot-scope="text, record">
+        <a @click="$refs.staticDetail.detail(record, '转入拒收', 7)">{{ record.inUncheckedNum }}</a>
+      </span>
     </s-table>
     <!-- <info-form ref="infoForm" @ok="handleOk" /> -->
 
@@ -95,9 +94,6 @@
       </template>
     </a-modal>
 
-  
-    
-
     <static-Detail ref="staticDetail" @ok="handleOk" />
   </a-card>
 </template>
@@ -108,11 +104,12 @@ import {
   getCommodityClassify,
   getReferralHospitalList,
   statReferralPatient,
+  exportReferralPatient,
 } from '@/api/modular/system/posManage'
 import { list } from '@/api/modular/system/rate'
 import { STable, Ellipsis } from '@/components'
-
-import staticDetail from "./staticDetail";
+import staticDetail from './staticDetail'
+// import infoForm from "./infoForm";
 import moment from 'moment'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -134,7 +131,7 @@ export default {
       queryParam: {
         statBegin: getlastMonthToday(),
         statEnd: formatDate(new Date().getTime()),
-        hospitalCode: undefined,
+        hospitalCode: Vue.ls.get(TRUE_USER).hospitalCode,
       },
       queryParamOrigin: {
         statBegin: undefined,
@@ -212,23 +209,21 @@ export default {
       loadData: (parameter) => {
         return statReferralPatient(Object.assign(parameter, this.queryParam)).then((res) => {
           if (res.code === 0) {
-             //组装控件需要的数据结构
-             var data = {
-                pageNo: parameter.pageNo,
-                pageSize: parameter.pageSize,
-                totalRows: res.data.total,
-                totalPage: res.data.total / parameter.pageSize,
-                rows: res.data,
-              }
+            //组装控件需要的数据结构
+            var data = {
+              pageNo: parameter.pageNo,
+              pageSize: parameter.pageSize,
+              totalRows: res.data.total,
+              totalPage: res.data.total / parameter.pageSize,
+              rows: res.data,
+            }
 
-              if (data.rows && data.rows.length > 0) {
-                data.rows.forEach((item, index) => {
-                  this.$set(item, 'beginTime', this.queryParam.statBegin)
-                  this.$set(item, 'endTime', this.queryParam.statEnd)
-                })
-              }
-
-
+            if (data.rows && data.rows.length > 0) {
+              data.rows.forEach((item, index) => {
+                this.$set(item, 'beginTime', this.queryParam.statBegin)
+                this.$set(item, 'endTime', this.queryParam.statEnd)
+              })
+            }
 
             return data
           } else {
@@ -236,6 +231,7 @@ export default {
           }
         })
       },
+      user: {},
       classData: [],
       treeData: [],
       originData: [],
@@ -247,9 +243,9 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.queryParam = { ...this.queryParam, ...this.$route.query }
     this.user = Vue.ls.get(TRUE_USER)
     console.log(this.user)
+    this.queryParam = { ...this.queryParam, ...this.$route.query }
     this.getDepartmentSelectList(undefined)
     this.createValue = [
       moment(getlastMonthToday(), this.dateFormat),
@@ -265,7 +261,37 @@ export default {
     })
   },
   methods: {
-    exportes() {},
+    //导出
+    exportOut() {
+      let params = JSON.parse(JSON.stringify(this.queryParam))
+      exportReferralPatient(params)
+        .then((res) => {
+          this.downloadfile(res)
+        })
+        .catch((err) => {
+          this.$message.error('导出错误：' + err.message)
+        })
+    },
+
+    downloadfile(res) {
+      var blob = new Blob([res.data], { type: 'application/octet-stream; charset=UTF-8' })
+      var contentDisposition = res.headers['content-disposition']
+      var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
+      var result = patt.exec(contentDisposition)
+      if (result) {
+        var filename = result[1]
+        var downloadElement = document.createElement('a')
+        var href = window.URL.createObjectURL(blob) // 创建下载的链接
+        var reg = /^["](.*)["]$/g
+        downloadElement.style.display = 'none'
+        downloadElement.href = href
+        downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
+        document.body.appendChild(downloadElement)
+        downloadElement.click() // 点击下载
+        document.body.removeChild(downloadElement) // 下载完成移除元素
+        window.URL.revokeObjectURL(href)
+      }
+    },
     /**
      * 根据生日计算年龄
      * @param {*} birthday
@@ -290,7 +316,12 @@ export default {
       getReferralHospitalList().then((res) => {
         this.fetching = false
         if (res.code == 0) {
-          this.originData = res.data
+          this.originData = [
+            {
+              hospitalCode: '',
+              hospitalName: '全部',
+            },
+          ].concat(res.data)
         }
       })
     },
@@ -442,5 +473,12 @@ button {
 .table-operator {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+</style>
+<style lang="less" scoped>
+.table-card {
+  /deep/ .ant-table-pagination {
+    display: none;
+  }
 }
 </style>

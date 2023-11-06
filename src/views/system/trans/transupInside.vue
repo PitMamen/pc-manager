@@ -555,7 +555,7 @@
             <div class="div-cell-value">
               <a-select
                 v-model="uploadData.inHospitalCode"
-                @select="getDepartmentSelectList(undefined)"
+                @select="onHospitalSelect"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
@@ -705,9 +705,9 @@
               >
                 <a-select-option
                   v-for="item in inDocDatas"
-                  :key="item.userId"
-                  :value="item.userId"
-                  >{{ item.userName }}</a-select-option
+                  :key="item.doc_id"
+                  :value="item.doc_id"
+                  >{{ item.doc_name }}</a-select-option
                 >
               </a-select>
             </div>
@@ -791,7 +791,8 @@ import {
   upReferral,
   // getDepartmentListForSelect,
   getDepartmentListForReq,
-  getTreeUsersByDeptIdsAndRoles,
+  // getTreeUsersByDeptIdsAndRoles,
+  getDocListForHospitalAndDepartment,
   getReferralData,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
@@ -1232,12 +1233,21 @@ export default {
       });
     },
 
+    onHospitalSelect() {
+      this.getDepartmentSelectList(undefined);
+      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+        this.getTreeUsers();
+      }
+    },
+
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
       this.uploadData.inDept = getOne.department_name;
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
-      this.getTreeUsers();
+      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+        this.getTreeUsers();
+      }
     },
 
     onDeptGetFocus() {
@@ -1297,6 +1307,11 @@ export default {
     },
 
     onDocFocus() {
+      if (!this.uploadData.inHospitalCode) {
+        this.$message.warn("请先选择转入机构");
+        return;
+      }
+
       if (!this.uploadData.inDeptCode) {
         this.$message.warn("请先选择转入科室");
         return;
@@ -1311,12 +1326,12 @@ export default {
     },
 
     getTreeUsers() {
-      getTreeUsersByDeptIdsAndRoles({
-        roleIds: ["doctor"],
-        departmentIds: [this.uploadData.inDeptCode],
+      getDocListForHospitalAndDepartment({
+        departmentId: this.uploadData.inDeptCode,
+        hospitalCode: this.uploadData.inHospitalCode,
       }).then((res) => {
         if (res.code == 0) {
-          this.inDocDatas = res.data[0].users || [];
+          this.inDocDatas = res.data || [];
         }
       });
     },
