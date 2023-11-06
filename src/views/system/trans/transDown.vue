@@ -73,6 +73,9 @@
       :scroll="{ x: true }"
       :rowKey="(record) => record.id"
     >
+      <span slot="diagnos" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
       <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治） -->
       <span slot="status" slot-scope="text, record">
         <span v-if="record.status.value === 1">待审核</span>
