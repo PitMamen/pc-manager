@@ -160,7 +160,7 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name">申请人：</div>
-            <div class="div-cell-value">{{dataInfo.reqDocName||''}}</div>
+            <div class="div-cell-value">{{ dataInfo.reqDocName || '' }}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">登记日期：</div>
@@ -189,7 +189,7 @@
               <a-select
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 show-search
-                v-model="requestData.inDeptCode"
+                v-model="requestData.inDept"
                 style="width: 35%"
                 :filter-option="false"
                 :not-found-content="fetching ? undefined : null"
@@ -204,7 +204,7 @@
                   v-for="(item, index) in originData"
                   :title="item.department_name"
                   :key="index"
-                  :value="item.department_id"
+                  :value="item.department_name"
                   >{{ item.department_name }}</a-select-option
                 >
               </a-select>
@@ -264,12 +264,12 @@
 
           <div class="div-cell">
             <div class="div-cell-name">审核人员：</div>
-            <div class="div-cell-value">{{dataInfo.inCheck}}</div>
+            <div class="div-cell-value">{{ dataInfo.inCheck }}</div>
             <!-- <div class="div-cell-value">{{user.userName}}</div> -->
           </div>
           <div class="div-cell">
             <div class="div-cell-name">审核日期：</div>
-            <div class="div-cell-value">{{dataInfo.inCheckTime}}</div>
+            <div class="div-cell-value">{{ dataInfo.inCheckTime }}</div>
           </div>
         </div>
 
@@ -341,7 +341,7 @@ export default {
       headers: {
         Authorization: '',
       },
-      user:{},
+      user: {},
       confirmLoading: false,
       tradeId: '',
       dateFormat: 'YYYY-MM-DD',
@@ -374,7 +374,7 @@ export default {
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     this.user = Vue.ls.get(TRUE_USER)
-        console.log("BBBB:",this.user)
+    console.log('BBBB:', this.user)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     this.getDepartmentSelectList(undefined)
   },
@@ -390,14 +390,11 @@ export default {
   },
   methods: {
     clearData() {
-        this.createValue = [
-        moment(getDateNow(), this.dateFormat),
-        moment(getCurrentMonthLast(), this.dateFormat),
-      ];
+      this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     },
 
-    print(){
-        this.$message.success("打印什么?")
+    print() {
+      this.$message.success('打印什么?')
     },
 
     getDetaiData(tradeId) {
@@ -414,8 +411,8 @@ export default {
 
               this.requestData.status = this.dataInfo.status.value
               this.requestData.docId = this.dataInfo.docName
-              this.requestData.inDeptCode = this.dataInfo.inDept
-              this.requestData.inDept = this.dataInfo.inDeptCode
+              this.requestData.inDeptCode = this.dataInfo.inDeptCode
+              this.requestData.inDept = this.dataInfo.inDept
               this.requestData.rejectReason = this.dataInfo.inCheckResult
               this.createValue = [
                 moment(this.dataInfo.reachBeginDate, this.dateFormat),
@@ -560,9 +557,15 @@ export default {
       this.$router.go(-1)
     },
     submitData() {
+      if (this.requestData.status == 5) {
+        if (!this.requestData.rejectReason) {
+          this.$message.error('请输入不通过原因!')
+          return
+        }
+      }
       this.confirmLoading = true
       console.log('VVV:', this.requestData)
-      // return
+      return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {
