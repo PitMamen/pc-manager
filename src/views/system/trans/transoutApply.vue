@@ -176,7 +176,7 @@
 
 
           <div class="div-line" style="margin-bottom: 10px">
-            <div class="div-cell">
+            <div class="div-cell" style="width:100%">
               <div class="div-cell-name">注意事项：</div>
               <div class="div-cell-value">{{ dataInfo.notice || '' }}</div>
             </div>
