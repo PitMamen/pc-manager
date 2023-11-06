@@ -683,7 +683,7 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-              <a-select-option
+                <a-select-option
                   v-for="item in inDocDatas"
                   :key="item.doc_id"
                   :value="item.doc_id"
@@ -1264,6 +1264,12 @@ export default {
                   this.referralLogList[this.linePositon].deal_result == "成功"
                     ? "process"
                     : "error";
+
+                this.$set(
+                  this.referralLogList[this.linePositon],
+                  "createTime",
+                  this.referralLogList[this.linePositon].dealImages
+                );
               }
 
               //申请人和时间拼在一起
