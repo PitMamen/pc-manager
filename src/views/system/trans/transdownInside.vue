@@ -25,7 +25,7 @@
             >{{ item.value }}</a-select-option
           >
         </a-select>
-        <a-select
+        <!-- <a-select
           show-search
           style="width: 305px; height: 28px; margin-left: 10px"
           v-model="patientId"
@@ -45,15 +45,14 @@
             :value="item.id"
             >{{ item.name }}</a-select-option
           >
-        </a-select>
+        </a-select> -->
 
-        <!-- <a-input
+        <a-input
           allow-clear
-          placeholder="请输入证件号/诊疗卡号/住院号进行搜索选择"
+          v-model="sourceKeyword"
+          placeholder="请输入证件号/诊疗卡号/住院号进行搜索"
           style="width: 305px; height: 28px; margin-left: 10px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        /> -->
+        />
         <a-button style="margin-left: 10px" @click="goSearch">查询</a-button>
         <a-button type="primary" @click="submitData()">保存</a-button>
         <!-- <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button> -->
@@ -805,7 +804,7 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-              <a-select-option
+                <a-select-option
                   v-for="item in inDocDatas"
                   :key="item.doc_id"
                   :value="item.doc_id"
@@ -918,6 +917,7 @@ export default {
   data() {
     return {
       sourceCode: undefined,
+      sourceKeyword: undefined,
       patientId: undefined,
       sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
@@ -1412,15 +1412,41 @@ export default {
       }
     },
 
-    //获取患者
-    getPatientList(keyword) {
+    // //获取患者
+    // getPatientList(keyword) {
+    //   this.fetching = true;
+    //   getReferralData({ queryStr: keyword, source: this.sourceCode }).then((res) => {
+    //     this.fetching = false;
+    //     if (res.code == 0) {
+    //       this.patientData = res.data;
+    //     }
+    //   });
+    // },
+
+        //获取患者
+        getPatientList() {
+      if (!this.sourceCode) {
+        this.$message.error("请先选择来源");
+        return;
+      }
+
+      if (!this.sourceKeyword) {
+        this.$message.error("请输入证件号/诊疗卡号/住院号进行搜索");
+        return;
+      }
+
       this.fetching = true;
-      getReferralData({ queryStr: keyword, source: this.sourceCode }).then((res) => {
-        this.fetching = false;
-        if (res.code == 0) {
-          this.patientData = res.data;
+      getReferralData({ queryStr: this.sourceKeyword, source: this.sourceCode }).then(
+        (res) => {
+          this.fetching = false;
+          if (res.code == 0) {
+            this.patientData = res.data;
+            if (this.patientData.length > 0) {
+              this.onSelectPatient(this.patientData[0].id);
+            }
+          }
         }
-      });
+      );
     },
 
     goSearch() {
@@ -1460,7 +1486,7 @@ export default {
     },
 
     onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.docId == userId);
+      let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
       this.uploadData.docName = getOne.doc_name;
       console.log("onSelectInDoctor docId", userId);
       console.log("onSelectInDoctor docName", getOne.doc_name);
@@ -1626,6 +1652,9 @@ export default {
         outUserId: undefined,
         phone: undefined,
       };
+
+      this.uploadData.reachBeginDate = this.createValue[0];
+      this.uploadData.reachEndDate = this.createValue[1];
     },
 
     /**
