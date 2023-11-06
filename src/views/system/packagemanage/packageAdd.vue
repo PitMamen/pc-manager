@@ -505,6 +505,11 @@ export default {
           },
           {
             allocationType: undefined,
+            commodityPkgManageItemReqs: [],
+            teamType: undefined,
+          },
+          {
+            allocationType: undefined,
             commodityPkgManageItemReqs: [
               // {
               //   achievementRatio: 0,
@@ -880,12 +885,12 @@ export default {
 
           this.canConfigTeam = true
           // this.onSelectChange()
-          this.getNewRsp()
+          // this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
           // this.onSelectChange()
-          this.getNewRsp()
+          // this.getNewRsp()
           break
         case 3:
           this.canConfigTeam = false
