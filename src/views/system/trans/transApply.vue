@@ -160,7 +160,7 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name">申请人：</div>
-            <div class="div-cell-value">邓鑫</div>
+            <div class="div-cell-value">{{dataInfo.reqDocName||''}}</div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">登记日期：</div>
@@ -560,7 +560,6 @@ export default {
     submitData() {
       this.confirmLoading = true
       console.log('VVV:', this.requestData)
-      return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {

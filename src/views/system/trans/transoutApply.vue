@@ -522,6 +522,8 @@
       },
   
       cancel() {
+        this.$message.success("打印什么?")
+        return
         this.$router.go(-1)
       },
 
