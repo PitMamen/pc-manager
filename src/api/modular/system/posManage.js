@@ -3759,6 +3759,17 @@ export function getTreeUsersByDeptIdsAndRoles(data) {
 }
 
 /**
+ * /tdUserTags/getDocListForHospitalAndDepartment 根据科室与角色查询用户树列表
+ */
+export function getDocListForHospitalAndDepartment(data) {
+  return axios({
+    url: '/account-api/tdUserTags/getDocListForHospitalAndDepartment',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  *  /tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy 获取健康管理团队配置
  * 
  * 参数  teamNameOrAbbr
@@ -5828,6 +5839,37 @@ export function referralExamine(data) {
   })
 }
 
+
+// 转出审核
+export function referralOutExamine(data) {
+  return axios({
+    url: '/referral-api/referralTrade/referralOutExamine',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 转诊统计下钻
+export function statReferralPatientDetail(data) {
+  return axios({
+    url: '/referral-api/referral/statReferralPatientDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 详情导出
+// export function exportReferralPatient(data) {
+//   return axios({
+//     url: '/referral-api/excel/exportReferralPatient',
+//     method: 'post',
+//     data: data,
+//     responseType: 'blob'
+//   })
+// }
 
 
 

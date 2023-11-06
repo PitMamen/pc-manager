@@ -73,27 +73,34 @@
       :scroll="{ x: true }"
       :rowKey="(record) => record.id"
     >
+      <span slot="diagnos" slot-scope="text">
+        <ellipsis :length="30" tooltip>{{ text }}</ellipsis>
+      </span>
       <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治） -->
-      <span slot="status" slot-scope="text, record">
-        <span v-if="record.status.value === 1">待审核</span>
-        <span v-if="record.status.value === 2" style="color: #69c07d">通过</span>
+      <span slot="statusName" slot-scope="text, record">
+        <span v-if="record.status.value === 1">{{ record.statusName }}</span>
+        <span
+          v-if="record.status.value === 2 || record.status.value === 4"
+          style="color: #69c07d"
+          >{{ record.statusName }}</span
+        >
         <a
-          @click="showDes"
-          v-if="record.status.value === 3"
+          @click="showDes(record)"
+          v-if="record.status.value === 3 || record.status.value === 5"
           style="color: #f40b0b; text-decoration: underline"
-          >不通过</a
+          >{{ record.statusName }}</a
         >
       </span>
       <span slot="action" slot-scope="text, record">
-        <template v-if="record.status.value === 1">
-          <a @click="goEdit(record)"
-            ><a-icon style="margin-right: 5px" type="edit" />修改</a
-          >
-        </template>
         <!-- 审核通过的不能修改 -->
-        <template v-if="record.status.value === 2">
+        <template v-if="record.status.value === 2 || record.status.value === 4">
           <span style="margin-right: 5px; color: #999"
             ><a-icon type="edit" :style="{ fontSize: '14px', color: '#999' }" />修改</span
+          >
+        </template>
+        <template v-else>
+          <a @click="goEdit(record)"
+            ><a-icon style="margin-right: 5px" type="edit" />修改</a
           >
         </template>
         <template>
@@ -110,7 +117,7 @@
       <div
         style="height: 120px; display: flex; flex-direction: column; padding-top: 30px"
       >
-        <div style="margin-top;: 30px">不通过原因：小问题，请自行处理。</div>
+        <div style="margin-top;: 30px">{{ failReason }}。</div>
       </div>
 
       <template slot="footer">
@@ -302,6 +309,7 @@ export default {
       originData: [],
       selectedRowKeys: [],
       selectedRows: [],
+      failReason: "",
     };
   },
   /**
@@ -381,7 +389,12 @@ export default {
       this.visibleDes = false;
     },
 
-    showDes() {
+    showDes(record) {
+      if (record.status.value == 3) {
+        this.failReason = record.outCheckResult;
+      } else if (record.status.value == 5) {
+        this.failReason = record.inCheckResult;
+      }
       this.visibleDes = true;
     },
     onChange(momentArr, dateArr) {

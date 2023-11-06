@@ -2,11 +2,11 @@
   <a-spin :spinning="confirmLoading">
     <a-card :bordered="false" :loading="loading">
       <div class="div-pro-btn">
-        <a-button type="primary" @click="submitData()">保存</a-button>
+        <a-button type="primary" @click="submitData(false)">保存</a-button>
         <!-- //工单状态（1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治） -->
         <a-button
           style="margin-left: 10px"
-          @click="reSubmit()"
+          @click="submitData(true)"
           v-if="uploadData.status.value == 3"
           >重新提交</a-button
         >
@@ -535,7 +535,7 @@
             <div class="div-cell-value">
               <a-select
                 v-model="uploadData.inHospitalCode"
-                @select="getDepartmentSelectList(undefined)"
+                @select="onHospitalSelect"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
@@ -613,8 +613,8 @@
               >
                 <a-select-option
                   v-for="item in transTypeDatas"
-                  :key="item.code"
-                  :value="item.code"
+                  :key="item.value"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -685,9 +685,9 @@
               >
                 <a-select-option
                   v-for="item in inDocDatas"
-                  :key="item.userId"
-                  :value="item.userId"
-                  >{{ item.userName }}</a-select-option
+                  :key="item.doc_id"
+                  :value="item.doc_id"
+                  >{{ item.doc_name }}</a-select-option
                 >
               </a-select>
             </div>
@@ -783,7 +783,8 @@ import {
   modifyUpReferral,
   // getDepartmentListForSelect,
   getDepartmentListForReq,
-  getTreeUsersByDeptIdsAndRoles,
+  // getTreeUsersByDeptIdsAndRoles,
+  getDocListForHospitalAndDepartment,
   upReferralDetail,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
@@ -1223,10 +1224,11 @@ export default {
               department_id: this.uploadData.inDeptCode,
             },
           ];
+          console.log("this.uploadData.docName", this.uploadData.docName);
           this.inDocDatas = [
             {
-              userId: this.uploadData.docId,
-              userName: this.uploadData.docName,
+              doc_id: this.uploadData.docId,
+              doc_name: this.uploadData.docName,
             },
           ];
 
@@ -1263,6 +1265,12 @@ export default {
                   this.referralLogList[this.linePositon].deal_result == "成功"
                     ? "process"
                     : "error";
+
+                this.$set(
+                  this.referralLogList[this.linePositon],
+                  "createTime",
+                  this.referralLogList[this.linePositon].dealImages
+                );
               }
 
               //申请人和时间拼在一起
@@ -1359,13 +1367,22 @@ export default {
       });
     },
 
+    onHospitalSelect() {
+      this.getDepartmentSelectList(undefined);
+      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+        this.getTreeUsers();
+      }
+    },
+
     // onSelectDept(){},
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
       this.uploadData.inDept = getOne.department_name;
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
-      this.getTreeUsers();
+      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+        this.getTreeUsers();
+      }
     },
 
     onDeptGetFocus() {
@@ -1376,6 +1393,11 @@ export default {
     },
 
     onDocFocus() {
+      if (!this.uploadData.inHospitalCode) {
+        this.$message.warn("请先选择转入机构");
+        return;
+      }
+
       if (!this.uploadData.inDeptCode) {
         this.$message.warn("请先选择转入科室");
         return;
@@ -1383,19 +1405,19 @@ export default {
     },
 
     onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.userId == userId);
-      this.uploadData.docName = getOne.userName;
+      let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
+      this.uploadData.docName = getOne.doc_name;
       console.log("onSelectInDoctor docId", userId);
-      console.log("onSelectInDoctor docName", getOne.vauserNamelue);
+      console.log("onSelectInDoctor docName", getOne.doc_name);
     },
 
     getTreeUsers() {
-      getTreeUsersByDeptIdsAndRoles({
-        roleIds: ["doctor"],
-        departmentIds: [this.uploadData.inDeptCode],
+      getDocListForHospitalAndDepartment({
+        departmentId: this.uploadData.inDeptCode,
+        hospitalCode: this.uploadData.inHospitalCode,
       }).then((res) => {
         if (res.code == 0) {
-          this.inDocDatas = res.data[0].users || [];
+          this.inDocDatas = res.data || [];
         }
       });
     },
@@ -1578,7 +1600,7 @@ export default {
       this.$message.success("去打印");
     },
 
-    submitData() {
+    submitData(isReupload) {
       let tempData = JSON.parse(JSON.stringify(this.uploadData));
       if (!tempData.patientBaseinfoReq.name) {
         this.$message.error("请输入患者姓名");
@@ -1678,6 +1700,20 @@ export default {
         moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
       );
 
+      if (tempData.outCheck) {
+        delete tempData.outCheck;
+      }
+      if (tempData.outCheckTime) {
+        delete tempData.outCheckTime;
+      }
+      if (tempData.outCheckResult) {
+        delete tempData.outCheckResult;
+      }
+
+      if (isReupload) {
+        this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
+      }
+
       console.log("addTransUp tempData modify", JSON.stringify(tempData));
       this.confirmLoading = true;
       modifyUpReferral(tempData)
@@ -1698,127 +1734,127 @@ export default {
         });
     },
 
-    //后台做的动作除了修改数据，还会更改状态
-    reSubmit() {
-      let tempData = JSON.parse(JSON.stringify(this.uploadData));
-      if (!tempData.patientBaseinfoReq.name) {
-        this.$message.error("请输入患者姓名");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.identificationType) {
-        this.$message.error("请选择证件类型");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.identificationNo) {
-        this.$message.error("请输入证件号码");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.sex) {
-        this.$message.error("请选择性别");
-        return;
-      }
-      // if (!this.dateValue) {//非必填
-      //   this.$message.error("请选择出生日期");
-      //   return;
-      // }
-      if (!tempData.patientBaseinfoReq.phone) {
-        this.$message.error("请输入本人电话");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.liveType) {
-        this.$message.error("请选择常住分类");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.address) {
-        this.$message.error("请输入选择户口地址");
-        return;
-      }
-      if (!tempData.patientBaseinfoReq.addressDetail) {
-        this.$message.error("请输入选择详细地址");
-        return;
-      }
-      if (!tempData.diseaseLevel) {
-        this.$message.error("请选择病情分级");
-        return;
-      }
+    // //后台做的动作除了修改数据，还会更改状态
+    // reSubmit() {
+    //   let tempData = JSON.parse(JSON.stringify(this.uploadData));
+    //   if (!tempData.patientBaseinfoReq.name) {
+    //     this.$message.error("请输入患者姓名");
+    //     return;
+    //   }
+    //   if (!tempData.patientBaseinfoReq.identificationType) {
+    //     this.$message.error("请选择证件类型");
+    //     return;
+    //   }
+    //   if (!tempData.patientBaseinfoReq.identificationNo) {
+    //     this.$message.error("请输入证件号码");
+    //     return;
+    //   }
+    //   if (!tempData.patientBaseinfoReq.sex) {
+    //     this.$message.error("请选择性别");
+    //     return;
+    //   }
+    //   // if (!this.dateValue) {//非必填
+    //   //   this.$message.error("请选择出生日期");
+    //   //   return;
+    //   // }
+    //   if (!tempData.patientBaseinfoReq.phone) {
+    //     this.$message.error("请输入本人电话");
+    //     return;
+    //   }
+    //   if (!tempData.patientBaseinfoReq.liveType) {
+    //     this.$message.error("请选择常住分类");
+    //     return;
+    //   }
+    //   if (!tempData.patientBaseinfoReq.address) {
+    //     this.$message.error("请输入选择户口地址");
+    //     return;
+    //   }
+    //   if (!tempData.patientBaseinfoReq.addressDetail) {
+    //     this.$message.error("请输入选择详细地址");
+    //     return;
+    //   }
+    //   if (!tempData.diseaseLevel) {
+    //     this.$message.error("请选择病情分级");
+    //     return;
+    //   }
 
-      // if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
-      //   this.$message.error("请输入选择主要诊断");
-      //   return;
-      // }
+    //   // if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
+    //   //   this.$message.error("请输入选择主要诊断");
+    //   //   return;
+    //   // }
 
-      if (!tempData.inHospitalCode) {
-        this.$message.error("请选择转入机构");
-        return;
-      }
-      if (!tempData.referralType) {
-        this.$message.error("请选择转诊类型");
-        return;
-      }
-      if (!tempData.referralReason) {
-        this.$message.error("请选择转诊原因");
-        return;
-      }
-      if (!tempData.referralWay) {
-        this.$message.error("请选择转运方式");
-        return;
-      }
+    //   if (!tempData.inHospitalCode) {
+    //     this.$message.error("请选择转入机构");
+    //     return;
+    //   }
+    //   if (!tempData.referralType) {
+    //     this.$message.error("请选择转诊类型");
+    //     return;
+    //   }
+    //   if (!tempData.referralReason) {
+    //     this.$message.error("请选择转诊原因");
+    //     return;
+    //   }
+    //   if (!tempData.referralWay) {
+    //     this.$message.error("请选择转运方式");
+    //     return;
+    //   }
 
-      if (!tempData.reachBeginDate || !tempData.reachEndDate) {
-        this.$message.error("请选择期望到院时间");
-        return;
-      }
+    //   if (!tempData.reachBeginDate || !tempData.reachEndDate) {
+    //     this.$message.error("请选择期望到院时间");
+    //     return;
+    //   }
 
-      // //单独组装生日
-      // tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
-      // //单独组装主要诊断
-      // this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
-      // this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+    //   // //单独组装生日
+    //   // tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format("YYYY-MM-DD");
+    //   // //单独组装主要诊断
+    //   // this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+    //   // this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
 
-      //单独组装生日
-      if (this.dateValue) {
-        tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
-          "YYYY-MM-DD"
-        );
-      }
-      //单独组装主要诊断
-      if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
-        this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
-        this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
-      }
+    //   //单独组装生日
+    //   if (this.dateValue) {
+    //     tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
+    //       "YYYY-MM-DD"
+    //     );
+    //   }
+    //   //单独组装主要诊断
+    //   if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
+    //     this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+    //     this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
+    //   }
 
-      //组装期望到院时间
-      this.$set(
-        tempData,
-        "reachBeginDate",
-        moment(this.uploadData.reachBeginDate).format("YYYY-MM-DD")
-      );
-      this.$set(
-        tempData,
-        "reachEndDate",
-        moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
-      );
+    //   //组装期望到院时间
+    //   this.$set(
+    //     tempData,
+    //     "reachBeginDate",
+    //     moment(this.uploadData.reachBeginDate).format("YYYY-MM-DD")
+    //   );
+    //   this.$set(
+    //     tempData,
+    //     "reachEndDate",
+    //     moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
+    //   );
 
-      console.log("addTransUp tempData modify", JSON.stringify(tempData));
-      this.confirmLoading = true;
-      this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
-      modifyUpReferral(tempData)
-        .then((res) => {
-          this.confirmLoading = false;
-          if (res.code == 0) {
-            this.$message.success("保存成功");
-            this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
-            // this.$bus.$emit('proEvent', '刷新数据-方案新增')
-            // this.clearData();
-            this.$router.go(-1);
-          } else {
-            this.$message.error("保存失败：" + res.message);
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false;
-        });
-    },
+    //   console.log("addTransUp tempData modify", JSON.stringify(tempData));
+    //   this.confirmLoading = true;
+    //   this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
+    //   modifyUpReferral(tempData)
+    //     .then((res) => {
+    //       this.confirmLoading = false;
+    //       if (res.code == 0) {
+    //         this.$message.success("保存成功");
+    //         this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
+    //         // this.$bus.$emit('proEvent', '刷新数据-方案新增')
+    //         // this.clearData();
+    //         this.$router.go(-1);
+    //       } else {
+    //         this.$message.error("保存失败：" + res.message);
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false;
+    //     });
+    // },
   },
 };
 </script>

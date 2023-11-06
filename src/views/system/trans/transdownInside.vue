@@ -25,7 +25,7 @@
             >{{ item.value }}</a-select-option
           >
         </a-select>
-        <a-select
+        <!-- <a-select
           show-search
           style="width: 305px; height: 28px; margin-left: 10px"
           v-model="patientId"
@@ -45,15 +45,14 @@
             :value="item.id"
             >{{ item.name }}</a-select-option
           >
-        </a-select>
+        </a-select> -->
 
-        <!-- <a-input
+        <a-input
           allow-clear
-          placeholder="请输入证件号/诊疗卡号/住院号进行搜索选择"
+          v-model="sourceKeyword"
+          placeholder="请输入证件号/诊疗卡号/住院号进行搜索"
           style="width: 305px; height: 28px; margin-left: 10px"
-          @keyup.enter="$refs.table.refresh(true)"
-          @search="$refs.table.refresh(true)"
-        /> -->
+        />
         <a-button style="margin-left: 10px" @click="goSearch">查询</a-button>
         <a-button type="primary" @click="submitData()">保存</a-button>
         <!-- <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button> -->
@@ -657,7 +656,7 @@
             <div class="div-cell-value">
               <a-select
                 v-model="uploadData.inHospitalCode"
-                @select="getDepartmentSelectList(undefined)"
+                @select="onHospitalSelect"
                 placeholder="请选择"
                 allow-clear
                 style="width: 100%; height: 28px"
@@ -735,8 +734,8 @@
               >
                 <a-select-option
                   v-for="item in transTypeDatas"
-                  :key="item.code"
-                  :value="item.code"
+                  :key="item.value"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -807,9 +806,9 @@
               >
                 <a-select-option
                   v-for="item in inDocDatas"
-                  :key="item.userId"
-                  :value="item.userId"
-                  >{{ item.userName }}</a-select-option
+                  :key="item.doc_id"
+                  :value="item.doc_id"
+                  >{{ item.doc_name }}</a-select-option
                 >
               </a-select>
             </div>
@@ -896,7 +895,8 @@ import {
   queryTradeId,
   // getDepartmentListForSelect,
   getDepartmentListForReq,
-  getTreeUsersByDeptIdsAndRoles,
+  // getTreeUsersByDeptIdsAndRoles,
+  getDocListForHospitalAndDepartment,
   getReferralData,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
@@ -917,6 +917,7 @@ export default {
   data() {
     return {
       sourceCode: undefined,
+      sourceKeyword: undefined,
       patientId: undefined,
       sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
@@ -1374,12 +1375,21 @@ export default {
       });
     },
 
+    onHospitalSelect() {
+      this.getDepartmentSelectList(undefined);
+      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+        this.getTreeUsers();
+      }
+    },
+
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
       this.uploadData.inDept = getOne.department_name;
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
-      this.getTreeUsers();
+      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+        this.getTreeUsers();
+      }
     },
 
     onDeptGetFocus() {
@@ -1402,15 +1412,41 @@ export default {
       }
     },
 
-    //获取患者
-    getPatientList(keyword) {
+    // //获取患者
+    // getPatientList(keyword) {
+    //   this.fetching = true;
+    //   getReferralData({ queryStr: keyword, source: this.sourceCode }).then((res) => {
+    //     this.fetching = false;
+    //     if (res.code == 0) {
+    //       this.patientData = res.data;
+    //     }
+    //   });
+    // },
+
+        //获取患者
+        getPatientList() {
+      if (!this.sourceCode) {
+        this.$message.error("请先选择来源");
+        return;
+      }
+
+      if (!this.sourceKeyword) {
+        this.$message.error("请输入证件号/诊疗卡号/住院号进行搜索");
+        return;
+      }
+
       this.fetching = true;
-      getReferralData({ queryStr: keyword, source: this.sourceCode }).then((res) => {
-        this.fetching = false;
-        if (res.code == 0) {
-          this.patientData = res.data;
+      getReferralData({ queryStr: this.sourceKeyword, source: this.sourceCode }).then(
+        (res) => {
+          this.fetching = false;
+          if (res.code == 0) {
+            this.patientData = res.data;
+            if (this.patientData.length > 0) {
+              this.onSelectPatient(this.patientData[0].id);
+            }
+          }
         }
-      });
+      );
     },
 
     goSearch() {
@@ -1439,6 +1475,10 @@ export default {
     },
 
     onDocFocus() {
+      if (!this.uploadData.inHospitalCode) {
+        this.$message.warn("请先选择转入机构");
+        return;
+      }
       if (!this.uploadData.inDeptCode) {
         this.$message.warn("请先选择转入科室");
         return;
@@ -1446,19 +1486,19 @@ export default {
     },
 
     onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.userId == userId);
-      this.uploadData.docName = getOne.userName;
+      let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
+      this.uploadData.docName = getOne.doc_name;
       console.log("onSelectInDoctor docId", userId);
-      console.log("onSelectInDoctor docName", getOne.vauserNamelue);
+      console.log("onSelectInDoctor docName", getOne.doc_name);
     },
 
     getTreeUsers() {
-      getTreeUsersByDeptIdsAndRoles({
-        roleIds: ["doctor"],
-        departmentIds: [this.uploadData.inDeptCode],
+      getDocListForHospitalAndDepartment({
+        departmentId: this.uploadData.inDeptCode,
+        hospitalCode: this.uploadData.inHospitalCode,
       }).then((res) => {
         if (res.code == 0) {
-          this.inDocDatas = res.data[0].users || [];
+          this.inDocDatas = res.data || [];
         }
       });
     },
@@ -1612,6 +1652,9 @@ export default {
         outUserId: undefined,
         phone: undefined,
       };
+
+      this.uploadData.reachBeginDate = this.createValue[0];
+      this.uploadData.reachEndDate = this.createValue[1];
     },
 
     /**

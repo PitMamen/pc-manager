@@ -35,7 +35,7 @@
         </div>
   
         <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == 2 }" @click="onRadioClick(2)">
-          <span style="margin-left: 3px">审核通过({{ numberData.ReqCheckedNum }})</span>
+          <span style="margin-left: 3px">审核通过({{ numberData.ReqOutCheckedNum }})</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == 3 }" @click="onRadioClick(3)">
           <span style="margin-left: 3px">审核不通过({{ numberData.ReqUncheckedNum }})</span>
@@ -85,6 +85,7 @@
     qryDepartmentByReq,
     qryReferralListByPage,
     qryReferralCount,
+    
   } from '@/api/modular/system/posManage'
   import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
   //   import recordDetail from './recordDetail'
@@ -110,7 +111,7 @@
         currentTab: '',
         numberData: {
           TotalNum: 0,  //全部
-          ReqCheckedNum: 0,  //审核通过
+          ReqOutCheckedNum: 0,  //审核通过
           ReqUncheckedNum:0, //审核不通过
           ReqNum:0 //待审核
         },
@@ -128,7 +129,7 @@
         columns: [
           {
             title: '患者姓名',
-            dataIndex: 'userName',
+            dataIndex: 'name',
             ellipsis: true,
           },
   
@@ -207,8 +208,8 @@
                 var data = {
                   pageNo: parameter.pageNo,
                   pageSize: parameter.pageSize,
-                  totalRows: res.data.total,
-                  totalPage: res.data.total / parameter.pageSize,
+                  totalRows: res.data.totalRows,
+                  totalPage: res.data.totalPage / parameter.pageSize,
                   rows: res.data.rows,
                 }
   
@@ -220,7 +221,7 @@
                   this.$set(item, 'userAge', item.userInfo ? item.userInfo.userAge : '')
                   this.$set(item, 'statusShow', item.status.value)
                   this.$set(item, 'tradeType', item.tradeType.description)
-                  this.$set(item, 'daishouzhi', '待收治')
+                  this.$set(item, 'daishouzhi', item.status.value==4?'收治':'待收治')
                   // this.$set(item, 'status', 1)
                   // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                   // item.nameDes = item.name
@@ -256,6 +257,13 @@
   
       this.getOrderStatusGroupByDataOut()
     },
+
+    mounted() {
+    this.$bus.$on('transOutexmine', (record) => {
+      console.log('transOutexmine', record)
+      this.$refs.table.refresh()
+    })
+  },
   
     methods: {
   
@@ -321,7 +329,7 @@
               if (res.data) {
                 this.numberData.TotalNum = res.data.TotalNum
                 this.numberData.ReqNum = res.data.ReqNum
-                this.numberData.ReqCheckedNum = res.data.ReqCheckedNum
+                this.numberData.ReqOutCheckedNum = res.data.ReqOutCheckedNum
                 this.numberData.ReqUncheckedNum = res.data.ReqUncheckedNum
               }
             }

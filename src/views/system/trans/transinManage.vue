@@ -120,7 +120,7 @@ export default {
       columns: [
         {
           title: '患者姓名',
-          dataIndex: 'userName',
+          dataIndex: 'name',
           ellipsis: true,
         },
 

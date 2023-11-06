@@ -94,7 +94,8 @@
             </div>
             <div class="infos">
               <div class="row">
-                <div class="item">服务医生：{{ tab1Info.doctorUserName || '--' }}</div>
+                <div class="item" v-if="item.orderType == 'psychologyRegister'">服务医生/咨询师：{{ tab1Info.doctorUserName || '--' }}</div>
+                <div class="item" v-else>服务医生：{{ tab1Info.doctorUserName || '--' }}</div>
                 <div v-if="jumpType != 6" class="item">服务护士：{{ tab1Info.nurseUserName || '--' }}</div>
                 <div v-if="jumpType != 6" class="item" :title="tab1Info.teamName || '--'">
                   服务团队：{{ tab1Info.teamName || '--' }}
@@ -1326,7 +1327,10 @@
                         <div style="font-size: 14px; color: #1a1a1a">
                           {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.userName : '-' || '-' }}
                         </div>
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                        <div v-if="item.orderType == 'psychologyRegister'" style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
+                          {{ videoFollowListData.docInfo ? videoFollowListData.psycholLevelDesc : '-' || '-' }}
+                        </div>
+                        <div v-else style="font-size: 12px; color: #4d4d4d; margin-left: 5px">
                           {{ videoFollowListData.docInfo ? videoFollowListData.docInfo.professionalTitle : '-' || '-' }}
                         </div>
                       </div>
@@ -1342,7 +1346,14 @@
                     </div>
                   </div>
                   <div class="line"></div>
-                  <div style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                  <div v-if="item.orderType == 'psychologyRegister'" style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
+                    套餐名称:{{
+                      videoFollowListData.commodityName
+                        ? videoFollowListData.commodityName
+                        : '-' || '-'
+                    }}
+                  </div>
+                  <div v-else style="margin-left: 15px; color: #4d4d4d; font-size: 12px; margin-top: 5px">
                     套餐名称:{{
                       videoFollowListData.rightsUseRecordStatus
                         ? videoFollowListData.rightsUseRecordStatus.serviceItemName
@@ -1379,7 +1390,14 @@
                       <div class="row-content">
                         <div class="docpoint"></div>
                         <!-- TODO 这里可能要改字段 -->
-                        <div style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                        <div v-if="item.orderType == 'psychologyRegister'" style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
+                          咨询师确认时间:{{
+                            videoFollowListData.rightsUseRecordStatus
+                              ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
+                              : '-' || '-'
+                          }}
+                        </div>
+                        <div v-else style="font-size: 12px; color: #4d4d4d; margin-left: 11px">
                           医生确认时间:{{
                             videoFollowListData.rightsUseRecordStatus
                               ? videoFollowListData.rightsUseRecordStatus.confirmPeriod
@@ -1929,7 +1947,9 @@ export default {
           }
 
           this.videoListData = this.videoFollowListData.videoTapeInfo //TODO 这里处理视频数据
-          this.playerOptions.sources[0].src = this.videoListData[0].callTape
+          if (this.videoListData && this.videoListData.length>0) {
+            this.playerOptions.sources[0].src = this.videoListData[0].callTape
+          }
         })
         .finally(() => {
           this.confirmLoading = false

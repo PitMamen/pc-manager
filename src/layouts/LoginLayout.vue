@@ -8,6 +8,7 @@
           <div class="content">
             <div class="row" v-for="(itemChild, indexChild) in sysApps" :key="indexChild" :value="itemChild.id">
               <div :class="getClass(indexChild)" @click="itemClick(itemChild)">
+              <!-- <div class="item item1" @click="itemClick(itemChild)"> -->
                 <!-- <img class="icon icon1" :src="itemChild.iconshow"/> -->
                 <img class="icon icon1" src="@/assets/login/icon1.png" v-if="itemChild.logo === 'icon1'" />
                 <img class="icon icon2" src="@/assets/login/icon2.png" v-if="itemChild.logo === 'icon2'" />
@@ -215,6 +216,9 @@ export default {
         return 'item item6'
       } else if (index == 6) {
         return 'item item2'
+      }else{
+        return 'item item4'
+
       }
     },
 
@@ -401,36 +405,33 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// /deep/.webkit-scrollbar-thumb {
-//   /*滚动条里面小方块*/
-//   border-radius: 10px;
-//   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-//   background: linear-gradient(270deg, #64e6c0 0%, #687ff9 100%);
-// }
+.content::-webkit-scrollbar {
 
-// /deep/.webkit-scrollbar-track {
-//   /*滚动条里面轨道*/
-//   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
-//   border-radius: 10px;
-//   background: #262335;
-// }
+width: 0px;
 
+}
 
-.ant-table-body{
-      &::-webkit-scrollbar {
-        height: 5px;
-      }
-      &::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        -webkit-box-shadow: inset 0 0 5px red;
-        background: #ccc;
-      }
-      &::-webkit-scrollbar-track {
-        -webkit-box-shadow: 0;
-        border-radius: 0;
-        background: #191f28;
-      }
-    }
+.content::-webkit-scrollbar-track {
+
+background-color: rgba(39, 39, 39, 1);
+
+ border-radius: 2px;
+
+}
+
+.content::-webkit-scrollbar-thumb {
+
+background-color: rgba(39, 39, 39, 1);
+
+border-radius: 10px;
+
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+
+ // background-color: rgb(118, 113, 113);
+
+}
 
 @import '~@/components/px2rem.less';
 #loginLayout {
