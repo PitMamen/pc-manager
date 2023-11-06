@@ -3,7 +3,7 @@
     :title="titleTop"
     :width="1200"
     :visible="visible"
-    :confirmLoading="confirmLoading" 
+    :confirmLoading="confirmLoading"
     @cancel="handleCancel"
     @ok="handleSubmit"
   >
@@ -27,7 +27,7 @@
     
             
     <script>
-import { transfer, statReferralPatientDetail,tradeBillExport } from '@/api/modular/system/posManage'
+import { transfer, statReferralPatientDetail, exportReferralPatient } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -64,7 +64,6 @@ export default {
       columns: [
         {
           title: '序号',
-          // innerHeight:20,
           dataIndex: 'xh',
         },
         {
@@ -73,11 +72,11 @@ export default {
         },
         {
           title: '转出方式',
-          dataIndex: 'referralWay',
+          dataIndex: 'tradeTypeName',
         },
         {
           title: '审核结果',
-          dataIndex: 'outCheckResult',
+          dataIndex: 'statusName',
         },
         {
           title: '患者姓名',
@@ -93,7 +92,7 @@ export default {
         },
         {
           title: '身份证号',
-          dataIndex: 'idcard',
+          dataIndex: 'idNo',
         },
         {
           title: '审核日期',
@@ -120,12 +119,13 @@ export default {
             rows: res.data.rows,
           }
 
-          //设置序号
-          data.rows.forEach((item, index) => {
-            item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-            this.$set(item, 'leixing', item.referralType.description)
-          })
-
+          if (data.rows) {
+            //设置序号
+            data.rows.forEach((item, index) => {
+              item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+              this.$set(item, 'leixing', item.tradeType.description)
+            })
+          }
           return data
         })
       },
@@ -145,15 +145,13 @@ export default {
       this.titleTop = record.hospitalName + '-' + title + '【' + record.beginTime + ' 至 ' + record.endTime + '】'
 
       this.$refs.table.refresh()
-    //   this.statReferralPatientDetailOut(this.queryParams) //获取需 转移人的 集合
     },
 
-// 导出
-    exportes(){
-        // this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
-        return
+    // 导出
+    exportes() {
+      // this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
-      tradeBillExport(params)
+      exportReferralPatient(params)
         .then((res) => {
           this.downloadfile(res)
         })
@@ -180,9 +178,6 @@ export default {
       window.URL.revokeObjectURL(href)
     },
 
-
-
-
     clearData() {
       this.queryParams.hospitalCode = ''
       this.queryParams.statBegin = ''
@@ -193,45 +188,44 @@ export default {
     /**
      * 随访医生列表
      */
-    statReferralPatientDetailOut(requestData) {
-      this.confirmLoading = true
-      statReferralPatientDetail(requestData)
-        .then((res) => {
-          if (res.code == 0) {
-            var data = {
-              pageNo: parameter.pageNo,
-              pageSize: parameter.pageSize,
-              totalRows: res.data.total,
-              totalPage: res.data.total / parameter.pageSize,
-              rows: res.data.rows,
-            }
+    // statReferralPatientDetailOut(requestData) {
+    //   this.confirmLoading = true
+    //   statReferralPatientDetail(requestData)
+    //     .then((res) => {
+    //       if (res.code == 0) {
+    //         var data = {
+    //           pageNo: parameter.pageNo,
+    //           pageSize: parameter.pageSize,
+    //           totalRows: res.data.total,
+    //           totalPage: res.data.total / parameter.pageSize,
+    //           rows: res.data.rows,
+    //         }
 
-            data.rows.forEach((item) => {
-              this.$set(item, 'leixing', item.referralType.description)
-              this.$set(item, 'xh', (res.data.pageNo - 1) * data.pageSize + (index + 1))
-            })
+    //         data.rows.forEach((item) => {
+    //           this.$set(item, 'leixing', item.referralType.description)
+    //           this.$set(item, 'xh', (res.data.pageNo - 1) * data.pageSize + (index + 1))
+    //         })
 
-            return res.data.rows
-          }
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
-
+    //         return res.data.rows
+    //       }
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
 
     /**
      * 取消
      */
     handleCancel() {
-        this.visible = false
+      this.visible = false
     },
-    
+
     /**
      * 提交
      */
     handleSubmit() {
-        this.visible = false
+      this.visible = false
     },
   },
 }

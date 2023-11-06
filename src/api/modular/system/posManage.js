@@ -5861,6 +5861,17 @@ export function statReferralPatientDetail(data) {
 }
 
 
+// 详情导出
+// export function exportReferralPatient(data) {
+//   return axios({
+//     url: '/referral-api/excel/exportReferralPatient',
+//     method: 'post',
+//     data: data,
+//     responseType: 'blob'
+//   })
+// }
+
+
 
 
 
