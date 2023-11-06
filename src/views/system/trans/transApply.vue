@@ -415,6 +415,7 @@ export default {
               this.requestData.status = this.dataInfo.status.value
               this.requestData.docId = this.dataInfo.docName
               this.requestData.inDeptCode = this.dataInfo.inDept
+              this.requestData.inDept = this.dataInfo.inDeptCode
               this.requestData.rejectReason = this.dataInfo.inCheckResult
               this.createValue = [
                 moment(this.dataInfo.reachBeginDate, this.dateFormat),
@@ -519,6 +520,7 @@ export default {
       console.log('onSelectDept department_name', getOne.department_name)
       if (getOne) {
         this.requestData.inDept = getOne.department_name
+        this.requestData.inDeptCode = getOne.department_id
       }
       this.getTreeUsers(this.requestData.inDeptCode)
     },
@@ -560,6 +562,7 @@ export default {
     submitData() {
       this.confirmLoading = true
       console.log('VVV:', this.requestData)
+      return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {
