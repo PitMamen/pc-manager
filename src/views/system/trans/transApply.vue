@@ -565,7 +565,6 @@ export default {
       }
       this.confirmLoading = true
       console.log('VVV:', this.requestData)
-      return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {
