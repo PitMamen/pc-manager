@@ -476,7 +476,7 @@ export default {
 
         .content {
           position: absolute;
-          height: 400px;
+          // height: 400px;
           overflow: auto;
         }
 

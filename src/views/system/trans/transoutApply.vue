@@ -400,7 +400,7 @@
       },
   
       getReferralLogListOut(tradeId) {
-        getReferralLogList('20231102091052174').then((res) => {
+        getReferralLogList(tradeId).then((res) => {
           if (res.code == 0) {
             // this.referralLogList = res.data.concat(res.data).concat(res.data);
             this.referralLogList = res.data
@@ -410,7 +410,7 @@
             console.log('getReferralLogList', haveIndex)
             if (haveIndex != -1) {
               this.linePositon = haveIndex - 1 //算出目前的步骤
-              console.log('YYYl:', this.linePositon)
+              // console.log('YYYl:', this.linePositon)
               this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
             }
   

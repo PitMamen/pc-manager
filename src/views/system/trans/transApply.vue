@@ -433,7 +433,7 @@ export default {
     },
 
     getReferralLogListOut(tradeId) {
-      getReferralLogList('20231102091052174').then((res) => {
+      getReferralLogList(tradeId).then((res) => {
         if (res.code == 0) {
           // this.referralLogList = res.data.concat(res.data).concat(res.data);
           this.referralLogList = res.data
@@ -560,6 +560,7 @@ export default {
     submitData() {
       this.confirmLoading = true
       console.log('VVV:', this.requestData)
+      return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {
