@@ -713,8 +713,8 @@
               >
                 <a-select-option
                   v-for="item in transTypeDatas"
-                  :key="item.code"
-                  :value="item.code"
+                  :key="item.value"
+                  :value="item.value"
                   >{{ item.value }}</a-select-option
                 >
               </a-select>
@@ -1368,8 +1368,8 @@ export default {
           ];
           this.inDocDatas = [
             {
-              userId: this.uploadData.docId,
-              userName: this.uploadData.docName,
+              doc_id: this.uploadData.docId,
+              doc_name: this.uploadData.docName,
             },
           ];
 
@@ -1539,10 +1539,10 @@ export default {
     },
 
     onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.userId == userId);
-      this.uploadData.docName = getOne.userName;
+      let getOne = this.inDocDatas.find((item) => item.docId == userId);
+      this.uploadData.docName = getOne.docName;
       console.log("onSelectInDoctor docId", userId);
-      console.log("onSelectInDoctor docName", getOne.vauserNamelue);
+      console.log("onSelectInDoctor docName", getOne.docName);
     },
 
     getTreeUsers() {
