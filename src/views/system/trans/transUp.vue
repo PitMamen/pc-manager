@@ -85,15 +85,15 @@
         >
       </span>
       <span slot="action" slot-scope="text, record">
-        <template v-if="record.status.value === 1">
-          <a @click="goEdit(record)"
-            ><a-icon style="margin-right: 5px" type="edit" />修改</a
-          >
-        </template>
         <!-- 审核通过的不能修改 -->
         <template v-if="record.status.value === 2">
           <span style="margin-right: 5px; color: #999"
             ><a-icon type="edit" :style="{ fontSize: '14px', color: '#999' }" />修改</span
+          >
+        </template>
+        <template v-else>
+          <a @click="goEdit(record)"
+            ><a-icon style="margin-right: 5px" type="edit" />修改</a
           >
         </template>
         <template>
