@@ -53,7 +53,7 @@
         <div class="row up-bottom">
           <span class="name">转诊医生(签字)</span>
           <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="date right">{{info.regTime||''}}</span>
+          <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
         </div>
 
         <div class="sub-title">
@@ -98,19 +98,19 @@
             <span>转诊注意事项：</span>
             <span>{{info.notice||''}}</span>
           </div>
-          <div class="row">
+          <div class="row" style="overflow: hidden;">
             <div class="right">
               <span class="name">转诊时限</span>
-              <span class="date">{{info.reachBeginDate||''}}</span>
+              <span class="date">{{moment(info.reachBeginDate).format('YYYY年MM月DD日')}}</span>
             </div>
           </div>
-          <div class="row">
+          <div class="row" style="overflow: hidden;">
             <div class="right">
               <span class="name">至</span>
-              <span class="date">{{info.reachEndDate||''}}</span>
+              <span class="date">{{moment(info.reachEndDate).format('YYYY年MM月DD日')}}</span>
             </div>
           </div>
-          <div class="row">
+          <div class="row" style="overflow: hidden;">
             <div class="right">
               <span class="name">医生签名</span>
               <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -131,7 +131,7 @@
           <div class="row">
             <span class="name">患方签字：</span>
             <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span class="date right">{{info.regTime||''}}</span>
+            <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
             <span class="name right">转诊日期</span>
           </div>
         </div>
@@ -146,7 +146,7 @@ const styles = `
   padding: 20px;
   font-size: 12px;
   font-weight: 400;
-  line-height: 21px;
+  line-height: 1.5;
   color: rgba(0,0,0,0.65);
 }
 .print-wrap .right {
@@ -165,7 +165,7 @@ const styles = `
   text-align: center;
 }
 .print-wrap .sub-title .name {
-  margin-right: 10px;
+  padding-right: 10px;
 }
 .print-wrap .sub-title .store {
   font-size: 14px;
@@ -173,18 +173,17 @@ const styles = `
   color: #1A1A1A;
 }
 .print-wrap .sub-title .no {
-  margin-left: 30px;
+  padding-left: 30px;
 }
 .print-wrap .row {
-  margin-bottom: 10px;
-  overflow: hidden;
+  padding-bottom: 10px;
 }
 .print-wrap .row .name {
-  margin-left: 20px;
-  margin-right: 10px;
+  padding-left: 20px;
+  padding-right: 10px;
 }
 .print-wrap .row .name:first-child {
-  margin-left: 0px;
+  padding-left: 0px;
 }
 .print-wrap .row .value {
   padding-left: 5px;
@@ -211,6 +210,7 @@ const styles = `
   border: 1px dashed #999999;
 }`;
 
+import moment from "moment";
 import printJS from 'print-js';
 import {
   getReferralTradeById
@@ -229,6 +229,7 @@ export default {
     };
   },
   methods: {
+    moment,
     open(id) {
       this.visible = true;
       this.id = id;
@@ -299,7 +300,7 @@ export default {
     padding: 10px 0;
     text-align: center;
     .name {
-      margin-right: 10px;
+      padding-right: 10px;
     }
     .store {
       font-size: 14px;
@@ -307,17 +308,16 @@ export default {
       color: #1A1A1A;
     }
     .no {
-      margin-left: 30px;
+      padding-left: 30px;
     }
   }
   .row {
-    margin-bottom: 10px;
-    overflow: hidden;
+    padding-bottom: 10px;
     .name {
-      margin-left: 20px;
-      margin-right: 10px;
+      padding-left: 20px;
+      padding-right: 10px;
       &:first-child {
-        margin-left: 0px;
+        padding-left: 0px;
       }
     }
     .value {

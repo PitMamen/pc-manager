@@ -49,90 +49,78 @@
         <div class="row">
           <span class="name">转诊原因</span>
           <span class="value">{{info.referralReason||''}}</span>
+          <span class="name">转回日期</span>
+          <span class="value">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
+        </div>
+        <div class="row">
+          <span class="name">病情转归</span>
+          <span class="value">{{info.referralReason||''}}</span>
         </div>
         <div class="row up-bottom">
           <span class="name">转诊医生(签字)</span>
           <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          <span class="date right">{{info.regTime||''}}</span>
+          <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
         </div>
 
         <div class="sub-title">
           <span class="name">{{info.outHospitalName||''}}</span>
-          <span class="store">双向转诊单（上转单）</span>
+          <span class="store">双向转诊单（下转单）</span>
           <span class="no">编号{{info.tradeId||''}}</span>
         </div>
         <div class="row">
-          <span class="name">患者姓名</span>
+          <span class="name">姓名</span>
           <span class="value">{{info.patientBaseinfo.name||''}}</span>
           <span class="name">性别</span>
           <span class="value">{{info.patientBaseinfo.sex||''}}</span>
           <span class="name">年龄</span>
           <span class="value">{{info.userInfo.userAge||''}}</span>
-          <span class="name">家庭住址</span>
-          <span class="value">{{(info.patientBaseinfo.address||'') + (info.patientBaseinfo.addressDetail||'')}}</span>
-        </div>
-        <div class="row">
+          <span class="name">病历号</span>
+          <span class="value">{{info.userInfo.userAge||''}}</span>
           <span class="name">联系电话</span>
           <span class="value">{{info.patientBaseinfo.phone||''}}</span>
-          <span class="name">费别</span>
-          <span class="value">{{info.patientBaseinfo.insuranceType||''}}</span>
-          <span class="name">初步诊断</span>
-          <span class="value">{{info.diagnos||''}}</span>
         </div>
         <div class="row">
-          <span class="name">转往医疗机构</span>
-          <span class="value">{{info.inHospitalName||''}}</span>
-          <span class="name">科室</span>
-          <span class="value">{{info.inDept||''}}</span>
+          <span class="name">家庭住址</span>
+          <span class="value">{{(info.patientBaseinfo.address||'') + (info.patientBaseinfo.addressDetail||'')}}</span>
+          <span class="name">家属姓名</span>
+          <span class="value">{{info.patientBaseinfo.contactor||''}}</span>
+          <span class="name">联系电话</span>
+          <span class="value">{{info.patientBaseinfo.contactTel||''}}</span>
+        </div>
+        <div class="row">
+          <span class="name">疾病诊断</span>
+          <span class="value">{{info.diagnos||''}}</span>
         </div>
         <div class="box">
           <div class="row">
-            <span>转诊目的：</span>
-            <span>{{info.referralReason||''}}</span>
-          </div>
-          <div class="row">
-            <span>病情摘要：</span>
+            <span>相关诊疗信息(检查诊断报告、出院小结等)：</span>
             <span>{{info.diseaseDesc||''}}</span>
           </div>
           <div class="row">
-            <span>转诊注意事项：</span>
+            <span>转回意见(注意事项)：</span>
             <span>{{info.notice||''}}</span>
           </div>
           <div class="row">
-            <div class="right">
-              <span class="name">转诊时限</span>
-              <span class="date">{{info.reachBeginDate||''}}</span>
-            </div>
+            <span class="name">医院</span>
+            <span class="value">{{info.inHospitalName||''}}</span>
+            <span class="name">科室</span>
+            <span class="value">{{info.inDept||''}}</span>
           </div>
           <div class="row">
-            <div class="right">
-              <span class="name">至</span>
-              <span class="date">{{info.reachEndDate||''}}</span>
-            </div>
+            <span class="name">科主任</span>
+            <span class="value">{{info.inHospitalName||''}}</span>
+            <span class="name">联系电话</span>
+            <span class="value">{{info.inDept||''}}</span>
           </div>
           <div class="row">
-            <div class="right">
-              <span class="name">医生签名</span>
-              <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-              <span class="name">电话</span>
-              <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            </div>
+            <span class="name">专科医生</span>
+            <span class="value">{{info.inHospitalName||''}}</span>
+            <span class="name">联系电话</span>
+            <span class="value">{{info.inDept||''}}</span>
           </div>
           <div class="row">
-            <span class="name">转诊社区卫生服务机构名称：(盖章)</span>
-            <span class="value image"></span>
-            <span class="name">转诊医生、审复核人签名</span>
-            <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-          </div>
-          <div class="row">
-            <span class="name">社区卫生服务机构联系电话：</span>
-            <span class="value">{{info.outHospitalTel||''}}</span>
-          </div>
-          <div class="row">
-            <span class="name">患方签字：</span>
-            <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-            <span class="date right">{{info.regTime||''}}</span>
-            <span class="name right">转诊日期</span>
+            <span class="name">日期</span>
+            <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
           </div>
         </div>
       </div>
@@ -146,7 +134,7 @@ const styles = `
   padding: 20px;
   font-size: 12px;
   font-weight: 400;
-  line-height: 21px;
+  line-height: 1.5;
   color: rgba(0,0,0,0.65);
 }
 .print-wrap .right {
@@ -165,7 +153,7 @@ const styles = `
   text-align: center;
 }
 .print-wrap .sub-title .name {
-  margin-right: 10px;
+  padding-right: 10px;
 }
 .print-wrap .sub-title .store {
   font-size: 14px;
@@ -173,18 +161,17 @@ const styles = `
   color: #1A1A1A;
 }
 .print-wrap .sub-title .no {
-  margin-left: 30px;
+  padding-left: 30px;
 }
 .print-wrap .row {
-  margin-bottom: 10px;
-  overflow: hidden;
+  padding-bottom: 10px;
 }
 .print-wrap .row .name {
-  margin-left: 20px;
-  margin-right: 10px;
+  padding-left: 20px;
+  padding-right: 10px;
 }
 .print-wrap .row .name:first-child {
-  margin-left: 0px;
+  padding-left: 0px;
 }
 .print-wrap .row .value {
   padding-left: 5px;
@@ -211,6 +198,7 @@ const styles = `
   border: 1px dashed #999999;
 }`;
 
+import moment from "moment";
 import printJS from 'print-js';
 import {
   getReferralTradeById
@@ -229,6 +217,7 @@ export default {
     };
   },
   methods: {
+    moment,
     open(id) {
       this.visible = true;
       this.id = id;
@@ -299,7 +288,7 @@ export default {
     padding: 10px 0;
     text-align: center;
     .name {
-      margin-right: 10px;
+      padding-right: 10px;
     }
     .store {
       font-size: 14px;
@@ -307,17 +296,16 @@ export default {
       color: #1A1A1A;
     }
     .no {
-      margin-left: 30px;
+      padding-left: 30px;
     }
   }
   .row {
-    margin-bottom: 10px;
-    overflow: hidden;
+    padding-bottom: 10px;
     .name {
-      margin-left: 20px;
-      margin-right: 10px;
+      padding-left: 20px;
+      padding-right: 10px;
       &:first-child {
-        margin-left: 0px;
+        padding-left: 0px;
       }
     }
     .value {
