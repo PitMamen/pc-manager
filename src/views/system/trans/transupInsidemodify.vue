@@ -1399,9 +1399,9 @@ export default {
 
     onSelectInDoctor(userId) {
       let getOne = this.inDocDatas.find((item) => item.docId == userId);
-      this.uploadData.docName = getOne.docName;
+      this.uploadData.docName = getOne.doc_name;
       console.log("onSelectInDoctor docId", userId);
-      console.log("onSelectInDoctor docName", getOne.docName);
+      console.log("onSelectInDoctor docName", getOne.doc_name);
     },
 
     getTreeUsers() {
