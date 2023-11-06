@@ -1860,8 +1860,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.ant-steps-item-subtitle {
-  white-space: pre-line;
+/deep/ .ant-steps-item-subtitle {
+  white-space: pre-line !important;
 }
 
 button {
