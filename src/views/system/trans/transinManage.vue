@@ -241,6 +241,8 @@ export default {
     this.$bus.$on('refreshtransinManage', (record) => {
       console.log('refreshtransinManage', record)
       this.$refs.table.refresh()
+
+      
     })
   },
 
