@@ -3,10 +3,48 @@
       <a-card :bordered="false">
         <!-- 基本信息 -->
         <div class="div-kuang">
-          <!-- <div class="div-title">
+          <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">档案信息</span>
-          </div> -->
+          </div>
+          <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #f90505; margin-top: 3px">*</span>患者姓名：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.name || '' }}</div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #f90505">*</span>身份证：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.identificationNo || '' }}</div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">性别：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.sex || '' }}</div>
+          </div>
+
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #f90505">*</span>出生日期：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.birthday || '' }}</div>
+          </div>
+        </div>
+        <div class="div-line">
+          <div class="div-cell">
+            <div class="div-cell-name"><span style="color: #f90505">*</span>本人电话：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.contactTel }}</div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">联系人姓名：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.contactor || '' }}</div>
+          </div>
+          <div class="div-cell">
+            <div class="div-cell-name">联系人电话：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.contactTel || '' }}</div>
+          </div>
+
+          <div class="div-cell">
+            <div class="div-cell-name">国籍：</div>
+            <div class="div-cell-value">{{ patientBaseinfo.country || '' }}</div>
+          </div>
+        </div>
   
           <div class="div-line">
             <div class="div-cell">
@@ -130,7 +168,7 @@
               <div class="div-cell-value" style="width: 100%">{{ dataInfo.docName || '' }}</div>
             </div>
             <div class="div-cell">
-              <div class="div-cell-name" style="width:109px">期望到院时间：</div>
+              <div class="div-cell-name" style="width:120px">期望到院时间：</div>
               <div class="div-cell-value" style="width: 100%">{{ dataInfo.reachBeginDate || '' }}至{{dataInfo.reachEndDate}}</div>
             </div>
           </div>
@@ -155,7 +193,7 @@
           <div class="div-line" style="margin-bottom: 10px">
             <div class="div-cell">
               <div class="div-cell-name">申请人：</div>
-              <div class="div-cell-value">邓鑫</div>
+              <div class="div-cell-value">{{dataInfo.reqDocName||''}}</div>
             </div>
             <div class="div-cell">
               <div class="div-cell-name">登记日期：</div>
@@ -207,7 +245,7 @@
   
           <div class="div-line" style="margin-bottom: 10px">
             <div class="div-cell" style="width: 100%">
-              <div class="div-cell-name" style="margin-top: -82px; margin-left: 5px">收治意见：</div>
+              <div class="div-cell-name" style="margin-top: -82px; margin-left: 5px">审核意见：</div>
               <div class="div-cell-value" style="width: 100%">
                 <a-textarea
                   :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
