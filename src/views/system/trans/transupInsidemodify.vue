@@ -1254,7 +1254,13 @@ export default {
 
           getReferralLogList(this.uploadData.tradeId).then((res) => {
             if (res.code == 0) {
-              // this.referralLogList = res.data.concat(res.data).concat(res.data);
+              if (res.data) {
+            res.data.forEach((item, index) => {
+              if (item.dealDetail == '统一预约') {
+                res.data.splice(index, 1)
+              }
+            })
+          }
               this.referralLogList = res.data;
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
                 return !itemTemp.dealUserName;

@@ -311,12 +311,9 @@
           :description="item.remark || '--'"
         />
       </a-steps>
-
-
-
     </a-card>
-     <printDownForm ref="printDownForm" @ok="handleOk" />
-     <printUpForm ref="printUpForm" @ok="handleOk" />
+    <printDownForm ref="printDownForm"  />
+    <printUpForm ref="printUpForm"  />
   </a-spin>
 </template>
   
@@ -333,16 +330,16 @@ import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import moment from 'moment'
-import printJS from 'print-js';
-import printDownForm from "./printDownForm";
-import printUpForm from "./printUpForm";
+import printJS from 'print-js'
+import printDownForm from './printDownForm'
+import printUpForm from './printUpForm'
 
 export default {
   components: {
     STable,
     Ellipsis,
     printDownForm,
-    printUpForm
+    printUpForm,
     // chooseMedic,
   },
   data() {
@@ -364,7 +361,7 @@ export default {
       inDocDatas: [],
       inSelectDepartment: [],
       referralLogList: [],
-      tradeType:2,  //根据此标致 打印 上转 还是下转  2 下转  1 上转
+      tradeType: 2, //根据此标致 打印 上转 还是下转  2 下转  1 上转
       lineStatus: 'error', //wait process finish error
       linePositon: 1,
 
@@ -407,10 +404,10 @@ export default {
     // 打印
     print() {
       // 下转
-      if (this.tradeType==2) {
+      if (this.tradeType == 2) {
         this.$refs.printDownForm.open(this.tradeId)
         // 上转
-      }else{
+      } else {
         this.$refs.printUpForm.open(this.tradeId)
       }
     },
@@ -426,7 +423,7 @@ export default {
 
               this.getDepartmentSelectList(this.dataInfo.inDept)
               this.getTreeUsers(this.dataInfo.inDeptCode)
-             this.tradeType = this.dataInfo.tradeType.value
+              this.tradeType = this.dataInfo.tradeType.value
               this.requestData.status = this.dataInfo.status.value
               this.requestData.docId = this.dataInfo.docId
               this.requestData.docName = this.dataInfo.docName
@@ -452,44 +449,48 @@ export default {
     getReferralLogListOut(tradeId) {
       getReferralLogList(tradeId).then((res) => {
         if (res.code == 0) {
-          // this.referralLogList = res.data.concat(res.data).concat(res.data);
+          if (res.data) {
+            res.data.forEach((item, index) => {
+              if (item.dealDetail == '统一预约') {
+                res.data.splice(index, 1)
+              }
+            })
+          }
+
           this.referralLogList = res.data
           let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
             return !itemTemp.dealUserName
           })
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
-                this.linePositon = haveIndex - 1; //算出目前的步骤
-              } else {
-                this.linePositon = this.referralLogList.length - 1;
-              }
+            this.linePositon = haveIndex - 1 //算出目前的步骤
+          } else {
+            this.linePositon = this.referralLogList.length - 1
+          }
 
-              this.lineStatus =
-                this.referralLogList[this.linePositon].deal_result == "成功"
-                  ? "process"
-                  : "error";
+          this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
 
-              if (this.referralLogList[this.linePositon].deal_result == "失败") {
-                this.$set(
-                  this.referralLogList[this.linePositon],
-                  "createTime",
-                  this.referralLogList[this.linePositon].dealImages
-                );
-              }
+          if (this.referralLogList[this.linePositon].deal_result == '失败') {
+            this.$set(
+              this.referralLogList[this.linePositon],
+              'createTime',
+              this.referralLogList[this.linePositon].dealImages
+            )
+          }
 
           //申请人和时间拼在一起
           this.referralLogList.forEach((element, index) => {
-            if (element.deal_result=="成功") {
-              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime||'')
-            }else if (element.deal_result=="失败") {
-                this.$set(element, 'nameAndTime', element.dealUserName+ '\n' + element.dealImages||'')
+            if (element.deal_result == '成功') {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime || '')
+            } else if (element.deal_result == '失败') {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages || '')
             }
             // else{
             //   this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
             // }
           })
 
-          console.log("FFFFFFF:",this.referralLogList)
+          console.log('FFFFFFF:', this.referralLogList)
         } else {
           this.$message.error(res.message)
         }
@@ -624,12 +625,9 @@ export default {
 </script>
   
   <style lang="less" scoped>
-  
-  /deep/ .ant-steps-item-subtitle {
+/deep/ .ant-steps-item-subtitle {
   white-space: pre-line !important;
 }
-
-
 
 button {
   margin-right: 8px;

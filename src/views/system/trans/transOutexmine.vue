@@ -72,8 +72,8 @@
   
       </s-table>
       <!-- <recordDetail ref="recordDetail" @ok="handleOk" /> -->
-      <printDownForm ref="printDownForm" @ok="handleOk" />
-    <printUpForm ref="printUpForm" @ok="handleOk" />
+      <printDownForm ref="printDownForm"  />
+    <printUpForm ref="printUpForm" />
     </a-card>
   </template>
      
