@@ -1514,6 +1514,8 @@ export default {
 
       this.uploadData.reachBeginDate = this.createValue[0];
       this.uploadData.reachEndDate = this.createValue[1];
+      this.uploadData.reqDocName = this.user.userName;
+      this.uploadData.regTime = formatDate(new Date());
     },
 
     /**
@@ -1623,7 +1625,7 @@ export default {
         "reachEndDate",
         moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
       );
-      delete tempData.status
+      delete tempData.status;
 
       console.log("addTransUp tempData", tempData);
       this.confirmLoading = true;
