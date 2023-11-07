@@ -561,6 +561,8 @@ export default {
     cancelApply() {
       cancelAudit(this.tradeId).then((res) => {
         if (res.code == 0) {
+          this.$message.success('操作成功')
+            this.$bus.$emit('refreshtransinManage', '刷新转入管理列表')
           this.$router.go(-1)
         }
       })
