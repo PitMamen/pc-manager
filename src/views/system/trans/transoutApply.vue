@@ -412,7 +412,7 @@ export default {
             if (element.deal_result == "成功") {
               this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime)
             } else if (element.deal_result == "失败") {
-              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
+              this.$set(element, 'nameAndTime', element.dealUserName + '\r\n' + element.dealImages)
             }
             // else{
             //   this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)

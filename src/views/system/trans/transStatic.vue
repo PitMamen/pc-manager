@@ -54,31 +54,31 @@
     >
       <!-- 上转人数 -->
       <span slot="upNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '上转人数', 1)">{{ record.upNum }}</a>
+        <a @click="goDetail(record,'上转人数',1)">{{ record.upNum }}</a>
       </span>
       <!-- 下转人数 -->
       <span slot="downNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '下转人数', 2)">{{ record.downNum }}</a>
+        <a @click="goDetail(record, '下转人数', 2)">{{ record.downNum }}</a>
       </span>
       <!-- 回转人数 -->
       <span slot="backNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '回转人数', 3)">{{ record.backNum }}</a>
+        <a @click="goDetail(record, '回转人数', 3)">{{ record.backNum }}</a>
       </span>
       <!-- 转出人数 -->
       <span slot="outNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '转出人数', 4)">{{ record.outNum }}</a>
+        <a @click="goDetail(record, '转出人数', 4)">{{ record.outNum }}</a>
       </span>
       <!-- 转出审核不通过 -->
       <span slot="outUncheckedNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '转出审核不通过', 5)">{{ record.outUncheckedNum }}</a>
+        <a @click="goDetail(record, '转出审核不通过', 5)">{{ record.outUncheckedNum }}</a>
       </span>
       <!-- 接入接收 -->
       <span slot="inNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '接入接收', 6)">{{ record.inNum }}</a>
+        <a @click="goDetail(record, '接入接收', 6)">{{ record.inNum }}</a>
       </span>
       <!-- 转入拒收 -->
       <span slot="inUncheckedNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="$refs.staticDetail.detail(record, '转入拒收', 7)">{{ record.inUncheckedNum }}</a>
+        <a @click="goDetail(record, '转入拒收', 7)">{{ record.inUncheckedNum }}</a>
       </span>
     </s-table>
     <!-- <info-form ref="infoForm" @ok="handleOk" /> -->
@@ -261,6 +261,21 @@ export default {
     })
   },
   methods: {
+
+   goDetail(record,name,type){
+    if(record.hospitalCode){
+      this.$refs.staticDetail.detail(record, name, type)
+    }else{
+      this.$set(record,'hospitalCode',this.queryParam.hospitalCode)
+      console.log("GGGl:",record)
+      this.$refs.staticDetail.detail(record, name, type)
+    }
+   },
+
+
+
+
+
     //导出
     exportOut() {
       let params = JSON.parse(JSON.stringify(this.queryParam))
