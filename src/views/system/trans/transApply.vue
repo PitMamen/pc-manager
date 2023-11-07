@@ -190,7 +190,7 @@
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 show-search
                 v-model="requestData.inDept"
-                style="width: 35%"
+                style="width: 42%"
                 :filter-option="false"
                 :not-found-content="fetching ? undefined : null"
                 allow-clear
@@ -220,7 +220,7 @@
                 @focus="onDocFocus"
                 placeholder="请选择"
                 allow-clear
-                style="width: 35%; height: 28px"
+                style="width: 42%; height: 28px"
               >
                 <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userName">{{
                   item.userName
@@ -228,9 +228,9 @@
               </a-select>
               <!-- </div> -->
             </div>
-            <div class="div-cell">
-              <div class="div-cell-name">期望到院时间：</div>
-              <div class="div-cell-value">
+            <div class="div-cell" style="width:27%">
+              <div class="div-cell-name" style="width: 140px">期望到院时间：</div>
+              <div class="div-cell-value" style="width: 100%">
                 <a-range-picker
                   :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                   style="width: 185px"
@@ -245,7 +245,7 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name">收治结论：</div>
-            <div class="div-cell-value">
+            <div class="div-cell-value" style="width:170px !important">
               <a-radio-group
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 v-model="requestData.status"
@@ -254,10 +254,10 @@
                 @change="radioChange"
                 v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
               >
-                <a-radio :value="4" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important">
+                <a-radio :value="4" style="font-size: 12px; color: #4D4D4D; margin-right: 0px !important">
                   通过
                 </a-radio>
-                <a-radio :value="5" style="font-size: 8px; color: #1a1a1a"> 不通过 </a-radio>
+                <a-radio :value="5" style="font-size: 12px; color: #4D4D4D"> 不通过 </a-radio>
               </a-radio-group>
             </div>
           </div>
@@ -483,6 +483,7 @@ export default {
             if (element.deal_result == '成功') {
               this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime || '')
             } else if (element.deal_result == '失败') {
+              this.$set(element, 'dealDetail', element.dealDetail+"(不通过)")
               this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages || '')
             }
             // else{
@@ -690,7 +691,7 @@ button {
       align-items: center;
 
       .div-cell-name {
-        width: 85px;
+        width: 110px;
         text-align: right;
         color: #4d4d4d;
       }

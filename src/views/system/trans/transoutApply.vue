@@ -167,7 +167,7 @@
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.docName || '' }}</div>
           </div>
           <div class="div-cell">
-            <div class="div-cell-name" style="width: 120px">期望到院时间：</div>
+            <div class="div-cell-name" style="width: 140px">期望到院时间：</div>
             <div class="div-cell-value" style="width: 100%">
               {{ dataInfo.reachBeginDate || '' }}至{{ dataInfo.reachEndDate }}
             </div>
@@ -206,19 +206,19 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name">审核结果：</div>
-            <div class="div-cell-value">
+            <div class="div-cell-value" style="width:170px !important">
               <a-radio-group
-                :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
+                :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3|| dataInfo.status.value == 5"
                 v-model="requestData.status"
                 style="margin-left: 10px"
                 name="radioGroup"
                 @change="radioChange"
                 v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
               >
-                <a-radio :value="2" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important">
+                <a-radio :value="2" style="font-size: 12px; color: #4D4D4D; margin-right: 0px !important">
                   通过
                 </a-radio>
-                <a-radio :value="3" style="font-size: 8px; color: #1a1a1a"> 不通过 </a-radio>
+                <a-radio :value="3" style="font-size: 12px; color: #4D4D4D"> 不通过 </a-radio>
               </a-radio-group>
             </div>
           </div>
@@ -239,7 +239,7 @@
             <div class="div-cell-name" style="margin-top: -82px; margin-left: 5px">审核意见：</div>
             <div class="div-cell-value" style="width: 100%">
               <a-textarea
-                :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
+                :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3|| dataInfo.status.value == 5"
                 v-model="requestData.rejectReason"
                 placeholder="请输入意见"
                 style="height: 80px; min-height: 100px; width: 80%"
@@ -253,6 +253,7 @@
       <div class="div-pro-btn">
         <div style="flex: 1"></div>
         <a-button
+        v-if="dataInfo.status.value != 5"
           type="primary"
           :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3"
           @click="submitData()"
@@ -442,6 +443,7 @@ export default {
             if (element.deal_result == '成功') {
               this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime || '')
             } else if (element.deal_result == '失败') {
+              this.$set(element, 'dealDetail', element.dealDetail+"(不通过)")
               this.$set(element, 'nameAndTime', element.dealUserName + '\r\n' + element.dealImages || '')
             }
             // else{
@@ -664,7 +666,7 @@ button {
       align-items: center;
 
       .div-cell-name {
-        width: 85px;
+        width: 110px;
         text-align: right;
         color: #4d4d4d;
       }

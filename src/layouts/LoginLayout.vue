@@ -14,59 +14,11 @@
                 <img class="icon icon2" src="@/assets/login/icon2.png" v-if="itemChild.logo === 'icon2'" />
                 <img class="icon icon3" src="@/assets/login/icon3.png" v-if="itemChild.logo === 'icon3'" />
                 <img class="icon icon4" src="@/assets/login/icon4.png" v-if="itemChild.logo === 'icon4'" />
+                <img class="icon icon5" src="@/assets/login/icon5.png" v-if="itemChild.logo === 'icon5'" />
                 <div class="titles">{{ itemChild.applicationName }}</div>
               </div>
             </div>
           </div>
-
-          <!-- <div class="item item1" @click="itemClick(sysApps[0])" v-if="sysApps && sysApps[0]">
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[0].logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[0].logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[0].logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[0].logo === 'icon4'" />
-              <div class="titles">{{ sysApps[0].applicationName }}</div>
-            </div>
-            <div class="item item2" @click="itemClick(sysApps[1])" v-if="sysApps && sysApps[1]">
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[1].logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[1].logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[1].logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[1].logo === 'icon4'" />
-              <div class="titles">{{ sysApps[1].applicationName }}</div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="item item3" @click="itemClick(sysApps[2])" v-if="sysApps && sysApps[2]">
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[2].logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[2].logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[2].logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[2].logo === 'icon4'" />
-              <div class="titles">{{ sysApps[2].applicationName }}</div>
-            </div>
-            <div class="item item4" @click="itemClick(sysApps[3])" v-if="sysApps && sysApps[3]">
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[3].logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[3].logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[3].logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[3].logo === 'icon4'" />
-              <div class="titles">{{ sysApps[3].applicationName }}</div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="item item5" @click="itemClick(sysApps[4])" v-if="sysApps && sysApps[4]">
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[4].logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[4].logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[4].logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[4].logo === 'icon4'" />
-              <div class="titles">{{ sysApps[4].applicationName }}</div>
-            </div>
-            <div class="item item6" @click="itemClick(sysApps[5])" v-if="sysApps && sysApps[5]">
-              <img class="icon icon1" src="@/assets/login/icon1.png" v-if="sysApps[5].logo === 'icon1'" />
-              <img class="icon icon2" src="@/assets/login/icon2.png" v-if="sysApps[5].logo === 'icon2'" />
-              <img class="icon icon3" src="@/assets/login/icon3.png" v-if="sysApps[5].logo === 'icon3'" />
-              <img class="icon icon4" src="@/assets/login/icon4.png" v-if="sysApps[5].logo === 'icon4'" />
-              <div class="titles">{{ sysApps[5].applicationName }}</div>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -235,6 +187,8 @@ export default {
         return '@/assets/login/icon3.png'
       } else if (icon == 'icon4') {
         return '@/assets/login/icon4.png'
+      }else if (icon == 'icon5') {
+        return '@/assets/login/icon5.png'
       }
     },
 
@@ -277,15 +231,15 @@ export default {
       this.sysApps = apps
       if (this.sysApps && this.sysApps.length > 0) {
         this.sysApps.forEach((item) => {
-          if (item.logo == 'icon1') {
-            this.$set(item, 'iconshow', '@/assets/login/icon1.png')
-          } else if (item.logo == 'icon2') {
-            this.$set(item, 'iconshow', '@/assets/login/icon2.png')
-          } else if (item.logo == 'icon3') {
-            this.$set(item, 'iconshow', '@/assets/login/icon3.png')
-          } else if (item.logo == 'icon4') {
-            this.$set(item, 'iconshow', '@/assets/login/icon4.png')
-          }
+          // if (item.logo == 'icon1') {
+          //   this.$set(item, 'iconshow', '@/assets/login/icon1.png')
+          // } else if (item.logo == 'icon2') {
+          //   this.$set(item, 'iconshow', '@/assets/login/icon2.png')
+          // } else if (item.logo == 'icon3') {
+          //   this.$set(item, 'iconshow', '@/assets/login/icon3.png')
+          // } else if (item.logo == 'icon4') {
+          //   this.$set(item, 'iconshow', '@/assets/login/icon4.png')
+          // }
         })
         console.log('VVVV:', this.sysApps)
       }
@@ -550,6 +504,10 @@ border-radius: 10px;
               .px2rem(height, 37);
             }
             .icon4 {
+              .px2rem(width, 42);
+              .px2rem(height, 38);
+            }
+            .icon5 {
               .px2rem(width, 42);
               .px2rem(height, 38);
             }
