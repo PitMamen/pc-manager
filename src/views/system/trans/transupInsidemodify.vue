@@ -10,7 +10,7 @@
           v-if="uploadData.status.value == 3"
           >重新提交</a-button
         >
-        <a-button style="margin-left: 10px" @click="goPrint()">打印</a-button>
+        <a-button style="margin-left: 10px" @click="goPrint">打印</a-button>
       </div>
 
       <!-- <div class="div-pro-btn">
@@ -759,6 +759,7 @@
 
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
     </a-card>
+    <print-UpForm ref="printUpForm" />
   </a-spin>
 </template>
 
@@ -793,14 +794,14 @@ import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
-// import chooseMedic from './chooseMedic'
+import printUpForm from './printUpForm'
 
 import E from "wangeditor";
 export default {
   components: {
     STable,
     Ellipsis,
-    // chooseMedic,
+    printUpForm,
   },
   // props: {
   //   modifyItem: Object,
@@ -1597,7 +1598,9 @@ export default {
 
     goPrint() {
       //TODO
-      this.$message.success("去打印");
+      // console.log('goPrint',JSON.stringify(record))
+      this.$refs.printUpForm.open(this.uploadData.tradeIdStr)
+      // this.$message.success("去打印");
     },
 
     submitData(isReupload) {

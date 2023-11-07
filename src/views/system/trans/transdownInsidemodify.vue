@@ -10,7 +10,7 @@
           v-if="uploadData.status.value == 3"
           >重新提交</a-button
         >
-        <a-button style="margin-left: 10px" @click="goPrint()">打印</a-button>
+        <a-button style="margin-left: 10px" @click="goPrint">打印</a-button>
       </div>
 
       <!-- <div class="div-pro-btn">
@@ -536,6 +536,7 @@
             <div class="div-cell-value">
               <a-select
                 v-model="downType"
+                :disabled="downTypeDisabled"
                 @select="checkAndGetOldTradeId"
                 placeholder="请选择"
                 allow-clear
@@ -858,6 +859,7 @@
       </a-steps>
 
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
+      <print-DownForm ref="printDownForm" />
     </a-card>
   </a-spin>
 </template>
@@ -896,14 +898,14 @@ import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
 import events from "@/components/MultiTab/events";
-// import chooseMedic from './chooseMedic'
+import printDownForm from "./printDownForm";
 
 import E from "wangeditor";
 export default {
   components: {
     STable,
     Ellipsis,
-    // chooseMedic,
+    printDownForm,
   },
   // props: {
   //   modifyItem: Object,
@@ -1022,7 +1024,7 @@ export default {
         outTenantId: undefined,
         outUserId: undefined,
         phone: undefined,
-        upTradeId: "154154151515",
+        // upTradeId: "154154151515",
       },
 
       zhengjianDatas: [],
@@ -1056,6 +1058,7 @@ export default {
       referralLogList: [],
 
       loading: false,
+      downTypeDisabled: false,
     };
   },
   // watch: {
@@ -1298,8 +1301,13 @@ export default {
     },
 
     goUpDetail() {
-      if (this.uploadData.upTradeId) {
-        //有则跳转
+      if (this.uploadData.oldTradeId) {
+        this.$router.push({
+          name: "transinDetail", // path: '/servicewise/projectEdit',
+          query: {
+            id: this.uploadData.oldTradeId,
+          },
+        });
       }
       //TODO
     },
@@ -1358,6 +1366,12 @@ export default {
           ];
           this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
 
+          //oldTradeIdStr为字符串，重新赋值保证数据不失真；有oldTradeId说明是回转，不能改变下转类型
+          this.$set(this.uploadData, "oldTradeId", this.uploadData.oldTradeIdStr);
+          if (this.uploadData.oldTradeId) {
+            this.downTypeDisabled = true;
+          }
+
           //转入科室
           this.originData = [];
           this.originData = [
@@ -1407,11 +1421,13 @@ export default {
                     ? "process"
                     : "error";
 
-                this.$set(
-                  this.referralLogList[this.linePositon],
-                  "createTime",
-                  this.referralLogList[this.linePositon].dealImages
-                );
+                if (this.referralLogList[this.linePositon].deal_result == "失败") {
+                  this.$set(
+                    this.referralLogList[this.linePositon],
+                    "createTime",
+                    this.referralLogList[this.linePositon].dealImages
+                  );
+                }
               }
 
               //申请人和时间拼在一起
@@ -1738,7 +1754,7 @@ export default {
 
     goPrint() {
       //TODO
-      this.$message.success("去打印");
+      this.$refs.printDownForm.open(this.uploadData.tradeIdStr);
     },
 
     submitData(isReupload) {

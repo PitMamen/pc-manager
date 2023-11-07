@@ -104,7 +104,7 @@
           >
         </template>
         <template>
-          <a @click="goPrint" style="margin-left: 8px"
+          <a @click="goPrint(record)" style="margin-left: 8px"
             ><a-icon style="margin-right: 5px" type="printer" />打印</a
           >
         </template>
@@ -124,6 +124,8 @@
         <a-button @click="handleOkDes">确定</a-button>
       </template>
     </a-modal>
+
+    <print-DownForm ref="printDownForm" />
   </a-card>
 </template>
 
@@ -136,7 +138,7 @@ import {
 } from "@/api/modular/system/posManage";
 import { list } from "@/api/modular/system/rate";
 import { STable, Ellipsis } from "@/components";
-// import infoForm from "./infoForm";
+import printDownForm from "./printDownForm";
 import moment from "moment";
 import Vue from "vue";
 import { TRUE_USER } from "@/store/mutation-types";
@@ -145,7 +147,7 @@ export default {
   components: {
     STable,
     Ellipsis,
-    // infoForm,
+    printDownForm,
   },
   data() {
     return {
@@ -415,9 +417,11 @@ export default {
         },
       });
     },
-    goPrint() {
+    goPrint(record) {
       //TODO
-      this.$message.success("去打印");
+      console.log('goPrint',JSON.stringify(record))
+      this.$refs.printDownForm.open(record.tradeIdStr)
+      // this.$message.success("去打印");
     },
 
     addTransUp() {
