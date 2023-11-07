@@ -1758,8 +1758,11 @@ export default {
         delete tempData.outCheckResult
       }
 
+      //isReupload true重新提交；false,修改不要status字段
       if (isReupload) {
-        this.$set(tempData, 'status', 1) //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
+        this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
+      }else{
+        delete tempData.status
       }
 
       console.log('addTransDown tempData modify', JSON.stringify(tempData))
