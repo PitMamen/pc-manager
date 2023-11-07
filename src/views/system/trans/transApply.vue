@@ -455,17 +455,16 @@ export default {
           // this.referralLogList = res.data.concat(res.data).concat(res.data);
           this.referralLogList = res.data
           let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
-            return !itemTemp.remark
+            return !itemTemp.dealUserName
           })
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
             this.linePositon = haveIndex - 1 //算出目前的步骤
             this.lineStatus = this.referralLogList[this.linePositon].deal_result == "成功" ? 'process' : 'error'
-
             this.$set(
               this.referralLogList[this.linePositon],
               'createTime',
-              this.referralLogList[this.linePositon].createTime ||''
+              this.referralLogList[this.linePositon].dealImages ||''
             )
           }
 

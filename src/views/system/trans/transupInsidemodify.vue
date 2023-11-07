@@ -1257,7 +1257,7 @@ export default {
               // this.referralLogList = res.data.concat(res.data).concat(res.data);
               this.referralLogList = res.data;
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
-                return !itemTemp.remark;
+                return !itemTemp.dealUserName;
               });
               console.log("getReferralLogList", haveIndex);
               if (haveIndex != -1) {
