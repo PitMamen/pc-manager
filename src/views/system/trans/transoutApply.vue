@@ -258,7 +258,7 @@
           @click="submitData()"
           >保存</a-button
         >
-        <a-button style="margin-left: 10px" @click="cancel()">打印</a-button>
+        <a-button style="margin-left: 10px" @click="print()">打印</a-button>
       </div>
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
 
@@ -272,6 +272,9 @@
           :description="item.remark || '--'"
         />
       </a-steps>
+
+      <printDownForm ref="printDownForm" @ok="handleOk" />
+      <printUpForm ref="printUpForm" @ok="handleOk" />
     </a-card>
   </a-spin>
 </template>
@@ -290,11 +293,15 @@ import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import moment from 'moment'
-
+import printJS from 'print-js'
+import printDownForm from './printDownForm'
+import printUpForm from './printUpForm'
 export default {
   components: {
     STable,
     Ellipsis,
+    printDownForm,
+    printUpForm,
     // chooseMedic,
   },
   data() {
@@ -318,7 +325,7 @@ export default {
       referralLogList: [],
       lineStatus: 'error', //wait process finish error
       linePositon: 1,
-
+      tradeType: 2, //根据此标致 打印 上转 还是下转  2 下转  1 上转
       requestData: {
         inDept: '', //准入科室名称
         inDeptCode: undefined, //转入科室编码
@@ -355,6 +362,15 @@ export default {
       this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
     },
 
+    // 打印
+    print() {
+      if (this.tradeType == 2) {
+        this.$refs.printDownForm.open(this.tradeId)
+      } else {
+        this.$refs.printUpForm.open(this.tradeId)
+      }
+    },
+
     getDetaiData(tradeId) {
       this.confirmLoading = true
       getReferralTradeById({ id: tradeId })
@@ -366,7 +382,7 @@ export default {
 
               // this.getDepartmentSelectList(this.dataInfo.inDept)
               this.getTreeUsers(this.dataInfo.inDeptCode)
-
+              this.tradeType = this.dataInfo.tradeType.value
               this.requestData.status = this.dataInfo.status.value
               this.requestData.docId = this.dataInfo.docName
               this.requestData.inDeptCode = this.dataInfo.inDept
@@ -398,7 +414,7 @@ export default {
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
             this.linePositon = haveIndex - 1 //算出目前的步骤
-            this.lineStatus = this.referralLogList[this.linePositon].deal_result == "成功" ? 'process' : 'error'
+            this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
 
             // this.$set(
             //   this.referralLogList[this.linePositon],
@@ -409,10 +425,10 @@ export default {
 
           //申请人和时间拼在一起
           this.referralLogList.forEach((element, index) => {
-            if (element.deal_result == "成功") {
-              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime)
-            } else if (element.deal_result == "失败") {
-              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
+            if (element.deal_result == '成功') {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime||'')
+            } else if (element.deal_result == '失败') {
+              this.$set(element, 'nameAndTime', element.dealUserName + '\r\n' + element.dealImages||'')
             }
             // else{
             //   this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
@@ -559,6 +575,9 @@ export default {
 </script>
     
     <style lang="less" scoped>
+/deep/.ant-steps-item-subtitle {
+  width: 120px;
+}
 button {
   margin-right: 8px;
 }
