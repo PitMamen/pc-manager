@@ -1370,6 +1370,7 @@ export default {
           this.$set(this.uploadData, "oldTradeId", this.uploadData.oldTradeIdStr);
           if (this.uploadData.oldTradeId) {
             this.downTypeDisabled = true;
+            this.downType = 2
           }
 
           //转入科室
