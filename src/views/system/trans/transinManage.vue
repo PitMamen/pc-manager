@@ -56,7 +56,7 @@
 
         <a @click="goPrint(record)" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
 
-        <a @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />评论</a>
+        <a disabled="true" @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />评论</a>
       </span>
 
       <span
@@ -78,6 +78,7 @@
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
+import printJS from 'print-js';
 import printDownForm from './printDownForm'
 import printUpForm from './printUpForm'
 import {
@@ -277,15 +278,12 @@ export default {
 
     goPrint(record) {
       // 下转
-      // if (record.tradeType.value == 2) {
-      //   this.$refs.printDownForm.open(this.tradeId)
-      //   // 上转
-      // } else {
-      //   this.$refs.printUpForm.open(this.tradeId)
-      // }
-
-      //TODO
-      this.$message.success('去打印')
+      if (record.tradeType.value == 2) {
+        this.$refs.printDownForm.open(record.tradeId)
+        // 上转
+      } else {
+        this.$refs.printUpForm.open(record.tradeId)
+      }
     },
 
     goComment() {

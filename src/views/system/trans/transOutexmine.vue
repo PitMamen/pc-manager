@@ -54,9 +54,9 @@
         <span slot="action" slot-scope="text, record">
           <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
   
-          <a @click="goPrint" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
+          <a @click="goPrint(record)" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
   
-          <a @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />评论</a>
+          <a   disabled="true" @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />评论</a>
         </span>
   
   
@@ -72,12 +72,17 @@
   
       </s-table>
       <!-- <recordDetail ref="recordDetail" @ok="handleOk" /> -->
+      <printDownForm ref="printDownForm" @ok="handleOk" />
+    <printUpForm ref="printUpForm" @ok="handleOk" />
     </a-card>
   </template>
      
      <script>
   import { STable } from '@/components'
   import moment from 'moment'
+  import printJS from 'print-js';
+  import printDownForm from './printDownForm'
+import printUpForm from './printUpForm'
   import {
     orderList,
     accessHospitals,
@@ -93,6 +98,8 @@
   export default {
     components: {
       STable,
+      printDownForm,
+    printUpForm,
       //   recordDetail
       // addForm,
       //   orderDetail,
@@ -278,9 +285,15 @@
         });
       },
   
-      goPrint() {
-        //TODO
-        this.$message.success('去打印')
+      goPrint(record) {
+        // 下转
+      if (record.tradeType.value == 2) {
+        this.$refs.printDownForm.open(record.tradeId)
+        // 上转
+      } else {
+        this.$refs.printUpForm.open(record.tradeId)
+      }
+        // this.$message.success('去打印')
       },
   
       goComment() {
