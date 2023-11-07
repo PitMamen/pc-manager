@@ -52,7 +52,7 @@
         </div>
         <div class="row up-bottom">
           <span class="name">转诊医生(签字)</span>
-          <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+          <span class="value">{{info.reqDocName||''}}</span>
           <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
         </div>
 
@@ -113,16 +113,16 @@
           <div class="row" style="overflow: hidden;">
             <div class="right">
               <span class="name">医生签名</span>
-              <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span class="value">{{info.reqDocName||''}}</span>
               <span class="name">电话</span>
-              <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+              <span class="value">{{info.reqDocUserInfo.phone||''}}</span>
             </div>
           </div>
           <div class="row">
             <span class="name">转诊社区卫生服务机构名称：(盖章)</span>
             <span class="value image"></span>
             <span class="name">转诊医生、审复核人签名</span>
-            <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="value">{{info.outCheck||''}}</span>
           </div>
           <div class="row">
             <span class="name">社区卫生服务机构联系电话：</span>
@@ -130,7 +130,7 @@
           </div>
           <div class="row">
             <span class="name">患方签字：</span>
-            <span class="value">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <span class="value">{{info.patientBaseinfo.name||''}}</span>
             <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
             <span class="name right">转诊日期</span>
           </div>
@@ -141,77 +141,9 @@
 </template>
 
 <script>
-const styles = `
-.print-wrap {
-  padding: 20px;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: rgba(0,0,0,0.65);
-}
-.print-wrap .right {
-  float: right;
-}
-.print-wrap .title {
-  padding-bottom: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #1A1A1A;
-  text-align: center;
-  border-bottom: 1px dashed #1A1A1A;
-}
-.print-wrap .sub-title {
-  padding: 10px 0;
-  text-align: center;
-}
-.print-wrap .sub-title .name {
-  padding-right: 10px;
-}
-.print-wrap .sub-title .store {
-  font-size: 14px;
-  font-weight: 500;
-  color: #1A1A1A;
-}
-.print-wrap .sub-title .no {
-  padding-left: 30px;
-}
-.print-wrap .row {
-  padding-bottom: 10px;
-}
-.print-wrap .row .name {
-  padding-left: 20px;
-  padding-right: 10px;
-}
-.print-wrap .row .name:first-child {
-  padding-left: 0px;
-}
-.print-wrap .row .value {
-  padding-left: 5px;
-  padding-right: 20px;
-  border-bottom: 1px solid #1A1A1A;
-}
-.print-wrap .row .value.image {
-  display: inline-block;
-  max-width: 80px;
-  max-height: 80px;
-  vertical-align: bottom;
-  border-bottom: none;
-}
-.print-wrap .row .ident {
-  text-indent: 60px;
-}
-.print-wrap .up-bottom {
-  padding-top: 30px;
-  padding-bottom: 20px;
-  border-bottom: 1px dashed #1A1A1A;
-}
-.print-wrap .box {
-  padding: 20px 10px;
-  border: 1px dashed #999999;
-}`;
-
 import moment from "moment";
 import printJS from 'print-js';
+import html2Canvas from 'html2canvas';
 import {
   getReferralTradeById
 } from "@/api/modular/system/posManage";
@@ -224,6 +156,7 @@ export default {
       id: '',
       info: {
         userInfo: {},
+        reqDocUserInfo: {},
         patientBaseinfo: {}
       }
     };
@@ -253,10 +186,21 @@ export default {
       });
     },
     handleSubmit() {
-      printJS({
-        printable: 'printId',
-        type: 'html',
-        style: styles
+      this.confirmLoading = true;
+      const element = document.getElementById('printId');
+      html2Canvas(element, {
+        useCORS: true,
+        width: element.scrollWidth,
+        height: element.scrollHeight
+      }).then((canvas) => {
+        const url = canvas.toDataURL('image/jpeg', 1.0);
+        printJS({
+          printable: url,
+          type: 'image',
+          style: `@page {size: auto;margin: 0;}`
+        });
+      }).finally(() => {
+        this.confirmLoading = false;
       });
     },
     handleCancel() {
