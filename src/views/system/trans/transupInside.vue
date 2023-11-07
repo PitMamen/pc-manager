@@ -1623,6 +1623,7 @@ export default {
         "reachEndDate",
         moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
       );
+      delete tempData.status
 
       console.log("addTransUp tempData", tempData);
       this.confirmLoading = true;
