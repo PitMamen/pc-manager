@@ -794,7 +794,7 @@ import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
-import printUpForm from './printUpForm'
+import printUpForm from "./printUpForm";
 
 import E from "wangeditor";
 export default {
@@ -1262,11 +1262,16 @@ export default {
               console.log("getReferralLogList", haveIndex);
               if (haveIndex != -1) {
                 this.linePositon = haveIndex - 1; //算出目前的步骤
-                this.lineStatus =
-                  this.referralLogList[this.linePositon].deal_result == "成功"
-                    ? "process"
-                    : "error";
+              } else {
+                this.linePositon = this.referralLogList.length - 1;
+              }
 
+              this.lineStatus =
+                this.referralLogList[this.linePositon].deal_result == "成功"
+                  ? "process"
+                  : "error";
+
+              if (this.referralLogList[this.linePositon].deal_result == "失败") {
                 this.$set(
                   this.referralLogList[this.linePositon],
                   "createTime",
@@ -1599,7 +1604,7 @@ export default {
     goPrint() {
       //TODO
       // console.log('goPrint',JSON.stringify(record))
-      this.$refs.printUpForm.open(this.uploadData.tradeIdStr)
+      this.$refs.printUpForm.open(this.uploadData.tradeIdStr);
       // this.$message.success("去打印");
     },
 
@@ -1863,7 +1868,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 /deep/ .ant-steps-item-subtitle {
   white-space: pre-line !important;
 }
