@@ -328,6 +328,7 @@ import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import moment from 'moment'
+import printJS from 'print-js';
 
 export default {
   components: {
