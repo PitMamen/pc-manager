@@ -1370,7 +1370,7 @@ export default {
           this.$set(this.uploadData, "oldTradeId", this.uploadData.oldTradeIdStr);
           if (this.uploadData.oldTradeId) {
             this.downTypeDisabled = true;
-            this.downType = 2
+            this.downType = 2;
           }
 
           //转入科室
@@ -1417,18 +1417,21 @@ export default {
               console.log("getReferralLogList", haveIndex);
               if (haveIndex != -1) {
                 this.linePositon = haveIndex - 1; //算出目前的步骤
-                this.lineStatus =
-                  this.referralLogList[this.linePositon].deal_result == "成功"
-                    ? "process"
-                    : "error";
+              } else {
+                this.linePositon = this.referralLogList.length - 1;
+              }
 
-                if (this.referralLogList[this.linePositon].deal_result == "失败") {
-                  this.$set(
-                    this.referralLogList[this.linePositon],
-                    "createTime",
-                    this.referralLogList[this.linePositon].dealImages
-                  );
-                }
+              this.lineStatus =
+                this.referralLogList[this.linePositon].deal_result == "成功"
+                  ? "process"
+                  : "error";
+
+              if (this.referralLogList[this.linePositon].deal_result == "失败") {
+                this.$set(
+                  this.referralLogList[this.linePositon],
+                  "createTime",
+                  this.referralLogList[this.linePositon].dealImages
+                );
               }
 
               //申请人和时间拼在一起
