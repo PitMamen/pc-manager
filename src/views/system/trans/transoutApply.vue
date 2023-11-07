@@ -258,6 +258,7 @@
           @click="submitData()"
           >保存</a-button
         >
+        <a-button v-if="dataInfo.status.value == 5" type="primary" ghost @click="cancelApply()">取消审核</a-button>
         <a-button style="margin-left: 10px" @click="print()">打印</a-button>
       </div>
       <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
@@ -273,7 +274,7 @@
         />
       </a-steps>
 
-      <printDownForm ref="printDownForm"  />
+      <printDownForm ref="printDownForm" />
       <printUpForm ref="printUpForm" />
     </a-card>
   </a-spin>
@@ -287,6 +288,7 @@ import {
   referralExamine,
   getReferralLogList,
   referralOutExamine,
+  cancelAudit,
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
@@ -420,30 +422,27 @@ export default {
           })
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
-                this.linePositon = haveIndex - 1; //算出目前的步骤
-              } else {
-                this.linePositon = this.referralLogList.length - 1;
-              }
+            this.linePositon = haveIndex - 1 //算出目前的步骤
+          } else {
+            this.linePositon = this.referralLogList.length - 1
+          }
 
-              this.lineStatus =
-                this.referralLogList[this.linePositon].deal_result == "成功"
-                  ? "process"
-                  : "error";
+          this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
 
-              if (this.referralLogList[this.linePositon].deal_result == "失败") {
-                this.$set(
-                  this.referralLogList[this.linePositon],
-                  "createTime",
-                  this.referralLogList[this.linePositon].dealImages
-                );
-              }
+          if (this.referralLogList[this.linePositon].deal_result == '失败') {
+            this.$set(
+              this.referralLogList[this.linePositon],
+              'createTime',
+              this.referralLogList[this.linePositon].dealImages
+            )
+          }
 
           //申请人和时间拼在一起
           this.referralLogList.forEach((element, index) => {
             if (element.deal_result == '成功') {
-              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime||'')
+              this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime || '')
             } else if (element.deal_result == '失败') {
-              this.$set(element, 'nameAndTime', element.dealUserName + '\r\n' + element.dealImages||'')
+              this.$set(element, 'nameAndTime', element.dealUserName + '\r\n' + element.dealImages || '')
             }
             // else{
             //   this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages)
@@ -552,10 +551,19 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`
     },
 
-    cancel() {
-      this.$message.success('打印什么?')
-      return
-      this.$router.go(-1)
+    // cancel() {
+    //   this.$message.success('打印什么?')
+    //   return
+    //   this.$router.go(-1)
+    // },
+
+    // 取消审核
+    cancelApply() {
+      cancelAudit(this.tradeId).then((res) => {
+        if (res.code == 0) {
+          this.$router.go(-1)
+        }
+      })
     },
 
     // 提交

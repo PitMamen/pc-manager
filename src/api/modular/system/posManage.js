@@ -5861,6 +5861,16 @@ export function statReferralPatientDetail(data) {
 }
 
 
+// 取消审核
+export function cancelAudit(data) {
+  return axios({
+    url: '/referral-api/referralTrade/cancelAudit/'+data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
 // 详情导出
 // export function exportReferralPatient(data) {
 //   return axios({
