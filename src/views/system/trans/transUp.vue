@@ -106,7 +106,7 @@
           >
         </template>
         <template>
-          <a @click="goPrint" style="margin-left: 8px"
+          <a @click="goPrint(record)" style="margin-left: 8px"
             ><a-icon style="margin-right: 5px" type="printer" />打印</a
           >
         </template>
@@ -119,13 +119,15 @@
       <div
         style="height: 120px; display: flex; flex-direction: column; padding-top: 30px"
       >
-        <div style="margin-top;: 30px">{{failReason}}</div>
+        <div style="margin-top;: 30px">{{ failReason }}</div>
       </div>
 
       <template slot="footer">
         <a-button @click="handleOkDes">确定</a-button>
       </template>
     </a-modal>
+    <!-- <print-UpForm ref="printUpForm" @ok="handleOk" /> -->
+    <print-UpForm ref="printUpForm" />
   </a-card>
 </template>
 
@@ -138,7 +140,7 @@ import {
 } from "@/api/modular/system/posManage";
 import { list } from "@/api/modular/system/rate";
 import { STable, Ellipsis } from "@/components";
-// import infoForm from "./infoForm";
+import printUpForm from "./printUpForm";
 import moment from "moment";
 import Vue from "vue";
 import { TRUE_USER } from "@/store/mutation-types";
@@ -148,7 +150,7 @@ export default {
   components: {
     STable,
     Ellipsis,
-    // infoForm,
+    printUpForm,
   },
   data() {
     return {
@@ -419,9 +421,11 @@ export default {
         },
       });
     },
-    goPrint() {
+    goPrint(record) {
       //TODO
-      this.$message.success("去打印");
+      console.log('goPrint',JSON.stringify(record))
+      this.$refs.printUpForm.open(record.tradeIdStr)
+      // this.$message.success("去打印");
     },
 
     addTransUp() {
