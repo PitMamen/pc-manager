@@ -1771,7 +1771,9 @@ export default {
         moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
       );
 
-      console.log("addTransUp tempData", tempData);
+      delete tempData.status
+
+      console.log("addTransDown tempData", tempData);
       this.confirmLoading = true;
       downReferral(tempData)
         .then((res) => {
