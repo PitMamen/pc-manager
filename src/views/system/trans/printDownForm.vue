@@ -120,7 +120,7 @@
           </div>
           <div class="row">
             <span class="name">日期</span>
-            <span class="date right">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
+            <span class="date">{{moment(info.regTime).format('YYYY年MM月DD日')}}</span>
           </div>
         </div>
       </div>
