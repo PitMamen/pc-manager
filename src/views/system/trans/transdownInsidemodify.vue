@@ -1412,7 +1412,7 @@ export default {
             if (res.code == 0) {
               this.referralLogList = res.data;
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
-                return !itemTemp.remark;
+                return !itemTemp.dealUserName;
               });
               console.log("getReferralLogList", haveIndex);
               if (haveIndex != -1) {

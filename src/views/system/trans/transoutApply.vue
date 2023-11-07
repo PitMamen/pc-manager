@@ -414,15 +414,23 @@ export default {
           })
           console.log('getReferralLogList', haveIndex)
           if (haveIndex != -1) {
-            this.linePositon = haveIndex - 1 //算出目前的步骤
-            this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
+                this.linePositon = haveIndex - 1; //算出目前的步骤
+              } else {
+                this.linePositon = this.referralLogList.length - 1;
+              }
 
-            // this.$set(
-            //   this.referralLogList[this.linePositon],
-            //   'createTime',
-            //   this.referralLogList[this.linePositon].createTime
-            // )
-          }
+              this.lineStatus =
+                this.referralLogList[this.linePositon].deal_result == "成功"
+                  ? "process"
+                  : "error";
+
+              if (this.referralLogList[this.linePositon].deal_result == "失败") {
+                this.$set(
+                  this.referralLogList[this.linePositon],
+                  "createTime",
+                  this.referralLogList[this.linePositon].dealImages
+                );
+              }
 
           //申请人和时间拼在一起
           this.referralLogList.forEach((element, index) => {
@@ -576,8 +584,8 @@ export default {
 </script>
     
     <style lang="less" scoped>
-/deep/.ant-steps-item-subtitle {
-  width: 120px;
+/deep/ .ant-steps-item-subtitle {
+  white-space: pre-line !important;
 }
 button {
   margin-right: 8px;
