@@ -409,6 +409,7 @@ export default {
       // 下转
       if (this.tradeType==2) {
         this.$refs.printDownForm.open(this.tradeId)
+        // 上转
       }else{
         this.$refs.printUpForm.open(this.tradeId)
       }

@@ -54,22 +54,32 @@
       <span slot="action" slot-scope="text, record">
         <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
 
-        <a @click="goPrint" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
+        <a @click="goPrint(record)" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
 
         <a @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />评论</a>
       </span>
 
-      <span style="cursor: pointer;" slot="actionstatus" slot-scope="text, record" :class="getColor(record)" @click="seekReason(record)">
+      <span
+        style="cursor: pointer"
+        slot="actionstatus"
+        slot-scope="text, record"
+        :class="getColor(record)"
+        @click="seekReason(record)"
+      >
         {{ getType(record) }}
       </span>
     </s-table>
     <!-- <recordDetail ref="recordDetail" @ok="handleOk" /> -->
+    <printDownForm ref="printDownForm" @ok="handleOk" />
+    <printUpForm ref="printUpForm" @ok="handleOk" />
   </a-card>
 </template>
    
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
+import printDownForm from './printDownForm'
+import printUpForm from './printUpForm'
 import {
   orderList,
   accessHospitals,
@@ -84,6 +94,8 @@ import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 export default {
   components: {
     STable,
+    printDownForm,
+    printUpForm,
     //   recordDetail
     // addForm,
     //   orderDetail,
@@ -241,8 +253,6 @@ export default {
     this.$bus.$on('refreshtransinManage', (record) => {
       console.log('refreshtransinManage', record)
       this.$refs.table.refresh()
-
-      
     })
   },
 
@@ -265,7 +275,15 @@ export default {
       })
     },
 
-    goPrint() {
+    goPrint(record) {
+      // 下转
+      // if (record.tradeType.value == 2) {
+      //   this.$refs.printDownForm.open(this.tradeId)
+      //   // 上转
+      // } else {
+      //   this.$refs.printUpForm.open(this.tradeId)
+      // }
+
       //TODO
       this.$message.success('去打印')
     },
