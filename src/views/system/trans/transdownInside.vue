@@ -1423,8 +1423,8 @@ export default {
     //   });
     // },
 
-        //获取患者
-        getPatientList() {
+    //获取患者
+    getPatientList() {
       if (!this.sourceCode) {
         this.$message.error("请先选择来源");
         return;
@@ -1655,6 +1655,8 @@ export default {
 
       this.uploadData.reachBeginDate = this.createValue[0];
       this.uploadData.reachEndDate = this.createValue[1];
+      this.uploadData.reqDocName = this.user.userName;
+      this.uploadData.regTime = formatDate(new Date());
     },
 
     /**
@@ -1771,7 +1773,7 @@ export default {
         moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
       );
 
-      delete tempData.status
+      delete tempData.status;
 
       console.log("addTransDown tempData", tempData);
       this.confirmLoading = true;
