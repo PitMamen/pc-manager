@@ -490,9 +490,7 @@ export default {
     console.log('record', this.record)
     this.confirmLoading = true
     this.qryServiceItemListOut('', true)
-    this.getDictDataOut()
-
-    // this.confirmLoading = true
+    this.getDictDataOut();
   },
 
   watch: {
