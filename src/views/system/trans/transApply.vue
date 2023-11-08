@@ -190,7 +190,7 @@
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 show-search
                 v-model="requestData.inDept"
-                style="width: 42%"
+                style="width: 44%"
                 :filter-option="false"
                 :not-found-content="fetching ? undefined : null"
                 allow-clear
@@ -220,7 +220,7 @@
                 @focus="onDocFocus"
                 placeholder="请选择"
                 allow-clear
-                style="width: 42%; height: 28px"
+                style="width: 44%; height: 28px"
               >
                 <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userName">{{
                   item.userName
