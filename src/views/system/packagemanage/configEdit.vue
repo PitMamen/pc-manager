@@ -490,9 +490,7 @@ export default {
     console.log('record', this.record)
     this.confirmLoading = true
     this.qryServiceItemListOut('', true)
-    this.getDictDataOut()
-
-    // this.confirmLoading = true
+    this.getDictDataOut();
   },
 
   watch: {
@@ -1140,7 +1138,7 @@ export default {
 
 
           //套餐为 导流包 允许价格输入0元
-          if (this.record.giftFlag != 1 && !itemTask.saleAmount) {
+          if (itemTask.saleAmount==null || itemTask.saleAmount==undefined) {
             console.log("FFFF:", itemTask.saleAmount)
             this.$message.error('请输入可选项目第' + (index + 1) + '个选择第 ' + (indexIn + 1) + '个项目的【服务价格】')
             return
@@ -1212,7 +1210,7 @@ export default {
           }
 
           //套餐为 导流包 允许价格输入0元
-          if (this.record.giftFlag != 1 && !itemTask.saleAmount) {
+          if (itemTask.saleAmount==null || itemTask.saleAmount==undefined) {
             this.$message.error('请输入必选项目第' + (index + 1) + '个项目的【服务价格】')
             return
           }

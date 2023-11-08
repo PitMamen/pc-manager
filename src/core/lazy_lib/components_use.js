@@ -55,6 +55,7 @@ import {
   Calendar,
   Timeline,
   Rate,
+  Cascader,
 
 } from 'ant-design-vue'
 // import VueCropper from 'vue-cropper'
@@ -107,6 +108,7 @@ Vue.use(AutoComplete)
 Vue.use(Calendar)
 Vue.use(Timeline)
 Vue.use(Rate)
+Vue.use(Cascader)
 
 
 Vue.prototype.$confirm = Modal.confirm
