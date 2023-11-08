@@ -1485,7 +1485,7 @@ export default {
           this.packageData.tenantId,
           this.packageData.hospitalCode,
           this.technicianmentId,
-          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
           this.broadClassify == 1 ? true : false
         )
       }

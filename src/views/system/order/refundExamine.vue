@@ -5,6 +5,7 @@
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
       <a-button v-show="showButton" style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
       <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
+      <!-- <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">重新退款</a-button> -->
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 49px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
       </div>
