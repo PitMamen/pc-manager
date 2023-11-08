@@ -5676,6 +5676,15 @@ export function searchDiagnosis(data) {
   })
 }
 
+// /patient/getRegionByUpAddressId 查询区域地区信息
+export function getRegionByUpAddressId(data) {
+  return axios({
+    url: '/referral-api/patient/getRegionByUpAddressId',
+    method: 'get',
+    params: data,
+  })
+}
+
 // referralTrade/upReferral 上转登记
 export function upReferral(data) {
   return axios({
