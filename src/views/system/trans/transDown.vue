@@ -413,7 +413,7 @@ export default {
         name: "transdownDetailmodify",
         // path: '/servicewise/projectEdit',
         query: {
-          dataStr: JSON.stringify(record),
+          tradeId: record.tradeId,
         },
       });
     },

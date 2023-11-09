@@ -416,8 +416,11 @@ export default {
       this.$router.push({
         name: "transupDetailmodify",
         // path: '/servicewise/projectEdit',
+        // query: {
+        //   dataStr: JSON.stringify(record),
+        // },
         query: {
-          dataStr: JSON.stringify(record),
+          tradeId: record.tradeId,
         },
       });
     },

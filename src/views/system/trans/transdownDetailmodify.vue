@@ -37,21 +37,7 @@ export default {
     $route(to, from) {
       console.log("watch****************transdownDetailmodify Be", to, from);
       if (to.path.indexOf("transdownDetailmodify") > -1) {
-        let temp = JSON.parse(this.$route.query.dataStr);
-        // this.$set(
-        //   temp,
-        //   "patientBaseinfoReq",
-        //   JSON.parse(JSON.stringify(temp.patientBaseinfo))
-        // );
-        // delete temp.patientBaseinfo;
-        console.log("temp", JSON.stringify(temp));
-        // this.initData();
-
-        this.$refs.transdownInsidemodify.refreshData(temp);
-        //判断当前路由跳转数据的medicId跟当前页面的medicId不一样，则需要刷数据；而且打开药品详情页的时候就先关闭已打开的详情页。两条逻辑保证修改药品功能可靠性
-        // if (temp.tradeId != this.tradeId) {
-        //   this.initData()
-        // }
+        this.$refs.transdownInsidemodify.refreshData(this.$route.query.tradeId);
       }
     },
   },
@@ -67,7 +53,7 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-      this.$refs.transdownInsidemodify.refreshData(JSON.parse(this.$route.query.dataStr));
+      this.$refs.transdownInsidemodify.refreshData(this.$route.query.tradeId);
     });
   },
 

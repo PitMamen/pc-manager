@@ -1231,9 +1231,9 @@ export default {
     handleCascaderChange(value) {
       console.log("Cascader handleCascaderChange", value);
       console.log("Cascader handleCascaderChange cascaderData", this.cascaderData);
-      if (value.length == 3) {
-        this.$refs.cascaderRef.dropDownVisible = false; //折叠无效
-      }
+      // if (value.length == 3) {
+      //   this.$refs.cascaderRef.dropDownVisible = false; //折叠无效
+      // }
     },
 
     //   loadCasData(selectedOptions) {

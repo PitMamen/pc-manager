@@ -347,8 +347,24 @@
               <span style="color: #f90505">*</span>户口地址：
             </div>
             <div class="div-cell-value" style="width: 85.1%">
-              <div class="div-cell-value" style="width: 80%">
-                <a-auto-complete
+                <a-cascader
+                  style="width: 100%; height: 28px"
+                  @focus="onCascaderFocus"
+                  v-model="cascaderData"
+                  :options="options"
+                  ref="cascaderRef"
+                  placeholder="请选择"
+                  changeOnSelect
+                  :field-names="{
+                    label: 'name',
+                    value: 'addressId',
+                    children: 'children',
+                  }"
+                  :load-data="loadCasData"
+                  @change="handleCascaderChange"
+                ></a-cascader>
+
+                <!-- <a-auto-complete
                   v-model="uploadData.patientBaseinfoReq.address"
                   placeholder="请输入选择"
                   option-label-prop="title"
@@ -365,8 +381,7 @@
                       >{{ item.townName }}</a-select-option
                     >
                   </template>
-                </a-auto-complete>
-              </div>
+                </a-auto-complete> -->
             </div>
           </div>
           <div class="div-cell" style="width: 46.8%">
@@ -796,6 +811,7 @@ import {
   // getTreeUsersByDeptIdsAndRoles,
   getDocListForHospitalAndDepartment,
   upReferralDetail,
+  getRegionByUpAddressId,
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal, formatDate, getlastMonthToday } from '@/utils/util'
@@ -961,6 +977,53 @@ export default {
       downType: 1,
 
       diagnoseNames: [],
+
+      
+      cascaderData: [],
+      options: [],
+      // options: [
+      //   {
+      //     id: 1,
+      //     addressId: 110000,
+      //     name: "北京市",
+      //     pyCode: "bjs",
+      //     provinceId: 11,
+      //     indexId: 0,
+      //     townName: "北京市",
+      //     upAddressId: -1,
+      //     provinceName: "北京市",
+      //     regionName: "华北地区",
+      //     maxNum: null,
+      //   },
+      // ],
+
+      townNameGet: "",
+      mySelected: [],
+      isChangedCascader: false,
+
+      loadCasData: (selectedOptions) => {
+        console.log("Cascader selectedOptions", selectedOptions);
+        this.mySelected = JSON.parse(JSON.stringify(selectedOptions));
+        if (selectedOptions.length == 3) {
+          return;
+        }
+        const targetOption = selectedOptions[selectedOptions.length - 1];
+        targetOption.loading = true;
+        // 接口调用
+        this.getRegion(targetOption.addressId, (array) => {
+          console.log("...targetOption", targetOption);
+          // 取消加载标识
+          targetOption.loading = false;
+          // 把下级数据存进去
+          targetOption.children = array;
+          // 重新赋值级联数据
+          this.options = [...this.options];
+        });
+        targetOption.loading = false;
+        // targetOption.children = [...data];
+        // this.options = [...this.options];
+      },
+
       referralLogList: [],
 
       loading: false,
@@ -1181,6 +1244,60 @@ export default {
   //       }
   // },
   methods: {
+
+    handleCascaderChange(value) {
+      this.isChangedCascader = true;
+      console.log("Cascader handleCascaderChange", value);
+      console.log("Cascader handleCascaderChange cascaderData", this.cascaderData);
+      // if (value.length == 3) {
+      //   this.$refs.cascaderRef.dropDownVisible = false; //折叠无效
+      // }
+    },
+
+    getRegion(addressId, callback = null) {
+      getRegionByUpAddressId({ upAddressId: addressId }).then((res) => {
+        if (res.code == 0) {
+          // 再传给回调函数
+          if (callback) {
+            res.data.forEach((item) => {
+              if (this.mySelected.length < 2) {
+                this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法
+              } else {
+                this.$set(item, "isLeaf", true); //很关键  isLeaf 为 false 才会触发loadData方法
+              }
+            });
+            callback(res.data);
+          }
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
+    },
+
+    getTownName(options) {
+      //递归查找
+      for (let index = 0; index < options.length; index++) {
+        if (options[index].addressId == this.cascaderData[2]) {
+          console.log("townName", options[index].townName);
+          this.townNameGet = options[index].townName;
+          return options[index].townName;
+        } else {
+          if (options[index].children) {
+            this.getTownName(options[index].children);
+          }
+        }
+      }
+    },
+
+    onCascaderFocus() {
+      if (this.options.length == 1) {
+        this.getRegion(-1, (array) => {
+          this.options = array;
+        });
+      }
+    },
+
     /**
      * 1 下转    2 回转
      */
@@ -1218,13 +1335,14 @@ export default {
       //TODO
     },
 
-    refreshData(newData) {
+    refreshData(tradeId) {
       this.confirmLoading = true
-      console.log('refreshData transdown', JSON.stringify(newData))
+      console.log('refreshData transdown', JSON.stringify(tradeId))
 
-      upReferralDetail(newData.tradeId).then((res) => {
+      upReferralDetail(tradeId).then((res) => {
         if (res.code == 0) {
           this.uploadData = res.data
+          this.isChangedCascader = false;
           this.$set(this.uploadData, 'tradeId', res.data.tradeIdStr)
 
           //列表和新增上转数据字段不一样，这里做转换
@@ -1235,8 +1353,33 @@ export default {
           if (this.uploadData.patientBaseinfoReq.birthday) {
             this.dateValue = moment(this.uploadData.patientBaseinfoReq.birthday, this.dateFormat)
           }
-          //户口地址
-          this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }]
+
+                    //户口地址 修改初始化时构造数据，为了显示修改地址和实现修改
+          // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+          this.options = [
+            {
+              name: this.uploadData.patientBaseinfoReq.address,
+              townName: this.uploadData.patientBaseinfoReq.address,
+              addressId: 1,
+            },
+          ];
+          this.cascaderData = [1];
+
+          // options: [
+          //   {
+          //     id: 1,
+          //     addressId: 110000,
+          //     name: "北京市",
+          //     pyCode: "bjs",
+          //     provinceId: 11,
+          //     indexId: 0,
+          //     townName: "北京市",
+          //     upAddressId: -1,
+          //     provinceName: "北京市",
+          //     regionName: "华北地区",
+          //     maxNum: null,
+          //   },
+          // ],
 
           //重新组装主要诊断
           if (this.uploadData.diagnoseCode) {
@@ -1688,10 +1831,21 @@ export default {
         this.$message.error('请选择常住分类')
         return
       }
-      if (!tempData.patientBaseinfoReq.address) {
-        this.$message.error('请输入选择户口地址')
-        return
+
+            // if (!tempData.patientBaseinfoReq.address) {
+      //   this.$message.error("请输入选择户口地址");
+      //   return;
+      // }
+
+      /**
+       * 这里分两种情况，一是用户不改地址需要可以提交；二是改了需要提交
+       */
+      // if (this.cascaderData[0] != 1 && this.cascaderData.length > 1) {
+        if (this.isChangedCascader && this.cascaderData.length != 3) {
+        this.$message.error("请选择户口地址");
+        return;
       }
+
       if (!tempData.patientBaseinfoReq.addressDetail) {
         this.$message.error('请输入选择详细地址')
         return
@@ -1738,6 +1892,14 @@ export default {
       if (this.dateValue) {
         tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format('YYYY-MM-DD')
       }
+
+      console.log(JSON.stringify(this.options));
+      //组装地址
+      if (this.cascaderData.length == 3) {
+        this.getTownName(this.options);
+        tempData.patientBaseinfoReq.address = this.townNameGet;
+      }
+
       //单独组装主要诊断
       if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
         this.$set(tempData, 'diagnoseCode', tempData.diagnoseCode.join(','))
