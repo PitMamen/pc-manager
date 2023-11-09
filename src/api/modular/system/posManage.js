@@ -4385,6 +4385,26 @@ export function applyRefund(data) {
 }
 
 
+//重新退款
+export function retry(data) {
+  return axios({
+    url: '/medical-api/admrefund/retry',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+
+
+
+
+
+
+
+
 //退款列表表头信息
 export function getTab(data) {
   return axios({

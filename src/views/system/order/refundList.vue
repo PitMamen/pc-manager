@@ -321,6 +321,14 @@ export default {
     })
   },
 
+
+  mounted() {
+    this.$bus.$on('refundRefresh', (record) => {
+      console.log('refundRefresh', record)
+      this.$refs.table.refresh()
+    })
+  },
+
   methods: {
     //详情
     goExamine(record) {
