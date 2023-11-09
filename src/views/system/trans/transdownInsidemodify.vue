@@ -4,7 +4,10 @@
       <div class="div-pro-btn">
         <a-button type="primary" @click="submitData(false)">保存</a-button>
         <!-- //工单状态（1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治） -->
-        <a-button style="margin-left: 10px" @click="submitData(true)" v-if="uploadData.status.value == 3"
+        <a-button
+          style="margin-left: 10px"
+          @click="submitData(true)"
+          v-if="uploadData.status.value == 3"
           >重新提交</a-button
         >
         <a-button style="margin-left: 10px" @click="goPrint">打印</a-button>
@@ -65,9 +68,12 @@
                 allow-clear
                 style="height: 28px; width: 90px"
               >
-                <a-select-option v-for="item in zhengjianDatas" :key="item.code" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in zhengjianDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
 
@@ -92,9 +98,12 @@
                 allow-clear
                 style="height: 28px; width: 100%"
               >
-                <a-select-option v-for="item in genderData" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in genderData"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -105,7 +114,11 @@
               出生日期：
             </div>
             <div class="div-cell-value">
-              <a-date-picker style="width: 100%" format="YYYY-MM-DD" v-model="dateValue" />
+              <a-date-picker
+                style="width: 100%"
+                format="YYYY-MM-DD"
+                v-model="dateValue"
+              />
             </div>
           </div>
         </div>
@@ -170,9 +183,12 @@
                 allow-clear
                 style="height: 28px; width: 100%"
               >
-                <a-select-option v-for="item in countryData" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in countryData"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -192,9 +208,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in nationData" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in nationData"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -211,9 +230,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in bloodData" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in bloodData"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -231,9 +253,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in rhDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in rhDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -251,9 +276,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in eduDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in eduDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -273,9 +301,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in jobDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in jobDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -292,9 +323,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in marryDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in marryDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -312,9 +346,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in liveDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in liveDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -332,9 +369,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in insuranceDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in insuranceDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -347,24 +387,24 @@
               <span style="color: #f90505">*</span>户口地址：
             </div>
             <div class="div-cell-value" style="width: 85.1%">
-                <a-cascader
-                  style="width: 100%; height: 28px"
-                  @focus="onCascaderFocus"
-                  v-model="cascaderData"
-                  :options="options"
-                  ref="cascaderRef"
-                  placeholder="请选择"
-                  changeOnSelect
-                  :field-names="{
-                    label: 'name',
-                    value: 'addressId',
-                    children: 'children',
-                  }"
-                  :load-data="loadCasData"
-                  @change="handleCascaderChange"
-                ></a-cascader>
+              <a-cascader
+                style="width: 100%; height: 28px"
+                @focus="onCascaderFocus"
+                v-model="cascaderData"
+                :options="options"
+                ref="cascaderRef"
+                placeholder="请选择"
+                changeOnSelect
+                :field-names="{
+                  label: 'name',
+                  value: 'addressId',
+                  children: 'children',
+                }"
+                :load-data="loadCasData"
+                @change="handleCascaderChange"
+              ></a-cascader>
 
-                <!-- <a-auto-complete
+              <!-- <a-auto-complete
                   v-model="uploadData.patientBaseinfoReq.address"
                   placeholder="请输入选择"
                   option-label-prop="title"
@@ -420,9 +460,12 @@
                 allow-clear
                 style="width: 12vw; height: 28px"
               >
-                <a-select-option v-for="item in levelDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in levelDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -448,9 +491,12 @@
                 @search="onDiagnoseSelectSearch"
               >
                 <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-                <a-select-option v-for="(item, index) in diagnoseDatas" :key="index" :value="item.icdCode">{{
-                  item.name
-                }}</a-select-option>
+                <a-select-option
+                  v-for="(item, index) in diagnoseDatas"
+                  :key="index"
+                  :value="item.icdCode"
+                  >{{ item.name }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -511,9 +557,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in downTypeDatas" :key="item.code" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in downTypeDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -551,10 +600,18 @@
               转诊原因：
             </div>
             <div class="div-cell-value">
-              <a-select @select="onSelectYibao" placeholder="请选择" allow-clear style="width: 100%; height: 28px">
-                <a-select-option v-for="item in reasonDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+              <a-select
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in reasonDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -567,10 +624,18 @@
               转运方式：
             </div>
             <div class="div-cell-value">
-              <a-select @select="onSelectYibao" placeholder="请选择" allow-clear style="width: 100%; height: 28px">
-                <a-select-option v-for="item in transTypeDatas" :key="item.code" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
+              <a-select
+                @select="onSelectYibao"
+                placeholder="请选择"
+                allow-clear
+                style="width: 100%; height: 28px"
+              >
+                <a-select-option
+                  v-for="item in transTypeDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -591,9 +656,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in inHospitalDatas" :key="item.hospitalCode" :value="item.hospitalCode">{{
-                  item.hospitalName
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in inHospitalDatas"
+                  :key="item.hospitalCode"
+                  :value="item.hospitalCode"
+                  >{{ item.hospitalName }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -611,9 +679,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in referralTypeDatas" :key="item.code" :value="item.code">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in referralTypeDatas"
+                  :key="item.code"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -632,9 +703,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in reasonDatas" :key="item.code" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in reasonDatas"
+                  :key="item.code"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -653,9 +727,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in transTypeDatas" :key="item.value" :value="item.value">{{
-                  item.value
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in transTypeDatas"
+                  :key="item.value"
+                  :value="item.value"
+                  >{{ item.value }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -722,9 +799,12 @@
                 allow-clear
                 style="width: 100%; height: 28px"
               >
-                <a-select-option v-for="item in inDocDatas" :key="item.doc_id" :value="item.doc_id">{{
-                  item.doc_name
-                }}</a-select-option>
+                <a-select-option
+                  v-for="item in inDocDatas"
+                  :key="item.doc_id"
+                  :value="item.doc_id"
+                  >{{ item.doc_name }}</a-select-option
+                >
               </a-select>
             </div>
           </div>
@@ -736,7 +816,11 @@
               期望到院时间：
             </div>
             <div class="div-cell-value" style="width: 81%">
-              <a-range-picker style="width: 100%" :value="createValue" @change="onChange" />
+              <a-range-picker
+                style="width: 100%"
+                :value="createValue"
+                @change="onChange"
+              />
             </div>
           </div>
         </div>
@@ -748,7 +832,12 @@
               转回意见：
             </div>
             <div class="div-cell-value" style="width: 82.8%">
-              <a-textarea :rows="4" :maxLength="2000" placeholder="请输入" v-model="uploadData.notice"></a-textarea>
+              <a-textarea
+                :rows="4"
+                :maxLength="2000"
+                placeholder="请输入"
+                v-model="uploadData.notice"
+              ></a-textarea>
             </div>
           </div>
         </div>
@@ -760,7 +849,12 @@
         </div>
       </div>
 
-      <a-steps progress-dot :current="linePositon" :status="lineStatus" style="margin-top: 50px">
+      <a-steps
+        progress-dot
+        :current="linePositon"
+        :status="lineStatus"
+        style="margin-top: 50px"
+      >
         <a-step
           v-for="item in referralLogList"
           :key="item.id"
@@ -812,17 +906,17 @@ import {
   getDocListForHospitalAndDepartment,
   upReferralDetail,
   getRegionByUpAddressId,
-} from '@/api/modular/system/posManage'
-import { STable, Ellipsis } from '@/components'
-import { formatDecimal, formatDate, getlastMonthToday } from '@/utils/util'
-import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import Vue from 'vue'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
-import moment from 'moment'
-import events from '@/components/MultiTab/events'
-import printDownForm from './printDownForm'
+} from "@/api/modular/system/posManage";
+import { STable, Ellipsis } from "@/components";
+import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
+import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
+import Vue from "vue";
+import { getDateNow, getCurrentMonthLast } from "@/utils/util";
+import moment from "moment";
+import events from "@/components/MultiTab/events";
+import printDownForm from "./printDownForm";
 
-import E from 'wangeditor'
+import E from "wangeditor";
 export default {
   components: {
     STable,
@@ -839,11 +933,11 @@ export default {
       // uploadData: {patientBaseinfoReq:{name:}},
       sourceCode: undefined,
       sourceDatas: [],
-      dateFormat: 'YYYY-MM-DD',
+      dateFormat: "YYYY-MM-DD",
       confirmLoading: false,
-      nowDateBegin: '',
+      nowDateBegin: "",
       dateValue: undefined,
-      lineStatus: 'error', //wait process finish error
+      lineStatus: "error", //wait process finish error
       linePositon: 1,
       createValue: [],
       user: {},
@@ -852,7 +946,7 @@ export default {
         //基本信息
         patientBaseinfoReq: {
           name: undefined,
-          identificationType: '01',
+          identificationType: "01",
           identificationNo: undefined,
           sex: undefined,
           birthday: undefined,
@@ -971,14 +1065,13 @@ export default {
       inDocDatas: [], //转入医生数组
       fetching: false,
       downTypeDatas: [
-        { code: 1, value: '下转' },
-        { code: 2, value: '回转' },
+        { code: 1, value: "下转" },
+        { code: 2, value: "回转" },
       ],
       downType: 1,
 
       diagnoseNames: [],
 
-      
       cascaderData: [],
       options: [],
       // options: [
@@ -1028,7 +1121,7 @@ export default {
 
       loading: false,
       downTypeDisabled: false,
-    }
+    };
   },
   // watch: {
   //   $route(to, from) {//TODO watch不回调需要找原因
@@ -1046,8 +1139,8 @@ export default {
    *
    */
   created() {
-    this.user = Vue.ls.get(TRUE_USER)
-    console.log('this.user', this.user)
+    this.user = Vue.ls.get(TRUE_USER);
+    console.log("this.user", this.user);
 
     //列表和新增上转数据字段不一样，这里做转换
     // this.$set(
@@ -1081,143 +1174,143 @@ export default {
     // this.uploadData.reachBeginDate = this.createValue[0];
     // this.uploadData.reachEndDate = this.createValue[1];
 
-    console.log('uploadData', this.uploadData)
-    console.log('uploadData identificationType', this.uploadData.identificationType)
+    console.log("uploadData", this.uploadData);
+    console.log("uploadData identificationType", this.uploadData.identificationType);
 
-    getDictData('PATIENT_DATA_SOURCE').then((res) => {
+    getDictData("PATIENT_DATA_SOURCE").then((res) => {
       if (res.code == 0) {
-        this.sourceDatas = res.data
+        this.sourceDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
+      this.confirmLoading = false;
+    });
 
     //获取 证件类型
-    getDictData('IDENTIFICATION_TYPE').then((res) => {
+    getDictData("IDENTIFICATION_TYPE").then((res) => {
       if (res.code == 0) {
-        this.zhengjianDatas = res.data
+        this.zhengjianDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('sex').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("sex").then((res) => {
       if (res.code == 0) {
-        this.genderData = res.data
+        this.genderData = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('PART_COUNTRY').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("PART_COUNTRY").then((res) => {
       if (res.code == 0) {
-        this.countryData = res.data
+        this.countryData = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('NATION').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("NATION").then((res) => {
       if (res.code == 0) {
-        this.nationData = res.data
+        this.nationData = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('BLOOD_TYPE').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("BLOOD_TYPE").then((res) => {
       if (res.code == 0) {
-        this.bloodData = res.data
+        this.bloodData = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('BLOOD_RH').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("BLOOD_RH").then((res) => {
       if (res.code == 0) {
-        this.rhDatas = res.data
+        this.rhDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('EDUCATION_LEVEL').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("EDUCATION_LEVEL").then((res) => {
       if (res.code == 0) {
-        this.eduDatas = res.data
+        this.eduDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('JOB_TYPE').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("JOB_TYPE").then((res) => {
       if (res.code == 0) {
-        this.jobDatas = res.data
+        this.jobDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('MARRY_STATUS').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("MARRY_STATUS").then((res) => {
       if (res.code == 0) {
-        this.marryDatas = res.data
+        this.marryDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('LIVE_TYPE').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("LIVE_TYPE").then((res) => {
       if (res.code == 0) {
-        this.liveDatas = res.data
+        this.liveDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('INSURANCE_TYPE').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("INSURANCE_TYPE").then((res) => {
       if (res.code == 0) {
-        this.insuranceDatas = res.data
+        this.insuranceDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('DISEASE_LEV').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("DISEASE_LEV").then((res) => {
       if (res.code == 0) {
-        this.levelDatas = res.data
+        this.levelDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
+      this.confirmLoading = false;
+    });
 
-    getDictData('CONVERT_DIAGNOSTIC_TYPE').then((res) => {
+    getDictData("CONVERT_DIAGNOSTIC_TYPE").then((res) => {
       if (res.code == 0) {
-        this.referralTypeDatas = res.data
+        this.referralTypeDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
+      this.confirmLoading = false;
+    });
 
-    getDictData('CONVERT_DIAGNOSTIC_RESON').then((res) => {
+    getDictData("CONVERT_DIAGNOSTIC_RESON").then((res) => {
       if (res.code == 0) {
-        this.reasonDatas = res.data
+        this.reasonDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
-    getDictData('CONVERT_JH_TYPE').then((res) => {
+      this.confirmLoading = false;
+    });
+    getDictData("CONVERT_JH_TYPE").then((res) => {
       if (res.code == 0) {
-        this.transTypeDatas = res.data
+        this.transTypeDatas = res.data;
       } else {
-        this.$message.error(res.message)
+        this.$message.error(res.message);
       }
-      this.confirmLoading = false
-    })
+      this.confirmLoading = false;
+    });
 
-    this.getHospitalDatas()
+    this.getHospitalDatas();
     // this.getDepartmentSelectList(undefined);
   },
   mounted() {
@@ -1227,7 +1320,7 @@ export default {
     //   this.inputData(record)
     // })
 
-    this.nowDateBegin = moment(new Date(), this.dateFormat)
+    this.nowDateBegin = moment(new Date(), this.dateFormat);
     // this.dateValue = moment(new Date(), this.dateFormat);
 
     // this.$nextTick(() => {
@@ -1244,7 +1337,6 @@ export default {
   //       }
   // },
   methods: {
-
     handleCascaderChange(value) {
       this.isChangedCascader = true;
       console.log("Cascader handleCascaderChange", value);
@@ -1302,7 +1394,7 @@ export default {
      * 1 下转    2 回转
      */
     checkAndGetOldTradeId() {
-      console.log('checkAndGetOldTradeId')
+      console.log("checkAndGetOldTradeId");
       if (
         this.downType == 2 &&
         this.uploadData.patientBaseinfoReq.identificationType &&
@@ -1312,49 +1404,56 @@ export default {
           identificationNo: this.uploadData.patientBaseinfoReq.identificationNo,
           identificationType: this.uploadData.patientBaseinfoReq.identificationType,
         }).then((res) => {
-          this.fetching = false
+          this.fetching = false;
           if (res.code == 0) {
-            this.uploadData.oldTradeId = res.data || '暂无'
+            this.uploadData.oldTradeId = res.data || "暂无";
           } else {
-            this.$message.error(res.message)
+            this.$message.error(res.message);
           }
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
       }
     },
 
     goUpDetail() {
       if (this.uploadData.oldTradeId) {
         this.$router.push({
-          name: 'transinDetail', // path: '/servicewise/projectEdit',
+          name: "transinDetail", // path: '/servicewise/projectEdit',
           query: {
             id: this.uploadData.oldTradeId,
           },
-        })
+        });
       }
       //TODO
     },
 
     refreshData(tradeId) {
-      this.confirmLoading = true
-      console.log('refreshData transdown', JSON.stringify(tradeId))
+      this.confirmLoading = true;
+      console.log("refreshData transdown", JSON.stringify(tradeId));
 
       upReferralDetail(tradeId).then((res) => {
         if (res.code == 0) {
-          this.uploadData = res.data
+          this.uploadData = res.data;
           this.isChangedCascader = false;
-          this.$set(this.uploadData, 'tradeId', res.data.tradeIdStr)
+          this.$set(this.uploadData, "tradeId", res.data.tradeIdStr);
 
           //列表和新增上转数据字段不一样，这里做转换
-          this.$set(this.uploadData, 'patientBaseinfoReq', JSON.parse(JSON.stringify(this.uploadData.patientBaseinfo)))
-          delete this.uploadData.patientBaseinfo
+          this.$set(
+            this.uploadData,
+            "patientBaseinfoReq",
+            JSON.parse(JSON.stringify(this.uploadData.patientBaseinfo))
+          );
+          delete this.uploadData.patientBaseinfo;
           //组装数据
           //生日
           if (this.uploadData.patientBaseinfoReq.birthday) {
-            this.dateValue = moment(this.uploadData.patientBaseinfoReq.birthday, this.dateFormat)
+            this.dateValue = moment(
+              this.uploadData.patientBaseinfoReq.birthday,
+              this.dateFormat
+            );
           }
 
-                    //户口地址 修改初始化时构造数据，为了显示修改地址和实现修改
+          //户口地址 修改初始化时构造数据，为了显示修改地址和实现修改
           // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
           this.options = [
             {
@@ -1383,236 +1482,249 @@ export default {
 
           //重新组装主要诊断
           if (this.uploadData.diagnoseCode) {
-            this.diagnoseDatas = []
-            this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(',')
-            console.log('this.uploadData.diagnoseCode', this.uploadData.diagnoseCode)
-            this.diagnoseNames = this.uploadData.diagnos.split(',')
+            this.diagnoseDatas = [];
+            this.uploadData.diagnoseCode = this.uploadData.diagnoseCode.split(",");
+            console.log("this.uploadData.diagnoseCode", this.uploadData.diagnoseCode);
+            this.diagnoseNames = this.uploadData.diagnos.split(",");
 
             this.uploadData.diagnoseCode.forEach((element, index) => {
               this.diagnoseDatas.push({
                 icdCode: element,
                 name: this.diagnoseNames[index],
-              })
-            })
+              });
+            });
           } else {
-            this.uploadData.diagnoseCode = undefined
+            this.uploadData.diagnoseCode = undefined;
           }
 
           //转诊类型
-          this.referralTypeDatas = []
+          this.referralTypeDatas = [];
           this.referralTypeDatas = [
             {
               code: this.uploadData.referralType.value,
               value: this.uploadData.referralType.description,
             },
-          ]
-          this.$set(this.uploadData, 'referralType', this.referralTypeDatas[0].code)
+          ];
+          this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
 
           //oldTradeIdStr为字符串，重新赋值保证数据不失真；有oldTradeId说明是回转，不能改变下转类型
-          this.$set(this.uploadData, 'oldTradeId', this.uploadData.oldTradeIdStr)
+          this.$set(this.uploadData, "oldTradeId", this.uploadData.oldTradeIdStr);
           if (this.uploadData.oldTradeId) {
-            this.downTypeDisabled = true
-            this.downType = 2
+            this.downTypeDisabled = true;
+            this.downType = 2;
           }
 
           //转入科室
-          this.originData = []
+          this.originData = [];
           this.originData = [
             {
               department_name: this.uploadData.inDept,
               department_id: this.uploadData.inDeptCode,
             },
-          ]
-          console.log('this.uploadData.docName', this.uploadData.docName)
+          ];
+          console.log("this.uploadData.docName", this.uploadData.docName);
           this.inDocDatas = [
             {
               doc_id: this.uploadData.docId,
               doc_name: this.uploadData.docName,
             },
-          ]
+          ];
 
           //期望到院时间  string转moment date对象
           this.createValue = [
             moment(this.uploadData.reachBeginDate, this.dateFormat),
             moment(this.uploadData.reachEndDate, this.dateFormat),
-          ]
-          this.uploadData.reachBeginDate = moment(this.uploadData.reachBeginDate, this.dateFormat)
-          this.uploadData.reachEndDate = moment(this.uploadData.reachEndDate, this.dateFormat)
+          ];
+          this.uploadData.reachBeginDate = moment(
+            this.uploadData.reachBeginDate,
+            this.dateFormat
+          );
+          this.uploadData.reachEndDate = moment(
+            this.uploadData.reachEndDate,
+            this.dateFormat
+          );
 
           //申请时间
-          this.uploadData.regTime = this.uploadData.regTime.substring(0, 10)
+          this.uploadData.regTime = this.uploadData.regTime.substring(0, 10);
 
-          console.log('this.uploadData', JSON.stringify(this.uploadData))
+          console.log("this.uploadData", JSON.stringify(this.uploadData));
 
           getReferralLogList(this.uploadData.tradeId).then((res) => {
             if (res.code == 0) {
               if (res.data) {
                 res.data.forEach((item, index) => {
-                  if (item.dealDetail == '统一预约') {
-                    res.data.splice(index, 1)
+                  if (item.dealDetail == "统一预约") {
+                    res.data.splice(index, 1);
                   }
-                })
+                });
               }
-              this.referralLogList = res.data
+              this.referralLogList = res.data;
 
               this.referralLogList.forEach((item, index) => {
-                if (item.dealDetail == '统一预约') {
-                  delete this.referralLogList[index]
+                if (item.dealDetail == "统一预约") {
+                  delete this.referralLogList[index];
                 }
-              })
+              });
 
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
-                return !itemTemp.dealUserName
-              })
-              console.log('getReferralLogList', haveIndex)
+                return !itemTemp.dealUserName;
+              });
+              console.log("getReferralLogList", haveIndex);
               if (haveIndex != -1) {
-                this.linePositon = haveIndex - 1 //算出目前的步骤
+                this.linePositon = haveIndex - 1; //算出目前的步骤
               } else {
-                this.linePositon = this.referralLogList.length - 1
+                this.linePositon = this.referralLogList.length - 1;
               }
 
-              this.lineStatus = this.referralLogList[this.linePositon].deal_result == '成功' ? 'process' : 'error'
+              this.lineStatus =
+                this.referralLogList[this.linePositon].deal_result == "成功"
+                  ? "process"
+                  : "error";
 
-              if (this.referralLogList[this.linePositon].deal_result == '失败') {
+              if (this.referralLogList[this.linePositon].deal_result == "失败") {
                 this.$set(
                   this.referralLogList[this.linePositon],
-                  'createTime',
+                  "createTime",
                   this.referralLogList[this.linePositon].dealImages
-                )
+                );
               }
 
               //申请人和时间拼在一起
               this.referralLogList.forEach((element, index) => {
-                this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime)
-              })
+                this.$set(
+                  element,
+                  "nameAndTime",
+                  element.dealUserName + "\n" + element.createTime
+                );
+              });
             } else {
-              this.$message.error(res.message)
+              this.$message.error(res.message);
             }
-            this.confirmLoading = false
-          })
+            this.confirmLoading = false;
+          });
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-        this.confirmLoading = false
-      })
+        this.confirmLoading = false;
+      });
     },
 
     //诊断搜索
     onDiagnoseSelectSearch(value) {
-      this.diagnoseDatas = []
-      this.searchDiagnosisDatas(value)
+      this.diagnoseDatas = [];
+      this.searchDiagnosisDatas(value);
     },
 
     //诊断选择变化
     onDiagnoseSelectChange(value) {
-      this.diagnoseNames = []
-      console.log('onDepartmentSelectChange value', value)
-      console.log('onDepartmentSelectChange diagnoseCode', this.uploadData.diagnoseCode)
+      this.diagnoseNames = [];
+      console.log("onDepartmentSelectChange value", value);
+      console.log("onDepartmentSelectChange diagnoseCode", this.uploadData.diagnoseCode);
 
       //组装诊断名字
       if (this.uploadData.diagnoseCode && this.uploadData.diagnoseCode.length > 0) {
         this.uploadData.diagnoseCode.forEach((element) => {
-          let getOne = this.diagnoseDatas.find((item) => item.icdCode == element)
-          this.diagnoseNames.push(getOne.name)
-        })
+          let getOne = this.diagnoseDatas.find((item) => item.icdCode == element);
+          this.diagnoseNames.push(getOne.name);
+        });
       }
-      console.log('onDiagnoseSelectChange diagnoseNames', this.diagnoseNames)
+      console.log("onDiagnoseSelectChange diagnoseNames", this.diagnoseNames);
 
       if (value === undefined || value.length == 0) {
-        this.diagnoseDatas = []
-        this.searchDiagnosisDatas('')
+        this.diagnoseDatas = [];
+        this.searchDiagnosisDatas("");
       }
     },
 
     searchDiagnosisDatas(value) {
-      this.fetching = true
+      this.fetching = true;
       searchDiagnosis({ keyWord: value }).then((res) => {
-        this.fetching = false
+        this.fetching = false;
         if (res.code == 0) {
-          this.diagnoseDatas = res.data
+          this.diagnoseDatas = res.data;
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-        this.confirmLoading = false
-      })
+        this.confirmLoading = false;
+      });
     },
 
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.originData = []
-      this.getDepartmentSelectList(value)
+      this.originData = [];
+      this.getDepartmentSelectList(value);
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
       if (value === undefined) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
+        this.originData = [];
+        this.getDepartmentSelectList(undefined);
       }
     },
 
     //获取管理的科室 可首拼
     getDepartmentSelectList(departmentName) {
-      this.fetching = true
-      this.originData = []
+      this.fetching = true;
+      this.originData = [];
       //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
       getDepartmentListForReq({
         hospitalCode: this.uploadData.inHospitalCode,
         departmentName: departmentName,
         status: 1,
       }).then((res) => {
-        this.fetching = false
+        this.fetching = false;
         if (res.code == 0) {
-          this.originData = res.data.records
+          this.originData = res.data.records;
         }
 
         // if (!departmentName) {
         //   this.$refs.table.refresh(true);
         // }
-      })
+      });
     },
 
     onHospitalSelect() {
-      this.getDepartmentSelectList(undefined)
+      this.getDepartmentSelectList(undefined);
       if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
-        this.getTreeUsers()
+        this.getTreeUsers();
       }
     },
 
     // onSelectDept(){},
     onSelectDept(department_id) {
-      let getOne = this.originData.find((item) => item.department_id == department_id)
-      this.uploadData.inDept = getOne.department_name
-      console.log('onSelectDept department_id', department_id)
-      console.log('onSelectDept department_name', getOne.department_name)
+      let getOne = this.originData.find((item) => item.department_id == department_id);
+      this.uploadData.inDept = getOne.department_name;
+      console.log("onSelectDept department_id", department_id);
+      console.log("onSelectDept department_name", getOne.department_name);
       if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
-        this.getTreeUsers()
+        this.getTreeUsers();
       }
     },
 
     onDeptGetFocus() {
       if (!this.uploadData.inHospitalCode) {
-        this.$message.error('请先选择转入机构')
-        return
+        this.$message.error("请先选择转入机构");
+        return;
       }
     },
 
     onDocFocus() {
       if (!this.uploadData.inHospitalCode) {
-        this.$message.warn('请先选择转入机构')
-        return
+        this.$message.warn("请先选择转入机构");
+        return;
       }
 
       if (!this.uploadData.inDeptCode) {
-        this.$message.warn('请先选择转入科室')
-        return
+        this.$message.warn("请先选择转入科室");
+        return;
       }
     },
 
     onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.doc_id == userId)
-      this.uploadData.docName = getOne.doc_name
-      console.log('onSelectInDoctor docId', userId)
-      console.log('onSelectInDoctor docName', getOne.doc_name)
+      let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
+      this.uploadData.docName = getOne.doc_name;
+      console.log("onSelectInDoctor docId", userId);
+      console.log("onSelectInDoctor docName", getOne.doc_name);
     },
 
     getTreeUsers() {
@@ -1621,22 +1733,22 @@ export default {
         hospitalCode: this.uploadData.inHospitalCode,
       }).then((res) => {
         if (res.code == 0) {
-          this.inDocDatas = res.data || []
+          this.inDocDatas = res.data || [];
         }
-      })
+      });
     },
 
     getHospitalDatas() {
-      this.fetching = true
+      this.fetching = true;
       downHospitalList({}).then((res) => {
-        this.fetching = false
+        this.fetching = false;
         if (res.code == 0) {
-          this.inHospitalDatas = res.data
+          this.inHospitalDatas = res.data;
         } else {
-          this.$message.error(res.message)
+          this.$message.error(res.message);
         }
-        this.confirmLoading = false
-      })
+        this.confirmLoading = false;
+      });
     },
 
     onSelectBase(addressId) {
@@ -1648,16 +1760,16 @@ export default {
     handleSearchBase(name) {
       let params = {
         keyWord: name,
-      }
+      };
       getRegionInfo(params)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            this.addressDatas = res.data
+            this.addressDatas = res.data;
           }
         })
         .finally((res) => {
           // this.confirmLoading = false
-        })
+        });
     },
 
     // handleChange(value) {
@@ -1665,19 +1777,22 @@ export default {
     // },
 
     onChange(momentArr, dateArr) {
-      this.createValue = momentArr
-      this.uploadData.reachBeginDate = dateArr[0]
-      this.uploadData.reachEndDate = dateArr[1]
+      this.createValue = momentArr;
+      this.uploadData.reachBeginDate = dateArr[0];
+      this.uploadData.reachEndDate = dateArr[1];
     },
 
     clearData() {
       // this.createValue = [];
-      this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+      this.createValue = [
+        moment(getDateNow(), this.dateFormat),
+        moment(getCurrentMonthLast(), this.dateFormat),
+      ];
       this.uploadData = {
         //基本信息
         patientBaseinfoReq: {
           name: undefined,
-          identificationType: '01',
+          identificationType: "01",
           identificationNo: undefined,
           sex: undefined,
           birthday: undefined,
@@ -1771,13 +1886,13 @@ export default {
         outTenantId: undefined,
         outUserId: undefined,
         phone: undefined,
-      }
+      };
     },
 
     handleChoose(record) {
-      console.log('handleChoose', JSON.stringify(record))
+      console.log("handleChoose", JSON.stringify(record));
       //TODO 填充药品数据
-      this.inputData(record)
+      this.inputData(record);
     },
 
     /**
@@ -1793,46 +1908,46 @@ export default {
     },
 
     cancel() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
 
     goPrint() {
       //TODO
-      this.$refs.printDownForm.open(this.uploadData.tradeIdStr)
+      this.$refs.printDownForm.open(this.uploadData.tradeIdStr);
     },
 
     submitData(isReupload) {
-      let tempData = JSON.parse(JSON.stringify(this.uploadData))
+      let tempData = JSON.parse(JSON.stringify(this.uploadData));
       if (!tempData.patientBaseinfoReq.name) {
-        this.$message.error('请输入患者姓名')
-        return
+        this.$message.error("请输入患者姓名");
+        return;
       }
       if (!tempData.patientBaseinfoReq.identificationType) {
-        this.$message.error('请选择证件类型')
-        return
+        this.$message.error("请选择证件类型");
+        return;
       }
       if (!tempData.patientBaseinfoReq.identificationNo) {
-        this.$message.error('请输入证件号码')
-        return
+        this.$message.error("请输入证件号码");
+        return;
       }
       if (!tempData.patientBaseinfoReq.sex) {
-        this.$message.error('请选择性别')
-        return
+        this.$message.error("请选择性别");
+        return;
       }
       // if (!this.dateValue) {//非必填
       //   this.$message.error("请选择出生日期");
       //   return;
       // }
       if (!tempData.patientBaseinfoReq.phone) {
-        this.$message.error('请输入本人电话')
-        return
+        this.$message.error("请输入本人电话");
+        return;
       }
       if (!tempData.patientBaseinfoReq.liveType) {
-        this.$message.error('请选择常住分类')
-        return
+        this.$message.error("请选择常住分类");
+        return;
       }
 
-            // if (!tempData.patientBaseinfoReq.address) {
+      // if (!tempData.patientBaseinfoReq.address) {
       //   this.$message.error("请输入选择户口地址");
       //   return;
       // }
@@ -1841,18 +1956,18 @@ export default {
        * 这里分两种情况，一是用户不改地址需要可以提交；二是改了需要提交
        */
       // if (this.cascaderData[0] != 1 && this.cascaderData.length > 1) {
-        if (this.isChangedCascader && this.cascaderData.length != 3) {
+      if (this.isChangedCascader && this.cascaderData.length != 3) {
         this.$message.error("请选择户口地址");
         return;
       }
 
       if (!tempData.patientBaseinfoReq.addressDetail) {
-        this.$message.error('请输入选择详细地址')
-        return
+        this.$message.error("请输入选择详细地址");
+        return;
       }
       if (!tempData.diseaseLevel) {
-        this.$message.error('请选择病情分级')
-        return
+        this.$message.error("请选择病情分级");
+        return;
       }
 
       // if (!tempData.diagnoseCode || tempData.diagnoseCode.length == 0) {
@@ -1861,25 +1976,25 @@ export default {
       // }
 
       if (!tempData.inHospitalCode) {
-        this.$message.error('请选择转入机构')
-        return
+        this.$message.error("请选择转入机构");
+        return;
       }
       if (!tempData.referralType) {
-        this.$message.error('请选择转诊类型')
-        return
+        this.$message.error("请选择转诊类型");
+        return;
       }
       if (!tempData.referralReason) {
-        this.$message.error('请选择转诊原因')
-        return
+        this.$message.error("请选择转诊原因");
+        return;
       }
       if (!tempData.referralWay) {
-        this.$message.error('请选择转运方式')
-        return
+        this.$message.error("请选择转运方式");
+        return;
       }
 
       if (!tempData.reachBeginDate || !tempData.reachEndDate) {
-        this.$message.error('请选择期望到院时间')
-        return
+        this.$message.error("请选择期望到院时间");
+        return;
       }
 
       // //单独组装生日
@@ -1890,7 +2005,9 @@ export default {
 
       //单独组装生日
       if (this.dateValue) {
-        tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format('YYYY-MM-DD')
+        tempData.patientBaseinfoReq.birthday = moment(this.dateValue).format(
+          "YYYY-MM-DD"
+        );
       }
 
       console.log(JSON.stringify(this.options));
@@ -1902,49 +2019,57 @@ export default {
 
       //单独组装主要诊断
       if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
-        this.$set(tempData, 'diagnoseCode', tempData.diagnoseCode.join(','))
-        this.$set(tempData, 'diagnos', this.diagnoseNames.join(','))
+        this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
+        this.$set(tempData, "diagnos", this.diagnoseNames.join(","));
       }
 
       //组装期望到院时间
-      this.$set(tempData, 'reachBeginDate', moment(this.uploadData.reachBeginDate).format('YYYY-MM-DD'))
-      this.$set(tempData, 'reachEndDate', moment(this.uploadData.reachEndDate).format('YYYY-MM-DD'))
+      this.$set(
+        tempData,
+        "reachBeginDate",
+        moment(this.uploadData.reachBeginDate).format("YYYY-MM-DD")
+      );
+      this.$set(
+        tempData,
+        "reachEndDate",
+        moment(this.uploadData.reachEndDate).format("YYYY-MM-DD")
+      );
 
       if (tempData.outCheck) {
-        delete tempData.outCheck
+        delete tempData.outCheck;
       }
       if (tempData.outCheckTime) {
-        delete tempData.outCheckTime
+        delete tempData.outCheckTime;
       }
       if (tempData.outCheckResult) {
-        delete tempData.outCheckResult
+        delete tempData.outCheckResult;
       }
 
       //isReupload true重新提交；false,修改不要status字段
       if (isReupload) {
         this.$set(tempData, "status", 1); //重新提交加一个参数，其他的都跟修改的一样   需要审核不通过才可以重新提交
-      }else{
-        delete tempData.status
+      } else {
+        delete tempData.status;
       }
 
-      console.log('addTransDown tempData modify', JSON.stringify(tempData))
-      this.confirmLoading = true
+      console.log("addTransDown tempData modify", JSON.stringify(tempData));
+      this.confirmLoading = true;
       modifyDownReferral(tempData)
         .then((res) => {
-          this.confirmLoading = false
+          this.confirmLoading = false;
           if (res.code == 0) {
-            this.$message.success('保存成功')
-            this.$bus.$emit('refreshTransDownListEvent', '刷新下转列表')
+            this.$message.success("保存成功");
+            this.$bus.$emit("refreshTransDownListEvent", "刷新下转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             // this.clearData();
-            this.$router.go(-1)
+            this.$router.go(-1);
           } else {
-            this.$message.error('保存失败：' + res.message)
+            this.$message.error("保存失败：" + res.message);
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
 
     // //后台做的动作除了修改数据，还会更改状态
@@ -2070,7 +2195,7 @@ export default {
     //     });
     // },
   },
-}
+};
 </script>
 
 <style lang="less" scoped>

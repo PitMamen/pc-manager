@@ -414,6 +414,7 @@
                   style="width: 100%; height: 28px"
                   v-model="cascaderData"
                   :options="options"
+                  @focus="onCascaderFocus"
                   ref="cascaderRef"
                   placeholder="请选择"
                   changeOnSelect
@@ -1408,6 +1409,14 @@ export default {
       // }
     },
 
+    onCascaderFocus() {
+      if (this.options.length == 1) {
+        this.getRegion(-1, (array) => {
+          this.options = array;
+        });
+      }
+    },
+
     /**
      * 1 下转    2 回转
      */
@@ -1626,7 +1635,15 @@ export default {
       );
 
       //户口地址
-      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      this.options = [
+        {
+          name: this.uploadData.patientBaseinfoReq.address,
+          townName: this.uploadData.patientBaseinfoReq.address,
+          addressId: 1,
+        },
+      ];
+      this.cascaderData = [1];
     },
 
     onSelectSource(sourceCode) {

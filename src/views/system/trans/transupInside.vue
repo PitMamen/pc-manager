@@ -413,6 +413,7 @@
               <a-cascader
                 style="width: 100%; height: 28px"
                 v-model="cascaderData"
+                @focus="onCascaderFocus"
                 :options="options"
                 ref="cascaderRef"
                 placeholder="请选择"
@@ -1298,6 +1299,14 @@ export default {
       // }
     },
 
+    onCascaderFocus() {
+      if (this.options.length == 1) {
+        this.getRegion(-1, (array) => {
+          this.options = array;
+        });
+      }
+    },
+
     //诊断搜索
     onDiagnoseSelectSearch(value) {
       this.diagnoseDatas = [];
@@ -1460,7 +1469,15 @@ export default {
       );
 
       //户口地址
-      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      this.options = [
+        {
+          name: this.uploadData.patientBaseinfoReq.address,
+          townName: this.uploadData.patientBaseinfoReq.address,
+          addressId: 1,
+        },
+      ];
+      this.cascaderData = [1];
     },
 
     onSelectSource(sourceCode) {
