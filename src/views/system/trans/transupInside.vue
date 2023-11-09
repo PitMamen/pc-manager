@@ -1263,9 +1263,9 @@ export default {
           if (callback) {
             res.data.forEach((item) => {
               if (this.mySelected.length < 2) {
-                this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法
+                this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
               } else {
-                this.$set(item, "isLeaf", true); //很关键  isLeaf 为 false 才会触发loadData方法
+                this.$set(item, "isLeaf", true); 
               }
             });
             callback(res.data);
