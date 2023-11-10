@@ -12,7 +12,7 @@
       <a-button
         v-if="record.userId && (checkData.userType == 'doctor' || checkData.userType == 'nurse')"
         icon="setting"
-        style="margin-right: 520px; width: 112px !important"
+        style="margin-right: 60%; width: 112px !important"
         :type="canInitCommodity ? 'primary' : 'default'"
         :loading="confirmLoading"
         @click="handleServiceInit"
@@ -209,30 +209,17 @@
           </div>
           <div class="div-title">
             <div class="div-line-blue"></div>
-            <span class="span-title">服务配置</span>
+            <span class="span-title">其它证书</span>
           </div>
 
-          <div class="div-content" style="flex-wrap: wrap">
-            <div class="checkview">
-              <span class="span-check-title">图文咨询:</span>
-              <a-switch v-model="textNumChecked" :disabled="!accountChecked" />
-            </div>
-            <div class="checkview">
-              <span class="span-check-title">电话咨询:</span>
-              <a-switch v-model="telNumChecked" :disabled="!accountChecked" />
-            </div>
-            <div class="checkview" style="margin-right: 0">
-              <span class="span-check-title">视频咨询:</span>
-              <a-switch v-model="videoNumChecked" :disabled="!accountChecked" />
-            </div>
-            <div class="checkview">
-              <span class="span-check-title">复诊开方:</span>
-              <a-switch v-model="appointNumChecked" :disabled="!accountChecked" />
-            </div>
-            <div class="checkview">
-              <span class="span-check-title">MDT会诊:</span>
-              <a-switch v-model="MDTNumChecked" :disabled="!accountChecked" />
-            </div>
+          <div class="div-content">
+            <a-checkbox v-model="psycholChecked"></a-checkbox>
+            <span class="span-item-name" style="margin-left: 10px; white-space: nowrap;">心理咨询师:</span>
+            <a-select v-model="checkData.psycholLevel" :disabled="!psycholChecked" allow-clear placeholder="请选择心理咨询师">
+              <a-select-option v-for="(item, index) in psycholList" :key="index" :value="item.code">{{
+                item.value
+              }}</a-select-option>
+            </a-select>
           </div>
 
           <div class="div-title" style="margin-top: 0">
@@ -775,6 +762,7 @@ export default {
         identificationNo: '',
         phone: '',
         email: '',
+        psycholLevel: undefined,
         userType: undefined, //人员类型
         professionalTitle: undefined, //人员职称
         hospitalCode: undefined, //所属机构
@@ -791,6 +779,12 @@ export default {
       roleList: [], //角色列表
       rylxList: [], //人员类型
       ryzcList: [], //人员职称
+      psycholChecked: false,
+      psycholList: [
+        {value: '心理咨询师', code: 1},
+        {value: '二级心理咨询师', code: 2},
+        {value: '三级心理咨询师', code: 3},
+      ],
 
       // 签约信息
       userInfoList: {},
@@ -829,6 +823,7 @@ export default {
         identificationNo: '',
         phone: '',
         email: '',
+        psycholLevel: undefined,
         userType: undefined, //人员类型
         professionalTitle: undefined, //人员职称
         hospitalCode: undefined, //所属机构
@@ -1037,10 +1032,14 @@ export default {
         userId: userId,
       }).then((res) => {
         if (res.code == 0) {
+          res.data.psycholLevel = res.data.psycholLevel || undefined
           res.data.userSex = res.data.userSex == '男' ? 0 : res.data.userSex == '女' ? 1 : 2
           // var birthday=res.data.birthday
           // var birthday2= birthday.substring(0, 4) + '-' +birthday.substring(4, 6) + '-'+birthday.substring(6)
           // res.data.birthday=birthday2
+          if (res.data.psycholLevel) {
+            this.psycholChecked = true
+          }
           if (res.data.loginName) {
             this.accountChecked = true
           } else {
@@ -1762,6 +1761,11 @@ export default {
         }
       }
 
+      if (this.psycholChecked && !this.checkData.psycholLevel) {
+        this.$message.error('请选择心理咨询师')
+        return
+      }
+
       // 如果选中的是 护士  则不要 职称 证件照
       if (this.checkData.userType == 'nurse') {
         this.checkData.titleZ = ''
@@ -1798,6 +1802,9 @@ export default {
         qualificationZ: this.photoListCheck.qualificationZ,
         titleF: this.photoListCheck.titleF,
         titleZ: this.photoListCheck.titleZ,
+      }
+      if (this.psycholChecked){
+        postData.psycholLevel = this.checkData.psycholLevel
       }
       if (this.accountChecked) {
         postData.loginName = this.checkData.loginName

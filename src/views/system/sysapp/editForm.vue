@@ -39,6 +39,7 @@
                   <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon2.png" v-if="item.id === 'icon2'" />
                   <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon3.png" v-if="item.id === 'icon3'" />
                   <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon4.png" v-if="item.id === 'icon4'" />
+                  <img class="icon" style="background: rgba(0, 0, 0, 0.85); width: auto; height: 20px;" src="@/assets/login/icon5.png" v-if="item.id === 'icon5'" />
                 </a-select-option>
               </a-select>
             </a-form-item>
@@ -152,6 +153,9 @@ export default {
         },
         {
           id: 'icon4'
+        },
+        {
+          id: 'icon5'
         }
       ],
       statusModel: true,

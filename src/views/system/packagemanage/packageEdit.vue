@@ -906,7 +906,7 @@ export default {
           }
           
         }
-        console.log("YYY:",nurseItem)
+        // console.log("YYY:",nurseItem)
         if (nurseItem) {
           this.isNurse = true
           this.allocationTypeNurse = nurseItem.allocationType.value
@@ -919,7 +919,7 @@ export default {
             }
           })
 
-          console.log('MMM:', this.nameNurse)
+          // console.log('MMM:', this.nameNurse)
 
           this.nurseDepartmentId = nurseItem.departmentId
           nurseItem.allocationType = nurseItem.allocationType.value
@@ -1028,6 +1028,9 @@ export default {
         }
 
         this.packageData.commodityPkgManageReqs = newRsps
+
+
+
         this.confirmLoading = false
       } else {
         this.confirmLoading = false
@@ -1482,7 +1485,7 @@ export default {
           this.packageData.tenantId,
           this.packageData.hospitalCode,
           this.technicianmentId,
-          this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
+          this.packageData.commodityPkgManageReqs[2].commodityPkgManageItemReqs,
           this.broadClassify == 1 ? true : false
         )
       }
@@ -1542,6 +1545,7 @@ export default {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
+      console.log("rrr:",this.packageData.commodityPkgManageReqs)
       this.$refs.addTeam.edit(
         this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode

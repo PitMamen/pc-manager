@@ -505,6 +505,11 @@ export default {
           },
           {
             allocationType: undefined,
+            commodityPkgManageItemReqs: [],
+            teamType: undefined,
+          },
+          {
+            allocationType: undefined,
             commodityPkgManageItemReqs: [
               // {
               //   achievementRatio: 0,
@@ -543,6 +548,8 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
 
     this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
+
+    console.log("HHH:",this.packageData)
 
     // this.getTenantListOut()
     this.packageData.tenantId = this.user.tenantId
@@ -584,6 +591,7 @@ export default {
       this.allocationTypeTechnician = undefined
       this.allocationTypeTeam = undefined
       this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
+      this.packageData.tenantId = this.user.tenantId
     },
 
     queryHospitalListOut() {
@@ -880,12 +888,12 @@ export default {
 
           this.canConfigTeam = true
           // this.onSelectChange()
-          this.getNewRsp()
+          // this.getNewRsp()
           break
         case 2:
           this.canConfigTeam = true
           // this.onSelectChange()
-          this.getNewRsp()
+          // this.getNewRsp()
           break
         case 3:
           this.canConfigTeam = false
@@ -1186,6 +1194,8 @@ export default {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
+
+      console.log("DDD:",this.packageData.commodityPkgManageReqs)
       this.$refs.addTeam.edit(
         this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode

@@ -17,10 +17,10 @@
           </div>
 
           <div class="div-content" style="margin-top: 20px">
-            <span class="span-item-name" ><span style="color: red">*</span>单价 </span>
+            <span class="span-item-name"><span style="color: red">*</span>单价 </span>
             <!-- 门诊  单价不让修改  只做展示 -->
             <a-input-number
-              :disabled="type==2"   
+              :disabled="type == 2"
               style="display: inline-block; width: 70px"
               v-model="saleAmount"
               :min="0"
@@ -109,8 +109,7 @@ export default {
   created() {},
   methods: {
     moment,
-    clearData() {
-    },
+    clearData() {},
 
     limitEnable() {
       this.islimitTip = !this.islimitTip
@@ -156,11 +155,10 @@ export default {
                     this.saleAmount = item1.saleAmount //单价
                     if (item1.itemsAttr) {
                       item1.itemsAttr.forEach((item2) => {
-
                         if (item2.ruleType == 'ITEM_ATTR_EXPIRE') {
                           //服务时效
                           this.timeAttrExpire = item2
-                          this.isSertimelimit=true
+                          this.isSertimelimit = true
                           this.serviceValue1 = this.timeAttrExpire.serviceValue
                           if (this.timeAttrExpire.unit == '小时') {
                             this.unitSelect = 1
@@ -193,22 +191,27 @@ export default {
     },
 
     handleSubmit() {
-      if (!this.serviceValue2||this.serviceValue2<=0) {
+      if (!this.serviceValue2 || this.serviceValue2 <= 0) {
         this.$message.error('请设置限制条数!')
         return
       }
 
-      if (!this.serviceValue1||this.serviceValue1<=0) {
+      if (!this.serviceValue1 || this.serviceValue1 <= 0) {
         this.$message.error('请输入服务时效!')
         return
       }
 
-
-      if (!this.saleAmount||this.saleAmount<=0) {
-        this.$message.error('请输入价格!')
-        return
+      if (this.type != 1) {
+        if (this.saleAmount < 0) {
+          this.$message.error('请输入价格!')
+          return
+        }
+      }else{
+        if (!this.saleAmount || this.saleAmount <= 0) {
+          this.$message.error('请输入价格!')
+          return
+        }
       }
-
 
 
       this.pkgs.forEach((item) => {

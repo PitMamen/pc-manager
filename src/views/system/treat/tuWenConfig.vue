@@ -37,7 +37,7 @@
                 <a-input-number
                   style="display: inline-block; width: 70px"
                   v-model="item.saleAmount"
-                  :min="0"
+                  :min="1"
                   :max="10000"
                   :maxLength="30"
                   allow-clear

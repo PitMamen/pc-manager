@@ -60,18 +60,19 @@
     </div>
 
     <s-table
-      :scroll="{ x: true }"
       ref="table"
+      class="x-table"
       size="default"
       :columns="columns"
       :data="loadData"
       :alert="true"
       :bordered="true"
+      :scroll="{ x: true }"
       :rowKey="(record) => record.code"
     >
       <!-- 复诊续方 -->
       <span slot="fzxfaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
           <a-popconfirm
             v-if="record.fuzhen"
             :title="record.fuzhen && record.fuzhen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -102,7 +103,7 @@
 
       <!-- 图文咨询 -->
       <span slot="twzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
           <a-popconfirm
             v-if="record.tuwen"
             :title="record.tuwen && record.tuwen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -133,7 +134,7 @@
 
       <!-- 电话咨询 -->
       <span slot="dhzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
           <a-popconfirm
             v-if="record.dianhua"
             :title="record.dianhua && record.dianhua.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -164,7 +165,7 @@
 
       <!-- 视频咨询 -->
       <span slot="spzxaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
           <a-popconfirm
             v-if="record.shipin"
             :title="record.shipin && record.shipin.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -195,7 +196,7 @@
 
       <!-- 门诊随诊 -->
       <span slot="mzszaction" slot-scope="text, record">
-        <div style="display: flex; flex-direction: row; align-items: center; margin-left: 20%">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
           <a-popconfirm
             v-if="record.menzhen"
             :title="record.menzhen && record.menzhen.stopStatus == 2 ? '确认停用？' : '确认启用？'"
@@ -223,8 +224,40 @@
           <a  :disabled="record.userType == 'nurse'"  v-if="record.menzhen" style="margin-left: 5px" @click="$refs.fzmzConfig.editmodal(record, 2)">配置</a>
         </div>
       </span>
+
+      <!-- 特需心理咨询 -->
+      <span slot="txzxaction" slot-scope="text, record">
+        <div style="display: flex; flex-direction: row; align-items: center; white-space: nowrap;">
+          <a-popconfirm
+            v-if="record.texu"
+            :title="record.texu && record.texu.stopStatus == 2 ? '确认停用？' : '确认启用？'"
+            placement="topRight"
+            @confirm="updatePkgStatusOut(record, 'texu')"
+          >
+            <a-switch
+              v-if="record.texu"
+              :disabled="!record.texu"
+              size="small"
+              :checked="record.texu ? record.texu.stopStatus == 2 : false"
+            />
+          </a-popconfirm>
+
+          <div v-if="!record.texu" class="tuoyuan" @click="showMessage(record,6)">
+            <div class="yuan"></div>
+          </div>
+
+          <div
+            style="width: 2px; height: 13px; background: #4d4d4d; margin-left: 5px; margin-right: 5px; margin-top: 2px"
+          ></div>
+
+          <a-icon type="setting" />
+          <a v-if="!record.texu" @click="showMessage(record,6)" style="margin-left: 5px; color: #4d4d4d">配置</a>
+          <a v-if="record.texu" style="margin-left: 5px" @click="$refs.texuConfig.editmodal(record, 3)">配置</a>
+        </div>
+      </span>
     </s-table>
 
+    <texu-Config ref="texuConfig" @ok="handleOk" />
     <fzmz-Config ref="fzmzConfig" @ok="handleOk" />
     <tuWen-Config ref="tuWenConfig" @ok="handleOk" />
     <phone-Config ref="phoneConfig" @ok="handleOk" />
@@ -243,12 +276,14 @@ import {
 } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
+import texuConfig from './texuConfig.vue'
 import fzmzConfig from './fzmzConfig.vue'
 import tuWenConfig from './tuWenConfig.vue'
 import phoneConfig from './phoneConfig.vue'
 export default {
   components: {
     STable,
+    texuConfig,
     fzmzConfig,
     tuWenConfig,
     phoneConfig,
@@ -317,6 +352,13 @@ export default {
         },
 
         {
+          title: '特需心理咨询',
+          dataIndex: 'txzxaction',
+          scopedSlots: { customRender: 'txzxaction' },
+          align: 'center',
+        },
+
+        {
           title: '图文咨询',
           dataIndex: 'twzxaction',
           scopedSlots: { customRender: 'twzxaction' },
@@ -377,6 +419,9 @@ export default {
                   } else if (item1.arrangeType == 'register') {
                     //复诊
                     this.$set(item, 'fuzhen', item1)
+                  } else if (item1.arrangeType == 'psychology') {
+                    //特需心理咨询
+                    this.$set(item, 'texu', item1)
                   }
                 })
               }
@@ -401,6 +446,9 @@ export default {
         this.$message.error('请先初始化!')
       }else{
         if (type==2&&!record.tuwen) {
+          this.$message.error('请先初始化!')
+        }
+        if (type==6) {
           this.$message.error('请先初始化!')
         }
       }
@@ -456,6 +504,13 @@ export default {
           updateType: 2,
         }
         record.menzhen.stopStatus = record.menzhen.stopStatus == 2 ? 1 : 2
+      } else if (type == 'texu') {
+        data = {
+          id: record.texu.commodityId,
+          statusValue: record.texu.stopStatus == 2 ? 1 : 2,
+          updateType: 2,
+        }
+        record.texu.stopStatus = record.texu.stopStatus == 2 ? 1 : 2
       }
 
       updatePkgStatus(data).then((res) => {
@@ -544,6 +599,11 @@ export default {
   },
 }
 </script>
+<style lang="less">
+.x-table .ant-table td {
+  white-space: nowrap;
+}
+</style>
     <style lang="less" scoped>
 .table-wrapper {
   // max-height: 600px;

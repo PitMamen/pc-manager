@@ -3759,6 +3759,17 @@ export function getTreeUsersByDeptIdsAndRoles(data) {
 }
 
 /**
+ * /tdUserTags/getDocListForHospitalAndDepartment 根据科室与角色查询用户树列表
+ */
+export function getDocListForHospitalAndDepartment(data) {
+  return axios({
+    url: '/account-api/tdUserTags/getDocListForHospitalAndDepartment',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  *  /tdHealthyTeamUserMapping/getHealthyTeamUserRoleGroupBy 获取健康管理团队配置
  * 
  * 参数  teamNameOrAbbr
@@ -3870,7 +3881,7 @@ export function getDictDataForCodeUserType(data) {
 */
 export function getDoctorQrCode(data) {
   return axios({
-    url: '/wx-api/wx/qrcode/'+appId+'/getDoctorQrCode',
+    url: '/wx-api/wx/qrcode/' + appId + '/getDoctorQrCode',
     method: 'get',
     params: data,
   })
@@ -4372,6 +4383,26 @@ export function applyRefund(data) {
     data: data,
   })
 }
+
+
+//重新退款
+export function retry(data) {
+  return axios({
+    url: '/medical-api/admrefund/retry',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+
+
+
+
+
+
 
 
 //退款列表表头信息
@@ -5155,7 +5186,7 @@ export function saveFactory(data) {
 // 获取临工注册信息
 export function getHvyogoUserInfo(userId) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/getHvyogoUserInfo/'+userId,
+    url: '/account-api/tfUserInfoHvyogo/getHvyogoUserInfo/' + userId,
     method: 'get',
     // params: userId,
   })
@@ -5182,7 +5213,7 @@ export function bindTask(data) {
 // 临工注册 
 export function register(userId) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/register/'+userId,
+    url: '/account-api/tfUserInfoHvyogo/register/' + userId,
     method: 'get',
     // params: data,
   })
@@ -5191,7 +5222,7 @@ export function register(userId) {
 // 临工签约  
 export function signing(userId) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/signing/'+userId,
+    url: '/account-api/tfUserInfoHvyogo/signing/' + userId,
     method: 'get',
     // params: userId,
   })
@@ -5201,7 +5232,7 @@ export function signing(userId) {
 // 银行卡号得到银行名称
 export function getBankNameForCardNo(cardNo) {
   return axios({
-    url: '/account-api/tfUserInfoHvyogo/getBankNameForCardNo/'+cardNo,
+    url: '/account-api/tfUserInfoHvyogo/getBankNameForCardNo/' + cardNo,
     method: 'get',
     // params: userId,
   })
@@ -5385,7 +5416,7 @@ export function snatchList(data) {
 // 套餐详情 
 export function snatchDetail(commodityPkgId) {
   return axios({
-    url: '/medical-api/pkg/snatchDetail/'+commodityPkgId,
+    url: '/medical-api/pkg/snatchDetail/' + commodityPkgId,
     method: 'get',
     // params: data,
   })
@@ -5396,7 +5427,7 @@ export function snatchDetail(commodityPkgId) {
 
 export function pkgManageItems(commodityId) {
   return axios({
-    url: '/medical-api/pkg/pkgManageItems/'+commodityId,
+    url: '/medical-api/pkg/pkgManageItems/' + commodityId,
     method: 'get',
     // params: data,
   })
@@ -5455,7 +5486,7 @@ export function accessTenants(data) {
   return axios({
     url: '/uam-api/tenant/accessTenants',
     method: 'get',
-   params: data,
+    params: data,
   })
 }
 
@@ -5466,7 +5497,7 @@ export function updateSnatchPkgItems(data) {
   return axios({
     url: '/medical-api/pkg/updateSnatchPkgItems',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5476,7 +5507,7 @@ export function queryDeptRegConfig(data) {
   return axios({
     url: '/info-api/departments/queryDeptRegConfig',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5486,7 +5517,7 @@ export function saveDeptRegConfig(data) {
   return axios({
     url: '/info-api/departments/saveDeptRegConfig',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5496,7 +5527,7 @@ export function updateDeptRegConfigStatus(data) {
   return axios({
     url: '/info-api/departments/updateDeptRegConfigStatus',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
 
@@ -5506,9 +5537,379 @@ export function qryDepartmentByReq(data) {
   return axios({
     url: '/health-api/patient/qryDepartmentByReq',
     method: 'post',
-   data: data,
+    data: data,
   })
 }
+
+
+//组织性质
+export function getOrganizationalNature(data) {
+  return axios({
+    url: '/info-api/feign/sysdictdata/getDictDataForCode/REFERRAL_ORG_NATURE',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+// 机构列表  全量
+
+export function getHospitalForOrgType(data) {
+  return axios({
+    url: '/uam-api/hospital/getHospitalForOrgType',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取档案信息
+export function getPatientBaseInfo(data) {
+  return axios({
+    url: '/referral-api/patient/getPatientBaseInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+// /patient/getRegionInfo  查询区域地区信息
+export function getRegionInfo(data) {
+  return axios({
+    url: '/referral-api/patient/getRegionInfo',
+    method: 'get',
+    params: data,
+  })
+}
+
+/// patient/qryPatientBaseList   查询档案列表
+export function qryPatientBaseList(data) {
+  return axios({
+    url: '/referral-api/patient/qryPatientBaseList',
+    method: 'post',
+    data: data,
+  })
+}
+
+///patient/savePatientBaseInfo  保存档案
+export function savePatientBaseInfo(data) {
+  return axios({
+    url: '/referral-api/patient/savePatientBaseInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
+///referralTrade/getUpReferralList 上转登记列表
+export function getUpReferralList(data) {
+  return axios({
+    url: '/referral-api/referralTrade/getUpReferralList',
+    method: 'post',
+    data: data,
+  })
+}
+
+///referralTrade/getDownReferralList 下转登记列表
+export function getDownReferralList(data) {
+  return axios({
+    url: '/referral-api/referralTrade/getDownReferralList',
+    method: 'post',
+    data: data,
+  })
+}
+
+///referralTrade/getReferralLogList 工单进度查询  上转登记进度
+export function getReferralLogList(tradId) {
+  return axios({
+    url: '/referral-api/referralTrade/getReferralLogList/' + tradId,
+    method: 'post',
+    // data: data,
+  })
+}
+
+
+///referralTrade/getReferralData 检索患者信息
+export function getReferralData(data) {
+  return axios({
+    url: '/referral-api/referralTrade/getReferralData/',
+    method: 'get',
+    params: data,
+  })
+}
+
+//  referralTrade/upReferralDetail/{tradeId}  工单记录详情 上转下转详情都是这个接口
+export function upReferralDetail(data) {
+  return axios({
+    url: '/referral-api/referralTrade/upReferralDetail/' + data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+///referralTrade/modifyUpReferral 修改上转登记
+export function modifyUpReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/modifyUpReferral',
+    method: 'post',
+    data: data,
+  })
+}
+///referralTrade/modifyDownReferral 修改下转登记
+export function modifyDownReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/modifyDownReferral',
+    method: 'post',
+    data: data,
+  })
+}
+
+// /referralOrg/upHospitalList 上转机构列表
+export function upHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/upHospitalList',
+    method: 'get',
+    params: data,
+  })
+}
+// /referralOrg/downHospitalList 下转机构列表
+export function downHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/downHospitalList',
+    method: 'get',
+    params: data,
+  })
+}
+
+// /referralTrade/queryTradeId  上转机构列表
+export function queryTradeId(data) {
+  return axios({
+    url: '/referral-api/referralTrade/queryTradeId',
+    method: 'get',
+    params: data,
+  })
+}
+
+//组织性质
+export function searchDiagnosis(data) {
+  return axios({
+    url: '/info-api/medicine/searchDiagnosis',
+    method: 'get',
+    params: data,
+  })
+}
+
+// /patient/getRegionByUpAddressId 查询区域地区信息
+export function getRegionByUpAddressId(data) {
+  return axios({
+    url: '/referral-api/patient/getRegionByUpAddressId',
+    method: 'get',
+    params: data,
+  })
+}
+
+// referralTrade/upReferral 上转登记
+export function upReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/upReferral',
+    method: 'post',
+    data: data,
+  })
+}
+// referralTrade/downReferral 下转登记
+export function downReferral(data) {
+  return axios({
+    url: '/referral-api/referralTrade/downReferral',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 转诊组织列表
+export function getreferralOrgList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/referralOrgList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 配置上级机构 
+export function configUpHospitalCode(data) {
+  return axios({
+    url: '/referral-api/referralOrg/configUpHospitalCode',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 上级机构列表
+export function getUpHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/getUpHospitalList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 下辖机构列表
+export function getDownHospitalList(data) {
+  return axios({
+    url: '/referral-api/referralOrg/getDownHospitalList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 移除下辖机构
+export function removeDownHospital(data) {
+  return axios({
+    url: '/referral-api/referralOrg/removeDownHospital/' + data,
+    method: 'get',
+    // param: data,
+  })
+}
+
+
+// 新增转诊组织
+export function addReferralOrg(data) {
+  return axios({
+    url: '/referral-api/referralOrg/addReferralOrg',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 修改转诊组织
+export function modifyReferralOrg(data) {
+  return axios({
+    url: '/referral-api/referralOrg/modifyReferralOrg',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 获取转诊组织信息
+export function getReferralOrgInfo(data) {
+  return axios({
+    url: '/referral-api/referralOrg/getReferralOrgInfo/' + data,
+    method: 'get',
+    // param: data,
+  })
+}
+
+
+
+//导出
+export function exportReferralPatient(data) {
+  return axios({
+    url: '/referral-api/excel/exportReferralPatient',
+    method: 'post',
+    data: data,
+    responseType: 'blob',
+  })
+}
+
+
+// 根据操作人员类型获取转诊的机构列表
+export function getReferralHospitalList(data) {
+  return axios({
+    url: '/referral-api/referral/getReferralHospitalList',
+    method: 'get',
+    param: data,
+  })
+}
+
+
+// 转诊人数统计
+export function statReferralPatient(data) {
+  return axios({
+    url: '/referral-api/referral/statReferralPatient',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 转入列表
+export function qryReferralListByPage(data) {
+  return axios({
+    url: '/referral-api/referral/qryReferralListByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 转入批量数量
+export function qryReferralCount(data) {
+  return axios({
+    url: '/referral-api/referral/qryReferralCount',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 根据id 查询转诊工单
+export function getReferralTradeById(data) {
+  return axios({
+    url: '/referral-api/referral/getReferralTradeById',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 转入审核
+export function referralExamine(data) {
+  return axios({
+    url: '/referral-api/referralTrade/referralExamine',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 转出审核
+export function referralOutExamine(data) {
+  return axios({
+    url: '/referral-api/referralTrade/referralOutExamine',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 转诊统计下钻
+export function statReferralPatientDetail(data) {
+  return axios({
+    url: '/referral-api/referral/statReferralPatientDetail',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 取消审核
+export function cancelAudit(data) {
+  return axios({
+    url: '/referral-api/referralTrade/cancelAudit/'+data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+// 详情导出
+// export function exportReferralPatient(data) {
+//   return axios({
+//     url: '/referral-api/excel/exportReferralPatient',
+//     method: 'post',
+//     data: data,
+//     responseType: 'blob'
+//   })
+// }
+
 
 
 
