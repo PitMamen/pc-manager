@@ -1396,7 +1396,7 @@ export default {
 
     onDeptGetFocus() {
       if (!this.uploadData.inHospitalCode) {
-        this.$message.error("请先选择转入机构");
+        this.$message.warn("请先选择转入机构");
         return;
       }
     },
@@ -1428,12 +1428,12 @@ export default {
     //获取患者
     getPatientList() {
       if (!this.sourceCode) {
-        this.$message.error("请先选择来源");
+        this.$message.warn("请先选择来源");
         return;
       }
 
       if (!this.sourceKeyword) {
-        this.$message.error("请输入证件号/诊疗卡号/住院号进行搜索");
+        this.$message.warn("请输入证件号/诊疗卡号/住院号进行搜索");
         return;
       }
 
