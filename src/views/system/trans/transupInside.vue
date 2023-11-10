@@ -413,6 +413,7 @@
               <a-cascader
                 style="width: 100%; height: 28px"
                 v-model="cascaderData"
+                @focus="onCascaderFocus"
                 :options="options"
                 ref="cascaderRef"
                 placeholder="请选择"
@@ -1231,9 +1232,9 @@ export default {
     handleCascaderChange(value) {
       console.log("Cascader handleCascaderChange", value);
       console.log("Cascader handleCascaderChange cascaderData", this.cascaderData);
-      if (value.length == 3) {
-        this.$refs.cascaderRef.dropDownVisible = false; //折叠无效
-      }
+      // if (value.length == 3) {
+      //   this.$refs.cascaderRef.dropDownVisible = false; //折叠无效
+      // }
     },
 
     //   loadCasData(selectedOptions) {
@@ -1262,9 +1263,9 @@ export default {
           if (callback) {
             res.data.forEach((item) => {
               if (this.mySelected.length < 2) {
-                this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法
+                this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
               } else {
-                this.$set(item, "isLeaf", true); //很关键  isLeaf 为 false 才会触发loadData方法
+                this.$set(item, "isLeaf", true); 
               }
             });
             callback(res.data);
@@ -1296,6 +1297,14 @@ export default {
       // } else {
       //   this.getTownName(item.children);
       // }
+    },
+
+    onCascaderFocus() {
+      if (this.options.length == 1) {
+        this.getRegion(-1, (array) => {
+          this.options = array;
+        });
+      }
     },
 
     //诊断搜索
@@ -1460,7 +1469,15 @@ export default {
       );
 
       //户口地址
-      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      this.options = [
+        {
+          name: this.uploadData.patientBaseinfoReq.address,
+          townName: this.uploadData.patientBaseinfoReq.address,
+          addressId: 1,
+        },
+      ];
+      this.cascaderData = [1];
     },
 
     onSelectSource(sourceCode) {

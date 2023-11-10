@@ -410,7 +410,24 @@
             </div>
             <div class="div-cell-value" style="width: 85.1%">
               <div class="div-cell-value" style="width: 80%">
-                <a-auto-complete
+                <a-cascader
+                  style="width: 100%; height: 28px"
+                  v-model="cascaderData"
+                  :options="options"
+                  @focus="onCascaderFocus"
+                  ref="cascaderRef"
+                  placeholder="请选择"
+                  changeOnSelect
+                  :field-names="{
+                    label: 'name',
+                    value: 'addressId',
+                    children: 'children',
+                  }"
+                  :load-data="loadCasData"
+                  @change="handleCascaderChange"
+                ></a-cascader>
+
+                <!-- <a-auto-complete
                   v-model="uploadData.patientBaseinfoReq.address"
                   placeholder="请输入选择"
                   option-label-prop="title"
@@ -427,7 +444,7 @@
                       >{{ item.townName }}</a-select-option
                     >
                   </template>
-                </a-auto-complete>
+                </a-auto-complete> -->
               </div>
             </div>
           </div>
@@ -899,6 +916,7 @@ import {
   // getTreeUsersByDeptIdsAndRoles,
   getDocListForHospitalAndDepartment,
   getReferralData,
+  getRegionByUpAddressId,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -1061,7 +1079,50 @@ export default {
 
       diagnoseNames: [],
 
+      cascaderData: [],
+      options: [],
+      // options: [
+      //   {
+      //     id: 1,
+      //     addressId: 110000,
+      //     name: "北京市",
+      //     pyCode: "bjs",
+      //     provinceId: 11,
+      //     indexId: 0,
+      //     townName: "北京市",
+      //     upAddressId: -1,
+      //     provinceName: "北京市",
+      //     regionName: "华北地区",
+      //     maxNum: null,
+      //   },
+      // ],
+
       loading: false,
+      townNameGet: "",
+      mySelected: [],
+
+      loadCasData: (selectedOptions) => {
+        console.log("Cascader selectedOptions", selectedOptions);
+        this.mySelected = JSON.parse(JSON.stringify(selectedOptions));
+        if (selectedOptions.length == 3) {
+          return;
+        }
+        const targetOption = selectedOptions[selectedOptions.length - 1];
+        targetOption.loading = true;
+        // 接口调用
+        this.getRegion(targetOption.addressId, (array) => {
+          console.log("...targetOption", targetOption);
+          // 取消加载标识
+          targetOption.loading = false;
+          // 把下级数据存进去
+          targetOption.children = array;
+          // 重新赋值级联数据
+          this.options = [...this.options];
+        });
+        targetOption.loading = false;
+        // targetOption.children = [...data];
+        // this.options = [...this.options];
+      },
     };
   },
   // watch: {
@@ -1249,6 +1310,10 @@ export default {
 
     this.getHospitalDatas();
     // this.getDepartmentSelectList(undefined);
+
+    this.getRegion(-1, (array) => {
+      this.options = array;
+    });
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1274,6 +1339,84 @@ export default {
   //       }
   // },
   methods: {
+    handleCascaderChange(value) {
+      console.log("Cascader handleCascaderChange", value);
+      console.log("Cascader handleCascaderChange cascaderData", this.cascaderData);
+      // if (value.length == 3) {
+      //   this.$refs.cascaderRef.dropDownVisible = false; //折叠无效
+      // }
+    },
+
+    //   loadCasData(selectedOptions) {
+    //   console.log("Cascader selectedOptions", selectedOptions);
+    //   const targetOption = selectedOptions[selectedOptions.length - 1];
+    //   targetOption.loading = true;
+    //   // 接口调用
+    //   this.getRegion(targetOption.addressId, (array) => {
+    //     console.log("...targetOption", targetOption);
+    //     // 取消加载标识
+    //     targetOption.loading = false;
+    //     // 把下级数据存进去
+    //     targetOption.children = array;
+    //     // 重新赋值级联数据
+    //     this.options = [...this.options];
+    //   });
+    //   targetOption.loading = false;
+    //   targetOption.children = [...data];
+    //   this.options = [...this.options];
+    // },
+
+    getRegion(addressId, callback = null) {
+      getRegionByUpAddressId({ upAddressId: addressId }).then((res) => {
+        if (res.code == 0) {
+          // 再传给回调函数
+          if (callback) {
+            res.data.forEach((item) => {
+              if (this.mySelected.length < 2) {
+                this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
+              } else {
+                this.$set(item, "isLeaf", true);
+              }
+            });
+            callback(res.data);
+          }
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
+    },
+
+    getTownName(options) {
+      //递归查找
+      for (let index = 0; index < options.length; index++) {
+        if (options[index].addressId == this.cascaderData[2]) {
+          console.log("townName", options[index].townName);
+          this.townNameGet = options[index].townName;
+          return options[index].townName;
+        } else {
+          if (options[index].children) {
+            this.getTownName(options[index].children);
+          }
+        }
+      }
+
+      // let one = options.find((item) => item.addressId == this.cascaderData[2]);
+      // if (one) {
+      //   return one.townName;
+      // } else {
+      //   this.getTownName(item.children);
+      // }
+    },
+
+    onCascaderFocus() {
+      if (this.options.length == 1) {
+        this.getRegion(-1, (array) => {
+          this.options = array;
+        });
+      }
+    },
+
     /**
      * 1 下转    2 回转
      */
@@ -1492,7 +1635,15 @@ export default {
       );
 
       //户口地址
-      this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
+      this.options = [
+        {
+          name: this.uploadData.patientBaseinfoReq.address,
+          townName: this.uploadData.patientBaseinfoReq.address,
+          addressId: 1,
+        },
+      ];
+      this.cascaderData = [1];
     },
 
     onSelectSource(sourceCode) {
@@ -1728,8 +1879,12 @@ export default {
         this.$message.error("请选择常住分类");
         return;
       }
-      if (!tempData.patientBaseinfoReq.address) {
-        this.$message.error("请输入选择户口地址");
+      // if (!tempData.patientBaseinfoReq.address) {
+      //   this.$message.error("请输入选择户口地址");
+      //   return;
+      // }
+      if (this.cascaderData.length != 3) {
+        this.$message.error("请选择户口地址");
         return;
       }
       if (!tempData.patientBaseinfoReq.addressDetail) {
@@ -1780,6 +1935,14 @@ export default {
           "YYYY-MM-DD"
         );
       }
+
+      console.log(JSON.stringify(this.options));
+      //组装地址
+      if (this.cascaderData.length == 3) {
+        this.getTownName(this.options);
+        tempData.patientBaseinfoReq.address = this.townNameGet;
+      }
+
       //单独组装主要诊断
       if (tempData.diagnoseCode && tempData.diagnoseCode.length > 0) {
         this.$set(tempData, "diagnoseCode", tempData.diagnoseCode.join(","));
