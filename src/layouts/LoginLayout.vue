@@ -1,6 +1,6 @@
 <template>
   <div id="loginLayout">
-    <div class="left">
+    <div class="left" v-show="!isMobile">
       <img class="chahua" src="@/assets/login/chahua.png" />
       <div class="mask" v-if="hasLogin && sysApps && sysApps.length > 1">
         <img class="logo" src="@/assets/login/logo.png" />
@@ -22,7 +22,68 @@
         </div>
       </div>
     </div>
-    <div class="right">
+    
+    <div v-if="isMobile" class="right" :class="{mobile: isMobile}">
+      <div class="right-wrap" style="top: 30%;">
+        <div class="titles">
+          <div class="title1" style="font-size: 20px;">数智化全病程服务管理平台</div>
+          <div class="title2" style="font-size: 14px;margin-top: 15px;margin-bottom: 50px;">健/康/城/市 智/慧/医/疗</div>
+        </div>
+        <div class="success-wrap" v-if="hasLogin && sysApps && sysApps.length > 1">
+          <div class="welcome" style="font-size: 12px; margin-top: 15px;">平台管理员，您好！欢迎使用本系统。</div>
+          <img class="success" src="@/assets/login/success.png" />
+          <div class="msg" style="font-size: 20px;">登录成功!</div>
+          <Button size="large" style="width: 50%;margin-top: 30px;margin-left: 25%;height: 45px;color: #ffffff;background: #1890ff;" @click="handleLogout">退出</Button>
+        </div>
+        <div class="login-wrap" v-else>
+          <div class="intro" style="font-size: 14px;">用户名</div>
+          
+          <Input
+          placeholder='请输入用户名'
+          class="mobileinput"
+          
+          @input="onUsernameInput"
+       
+          >
+        </Input>
+          
+         
+          <div class="intro"  style="font-size: 14px;margin-top: 15px;">密码</div>
+          <Input
+          placeholder='请输入密码'
+          class="mobileinput"
+          type='password'
+          @input="onPasswordInput">
+        </Input>
+          
+
+          <div style="margin-top: 15px;font-size: 14px;" class="intro">验证码</div>
+          <div class="captcha">
+            <Input
+          placeholder='请输入验证码'
+          class="mobileinput"
+          style="width: 50%"
+          @input="onCaptchaInput">
+        </Input>
+          <img @click="update()" style="width: 45%; height: 51px;" :src="imageUrl" />
+         
+          </div>
+
+          <a-button
+            size="large"
+            type="primary"
+            class="login-button-mobile"
+            
+            :loading="flag"
+            :disabled="flag"
+            @click="handleLogin"
+          >
+            {{flag?'登录中...':'登 录'}}
+          </a-button>
+        </div>
+      </div>
+    </div>
+    <div v-else class="right" >
       <div class="right-wrap">
         <div class="titles">
           <div class="title1">数智化全病程服务管理平台</div>
@@ -103,6 +164,7 @@ import { SYS_APP } from '@/store/mutation-types'
 import { SYS_APP_ID } from '@/store/mutation-types'
 import { ACCESS_TOKEN } from '@/store/mutation-types'
 
+
 export default {
   name: 'LoginLayout',
   components: { RouteView },
@@ -117,8 +179,12 @@ export default {
         password: '',
         captcha: '',
         captchaKey: '',
+        applicationId:'',
+        redirectRri:'',
+        state:'',
       },
       sysApps: [],
+      isMobile: false
     }
   },
   computed: {
@@ -139,10 +205,17 @@ export default {
   },
   mounted() {
     this.setSysApps()
+    this.isMobile = !this.isPC()
   },
   beforeDestroy() {},
 
   created() {
+   
+    console.log(this.$route.query)
+    this.loginParams.applicationId=this.$route.query.application_id || undefined
+    this.loginParams.redirectRri=this.$route.query.redirect_uri || undefined
+    this.loginParams.state=this.$route.query.state || undefined
+     
     this.getCaptcha()
   },
   methods: {
@@ -151,6 +224,22 @@ export default {
     update() {
       this.getCaptcha()
     },
+
+
+  isPC() {
+	    var userAgentInfo = navigator.userAgent;
+	    var Agents = ["Android", "iPhone",
+	                "SymbianOS", "Windows Phone",
+	                "iPad", "iPod"];
+	    var flag = true;
+	    for (var v = 0; v < Agents.length; v++) {
+	        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+	            flag = false;
+	            break;
+	        }
+	    }
+	    return flag;
+	},
 
     getClass(index) {
       console.log('RRR:', index)
@@ -191,6 +280,7 @@ export default {
         return '@/assets/login/icon5.png'
       }
     },
+
 
     //获取验证码调用
     getCaptcha() {
@@ -250,7 +340,19 @@ export default {
       var encrypted = cryptoJs.DES.encrypt(message, keyHex, option)
       return encrypted.ciphertext.toString()
     },
+    onUsernameInput(event){
+    
+      this.loginParams.username=event.currentTarget.value
+    },
+    onPasswordInput(event){
+      this.loginParams.password=event.currentTarget.value   
+    },
+    onCaptchaInput(event){
+      this.loginParams.captcha=event.currentTarget.value   
+    },
     handleLogin() {
+   
+
       this.loginParams.username = this.loginParams.username.trim()
       this.loginParams.password = this.loginParams.password.trim()
       this.loginParams.captcha = this.loginParams.captcha.trim()
@@ -297,7 +399,17 @@ export default {
             this.$message.error('您账号未绑定系统应用，无法登录')
             return
           }
+         
           this.setSysApps(apps)
+
+           //判断是否跳转到第三方网站
+           if(this.loginParams.redirectRri){
+            window.open(this.loginParams.redirectRri+'?code='+res.data.code+'&state='+res.data.state, '_self')
+
+            Vue.ls.remove(ACCESS_TOKEN)
+            return
+          }
+
           if (apps.length === 1) {
             this.itemClick(apps[0])
             return
@@ -532,6 +644,9 @@ border-radius: 10px;
     height: 100%;
     background: #ffffff;
     box-shadow: 0px 5px 10px 0px rgba(217, 239, 255, 0.35);
+  &.mobile {
+      margin-left: 0px;
+    }
     .right-wrap {
       position: absolute;
       width: 100%;
@@ -563,6 +678,20 @@ border-radius: 10px;
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
+        }
+
+      
+        .mobileinput{
+          width: 100%;
+          height: 45px;
+          margin-top: 10px;
+        }
+
+        .login-button-mobile{
+          width: 100%;
+          height: 45px !important;
+          margin-top: 30px;
+          font-size: 17px !important;
         }
 
         .px2rem(margin-top, 94);
