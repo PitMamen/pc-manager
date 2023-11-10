@@ -906,7 +906,7 @@ export default {
           }
           
         }
-        console.log("YYY:",nurseItem)
+        // console.log("YYY:",nurseItem)
         if (nurseItem) {
           this.isNurse = true
           this.allocationTypeNurse = nurseItem.allocationType.value
@@ -919,7 +919,7 @@ export default {
             }
           })
 
-          console.log('MMM:', this.nameNurse)
+          // console.log('MMM:', this.nameNurse)
 
           this.nurseDepartmentId = nurseItem.departmentId
           nurseItem.allocationType = nurseItem.allocationType.value
