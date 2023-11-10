@@ -369,7 +369,7 @@ export default {
     getColor(value) {
       if (value == 1 || value == 2) {
         return 'span-green'
-      } else if (value == 3 || value == 5) {
+      } else if (value == 3 || value == 5||value==7) {
         return 'span-red'
       } else if (value == 6) {
         return 'span-blue'
