@@ -5,15 +5,18 @@
       <a-button type="primary" ghost @click="goBack()">返回</a-button>
       <a-button v-show="showButton" style="margin-left: 10px" type="primary" @click="agreeRefund()">同意退款</a-button>
       <a-button v-show="showButton" style="margin-left: 10px" type="danger" @click="rejectRefund()">驳回退款</a-button>
+      <a-button v-show="showretryButton" style="margin-left: 10px" type="primary" @click="retryRefund()"
+        >重新退款</a-button
+      >
       <div style="overflow: hidden; float: right; width: 100%; margin-right: 49px">
         <a-button type="primary" ghost style="margin-left: 0%; float: right">日志</a-button>
       </div>
     </div>
 
-    <div class="big-kuang" >
+    <div class="big-kuang">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">基本信息</div>
       <div class="line"></div>
-      <div class="div-up-content" >
+      <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">订单号 :</span>
           <a style="color: #409eff" @click="goDetail(orderDetailDataList.orderId)" class="span-item-value">{{
@@ -32,7 +35,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" >
+      <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">所属医院 :</span>
           <span class="span-item-value">{{ orderDetailDataList.hospitalName || '-' }}</span>
@@ -51,7 +54,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" >
+      <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">用户姓名 :</span>
           <span class="span-item-value">{{ orderDetailDataList.userName || '-' }}</span>
@@ -68,7 +71,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" >
+      <div class="div-up-content">
         <div class="div-pro-line">
           <span class="span-item-name">套餐包服务时间 :</span>
           <span class="span-item-value">{{
@@ -87,7 +90,7 @@
         </div>
       </div>
 
-      <div class="div-up-content" style="padding-bottom: 10px;">
+      <div class="div-up-content" style="padding-bottom: 10px">
         <div class="div-pro-line">
           <span class="span-item-name">同意退款时间 :</span>
           <span class="span-item-value">{{ orderDetailDataList.agreeRefundTime || '-' }}</span>
@@ -105,11 +108,18 @@
       </div>
     </div>
 
-    <div style="margin-top: 20px;" class="big-kuang">
+    <div style="margin-top: 20px" class="big-kuang">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">产品清单</div>
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5"
+        style="
+          margin-left: 15px;
+          margin-right: 15px;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          border: none;
+          background-color: #f5f5f5;
+        "
         size="small"
         class="a-table-one"
         bordered
@@ -123,7 +133,7 @@
       </a-table>
     </div>
 
-    <div style="margin-top: 20px; " class="big-kuang">
+    <div style="margin-top: 20px" class="big-kuang">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">权益清单</div>
       <span style="margin-left: 82.5%; float: right; margin-top: -30px; color: #409eff; margin-right: 20px"
         >使用情况</span
@@ -131,7 +141,14 @@
 
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5"
+        style="
+          margin-left: 15px;
+          margin-right: 15px;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          border: none;
+          background-color: #f5f5f5;
+        "
         size="small"
         class="a-table-one"
         bordered
@@ -145,11 +162,11 @@
       </a-table>
     </div>
 
-    <div style="margin-top: 20px; " class="big-kuang">
+    <div style="margin-top: 20px" class="big-kuang">
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">费用情况</div>
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; background-color: #f5f5f5"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px; margin-bottom: 10px; background-color: #f5f5f5"
         size="small"
         class="a-table-one"
         bordered
@@ -169,7 +186,7 @@
         <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">退款详情</div>
         <div class="line"></div>
 
-        <div class="div-up-content" style="margin-top: 15px;">
+        <div class="div-up-content" style="margin-top: 15px">
           <div class="div-pro-line" style="margin-left: 50px">
             <span style="color: #1a1a1a" class="span-item-name">应退总金额 :</span>
             <span style="color: #1a1a1a" class="span-item-value">{{ orderDetailDataList.refundMoney }}</span>
@@ -177,16 +194,12 @@
 
           <div class="div-pro-line" style="margin-left: 20px">
             <span class="span-item-name" style="color: #1a1a1a"> 实退总金额 :</span>
-            <span class="span-item-value" style="color: #1a1a1a">{{
-              orderDetailDataList.actualRefundMoney
-            }}</span>
+            <span class="span-item-value" style="color: #1a1a1a">{{ orderDetailDataList.actualRefundMoney }}</span>
           </div>
 
           <div class="div-pro-line" style="margin-left: 20px">
             <span class="span-item-name" style="color: #1a1a1a"> 退款方式 :</span>
-            <span class="span-item-value" style=" color: #1a1a1a">{{
-              orderDetailDataList.refundMethod
-            }}</span>
+            <span class="span-item-value" style="color: #1a1a1a">{{ orderDetailDataList.refundMethod }}</span>
           </div>
         </div>
       </div>
@@ -241,7 +254,7 @@
 </template>
     
     <script>
-import { refundDetail, examine } from '@/api/modular/system/posManage'
+import { refundDetail, examine, retry } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -264,6 +277,7 @@ export default {
       record: undefined,
       commodityPkgId: undefined,
       showButton: false,
+      showretryButton: false,
       orderDetailDataList: [],
       goodsItemsData: [], //产品清单数据
       rightItemsData: [], //权益清单数据
@@ -557,6 +571,13 @@ export default {
               }
             }
 
+            // console.log("TTTT:",this.user.dataAccessActors)
+
+            if (this.user && this.user.dataAccessActors.includes('financialManager')) {
+              if (this.orderDetailDataList.refundStatus.value == 5) {
+                this.showretryButton = true
+              }
+            }
 
             this.goodsItemsData = res.data.goodsItems //产品信息
             this.rightItemsData = res.data.rightItems //权益信息
@@ -612,6 +633,26 @@ export default {
     //驳回退款
     rejectRefund() {
       this.visible_model = true
+    },
+
+    // 重新退款
+    retryRefund() {
+      let postData = {
+        applyId: this.orderId,
+      }
+      this.confirmLoading = true
+      retry(postData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.showretryButton = false
+            this.$message.success("操作成功!")
+            this.$bus.$emit('refundRefresh', '刷新数据')
+            this.$router.go(-1)
+          }
+        })
+        .finally((item) => {
+          this.confirmLoading = false
+        })
     },
 
     //审核通过退款   type=1 同意 2 驳回

@@ -412,8 +412,8 @@ export default {
     //详情
     goDetail(record) {
       var path = ''
-      if (record.orderType == 'appPreRegister') {
-        //复诊续方
+      if (record.orderType == 'appPreRegister'||record.orderType =='psychologyRegister') {
+        //复诊续方   //复诊订单
         path = '/order/continuationDetail'
         //有赞商城
       } else if (record.orderType == 'youzanOrder') {

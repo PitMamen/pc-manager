@@ -121,6 +121,17 @@ const vueConfig = {
         }
       },
 
+
+      '/api/referral-api': {
+        target: 'http://192.168.1.121/referral-api',
+        ws: false,
+        logLevel: 'debug',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/api/referral-api': ''   //需要rewrite的,
+        }
+      },
+
       '/api/account-api': {
         target: 'http://192.168.1.121/account-api',
         ws: false,

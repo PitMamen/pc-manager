@@ -549,6 +549,8 @@ export default {
 
     this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
 
+    console.log("HHH:",this.packageData)
+
     // this.getTenantListOut()
     this.packageData.tenantId = this.user.tenantId
     this.queryHospitalListOut()
@@ -589,6 +591,7 @@ export default {
       this.allocationTypeTechnician = undefined
       this.allocationTypeTeam = undefined
       this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
+      this.packageData.tenantId = this.user.tenantId
     },
 
     queryHospitalListOut() {
@@ -1191,6 +1194,8 @@ export default {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
+
+      console.log("DDD:",this.packageData.commodityPkgManageReqs)
       this.$refs.addTeam.edit(
         this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode

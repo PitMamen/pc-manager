@@ -1028,6 +1028,9 @@ export default {
         }
 
         this.packageData.commodityPkgManageReqs = newRsps
+
+
+
         this.confirmLoading = false
       } else {
         this.confirmLoading = false
@@ -1542,6 +1545,7 @@ export default {
         this.$message.warn('请先选择团队参与分配方式')
         return
       }
+      console.log("rrr:",this.packageData.commodityPkgManageReqs)
       this.$refs.addTeam.edit(
         this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode

@@ -14,7 +14,7 @@
           <div class="div-content">
             <span>{{ record.userName }}|{{ record.userSex }}|{{ record.userAge }}|{{ record.hospitalName }}</span>
 
-            <div style="flex-wrap: wrap; margin-left: 60%; display: flex; flex-direction: row">
+            <div style="flex-wrap: wrap; margin-left: 60%; display: flex; flex-direction: row" v-if="false">
               <div style="color: #4d4d4d; margin-top: 5px">分成</div>
               <a-input-number
                 style="display: inline-block; width: 70px; margin-left: 10px"
@@ -336,19 +336,8 @@
           >
             <div class="mission-top-add">
               <div class="div-content">
-                <span class="span-item-name">单价 </span>
-                <a-input-number
-                  style="display: inline-block; width: 70px"
-                  v-model="item.saleAmount"
-                  :min="1"
-                  :max="10000"
-                  :maxLength="30"
-                  allow-clear
-                />
-                <div style="margin-left: 5px; color: #4d4d4d">元</div>
-
                 <!-- <a-checkbox style="margin-left: 20px" @click="limitEnable(item)" :checked="item.isLimit" /> -->
-                <span class="span-item-name" style="margin-left: 10px">服务时长</span>
+                <span class="span-item-name">服务时长</span>
 
                 <a-input
                   :maxLength="20"
@@ -374,22 +363,7 @@
                     item.value
                   }}</a-select-option>
                 </a-select>
-
-                <a-button
-                  style="margin-left: auto; margin-right: 10px"
-                  type="primary"
-                  ghost
-                  @click="deleteTask(item, index)"
-                  >删除</a-button
-                >
-
-                <a-button
-                  style="margin-right: 10px"
-                  type="primary"
-                  @click="addTask(item, index)"
-                  v-if="index == taskList.length - 1"
-                  >新增</a-button
-                >
+                
               </div>
             </div>
           </div>
@@ -479,7 +453,7 @@ export default {
           saleAmount: '',
 
           isLimit: true,
-          isSerLimit: false,
+          isSerLimit: true,
         },
       ],
 
@@ -511,7 +485,7 @@ export default {
           saleAmount: '',
 
           isLimit: true,
-          isSerLimit: false,
+          isSerLimit: true,
           timeId: 0,
           StripId: 0,
         },
@@ -601,7 +575,7 @@ export default {
 
         saleAmount: '', //单价
 
-        isSerLimit: false,
+        isSerLimit: true,
         isLimit: true,
         timeId: 0,
         StripId: 0,
@@ -708,7 +682,7 @@ export default {
                   projectId: item1.id,
                   saleAmount: item1.saleAmount, //单价
                   pkgsId: item.id,
-                  isSerLimit: false,
+                  isSerLimit: true,
                   isLimit: true,
                   timeId: 0,
                   StripId: 0,
@@ -847,8 +821,8 @@ export default {
               quantity: 1,
               itemImg: 1,
               saleAmount: itemTask.saleAmount,
-              serviceItemId: this.type === 1 ? 11 : 5,
-              serviceItemName: this.type === 1 ? '电话咨询' : '视频咨询',
+              serviceItemId: 5,
+              serviceItemName: '特需心理咨询',
               unit: '次',
               itemsAttr: [
                 {
@@ -903,16 +877,39 @@ export default {
       this.taskList.forEach((itemTask) => {
         if (itemTask.isLimit) {
           console.log('IIIIII:', itemTask.serviceStrip)
-          if (!itemTask.serviceStrip || itemTask.serviceStrip == '' || itemTask.serviceStrip == 0) {
+          if (!/^[1-9]\d*$/.test(itemTask.serviceStrip+'')) {
             isReturn = true
             return
           }
         }
       })
       if (isReturn) {
-        this.$message.error('请输入服务时长!')
+        this.$message.error('请输入整数服务时长!')
         return
       }
+
+      this.taskList.forEach((itemTask) => {
+        if (!itemTask.isSerLimit) {
+          isReturn = true
+          return
+        }
+      })
+      if (isReturn) {
+        this.$message.error('请先勾选服务时效!')
+        return
+      }
+
+      this.taskList.forEach((itemTask) => {
+        if (!/^[1-9]\d*$/.test(itemTask.serviceTime)) {
+          isReturn = true
+          return
+        }
+      })
+      if (isReturn) {
+        this.$message.error('请输入整数服务时效!')
+        return
+      }
+
       this.addArrangeInfoOut()
     },
 

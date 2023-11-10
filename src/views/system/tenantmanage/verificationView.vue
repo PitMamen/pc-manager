@@ -189,8 +189,8 @@
 
         <div class="div-span-content-right" style="position: relative">
           <div class="div-service-user">
-            <span style="color: #000">渠道来源：</span>
-            <span style="color: #000">{{ record.authSourceStr }}</span>
+            <span style="color: #000;">渠道来源：</span>
+            <span style="color: #000;">{{ record.authSourceStr }}</span>
           </div>
 
           <div v-if="record.isLook" class="div-service-user">
