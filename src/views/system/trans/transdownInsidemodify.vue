@@ -1703,7 +1703,7 @@ export default {
 
     onDeptGetFocus() {
       if (!this.uploadData.inHospitalCode) {
-        this.$message.error("请先选择转入机构");
+        this.$message.warn("请先选择转入机构");
         return;
       }
     },
