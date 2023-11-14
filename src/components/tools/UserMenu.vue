@@ -6,18 +6,33 @@
         <span class="name hospital-name">{{ hospitalName }}</span>
         <span class="name user-name">{{ userName }}</span>
         <span class="line"></span>
+        <div class="name user-name" style="cursor: pointer;" @click="appToggled()">
+          <img src="~@/assets/login/qiehuan.png" />
+          <span style="font-size: 14px; margin-left: 8px">系统切换</span>
+        </div>
+
+        <span class="line"></span>
+
+        <div :title="'修改密码'" class="name user-name" style="cursor: pointer" @click="updatePwd()">
+          <img  style="width: 20px; height: 20px; margin-top: -2px" src="~@/assets/login/mima.png" />
+        </div>
+        <span class="line"></span>
+
+
+        <div :title="'退出登录'" class="name user-name" style="cursor: pointer"  @click="handleLogout">
+          <img src="~@/assets/login/tuichu.png" />
+        </div>
+
+
       </div>
-      <a-dropdown>
+      <!-- <a-dropdown>
         <a-icon class="icon-setting" type="setting" />
-        <!-- fixedPart 隐藏其他的功能 -->
         <a-menu slot="overlay" class="user-dropdown-menu-wrapper">
-          <!-- <a-menu-item key="4" v-if="mode === 'sidemenu'"> -->
-          <a-menu-item key="4" v-if="userappList.length>1">
+          <a-menu-item key="4" v-if="userappList.length > 1">
             <a @click="appToggled()">
               <span>切换应用</span>
             </a>
           </a-menu-item>
-          <!-- <a-menu-item key="5" v-if="hasPerm('sysUser:updatePwd')"  > -->
           <a-menu-item key="5" v-if="true">
             <a @click="updatePwd()">
               <span>修改密码</span>
@@ -41,7 +56,7 @@
             </a>
           </a-menu-item>
         </a-menu>
-      </a-dropdown>
+      </a-dropdown> -->
     </div>
     <a-modal
       title="修改密码"
@@ -138,7 +153,7 @@ export default {
       keshiName: '',
       currentRoleId: 1,
       lastRoleId: 1,
-      userappList:[],
+      userappList: [],
       //接口请求的角色列表
       roleList: [
         { roleId: 1, roleRealName: '医生' },
@@ -222,7 +237,7 @@ export default {
      */
     appToggled() {
       this.$router.push({
-        path: '/user/login'
+        path: '/user/login',
       })
     },
 
@@ -316,29 +331,29 @@ export default {
 
 <style lang="less">
 .user-dropdown-menu-wrapper.ant-dropdown-menu {
-    padding: 0 !important;
-    background: #3375A8;
-    border-radius: 4px;
-    .ant-dropdown-menu-item {
-      width: 120px !important;
-      margin: 0 10px;
-      padding: 4px 0;
-      font-size: 12px !important;
-      line-height: 20px !important;
-      text-align: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-      &:hover {
-        background: #3375A8 !important;
-      }
-      &:last-child {
-        border-bottom: none;
-      }
-      a {
-        margin: 0 !important;
-        padding: 0 !important;
-        color: #FFFFFF !important;
-      }
+  padding: 0 !important;
+  background: #3375a8;
+  border-radius: 4px;
+  .ant-dropdown-menu-item {
+    width: 120px !important;
+    margin: 0 10px;
+    padding: 4px 0;
+    font-size: 12px !important;
+    line-height: 20px !important;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    &:hover {
+      background: #3375a8 !important;
     }
+    &:last-child {
+      border-bottom: none;
+    }
+    a {
+      margin: 0 !important;
+      padding: 0 !important;
+      color: #ffffff !important;
+    }
+  }
 }
 </style>
 <style lang="less" scoped>
@@ -363,7 +378,7 @@ export default {
         float: left;
         width: 2px;
         height: 42px;
-        background: linear-gradient(0deg, #01B1F6, #FFFFFF, #01B1F6);
+        background: linear-gradient(0deg, #01b1f6, #ffffff, #01b1f6);
         opacity: 0.6;
       }
       .name {
@@ -373,10 +388,10 @@ export default {
         font-size: 14px;
         font-weight: 400;
         line-height: 14px;
-        color: #FFFFFF;
+        color: #ffffff;
       }
       .hospital-name {
-        border-right: 1px solid #FFFFFF;
+        border-right: 1px solid #ffffff;
       }
     }
     .icon-setting {
@@ -385,7 +400,7 @@ export default {
       font-size: 16px;
       font-weight: 400;
       line-height: 16px;
-      color: #FFFFFF;
+      color: #ffffff;
       cursor: pointer;
     }
   }
