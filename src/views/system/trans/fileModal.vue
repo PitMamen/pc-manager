@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import fileZhuyuan from './fileZhuyuan'
+import fileZhuyuan from "./fileZhuyuan";
 // import patientFile from './patientFile'
 // import histroySolve from './histroySolve'
 // import telDetail from './telDetail'
@@ -108,4 +108,10 @@ export default {
 //   background-color: #409eff;
 //   color: white;
 // }
+/deep/ .ant-tabs-left-bar {
+  margin-top: 15% !important;
+}
+/deep/ .ant-tabs-left-content {
+  padding-left: 20px !important;
+}
 </style>
