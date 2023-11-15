@@ -1,13 +1,9 @@
 <template>
   <!-- <div style="height: 500px; width: 100%"> -->
+  <!-- v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0" -->
   <div class="inner-wrap">
-    <div
-      class="div-yiji"
-      v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0"
-      style="padding-right: 10px; padding-bottom: 10px"
-    >
-      <div class="div-shu" style="overflow-y: auto; height: 450px">
-        <!-- <div class="div-shu"> -->
+    <div class="div-yiji" style="padding-right: 10px; padding-bottom: 10px">
+      <!-- <div class="div-shu" style="overflow-y: auto; height: 450px">
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
             v-for="(item, index) in insideJbxx.newArr"
@@ -23,8 +19,11 @@
             </div></a-timeline-item
           >
         </a-timeline>
-      </div>
-      <div class="div-jancha" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jiancha'">
+      </div> -->
+
+   
+      <div class="kuang-content" v-if="insideShowType == 'jiancha'">
+        <div class="div-jancha" style="overflow-y: auto; height: 450px" >
         <div class="div-line-wrap">
           <div class="div-item-two">
             检查名称：<span style="color: #333">{{ insideShowData.jcmc }}</span>
@@ -37,27 +36,27 @@
           </div>
         </div>
 
-        <div class="div-line-wrap">
+        <div class="div-line-wrap" style="margin-top:20px">
           <div class="div-item-two">影响表现或检查所见：</div>
         </div>
         <div class="div-line-wrap">
           <span style="color: #333">{{ insideShowData.yxbxjcsj }}</span>
         </div>
-        <div class="div-line-wrap">
+        <div class="div-line-wrap" style="margin-top:20px">
           <div class="div-item-two">检查诊断或提示：</div>
         </div>
         <div class="div-line-wrap">
           <span style="color: #333">{{ insideShowData.yxzdts }}</span>
         </div>
 
-        <div class="div-line-wrap">
+        <div class="div-line-wrap" style="margin-top:20px">
           <div class="div-item-two">备注或建议：</div>
         </div>
         <div class="div-line-wrap">
           <span style="color: #333">{{ insideShowData.bzhjy }}</span>
         </div>
 
-        <div class="div-line-wrap">
+        <div class="div-line-wrap" style="margin-top:20px">
           <div class="div-item-three">
             检查日期：<span style="color: #333">{{ insideShowData.jcmc }}</span>
           </div>
@@ -66,14 +65,23 @@
           </div>
         </div>
       </div>
+      </div>
 
-      <div class="div-janyan" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jianyan'">
+
+   
+
+
+      <div class="kuang-content" v-if="insideShowType == 'jianyan'">
+        <div class="div-janyan" style="overflow-y: auto; height: 450px" >
         <div class="div-line-wrap">
           <div class="div-item-two">
             项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
           </div>
-          <div class="div-item-four">
+          <div class="div-item-two">
             标本名称：<span style="color: #333">{{ insideShowData.bbmc }}</span>
+          </div>
+          <div class="div-item-two">
+            报告日期：<span style="color: #333">{{ insideShowData.bbmc }}</span>
           </div>
         </div>
 
@@ -98,11 +106,15 @@
           </span>
         </a-table>
       </div>
+
+      </div>
+
+     
     </div>
 
-    <div v-else class="nodata">
+    <!-- <div v-else class="nodata">
       <img src="~@/assets/icons/img_nodata.png" />
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -211,6 +223,7 @@ export default {
       display: flex;
       align-items: center;
       flex-direction: row;
+      // justify-content: space-between;
 
       .div-item-four {
         width: 25%;
@@ -225,15 +238,26 @@ export default {
       }
     }
 
-    .div-janyan {
-      width: 87%;
+    .kuang-content {
+      width: 90%;
+      padding: 20px;
+      background: #ffffff;
+      border: 1px solid #e6e6e6;
+    height: 470px;
+
+      .div-janyan {
+      // width: 87%;
       height: 100%;
     }
+
+    }
+
+   
 
     .div-shu {
       font-size: 12px;
       margin-right: 1%;
-      width: 12%;
+      // width: 12%;
 
       /deep/ .ant-timeline-item {
         padding: 0 0 8px 0 !important;
