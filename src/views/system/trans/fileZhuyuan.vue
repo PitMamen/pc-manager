@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="confirmLoading">
-    <div style="height: 500px; width: 100%">
+    <div style="height: 600px; width: 100%">
       <div v-if="historyList.length > 0">
         <div class="file-wrap">
           <!-- <div class="left-btn">
@@ -10,19 +10,26 @@
           </div> -->
           <div class="right-content">
             <div class="content-top">
-              <span style="margin-left: 10px; min-width: 62px">出院时间：</span>
+              <span style="min-width: 62px">住院记录：</span>
               <div
                 class="data-item"
                 v-for="(itemData, indexData) in historyList"
                 :key="indexData"
                 :value="itemData.docId"
               >
-                <span
-                  @click="onFileItemClick(itemData, indexData)"
-                  class="div-time"
-                  :class="{ checked: itemData.isChecked }"
-                  >{{ itemData.time }}</span
-                >
+                <div style="display: flex; flex-direction: column; align-items: center">
+                  <span
+                    @click="onFileItemClick(itemData, indexData)"
+                    class="div-time"
+                    :class="{ checked: itemData.isChecked }"
+                    >{{ itemData.time }}</span
+                  >
+                  <!-- TODO  -->
+                  <span :class="{ checked: itemData.isChecked }"
+                    >{{ itemData.name }}湘雅二医院</span
+                  >
+                </div>
+
                 <div v-if="indexData != historyList.length - 1" class="div-line"></div>
               </div>
             </div>
@@ -33,6 +40,7 @@
                 v-model="activeKey"
                 type="line"
                 @change="tabChange"
+                :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
                 style="position: relative"
               >
                 <a-tab-pane key="1">
@@ -104,11 +112,12 @@
                     </span>
                   </template>
 
+                  <!-- :jbxx="zmrHtml" -->
                   <basic-xiaojie
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicXiaojie"
-                    :jbxx="zmrHtml"
-                    :patientInfo="patientInfo"
+                    :jbxx="fileDetailData"
+                    :showData="showData"
                   />
                 </a-tab-pane>
               </a-tabs>
@@ -196,11 +205,15 @@ export default {
       activeKey: "1",
       jbxx: { name: "李四" },
       user: {},
-      patientInfo: {},
+      patientInfo: { baseInfo: { identificationNo: "3256543" } },
       showData: {},
       showDataYizhu: {},
       showDataShoushu: {},
-      historyList: [{}, {}, {}],
+      historyList: [
+        { time: "2022-10-11" },
+        { time: "2022-10-16" },
+        { time: "2023-01-18" },
+      ],
       /**
        * 			if (index === 0) {
 					recordType = 'all'
@@ -211,7 +224,24 @@ export default {
 				}
        */
       recordType: "zhuyuan",
-      fileDetailData: {},
+      fileDetailData: {
+        // zdxx: {
+        //   xm: "张三",
+        // },
+        ssxx: [{}, {}],
+        zdxx: [
+          {
+            zdbmmc: "的的",
+          },
+          {
+            zdbmmc: "个人个人",
+          },
+          {
+            zdbmmc: "法人",
+          },
+        ],
+        cismain: { csny: "发发发发发" },
+      },
       accountUserId: "", //登录用户的userId
     };
   },
@@ -680,6 +710,37 @@ export default {
         });
     },
 
+    // tabChange(key) {
+    //   if (key == 1) {
+    //     this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx);
+    //   } else if (key == 2) {
+    //     if (this.fileDetailData.newArr.length > 0) {
+    //       this.$refs.basicTech.refreshData(
+    //         this.fileDetailData,
+    //         this.defaultShowType,
+    //         this.showData
+    //       );
+    //     }
+    //   } else if (key == 3) {
+    //     if (this.fileDetailData.yzxx.length > 0) {
+    //       this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu);
+    //     }
+    //   } else if (key == 4) {
+    //     this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu);
+    //   } else if (key == 5) {
+    //     this.$nextTick(() => {
+    //       this.$refs.basicFee.refreshData(
+    //         JSON.parse(JSON.stringify(this.fileDetailData.sfxx))
+    //       );
+    //     });
+    //   } else if (key == 6) {
+    //     this.$nextTick(() => {
+    //       // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
+    //       this.$refs.basicXiaojie.refreshData(this.fileDetailData);
+    //     });
+    //   }
+    // },
+
     tabChange(key) {
       if (key == 1) {
         this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx);
@@ -692,20 +753,17 @@ export default {
           );
         }
       } else if (key == 3) {
-        if (this.fileDetailData.yzxx.length > 0) {
-          this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu);
+        if (this.fileDetailData.newArr.length > 0) {
+          this.$refs.basicTech.refreshData(
+            this.fileDetailData,
+            this.defaultShowType,
+            this.showData
+          );
         }
       } else if (key == 4) {
-        this.$refs.basicSurgery.refreshData(this.fileDetailData, this.showDataShoushu);
-      } else if (key == 5) {
         this.$nextTick(() => {
-          this.$refs.basicFee.refreshData(
-            JSON.parse(JSON.stringify(this.fileDetailData.sfxx))
-          );
-        });
-      } else if (key == 6) {
-        this.$nextTick(() => {
-          this.$refs.basicXiaojie.refreshData(this.zmrHtml);
+          // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
+          this.$refs.basicXiaojie.refreshData(this.fileDetailData);
         });
       }
     },
@@ -718,11 +776,22 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-/deep/ .ant-tabs-bar {
-  margin: 0 !important;
+// /deep/ .ant-tabs-bar {
+//   margin: 0 !important;
+// }
+/deep/ .ant-tabs-left-bar {
+  margin-top: 100px !important;
 }
-/deep/ .ant-tabs.ant-tabs-left-bar {
-  margin-top: 10% !important;
+
+/deep/ .ant-tabs-bar {
+  margin-bottom: 0 !important;
+}
+
+/deep/ .ant-tabs-nav-animated {
+  margin-left: 15px !important;
+}
+/deep/ .ant-tabs-tab {
+  padding: 12px 4px !important;
 }
 
 .file-wrap {
@@ -733,13 +802,14 @@ export default {
 
   .right-content {
     width: 100%;
-    border-left: #eaeaea 1px solid;
+    // border-left: #eaeaea 1px solid;
     display: flex;
     flex-direction: column;
     .content-top {
       display: flex;
       width: 100%;
       overflow-x: auto;
+      margin-top: 20px;
       align-items: center;
       flex-direction: row;
       flex-shrink: 0;
@@ -772,9 +842,9 @@ export default {
 
     .content-main {
       margin-top: 10px;
-      /deep/ .ant-tabs.ant-tabs-top.ant-tabs-line {
-        border-bottom: 1px solid #eee !important;
-      }
+      // /deep/ .ant-tabs.ant-tabs-top.ant-tabs-line {
+      //   border-bottom: 1px solid #eee !important;
+      // }
       .span-tab {
         display: flex;
         align-items: center;
@@ -804,4 +874,11 @@ export default {
   text-align: center;
   padding-top: 150px;
 }
+</style>
+//
+<style lang="less" scoped>
+// /deep/ .ant-tabs-left-bar {
+//   margin-top: 10% !important;
+// }
+//
 </style>

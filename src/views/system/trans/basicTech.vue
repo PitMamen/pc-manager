@@ -6,7 +6,7 @@
       v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0"
       style="padding-right: 10px; padding-bottom: 10px"
     >
-      <div class="div-shu" style="overflow-y: auto; height: 370px">
+      <div class="div-shu" style="overflow-y: auto; height: 450px">
         <!-- <div class="div-shu"> -->
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
@@ -24,7 +24,7 @@
           >
         </a-timeline>
       </div>
-      <div class="div-jancha" style="overflow-y: auto; height: 370px" v-if="insideShowType == 'jiancha'">
+      <div class="div-jancha" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jiancha'">
         <div class="div-line-wrap">
           <div class="div-item-two">
             检查名称：<span style="color: #333">{{ insideShowData.jcmc }}</span>
@@ -67,7 +67,7 @@
         </div>
       </div>
 
-      <div class="div-janyan" style="overflow-y: auto; height: 370px" v-if="insideShowType == 'jianyan'">
+      <div class="div-janyan" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jianyan'">
         <div class="div-line-wrap">
           <div class="div-item-two">
             项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
@@ -191,7 +191,7 @@ export default {
 <style lang="less" scoped>
 .inner-wrap {
   font-size: 12px;
-  height: 388px;
+  height: 488px;
   font-size: 12px;
   padding: 10px;
   width: 99%;
