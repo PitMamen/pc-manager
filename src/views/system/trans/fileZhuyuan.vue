@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="confirmLoading">
-    <div style="height: 500px; width: 100%">
+    <div style="height: 600px; width: 100%">
       <div v-if="historyList.length > 0">
         <div class="file-wrap">
           <!-- <div class="left-btn">

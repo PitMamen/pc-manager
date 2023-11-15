@@ -3,7 +3,7 @@
   <div class="inner-wrap">
     <div
       v-if="jbxx"
-      style="overflow-y: auto; height: 380px; padding-right: 10px; padding-bottom: 10px"
+      style="overflow-y: auto; height: 480px; padding-right: 10px; padding-bottom: 10px"
     >
       <!-- <span>{{ jbxx.name }}</span> -->
       <div class="div-title">
@@ -510,7 +510,7 @@ export default {
 }
 
 .inner-wrap {
-  max-height: 388px;
+  max-height: 488px;
   // overflow-y: auto;
   // overflow: hidden;
   font-size: 12px;

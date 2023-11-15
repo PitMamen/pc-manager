@@ -23,62 +23,75 @@
         </a-timeline>
       </div> -->
 
-      <div class="div-jancha" style="overflow-y: auto; height: 370px">
+      <!-- <div class="div-jancha" style="overflow-y: auto; height: 370px"> -->
+      <div class="div-jancha" style="overflow-y: auto; height: 450px">
         <div class="div-line-wrap" style="margin-top: 0">
-          <div class="div-item-three" style="color: red">
-            科室：<span>{{ insideShowData.data[0].ksmc }}</span>
+          <div class="div-item-three" style="color: #999">
+            入院日期：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}2023-10-11</span>
           </div>
-          <div class="div-item-three" style="color: red">
-            住院号：<span>{{ insideShowData.data[0].zyh }}</span>
+          <div class="div-item-three" style="color: #999">
+            出院日期：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}2023-10-11</span>
           </div>
-          <div class="div-item-three" style="color: red">
-            床号：<span>{{ insideShowData.data[0].ch || "-" }}</span>
+          <div class="div-item-three" style="color: #999">
+            住院天数：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}天</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-leng">麻醉方式：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].mzfsmc }}</div>
+          <div class="div-item-leng">入院诊断：</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].mzfsmc }}到我的无</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-leng">术前诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssqzdmc }}</div>
+          <div class="div-item-leng">出院诊断：</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssqzdmc }}范围分为非</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">术后诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].sshzdmc }}</div>
+          <div class="div-item-leng-con">{{ insideShowData.data[0].sshzdmc }}服务而分为热</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-leng">手术名称：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}</div>
+          <div class="div-item-leng">入院时情况：</div>
+        </div>
+        <div class="div-line-wrap" style="margin-top: 8px;">
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-leng" style="width: 88px">手术过程描述：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssgcms }}</div>
+          <div class="div-item-leng">诊疗经过：</div>
+        </div>
+        <div class="div-line-wrap" style="margin-top: 8px;">
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然</div>
+        </div>
+        
+        <div class="div-line-wrap">
+          <div class="div-item-leng">出院情况：</div>
+        </div>
+        <div class="div-line-wrap" style="margin-top: 8px;">
+          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然</div>
         </div>
 
         <div class="div-line-wrap">
-          <div class="div-item-leng" style="width: 99px">手术及操作方法：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssjczff }}</div>
+          <div class="div-item-leng">出院医嘱：</div>
+        </div>
+        <div class="div-line-wrap" style="margin-top: 8px;">
+          <div class="div-item-leng-con" style="white-space: pre-line;">{{ insideShowData.data[0].ssczmc }}1.大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然\n2.发热感染隔热条</div>
         </div>
 
-        <div class="div-line-wrap">
-          <div class="div-item-leng">手术过程：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssgc }}</div>
+        <div class="div-line-wrap" style="margin-top: 18px">
+          <div class="div-item-three" style="color: #999">
+            登记医生：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}李二狗</span>
+          </div>
+          <div class="div-item-three" style="color: #999">
+            登记日期：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}2023-10-11</span>
+          </div>
+          <div class="div-item-three" style="color: #999">
+            登记机构：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}天狗医院</span>
+          </div>
         </div>
 
-        <div class="div-line-wrap">
-          <div style="width: 85%"></div>
-          <div style="width: 15%">手术医生姓名：{{ insideShowData.data[0].ssysxm }}</div>
-        </div>
-        <div class="div-line-wrap">
-          <div style="width: 85%"></div>
-          <div style="width: 15%">麻醉医师姓名：{{ insideShowData.data[0].mzysxm }}</div>
-        </div>
       </div>
     </div>
 
@@ -137,7 +150,7 @@ export default {
   // padding: 10px;
   // width: 99%;
 
-  max-height: 388px;
+  max-height: 488px;
   // overflow-y: auto;
   // overflow: hidden;
   font-size: 12px;
@@ -147,7 +160,8 @@ export default {
 
   .div-surgery {
     overflow-y: auto;
-    height: 380px;
+    // height: 380px;
+    height: 100%;
     padding-right: 10px;
 
     padding-bottom: 10px;
@@ -163,7 +177,7 @@ export default {
       .div-line-wrap {
         font-size: 12px;
         width: 100%;
-        margin-top: 12px;
+        margin-top: 17px;
         display: flex;
         font-weight: bold;
         color: #333;
@@ -171,9 +185,11 @@ export default {
         flex-direction: row;
 
         .div-item-leng {
-          width: 62px;
+          // width: 62px;
+          color: #999;
         }
         .div-item-leng-con {
+          color: #1a1a1a;
           width: 600px;
           overflow: hidden;
           text-overflow: ellipsis;
