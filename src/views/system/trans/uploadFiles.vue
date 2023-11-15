@@ -112,6 +112,7 @@
         <div style="flex: 1"></div>
         <a-button ghost type="primary" @click="commitPhoto()">提交记录</a-button>
       </div>
+      <file-modalshow ref="fileModalshow"  />
     </a-card>
   </a-spin>
 </template>
@@ -122,14 +123,14 @@ import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
-// import chooseMedic from './chooseMedic'
+import fileModalshow from './fileModalshow'
 
 import E from 'wangeditor'
 export default {
   components: {
     STable,
     Ellipsis,
-    // chooseMedic,
+    fileModalshow,
   },
   data() {
     return {
@@ -247,7 +248,9 @@ export default {
 
     // 病历详情
     goRecordDetail() {
-
+      //TODO 测试数据
+      let record = {name:'张三',sex:'男',age:12}
+      this.$refs.fileModalshow.showFile(record);
     },
 
     // 授权管理
