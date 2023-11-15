@@ -1,13 +1,22 @@
 <template>
   <div class="wrap">
     <div>
-      <a-tabs v-model="keyindex">
+      <a-tabs
+        v-model="keyindex"
+        :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
+      >
         <a-tab-pane key="1" tab="转诊申请单">
           <!-- <transup-insidemodify :modifyItem="passItem" ref="transupInsidemodify" /> -->
           <transup-insidemodify ref="transupInsidemodify" />
         </a-tab-pane>
 
         <a-tab-pane disabled key="2" tab="上传病历" force-render>
+          <upload-files ref="uploadFiles" />
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="健康档案" force-render>
+          <file-danan ref="fileDanan" />
+        </a-tab-pane>
+        <a-tab-pane disabled key="4" tab="添加评论" force-render>
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
       </a-tabs>
@@ -19,11 +28,13 @@
 <script>
 import transupInsidemodify from "./transupInsidemodify";
 import uploadFiles from "./uploadFiles";
+import fileDanan from "./fileDanan";
 
 export default {
   components: {
     transupInsidemodify,
     uploadFiles,
+    fileDanan,
   },
 
   data() {
