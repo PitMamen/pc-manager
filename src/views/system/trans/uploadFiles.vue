@@ -339,6 +339,33 @@ button {
 }
 </style>
 <style lang="less" scoped>
+  .div-title {
+    display: flex;
+    background-color: #ebebeb;
+    flex-direction: row;
+    width: 100% !important;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    height: 26px;
+
+    .div-line-blue {
+      width: 5px;
+      height: 100%;
+      background-color: #1890ff;
+    }
+
+    .span-title {
+      font-size: 12px;
+      margin-left: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+  }
+
+
+
+
 .div-box {
   border: 1px solid #e6e6e6;
   display: flex;
