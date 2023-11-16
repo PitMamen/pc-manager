@@ -1,6 +1,6 @@
 <template>
   <a-spin :spinning="confirmLoading">
-    <div style="height: 500px; width: 100%">
+    <div style="height: 600px; width: 100%">
       <div v-if="historyList.length > 0">
         <div class="file-wrap">
           <!-- <div class="left-btn">
@@ -40,6 +40,7 @@
                 v-model="activeKey"
                 type="line"
                 @change="tabChange"
+                :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
                 style="position: relative"
               >
                 <a-tab-pane key="1">
@@ -786,6 +787,13 @@ export default {
   margin-bottom: 0 !important;
 }
 
+/deep/ .ant-tabs-nav-animated {
+  margin-left: 15px !important;
+}
+/deep/ .ant-tabs-tab {
+  padding: 12px 4px !important;
+}
+
 .file-wrap {
   display: flex;
   height: 450px;
@@ -834,9 +842,9 @@ export default {
 
     .content-main {
       margin-top: 10px;
-      /deep/ .ant-tabs.ant-tabs-top.ant-tabs-line {
-        border-bottom: 1px solid #eee !important;
-      }
+      // /deep/ .ant-tabs.ant-tabs-top.ant-tabs-line {
+      //   border-bottom: 1px solid #eee !important;
+      // }
       .span-tab {
         display: flex;
         align-items: center;
