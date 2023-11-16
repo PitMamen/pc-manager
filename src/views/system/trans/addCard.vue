@@ -6,7 +6,8 @@
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
-    :okText="record.id?'确定':'建卡'"
+    :okText="record.cardFlag === 1 ? '确定' : '建卡'"
+    cancelText="关闭"
     :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
@@ -18,73 +19,71 @@
           </div>
           <div class="div-content">
             <span class="span-item-name">患者姓名:</span>
-            <span class="span-item-value">李四</span>
-          
+            <span class="span-item-value">{{ record.patientBaseinfo.name }}</span>
+
             <span class="span-item-name">性别:</span>
-            <span class="span-item-value">男</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.sex }}</span>
           </div>
           <div class="div-content">
             <span class="span-item-name">出生日期:</span>
-            <span class="span-item-value">1998-5-20</span>
-          
+            <span class="span-item-value">{{ record.patientBaseinfo.birthday }}</span>
+
             <span class="span-item-name">本人电话:</span>
-            <span class="span-item-value">13574111205</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.phone }}</span>
           </div>
           <div class="div-content">
             <span class="span-item-name">证件类型:</span>
             <span class="span-item-value">身份证</span>
-          
+
             <span class="span-item-name">证件号码:</span>
-            <span class="span-item-value">433130199009255645</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.identificationNo }}</span>
           </div>
-          <div class="div-content" style="align-items: flex-start;">
+          <div class="div-content" style="align-items: flex-start">
             <span class="span-item-name">家庭住址:</span>
-            <span class="span-item-value">湖南省长沙市湖南省</span>
-          
-           
+            <span class="span-item-value">{{ record.patientBaseinfo.address }}</span>
           </div>
-       
 
           <div class="div-title">
             <div class="div-line-blue"></div>
             <span class="span-title">建卡信息</span>
           </div>
-          <div class="div-content" >
+          <div class="div-content">
             <span class="span-item-name">建档机构:</span>
-            <span class="span-item-value">中南大学二医院</span>
-          
+            <span class="span-item-value">{{ record.inHospitalName }}</span>
+
             <span class="span-item-name">建档方式:</span>
             <span class="span-item-value">
-              <a-radio-group name="radioGroup" v-model="checkData.type">
-              <a-radio :value="0">手动 </a-radio>
-              <a-radio :value="1" >自动 </a-radio>
-              
-            </a-radio-group>
+              <a-radio-group :disabled="record.cardFlag===1" name="radioGroup" v-model="createType">
+                <a-radio :value="1">手动 </a-radio>
+                <a-radio :value="2">自动 </a-radio>
+              </a-radio-group>
             </span>
           </div>
 
-          
-          
-          <div v-if="checkData.type === 0" class="div-content">
+           
+          <div v-if="record.cardFlag === 1" class="div-content">
+            <span class="span-item-name">就诊卡号:</span>
+            <span class="span-item-value">{{ cardNo }}</span>
+          </div>
+
+          <div v-else>
+            <div v-if="createType === 1" class="div-content">
             <a-input
               class="span-item-value"
-              v-model="checkData.loginName"
+              v-model="cardNo"
               style="display: inline-block"
               allow-clear
               :maxLength="100"
               placeholder="请输入您给患者建档后的诊疗卡号"
-           
             />
           </div>
-          <div v-if="checkData.type === 1" class="div-content">
-            <span class="span-item-value" style="color: #999999;margin-left: 5px;">患者的诊疗卡号由HIS系统自动生成</span>
+          <div v-if="createType === 2" class="div-content">
+            <span class="span-item-value" style="color: #999999; margin-left: 5px"
+              >患者的诊疗卡号由HIS系统自动生成</span
+            >
           </div>
-          <div class="div-content">
-            <span class="span-item-name">就诊卡号:</span>
-            <span class="span-item-value">433130199009255645</span>
-          
-            
           </div>
+         
         </div>
       </div>
     </a-spin>
@@ -93,18 +92,10 @@
 
 
 <script>
-import {
-  getRoleList,
-  queryHospitalList,
-  getDoctorAccountDetail,
-  createDoctorAccount,
-  getUnbindAccountDoctorUser,
-  updateDoctorAccount,
-  getOwnConnectCustomerFunUserList
-} from '@/api/modular/system/posManage'
+import { createCard } from '@/api/modular/system/posManage'
 
-import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import {isObjectEmpty,isStringEmpty,isArrayEmpty} from '@/utils/util'
+import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { isStringEmpty } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -116,58 +107,20 @@ export default {
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
-      fileList: [],
-      danandataList: [],
-      treeData: [],
-      checkData: {
-        type:0,
-        loginName: '', //登录账号
-        userId: '', //对应人员
-        hospitalName: '',
-        phone: '',
-        role: undefined, //分配角色
-        seatUser: '', //坐席
-        companywxUserId:'',//企微账号
-      },
-      fetching: false,
-      accountChecked: false, //客服坐席
-      wecomChecked: false, //企稳账号
 
-      roleList: [], //角色列表
-      wecomUserList:[],//企稳用户列表
-      rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
-      userList: [],
+      createType: 1,
+      cardNo: undefined,
+      fetching: false,
     }
   },
   created() {},
   methods: {
     clearData() {
       this.record = {}
-      this.checkData = {
-        type:0,
-        loginName: '', //登录账号
-        userId: '', //对应人员
-        hospitalName: '',
-        phone: '',
-        role: [], //分配角色
-        seatUser: '', //坐席
-        companywxUserId:''
-      }
-      this.roleList=[]
-      this.userList=[]
-      this.accountChecked = false
-      this.wecomChecked=false
+      this.createType = 1
+      this.cardNo = undefined
     },
-    //新增
-    addModel() {
-      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-      this.clearData()
-      this.visible = true
-      this.confirmLoading = false
-      this.getUserList('')
-      this.getRolesOut()
-      this.getOwnConnectCustomerFunUserListOut()
-    },
+
     //修改
     editModel(record) {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -175,208 +128,68 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.record = record
-
-      this.getRolesOut()
-      this.getOwnConnectCustomerFunUserListOut()
-
-      this.getDoctorAccountDetailOut(record.accountId)
-    },
-    //账号详情
-    getDoctorAccountDetailOut(accountId) {
-      getDoctorAccountDetail({
-        accountId: accountId,
-      }).then((res) => {
-        if (res.code == 0) {
-          this.checkData = res.data
-          this.accountChecked=res.data.seatUser?true:false
-          this.wecomChecked=res.data.companywxUserId?true:false
-          var roles = []
-          res.data.roles.forEach((element) => {
-            roles.push(element.roleId)
-          })
-          console.log(roles)
-          this.checkData.role = roles
-          this.userList.push({
-            ospitalCode: res.data.hospitalCode,
-            hospitalName: res.data.hospitalName,
-            phone: res.data.phone,
-            userId: res.data.userId,
-            userName: res.data.userName,
-          })
-          this.getRolesOut()
-        }
-      })
-    },
-
-    //获取角色列表
-    getRolesOut() {
-      getRoleList({
-        belong: undefined,
-        status: 1,
-        topFlag: undefined,
-        keyWords: undefined,
-      }).then((res) => {
-        if (res.code == 0) {
-          var roleList = []
-          
-          for (let i = 0; i < res.data.records.length; i++) {
-            if (res.data.records[i].state == 1) {
-              roleList.push(res.data.records[i])
-            }
-          }
-          this.roleList = roleList
-        }
-      })
-    },
-     //获取配置了客户联系功能的成员列表
-     getOwnConnectCustomerFunUserListOut() {
-      getOwnConnectCustomerFunUserList().then((res) => {
-        if (res.code == 0) {
-          this.wecomUserList=res.data.follow_user
-        }
-      })
-    },
-    getUserList(queryText) {
-      this.fetching = true
-      getUnbindAccountDoctorUser({
-        status: 0, //（0正常、1停用、2删除）
-        queryText: queryText,
-        pageNo: 1,
-        pageSize: 10000,
-      }).then((res) => {
-        this.fetching = false
-        if (res.code == 0) {
-          this.userList = res.data.rows
-          this.$forceUpdate()
-          console.log(this.userList)
-        }
-      })
-    },
-         //不能输入非汉字效验  效验不能输入非空字符串
-	  validateNoChinese : ( value, callback) => {
-	    let reg = /^[^\u4e00-\u9fa5]+$/g;
-	    let regEmpty = /^\s*$/g;
-	    if (value && !reg.test(value)) {
-	      callback('书写格式错误');
-	    } else if(value && regEmpty.test(value)) {
-	      callback('不能为空');
-	    } else {
-	      callback();
-	    }
-	  },
-    onRoleSelectChange(value){
-      console.log(value)
-      this.checkData.role=value
-      this.$forceUpdate()
-    },
-    onUserSelectChange(value) {
-      console.log('onUserSelectChange', value)
-      var checkedUser = this.userList.find((item) => item.userId == value)
-      console.log('checkedUser', checkedUser)
-      if (checkedUser) {
-        this.checkData.hospitalName = checkedUser.hospitalName
-        this.checkData.phone = checkedUser.phone
+      if(record.cardFlag === 1){
+        this.createType=record.cardType || 1
+        this.cardNo=record.cardNo
       }
+      
     },
-    onUserSelectSearch(value) {
-      console.log(value)
-      this.getUserList(value)
+
+    //不能输入非汉字效验  效验不能输入非空字符串
+    validateNoChinese: (value, callback) => {
+      let reg = /^[^\u4e00-\u9fa5]+$/g
+      let regEmpty = /^\s*$/g
+      if (value && !reg.test(value)) {
+        callback('书写格式错误')
+      } else if (value && regEmpty.test(value)) {
+        callback('不能为空')
+      } else {
+        callback()
+      }
     },
     checkAccountName() {
-      console.log(this.checkData.loginName)
-      var value=this.checkData.loginName
-      let reg = /^[^\u4e00-\u9fa5]+$/g;
-	    let regEmpty = /^\s*$/g;
-	    if (value && !reg.test(value)) {
-	     
-        this.$message.error('账号不能输入中文')
+      
+      var value = this.cardNo
+      let reg = /^[^\u4e00-\u9fa5]+$/g
+      let regEmpty = /^\s*$/g
+      if (value && !reg.test(value)) {
+        this.$message.error('就诊卡号输入不正确')
         return false
-	    }else {
+      } else {
         return true
-      } 
+      }
     },
     handleSubmit() {
-      console.log(this.checkData)
 
-      if (isStringEmpty(this.checkData.loginName)) {
-        this.$message.error('请输入登录账号')
-        return
-      }
-      if(!this.checkAccountName()){
+      if(this.record.cardFlag === 1){
+        this.handleCancel()
         return
       }
 
-
-      if (isStringEmpty(this.checkData.userId)) {
-        this.$message.error('请选择对应人员')
-        return
-      }
-
-      if (isArrayEmpty(this.checkData.role)) {
-        this.$message.error('请分配角色')
-        return
-      }
-
-      if (this.accountChecked) {
-        //如果勾选了客服坐席
-
-        if (isStringEmpty(this.checkData.seatUser)) {
-          this.$message.error('请输入客服坐席ID')
+      if (this.createType === 1) {
+        if (isStringEmpty(this.cardNo)) {
+          this.$message.error('请输入您给患者建档后的诊疗卡号')
           return
         }
-      }
-      if(this.wecomChecked){
-         //如果勾选了企微账号
 
-         if (isStringEmpty(this.checkData.companywxUserId)) {
-          this.$message.error('请选择企业微信账号')
-          return
-        }
+        if (!this.checkAccountName()) {
+        return
+      }
+
       }
 
       var postData = {
-        loginName: this.checkData.loginName,
-        userId: this.checkData.userId,
-        actorIds: this.checkData.role,
+        cardNo: this.cardNo,
+        cardType: this.createType,
+        tradeId: this.record.tradeId,
       }
-      if (this.accountChecked) {
-        postData.seatUser = this.checkData.seatUser
-      }else{
-        postData.seatUser=''
-      }
-      if (this.wecomChecked) {
-        postData.companywxUserId = this.checkData.companywxUserId
-      }else{
-        postData.companywxUserId=''
-      }
-      this.confirmLoading = true
-
-      if (this.record.accountId) {
-        postData.accountId = this.record.accountId
-        //修改
-        this.editAccount(postData)
-      } else {
-        //新增
-        this.addAccount(postData)
-      }
+      this.addCard(postData)
     },
 
-    addAccount(postData) {
-      createDoctorAccount(postData).then((res) => {
+    addCard(postData) {
+      createCard(postData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('新增成功！')
-          this.visible = false
-          this.$emit('ok', '')
-        } else {
-          this.$message.error(res.message)
-        }
-        this.confirmLoading = false
-      })
-    },
-    editAccount(postData) {
-      updateDoctorAccount(postData).then((res) => {
-        if (res.code == 0) {
-          this.$message.success('修改成功！')
+          this.$message.success('建卡成功！')
           this.visible = false
           this.$emit('ok', '')
         } else {
@@ -403,14 +216,13 @@ export default {
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
- 
+
   display: flex;
   align-items: center;
   flex-direction: row;
   height: 26px;
   margin-top: 20px;
   margin-bottom: 15px;
-  
 
   .div-line-blue {
     width: 5px;
@@ -427,7 +239,6 @@ export default {
 .div-part {
   width: 100%;
   height: 320px;
- 
 
   .div-part-left {
     float: left;
@@ -444,18 +255,18 @@ export default {
 
   .div-content {
     margin-bottom: 15px;
-    
+
     display: flex;
     flex-direction: row;
     align-items: center;
     overflow: hidden;
-    
+
     /deep/.ant-select-selection--multiple {
       li {
         margin-top: 1px !important;
       }
     }
- 
+
     .span-item-name {
       display: inline-block;
       color: #4d4d4d;

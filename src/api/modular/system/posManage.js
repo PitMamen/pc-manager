@@ -2812,6 +2812,23 @@ export function getDepartmentListForSelect(departmentName, source) {
   })
 }
 /**
+ * 住院科室列表
+ */
+export function getZhuyuanDepartmentList(departmentName, source) {
+  return axios({
+    url: '/follow-api/departmentManger/getDepartmentListForReq',
+    method: 'post',
+    data: {
+      departmentType:3,
+      departmentName: departmentName,//搜索输入
+      source: source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
+      status: 1,//1开启
+      pageNo: 1,
+      pageSize: 9999
+    },
+  })
+}
+/**
  * 科室列表 科室选择用
  */
 export function getMyDepartments(data) {
@@ -5840,11 +5857,28 @@ export function qryReferralListByPage(data) {
   })
 }
 
+// 统一预约列表
+export function reservationListByPage(data) {
+  return axios({
+    url: '/referral-api/referral/reservationListByPage',
+    method: 'post',
+    data: data,
+  })
+}
 
 // 转入批量数量
 export function qryReferralCount(data) {
   return axios({
     url: '/referral-api/referral/qryReferralCount',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 统一预约批量数量
+export function reservationCount(data) {
+  return axios({
+    url: '/referral-api/referral/reservationCount',
     method: 'post',
     data: data,
   })
@@ -5910,10 +5944,38 @@ export function cancelAudit(data) {
 //   })
 // }
 
+// 建卡
+export function createCard(data) {
+  return axios({
+    url: '/referral-api/referralTrade/createCard',
+    method: 'post',
+    data: data,
+  })
+}
+// 约床
+export function createBed(data) {
+  return axios({
+    url: '/referral-api/referralTrade/createBed',
+    method: 'post',
+    data: data,
+  })
+}
 
+// 取消床位
+export function cancelBed(data) {
+  return axios({
+    url: '/referral-api/referralTrade/cancelBed',
+    method: 'post',
+    data: data,
+  })
+}
 
-
-
-
-
+// 约床短信提醒
+export function bedRemind(data) {
+  return axios({
+    url: '/referral-api/referralTrade/remind/'+data,
+    method: 'get',
+    // params: data,
+  })
+}
 

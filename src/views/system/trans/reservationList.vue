@@ -27,18 +27,18 @@
       </div>
   
       <div class="div-radio">
-        <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == '' }" @click="onRadioClick('')">
-          <span style="margin-left: 3px">全部({{ numberData.TotalNum }})</span>
+        <div class="radio-item" :class="{ 'checked-btn': currentTab == 0 }" @click="onRadioClick(0)">
+          <span style="margin-left: 3px">全部({{ numberData.totalNum }})</span>
         </div>
-        <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == 1 }" @click="onRadioClick(1)">
-          <span style="margin-left: 3px">未建卡({{ numberData.ReqNum }}) </span>
+        <div class="radio-item" :class="{ 'checked-btn': currentTab == 1 }" @click="onRadioClick(1)">
+          <span style="margin-left: 3px">未建卡({{ numberData.cardFlagNo }}) </span>
         </div>
   
-        <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == 2 }" @click="onRadioClick(2)">
-          <span style="margin-left: 3px">未约床({{ numberData.ReqOutCheckedNum }})</span>
+        <div class="radio-item" :class="{ 'checked-btn': currentTab == 2 }" @click="onRadioClick(2)">
+          <span style="margin-left: 3px">未约床({{ numberData.bedFlagNo }})</span>
         </div>
-        <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == 3 }" @click="onRadioClick(3)">
-          <span style="margin-left: 3px">已约床({{ numberData.ReqUncheckedNum }})</span>
+        <div class="radio-item" :class="{ 'checked-btn': currentTab== 3 }" @click="onRadioClick(3)">
+          <span style="margin-left: 3px">已约床({{ numberData.bedFlagOk }})</span>
         </div>
       </div>
   
@@ -54,18 +54,20 @@
         <span slot="action" slot-scope="text, record">
           <a @click="$refs.addCard.editModel(record)"><a-icon style="margin-right: 5px" type="solution"></a-icon>建卡</a>
   
-          <a @click="$refs.addBed.editModel(record)" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="layout" />约床</a>
+          <a @click="$refs.addBed.editModel(record)" :disabled="record.cardFlag !== 1" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="layout" />约床</a>
   
-          <a   @click="goComment" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />提醒</a>
+          <a   @click="goBedRemind(record.tradeId)" :disabled="record.bedFlag !== 1"  style="margin-left: 8px"><a-icon style="margin-right: 5px" type="message" />提醒</a>
         </span>
   
   
         
-        <span slot="actionstatus" slot-scope="text, record" :class="getColor(record)">
-          {{ getType(record) }}
+        <span slot="actioncard" slot-scope="text, record" :class="getCardColor(record.cardFlag)">
+          {{ record.cardFlagText }}
         </span>
   
-  
+        <span slot="actionbed" slot-scope="text, record" :class="getBedColor(record.bedFlag)">
+          {{ record.bedFlagText }}
+        </span>
   
   
   
@@ -82,9 +84,9 @@
   import addCard from './addCard'
   import addBed from './addBed'
   import {
-    qryReferralListByPage,
-    qryReferralCount,
-    
+    reservationListByPage,
+    reservationCount,
+    bedRemind
   } from '@/api/modular/system/posManage'
   import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 
@@ -103,19 +105,22 @@
         treeData: [],
         departmentList: [],
         confirmLoading: false,
-        currentTab: '',
+       
         numberData: {
-          TotalNum: 0,  //全部
-          ReqOutCheckedNum: 0,  //审核通过
-          ReqUncheckedNum:0, //审核不通过
-          ReqNum:0 //待审核
+          totalNum: 0,  //全部
+          bedFlagNo: 0, 
+          bedFlagOk:0,
+          cardFlagNo:0 ,
+          cardFlagOk:0 
         },
+        currentTab:0,//0全部 1未建卡 2未约床 3已约床
         queryParams: {
+          cardFlag:'',//是否建卡 1已建 2未建
+          bedFlag:'',//是否约床位 1已约 2未约
           keyWord: '',
           regTimeBegin: getDateNow(),
           regTimeEnd: getCurrentMonthLast(),
-          status: '',
-          flag:2
+          
         },
   
         queryParamsTemp: {},
@@ -124,8 +129,8 @@
         columns: [
           {
             title: '患者姓名',
-            dataIndex: 'name',
-            ellipsis: true,
+            dataIndex: 'userName',
+           
           },
   
           {
@@ -144,49 +149,49 @@
   
           {
             title: '申请单号',
-            dataIndex: 'referralReason',
+            dataIndex: 'tradeId',
           },
           {
             title: '申请机构',
-            dataIndex: 'reqDocName',
-            align: 'right',
+            dataIndex: 'inHospitalName',
+           
           },
           
   
           {
             title: '收治时间',
-            dataIndex: 'reqDept',
-            align: 'center',
+            dataIndex: 'inCheckTime',
+            
           },
 
           {
             title: '到院时间',
-            dataIndex: 'regTime',
+            dataIndex: 'serveTime',
           },
           {
             title: '收治科室',
-            dataIndex: 'serveTime',
+            dataIndex: 'inDept',
           },
   
           {
             title: '收治人员',
-            dataIndex: 'inHospitalName',
+            dataIndex: 'docName',
           },
 
           {
             title: '建卡情况',
-            dataIndex: 'statusShow',
-            scopedSlots: { customRender: 'actionstatus' },
+            dataIndex: 'cardFlagText',
+            scopedSlots: { customRender: 'actioncard' },
           },
           {
             title: '床位预约',
-            dataIndex: 'statusShow',
-            scopedSlots: { customRender: 'actionstatus' },
+            dataIndex: 'bedFlagText',
+            scopedSlots: { customRender: 'actionbed' },
           },
 
           {
             title: '提醒',
-            dataIndex: 'daishouzhi',
+            dataIndex: 'sendMessageDes',
           },
   
           {
@@ -199,8 +204,9 @@
         // 加载数据方法 必须为 Promise 对象
         loadData: (parameter) => {
           this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-          this.queryParamsTemp.status = this.currentTab
-          return qryReferralListByPage(Object.assign(parameter, this.queryParams))
+          
+          this.checkQueryParams()
+          return reservationListByPage(Object.assign(parameter, this.queryParams))
             .then((res) => {
               if (res.code == 0 && res.data.rows.length > 0) {
                 //组装控件需要的数据结构
@@ -215,12 +221,15 @@
                 //设置序号
                 data.rows.forEach((item, index) => {
                   this.$set(item, 'serveTime', item.reachBeginDate + '至' + item.reachEndDate)
-                  this.$set(item, 'userName', item.userInfo ? item.userInfo.userName : '')
-                  this.$set(item, 'userSex', item.userInfo ? item.userInfo.userSex : '')
-                  this.$set(item, 'userAge', item.userInfo ? item.userInfo.userAge : '')
+                  this.$set(item, 'userName', item.patientBaseinfo ? item.patientBaseinfo.name : '')
+                  this.$set(item, 'userSex', item.patientBaseinfo ? item.patientBaseinfo.sex : '')
+                  this.$set(item, 'userAge', item.patientBaseinfo ? item.patientBaseinfo.userAge : '')
                   this.$set(item, 'statusShow', item.status.value)
                   this.$set(item, 'tradeType', item.tradeType.description)
                   this.$set(item, 'daishouzhi', item.status.value==4?'收治':'待收治')
+                  this.$set(item, 'cardFlagText', item.cardFlag==1?'已建卡':'未建卡')
+                  this.$set(item, 'bedFlagText', item.bedFlag==1?'已约床':'未约床')
+                  this.$set(item, 'sendMessageDes', item.sendMessageCount>0?'是':'否')
                   // this.$set(item, 'status', 1)
                   // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                   // item.nameDes = item.name
@@ -240,8 +249,7 @@
   
     activated() {
       this.reset(false)
-      this.queryParams.status = this.currentTab
-      this.queryParamsTemp.status = this.currentTab
+      this.checkQueryParams()
     },
   
     created() {
@@ -287,16 +295,20 @@
         }
       },
   
-      getColor(record) {
-        if (record.status.value == 2) {
-          return 'span-green'
-        } else if (record.status.value == 3) {
-          return 'span-red'
-        }else if (record.status.value == 1) {
+      getCardColor(flag) {
+        if (flag == 1) {
+          return 'span-blue'
+        } else  {
           return 'span-gray'
         }
       },
-  
+      getBedColor(flag) {
+        if (flag == 1) {
+          return 'span-green'
+        } else  {
+          return 'span-gray'
+        }
+      },
       reset(clearTime) {
         this.queryParams.keyWord = ''
   
@@ -307,21 +319,23 @@
         }
         this.queryParams.regTimeBegin = clearTime ? '' : getDateNow()
         this.queryParams.regTimeEnd = clearTime ? '' : getCurrentMonthLast()
-        this.queryParams.status = ''
+      
         this.handleOk()
       },
   
       //订单分组
       getOrderStatusGroupByDataOut() {
-        qryReferralCount(this.queryParams)
+        reservationCount(this.queryParams)
           .then((res) => {
             if (res.code == 0) {
               if (res.data) {
-                this.numberData.TotalNum = res.data.TotalNum
-                this.numberData.ReqNum = res.data.ReqNum
-                this.numberData.ReqOutCheckedNum = res.data.ReqOutCheckedNum
-                this.numberData.ReqUncheckedNum = res.data.ReqUncheckedNum
+                this.numberData.totalNum = res.data.totalNum
+                this.numberData.bedFlagNo = res.data.bedFlagNo
+                this.numberData.bedFlagOk = res.data.bedFlagOk
+                this.numberData.cardFlagNo = res.data.cardFlagNo
+                this.numberData.cardFlagOk = res.data.cardFlagOk
               }
+             
             }
           })
           .catch((err) => {
@@ -335,11 +349,37 @@
           return
         }
         this.currentTab = type
-        this.queryParams.status = type
-        this.queryParamsTemp.status = type
+        this.checkQueryParams()
         this.$refs.table.refresh()
       },
-  
+
+      checkQueryParams(){
+        if(this.currentTab === 0){
+          //是否建卡 1已建 2未建
+          //是否约床位 1已约 2未约
+          this.queryParams.cardFlag = ''
+          this.queryParams.bedFlag = ''
+          this.queryParamsTemp.cardFlag = ''
+          this.queryParamsTemp.bedFlag = ''
+        }else if(this.currentTab === 1){
+          this.queryParams.cardFlag = 2
+          this.queryParams.bedFlag = ''
+          this.queryParamsTemp.cardFlag = 2
+          this.queryParamsTemp.bedFlag = ''
+        }else if(this.currentTab === 2){
+          this.queryParams.cardFlag = ''
+          this.queryParams.bedFlag = 2
+          this.queryParamsTemp.cardFlag = ''
+          this.queryParamsTemp.bedFlag = 2
+        }else if(this.currentTab === 3){
+          this.queryParams.cardFlag = ''
+          this.queryParams.bedFlag = 1
+          this.queryParamsTemp.cardFlag = ''
+          this.queryParamsTemp.bedFlag = 1
+        }
+      },
+      
+      
       formatDate(date) {
         date = new Date(date)
         let myyear = date.getFullYear()
@@ -361,7 +401,18 @@
         this.queryParams.regTimeBegin = dateArr[0]
         this.queryParams.regTimeEnd = dateArr[1]
       },
-  
+      goBedRemind(id) {
+        this.confirmLoading = true
+      bedRemind(id).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('已发送！')
+          this.$refs.table.refresh()
+        } else {
+          this.$message.error(res.message)
+        }
+        this.confirmLoading = false
+      })
+    },
       //挂号时间
       onChangeOrder(momentArr, dateArr2) {
         //   if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
@@ -397,7 +448,7 @@
       },
   
       handleOk() {
-        this.queryParams.status = ''
+        
         this.getOrderStatusGroupByDataOut()
         this.$refs.table.refresh()
       },

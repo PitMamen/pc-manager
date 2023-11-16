@@ -509,6 +509,45 @@
               />
             </div>
 
+           
+          </div>
+
+          <div class="mission-bottom">
+            <div class="mission-bottom-left">
+              <a-checkbox
+                
+                
+                :checked="itemTask.isjiangeChecked"
+                style="margin-left: 1%"
+              />
+              <span
+                
+                class="span-titl"
+                style="margin-left: 1%"
+                >设置间隔匹配时间</span
+              >
+
+              <a-input-number
+                
+                style="display: inline-block; margin-left: 1%; width: 100px !important"
+                v-model="itemTask.jiangenum"
+                :min="0"
+                :max="10000"
+                :maxLength="30"
+                allow-clear
+                placeholder="请输入数量"
+              />
+              <a-select
+              class="mid-select-two"
+              style="width: 100px !important"
+              v-model="itemTask.jiangeUnit"
+              allow-clear
+              placeholder="单位"
+            >
+              <a-select-option  value="1">天</a-select-option>
+            </a-select>
+            </div>
+
             <div class="end-btn-task" style="width: 29%">
               <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
 
@@ -525,6 +564,7 @@
             <!-- <a-button style="margin-left: 2%" type="primary" @click="delMission(indexTask, itemTask)"
               >刪除任务</a-button> -->
           </div>
+
         </div>
       </div>
 
