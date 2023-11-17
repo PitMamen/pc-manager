@@ -55,7 +55,7 @@
               style="display: inline-block"
               allow-clear
               :readOnly="record.bedFlag === 1"
-              :maxLength="50"
+              :maxLength="20"
               placeholder="请输入患者住院号"
             />
 
@@ -113,7 +113,7 @@
                 v-model="checkData.memo"
                 class="span-item-value"
                 showCount
-                :maxLength="100"
+                :maxLength="50"
                 :readOnly="record.bedFlag === 1"
                 style="height: 46px !important; display: inline-block"
                 :auto-size="false"
@@ -121,12 +121,9 @@
               />
             </span>
           </div>
-          <div v-if="record.bedFlag !== 1" class="div-content" >
-            <a-checkbox  v-model="smsChecked" style="margin-left: auto;">预约登记后自动短信通知</a-checkbox>
-            
-            
+          <div v-if="record.bedFlag !== 1" class="div-content">
+            <a-checkbox v-model="smsChecked" style="margin-left: auto">预约登记后自动短信通知</a-checkbox>
           </div>
-         
         </div>
       </div>
     </a-spin>
@@ -135,11 +132,7 @@
 
 
 <script>
-import {
-  createBed,
-  cancelBed,
-  getZhuyuanDepartmentList,
-} from '@/api/modular/system/posManage'
+import { createBed, cancelBed, getZhuyuanDepartmentList } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
@@ -158,7 +151,7 @@ export default {
       advanced: false,
       createValue: undefined,
       originData: [],
-      smsChecked:true,
+      smsChecked: true,
       checkData: {
         inTime: undefined, //住院时间
         memo: undefined, //补充事项
@@ -186,7 +179,7 @@ export default {
         inDeptCode: undefined, //入院科室
         inDept: undefined, //入院科室名称
       }
-      this.smsChecked=true
+      this.smsChecked = true
       this.originData = []
       this.createValue = ''
     },
@@ -201,7 +194,7 @@ export default {
       this.checkData.tradeId = record.tradeId
       if (this.record.bedFlag === 1) {
         this.checkData.zyh = record.zyh || undefined
-        this.checkData.yj = record.yj || undefined
+        this.checkData.yj = record.yj
         this.checkData.inDeptCode = record.inDeptCode
         this.originData = [{ department_id: record.inDeptCode, department_name: record.inDept }]
         this.checkData.memo = record.memo
@@ -272,10 +265,15 @@ export default {
     checkCardNo(value) {
       return /^[\da-z]+$/i.test(value)
     },
+    //判断正整数
+    isPositiveInteger(value) {
+      var reg = /^[1-9]\d*$/
+      return reg.test(value)
+    },
     handleSubmit() {
       console.log(this.checkData)
 
-      if(this.checkData.zyh){
+      if (this.checkData.zyh) {
         if (!this.checkCardNo(this.checkData.zyh)) {
           this.$message.error('住院号输入不正确')
           return
@@ -292,9 +290,12 @@ export default {
         return
       }
 
-      if (this.checkData.yj && this.checkData.yj < 0) {
-        this.$message.error('押金不能为负')
-        return
+      if (this.checkData.yj ) {
+        if (!this.isPositiveInteger(this.checkData.yj)) {
+          this.$message.error('预估押金只能是正整数')
+          return
+        }
+       
       }
 
       this.confirmLoading = true
@@ -309,7 +310,7 @@ export default {
     },
 
     goCreateBed() {
-      this.checkData.sendMessageFlag=this.smsChecked?1:0
+      this.checkData.sendMessageFlag = this.smsChecked ? 1 : 0
       createBed(this.checkData).then((res) => {
         if (res.code == 0) {
           this.$message.success('预约成功！')
