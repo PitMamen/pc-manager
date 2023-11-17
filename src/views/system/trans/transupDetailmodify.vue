@@ -2,6 +2,7 @@
   <div class="wrap">
     <div>
       <a-tabs
+        @change="callback"
         v-model="keyindex"
         :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
       >
@@ -10,7 +11,7 @@
           <transup-insidemodify ref="transupInsidemodify" />
         </a-tab-pane>
 
-        <a-tab-pane  key="2" tab="上传病历" force-render>
+        <a-tab-pane key="2" tab="上传病历" force-render>
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="健康档案" force-render>
@@ -72,18 +73,12 @@ export default {
   },
 
   methods: {
-    // initData() {
-    //   this.passItem = JSON.parse(this.$route.query.dataStr);
-
-    //   console.log("this.passItem", JSON.stringify(this.passItem));
-    //   this.$nextTick(() => {
-    //     this.$refs.transupInsidemodify.refreshData(this.passItem);
-    //   });
-
-    //   // this.tradeId = this.passItem.tradeId;
-    //   // console.log("this.passItem.tradeId", this.passItem.tradeId);
-    // },
-    callback() {},
+    // 点击tab 回调触发 
+    callback(keyIndex) {
+      if (keyIndex=='2') {
+        this.$refs.uploadFiles.refershData(keyIndex);
+      }
+    },
     handleOk() {},
 
     cancel() {
