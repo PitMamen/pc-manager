@@ -11,11 +11,9 @@
       </a-tab-pane>
       <a-tab-pane disabled key="2" tab="门诊">
         门诊
-        <!-- <task-statistics ref="taskStatistics" @ok="handleOk" /> -->
       </a-tab-pane>
       <a-tab-pane disabled key="3" tab="体检">
         体检
-        <!-- <task-statistics ref="taskStatistics" @ok="handleOk" /> -->
       </a-tab-pane>
     </a-tabs>
   </a-spin>
