@@ -8,7 +8,7 @@
         <span class="span-title">住院病历</span>
       </div>
 
-      <a-button style="margin-top: 20px; margin-left: 10px" type="primary" @click="submitData()">同步病历</a-button>
+      <a-button style="margin-top: 20px; margin-left: 10px" type="primary" @click="syncCase()">同步病历</a-button>
 
       <!-- </div> -->
 
@@ -22,19 +22,16 @@
         :alert="true"
         :rowKey="(record) => record.code"
       >
+        <span slot="ztshow" slot-scope="text, record">
+          <span style="color: #69c07d">{{ record.zt }}</span>
+        </span>
       </a-table>
-
 
       <div class="div-pro-btn">
         <div style="flex: 1"></div>
         <a-button ghost type="primary" @click="goRecordDetail()">病历详情</a-button>
         <a-button ghost type="primary" style="margin-left: 10px" @click="goAuthorizeManage()">授权管理</a-button>
       </div>
-
-
-
-
-
 
       <div class="div-title">
         <div class="div-line-blue"></div>
@@ -112,14 +109,14 @@
         <div style="flex: 1"></div>
         <a-button ghost type="primary" @click="commitPhoto()">提交记录</a-button>
       </div>
-      <file-modalshow ref="fileModalshow"  />
-      <empower-Manage ref="empowerManage" @ok="handleOk"  />
+      <file-modalshow ref="fileModalshow" />
+      <empower-Manage ref="empowerManage" @ok="handleOk" />
     </a-card>
   </a-spin>
 </template>
 
 <script>
-import {} from '@/api/modular/system/posManage'
+import { synPatientCase, getSynRecord } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -134,7 +131,6 @@ export default {
     Ellipsis,
     fileModalshow,
     empowerManage,
-
   },
   data() {
     return {
@@ -146,7 +142,7 @@ export default {
       },
       fileListBanner: [],
       fileListDetail: [],
-      otherListphoto:[],
+      otherListphoto: [],
       previewImageBanner: '',
       previewImageDetail: '',
       previewOtherDetail: '',
@@ -154,50 +150,61 @@ export default {
       previewVisibleDetail: false,
       previewVisibleOther: false,
 
+      tradeId: '',
+
       tableData: [],
       columns: [
         {
           title: '住院流水号',
           // innerHeight:20,
-          dataIndex: 'xh',
+          dataIndex: 'regNo',
         },
         {
           title: '入院时间',
-          width: 100,
-          dataIndex: 'rysj',
+          dataIndex: 'inDate',
           ellipsis: true,
         },
         {
           title: '出院时间',
-          dataIndex: 'cysj',
+          dataIndex: 'outDate',
         },
         {
           title: '病案首页',
-          dataIndex: 'basy',
+          dataIndex: 'caseNum',
+          align: 'center',
         },
         {
           title: '出院小结',
-          dataIndex: 'cyxj',
+          dataIndex: 'summaryNum',
+          align: 'center',
         },
 
         {
           title: '化验报告',
-          dataIndex: 'hybg',
+          dataIndex: 'examNum',
+          align: 'center',
+        },
+
+        {
+          title: '检查报告',
+          dataIndex: 'checkNum',
+          align: 'center',
         },
 
         {
           title: '状态',
-          dataIndex: 'zt',
+          dataIndex: 'createTimeshow',
         },
 
         {
           title: '授权访问',
-          dataIndex: 'sqfw',
+          dataIndex: 'zt',
+          scopedSlots: { customRender: 'ztshow' },
         },
 
         {
           title: '授权机构',
-          dataIndex: 'sqjg',
+          dataIndex: 'hospitalName',
         },
       ],
     }
@@ -212,37 +219,18 @@ export default {
     },
   },
 
-  /**
-   * 初始化判断按钮权限是否拥有，没有则不现实列
-   *
-   * medicSearch 页面暂时不需要了，换 chooseMedic 弹窗实现功能
-   *
-   */
+  activated() {
+    if (this.$route.query.tradeId) {
+      this.resetData()
+      this.tradeId = this.$route.query.tradeId
+      this.getSynRecordOut()
+    }
+  },
+
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-    // this.getMedicTypes()
-    // // this.getTreatTypes()
-    // this.getYiBaoDatas()
-    // // this.getCategoryListOut()
-    // // this.getBaseUnitDatas()
-    // this.getExpenseDatas()
-    // // this.getUnitDatas()
-
-    // this.getSpiritualDatas()
-    // this.getAnesthesiaDatas()
-    // this.getBacteriaDatas()
-    // this.getDefaultUseDatas()
-    // this.getDefaultFreqDatas()
   },
   mounted() {
-    // this.$bus.$on('medicNewEvent', (record) => {
-    //   console.log('medicNewEvent', JSON.stringify(record))
-    //   //TODO 填充药品数据
-    //   this.inputData(record)
-    // // })
-    // this.$nextTick(() => {
-    //   this.initEditor()
-    // })
   },
   methods: {
     resetData() {
@@ -250,24 +238,68 @@ export default {
       this.fileListDetail = []
     },
 
+    // 获取档案信息
+    getSynRecordOut() {
+      this.confirmLoading = true
+      // getSynRecord({ tradeId: '20231108095148621' }).then((res) => {
+      getSynRecord({ tradeId: this.tradeId }).then((res) => {
+        if (res.code == 0) {
+          this.tableData = res.data
+          if (this.tableData) {
+            this.tableData.forEach((item) => {
+              this.$set(item, 'zt', '已授权')
+              if (item.createTime&&item.createTime.length>10) {
+                this.$set(item, 'createTimeshow', item.createTime.substring(0,10)+'同步')
+              }
+            })
+          }
+        }
+      }).finally((erro)=>{
+        this.confirmLoading = false
+      })
+    },
+
+    // 同步病历
+    synPatientCaseOut() {
+      this.confirmLoading = true
+      // synPatientCase({ tradeId: '20231108095148621' }).then((res) => {
+      synPatientCase({ tradeId: this.tradeId }).then((res) => {
+        if (res.code == 0) {
+          this.confirmLoading = false
+          this.$message.success('操作成功!')
+        } else {
+          this.$message.error(res.message)
+        }
+      }).finally((erro)=>{
+        this.confirmLoading = false
+      })
+    },
+
+
+
+    // 同步
+    syncCase(){
+      this.synPatientCaseOut()
+    },
+
+
+
+
+
     // 病历详情
     goRecordDetail() {
       //TODO 测试数据
-      let record = {name:'张三',sex:'男',age:12}
-      this.$refs.fileModalshow.showFile(record);
+      let record = { name: '张三', sex: '男', age: 12 }
+      this.$refs.fileModalshow.showFile(record)
     },
 
     // 授权管理
     goAuthorizeManage() {
-
-      this.$refs.empowerManage.manage("1")
+      this.$refs.empowerManage.manage('1')
     },
 
     // 提交病历
-    commitPhoto(){
-
-    },
-
+    commitPhoto() {},
 
     handleChangeBanner(changeObj) {
       console.log('changeObj', JSON.stringify(changeObj))
@@ -290,7 +322,6 @@ export default {
       }
     },
 
-
     handleChangeOther(changeObj) {
       if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
         this.$message.error(changeObj.file.response.message)
@@ -300,8 +331,6 @@ export default {
         this.otherListphoto = changeObj.fileList
       }
     },
-
-
 
     handleCancelOther() {
       this.previewVisibleOther = false
@@ -331,7 +360,6 @@ export default {
       this.previewVisibleDetail = true
     },
 
-
     async handlePreviewOther(file) {
       if (!file.url && !file.preview) {
         file.preview = await this.getBase64(file.originFileObj)
@@ -349,32 +377,29 @@ button {
 }
 </style>
 <style lang="less" scoped>
-  .div-title {
-    display: flex;
-    background-color: #ebebeb;
-    flex-direction: row;
-    width: 100% !important;
-    display: flex;
-    align-items: center;
-    flex-direction: row;
-    height: 26px;
+.div-title {
+  display: flex;
+  background-color: #ebebeb;
+  flex-direction: row;
+  width: 100% !important;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  height: 26px;
 
-    .div-line-blue {
-      width: 5px;
-      height: 100%;
-      background-color: #1890ff;
-    }
-
-    .span-title {
-      font-size: 12px;
-      margin-left: 10px;
-      font-weight: bold;
-      color: #333;
-    }
+  .div-line-blue {
+    width: 5px;
+    height: 100%;
+    background-color: #1890ff;
   }
 
-
-
+  .span-title {
+    font-size: 12px;
+    margin-left: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+}
 
 .div-box {
   border: 1px solid #e6e6e6;
