@@ -16,8 +16,8 @@
         <a-tab-pane key="3" tab="健康档案" force-render>
           <file-danan ref="fileDanan" />
         </a-tab-pane>
-        <a-tab-pane disabled key="4" tab="添加评论" force-render>
-          <upload-files ref="uploadFiles" />
+        <a-tab-pane key="4" tab="添加评论" force-render>
+          <add-comments ref="addComments" />
         </a-tab-pane>
       </a-tabs>
     </div>
@@ -29,12 +29,14 @@
 import transupInsidemodify from "./transupInsidemodify";
 import uploadFiles from "./uploadFiles";
 import fileDanan from "./fileDanan";
+import addComments from "./addComments";
 
 export default {
   components: {
     transupInsidemodify,
     uploadFiles,
     fileDanan,
+    addComments,
   },
 
   data() {
