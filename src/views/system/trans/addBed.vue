@@ -6,7 +6,8 @@
     :confirmLoading="confirmLoading"
     @ok="handleSubmit"
     @cancel="handleCancel"
-    :okText="record.id ? '确定' : '预约登记'"
+    :okText="record.bedFlag === 1 ? '取消预约' : '预约登记'"
+    cancelText="关闭"
     :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
@@ -18,28 +19,28 @@
           </div>
           <div class="div-content">
             <span class="span-item-name">患者姓名:</span>
-            <span class="span-item-value">李四</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.name }}</span>
 
             <span class="span-item-name">性别:</span>
-            <span class="span-item-value">男</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.sex }}</span>
           </div>
           <div class="div-content">
             <span class="span-item-name">出生日期:</span>
-            <span class="span-item-value">1998-5-20</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.birthday }}</span>
 
             <span class="span-item-name">本人电话:</span>
-            <span class="span-item-value">13574111205</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.phone }}</span>
           </div>
           <div class="div-content">
             <span class="span-item-name">证件类型:</span>
             <span class="span-item-value">身份证</span>
 
             <span class="span-item-name">证件号码:</span>
-            <span class="span-item-value">433130199009255645</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.identificationNo }}</span>
           </div>
           <div class="div-content" style="align-items: flex-start">
             <span class="span-item-name">家庭住址:</span>
-            <span class="span-item-value">湖南省长沙市湖南省</span>
+            <span class="span-item-value">{{ record.patientBaseinfo.address }}</span>
           </div>
 
           <div class="div-title">
@@ -50,54 +51,74 @@
             <span class="span-item-name">住院号:</span>
             <a-input
               class="span-item-value"
-              v-model="checkData.loginName"
+              v-model="checkData.zyh"
               style="display: inline-block"
               allow-clear
-              :disabled="record.accountId"
+              :readOnly="record.bedFlag === 1"
               :maxLength="50"
               placeholder="请输入患者住院号"
             />
 
             <span class="span-item-name" style="margin-left: 10px"><span style="color: red">*</span>到院时间:</span>
             <span class="span-item-value">
-              <a-date-picker :value="createValue" @change="onChange" />
+              <a-date-picker :value="createValue" :disabled="record.bedFlag === 1"  @change="onChange" />
             </span>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>入院科室:</span>
-            <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择入院科室">
+            <!-- <a-select v-model="checkData.professionalTitle" allow-clear placeholder="请选择入院科室">
               <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item.value">{{
                 item.value
               }}</a-select-option>
+            </a-select> -->
+            <a-select
+            :disabled="record.bedFlag === 1"
+              show-search
+              v-model="checkData.inDeptCode"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              placeholder="请选择入院科室"
+              @change="onDepartmentSelectChange2"
+              @search="onDepartmentSelectSearch2"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option
+                v-for="(item, index) in originData"
+                :title="item.department_name"
+                :key="index"
+                :value="item.department_id"
+                >{{ item.department_name }}</a-select-option
+              >
             </a-select>
 
             <span class="span-item-name" style="margin-left: 10px">押金估算:</span>
             <span class="span-item-value">
               <a-input
                 class="span-item-value"
-                v-model="checkData.loginName"
+                v-model="checkData.yj"
                 style="display: inline-block"
                 allow-clear
-                :disabled="record.accountId"
+                :readOnly="record.bedFlag === 1"
                 type="number"
                 :maxLength="10"
                 placeholder="请输入金额"
               />
             </span>
           </div>
-          <div class="div-content" style="align-items: flex-start;">
+          <div class="div-content" style="align-items: flex-start">
             <span class="span-item-name">补充事项:</span>
             <span class="span-item-value">
               <a-textarea
-              v-model="checkData.doctorBrief"
-              class="span-item-value"
-              showCount
-              :maxLength="200"
-              style="height: 64px !important;  display: inline-block"
-              
-              :auto-size="false"
-              placeholder="请输入内容 "
-            />
+                v-model="checkData.memo"
+                class="span-item-value"
+                showCount
+                :maxLength="100"
+                :readOnly="record.bedFlag === 1"
+                style="height: 46px !important; display: inline-block"
+                :auto-size="false"
+                placeholder="请输入内容 "
+              />
             </span>
           </div>
         </div>
@@ -109,80 +130,67 @@
 
 <script>
 import {
+  createBed,
+  cancelBed,
   getRoleList,
   queryHospitalList,
   getDoctorAccountDetail,
   createDoctorAccount,
   getUnbindAccountDoctorUser,
   updateDoctorAccount,
-  getOwnConnectCustomerFunUserList,
+  getZhuyuanDepartmentList,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
 import Vue from 'vue'
+import moment from 'moment'
 export default {
   components: {},
   data() {
     return {
+      dateFormat: 'YYYY-MM-DD',
       visible: false,
       record: {},
       headers: {},
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
-      fileList: [],
-      danandataList: [],
-      treeData: [],
+      createValue:undefined,
+      originData: [],
       checkData: {
-        type: 0,
-        loginName: '', //登录账号
-        userId: '', //对应人员
-        hospitalName: '',
-        phone: '',
-        role: undefined, //分配角色
-        seatUser: '', //坐席
-        companywxUserId: '', //企微账号
+        inTime: undefined,//住院时间
+        memo: undefined,//补充事项
+        sendMessageFlag: 1,//是否发送短信（1发送 其它不发送）
+        tradeId: undefined,
+        yj: undefined,//押金
+        zyh: undefined,//住院号
+        inDeptCode:undefined,//入院科室
+        inDept:undefined,//入院科室
       },
       fetching: false,
-      accountChecked: false, //客服坐席
-      wecomChecked: false, //企稳账号
 
-      roleList: [], //角色列表
-      wecomUserList: [], //企稳用户列表
-      rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
-      userList: [],
+     
     }
   },
   created() {},
   methods: {
     clearData() {
       this.record = {}
-      this.checkData = {
-        type: 0,
-        loginName: '', //登录账号
-        userId: '', //对应人员
-        hospitalName: '',
-        phone: '',
-        role: [], //分配角色
-        seatUser: '', //坐席
-        companywxUserId: '',
+      this.checkData =  {
+        inTime: undefined,//住院时间
+        memo: undefined,//补充事项
+        sendMessageFlag: 1,//是否发送短信（1发送 其它不发送）
+        tradeId: undefined,
+        yj: undefined,//押金
+        zyh: undefined,//住院号
+        inDeptCode:undefined,//入院科室
+        inDept:undefined,//入院科室名称
       }
-      this.roleList = []
-      this.userList = []
-      this.accountChecked = false
-      this.wecomChecked = false
+      this.originData = []
+      this.createValue=''
     },
-    //新增
-    addModel() {
-      this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
-      this.clearData()
-      this.visible = true
-      this.confirmLoading = false
-      this.getUserList('')
-      this.getRolesOut()
-      this.getOwnConnectCustomerFunUserListOut()
-    },
+
     //修改
     editModel(record) {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -190,83 +198,67 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.record = record
-
-      this.getRolesOut()
-      this.getOwnConnectCustomerFunUserListOut()
-
-      this.getDoctorAccountDetailOut(record.accountId)
-    },
-    //账号详情
-    getDoctorAccountDetailOut(accountId) {
-      getDoctorAccountDetail({
-        accountId: accountId,
-      }).then((res) => {
-        if (res.code == 0) {
-          this.checkData = res.data
-          this.accountChecked = res.data.seatUser ? true : false
-          this.wecomChecked = res.data.companywxUserId ? true : false
-          var roles = []
-          res.data.roles.forEach((element) => {
-            roles.push(element.roleId)
-          })
-          console.log(roles)
-          this.checkData.role = roles
-          this.userList.push({
-            ospitalCode: res.data.hospitalCode,
-            hospitalName: res.data.hospitalName,
-            phone: res.data.phone,
-            userId: res.data.userId,
-            userName: res.data.userName,
-          })
-          this.getRolesOut()
-        }
-      })
+      this.checkData.tradeId=record.tradeId
+      if(this.record.bedFlag ===1){
+        this.checkData.zyh=record.zyh
+        this.checkData.yj=record.yj
+        this.checkData.inDeptCode=record.inDeptCode
+        this.originData=[{department_id:record.inDeptCode,department_name:record.inDept}]
+        this.checkData.memo=record.memo
+        this.checkData.inTime=record.inTime
+        
+        this.createValue=moment(record.inTime, this.dateFormat)
+      }else {
+        this.getZhuyuanDepartmentListOut(undefined)
+      }
+     
     },
 
-    //获取角色列表
-    getRolesOut() {
-      getRoleList({
-        belong: undefined,
-        status: 1,
-        topFlag: undefined,
-        keyWords: undefined,
-      }).then((res) => {
-        if (res.code == 0) {
-          var roleList = []
-
-          for (let i = 0; i < res.data.records.length; i++) {
-            if (res.data.records[i].state == 1) {
-              roleList.push(res.data.records[i])
-            }
-          }
-          this.roleList = roleList
-        }
-      })
-    },
-    //获取配置了客户联系功能的成员列表
-    getOwnConnectCustomerFunUserListOut() {
-      getOwnConnectCustomerFunUserList().then((res) => {
-        if (res.code == 0) {
-          this.wecomUserList = res.data.follow_user
-        }
-      })
-    },
-    getUserList(queryText) {
+    //获取管理的科室 可首拼
+    getZhuyuanDepartmentListOut(departmentName) {
       this.fetching = true
-      getUnbindAccountDoctorUser({
-        status: 0, //（0正常、1停用、2删除）
-        queryText: queryText,
-        pageNo: 1,
-        pageSize: 10000,
-      }).then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getZhuyuanDepartmentList(departmentName, undefined).then((res) => {
         this.fetching = false
         if (res.code == 0) {
-          this.userList = res.data.rows
-          this.$forceUpdate()
-          console.log(this.userList)
+          this.originData = res.data.records
         }
+
+       
       })
     },
+
+    //科室搜索
+    onDepartmentSelectSearch2(value) {
+      this.originData = []
+      this.getZhuyuanDepartmentListOut(value)
+    },
+    //科室选择变化
+    onDepartmentSelectChange2(value) {
+      if (value === undefined) {
+        this.originData = []
+        this.getZhuyuanDepartmentListOut(undefined)
+      }
+      console.log('hahah',value)
+    var department=  this.originData.find((item)=>{
+        return item.department_id===value
+      })
+     console.log(department)
+     this.checkData.inDept=department.department_name
+    },
+    
+      onChange(momentArr, dateArr) {
+        console.log(momentArr)
+        console.log(dateArr)
+        if (dateArr[0] == '') {
+          this.checkData.inTime = ''
+          return
+        }
+  
+        this.createValue = momentArr
+        this.checkData.inTime =dateArr
+       
+      },
     //不能输入非汉字效验  效验不能输入非空字符串
     validateNoChinese: (value, callback) => {
       let reg = /^[^\u4e00-\u9fa5]+$/g
@@ -279,24 +271,7 @@ export default {
         callback()
       }
     },
-    onRoleSelectChange(value) {
-      console.log(value)
-      this.checkData.role = value
-      this.$forceUpdate()
-    },
-    onUserSelectChange(value) {
-      console.log('onUserSelectChange', value)
-      var checkedUser = this.userList.find((item) => item.userId == value)
-      console.log('checkedUser', checkedUser)
-      if (checkedUser) {
-        this.checkData.hospitalName = checkedUser.hospitalName
-        this.checkData.phone = checkedUser.phone
-      }
-    },
-    onUserSelectSearch(value) {
-      console.log(value)
-      this.getUserList(value)
-    },
+
     checkAccountName() {
       console.log(this.checkData.loginName)
       var value = this.checkData.loginName
@@ -312,72 +287,40 @@ export default {
     handleSubmit() {
       console.log(this.checkData)
 
-      if (isStringEmpty(this.checkData.loginName)) {
-        this.$message.error('请输入登录账号')
+      if (isStringEmpty(this.checkData.inTime)) {
+        this.$message.error('请选择到院时间')
         return
       }
-      if (!this.checkAccountName()) {
-        return
-      }
+      
 
-      if (isStringEmpty(this.checkData.userId)) {
-        this.$message.error('请选择对应人员')
-        return
-      }
-
-      if (isArrayEmpty(this.checkData.role)) {
-        this.$message.error('请分配角色')
+      if (isStringEmpty(this.checkData.inDeptCode)) {
+        this.$message.error('请选择入院科室')
         return
       }
 
-      if (this.accountChecked) {
-        //如果勾选了客服坐席
-
-        if (isStringEmpty(this.checkData.seatUser)) {
-          this.$message.error('请输入客服坐席ID')
-          return
-        }
-      }
-      if (this.wecomChecked) {
-        //如果勾选了企微账号
-
-        if (isStringEmpty(this.checkData.companywxUserId)) {
-          this.$message.error('请选择企业微信账号')
-          return
-        }
+      if(this.checkData.yj && this.checkData.yj<0){
+        this.$message.error('押金不能为负')
+        return
       }
 
-      var postData = {
-        loginName: this.checkData.loginName,
-        userId: this.checkData.userId,
-        actorIds: this.checkData.role,
-      }
-      if (this.accountChecked) {
-        postData.seatUser = this.checkData.seatUser
-      } else {
-        postData.seatUser = ''
-      }
-      if (this.wecomChecked) {
-        postData.companywxUserId = this.checkData.companywxUserId
-      } else {
-        postData.companywxUserId = ''
-      }
+     
+      
       this.confirmLoading = true
 
-      if (this.record.accountId) {
-        postData.accountId = this.record.accountId
-        //修改
-        this.editAccount(postData)
+      if (this.record.bedFlag === 1) {
+        
+        //取消
+        this.goCancelBed()
       } else {
-        //新增
-        this.addAccount(postData)
+        //预约
+        this.goCreateBed()
       }
     },
 
-    addAccount(postData) {
-      createDoctorAccount(postData).then((res) => {
+    goCreateBed() {
+      createBed(this.checkData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('新增成功！')
+          this.$message.success('预约成功！')
           this.visible = false
           this.$emit('ok', '')
         } else {
@@ -386,10 +329,14 @@ export default {
         this.confirmLoading = false
       })
     },
-    editAccount(postData) {
-      updateDoctorAccount(postData).then((res) => {
+    goCancelBed() {
+      var postData={
+        sendMessageFlag:this.checkData.sendMessageFlag,
+        tradeId:this.checkData.tradeId,
+      }
+      cancelBed(postData).then((res) => {
         if (res.code == 0) {
-          this.$message.success('修改成功！')
+          this.$message.success('已取消！')
           this.visible = false
           this.$emit('ok', '')
         } else {
@@ -438,7 +385,7 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 320px;
+  height: 380px;
 
   .div-part-left {
     float: left;
