@@ -53,14 +53,13 @@
 
             <span class="span-item-name">建档方式:</span>
             <span class="span-item-value">
-              <a-radio-group :disabled="record.cardFlag===1" name="radioGroup" v-model="createType">
+              <a-radio-group :disabled="record.cardFlag === 1" name="radioGroup" v-model="createType">
                 <a-radio :value="1">手动 </a-radio>
                 <a-radio :value="2">自动 </a-radio>
               </a-radio-group>
             </span>
           </div>
 
-           
           <div v-if="record.cardFlag === 1" class="div-content">
             <span class="span-item-name">就诊卡号:</span>
             <span class="span-item-value">{{ cardNo }}</span>
@@ -68,22 +67,21 @@
 
           <div v-else>
             <div v-if="createType === 1" class="div-content">
-            <a-input
-              class="span-item-value"
-              v-model="cardNo"
-              style="display: inline-block"
-              allow-clear
-              :maxLength="100"
-              placeholder="请输入您给患者建档后的诊疗卡号"
-            />
+              <a-input
+                class="span-item-value"
+                v-model="cardNo"
+                style="display: inline-block"
+                allow-clear
+                :maxLength="100"
+                placeholder="请输入您给患者建档后的诊疗卡号"
+              />
+            </div>
+            <div v-if="createType === 2" class="div-content">
+              <span class="span-item-value" style="color: #999999; margin-left: 5px"
+                >患者的诊疗卡号由HIS系统自动生成</span
+              >
+            </div>
           </div>
-          <div v-if="createType === 2" class="div-content">
-            <span class="span-item-value" style="color: #999999; margin-left: 5px"
-              >患者的诊疗卡号由HIS系统自动生成</span
-            >
-          </div>
-          </div>
-         
         </div>
       </div>
     </a-spin>
@@ -127,12 +125,12 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
+     
       this.record = record
-      if(record.cardFlag === 1){
-        this.createType=record.cardType || 1
-        this.cardNo=record.cardNo
+      if (record.cardFlag === 1) {
+        this.createType = record.cardType
+        this.cardNo = record.cardNo
       }
-      
     },
 
     //不能输入非汉字效验  效验不能输入非空字符串
@@ -147,8 +145,8 @@ export default {
         callback()
       }
     },
+    //判断不是中文
     checkAccountName() {
-      
       var value = this.cardNo
       let reg = /^[^\u4e00-\u9fa5]+$/g
       let regEmpty = /^\s*$/g
@@ -159,9 +157,15 @@ export default {
         return true
       }
     },
-    handleSubmit() {
+    //判断只允许字母和数字
+    checkCardNo(value) {
 
-      if(this.record.cardFlag === 1){
+      return /^[\da-z]+$/i.test(value)
+
+  
+    },
+    handleSubmit() {
+      if (this.record.cardFlag === 1) {
         this.handleCancel()
         return
       }
@@ -172,10 +176,10 @@ export default {
           return
         }
 
-        if (!this.checkAccountName()) {
-        return
-      }
-
+        if (!this.checkCardNo(this.cardNo)) {
+          this.$message.error('就诊卡号输入不正确')
+          return
+        }
       }
 
       var postData = {
@@ -183,6 +187,7 @@ export default {
         cardType: this.createType,
         tradeId: this.record.tradeId,
       }
+      console.log(postData)
       this.addCard(postData)
     },
 

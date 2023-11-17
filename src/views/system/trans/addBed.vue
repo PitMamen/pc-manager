@@ -61,7 +61,7 @@
 
             <span class="span-item-name" style="margin-left: 10px"><span style="color: red">*</span>到院时间:</span>
             <span class="span-item-value">
-              <a-date-picker :value="createValue" :disabled="record.bedFlag === 1"  @change="onChange" />
+              <a-date-picker :value="createValue" :disabled="record.bedFlag === 1" @change="onChange" />
             </span>
           </div>
           <div class="div-content">
@@ -72,7 +72,7 @@
               }}</a-select-option>
             </a-select> -->
             <a-select
-            :disabled="record.bedFlag === 1"
+              :disabled="record.bedFlag === 1"
               show-search
               v-model="checkData.inDeptCode"
               :filter-option="false"
@@ -121,6 +121,12 @@
               />
             </span>
           </div>
+          <div v-if="record.bedFlag !== 1" class="div-content" >
+            <a-checkbox  v-model="smsChecked" style="margin-left: auto;">预约登记后自动短信通知</a-checkbox>
+            
+            
+          </div>
+         
         </div>
       </div>
     </a-spin>
@@ -132,12 +138,6 @@
 import {
   createBed,
   cancelBed,
-  getRoleList,
-  queryHospitalList,
-  getDoctorAccountDetail,
-  createDoctorAccount,
-  getUnbindAccountDoctorUser,
-  updateDoctorAccount,
   getZhuyuanDepartmentList,
 } from '@/api/modular/system/posManage'
 
@@ -156,39 +156,39 @@ export default {
       confirmLoading: false,
       // 高级搜索 展开/关闭
       advanced: false,
-      createValue:undefined,
+      createValue: undefined,
       originData: [],
+      smsChecked:true,
       checkData: {
-        inTime: undefined,//住院时间
-        memo: undefined,//补充事项
-        sendMessageFlag: 1,//是否发送短信（1发送 其它不发送）
+        inTime: undefined, //住院时间
+        memo: undefined, //补充事项
+        sendMessageFlag: 1, //是否发送短信（1发送 其它不发送）
         tradeId: undefined,
-        yj: undefined,//押金
-        zyh: undefined,//住院号
-        inDeptCode:undefined,//入院科室
-        inDept:undefined,//入院科室
+        yj: undefined, //押金
+        zyh: undefined, //住院号
+        inDeptCode: undefined, //入院科室
+        inDept: undefined, //入院科室
       },
       fetching: false,
-
-     
     }
   },
   created() {},
   methods: {
     clearData() {
       this.record = {}
-      this.checkData =  {
-        inTime: undefined,//住院时间
-        memo: undefined,//补充事项
-        sendMessageFlag: 1,//是否发送短信（1发送 其它不发送）
+      this.checkData = {
+        inTime: undefined, //住院时间
+        memo: undefined, //补充事项
+        sendMessageFlag: 1, //是否发送短信（1发送 其它不发送）
         tradeId: undefined,
-        yj: undefined,//押金
-        zyh: undefined,//住院号
-        inDeptCode:undefined,//入院科室
-        inDept:undefined,//入院科室名称
+        yj: undefined, //押金
+        zyh: undefined, //住院号
+        inDeptCode: undefined, //入院科室
+        inDept: undefined, //入院科室名称
       }
+      this.smsChecked=true
       this.originData = []
-      this.createValue=''
+      this.createValue = ''
     },
 
     //修改
@@ -198,20 +198,19 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.record = record
-      this.checkData.tradeId=record.tradeId
-      if(this.record.bedFlag ===1){
-        this.checkData.zyh=record.zyh
-        this.checkData.yj=record.yj
-        this.checkData.inDeptCode=record.inDeptCode
-        this.originData=[{department_id:record.inDeptCode,department_name:record.inDept}]
-        this.checkData.memo=record.memo
-        this.checkData.inTime=record.inTime
-        
-        this.createValue=moment(record.inTime, this.dateFormat)
-      }else {
+      this.checkData.tradeId = record.tradeId
+      if (this.record.bedFlag === 1) {
+        this.checkData.zyh = record.zyh || undefined
+        this.checkData.yj = record.yj || undefined
+        this.checkData.inDeptCode = record.inDeptCode
+        this.originData = [{ department_id: record.inDeptCode, department_name: record.inDept }]
+        this.checkData.memo = record.memo
+        this.checkData.inTime = record.inTime
+
+        this.createValue = moment(record.inTime, this.dateFormat)
+      } else {
         this.getZhuyuanDepartmentListOut(undefined)
       }
-     
     },
 
     //获取管理的科室 可首拼
@@ -223,8 +222,6 @@ export default {
         if (res.code == 0) {
           this.originData = res.data.records
         }
-
-       
       })
     },
 
@@ -239,26 +236,25 @@ export default {
         this.originData = []
         this.getZhuyuanDepartmentListOut(undefined)
       }
-      console.log('hahah',value)
-    var department=  this.originData.find((item)=>{
-        return item.department_id===value
+      console.log('hahah', value)
+      var department = this.originData.find((item) => {
+        return item.department_id === value
       })
-     console.log(department)
-     this.checkData.inDept=department.department_name
+      console.log(department)
+      this.checkData.inDept = department.department_name
     },
-    
-      onChange(momentArr, dateArr) {
-        console.log(momentArr)
-        console.log(dateArr)
-        if (dateArr[0] == '') {
-          this.checkData.inTime = ''
-          return
-        }
-  
-        this.createValue = momentArr
-        this.checkData.inTime =dateArr
-       
-      },
+
+    onChange(momentArr, dateArr) {
+      console.log(momentArr)
+      console.log(dateArr)
+      if (dateArr[0] == '') {
+        this.checkData.inTime = ''
+        return
+      }
+
+      this.createValue = momentArr
+      this.checkData.inTime = dateArr
+    },
     //不能输入非汉字效验  效验不能输入非空字符串
     validateNoChinese: (value, callback) => {
       let reg = /^[^\u4e00-\u9fa5]+$/g
@@ -272,43 +268,38 @@ export default {
       }
     },
 
-    checkAccountName() {
-      console.log(this.checkData.loginName)
-      var value = this.checkData.loginName
-      let reg = /^[^\u4e00-\u9fa5]+$/g
-      let regEmpty = /^\s*$/g
-      if (value && !reg.test(value)) {
-        this.$message.error('账号不能输入中文')
-        return false
-      } else {
-        return true
-      }
+    //判断只允许字母和数字
+    checkCardNo(value) {
+      return /^[\da-z]+$/i.test(value)
     },
     handleSubmit() {
       console.log(this.checkData)
+
+      if(this.checkData.zyh){
+        if (!this.checkCardNo(this.checkData.zyh)) {
+          this.$message.error('住院号输入不正确')
+          return
+        }
+      }
 
       if (isStringEmpty(this.checkData.inTime)) {
         this.$message.error('请选择到院时间')
         return
       }
-      
 
       if (isStringEmpty(this.checkData.inDeptCode)) {
         this.$message.error('请选择入院科室')
         return
       }
 
-      if(this.checkData.yj && this.checkData.yj<0){
+      if (this.checkData.yj && this.checkData.yj < 0) {
         this.$message.error('押金不能为负')
         return
       }
 
-     
-      
       this.confirmLoading = true
 
       if (this.record.bedFlag === 1) {
-        
         //取消
         this.goCancelBed()
       } else {
@@ -318,6 +309,7 @@ export default {
     },
 
     goCreateBed() {
+      this.checkData.sendMessageFlag=this.smsChecked?1:0
       createBed(this.checkData).then((res) => {
         if (res.code == 0) {
           this.$message.success('预约成功！')
@@ -330,9 +322,9 @@ export default {
       })
     },
     goCancelBed() {
-      var postData={
-        sendMessageFlag:this.checkData.sendMessageFlag,
-        tradeId:this.checkData.tradeId,
+      var postData = {
+        sendMessageFlag: this.checkData.sendMessageFlag,
+        tradeId: this.checkData.tradeId,
       }
       cancelBed(postData).then((res) => {
         if (res.code == 0) {
@@ -385,7 +377,7 @@ export default {
 }
 .div-part {
   width: 100%;
-  height: 380px;
+  height: 390px;
 
   .div-part-left {
     float: left;
