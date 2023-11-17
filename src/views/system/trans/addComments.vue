@@ -9,7 +9,7 @@
       <div class="div-comment-item">
         <div style="height: 20px; background-color: #409eff"></div>
         <div class="child-item">
-          <div>王二</div>
+          <div class="child-head">王二</div>
           <div class="child-item-right">
             <div class="item-right-top">
               <div>王二</div>
@@ -173,6 +173,13 @@ export default {
       display: flex;
       flex-direction: row;
       align-items: center;
+
+      .child-head{
+        color: white;
+        background-color: #1890ff;
+        padding: 6px;
+        border-radius: 15px;
+      }
 
       .child-item-right {
         display: flex;

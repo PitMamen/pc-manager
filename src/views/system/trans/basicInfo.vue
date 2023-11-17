@@ -16,13 +16,13 @@
             姓名：<span style="text-decoration: underline">{{ jbxx.xm }}</span>
           </div>
           <div class="div-item-four">
-            性别：<span style="text-decoration: underline">{{ jbxx.xbs }}</span>
+            性别：<span style="text-decoration: underline">{{
+              jbxx.xb == "1" ? "男" : "女"
+            }}</span>
           </div>
           <div class="div-item-four">
             <!-- 出生日期：<span style="text-decoration: underline">{{ patientInfo.baseInfo.birthday }}</span> -->
-            出生日期：<span style="text-decoration: underline">{{
-              jbxx.cismain.csny
-            }}</span>
+            出生日期：<span style="text-decoration: underline">{{ jbxx.csny }}</span>
           </div>
           <div class="div-item-four">
             年龄：<span style="text-decoration: underline">{{ jbxx.nl }}</span>
@@ -31,10 +31,10 @@
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            国籍：<span style="text-decoration: underline">{{ jbxx.cismain.gjmc }}</span>
+            国籍：<span style="text-decoration: underline">{{ jbxx.gjmc }}</span>
           </div>
           <div class="div-item-four">
-            民族：<span style="text-decoration: underline">{{ jbxx.yymzmc }}</span>
+            民族：<span style="text-decoration: underline">{{ jbxx.mzmc }}</span>
           </div>
           <div class="div-item-four">
             新生儿出生体重：<span style="text-decoration: underline">{{
@@ -44,7 +44,7 @@
           </div>
           <div class="div-item-four">
             新生儿入院体重：<span style="text-decoration: underline">{{
-              jbxx.cismain.xserytz || "-"
+              jbxx.xserytz || "-"
             }}</span
             >&nbsp;克
           </div>
@@ -54,7 +54,7 @@
           <div class="div-item-two">
             出生地址：<span
               style="text-decoration: underline; width: 86%; display: inline-block"
-              >{{ jbxx.cismain.csd }}</span
+              >{{ jbxx.csd }}</span
             >
             <!-- 出生地址：<span style="border-bottom: 1px solid #333; width: 200px; display: inline-block">{{ -->
             <!-- jbxx.name
@@ -65,18 +65,16 @@
             <span style="text-decoration: underline"></span>
           </div>
           <div class="div-item-four">
-            籍贯：<span style="text-decoration: underline">{{ jbxx.cismain.jg }}</span>
+            籍贯：<span style="text-decoration: underline">{{ jbxx.jg }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            身份证号：<span style="text-decoration: underline">{{
-              patientInfo.baseInfo.identificationNo
-            }}</span>
+            身份证号：<span style="text-decoration: underline">{{ jbxx.sfz }}</span>
           </div>
           <div class="div-item-four">
-            职业：<span style="text-decoration: underline">{{ jbxx.cismain.zybm }}</span>
+            职业：<span style="text-decoration: underline">{{ jbxx.zybm }}</span>
           </div>
           <div class="div-item-four">
             婚姻：<span style="text-decoration: underline">{{ jbxx.hyzkmc }}</span>
@@ -89,12 +87,12 @@
           <div class="div-item-two">
             户籍地址：<span
               style="text-decoration: underline; width: 86%; display: inline-block"
-              >{{ jbxx.cismain.hkdz }}</span
+              >{{ jbxx.hkdz }}</span
             >
           </div>
 
           <div class="div-item-four">
-            邮编：<span style="text-decoration: underline">{{ jbxx.cismain.hkyb }}</span>
+            邮编：<span style="text-decoration: underline">{{ jbxx.hkyb }}</span>
           </div>
         </div>
 
@@ -102,88 +100,68 @@
           <div class="div-item-two">
             现居地址：<span
               style="text-decoration: underline; width: 86%; display: inline-block"
-              >{{ jbxx.cismain.jzd }}</span
+              >{{ jbxx.jzd }}</span
             >
           </div>
           <div class="div-item-four">
-            电话：<span style="text-decoration: underline">{{ jbxx.cismain.lxdh }}</span>
+            电话：<span style="text-decoration: underline">{{ jbxx.lxdh }}</span>
           </div>
           <div class="div-item-four">
-            邮编：<span style="text-decoration: underline">{{ jbxx.cismain.xzzyb }}</span>
+            邮编：<span style="text-decoration: underline">{{ jbxx.xzzyb }}</span>
           </div>
         </div>
         <div class="div-line-wrap">
           <div class="div-item-two">
             工作单位及地址：<span
               style="text-decoration: underline; width: 200px; display: inline-block"
-              >{{ jbxx.cismain.gzdw }}</span
+              >{{ jbxx.gzdw }}</span
             >
           </div>
           <div class="div-item-four">
-            单位电话：<span style="text-decoration: underline">{{
-              jbxx.cismain.gzdwdh
-            }}</span>
+            单位电话：<span style="text-decoration: underline">{{ jbxx.gzdwdh }}</span>
           </div>
           <div class="div-item-four">
-            邮编：<span style="text-decoration: underline">{{
-              jbxx.cismain.gzdwyb
-            }}</span>
+            邮编：<span style="text-decoration: underline">{{ jbxx.gzdwyb }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            联系人姓名：<span style="text-decoration: underline">{{
-              jbxx.cismain.lxrxm
-            }}</span>
+            联系人姓名：<span style="text-decoration: underline">{{ jbxx.lxrxm }}</span>
           </div>
           <div class="div-item-four">
-            关系：<span style="text-decoration: underline">{{
-              jbxx.cismain.lxrgxmc
-            }}</span>
+            关系：<span style="text-decoration: underline">{{ jbxx.lxrgxmc }}</span>
           </div>
           <div class="div-item-four">
-            地址：<span style="text-decoration: underline">{{ jbxx.cismain.lxrdz }}</span>
+            地址：<span style="text-decoration: underline">{{ jbxx.lxrdz }}</span>
           </div>
           <div class="div-item-four">
-            电话：<span style="text-decoration: underline">{{ jbxx.cismain.lxrdh }}</span>
+            电话：<span style="text-decoration: underline">{{ jbxx.lxrdh }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            入院途径：<span style="text-decoration: underline">{{
-              jbxx.cismain.rylxmc
-            }}</span>
+            入院途径：<span style="text-decoration: underline">{{ jbxx.rylxmc }}</span>
           </div>
           <div class="div-item-four">
-            入院时间：<span style="text-decoration: underline">{{
-              jbxx.cismain.rysj
-            }}</span>
+            入院时间：<span style="text-decoration: underline">{{ jbxx.rysj }}</span>
           </div>
           <div class="div-item-four">
-            入院科别：<span style="text-decoration: underline">{{
-              jbxx.cismain.ryksmc
-            }}</span>
+            入院科别：<span style="text-decoration: underline">{{ jbxx.rybq }}</span>
           </div>
           <div class="div-item-four">
-            病区：<span style="text-decoration: underline">{{ jbxx.cismain.rybq }}</span>
+            病区：<span style="text-decoration: underline">{{ jbxx.rybq }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            转科：<span style="text-decoration: underline">{{
-              jbxx.cismain.zkksbm1 || "-"
-            }}</span
+            转科：<span style="text-decoration: underline">{{ jbxx.zkksbm1 || "-" }}</span
             ><span style="margin-left: 10px">转：</span
-            ><span style="text-decoration: underline">{{
-              jbxx.cismain.zkksbm2 || "-"
-            }}</span>
+            ><span style="text-decoration: underline">{{ jbxx.zkksbm2 || "-" }}</span>
             <span style="margin-left: 10px">转：</span
-            ><span style="text-decoration: underline">{{
-              jbxx.cismain.zkksbm3 || "-"
-            }}</span>
+            ><span style="text-decoration: underline">{{ jbxx.zkksbm3 || "-" }}</span>
           </div>
           <div class="div-item-four"></div>
           <div class="div-item-four"></div>
@@ -192,22 +170,16 @@
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            出院时间：<span style="text-decoration: underline">{{
-              jbxx.cismain.cysj
-            }}</span>
+            出院时间：<span style="text-decoration: underline">{{ jbxx.cysj }}</span>
           </div>
           <div class="div-item-four">
-            出院科别：<span style="text-decoration: underline">{{
-              jbxx.cismain.cyksmc
-            }}</span>
+            出院科别：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
           </div>
           <div class="div-item-four">
-            病房：<span style="text-decoration: underline">{{ jbxx.cismain.cybq }}</span>
+            病房：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
           </div>
           <div class="div-item-four">
-            实际住院：<span style="text-decoration: underline">{{
-              jbxx.cismain.sjzyts
-            }}</span
+            实际住院：<span style="text-decoration: underline">{{ jbxx.sjzyts }}</span
             >&nbsp;天
           </div>
         </div>
@@ -226,7 +198,7 @@
         size="default"
         bordered
         :columns="columns"
-        :data-source="insideZdxx"
+        :data-source="jbxx.diagnosisInfo"
         :alert="true"
         :rowKey="(record) => record.code"
       >
@@ -246,7 +218,7 @@
         bordered
         :scroll="{ x: true }"
         :columns="columnsSurgery"
-        :data-source="insideZdxx"
+        :data-source="jbxx.operationInfo"
         :alert="true"
         :rowKey="(record) => record.code"
       >
@@ -259,21 +231,26 @@
       <!-- 费用布局 -->
       <div class="div-fee">
         <div class="div-fee-line">
-          <span class="fee-des">住院费用（元）：总费用</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="fee-des">住院总费用（元）：总费用</span>
+          <span class="value">{{ jbxx.zfy || "" }}</span>
+          <span class="name">（自付金额：</span>
+          <span class="value">{{ jbxx.zfje || "" }}</span>
+          <span class="name">其他支付：</span>
+          <span class="value">{{ jbxx.qtzf || "" }}</span>）
         </div>
         <div class="div-fee-line">
-          <span class="fee-des">1.医疗类：</span>
-          <span class="name">（1）一般治疗费：</span>
+          <span class="fee-des">1.综合医疗服务类：</span>
+          <span class="name">（1）一般治疗服务费：</span>
+          <span class="value">{{ jbxx.reqDocName || "" }}</span>
+          <span class="name">（2）一般治疗操作费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（2）特殊治疗费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（3）诊疗费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（3）护理费：</span>
+          <span class="value">{{ jbxx.zlf + "" || "" }}</span>
+          <span class="name">（4）其他费用：</span>
+          <span class="value">{{ jbxx.zlf + "" || "" }}</span>
         </div>
 
-        <div class="div-fee-line">
-          <!-- <span class="fee-des">1.医疗类：</span> -->
+        <!-- <div class="div-fee-line">
           <span class="name">（4）手术费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
           <span class="name">（5）麻醉费：</span>
@@ -282,91 +259,107 @@
           <span class="value">{{ info.reqDocName || "" }}</span>
           <span class="name">（7）婴儿费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-        </div>
+        </div> -->
         <div class="div-fee-line">
-          <span class="fee-des">2.辅助医疗类：</span>
-          <span class="name">（8）辅助医疗费：</span>
+          <span class="fee-des">2.诊断类：</span>
+          <span class="name">（5）病理诊断费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（9）输氧费：</span>
+          <span class="name">（6）实验室诊断费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（10）呼吸机费：</span>
+          <span class="name">（7）影像学诊断费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（8）临床诊断项目费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
         </div>
-        <div class="div-fee-line">
+        <!-- <div class="div-fee-line">
           <span class="name">（11）监护仪费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
           <span class="name">（12）调温费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
+        </div> -->
+        <div class="div-fee-line">
+          <span class="fee-des">3.治疗类：</span>
+          <span class="name">（9）非手术治疗项目费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（临床物理治疗费：</span>
+          <span class="value">{{ jbxx.qtzf || "" }}</span>）
+
         </div>
         <div class="div-fee-line">
-          <span class="fee-des">3.检查检验类：</span>
-          <span class="name">（13）化验费：</span>
+          <span class="name">（10）手术治疗费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（14）放射费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（15）核素费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-        </div>
-        <div class="div-fee-line">
-          <span class="name">（16）超声费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（17）病理费：</span>
+          <span class="name">（麻醉费：</span>
+          <span class="value">{{ jbxx.zfje || "" }}</span>
+          <span class="name">手术费：</span>
+          <span class="value">{{ jbxx.qtzf || "" }}</span>）
+
+          <!-- <span class="name">（17）病理费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
           <span class="name">（18）内镜检查费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
           <span class="name">其他检查费用：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span> -->
+        </div>
+        <div class="div-fee-line">
+          <span class="fee-des">4.康复类：</span>
+          <span class="name">（11）康复费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
         </div>
         <div class="div-fee-line">
-          <span class="fee-des">4.护理类：</span>
-          <span class="name">（20）护理费：</span>
+          <span class="fee-des">5.中医类：</span>
+          <span class="name">（12）中医治疗费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（21）护理治疗费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <!-- <span class="value" style="padding-right: 20px"
+            >{{ info.reqDocName || "" }}（抗菌药物费用:&nbsp;&nbsp;&nbsp;{{}}）</span
+          > -->
         </div>
         <div class="div-fee-line">
-          <span class="fee-des">5.西药类：</span>
-          <span class="name">（22）西药费：</span>
-          <span class="value" >{{ info.reqDocName || "" }}</span>
-          <span class="value" style="padding-right: 20px;">{{ info.reqDocName || "" }}（抗菌药物费用:&nbsp;&nbsp;&nbsp;{{  }}）</span>
+          <span class="fee-des">6.西药类：</span>
+          <span class="name">（13）西药费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（抗菌药物费用：</span>
+          <span class="value">{{ jbxx.qtzf || "" }}</span>）
+
 
         </div>
         <div class="div-fee-line">
-          <span class="fee-des">6.中药类：</span>
-          <span class="name">（23）中成药费：</span>
+          <span class="fee-des">7.中药类：</span>
+          <span class="name">（14）中成药费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（24）中草药费：</span>
+          <span class="name">（15）中草药费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+        </div>
+
+        <div class="div-fee-line">
+          <span class="fee-des">8.血液和血液制品类：</span>
+          <span class="name">（16）血费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（17）白蛋白类制品费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（18）球蛋白类制品费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+        </div>
+        <div class="div-fee-line">
+
+          <span class="name">（19）凝血因子类制品费：</span>
+          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="name">（20）细胞因子类制品费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
 
         </div>
         <div class="div-fee-line">
-          <span class="fee-des">7.耗材类：</span>
-          <span class="name">（25）手术用一次性医用材料费：</span>
+          <span class="fee-des">9.耗材类：</span>
+          <span class="name">（21）检查用一次性医用材料费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（26）治疗用一次性医用材料费：</span>
+          <span class="name">（22）治疗用一次性医用材料费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-        </div>
-        <div class="div-fee-line">
-          <span class="name">（27）检查用一次性医用材料费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-        </div>
-        <div class="div-fee-line">
-          <span class="fee-des">8.血液制品类：</span>
-          <span class="name">（28）输血费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-        </div>
-        <div class="div-fee-line">
-          <span class="fee-des">9.床位类：</span>
-          <span class="name">（29）床位费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-          <span class="name">（30）陪床费：</span>
+          <span class="name">（23）手术用一次性医用材料费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
         </div>
         <div class="div-fee-line">
           <span class="fee-des">10.其他类：</span>
           <span class="name">（31）其他费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
-
         </div>
       </div>
     </div>
@@ -382,12 +375,12 @@ export default {
   components: {},
   props: {
     jbxx: Object,
-    patientInfo: Object,
+    // patientInfo: Object,
   },
   data() {
     return {
       info: { reqDocName: "" },
-      insideZdxx: this.jbxx.zdxx,
+      insideZdxx: this.jbxx,
       columns: [
         {
           title: "医院诊断类别名称",
@@ -410,7 +403,8 @@ export default {
         },
         {
           title: "主要诊断标志",
-          dataIndex: "zyzdbz",
+          // dataIndex: "zyzdbz",
+          dataIndex: "cyzdbz",
           ellipsis: true,
         },
         {
@@ -424,59 +418,59 @@ export default {
           title: "手术操作编码",
           // ellipsis: true,
           // width:90,
-          dataIndex: "zdlbmc",
+          dataIndex: "ssczbm",
         },
         {
           title: "手术操作日期",
-          dataIndex: "zdbm",
+          dataIndex: "sskssj",
           ellipsis: true,
         },
         {
           title: "手术级别",
           // innerHeight:20,
-          dataIndex: "zdbmmc",
+          dataIndex: "ssjb",
         },
         {
           title: "手术操作名称",
-          dataIndex: "zdsj",
+          dataIndex: "ssczmc",
           ellipsis: true,
         },
         {
           title: "术者",
-          dataIndex: "zyzdbz",
+          dataIndex: "ssysxm",
           ellipsis: true,
           align: "center",
           children: [
             {
               title: "术者",
-              dataIndex: "inNum",
+              dataIndex: "ssysxm",
               align: "center",
             },
             {
               title: "I助",
-              dataIndex: "avgPrice",
+              dataIndex: "ssysz1xm",
               align: "center",
             },
             {
               title: "II助",
-              dataIndex: "inMoney",
+              dataIndex: "ssysz2xm",
               align: "center",
             },
           ],
         },
         {
           title: "切口等级",
-          dataIndex: "defe",
+          dataIndex: "qkyhdj",
           ellipsis: true,
         },
         {
           title: "麻醉医生",
-          dataIndex: "fergre",
+          dataIndex: "mzysxm",
           ellipsis: true,
         },
         {
           title: "麻醉方式",
-          dataIndex: "fergtre",
+          dataIndex: "mzfsmc",
           ellipsis: true,
         },
       ],
@@ -495,8 +489,8 @@ export default {
       return `${myyear}-${mymonth}-${myweekday}`;
     },
 
-    refreshData(zdxx) {
-      this.insideZdxx = zdxx;
+    refreshData(fileMainData) {
+      this.jbxx = fileMainData;
     },
   },
 };
