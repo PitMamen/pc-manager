@@ -229,7 +229,7 @@
                   this.$set(item, 'daishouzhi', item.status.value==4?'收治':'待收治')
                   this.$set(item, 'cardFlagText', item.cardFlag==1?'已建卡':'未建卡')
                   this.$set(item, 'bedFlagText', item.bedFlag==1?'已约床':'未约床')
-                  this.$set(item, 'sendMessageDes', item.sendMessageCount>0?'是':'否')
+                  this.$set(item, 'sendMessageDes', item.sendMessageCount>0?item.sendMessageCount+'次':'否')
                   // this.$set(item, 'status', 1)
                   // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                   // item.nameDes = item.name

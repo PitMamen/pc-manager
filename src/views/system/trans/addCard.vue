@@ -72,7 +72,7 @@
                 v-model="cardNo"
                 style="display: inline-block"
                 allow-clear
-                :maxLength="100"
+                :maxLength="50"
                 placeholder="请输入您给患者建档后的诊疗卡号"
               />
             </div>
