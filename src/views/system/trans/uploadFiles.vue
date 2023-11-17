@@ -113,6 +113,7 @@
         <a-button ghost type="primary" @click="commitPhoto()">提交记录</a-button>
       </div>
       <file-modalshow ref="fileModalshow"  />
+      <empower-Manage ref="empowerManage" @ok="handleOk"  />
     </a-card>
   </a-spin>
 </template>
@@ -124,6 +125,7 @@ import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 import fileModalshow from './fileModalshow'
+import empowerManage from './empowerManage'
 
 import E from 'wangeditor'
 export default {
@@ -131,6 +133,8 @@ export default {
     STable,
     Ellipsis,
     fileModalshow,
+    empowerManage,
+
   },
   data() {
     return {
@@ -254,7 +258,10 @@ export default {
     },
 
     // 授权管理
-    goAuthorizeManage() {},
+    goAuthorizeManage() {
+
+      this.$refs.empowerManage.manage("1")
+    },
 
     // 提交病历
     commitPhoto(){

@@ -10,7 +10,7 @@
           <transup-insidemodify ref="transupInsidemodify" />
         </a-tab-pane>
 
-        <a-tab-pane disabled key="2" tab="上传病历" force-render>
+        <a-tab-pane  key="2" tab="上传病历" force-render>
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="健康档案" force-render>
