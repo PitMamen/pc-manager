@@ -45,6 +45,7 @@
           :action="actionUrl"
           :headers="headers"
           :multiple="true"
+          accept="image/jpeg,image/png,image/jpg"
           list-type="picture-card"
           :file-list="fileListBanner"
           @preview="handlePreviewBanner"
@@ -67,6 +68,7 @@
           :action="actionUrl"
           :headers="headers"
           :multiple="true"
+          accept="image/jpeg,image/png,image/jpg"
           list-type="picture-card"
           :file-list="fileListDetail"
           @preview="handlePreviewDetail"
@@ -90,6 +92,7 @@
           :action="actionUrl"
           :headers="headers"
           :multiple="true"
+          accept="image/jpeg,image/png,image/jpg"
           list-type="picture-card"
           :file-list="otherListphoto"
           @preview="handlePreviewOther"
@@ -267,6 +270,7 @@ export default {
         if (res.code == 0) {
           this.confirmLoading = false
           this.$message.success('操作成功!')
+          this.getSynRecordOut()
         } else {
           this.$message.error(res.message)
         }
