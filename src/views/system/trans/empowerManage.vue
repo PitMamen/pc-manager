@@ -171,7 +171,7 @@ export default {
         })
     },
 
-    handleOk() {},
+    // handleOk() {},
 
     //提交取消订单
     handleComf() {

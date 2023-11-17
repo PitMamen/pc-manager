@@ -16,6 +16,7 @@
         :scroll="{ x: true }"
         style="margin-top: 10px"
         ref="table"
+        :pagination="false"
         size="default"
         :columns="columns"
         :data-source="tableData"
@@ -212,6 +213,7 @@ export default {
       ],
     }
   },
+
   watch: {
     $route(to, from) {
       //TODO watch不回调需要找原因
@@ -233,62 +235,65 @@ export default {
   created() {
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     resetData() {
       this.fileListBanner = []
       this.fileListDetail = []
     },
 
+    // 每次点击当前tab时 会触发
+    refershData(activeKey) {
+      console.log('2222222222222222222:', activeKey)
+      this.getSynRecordOut()
+    },
+
     // 获取档案信息
     getSynRecordOut() {
       this.confirmLoading = true
       // getSynRecord({ tradeId: '20231108095148621' }).then((res) => {
-      getSynRecord({ tradeId: this.tradeId }).then((res) => {
-        if (res.code == 0) {
-          this.tableData = res.data
-          if (this.tableData) {
-            this.tableData.forEach((item) => {
-              this.$set(item, 'zt', '已授权')
-              if (item.createTime&&item.createTime.length>10) {
-                this.$set(item, 'createTimeshow', item.createTime.substring(0,10)+'同步')
-              }
-            })
+      getSynRecord({ tradeId: this.tradeId })
+        .then((res) => {
+          if (res.code == 0) {
+            this.tableData = res.data
+            if (this.tableData) {
+              this.tableData.forEach((item) => {
+                this.$set(item, 'zt', '已授权')
+                if (item.createTime && item.createTime.length > 10) {
+                  this.$set(item, 'createTimeshow', item.createTime.substring(0, 10) + '同步')
+                }
+              })
+            }
           }
-        }
-      }).finally((erro)=>{
-        this.confirmLoading = false
-      })
+        })
+        .finally((erro) => {
+          this.confirmLoading = false
+        })
     },
 
     // 同步病历
     synPatientCaseOut() {
       this.confirmLoading = true
       // synPatientCase({ tradeId: '20231108095148621' }).then((res) => {
-      synPatientCase({ tradeId: this.tradeId }).then((res) => {
-        if (res.code == 0) {
+      synPatientCase({ tradeId: this.tradeId })
+        .then((res) => {
+          if (res.code == 0) {
+            this.confirmLoading = false
+            this.$message.success('操作成功!')
+            this.getSynRecordOut()
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((erro) => {
           this.confirmLoading = false
-          this.$message.success('操作成功!')
-          this.getSynRecordOut()
-        } else {
-          this.$message.error(res.message)
-        }
-      }).finally((erro)=>{
-        this.confirmLoading = false
-      })
+        })
     },
-
-
 
     // 同步
-    syncCase(){
+    syncCase() {
       this.synPatientCaseOut()
     },
-
-
-
-
 
     // 病历详情
     goRecordDetail() {
