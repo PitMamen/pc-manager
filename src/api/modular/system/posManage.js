@@ -5979,3 +5979,22 @@ export function bedRemind(data) {
   })
 }
 
+// 同步病历信息
+export function synPatientCase(data) {
+  return axios({
+    url: '/referral-api/patient/synPatientCase',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取同步信息
+export function getSynRecord(data) {
+  return axios({
+    url: '/referral-api/patient/getSynRecord',
+    method: 'get',
+    params: data,
+  })
+}
+
+
