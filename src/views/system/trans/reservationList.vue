@@ -153,7 +153,7 @@
           },
           {
             title: '申请机构',
-            dataIndex: 'inHospitalName',
+            dataIndex: 'outHospitalName',
            
           },
           
