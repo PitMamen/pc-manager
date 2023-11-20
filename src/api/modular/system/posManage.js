@@ -6043,3 +6043,22 @@ export function getCaseSummary(data) {
   })
 }
 
+
+// 提交记录
+export function uploadTradeImg(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeImg/uploadTradeImg',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 获取图片
+export function getTradeImg(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeImg/getTradeImg',
+    method: 'post',
+    params: data,
+  })
+}

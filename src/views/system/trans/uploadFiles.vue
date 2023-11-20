@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import { synPatientCase, getSynRecord } from '@/api/modular/system/posManage'
+import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -157,6 +157,12 @@ export default {
       tradeId: '',
 
       tableData: [],
+
+      tempData: {
+        imgList: [],
+        tradeId: '',
+      },
+
       columns: [
         {
           title: '住院流水号',
@@ -228,6 +234,7 @@ export default {
     if (this.$route.query.tradeId) {
       this.resetData()
       this.tradeId = this.$route.query.tradeId
+      this.tempData.tradeId = this.tradeId
       this.getSynRecordOut()
     }
   },
@@ -240,6 +247,7 @@ export default {
     resetData() {
       this.fileListBanner = []
       this.fileListDetail = []
+      this.otherListphoto = []
     },
 
     // 每次点击当前tab时 会触发
@@ -308,7 +316,44 @@ export default {
     },
 
     // 提交病历
-    commitPhoto() {},
+    commitPhoto() {
+      // 化验报告图片
+      this.tempData.imgList = []
+      if (this.fileListBanner.length == 0) {
+        this.$message.error('请上传化验报告图片！')
+        return
+      } else {
+        for (let index = 0; index < this.fileListBanner.length; index++) {
+          this.tempData.imgList.push({ imgPath: this.fileListBanner[index].response.data.fileLinkUrl, imgType: 1 })
+        }
+      }
+
+      // 检查报告图片
+      if (this.fileListDetail.length == 0) {
+        this.$message.error('请上传检查报告图片！')
+        return
+      } else {
+        for (let index = 0; index < this.fileListDetail.length; index++) {
+          this.tempData.imgList.push({ imgPath: this.fileListDetail[index].response.data.fileLinkUrl, imgType: 2 })
+        }
+      }
+
+      if (this.otherListphoto.length == 0) {
+        this.$message.error('请上传其它病历图片！')
+        return
+      } else {
+        for (let index = 0; index < this.fileListDetail.length; index++) {
+          this.tempData.imgList.push({ imgPath: this.otherListphoto[index].response.data.fileLinkUrl, imgType: 3 })
+        }
+      }
+
+      this.tempData.tradeId = this.tradeId
+      uploadTradeImg(this.tempData).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('操作成功!')
+        }
+      })
+    },
 
     handleChangeBanner(changeObj) {
       console.log('changeObj', JSON.stringify(changeObj))
@@ -353,6 +398,15 @@ export default {
       this.previewVisibleBanner = false
     },
 
+    getBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result)
+        reader.onerror = (error) => reject(error)
+      })
+    },
+
     async handlePreviewBanner(file) {
       if (!file.url && !file.preview) {
         file.preview = await this.getBase64(file.originFileObj)
@@ -377,10 +431,7 @@ export default {
       this.previewVisibleOther = true
     },
 
-
-    handleOk(){
-      
-    }
+    handleOk() {},
   },
 }
 </script>

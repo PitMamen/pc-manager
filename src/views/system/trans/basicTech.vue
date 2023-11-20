@@ -93,7 +93,7 @@
           :scroll="{ x: true }"
           bordered
           :columns="columns"
-          :data-source="insideShowData.jyjgzb"
+          :data-source="insideShowData.bacteriaInfo"
           :alert="true"
           :rowKey="(record) => record.code"
         >
@@ -193,6 +193,7 @@ export default {
     },
 
     refreshData(insideJbxx, insideShowType, insideShowData) {
+      console.log("showType:",insideShowType)
       this.insideJbxx = insideJbxx
       this.insideShowType = insideShowType
       this.insideShowData = insideShowData
