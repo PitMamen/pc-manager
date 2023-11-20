@@ -13,7 +13,7 @@
     </template>
 
     <a-spin :spinning="confirmLoading">
-      <file-zhuyuan :record="record" ref="fileZhuyuan" @ok="handleCancel" />
+      <file-zhuyuan :record="record" ref="fileZhuyuan" />
     </a-spin>
   </a-modal>
 </template>
@@ -26,7 +26,6 @@ import { canCall } from "@/utils/util";
 export default {
   components: {
     fileZhuyuan,
-
   },
 
   data() {
@@ -39,7 +38,6 @@ export default {
     };
   },
   created() {
-
     getAccountParam("follow_caller_phone").then((res) => {
       if (res.code == 0) {
         this.callers = res.data;

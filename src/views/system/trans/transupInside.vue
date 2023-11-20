@@ -989,6 +989,7 @@ export default {
       loading: false,
       townNameGet: "",
       mySelected: [],
+      isInputPatient: false,
 
       loadCasData: (selectedOptions) => {
         console.log("Cascader selectedOptions", selectedOptions);
@@ -1265,7 +1266,7 @@ export default {
               if (this.mySelected.length < 2) {
                 this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
               } else {
-                this.$set(item, "isLeaf", true); 
+                this.$set(item, "isLeaf", true);
               }
             });
             callback(res.data);
@@ -1478,6 +1479,7 @@ export default {
         },
       ];
       this.cascaderData = [1];
+      this.isInputPatient = true;
     },
 
     onSelectSource(sourceCode) {
@@ -1668,6 +1670,7 @@ export default {
       this.uploadData.reachEndDate = this.createValue[1];
       this.uploadData.reqDocName = this.user.userName;
       this.uploadData.regTime = formatDate(new Date());
+      this.isInputPatient = false;
     },
 
     /**
@@ -1718,7 +1721,7 @@ export default {
       //   this.$message.error("请输入选择户口地址");
       //   return;
       // }
-      if (this.cascaderData.length != 3) {
+      if (!this.isInputPatient && this.cascaderData.length != 3) {
         this.$message.error("请选择户口地址");
         return;
       }

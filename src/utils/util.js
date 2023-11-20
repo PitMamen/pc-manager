@@ -100,6 +100,18 @@ export function formatDateFull(date) {
   oSen < 10 ? (oSen = '0' + oSen) : oSen
   return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
 }
+export function countAge(age) {
+  let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
+  var birthday = new Date(str)
+  var d = new Date()
+  var age =
+    d.getFullYear() -
+    birthday.getFullYear() -
+    (d.getMonth() < birthday.getMonth() || (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
+      ? 1
+      : 0)
+  return age
+}
 
 export function formatDateMin(date) {
   date = new Date(date)
