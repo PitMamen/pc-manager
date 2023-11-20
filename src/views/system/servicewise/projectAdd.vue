@@ -517,7 +517,7 @@
               <a-checkbox
                 
                 
-                :checked="itemTask.isjiangeChecked"
+              v-model="itemTask.isRepeatExecTimeChecked"
                 style="margin-left: 1%"
               />
               <span
@@ -530,17 +530,17 @@
               <a-input-number
                 
                 style="display: inline-block; margin-left: 1%; width: 100px !important"
-                v-model="itemTask.jiangenum"
+                v-model="itemTask.repeatExecTime"
                 :min="0"
                 :max="10000"
-                :maxLength="30"
+                :maxLength="5"
                 allow-clear
                 placeholder="请输入数量"
               />
               <a-select
               class="mid-select-two"
               style="width: 100px !important"
-              v-model="itemTask.jiangeUnit"
+              value="天"
               allow-clear
               placeholder="单位"
             >
@@ -1100,6 +1100,8 @@ export default {
         // timeUnit: this.timeUnitTypesData[0].value,
         timeUnit: undefined,
         itemTemplateList: [],
+        isRepeatExecTimeChecked:false,
+        repeatExecTime:undefined
       })
 
       this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
@@ -1511,6 +1513,20 @@ export default {
           item.overdueTimeUnit
         }
 
+        if(item.isRepeatExecTimeChecked){
+          if(!item.repeatExecTime){
+            this.$message.error('请设置第' + (index + 1) + '条任务的间隔匹配时间')
+            return
+          }
+          if (!this.isPositiveInteger(item.repeatExecTime)) {
+          this.$message.error('第' + (index + 1) +'条任务的间隔匹配时间只能设置为正整数')
+          return
+        }
+        }else{
+          delete item.repeatExecTime
+        }
+
+
         delete item.everyData
         delete item.nameStr
       }
@@ -1533,7 +1549,11 @@ export default {
           this.confirmLoading = false
         })
     },
-
+  //判断正整数
+    isPositiveInteger(value) {
+      var reg = /^[1-9]\d*$/
+      return reg.test(value)
+    },
     cancel() {
       this.$router.go(-1)
     },
