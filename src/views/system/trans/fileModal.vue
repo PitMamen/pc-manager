@@ -23,7 +23,7 @@
         style="margin-top: -10px; position: relative"
       >
         <a-tab-pane key="1" tab="住院">
-          <file-zhuyuan :record="record" ref="fileZhuyuan" @ok="handleCancel" />
+          <file-zhuyuan :record="record" ref="fileZhuyuan"/>
         </a-tab-pane>
         <a-tab-pane disabled key="2" tab="门诊">
           门诊

@@ -17,17 +17,17 @@
                 :key="indexData"
                 :value="itemData.docId"
               >
-                <div style="display: flex; flex-direction: column; align-items: center">
+                <div class="div-top-item">
                   <span
                     @click="onFileItemClick(itemData, indexData)"
                     class="div-time"
                     :class="{ checked: itemData.isChecked }"
-                    >{{ itemData.time }}</span
+                    >{{ itemData.inDate }}</span
                   >
                   <!-- TODO  -->
-                  <span :class="{ checked: itemData.isChecked }"
-                    >{{ itemData.name }}湘雅二医院</span
-                  >
+                  <span :class="{ checked: itemData.isChecked }">{{
+                    itemData.hospitalName
+                  }}</span>
                 </div>
 
                 <div v-if="indexData != historyList.length - 1" class="div-line"></div>
@@ -55,11 +55,11 @@
                     </span>
                   </template>
                   <!-- style="margin-top: 2px; margin-left: 10px; border: #eaeaea solid 1px; overflow: hidden" -->
+                  <!-- :patientInfo="patientInfo" -->
                   <basic-info
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicInfo"
-                    :jbxx="fileDetailData"
-                    :patientInfo="patientInfo"
+                    :jbxx="fileMainData"
                   />
                 </a-tab-pane>
                 <a-tab-pane key="2">
@@ -173,6 +173,8 @@
 
 <script>
 import {
+  getSynRecord,
+  getCaseMain,
   getFileList,
   getFileDtail,
   getBaseInfo,
@@ -188,7 +190,7 @@ import basicTech from "./basicTech";
 // import basicFee from "./basicFee";
 import { TRUE_USER } from "@/store/mutation-types";
 import { decodeRecord } from "@/utils/forgeUtils";
-import { formatDateFull, formatDate } from "@/utils/util";
+import { formatDateFull, formatDate, countAge } from "@/utils/util";
 import Vue from "vue";
 export default {
   components: { basicInfo, basicTech, basicXiaojie },
@@ -243,6 +245,8 @@ export default {
         cismain: { csny: "发发发发发" },
       },
       accountUserId: "", //登录用户的userId
+
+      fileMainData: {},
     };
   },
 
@@ -266,9 +270,96 @@ export default {
     //私有云
     // this.getFileListOut();
 
-    this.getPatientBaseInfo();
+    // this.getPatientBaseInfo();
+
+    console.log("created", this.record);
+
+    this.getTimeLineData();
   },
   methods: {
+    //患者档案列表进来时，id就是identificationId
+    getTimeLineData() {
+      let param;
+      if (this.record.tradeId) {
+        param = {
+          tradeId: this.record.tradeId,
+        };
+      } else {
+        param = {
+          identificationId: this.record.id,
+        };
+      }
+      // let param = {
+      //   identificationId: this.record.id,
+      //   tradeId: this.user.userId,
+      // };
+      this.confirmLoading = true;
+      getSynRecord(param)
+        .then((res) => {
+          if (res.code === 0) {
+            this.historyList = res.data;
+            if (this.historyList.length > 0) {
+              this.$set(this.historyList[0], "isChecked", true);
+              // this.getDetailOut(0);
+              this.getDetailData(0);
+            }
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false;
+        });
+    },
+
+    //档案首页数据
+    getDetailData(index) {
+      getCaseMain({ caseId: this.historyList[index].id })
+        .then((res) => {
+          if (res.code === 0) {
+            this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
+            if (this.fileMainData.diagnosisInfo.length > 0) {
+              this.fileMainData.diagnosisInfo.forEach((item) => {
+                this.$set(item, "zdsj", formatDateFull(item.zdsj));
+              });
+            }
+            if (this.fileMainData.operationInfo.length > 0) {
+              this.fileMainData.operationInfo.forEach((item) => {
+                this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
+              });
+            }
+            this.$set(this.fileMainData, "nl", countAge(this.fileMainData.csny));
+            console.log("getDetailData", JSON.stringify(this.fileMainData));
+            this.$refs.basicInfo.refreshData(this.fileMainData);
+          } else {
+            this.fileMainData = undefined;
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false;
+        });
+    },
+
+    onFileItemClick(itemData, indexData) {
+      for (let index = 0; index < this.historyList.length; index++) {
+        this.$set(this.historyList[index], "isChecked", false);
+        if (indexData == index) {
+          this.$set(this.historyList[index], "isChecked", true);
+        }
+      }
+
+      this.getDetailData(indexData);
+      // if (this.MEDICAL_DATA_SOURCE == "1") {
+      //   //从emr获取
+
+      //   this.getEMRData(itemData.zyh);
+      // } else {
+      //   //私有云
+      //   this.getDetailOut(indexData);
+      // }
+    },
+
     //私有云档案 列表
     getFileListOut() {
       let param = {
@@ -382,22 +473,22 @@ export default {
         });
       });
     },
-    onFileItemClick(itemData, indexData) {
-      for (let index = 0; index < this.historyList.length; index++) {
-        this.$set(this.historyList[index], "isChecked", false);
-        if (indexData == index) {
-          this.$set(this.historyList[index], "isChecked", true);
-        }
-      }
-      if (this.MEDICAL_DATA_SOURCE == "1") {
-        //从emr获取
+    // onFileItemClick(itemData, indexData) {
+    //   for (let index = 0; index < this.historyList.length; index++) {
+    //     this.$set(this.historyList[index], "isChecked", false);
+    //     if (indexData == index) {
+    //       this.$set(this.historyList[index], "isChecked", true);
+    //     }
+    //   }
+    //   if (this.MEDICAL_DATA_SOURCE == "1") {
+    //     //从emr获取
 
-        this.getEMRData(itemData.zyh);
-      } else {
-        //私有云
-        this.getDetailOut(indexData);
-      }
-    },
+    //     this.getEMRData(itemData.zyh);
+    //   } else {
+    //     //私有云
+    //     this.getDetailOut(indexData);
+    //   }
+    // },
 
     //私有云档案详情
     getDetailOut(index) {
@@ -770,7 +861,7 @@ export default {
 
     goCancel() {
       console.log("hdh");
-      this.$emit("handleCancel", "");
+      // this.$emit("handleCancel", "");
     },
   },
 };
@@ -820,15 +911,22 @@ export default {
         flex-direction: row;
         flex-shrink: 0;
 
+        .div-top-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          &:hover {
+            cursor: pointer;
+          }
+
+          .div-time {
+            font-weight: bold;
+            margin-left: 5px;
+          }
+        }
+
         .checked {
           color: #1890ff;
-        }
-      }
-      .div-time {
-        font-weight: bold;
-        margin-left: 5px;
-        &:hover {
-          cursor: pointer;
         }
       }
 
