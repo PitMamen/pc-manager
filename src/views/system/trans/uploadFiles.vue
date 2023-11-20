@@ -120,7 +120,7 @@
 </template>
 
 <script>
-import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg } from '@/api/modular/system/posManage'
+import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg ,upReferralDetail} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -237,6 +237,7 @@ export default {
       this.tradeId = this.$route.query.tradeId
       this.tempData.tradeId = this.tradeId
       this.getSynRecordOut()
+      this.getRecordDetail()
     }
   },
 
@@ -255,6 +256,7 @@ export default {
     refershData(activeKey) {
       console.log('2222222222222222222:', activeKey)
       this.getSynRecordOut()
+      this.getRecordDetail()
     },
 
     // 获取档案信息
@@ -287,7 +289,9 @@ export default {
         upReferralDetail(this.tradeId )
         .then((res) => {
           if (res.code == 0) {
+            debugger
               this.record = res.data
+              this.$set(this.record, "tradeId", res.data.tradeIdStr);
           }
         })
         .finally((erro) => {

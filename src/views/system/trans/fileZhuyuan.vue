@@ -9,7 +9,7 @@
             <div class="default">体检</div>
           </div> -->
           <div class="right-content">
-            <div class="content-top">
+            <div class="content-top" v-if="!isSingle">
               <span style="min-width: 62px">住院记录：</span>
               <div
                 class="data-item"
@@ -200,6 +200,7 @@ export default {
       zmrHtml: "", //出院小结HTML
       isDoubled: true,
       confirmLoading: false,
+      isSingle: false,
       defaultShowType: "jiancha",
       activeKey: "1",
       jbxx: { name: "李四" },
@@ -279,13 +280,14 @@ export default {
     //患者档案列表进来时，id就是identificationId
     getTimeLineData() {
       let param;
-      if (this.record.tradeId) {
+      if (this.record.tradeId) {//仅一条
         param = {
           tradeId: this.record.tradeId,
         }
+        this.isSingle = true
       } else {
         param = {
-          identificationId: this.record.id,
+          identificationId: this.record.id,//多条时间线
         }
       }
 
@@ -293,7 +295,7 @@ export default {
       // param = {
       //   identificationId: 74,
       // };
-
+      console.log("getTimeLineData", param);
       this.confirmLoading = true;
       getSynRecord(param)
         .then((res) => {
