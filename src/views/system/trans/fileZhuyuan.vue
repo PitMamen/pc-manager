@@ -107,11 +107,11 @@
                   </template>
 
                   <!-- :jbxx="zmrHtml" -->
+                  <!-- :showData="showData" -->
                   <basic-xiaojie
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicXiaojie"
-                    :jbxx="fileDetailData"
-                    :showData="showData"
+                    :jbxx="fileSummaryData"
                   />
                 </a-tab-pane>
               </a-tabs>
@@ -140,7 +140,7 @@
                   <basic-xiaojie
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicXiaojie"
-                    :jbxx="zmrHtml"
+                    :jbxx="fileSummaryData"
                     :patientInfo="patientInfo"
                   />
                 </a-tab-pane>
@@ -247,6 +247,7 @@ export default {
       accountUserId: "", //登录用户的userId
 
       fileMainData: {},
+      fileSummaryData: {},
     };
   },
 
@@ -280,15 +281,16 @@ export default {
     //患者档案列表进来时，id就是identificationId
     getTimeLineData() {
       let param;
-      if (this.record.tradeId) {//仅一条
+      if (this.record.tradeId) {
+        //仅一条
         param = {
           tradeId: this.record.tradeId,
-        }
-        this.isSingle = true
+        };
+        this.isSingle = true;
       } else {
         param = {
-          identificationId: this.record.id,//多条时间线
-        }
+          identificationId: this.record.id, //多条时间线
+        };
       }
 
       //TODO 测试代码，暂时写死
@@ -310,6 +312,7 @@ export default {
               this.getDetailData(0);
               this.getCaseCheckOut(0);
               this.getCaseExamOut(0);
+              this.getSummaryData(0);
             }
           } else {
             this.$message.error(res.message);
@@ -323,7 +326,7 @@ export default {
     //档案首页数据
     getDetailData(index) {
       getCaseMain({ caseId: this.historyList[index].id })
-      // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
+        // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {
           if (res.code === 0) {
             this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
@@ -411,6 +414,45 @@ export default {
         });
     },
 
+    //档案首页数据
+    getSummaryData(index) {
+      getCaseSummary({ caseId: this.historyList[index].id })
+        // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
+        .then((res) => {
+          if (res.code === 0) {
+            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data);
+            console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
+
+            this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+          } else {
+            this.fileSummaryData = undefined;
+            this.$message.error(res.message);
+          }
+
+          //   this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
+          //   if (this.fileMainData.diagnosisInfo.length > 0) {
+          //     this.fileMainData.diagnosisInfo.forEach((item) => {
+          //       this.$set(item, "zdsj", formatDateFull(item.zdsj));
+          //     });
+          //   }
+          //   if (this.fileMainData.operationInfo.length > 0) {
+          //     this.fileMainData.operationInfo.forEach((item) => {
+          //       this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
+          //     });
+          //   }
+          //   this.$set(this.fileMainData, "nl", countAge(this.fileMainData.csny));
+          //   console.log("getDetailData", JSON.stringify(this.fileMainData));
+          //   this.$refs.basicInfo.refreshData(this.fileMainData);
+          // } else {
+          //   this.fileMainData = undefined;
+          //   this.$message.error(res.message);
+          // }
+        })
+        .finally(() => {
+          this.confirmLoading = false;
+        });
+    },
+
     onFileItemClick(itemData, indexData) {
       console.log("YYY:", indexData);
       for (let index = 0; index < this.historyList.length; index++) {
@@ -423,6 +465,7 @@ export default {
       this.getDetailData(indexData);
       this.getCaseCheckOut(indexData);
       this.getCaseExamOut(indexData);
+      this.getSummaryData(indexData);
       // if (this.MEDICAL_DATA_SOURCE == "1") {
       //   //从emr获取
 
