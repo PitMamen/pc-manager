@@ -10,12 +10,10 @@
     @ok="handleComf"
     :maskClosable="false"
   >
-
-  <template slot="footer">
-        <a-button type="primary" @click="handleComf">重新同步</a-button>
-        <a-button @click="handleCancel">取消</a-button>
-      </template>
-
+    <template slot="footer">
+      <a-button type="primary" @click="handleComf">重新同步</a-button>
+      <a-button @click="handleCancel">取消</a-button>
+    </template>
 
     <div class="top-kuang">
       <div class="div-title">
@@ -27,52 +25,57 @@
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name">授权机构 :</span>
-            <span class="span-item-value">中南大学湘雅二医院</span>
+            <span class="span-item-value">{{ AuthDetailData.hospitalName }}</span>
           </div>
         </div>
 
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name">授权ID :</span>
-            <span class="span-item-value">11223334455656</span>
+            <span :title="AuthDetailData.authId" class="span-item-value" style="width: 166px">{{
+              AuthDetailData.authId
+            }}</span>
           </div>
         </div>
 
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name">授权状态 :</span>
-            <span class="span-item-value">已授权</span>
+            <span :style="{ color: AuthDetailData.authStatus == 1 ? '#69c07d' : '#F81111' }" class="span-item-value">{{
+              AuthDetailData.authStatus == 1 ? '已授权' : '未授权'
+            }}</span>
           </div>
         </div>
 
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name">住院流水号 :</span>
-            <span class="span-item-value">20125451216164</span>
+            <span class="span-item-value">{{ AuthDetailData.regNo }}</span>
           </div>
         </div>
 
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name">患者姓名 :</span>
-            <span class="span-item-value">李大霄</span>
+            <span class="span-item-value">{{ AuthDetailData.userName }}</span>
           </div>
         </div>
 
         <div class="div-up-content">
           <div class="div-pro-line">
             <span class="span-item-name">被授权机构 :</span>
-            <span class="span-item-value">某某社区医院</span>
+            <span class="span-item-value">{{ AuthDetailData.authedHospitalName }}</span>
           </div>
         </div>
-
       </div>
     </div>
 
     <div class="bottom-line"></div>
 
     <div style="display: flex; flex-wrap: wrap; margin-top: 5px">
-      <a-button style="margin-left: auto" type="primary">取消授权</a-button>
+      <a-button style="margin-left: auto" type="primary" @click="apply()">{{
+        status == 1 ? '取消授权' : '重新授权'
+      }}</a-button>
     </div>
 
     <div class="div-title" style="margin-left: 10px; margin-top: 10px">
@@ -94,7 +97,7 @@
 </template>
         
         <script>
-import { getOrderDetail } from '@/api/modular/system/posManage'
+import { viewAuthDetail, operationAuth, synPatientCase } from '@/api/modular/system/posManage'
 import moment from 'moment'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -110,36 +113,39 @@ export default {
   data() {
     return {
       record: undefined,
-      orderDetailDataList: [],
       confirmLoading: false,
       visible: false,
       bingliData: [],
+      AuthDetailData: {},
 
+      status: 1,
+      caseId: '',
+      tradeId: '',
       columns: [
         {
           title: '病历类型',
-          dataIndex: 'xh',
+          dataIndex: 'caseType',
         },
         {
           title: '病历内容',
-          dataIndex: 'rysj',
+          dataIndex: 'caseContent',
         },
         {
           title: '状态',
-          dataIndex: 'cysj',
+          dataIndex: 'statusDesc',
         },
         {
           title: '同步时间',
-          dataIndex: 'basy',
+          dataIndex: 'syncTime',
         },
-        {
-          title: '访问地址',
-          dataIndex: 'cyxj',
-        },
+        // {
+        //   title: '访问地址',
+        //   dataIndex: 'cyxj',
+        // },
 
         {
           title: '所属机构',
-          dataIndex: 'hybg',
+          dataIndex: 'hospitalName',
         },
       ],
     }
@@ -150,20 +156,28 @@ export default {
   methods: {
     moment,
     //入口
-    manage(record) {
+    manage(caseId, status, tradeId) {
       this.visible = true
-      this.orderDetailDataList = {}
-      this.record = record
-      // this.getOrderDetailOut(record.orderId)
+      this.bingliData = []
+      this.AuthDetailData = {}
+
+      this.caseId = caseId
+      this.status = status
+      this.tradeId = tradeId
+
+      this.viewAuthDetailOut(caseId)
     },
 
-    getOrderDetailOut(orderId) {
+    // 获取授权详情
+    viewAuthDetailOut(caseID) {
       this.confirmLoading = true
-      getOrderDetail({ orderId: orderId })
+      viewAuthDetail({ caseId: caseID })
         .then((res) => {
           if (res.code == 0) {
-            var reponseDataList = res.data
-            this.orderDetailDataList = JSON.parse(JSON.stringify(reponseDataList))
+            if (res.data) {
+              this.AuthDetailData = res.data
+              this.bingliData = res.data.caseItems
+            }
           }
         })
         .finally((res) => {
@@ -171,11 +185,47 @@ export default {
         })
     },
 
-    // handleOk() {},
+    // 授权/取消授权
+    apply() {
+      let questData = {
+        caseId: this.caseId,
+        status: this.status == 1 ? 0 : 1,
+      }
+      this.confirmLoading = true
+      operationAuth(questData)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success('操作成功!')
+            this.$emit('ok', '')
+            this.visible = false
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false
+        })
+    },
+
+    // 同步病历  (重新同步后  保留弹框)
+    synPatientCaseOut() {
+      this.confirmLoading = true
+      // synPatientCase({ tradeId: '20231108095148621' }).then((res) => {
+      synPatientCase({ tradeId: this.tradeId })
+        .then((res) => {
+          if (res.code == 0) {
+            this.confirmLoading = false
+            this.$message.success('操作成功!')
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((erro) => {
+          this.confirmLoading = false
+        })
+    },
 
     //提交取消订单
     handleComf() {
-      this.visible = false
+      this.synPatientCaseOut()
     },
 
     //取消
@@ -354,7 +404,7 @@ export default {
     }
     .span-item-name {
       display: inline-block;
-      margin-left: 15px;
+      // margin-left: 15px;
       color: #000;
       font-size: 12px;
       text-align: left;

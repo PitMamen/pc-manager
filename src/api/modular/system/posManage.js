@@ -6057,8 +6057,27 @@ export function uploadTradeImg(data) {
 // 获取图片
 export function getTradeImg(data) {
   return axios({
-    url: '/referral-api/tbReferralTradeImg/getTradeImg',
+    url: '/referral-api/tbReferralTradeImg/getTradeImg/'+data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+// 授权/取消授权
+export function operationAuth(data) {
+  return axios({
+    url: '/referral-api/patient/operationAuth',
     method: 'post',
+    data: data,
+  })
+}
+
+// 授权详情
+export function viewAuthDetail(data) {
+  return axios({
+    url: '/referral-api/patient/viewAuthDetail',
+    method: 'get',
     params: data,
   })
 }

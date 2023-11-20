@@ -24,7 +24,9 @@
         :rowKey="(record) => record.code"
       >
         <span slot="ztshow" slot-scope="text, record">
-          <span style="color: #69c07d">{{ record.zt }}</span>
+          <span :style="{ color: record.authorizationStatus == 1 ? '#69c07d' : '#F81111' }">{{
+            record.authorizationStatus == 1 ? '已授权' : '未授权'
+          }}</span>
         </span>
       </a-table>
 
@@ -156,8 +158,10 @@ export default {
 
       tradeId: '',
 
+      status:0,
+      caseId:'',
       tableData: [],
-
+      photoData: [],
       tempData: {
         imgList: [],
         tradeId: '',
@@ -208,7 +212,7 @@ export default {
 
         {
           title: '授权访问',
-          dataIndex: 'zt',
+          dataIndex: 'authorizationStatus',
           scopedSlots: { customRender: 'ztshow' },
         },
 
@@ -236,6 +240,7 @@ export default {
       this.tradeId = this.$route.query.tradeId
       this.tempData.tradeId = this.tradeId
       this.getSynRecordOut()
+      this.getTradeImgOut()
     }
   },
 
@@ -252,8 +257,8 @@ export default {
 
     // 每次点击当前tab时 会触发
     refershData(activeKey) {
-      console.log('2222222222222222222:', activeKey)
       this.getSynRecordOut()
+      this.getTradeImgOut()
     },
 
     // 获取档案信息
@@ -265,8 +270,10 @@ export default {
           if (res.code == 0) {
             this.tableData = res.data
             if (this.tableData) {
+              this.caseId =this.tableData[0].id
+              this.status =this.tableData[0].authorizationStatus
               this.tableData.forEach((item) => {
-                this.$set(item, 'zt', '已授权')
+                // this.$set(item, 'zt', '已授权')
                 if (item.createTime && item.createTime.length > 10) {
                   this.$set(item, 'createTimeshow', item.createTime.substring(0, 10) + '同步')
                 }
@@ -312,7 +319,49 @@ export default {
 
     // 授权管理
     goAuthorizeManage() {
-      this.$refs.empowerManage.manage('1')
+      this.$refs.empowerManage.manage(this.caseId,this.status,this.tradeId)
+    },
+
+    // 获取图片
+    getTradeImgOut() {
+      this.resetData()
+      getTradeImg(this.tradeId).then((res) => {
+        if (res.code == 0) {
+          this.photoData = res.data
+
+          if (this.photoData.length > 0) {
+            this.photoData.forEach((item) => {
+              if (item.imgType == 1) {
+                //化验报告图片
+                this.fileListBanner.push({
+                  uid: item.id,
+                  name: '照片',
+                  status: 'done',
+                  url: item.imgPath,
+                })
+              }
+              if (item.imgType == 2) {
+                // //检查报告图片
+                this.fileListDetail.push({
+                  uid: item.id,
+                  name: '照片',
+                  status: 'done',
+                  url: item.imgPath,
+                })
+              }
+              if (item.imgType == 3) {
+                // //其它病历图片
+                this.otherListphoto.push({
+                  uid: item.id,
+                  name: '照片',
+                  status: 'done',
+                  url: item.imgPath,
+                })
+              }
+            })
+          }
+        }
+      })
     },
 
     // 提交病历
@@ -324,7 +373,11 @@ export default {
         return
       } else {
         for (let index = 0; index < this.fileListBanner.length; index++) {
-          this.tempData.imgList.push({ imgPath: this.fileListBanner[index].response.data.fileLinkUrl, imgType: 1 })
+          if (this.fileListBanner[index].response) {
+            this.tempData.imgList.push({ imgPath: this.fileListBanner[index].response.data.fileLinkUrl, imgType: 1 }) //追加的图片
+          } else {
+            this.tempData.imgList.push({ imgPath: this.fileListBanner[index].url, imgType: 1 }) //从接口获取到的图片
+          }
         }
       }
 
@@ -334,7 +387,11 @@ export default {
         return
       } else {
         for (let index = 0; index < this.fileListDetail.length; index++) {
-          this.tempData.imgList.push({ imgPath: this.fileListDetail[index].response.data.fileLinkUrl, imgType: 2 })
+          if (this.fileListDetail[index].response) {
+            this.tempData.imgList.push({ imgPath: this.fileListDetail[index].response.data.fileLinkUrl, imgType: 2 }) //追加的图片
+          } else {
+            this.tempData.imgList.push({ imgPath: this.fileListDetail[index].url, imgType: 2 }) //从接口获取到的图片
+          }
         }
       }
 
@@ -342,8 +399,13 @@ export default {
         this.$message.error('请上传其它病历图片！')
         return
       } else {
-        for (let index = 0; index < this.fileListDetail.length; index++) {
-          this.tempData.imgList.push({ imgPath: this.otherListphoto[index].response.data.fileLinkUrl, imgType: 3 })
+        for (let index = 0; index < this.otherListphoto.length; index++) {
+          // 判断是追加 还是修改
+          if (this.otherListphoto[index].response) {
+            this.tempData.imgList.push({ imgPath: this.otherListphoto[index].response.data.fileLinkUrl, imgType: 3 }) //追加的图片
+          } else {
+            this.tempData.imgList.push({ imgPath: this.otherListphoto[index].url, imgType: 3 }) //从接口获取到的图片
+          }
         }
       }
 
@@ -431,7 +493,10 @@ export default {
       this.previewVisibleOther = true
     },
 
-    handleOk() {},
+    handleOk() {
+      console.log("99999999999999")
+      this.getSynRecordOut()
+    },
   },
 }
 </script>
