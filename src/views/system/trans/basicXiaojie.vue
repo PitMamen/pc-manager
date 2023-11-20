@@ -88,7 +88,7 @@
             登记日期：<span style="color: #1a1a1a;">{{  insideJbxx.ywscsj }}</span>
           </div>
           <div class="div-item-three" style="color: #999">
-            登记机构：<span style="color: #1a1a1a;">{{  insideJbxx.yljgdm}}</span>
+            登记机构：<span style="color: #1a1a1a;">{{  insideJbxx.hospitalName}}</span>
           </div>
         </div>
 

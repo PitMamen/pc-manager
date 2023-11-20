@@ -333,6 +333,18 @@ export default {
             if (this.fileMainData.diagnosisInfo.length > 0) {
               this.fileMainData.diagnosisInfo.forEach((item) => {
                 this.$set(item, "zdsj", formatDateFull(item.zdsj));
+
+                if (item.cyzdbz == 1) {
+                  this.$set(item, "cyzdbz", "主要诊断");
+                } else if (item.cyzdbz == 2) {
+                  this.$set(item, "cyzdbz", "其他诊断");
+                }
+
+                if (item.yzdbz == 0) {
+                  this.$set(item, "yzdbz", "已确诊");
+                } else if (item.yzdbz == 1) {
+                  this.$set(item, "yzdbz", "仍疑似");
+                }
               });
             }
             if (this.fileMainData.operationInfo.length > 0) {
