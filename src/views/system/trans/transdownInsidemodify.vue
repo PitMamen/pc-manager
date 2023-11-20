@@ -1551,20 +1551,20 @@ export default {
 
           getReferralLogList(this.uploadData.tradeId).then((res) => {
             if (res.code == 0) {
-              if (res.data) {
-                res.data.forEach((item, index) => {
-                  if (item.dealDetail == "统一预约") {
-                    res.data.splice(index, 1);
-                  }
-                });
-              }
+              // if (res.data) {
+              //   res.data.forEach((item, index) => {
+              //     if (item.dealDetail == "统一预约") {
+              //       res.data.splice(index, 1);
+              //     }
+              //   });
+              // }
               this.referralLogList = res.data;
 
-              this.referralLogList.forEach((item, index) => {
-                if (item.dealDetail == "统一预约") {
-                  delete this.referralLogList[index];
-                }
-              });
+              // this.referralLogList.forEach((item, index) => {
+              //   if (item.dealDetail == "统一预约") {
+              //     delete this.referralLogList[index];
+              //   }
+              // });
 
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
                 return !itemTemp.dealUserName;

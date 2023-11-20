@@ -494,6 +494,45 @@
               > -->
             </div>
 
+          
+            
+          </div>
+          <div class="mission-bottom">
+            <div class="mission-bottom-left">
+              <a-checkbox
+                
+                
+              v-model="itemTask.isRepeatExecTimeChecked"
+                style="margin-left: 1%"
+              />
+              <span
+                
+                class="span-titl"
+                style="margin-left: 1%"
+                >设置间隔匹配时间</span
+              >
+
+              <a-input-number
+                
+                style="display: inline-block; margin-left: 1%; width: 100px !important"
+                v-model="itemTask.repeatExecTime"
+                :min="0"
+                :max="10000"
+                :maxLength="5"
+                allow-clear
+                placeholder="请输入数量"
+              />
+              <a-select
+              class="mid-select-two"
+              style="width: 100px !important"
+              value="天"
+              allow-clear
+              placeholder="单位"
+            >
+              <a-select-option  value="1">天</a-select-option>
+            </a-select>
+            </div>
+
             <div class="end-btn-task" style="width: 29%">
               <span class="span-end" style="margin-left: 2%" @click="delMission(indexTask, itemTask)">刪除任务</span>
 
@@ -920,6 +959,16 @@ export default {
         console.log('pushTimePoint ddd', item.pushTimePoint)
         console.log('item processData', item)
 
+        //处理间隔匹配时间
+        if(item.repeatExecTime){
+         
+          this.$set(item, 'isRepeatExecTimeChecked', true)
+        }else {
+         
+          this.$set(item, 'isRepeatExecTimeChecked', false)
+          
+        }
+
         //处理选择的集合
         this.chooseTemplateList.push({
           id: item.messageContentId,
@@ -1259,6 +1308,8 @@ export default {
         metaConfigureDetailId: undefined,
         // timeUnit: this.timeUnitTypesData[0].value,
         itemTemplateList: [],
+        isRepeatExecTimeChecked:false,
+        repeatExecTime:undefined
       })
       this.onTypeSelect(this.projectData.tasks.length - 1, this.projectData.tasks[this.projectData.tasks.length - 1])
     },
@@ -1627,6 +1678,20 @@ export default {
           item.overdueTimeUnit
         }
 
+        //处理间隔匹配时间
+        if(item.isRepeatExecTimeChecked){
+          if(!item.repeatExecTime){
+            this.$message.error('请设置第' + (index + 1) + '条任务的间隔匹配时间')
+            return
+          }
+          if (!this.isPositiveInteger(item.repeatExecTime)) {
+          this.$message.error('第' + (index + 1) +'条任务的间隔匹配时间只能设置为正整数')
+          return
+        }
+        }else{
+          delete item.repeatExecTime
+        }
+
         delete item.everyData
         delete item.nameStr
       }
@@ -1649,7 +1714,11 @@ export default {
           this.confirmLoading = false
         })
     },
-
+ //判断正整数
+ isPositiveInteger(value) {
+      var reg = /^[1-9]\d*$/
+      return reg.test(value)
+    },
     cancel() {
       this.$router.go(-1)
     },
