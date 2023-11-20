@@ -5998,3 +5998,31 @@ export function getSynRecord(data) {
 }
 
 
+
+// 获取检验数据
+export function getCaseExam(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseExam',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取检查数据
+export function getCaseCheck(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseCheck',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取出院小结数据
+export function getCaseSummary(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseSummary',
+    method: 'get',
+    params: data,
+  })
+}
+

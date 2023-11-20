@@ -376,6 +376,11 @@ export default {
       this.previewOtherDetail = file.url || file.preview
       this.previewVisibleOther = true
     },
+
+
+    handleOk(){
+      
+    }
   },
 }
 </script>
