@@ -162,6 +162,7 @@ export default {
         imgList: [],
         tradeId: '',
       },
+      record:{},
 
       columns: [
         {
@@ -279,6 +280,21 @@ export default {
         })
     },
 
+        // 获取详情信息
+    getRecordDetail() {
+      this.confirmLoading = true
+      // getSynRecord({ tradeId: '20231108095148621' }).then((res) => {
+        upReferralDetail(this.tradeId )
+        .then((res) => {
+          if (res.code == 0) {
+              this.record = res.data
+          }
+        })
+        .finally((erro) => {
+          this.confirmLoading = false
+        })
+    },
+
     // 同步病历
     synPatientCaseOut() {
       this.confirmLoading = true
@@ -306,8 +322,8 @@ export default {
     // 病历详情
     goRecordDetail() {
       //TODO 测试数据
-      let record = { name: '张三', sex: '男', age: 12 }
-      this.$refs.fileModalshow.showFile(record)
+      // let record = { name: '张三', sex: '男', age: 12 }
+      this.$refs.fileModalshow.showFile(this.record)
     },
 
     // 授权管理

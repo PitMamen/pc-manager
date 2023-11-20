@@ -21,7 +21,6 @@
                   <span class="div-time" :class="{ checked: itemData.isChecked }">{{
                     itemData.inDate
                   }}</span>
-                  <!-- TODO  -->
                   <span :class="{ checked: itemData.isChecked }">{{
                     itemData.hospitalName
                   }}</span>
@@ -280,20 +279,20 @@ export default {
     //患者档案列表进来时，id就是identificationId
     getTimeLineData() {
       let param;
-      // if (this.record.tradeId) {
-      //   param = {
-      //     tradeId: this.record.tradeId,
-      //   }
-      // } else {
-      //   param = {
-      //     identificationId: this.record.id,
-      //   }
-      // }
+      if (this.record.tradeId) {
+        param = {
+          tradeId: this.record.tradeId,
+        }
+      } else {
+        param = {
+          identificationId: this.record.id,
+        }
+      }
 
       //TODO 测试代码，暂时写死
-      param = {
-        identificationId: 74,
-      };
+      // param = {
+      //   identificationId: 74,
+      // };
 
       this.confirmLoading = true;
       getSynRecord(param)
@@ -321,8 +320,8 @@ export default {
 
     //档案首页数据
     getDetailData(index) {
-      // getCaseMain({ caseId: this.historyList[index].id })
-      getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
+      getCaseMain({ caseId: this.historyList[index].id })
+      // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {
           if (res.code === 0) {
             this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
