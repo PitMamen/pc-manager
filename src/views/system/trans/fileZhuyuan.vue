@@ -17,7 +17,7 @@
                 :key="indexData"
                 :value="itemData.docId"
               >
-                <div style="display: flex; flex-direction: column; align-items: center">
+                <div class="div-top-item">
                   <span
                     @click="onFileItemClick(itemData, indexData)"
                     class="div-time"
@@ -190,7 +190,7 @@ import basicTech from "./basicTech";
 // import basicFee from "./basicFee";
 import { TRUE_USER } from "@/store/mutation-types";
 import { decodeRecord } from "@/utils/forgeUtils";
-import { formatDateFull, formatDate ,countAge} from "@/utils/util";
+import { formatDateFull, formatDate, countAge } from "@/utils/util";
 import Vue from "vue";
 export default {
   components: { basicInfo, basicTech, basicXiaojie },
@@ -318,21 +318,21 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
-            if (this.fileMainData.diagnosisInfo.length>0) {
-              this.fileMainData.diagnosisInfo.forEach((item)=>{
+            if (this.fileMainData.diagnosisInfo.length > 0) {
+              this.fileMainData.diagnosisInfo.forEach((item) => {
                 this.$set(item, "zdsj", formatDateFull(item.zdsj));
-              })
+              });
             }
-            if (this.fileMainData.operationInfo.length>0) {
-              this.fileMainData.operationInfo.forEach((item)=>{
-                this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0,10));
-              })
+            if (this.fileMainData.operationInfo.length > 0) {
+              this.fileMainData.operationInfo.forEach((item) => {
+                this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
+              });
             }
             this.$set(this.fileMainData, "nl", countAge(this.fileMainData.csny));
             console.log("getDetailData", JSON.stringify(this.fileMainData));
             this.$refs.basicInfo.refreshData(this.fileMainData);
           } else {
-            this.fileMainData = undefined
+            this.fileMainData = undefined;
             this.$message.error(res.message);
           }
         })
@@ -911,15 +911,22 @@ export default {
         flex-direction: row;
         flex-shrink: 0;
 
+        .div-top-item {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          &:hover {
+            cursor: pointer;
+          }
+
+          .div-time {
+            font-weight: bold;
+            margin-left: 5px;
+          }
+        }
+
         .checked {
           color: #1890ff;
-        }
-      }
-      .div-time {
-        font-weight: bold;
-        margin-left: 5px;
-        &:hover {
-          cursor: pointer;
         }
       }
 

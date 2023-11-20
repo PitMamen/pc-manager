@@ -232,22 +232,23 @@
       <div class="div-fee">
         <div class="div-fee-line">
           <span class="fee-des">住院总费用（元）：总费用</span>
-          <span class="value">{{ jbxx.zfy || "" }}</span>
+          <span class="value">{{ jbxx.zfy + "" || "" }}</span>
           <span class="name">（自付金额：</span>
-          <span class="value">{{ jbxx.zfje || "" }}</span>
+          <span class="value">{{ jbxx.zfje + "" || "" }}</span>
           <span class="name">其他支付：</span>
-          <span class="value">{{ jbxx.qtzf || "" }}</span>）
+          <span class="value">{{ jbxx.zfy - jbxx.zfje + "" || "" }}</span
+          >）
         </div>
         <div class="div-fee-line">
           <span class="fee-des">1.综合医疗服务类：</span>
           <span class="name">（1）一般治疗服务费：</span>
-          <span class="value">{{ jbxx.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.ylfwf + "" || "" }}</span>
           <span class="name">（2）一般治疗操作费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.zlczf + "" || "" }}</span>
           <span class="name">（3）护理费：</span>
-          <span class="value">{{ jbxx.zlf + "" || "" }}</span>
+          <span class="value">{{ jbxx.hlf + "" || "" }}</span>
           <span class="name">（4）其他费用：</span>
-          <span class="value">{{ jbxx.zlf + "" || "" }}</span>
+          <span class="value">{{ jbxx.qtf + "" || "" }}</span>
         </div>
 
         <!-- <div class="div-fee-line">
@@ -263,13 +264,13 @@
         <div class="div-fee-line">
           <span class="fee-des">2.诊断类：</span>
           <span class="name">（5）病理诊断费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.blzdf + "" || "" }}</span>
           <span class="name">（6）实验室诊断费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.syszdf + "" || "" }}</span>
           <span class="name">（7）影像学诊断费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.yxxzdf + "" || "" }}</span>
           <span class="name">（8）临床诊断项目费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.lczdxmf + "" || "" }}</span>
         </div>
         <!-- <div class="div-fee-line">
           <span class="name">（11）监护仪费：</span>
@@ -280,18 +281,19 @@
         <div class="div-fee-line">
           <span class="fee-des">3.治疗类：</span>
           <span class="name">（9）非手术治疗项目费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.fsszlxmf + "" || "" }}</span>
           <span class="name">（临床物理治疗费：</span>
-          <span class="value">{{ jbxx.qtzf || "" }}</span>）
-
+          <span class="value">{{ jbxx.lcwlzlf + "" || "" }}</span
+          >）
         </div>
         <div class="div-fee-line">
           <span class="name">（10）手术治疗费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.sszlf + "" || "" }}</span>
           <span class="name">（麻醉费：</span>
-          <span class="value">{{ jbxx.zfje || "" }}</span>
+          <span class="value">{{ jbxx.mzf + "" || "" }}</span>
           <span class="name">手术费：</span>
-          <span class="value">{{ jbxx.qtzf || "" }}</span>）
+          <span class="value">{{ jbxx.ssf + "" || "" }}</span
+          >）
 
           <!-- <span class="name">（17）病理费：</span>
           <span class="value">{{ info.reqDocName || "" }}</span>
@@ -303,12 +305,12 @@
         <div class="div-fee-line">
           <span class="fee-des">4.康复类：</span>
           <span class="name">（11）康复费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.kff + "" || "" }}</span>
         </div>
         <div class="div-fee-line">
           <span class="fee-des">5.中医类：</span>
           <span class="name">（12）中医治疗费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.zyzlf + "" || "" }}</span>
           <!-- <span class="value" style="padding-right: 20px"
             >{{ info.reqDocName || "" }}（抗菌药物费用:&nbsp;&nbsp;&nbsp;{{}}）</span
           > -->
@@ -316,50 +318,47 @@
         <div class="div-fee-line">
           <span class="fee-des">6.西药类：</span>
           <span class="name">（13）西药费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.xyf + "" || "" }}</span>
           <span class="name">（抗菌药物费用：</span>
-          <span class="value">{{ jbxx.qtzf || "" }}</span>）
-
-
+          <span class="value">{{ jbxx.kjywfy + "" || "" }}</span
+          >）
         </div>
         <div class="div-fee-line">
           <span class="fee-des">7.中药类：</span>
           <span class="name">（14）中成药费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.zcyf + "" || "" }}</span>
           <span class="name">（15）中草药费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.zcaf + "" || "" }}</span>
         </div>
 
         <div class="div-fee-line">
           <span class="fee-des">8.血液和血液制品类：</span>
           <span class="name">（16）血费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.xf + "" || "" }}</span>
           <span class="name">（17）白蛋白类制品费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.bdbzpf + "" || "" }}</span>
           <span class="name">（18）球蛋白类制品费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.qdbzpf + "" || "" }}</span>
         </div>
         <div class="div-fee-line">
-
           <span class="name">（19）凝血因子类制品费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.nxyzzpf + "" || "" }}</span>
           <span class="name">（20）细胞因子类制品费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
-
+          <span class="value">{{ jbxx.xbyzzpf + "" || "" }}</span>
         </div>
         <div class="div-fee-line">
           <span class="fee-des">9.耗材类：</span>
           <span class="name">（21）检查用一次性医用材料费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.jcyyclf  + "" || "" }}</span>
           <span class="name">（22）治疗用一次性医用材料费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.zlyyclf + "" || "" }}</span>
           <span class="name">（23）手术用一次性医用材料费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.ssyyclf + "" || "" }}</span>
         </div>
         <div class="div-fee-line">
           <span class="fee-des">10.其他类：</span>
           <span class="name">（31）其他费：</span>
-          <span class="value">{{ info.reqDocName || "" }}</span>
+          <span class="value">{{ jbxx.qtf1 + "" || "" }}</span>
         </div>
       </div>
     </div>
