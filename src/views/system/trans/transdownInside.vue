@@ -1646,6 +1646,7 @@ export default {
       ];
       this.cascaderData = [1];
       this.isInputPatient = true;
+      this.mySelected = []
     },
 
     onSelectSource(sourceCode) {
