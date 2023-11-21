@@ -38,7 +38,7 @@
           </div>
           <div class="div-item-four">
             新生儿出生体重：<span style="text-decoration: underline">{{
-              jbxx.fgg || "-"
+              jbxx.xsecstz || "-"
             }}</span
             >&nbsp;克
           </div>

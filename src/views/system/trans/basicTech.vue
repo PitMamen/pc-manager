@@ -21,95 +21,92 @@
         </a-timeline>
       </div> -->
 
-   
       <div class="kuang-content" v-if="insideShowType == 'jiancha'">
-        <div class="div-jancha" style="overflow-y: auto; height: 450px" >
-        <div class="div-line-wrap">
-          <div class="div-item-two">
-            检查名称：<span style="color: #333">{{ insideShowData.jcmc }}</span>
+        <div class="div-jancha" style="overflow-y: auto; height: 450px">
+          <div class="div-line-wrap">
+            <div class="div-item-two">
+              检查名称：<span style="color: #1a1a1a">{{ insideShowData[0].jcmc }}</span>
+            </div>
+            <div class="div-item-three">
+              检查类型：<span style="color: #1a1a1a">{{ insideShowData[0].examtype }}</span>
+            </div>
+            <div class="div-item-three">
+              检查部位与方法：<span style="color: #1a1a1a">{{ insideShowData[0].jcbw }}</span>
+            </div>
           </div>
-          <div class="div-item-three">
-            检查类型：<span style="color: #333">{{ insideShowData.jclx }}</span>
-          </div>
-          <div class="div-item-three">
-            检查部位与方法：<span style="color: #333">{{ insideShowData.jcbwff }}</span>
-          </div>
-        </div>
 
-        <div class="div-line-wrap" style="margin-top:20px">
-          <div class="div-item-two">影响表现或检查所见：</div>
-        </div>
-        <div class="div-line-wrap">
-          <span style="color: #333">{{ insideShowData.yxbxjcsj }}</span>
-        </div>
-        <div class="div-line-wrap" style="margin-top:20px">
-          <div class="div-item-two">检查诊断或提示：</div>
-        </div>
-        <div class="div-line-wrap">
-          <span style="color: #333">{{ insideShowData.yxzdts }}</span>
-        </div>
-
-        <div class="div-line-wrap" style="margin-top:20px">
-          <div class="div-item-two">备注或建议：</div>
-        </div>
-        <div class="div-line-wrap">
-          <span style="color: #333">{{ insideShowData.bzhjy }}</span>
-        </div>
-
-        <div class="div-line-wrap" style="margin-top:20px">
-          <div class="div-item-three">
-            检查日期：<span style="color: #333">{{ insideShowData.jcmc }}</span>
+          <div class="div-line-wrap" style="margin-top: 20px">
+            <div class="div-item-two">影响表现或检查所见：</div>
           </div>
-          <div class="div-item-three">
-            报告日期：<span style="color: #333">{{ insideShowData.jclx }}</span>
+
+          <!-- <div class="div-line-wrap" style="margin-top: 20px">
+            <div style="font-weight: bold; color: black" class="div-item-two">{{ insideShowData[0].xybx }}</div>
+          </div> -->
+
+          <div class="div-line-wrap">
+            <span style="color: #1a1a1a">{{ insideShowData[0].xybx }}</span>
+          </div>
+          <div class="div-line-wrap" style="margin-top: 20px">
+            <div class="div-item-two">检查诊断或提示：</div>
+          </div>
+          <div class="div-line-wrap">
+            <span style="color: #1a1a1a">{{ insideShowData[0].yxzd }}</span>
+          </div>
+
+          <div class="div-line-wrap" style="margin-top: 20px">
+            <div class="div-item-two">备注或建议：</div>
+          </div>
+          <div class="div-line-wrap">
+            <span style="color: #1a1a1a">{{ insideShowData[0].bzhjy }}</span>
+          </div>
+
+          <div class="div-line-wrap" style="margin-top: 20px">
+            <div class="div-item-three">
+              检查日期：<span style="color: #1a1a1a">{{ insideShowData[0].jysj }}</span>
+            </div>
+            <div class="div-item-three">
+              报告日期：<span style="color: #1a1a1a">{{ insideShowData[0].bgrq }}</span>
+            </div>
           </div>
         </div>
       </div>
-      </div>
-
-
-   
-
 
       <div class="kuang-content" v-if="insideShowType == 'jianyan'">
-        <div class="div-janyan" style="overflow-y: auto; height: 450px" >
-        <div class="div-line-wrap">
-          <div class="div-item-two">
-            项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
+        <div class="div-janyan" style="overflow-y: auto; height: 450px">
+          <div class="div-line-wrap">
+            <div class="div-item-two">
+              项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
+            </div>
+            <div class="div-item-two">
+              标本名称：<span style="color: #333">{{ insideShowData.bbmc }}</span>
+            </div>
+            <div class="div-item-two">
+              报告日期：<span style="color: #333">{{ insideShowData.bbmc }}</span>
+            </div>
           </div>
-          <div class="div-item-two">
-            标本名称：<span style="color: #333">{{ insideShowData.bbmc }}</span>
-          </div>
-          <div class="div-item-two">
-            报告日期：<span style="color: #333">{{ insideShowData.bbmc }}</span>
-          </div>
+
+          <a-table
+            ref="table"
+            :pagination="false"
+            style="margin-top: 10px; margin-bottom: 10px"
+            size="default"
+            :scroll="{ x: true }"
+            bordered
+            :columns="columns"
+            :data-source="insideShowData.bacteriaInfo"
+            :alert="true"
+            :rowKey="(record) => record.code"
+          >
+            <span slot="wrong" slot-scope="text, record">
+              <span v-if="record.ycts == 1">正常</span>
+              <a-icon v-else-if="record.ycts == 3" style="color: red" type="arrow-up" />
+              <a-icon v-else-if="record.ycts == 4" style="color: red" type="arrow-down" />
+              <span v-else>-</span>
+              <!-- <a-icon type="arrow-down" /> -->
+            </span>
+          </a-table>
         </div>
-
-        <a-table
-          ref="table"
-          :pagination="false"
-          style="margin-top: 10px; margin-bottom: 10px"
-          size="default"
-          :scroll="{ x: true }"
-          bordered
-          :columns="columns"
-          :data-source="insideShowData.bacteriaInfo"
-          :alert="true"
-          :rowKey="(record) => record.code"
-        >
-          <span slot="wrong" slot-scope="text, record">
-            <span v-if="record.ycts == 1">正常</span>
-            <a-icon v-else-if="record.ycts == 3" style="color: red" type="arrow-up" />
-            <a-icon v-else-if="record.ycts == 4" style="color: red" type="arrow-down" />
-            <span v-else>-</span>
-            <!-- <a-icon type="arrow-down" /> -->
-          </span>
-        </a-table>
       </div>
-
-      </div>
-
-     
     </div>
 
     <!-- <div v-else class="nodata">
@@ -120,6 +117,7 @@
 
 
 <script>
+import { formatDateFull, formatDate, countAge } from "@/utils/util";
 export default {
   components: {},
   props: {
@@ -192,11 +190,19 @@ export default {
       console.log('this.insideShowData', this.insideShowData)
     },
 
-    refreshData(insideJbxx, insideShowType, insideShowData) {
-      console.log("showType:",insideShowType)
-      this.insideJbxx = insideJbxx
-      this.insideShowType = insideShowType
-      this.insideShowData = insideShowData
+    refreshData(insideJbxx, insideShowType) {
+      console.log('showType:', insideJbxx, insideShowType)
+      this.insideShowData = insideJbxx
+      if (this.insideShowData.length > 0) {
+              this.insideShowData.forEach((item) => {
+                this.$set(item, "jysj", formatDateFull(item.jysj).substring(0,10));
+              });
+            }
+
+
+
+      // this.insideShowType = insideShowType
+      // this.insideShowData = insideShowData
     },
   },
 }
@@ -244,16 +250,13 @@ export default {
       padding: 20px;
       background: #ffffff;
       border: 1px solid #e6e6e6;
-    height: 470px;
+      height: 470px;
 
       .div-janyan {
-      // width: 87%;
-      height: 100%;
+        // width: 87%;
+        height: 100%;
+      }
     }
-
-    }
-
-   
 
     .div-shu {
       font-size: 12px;

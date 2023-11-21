@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg } from '@/api/modular/system/posManage'
+import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg ,upReferralDetail} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -166,6 +166,7 @@ export default {
         imgList: [],
         tradeId: '',
       },
+      record:{},
 
       columns: [
         {
@@ -241,6 +242,7 @@ export default {
       this.tempData.tradeId = this.tradeId
       this.getSynRecordOut()
       this.getTradeImgOut()
+      this.getRecordDetail()
     }
   },
 
@@ -259,6 +261,7 @@ export default {
     refershData(activeKey) {
       this.getSynRecordOut()
       this.getTradeImgOut()
+      this.getRecordDetail()
     },
 
     // 获取档案信息
@@ -279,6 +282,22 @@ export default {
                 }
               })
             }
+          }
+        })
+        .finally((erro) => {
+          this.confirmLoading = false
+        })
+    },
+
+        // 获取详情信息
+    getRecordDetail() {
+      this.confirmLoading = true
+      // getSynRecord({ tradeId: '20231108095148621' }).then((res) => {
+        upReferralDetail(this.tradeId )
+        .then((res) => {
+          if (res.code == 0) {
+              this.record = res.data
+              this.$set(this.record, "tradeId", res.data.tradeIdStr);
           }
         })
         .finally((erro) => {
@@ -313,8 +332,8 @@ export default {
     // 病历详情
     goRecordDetail() {
       //TODO 测试数据
-      let record = { name: '张三', sex: '男', age: 12 }
-      this.$refs.fileModalshow.showFile(record)
+      // let record = { name: '张三', sex: '男', age: 12 }
+      this.$refs.fileModalshow.showFile(this.record)
     },
 
     // 授权管理

@@ -4,17 +4,13 @@
       tab-position="left"
       v-model="activeKey"
       type="line"
-      style=" position: relative;margin-left: 20px;"
+      style="position: relative; margin-left: 20px"
     >
       <a-tab-pane key="1" tab="住院">
         <file-zhuyuan :record="record" ref="fileZhuyuan" />
       </a-tab-pane>
-      <a-tab-pane disabled key="2" tab="门诊">
-        门诊
-      </a-tab-pane>
-      <a-tab-pane disabled key="3" tab="体检">
-        体检
-      </a-tab-pane>
+      <a-tab-pane disabled key="2" tab="门诊"> 门诊 </a-tab-pane>
+      <a-tab-pane disabled key="3" tab="体检"> 体检 </a-tab-pane>
     </a-tabs>
   </a-spin>
 </template>
@@ -34,8 +30,8 @@ export default {
   },
   data() {
     return {
-      activeKey: '1', 
-      confirmLoading: false, 
+      activeKey: "1",
+      confirmLoading: false,
       accountUserId: "", //登录用户的userId
     };
   },
@@ -43,65 +39,12 @@ export default {
   created() {
     // debugger
     this.user = Vue.ls.get(TRUE_USER);
-
-    //查询系统配置  显示不同档案来源
-    // getSysConfigData('MEDICAL_DATA_SOURCE').then((res) => {
-    //   this.MEDICAL_DATA_SOURCE = res.data.value || '0'
-
-    //   if (this.MEDICAL_DATA_SOURCE == '1') {
-    //     //从emr获取
-    //     this.getZyRecordsOut()
-    //   } else {
-    //     //私有云
-    //     this.getFileListOut()
-    //   }
-    // }).
-
-    //私有云
-    // this.getFileListOut();
-
-    // this.getPatientBaseInfo();
   },
   methods: {
-    //私有云档案 列表
-    getFileListOut() {
-      let param = {
-        dataOwnerId: this.record.id,
-        // dataOwnerId: this.record.userId,
-        dataUserId: this.user.userId,
-        recordType: this.recordType,
-        pastMonths: "60",
-      };
-      this.confirmLoading = true;
-      getFileList(param)
-        .then((res) => {
-          if (res.code === 0) {
-            this.historyList = res.data;
-            if (this.historyList.length > 0) {
-              for (let index = 0; index < this.historyList.length; index++) {
-                this.$set(this.historyList[index], "isChecked", false);
-                var time = "未知时间";
-                if (
-                  this.historyList[index].happenedTime &&
-                  this.historyList[index].happenedTime.length > 10
-                ) {
-                  time = this.historyList[index].happenedTime.substring(0, 10);
-                }
-                this.$set(this.historyList[index], "time", time);
-              }
-              this.$set(this.historyList[0], "isChecked", true);
-              this.getDetailOut(0);
-            } else {
-              this.confirmLoading = false;
-            }
-          } else {
-            this.$message.error(res.message);
-            this.confirmLoading = false;
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false;
-        });
+    refreshData(data) {
+      this.record = data;
+      console.log("refreshData fileDanan", data);
+      this.$refs.fileZhuyuan.getTimeLineData();
     },
 
     goCancel() {

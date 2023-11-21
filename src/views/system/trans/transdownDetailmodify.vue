@@ -2,6 +2,7 @@
   <div class="wrap">
     <div>
       <a-tabs
+      @change="callback"
         v-model="keyindex"
         :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
       >
@@ -13,7 +14,7 @@
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="健康档案" force-render>
-          <file-danan ref="fileDanan" />
+          <file-danan :record="record" ref="fileDanan" />
         </a-tab-pane>
         <a-tab-pane disabled key="4" tab="添加评论" force-render>
           <upload-files ref="uploadFiles" />
@@ -39,8 +40,8 @@ export default {
   data() {
     return {
       keyindex: "1",
-      // tradeId: undefined,
       passItem: undefined,
+      record: undefined,
     };
   },
 
@@ -48,6 +49,7 @@ export default {
     $route(to, from) {
       console.log("watch****************transdownDetailmodify Be", to, from);
       if (to.path.indexOf("transdownDetailmodify") > -1) {
+        this.record = { tradeId: this.$route.query.tradeId };
         this.$refs.transdownInsidemodify.refreshData(this.$route.query.tradeId);
       }
     },
@@ -64,6 +66,7 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
+      this.record = { tradeId: this.$route.query.tradeId };
       this.$refs.transdownInsidemodify.refreshData(this.$route.query.tradeId);
     });
   },
@@ -80,7 +83,14 @@ export default {
     //   // this.tradeId = this.passItem.tradeId;
     //   // console.log("this.passItem.tradeId", this.passItem.tradeId);
     // },
-    callback() {},
+    // 点击tab 回调触发
+    callback(keyIndex) {
+      if (keyIndex == "2") {
+        this.$refs.uploadFiles.refershData(keyIndex);
+      } else if (keyIndex == "3") {
+        this.$refs.fileDanan.refreshData(this.record);
+      }
+    },
     handleOk() {},
 
     cancel() {

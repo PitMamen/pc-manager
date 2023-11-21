@@ -20,6 +20,7 @@
 
 <script>
 import fileZhuyuan from "./fileZhuyuan";
+import { formatDateFull, formatDate, countAgeNew } from "@/utils/util";
 
 import { getAccountParam } from "@/api/modular/system/posManage";
 import { canCall } from "@/utils/util";
@@ -49,10 +50,14 @@ export default {
 
   methods: {
     showFile(record) {
+      console.log('record fileModalshow',record)
       this.record = record;
       this.visible = true;
+      this.$set(this.record.patientBaseinfo, "age", countAgeNew(this.record.patientBaseinfo.birthday));
       this.title =
-        this.record.name + " | " + this.record.sex + " | " + this.record.age + "岁";
+        this.record.name + " | " + this.record.patientBaseinfo.sex + " | " + this.record.patientBaseinfo.age + "岁";
+
+      this.$refs.fileZhuyuan.getTimeLineData();
     },
 
     handleCancel() {
