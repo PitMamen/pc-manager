@@ -2005,7 +2005,7 @@ export default {
     handleOkAsk() {
       this.visibleAsk = false;
       this.$router.push({
-        name: "transupDetailmodify",
+        name: "transdownDetailmodify",
         // path: '/servicewise/projectEdit',
         // query: {
         //   dataStr: JSON.stringify(record),
