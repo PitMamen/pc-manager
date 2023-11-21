@@ -237,6 +237,7 @@ export default {
 
   activated() {
     if (this.$route.query.tradeId) {
+      console.log("111111111111111:",this.$route.query.tradeId)
       this.resetData()
       this.tradeId = this.$route.query.tradeId
       this.tempData.tradeId = this.tradeId
@@ -258,7 +259,9 @@ export default {
     },
 
     // 每次点击当前tab时 会触发
-    refershData(activeKey) {
+    refershData(activeKey,record) {
+      this.tradeId = record.tradeId
+      console.log("222222222222:",this.tradeId)
       this.getSynRecordOut()
       this.getTradeImgOut()
       this.getRecordDetail()
@@ -272,7 +275,7 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.tableData = res.data
-            if (this.tableData) {
+            if (this.tableData&&this.tableData.length>0) {
               this.caseId =this.tableData[0].id
               this.status =this.tableData[0].authorizationStatus
               this.tableData.forEach((item) => {

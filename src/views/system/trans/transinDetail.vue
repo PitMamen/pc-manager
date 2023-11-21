@@ -6,7 +6,7 @@
           <trans-apply ref="transApply" />
         </a-tab-pane>
 
-        <a-tab-pane disabled key="2" tab="上传病例" force-render>
+        <a-tab-pane  key="2" tab="上传病例" force-render>
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
 
@@ -62,7 +62,7 @@ export default {
   methods: {
     callback(keyIndex) {
       if (keyIndex == "2") {
-        this.$refs.uploadFiles.refershData(keyIndex);
+        this.$refs.uploadFiles.refershData(keyIndex,this.record);
       } else if (keyIndex == "3") {
         this.$refs.fileDanan.refreshData(this.record);
       }

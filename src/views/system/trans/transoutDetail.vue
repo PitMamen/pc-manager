@@ -63,7 +63,8 @@ export default {
   methods: {
     callback(keyIndex) {
       if (keyIndex == "2") {
-        this.$refs.uploadFiles.refershData(keyIndex);
+        // this.$refs.uploadFiles.refershData(keyIndex);
+        this.$refs.uploadFiles.refershData(keyIndex,this.record);
       } else if (keyIndex == "3") {
         this.$refs.fileDanan.refreshData(this.record);
       }
