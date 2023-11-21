@@ -396,8 +396,8 @@ export default {
         // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {
           if (res.code === 0) {
-            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data)
-            // console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
+            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data);
+            console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
 
             let str =
               this.fileSummaryData.rysj.substring(0, 4) +
@@ -413,6 +413,18 @@ export default {
               '-' +
               this.fileSummaryData.cysj.substring(6, 8)
             this.$set(this.fileSummaryData, 'cysj', str2)
+
+            if (this.fileSummaryData.ywscsj) {
+              this.$set(
+                this.fileSummaryData,
+                "ywscsj",
+                moment(this.fileSummaryData.ywscsj).format("YYYY-MM-DD HH:mm:ss")
+              );
+            }
+
+            this.$nextTick(() => {
+              this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+            });
 
             // this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
           } else {
@@ -452,6 +464,7 @@ export default {
           this.$set(this.historyList[index], 'isChecked', true)
         }
       }
+      this.confirmLoading = true;
 
       this.getDetailData(indexData)
       this.getCaseCheckOut(indexData)
@@ -539,13 +552,12 @@ export default {
           this.$nextTick(() => {
             this.$refs.basicTech2.refreshData(this.jianChaData, 'jiancha')
           })
-
         }
       } else if (key == 4) {
         this.$nextTick(() => {
           // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
-          this.$refs.basicXiaojie.refreshData(this.fileDetailData)
-        })
+          this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+        });
       }
     },
 

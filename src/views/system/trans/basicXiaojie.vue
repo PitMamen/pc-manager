@@ -49,7 +49,7 @@
 
         <div class="div-line-wrap">
           <div class="div-item-leng">术后诊断：</div>
-          <div class="div-item-leng-con">{{ insideJbxx.sshzd }}</div>
+          <div class="div-item-leng-con">{{ insideJbxx.cyzd }}</div>
         </div>
 
         <div class="div-line-wrap">
@@ -133,7 +133,7 @@ export default {
     refreshData(insideJbxx) {
       // this.insideJbxx = insideJbxx;
       // this.jbxx = insideJbxx;
-      this.insideShowData = insideJbxx
+      this.insideJbxx = insideJbxx
     },
     // refreshData(insideJbxx, insideShowData) {
     //   console.log('refreshDataShoushu', this.insideShowData)
