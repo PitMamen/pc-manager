@@ -2,7 +2,7 @@
   <div class="wrap">
     <div>
       <a-tabs
-      @change="callback"
+        @change="callback"
         v-model="keyindex"
         :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
       >
@@ -10,7 +10,7 @@
           <transdown-insidemodify ref="transdownInsidemodify" />
         </a-tab-pane>
 
-        <a-tab-pane  key="2" tab="上传病历" force-render>
+        <a-tab-pane key="2" tab="上传病历" force-render>
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
         <a-tab-pane key="3" tab="健康档案" force-render>
@@ -67,6 +67,9 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.record = { tradeId: this.$route.query.tradeId };
+      if (this.$route.query.keyindex) {
+        this.keyindex = this.$route.query.keyindex;
+      }
       this.$refs.transdownInsidemodify.refreshData(this.$route.query.tradeId);
     });
   },

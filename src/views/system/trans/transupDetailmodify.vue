@@ -70,6 +70,9 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.record = { tradeId: this.$route.query.tradeId };
+      if (this.$route.query.keyindex) {
+        this.keyindex = this.$route.query.keyindex;
+      }
       this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
     });
   },

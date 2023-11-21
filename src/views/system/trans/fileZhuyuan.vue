@@ -34,7 +34,7 @@
             <div v-if="MEDICAL_DATA_SOURCE == '0'" class="content-main">
               <!-- style="margin-top: -10px; position: relative" -->
               <a-tabs
-               @change="tabChange"
+                @change="tabChange"
                 v-model="activeKey"
                 type="line"
                 :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
@@ -117,7 +117,6 @@
                 </a-tab-pane>
               </a-tabs>
             </div>
-
           </div>
         </div>
       </div>
@@ -373,7 +372,7 @@ export default {
             // }
             // this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
             // console.log('getDetailData', JSON.stringify(this.fileMainData))
-            this.$refs.basicTech.refreshData(this.jianChaData,'jiancha');
+            this.$refs.basicTech.refreshData(this.jianChaData, "jiancha");
           } else {
             this.jianChaData = undefined;
             this.$message.error(res.message);
@@ -403,7 +402,7 @@ export default {
             // }
             // this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
             // console.log('getDetailData', JSON.stringify(this.fileMainData))
-            this.$refs.basicTech.refreshData(this.jianyanData,'jianyan');
+            this.$refs.basicTech.refreshData(this.jianyanData, "jianyan");
           } else {
             this.jianyanData = undefined;
             this.$message.error(res.message);
@@ -421,7 +420,7 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data);
-            // console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
+            console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
 
             let str =
               this.fileSummaryData.rysj.substring(0, 4) +
@@ -438,7 +437,15 @@ export default {
               this.fileSummaryData.cysj.substring(6, 8);
             this.$set(this.fileSummaryData, "cysj", str2);
 
-            // this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+            if (this.fileSummaryData.ywscsj) {
+              this.$set(
+                this.fileSummaryData,
+                "ywscsj",
+                moment(this.fileSummaryData.ywscsj).format("YYYY-MM-DD HH:mm:ss")
+              );
+            }
+
+            this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
           } else {
             this.fileSummaryData = undefined;
             this.$message.error(res.message);
@@ -476,6 +483,7 @@ export default {
           this.$set(this.historyList[index], "isChecked", true);
         }
       }
+      this.confirmLoading = true;
 
       this.getDetailData(indexData);
       this.getCaseCheckOut(indexData);
@@ -553,7 +561,6 @@ export default {
       });
     },
 
-
     tabChange(key) {
       console.log("KKKK:", key);
       if (key == 1) {
@@ -563,7 +570,7 @@ export default {
         if (this.jianyanData.length > 0) {
           this.$refs.basicTech.refreshData(
             this.jianyanData,
-            "jianyan",
+            "jianyan"
             // this.showData
           );
         }
@@ -572,7 +579,7 @@ export default {
         if (this.jianChaData.length > 0) {
           this.$refs.basicTech.refreshData(
             this.jianChaData,
-            "jiancha",
+            "jiancha"
             // this.showData
           );
         }
