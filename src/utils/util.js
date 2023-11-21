@@ -284,6 +284,82 @@ export function isStringEmpty(str) {
 }
 
 /**
+ * 
+ * @param {获取切口名称} str 
+ * @returns 
+ */
+export function getQiekou(code) {
+  let str
+  switch (code) {
+    case '0':
+      str = '有手术，但体表无切口或腔镜手术切口'
+      break;
+    case '11':
+      str = 'I/甲'
+      break;
+    case '12':
+      str = 'I/乙'
+      break;
+    case '13':
+      str = 'I/丙'
+      break;
+    case '14':
+      str = 'I/其他'
+      break;
+    case '21':
+      str = 'II/甲'
+      break;
+    case '22':
+      str = 'II/乙'
+      break;
+    case '23':
+      str = 'II/丙'
+      break;
+    case '24':
+      str = 'II/其他'
+      break;
+    case '31':
+      str = 'III/甲'
+      break;
+    case '32':
+      str = 'III/乙'
+      break;
+    case '33':
+      str = 'III/丙'
+      break;
+    case '34':
+      str = 'III/其他'
+      break;
+
+    default:
+      break;
+  }
+  return str
+}
+
+export function getSurgeryLevel(code) {
+  let str
+  switch (code) {
+    case '1':
+      str= '一级手术'
+      break;
+    case '2':
+      str= '二级手术'
+      break;
+    case '3':
+      str= '三级手术'
+      break;
+    case '4':
+      str= '四级手术'
+      break;
+  
+    default:
+      break;
+  }
+  return str
+}
+
+/**
  * 判断数组是空
  * @param {} arr 
  * @returns 

@@ -93,7 +93,7 @@
             :scroll="{ x: true }"
             bordered
             :columns="columns"
-            :data-source="insideShowData.bacteriaInfo"
+            :data-source="bacteriaInfo"
             :alert="true"
             :rowKey="(record) => record.code"
           >
@@ -117,21 +117,21 @@
 
 
 <script>
-import { formatDateFull, formatDate, countAge } from "@/utils/util";
+import { formatDateFull, formatDate, countAge } from '@/utils/util'
 export default {
   components: {},
   props: {
-    jbxx: Object,
+    // jbxx: Object,
     showType: String,
     showData: Object,
   },
   data() {
     return {
       // showType: '',
-      insideJbxx: this.jbxx,
-      insideShowType: this.showType,
+      insideJbxx: {},
+      insideShowType: '',
       insideShowData: this.showData,
-      // insideShowType: 'jiancha',
+      bacteriaInfo: [],
 
       columns: [
         {
@@ -177,31 +177,32 @@ export default {
   created() {},
   methods: {
     onItemClick(itemOut, indexOut) {
-      for (let index = 0; index < this.insideJbxx.newArr.length; index++) {
-        this.insideJbxx.newArr[index].color = 'gray'
-        if (indexOut == index) {
-          this.insideJbxx.newArr[index].color = 'blue'
-        }
-      }
+      // for (let index = 0; index < this.insideJbxx.newArr.length; index++) {
+      //   this.insideJbxx.newArr[index].color = 'gray'
+      //   if (indexOut == index) {
+      //     this.insideJbxx.newArr[index].color = 'blue'
+      //   }
+      // }
 
-      this.insideShowType = this.insideJbxx.newArr[indexOut].type
+      // this.insideShowType = this.insideJbxx.newArr[indexOut].type
 
-      this.insideShowData = this.insideJbxx.newArr[indexOut].data
-      console.log('this.insideShowData', this.insideShowData)
+      // this.insideShowData = this.insideJbxx.newArr[indexOut].data
     },
 
     refreshData(insideJbxx, insideShowType) {
       console.log('showType:', insideJbxx, insideShowType)
       this.insideShowData = insideJbxx
+      this.insideShowType = insideShowType
       if (this.insideShowData.length > 0) {
-              this.insideShowData.forEach((item) => {
-                this.$set(item, "jysj", formatDateFull(item.jysj).substring(0,10));
-              });
-            }
+        if (insideShowType == 'jianyan') {
+          this.bacteriaInfo = this.insideShowData[0].bacteriaInfo
+        }
 
+        this.insideShowData.forEach((item) => {
+          this.$set(item, 'jysj', formatDateFull(item.jysj).substring(0, 10))
+        })
+      }
 
-
-      // this.insideShowType = insideShowType
       // this.insideShowData = insideShowData
     },
   },

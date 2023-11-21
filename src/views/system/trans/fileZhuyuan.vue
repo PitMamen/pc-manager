@@ -30,12 +30,13 @@
               </div>
             </div>
 
+            <!-- @change="tabChange" -->
             <div v-if="MEDICAL_DATA_SOURCE == '0'" class="content-main">
               <!-- style="margin-top: -10px; position: relative" -->
               <a-tabs
+               @change="tabChange"
                 v-model="activeKey"
                 type="line"
-                @change="tabChange"
                 :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
                 style="position: relative"
               >
@@ -72,7 +73,7 @@
                   <basic-tech
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicTech"
-                    :jbxx="jianyanData"
+                    :jybg="jianyanData"
                     :showType="defaultShowType"
                   />
                 </a-tab-pane>
@@ -90,7 +91,7 @@
                   <basic-tech
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
                     ref="basicTech"
-                    :jbxx="jianChaData"
+                    :jcbg="jianChaData"
                     :showType="defaultShowType"
                   />
                 </a-tab-pane>
@@ -117,50 +118,12 @@
               </a-tabs>
             </div>
 
-            <!-- TODO 这条分支逻辑先不管，先全部按私有云处理 -->
-            <div v-if="MEDICAL_DATA_SOURCE == '1'" class="content-main">
-              <a-tabs
-                v-model="activeKey"
-                type="line"
-                @change="tabChange"
-                style="margin-top: -10px; position: relative"
-              >
-                <a-tab-pane key="6">
-                  <template #tab>
-                    <span class="span-tab">
-                      <img
-                        style="width: 13px; height: 13px; margin-right: 7px"
-                        :class="{ 'checked-icon': activeKey == '6' }"
-                        src="~@/assets/icons/jbxx.svg"
-                      />
-                      出院小结
-                    </span>
-                  </template>
-
-                  <basic-xiaojie
-                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
-                    ref="basicXiaojie"
-                    :jbxx="fileSummaryData"
-                    :patientInfo="patientInfo"
-                  />
-                </a-tab-pane>
-              </a-tabs>
-            </div>
           </div>
         </div>
       </div>
       <div v-else class="nodata">
         <img src="~@/assets/icons/img_nodata.png" />
       </div>
-      <!-- <div style="margin-top: 12px; display: flex; flex-direction: row-reverse">
-        <a-button
-          type="default"
-          @click="goCancel"
-          style="width: 90px; color: #1890ff !important; border-color: #1890ff !important"
-        >
-          关闭
-        </a-button>
-      </div> -->
     </div>
   </a-spin>
 </template>
@@ -187,8 +150,15 @@ import basicTech from "./basicTech";
 // import basicFee from "./basicFee";
 import { TRUE_USER } from "@/store/mutation-types";
 import { decodeRecord } from "@/utils/forgeUtils";
-import { formatDateFull, formatDate, countAge } from "@/utils/util";
+import {
+  formatDateFull,
+  formatDate,
+  countAge,
+  getQiekou,
+  getSurgeryLevel,
+} from "@/utils/util";
 import Vue from "vue";
+import moment from "moment";
 export default {
   components: { basicInfo, basicTech, basicXiaojie },
   props: {
@@ -350,10 +320,29 @@ export default {
             if (this.fileMainData.operationInfo.length > 0) {
               this.fileMainData.operationInfo.forEach((item) => {
                 this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
+                this.$set(item, "qkyhdj", getQiekou(item.qkyhdj));
+                // this.$set(item, "ssjb", getSurgeryLevel(item.ssjb));
               });
             }
+            // console.log("getDetailData", JSON.stringify(this.fileMainData));
             this.$set(this.fileMainData, "nl", countAge(this.fileMainData.csny));
-            console.log("getDetailData", JSON.stringify(this.fileMainData));
+            let str =
+              this.fileMainData.csny.substring(0, 4) +
+              "-" +
+              this.fileMainData.csny.substring(4, 6) +
+              "-" +
+              this.fileMainData.csny.substring(6, 8);
+            this.$set(this.fileMainData, "csny", str);
+            this.$set(
+              this.fileMainData,
+              "rysj",
+              moment(this.fileMainData.rysj).format("YYYY-MM-DD HH:mm:ss")
+            );
+            this.$set(
+              this.fileMainData,
+              "cysj",
+              moment(this.fileMainData.cysj).format("YYYY-MM-DD HH:mm:ss")
+            );
             this.$refs.basicInfo.refreshData(this.fileMainData);
           } else {
             this.fileMainData = undefined;
@@ -371,7 +360,7 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.jianChaData = decodeRecord(res.data.cipher, res.data.data);
-            console.log("解密：", this.jianChaData);
+            console.log("解密检查：", this.jianChaData);
             // if (this.fileMainData.diagnosisInfo.length > 0) {
             //   this.fileMainData.diagnosisInfo.forEach((item) => {
             //     this.$set(item, 'zdsj', formatDateFull(item.zdsj))
@@ -401,8 +390,7 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.jianyanData = decodeRecord(res.data.cipher, res.data.data);
-
-            console.log("TTT:", this.jianyanData);
+            console.log("解密检验：", this.jianyanData);
             // if (this.fileMainData.diagnosisInfo.length > 0) {
             //   this.fileMainData.diagnosisInfo.forEach((item) => {
             //     this.$set(item, 'zdsj', formatDateFull(item.zdsj))
@@ -433,9 +421,24 @@ export default {
         .then((res) => {
           if (res.code === 0) {
             this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data);
-            console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
+            // console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
 
-            this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+            let str =
+              this.fileSummaryData.rysj.substring(0, 4) +
+              "-" +
+              this.fileSummaryData.rysj.substring(4, 6) +
+              "-" +
+              this.fileSummaryData.rysj.substring(6, 8);
+            this.$set(this.fileSummaryData, "rysj", str);
+            let str2 =
+              this.fileSummaryData.cysj.substring(0, 4) +
+              "-" +
+              this.fileSummaryData.cysj.substring(4, 6) +
+              "-" +
+              this.fileSummaryData.cysj.substring(6, 8);
+            this.$set(this.fileSummaryData, "cysj", str2);
+
+            // this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
           } else {
             this.fileSummaryData = undefined;
             this.$message.error(res.message);
@@ -550,384 +553,6 @@ export default {
       });
     },
 
-    //emr档案 列表
-    getZyRecordsOut() {
-      let param = {
-        userId: this.record.id,
-      };
-      this.confirmLoading = true;
-      getZyRecords(param)
-        .then((res) => {
-          if (res.code === 0 && res.data) {
-            this.historyList = res.data;
-
-            if (this.historyList.length > 0) {
-              for (let index = 0; index < this.historyList.length; index++) {
-                this.$set(this.historyList[index], "isChecked", false);
-                var time = "未知时间";
-                if (
-                  this.historyList[index].cysj &&
-                  this.historyList[index].cysj.length > 10
-                ) {
-                  time = this.historyList[index].cysj.substring(0, 10);
-                }
-                this.$set(this.historyList[index], "time", time);
-              }
-              this.$set(this.historyList[0], "isChecked", true);
-              this.getEMRData(this.historyList[0].zyh);
-            } else {
-              this.confirmLoading = false;
-            }
-          } else {
-            this.confirmLoading = false;
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false;
-        });
-    },
-    //emr档案 详情
-    getEMRData(zylsh) {
-      getZySummary({ zylsh: zylsh }).then((res) => {
-        this.confirmLoading = false;
-        if (res.code == 0 && res.data) {
-          this.zmrHtml = res.data;
-        } else {
-          this.zmrHtml = [];
-        }
-        this.activeKey = "6";
-        this.$nextTick(() => {
-          this.$refs.basicXiaojie.refreshData(this.zmrHtml);
-        });
-      });
-    },
-    // onFileItemClick(itemData, indexData) {
-    //   for (let index = 0; index < this.historyList.length; index++) {
-    //     this.$set(this.historyList[index], "isChecked", false);
-    //     if (indexData == index) {
-    //       this.$set(this.historyList[index], "isChecked", true);
-    //     }
-    //   }
-    //   if (this.MEDICAL_DATA_SOURCE == "1") {
-    //     //从emr获取
-
-    //     this.getEMRData(itemData.zyh);
-    //   } else {
-    //     //私有云
-    //     this.getDetailOut(indexData);
-    //   }
-    // },
-
-    //私有云档案详情
-    getDetailOut(index) {
-      let param = {
-        dataOwnerId: this.record.id,
-        // dataOwnerId: '1195',
-        // dataOwnerId: '1239',
-        // dataOwnerId: '1194',
-        dataUserId: this.user.userId,
-        recordType: this.recordType,
-        serialNumber: this.historyList[index].serialNumber,
-        hospitalCode: this.historyList[index].hospitalCode,
-      };
-      this.confirmLoading = true;
-      getFileDtail(param)
-        .then((res) => {
-          this.confirmLoading = false;
-          if (res.code === 0) {
-            this.fileDetailData = decodeRecord(res.encryptedRecord, res.wrappedDEK);
-            if (this.fileDetailData) {
-              console.log(
-                "this.fileDetailDataStr ***",
-                JSON.stringify(this.fileDetailData)
-              );
-              //数据处理统一放在外层页面做
-              this.fileDetailData.cismain.rysj = formatDate(
-                new Date(this.fileDetailData.cismain.rysj)
-              );
-              this.fileDetailData.cismain.cysj = formatDate(
-                new Date(this.fileDetailData.cismain.cysj)
-              );
-
-              //脱敏处理
-              this.fileDetailData.cismain.lxdh = this.fileDetailData.cismain.lxdh.replace(
-                /(\d{3})\d{4}(\d{4})/,
-                "$1****$2"
-              );
-              this.fileDetailData.cismain.gzdwdh = this.fileDetailData.cismain.gzdwdh.replace(
-                /(\d{3})\d{4}(\d{4})/,
-                "$1****$2"
-              );
-              this.fileDetailData.cismain.lxrdh = this.fileDetailData.cismain.lxrdh.replace(
-                /(\d{3})\d{4}(\d{4})/,
-                "$1****$2"
-              );
-              if (this.fileDetailData.cismain && this.fileDetailData.cismain.csny) {
-                this.fileDetailData.cismain.csny =
-                  this.fileDetailData.cismain.csny.substring(0, 4) +
-                  "-" +
-                  this.fileDetailData.cismain.csny.substring(4, 6) +
-                  "-" +
-                  this.fileDetailData.cismain.csny.substring(6, 8);
-                this.fileDetailData.zdxx.forEach((item) => {
-                  item.zdsj = formatDate(new Date(item.zdsj));
-                });
-              }
-
-              //检查检验合并数组并排序
-              let newArr = [];
-              //处理检查数据
-              if (this.fileDetailData.yqjc && this.fileDetailData.yqjc.length > 0) {
-                for (let index = 0; index < this.fileDetailData.yqjc.length; index++) {
-                  newArr.push({
-                    id: index,
-                    type: "jiancha",
-                    name: this.fileDetailData.yqjc[index].jcmc,
-                    color: "gray",
-                    time: this.fileDetailData.yqjc[index].jysj,
-                    timeStr: formatDate(new Date(this.fileDetailData.yqjc[index].jysj)),
-                    data: this.fileDetailData.yqjc[index],
-                  });
-                }
-                console.log(
-                  "this.fileDetailData.yqjcStr 检查",
-                  JSON.stringify(this.fileDetailData.yqjc)
-                );
-              }
-
-              //处理检验数据
-              let length = newArr.length;
-              if (this.fileDetailData.sysjc && this.fileDetailData.sysjc.length > 0) {
-                for (let index = 0; index < this.fileDetailData.sysjc.length; index++) {
-                  this.fileDetailData.sysjc[index].jyjgzb.forEach((itemFor, indexFor) => {
-                    this.$set(itemFor, "xh", indexFor + 1);
-                  });
-                  newArr.push({
-                    id: index + length,
-                    type: "jianyan",
-                    name: this.fileDetailData.sysjc[index].bgdlb,
-                    color: "gray",
-                    time: this.fileDetailData.sysjc[index].jyrq,
-                    timeStr: formatDate(new Date(this.fileDetailData.sysjc[index].jyrq)),
-                    data: this.fileDetailData.sysjc[index],
-                  });
-                }
-                console.log(
-                  "this.fileDetailData.sysjc 检验",
-                  JSON.stringify(this.fileDetailData.sysjc)
-                );
-              }
-              //排序处理
-              newArr.sort((a, b) => {
-                return b.time - a.time;
-              });
-              this.$set(this.fileDetailData, "newArr", newArr);
-              if (this.fileDetailData.newArr.length > 0) {
-                this.$set(this.fileDetailData.newArr[0], "color", "blue");
-                this.defaultShowType = this.fileDetailData.newArr[0].type;
-                this.showData = this.fileDetailData.newArr[0].data;
-              }
-              console.log(
-                "this.fileDetailData.newArrStr",
-                JSON.stringify(this.fileDetailData.newArr)
-              );
-
-              //处理医嘱数据  需要按时间将一级数组封装成新的二级数组
-              for (let index = 0; index < this.fileDetailData.yzxx.length; index++) {
-                this.$set(
-                  this.fileDetailData.yzxx[index],
-                  "timeStr",
-                  formatDate(new Date(this.fileDetailData.yzxx[index].yzxdsj))
-                );
-                //组装发药数量
-                this.$set(
-                  this.fileDetailData.yzxx[index],
-                  "fysl",
-                  this.fileDetailData.yzxx[index].ypsl +
-                    this.fileDetailData.yzxx[index].ypdw
-                );
-                //组装每次剂量
-                this.$set(
-                  this.fileDetailData.yzxx[index],
-                  "mcjl",
-                  this.fileDetailData.yzxx[index].jl + this.fileDetailData.yzxx[index].dw
-                );
-                //组装每次数量
-                this.$set(
-                  this.fileDetailData.yzxx[index],
-                  "mcsl",
-                  this.fileDetailData.yzxx[index].mcsl +
-                    this.fileDetailData.yzxx[index].mcdw
-                );
-              }
-              let newYzxx = [];
-              let dateArr = [];
-              if (this.fileDetailData.yzxx.length > 0) {
-                for (let index = 0; index < this.fileDetailData.yzxx.length; index++) {
-                  dateArr.push(this.fileDetailData.yzxx[index].timeStr);
-                }
-                dateArr = dateArr.filter((item, index) => {
-                  //去重
-                  return dateArr.indexOf(item) === index; // 因为indexOf 只能查找到第一个
-                });
-              }
-              console.log("dateArr", dateArr);
-              for (let index = 0; index < dateArr.length; index++) {
-                newYzxx.push({ color: "gray", data: [], timeStr: dateArr[index] });
-                for (
-                  let indexIn = 0;
-                  indexIn < this.fileDetailData.yzxx.length;
-                  indexIn++
-                ) {
-                  if (dateArr[index] == this.fileDetailData.yzxx[indexIn].timeStr) {
-                    newYzxx[index].data.push(
-                      JSON.parse(JSON.stringify(this.fileDetailData.yzxx[indexIn]))
-                    );
-                  }
-                }
-              }
-              this.$set(this.fileDetailData, "yzxx", newYzxx);
-
-              if (this.fileDetailData.yzxx.length > 0) {
-                this.showDataYizhu = this.fileDetailData.yzxx[0];
-                this.$set(this.fileDetailData.yzxx[0], "color", "blue");
-              }
-
-              //处理手术信息 需要按时间将一级数组封装成新的二级数组
-              for (let index = 0; index < this.fileDetailData.ssxx.length; index++) {
-                this.$set(
-                  this.fileDetailData.ssxx[index],
-                  "timeStr",
-                  formatDate(new Date(this.fileDetailData.ssxx[index].sskssj))
-                );
-                // //组装发药数量
-                // this.$set(
-                //   this.fileDetailData.ssxx[index],
-                //   'fysl',
-                //   this.fileDetailData.ssxx[index].ypsl + this.fileDetailData.ssxx[index].ypdw
-                // )
-              }
-              let newYzxxSX = [];
-              let dateArrSX = [];
-              if (this.fileDetailData.ssxx.length > 0) {
-                for (let index = 0; index < this.fileDetailData.ssxx.length; index++) {
-                  dateArrSX.push(this.fileDetailData.ssxx[index].timeStr);
-                }
-                dateArrSX = dateArrSX.filter((item, index) => {
-                  //去重
-                  return dateArrSX.indexOf(item) === index; // 因为indexOf 只能查找到第一个
-                });
-              }
-              console.log("dateArrSS手术", dateArrSX);
-              for (let index = 0; index < dateArrSX.length; index++) {
-                newYzxxSX.push({ color: "gray", data: [], timeStr: dateArrSX[index] });
-                for (
-                  let indexIn = 0;
-                  indexIn < this.fileDetailData.ssxx.length;
-                  indexIn++
-                ) {
-                  if (dateArrSX[index] == this.fileDetailData.ssxx[indexIn].timeStr) {
-                    newYzxxSX[index].data.push(
-                      JSON.parse(JSON.stringify(this.fileDetailData.ssxx[indexIn]))
-                    );
-                  }
-                }
-              }
-              this.$set(this.fileDetailData, "ssxx", newYzxxSX);
-
-              if (this.fileDetailData.ssxx.length > 0) {
-                this.showDataShoushu = this.fileDetailData.ssxx[0];
-                this.$set(this.fileDetailData.ssxx[0], "color", "blue");
-              }
-
-              //组装收费信息 数组根据收费名称封装成二级数组，计算二级数组的总和
-              let newYzxxSF = [];
-              let dateArrSF = [];
-              if (this.fileDetailData.sfxx.length > 0) {
-                for (let index = 0; index < this.fileDetailData.sfxx.length; index++) {
-                  dateArrSF.push(this.fileDetailData.sfxx[index].mxfylbmc);
-                }
-                dateArrSF = dateArrSF.filter((item, index) => {
-                  //去重
-                  return dateArrSF.indexOf(item) === index; // 因为indexOf 只能查找到第一个
-                });
-              }
-              console.log("dateArrSS收费", dateArrSF);
-              for (let index = 0; index < dateArrSF.length; index++) {
-                newYzxxSF.push({ color: "gray", data: [], mxfylbmc: dateArrSF[index] });
-                for (
-                  let indexIn = 0;
-                  indexIn < this.fileDetailData.sfxx.length;
-                  indexIn++
-                ) {
-                  if (dateArrSF[index] == this.fileDetailData.sfxx[indexIn].mxfylbmc) {
-                    newYzxxSF[index].data.push(
-                      JSON.parse(JSON.stringify(this.fileDetailData.sfxx[indexIn]))
-                    );
-                  }
-                }
-              }
-
-              //增加总数
-              for (let index = 0; index < newYzxxSF.length; index++) {
-                let itemTotal = 0;
-                for (let indexIn = 0; indexIn < newYzxxSF[index].data.length; indexIn++) {
-                  itemTotal = itemTotal + newYzxxSF[index].data[indexIn].mxxmje;
-                }
-
-                this.$set(
-                  newYzxxSF[index],
-                  "mxxmje",
-                  itemTotal > 0 ? itemTotal.toFixed(2) : 0
-                );
-
-                this.$set(newYzxxSF[index], "mxxmmc", newYzxxSF[index].mxfylbmc);
-              }
-
-              // mxxmje 收费金额   mxfylbmc 收费名称
-              this.$set(this.fileDetailData, "sfxx", newYzxxSF);
-              console.log("newYzxxSF", JSON.stringify(newYzxxSF));
-
-              console.log("this.fileDetailDataStr", JSON.stringify(this.fileDetailData));
-            } else {
-              uni.$u.toast("解密失败");
-            }
-
-            // this.$nextTick(() => {
-            this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx);
-            if (this.$refs.basicTech && this.fileDetailData.newArr.length > 0) {
-              this.$refs.basicTech.refreshData(
-                this.fileDetailData,
-                this.defaultShowType,
-                this.showData
-              );
-            }
-            if (this.$refs.basicMedic && this.fileDetailData.yzxx.length > 0) {
-              this.$refs.basicMedic.refreshData(this.fileDetailData, this.showDataYizhu);
-            }
-
-            if (this.$refs.basicSurgery) {
-              this.$refs.basicSurgery.refreshData(
-                this.fileDetailData,
-                this.showDataShoushu
-              );
-            }
-            if (this.$refs.basicFee) {
-              this.$refs.basicFee.refreshData(
-                JSON.parse(JSON.stringify(this.fileDetailData.sfxx))
-              );
-            }
-            if (this.$refs.basicXiaojie) {
-              this.$refs.basicXiaojie.refreshData(this.fileDetailData.zdxx);
-            }
-          } else {
-            this.$message.error(res.message);
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false;
-        });
-    },
 
     tabChange(key) {
       console.log("KKKK:", key);

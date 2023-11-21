@@ -1262,6 +1262,7 @@ export default {
         if (res.code == 0) {
           // 再传给回调函数
           if (callback) {
+            console.log('this.mySelected.length',this.mySelected.length)
             res.data.forEach((item) => {
               if (this.mySelected.length < 2) {
                 this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
@@ -1480,6 +1481,7 @@ export default {
       ];
       this.cascaderData = [1];
       this.isInputPatient = true;
+      this.mySelected = []
     },
 
     onSelectSource(sourceCode) {
