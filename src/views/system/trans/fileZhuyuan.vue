@@ -358,7 +358,7 @@ export default {
               this.fileMainData.operationInfo.forEach((item) => {
                 this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
                 this.$set(item, "qkyhdj", getQiekou(item.qkyhdj));
-                this.$set(item, "ssjb", getSurgeryLevel(item.ssjb));
+                // this.$set(item, "ssjb", getSurgeryLevel(item.ssjb));
               });
             }
             console.log("getDetailData", JSON.stringify(this.fileMainData));
@@ -374,6 +374,11 @@ export default {
               this.fileMainData,
               "rysj",
               moment(this.fileMainData.rysj).format("YYYY-MM-DD HH:mm:ss")
+            );
+            this.$set(
+              this.fileMainData,
+              "cysj",
+              moment(this.fileMainData.cysj).format("YYYY-MM-DD HH:mm:ss")
             );
             this.$refs.basicInfo.refreshData(this.fileMainData);
           } else {

@@ -427,7 +427,7 @@ export default {
         {
           title: "手术级别",
           // innerHeight:20,
-          dataIndex: "ssjb",
+          dataIndex: "ssjbmc",
         },
         {
           title: "手术操作名称",
