@@ -18,12 +18,8 @@
                 :value="itemData.docId"
               >
                 <div class="div-top-item" @click="onFileItemClick(itemData, indexData)">
-                  <span class="div-time" :class="{ checked: itemData.isChecked }">{{
-                    itemData.inDate
-                  }}</span>
-                  <span :class="{ checked: itemData.isChecked }">{{
-                    itemData.hospitalName
-                  }}</span>
+                  <span class="div-time" :class="{ checked: itemData.isChecked }">{{ itemData.inDate }}</span>
+                  <span :class="{ checked: itemData.isChecked }">{{ itemData.hospitalName }}</span>
                 </div>
 
                 <div v-if="indexData != historyList.length - 1" class="div-line"></div>
@@ -34,7 +30,7 @@
             <div v-if="MEDICAL_DATA_SOURCE == '0'" class="content-main">
               <!-- style="margin-top: -10px; position: relative" -->
               <a-tabs
-               @change="tabChange"
+                @change="tabChange"
                 v-model="activeKey"
                 type="line"
                 :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
@@ -72,8 +68,7 @@
                   </template>
                   <basic-tech
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
-                    ref="basicTech"
-                    :jybg="jianyanData"
+                    ref="basicTech1"
                     :showType="defaultShowType"
                   />
                 </a-tab-pane>
@@ -90,8 +85,7 @@
                   </template>
                   <basic-tech
                     style="margin-top: 2px; margin-left: 10px; overflow: hidden"
-                    ref="basicTech"
-                    :jcbg="jianChaData"
+                    ref="basicTech2"
                     :showType="defaultShowType"
                   />
                 </a-tab-pane>
@@ -117,7 +111,6 @@
                 </a-tab-pane>
               </a-tabs>
             </div>
-
           </div>
         </div>
       </div>
@@ -141,24 +134,18 @@ import {
   getCaseExam,
   getCaseCheck,
   getCaseSummary,
-} from "@/api/modular/system/posManage";
-import basicInfo from "./basicInfo";
-import basicXiaojie from "./basicXiaojie";
-import basicTech from "./basicTech";
+} from '@/api/modular/system/posManage'
+import basicInfo from './basicInfo'
+import basicXiaojie from './basicXiaojie'
+import basicTech from './basicTech'
 // import basicMedic from "./basicMedic";
 // import basicSurgery from "./basicSurgery";
 // import basicFee from "./basicFee";
-import { TRUE_USER } from "@/store/mutation-types";
-import { decodeRecord } from "@/utils/forgeUtils";
-import {
-  formatDateFull,
-  formatDate,
-  countAge,
-  getQiekou,
-  getSurgeryLevel,
-} from "@/utils/util";
-import Vue from "vue";
-import moment from "moment";
+import { TRUE_USER } from '@/store/mutation-types'
+import { decodeRecord } from '@/utils/forgeUtils'
+import { formatDateFull, formatDate, countAge, getQiekou, getSurgeryLevel } from '@/utils/util'
+import Vue from 'vue'
+import moment from 'moment'
 export default {
   components: { basicInfo, basicTech, basicXiaojie },
   props: {
@@ -166,24 +153,20 @@ export default {
   },
   data() {
     return {
-      MEDICAL_DATA_SOURCE: "0", //档案来源 1：从emr获取 0：从私有云获取
-      zmrHtml: "", //出院小结HTML
+      MEDICAL_DATA_SOURCE: '0', //档案来源 1：从emr获取 0：从私有云获取
+      zmrHtml: '', //出院小结HTML
       isDoubled: true,
       confirmLoading: false,
       isSingle: false,
-      defaultShowType: "jiancha",
-      activeKey: "1",
-      jbxx: { name: "李四" },
+      defaultShowType: 'jiancha',
+      activeKey: '1',
+      jbxx: { name: '李四' },
       user: {},
-      patientInfo: { baseInfo: { identificationNo: "3256543" } },
+      patientInfo: { baseInfo: { identificationNo: '3256543' } },
       showData: {},
       showDataYizhu: {},
       showDataShoushu: {},
-      historyList: [
-        { time: "2022-10-11" },
-        { time: "2022-10-16" },
-        { time: "2023-01-18" },
-      ],
+      historyList: [{ time: '2022-10-11' }, { time: '2022-10-16' }, { time: '2023-01-18' }],
       /**
        * 			if (index === 0) {
 					recordType = 'all'
@@ -193,7 +176,7 @@ export default {
 					recordType = 'menzhen'
 				}
        */
-      recordType: "zhuyuan",
+      recordType: 'zhuyuan',
       jianyanData: {},
       jianChaData: {},
       fileDetailData: {
@@ -203,27 +186,27 @@ export default {
         ssxx: [{}, {}],
         zdxx: [
           {
-            zdbmmc: "的的",
+            zdbmmc: '的的',
           },
           {
-            zdbmmc: "个人个人",
+            zdbmmc: '个人个人',
           },
           {
-            zdbmmc: "法人",
+            zdbmmc: '法人',
           },
         ],
-        cismain: { csny: "发发发发发" },
+        cismain: { csny: '发发发发发' },
       },
-      accountUserId: "", //登录用户的userId
+      accountUserId: '', //登录用户的userId
 
       fileMainData: {},
       fileSummaryData: {},
-    };
+    }
   },
 
   created() {
     // debugger
-    this.user = Vue.ls.get(TRUE_USER);
+    this.user = Vue.ls.get(TRUE_USER)
 
     //查询系统配置  显示不同档案来源
     // getSysConfigData('MEDICAL_DATA_SOURCE').then((res) => {
@@ -243,54 +226,54 @@ export default {
 
     // this.getPatientBaseInfo();
 
-    console.log("created", this.record);
+    console.log('created', this.record)
 
-    this.getTimeLineData();
+    this.getTimeLineData()
   },
   methods: {
     //患者档案列表进来时，id就是identificationId
     getTimeLineData() {
-      let param;
+      let param
       if (this.record.tradeId) {
         //仅一条
         param = {
           tradeId: this.record.tradeId,
-        };
-        this.isSingle = true;
+        }
+        this.isSingle = true
       } else {
         param = {
           identificationId: this.record.id, //多条时间线
-        };
+        }
       }
 
       //TODO 测试代码，暂时写死
       // param = {
       //   identificationId: 74,
       // };
-      console.log("getTimeLineData", param);
-      this.confirmLoading = true;
+      console.log('getTimeLineData', param)
+      this.confirmLoading = true
       getSynRecord(param)
         .then((res) => {
           if (res.code === 0) {
-            this.historyList = res.data;
+            this.historyList = res.data
             if (this.historyList.length > 0) {
               this.historyList.forEach((history) => {
-                this.$set(history, "isChecked", false);
-              });
-              this.$set(this.historyList[0], "isChecked", true);
+                this.$set(history, 'isChecked', false)
+              })
+              this.$set(this.historyList[0], 'isChecked', true)
               // this.getDetailOut(0);
-              this.getDetailData(0);
-              this.getCaseCheckOut(0);
-              this.getCaseExamOut(0);
-              this.getSummaryData(0);
+              this.getDetailData(0)
+              this.getCaseCheckOut(0)
+              this.getCaseExamOut(0)
+              this.getSummaryData(0)
             }
           } else {
-            this.$message.error(res.message);
+            this.$message.error(res.message)
           }
         })
         .finally(() => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
 
     //档案首页数据
@@ -299,59 +282,51 @@ export default {
         // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {
           if (res.code === 0) {
-            this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
+            this.fileMainData = decodeRecord(res.data.cipher, res.data.data)
             if (this.fileMainData.diagnosisInfo.length > 0) {
               this.fileMainData.diagnosisInfo.forEach((item) => {
-                this.$set(item, "zdsj", formatDateFull(item.zdsj));
+                this.$set(item, 'zdsj', formatDateFull(item.zdsj))
 
                 if (item.cyzdbz == 1) {
-                  this.$set(item, "cyzdbz", "主要诊断");
+                  this.$set(item, 'cyzdbz', '主要诊断')
                 } else if (item.cyzdbz == 2) {
-                  this.$set(item, "cyzdbz", "其他诊断");
+                  this.$set(item, 'cyzdbz', '其他诊断')
                 }
 
                 if (item.yzdbz == 0) {
-                  this.$set(item, "yzdbz", "已确诊");
+                  this.$set(item, 'yzdbz', '已确诊')
                 } else if (item.yzdbz == 1) {
-                  this.$set(item, "yzdbz", "仍疑似");
+                  this.$set(item, 'yzdbz', '仍疑似')
                 }
-              });
+              })
             }
             if (this.fileMainData.operationInfo.length > 0) {
               this.fileMainData.operationInfo.forEach((item) => {
-                this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
-                this.$set(item, "qkyhdj", getQiekou(item.qkyhdj));
+                this.$set(item, 'sskssj', formatDateFull(item.sskssj).substring(0, 10))
+                this.$set(item, 'qkyhdj', getQiekou(item.qkyhdj))
                 // this.$set(item, "ssjb", getSurgeryLevel(item.ssjb));
-              });
+              })
             }
             // console.log("getDetailData", JSON.stringify(this.fileMainData));
-            this.$set(this.fileMainData, "nl", countAge(this.fileMainData.csny));
+            this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
             let str =
               this.fileMainData.csny.substring(0, 4) +
-              "-" +
+              '-' +
               this.fileMainData.csny.substring(4, 6) +
-              "-" +
-              this.fileMainData.csny.substring(6, 8);
-            this.$set(this.fileMainData, "csny", str);
-            this.$set(
-              this.fileMainData,
-              "rysj",
-              moment(this.fileMainData.rysj).format("YYYY-MM-DD HH:mm:ss")
-            );
-            this.$set(
-              this.fileMainData,
-              "cysj",
-              moment(this.fileMainData.cysj).format("YYYY-MM-DD HH:mm:ss")
-            );
-            this.$refs.basicInfo.refreshData(this.fileMainData);
+              '-' +
+              this.fileMainData.csny.substring(6, 8)
+            this.$set(this.fileMainData, 'csny', str)
+            this.$set(this.fileMainData, 'rysj', moment(this.fileMainData.rysj).format('YYYY-MM-DD HH:mm:ss'))
+            this.$set(this.fileMainData, 'cysj', moment(this.fileMainData.cysj).format('YYYY-MM-DD HH:mm:ss'))
+            this.$refs.basicInfo.refreshData(this.fileMainData)
           } else {
-            this.fileMainData = undefined;
-            this.$message.error(res.message);
+            this.fileMainData = undefined
+            this.$message.error(res.message)
           }
         })
         .finally(() => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
 
     // 获取检查数据
@@ -359,8 +334,9 @@ export default {
       getCaseCheck({ caseId: this.historyList[index].id })
         .then((res) => {
           if (res.code === 0) {
-            this.jianChaData = decodeRecord(res.data.cipher, res.data.data);
-            console.log("解密检查：", this.jianChaData);
+            this.jianChaData = decodeRecord(res.data.cipher, res.data.data)
+            console.log('解密检查：', this.jianChaData)
+
             // if (this.fileMainData.diagnosisInfo.length > 0) {
             //   this.fileMainData.diagnosisInfo.forEach((item) => {
             //     this.$set(item, 'zdsj', formatDateFull(item.zdsj))
@@ -373,15 +349,15 @@ export default {
             // }
             // this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
             // console.log('getDetailData', JSON.stringify(this.fileMainData))
-            this.$refs.basicTech.refreshData(this.jianChaData,'jiancha');
+            // this.$refs.basicTech.refreshData(this.jianChaData,'jiancha');
           } else {
-            this.jianChaData = undefined;
-            this.$message.error(res.message);
+            this.jianChaData = undefined
+            this.$message.error(res.message)
           }
         })
         .finally(() => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
 
     // 获取检验数据
@@ -389,8 +365,8 @@ export default {
       getCaseExam({ caseId: this.historyList[index].id })
         .then((res) => {
           if (res.code === 0) {
-            this.jianyanData = decodeRecord(res.data.cipher, res.data.data);
-            console.log("解密检验：", this.jianyanData);
+            this.jianyanData = decodeRecord(res.data.cipher, res.data.data)
+            console.log('解密检验：', this.jianyanData)
             // if (this.fileMainData.diagnosisInfo.length > 0) {
             //   this.fileMainData.diagnosisInfo.forEach((item) => {
             //     this.$set(item, 'zdsj', formatDateFull(item.zdsj))
@@ -403,15 +379,15 @@ export default {
             // }
             // this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
             // console.log('getDetailData', JSON.stringify(this.fileMainData))
-            this.$refs.basicTech.refreshData(this.jianyanData,'jianyan');
+            // this.$refs.basicTech.refreshData(this.jianyanData,'jianyan');
           } else {
-            this.jianyanData = undefined;
-            this.$message.error(res.message);
+            this.jianyanData = undefined
+            this.$message.error(res.message)
           }
         })
         .finally(() => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
 
     //档案首页数据
@@ -420,28 +396,28 @@ export default {
         // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {
           if (res.code === 0) {
-            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data);
+            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data)
             // console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
 
             let str =
               this.fileSummaryData.rysj.substring(0, 4) +
-              "-" +
+              '-' +
               this.fileSummaryData.rysj.substring(4, 6) +
-              "-" +
-              this.fileSummaryData.rysj.substring(6, 8);
-            this.$set(this.fileSummaryData, "rysj", str);
+              '-' +
+              this.fileSummaryData.rysj.substring(6, 8)
+            this.$set(this.fileSummaryData, 'rysj', str)
             let str2 =
               this.fileSummaryData.cysj.substring(0, 4) +
-              "-" +
+              '-' +
               this.fileSummaryData.cysj.substring(4, 6) +
-              "-" +
-              this.fileSummaryData.cysj.substring(6, 8);
-            this.$set(this.fileSummaryData, "cysj", str2);
+              '-' +
+              this.fileSummaryData.cysj.substring(6, 8)
+            this.$set(this.fileSummaryData, 'cysj', str2)
 
             // this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
           } else {
-            this.fileSummaryData = undefined;
-            this.$message.error(res.message);
+            this.fileSummaryData = undefined
+            this.$message.error(res.message)
           }
 
           //   this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
@@ -464,23 +440,23 @@ export default {
           // }
         })
         .finally(() => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
 
     onFileItemClick(itemData, indexData) {
-      console.log("YYY:", indexData);
+      console.log('YYY:', indexData)
       for (let index = 0; index < this.historyList.length; index++) {
-        this.$set(this.historyList[index], "isChecked", false);
+        this.$set(this.historyList[index], 'isChecked', false)
         if (indexData == index) {
-          this.$set(this.historyList[index], "isChecked", true);
+          this.$set(this.historyList[index], 'isChecked', true)
         }
       }
 
-      this.getDetailData(indexData);
-      this.getCaseCheckOut(indexData);
-      this.getCaseExamOut(indexData);
-      this.getSummaryData(indexData);
+      this.getDetailData(indexData)
+      this.getCaseCheckOut(indexData)
+      this.getCaseExamOut(indexData)
+      this.getSummaryData(indexData)
       // if (this.MEDICAL_DATA_SOURCE == "1") {
       //   //从emr获取
 
@@ -498,98 +474,87 @@ export default {
         // dataOwnerId: this.record.userId,
         dataUserId: this.user.userId,
         recordType: this.recordType,
-        pastMonths: "60",
-      };
-      this.confirmLoading = true;
+        pastMonths: '60',
+      }
+      this.confirmLoading = true
       getFileList(param)
         .then((res) => {
           if (res.code === 0) {
-            this.historyList = res.data;
+            this.historyList = res.data
             if (this.historyList.length > 0) {
               for (let index = 0; index < this.historyList.length; index++) {
-                this.$set(this.historyList[index], "isChecked", false);
-                var time = "未知时间";
-                if (
-                  this.historyList[index].happenedTime &&
-                  this.historyList[index].happenedTime.length > 10
-                ) {
-                  time = this.historyList[index].happenedTime.substring(0, 10);
+                this.$set(this.historyList[index], 'isChecked', false)
+                var time = '未知时间'
+                if (this.historyList[index].happenedTime && this.historyList[index].happenedTime.length > 10) {
+                  time = this.historyList[index].happenedTime.substring(0, 10)
                 }
-                this.$set(this.historyList[index], "time", time);
+                this.$set(this.historyList[index], 'time', time)
               }
-              this.$set(this.historyList[0], "isChecked", true);
-              this.getDetailOut(0);
+              this.$set(this.historyList[0], 'isChecked', true)
+              this.getDetailOut(0)
             } else {
-              this.confirmLoading = false;
+              this.confirmLoading = false
             }
           } else {
-            this.$message.error(res.message);
-            this.confirmLoading = false;
+            this.$message.error(res.message)
+            this.confirmLoading = false
           }
         })
         .finally(() => {
-          this.confirmLoading = false;
-        });
+          this.confirmLoading = false
+        })
     },
 
     getPatientBaseInfo() {
       getBaseInfo({ userId: this.record.id }).then((res) => {
         if (res.code === 0) {
-          let birthday = res.data.baseInfo.birthday;
+          let birthday = res.data.baseInfo.birthday
           res.data.baseInfo.birthday =
-            birthday.substring(0, 4) +
-            "-" +
-            birthday.substring(4, 6) +
-            "-" +
-            birthday.substring(6, 8);
-          this.patientInfo = res.data;
+            birthday.substring(0, 4) + '-' + birthday.substring(4, 6) + '-' + birthday.substring(6, 8)
+          this.patientInfo = res.data
           this.patientInfo.baseInfo.identificationNo = this.patientInfo.baseInfo.identificationNo.replace(
             /^(.{6})(?:\d+)(.{4})$/,
-            "$1********$2"
-          );
+            '$1********$2'
+          )
         } else {
-          this.$message.error(res.message);
+          this.$message.error(res.message)
         }
-      });
+      })
     },
 
-
     tabChange(key) {
-      console.log("KKKK:", key);
+      console.log('KKKK:', key)
       if (key == 1) {
-        this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx);
+        this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
       } else if (key == 2) {
         //检验
         if (this.jianyanData.length > 0) {
-          this.$refs.basicTech.refreshData(
-            this.jianyanData,
-            "jianyan",
-            // this.showData
-          );
+          this.$nextTick(() => {
+            this.$refs.basicTech1.refreshData(this.jianyanData, 'jianyan')
+          })
         }
       } else if (key == 3) {
         //检查
         if (this.jianChaData.length > 0) {
-          this.$refs.basicTech.refreshData(
-            this.jianChaData,
-            "jiancha",
-            // this.showData
-          );
+          this.$nextTick(() => {
+            this.$refs.basicTech2.refreshData(this.jianChaData, 'jiancha')
+          })
+
         }
       } else if (key == 4) {
         this.$nextTick(() => {
           // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
-          this.$refs.basicXiaojie.refreshData(this.fileDetailData);
-        });
+          this.$refs.basicXiaojie.refreshData(this.fileDetailData)
+        })
       }
     },
 
     goCancel() {
-      console.log("hdh");
+      console.log('hdh')
       // this.$emit("handleCancel", "");
     },
   },
-};
+}
 </script>
 <style lang="less" scoped>
 // /deep/ .ant-tabs-bar {

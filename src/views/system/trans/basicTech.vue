@@ -3,35 +3,17 @@
   <!-- v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0" -->
   <div class="inner-wrap">
     <div class="div-yiji" style="padding-right: 10px; padding-bottom: 10px">
-      <!-- <div class="div-shu" style="overflow-y: auto; height: 450px">
-        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
-          <a-timeline-item
-            v-for="(item, index) in insideJbxx.newArr"
-            :color="item.color"
-            :key="index"
-            @click="onItemClick(item, index)"
-          >
-            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
-              {{ item.timeStr }}
-              <div class="div-name" :title="item.name">
-                {{ item.name }}
-              </div>
-            </div></a-timeline-item
-          >
-        </a-timeline>
-      </div> -->
-
       <div class="kuang-content" v-if="insideShowType == 'jiancha'">
         <div class="div-jancha" style="overflow-y: auto; height: 450px">
           <div class="div-line-wrap">
             <div class="div-item-two">
-              检查名称：<span style="color: #1a1a1a">{{ insideShowData[0].jcmc }}</span>
+              检查名称：<span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.jcmc }}</span>
             </div>
             <div class="div-item-three">
-              检查类型：<span style="color: #1a1a1a">{{ insideShowData[0].examtype }}</span>
+              检查类型：<span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.examtype }}</span>
             </div>
             <div class="div-item-three">
-              检查部位与方法：<span style="color: #1a1a1a">{{ insideShowData[0].jcbw }}</span>
+              检查部位与方法：<span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.jcbw }}</span>
             </div>
           </div>
 
@@ -44,28 +26,28 @@
           </div> -->
 
           <div class="div-line-wrap">
-            <span style="color: #1a1a1a">{{ insideShowData[0].xybx }}</span>
+            <span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.xybx }}</span>
           </div>
           <div class="div-line-wrap" style="margin-top: 20px">
             <div class="div-item-two">检查诊断或提示：</div>
           </div>
           <div class="div-line-wrap">
-            <span style="color: #1a1a1a">{{ insideShowData[0].yxzd }}</span>
+            <span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.yxzd }}</span>
           </div>
 
           <div class="div-line-wrap" style="margin-top: 20px">
             <div class="div-item-two">备注或建议：</div>
           </div>
           <div class="div-line-wrap">
-            <span style="color: #1a1a1a">{{ insideShowData[0].bzhjy }}</span>
+            <span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.bzhjy }}</span>
           </div>
 
           <div class="div-line-wrap" style="margin-top: 20px">
             <div class="div-item-three">
-              检查日期：<span style="color: #1a1a1a">{{ insideShowData[0].jysj }}</span>
+              检查日期：<span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.jysj }}</span>
             </div>
             <div class="div-item-three">
-              报告日期：<span style="color: #1a1a1a">{{ insideShowData[0].bgrq }}</span>
+              报告日期：<span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.bgrq }}</span>
             </div>
           </div>
         </div>
@@ -75,13 +57,13 @@
         <div class="div-janyan" style="overflow-y: auto; height: 450px">
           <div class="div-line-wrap">
             <div class="div-item-two">
-              项目名称：<span style="color: #333">{{ insideShowData.bgdlb }}</span>
+              项目名称：<span style="color: #333; font-weight: bold">{{ jianyanSingeData.bgdlb }}</span>
             </div>
             <div class="div-item-two">
-              标本名称：<span style="color: #333">{{ insideShowData.bbmc }}</span>
+              标本名称：<span style="color: #333; font-weight: bold">{{ jianyanSingeData.bbmc }}</span>
             </div>
             <div class="div-item-two">
-              报告日期：<span style="color: #333">{{ insideShowData.bbmc }}</span>
+              报告日期：<span style="color: #333; font-weight: bold">{{ jianyanSingeData.jyrq }}</span>
             </div>
           </div>
 
@@ -107,6 +89,44 @@
           </a-table>
         </div>
       </div>
+
+      <div class="div-shu" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jianyan'">
+        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
+          <a-timeline-item
+            v-for="(item, index) in jianyanDataShow"
+            :color="item.color"
+            :key="index"
+            @click="onItemClick(item, index)"
+          >
+            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
+              {{ item.bgrq }}
+              <div class="div-name" :title="item.name">
+                {{ item.bgdlb }}
+              </div>
+            </div></a-timeline-item
+          >
+        </a-timeline>
+      </div>
+
+      <!-- 检查报告时间轴 -->
+
+      <div class="div-shu" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jiancha'">
+        <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
+          <a-timeline-item
+            v-for="(item, index) in jianchaDataShow"
+            :color="item.color"
+            :key="index"
+            @click="onItemClickJiancha(item, index)"
+          >
+            <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
+              {{ item.jysj ||'2023-10-12'}}
+              <div class="div-name" :title="item.name">
+                {{ item.jcmc ||'脑部CT'}}
+              </div>
+            </div></a-timeline-item
+          >
+        </a-timeline>
+      </div>
     </div>
 
     <!-- <div v-else class="nodata">
@@ -122,16 +142,18 @@ export default {
   components: {},
   props: {
     // jbxx: Object,
-    showType: String,
-    showData: Object,
+    // showType: String,
+    // showData: Object,
   },
   data() {
     return {
-      // showType: '',
-      insideJbxx: {},
       insideShowType: '',
-      insideShowData: this.showData,
+      jianchaDataShow: [],
+      jianyanDataShow: [],
       bacteriaInfo: [],
+
+      jianyanSingeData: {},
+      jianchaSingeData: {},
 
       columns: [
         {
@@ -151,12 +173,12 @@ export default {
         },
         {
           title: '结果',
-          dataIndex: 'jybgjg',
+          dataIndex: 'jczbjg',
           ellipsis: true,
         },
         {
           title: '异常提示',
-          // dataIndex: 'ycts',
+          dataIndex: 'ycts',
           scopedSlots: { customRender: 'wrong' },
           // ellipsis: true,
         },
@@ -175,35 +197,78 @@ export default {
   },
 
   created() {},
+
+  mounted() {},
+
   methods: {
+    // 检验报告时间轴点击
     onItemClick(itemOut, indexOut) {
-      // for (let index = 0; index < this.insideJbxx.newArr.length; index++) {
-      //   this.insideJbxx.newArr[index].color = 'gray'
-      //   if (indexOut == index) {
-      //     this.insideJbxx.newArr[index].color = 'blue'
-      //   }
-      // }
+      for (let index = 0; index < this.jianyanDataShow.length; index++) {
+        this.jianyanDataShow[index].color = 'gray'
+        if (indexOut == index) {
+          this.jianyanDataShow[index].color = 'blue'
+        }
+      }
+      this.bacteriaInfo = this.jianyanDataShow[indexOut].indicatorInfo
+      this.jianyanSingeData = this.jianyanDataShow[indexOut]
+    },
 
-      // this.insideShowType = this.insideJbxx.newArr[indexOut].type
+    // 检查报告时间轴点击
+    onItemClickJiancha(itemOut, indexOut){
+      for (let index = 0; index < this.jianchaDataShow.length; index++) {
+        this.jianchaDataShow[index].color = 'gray'
+        if (indexOut == index) {
+          this.jianchaDataShow[index].color = 'blue'
+        }
+      }
+      // this.bacteriaInfo = this.jianchaDataShow[indexOut].indicatorInfo
+      this.jianchaSingeData = this.jianchaDataShow[indexOut]
+    },
 
-      // this.insideShowData = this.insideJbxx.newArr[indexOut].data
+
+
+
+
+
+    resetData() {
+      this.jianyanDataShow = []
+      this.jianchaDataShow = []
+      this.bacteriaInfo = []
+      this.jianyanSingeData = {}
+      this.jianchaDataShow = {}
     },
 
     refreshData(insideJbxx, insideShowType) {
-      console.log('showType:', insideJbxx, insideShowType)
-      this.insideShowData = insideJbxx
       this.insideShowType = insideShowType
-      if (this.insideShowData.length > 0) {
-        if (insideShowType == 'jianyan') {
-          this.bacteriaInfo = this.insideShowData[0].bacteriaInfo
+      this.resetData()
+      console.log('showType:', insideJbxx, this.insideShowType)
+      if (insideShowType == 'jianyan') {
+        this.jianyanDataShow = insideJbxx
+        if (this.jianyanDataShow.length > 0) {
+          this.jianyanDataShow.forEach((item, index) => {
+            this.$set(item, 'jyrq', formatDateFull(item.jyrq).substring(0, 10))
+            // this.$set(item, 'color', 'gray')
+            this.$set(item, 'color', index == 0 ? 'blue' : 'gray')
+          })
+
+          this.bacteriaInfo = this.jianyanDataShow[0].indicatorInfo
+          this.jianyanSingeData = this.jianyanDataShow[0]
+          if (this.bacteriaInfo) {
+            this.bacteriaInfo.forEach((item, index) => {
+              this.$set(item, 'xh', index + 1)
+            })
+          }
         }
-
-        this.insideShowData.forEach((item) => {
+      } else if (insideShowType == 'jiancha') {
+        this.jianchaDataShow = insideJbxx
+        this.jianchaDataShow.forEach((item,index) => {
           this.$set(item, 'jysj', formatDateFull(item.jysj).substring(0, 10))
-        })
-      }
 
-      // this.insideShowData = insideShowData
+          this.$set(item, 'color', index == 0 ? 'blue' : 'gray')
+        })
+
+        this.jianchaSingeData=this.jianchaDataShow[0]
+      }
     },
   },
 }
@@ -261,7 +326,8 @@ export default {
 
     .div-shu {
       font-size: 12px;
-      margin-right: 1%;
+      // margin-right: 1%;
+      margin-left: 20px;
       // width: 12%;
 
       /deep/ .ant-timeline-item {
@@ -269,6 +335,7 @@ export default {
       }
 
       .div-line-content {
+        width: 100px;
         font-size: 12px;
 
         .div-name {
