@@ -3,7 +3,7 @@
   <div class="inner-wrap">
     <div
       class="div-surgery"
-      v-if="insideJbxx.ssxx && insideJbxx.ssxx.length > 0"
+      v-if="jbxx"
       style="padding-right: 10px; padding-bottom: 10px"
     >
       <!-- <div class="div-shu" style="overflow-y: auto; height: 370px">
@@ -27,68 +27,68 @@
       <div class="div-jancha" style="overflow-y: auto; height: 450px">
         <div class="div-line-wrap" style="margin-top: 0">
           <div class="div-item-three" style="color: #999">
-            入院日期：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}2023-10-11</span>
+            入院日期：<span style="color: #1a1a1a;">{{ insideJbxx.rysj }}</span>
           </div>
           <div class="div-item-three" style="color: #999">
-            出院日期：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}2023-10-11</span>
+            出院日期：<span style="color: #1a1a1a;">{{ insideJbxx.cysj }}</span>
           </div>
           <div class="div-item-three" style="color: #999">
-            住院天数：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}天</span>
+            住院天数：<span style="color: #1a1a1a;">{{ insideJbxx.zyts }}天</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">入院诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].mzfsmc }}到我的无</div>
+          <div class="div-item-leng-con">{{ insideJbxx.ryzd }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">出院诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssqzdmc }}范围分为非</div>
+          <div class="div-item-leng-con">{{ insideJbxx.cyzd }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">术后诊断：</div>
-          <div class="div-item-leng-con">{{ insideShowData.data[0].sshzdmc }}服务而分为热</div>
+          <div class="div-item-leng-con">{{ insideJbxx.sshzd }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">入院时情况：</div>
         </div>
         <div class="div-line-wrap" style="margin-top: 8px;">
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然</div>
+          <div class="div-item-leng-con">{{ insideJbxx.ryzztz }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">诊疗经过：</div>
         </div>
         <div class="div-line-wrap" style="margin-top: 8px;">
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然</div>
+          <div class="div-item-leng-con">{{ insideJbxx.zlgc }}</div>
         </div>
         
         <div class="div-line-wrap">
           <div class="div-item-leng">出院情况：</div>
         </div>
         <div class="div-line-wrap" style="margin-top: 8px;">
-          <div class="div-item-leng-con">{{ insideShowData.data[0].ssczmc }}大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然</div>
+          <div class="div-item-leng-con">{{ insideJbxx.cyqk }}</div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-leng">出院医嘱：</div>
         </div>
         <div class="div-line-wrap" style="margin-top: 8px;">
-          <div class="div-item-leng-con" style="white-space: pre-line;">{{ insideShowData.data[0].ssczmc }}1.大锅饭二个如果热狗核桃仁和投入韩国人拖后腿然后突然\n2.发热感染隔热条</div>
+          <div class="div-item-leng-con" style="white-space: pre-line;">{{ insideJbxx.cyyz}}</div>
         </div>
 
         <div class="div-line-wrap" style="margin-top: 18px">
           <div class="div-item-three" style="color: #999">
-            登记医生：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}李二狗</span>
+            登记医生：<span style="color: #1a1a1a;">{{  insideJbxx.zzysxm}}</span>
           </div>
           <div class="div-item-three" style="color: #999">
-            登记日期：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}2023-10-11</span>
+            登记日期：<span style="color: #1a1a1a;">{{  insideJbxx.ywscsj }}</span>
           </div>
           <div class="div-item-three" style="color: #999">
-            登记机构：<span style="color: #1a1a1a;">{{ insideShowData.data[0].ksmc }}天狗医院</span>
+            登记机构：<span style="color: #1a1a1a;">{{  insideJbxx.hospitalName}}</span>
           </div>
         </div>
 
@@ -131,8 +131,9 @@ export default {
     },
 
     refreshData(insideJbxx) {
-      this.insideJbxx = insideJbxx;
-      this.insideShowData = { data: [{},{}] };
+      // this.insideJbxx = insideJbxx;
+      // this.jbxx = insideJbxx;
+      this.insideShowData = insideJbxx
     },
     // refreshData(insideJbxx, insideShowData) {
     //   console.log('refreshDataShoushu', this.insideShowData)
