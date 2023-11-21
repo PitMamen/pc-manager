@@ -445,7 +445,11 @@ export default {
               );
             }
 
-            this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+            this.$nextTick(() => {
+              this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+            });
+
+            // this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
           } else {
             this.fileSummaryData = undefined;
             this.$message.error(res.message);
@@ -564,7 +568,7 @@ export default {
     tabChange(key) {
       console.log("KKKK:", key);
       if (key == 1) {
-        this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx);
+        this.$refs.basicInfo.refreshData(this.fileMainData);
       } else if (key == 2) {
         //检验
         if (this.jianyanData.length > 0) {
@@ -586,7 +590,7 @@ export default {
       } else if (key == 4) {
         this.$nextTick(() => {
           // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
-          this.$refs.basicXiaojie.refreshData(this.fileDetailData);
+          this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
         });
       }
     },
