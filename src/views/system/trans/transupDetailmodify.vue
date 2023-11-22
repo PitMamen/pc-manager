@@ -7,20 +7,24 @@
         :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
       >
         <a-tab-pane key="1" tab="转诊申请单">
-          <!-- <transup-insidemodify :modifyItem="passItem" ref="transupInsidemodify" /> -->
-          <transup-insidemodify ref="transupInsidemodify" />
+          <!-- <transup-insidemodify ref="transupInsidemodify" /> -->
         </a-tab-pane>
 
         <a-tab-pane key="2" tab="上传病历" force-render>
-          <upload-files ref="uploadFiles" />
+          <!-- <upload-files ref="uploadFiles" /> -->
         </a-tab-pane>
         <a-tab-pane key="3" tab="健康档案" force-render>
-          <file-danan :record="record" ref="fileDanan" />
+          <!-- <file-danan :record="record" ref="fileDanan" /> -->
         </a-tab-pane>
         <a-tab-pane key="4" tab="添加评论" force-render>
-          <add-comments ref="addComments" />
+          <!-- <add-comments ref="addComments" /> -->
         </a-tab-pane>
       </a-tabs>
+
+      <transup-insidemodify v-show="keyindex=='1'" ref="transupInsidemodify" />
+      <upload-files v-show="keyindex=='2'" ref="uploadFiles" />
+      <file-danan v-show="keyindex=='3'" :record="record" ref="fileDanan" />
+      <upload-files v-show="keyindex=='4'" ref="uploadFiles" />
     </div>
     <span class="btn-back" @click="cancel()">返回列表</span>
   </div>
@@ -54,6 +58,8 @@ export default {
       if (to.path.indexOf("transupDetailmodify") > -1) {
         this.record = { tradeId: this.$route.query.tradeId };
         this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
+        // this.keyindex = this.$route.query.keyindex;
+        this.$refs.addComments.refreshData(this.record);
       }
     },
   },
@@ -74,6 +80,7 @@ export default {
         this.keyindex = this.$route.query.keyindex;
       }
       this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
+      this.$refs.addComments.refreshData(this.record);
     });
   },
 
@@ -84,6 +91,10 @@ export default {
         this.$refs.uploadFiles.refershData(keyIndex);
       } else if (keyIndex == "3") {
         this.$refs.fileDanan.refreshData(this.record);
+      } else if (keyIndex == "4") {
+        this.$refs.addComments.refreshData(this.record);
+      } else if (keyIndex == "1") {
+        this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
       }
     },
     handleOk() {},

@@ -122,7 +122,7 @@
 </template>
 
 <script>
-import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg ,upReferralDetail} from '@/api/modular/system/posManage'
+import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg ,upReferralDetail,getAuthStatus} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -142,6 +142,7 @@ export default {
     return {
       confirmLoading: false,
       loading: false,
+      needAuth: false,
       actionUrl: '/api/content-api/fileUpload/uploadImgFile',
       headers: {
         Authorization: '',
@@ -259,8 +260,9 @@ export default {
     },
 
     // 每次点击当前tab时 会触发
-    refershData(activeKey,record) {
+    refershData(activeKey,record,needAuth) {
       this.tradeId = record.tradeId
+      this.needAuth = needAuth
       console.log("222222222222:",this.tradeId)
       this.getSynRecordOut()
       this.getTradeImgOut()
@@ -334,9 +336,31 @@ export default {
 
     // 病历详情
     goRecordDetail() {
-      //TODO 测试数据
-      // let record = { name: '张三', sex: '男', age: 12 }
-      this.$refs.fileModalshow.showFile(this.record)
+      if (this.needAuth) {
+        if (this.tableData.length==0) {
+        this.$message.error("无住院记录，请点击同步病例");
+        return;
+        }
+
+        getAuthStatus({ caseId: this.tableData[0].id })
+        .then((res) => {
+          if (res.code == 0) {
+            if (res.data.authStatus==1) {
+              this.$refs.fileModalshow.showFile(this.record)
+            }else{
+              this.$message.error("您无权限查看档案详情！");
+            }
+       
+          } else {
+            this.$message.error(res.message)
+          }
+        })
+        .finally((erro) => {
+          this.confirmLoading = false
+        })
+      } else {
+        this.$refs.fileModalshow.showFile(this.record)
+      }
     },
 
     // 授权管理

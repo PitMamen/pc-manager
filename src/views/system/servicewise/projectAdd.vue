@@ -1513,6 +1513,7 @@ export default {
           item.overdueTimeUnit
         }
 
+        //处理间隔匹配时间
         if(item.isRepeatExecTimeChecked){
           if(!item.repeatExecTime){
             this.$message.error('请设置第' + (index + 1) + '条任务的间隔匹配时间')
