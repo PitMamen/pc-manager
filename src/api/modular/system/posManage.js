@@ -5739,6 +5739,15 @@ export function getCaseMain(data) {
   })
 }
 
+// /referral-api/patient/authStatus 授权状态
+export function getAuthStatus(data) {
+  return axios({
+    url: '/referral-api/patient/authStatus',
+    method: 'get',
+    params: data,
+  })
+}
+
 // referralTrade/upReferral 上转登记
 export function upReferral(data) {
   return axios({
