@@ -18,14 +18,25 @@
           <div class="data-head">{{ item.userName }}</div>
           <div class="data-item-right">
             <div class="item-right-top">
-              <div>{{ item.userName }}</div>
-              <div style="margin-left: 10px">【{{ item.userHospitalName }}】</div>
-              <div style="margin-left: 10px">{{ item.createTime }}</div>
+              <div style="font-size: 14px; font-weight: bold; color: #1a1a1a">
+                {{ item.userName }}
+              </div>
+              <div
+                style="
+                  margin-left: 10px;
+                  font-size: 14px;
+                  font-weight: bold;
+                  color: #1a1a1a;
+                "
+              >
+                【{{ item.userHospitalName }}】
+              </div>
+              <div style="margin-left: 10px; color: #999">{{ item.createTime }}</div>
 
               <div style="flex: 1"></div>
               <div class="btn-div">
                 <!-- <div class="btn-no" v-if="item.self != 'yes'"> -->
-                <div class="btn-no">
+                <div class="btn-no" v-if="item.self != 'yes'">
                   <img src="@/assets/icons/huifu.png" style="width: 12px; height: 12px" />
                   <div style="color: #409eff; margin-left: 5px">回复</div>
                 </div>
@@ -64,9 +75,13 @@
             <div class="data-head-child">{{ child.userName }}</div>
             <div class="data-child-right">
               <div class="child-right-top">
-                <div>{{ child.userName }}</div>
-                <div style="margin-left: 10px">【{{ child.userHospitalName }}】</div>
-                <div style="margin-left: 10px">{{ child.createTime }}</div>
+                <div style="font-size: 14px; font-weight: bold; color: #1a1a1a">
+                  {{ child.userName }}
+                </div>
+                <div style="margin-left: 10px; font-weight: bold; color: #1a1a1a">
+                  【{{ child.userHospitalName }}】
+                </div>
+                <div style="margin-left: 10px; color: #999">{{ child.createTime }}</div>
 
                 <div style="flex: 1"></div>
                 <div class="btn-div">
@@ -88,16 +103,18 @@
                 </div>
               </div>
 
-              <div
-                :class="
-                  indexChild == item.listChild.length - 1
-                    ? 'comment-content-child-last'
-                    : 'comment-content-child'
-                "
-              >
-                {{ child.text }}
+              <div class="content-show-area">
+                <div class="at-area" v-show="child.atName">@{{ child.atName }}</div>
+                <div
+                  :class="
+                    indexChild == item.listChild.length - 1
+                      ? 'comment-content-child-last'
+                      : 'comment-content-child'
+                  "
+                >
+                  {{ child.text }}
+                </div>
               </div>
-              <!-- <div style="height: 1px; background-color: #e6e6e6"></div> -->
             </div>
           </div>
         </div>
@@ -426,7 +443,8 @@ export default {
 
         .comment-content {
           margin-left: 10px;
-          margin-top: 20px;
+          color: #1a1a1a;
+          margin-top: 15px;
           margin-bottom: 10px;
         }
       }
@@ -486,15 +504,34 @@ export default {
             }
           }
 
+          .content-show-area {
+            display: flex;
+            flex-direction: row;
+
+            .at-area {
+              color: white;
+              background-color: #1890ff;
+              height: 25px;
+              margin-top: 10px;
+              text-align: center;
+              padding: 3px 10px;
+              border-radius: 10px;
+            }
+          }
+
           .comment-content-child {
             border-bottom: 1px solid #e6e6e6;
             margin-left: 10px;
-            margin-top: 20px;
+            color: #1a1a1a;
+            flex:1;
+            margin-top: 15px;
             padding-bottom: 10px;
           }
           .comment-content-child-last {
             margin-left: 10px;
-            margin-top: 20px;
+            color: #1a1a1a;
+            flex:1;
+            margin-top: 15px;
             padding-bottom: 10px;
           }
         }
