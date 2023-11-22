@@ -6,7 +6,13 @@
         <span class="span-title">历史评论</span>
       </div>
 
-      <div class="div-comment-item" v-for="(item, index) in commentsData" :key="index">
+      <!-- v-if="commentsData.length > 0" -->
+      <div
+        v-if="commentsData.length > 0"
+        class="div-comment-item"
+        v-for="(item, index) in commentsData"
+        :key="index"
+      >
         <div style="height: 20px; background-color: #409eff"></div>
         <div class="comment-item-bottom">
           <div class="data-head">{{ item.userName }}</div>
@@ -18,18 +24,26 @@
 
               <div style="flex: 1"></div>
               <div class="btn-div">
+                <!-- <div class="btn-no" v-if="item.self != 'yes'"> -->
                 <div class="btn-no">
                   <img src="@/assets/icons/huifu.png" style="width: 12px; height: 12px" />
                   <div style="color: #409eff; margin-left: 5px">回复</div>
                 </div>
-                <div class="btn-no">
+                <div class="btn-no" v-if="item.self == 'yes'">
                   <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
                   <div style="color: #409eff; margin-left: 5px">编辑</div>
                 </div>
-                <div class="btn-no">
-                  <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
-                  <div style="color: #409eff; margin-left: 5px">删除</div>
-                </div>
+
+                <a-popconfirm
+                  placement="topRight"
+                  title="确认删除吗？"
+                  @confirm="() => deleteCommentOut(item.id)"
+                >
+                  <div class="btn-no" v-if="item.self == 'yes'">
+                    <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
+                    <div style="color: #409eff; margin-left: 5px">删除</div>
+                  </div>
+                </a-popconfirm>
               </div>
             </div>
 
@@ -47,7 +61,7 @@
           :key="indexChild"
         >
           <div class="comment-child-bottom">
-            <div class="data-head">{{ child.userName }}</div>
+            <div class="data-head-child">{{ child.userName }}</div>
             <div class="data-child-right">
               <div class="child-right-top">
                 <div>{{ child.userName }}</div>
@@ -56,18 +70,18 @@
 
                 <div style="flex: 1"></div>
                 <div class="btn-div">
-                  <div class="btn-no">
+                  <div class="btn-no" v-if="item.self != 'yes'">
                     <img
                       src="@/assets/icons/huifu.png"
                       style="width: 12px; height: 12px"
                     />
                     <div style="color: #409eff; margin-left: 5px">回复</div>
                   </div>
-                  <div class="btn-no">
+                  <div class="btn-no" v-if="item.self == 'yes'">
                     <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
                     <div style="color: #409eff; margin-left: 5px">编辑</div>
                   </div>
-                  <div class="btn-no">
+                  <div class="btn-no" v-if="item.self == 'yes'">
                     <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
                     <div style="color: #409eff; margin-left: 5px">删除</div>
                   </div>
@@ -88,12 +102,45 @@
           </div>
         </div>
       </div>
+
+      <div class="div-add-coment">
+        <div style="height: 20px; background-color: #409eff"></div>
+        <div class="add-coment-bottom">
+          <div class="add-coment-head">{{ user.userName }}</div>
+          <div class="add-coment-right">
+            <a-textarea
+              :rows="2"
+              v-model="newcommet"
+              :maxlength="300"
+              placeholder="请输入评论"
+            ></a-textarea>
+
+            <div class="div-comment-handle">
+              <div style="flex: 1"></div>
+              <a-button
+                type="primary"
+                :loading="submitLoading"
+                @click="addCommentOut(0, newcommet)"
+                style="margin-right: 20px"
+              >
+                保存
+              </a-button>
+              <a-button @click="() => (newcommet = '')">取消</a-button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </a-spin>
 </template>
 
 <script>
-import { getCommentList } from "@/api/modular/system/posManage";
+import {
+  getCommentList,
+  addComment,
+  deleteComment,
+  modifyComment,
+} from "@/api/modular/system/posManage";
 import fileZhuyuan from "./fileZhuyuan";
 
 import { TRUE_USER } from "@/store/mutation-types";
@@ -108,7 +155,9 @@ export default {
   data() {
     return {
       activeKey: "1",
+      newcommet: "",
       confirmLoading: false,
+      submitLoading: false,
       record: {},
       //canEdit 表示自己可以修改，切换相关UI  ；isNewComment 在外层表示是新增的评论，里层表示回复
       commentsData: [
@@ -180,26 +229,23 @@ export default {
       //   { content: "", canEdit: false, isNewComment: true, childList: [] },
       // ],
       accountUserId: "", //登录用户的userId
+      user: {},
     };
   },
 
   created() {
     // debugger
     this.user = Vue.ls.get(TRUE_USER);
+    console.log("dddddddddddddddddddddddddd", this.user);
   },
   methods: {
     //获取评论列表
     getCommentListOut() {
-      // let param = {
-      //   pageNo: 1,
-      //   pageSize: 100,
-      //   // tradeId: this.record.tradeId,
-      //   tradeId: "20231108095148621",
-      // };
       let param = {
         pageNo: 1,
         pageSize: 1000,
-        tradeId: "20231108095148621",
+        tradeId: this.record.tradeId,
+        // tradeId: "20231108095148621",
       };
       this.confirmLoading = true;
       debugger;
@@ -207,7 +253,11 @@ export default {
         .then((res) => {
           debugger;
           if (res.code === 0) {
-            // this.commentsData = res.data.records
+            if (res.data && res.data.records) {
+              this.commentsData = res.data.records;
+            } else {
+              this.commentsData = [];
+            }
           } else {
             this.$message.error(res.message);
             this.confirmLoading = false;
@@ -220,18 +270,68 @@ export default {
 
     refreshData(record) {
       this.record = record;
-      // this.getCommentListOut();
+      this.getCommentListOut();
 
-      getCommentList({ pageNo: 1, pageSize: 100, tradeId: "20231108095148621" }).then(
-        (res) => {
+      // getCommentList({ pageNo: 1, pageSize: 100, tradeId: "20231108095148621" }).then(
+      //   (res) => {
+      //     if (res.code == 0) {
+      //       // this.commentsData = res.data.records
+      //     } else {
+      //       this.$message.error(res.message);
+      //     }
+      //     this.confirmLoading = false;
+      //   }
+      // );
+    },
+
+    /**
+     * {
+	"pid": 0,  第一级就是0，如果是第二级，就是上一条记录的id
+	"text": "内容",
+	"tradeId": 工单id
+}
+     */
+    addCommentOut(pid, text) {
+      if (!text) {
+        this.$message.error("请输入评论内容");
+        return;
+      }
+      this.submitLoading = true;
+      // addComment({ pid: pid, text: text, tradeId: "20231108095148621" }).then(
+      addComment({ pid: pid, text: text, tradeId: this.record.tradeId })
+        .then((res) => {
           if (res.code == 0) {
             // this.commentsData = res.data.records
+            this.newcommet = "";
+            this.getCommentListOut();
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          this.submitLoading = false;
+        });
+    },
+
+    /**
+     *
+     */
+    deleteCommentOut(id) {
+      this.confirmLoading = true;
+      deleteComment(id)
+        .then((res) => {
+          if (res.code == 0) {
+            // this.commentsData = res.data.records
+            this.$message.success("删除成功");
+            this.getCommentListOut();
           } else {
             this.$message.error(res.message);
           }
           this.confirmLoading = false;
-        }
-      );
+        })
+        .finally(() => {
+          this.submitLoading = false;
+        });
     },
 
     goCancel() {
@@ -244,7 +344,6 @@ export default {
 <style lang="less" scoped>
 .div-wrap {
   display: flex;
-  height: 450px;
   padding: 20px;
   font-size: 12px;
   flex-direction: column;
@@ -271,6 +370,7 @@ export default {
     }
   }
 
+  // 第一级评论样式
   .div-comment-item {
     margin-top: 20px;
     display: flex;
@@ -282,7 +382,7 @@ export default {
     .comment-item-bottom {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      // align-items: center;
       padding-right: 30px;
       padding-left: 10px;
       margin-top: 10px;
@@ -291,6 +391,7 @@ export default {
         color: white;
         background-color: #1890ff;
         padding: 6px;
+        height: 30px;
         border-radius: 15px;
       }
 
@@ -331,6 +432,7 @@ export default {
       }
     }
 
+    // 第二级评论样式
     .div-comment-child {
       // margin-top: 20px;
       display: flex;
@@ -342,13 +444,14 @@ export default {
       .comment-child-bottom {
         display: flex;
         flex-direction: row;
-        align-items: center;
+        // align-items: center;
         padding-right: 30px;
         padding-left: 10px;
         margin-top: 10px;
 
-        .data-head {
+        .data-head-child {
           color: white;
+          height: 30px;
           background-color: #1890ff;
           padding: 6px;
           border-radius: 15px;
@@ -394,6 +497,44 @@ export default {
             margin-top: 20px;
             padding-bottom: 10px;
           }
+        }
+      }
+    }
+  }
+
+  .div-add-coment {
+    margin-top: 20px;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    box-shadow: 0px 0px 2px 2px #e6e6e6 inset;
+    border-radius: 4px;
+    .add-coment-bottom {
+      display: flex;
+      flex-direction: row;
+      // align-items: center;
+      padding-right: 30px;
+      padding-left: 10px;
+      margin-top: 10px;
+      .add-coment-head {
+        color: white;
+        height: 30px;
+        background-color: #1890ff;
+        padding: 6px;
+        border-radius: 15px;
+      }
+
+      .add-coment-right {
+        display: flex;
+        margin-left: 10px;
+        flex: 1;
+        flex-direction: column;
+
+        .div-comment-handle {
+          padding: 8px;
+          display: flex;
+          flex-direction: row;
+          align-items: center;
         }
       }
     }
