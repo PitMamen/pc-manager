@@ -40,7 +40,7 @@
       </div> -->
 
       <!-- 基本信息 -->
-      <div class="div-box">
+      <div class="div-box" id="my-dot-id">
         <div class="box-title">档案信息</div>
         <div class="box-divider" />
         <div class="div-line">

@@ -5756,6 +5756,41 @@ export function downReferral(data) {
   })
 }
 
+// tbReferralTradeComment/addComment 添加评论
+export function addComment(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/addComment',
+    method: 'post',
+    data: data,
+  })
+}
+
+// tbReferralTradeComment/deleteComment 删除评论
+export function deleteComment(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/deleteComment/' + data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+// tbReferralTradeComment/getCommentList 获取评论列表
+export function getCommentList(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/getCommentList',
+    method: 'post',
+    data: data,
+  })
+}
+// tbReferralTradeComment/modifyComment 修改评论
+export function modifyComment(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/modifyComment',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 转诊组织列表
 export function getreferralOrgList(data) {
   return axios({

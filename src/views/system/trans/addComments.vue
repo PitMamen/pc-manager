@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { getFileList } from "@/api/modular/system/posManage";
+import { getCommentList } from "@/api/modular/system/posManage";
 import fileZhuyuan from "./fileZhuyuan";
 
 import { TRUE_USER } from "@/store/mutation-types";
@@ -32,13 +32,14 @@ import { formatDateFull, formatDate } from "@/utils/util";
 import Vue from "vue";
 export default {
   components: { fileZhuyuan },
-  props: {
-    record: Object,
-  },
+  // props: {
+  //   record: Object,
+  // },
   data() {
     return {
       activeKey: "1",
       confirmLoading: false,
+      record: {},
       //canEdit 表示自己可以修改，切换相关UI  ；isNewComment 在外层表示是新增的评论，里层表示回复
       commentsData: [
         {
@@ -87,36 +88,18 @@ export default {
   },
   methods: {
     //私有云档案 列表
-    getFileListOut() {
+    getCommentListOut() {
       let param = {
-        dataOwnerId: this.record.id,
-        // dataOwnerId: this.record.userId,
-        dataUserId: this.user.userId,
-        recordType: this.recordType,
-        pastMonths: "60",
+        pageNo: 1,
+        pageSize: 1000000,
+        // tradeId: this.record.tradeId,
+        tradeId: "20231108095148621",
       };
       this.confirmLoading = true;
-      getFileList(param)
+      // getCommentList({tradeId:this.record.tradeId})
+      getCommentList(param)
         .then((res) => {
           if (res.code === 0) {
-            this.historyList = res.data;
-            if (this.historyList.length > 0) {
-              for (let index = 0; index < this.historyList.length; index++) {
-                this.$set(this.historyList[index], "isChecked", false);
-                var time = "未知时间";
-                if (
-                  this.historyList[index].happenedTime &&
-                  this.historyList[index].happenedTime.length > 10
-                ) {
-                  time = this.historyList[index].happenedTime.substring(0, 10);
-                }
-                this.$set(this.historyList[index], "time", time);
-              }
-              this.$set(this.historyList[0], "isChecked", true);
-              this.getDetailOut(0);
-            } else {
-              this.confirmLoading = false;
-            }
           } else {
             this.$message.error(res.message);
             this.confirmLoading = false;
@@ -125,6 +108,11 @@ export default {
         .finally(() => {
           this.confirmLoading = false;
         });
+    },
+
+    refreshData(record) {
+      this.record = record;
+      this.getCommentListOut();
     },
 
     goCancel() {
@@ -174,7 +162,7 @@ export default {
       flex-direction: row;
       align-items: center;
 
-      .child-head{
+      .child-head {
         color: white;
         background-color: #1890ff;
         padding: 6px;
