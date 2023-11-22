@@ -25,7 +25,7 @@
       getAccessToken() {
         getAccessToken().then(res => {
           if (res.code == 0){
-            this.accessToken = res.data;
+            this.accessToken = res.data.access_token;
           }else {
             this.$message.error(res.message);
           }
