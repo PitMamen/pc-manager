@@ -91,7 +91,7 @@
       </div>
 
         <!-- 检验报告时间轴 -->
-      <div class="div-shu" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jianyan'">
+      <div class="div-shu" style=" height: 450px" v-if="insideShowType == 'jianyan'">
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
             v-for="(item, index) in jianyanDataShow"
@@ -111,7 +111,7 @@
 
       <!-- 检查报告时间轴 -->
 
-      <div class="div-shu" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jiancha'">
+      <div class="div-shu" style=" height: 450px" v-if="insideShowType == 'jiancha'">
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
             v-for="(item, index) in jianchaDataShow"
