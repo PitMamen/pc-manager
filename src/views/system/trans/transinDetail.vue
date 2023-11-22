@@ -3,17 +3,25 @@
     <div>
       <a-tabs @change="callback" v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
-          <trans-apply ref="transApply" />
+          <!-- <trans-apply ref="transApply" /> -->
         </a-tab-pane>
 
-        <a-tab-pane  key="2" tab="上传病例" force-render>
-          <upload-files ref="uploadFiles" />
+        <a-tab-pane key="2" tab="上传病例" force-render>
+          <!-- <upload-files ref="uploadFiles" /> -->
         </a-tab-pane>
 
         <a-tab-pane key="3" :record="record" tab="健康档案" force-render>
-          <file-danan :record="record" ref="fileDanan" />
+          <!-- <file-danan :record="record" ref="fileDanan" /> -->
+        </a-tab-pane>
+        <a-tab-pane key="4" :record="record" tab="添加评论" force-render>
+          <!-- <file-danan :record="record" ref="fileDanan" /> -->
         </a-tab-pane>
       </a-tabs>
+
+      <trans-apply v-show="keyindex=='1'" ref="transApply" />
+      <upload-files v-show="keyindex=='2'" ref="uploadFiles" />
+      <file-danan v-show="keyindex=='3'" :record="record" ref="fileDanan" />
+      <add-comments v-show="keyindex=='4'" ref="addComments" />
     </div>
     <span class="btn-back" @click="cancel()">返回列表</span>
   </div>
@@ -23,12 +31,14 @@
 import transApply from "./transApply";
 import uploadFiles from "./uploadFiles";
 import fileDanan from "./fileDanan";
+import addComments from "./addComments";
 
 export default {
   components: {
     transApply,
     uploadFiles,
     fileDanan,
+    addComments,
   },
 
   data() {
@@ -62,9 +72,13 @@ export default {
   methods: {
     callback(keyIndex) {
       if (keyIndex == "2") {
-        this.$refs.uploadFiles.refershData(keyIndex,this.record,true);
+        this.$refs.uploadFiles.refershData(keyIndex, this.record, true);
       } else if (keyIndex == "3") {
         this.$refs.fileDanan.refreshData(this.record);
+      } else if (keyIndex == "4") {
+        this.$refs.addComments.refreshData({ tradeId: this.$route.query.id });
+      } else if (keyIndex == "1") {
+        // this.$refs.fileDanan.refreshData(this.record);
       }
     },
     handleOk() {},
