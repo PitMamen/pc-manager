@@ -34,6 +34,57 @@
             </div>
 
             <div class="comment-content">{{ item.text }}</div>
+            <div
+              v-if="item.listChild.length > 0"
+              style="height: 1px; background-color: #e6e6e6"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="div-comment-child"
+          v-for="(child, indexChild) in item.listChild"
+          :key="indexChild"
+        >
+          <div class="comment-child-bottom">
+            <div class="data-head">{{ child.userName }}</div>
+            <div class="data-child-right">
+              <div class="child-right-top">
+                <div>{{ child.userName }}</div>
+                <div style="margin-left: 10px">【{{ child.userHospitalName }}】</div>
+                <div style="margin-left: 10px">{{ child.createTime }}</div>
+
+                <div style="flex: 1"></div>
+                <div class="btn-div">
+                  <div class="btn-no">
+                    <img
+                      src="@/assets/icons/huifu.png"
+                      style="width: 12px; height: 12px"
+                    />
+                    <div style="color: #409eff; margin-left: 5px">回复</div>
+                  </div>
+                  <div class="btn-no">
+                    <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
+                    <div style="color: #409eff; margin-left: 5px">编辑</div>
+                  </div>
+                  <div class="btn-no">
+                    <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
+                    <div style="color: #409eff; margin-left: 5px">删除</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                :class="
+                  indexChild == item.listChild.length - 1
+                    ? 'comment-content-child-last'
+                    : 'comment-content-child'
+                "
+              >
+                {{ child.text }}
+              </div>
+              <!-- <div style="height: 1px; background-color: #e6e6e6"></div> -->
+            </div>
           </div>
         </div>
       </div>
@@ -222,7 +273,6 @@ export default {
 
   .div-comment-item {
     margin-top: 20px;
-    padding-bottom: 10px;
     display: flex;
     overflow: hidden;
     flex-direction: column;
@@ -276,15 +326,77 @@ export default {
         .comment-content {
           margin-left: 10px;
           margin-top: 20px;
+          margin-bottom: 10px;
         }
       }
     }
 
-    // .comment-item-top {
-    //   display: flex;
-    //   flex-direction: row;
-    //   align-items: center;
-    // }
+    .div-comment-child {
+      // margin-top: 20px;
+      display: flex;
+      overflow: hidden;
+      flex-direction: column;
+      // box-shadow: 0px 0px 2px 2px #e6e6e6 inset;
+      // border-radius: 4px;
+
+      .comment-child-bottom {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding-right: 30px;
+        padding-left: 10px;
+        margin-top: 10px;
+
+        .data-head {
+          color: white;
+          background-color: #1890ff;
+          padding: 6px;
+          border-radius: 15px;
+        }
+
+        .data-child-right {
+          display: flex;
+          margin-left: 10px;
+          flex: 1;
+          flex-direction: column;
+
+          .child-right-top {
+            display: flex;
+            margin-left: 10px;
+            flex-direction: row;
+            align-items: center;
+
+            .btn-div {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+
+              .btn-no {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                &:hover {
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+
+          .comment-content-child {
+            border-bottom: 1px solid #e6e6e6;
+            margin-left: 10px;
+            margin-top: 20px;
+            padding-bottom: 10px;
+          }
+          .comment-content-child-last {
+            margin-left: 10px;
+            margin-top: 20px;
+            padding-bottom: 10px;
+          }
+        }
+      }
+    }
   }
 }
 </style>
