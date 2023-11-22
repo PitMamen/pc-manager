@@ -239,7 +239,6 @@ const vueConfig = {
           '^/api/medical-api': ''   
         }
       },
-
       '/api/manager-api': { 
         target: 'http://192.168.1.121/manager-api',
         ws: false,
@@ -249,7 +248,6 @@ const vueConfig = {
           '^/api/manager-api': ''   
         }
       },
-
       '/api/medical-api': { 
         target: 'http://192.168.1.121/medical-api',
         ws: false,
@@ -258,8 +256,7 @@ const vueConfig = {
         pathRewrite: {
           '^/api/medical-api': ''   
         }
-      },
-   
+      }
     }
   },
 

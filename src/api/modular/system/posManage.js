@@ -2053,6 +2053,18 @@ export function queryHistoryIMRecordPage(data) {
 }
 
 /**
+ * 
+ * getAccessToken
+ */
+ export function getAccessToken(data) {
+  return axios({
+    url: '/im-api/tencentIM/queryHistoryIMRecordPage',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  * 随访类型列表：1:关怀型随访2:管理型随访3:科研型随访
  */
 export function followTypes(data) {
