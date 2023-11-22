@@ -3,17 +3,24 @@
     <div>
       <a-tabs @change="callback" v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
-          <transout-apply ref="transoutApply" />
+          <!-- <transout-apply ref="transoutApply" /> -->
         </a-tab-pane>
 
-        <a-tab-pane  key="2" tab="上传病例" force-render>
-          <upload-files ref="uploadFiles" />
+        <a-tab-pane key="2" tab="上传病例" force-render>
+          <!-- <upload-files ref="uploadFiles" /> -->
         </a-tab-pane>
 
         <a-tab-pane key="3" :record="record" tab="健康档案" force-render>
-          <file-danan :record="record" ref="fileDanan" />
+          <!-- <file-danan :record="record" ref="fileDanan" /> -->
+        </a-tab-pane>
+        <a-tab-pane key="4" :record="record" tab="添加评论" force-render>
+          <!-- <file-danan :record="record" ref="fileDanan" /> -->
         </a-tab-pane>
       </a-tabs>
+      <transout-apply v-show="keyindex=='1'" ref="transoutApply" />
+      <upload-files v-show="keyindex=='2'" ref="uploadFiles" />
+      <file-danan v-show="keyindex=='3'" :record="record" ref="fileDanan" />
+      <add-comments v-show="keyindex=='4'" ref="addComments" />
     </div>
     <span class="btn-back" @click="cancel()">返回列表</span>
   </div>
@@ -23,12 +30,14 @@
 import transoutApply from "./transoutApply";
 import uploadFiles from "./uploadFiles";
 import fileDanan from "./fileDanan";
+import addComments from "./addComments";
 
 export default {
   components: {
     transoutApply,
     uploadFiles,
     fileDanan,
+    addComments,
   },
 
   data() {
@@ -64,9 +73,11 @@ export default {
     callback(keyIndex) {
       if (keyIndex == "2") {
         // this.$refs.uploadFiles.refershData(keyIndex);
-        this.$refs.uploadFiles.refershData(keyIndex,this.record);
+        this.$refs.uploadFiles.refershData(keyIndex, this.record);
       } else if (keyIndex == "3") {
         this.$refs.fileDanan.refreshData(this.record);
+      } else if (keyIndex == "4") {
+        this.$refs.addComments.refreshData({ tradeId: this.$route.query.id });
       }
     },
     handleOk() {},
