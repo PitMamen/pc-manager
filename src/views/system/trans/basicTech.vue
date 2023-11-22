@@ -90,6 +90,7 @@
         </div>
       </div>
 
+        <!-- 检验报告时间轴 -->
       <div class="div-shu" style="overflow-y: auto; height: 450px" v-if="insideShowType == 'jianyan'">
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
@@ -99,7 +100,7 @@
             @click="onItemClick(item, index)"
           >
             <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
-              {{ item.bgrq }}
+              {{ item.jyrq }}
               <div class="div-name" :title="item.name">
                 {{ item.bgdlb }}
               </div>

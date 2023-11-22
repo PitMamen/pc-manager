@@ -73,7 +73,7 @@
     <div class="bottom-line"></div>
 
     <div style="display: flex; flex-wrap: wrap; margin-top: 5px">
-      <a-button style="margin-left: auto" type="primary" @click="apply()">{{
+      <a-button v-if="AuthDetailData.canOperationAuth==1" style="margin-left: auto" type="primary" @click="apply()">{{
         status == 1 ? '取消授权' : '重新授权'
       }}</a-button>
     </div>
