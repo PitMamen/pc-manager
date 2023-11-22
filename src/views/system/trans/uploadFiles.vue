@@ -122,7 +122,14 @@
 </template>
 
 <script>
-import { synPatientCase, getSynRecord, getTradeImg, uploadTradeImg ,upReferralDetail,getAuthStatus} from '@/api/modular/system/posManage'
+import {
+  synPatientCase,
+  getSynRecord,
+  getTradeImg,
+  uploadTradeImg,
+  upReferralDetail,
+  getAuthStatus,
+} from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal } from '@/utils/util'
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
@@ -156,18 +163,19 @@ export default {
       previewVisibleBanner: false,
       previewVisibleDetail: false,
       previewVisibleOther: false,
+      showResyncButton: false,
 
       tradeId: '',
 
-      status:0,
-      caseId:'',
+      status: 0,
+      caseId: '',
       tableData: [],
       photoData: [],
       tempData: {
         imgList: [],
         tradeId: '',
       },
-      record:{},
+      record: {},
 
       columns: [
         {
@@ -238,7 +246,7 @@ export default {
 
   activated() {
     if (this.$route.query.tradeId) {
-      console.log("111111111111111:",this.$route.query.tradeId)
+      console.log('111111111111111:', this.$route.query.tradeId)
       this.resetData()
       this.tradeId = this.$route.query.tradeId
       this.tempData.tradeId = this.tradeId
@@ -260,10 +268,10 @@ export default {
     },
 
     // 每次点击当前tab时 会触发
-    refershData(activeKey,record,needAuth) {
+    refershData(activeKey, record, needAuth) {
       this.tradeId = record.tradeId
       this.needAuth = needAuth
-      console.log("222222222222:",this.tradeId)
+      console.log('222222222222:', this.tradeId)
       this.getSynRecordOut()
       this.getTradeImgOut()
       this.getRecordDetail()
@@ -277,9 +285,14 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             this.tableData = res.data
-            if (this.tableData&&this.tableData.length>0) {
-              this.caseId =this.tableData[0].id
-              this.status =this.tableData[0].authorizationStatus
+            if (this.tableData && this.tableData.length > 0) {
+              this.showResyncButton = true      //如果有记录 说明同步过病历 反之没有  有记录 则显示弹框里面的重新同步按钮 反之不显示
+            } else {
+              this.showResyncButton = false
+            }
+            if (this.tableData && this.tableData.length > 0) {
+              this.caseId = this.tableData[0].id
+              this.status = this.tableData[0].authorizationStatus
               this.tableData.forEach((item) => {
                 // this.$set(item, 'zt', '已授权')
                 if (item.createTime && item.createTime.length > 10) {
@@ -294,15 +307,15 @@ export default {
         })
     },
 
-        // 获取详情信息
+    // 获取详情信息
     getRecordDetail() {
       this.confirmLoading = true
       // getSynRecord({ tradeId: '20231108095148621' }).then((res) => {
-        upReferralDetail(this.tradeId )
+      upReferralDetail(this.tradeId)
         .then((res) => {
           if (res.code == 0) {
-              this.record = res.data
-              this.$set(this.record, "tradeId", res.data.tradeIdStr);
+            this.record = res.data
+            this.$set(this.record, 'tradeId', res.data.tradeIdStr)
           }
         })
         .finally((erro) => {
@@ -337,27 +350,26 @@ export default {
     // 病历详情
     goRecordDetail() {
       if (this.needAuth) {
-        if (this.tableData.length==0) {
-        this.$message.error("无住院记录，请点击同步病例");
-        return;
+        if (this.tableData.length == 0) {
+          this.$message.error('无住院记录，请点击同步病例')
+          return
         }
 
         getAuthStatus({ caseId: this.tableData[0].id })
-        .then((res) => {
-          if (res.code == 0) {
-            if (res.data.authStatus==1) {
-              this.$refs.fileModalshow.showFile(this.record)
-            }else{
-              this.$message.error("您无权限查看档案详情！");
+          .then((res) => {
+            if (res.code == 0) {
+              if (res.data.authStatus == 1) {
+                this.$refs.fileModalshow.showFile(this.record)
+              } else {
+                this.$message.error('您无权限查看档案详情！')
+              }
+            } else {
+              this.$message.error(res.message)
             }
-       
-          } else {
-            this.$message.error(res.message)
-          }
-        })
-        .finally((erro) => {
-          this.confirmLoading = false
-        })
+          })
+          .finally((erro) => {
+            this.confirmLoading = false
+          })
       } else {
         this.$refs.fileModalshow.showFile(this.record)
       }
@@ -365,7 +377,7 @@ export default {
 
     // 授权管理
     goAuthorizeManage() {
-      this.$refs.empowerManage.manage(this.caseId,this.status,this.tradeId)
+      this.$refs.empowerManage.manage(this.caseId, this.status, this.tradeId,this.showResyncButton)
     },
 
     // 获取图片
@@ -540,7 +552,7 @@ export default {
     },
 
     handleOk() {
-      console.log("99999999999999")
+      console.log('99999999999999')
       this.getSynRecordOut()
     },
   },
