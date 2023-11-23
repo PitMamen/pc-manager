@@ -11,7 +11,7 @@
     :maskClosable="false"
   >
     <template slot="footer">
-      <a-button v-if="showResyncButton" type="primary" @click="handleComf">重新同步</a-button>
+      <a-button v-if="AuthDetailData.canOperationAuth == 1" type="primary" @click="handleComf">重新同步</a-button>
       <a-button @click="handleCancel">取消</a-button>
     </template>
 
