@@ -348,6 +348,9 @@ export default {
             });
           } else {
             this.jianChaData = undefined
+            this.$nextTick(() => {
+              this.$refs.basicTech2.refreshData(undefined,'jiancha');
+            });
             // this.$message.error(res.message)
           }
         })
@@ -368,6 +371,9 @@ export default {
             });
           } else {
             this.jianyanData = undefined
+            this.$nextTick(() => {
+              this.$refs.basicTech1.refreshData(undefined,'jianyan');
+            });
             // this.$message.error(res.message)
           }
         })
