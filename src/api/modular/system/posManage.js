@@ -2058,7 +2058,7 @@ export function queryHistoryIMRecordPage(data) {
  */
  export function getAccessToken(data) {
   return axios({
-    url: '/im-api/tencentIM/queryHistoryIMRecordPage',
+    url: '/account-api/exchangeAccessToken',
     method: 'get',
     params: data,
   })
@@ -5670,6 +5670,15 @@ export function upReferralDetail(data) {
     url: '/referral-api/referralTrade/upReferralDetail/' + data,
     method: 'get',
     // params: data,
+  })
+}
+
+//  revokeApply
+export function revokeApply(data) {
+  return axios({
+    url: '/referral-api/referralTrade/revokeApply/' + data,
+    method: 'get',
+    params: data,
   })
 }
 
