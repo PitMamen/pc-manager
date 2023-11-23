@@ -40,7 +40,7 @@
                   <img src="@/assets/icons/huifu.png" style="width: 12px; height: 12px" />
                   <div style="color: #409eff; margin-left: 5px">回复</div>
                 </div>
-                <div class="btn-no" v-if="item.self == 'yes'">
+                <div class="btn-no" v-if="item.self == 'yes'" @click="goEdit(item)">
                   <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
                   <div style="color: #409eff; margin-left: 5px">编辑</div>
                 </div>
@@ -58,7 +58,32 @@
               </div>
             </div>
 
-            <div class="comment-content">{{ item.text }}</div>
+            <div v-show="!item.isEdit" class="comment-content">{{ item.text }}</div>
+            <!-- <div class="add-coment-right"></div> -->
+            <div v-show="item.isEdit" class="edit-area">
+              <!-- 动态设置ref 动态设置ref-->
+              <!-- :ref="`textarea${item.id}`" -->
+              <a-textarea
+                :rows="2"
+                :ref="'textarea' + item.id"
+                v-model="item.text"
+                :maxLength="300"
+                placeholder="请输入评论"
+              ></a-textarea>
+
+              <div class="div-comment-handle">
+                <div style="flex: 1"></div>
+                <a-button
+                  type="primary"
+                  :loading="item.submitLoading"
+                  @click="editCommentOut(item)"
+                  style="margin-right: 20px"
+                >
+                  保存
+                </a-button>
+                <a-button @click="editCancel(item)">取消</a-button>
+              </div>
+            </div>
             <div
               v-if="item.listChild.length > 0"
               style="height: 1px; background-color: #e6e6e6"
@@ -115,6 +140,31 @@
                   {{ child.text }}
                 </div>
               </div>
+
+              <div v-show="child.isEdit" class="edit-area-child">
+                <!-- 动态设置ref 动态设置ref-->
+                <!-- :ref="`textarea${item.id}`" -->
+                <a-textarea
+                  :rows="2"
+                  :ref="'textarea' + child.id"
+                  v-model="child.text"
+                  :maxLength="300"
+                  placeholder="请输入评论"
+                ></a-textarea>
+
+                <div class="div-comment-handle">
+                  <div style="flex: 1"></div>
+                  <a-button
+                    type="primary"
+                    :loading="child.submitLoading"
+                    @click="editCommentOut(child)"
+                    style="margin-right: 20px"
+                  >
+                    保存
+                  </a-button>
+                  <a-button @click="editCancel(child)">取消</a-button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -128,7 +178,7 @@
             <a-textarea
               :rows="2"
               v-model="newcommet"
-              :maxlength="300"
+              :maxLength="300"
               placeholder="请输入评论"
             ></a-textarea>
 
@@ -272,6 +322,15 @@ export default {
           if (res.code === 0) {
             if (res.data && res.data.records) {
               this.commentsData = res.data.records;
+
+              for (let index = 0; index < this.commentsData.length; index++) {
+                this.$set(this.commentsData[index], "isEdit", false);
+                this.$set(this.commentsData[index], "submitLoading", false);
+                this.commentsData[index].listChild.forEach((element) => {
+                  this.$set(element, "isEdit", false);
+                  this.$set(element, "submitLoading", false);
+                });
+              }
             } else {
               this.commentsData = [];
             }
@@ -301,6 +360,16 @@ export default {
       // );
     },
 
+    goEdit(item) {
+      item.isEdit = true;
+      this.$set(item, "oldText", item.text);
+      // <!-- 动态设置ref 动态设置ref-->
+      debugger;
+      this.$refs[`textarea${item.id}`][0].focus();
+      console.log("goEdit item", item);
+      console.log("goEdit this.$refs", this.$refs[`textarea${item.id}`][0]);
+    },
+
     /**
      * {
 	"pid": 0,  第一级就是0，如果是第二级，就是上一条记录的id
@@ -328,6 +397,38 @@ export default {
         .finally(() => {
           this.submitLoading = false;
         });
+    },
+
+    editCommentOut(item) {
+      if (!item.text) {
+        this.$message.error("请输入评论内容");
+        return;
+      }
+      item.submitLoading = true;
+      // addComment({ pid: pid, text: text, tradeId: "20231108095148621" }).then(
+      modifyComment({ id: item.id, text: item.text })
+        .then((res) => {
+          if (res.code == 0) {
+            // this.commentsData = res.data.records
+            // this.newcommet = "";
+            // this.getCommentListOut();
+
+            this.$message.success("修改成功");
+          } else {
+            item.text = item.oldText;
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          item.submitLoading = false;
+          item.isEdit = false;
+        });
+    },
+
+    editCancel(item) {
+      console.log("editCancel", item);
+      item.text = item.oldText;
+      item.isEdit = false;
     },
 
     /**
@@ -447,6 +548,20 @@ export default {
           margin-top: 15px;
           margin-bottom: 10px;
         }
+
+        .edit-area {
+          display: flex;
+          margin-left: 10px;
+          flex: 1;
+          flex-direction: column;
+
+          .div-comment-handle {
+            padding: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+          }
+        }
       }
     }
 
@@ -519,18 +634,32 @@ export default {
             }
           }
 
+          .edit-area-child {
+            display: flex;
+            margin-left: 10px;
+            flex: 1;
+            flex-direction: column;
+
+            .div-comment-handle {
+              padding: 8px;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            }
+          }
+
           .comment-content-child {
             border-bottom: 1px solid #e6e6e6;
             margin-left: 10px;
             color: #1a1a1a;
-            flex:1;
+            flex: 1;
             margin-top: 15px;
             padding-bottom: 10px;
           }
           .comment-content-child-last {
             margin-left: 10px;
             color: #1a1a1a;
-            flex:1;
+            flex: 1;
             margin-top: 15px;
             padding-bottom: 10px;
           }
