@@ -3,6 +3,9 @@
     <div class="container" v-if="accessToken">
       <iframe :src="url+ '?accessToken=' +accessToken" name="robotChat" class="iframe"></iframe>
     </div>
+    <div class="container" style="padding-top: 400px;" v-else>
+      <a-spin :spinning="true" style="width: 100%; height: 100%;"></a-spin>
+    </div>
   </div>
 </template>
 
@@ -14,7 +17,7 @@
   export default {
     data() {
       return {
-        url: 'http://localhost/pages/ai/index',
+        url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
         accessToken: ''
       }
     },
