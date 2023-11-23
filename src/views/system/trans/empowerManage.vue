@@ -11,7 +11,7 @@
     :maskClosable="false"
   >
     <template slot="footer">
-      <a-button type="primary" @click="handleComf">重新同步</a-button>
+      <a-button v-if="showResyncButton" type="primary" @click="handleComf">重新同步</a-button>
       <a-button @click="handleCancel">取消</a-button>
     </template>
 
@@ -73,7 +73,7 @@
     <div class="bottom-line"></div>
 
     <div style="display: flex; flex-wrap: wrap; margin-top: 5px">
-      <a-button style="margin-left: auto" type="primary" @click="apply()">{{
+      <a-button v-if="AuthDetailData.canOperationAuth == 1" style="margin-left: auto" type="primary" @click="apply()">{{
         status == 1 ? '取消授权' : '重新授权'
       }}</a-button>
     </div>
@@ -117,6 +117,7 @@ export default {
       visible: false,
       bingliData: [],
       AuthDetailData: {},
+      showResyncButton: false,
 
       status: 1,
       caseId: '',
@@ -156,7 +157,7 @@ export default {
   methods: {
     moment,
     //入口
-    manage(caseId, status, tradeId) {
+    manage(caseId, status, tradeId, showResyncButton) {
       this.visible = true
       this.bingliData = []
       this.AuthDetailData = {}
@@ -164,6 +165,7 @@ export default {
       this.caseId = caseId
       this.status = status
       this.tradeId = tradeId
+      this.showResyncButton = showResyncButton
 
       this.viewAuthDetailOut(caseId)
     },
@@ -212,7 +214,9 @@ export default {
       synPatientCase({ tradeId: this.tradeId })
         .then((res) => {
           if (res.code == 0) {
-            this.confirmLoading = false
+            // 重新同步后要更新同步记录
+            this.viewAuthDetailOut(this.caseId)
+            this.$emit("ok",'')
             this.$message.success('操作成功!')
           } else {
             this.$message.error(res.message)
@@ -230,6 +234,7 @@ export default {
 
     //取消
     handleCancel() {
+      this.$emit("ok",'')
       this.visible = false
     },
   },

@@ -16,9 +16,8 @@
         <a-tab-pane key="3" tab="健康档案" force-render>
           <!-- <file-danan :record="record" ref="fileDanan" /> -->
         </a-tab-pane>
-        <a-tab-pane key="4" tab="添加评论" force-render>
-          <!-- <add-comments ref="addComments" /> -->
-        </a-tab-pane>
+        <!-- <a-tab-pane key="4" tab="添加评论" force-render>
+        </a-tab-pane> -->
       </a-tabs>
 
       <transup-insidemodify v-show="keyindex=='1'" ref="transupInsidemodify" />

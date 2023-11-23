@@ -272,7 +272,7 @@ export default {
           }
         })
         .finally(() => {
-          this.confirmLoading = false
+          // this.confirmLoading = false     //这里不要置为false 数据多加载慢 导致点击其他tab时渲染不出界面 等首页数据加载完了   再置为false
         })
     },
 
@@ -336,20 +336,9 @@ export default {
           if (res.code === 0) {
             this.jianChaData = decodeRecord(res.data.cipher, res.data.data)
             console.log('解密检查：', this.jianChaData)
-
-            // if (this.fileMainData.diagnosisInfo.length > 0) {
-            //   this.fileMainData.diagnosisInfo.forEach((item) => {
-            //     this.$set(item, 'zdsj', formatDateFull(item.zdsj))
-            //   })
-            // }
-            // if (this.fileMainData.operationInfo.length > 0) {
-            //   this.fileMainData.operationInfo.forEach((item) => {
-            //     this.$set(item, 'sskssj', formatDateFull(item.sskssj).substring(0, 10))
-            //   })
-            // }
-            // this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
-            // console.log('getDetailData', JSON.stringify(this.fileMainData))
-            // this.$refs.basicTech.refreshData(this.jianChaData,'jiancha');
+            this.$nextTick(() => {
+              this.$refs.basicTech.refreshData(this.jianChaData,'jiancha');
+            });
           } else {
             this.jianChaData = undefined
             this.$message.error(res.message)
@@ -367,19 +356,9 @@ export default {
           if (res.code === 0) {
             this.jianyanData = decodeRecord(res.data.cipher, res.data.data)
             console.log('解密检验：', this.jianyanData)
-            // if (this.fileMainData.diagnosisInfo.length > 0) {
-            //   this.fileMainData.diagnosisInfo.forEach((item) => {
-            //     this.$set(item, 'zdsj', formatDateFull(item.zdsj))
-            //   })
-            // }
-            // if (this.fileMainData.operationInfo.length > 0) {
-            //   this.fileMainData.operationInfo.forEach((item) => {
-            //     this.$set(item, 'sskssj', formatDateFull(item.sskssj).substring(0, 10))
-            //   })
-            // }
-            // this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
-            // console.log('getDetailData', JSON.stringify(this.fileMainData))
-            // this.$refs.basicTech.refreshData(this.jianyanData,'jianyan');
+            this.$nextTick(() => {
+              this.$refs.basicTech.refreshData(this.jianyanData,'jianyan');
+            });
           } else {
             this.jianyanData = undefined
             this.$message.error(res.message)
@@ -392,6 +371,7 @@ export default {
 
     //档案首页数据
     getSummaryData(index) {
+      this.confirmLoading = true
       getCaseSummary({ caseId: this.historyList[index].id })
         // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {

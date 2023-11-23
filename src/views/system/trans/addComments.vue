@@ -6,14 +6,193 @@
         <span class="span-title">历史评论</span>
       </div>
 
-      <div class="div-comment-item">
+      <!-- v-if="commentsData.length > 0" -->
+      <div
+        v-if="commentsData.length > 0"
+        class="div-comment-item"
+        v-for="(item, index) in commentsData"
+        :key="index"
+      >
         <div style="height: 20px; background-color: #409eff"></div>
-        <div class="child-item">
-          <div class="child-head">王二</div>
-          <div class="child-item-right">
+        <div class="comment-item-bottom">
+          <div class="data-head">{{ item.userName }}</div>
+          <div class="data-item-right">
             <div class="item-right-top">
-              <div>王二</div>
-              <div>【中南大学湘雅】</div>
+              <div style="font-size: 14px; font-weight: bold; color: #1a1a1a">
+                {{ item.userName }}
+              </div>
+              <div
+                style="
+                  margin-left: 10px;
+                  font-size: 14px;
+                  font-weight: bold;
+                  color: #1a1a1a;
+                "
+              >
+                【{{ item.userHospitalName }}】
+              </div>
+              <div style="margin-left: 10px; color: #999">{{ item.createTime }}</div>
+
+              <div style="flex: 1"></div>
+              <div class="btn-div">
+                <!-- <div class="btn-no" v-if="item.self != 'yes'"> -->
+                <div class="btn-no" v-if="item.self != 'yes'">
+                  <img src="@/assets/icons/huifu.png" style="width: 12px; height: 12px" />
+                  <div style="color: #409eff; margin-left: 5px">回复</div>
+                </div>
+                <div class="btn-no" v-if="item.self == 'yes'" @click="goEdit(item)">
+                  <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
+                  <div style="color: #409eff; margin-left: 5px">编辑</div>
+                </div>
+
+                <a-popconfirm
+                  placement="topRight"
+                  title="确认删除吗？"
+                  @confirm="() => deleteCommentOut(item.id)"
+                >
+                  <div class="btn-no" v-if="item.self == 'yes'">
+                    <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
+                    <div style="color: #409eff; margin-left: 5px">删除</div>
+                  </div>
+                </a-popconfirm>
+              </div>
+            </div>
+
+            <div v-show="!item.isEdit" class="comment-content">{{ item.text }}</div>
+            <!-- <div class="add-coment-right"></div> -->
+            <div v-show="item.isEdit" class="edit-area">
+              <!-- 动态设置ref 动态设置ref-->
+              <!-- :ref="`textarea${item.id}`" -->
+              <a-textarea
+                :rows="2"
+                :ref="'textarea' + item.id"
+                v-model="item.text"
+                :maxLength="300"
+                placeholder="请输入评论"
+              ></a-textarea>
+
+              <div class="div-comment-handle">
+                <div style="flex: 1"></div>
+                <a-button
+                  type="primary"
+                  :loading="item.submitLoading"
+                  @click="editCommentOut(item)"
+                  style="margin-right: 20px"
+                >
+                  保存
+                </a-button>
+                <a-button @click="editCancel(item)">取消</a-button>
+              </div>
+            </div>
+            <div
+              v-if="item.listChild.length > 0"
+              style="height: 1px; background-color: #e6e6e6"
+            ></div>
+          </div>
+        </div>
+
+        <div
+          class="div-comment-child"
+          v-for="(child, indexChild) in item.listChild"
+          :key="indexChild"
+        >
+          <div class="comment-child-bottom">
+            <div class="data-head-child">{{ child.userName }}</div>
+            <div class="data-child-right">
+              <div class="child-right-top">
+                <div style="font-size: 14px; font-weight: bold; color: #1a1a1a">
+                  {{ child.userName }}
+                </div>
+                <div style="margin-left: 10px; font-weight: bold; color: #1a1a1a">
+                  【{{ child.userHospitalName }}】
+                </div>
+                <div style="margin-left: 10px; color: #999">{{ child.createTime }}</div>
+
+                <div style="flex: 1"></div>
+                <div class="btn-div">
+                  <div class="btn-no" v-if="item.self != 'yes'">
+                    <img
+                      src="@/assets/icons/huifu.png"
+                      style="width: 12px; height: 12px"
+                    />
+                    <div style="color: #409eff; margin-left: 5px">回复</div>
+                  </div>
+                  <div class="btn-no" v-if="item.self == 'yes'">
+                    <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
+                    <div style="color: #409eff; margin-left: 5px">编辑</div>
+                  </div>
+                  <div class="btn-no" v-if="item.self == 'yes'">
+                    <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
+                    <div style="color: #409eff; margin-left: 5px">删除</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="content-show-area">
+                <div class="at-area" v-show="child.atName">@{{ child.atName }}</div>
+                <div
+                  :class="
+                    indexChild == item.listChild.length - 1
+                      ? 'comment-content-child-last'
+                      : 'comment-content-child'
+                  "
+                >
+                  {{ child.text }}
+                </div>
+              </div>
+
+              <div v-show="child.isEdit" class="edit-area-child">
+                <!-- 动态设置ref 动态设置ref-->
+                <!-- :ref="`textarea${item.id}`" -->
+                <a-textarea
+                  :rows="2"
+                  :ref="'textarea' + child.id"
+                  v-model="child.text"
+                  :maxLength="300"
+                  placeholder="请输入评论"
+                ></a-textarea>
+
+                <div class="div-comment-handle">
+                  <div style="flex: 1"></div>
+                  <a-button
+                    type="primary"
+                    :loading="child.submitLoading"
+                    @click="editCommentOut(child)"
+                    style="margin-right: 20px"
+                  >
+                    保存
+                  </a-button>
+                  <a-button @click="editCancel(child)">取消</a-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="div-add-coment">
+        <div style="height: 20px; background-color: #409eff"></div>
+        <div class="add-coment-bottom">
+          <div class="add-coment-head">{{ user.userName }}</div>
+          <div class="add-coment-right">
+            <a-textarea
+              :rows="2"
+              v-model="newcommet"
+              :maxLength="300"
+              placeholder="请输入评论"
+            ></a-textarea>
+
+            <div class="div-comment-handle">
+              <div style="flex: 1"></div>
+              <a-button
+                type="primary"
+                :loading="submitLoading"
+                @click="addCommentOut(0, newcommet)"
+                style="margin-right: 20px"
+              >
+                保存
+              </a-button>
+              <a-button @click="() => (newcommet = '')">取消</a-button>
             </div>
           </div>
         </div>
@@ -23,7 +202,12 @@
 </template>
 
 <script>
-import { getCommentList } from "@/api/modular/system/posManage";
+import {
+  getCommentList,
+  addComment,
+  deleteComment,
+  modifyComment,
+} from "@/api/modular/system/posManage";
 import fileZhuyuan from "./fileZhuyuan";
 
 import { TRUE_USER } from "@/store/mutation-types";
@@ -38,18 +222,69 @@ export default {
   data() {
     return {
       activeKey: "1",
+      newcommet: "",
       confirmLoading: false,
+      submitLoading: false,
       record: {},
       //canEdit 表示自己可以修改，切换相关UI  ；isNewComment 在外层表示是新增的评论，里层表示回复
       commentsData: [
         {
-          comments: [
-            { content: "你不能这样搞的，没床位了", canEdit: false, isNewComment: false },
-            { content: "新增一个嘛", canEdit: false, isNewComment: false },
-            { content: "", canEdit: false, isNewComment: true },
-          ],
+          id: 12,
+          userId: 1,
+          userName: "管理员",
+          userHospitalCode: "444885559",
+          userHospitalName: "中南大学湘雅二医院",
+          createTime: 1700557618000,
+          text: "5555555",
+          tradeId: 20231108095148621,
+          atName: "",
+          listChild: [],
+          self: "yes",
+          pid: 0,
         },
-        { comments: [{ content: "", canEdit: false, isNewComment: true }] },
+        {
+          id: 11,
+          userId: 1,
+          userName: "管理员",
+          userHospitalCode: "444885559",
+          userHospitalName: "中南大学湘雅二医院",
+          createTime: 1700557612000,
+          text: "4444",
+          tradeId: 20231108095148621,
+          atName: "",
+          listChild: [
+            {
+              id: 14,
+              userId: 1,
+              userName: "管理员",
+              userHospitalCode: "444885559",
+              userHospitalName: "中南大学湘雅二医院",
+              createTime: 1700557888000,
+              text: "66666_66",
+              tradeId: 20231108095148621,
+              atName: "管理员",
+              listChild: null,
+              self: null,
+              pid: 11,
+            },
+            {
+              id: 15,
+              userId: 1,
+              userName: "管理员",
+              userHospitalCode: "444885559",
+              userHospitalName: "中南大学湘雅二医院",
+              createTime: 1700557920000,
+              text: "66666_6677",
+              tradeId: 20231108095148621,
+              atName: "管理员",
+              listChild: null,
+              self: null,
+              pid: 11,
+            },
+          ],
+          self: "yes",
+          pid: 0,
+        },
       ],
       // commentsData: [
       //   {
@@ -61,45 +296,44 @@ export default {
       //   { content: "", canEdit: false, isNewComment: true, childList: [] },
       // ],
       accountUserId: "", //登录用户的userId
+      user: {},
     };
   },
 
   created() {
     // debugger
     this.user = Vue.ls.get(TRUE_USER);
-
-    //查询系统配置  显示不同档案来源
-    // getSysConfigData('MEDICAL_DATA_SOURCE').then((res) => {
-    //   this.MEDICAL_DATA_SOURCE = res.data.value || '0'
-
-    //   if (this.MEDICAL_DATA_SOURCE == '1') {
-    //     //从emr获取
-    //     this.getZyRecordsOut()
-    //   } else {
-    //     //私有云
-    //     this.getFileListOut()
-    //   }
-    // }).
-
-    //私有云
-    // this.getFileListOut();
-
-    // this.getPatientBaseInfo();
+    console.log("dddddddddddddddddddddddddd", this.user);
   },
   methods: {
-    //私有云档案 列表
+    //获取评论列表
     getCommentListOut() {
       let param = {
         pageNo: 1,
-        pageSize: 1000000,
-        // tradeId: this.record.tradeId,
-        tradeId: "20231108095148621",
+        pageSize: 1000,
+        tradeId: this.record.tradeId,
+        // tradeId: "20231108095148621",
       };
       this.confirmLoading = true;
-      // getCommentList({tradeId:this.record.tradeId})
+      debugger;
       getCommentList(param)
         .then((res) => {
+          debugger;
           if (res.code === 0) {
+            if (res.data && res.data.records) {
+              this.commentsData = res.data.records;
+
+              for (let index = 0; index < this.commentsData.length; index++) {
+                this.$set(this.commentsData[index], "isEdit", false);
+                this.$set(this.commentsData[index], "submitLoading", false);
+                this.commentsData[index].listChild.forEach((element) => {
+                  this.$set(element, "isEdit", false);
+                  this.$set(element, "submitLoading", false);
+                });
+              }
+            } else {
+              this.commentsData = [];
+            }
           } else {
             this.$message.error(res.message);
             this.confirmLoading = false;
@@ -113,6 +347,109 @@ export default {
     refreshData(record) {
       this.record = record;
       this.getCommentListOut();
+
+      // getCommentList({ pageNo: 1, pageSize: 100, tradeId: "20231108095148621" }).then(
+      //   (res) => {
+      //     if (res.code == 0) {
+      //       // this.commentsData = res.data.records
+      //     } else {
+      //       this.$message.error(res.message);
+      //     }
+      //     this.confirmLoading = false;
+      //   }
+      // );
+    },
+
+    goEdit(item) {
+      item.isEdit = true;
+      this.$set(item, "oldText", item.text);
+      // <!-- 动态设置ref 动态设置ref-->
+      debugger;
+      this.$refs[`textarea${item.id}`][0].focus();
+      console.log("goEdit item", item);
+      console.log("goEdit this.$refs", this.$refs[`textarea${item.id}`][0]);
+    },
+
+    /**
+     * {
+	"pid": 0,  第一级就是0，如果是第二级，就是上一条记录的id
+	"text": "内容",
+	"tradeId": 工单id
+}
+     */
+    addCommentOut(pid, text) {
+      if (!text) {
+        this.$message.error("请输入评论内容");
+        return;
+      }
+      this.submitLoading = true;
+      // addComment({ pid: pid, text: text, tradeId: "20231108095148621" }).then(
+      addComment({ pid: pid, text: text, tradeId: this.record.tradeId })
+        .then((res) => {
+          if (res.code == 0) {
+            // this.commentsData = res.data.records
+            this.newcommet = "";
+            this.getCommentListOut();
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          this.submitLoading = false;
+        });
+    },
+
+    editCommentOut(item) {
+      if (!item.text) {
+        this.$message.error("请输入评论内容");
+        return;
+      }
+      item.submitLoading = true;
+      // addComment({ pid: pid, text: text, tradeId: "20231108095148621" }).then(
+      modifyComment({ id: item.id, text: item.text })
+        .then((res) => {
+          if (res.code == 0) {
+            // this.commentsData = res.data.records
+            // this.newcommet = "";
+            // this.getCommentListOut();
+
+            this.$message.success("修改成功");
+          } else {
+            item.text = item.oldText;
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          item.submitLoading = false;
+          item.isEdit = false;
+        });
+    },
+
+    editCancel(item) {
+      console.log("editCancel", item);
+      item.text = item.oldText;
+      item.isEdit = false;
+    },
+
+    /**
+     *
+     */
+    deleteCommentOut(id) {
+      this.confirmLoading = true;
+      deleteComment(id)
+        .then((res) => {
+          if (res.code == 0) {
+            // this.commentsData = res.data.records
+            this.$message.success("删除成功");
+            this.getCommentListOut();
+          } else {
+            this.$message.error(res.message);
+          }
+          this.confirmLoading = false;
+        })
+        .finally(() => {
+          this.submitLoading = false;
+        });
     },
 
     goCancel() {
@@ -125,7 +462,6 @@ export default {
 <style lang="less" scoped>
 .div-wrap {
   display: flex;
-  height: 450px;
   padding: 20px;
   font-size: 12px;
   flex-direction: column;
@@ -152,40 +488,222 @@ export default {
     }
   }
 
+  // 第一级评论样式
   .div-comment-item {
     margin-top: 20px;
     display: flex;
+    overflow: hidden;
     flex-direction: column;
+    box-shadow: 0px 0px 2px 2px #e6e6e6 inset;
+    border-radius: 4px;
 
-    .child-item {
+    .comment-item-bottom {
       display: flex;
       flex-direction: row;
-      align-items: center;
+      // align-items: center;
+      padding-right: 30px;
+      padding-left: 10px;
+      margin-top: 10px;
 
-      .child-head {
+      .data-head {
         color: white;
+        background-color: #1890ff;
+        padding: 6px;
+        height: 30px;
+        border-radius: 15px;
+      }
+
+      .data-item-right {
+        display: flex;
+        margin-left: 10px;
+        flex: 1;
+        flex-direction: column;
+
+        .item-right-top {
+          display: flex;
+          margin-left: 10px;
+          flex-direction: row;
+          align-items: center;
+
+          .btn-div {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+
+            .btn-no {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+
+              &:hover {
+                cursor: pointer;
+              }
+            }
+          }
+        }
+
+        .comment-content {
+          margin-left: 10px;
+          color: #1a1a1a;
+          margin-top: 15px;
+          margin-bottom: 10px;
+        }
+
+        .edit-area {
+          display: flex;
+          margin-left: 10px;
+          flex: 1;
+          flex-direction: column;
+
+          .div-comment-handle {
+            padding: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+          }
+        }
+      }
+    }
+
+    // 第二级评论样式
+    .div-comment-child {
+      // margin-top: 20px;
+      display: flex;
+      overflow: hidden;
+      flex-direction: column;
+      // box-shadow: 0px 0px 2px 2px #e6e6e6 inset;
+      // border-radius: 4px;
+
+      .comment-child-bottom {
+        display: flex;
+        flex-direction: row;
+        // align-items: center;
+        padding-right: 30px;
+        padding-left: 10px;
+        margin-top: 10px;
+
+        .data-head-child {
+          color: white;
+          height: 30px;
+          background-color: #1890ff;
+          padding: 6px;
+          border-radius: 15px;
+        }
+
+        .data-child-right {
+          display: flex;
+          margin-left: 10px;
+          flex: 1;
+          flex-direction: column;
+
+          .child-right-top {
+            display: flex;
+            margin-left: 10px;
+            flex-direction: row;
+            align-items: center;
+
+            .btn-div {
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+
+              .btn-no {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                &:hover {
+                  cursor: pointer;
+                }
+              }
+            }
+          }
+
+          .content-show-area {
+            display: flex;
+            flex-direction: row;
+
+            .at-area {
+              color: white;
+              background-color: #1890ff;
+              height: 25px;
+              margin-top: 10px;
+              text-align: center;
+              padding: 3px 10px;
+              border-radius: 10px;
+            }
+          }
+
+          .edit-area-child {
+            display: flex;
+            margin-left: 10px;
+            flex: 1;
+            flex-direction: column;
+
+            .div-comment-handle {
+              padding: 8px;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+            }
+          }
+
+          .comment-content-child {
+            border-bottom: 1px solid #e6e6e6;
+            margin-left: 10px;
+            color: #1a1a1a;
+            flex: 1;
+            margin-top: 15px;
+            padding-bottom: 10px;
+          }
+          .comment-content-child-last {
+            margin-left: 10px;
+            color: #1a1a1a;
+            flex: 1;
+            margin-top: 15px;
+            padding-bottom: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  .div-add-coment {
+    margin-top: 20px;
+    display: flex;
+    overflow: hidden;
+    flex-direction: column;
+    box-shadow: 0px 0px 2px 2px #e6e6e6 inset;
+    border-radius: 4px;
+    .add-coment-bottom {
+      display: flex;
+      flex-direction: row;
+      // align-items: center;
+      padding-right: 30px;
+      padding-left: 10px;
+      margin-top: 10px;
+      .add-coment-head {
+        color: white;
+        height: 30px;
         background-color: #1890ff;
         padding: 6px;
         border-radius: 15px;
       }
 
-      .child-item-right {
+      .add-coment-right {
         display: flex;
+        margin-left: 10px;
+        flex: 1;
         flex-direction: column;
 
-        .item-right-top {
+        .div-comment-handle {
+          padding: 8px;
           display: flex;
           flex-direction: row;
           align-items: center;
         }
       }
     }
-
-    // .comment-item-top {
-    //   display: flex;
-    //   flex-direction: row;
-    //   align-items: center;
-    // }
   }
 }
 </style>

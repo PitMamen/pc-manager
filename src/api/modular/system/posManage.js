@@ -2053,6 +2053,18 @@ export function queryHistoryIMRecordPage(data) {
 }
 
 /**
+ * 
+ * getAccessToken
+ */
+ export function getAccessToken(data) {
+  return axios({
+    url: '/account-api/exchangeAccessToken',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  * 随访类型列表：1:关怀型随访2:管理型随访3:科研型随访
  */
 export function followTypes(data) {
@@ -5661,6 +5673,15 @@ export function upReferralDetail(data) {
   })
 }
 
+//  revokeApply
+export function revokeApply(data) {
+  return axios({
+    url: '/referral-api/referralTrade/revokeApply/' + data,
+    method: 'get',
+    params: data,
+  })
+}
+
 ///referralTrade/modifyUpReferral 修改上转登记
 export function modifyUpReferral(data) {
   return axios({
@@ -5734,6 +5755,15 @@ export function getRegionByUpAddressId(data) {
 export function getCaseMain(data) {
   return axios({
     url: '/referral-api/patient/getCaseMain',
+    method: 'get',
+    params: data,
+  })
+}
+
+// /referral-api/patient/authStatus 授权状态
+export function getAuthStatus(data) {
+  return axios({
+    url: '/referral-api/patient/authStatus',
     method: 'get',
     params: data,
   })
