@@ -255,9 +255,23 @@
           <span class="span-title">区块链注册</span>
         </div>
 
-        <div class="dddd-r" style="margin-top: 10px; margin-left: 10px"></div>
+        <div class="div-qu-kuai">
+          <div style="color: #999; font-size: 12px">
+            说明：医疗机构在区块链注册后可授权其他机构访问本院患者病例
+          </div>
+          <div class="div-oper">
+            <div style="color: #1a1a1a; font-weight: bold; width: 110px">
+              当前状态：{{ blockchainHosId ? "已注册" : "未注册" }}
+            </div>
+            <div class="div-chain-id" :title="blockchainHosId">
+              数字ID：{{ blockchainHosId ? this.blockchainHosId : "暂无" }}
+            </div>
+            <div style="flex: 1"></div>
+            <div v-show="!blockchainHosId" class="btn-kuai" @click="goRegister">注册</div>
+          </div>
+        </div>
 
-        <div class="div-title" style="margin-left: 10px; margin-top: 3px">
+        <div class="div-title" style="margin-left: 10px; margin-top: 13px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
         </div>
@@ -307,6 +321,7 @@ import {
   queryHospitaldetail,
   getDictDataForCodeorgType,
   institutionClassify,
+  registerBlockchain,
 } from "@/api/modular/system/posManage";
 import { STable } from "@/components";
 import { formatDate, formatDateFull } from "@/utils/util";
@@ -324,6 +339,7 @@ export default {
       hospitalTypeSelect: "", //科室类型
       Hospitallevel: "", //科室等级
       shoudata: "",
+      blockchainHosId: "",
       bb: "1",
       userId: "",
       timeStr: "",
@@ -609,6 +625,7 @@ export default {
             if (res.data.level != null) {
               this.Hospitallevel = res.data.level.description;
             }
+            this.blockchainHosId = res.data.blockchainHosId;
 
             this.$nextTick(() => {
               this.init(res.data.introduction);
@@ -621,6 +638,20 @@ export default {
               url: res.data.imgUrl,
               // media_id: this.checkData.extraData,
             });
+          }
+        })
+        .finally((res) => {
+          this.confirmLoading = false;
+        });
+    },
+
+    goRegister() {
+      registerBlockchain({ hospitalCode: this.queryParams.hospitalCode })
+        .then((res) => {
+          if (res.code == 0) {
+            this.blockchainHosId = res.data;
+          } else {
+            this.$message.error(res.message);
           }
         })
         .finally((res) => {
@@ -768,6 +799,7 @@ export default {
      * 重置
      */
     reset() {
+      this.blockchainHosId = "";
       this.queryParams.hospitalCode = "";
       this.queryParams.hospitalName = "";
       this.queryParams.hospitalId = "";
@@ -1143,6 +1175,39 @@ export default {
   .card-right-user {
     overflow: hidden;
     width: 65% !important;
+
+    .div-qu-kuai {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      margin-left: 10px;
+
+      .div-oper {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .div-chain-id {
+          width: 160px;
+          margin-left: 15px;
+          color: #1a1a1a;
+          font-weight: bold;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+        }
+
+        .btn-kuai {
+          color: #1890ff;
+          padding: 1px 15px;
+          border: 1px solid #1890ff;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
 
     .table-operator {
       margin-bottom: 18px;
