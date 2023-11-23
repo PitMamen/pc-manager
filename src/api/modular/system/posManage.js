@@ -2798,6 +2798,19 @@ export function queryHospitaldetail(data) {
 
 
 /**
+ * 将机构注册到区块链
+ */
+
+export function registerBlockchain(data) {
+  return axios({
+    url: '/uam-api/hospital/registerBlockchain',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
  * 科室列表
  */
 export function getDepartmentListForReq(data) {
