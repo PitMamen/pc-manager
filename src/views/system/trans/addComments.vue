@@ -6,7 +6,6 @@
         <span class="span-title">历史评论</span>
       </div>
 
-      <!-- v-if="commentsData.length > 0" -->
       <div
         v-if="commentsData.length > 0"
         class="div-comment-item"
@@ -15,7 +14,7 @@
       >
         <div style="height: 20px; background-color: #409eff"></div>
         <div class="comment-item-bottom">
-          <div class="data-head">{{ item.userName }}</div>
+          <div class="data-head">{{ item.userName.substring(0, 2) }}</div>
           <div class="data-item-right">
             <div class="item-right-top">
               <div style="font-size: 14px; font-weight: bold; color: #1a1a1a">
@@ -36,7 +35,11 @@
               <div style="flex: 1"></div>
               <div class="btn-div">
                 <!-- <div class="btn-no" v-if="item.self != 'yes'"> -->
-                <div class="btn-no" v-if="item.self != 'yes'">
+                <div
+                  class="btn-no"
+                  v-if="item.self != 'yes'"
+                  @click="addAnswer(item, undefined)"
+                >
                   <img src="@/assets/icons/huifu.png" style="width: 12px; height: 12px" />
                   <div style="color: #409eff; margin-left: 5px">回复</div>
                 </div>
@@ -97,8 +100,8 @@
           :key="indexChild"
         >
           <div class="comment-child-bottom">
-            <div class="data-head-child">{{ child.userName }}</div>
-            <div class="data-child-right">
+            <div class="data-head-child">{{ child.userName.substring(0, 2) }}</div>
+            <div class="data-child-right" v-show="!child.isNewAnswer">
               <div class="child-right-top">
                 <div style="font-size: 14px; font-weight: bold; color: #1a1a1a">
                   {{ child.userName }}
@@ -110,25 +113,31 @@
 
                 <div style="flex: 1"></div>
                 <div class="btn-div">
-                  <div class="btn-no" v-if="item.self != 'yes'">
+
+                  <div
+                    class="btn-no"
+                    v-if="child.self != 'yes'"
+                    @click="addAnswer(item, child)"
+                  >
                     <img
                       src="@/assets/icons/huifu.png"
                       style="width: 12px; height: 12px"
                     />
                     <div style="color: #409eff; margin-left: 5px">回复</div>
                   </div>
-                  <div class="btn-no" v-if="item.self == 'yes'">
+
+                  <div class="btn-no" v-if="child.self == 'yes'" @click="goEdit(child)">
                     <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
                     <div style="color: #409eff; margin-left: 5px">编辑</div>
                   </div>
-                  <div class="btn-no" v-if="item.self == 'yes'">
+                  <div class="btn-no" v-if="child.self == 'yes'">
                     <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
                     <div style="color: #409eff; margin-left: 5px">删除</div>
                   </div>
                 </div>
               </div>
 
-              <div class="content-show-area">
+              <div v-show="!child.isEdit" class="content-show-area">
                 <div class="at-area" v-show="child.atName">@{{ child.atName }}</div>
                 <div
                   :class="
@@ -166,6 +175,28 @@
                 </div>
               </div>
             </div>
+
+            <div class="add-answer-right" v-show="child.isNewAnswer">
+              <a-textarea
+                :rows="2"
+                v-model="newAnswer"
+                :maxLength="300"
+                placeholder="请输入评论"
+              ></a-textarea>
+
+              <div class="div-answer-handle">
+                <div style="flex: 1"></div>
+                <a-button
+                  type="primary"
+                  :loading="submitLoadingAnswer"
+                  @click="addCommentAnswer(item, child)"
+                  style="margin-right: 20px"
+                >
+                  保存
+                </a-button>
+                <a-button @click="cancelAnswer(item, indexChild)">取消</a-button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -173,7 +204,7 @@
       <div class="div-add-coment">
         <div style="height: 20px; background-color: #409eff"></div>
         <div class="add-coment-bottom">
-          <div class="add-coment-head">{{ user.userName }}</div>
+          <div class="add-coment-head">{{ user.userName.substring(0, 2) }}</div>
           <div class="add-coment-right">
             <a-textarea
               :rows="2"
@@ -187,7 +218,7 @@
               <a-button
                 type="primary"
                 :loading="submitLoading"
-                @click="addCommentOut(0, newcommet)"
+                @click="addCommentOut(0, newcommet, undefined)"
                 style="margin-right: 20px"
               >
                 保存
@@ -221,12 +252,14 @@ export default {
   // },
   data() {
     return {
-      activeKey: "1",
       newcommet: "",
+      newAnswer: "",
       confirmLoading: false,
+      //新增提交用
       submitLoading: false,
+      //回复提交用  item.submitLoading修改用
+      submitLoadingAnswer: false,
       record: {},
-      //canEdit 表示自己可以修改，切换相关UI  ；isNewComment 在外层表示是新增的评论，里层表示回复
       commentsData: [
         {
           id: 12,
@@ -329,6 +362,7 @@ export default {
                 this.commentsData[index].listChild.forEach((element) => {
                   this.$set(element, "isEdit", false);
                   this.$set(element, "submitLoading", false);
+                  this.$set(element, "isNewAnswer", false);
                 });
               }
             } else {
@@ -377,26 +411,92 @@ export default {
 	"tradeId": 工单id
 }
      */
-    addCommentOut(pid, text) {
+    addCommentOut(pid, text, atName) {
       if (!text) {
         this.$message.error("请输入评论内容");
         return;
       }
-      this.submitLoading = true;
+      if (atName) {
+        this.submitLoadingAnswer = true;
+      } else {
+        this.submitLoading = true;
+      }
+      let param;
+      if (atName) {
+        param = { pid: pid, text: text, tradeId: this.record.tradeId, atName: atName };
+      } else {
+        param = { pid: pid, text: text, tradeId: this.record.tradeId };
+      }
       // addComment({ pid: pid, text: text, tradeId: "20231108095148621" }).then(
-      addComment({ pid: pid, text: text, tradeId: this.record.tradeId })
+      addComment(param)
         .then((res) => {
           if (res.code == 0) {
             // this.commentsData = res.data.records
-            this.newcommet = "";
+            if (atName) {
+              this.newAnswer = "";
+            } else {
+              this.newcommet = "";
+            }
             this.getCommentListOut();
           } else {
             this.$message.error(res.message);
           }
         })
         .finally(() => {
-          this.submitLoading = false;
+          if (atName) {
+            this.newAnswer = "";
+          } else {
+            this.newcommet = "";
+          }
+          if (atName) {
+            this.submitLoadingAnswer = false;
+          } else {
+            this.submitLoading = false;
+          }
         });
+    },
+
+    /**
+     * 添加回复是在父级 item 的 listChild 里面加一个表示回复的空对象
+     *
+     * child 为 undefined ,则新增的回复atName为item的userName;child 不为 undefined ,则新增的回复atName为child的userName
+     */
+    addAnswer(item, child) {
+      //先清空已打开的回复
+      for (let index = 0; index < this.commentsData.length; index++) {
+        this.commentsData[index].listChild.forEach((element, num) => {
+          if (element.isNewAnswer) {
+            this.commentsData[index].listChild.splice(num, 1);
+          }
+        });
+      }
+
+      item.listChild.push({
+        text: "",
+        isNewAnswer: true,
+        pid: item.id,
+        userName: this.user.userName,
+        atName: child ? child.userName : item.userName,
+      });
+    },
+
+    /**
+     * 添加回复是在父级 item 的 listChild 里面加一个表示回复的空对象
+     */
+    addCommentAnswer(item, child) {
+      if (!this.newAnswer) {
+        this.$message.error("请输入回复内容");
+        return;
+      }
+      this.addCommentOut(item.id, this.newAnswer, child.atName);
+    },
+
+    /**
+     *
+     */
+    cancelAnswer(item, indexChild) {
+      item.listChild.splice(indexChild, 1);
+      this.newAnswer = "";
     },
 
     editCommentOut(item) {
@@ -416,7 +516,7 @@ export default {
             this.$message.success("修改成功");
           } else {
             item.text = item.oldText;
-            this.$message.error(res.message);
+            // this.$message.error(res.message);
           }
         })
         .finally(() => {
@@ -445,10 +545,10 @@ export default {
           } else {
             this.$message.error(res.message);
           }
-          this.confirmLoading = false;
+          // this.confirmLoading = false;
         })
         .finally(() => {
-          this.submitLoading = false;
+          // this.submitLoading = false;
         });
     },
 
@@ -662,6 +762,19 @@ export default {
             flex: 1;
             margin-top: 15px;
             padding-bottom: 10px;
+          }
+        }
+
+        .add-answer-right {
+          display: flex;
+          margin-left: 10px;
+          flex: 1;
+          flex-direction: column;
+          .div-answer-handle {
+            padding: 8px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
           }
         }
       }
