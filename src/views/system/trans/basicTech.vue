@@ -56,7 +56,7 @@
         </div>
       </div>
 
-      <div class="kuang-content" v-if="insideShowType == 'jianyan'">
+      <div class="kuang-content" v-if="insideShowType == 'jianyan'&&jianyanDataShow">
         <div class="div-janyan" style="overflow-y: auto; height: 450px">
           <div class="div-line-wrap">
             <div class="div-item-two">
