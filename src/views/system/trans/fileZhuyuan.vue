@@ -134,6 +134,7 @@ import {
   getCaseExam,
   getCaseCheck,
   getCaseSummary,
+  getBycode,
 } from '@/api/modular/system/posManage'
 import basicInfo from './basicInfo'
 import basicXiaojie from './basicXiaojie'
@@ -179,6 +180,7 @@ export default {
       recordType: 'zhuyuan',
       jianyanData: {},
       jianChaData: {},
+      typeList: [], //检查类型
       fileDetailData: {
         // zdxx: {
         //   xm: "张三",
@@ -208,23 +210,6 @@ export default {
     // debugger
     this.user = Vue.ls.get(TRUE_USER)
 
-    //查询系统配置  显示不同档案来源
-    // getSysConfigData('MEDICAL_DATA_SOURCE').then((res) => {
-    //   this.MEDICAL_DATA_SOURCE = res.data.value || '0'
-
-    //   if (this.MEDICAL_DATA_SOURCE == '1') {
-    //     //从emr获取
-    //     this.getZyRecordsOut()
-    //   } else {
-    //     //私有云
-    //     this.getFileListOut()
-    //   }
-    // }).
-
-    //私有云
-    // this.getFileListOut();
-
-    // this.getPatientBaseInfo();
 
     console.log('created', this.record)
 
@@ -262,6 +247,7 @@ export default {
               })
               this.$set(this.historyList[0], 'isChecked', true)
               // this.getDetailOut(0);
+              this.getBycodeOut()
               this.getDetailData(0)
               this.getCaseCheckOut(0)
               this.getCaseExamOut(0)
@@ -274,6 +260,17 @@ export default {
         .finally(() => {
           // this.confirmLoading = false     //这里不要置为false 数据多加载慢 导致点击其他tab时渲染不出界面 等首页数据加载完了   再置为false
         })
+    },
+
+    getBycodeOut() {
+      var request = {
+        code: 'CHECK_TYPE_DIC',
+      }
+      getBycode(request).then((res) => {
+        if (res.code == 0) {
+          this.typeList = res.data
+        }
+      })
     },
 
     //档案首页数据
@@ -333,11 +330,21 @@ export default {
     getCaseCheckOut(index) {
       getCaseCheck({ caseId: this.historyList[index].id })
         .then((res) => {
-          if (res.code === 0) {
+          if (res.code === 0 && res.data.cipher) {
             this.jianChaData = decodeRecord(res.data.cipher, res.data.data)
             console.log('解密检查：', this.jianChaData)
+            if (this.jianChaData.length > 0 && this.typeList.length > 0) {
+              this.typeList.forEach((itemOut) => {
+                this.jianChaData.forEach((itemIn) => {
+                  if (itemIn.examtype == itemOut.code) {
+                    this.$set(itemIn, 'examtype', itemOut.value)
+                    console.log('TTT:', itemIn.examtype)
+                  }
+                })
+              })
+            }
             this.$nextTick(() => {
-              this.$refs.basicTech.refreshData(this.jianChaData,'jiancha');
+              this.$refs.basicTech2.refreshData(this.jianChaData,'jiancha');
             });
           } else {
             this.jianChaData = undefined
@@ -353,15 +360,15 @@ export default {
     getCaseExamOut(index) {
       getCaseExam({ caseId: this.historyList[index].id })
         .then((res) => {
-          if (res.code === 0) {
+          if (res.code === 0 && res.data.cipher) {
             this.jianyanData = decodeRecord(res.data.cipher, res.data.data)
             console.log('解密检验：', this.jianyanData)
             this.$nextTick(() => {
-              this.$refs.basicTech.refreshData(this.jianyanData,'jianyan');
+              this.$refs.basicTech1.refreshData(this.jianyanData,'jianyan');
             });
           } else {
             this.jianyanData = undefined
-            this.$message.error(res.message)
+            // this.$message.error(res.message)
           }
         })
         .finally(() => {
@@ -376,8 +383,8 @@ export default {
         // getCaseMain({ caseId: 1 }) //TODO 测试代码，暂时写死
         .then((res) => {
           if (res.code === 0) {
-            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data);
-            console.log("fileSummaryData", JSON.stringify(this.fileSummaryData));
+            this.fileSummaryData = decodeRecord(res.data.cipher, res.data.data)
+            console.log('fileSummaryData', JSON.stringify(this.fileSummaryData))
 
             let str =
               this.fileSummaryData.rysj.substring(0, 4) +
@@ -397,39 +404,18 @@ export default {
             if (this.fileSummaryData.ywscsj) {
               this.$set(
                 this.fileSummaryData,
-                "ywscsj",
-                moment(this.fileSummaryData.ywscsj).format("YYYY-MM-DD HH:mm:ss")
-              );
+                'ywscsj',
+                moment(this.fileSummaryData.ywscsj).format('YYYY-MM-DD HH:mm:ss')
+              )
             }
 
             this.$nextTick(() => {
-              this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
-            });
-
-            // this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
+              this.$refs.basicXiaojie.refreshData(this.fileSummaryData)
+            })
           } else {
             this.fileSummaryData = undefined
             this.$message.error(res.message)
           }
-
-          //   this.fileMainData = decodeRecord(res.data.cipher, res.data.data);
-          //   if (this.fileMainData.diagnosisInfo.length > 0) {
-          //     this.fileMainData.diagnosisInfo.forEach((item) => {
-          //       this.$set(item, "zdsj", formatDateFull(item.zdsj));
-          //     });
-          //   }
-          //   if (this.fileMainData.operationInfo.length > 0) {
-          //     this.fileMainData.operationInfo.forEach((item) => {
-          //       this.$set(item, "sskssj", formatDateFull(item.sskssj).substring(0, 10));
-          //     });
-          //   }
-          //   this.$set(this.fileMainData, "nl", countAge(this.fileMainData.csny));
-          //   console.log("getDetailData", JSON.stringify(this.fileMainData));
-          //   this.$refs.basicInfo.refreshData(this.fileMainData);
-          // } else {
-          //   this.fileMainData = undefined;
-          //   this.$message.error(res.message);
-          // }
         })
         .finally(() => {
           this.confirmLoading = false
@@ -444,75 +430,12 @@ export default {
           this.$set(this.historyList[index], 'isChecked', true)
         }
       }
-      this.confirmLoading = true;
+      this.confirmLoading = true
 
       this.getDetailData(indexData)
       this.getCaseCheckOut(indexData)
       this.getCaseExamOut(indexData)
       this.getSummaryData(indexData)
-      // if (this.MEDICAL_DATA_SOURCE == "1") {
-      //   //从emr获取
-
-      //   this.getEMRData(itemData.zyh);
-      // } else {
-      //   //私有云
-      //   this.getDetailOut(indexData);
-      // }
-    },
-
-    //私有云档案 列表
-    getFileListOut() {
-      let param = {
-        dataOwnerId: this.record.id,
-        // dataOwnerId: this.record.userId,
-        dataUserId: this.user.userId,
-        recordType: this.recordType,
-        pastMonths: '60',
-      }
-      this.confirmLoading = true
-      getFileList(param)
-        .then((res) => {
-          if (res.code === 0) {
-            this.historyList = res.data
-            if (this.historyList.length > 0) {
-              for (let index = 0; index < this.historyList.length; index++) {
-                this.$set(this.historyList[index], 'isChecked', false)
-                var time = '未知时间'
-                if (this.historyList[index].happenedTime && this.historyList[index].happenedTime.length > 10) {
-                  time = this.historyList[index].happenedTime.substring(0, 10)
-                }
-                this.$set(this.historyList[index], 'time', time)
-              }
-              this.$set(this.historyList[0], 'isChecked', true)
-              this.getDetailOut(0)
-            } else {
-              this.confirmLoading = false
-            }
-          } else {
-            this.$message.error(res.message)
-            this.confirmLoading = false
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false
-        })
-    },
-
-    getPatientBaseInfo() {
-      getBaseInfo({ userId: this.record.id }).then((res) => {
-        if (res.code === 0) {
-          let birthday = res.data.baseInfo.birthday
-          res.data.baseInfo.birthday =
-            birthday.substring(0, 4) + '-' + birthday.substring(4, 6) + '-' + birthday.substring(6, 8)
-          this.patientInfo = res.data
-          this.patientInfo.baseInfo.identificationNo = this.patientInfo.baseInfo.identificationNo.replace(
-            /^(.{6})(?:\d+)(.{4})$/,
-            '$1********$2'
-          )
-        } else {
-          this.$message.error(res.message)
-        }
-      })
     },
 
     tabChange(key) {
@@ -521,23 +444,31 @@ export default {
         this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
       } else if (key == 2) {
         //检验
-        if (this.jianyanData.length > 0) {
+        if (this.jianyanData&&this.jianyanData.length > 0) {
           this.$nextTick(() => {
             this.$refs.basicTech1.refreshData(this.jianyanData, 'jianyan')
+          })
+        }else{
+          this.$nextTick(() => {
+            this.$refs.basicTech1.refreshData(undefined, 'jianyan')
           })
         }
       } else if (key == 3) {
         //检查
-        if (this.jianChaData.length > 0) {
+        if (this.jianChaData&&this.jianChaData.length > 0) {
           this.$nextTick(() => {
             this.$refs.basicTech2.refreshData(this.jianChaData, 'jiancha')
+          })
+        }else{
+          this.$nextTick(() => {
+            this.$refs.basicTech2.refreshData(undefined, 'jiancha')
           })
         }
       } else if (key == 4) {
         this.$nextTick(() => {
           // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
-          this.$refs.basicXiaojie.refreshData(this.fileSummaryData);
-        });
+          this.$refs.basicXiaojie.refreshData(this.fileSummaryData)
+        })
       }
     },
 
