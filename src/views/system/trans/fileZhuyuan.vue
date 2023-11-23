@@ -258,7 +258,7 @@ export default {
           }
         })
         .finally(() => {
-          // this.confirmLoading = false     //这里不要置为false 数据多加载慢 导致点击其他tab时渲染不出界面 等首页数据加载完了   再置为false
+          this.confirmLoading = false     //这里不要置为false 数据多加载慢 导致点击其他tab时渲染不出界面 等首页数据加载完了   再置为false
         })
     },
 
@@ -348,7 +348,7 @@ export default {
             });
           } else {
             this.jianChaData = undefined
-            this.$message.error(res.message)
+            // this.$message.error(res.message)
           }
         })
         .finally(() => {
