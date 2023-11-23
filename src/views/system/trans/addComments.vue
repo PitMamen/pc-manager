@@ -113,7 +113,6 @@
 
                 <div style="flex: 1"></div>
                 <div class="btn-div">
-
                   <div
                     class="btn-no"
                     v-if="child.self != 'yes'"
@@ -130,10 +129,22 @@
                     <a-icon type="edit" style="color: #409eff; margin-left: 20px" />
                     <div style="color: #409eff; margin-left: 5px">编辑</div>
                   </div>
-                  <div class="btn-no" v-if="child.self == 'yes'">
+
+                  <a-popconfirm
+                    placement="topRight"
+                    title="确认删除吗？"
+                    @confirm="() => deleteCommentOut(child.id)"
+                  >
+                    <div class="btn-no" v-if="child.self == 'yes'">
+                      <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
+                      <div style="color: #409eff; margin-left: 5px">删除</div>
+                    </div>
+                  </a-popconfirm>
+
+                  <!-- <div class="btn-no" v-if="child.self == 'yes'">
                     <a-icon type="delete" style="color: #409eff; margin-left: 20px" />
                     <div style="color: #409eff; margin-left: 5px">删除</div>
-                  </div>
+                  </div> -->
                 </div>
               </div>
 
@@ -260,75 +271,67 @@ export default {
       //回复提交用  item.submitLoading修改用
       submitLoadingAnswer: false,
       record: {},
-      commentsData: [
-        {
-          id: 12,
-          userId: 1,
-          userName: "管理员",
-          userHospitalCode: "444885559",
-          userHospitalName: "中南大学湘雅二医院",
-          createTime: 1700557618000,
-          text: "5555555",
-          tradeId: 20231108095148621,
-          atName: "",
-          listChild: [],
-          self: "yes",
-          pid: 0,
-        },
-        {
-          id: 11,
-          userId: 1,
-          userName: "管理员",
-          userHospitalCode: "444885559",
-          userHospitalName: "中南大学湘雅二医院",
-          createTime: 1700557612000,
-          text: "4444",
-          tradeId: 20231108095148621,
-          atName: "",
-          listChild: [
-            {
-              id: 14,
-              userId: 1,
-              userName: "管理员",
-              userHospitalCode: "444885559",
-              userHospitalName: "中南大学湘雅二医院",
-              createTime: 1700557888000,
-              text: "66666_66",
-              tradeId: 20231108095148621,
-              atName: "管理员",
-              listChild: null,
-              self: null,
-              pid: 11,
-            },
-            {
-              id: 15,
-              userId: 1,
-              userName: "管理员",
-              userHospitalCode: "444885559",
-              userHospitalName: "中南大学湘雅二医院",
-              createTime: 1700557920000,
-              text: "66666_6677",
-              tradeId: 20231108095148621,
-              atName: "管理员",
-              listChild: null,
-              self: null,
-              pid: 11,
-            },
-          ],
-          self: "yes",
-          pid: 0,
-        },
-      ],
+      commentsData: [],
       // commentsData: [
       //   {
-      //     content: "你不能这样搞的，没床位了",
-      //     canEdit: true,
-      //     isNewComment: false,
-      //     childList: [{ content: "新增一个嘛", canEdit: false, isNewComment: false }],
+      //     id: 12,
+      //     userId: 1,
+      //     userName: "管理员",
+      //     userHospitalCode: "444885559",
+      //     userHospitalName: "中南大学湘雅二医院",
+      //     createTime: 1700557618000,
+      //     text: "5555555",
+      //     tradeId: 20231108095148621,
+      //     atName: "",
+      //     listChild: [],
+      //     self: "yes",
+      //     pid: 0,
       //   },
-      //   { content: "", canEdit: false, isNewComment: true, childList: [] },
+      //   {
+      //     id: 11,
+      //     userId: 1,
+      //     userName: "管理员",
+      //     userHospitalCode: "444885559",
+      //     userHospitalName: "中南大学湘雅二医院",
+      //     createTime: 1700557612000,
+      //     text: "4444",
+      //     tradeId: 20231108095148621,
+      //     atName: "",
+      //     listChild: [
+      //       {
+      //         id: 14,
+      //         userId: 1,
+      //         userName: "管理员",
+      //         userHospitalCode: "444885559",
+      //         userHospitalName: "中南大学湘雅二医院",
+      //         createTime: 1700557888000,
+      //         text: "66666_66",
+      //         tradeId: 20231108095148621,
+      //         atName: "管理员",
+      //         listChild: null,
+      //         self: null,
+      //         pid: 11,
+      //       },
+      //       {
+      //         id: 15,
+      //         userId: 1,
+      //         userName: "管理员",
+      //         userHospitalCode: "444885559",
+      //         userHospitalName: "中南大学湘雅二医院",
+      //         createTime: 1700557920000,
+      //         text: "66666_6677",
+      //         tradeId: 20231108095148621,
+      //         atName: "管理员",
+      //         listChild: null,
+      //         self: null,
+      //         pid: 11,
+      //       },
+      //     ],
+      //     self: "yes",
+      //     pid: 0,
+      //   },
       // ],
-      accountUserId: "", //登录用户的userId
+
       user: {},
     };
   },
@@ -381,17 +384,6 @@ export default {
     refreshData(record) {
       this.record = record;
       this.getCommentListOut();
-
-      // getCommentList({ pageNo: 1, pageSize: 100, tradeId: "20231108095148621" }).then(
-      //   (res) => {
-      //     if (res.code == 0) {
-      //       // this.commentsData = res.data.records
-      //     } else {
-      //       this.$message.error(res.message);
-      //     }
-      //     this.confirmLoading = false;
-      //   }
-      // );
     },
 
     goEdit(item) {
