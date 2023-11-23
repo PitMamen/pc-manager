@@ -211,6 +211,11 @@ export default {
         }
       }
       this.bacteriaInfo = this.jianyanDataShow[indexOut].indicatorInfo
+      if (this.bacteriaInfo) {
+            this.bacteriaInfo.forEach((item, index) => {
+              this.$set(item, 'xh', index + 1)
+            })
+          }
       this.jianyanSingeData = this.jianyanDataShow[indexOut]
     },
 
