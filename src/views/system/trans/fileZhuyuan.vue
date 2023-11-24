@@ -318,7 +318,7 @@ export default {
             this.$refs.basicInfo.refreshData(this.fileMainData)
           } else {
             this.fileMainData = undefined
-            this.$message.error(res.message)
+            // this.$message.error(res.message)
           }
         })
         .finally(() => {
@@ -420,7 +420,7 @@ export default {
             })
           } else {
             this.fileSummaryData = undefined
-            this.$message.error(res.message)
+            // this.$message.error(res.message)
           }
         })
         .finally(() => {

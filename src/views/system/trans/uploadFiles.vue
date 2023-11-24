@@ -426,10 +426,7 @@ export default {
     commitPhoto() {
       // 化验报告图片
       this.tempData.imgList = []
-      if (this.fileListBanner.length == 0) {
-        this.$message.error('请上传化验报告图片！')
-        return
-      } else {
+      if (this.fileListBanner.length >0) {
         for (let index = 0; index < this.fileListBanner.length; index++) {
           if (this.fileListBanner[index].response) {
             this.tempData.imgList.push({ imgPath: this.fileListBanner[index].response.data.fileLinkUrl, imgType: 1 }) //追加的图片
@@ -438,25 +435,47 @@ export default {
           }
         }
       }
+      // if (this.fileListBanner.length == 0) {
+      //   this.$message.error('请上传化验报告图片！')
+      //   return
+      // } else {
+      //   for (let index = 0; index < this.fileListBanner.length; index++) {
+      //     if (this.fileListBanner[index].response) {
+      //       this.tempData.imgList.push({ imgPath: this.fileListBanner[index].response.data.fileLinkUrl, imgType: 1 }) //追加的图片
+      //     } else {
+      //       this.tempData.imgList.push({ imgPath: this.fileListBanner[index].url, imgType: 1 }) //从接口获取到的图片
+      //     }
+      //   }
+      // }
 
       // 检查报告图片
-      if (this.fileListDetail.length == 0) {
-        this.$message.error('请上传检查报告图片！')
-        return
-      } else {
-        for (let index = 0; index < this.fileListDetail.length; index++) {
+     if (this.fileListDetail.length.length>0) {
+      for (let index = 0; index < this.fileListDetail.length; index++) {
           if (this.fileListDetail[index].response) {
             this.tempData.imgList.push({ imgPath: this.fileListDetail[index].response.data.fileLinkUrl, imgType: 2 }) //追加的图片
           } else {
             this.tempData.imgList.push({ imgPath: this.fileListDetail[index].url, imgType: 2 }) //从接口获取到的图片
           }
         }
-      }
+     }
 
-      if (this.otherListphoto.length == 0) {
-        this.$message.error('请上传其它病历图片！')
-        return
-      } else {
+
+      // if (this.fileListDetail.length == 0) {
+      //   this.$message.error('请上传检查报告图片！')
+      //   return
+      // } else {
+      //   for (let index = 0; index < this.fileListDetail.length; index++) {
+      //     if (this.fileListDetail[index].response) {
+      //       this.tempData.imgList.push({ imgPath: this.fileListDetail[index].response.data.fileLinkUrl, imgType: 2 }) //追加的图片
+      //     } else {
+      //       this.tempData.imgList.push({ imgPath: this.fileListDetail[index].url, imgType: 2 }) //从接口获取到的图片
+      //     }
+      //   }
+      // }
+
+
+
+      if (this.otherListphoto.length.length>0) {
         for (let index = 0; index < this.otherListphoto.length; index++) {
           // 判断是追加 还是修改
           if (this.otherListphoto[index].response) {
@@ -466,6 +485,21 @@ export default {
           }
         }
       }
+
+
+      // if (this.otherListphoto.length == 0) {
+      //   this.$message.error('请上传其它病历图片！')
+      //   return
+      // } else {
+      //   for (let index = 0; index < this.otherListphoto.length; index++) {
+      //     // 判断是追加 还是修改
+      //     if (this.otherListphoto[index].response) {
+      //       this.tempData.imgList.push({ imgPath: this.otherListphoto[index].response.data.fileLinkUrl, imgType: 3 }) //追加的图片
+      //     } else {
+      //       this.tempData.imgList.push({ imgPath: this.otherListphoto[index].url, imgType: 3 }) //从接口获取到的图片
+      //     }
+      //   }
+      // }
 
       this.tempData.tradeId = this.tradeId
       uploadTradeImg(this.tempData).then((res) => {
