@@ -33,7 +33,7 @@
               />
             </div>
 
-            <div class="div-pro-line" style="margin-left: -25px !important;">
+            <div class="div-pro-line" style="margin-left: -25px !important">
               <span class="span-item-name">姓名 :</span>
               <span class="span-item-value">{{ record.userName }}</span>
             </div>
@@ -50,7 +50,7 @@
               <span class="span-item-value" style="width: 48%">{{ record.phone }}</span>
             </div>
 
-            <div class="div-pro-line" style=" margin-top: -2%">
+            <div class="div-pro-line" style="margin-top: -2%">
               <span class="span-item-name"> 类型 :</span>
               <span class="span-item-value" style="width: 70%">{{ record.personTypeshow }}</span>
             </div>
@@ -67,7 +67,7 @@
               <span class="span-item-value" style="width: 48%">{{ record.hospitalName }}</span>
             </div>
 
-            <div class="div-pro-line" >
+            <div class="div-pro-line">
               <span class="span-item-name">所属科室 :</span>
               <span class="span-item-value" style="width: 48%">{{ record.departmentName }}</span>
             </div>
@@ -111,12 +111,11 @@
             >
             </a-upload>
 
-
             <!-- 职称照片 -->
-            <div v-if="record.personType=='doctor'" style="margin-left: 3%; color: #333">职称照片：</div>
+            <div v-if="record.personType == 'doctor'" style="margin-left: 3%; color: #333">职称照片：</div>
 
             <a-upload
-            v-if="record.personType=='doctor'"
+              v-if="record.personType == 'doctor'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
@@ -125,6 +124,15 @@
             >
             </a-upload>
 
+            <a-upload
+              v-if="record.personType == 'doctor'"
+              :disabled="true"
+              :showUploadList="{ showRemoveIcon: false }"
+              list-type="picture-card"
+              :file-list="titleFList"
+              accept="image/jpeg,image/png,image/jpg"
+            >
+            </a-upload>
           </div>
 
           <div class="item-idcard" style="margin-top: 15px">
@@ -141,6 +149,7 @@
             </a-upload>
 
             <a-upload
+            v-if="record.personType != 'medTechnician'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
@@ -152,11 +161,18 @@
             <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.qualificationZ" /> -->
             <!-- <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.qualificationF" /> -->
 
-            <!-- 执业证照片 -->
-            <div v-if="record.personType=='doctor'||record.personType=='nurse'" style="margin-left: 3%; color: #333">执业证照片：</div>
+            <!-- 执业证照片(医生或护士) 多加一条 如果是技师 需要显示一张执业证-->
+            <div
+              v-if="record.personType == 'doctor' || record.personType == 'nurse'"
+              style="margin-left: 3%; color: #333"
+            >
+              执业证照片：
+            </div>
 
             <a-upload
-            v-if="record.personType=='doctor'||record.personType=='nurse'"
+              v-if="
+                record.personType == 'doctor' || record.personType == 'nurse' || record.personType == 'medTechnician'
+              "
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
@@ -166,7 +182,7 @@
             </a-upload>
 
             <a-upload
-            v-if="record.personType=='doctor'||record.personType=='nurse'"
+              v-if="record.personType == 'doctor' || record.personType == 'nurse'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
@@ -189,8 +205,8 @@
 
         <div class="div-span-content-right" style="position: relative">
           <div class="div-service-user">
-            <span style="color: #000;">渠道来源：</span>
-            <span style="color: #000;">{{ record.authSourceStr }}</span>
+            <span style="color: #000">渠道来源：</span>
+            <span style="color: #000">{{ record.authSourceStr }}</span>
           </div>
 
           <div v-if="record.isLook" class="div-service-user">
@@ -282,6 +298,7 @@ export default {
       idcardZList: [],
       idcardFList: [],
       titleZList: [],
+      titleFList: [],
       qualificationZList: [],
       qualificationFList: [],
       practiceZList: [],
@@ -309,7 +326,7 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    console.log("ddd:",this.user)
+    console.log('ddd:', this.user)
   },
   methods: {
     radioChange(e) {
@@ -341,6 +358,7 @@ export default {
       this.idcardZList = []
       this.idcardFList = []
       this.titleZList = []
+      this.titleFList = []
       this.qualificationZList = []
       this.qualificationFList = []
       this.practiceZList = []
@@ -373,6 +391,17 @@ export default {
           name: '照片',
           status: 'done',
           url: record.titleZ,
+          // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        })
+      }
+
+      if (record.titleZ) {
+        //   职称证
+        this.titleFList.push({
+          uid: '-1',
+          name: '照片',
+          status: 'done',
+          url: record.titleF,
           // url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
         })
       }
