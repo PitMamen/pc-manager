@@ -7,37 +7,43 @@ import Vue from 'vue'
  */
 export function decodeRecord(encryptedRecord, wrappedDEK) {
 
-	// var keypairsSto = uni.getStorageSync('keypair')
-	var keypairsSto = Vue.ls.get('keypair')
-	console.log(keypairsSto)
+	if (encryptedRecord && wrappedDEK) {
+		// var keypairsSto = uni.getStorageSync('keypair')
+		var keypairsSto = Vue.ls.get('keypair')
+		console.log(keypairsSto)
 
-	var priKeyPem = keypairsSto.privateKey
+		var priKeyPem = keypairsSto.privateKey
 
-	var priKey = forge.pki.privateKeyFromPem(priKeyPem);
-	var keyAndIV = priKey.decrypt(forge.util.decode64(wrappedDEK), "RSA-OAEP");
-	console.log("keyAndIV", keyAndIV.length)
+		var priKey = forge.pki.privateKeyFromPem(priKeyPem);
+		var keyAndIV = priKey.decrypt(forge.util.decode64(wrappedDEK), "RSA-OAEP");
+		console.log("keyAndIV", keyAndIV.length)
 
-	// keyAndIV 是一个byte数组，前32字节为AES key（256位），后16字节为AES iv
-	// 用AES解密encryptedRecord
-	const key = keyAndIV.slice(0, 32)
-	console.log("key", key.length)
-	const iv = keyAndIV.slice(-16)
-	console.log("iv", iv.length)
-	var decipher = forge.cipher.createDecipher('AES-CBC', key);
-	decipher.start({
-		iv: iv
-	});
-	decipher.update(forge.util.createBuffer(forge.util.decode64(encryptedRecord)));
-	var result = decipher.finish(); // 返回true表示成功，false表示失败
-	console.log("result", result)
-	if (result) {
-		var decrypted = decipher.output.toString();
-		console.log("decrypted2", JSON.parse(decrypted))
-		return JSON.parse(decrypted);
+		// keyAndIV 是一个byte数组，前32字节为AES key（256位），后16字节为AES iv
+		// 用AES解密encryptedRecord
+		const key = keyAndIV.slice(0, 32)
+		console.log("key", key.length)
+		const iv = keyAndIV.slice(-16)
+		console.log("iv", iv.length)
+		var decipher = forge.cipher.createDecipher('AES-CBC', key);
+		decipher.start({
+			iv: iv
+		});
+		decipher.update(forge.util.createBuffer(forge.util.decode64(encryptedRecord)));
+		var result = decipher.finish(); // 返回true表示成功，false表示失败
+		console.log("result", result)
+		if (result) {
+			var decrypted = decipher.output.toString();
+			console.log("decrypted2", JSON.parse(decrypted))
+			return JSON.parse(decrypted);
 
+		} else {
+			return ''
+		}
 	} else {
 		return ''
 	}
+
+
 }
 
 

@@ -2,8 +2,11 @@
   <!-- <div style="height: 500px; width: 100%"> -->
   <!-- v-if="insideJbxx.newArr && insideJbxx.newArr.length > 0" -->
   <div class="inner-wrap">
+    <div v-if="!jianchaDataShow || !jianyanDataShow" class="nodata">
+      <img src="~@/assets/icons/img_nodata.png" />
+    </div>
     <div class="div-yiji" style="padding-right: 10px; padding-bottom: 10px">
-      <div class="kuang-content" v-if="insideShowType == 'jiancha'">
+      <div class="kuang-content" v-if="insideShowType == 'jiancha' && jianchaDataShow">
         <div class="div-jancha" style="overflow-y: auto; height: 450px">
           <div class="div-line-wrap">
             <div class="div-item-two">
@@ -18,7 +21,7 @@
           </div>
 
           <div class="div-line-wrap" style="margin-top: 20px">
-            <div class="div-item-two">影响表现或检查所见：</div>
+            <div class="div-item-two">影像表现或检查所见：</div>
           </div>
 
           <!-- <div class="div-line-wrap" style="margin-top: 20px">
@@ -26,7 +29,7 @@
           </div> -->
 
           <div class="div-line-wrap">
-            <span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.xybx }}</span>
+            <span style="color: #1a1a1a; font-weight: bold">{{ jianchaSingeData.yxbx }}</span>
           </div>
           <div class="div-line-wrap" style="margin-top: 20px">
             <div class="div-item-two">检查诊断或提示：</div>
@@ -53,7 +56,7 @@
         </div>
       </div>
 
-      <div class="kuang-content" v-if="insideShowType == 'jianyan'">
+      <div class="kuang-content" v-if="insideShowType == 'jianyan'&&jianyanDataShow">
         <div class="div-janyan" style="overflow-y: auto; height: 450px">
           <div class="div-line-wrap">
             <div class="div-item-two">
@@ -90,8 +93,8 @@
         </div>
       </div>
 
-        <!-- 检验报告时间轴 -->
-      <div class="div-shu" style=" height: 450px" v-if="insideShowType == 'jianyan'">
+      <!-- 检验报告时间轴 -->
+      <div class="div-shu" style="height: 450px" v-if="insideShowType == 'jianyan'">
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
             v-for="(item, index) in jianyanDataShow"
@@ -111,7 +114,7 @@
 
       <!-- 检查报告时间轴 -->
 
-      <div class="div-shu" style=" height: 450px" v-if="insideShowType == 'jiancha'">
+      <div class="div-shu" style="height: 450px" v-if="insideShowType == 'jiancha'">
         <a-timeline mode="left" style="margin-left: 5%; margin-top: 5%">
           <a-timeline-item
             v-for="(item, index) in jianchaDataShow"
@@ -120,9 +123,9 @@
             @click="onItemClickJiancha(item, index)"
           >
             <div class="div-line-content" :class="{ doubled: item.color == 'blue' }">
-              {{ item.jysj ||'2023-10-12'}}
+              {{ item.jysj || '2023-10-12' }}
               <div class="div-name" :title="item.name">
-                {{ item.jcmc ||'脑部CT'}}
+                {{ item.jcmc || '脑部CT' }}
               </div>
             </div></a-timeline-item
           >
@@ -130,7 +133,7 @@
       </div>
     </div>
 
-    <!-- <div v-else class="nodata">
+    <!-- <div v-if="!jianchaDataShow || !jianyanDataShow" class="nodata">
       <img src="~@/assets/icons/img_nodata.png" />
     </div> -->
   </div>
@@ -211,11 +214,16 @@ export default {
         }
       }
       this.bacteriaInfo = this.jianyanDataShow[indexOut].indicatorInfo
+      if (this.bacteriaInfo) {
+        this.bacteriaInfo.forEach((item, index) => {
+          this.$set(item, 'xh', index + 1)
+        })
+      }
       this.jianyanSingeData = this.jianyanDataShow[indexOut]
     },
 
     // 检查报告时间轴点击
-    onItemClickJiancha(itemOut, indexOut){
+    onItemClickJiancha(itemOut, indexOut) {
       for (let index = 0; index < this.jianchaDataShow.length; index++) {
         this.jianchaDataShow[index].color = 'gray'
         if (indexOut == index) {
@@ -225,11 +233,6 @@ export default {
       // this.bacteriaInfo = this.jianchaDataShow[indexOut].indicatorInfo
       this.jianchaSingeData = this.jianchaDataShow[indexOut]
     },
-
-
-
-
-
 
     resetData() {
       this.jianyanDataShow = []
@@ -245,7 +248,7 @@ export default {
       console.log('showType:', insideJbxx, this.insideShowType)
       if (insideShowType == 'jianyan') {
         this.jianyanDataShow = insideJbxx
-        if (this.jianyanDataShow.length > 0) {
+        if (this.jianyanDataShow && this.jianyanDataShow.length > 0) {
           this.jianyanDataShow.forEach((item, index) => {
             this.$set(item, 'jyrq', formatDateFull(item.jyrq).substring(0, 10))
             // this.$set(item, 'color', 'gray')
@@ -262,13 +265,19 @@ export default {
         }
       } else if (insideShowType == 'jiancha') {
         this.jianchaDataShow = insideJbxx
-        this.jianchaDataShow.forEach((item,index) => {
-          this.$set(item, 'jysj', formatDateFull(item.jysj).substring(0, 10))
+        if (this.jianchaDataShow && this.jianchaDataShow.length > 0) {
+          this.jianchaDataShow.forEach((item, index) => {
+            this.$set(item, 'color', index == 0 ? 'blue' : 'gray')
+            if (item.jysj) {
+              this.$set(item, 'jysj', formatDateFull(item.jysj).substring(0, 10))
+            }
+            if (item.bgrq) {
+              this.$set(item, 'bgrq', item.bgrq.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3'))
+            }
+          })
 
-          this.$set(item, 'color', index == 0 ? 'blue' : 'gray')
-        })
-
-        this.jianchaSingeData=this.jianchaDataShow[0]
+          this.jianchaSingeData = this.jianchaDataShow[0]
+        }
       }
     },
   },

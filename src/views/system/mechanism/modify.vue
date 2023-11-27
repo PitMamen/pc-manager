@@ -16,7 +16,9 @@
           <span class="span-title">基础信息</span>
         </div>
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 5px"> <span style="color: red">*</span> 上级机构:</span>
+          <span style="margin-top: 5px">
+            <span style="color: red">*</span> 上级机构:</span
+          >
           <a-select
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
@@ -26,14 +28,19 @@
             placeholder="请选择机构类型"
             @select="onSelect"
           >
-            <a-select-option v-for="(item, index) in ParentList" :value="item.hospitalId" :key="index">{{
-              item.hospitalName
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in ParentList"
+              :value="item.hospitalId"
+              :key="index"
+              >{{ item.hospitalName }}</a-select-option
+            >
           </a-select>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 10px"> <span style="color: red">*</span> 机构代码:</span>
+          <span style="margin-top: 10px">
+            <span style="color: red">*</span> 机构代码:</span
+          >
           <a-input
             type="number"
             v-model="queryParams.hospitalCode"
@@ -46,7 +53,9 @@
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 7px"> <span style="color: red">*</span> 机构名称:</span>
+          <span style="margin-top: 7px">
+            <span style="color: red">*</span> 机构名称:</span
+          >
           <a-input
             v-model="queryParams.hospitalName"
             allow-clear
@@ -59,7 +68,12 @@
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
           <span> <span style="color: red">*</span> 显示顺序:</span>
-          <a-button style="margin-left: 5px; width: 30px" icon="plus" size="small" @click="addNum()" />
+          <a-button
+            style="margin-left: 5px; width: 30px"
+            icon="plus"
+            size="small"
+            @click="addNum()"
+          />
           <!-- <a-icon type="plus" /> -->
           <a-input
             v-model="queryParams.sortedNo"
@@ -67,7 +81,12 @@
             allow-clear
             style="width: 127px; margin-left: 7px; text-align: center"
           />
-          <a-button style="margin-left: 7px; width: 30px" size="small" icon="minus" @click="duleNum()" />
+          <a-button
+            style="margin-left: 7px; width: 30px"
+            size="small"
+            icon="minus"
+            @click="duleNum()"
+          />
         </div>
 
         <!-- <div class="display-item" style="margin-left: 10px; margin-top: 10px">
@@ -86,7 +105,9 @@
         </div> -->
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 5px"> <span style="color: red">*</span> 组织类型:</span>
+          <span style="margin-top: 5px">
+            <span style="color: red">*</span> 组织类型:</span
+          >
           <a-select
             class="sitemore"
             style="min-width: 200px; height: 28px; margin-left: 5px; margin-top: 5px"
@@ -96,9 +117,12 @@
             v-model="queryParams.orgType"
             placeholder="请选择组织类型"
           >
-            <a-select-option v-for="item in orgTypeData" :value="item.code" :key="item.code">{{
-              item.value
-            }}</a-select-option>
+            <a-select-option
+              v-for="item in orgTypeData"
+              :value="item.code"
+              :key="item.code"
+              >{{ item.value }}</a-select-option
+            >
           </a-select>
         </div>
 
@@ -108,7 +132,9 @@
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 10px"> <span style="color: red">*</span> 机构类型:</span>
+          <span style="margin-top: 10px">
+            <span style="color: red">*</span> 机构类型:</span
+          >
           <a-select
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
             class="sitemore"
@@ -119,14 +145,19 @@
             placeholder="请选择机构类型"
             @select="selectTyple"
           >
-            <a-select-option v-for="(item, index) in HospitalTypeList" :value="item.value" :key="index">{{
-              item.description
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in HospitalTypeList"
+              :value="item.value"
+              :key="index"
+              >{{ item.description }}</a-select-option
+            >
           </a-select>
         </div>
 
         <div class="display-item" style="margin-left: 10px; margin-top: 10px">
-          <span style="margin-top: 10px"> <span style="color: red">*</span> 机构等级:</span>
+          <span style="margin-top: 10px">
+            <span style="color: red">*</span> 机构等级:</span
+          >
           <a-select
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
             class="sitemore"
@@ -137,9 +168,12 @@
             placeholder="请选择机构等级"
             @select="selectLevel"
           >
-            <a-select-option v-for="(item, index) in HospitalLevelList" :value="item.value" :key="index">{{
-              item.description
-            }}</a-select-option>
+            <a-select-option
+              v-for="(item, index) in HospitalLevelList"
+              :value="item.value"
+              :key="index"
+              >{{ item.description }}</a-select-option
+            >
           </a-select>
         </div>
 
@@ -148,10 +182,10 @@
           <span class="span-title">接口配置</span>
         </div>
 
-
-
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 监管分类:</span>
+          <span style="margin-top: 10px; margin-left: -5px">
+            <span style="color: red">*</span> 监管分类:</span
+          >
           <a-tree-select
             v-model="queryParams.institutionClassify"
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
@@ -167,9 +201,10 @@
           </a-tree-select>
         </div>
 
-
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 监管代码:</span>
+          <span style="margin-top: 10px; margin-left: -5px">
+            <span style="color: red">*</span> 监管代码:</span
+          >
           <a-input
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
             v-model="queryParams.supervisionHosCode"
@@ -181,17 +216,10 @@
           />
         </div>
 
-
-
-
-
-
-
-
-
-
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px"> <span style="color: red">*</span> HIS编码: </span>
+          <span style="margin-top: 10px">
+            <span style="color: red">*</span> HIS编码:
+          </span>
           <a-input
             type="number"
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
@@ -205,7 +233,9 @@
         </div>
 
         <div class="display-item" style="margin-left: 12px; margin-top: 10px">
-          <span style="margin-top: 10px; margin-left: -5px"> <span style="color: red">*</span> 服务地址:</span>
+          <span style="margin-top: 10px; margin-left: -5px">
+            <span style="color: red">*</span> 服务地址:</span
+          >
           <a-input
             :disabled="!queryParams.orgType || queryParams.orgType != 2"
             v-model="queryParams.middleware"
@@ -216,15 +246,32 @@
             @search="$refs.table.refresh(true)"
           />
         </div>
-
-
-        
-
       </div>
 
       <!-- ri -->
       <div class="card-right-user" style="height: 570px">
         <div class="div-title" style="margin-left: 10px; margin-top: 3px">
+          <div class="div-line-blue"></div>
+          <span class="span-title">区块链注册</span>
+        </div>
+
+        <div class="div-qu-kuai">
+          <div style="color: #999; font-size: 12px">
+            说明：医疗机构在区块链注册后可授权其他机构访问本院患者病例
+          </div>
+          <div class="div-oper">
+            <div style="color: #1a1a1a; font-weight: bold; width: 110px">
+              当前状态：{{ blockchainHosId ? "已注册" : "未注册" }}
+            </div>
+            <div class="div-chain-id" :title="blockchainHosId">
+              数字ID：{{ blockchainHosId ? this.blockchainHosId : "暂无" }}
+            </div>
+            <div style="flex: 1"></div>
+            <div v-show="!blockchainHosId" class="btn-kuai" @click="goRegister">注册</div>
+          </div>
+        </div>
+
+        <div class="div-title" style="margin-left: 10px; margin-top: 13px">
           <div class="div-line-blue"></div>
           <span class="span-title">机构简介</span>
         </div>
@@ -263,11 +310,9 @@
     </div>
   </a-modal>
 </template>
-        
-        
-        
-        <script>
-import moment from 'moment'
+
+<script>
+import moment from "moment";
 import {
   save,
   queryHospitalLevel,
@@ -276,13 +321,14 @@ import {
   queryHospitaldetail,
   getDictDataForCodeorgType,
   institutionClassify,
-} from '@/api/modular/system/posManage'
-import { STable } from '@/components'
-import { formatDate, formatDateFull } from '@/utils/util'
-import E from 'wangeditor'
-import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import Vue from 'vue'
-import { appId } from '@/utils/util'
+  registerBlockchain,
+} from "@/api/modular/system/posManage";
+import { STable } from "@/components";
+import { formatDate, formatDateFull } from "@/utils/util";
+import E from "wangeditor";
+import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
+import Vue from "vue";
+import { appId } from "@/utils/util";
 // import { nextTick } from 'vue/types/umd'
 export default {
   components: {
@@ -290,33 +336,34 @@ export default {
   },
   data() {
     return {
-      hospitalTypeSelect: '', //科室类型
-      Hospitallevel: '', //科室等级
-      shoudata: '',
-      bb: '1',
-      userId: '',
-      timeStr: '',
+      hospitalTypeSelect: "", //科室类型
+      Hospitallevel: "", //科室等级
+      shoudata: "",
+      blockchainHosId: "",
+      bb: "1",
+      userId: "",
+      timeStr: "",
       originData: [],
-      hospitalId: '',
-      id: '', //表名ID
-      rangeValue: '1',
+      hospitalId: "",
+      id: "", //表名ID
+      rangeValue: "1",
       previewVisible: false,
       HospitalLevelList: [],
       HospitalTypeList: [],
       ParentList: [],
-      classifyTreeData:[],
+      classifyTreeData: [],
       record: {},
       queryParams: {
-        hisCode: '',
-        hospitalCode: '',
+        hisCode: "",
+        hospitalCode: "",
         hospitalId: 0,
-        hospitalName: '',
-        hospitalType: '',
-        imgUrl: '',
-        introduction: '',
-        level: '',
-        middleware: '',
-        supervisionHosCode: '', //机构代码
+        hospitalName: "",
+        hospitalType: "",
+        imgUrl: "",
+        introduction: "",
+        level: "",
+        middleware: "",
+        supervisionHosCode: "", //机构代码
         institutionClassify: undefined, //机构分类
         orgType: undefined,
         pid: 0,
@@ -324,8 +371,8 @@ export default {
         tenantId: 0,
       },
       queryClassify: {
-        queryText: '',
-        ver: 'WS 218-2002',
+        queryText: "",
+        ver: "WS 218-2002",
       },
       orgTypeData: [],
 
@@ -338,87 +385,85 @@ export default {
         sm: { span: 15 },
       },
       headers: {
-        Authorization: '',
+        Authorization: "",
       },
       visible: false,
       confirmLoading: false,
       editor: null,
       form: this.$form.createForm(this),
-      title: '修改机构',
-      actionUrlCover: '/api/content-api/fileUpload/uploadImgFile',
+      title: "修改机构",
+      actionUrlCover: "/api/content-api/fileUpload/uploadImgFile",
       fileList: [],
-    }
+    };
   },
 
   created() {
-    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+    this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN);
   },
 
   methods: {
     moment,
     //初始化方法
     modify(record) {
-      this.visible = true
-      this.reset()
-      this.shoudata = record.hospitalName
-      this.queryParams.pid = record.pid
-      this.hospitalId = record.hospitalId
+      this.visible = true;
+      this.reset();
+      this.shoudata = record.hospitalName;
+      this.queryParams.pid = record.pid;
+      this.hospitalId = record.hospitalId;
 
-      this.queryParams.hospitalId = record.hospitalId
-      this.getinstitutionClassify()
-      this.getHospitalDetailOut()
-      this.getHospitalLevel()
-      this.getHospitalType()
-      this.getParentList()
-      this.getDictDataForCodeorgTypeOut()
+      this.queryParams.hospitalId = record.hospitalId;
+      this.getinstitutionClassify();
+      this.getHospitalDetailOut();
+      this.getHospitalLevel();
+      this.getHospitalType();
+      this.getParentList();
+      this.getDictDataForCodeorgTypeOut();
     },
 
-
-
-  // 获取机构分类列表接口
-  getinstitutionClassify() {
+    // 获取机构分类列表接口
+    getinstitutionClassify() {
       institutionClassify(this.queryClassify).then((res) => {
         if (res.code == 0 && res.data.length > 0) {
           res.data.forEach((item, index) => {
-            this.$set(item, 'key', item.classify)
-            this.$set(item, 'value', item.classify)
-            this.$set(item, 'title', item.name)
-            this.$set(item, 'children', item.children)
+            this.$set(item, "key", item.classify);
+            this.$set(item, "value", item.classify);
+            this.$set(item, "title", item.name);
+            this.$set(item, "children", item.children);
 
             item.children.forEach((item1, index1) => {
-              this.$set(item1, 'key', item1.classify)
-              this.$set(item1, 'value', item1.classify)
-              this.$set(item1, 'title', item1.name)
-              this.$set(item1, 'children', item1.children)
+              this.$set(item1, "key", item1.classify);
+              this.$set(item1, "value", item1.classify);
+              this.$set(item1, "title", item1.name);
+              this.$set(item1, "children", item1.children);
 
               item1.children.forEach((item2, index2) => {
-                this.$set(item2, 'key', item2.classify)
-                this.$set(item2, 'value', item2.classify)
-                this.$set(item2, 'title', item2.name)
-              })
-            })
-          })
+                this.$set(item2, "key", item2.classify);
+                this.$set(item2, "value", item2.classify);
+                this.$set(item2, "title", item2.name);
+              });
+            });
+          });
 
-          this.classifyTreeData = res.data
+          this.classifyTreeData = res.data;
         } else {
-          this.classifyTreeData = res.data
+          this.classifyTreeData = res.data;
         }
-        return []
-      })
+        return [];
+      });
     },
 
     //科室搜索
     onDepartmentSelectSearch(value) {
-      this.classifyTreeData = []
-      this.queryClassify.queryText = value
-      console.log('BBB:', this.queryClassify.queryText, value)
-      this.getinstitutionClassify(this.queryClassify)
+      this.classifyTreeData = [];
+      this.queryClassify.queryText = value;
+      console.log("BBB:", this.queryClassify.queryText, value);
+      this.getinstitutionClassify(this.queryClassify);
     },
     //科室选择变化
     onDepartmentSelectChange(value) {
       if (value === undefined) {
-        this.classifyTreeData = []
-        this.getinstitutionClassify(undefined)
+        this.classifyTreeData = [];
+        this.getinstitutionClassify(undefined);
       }
     },
 
@@ -426,99 +471,101 @@ export default {
      * 组织类型接口
      */
     getDictDataForCodeorgTypeOut() {
-      this.confirmLoading = true
+      this.confirmLoading = true;
       getDictDataForCodeorgType()
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            this.orgTypeData = res.data
+            this.orgTypeData = res.data;
             for (let index = 0; index < this.orgTypeData.length; index++) {
-              this.orgTypeData[index].code = Number(this.orgTypeData[index].code)
+              this.orgTypeData[index].code = Number(this.orgTypeData[index].code);
             }
           } else {
-            this.orgTypeData = res.data
+            this.orgTypeData = res.data;
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
 
     init(introduction) {
       if (this.editor) {
-        this.editor.txt.html(introduction||'')
-        return
+        this.editor.txt.html(introduction || "");
+        return;
       }
-      this.editor = new E('#div2')
-      this.editor.config.height = 600
-      this.editor.config.pasteFilterStyle = false
+      this.editor = new E("#div2");
+      this.editor.config.height = 600;
+      this.editor.config.pasteFilterStyle = false;
       this.editor.config.onchange = (html) => {
-        console.log('editor modify:', html)
-        this.queryParams.introduction = html
-      }
+        console.log("editor modify:", html);
+        this.queryParams.introduction = html;
+      };
       // 默认情况下，显示所有菜单
       this.editor.config.menus = [
-        'head',
-        'bold',
-        'fontSize',
-        'fontName',
-        'italic',
-        'underline',
-        'strikeThrough',
-        'indent',
-        'lineHeight',
-        'foreColor',
-        'backColor',
-        'link',
-        'list',
-        'todo',
-        'justify',
-        'quote',
+        "head",
+        "bold",
+        "fontSize",
+        "fontName",
+        "italic",
+        "underline",
+        "strikeThrough",
+        "indent",
+        "lineHeight",
+        "foreColor",
+        "backColor",
+        "link",
+        "list",
+        "todo",
+        "justify",
+        "quote",
         // 'emoticon',
-        'image',
-        'video',
-        'table',
-        'code',
-        'splitLine',
-        'undo',
-        'redo',
-      ]
+        "image",
+        "video",
+        "table",
+        "code",
+        "splitLine",
+        "undo",
+        "redo",
+      ];
 
       this.editor.config.uploadImgHeaders = {
         Authorization: Vue.ls.get(ACCESS_TOKEN),
-      }
-      console.log('Vue.ls.get(ACCESS_TOKEN)', Vue.ls.get(ACCESS_TOKEN))
+      };
+      console.log("Vue.ls.get(ACCESS_TOKEN)", Vue.ls.get(ACCESS_TOKEN));
 
       // 配置 server 接口地址
-      this.editor.config.uploadFileName = 'file'
-      this.editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFileForEdit'
+      this.editor.config.uploadFileName = "file";
+      this.editor.config.uploadImgServer =
+        "/api/content-api/fileUpload/uploadImgFileForEdit";
       // this.editor.config.uploadImgServer = '/api/wx-api/health/wx/' + appId + '/uploadInnerImg'
       // this.editor.config.uploadImgServer = '/api/content-api/fileUpload/uploadImgFile'
       // editor.config.showLinkVideo = false
 
       //教育文章先不支持视频，所以注释
-      this.editor.config.uploadVideoName = 'file'
-      this.editor.config.uploadVideoServer = '/api/content-api/fileUpload/uploadVideoFileForEdit'
+      this.editor.config.uploadVideoName = "file";
+      this.editor.config.uploadVideoServer =
+        "/api/content-api/fileUpload/uploadVideoFileForEdit";
       this.editor.config.uploadVideoHeaders = {
         Authorization: Vue.ls.get(ACCESS_TOKEN),
-      }
-      this.editor.create()
-      this.editor.txt.html(introduction)
+      };
+      this.editor.create();
+      this.editor.txt.html(introduction);
     },
 
     /**
      * 增加序号
      */
     addNum() {
-      this.queryParams.sortedNo++
+      this.queryParams.sortedNo++;
     },
 
     /**
      * 减序号
      */
     duleNum() {
-      this.queryParams.sortedNo--
+      this.queryParams.sortedNo--;
       if (this.queryParams.sortedNo <= 0) {
-        this.queryParams.sortedNo = 0
+        this.queryParams.sortedNo = 0;
       }
     },
 
@@ -527,8 +574,8 @@ export default {
      *
      */
     onSelect(hospitalId, s2) {
-      console.log('hospitalId', hospitalId)
-      this.queryParams.hospitalId = hospitalId
+      console.log("hospitalId", hospitalId);
+      this.queryParams.hospitalId = hospitalId;
 
       //   this.chooseDeptItem = JSON.parse(JSON.stringify(this.originData.find((item) => item.id == departmentId)))
       //   console.log('chooseDeptItem', this.chooseDeptItem)
@@ -539,16 +586,16 @@ export default {
      * 选择科室类型
      */
     selectTyple(selectTyple) {
-      console.log('科室类型', selectTyple)
-      this.queryParams.hospitalType = selectTyple
+      console.log("科室类型", selectTyple);
+      this.queryParams.hospitalType = selectTyple;
     },
 
     /**
      * 科室等级
      */
     selectLevel(selectLevel) {
-      console.log('科室等级', selectLevel)
-      this.queryParams.level = selectLevel
+      console.log("科室等级", selectLevel);
+      this.queryParams.level = selectLevel;
     },
 
     /**
@@ -559,41 +606,57 @@ export default {
         .then((res) => {
           if (res.code == 0) {
             // this.queryParams.hospitalId = res.data.pid
-            this.queryParams.hospitalCode = res.data.hospitalCode
-            this.queryParams.hospitalName = res.data.hospitalName
-            this.queryParams.sortedNo = res.data.sortedNo
-            this.queryParams.orgType = res.data.orgType.value
-            this.queryParams.hospitalType = res.data.hospitalType != null ? res.data.hospitalType.value : ''
-            this.queryParams.level = res.data.level != null ? res.data.level.value : ''
-            this.queryParams.hisCode = res.data.hisCode
-            this.queryParams.middleware = res.data.middleware
-            this.queryParams.introduction = res.data.introduction
-            this.queryParams.orgType = res.data.orgType.value
-            this.queryParams.institutionClassify = res.data.institutionClassify
-            this.queryParams.supervisionHosCode = res.data.supervisionHosCode
+            this.queryParams.hospitalCode = res.data.hospitalCode;
+            this.queryParams.hospitalName = res.data.hospitalName;
+            this.queryParams.sortedNo = res.data.sortedNo;
+            this.queryParams.orgType = res.data.orgType.value;
+            this.queryParams.hospitalType =
+              res.data.hospitalType != null ? res.data.hospitalType.value : "";
+            this.queryParams.level = res.data.level != null ? res.data.level.value : "";
+            this.queryParams.hisCode = res.data.hisCode;
+            this.queryParams.middleware = res.data.middleware;
+            this.queryParams.introduction = res.data.introduction;
+            this.queryParams.orgType = res.data.orgType.value;
+            this.queryParams.institutionClassify = res.data.institutionClassify;
+            this.queryParams.supervisionHosCode = res.data.supervisionHosCode;
             if (res.data.hospitalType != null) {
-              this.hospitalTypeSelect = res.data.hospitalType.description
+              this.hospitalTypeSelect = res.data.hospitalType.description;
             }
             if (res.data.level != null) {
-              this.Hospitallevel = res.data.level.description
+              this.Hospitallevel = res.data.level.description;
             }
+            this.blockchainHosId = res.data.blockchainHosId;
 
             this.$nextTick(() => {
-              this.init(res.data.introduction)
-            })
-            this.fileList = []
+              this.init(res.data.introduction);
+            });
+            this.fileList = [];
             this.fileList.push({
-              uid: '-1',
-              name: '封面',
-              status: 'done',
+              uid: "-1",
+              name: "封面",
+              status: "done",
               url: res.data.imgUrl,
               // media_id: this.checkData.extraData,
-            })
+            });
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
+          this.confirmLoading = false;
+        });
+    },
+
+    goRegister() {
+      registerBlockchain({ hospitalCode: this.queryParams.hospitalCode })
+        .then((res) => {
+          if (res.code == 0) {
+            this.blockchainHosId = res.data;
+          } else {
+            this.$message.error(res.message);
+          }
         })
+        .finally((res) => {
+          this.confirmLoading = false;
+        });
     },
 
     /**
@@ -602,9 +665,9 @@ export default {
     getParentList() {
       parent().then((res) => {
         if (res.code == 0) {
-          this.ParentList = res.data
+          this.ParentList = res.data;
         }
-      })
+      });
     },
 
     /***
@@ -614,12 +677,12 @@ export default {
       queryHospitalLevel()
         .then((res) => {
           if (res.code == 0) {
-            this.HospitalLevelList = res.data
+            this.HospitalLevelList = res.data;
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
 
     /**
@@ -629,12 +692,12 @@ export default {
       queryHospitalType()
         .then((res) => {
           if (res.code == 0) {
-            this.HospitalTypeList = res.data
+            this.HospitalTypeList = res.data;
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
 
     /**
@@ -649,72 +712,72 @@ export default {
 
     async handlePreview(file) {
       if (!file.url && !file.preview) {
-        file.preview = await this.getBase64(file.originFileObj)
+        file.preview = await this.getBase64(file.originFileObj);
       }
-      this.previewImage = file.url || file.preview
-      this.previewVisible = true
+      this.previewImage = file.url || file.preview;
+      this.previewVisible = true;
     },
 
     handleChange(changeObj) {
-      if (changeObj.file.status == 'done' && changeObj.file.response.code != 0) {
-        this.$message.error(changeObj.file.response.message)
-        changeObj.fileList.pop()
-        this.fileList = changeObj.fileList
+      if (changeObj.file.status == "done" && changeObj.file.response.code != 0) {
+        this.$message.error(changeObj.file.response.message);
+        changeObj.fileList.pop();
+        this.fileList = changeObj.fileList;
       } else {
-        this.fileList = changeObj.fileList
+        this.fileList = changeObj.fileList;
       }
     },
 
     getBase64(file) {
       return new Promise((resolve, reject) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onload = () => resolve(reader.result)
-        reader.onerror = (error) => reject(error)
-      })
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+      });
     },
 
     /***
      * 新增租户接口调用
      */
     addHospital() {
-      this.confirmLoading = true
+      this.confirmLoading = true;
       save(this.queryParams)
         .then((res) => {
           if (res.code == 0 && res.success) {
-            this.visible = false
-            this.$message.success('修改成功')
-            this.$emit('ok')
+            this.visible = false;
+            this.$message.success("修改成功");
+            this.$emit("ok");
           } else {
-            this.$message.error('修改失败:' + res.message)
+            this.$message.error("修改失败:" + res.message);
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
 
     formatDateOut(date) {
-      date = new Date(date)
-      let myyear = date.getFullYear()
-      let mymonth = date.getMonth() + 1
-      let myweekday = date.getDate()
-      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
-      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
-      return `${myyear}-${mymonth}-${myweekday}`
+      date = new Date(date);
+      let myyear = date.getFullYear();
+      let mymonth = date.getMonth() + 1;
+      let myweekday = date.getDate();
+      mymonth < 10 ? (mymonth = "0" + mymonth) : mymonth;
+      myweekday < 10 ? (myweekday = "0" + myweekday) : myweekday;
+      return `${myyear}-${mymonth}-${myweekday}`;
     },
 
     //数组元素去重
     removeDuplicate(arry) {
-      const newArry = []
+      const newArry = [];
       if (arry != null && arry.length > 0) {
         arry.forEach((item) => {
           if (!newArry.includes(item)) {
-            newArry.push(item)
+            newArry.push(item);
           }
-        })
+        });
       }
-      return newArry
+      return newArry;
     },
 
     /**
@@ -736,120 +799,120 @@ export default {
      * 重置
      */
     reset() {
-      this.queryParams.hospitalCode = ''
-      this.queryParams.hospitalName = ''
-      this.queryParams.hospitalId = ''
-      this.queryParams.hospitalType = ''
-      this.queryParams.imgUrl = ''
-      this.queryParams.introduction = ''
-      this.queryParams.level = ''
-      this.queryParams.middleware = ''
-      this.queryParams.orgType = undefined
-      this.queryParams.pid = ''
-      this.queryParams.sortedNo = ''
-      this.queryParams.tenantId = ''
-      this.queryParams.supervisionHosCode= '', //机构代码
-      this.queryParams.institutionClassify= undefined //机构分类
+      this.blockchainHosId = "";
+      this.queryParams.hospitalCode = "";
+      this.queryParams.hospitalName = "";
+      this.queryParams.hospitalId = "";
+      this.queryParams.hospitalType = "";
+      this.queryParams.imgUrl = "";
+      this.queryParams.introduction = "";
+      this.queryParams.level = "";
+      this.queryParams.middleware = "";
+      this.queryParams.orgType = undefined;
+      this.queryParams.pid = "";
+      this.queryParams.sortedNo = "";
+      this.queryParams.tenantId = "";
+      (this.queryParams.supervisionHosCode = ""), //机构代码
+        (this.queryParams.institutionClassify = undefined); //机构分类
     },
 
     /**
      * 取消
      */
     handleCancel() {
-      this.visible = false
-      this.previewVisible = false
+      this.visible = false;
+      this.previewVisible = false;
     },
 
     /**
      * 提交
      */
     handleSubmit() {
-      if (this.queryParams.hospitalId === '') {
-        this.$message.error('请选择上级机构')
-        return
+      if (this.queryParams.hospitalId === "") {
+        this.$message.error("请选择上级机构");
+        return;
       }
 
       if (!this.queryParams.hospitalCode) {
-        this.$message.error('请输入机构代码')
-        return
+        this.$message.error("请输入机构代码");
+        return;
       }
       if (!this.queryParams.hospitalName) {
-        this.$message.error('请输入机构名称')
-        return
+        this.$message.error("请输入机构名称");
+        return;
       }
       if (!this.queryParams.orgType) {
-        this.$message.error('请选择机构类型')
-        return
+        this.$message.error("请选择机构类型");
+        return;
       }
 
       if (this.queryParams.orgType == 2) {
         if (!this.queryParams.hospitalType) {
-          this.$message.error('请选择机构类型')
-          return
+          this.$message.error("请选择机构类型");
+          return;
         }
         if (!this.queryParams.level) {
-          this.$message.error('请选择机构等级')
-          return
+          this.$message.error("请选择机构等级");
+          return;
         }
         if (!this.queryParams.hisCode) {
-          this.$message.error('请输入HIS编码')
-          return
+          this.$message.error("请输入HIS编码");
+          return;
         }
         if (!this.queryParams.middleware) {
-          this.$message.error('请输入服务地址')
-          return
+          this.$message.error("请输入服务地址");
+          return;
         }
 
         if (!this.queryParams.supervisionHosCode) {
-          this.$message.error('请输入机构代码')
-          return
+          this.$message.error("请输入机构代码");
+          return;
         }
 
         if (!this.queryParams.institutionClassify) {
-          this.$message.error('请选择机构分类')
-          return
+          this.$message.error("请选择机构分类");
+          return;
         }
-
       } else {
         /**
          * 如果 选中的 组织类型不是 医疗机构  则不传医疗机构属性、接口配置等参数
          */
-        this.queryParams.hospitalType = ''
-        this.queryParams.level = ''
-        this.queryParams.hisCode = ''
-        this.queryParams.middleware = ''
-        this.queryParams.supervisionHosCode = ''
-        this.queryParams.institutionClassify = ''
+        this.queryParams.hospitalType = "";
+        this.queryParams.level = "";
+        this.queryParams.hisCode = "";
+        this.queryParams.middleware = "";
+        this.queryParams.supervisionHosCode = "";
+        this.queryParams.institutionClassify = "";
       }
       if (this.fileList.length > 0 && this.fileList[0].response) {
-        this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl
+        this.queryParams.imgUrl = this.fileList[0].response.data.fileLinkUrl;
       } else {
         if (this.fileList && this.fileList[0]) {
-          this.queryParams.imgUrl = this.fileList[0].url
+          this.queryParams.imgUrl = this.fileList[0].url;
         }
-        this.queryParams.imgUrl = ''
+        this.queryParams.imgUrl = "";
       }
 
       if (this.queryParams.sortedNo < 0) {
-        this.$message.error('显示序号不能小于0!')
-        return
+        this.$message.error("显示序号不能小于0!");
+        return;
       }
 
-      this.addHospital()
+      this.addHospital();
     },
   },
-}
+};
 </script>
 
-<style lang="less"  >
+<style lang="less">
 .ant-select-tree-dropdown {
   max-height: 27vh !important; //60
   top: 540px !important; //148
   left: 637px;
 }
 </style>
-        
-        <style lang="less">
+
+<style lang="less">
 .dddd-r {
   display: flex;
   flex-direction: row;
@@ -915,7 +978,7 @@ export default {
   }
 }
 </style>
-      <style lang="less">
+<style lang="less">
 .div-service-user {
   display: flex;
   flex-direction: row;
@@ -1112,6 +1175,39 @@ export default {
   .card-right-user {
     overflow: hidden;
     width: 65% !important;
+
+    .div-qu-kuai {
+      display: flex;
+      flex-direction: column;
+      margin-top: 10px;
+      margin-left: 10px;
+
+      .div-oper {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .div-chain-id {
+          width: 160px;
+          margin-left: 15px;
+          color: #1a1a1a;
+          font-weight: bold;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+        }
+
+        .btn-kuai {
+          color: #1890ff;
+          padding: 1px 15px;
+          border: 1px solid #1890ff;
+          &:hover {
+            cursor: pointer;
+          }
+        }
+      }
+    }
 
     .table-operator {
       margin-bottom: 18px;

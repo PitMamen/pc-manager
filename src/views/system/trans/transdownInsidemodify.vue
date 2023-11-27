@@ -11,7 +11,7 @@
           >重新提交</a-button
         >
         <a-popconfirm
-          placement="topRight"
+          placement="right"
           title="您确认要撤销当前申请单么？撤销之后无法找回"
           @confirm="() => cancelApply()"
         >
@@ -1350,6 +1350,7 @@ export default {
       revokeApply(this.uploadData.tradeIdStr).then(res => {
         if (res.code == 0) {
           this.$message.success("撤销成功");
+          this.$bus.$emit('refreshTransDownListEvent');
           setTimeout(() => {
             events.$emit('close');
           }, 1000);
