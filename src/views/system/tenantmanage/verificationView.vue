@@ -152,11 +152,11 @@
             <!-- <img style="width: 60px; height: 60px; margin-left: 10px" class="item-image" :src="record.qualificationZ" /> -->
             <!-- <img style="width: 60px; height: 60px; margin-left: 20px" class="item-image" :src="record.qualificationF" /> -->
 
-            <!-- 执业证照片 -->
+            <!-- 执业证照片(医生或护士) 多加一条 如果是技师 需要显示一张执业证-->
             <div v-if="record.personType=='doctor'||record.personType=='nurse'" style="margin-left: 3%; color: #333">执业证照片：</div>
 
             <a-upload
-            v-if="record.personType=='doctor'||record.personType=='nurse'"
+            v-if="record.personType=='doctor'||record.personType=='nurse'||record.personType=='medTechnician'"   
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
