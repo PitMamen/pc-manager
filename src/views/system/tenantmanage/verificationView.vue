@@ -149,6 +149,7 @@
             </a-upload>
 
             <a-upload
+            v-if="record.personType != 'medTechnician'"
               :disabled="true"
               :showUploadList="{ showRemoveIcon: false }"
               list-type="picture-card"
