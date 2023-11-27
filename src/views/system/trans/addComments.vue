@@ -351,10 +351,8 @@ export default {
         // tradeId: "20231108095148621",
       };
       this.confirmLoading = true;
-      debugger;
       getCommentList(param)
         .then((res) => {
-          debugger;
           if (res.code === 0) {
             if (res.data && res.data.records) {
               this.commentsData = res.data.records;
@@ -390,7 +388,6 @@ export default {
       item.isEdit = true;
       this.$set(item, "oldText", item.text);
       // <!-- 动态设置ref 动态设置ref-->
-      debugger;
       this.$refs[`textarea${item.id}`][0].focus();
       console.log("goEdit item", item);
       console.log("goEdit this.$refs", this.$refs[`textarea${item.id}`][0]);

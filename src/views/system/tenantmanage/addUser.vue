@@ -365,7 +365,8 @@
                 </a-upload>
               </div>
 
-              <div style="right: 120px; top: 10px; margin-left: 10px">
+              <!-- 技师只要一张资格证？？？ -->
+              <div style="right: 120px; top: 10px; margin-left: 10px" >
                 <a-upload
                   :action="actionUrlCover"
                   :multiple="true"
