@@ -78,9 +78,9 @@
         <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
       </span>
 
-      <span slot="execute" slot-scope="text, record">
+      <!-- <span slot="execute" slot-scope="text, record">
         <a @click="goExecute(record)">{{record.planUserInfo}}</a>
-      </span>
+      </span> -->
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
           placement="topRight"
@@ -176,13 +176,13 @@ export default {
         
           dataIndex: 'followType',
         },
-        {
-          title: '方案执行',
+        // {
+        //   title: '方案执行',
         
-          dataIndex: 'planUserInfo',
-          align: 'center',
-          scopedSlots: { customRender: 'execute' },
-        },
+        //   dataIndex: 'planUserInfo',
+        //   align: 'center',
+        //   scopedSlots: { customRender: 'execute' },
+        // },
 
         {
           title: '状态',
