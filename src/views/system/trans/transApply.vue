@@ -109,7 +109,7 @@
             <div class="div-cell-name">病情分级：</div>
             <div class="div-cell-value">{{ dataInfo.diseaseLevel || '' }}</div>
           </div>
-          <div class="div-cell" style="width: 80%">
+          <div class="div-cell">
             <div class="div-cell-name">主要诊断：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.diagnos || '' }}</div>
           </div>
@@ -143,15 +143,15 @@
             <div class="div-cell-name"><span style="color: #f90505">*</span>转入机构：</div>
             <div class="div-cell-value">{{ dataInfo.inHospitalName || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:3.1%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转诊类型：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralType.description || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:1.6%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转诊原因：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralReason || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:2.6%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转运方式：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralWay || '' }}</div>
           </div>
@@ -162,15 +162,15 @@
             <div class="div-cell-name">申请人：</div>
             <div class="div-cell-value">{{ dataInfo.reqDocName || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:3.1%">
             <div class="div-cell-name">登记日期：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.regTime || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:1.6%">
             <div class="div-cell-name">申请机构：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.outHospitalName || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:2.6%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>注意事项：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.notice || '' }}</div>
           </div>
@@ -183,7 +183,7 @@
           </div>
 
           <div class="div-line" style="margin-bottom: 10px">
-            <div class="div-cell">
+            <div class="div-cell" style="width:24.7%">
               <div class="div-cell-name">转入科室：</div>
               <!-- <div class="div-cell-value"> -->
               <a-select
@@ -210,7 +210,7 @@
               </a-select>
               <!-- </div> -->
             </div>
-            <div class="div-cell">
+            <div class="div-cell" style="width:24.7%">
               <div class="div-cell-name">接收医生：</div>
               <!-- <div class="div-cell-value"> -->
               <a-select
@@ -228,7 +228,7 @@
               </a-select>
               <!-- </div> -->
             </div>
-            <div class="div-cell" style="width:27%">
+            <div class="div-cell" style="width:35.7%">
               <div class="div-cell-name" style="width: 140px">期望到院时间：</div>
               <div class="div-cell-value" style="width: 100%">
                 <a-range-picker
@@ -262,12 +262,12 @@
             </div>
           </div>
 
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:-1.5%">
             <div class="div-cell-name">审核人员：</div>
             <div class="div-cell-value">{{ dataInfo.inCheck }}</div>
             <!-- <div class="div-cell-value">{{user.userName}}</div> -->
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="margin-left:-1.39%">
             <div class="div-cell-name">审核日期：</div>
             <div class="div-cell-value">{{ dataInfo.inCheckTime }}</div>
           </div>
@@ -689,7 +689,7 @@ button {
     align-items: center;
 
     .div-cell {
-      width: 23%;
+      width: 26.2%;
       display: flex;
       flex-direction: row;
       align-items: center;
