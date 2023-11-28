@@ -210,7 +210,6 @@
               <a-radio-group
                 :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3|| dataInfo.status.value == 5"
                 v-model="requestData.status"
-                style="margin-left: 10px"
                 name="radioGroup"
                 @change="radioChange"
                 v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
