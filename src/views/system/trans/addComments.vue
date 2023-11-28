@@ -478,6 +478,7 @@ export default {
         return;
       }
       this.addCommentOut(item.id, this.newAnswer, child.atName);
+      // this.addCommentOut(item.id, this.newAnswer, child.userName);
     },
 
     /**
