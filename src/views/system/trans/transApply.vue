@@ -333,6 +333,7 @@ import moment from 'moment'
 import printJS from 'print-js'
 import printDownForm from './printDownForm'
 import printUpForm from './printUpForm'
+import { time } from 'echarts/core'
 
 export default {
   components: {
@@ -390,6 +391,7 @@ export default {
   activated() {
     if (this.$route.query.id) {
       //修改
+      this.clearData()
       this.tradeId = this.$route.query.id
       this.requestData.tradeId = this.$route.query.id
       this.getDetaiData(this.tradeId)
@@ -399,6 +401,8 @@ export default {
   methods: {
     clearData() {
       this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+      this.requestData.reachBeginDate = getDateNow()
+      this.requestData.reachEndDate = getCurrentMonthLast()
     },
 
     // 打印
@@ -436,6 +440,8 @@ export default {
               ]
               this.requestData.reachBeginDate = moment(this.dataInfo.reachBeginDate, this.dateFormat)
               this.requestData.reachEndDate = moment(this.dataInfo.reachEndDate, this.dateFormat)
+
+              // console.log("GGG:",this.requestData.reachBeginDate)
             }
           } else {
             this.$message.error(res.message)
@@ -449,13 +455,7 @@ export default {
     getReferralLogListOut(tradeId) {
       getReferralLogList(tradeId).then((res) => {
         if (res.code == 0) {
-          if (res.data) {
-            res.data.forEach((item, index) => {
-              if (item.dealDetail == '统一预约') {
-                res.data.splice(index, 1)
-              }
-            })
-          }
+   
 
           this.referralLogList = res.data
           let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
@@ -608,7 +608,11 @@ export default {
         }
       }
       this.confirmLoading = true
-      console.log('VVV:', this.requestData)
+      
+      this.requestData.reachBeginDate = this.requestData.reachBeginDate.format('yyyy-MM-DD')
+      this.requestData.reachEndDate = this.requestData.reachEndDate.format('yyyy-MM-DD')
+      // console.log('VVV:', this.requestData)
+      // return
       referralExamine(this.requestData)
         .then((res) => {
           if (res.code == 0) {

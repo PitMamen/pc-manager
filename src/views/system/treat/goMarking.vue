@@ -52,21 +52,26 @@
               font-size: 14px;
               color: #1a1a1a;
             "
-            >备注</span
+            >登记未入组原因</span
           >
         </div>
       </div>
       <div class="line"></div>
 
       <div class="flag-content" style="margin-top: 20px; margin-bottom: 20px">
-        <span class="span-item-name" style="margin-left: 10px; font-size: 12px; color: #1a1a1a">患者备注 :</span>
-        <a-input
+        <span class="span-item-name" style="margin-left: 10px; font-size: 12px; color: #1a1a1a">未入组原因 :</span>
+        <!-- <a-input
           style="width: 90%; margin-top: -4px; margin-left: 5px; display: inline-block"
           v-model="specFlag"
           class="span-item-value"
           allow-clear
           placeholder="请输入患者标记 "
-        />
+        /> -->
+        <a-select v-model="specFlag" allow-clear placeholder="请选择未入组原因" style="width: 90%; margin-top: -4px; margin-left: 5px; display: inline-block">
+              <a-select-option v-for="(item, index) in rylxList" :key="index" :value="item">{{
+                item
+              }}</a-select-option>
+            </a-select>
         <div></div>
       </div>
     </div>
@@ -98,7 +103,8 @@ export default {
       confirmLoading: false,
       payMode: '',
       visible: false,
-      specFlag: '', //标记
+      specFlag: undefined, //标记
+      rylxList:['无智能手机','患者拒绝随访','放弃治疗','患者先出院几天后结账','患者无手术','日间手术','患者转科','患者转ICU','患者死亡','近期有重复住院记录，无需随访','通过其他方式进行随访','其它']
     }
   },
 
@@ -111,7 +117,7 @@ export default {
       this.visible = true
       this.orderDetailDataList = {}
       this.record = record
-      this.specFlag = ''
+      this.specFlag = undefined
       this.followPlanPhonePatientInfoOut(this.record.id)
     },
 

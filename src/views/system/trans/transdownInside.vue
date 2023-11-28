@@ -872,6 +872,17 @@
         </div>
       </div>
 
+      <a-modal
+        title="温馨提示"
+        :visible="visibleAsk"
+        @ok="handleOkAsk"
+        cancelText="暂不上传"
+        okText="立即上传"
+        @cancel="handleCancelAsk"
+      >
+        <p>是否进行病历上传？</p>
+      </a-modal>
+
       <!-- <a-steps
         progress-dot
         :current="linePositon"
@@ -941,6 +952,8 @@ export default {
       sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
       confirmLoading: false,
+      visibleAsk: false,
+      tradeId: "",
       nowDateBegin: "",
       dateValue: undefined,
       lineStatus: "error",
@@ -1100,6 +1113,7 @@ export default {
       loading: false,
       townNameGet: "",
       mySelected: [],
+      isInputPatient: false,
 
       loadCasData: (selectedOptions) => {
         console.log("Cascader selectedOptions", selectedOptions);
@@ -1644,6 +1658,8 @@ export default {
         },
       ];
       this.cascaderData = [1];
+      this.isInputPatient = true;
+      this.mySelected = []
     },
 
     onSelectSource(sourceCode) {
@@ -1833,6 +1849,7 @@ export default {
       this.uploadData.reachEndDate = this.createValue[1];
       this.uploadData.reqDocName = this.user.userName;
       this.uploadData.regTime = formatDate(new Date());
+      this.isInputPatient = false;
     },
 
     /**
@@ -1883,7 +1900,7 @@ export default {
       //   this.$message.error("请输入选择户口地址");
       //   return;
       // }
-      if (this.cascaderData.length != 3) {
+      if (!this.isInputPatient && this.cascaderData.length != 3) {
         this.$message.error("请选择户口地址");
         return;
       }
@@ -1973,7 +1990,9 @@ export default {
             this.$bus.$emit("refreshTransDownListEvent", "刷新下转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.clearData();
-            this.$router.go(-1);
+            this.tradeId = res.data;
+            this.visibleAsk = true;
+            // this.$router.go(-1);
           } else {
             this.$message.error("保存失败：" + res.message);
           }
@@ -1981,6 +2000,25 @@ export default {
         .finally((res) => {
           this.confirmLoading = false;
         });
+    },
+
+    handleOkAsk() {
+      this.visibleAsk = false;
+      this.$router.push({
+        name: "transdownDetailmodify",
+        // path: '/servicewise/projectEdit',
+        // query: {
+        //   dataStr: JSON.stringify(record),
+        // },
+        query: {
+          tradeId: this.tradeId,
+          keyindex: "2",
+        },
+      });
+    },
+    handleCancelAsk() {
+      this.visibleAsk = false;
+      this.$router.go(-1);
     },
   },
 };

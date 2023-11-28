@@ -1,7 +1,7 @@
 <template>
   <div class="wrap">
     <div>
-      <a-tabs v-model="keyindex">
+      <a-tabs v-model="keyindex" @change="callback">
         <a-tab-pane key="1" tab="转诊申请单">
           <transup-inside ref="transupInside" />
         </a-tab-pane>
@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import transupInside from "./transupInside";
-import uploadFiles from "./uploadFiles";
+import transupInside from './transupInside'
+import uploadFiles from './uploadFiles'
 
 export default {
   components: {
@@ -27,26 +27,31 @@ export default {
 
   data() {
     return {
-      keyindex: "1",
-    };
+      keyindex: '1',
+    }
   },
 
   created() {
-    console.log(this.$route.query.keyindex);
+    console.log(this.$route.query.keyindex)
     if (this.$route.query.keyindex) {
-      this.keyindex = this.$route.query.keyindex;
+      this.keyindex = this.$route.query.keyindex
     }
   },
 
   methods: {
-    callback() {},
+        // 点击tab 回调触发 
+    callback(keyIndex) {
+      if (keyIndex == '2') {
+        this.$refs.uploadFiles.refershData(keyIndex)
+      }
+    },
     handleOk() {},
 
     cancel() {
-      this.$router.go(-1);
+      this.$router.go(-1)
     },
   },
-};
+}
 </script>
 
 <style lang="less" scoped>

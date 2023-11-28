@@ -1,10 +1,10 @@
-// export const currentEnv = "test"    //测试环境
+export const currentEnv = "test"    //测试环境
 // export const currentEnv = "show"    //演示环境
-export const currentEnv = "online"  //线上环境
+// export const currentEnv = "online"  //线上环境
 
-// export const appId = "wx99df16e6be344865"//测试公众号 上面三个湘雅医院的公众号
+export const appId = "wx99df16e6be344865"//测试公众号 上面三个湘雅医院的公众号
 // export const appId = "wx0bc29297eabbca39"//演示环境公众号
-export const appId = "wx2f945858177df980" //线上公众号（更换的） # 健康管家公众号的appid
+// export const appId = "wx2f945858177df980" //线上公众号（更换的） # 健康管家公众号的appid
 
 export function timeFix() {
   const time = new Date()
@@ -99,6 +99,41 @@ export function formatDateFull(date) {
   oMin < 10 ? (oMin = '0' + oMin) : oMin
   oSen < 10 ? (oSen = '0' + oSen) : oSen
   return `${myyear}-${mymonth}-${myweekday} ${oHour}:${oMin}:${oSen}`
+}
+
+/**
+ * 19950215
+ * @param {*} age 
+ * @returns 
+ */
+export function countAge(age) {
+  let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
+  var birthday = new Date(str)
+  var d = new Date()
+  var age =
+    d.getFullYear() -
+    birthday.getFullYear() -
+    (d.getMonth() < birthday.getMonth() || (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
+      ? 1
+      : 0)
+  return age
+}
+
+/**
+ * 1995-02-15
+ * @param {*} age 
+ * @returns 
+ */
+export function countAgeNew(age) {
+  var birthday = new Date(age)
+  var d = new Date()
+  var age =
+    d.getFullYear() -
+    birthday.getFullYear() -
+    (d.getMonth() < birthday.getMonth() || (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
+      ? 1
+      : 0)
+  return age
 }
 
 export function formatDateMin(date) {
@@ -246,6 +281,82 @@ export function isObjectEmpty(obj) {
  */
 export function isStringEmpty(str) {
   return str == undefined || str == null || str.length <= 0
+}
+
+/**
+ * 
+ * @param {获取切口名称} str 
+ * @returns 
+ */
+export function getQiekou(code) {
+  let str
+  switch (code) {
+    case '0':
+      str = '有手术，但体表无切口或腔镜手术切口'
+      break;
+    case '11':
+      str = 'I/甲'
+      break;
+    case '12':
+      str = 'I/乙'
+      break;
+    case '13':
+      str = 'I/丙'
+      break;
+    case '14':
+      str = 'I/其他'
+      break;
+    case '21':
+      str = 'II/甲'
+      break;
+    case '22':
+      str = 'II/乙'
+      break;
+    case '23':
+      str = 'II/丙'
+      break;
+    case '24':
+      str = 'II/其他'
+      break;
+    case '31':
+      str = 'III/甲'
+      break;
+    case '32':
+      str = 'III/乙'
+      break;
+    case '33':
+      str = 'III/丙'
+      break;
+    case '34':
+      str = 'III/其他'
+      break;
+
+    default:
+      break;
+  }
+  return str
+}
+
+export function getSurgeryLevel(code) {
+  let str
+  switch (code) {
+    case '1':
+      str= '一级手术'
+      break;
+    case '2':
+      str= '二级手术'
+      break;
+    case '3':
+      str= '三级手术'
+      break;
+    case '4':
+      str= '四级手术'
+      break;
+  
+    default:
+      break;
+  }
+  return str
 }
 
 /**

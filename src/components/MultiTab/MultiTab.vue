@@ -48,6 +48,10 @@ export default {
       this[action](targetKey)
     },
     remove (targetKey) {
+      if (['/welcome', '/qbc/index'].includes(targetKey)){
+        return;
+      }
+
       this.pages = this.pages.filter(page => page.fullPath !== targetKey)
       this.fullPathList = this.fullPathList.filter(path => path !== targetKey)
       // 判断当前标签是否关闭，若关闭则跳转到最后一个还存在的标签页
@@ -147,7 +151,7 @@ export default {
         <a-tab-pane
           style={{ height: 0 }}
           tab={this.renderTabPane(page.meta.customTitle || page.meta.title, page.fullPath)}
-          key={page.fullPath} closable={pages.length > 1}
+          key={page.fullPath} closable={pages.length>1 && !['/welcome', '/qbc/index'].includes(page.fullPath)}
         >
         </a-tab-pane>)
     })

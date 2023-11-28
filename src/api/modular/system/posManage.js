@@ -2053,6 +2053,18 @@ export function queryHistoryIMRecordPage(data) {
 }
 
 /**
+ * 
+ * getAccessToken
+ */
+ export function getAccessToken(data) {
+  return axios({
+    url: '/account-api/exchangeAccessToken',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  * 随访类型列表：1:关怀型随访2:管理型随访3:科研型随访
  */
 export function followTypes(data) {
@@ -2786,6 +2798,19 @@ export function queryHospitaldetail(data) {
 
 
 /**
+ * 将机构注册到区块链
+ */
+
+export function registerBlockchain(data) {
+  return axios({
+    url: '/uam-api/hospital/registerBlockchain',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
  * 科室列表
  */
 export function getDepartmentListForReq(data) {
@@ -2803,6 +2828,23 @@ export function getDepartmentListForSelect(departmentName, source) {
     url: '/follow-api/departmentManger/getDepartmentListForReq',
     method: 'post',
     data: {
+      departmentName: departmentName,//搜索输入
+      source: source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
+      status: 1,//1开启
+      pageNo: 1,
+      pageSize: 9999
+    },
+  })
+}
+/**
+ * 住院科室列表
+ */
+export function getZhuyuanDepartmentList(departmentName, source) {
+  return axios({
+    url: '/follow-api/departmentManger/getDepartmentListForReq',
+    method: 'post',
+    data: {
+      departmentType:3,
       departmentName: departmentName,//搜索输入
       source: source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
       status: 1,//1开启
@@ -5644,6 +5686,15 @@ export function upReferralDetail(data) {
   })
 }
 
+//  revokeApply
+export function revokeApply(data) {
+  return axios({
+    url: '/referral-api/referralTrade/revokeApply/' + data,
+    method: 'get',
+    params: data,
+  })
+}
+
 ///referralTrade/modifyUpReferral 修改上转登记
 export function modifyUpReferral(data) {
   return axios({
@@ -5705,6 +5756,32 @@ export function getRegionByUpAddressId(data) {
   })
 }
 
+// // /patient/getSynRecord 获取同步信息
+// export function getSynRecord(data) {
+//   return axios({
+//     url: '/referral-api/patient/getSynRecord',
+//     method: 'get',
+//     params: data,
+//   })
+// }
+// /patient/getCaseMain 获取同步信息
+export function getCaseMain(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseMain',
+    method: 'get',
+    params: data,
+  })
+}
+
+// /referral-api/patient/authStatus 授权状态
+export function getAuthStatus(data) {
+  return axios({
+    url: '/referral-api/patient/authStatus',
+    method: 'get',
+    params: data,
+  })
+}
+
 // referralTrade/upReferral 上转登记
 export function upReferral(data) {
   return axios({
@@ -5717,6 +5794,41 @@ export function upReferral(data) {
 export function downReferral(data) {
   return axios({
     url: '/referral-api/referralTrade/downReferral',
+    method: 'post',
+    data: data,
+  })
+}
+
+// tbReferralTradeComment/addComment 添加评论
+export function addComment(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/addComment',
+    method: 'post',
+    data: data,
+  })
+}
+
+// tbReferralTradeComment/deleteComment 删除评论
+export function deleteComment(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/deleteComment/' + data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+// tbReferralTradeComment/getCommentList 获取评论列表
+export function getCommentList(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/getCommentList',
+    method: 'post',
+    data: data,
+  })
+}
+// tbReferralTradeComment/modifyComment 修改评论
+export function modifyComment(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeComment/modifyComment',
     method: 'post',
     data: data,
   })
@@ -5840,11 +5952,28 @@ export function qryReferralListByPage(data) {
   })
 }
 
+// 统一预约列表
+export function reservationListByPage(data) {
+  return axios({
+    url: '/referral-api/referral/reservationListByPage',
+    method: 'post',
+    data: data,
+  })
+}
 
 // 转入批量数量
 export function qryReferralCount(data) {
   return axios({
     url: '/referral-api/referral/qryReferralCount',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 统一预约批量数量
+export function reservationCount(data) {
+  return axios({
+    url: '/referral-api/referral/reservationCount',
     method: 'post',
     data: data,
   })
@@ -5910,10 +6039,123 @@ export function cancelAudit(data) {
 //   })
 // }
 
+// 建卡
+export function createCard(data) {
+  return axios({
+    url: '/referral-api/referralTrade/createCard',
+    method: 'post',
+    data: data,
+  })
+}
+// 约床
+export function createBed(data) {
+  return axios({
+    url: '/referral-api/referralTrade/createBed',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 取消床位
+export function cancelBed(data) {
+  return axios({
+    url: '/referral-api/referralTrade/cancelBed',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 约床短信提醒
+export function bedRemind(data) {
+  return axios({
+    url: '/referral-api/referralTrade/remind/'+data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+// 同步病历信息
+export function synPatientCase(data) {
+  return axios({
+    url: '/referral-api/patient/synPatientCase',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取同步信息
+export function getSynRecord(data) {
+  return axios({
+    url: '/referral-api/patient/getSynRecord',
+    method: 'get',
+    params: data,
+  })
+}
 
 
 
+// 获取检验数据
+export function getCaseExam(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseExam',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取检查数据
+export function getCaseCheck(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseCheck',
+    method: 'get',
+    params: data,
+  })
+}
+
+// 获取出院小结数据
+export function getCaseSummary(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseSummary',
+    method: 'get',
+    params: data,
+  })
+}
 
 
+// 提交记录
+export function uploadTradeImg(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeImg/uploadTradeImg',
+    method: 'post',
+    data: data,
+  })
+}
 
 
+// 获取图片
+export function getTradeImg(data) {
+  return axios({
+    url: '/referral-api/tbReferralTradeImg/getTradeImg/'+data,
+    method: 'get',
+    // params: data,
+  })
+}
+
+
+// 授权/取消授权
+export function operationAuth(data) {
+  return axios({
+    url: '/referral-api/patient/operationAuth',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 授权详情
+export function viewAuthDetail(data) {
+  return axios({
+    url: '/referral-api/patient/viewAuthDetail',
+    method: 'get',
+    params: data,
+  })
+}

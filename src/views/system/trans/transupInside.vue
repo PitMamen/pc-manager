@@ -771,6 +771,16 @@
         </div>
       </div>
 
+      <a-modal
+        title="温馨提示"
+        :visible="visibleAsk"
+        @ok="handleOkAsk"
+        cancelText="暂不上传"
+        okText="立即上传"
+        @cancel="handleCancelAsk"
+      >
+        <p>是否进行病历上传？</p>
+      </a-modal>
       <!-- <a-steps
         progress-dot
         :current="linePositon"
@@ -837,6 +847,8 @@ export default {
       sourceDatas: [],
       dateFormat: "YYYY-MM-DD",
       confirmLoading: false,
+      visibleAsk: false,
+      tradeId: "",
       nowDateBegin: "",
       dateValue: undefined,
       lineStatus: "error",
@@ -989,6 +1001,7 @@ export default {
       loading: false,
       townNameGet: "",
       mySelected: [],
+      isInputPatient: false,
 
       loadCasData: (selectedOptions) => {
         console.log("Cascader selectedOptions", selectedOptions);
@@ -1261,11 +1274,12 @@ export default {
         if (res.code == 0) {
           // 再传给回调函数
           if (callback) {
+            console.log("this.mySelected.length", this.mySelected.length);
             res.data.forEach((item) => {
               if (this.mySelected.length < 2) {
                 this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
               } else {
-                this.$set(item, "isLeaf", true); 
+                this.$set(item, "isLeaf", true);
               }
             });
             callback(res.data);
@@ -1478,6 +1492,8 @@ export default {
         },
       ];
       this.cascaderData = [1];
+      this.isInputPatient = true;
+      this.mySelected = [];
     },
 
     onSelectSource(sourceCode) {
@@ -1668,6 +1684,7 @@ export default {
       this.uploadData.reachEndDate = this.createValue[1];
       this.uploadData.reqDocName = this.user.userName;
       this.uploadData.regTime = formatDate(new Date());
+      this.isInputPatient = false;
     },
 
     /**
@@ -1718,7 +1735,7 @@ export default {
       //   this.$message.error("请输入选择户口地址");
       //   return;
       // }
-      if (this.cascaderData.length != 3) {
+      if (!this.isInputPatient && this.cascaderData.length != 3) {
         this.$message.error("请选择户口地址");
         return;
       }
@@ -1801,7 +1818,9 @@ export default {
             this.$bus.$emit("refreshTransUpListEvent", "刷新上转列表");
             // this.$bus.$emit('proEvent', '刷新数据-方案新增')
             this.clearData();
-            this.$router.go(-1);
+            this.tradeId = res.data;
+            this.visibleAsk = true;
+            // this.$router.go(-1);
           } else {
             this.$message.error("保存失败：" + res.message);
           }
@@ -1809,6 +1828,25 @@ export default {
         .finally((res) => {
           this.confirmLoading = false;
         });
+    },
+
+    handleOkAsk() {
+      this.visibleAsk = false;
+      this.$router.push({
+        name: "transupDetailmodify",
+        // path: '/servicewise/projectEdit',
+        // query: {
+        //   dataStr: JSON.stringify(record),
+        // },
+        query: {
+          tradeId: this.tradeId,
+          keyindex: "2",
+        },
+      });
+    },
+    handleCancelAsk() {
+      this.visibleAsk = false;
+      this.$router.go(-1);
     },
   },
 };

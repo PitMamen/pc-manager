@@ -64,13 +64,13 @@
           >
         </template> -->
         <template>
-          <a @click="goFile" style="margin-left: 8px"
+          <a @click="goFile(record)" style="margin-left: 8px"
             ><a-icon style="margin-right: 5px" type="printer" />档案</a
           >
         </template>
       </span>
     </s-table>
-    <info-form ref="infoForm" @ok="handleOk" />
+    <!-- <info-form ref="infoForm" @ok="handleOk" /> -->
 
     <!-- <a-modal v-model="visibleDes" title="提示" :footer="null" @ok="handleOkDes"> -->
     <!-- <a-modal v-model="visibleDes" cancelText="''" title="提示" @ok="handleOkDes">
@@ -86,6 +86,7 @@
     </a-modal> -->
 
     <info-form ref="infoForm" @ok="handleModify" />
+    <file-modal ref="fileModal" />
   </a-card>
 </template>
 
@@ -102,11 +103,13 @@ import moment from "moment";
 import Vue from "vue";
 import { TRUE_USER } from "@/store/mutation-types";
 import infoForm from "./infoForm";
+import fileModal from "./fileModal";
 export default {
   components: {
     STable,
     Ellipsis,
     infoForm,
+    fileModal,
   },
   data() {
     return {
@@ -294,8 +297,9 @@ export default {
       // this.$message.success("去编辑");
       this.$refs.infoForm.goModify(record);
     },
-    goFile() {
+    goFile(record) {
       // this.$message.success("去打印");
+      this.$refs.fileModal.showFile(record);
     },
 
     addTransUp() {

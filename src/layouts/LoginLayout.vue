@@ -310,6 +310,7 @@ export default {
         location.href = item.indexUrl
         return
       }
+      console.log('item.indexUrl', item.indexUrl);
       this.$router.push({ path: item.indexUrl })
     },
     setSysApps(apps) {

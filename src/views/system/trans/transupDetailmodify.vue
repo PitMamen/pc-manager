@@ -1,16 +1,29 @@
 <template>
   <div class="wrap">
     <div>
-      <a-tabs v-model="keyindex">
+      <a-tabs
+        @change="callback"
+        v-model="keyindex"
+        :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
+      >
         <a-tab-pane key="1" tab="转诊申请单">
-          <!-- <transup-insidemodify :modifyItem="passItem" ref="transupInsidemodify" /> -->
-          <transup-insidemodify ref="transupInsidemodify" />
+          <!-- <transup-insidemodify ref="transupInsidemodify" /> -->
         </a-tab-pane>
 
-        <a-tab-pane disabled key="2" tab="上传病历" force-render>
-          <upload-files ref="uploadFiles" />
+        <a-tab-pane key="2" tab="上传病历" force-render>
+          <!-- <upload-files ref="uploadFiles" /> -->
         </a-tab-pane>
+        <a-tab-pane key="3" tab="健康档案" force-render>
+          <!-- <file-danan :record="record" ref="fileDanan" /> -->
+        </a-tab-pane>
+        <!-- <a-tab-pane key="4" tab="添加评论" force-render>
+        </a-tab-pane> -->
       </a-tabs>
+
+      <transup-insidemodify v-show="keyindex=='1'" ref="transupInsidemodify" />
+      <upload-files v-show="keyindex=='2'" ref="uploadFiles" />
+      <file-danan v-show="keyindex=='3'" :record="record" ref="fileDanan" />
+      <upload-files v-show="keyindex=='4'" ref="uploadFiles" />
     </div>
     <span class="btn-back" @click="cancel()">返回列表</span>
   </div>
@@ -19,18 +32,22 @@
 <script>
 import transupInsidemodify from "./transupInsidemodify";
 import uploadFiles from "./uploadFiles";
+import fileDanan from "./fileDanan";
+import addComments from "./addComments";
 
 export default {
   components: {
     transupInsidemodify,
     uploadFiles,
+    fileDanan,
+    addComments,
   },
 
   data() {
     return {
       keyindex: "1",
-      // tradeId: undefined,
       passItem: undefined,
+      record: undefined,
     };
   },
 
@@ -38,7 +55,10 @@ export default {
     $route(to, from) {
       console.log("watch****************transupDetailmodify Be", to, from);
       if (to.path.indexOf("transupDetailmodify") > -1) {
+        this.record = { tradeId: this.$route.query.tradeId };
         this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
+        // this.keyindex = this.$route.query.keyindex;
+        this.$refs.addComments.refreshData(this.record);
       }
     },
   },
@@ -54,23 +74,28 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
+      this.record = { tradeId: this.$route.query.tradeId };
+      if (this.$route.query.keyindex) {
+        this.keyindex = this.$route.query.keyindex;
+      }
       this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
+      this.$refs.addComments.refreshData(this.record);
     });
   },
 
   methods: {
-    // initData() {
-    //   this.passItem = JSON.parse(this.$route.query.dataStr);
-
-    //   console.log("this.passItem", JSON.stringify(this.passItem));
-    //   this.$nextTick(() => {
-    //     this.$refs.transupInsidemodify.refreshData(this.passItem);
-    //   });
-
-    //   // this.tradeId = this.passItem.tradeId;
-    //   // console.log("this.passItem.tradeId", this.passItem.tradeId);
-    // },
-    callback() {},
+    // 点击tab 回调触发
+    callback(keyIndex) {
+      if (keyIndex == "2") {
+        this.$refs.uploadFiles.refershData(keyIndex);
+      } else if (keyIndex == "3") {
+        this.$refs.fileDanan.refreshData(this.record);
+      } else if (keyIndex == "4") {
+        this.$refs.addComments.refreshData(this.record);
+      } else if (keyIndex == "1") {
+        this.$refs.transupInsidemodify.refreshData(this.$route.query.tradeId);
+      }
+    },
     handleOk() {},
 
     cancel() {

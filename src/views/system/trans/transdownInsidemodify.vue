@@ -10,6 +10,13 @@
           v-if="uploadData.status.value == 3"
           >重新提交</a-button
         >
+        <a-popconfirm
+          placement="right"
+          title="您确认要撤销当前申请单么？撤销之后无法找回"
+          @confirm="() => cancelApply()"
+        >
+          <a-button style="margin-left: 10px">撤销申请</a-button>
+        </a-popconfirm>
         <a-button style="margin-left: 10px" @click="goPrint">打印</a-button>
       </div>
 
@@ -40,7 +47,7 @@
       </div> -->
 
       <!-- 基本信息 -->
-      <div class="div-box">
+      <div class="div-box" id="my-dot-id">
         <div class="box-title">档案信息</div>
         <div class="box-divider" />
         <div class="div-line">
@@ -891,6 +898,7 @@ import {
   // getMedicCategoryList,
   // addMedicineSku,
   // getTreatTypeList,
+  revokeApply,
   getDictData,
   getRegionInfo,
   searchDiagnosis,
@@ -913,8 +921,8 @@ import { TRUE_USER, ACCESS_TOKEN } from "@/store/mutation-types";
 import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
-import events from "@/components/MultiTab/events";
 import printDownForm from "./printDownForm";
+import events from '@/components/MultiTab/events'
 
 import E from "wangeditor";
 export default {
@@ -1337,6 +1345,22 @@ export default {
   //       }
   // },
   methods: {
+    cancelApply() {
+      this.confirmLoading = true;
+      revokeApply(this.uploadData.tradeIdStr).then(res => {
+        if (res.code == 0) {
+          this.$message.success("撤销成功");
+          this.$bus.$emit('refreshTransDownListEvent');
+          setTimeout(() => {
+            events.$emit('close');
+          }, 1000);
+        } else {
+          this.$message.error(res.message);
+        }
+      }).finally(() => {
+        this.confirmLoading = false;
+      });
+    },
     handleCascaderChange(value) {
       this.isChangedCascader = true;
       console.log("Cascader handleCascaderChange", value);
@@ -1551,20 +1575,9 @@ export default {
 
           getReferralLogList(this.uploadData.tradeId).then((res) => {
             if (res.code == 0) {
-              if (res.data) {
-                res.data.forEach((item, index) => {
-                  if (item.dealDetail == "统一预约") {
-                    res.data.splice(index, 1);
-                  }
-                });
-              }
+
               this.referralLogList = res.data;
 
-              this.referralLogList.forEach((item, index) => {
-                if (item.dealDetail == "统一预约") {
-                  delete this.referralLogList[index];
-                }
-              });
 
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
                 return !itemTemp.dealUserName;

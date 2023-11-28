@@ -365,7 +365,8 @@
                 </a-upload>
               </div>
 
-              <div style="right: 120px; top: 10px; margin-left: 10px">
+              <!-- 技师只要一张资格证？？？ -->
+              <div style="right: 120px; top: 10px; margin-left: 10px" >
                 <a-upload
                   :action="actionUrlCover"
                   :multiple="true"
@@ -407,7 +408,7 @@
                 </a-upload>
               </div>
 
-              <div style="right: 120px; top: 10px; margin-left: 10px">
+              <div v-if="checkData.userType != 'medTechnician'" style="right: 120px; top: 10px; margin-left: 10px">
                 <a-upload
                   :action="actionUrlCover"
                   :multiple="true"
@@ -1780,6 +1781,17 @@ export default {
         this.checkData.practiceZ = ''
         this.checkData.practiceF = ''
       }
+
+
+      if (this.checkData.userType == 'medTechnician') {
+
+        this.checkData.practiceF = ''
+      }
+
+
+
+
+
 
       var postData = {
         identificationNo: this.checkData.identificationNo,
