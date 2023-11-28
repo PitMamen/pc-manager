@@ -279,8 +279,9 @@ export default {
                 this.$set(item, "statusName", item.status.description);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
                 this.$set(item, "tradeId", item.tradeIdStr);
-                
-                this.$set(item, "reqDept", item.reqDept ? item.reqDept : "");
+
+                // this.$set(item, "reqDept", item.reqDept ? item.reqDept : "");
+                this.$set(item, "reqDept", item.reqDept == null ? "" : item.reqDept);
 
                 if (item.patientBaseinfo) {
                   this.$set(item, "name", item.patientBaseinfo.name);
@@ -421,8 +422,8 @@ export default {
     },
     goPrint(record) {
       //TODO
-      console.log('goPrint',JSON.stringify(record))
-      this.$refs.printDownForm.open(record.tradeIdStr)
+      console.log("goPrint", JSON.stringify(record));
+      this.$refs.printDownForm.open(record.tradeIdStr);
       // this.$message.success("去打印");
     },
 

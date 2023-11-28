@@ -284,7 +284,8 @@ export default {
                 this.$set(item, "tradeId", item.tradeIdStr);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
 
-                this.$set(item, "reqDept", item.reqDept ? item.reqDept : "");
+                // this.$set(item, "reqDept", item.reqDept ? item.reqDept : "");
+                this.$set(item, "reqDept", item.reqDept == null ? "" : item.reqDept);
 
                 if (item.patientBaseinfo) {
                   this.$set(item, "name", item.patientBaseinfo.name);
