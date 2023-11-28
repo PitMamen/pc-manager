@@ -580,7 +580,7 @@
             </div>
             <div class="div-cell-value">
               <div class="div-id" @click="goUpDetail">
-                <span>{{ uploadData.oldTradeId }}</span>
+                <span>{{ uploadData.oldTradeId || "暂无" }}</span>
               </div>
               <!-- <a-select
                 v-model="uploadData.referralType"
@@ -922,7 +922,7 @@ import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
 import printDownForm from "./printDownForm";
-import events from '@/components/MultiTab/events'
+import events from "@/components/MultiTab/events";
 
 import E from "wangeditor";
 export default {
@@ -1347,19 +1347,21 @@ export default {
   methods: {
     cancelApply() {
       this.confirmLoading = true;
-      revokeApply(this.uploadData.tradeIdStr).then(res => {
-        if (res.code == 0) {
-          this.$message.success("撤销成功");
-          this.$bus.$emit('refreshTransDownListEvent');
-          setTimeout(() => {
-            events.$emit('close');
-          }, 1000);
-        } else {
-          this.$message.error(res.message);
-        }
-      }).finally(() => {
-        this.confirmLoading = false;
-      });
+      revokeApply(this.uploadData.tradeIdStr)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success("撤销成功");
+            this.$bus.$emit("refreshTransDownListEvent");
+            setTimeout(() => {
+              events.$emit("close");
+            }, 1000);
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false;
+        });
     },
     handleCascaderChange(value) {
       this.isChangedCascader = true;
@@ -1379,7 +1381,7 @@ export default {
               if (this.mySelected.length < 2) {
                 this.$set(item, "isLeaf", false); //很关键  isLeaf 为 false 才会触发loadData方法；而且最后层级isLeaf 为true，选完了才能自动关闭下拉框
               } else {
-                this.$set(item, "isLeaf", true); 
+                this.$set(item, "isLeaf", true);
               }
             });
             callback(res.data);
@@ -1430,12 +1432,14 @@ export default {
         }).then((res) => {
           this.fetching = false;
           if (res.code == 0) {
-            this.uploadData.oldTradeId = res.data || "暂无";
+            this.uploadData.oldTradeId = res.data || "";
           } else {
             this.$message.error(res.message);
           }
           this.confirmLoading = false;
         });
+      } else {
+        this.uploadData.oldTradeId = "";
       }
     },
 
@@ -1575,9 +1579,7 @@ export default {
 
           getReferralLogList(this.uploadData.tradeId).then((res) => {
             if (res.code == 0) {
-
               this.referralLogList = res.data;
-
 
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
                 return !itemTemp.dealUserName;
