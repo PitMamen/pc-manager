@@ -596,7 +596,7 @@
             </div>
             <div class="div-cell-value">
               <div class="div-id" @click="goUpDetail">
-                <span>{{ uploadData.oldTradeId }}</span>
+                <span>{{ uploadData.oldTradeId || "暂无" }}</span>
               </div>
               <!-- <a-select
                 v-model="uploadData.referralType"
@@ -1447,7 +1447,7 @@ export default {
         }).then((res) => {
           this.fetching = false;
           if (res.code == 0) {
-            this.uploadData.oldTradeId = res.data || "暂无";
+            this.uploadData.oldTradeId = res.data;
           } else {
             this.$message.error(res.message);
           }
@@ -1659,7 +1659,7 @@ export default {
       ];
       this.cascaderData = [1];
       this.isInputPatient = true;
-      this.mySelected = []
+      this.mySelected = [];
     },
 
     onSelectSource(sourceCode) {
