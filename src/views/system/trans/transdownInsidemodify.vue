@@ -1432,7 +1432,7 @@ export default {
         }).then((res) => {
           this.fetching = false;
           if (res.code == 0) {
-            this.uploadData.oldTradeId = res.data;
+            this.uploadData.oldTradeId = res.data || "";
           } else {
             this.$message.error(res.message);
           }
