@@ -284,6 +284,8 @@ export default {
                 this.$set(item, "tradeId", item.tradeIdStr);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
 
+                this.$set(item, "reqDept", item.reqDept ? item.reqDept : "");
+
                 if (item.patientBaseinfo) {
                   this.$set(item, "name", item.patientBaseinfo.name);
                   this.$set(item, "sex", item.patientBaseinfo.sex);
@@ -426,8 +428,8 @@ export default {
     },
     goPrint(record) {
       //TODO
-      console.log('goPrint',JSON.stringify(record))
-      this.$refs.printUpForm.open(record.tradeIdStr)
+      console.log("goPrint", JSON.stringify(record));
+      this.$refs.printUpForm.open(record.tradeIdStr);
       // this.$message.success("去打印");
     },
 

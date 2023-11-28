@@ -279,6 +279,8 @@ export default {
                 this.$set(item, "statusName", item.status.description);
                 this.$set(item, "regTime", formatDateFull(item.regTime));
                 this.$set(item, "tradeId", item.tradeIdStr);
+                
+                this.$set(item, "reqDept", item.reqDept ? item.reqDept : "");
 
                 if (item.patientBaseinfo) {
                   this.$set(item, "name", item.patientBaseinfo.name);
