@@ -1438,6 +1438,8 @@ export default {
           }
           this.confirmLoading = false;
         });
+      } else {
+        this.uploadData.oldTradeId = "";
       }
     },
 
