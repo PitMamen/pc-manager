@@ -477,8 +477,8 @@ export default {
         this.$message.error("请输入回复内容");
         return;
       }
-      // this.addCommentOut(item.id, this.newAnswer, child.atName);
-      this.addCommentOut(item.id, this.newAnswer, child.userName);
+      this.addCommentOut(item.id, this.newAnswer, child.atName);
+      // this.addCommentOut(item.id, this.newAnswer, child.userName);
     },
 
     /**
