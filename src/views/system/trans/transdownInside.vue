@@ -1472,7 +1472,7 @@ export default {
             if (res.data) {
               this.downType = 2;
             }
-            this.uploadData.oldTradeId = res.data || "暂无";
+            this.uploadData.oldTradeId = res.data || "";
           } else {
             this.$message.error(res.message);
           }
