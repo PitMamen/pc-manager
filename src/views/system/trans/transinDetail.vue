@@ -1,5 +1,6 @@
 <template>
-  <div class="wrap">
+  <!-- style="height:900px;overflow: auto;" -->
+  <div class="wrap" >
     <div>
       <a-tabs @change="callback" v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
@@ -91,12 +92,58 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+.content::-webkit-scrollbar {
+
+width: 0px;
+
+}
+
+.content::-webkit-scrollbar-track {
+
+background-color: rgba(39, 39, 39, 1);
+
+ border-radius: 2px;
+
+}
+
+.content::-webkit-scrollbar-thumb {
+
+background-color: rgba(39, 39, 39, 1);
+
+border-radius: 10px;
+
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+
+ // background-color: rgb(118, 113, 113);
+
+}
+
+
+
+
+
+
 /deep/ .ant-tabs-bar.ant-tabs-top-bar {
   margin: 0 0 0 20px !important;
 }
 </style>
 
 <style lang="less" scoped>
+
+
+
+
+
+
+
+
+
+
+
+
 // .wrap {
 //   height: calc(100% - 20px);
 //   .ant-tabs {
