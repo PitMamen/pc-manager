@@ -228,6 +228,7 @@ import printUpForm from './printUpForm'
                   this.$set(item, 'userAge', item.userInfo ? item.userInfo.userAge : '')
                   this.$set(item, 'statusShow', item.status.value)
                   this.$set(item, 'tradeType', item.tradeType.description)
+                  this.$set(item, 'reqDept', item.reqDept||'')
                   this.$set(item, 'daishouzhi', item.status.value==4?'收治':'待收治')
                   // this.$set(item, 'status', 1)
                   // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
