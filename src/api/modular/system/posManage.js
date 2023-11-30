@@ -244,6 +244,27 @@ export function getQrUrl(param) {
 
   })
 }
+
+
+// 获取机构二维码
+export function getHospitalHomeQrCode(param) {
+  return axios({
+    // 192.168.1.122:8126/wx/qrcode/{appid}/getQrCode?ks=1&bq=2
+    // url: '/push-api/wx/qrcode/getQrCode',
+    url: '/wx-api/wx/qrcode/'+appId+'/getHospitalHomeQrCode',
+    method: 'get',
+    params: param,
+
+  })
+}
+
+
+
+
+
+
+
+
 /**
  * 获取二维码链接  套餐二维码
  *
