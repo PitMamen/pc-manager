@@ -126,6 +126,7 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: row;
+  margin-bottom: 5px;
   .radio-item {
     display: flex;
     overflow: hidden;
