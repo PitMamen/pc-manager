@@ -10,15 +10,8 @@
   >
     <template slot="footer">
       <div style="display: flex; flex-direction: row; align-items: center">
-        <div
-          style="
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin-left: 10px;
-          "
-        >
-          <a-checkbox @click="goAgin()" :checked="isAgain" />
+        <div @click="goAgin()" class="btn-check">
+          <a-checkbox :checked="isAgain" />
           <div style="width: 120px; text-align: left; margin-left: 10px">
             智慧管家同步提醒
           </div>
@@ -1093,6 +1086,16 @@ export default {
 }
 /deep/ .global-search {
   width: 300px !important;
+}
+
+.btn-check {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .div-check3 {

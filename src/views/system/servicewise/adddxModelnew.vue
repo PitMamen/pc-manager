@@ -10,14 +10,7 @@
   >
     <template slot="footer">
       <div style="display: flex; flex-direction: row; align-items: center">
-        <div
-          style="
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            margin-left: 10px;
-          "
-        >
+        <div @click="goAgin()" class="btn-check">
           <a-checkbox @click="goAgin()" :checked="isAgain" />
           <div style="width: 120px; text-align: left; margin-left: 10px">
             智慧管家同步提醒
@@ -70,7 +63,6 @@
               <a-select
                 v-model="checkData.useTo"
                 allow-clear
-                @select="onSelectUse"
                 placeholder="请选择"
               >
                 <a-select-option
@@ -349,6 +341,11 @@ export default {
     };
   },
   methods: {
+    goAgin() {
+      // 随访名单更新时需重新匹配：0不匹配1匹配
+      this.isAgain = !this.isAgain;
+    },
+
     clearData() {
       this.id = "";
       this.wxgzhData = [];
@@ -808,7 +805,15 @@ export default {
 /deep/ .global-search {
   width: 300px !important;
 }
-
+.btn-check {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+  &:hover {
+    cursor: pointer;
+  }
+}
 .div-check2 {
   // background-color: white;
   // padding: 0 5% 0 5%;
