@@ -43,7 +43,7 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"
-              ><span style="color: red">*</span> 来源名单 :</span
+              ><span style="color: red">*</span> 病人类型 :</span
             >
             <a-select
               v-model="projectData.basePlan.metaConfigureId"
@@ -62,6 +62,25 @@
         </div>
 
         <div class="div-up-content">
+          <div class="div-pro-line">
+            <span class="span-item-name"
+              ><span style="color: red">*</span> 来源名单 :</span
+            >
+            <a-select
+              v-model="projectData.basePlan.metaConfigureId"
+              @select="onSourceSelect"
+              allow-clear
+              placeholder="请选择来源名单"
+            >
+              <a-select-option
+                v-for="(item, index) in sourceData"
+                :key="index"
+                :value="item.value"
+                >{{ item.description }}</a-select-option
+              >
+            </a-select>
+          </div>
+
           <div class="div-pro-line">
             <span class="span-item-name"
               ><span style="color: red">*</span> 执行科室 :</span
@@ -86,6 +105,25 @@
           </div>
 
           <div class="div-pro-line">
+            <span class="span-item-name"
+              ><span style="color: red">*</span> 所属学科 :</span
+            >
+            <a-select
+              v-model="projectData.basePlan.metaConfigureId"
+              @select="onSourceSelect"
+              allow-clear
+              placeholder="请选择来源名单"
+            >
+              <a-select-option
+                v-for="(item, index) in sourceData"
+                :key="index"
+                :value="item.value"
+                >{{ item.description }}</a-select-option
+              >
+            </a-select>
+          </div>
+
+          <!-- <div class="div-pro-line">
             <span class="span-item-name" style="margin-left: 1%"> &nbsp;补充说明 :</span>
             <a-input
               class="span-item-value"
@@ -95,26 +133,34 @@
               allow-clear
               placeholder="请输入补充说明 "
             />
-          </div>
+          </div> -->
 
-          <div class="div-pro-line">
+          <!-- <div class="div-pro-line">
             <a-checkbox @click="goAgin()" :checked="isAgain" style="margin-left: 1%" />
             <span class="span-titl" style="margin-left: 1%"
               >随访名单更新时需重新匹配</span
             >
             <a-checkbox @click="goOnce()" :checked="isOnce" style="margin-left: 3%" />
             <span class="span-titl" style="margin-left: 1%">每个患者仅匹配一次</span>
-          </div>
+          </div> -->
         </div>
 
         <div class="div-up-content">
-          <div class="div-pro-line">
+          <div class="div-pro-line" style="width: 100%;">
+          <span style="color: #000;margin-left: 12px;"> 规则配置：</span>
+            <a-checkbox @click="goAgin()" :checked="isAgain"  />
+            <span class="span-titl" style="margin-left: 10px"
+              >随访名单更新时需重新匹配</span
+            >
+            <a-checkbox @click="goOnce()" :checked="isOnce" style="margin-left: 20px" />
+            <span class="span-titl" style="margin-left: 10px">每个患者仅匹配一次</span>
+
             <a-checkbox
               @click="goReExecute()"
               :checked="isReExecute"
-              style="margin-left: 1%"
+              style="margin-left: 20px"
             />
-            <span class="span-titl" style="margin-left: 1%">超时任务重新生成并执行</span>
+            <span class="span-titl" style="margin-left: 10px">超时任务重新生成并执行</span>
           </div>
         </div>
       </div>
