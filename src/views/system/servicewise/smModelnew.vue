@@ -27,20 +27,28 @@
           allow-clear
           style="width: 120px; height: 28px"
         >
-          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
+          <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{
+            item.name
+          }}</a-select-option>
         </a-select>
       </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
-          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
-          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
+          <a-button type="primary" icon="search" @click="$refs.table.refresh(true)"
+            >查询</a-button
+          >
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()"
+            >重置</a-button
+          >
         </span>
       </div>
     </div>
 
     <div class="table-operator" style="overflow: hidden">
-      <a-button icon="plus" style="float: right; margin-right: 0" @click="addModel2()">新增</a-button>
+      <a-button icon="plus" style="float: right; margin-right: 0" @click="addModel2()"
+        >新增</a-button
+      >
     </div>
 
     <s-table
@@ -53,7 +61,9 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="changeModel(record)" :disabled="record.templateStatus == 2"><a-icon type="edit"></a-icon>修改</a>
+        <a @click="changeModel(record)" :disabled="record.templateStatus == 2"
+          ><a-icon type="edit"></a-icon>修改</a
+        >
         <!-- <a-divider type="vertical" />
           <a @click="Enable(record)">{{ record.enableStatus }}</a> -->
       </span>
@@ -75,12 +85,14 @@
     <adddx-Modelnew ref="adddxModelnew" @ok="handleOk" @cancel="handleCancel" />
   </a-card>
 </template>
-    
-    
-    <script>
-import { STable } from '@/components'
-import adddxModelnew from './adddxModelnew'
-import { getSmsTemplateList, changeStatusSmsTemplate } from '@/api/modular/system/posManage'
+
+<script>
+import { STable } from "@/components";
+import adddxModelnew from "./adddxModelnew";
+import {
+  getSmsTemplateList,
+  changeStatusSmsTemplate,
+} from "@/api/modular/system/posManage";
 // import adddxtemplate from './adddxtemplate'
 export default {
   components: {
@@ -93,7 +105,7 @@ export default {
       datas: [],
       keshiData: [],
       queryParams: {
-        templateTitle: '',
+        templateTitle: "",
         templateStatus: 1,
       },
       labelCol: {
@@ -111,75 +123,80 @@ export default {
       // 表头
       columns: [
         {
-          title: '模板名称',
-          dataIndex: 'templateTitle',
-        
+          title: "模板名称",
+          dataIndex: "templateTitle",
         },
         {
-          title: '用途',
-          dataIndex: 'templateInsideCode',
-         
+          title: "用途",
+          dataIndex: "useTo",
         },
 
         {
-          title: '模板内容',
-          dataIndex: 'templateContent',
-        
+          title: "模板内容",
+          dataIndex: "templateContent",
+
           ellipsis: true,
-        
         },
         {
-          title: '状态',
-          dataIndex: 'statuas',
-          fixed: 'right',
+          title: "状态",
+          dataIndex: "statuas",
+          fixed: "right",
           width: 70,
-          scopedSlots: { customRender: 'statuas' },
+          scopedSlots: { customRender: "statuas" },
         },
         {
-          title: '操作',
+          title: "操作",
           width: 70,
-          fixed: 'right',
-          dataIndex: 'action',
-          scopedSlots: { customRender: 'action' },
+          fixed: "right",
+          dataIndex: "action",
+          scopedSlots: { customRender: "action" },
         },
       ],
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        this.confirmLoading = true
-        return getSmsTemplateList(Object.assign(parameter, this.queryParams)).then((res) => {
-          // console.log('请求结果:', res.message)
-          this.confirmLoading = false
-          var data = {
-            pageNo: parameter.pageNo,
-            pageSize: parameter.pageSize,
-            totalRows: res.data.total,
-            totalPage: res.data.pages / parameter.pageSize,
-            rows: res.data.records,
-          }
-          data.rows.forEach((item, index) => {
-            this.$set(item, 'zt', item.templateStatus == 1 ? '正常' : '停用')
-            this.$set(item, 'enableStatus', item.templateStatus == 1 ? '停用' : '启用')
-          })
+        this.confirmLoading = true;
+        return getSmsTemplateList(Object.assign(parameter, this.queryParams)).then(
+          (res) => {
+            // console.log('请求结果:', res.message)
+            this.confirmLoading = false;
+            var data = {
+              pageNo: parameter.pageNo,
+              pageSize: parameter.pageSize,
+              totalRows: res.data.total,
+              totalPage: res.data.pages / parameter.pageSize,
+              rows: res.data.records,
+            };
+            data.rows.forEach((item, index) => {
+              this.$set(item, "zt", item.templateStatus == 1 ? "正常" : "停用");
+              this.$set(item, "enableStatus", item.templateStatus == 1 ? "停用" : "启用");
+              //用途：1问卷收集 2健康宣教 3消息提醒
+              this.$set(
+                item,
+                "useTo",
+                item.useTo == 1 ? "问卷收集" : item.useTo == 2 ? "健康宣教" : "消息提醒"
+              );
+            });
 
-          return data
-        })
+            return data;
+          }
+        );
       },
       selects: [
-      {
-          id: '',
-          name: '全部'
+        {
+          id: "",
+          name: "全部",
         },
         {
           id: 1,
-          name: '启用',
+          name: "启用",
         },
         {
           id: 2,
-          name: '停用',
+          name: "停用",
         },
       ],
-    }
+    };
   },
   methods: {
     /**
@@ -187,63 +204,63 @@ export default {
      */
     reset() {
       // if (this.queryParams.templateTitle != '') {
-      this.queryParams.templateTitle = ''
-      this.queryParams.templateStatus = 1
-      this.$refs.table.refresh()
+      this.queryParams.templateTitle = "";
+      this.queryParams.templateStatus = 1;
+      this.$refs.table.refresh();
       // }
     },
 
     goOpen() {
-      this.isOpen = !this.isOpen
+      this.isOpen = !this.isOpen;
       if (this.isOpen) {
-        this.queryParams.templateStatus = 1
+        this.queryParams.templateStatus = 1;
       } else {
-        this.queryParams.templateStatus = 2
+        this.queryParams.templateStatus = 2;
       }
-      this.handleOk()
+      this.handleOk();
     },
 
     /**
      * 启用/停用
      */
     Enable(record) {
-      record.templateStatus = record.templateStatus == 1 ? 2 : 1
-      record.enableStatus = record.templateStatus == 1 ? '停用' : '启用'
+      record.templateStatus = record.templateStatus == 1 ? 2 : 1;
+      record.enableStatus = record.templateStatus == 1 ? "停用" : "启用";
       var queryParamData = {
         id: record.id,
         templateStatus: record.templateStatus,
-      }
-      this.confirmLoading = true
+      };
+      this.confirmLoading = true;
       //更新接口调用
       changeStatusSmsTemplate(queryParamData)
         .then((res) => {
           if (res.success) {
-            this.confirmLoading = false
-            this.$message.success('操作成功!')
+            this.confirmLoading = false;
+            this.$message.success("操作成功!");
             setTimeout(() => {
-              this.handleOk()
-            }, 1000)
+              this.handleOk();
+            }, 1000);
           } else {
-            this.$message.error('编辑失败：' + res.message)
+            this.$message.error("编辑失败：" + res.message);
           }
         })
         .finally((res) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
 
     /**
      * 新增 短信模板
      */
     addModel2() {
-      console.log('新增 短信模板 按钮')
+      console.log("新增 短信模板 按钮");
       //   this.$router.push({
       //   name: 'sys_dxtemplate_add',
       //   query: {
 
       //   },
       // })
-      this.$refs.adddxModelnew.addModel()
+      this.$refs.adddxModelnew.addModel();
     },
 
     /**
@@ -256,21 +273,21 @@ export default {
       //     id:record.id,
       //   },
       // })
-      this.$refs.adddxModelnew.checkModel(record.id)
+      this.$refs.adddxModelnew.checkModel(record.id);
     },
 
     handleOk() {
-      this.$refs.table.refresh()
+      this.$refs.table.refresh();
     },
 
     handleCancel() {
-      this.form.resetFields()
-      this.visible = false
+      this.form.resetFields();
+      this.visible = false;
     },
   },
-}
+};
 </script>
-    <style lang="less" scoped>
+<style lang="less" scoped>
 .table-wrapper {
   // max-height: 600px;
   // overflow-y: auto;
@@ -312,5 +329,3 @@ export default {
   height: 1px;
 }
 </style>
-
-

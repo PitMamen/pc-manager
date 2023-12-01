@@ -326,7 +326,7 @@ export default {
       dananfieldList: [], //档案字段列表
       danandataList: [], //档案日期字段列表
       navigateListData: [],
-      isAgain: true, 
+      isAgain: true,
     };
   },
   methods: {

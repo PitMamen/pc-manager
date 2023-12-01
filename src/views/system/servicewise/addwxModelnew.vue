@@ -442,7 +442,7 @@ export default {
       teachContent: { title: "" },
       thirdAppid: "", //第三方appid
       thirdLink: "", //第三方链接
-      isAgain: true, 
+      isAgain: true,
 
       wxgzhData: [], //公众号列表
       templateData: [], //模板列表
