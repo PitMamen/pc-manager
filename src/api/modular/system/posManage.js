@@ -1759,7 +1759,7 @@ export function modifyWxTemplate(data) {
  */
 export function addWxTemplateNew(data) {
   return axios({
-    url: '/follow-api/wxTemplate/addWxTemplate',
+    url: '/follow-api/wxTemplate/addWxTemplateNew',
     method: 'post',
     data: data,
   })
@@ -1769,7 +1769,7 @@ export function addWxTemplateNew(data) {
  */
 export function modifyWxTemplateNew(data) {
   return axios({
-    url: '/follow-api/wxTemplate/modifyWxTemplate',
+    url: '/follow-api/wxTemplate/modifyWxTemplateNew',
     method: 'post',
     data: data,
   })
@@ -2289,7 +2289,7 @@ export function modifySmsTemplate(data) {
 */
 export function addSmsTemplateNew(data) {
   return axios({
-    url: '/follow-api/smsTemplate/addSmsTemplate',
+    url: '/follow-api/smsTemplate/addSmsTemplateNew',
     method: 'post',
     data: data,
   })
@@ -2300,7 +2300,7 @@ export function addSmsTemplateNew(data) {
 */
 export function modifySmsTemplateNew(data) {
   return axios({
-    url: '/follow-api/smsTemplate/modifySmsTemplate',
+    url: '/follow-api/smsTemplate/modifySmsTemplateNew',
     method: 'post',
     data: data,
   })

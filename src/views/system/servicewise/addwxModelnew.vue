@@ -701,7 +701,7 @@ export default {
 
     onSelectJump(code) {
       if (code == 7) {
-        this.myJumpYype = "";
+        this.myJumpYype = 3;
       }
     },
 
@@ -997,7 +997,7 @@ export default {
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
         // templateContent: this.templateContent.content,
-        templateName: this.templateContent.title,
+        // templateName: this.templateContent.title,
         //jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
         jumpType: this.myJumpYype,
         jumpValue: jumpValue,

@@ -68,7 +68,7 @@
             <div class="div-left">
               <span class="span-item-name" style="text-align: right">用途 :</span>
               <a-input
-                v-model="templateContent.smsTemplateCode"
+                v-model="checkData.useTo"
                 class="span-item-value"
                 style="display: inline-block"
                 readOnly
@@ -76,12 +76,13 @@
                 placeholder="请输入内部编码 "
               />
             </div>
-            <div class="div-left" style="padding-left: 20px">
+            <div v-if="checkData.useTo == 1" class="div-left" style="padding-left: 20px">
               <span class="span-item-name">问卷名称 :</span>
               <a-input
-                v-model="checkData.templateTitle"
+                v-show="questionContent.name"
+                v-model="questionContent.name"
                 class="span-item-value"
-                style="display: inline-block; width: 222px"
+                style="display: inline-block; width: 200px"
                 allow-clear
                 type="text"
                 :maxLength="30"
@@ -92,10 +93,11 @@
               </a-button>
             </div>
 
-            <div v-if="false" class="div-left" style="padding-left: 20px">
+            <div v-if="checkData.useTo == 2" class="div-left" style="padding-left: 20px">
               <span class="span-item-name">宣教文章 :</span>
               <a-input
-                v-model="checkData.templateTitle"
+                v-show="teachContent.title"
+                v-model="teachContent.title"
                 class="span-item-value"
                 style="display: inline-block; width: 222px"
                 allow-clear
@@ -114,9 +116,9 @@
                 >留言消息 :</span
               >
               <a-textarea
-                v-model="templateContent.smsTemplateContent"
                 class="span-item-value"
-                readOnly
+                v-model="checkData.message"
+                :maxLength="200"
                 style="
                   height: 65px !important;
                   width: 695px !important;
@@ -329,6 +331,8 @@ export default {
       danandataList: [], //档案日期字段列表
       navigateListData: [],
       isAgain: true,
+      // 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
+      myJumpYype: 1,
     };
   },
   methods: {
@@ -344,6 +348,9 @@ export default {
         templateTitle: "", //模板输入标题
         navigatorType: "", //跳转类型
         navigatorContent: "", //跳转内容
+        useTo: 1,
+        message: "", //留言消息
+        syncRemind: 1, // 是否同步提醒 1是 2否
       };
       (this.templateContent = {
         smsConfigureId: "",
@@ -369,21 +376,21 @@ export default {
         }
       });
 
-      //获取档案字段列表
-      qryMetaConfigureDetail({ databaseTableName: "tb_patient_baseinfo" }).then((res) => {
-        if (res.code == 0) {
-          this.dananfieldList = res.data[0].detail;
+      // //获取档案字段列表
+      // qryMetaConfigureDetail({ databaseTableName: "tb_patient_baseinfo" }).then((res) => {
+      //   if (res.code == 0) {
+      //     this.dananfieldList = res.data[0].detail;
 
-          //如果是日期类的 需要限制
-          var dataList = [];
-          this.dananfieldList.forEach((item) => {
-            if (item.fieldType.value == 2) {
-              dataList.push(item);
-            }
-          });
-          this.danandataList = dataList;
-        }
-      });
+      //     //如果是日期类的 需要限制
+      //     var dataList = [];
+      //     this.dananfieldList.forEach((item) => {
+      //       if (item.fieldType.value == 2) {
+      //         dataList.push(item);
+      //       }
+      //     });
+      //     this.danandataList = dataList;
+      //   }
+      // });
     },
     //修改  详情
     checkModel(id) {
@@ -415,17 +422,36 @@ export default {
               });
               this.wxgzhData = thisWXData;
 
-              this.radioTyPe = res.data.jumpType - 1;
-              if (this.radioTyPe == 0) {
+              // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
+              //1问卷收集 2健康宣教 3消息提醒
+              if (this.checkData.useTo == 1) {
                 this.questionContent.questUrl = res.data.jumpValue;
                 this.questionContent.name = res.data.jumpTitle;
                 this.questionContent.id = res.data.jumpId;
-              } else if (this.radioTyPe == 1) {
+              } else if (this.checkData.useTo == 2) {
                 this.teachContent.articleId = res.data.jumpId;
                 this.teachContent.title = res.data.jumpTitle;
-              } else if (this.radioTyPe == 3) {
-                this.checkData.navigatorContent = res.data.jumpValue;
+              } else if (this.checkData.useTo == 3) {
+                // this.radioTyPe = res.data.jumpType;
+                // if (this.radioTyPe == 4) {
+                //   this.$set(this.checkData, "navigatorContent", res.data.jumpValue);
+                // } else if (this.radioTyPe == 6) {
+                //   //第三方小程序地址
+                //   this.thirdAppid = res.data.jumpId;
+                //   this.thirdLink = res.data.jumpValue;
+                // }
               }
+              // this.radioTyPe = res.data.jumpType - 1;
+              // if (this.radioTyPe == 0) {
+              //   this.questionContent.questUrl = res.data.jumpValue;
+              //   this.questionContent.name = res.data.jumpTitle;
+              //   this.questionContent.id = res.data.jumpId;
+              // } else if (this.radioTyPe == 1) {
+              //   this.teachContent.articleId = res.data.jumpId;
+              //   this.teachContent.title = res.data.jumpTitle;
+              // } else if (this.radioTyPe == 3) {
+              //   this.checkData.navigatorContent = res.data.jumpValue;
+              // }
 
               this.fieldList = JSON.parse(res.data.templateParamJson);
 
@@ -533,32 +559,32 @@ export default {
       return arr;
     },
 
-    //字段属性选择
-    fieldSXChange(value) {
-      console.log(value);
-      this.fieldList[value];
-    },
-    radioChange(e) {
-      this.radioTyPe = e.target.value;
-      console.log(this.radioTyPe);
-    },
+    // //字段属性选择
+    // fieldSXChange(value) {
+    //   console.log(value);
+    //   this.fieldList[value];
+    // },
+    // radioChange(e) {
+    //   this.radioTyPe = e.target.value;
+    //   console.log(this.radioTyPe);
+    // },
     /**
      *autoComplete回调，本地模拟的数据处理
      */
-    handleSearch(inputName) {
-      if (inputName) {
-        this.ksTypeDataTemp = this.ksTypeData.filter(
-          (item) => item.departmentName.indexOf(inputName) != -1
-        );
-      } else {
-        this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData));
-      }
-    },
+    // handleSearch(inputName) {
+    //   if (inputName) {
+    //     this.ksTypeDataTemp = this.ksTypeData.filter(
+    //       (item) => item.departmentName.indexOf(inputName) != -1
+    //     );
+    //   } else {
+    //     this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData));
+    //   }
+    // },
     //属性选择
-    onFiledChange(index) {
-      console.log(index);
-      this.fieldList[index].content = "";
-    },
+    // onFiledChange(index) {
+    //   console.log(index);
+    //   this.fieldList[index].content = "";
+    // },
     selectQestionBtn() {
       this.$refs.addQuestion.add(0);
     },
@@ -582,12 +608,22 @@ export default {
         this.$message.error("请选择短信平台");
         return;
       }
-      if (!this.checkData.templateId) {
-        this.$message.error("请选择模板ID");
-        return;
-      }
+      // if (!this.checkData.templateId) {
+      //   this.$message.error("请选择模板ID");
+      //   return;
+      // }
       if (!this.checkData.templateTitle) {
         this.$message.error("请输入模板标题");
+        return;
+      }
+
+      if (!this.checkData.useTo) {
+        this.$message.error("请选择用途");
+        return;
+      }
+
+      if (!this.checkData.message) {
+        this.$message.error("请输入留言消息");
         return;
       }
 
@@ -600,10 +636,9 @@ export default {
       var jumpValue = "";
       var jumpTitle = "";
       var jumpId = "";
-      if (this.radioTyPe == -1) {
-        this.$message.error("请选择跳转类型");
-        return;
-      } else if (this.radioTyPe == 0) {
+
+      //1问卷收集 2健康宣教 3消息提醒
+      if (this.checkData.useTo == 1) {
         if (!this.questionContent.questUrl) {
           this.$message.error("请选择问卷");
           return;
@@ -611,7 +646,10 @@ export default {
         jumpValue = this.questionContent.questUrl;
         jumpTitle = this.questionContent.name;
         jumpId = this.questionContent.id;
-      } else if (this.radioTyPe == 1) {
+
+        // 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
+        this.myJumpYype = 1;
+      } else if (this.checkData.useTo == 2) {
         if (!this.teachContent.articleId) {
           this.$message.error("请选择宣教文章");
           return;
@@ -619,28 +657,55 @@ export default {
         jumpValue = this.teachContent.articleId;
         jumpTitle = this.teachContent.title;
         jumpId = this.teachContent.articleId;
-      } else if (this.radioTyPe == 3) {
-        if (!this.checkData.navigatorContent) {
-          this.$message.error("请输入第三方链接");
-          return;
-        }
-        jumpValue = this.checkData.navigatorContent;
-        jumpTitle = this.checkData.navigatorContent;
+
+        this.myJumpYype = 2;
+      } else if (this.checkData.useTo == 3) {
+        this.myJumpYype = 3;
       }
+
+      // if (this.radioTyPe == -1) {
+      //   this.$message.error("请选择跳转类型");
+      //   return;
+      // } else if (this.radioTyPe == 0) {
+      //   if (!this.questionContent.questUrl) {
+      //     this.$message.error("请选择问卷");
+      //     return;
+      //   }
+      //   jumpValue = this.questionContent.questUrl;
+      //   jumpTitle = this.questionContent.name;
+      //   jumpId = this.questionContent.id;
+      // } else if (this.radioTyPe == 1) {
+      //   if (!this.teachContent.articleId) {
+      //     this.$message.error("请选择宣教文章");
+      //     return;
+      //   }
+      //   jumpValue = this.teachContent.articleId;
+      //   jumpTitle = this.teachContent.title;
+      //   jumpId = this.teachContent.articleId;
+      // } else if (this.radioTyPe == 3) {
+      //   if (!this.checkData.navigatorContent) {
+      //     this.$message.error("请输入第三方链接");
+      //     return;
+      //   }
+      //   jumpValue = this.checkData.navigatorContent;
+      //   jumpTitle = this.checkData.navigatorContent;
+      // }
 
       var postData = {
         smsConfigureId: this.checkData.smsConfigureId,
         templateId: "",
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
-        templateContent: this.templateContent.smsTemplateContent,
-        templateName: this.templateContent.smsTemplateTitle,
-        templateInsideCode: this.templateContent.smsTemplateCode,
-        jumpType: this.radioTyPe + 1,
+        // templateContent: this.templateContent.smsTemplateContent,
+        // templateName: this.templateContent.smsTemplateTitle,
+        // templateInsideCode: this.templateContent.smsTemplateCode,
+        //jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
+        jumpType: this.myJumpYype,
+        message: this.checkData.message,
         jumpValue: jumpValue,
         jumpTitle: jumpTitle,
         jumpId: jumpId,
-        templateParamJson: JSON.stringify(this.fieldList),
+        // templateParamJson: JSON.stringify(this.fieldList),
       };
       this.confirmLoading = true;
       if (this.id) {
