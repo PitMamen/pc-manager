@@ -67,14 +67,19 @@
           <div class="div-line-wrap">
             <div class="div-left">
               <span class="span-item-name" style="text-align: right">用途 :</span>
-              <a-input
+              <a-select
                 v-model="checkData.useTo"
-                class="span-item-value"
-                style="display: inline-block"
-                readOnly
                 allow-clear
-                placeholder="请输入内部编码 "
-              />
+                @select="onSelectUse"
+                placeholder="请选择"
+              >
+                <a-select-option
+                  v-for="(item, index) in useDatas"
+                  :key="index"
+                  :value="item.code"
+                  >{{ item.value }}</a-select-option
+                >
+              </a-select>
             </div>
             <div v-if="checkData.useTo == 1" class="div-left" style="padding-left: 20px">
               <span class="span-item-name">问卷名称 :</span>
@@ -313,6 +318,9 @@ export default {
         templateTitle: "", //模板输入标题
         navigatorType: "", //跳转类型
         navigatorContent: "", //跳转内容
+        useTo: 1,
+        message: "", //留言消息
+        syncRemind: 1, // 是否同步提醒 1是 2否
       },
       templateContent: {
         smsConfigureId: "",
@@ -333,6 +341,11 @@ export default {
       isAgain: true,
       // 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
       myJumpYype: 1,
+      useDatas: [
+        { code: 1, value: "问卷收集" },
+        { code: 2, value: "健康宣教" },
+        { code: 3, value: "消息提醒" },
+      ],
     };
   },
   methods: {
@@ -421,6 +434,8 @@ export default {
                 }
               });
               this.wxgzhData = thisWXData;
+
+              this.isAgain = this.checkData.syncRemind == 1 ? true : false;
 
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
               //1问卷收集 2健康宣教 3消息提醒
@@ -696,6 +711,7 @@ export default {
         templateId: "",
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
+        syncRemind: this.checkData.syncRemind,
         // templateContent: this.templateContent.smsTemplateContent,
         // templateName: this.templateContent.smsTemplateTitle,
         // templateInsideCode: this.templateContent.smsTemplateCode,

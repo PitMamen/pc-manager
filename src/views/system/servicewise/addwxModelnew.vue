@@ -615,6 +615,8 @@ export default {
               this.wxgzhData = thisWXData;
               console.log("HAHAHA:", res.data.jumpType);
 
+              this.isAgain = this.checkData.syncRemind == 1 ? true : false;
+
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
               //1问卷收集 2健康宣教 3消息提醒
               if (this.checkData.useTo == 1) {
@@ -994,6 +996,7 @@ export default {
         templateId: this.checkData.templateId,
         message: this.checkData.message,
         useTo: this.checkData.useTo,
+        syncRemind: this.checkData.syncRemind,
         templateStatus: 1,
         templateTitle: this.checkData.templateTitle,
         // templateContent: this.templateContent.content,
