@@ -60,11 +60,7 @@
           <div class="div-line-wrap">
             <div class="div-left">
               <span class="span-item-name" style="text-align: right">用途 :</span>
-              <a-select
-                v-model="checkData.useTo"
-                allow-clear
-                placeholder="请选择"
-              >
+              <a-select v-model="checkData.useTo" allow-clear placeholder="请选择">
                 <a-select-option
                   v-for="(item, index) in useDatas"
                   :key="index"
@@ -703,6 +699,9 @@ export default {
       //   jumpTitle = this.checkData.navigatorContent;
       // }
 
+      // syncRemind 是否同步提醒 1是 2否
+      this.checkData.syncRemind = this.isAgain ? 1 : 2;
+
       var postData = {
         smsConfigureId: this.checkData.smsConfigureId,
         templateId: "",
@@ -715,6 +714,7 @@ export default {
         //jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
         jumpType: this.myJumpYype,
         message: this.checkData.message,
+        useTo: this.checkData.useTo,
         jumpValue: jumpValue,
         jumpTitle: jumpTitle,
         jumpId: jumpId,
