@@ -411,6 +411,8 @@ import {
   getWxTemplateById,
   modifyWxTemplate,
   getBycode,
+  addWxTemplateNew,
+  modifyWxTemplateNew,
 } from "@/api/modular/system/posManage";
 import addQuestion from "../package/addQuestion";
 import addTeach from "../package/addTeach";
@@ -465,6 +467,7 @@ export default {
       danandataList: [], //档案日期字段列表
       navigateListData: [],
       // 1问卷收集 2健康宣教 3消息提醒
+      //微信只有问卷搜集
       useDatas: [
         { code: 1, value: "问卷收集" },
         { code: 2, value: "健康宣教" },
@@ -1018,7 +1021,7 @@ export default {
     },
 
     add(postData) {
-      addWxTemplate(postData).then((res) => {
+      addWxTemplateNew(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success("新增成功！");
           this.visible = false;
@@ -1030,7 +1033,7 @@ export default {
       });
     },
     modify(postData) {
-      modifyWxTemplate(postData).then((res) => {
+      modifyWxTemplateNew(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success("修改成功！");
           this.visible = false;

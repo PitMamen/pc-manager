@@ -1755,6 +1755,26 @@ export function modifyWxTemplate(data) {
   })
 }
 /**
+ * 添加微信模板接口
+ */
+export function addWxTemplateNew(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/addWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+ * 修改微信模板接口
+ */
+export function modifyWxTemplateNew(data) {
+  return axios({
+    url: '/follow-api/wxTemplate/modifyWxTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+/**
  * 获取微信模板详情
  */
 export function getWxTemplateById(id) {
@@ -2258,6 +2278,27 @@ export function addSmsTemplate(data) {
 * 添加短信模板接口
 */
 export function modifySmsTemplate(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/modifySmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+/**
+* 添加短信模板接口
+*/
+export function addSmsTemplateNew(data) {
+  return axios({
+    url: '/follow-api/smsTemplate/addSmsTemplate',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+* 添加短信模板接口
+*/
+export function modifySmsTemplateNew(data) {
   return axios({
     url: '/follow-api/smsTemplate/modifySmsTemplate',
     method: 'post',

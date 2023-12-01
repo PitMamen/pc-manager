@@ -284,6 +284,8 @@ import {
   addSmsTemplate,
   getSmsTemplateById,
   modifySmsTemplate,
+  addSmsTemplateNew,
+  modifySmsTemplateNew,
 } from "@/api/modular/system/posManage";
 import addQuestion from "../package/addQuestion";
 import addTeach from "../package/addTeach";
@@ -652,7 +654,7 @@ export default {
     },
 
     add(postData) {
-      addSmsTemplate(postData).then((res) => {
+      addSmsTemplateNew(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success("新增成功！");
           this.visible = false;
@@ -664,7 +666,7 @@ export default {
       });
     },
     modify(postData) {
-      modifySmsTemplate(postData).then((res) => {
+      modifySmsTemplateNew(postData).then((res) => {
         if (res.code == 0) {
           this.$message.success("修改成功！");
           this.visible = false;
