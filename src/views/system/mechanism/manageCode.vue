@@ -104,7 +104,7 @@ export default {
       if (type == this.currentTab) {
         return
       }
-
+      
       this.currentTab = type
       if (type == 2) {
         this.getHospitalQrCodeOut()

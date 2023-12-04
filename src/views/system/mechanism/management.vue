@@ -53,7 +53,7 @@
     >
       <span slot="action" slot-scope="text, record">
 
-        <a @click="$refs.manageCode.add(record)"><a-icon type="wechat"></a-icon>随访二维码</a>
+        <a @click="$refs.manageCode.add(record)"><a-icon type="wechat"></a-icon>二维码</a>
         <a-divider type="vertical" />
         <a @click="$refs.addMechanism.add(record)"><a-icon type="plus"></a-icon>新增</a>
 
