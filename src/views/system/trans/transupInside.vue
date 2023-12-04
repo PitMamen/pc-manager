@@ -50,6 +50,7 @@
         <a-input
           allow-clear
           v-model="sourceKeyword"
+          @keyup.enter="getPatientList()"
           placeholder="请输入证件号/诊疗卡号/住院号进行搜索"
           style="width: 305px; height: 28px; margin-left: 10px"
         />
