@@ -94,8 +94,11 @@
       <span slot="action" slot-scope="text, record">
         <!-- 审核通过的不能修改 -->
         <template v-if="record.status.value === 2 || record.status.value === 4">
-          <span style="margin-right: 5px; color: #999"
+          <!-- <span style="margin-right: 5px; color: #999"
             ><a-icon type="edit" :style="{ fontSize: '14px', color: '#999' }" />修改</span
+          > -->
+          <a @click="goDetail(record)"
+            ><a-icon style="margin-right: 5px" type="edit" />查看</a
           >
         </template>
         <template v-else>
@@ -424,6 +427,17 @@ export default {
         },
       });
     },
+
+    goDetail(record) {
+      this.$router.push({
+        name: "transoutDetailnew",
+        // path: '/servicewise/projectEdit',
+        query: {
+          id: record.tradeId,
+        },
+      });
+    },
+
     goPrint(record) {
       //TODO
       console.log("goPrint", JSON.stringify(record));
