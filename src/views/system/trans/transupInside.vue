@@ -664,11 +664,22 @@
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              转入科室：
+              <!-- 转入科室： -->
+              接诊学科：
             </div>
             <div class="div-cell-value">
-              <!-- class="deptselect-single" -->
-              <a-select
+              <!-- style="min-width: 87%; margin-left: 5px; height: 30px" -->
+              <a-tree-select
+                v-model="uploadData.inDeptCode"
+                style="width: 100%"
+                :tree-data="treeDataSub"
+                @select="onSelectDept"
+                placeholder="请选择"
+                tree-default-expand-all
+              >
+              </a-tree-select>
+
+              <!-- <a-select
                 show-search
                 style="width: 100%"
                 v-model="uploadData.inDeptCode"
@@ -689,31 +700,23 @@
                   :value="item.department_id"
                   >{{ item.department_name }}</a-select-option
                 >
-              </a-select>
-
-              <!-- <a-select
-                v-model="uploadData.healthInsuranceCategoryId"
-                @select="onSelectYibao"
-                placeholder="请选择"
-                allow-clear
-                style="width: 100%; height: 28px"
-              >
-                <a-select-option
-                  v-for="item in transTypeDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
-                >
               </a-select> -->
             </div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              接受医生：
+              接收医生：
             </div>
             <div class="div-cell-value">
-              <a-select
+              <a-input
+                v-model="uploadData.docName"
+                allow-clear
+                placeholder="请输入"
+                style="width: 100%; height: 28px"
+              />
+
+              <!-- <a-select
                 v-model="uploadData.docId"
                 @select="onSelectInDoctor"
                 @focus="onDocFocus"
@@ -727,7 +730,7 @@
                   :value="item.doc_id"
                   >{{ item.doc_name }}</a-select-option
                 >
-              </a-select>
+              </a-select> -->
             </div>
           </div>
 
@@ -823,6 +826,7 @@ import {
   getDocListForHospitalAndDepartment,
   getReferralData,
   getRegionByUpAddressId,
+  gettreeMedicalSubjects,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -971,6 +975,7 @@ export default {
       levelDatas: [],
       diagnoseDatas: [],
       inHospitalDatas: [],
+      treeDataSub: [],
       reasonDatas: [],
       transTypeDatas: [],
       referralTypeDatas: [],
@@ -1212,7 +1217,7 @@ export default {
     });
 
     this.getHospitalDatas();
-    // this.getDepartmentSelectList(undefined);
+    this.gettreeMedicalSubjectsOut();
 
     this.getRegion(-1, (array) => {
       this.options = array;
@@ -1398,15 +1403,34 @@ export default {
       }
     },
 
-    onSelectDept(department_id) {
-      let getOne = this.originData.find((item) => item.department_id == department_id);
-      this.uploadData.inDept = getOne.department_name;
-      console.log("onSelectDept department_id", department_id);
-      console.log("onSelectDept department_name", getOne.department_name);
-      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
-        this.getTreeUsers();
-      }
+    onSelectDept(subid, s1) {
+      console.log("onSelectDept", subid);
+      console.log("onSelectDept", s1);
+      this.treeDataSub.forEach((item, index) => {
+        item.children.forEach((item1, index1) => {
+          if (item1.subjectCode == subid) {
+            this.uploadData.inDept = item1.subjectClassifyName;
+            console.log("onSelectDept subjectClassifyName", this.uploadData.inDept);
+          }
+
+          // this.$set(item1, 'key', item1.subjectClassifyId)
+          // this.$set(item1, 'value', item1.subjectClassifyId)
+          // this.$set(item1, "key", item1.subjectCode);
+          // this.$set(item1, "value", item1.subjectCode);
+          // this.$set(item1, "title", item1.subjectClassifyName);
+        });
+      });
     },
+
+    // onSelectDept(department_id) {
+    //   let getOne = this.originData.find((item) => item.department_id == department_id);
+    //   this.uploadData.inDept = getOne.department_name;
+    //   console.log("onSelectDept department_id", department_id);
+    //   console.log("onSelectDept department_name", getOne.department_name);
+    //   if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+    //     this.getTreeUsers();
+    //   }
+    // },
 
     onDeptGetFocus() {
       if (!this.uploadData.inHospitalCode) {
@@ -1512,12 +1536,12 @@ export default {
       }
     },
 
-    onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
-      this.uploadData.docName = getOne.doc_name;
-      console.log("onSelectInDoctor docId", userId);
-      console.log("onSelectInDoctor docName", getOne.doc_name);
-    },
+    // onSelectInDoctor(userId) {
+    //   let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
+    //   this.uploadData.docName = getOne.doc_name;
+    //   console.log("onSelectInDoctor docId", userId);
+    //   console.log("onSelectInDoctor docName", getOne.doc_name);
+    // },
 
     getTreeUsers() {
       getDocListForHospitalAndDepartment({
@@ -1540,6 +1564,35 @@ export default {
           this.$message.error(res.message);
         }
         this.confirmLoading = false;
+      });
+    },
+
+    //学科列表
+    gettreeMedicalSubjectsOut() {
+      gettreeMedicalSubjects().then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+          res.data.forEach((item, index) => {
+            // this.$set(item, 'key', item.subjectClassifyId)
+            // this.$set(item, 'value', item.subjectClassifyId)
+            this.$set(item, "key", item.subjectCode);
+            this.$set(item, "value", item.subjectCode);
+            this.$set(item, "title", item.subjectClassifyName);
+            this.$set(item, "title", item.subjectClassifyName);
+            this.$set(item, "disabled", true);
+
+            item.children.forEach((item1, index1) => {
+              // this.$set(item1, 'key', item1.subjectClassifyId)
+              // this.$set(item1, 'value', item1.subjectClassifyId)
+              this.$set(item1, "key", item1.subjectCode);
+              this.$set(item1, "value", item1.subjectCode);
+              this.$set(item1, "title", item1.subjectClassifyName);
+            });
+          });
+
+          this.treeDataSub = res.data;
+        } else {
+          this.treeDataSub = res.data;
+        }
       });
     },
 
