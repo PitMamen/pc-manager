@@ -1697,7 +1697,7 @@ export default {
         return;
       }
       if (!this.uploadData.inDeptCode) {
-        this.$message.warn("请先选择转入科室");
+        this.$message.warn("请先选择接诊学科");
         return;
       }
     },
