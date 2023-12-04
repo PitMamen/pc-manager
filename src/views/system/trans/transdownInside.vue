@@ -51,10 +51,10 @@
           allow-clear
           v-model="sourceKeyword"
           placeholder="请输入证件号/诊疗卡号/住院号进行搜索"
-          @keyup.enter="goSearch"
+          @keyup.enter="getPatientList()"
           style="width: 305px; height: 28px; margin-left: 10px"
         />
-        <a-button style="margin-left: 10px" @click="goSearch">查询</a-button>
+        <a-button style="margin-left: 10px" @click="getPatientList()">查询</a-button>
         <a-button type="primary" @click="submitData()">保存</a-button>
         <!-- <a-button style="margin-left: 10px" @click="cancel()">重新提交</a-button> -->
       </div>
