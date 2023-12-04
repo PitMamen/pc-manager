@@ -211,7 +211,7 @@
 
         <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
           <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-          <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+          <span class="span-item-value" style="width:65%;color:#1A1A1A">{{ orderDetailDataList.hospitalName|| '-'  }}</span>
         </div>
       </div>
 
@@ -226,7 +226,7 @@
 
         <div class="div-pro-line"  style="margin-left:20px;width: 40%;">
           <span class="span-item-name" style="color:#1A1A1A"> 收货地址 :</span>
-          <span class="span-item-value" style="width:65%;color:#1A1A1A">中南大学湘雅二医院</span>
+          <span class="span-item-value" style="width:65%;color:#1A1A1A">{{ orderDetailDataList.hospitalName|| '-'  }}</span>
         </div>
       </div>
     </div>

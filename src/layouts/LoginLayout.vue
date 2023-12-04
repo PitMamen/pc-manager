@@ -15,6 +15,7 @@
                 <img class="icon icon3" src="@/assets/login/icon3.png" v-if="itemChild.logo === 'icon3'" />
                 <img class="icon icon4" src="@/assets/login/icon4.png" v-if="itemChild.logo === 'icon4'" />
                 <img class="icon icon5" src="@/assets/login/icon5.png" v-if="itemChild.logo === 'icon5'" />
+                <img class="icon icon6" src="@/assets/login/icon6.png" v-if="itemChild.logo === 'icon6'" />
                 <div class="titles">{{ itemChild.applicationName }}</div>
               </div>
             </div>
@@ -267,19 +268,6 @@ export default {
       return 'icon ' + icon
     },
 
-    getSrc(icon) {
-      if (icon == 'icon1') {
-        return "'@/assets/login/icon1.png'"
-      } else if (icon == 'icon2') {
-        return '@/assets/login/icon2.png'
-      } else if (icon == 'icon3') {
-        return '@/assets/login/icon3.png'
-      } else if (icon == 'icon4') {
-        return '@/assets/login/icon4.png'
-      }else if (icon == 'icon5') {
-        return '@/assets/login/icon5.png'
-      }
-    },
 
 
     //获取验证码调用
@@ -621,8 +609,12 @@ border-radius: 10px;
               .px2rem(height, 38);
             }
             .icon5 {
+              .px2rem(width, 40);
+              .px2rem(height, 37);
+            }
+            .icon6 {
               .px2rem(width, 42);
-              .px2rem(height, 38);
+              .px2rem(height, 40);
             }
             .titles {
               .px2rem(font-size, 28);
