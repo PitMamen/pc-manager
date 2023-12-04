@@ -470,7 +470,7 @@ export default {
       selectList: [
         { code: 6, value: "小程序" },
         { code: 4, value: "外部网站" },
-        { code: 7, value: "不跳转" },
+        { code: 3, value: "不跳转" },
         // { code: 3, value: "跳转外网地址" },
         // { code: 4, value: "最新病历" },
         // { code: 5, value: "第三方小程序" },
@@ -611,7 +611,7 @@ export default {
               this.isAgain = this.checkData.syncRemind == 1 ? true : false;
 
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
-              //1问卷收集 2健康宣教 3消息提醒
+              //useTo 1问卷收集 2健康宣教 3消息提醒
               if (this.checkData.useTo == 1) {
                 this.questionContent.questUrl = res.data.jumpValue;
                 this.questionContent.name = res.data.jumpTitle;
