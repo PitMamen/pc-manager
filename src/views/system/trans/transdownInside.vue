@@ -2078,6 +2078,13 @@ export default {
 };
 </script>
 
+<style>
+.ant-select-tree-dropdown {
+  max-height: 70vh !important;
+  /* top: 148px !important; */
+}
+</style>
+
 <style lang="less" scoped>
 button {
   margin-right: 8px;
