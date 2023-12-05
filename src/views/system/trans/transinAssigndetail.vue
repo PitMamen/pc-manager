@@ -1,6 +1,6 @@
 <template>
   <!-- style="height:900px;overflow: auto;" -->
-  <div class="wrap" >
+  <div class="wrap">
     <div>
       <a-tabs @change="callback" v-model="keyindex">
         <a-tab-pane key="1" tab="转诊申请单">
@@ -19,10 +19,10 @@
         </a-tab-pane>
       </a-tabs>
 
-      <trans-applyinside v-show="keyindex=='1'" ref="transApplyinside" />
-      <upload-files v-show="keyindex=='2'" ref="uploadFiles" />
-      <file-danan v-show="keyindex=='3'" :record="record" ref="fileDanan" />
-      <add-comments v-show="keyindex=='4'" ref="addComments" />
+      <trans-applyinside v-show="keyindex == '1'" ref="transApplyinside" />
+      <upload-files v-show="keyindex == '2'" ref="uploadFiles" />
+      <file-danan v-show="keyindex == '3'" :record="record" ref="fileDanan" />
+      <add-comments v-show="keyindex == '4'" ref="addComments" />
     </div>
     <span class="btn-back" @click="cancel()">返回列表</span>
   </div>
@@ -92,39 +92,25 @@ export default {
 </script>
 
 <style lang="less" scoped>
-
 .content::-webkit-scrollbar {
-
-width: 0px;
-
+  width: 0px;
 }
 
 .content::-webkit-scrollbar-track {
+  background-color: rgba(39, 39, 39, 1);
 
-background-color: rgba(39, 39, 39, 1);
-
- border-radius: 2px;
-
+  border-radius: 2px;
 }
 
 .content::-webkit-scrollbar-thumb {
+  background-color: rgba(39, 39, 39, 1);
 
-background-color: rgba(39, 39, 39, 1);
-
-border-radius: 10px;
-
+  border-radius: 10px;
 }
 
 .content::-webkit-scrollbar-thumb:hover {
-
- // background-color: rgb(118, 113, 113);
-
+  // background-color: rgb(118, 113, 113);
 }
-
-
-
-
-
 
 /deep/ .ant-tabs-bar.ant-tabs-top-bar {
   margin: 0 0 0 20px !important;
@@ -132,18 +118,6 @@ border-radius: 10px;
 </style>
 
 <style lang="less" scoped>
-
-
-
-
-
-
-
-
-
-
-
-
 // .wrap {
 //   height: calc(100% - 20px);
 //   .ant-tabs {
