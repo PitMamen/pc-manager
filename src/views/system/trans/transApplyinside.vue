@@ -265,7 +265,7 @@
                   v-for="(item, index) in originData"
                   :title="item.department_name"
                   :key="index"
-                  :value="item.department_name"
+                  :value="item.department_id"
                   >{{ item.department_name }}</a-select-option
                 >
               </a-select>
@@ -607,6 +607,7 @@ export default {
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
       //   this.uploadData.inDept = getOne.department_name;
+      console.log("onSelectDept getOne", getOne);
       console.log("onSelectDept department_id", department_id);
       console.log("onSelectDept department_name", getOne.department_name);
       if (getOne) {

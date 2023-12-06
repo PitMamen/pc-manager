@@ -189,7 +189,7 @@
               <a-select
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 show-search
-                v-model="requestData.inDept"
+                v-model="requestData.inSubjectName"
                 style="width: 44%"
                 :filter-option="false"
                 :not-found-content="fetching ? undefined : null"

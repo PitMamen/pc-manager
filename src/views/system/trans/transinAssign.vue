@@ -74,7 +74,7 @@
           ><a-icon style="margin-right: 5px" type="printer" />打印</a
         >
 
-        <a disabled="true" @click="goComment" style="margin-left: 8px"
+        <a  @click="goComment(record)" style="margin-left: 8px"
           ><a-icon style="margin-right: 5px" type="message" />评论</a
         >
       </span>
@@ -197,8 +197,8 @@ export default {
         },
 
         {
-          title: "转入科室",
-          dataIndex: "inDept",
+          title: "收治科室",
+          dataIndex: "inSubjectName",
           align: "center",
         },
         {
@@ -206,9 +206,14 @@ export default {
           dataIndex: "docName",
         },
 
+        // {
+        //   title: "分科情况",
+        //   dataIndex: "inSubjectName",
+        //   align: "center",
+        // },
         {
-          title: "收治情况",
-          dataIndex: "statusShow",
+          title: "分科情况",
+          dataIndex: "actionstatus",
           scopedSlots: { customRender: "actionstatus" },
         },
 
@@ -304,6 +309,7 @@ export default {
         // path: '/servicewise/projectEdit',
         query: {
           id: record.tradeId,
+          keyindex: '1',
         },
       });
     },
@@ -318,27 +324,31 @@ export default {
       }
     },
 
-    goComment() {
-      this.$message.success("去评论");
+    goComment(record) {
+      this.$router.push({
+        name: "transinAssigndetail",
+        // path: '/servicewise/projectEdit',
+        query: {
+          id: record.tradeId,
+          keyindex: '4',
+        },
+      });
     },
 
     //    <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治） -->
     getType(record) {
-      if (record.status.value == 4) {
-        return "已收治";
-      } else if (record.status.value == 2) {
-        return "待接收";
-      } else if (record.status.value == 5) {
-        return "不予收治";
+      if (record.inDept) {
+        return "已分配";
+      } else {
+        return "未分配";
       }
     },
 
     getColor(record) {
-      if (record.status.value == 4) {
+      if (record.inDept) {
         return "span-green";
-      } else if (record.status.value == 5) {
-        return "span-red";
-      } else if (record.status.value == 2) {
+      }
+      {
         return "span-gray";
       }
     },

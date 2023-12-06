@@ -54,6 +54,7 @@ export default {
       console.log("watch****************transinDetail Be", to, from);
       if (to.path.indexOf("transinAssigndetail") > -1) {
         this.record = { tradeId: this.$route.query.id };
+        this.keyindex = this.$route.query.keyindex;
       }
     },
   },

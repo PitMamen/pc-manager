@@ -1214,7 +1214,7 @@ export default {
     });
 
     this.getHospitalDatas();
-    this.gettreeMedicalSubjectsOut();
+
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1467,6 +1467,7 @@ export default {
         } else {
           this.$message.error(res.message);
         }
+        this.gettreeMedicalSubjectsOut();
         this.confirmLoading = false;
       });
     },
