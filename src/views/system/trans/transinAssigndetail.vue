@@ -55,6 +55,7 @@ export default {
       if (to.path.indexOf("transinAssigndetail") > -1) {
         this.record = { tradeId: this.$route.query.id };
         this.keyindex = this.$route.query.keyindex;
+        // this.$refs.transApplyinside.refreshData(this.record.tradeId);
       }
     },
   },

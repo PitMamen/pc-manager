@@ -451,15 +451,19 @@ export default {
               if (this.dataInfo.inDeptCode) {
                 this.isAssigned = true;
                 // this.requestData.inDeptCode = this.dataInfo.inDeptCode;
-                this.requestData.inDeptCode = this.dataInfo.inDept;//这里有显示问题，用inDept赋值给inDeptCode避免这个问题
+                this.requestData.inDeptCode = this.dataInfo.inDept; //这里有显示问题，用inDept赋值给inDeptCode避免这个问题
                 this.originData = {
                   department_id: this.dataInfo.inDeptCode,
                   // department_id: this.dataInfo.inDeptCode,
                   department_name: this.dataInfo.inDept,
                 };
+              } else {
+                this.isAssigned = false;
+                this.requestData.inDeptCode = undefined;
+                this.originData = [];
               }
 
-              console.log("  this.originData ", this.requestData.inDeptCode +'');
+              console.log("  this.originData ", this.requestData.inDeptCode + "");
               console.log("  this.originData ", this.originData);
 
               // this.requestData.inDept = this.dataInfo.inDept;
@@ -621,6 +625,15 @@ export default {
         return;
       }
     },
+
+    // refreshData(tradeId) {
+    //   console.log("ggggggg", tradeId);
+    //   this.confirmLoading = true;
+    //   // console.log("refreshData transup", JSON.stringify(tradeId))
+    //   this.tradeId = tradeId;
+    //   this.getDetaiData(this.tradeId);
+    //   this.getReferralLogListOut(this.tradeId);
+    // },
 
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id);
