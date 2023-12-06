@@ -238,7 +238,7 @@
 
           <div class="div-line" style="margin-bottom: 10px">
             <div class="div-cell" style="width: 24.7%">
-              <div class="div-cell-name">收治学科：</div>
+              <div class="div-cell-name" style="width: 152px;">收治学科：</div>
               <div class="div-cell-value" style="width: 100%">
                 {{ dataInfo.inSubjectName || "" }}
               </div>
@@ -273,7 +273,7 @@
             </div>
 
             <div class="div-cell" style="width: 24.7%">
-              <div class="div-cell-name">接收医生：</div>
+              <div class="div-cell-name" style="width: 152px;">接收医生：</div>
               <a-input
                 :disabled="isAssigned"
                 v-model="requestData.docName"
