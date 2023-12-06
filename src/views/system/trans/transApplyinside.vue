@@ -121,7 +121,7 @@
             <div class="div-cell-name">病情分级：</div>
             <div class="div-cell-value">{{ dataInfo.diseaseLevel || "" }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="align-items: baseline;width:100%">
             <div class="div-cell-name">主要诊断：</div>
             <div class="div-cell-value" style="width: 100%">
               {{ dataInfo.diagnos || "" }}
@@ -245,7 +245,7 @@
             </div>
 
             <div class="div-cell" style="width: 24.7%">
-              <div class="div-cell-name">收治科室：</div>
+              <div class="div-cell-name"><span v-if="!isAssigned" style="color: #f90505">*</span>收治科室：</div>
               <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治）这个页面status都是2 -->
               <!-- :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5" -->
               <a-select
