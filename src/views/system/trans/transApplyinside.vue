@@ -246,9 +246,10 @@
 
             <div class="div-cell" style="width: 24.7%">
               <div class="div-cell-name">收治科室：</div>
-               <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治）这个页面status都是2 -->
+              <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治）这个页面status都是2 -->
               <!-- :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5" -->
               <a-select
+                :disabled="isAssigned"
                 show-search
                 v-model="requestData.inDeptCode"
                 style="width: 44%"
@@ -274,6 +275,7 @@
             <div class="div-cell" style="width: 24.7%">
               <div class="div-cell-name">接收医生：</div>
               <a-input
+                :disabled="isAssigned"
                 v-model="requestData.docName"
                 allow-clear
                 placeholder="请输入"
@@ -283,7 +285,9 @@
           </div>
           <div class="div-line" style="margin-bottom: 10px">
             <div style="flex: 1"></div>
-            <a-button type="primary" @click="goAssign">确定分配</a-button>
+            <a-button :disabled="isAssigned" type="primary" @click="goAssign"
+              >确定分配</a-button
+            >
           </div>
         </div>
       </div>
@@ -362,6 +366,7 @@ export default {
       dataInfo: { referralType: {}, status: {} },
       rangeValue: "4",
       fetching: false,
+      isAssigned: false,
       originData: [],
       inDocDatas: [],
       inSelectDepartment: [],
@@ -443,7 +448,20 @@ export default {
 
               this.requestData.docName = this.dataInfo.docName;
 
-              // this.requestData.inDeptCode = this.dataInfo.inDeptCode;
+              if (this.dataInfo.inDeptCode) {
+                this.isAssigned = true;
+                // this.requestData.inDeptCode = this.dataInfo.inDeptCode;
+                this.requestData.inDeptCode = this.dataInfo.inDept;//这里有显示问题，用inDept赋值给inDeptCode避免这个问题
+                this.originData = {
+                  department_id: this.dataInfo.inDeptCode,
+                  // department_id: this.dataInfo.inDeptCode,
+                  department_name: this.dataInfo.inDept,
+                };
+              }
+
+              console.log("  this.originData ", this.requestData.inDeptCode +'');
+              console.log("  this.originData ", this.originData);
+
               // this.requestData.inDept = this.dataInfo.inDept;
               // this.requestData.inDept = this.dataInfo.inDept;
 

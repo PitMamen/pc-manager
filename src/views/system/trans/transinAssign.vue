@@ -111,6 +111,7 @@ import {
 } from "@/api/modular/system/posManage";
 import { formatDate, getDateNow, getCurrentMonthLast } from "@/utils/util";
 //   import recordDetail from './recordDetail'
+import events from '@/components/MultiTab/events'
 
 export default {
   components: {
@@ -304,6 +305,7 @@ export default {
 
     // 去详情
     goDetail(record) {
+      events.$emit('close','/trans/transinAssigndetail')
       this.$router.push({
         name: "transinAssigndetail",
         // path: '/servicewise/projectEdit',
@@ -325,6 +327,7 @@ export default {
     },
 
     goComment(record) {
+      events.$emit('close','/trans/transinAssigndetail')
       this.$router.push({
         name: "transinAssigndetail",
         // path: '/servicewise/projectEdit',
