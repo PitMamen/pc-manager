@@ -769,7 +769,7 @@
             </div>
             <div class="div-cell-value">
               <a-tree-select
-                v-model="uploadData.inDeptCode"
+                v-model="uploadData.inSubjectId"
                 style="width: 100%"
                 :tree-data="treeDataSub"
                 @select="onSelectDept"
@@ -800,7 +800,6 @@
                   >{{ item.department_name }}</a-select-option
                 >
               </a-select> -->
-
             </div>
           </div>
           <div class="div-cell">
@@ -1014,6 +1013,8 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
+        inSubjectId: undefined, //接诊学科
+        inSubjectName: undefined, //接诊学科名字
         docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
@@ -1564,9 +1565,9 @@ export default {
 
     onHospitalSelect() {
       this.getDepartmentSelectList(undefined);
-      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
-        this.getTreeUsers();
-      }
+      // if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+      //   this.getTreeUsers();
+      // }
     },
 
     onSelectDept(subid, s1) {
@@ -1575,7 +1576,7 @@ export default {
       this.treeDataSub.forEach((item, index) => {
         item.children.forEach((item1, index1) => {
           if (item1.subjectCode == subid) {
-            this.uploadData.inDept = item1.subjectClassifyName;
+            this.uploadData.inSubjectName = item1.subjectClassifyName;
             console.log("onSelectDept subjectClassifyName", this.uploadData.inDept);
           }
 
@@ -1668,10 +1669,12 @@ export default {
       //填充数据
       this.uploadData.patientBaseinfoReq = JSON.parse(JSON.stringify(getOne));
       //组装数据 生日
-      this.dateValue = moment(
-        this.uploadData.patientBaseinfoReq.birthday,
-        this.dateFormat
-      );
+      if (this.uploadData.patientBaseinfoReq.birthday) {
+        this.dateValue = moment(
+          this.uploadData.patientBaseinfoReq.birthday,
+          this.dateFormat
+        );
+      }
 
       //户口地址
       // this.addressDatas = [{ townName: this.uploadData.patientBaseinfoReq.address }];
@@ -1696,7 +1699,7 @@ export default {
         this.$message.warn("请先选择转入机构");
         return;
       }
-      if (!this.uploadData.inDeptCode) {
+      if (!this.uploadData.inSubjectId) {
         this.$message.warn("请先选择接诊学科");
         return;
       }
@@ -1849,6 +1852,8 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
+        inSubjectId: undefined, //接诊学科
+        inSubjectName: undefined, //接诊学科名字
         docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期

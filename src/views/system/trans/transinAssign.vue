@@ -44,7 +44,7 @@
         :class="{ 'checked-btn': queryParamsTemp.allocationFlag == 2 }"
         @click="onRadioClick(2)"
       >
-        <span style="margin-left: 3px">待分配({{ numberData.ReqCheckedNum }}) </span>
+        <span style="margin-left: 3px">待分配({{ numberData.allocationNo }}) </span>
       </div>
 
       <div
@@ -52,7 +52,7 @@
         :class="{ 'checked-btn': queryParamsTemp.allocationFlag == 1 }"
         @click="onRadioClick(1)"
       >
-        <span style="margin-left: 3px">已分配({{ numberData.CheckedNum }})</span>
+        <span style="margin-left: 3px">已分配({{ numberData.allocationYes }})</span>
       </div>
     </div>
 
@@ -135,15 +135,16 @@ export default {
       currentTab: "",
       numberData: {
         TotalNum: 0,
-        ReqCheckedNum: 0,
-        CheckedNum: 0,
-        UncheckedNum: 0,
+        allocationYes: 0,
+        allocationNo: 0,
       },
+
+      // <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治）这个页面status都是2 -->
       queryParams: {
         keyWord: "",
         regTimeBegin: getDateNow(),
         regTimeEnd: getCurrentMonthLast(),
-        status: "",
+        status: 2,
         allocationFlag: undefined, // 1已分配 2未分配，全部的时候不传，整型
         flag: 1,
       },
@@ -222,7 +223,10 @@ export default {
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams));
         this.queryParamsTemp.allocationFlag = this.currentTab;
-        return qryReferralListByPage(Object.assign(parameter, this.queryParams))
+        if (!this.queryParamsTemp.allocationFlag) {
+          delete this.queryParamsTemp.allocationFlag;
+        }
+        return qryReferralListByPage(Object.assign(parameter, this.queryParamsTemp))
           .then((res) => {
             if (res.code == 0 && res.data.rows.length > 0) {
               //组装控件需要的数据结构
@@ -279,8 +283,8 @@ export default {
   },
 
   mounted() {
-    this.$bus.$on("refreshtransinManage", (record) => {
-      console.log("refreshtransinManage", record);
+    this.$bus.$on("refreshtransAssign", (record) => {
+      console.log("refreshtransAssign", record);
       this.$refs.table.refresh();
     });
   },
@@ -352,20 +356,23 @@ export default {
       }
       this.queryParams.regTimeBegin = clearTime ? "" : getDateNow();
       this.queryParams.regTimeEnd = clearTime ? "" : getCurrentMonthLast();
-      this.queryParams.status = "";
+      this.queryParams.allocationFlag = "";
       this.handleOk();
     },
 
     //订单分组
     getOrderStatusGroupByDataOut() {
-      qryReferralCount(this.queryParams)
+      let param = JSON.parse(JSON.stringify(this.queryParams));
+      if (!param.allocationFlag) {
+        delete param.allocationFlag;
+      }
+      qryReferralCount(param)
         .then((res) => {
           if (res.code == 0) {
             if (res.data) {
               this.numberData.TotalNum = res.data.TotalNum;
-              this.numberData.ReqCheckedNum = res.data.ReqCheckedNum;
-              this.numberData.CheckedNum = res.data.CheckedNum;
-              this.numberData.UncheckedNum = res.data.UncheckedNum;
+              this.numberData.allocationYes = res.data.allocationYes;
+              this.numberData.allocationNo = res.data.allocationNo;
             }
           }
         })
@@ -442,7 +449,7 @@ export default {
     },
 
     handleOk() {
-      this.queryParams.status = "";
+      this.queryParams.allocationFlag = "";
       this.getOrderStatusGroupByDataOut();
       this.$refs.table.refresh();
     },

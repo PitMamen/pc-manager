@@ -240,38 +240,17 @@
             <div class="div-cell" style="width: 24.7%">
               <div class="div-cell-name">收治学科：</div>
               <div class="div-cell-value" style="width: 100%">
-                {{ dataInfo.inDept || "" }}
+                {{ dataInfo.inSubjectName || "" }}
               </div>
-              <!-- <a-select
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                show-search
-                v-model="requestData.inDept"
-                style="width: 44%"
-                :filter-option="false"
-                :not-found-content="fetching ? undefined : null"
-                allow-clear
-                placeholder="请输入选择科室"
-                @change="onDepartmentSelectChange"
-                @select="onSelectDept"
-                @search="onDepartmentSelectSearch"
-              >
-                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-                <a-select-option
-                  v-for="(item, index) in originData"
-                  :title="item.department_name"
-                  :key="index"
-                  :value="item.department_name"
-                  >{{ item.department_name }}</a-select-option
-                >
-              </a-select> -->
             </div>
 
             <div class="div-cell" style="width: 24.7%">
               <div class="div-cell-name">收治科室：</div>
+               <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治）这个页面status都是2 -->
+              <!-- :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5" -->
               <a-select
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 show-search
-                v-model="requestData.inDept"
+                v-model="requestData.inDeptCode"
                 style="width: 44%"
                 :filter-option="false"
                 :not-found-content="fetching ? undefined : null"
@@ -295,33 +274,16 @@
             <div class="div-cell" style="width: 24.7%">
               <div class="div-cell-name">接收医生：</div>
               <a-input
-                v-model="dataInfo.docName"
+                v-model="requestData.docName"
                 allow-clear
                 placeholder="请输入"
                 style="width: 100%; height: 28px"
               />
-
-              <!-- <a-select
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                v-model="requestData.docName"
-                @select="onSelectInDoctor"
-                @focus="onDocFocus"
-                placeholder="请选择"
-                allow-clear
-                style="width: 44%; height: 28px"
-              >
-                <a-select-option
-                  v-for="item in inDocDatas"
-                  :key="item.userId"
-                  :value="item.userName"
-                  >{{ item.userName }}</a-select-option
-                >
-              </a-select> -->
             </div>
           </div>
           <div class="div-line" style="margin-bottom: 10px">
             <div style="flex: 1"></div>
-            <a-button type="primary">确定分配</a-button>
+            <a-button type="primary" @click="goAssign">确定分配</a-button>
           </div>
         </div>
       </div>
@@ -365,6 +327,7 @@ import {
   getTreeUsersByDeptIdsAndRoles,
   referralExamine,
   getReferralLogList,
+  allocationDept,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, getDateNow, getCurrentMonthLast } from "@/utils/util";
@@ -410,13 +373,13 @@ export default {
       requestData: {
         inDept: "", //准入科室名称
         inDeptCode: undefined, //转入科室编码
-        reachBeginDate: getDateNow(), //期望到院 结束时间
-        reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
-        rejectReason: "", //收治意见
-        status: 4, // 4 确认收治  5 拒绝收治
         tradeId: "",
-        docId: undefined,
         docName: "",
+        // reachBeginDate: getDateNow(), //期望到院 结束时间
+        // reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
+        // rejectReason: "", //收治意见
+        // status: 4, // 4 确认收治  5 拒绝收治
+        // docId: undefined,
       },
     };
   },
@@ -448,8 +411,8 @@ export default {
         moment(getDateNow(), this.dateFormat),
         moment(getCurrentMonthLast(), this.dateFormat),
       ];
-      this.requestData.reachBeginDate = getDateNow();
-      this.requestData.reachEndDate = getCurrentMonthLast();
+      // this.requestData.reachBeginDate = getDateNow();
+      // this.requestData.reachEndDate = getCurrentMonthLast();
     },
 
     // 打印
@@ -476,23 +439,27 @@ export default {
               this.getTreeUsers(this.dataInfo.inDeptCode);
               this.tradeType = this.dataInfo.tradeType.value;
               this.requestData.status = this.dataInfo.status.value;
-              this.requestData.docId = this.dataInfo.docId;
+              // this.requestData.docId = this.dataInfo.docId;
+
               this.requestData.docName = this.dataInfo.docName;
-              this.requestData.inDeptCode = this.dataInfo.inDeptCode;
-              this.requestData.inDept = this.dataInfo.inDept;
-              this.requestData.rejectReason = this.dataInfo.inCheckResult;
+
+              // this.requestData.inDeptCode = this.dataInfo.inDeptCode;
+              // this.requestData.inDept = this.dataInfo.inDept;
+              // this.requestData.inDept = this.dataInfo.inDept;
+
+              // this.requestData.rejectReason = this.dataInfo.inCheckResult;
               this.createValue = [
                 moment(this.dataInfo.reachBeginDate, this.dateFormat),
                 moment(this.dataInfo.reachEndDate, this.dateFormat),
               ];
-              this.requestData.reachBeginDate = moment(
-                this.dataInfo.reachBeginDate,
-                this.dateFormat
-              );
-              this.requestData.reachEndDate = moment(
-                this.dataInfo.reachEndDate,
-                this.dateFormat
-              );
+              // this.requestData.reachBeginDate = moment(
+              //   this.dataInfo.reachBeginDate,
+              //   this.dateFormat
+              // );
+              // this.requestData.reachEndDate = moment(
+              //   this.dataInfo.reachEndDate,
+              //   this.dateFormat
+              // );
 
               // console.log("GGG:",this.requestData.reachBeginDate)
             }
@@ -561,17 +528,38 @@ export default {
       });
     },
 
-    onChange(momentArr, dateArr) {
-      if (dateArr[0] == "" && dateArr[1] == "") {
-        this.requestData.reachBeginDate = "";
-        this.requestData.reachEndDate = "";
+    goAssign() {
+      if (!this.requestData.inDept) {
+        this.$message.error("请选择收治科室");
         return;
       }
-
-      this.createValue = momentArr;
-      this.requestData.reachBeginDate = dateArr[0];
-      this.requestData.reachEndDate = dateArr[1];
+      // if (!this.requestData.docName) {  非必填
+      //   this.$message.error("请输入接收医生");
+      //   return;
+      // }
+      allocationDept(this.requestData).then((res) => {
+        if (res.code == 0) {
+          this.$message.success("分配成功");
+          this.$bus.$emit("refreshtransAssign", "刷新列表");
+          this.$router.go(-1);
+        } else {
+          this.$message.error(res.message);
+        }
+        this.confirmLoading = false;
+      });
     },
+
+    // onChange(momentArr, dateArr) {
+    //   if (dateArr[0] == "" && dateArr[1] == "") {
+    //     this.requestData.reachBeginDate = "";
+    //     this.requestData.reachEndDate = "";
+    //     return;
+    //   }
+
+    //   this.createValue = momentArr;
+    //   this.requestData.reachBeginDate = dateArr[0];
+    //   this.requestData.reachEndDate = dateArr[1];
+    // },
 
     //科室搜索
     onDepartmentSelectSearch(value) {
@@ -598,16 +586,16 @@ export default {
       });
     },
 
-    onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.userId == userId);
-      //   this.uploadData.docName = getOne.userName;
-      // console.log('onSelectInDoctor docId', getOne.userId)
-      // console.log('onSelectInDoctor docName', getOne.userName)
-      if (getOne) {
-        this.requestData.docName = getOne.userName;
-        this.requestData.docId = getOne.userId;
-      }
-    },
+    // onSelectInDoctor(userId) {
+    //   let getOne = this.inDocDatas.find((item) => item.userId == userId);
+    //   //   this.uploadData.docName = getOne.userName;
+    //   // console.log('onSelectInDoctor docId', getOne.userId)
+    //   // console.log('onSelectInDoctor docName', getOne.userName)
+    //   if (getOne) {
+    //     this.requestData.docName = getOne.userName;
+    //     this.requestData.docId = getOne.userId;
+    //   }
+    // },
 
     onDocFocus() {
       if (!this.inSelectDepartment) {
@@ -639,15 +627,15 @@ export default {
       });
     },
 
-    radioChange(event) {
-      if (event.target.value == 4) {
-        this.rangeValue = 4;
-        this.requestData.status = 4;
-      } else {
-        this.rangeValue = 5;
-        this.requestData.status = 5;
-      }
-    },
+    // radioChange(event) {
+    //   if (event.target.value == 4) {
+    //     this.rangeValue = 4;
+    //     this.requestData.status = 4;
+    //   } else {
+    //     this.rangeValue = 5;
+    //     this.requestData.status = 5;
+    //   }
+    // },
 
     formatDate(date) {
       date = new Date(date);
@@ -662,33 +650,33 @@ export default {
     cancel() {
       this.$router.go(-1);
     },
-    submitData() {
-      if (this.requestData.status == 5) {
-        if (!this.requestData.rejectReason) {
-          this.$message.error("请输入不通过原因!");
-          return;
-        }
-      }
-      this.confirmLoading = true;
+    // submitData() {
+    //   if (this.requestData.status == 5) {
+    //     if (!this.requestData.rejectReason) {
+    //       this.$message.error("请输入不通过原因!");
+    //       return;
+    //     }
+    //   }
+    //   this.confirmLoading = true;
 
-      this.requestData.reachBeginDate = this.requestData.reachBeginDate.format(
-        "yyyy-MM-DD"
-      );
-      this.requestData.reachEndDate = this.requestData.reachEndDate.format("yyyy-MM-DD");
-      // console.log('VVV:', this.requestData)
-      // return
-      referralExamine(this.requestData)
-        .then((res) => {
-          if (res.code == 0) {
-            this.$message.success("操作成功");
-            this.$bus.$emit("refreshtransinManage", "刷新转入管理列表");
-            this.$router.go(-1);
-          }
-        })
-        .finally((error) => {
-          this.confirmLoading = false;
-        });
-    },
+    //   this.requestData.reachBeginDate = this.requestData.reachBeginDate.format(
+    //     "yyyy-MM-DD"
+    //   );
+    //   this.requestData.reachEndDate = this.requestData.reachEndDate.format("yyyy-MM-DD");
+    //   // console.log('VVV:', this.requestData)
+    //   // return
+    //   referralExamine(this.requestData)
+    //     .then((res) => {
+    //       if (res.code == 0) {
+    //         this.$message.success("操作成功");
+    //         this.$bus.$emit("refreshtransinManage", "刷新转入管理列表");
+    //         this.$router.go(-1);
+    //       }
+    //     })
+    //     .finally((error) => {
+    //       this.confirmLoading = false;
+    //     });
+    // },
   },
 };
 </script>

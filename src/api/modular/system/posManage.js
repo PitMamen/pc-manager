@@ -5970,6 +5970,15 @@ export function qryReferralCount(data) {
   })
 }
 
+// 转诊分科  分配科室
+export function allocationDept(data) {
+  return axios({
+    url: '/referral-api/referral/allocationDept',
+    method: 'post',
+    data: data,
+  })
+}
+
 // 统一预约批量数量
 export function reservationCount(data) {
   return axios({

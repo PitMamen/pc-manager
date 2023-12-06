@@ -753,7 +753,7 @@
             </div>
             <div class="div-cell-value">
               <a-tree-select
-                v-model="uploadData.inDeptCode"
+                v-model="uploadData.inSubjectId"
                 style="width: 100%"
                 :tree-data="treeDataSub"
                 @select="onSelectDept"
@@ -1003,6 +1003,8 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
+        inSubjectId: undefined, //接诊学科
+        inSubjectName: undefined, //接诊学科名字
         docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
@@ -1550,8 +1552,8 @@ export default {
           this.originData = [];
           this.originData = [
             {
-              department_name: this.uploadData.inDept,
-              department_id: this.uploadData.inDeptCode,
+              department_name: this.uploadData.inSubjectId,
+              department_id: this.uploadData.inSubjectName,
             },
           ];
           console.log("this.uploadData.docName", this.uploadData.docName);
@@ -1715,7 +1717,7 @@ export default {
       this.treeDataSub.forEach((item, index) => {
         item.children.forEach((item1, index1) => {
           if (item1.subjectCode == subid) {
-            this.uploadData.inDept = item1.subjectClassifyName;
+            this.uploadData.inSubjectName = item1.subjectClassifyName;
             console.log("onSelectDept subjectClassifyName", this.uploadData.inDept);
           }
 
@@ -1751,8 +1753,8 @@ export default {
         return;
       }
 
-      if (!this.uploadData.inDeptCode) {
-        this.$message.warn("请先选择转入科室");
+      if (!this.uploadData.inSubjectId) {
+        this.$message.warn("请先选择接诊学科");
         return;
       }
     },
@@ -1904,6 +1906,8 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
+        inSubjectId: undefined, //接诊学科
+        inSubjectName: undefined, //接诊学科名字
         docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
