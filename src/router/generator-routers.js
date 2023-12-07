@@ -1,11 +1,12 @@
 
-import { BasicLayout, BlankLayout, PageView, RouteView ,Iframe} from '@/layouts'
+import { HeadLayout, BasicLayout, BlankLayout, PageView, RouteView ,Iframe} from '@/layouts'
 
 // 前端路由表
 const constantRouterComponents = {
   // 基础页面 layout 必须引入
   BasicLayout: BasicLayout,
   BlankLayout: BlankLayout,
+  HeadLayout: HeadLayout,
   RouteView: RouteView,
   PageView: PageView,
   Iframe:Iframe,
