@@ -9,7 +9,7 @@
     :maskClosable="false"
   >
     <a-spin :spinning="confirmLoading">
-      <div class="div-part" style="margin-top: 0px;overflow-y: auto;">
+      <div class="div-part" style="margin-top: 0px;overflow-y: scroll;">
         <div class="div-part-left">
           <div
             class="left-content1"
