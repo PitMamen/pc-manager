@@ -17,7 +17,9 @@
   export default {
     data() {
       return {
-        url: 'https://manager-ai.mclouds.org.cn/pages/ai/index',
+        //url: 'https://manager-ai.mclouds.org.cn/pages/ai/index',
+        //url: 'http://localhost/pages/ai/index',
+        url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
         accessToken: ''
       }
     },

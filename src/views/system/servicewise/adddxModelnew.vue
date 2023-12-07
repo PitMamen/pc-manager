@@ -111,7 +111,7 @@
               <a-textarea
                 class="span-item-value"
                 v-model="checkData.message"
-                :maxLength="48"
+                :maxLength="35"
                 style="
                   height: 65px !important;
                   width: 695px !important;
