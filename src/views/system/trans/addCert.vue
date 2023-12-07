@@ -200,6 +200,7 @@ export default {
       diagnoseCode:undefined,
       diagnoseDatas:[],
       diagnoseNames:[],
+      checkDiagnoseDatas:[],
       checkData: {
         inTime: undefined, //住院时间
         memo: undefined, //补充事项
@@ -245,6 +246,7 @@ export default {
       this.diagnoseCode=undefined
       this.diagnoseDatas=[]
       this.diagnoseNames=[]
+      this.checkDiagnoseDatas=[]
     },
 
     //修改
@@ -283,7 +285,7 @@ export default {
           }
           
           this.diagnoseDatas=diagnoseDatas
-         
+          this.checkDiagnoseDatas=diagnoseDatas
         }
         
 
@@ -310,6 +312,14 @@ export default {
       if (this.diagnoseCode && this.diagnoseCode.length > 0) {
         this.diagnoseCode.forEach((element) => {
           let getOne = this.diagnoseDatas.find((item) => item.icdCode == element);
+          if(getOne){
+            this.checkDiagnoseDatas.push(getOne)
+          }
+         
+        });
+        this.diagnoseCode.forEach((element) => {
+          let getOne = this.checkDiagnoseDatas.find((item) => item.icdCode == element);
+         
           this.diagnoseNames.push(getOne.name);
         });
       }
