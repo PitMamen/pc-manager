@@ -292,6 +292,7 @@ export default {
         console.log(nowTime)
         this.checkData.regTime = nowTime
         this.createValue2 = moment(nowTime, this.dateFormat2)
+        this.checkData.reqDocName=record.docName
         this.getZhuyuanDepartmentListOut(undefined)
 
       }

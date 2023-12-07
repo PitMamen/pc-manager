@@ -87,10 +87,11 @@
         
   
         
-        <span slot="actioncard" slot-scope="text, record" :class="getCardColor(record.szFlagText)">
-          {{ record.szFlagText }}
+        <span   slot="actioncard" slot-scope="text, record" :class="getCardColor(record.szFlagText)">
+         
+          <a :class="getCardColor(record.szFlagText)" @click="goAddStatus(record)">{{ record.szFlagText }}</a>
         </span>
-  
+       
         <span slot="actionbed" slot-scope="text, record" :class="getBedColor(record.bzFlagText)">
           {{ record.bzFlagText }}
         </span>
@@ -101,6 +102,7 @@
       </s-table>
       <add-card ref="addCard"  @ok="handleOk" />
       <add-Cert ref="addCert"  @ok="handleOk" />
+      <add-Status ref="addStatus"  @ok="handleOk" />
     </a-card>
   </template>
      
@@ -109,6 +111,7 @@
   import moment from 'moment'
   import addCard from './addCard'
   import addCert from './addCert'
+  import addStatus from './addStatus'
   import {
     getDepartmentListForSelect,
     reservationListByPage,
@@ -122,7 +125,8 @@
     components: {
       STable,
       addCard,
-      addCert
+      addCert,
+      addStatus
     },
   
     data() {
@@ -363,7 +367,12 @@
       goComment() {
         this.$message.success('去评论')
       },
-  
+      goAddStatus(record){
+        if(record.status.value===5){
+          this.$refs.addStatus.editModel(record)
+        }
+       
+      },
       getType(record) {
         if (record.status.value == 1) {
           return '待审核'
