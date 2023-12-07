@@ -188,7 +188,7 @@
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell">
             <div class="div-cell-name">接诊学科：</div>
-            <div class="div-cell-value">{{ dataInfo.inDept || "" }}</div>
+            <div class="div-cell-value">{{ dataInfo.inSubjectName || "" }}</div>
           </div>
           <div class="div-cell" style="margin-left: 0.1%">
             <div class="div-cell-name">接收医生：</div>
