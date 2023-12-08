@@ -246,7 +246,7 @@
                   style="display: inline-block"
                   allow-clear
                   type="text"
-                  :maxLength="30"
+                  :maxLength="300"
                   placeholder="请输入外部链接 "
                 />
               </div>
@@ -268,10 +268,10 @@
                 <a-input
                   v-model="thirdLink"
                   class="span-item-value"
-                  style="display: inline-block; width: 110px; margin-left: 10px"
+                  style="display: inline-block; width: 188px; margin-left: 10px"
                   allow-clear
                   type="text"
-                  :maxLength="30"
+                  :maxLength="300"
                   placeholder="请输入 "
                 />
               </div>
