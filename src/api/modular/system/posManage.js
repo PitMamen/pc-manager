@@ -2150,6 +2150,17 @@ export function dateFields(data) {
 }
 
 /**
+ * /follow/dict/dateFields 时间过滤字段列表：科室，患者姓名，出院日期  上面的dateFields 可以不用了
+ */
+export function cfgDateFields(data) {
+  return axios({
+    url: '/follow-api/follow/dict/cfgDateFields',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
  * /follow/dict/operationTypes 操作类型列表：>大于、<小于、=精准匹配、like模糊匹配、in包含
  */
 export function operationTypes(data) {

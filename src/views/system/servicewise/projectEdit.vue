@@ -162,16 +162,17 @@
               ><span style="color: red">*</span> 病人类型 :</span
             >
             <a-select
-              v-model="projectData.basePlan.metaConfigureId"
-              @select="onSourceSelect"
+              disabled
+              v-model="projectData.basePlan.scene"
+              @select="onSceneSelect"
               allow-clear
-              placeholder="请选择来源名单"
+              placeholder="请选择病人类型"
             >
               <a-select-option
-                v-for="(item, index) in sourceData"
+                v-for="(item, index) in sceneDatas"
                 :key="index"
-                :value="item.value"
-                >{{ item.description }}</a-select-option
+                :value="item.code"
+                >{{ item.value }}</a-select-option
               >
             </a-select>
           </div>
@@ -185,6 +186,8 @@
             <a-select
               v-model="projectData.basePlan.metaConfigureId"
               @select="onSourceSelect"
+              :disabled="isMenzhen"
+              @focus="onSourceFocus"
               allow-clear
               placeholder="请选择来源名单"
             >
@@ -197,7 +200,7 @@
             </a-select>
           </div>
 
-          <div class="div-pro-line">
+          <div class="div-pro-line" v-if="!isMenzhen">
             <span class="span-item-name"
               ><span style="color: red">*</span> 执行科室 :</span
             >
@@ -220,23 +223,17 @@
             </a-select>
           </div>
 
-          <div class="div-pro-line">
+          <div class="div-pro-line" v-if="isMenzhen">
             <span class="span-item-name"
               ><span style="color: red">*</span> 所属学科 :</span
             >
-            <a-select
-              v-model="projectData.basePlan.metaConfigureId"
-              @select="onSourceSelect"
-              allow-clear
-              placeholder="请选择来源名单"
+            <a-tree-select
+              v-model="projectData.basePlan.subjectCode"
+              :tree-data="treeDataSub"
+              placeholder="请选择所属学科"
+              tree-default-expand-all
             >
-              <a-select-option
-                v-for="(item, index) in sourceData"
-                :key="index"
-                :value="item.value"
-                >{{ item.description }}</a-select-option
-              >
-            </a-select>
+            </a-tree-select>
           </div>
 
           <!-- <div class="div-pro-line">
@@ -438,7 +435,7 @@
           :key="indexTask"
           :value="itemTask.taskId"
         >
-          <div class="mission-top-add">
+          <div class="mission-top-add" v-if="!isMenzhen">
             <div class="btn-top" @click="addStop(indexTask)">
               <img
                 style="width: 16px; height: 16px"
@@ -462,7 +459,7 @@
           </div>
 
           <!-- 分割线 -->
-          <div class="div-divider"></div>
+          <div class="div-divider" v-if="!isMenzhen"></div>
 
           <div class="mission-top">
             <a-select
@@ -542,6 +539,7 @@
               v-model="itemTask.taskExecType"
               allow-clear
               @select="onSelectExecType"
+              :disabled="isMenzhen"
               placeholder="请选择执行周期"
             >
               <a-select-option
@@ -558,6 +556,7 @@
               v-model="itemTask.metaConfigureDetailId"
               style="width: 100px !important"
               allow-clear
+              :disabled="isMenzhen"
               placeholder="日期类别"
             >
               <a-select-option
@@ -657,7 +656,7 @@
           <!-- 分割线 -->
           <div class="div-divider"></div>
 
-          <div class="mission-bottom">
+          <div class="mission-bottom" v-if="!isMenzhen">
             <div class="mission-bottom-left">
               <a-checkbox
                 v-if="
@@ -764,7 +763,7 @@
             </div>
           </div>
           <div class="mission-bottom">
-            <div class="mission-bottom-left">
+            <div class="mission-bottom-left" v-if="!isMenzhen">
               <a-checkbox
                 v-model="itemTask.isRepeatExecTimeChecked"
                 style="margin-left: 1%"
@@ -790,6 +789,8 @@
                 <a-select-option value="1">天</a-select-option>
               </a-select>
             </div>
+
+            <div style="flex: 1"></div>
 
             <div class="end-btn-task" style="width: 29%">
               <span
@@ -861,6 +862,8 @@ import {
   getSmsTemplateListForJumpTypeFuzzy,
   getWxTemplateListForJumpTypeFuzzy,
   getAllQuestionsFuzzy,
+  gettreeMedicalSubjects,
+  cfgDateFields,
 } from "@/api/modular/system/posManage";
 import moment from "moment";
 import { TRUE_USER } from "@/store/mutation-types";
@@ -892,6 +895,7 @@ export default {
       chooseData: [],
       operateData: [],
       msgData: [],
+      msgDataOrgigin: [],
       msgContentData: [],
       taskTypeData: [],
       taskExecData: [],
@@ -904,6 +908,13 @@ export default {
       templateListSMS: [],
       templateListQues: [],
       chooseTemplateList: [],
+      isMenzhen: false,
+      //病人类型 1门诊病人/2出院病人/3体检病
+      sceneDatas: [
+        { code: 1, value: "门诊病人" },
+        { code: 2, value: "出院病人" },
+        { code: 3, value: "体检病人" },
+      ],
       everyData: [
         { value: "1", description: "周一" },
         { value: "2", description: "周二" },
@@ -936,6 +947,8 @@ export default {
           metaConfigureId: undefined,
           executeDepartments: undefined, //执行科室
           remark: undefined, //补充说明
+          scene: undefined, //病人类型 1门诊病人/2出院病人/3体检病
+          subjectCode: undefined, //学科编码
 
           updateMatchStatus: 0, //随访名单更新时需重新匹配：0不匹配1匹配
           repeatMatchStatus: 0, //重复匹配状态：0不重复1可以重
@@ -976,11 +989,11 @@ export default {
         // this.confirmLoading = false
       });
 
-    tables().then((res) => {
-      if (res.code == 0) {
-        this.sourceData = res.data;
-      }
-    });
+    // tables().then((res) => {
+    //   if (res.code == 0) {
+    //     this.sourceData = res.data;
+    //   }
+    // });
     operationTypes().then((res) => {
       if (res.code == 0) {
         this.operateData = res.data;
@@ -989,6 +1002,7 @@ export default {
 
     messageTypes().then((res) => {
       if (res.code == 0) {
+        this.msgDataOrgigin = JSON.parse(JSON.stringify(res.data));
         this.msgData = res.data;
       }
     });
@@ -1031,6 +1045,7 @@ export default {
 
     // this.getDeptAllQues()
     // this.getWxTemplateListForJumpTypeOut()
+    this.gettreeMedicalSubjectsOut();
   },
 
   methods: {
@@ -1098,6 +1113,11 @@ export default {
       this.dateFieldsOut();
       // this.getDeptsOut()
       // this.getUsersByDeptIdAndRoleOut()
+      if (this.projectData.basePlan.scene == 1) {
+        this.isMenzhen = true;
+      } else {
+        this.isMenzhen = false;
+      }
 
       this.projectData.basePlan.followType = parseString(
         this.projectData.basePlan.followType
@@ -1105,6 +1125,7 @@ export default {
       this.projectData.basePlan.metaConfigureId = parseString(
         this.projectData.basePlan.metaConfigureId
       );
+      this.getSourceData(this.projectData.basePlan.scene);
 
       //处理复选框的值
       this.projectData.basePlan.updateMatchStatus = this.projectData.basePlan.updateMatchStatus.value;
@@ -1112,7 +1133,7 @@ export default {
       this.isAgain = this.projectData.basePlan.updateMatchStatus == 1 ? true : false;
       this.isReExecute =
         this.projectData.basePlan.execOvertimetaskFlag == 1 ? true : false;
-      // console.log("哈哈哈：", this.isReExecute,this.projectData.basePlan.execOvertimetaskFlag)
+      console.log("哈哈哈：", this.isReExecute,this.projectData.basePlan.execOvertimetaskFlag)
       //重复匹配状态：0不重复1可以重   true不重复  false重复   勾上true不重复   不勾false重复
       //repeatMatchStatus为0勾上    updateMatchStatus为1勾上
       console.log(
@@ -1124,15 +1145,18 @@ export default {
       // this.projectData.basePlan.repeatMatchStatus = this.isOnce ? 0 : 1
 
       // this.projectData.basePlan.executeDepartment = parseInt(this.projectData.basePlan.executeDepartment)
-      let newArr = [];
-      this.projectData.basePlan.executeDepartments.forEach((item) => {
-        newArr.push(parseInt(item));
-      });
-      this.projectData.basePlan.executeDepartments = newArr;
-      console.log(
-        "this.projectData.basePlan.executeDepartments",
-        this.projectData.basePlan.executeDepartments
-      );
+      if (this.isMenzhen) {
+      } else {
+        let newArr = [];
+        this.projectData.basePlan.executeDepartments.forEach((item) => {
+          newArr.push(parseInt(item));
+        });
+        this.projectData.basePlan.executeDepartments = newArr;
+        console.log(
+          "this.projectData.basePlan.executeDepartments",
+          this.projectData.basePlan.executeDepartments
+        );
+      }
 
       if (this.projectData.filterRules && this.projectData.filterRules.length > 0) {
         this.projectData.filterRules.forEach((item) => {
@@ -1614,7 +1638,10 @@ export default {
         tempExecType = cacheExecType;
       }
 
+      //TODO 门诊的需要单独处理
       //stopType 任务终止类型;1:制定日期2:出现在特殊名单3:指定次数
+      // let mom = moment(formatDate(new Date()) + " 08:00:00", "YYYY-MM-DD HH:mm:ss");
+      // this.$set(itemTask, "pushTimePoint", mom);
       this.projectData.tasks.push({
         isChecked: true,
         timeQuantity: 1,
@@ -1623,13 +1650,20 @@ export default {
         // messageType: this.msgData[1].value,
         // taskExecType: this.taskExecData[0].value,
         messageType: tempMessageType,
-        taskExecType: tempExecType,
+        taskExecType: this.isMenzhen ? this.taskExecData[0].value : tempExecType,
         // metaConfigureDetailId: this.dateFieldsData[3].value,
-        metaConfigureDetailId: undefined,
+        metaConfigureDetailId:
+          this.isMenzhen && this.dateFieldsData.length > 0
+            ? this.dateFieldsData[0].value
+            : undefined,
         // timeUnit: this.timeUnitTypesData[0].value,
         itemTemplateList: [],
         isRepeatExecTimeChecked: false,
         repeatExecTime: undefined,
+        pushTimePoint: moment(
+          formatDate(new Date()) + " 08:00:00",
+          "YYYY-MM-DD HH:mm:ss"
+        ),
       });
       this.onTypeSelect(
         this.projectData.tasks.length - 1,
@@ -1643,6 +1677,100 @@ export default {
     onSourceSelect() {
       this.fieldsOut();
       this.dateFieldsOut();
+    },
+
+    onSourceFocus() {
+      if (!this.projectData.basePlan.scene) {
+        this.$message.warn("请先选择病人类型");
+        return;
+      }
+    },
+
+    /**
+     * //病人类型 1门诊病人/2出院病人/3体检病人
+     *
+     * 如果选择门诊病人，新增字段所属学科，来源名单默认选择门诊病人（不允许修改），去掉执行科室字段、名单过滤、去掉各子
+     * 任务的终止条件、过滤条件、电话跟进、间隔匹配时间，【执行周期】字段默认选择临时执行（不可更改），【日期】默认为推送时间（不可更改）
+     */
+    onSceneSelect(scene) {
+      this.projectData.tasks.forEach((item, index) => {
+        // item.messageType = this.msgData[0].value;
+        // item.taskExecType = this.taskExecData[0].value;
+        if (item.messageType == 1) {
+          //电话的要干掉  换成第一个
+          item.messageType = this.msgData[0].value;
+          item.messageContentId = undefined;
+          this.onTypeSelect(0, item);
+        }
+
+        if (this.taskExecData.length > 0) {
+          item.taskExecType = this.taskExecData[0].value;
+        }
+        if (this.dateFieldsData.length > 0) {
+          item.metaConfigureDetailId = this.dateFieldsData[0].value;
+        }
+      });
+
+      if (scene == 1) {
+        this.isMenzhen = true;
+        this.msgData = this.msgDataOrgigin.filter(
+          (item) => item.description.indexOf("电话回访") == -1
+        );
+      } else {
+        this.isMenzhen = false;
+        this.msgData = JSON.parse(JSON.stringify(this.msgDataOrgigin));
+      }
+      this.getSourceData(scene);
+      console.log("ppppppppp onSceneSelect set", scene);
+    },
+
+    //学科列表
+    gettreeMedicalSubjectsOut() {
+      gettreeMedicalSubjects().then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+          res.data.forEach((item, index) => {
+            // this.$set(item, 'key', item.subjectClassifyId)
+            // this.$set(item, 'value', item.subjectClassifyId)
+            this.$set(item, "key", item.subjectCode);
+            this.$set(item, "value", item.subjectCode);
+            this.$set(item, "title", item.subjectClassifyName);
+            this.$set(item, "title", item.subjectClassifyName);
+            this.$set(item, "disabled", true);
+
+            item.children.forEach((item1, index1) => {
+              // this.$set(item1, 'key', item1.subjectClassifyId)
+              // this.$set(item1, 'value', item1.subjectClassifyId)
+              this.$set(item1, "key", item1.subjectCode);
+              this.$set(item1, "value", item1.subjectCode);
+              this.$set(item1, "title", item1.subjectClassifyName);
+            });
+          });
+
+          this.treeDataSub = res.data;
+        } else {
+          this.treeDataSub = res.data;
+        }
+      });
+    },
+
+    getSourceData(scene) {
+      tables({ scene: scene }).then((res) => {
+        if (res.code == 0) {
+          this.sourceData = res.data;
+          // this.projectData.basePlan.metaConfigureId = this.sourceData[0].value
+          this.isAgain = true; //默认勾选重新匹配
+          this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0;
+          //选择来源名单后，必须调取数据了
+
+          // 新增字段所属学科，来源名单默认选择门诊病人（不允许修改）
+          console.log("getSourceData scene", scene);
+          if (scene == 1) {
+            console.log("getSourceData metaConfigureId", this.sourceData[0].value);
+            this.projectData.basePlan.metaConfigureId = this.sourceData[0].value;
+            this.dateFieldsOut();
+          }
+        }
+      });
     },
 
     /**
@@ -1828,11 +1956,33 @@ export default {
       );
     },
 
+    // dateFieldsOut() {
+    //   dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then(
+    //     (res) => {
+    //       if (res.code == 0) {
+    //         this.dateFieldsData = res.data;
+    //       }
+    //     }
+    //   );
+    // },
+
     dateFieldsOut() {
-      dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then(
+      // dateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then(
+      cfgDateFields({ metaConfigureId: this.projectData.basePlan.metaConfigureId }).then(
         (res) => {
           if (res.code == 0) {
             this.dateFieldsData = res.data;
+            this.fieldsOut();
+            if (this.isMenzhen && this.projectData.tasks.length > 0) {
+              this.projectData.tasks.forEach((item) => {
+                if (item.messageType == 1) {
+                  item.messageType = this.msgData[0].value;
+                  item.messageContentId = undefined;
+                }
+                item.taskExecType = this.taskExecData[0].value;
+                item.metaConfigureDetailId = this.dateFieldsData[0].value;
+              });
+            }
           }
         }
       );
@@ -1872,12 +2022,19 @@ export default {
         this.$message.error("请选择来源名单");
         return;
       }
-      if (
-        !tempData.basePlan.executeDepartments ||
-        tempData.basePlan.executeDepartments.length == 0
-      ) {
-        this.$message.error("请选择执行科室");
-        return;
+      if (this.isMenzhen) {
+        if (!tempData.basePlan.subjectCode) {
+          this.$message.error("请选择所属学科");
+          return;
+        }
+      } else {
+        if (
+          !tempData.basePlan.executeDepartments ||
+          tempData.basePlan.executeDepartments.length == 0
+        ) {
+          this.$message.error("请选择执行科室");
+          return;
+        }
       }
 
       if (tempData.tasks.length == 0) {
@@ -2001,8 +2158,9 @@ export default {
 
         //微信和短信消息时勾选了加人，以及电话随访时需要添加人员
         if (
-          ((item.messageType == 2 || item.messageType == 3) && item.isChecked) ||
-          item.messageType == 1
+          !this.isMenzhen &&
+          (((item.messageType == 2 || item.messageType == 3) && item.isChecked) ||
+            item.messageType == 1)
         ) {
           if (!item.departmentDtos || item.departmentDtos.length == 0) {
             this.$message.error("请添加人员分配");
@@ -2011,7 +2169,11 @@ export default {
         }
 
         //后期加的  如果是微信或者电话随访，勾选了这个字段就传1
-        if ((item.messageType == 2 || item.messageType == 3) && item.isChecked) {
+        if (
+          !this.isMenzhen &&
+          (item.messageType == 2 || item.messageType == 3) &&
+          item.isChecked
+        ) {
           this.$set(item, "overdueFollowType", 1);
         }
 
@@ -2021,7 +2183,7 @@ export default {
         }
 
         //处理间隔匹配时间
-        if (item.isRepeatExecTimeChecked) {
+        if (!this.isMenzhen && item.isRepeatExecTimeChecked) {
           if (!item.repeatExecTime) {
             this.$message.error("请设置第" + (index + 1) + "条任务的间隔匹配时间");
             return;
