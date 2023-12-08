@@ -1757,18 +1757,6 @@ export default {
       tables({ scene: scene }).then((res) => {
         if (res.code == 0) {
           this.sourceData = res.data;
-          //默认值需求  默认来源名单
-          let cacheId = Vue.ls.get("cache_project_sourceId");
-          console.log("oooooooooo cacheSourceId", cacheId);
-          let getOne = this.sourceData.find((item) => item.value == cacheId);
-          if (cacheId && getOne) {
-            this.projectData.basePlan.metaConfigureId = cacheId;
-            // this.onSourceSelect()
-          } else {
-            if (this.projectData.tasks.length == 0) {
-              this.addMission();
-            }
-          }
           // this.projectData.basePlan.metaConfigureId = this.sourceData[0].value
           this.isAgain = true; //默认勾选重新匹配
           this.projectData.basePlan.updateMatchStatus = this.isAgain ? 1 : 0;
