@@ -38,13 +38,13 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   .wrap-headLayout {
     display: flex;
     flex-direction: column;
     height: 100vh;
     .wrap-head {
-      .header-animat {
+      /deep/ .header-animat {
         .sysapp-logo {
           position: relative;
           float: left;
