@@ -92,7 +92,7 @@
       </span>
     </s-table>
 
-    <add-Name ref="addName" @ok="handleOk" />
+    <!-- <add-Name ref="addName" @ok="handleOk" /> -->
     <plan-Execute ref="planExecute" @ok="handleOk" />
   </a-card>
 </template>
