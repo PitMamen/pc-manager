@@ -1125,6 +1125,7 @@ export default {
       this.projectData.basePlan.metaConfigureId = parseString(
         this.projectData.basePlan.metaConfigureId
       );
+      this.getSourceData(this.projectData.basePlan.scene);
 
       //处理复选框的值
       this.projectData.basePlan.updateMatchStatus = this.projectData.basePlan.updateMatchStatus.value;
@@ -1132,7 +1133,7 @@ export default {
       this.isAgain = this.projectData.basePlan.updateMatchStatus == 1 ? true : false;
       this.isReExecute =
         this.projectData.basePlan.execOvertimetaskFlag == 1 ? true : false;
-      // console.log("哈哈哈：", this.isReExecute,this.projectData.basePlan.execOvertimetaskFlag)
+      console.log("哈哈哈：", this.isReExecute,this.projectData.basePlan.execOvertimetaskFlag)
       //重复匹配状态：0不重复1可以重   true不重复  false重复   勾上true不重复   不勾false重复
       //repeatMatchStatus为0勾上    updateMatchStatus为1勾上
       console.log(

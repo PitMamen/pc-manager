@@ -825,7 +825,7 @@ export default {
 
           updateMatchStatus: 0, //随访名单更新时需重新匹配：0不匹配1匹配
           repeatMatchStatus: 1, //重复匹配状态：0不重复1可以重
-          execOvertimetaskFlag: 1, //1 执行  0 不执行
+          execOvertimetaskFlag: 0, //1 执行  0 不执行
         },
         filterRules: [],
         tasks: [],
