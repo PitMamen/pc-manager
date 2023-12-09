@@ -382,22 +382,7 @@
               </template>
             </a-auto-complete>
 
-            <!-- <a-select
-              class="mid-select-two"
-              v-model="itemTask.messageContentId"
-              @focus="onTemFocus(indexTask, itemTask)"
-              @select="onTemSelect(indexTask, itemTask)"
-              allow-clear
-              placeholder="请选择模版"
-            >
-              <a-select-option
-                v-for="(item, index) in itemTask.itemTemplateList"
-                :title="item.templateTitle"
-                :key="index"
-                :value="item.id"
-                >{{ item.templateTitle }}</a-select-option
-              >
-            </a-select> -->
+
             <div class="div-type" @click="showDetail(itemTask, indexTask)">
               {{ itemTask.taskTypeName }}
               <!-- <a-select
