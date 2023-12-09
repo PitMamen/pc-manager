@@ -2,10 +2,10 @@
   <div class="wrap-robot">
     <div class="left">
       <div class="tabs">
-        <tab-question v-show="tab===1" />
-        <tab-knowledge v-show="tab===2" />
-        <tab-note v-show="tab===3" />
-        <tab-diagnose v-show="tab===4" />
+        <tab-question :conversationId="conversationId" v-show="tab===1" />
+        <tab-knowledge :conversationId="conversationId" v-show="tab===2" />
+        <tab-note :conversationId="conversationId" v-show="tab===3" />
+        <tab-diagnose :conversationId="conversationId" v-show="tab===4" />
       </div>
     </div>
     <div class="right">
@@ -33,9 +33,10 @@
       return {
         tab: 1,
         accessToken: '',
-        // url: 'http://localhost/pages/ai/index',
+        conversationId: '',
+        url: 'http://localhost/pages/ai/index',
         // url: 'https://manager-ai.mclouds.org.cn/pages/ai/index',
-        url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
+        // url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
       }
     },
     components: {
@@ -46,6 +47,7 @@
     },
     created() {
       this.getAccessToken();
+      window.addEventListener('message', this.tabHandler);
     },
     methods: {
       getAccessToken() {
@@ -56,7 +58,14 @@
             this.$message.error(res.message);
           }
         });
-      }
+      },
+      tabHandler(evt) {
+				const data = JSON.parse(evt.data);
+				if (data.type === 'parent-tab-change'){
+					this.tab = data.tab;
+          this.conversationId = data.conversationId;
+				}
+			}
     }
   }
 </script>
