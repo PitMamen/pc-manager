@@ -15,7 +15,7 @@
       <div class="content">
         <div class="row row1">
           <div class="form">
-            <div class="name">性别<span class="red">*</span></div>
+            <div class="name"><span class="red">*</span>性别</div>
             <div class="action">
               <a-radio-group v-model="params.sex">
                 <a-radio value="男性">男性</a-radio>
@@ -42,12 +42,11 @@
         </div>
         <div class="row row2">
           <div class="form">
-            <div class="name">主诉<span class="red">*</span></div>
+            <div class="name"><span class="red">*</span>主诉</div>
             <div class="action">
               <a-textarea
                 v-model="params.complaint"
-                :maxLength="200"
-                :autoSize="{minRows: 2,maxRows: 6}"
+                :maxLength="512"
                 placeholder="请输入主诉,限512字符内"
               ></a-textarea>
               <div class="abs-count">{{(params.complaint||'').length}}/512</div>
@@ -60,8 +59,7 @@
             <div class="action">
               <a-textarea
                 v-model="params.presentIllnessHistory"
-                :maxLength="200"
-                :autoSize="{minRows: 2,maxRows: 6}"
+                :maxLength="512"
                 placeholder="请输入现病史,限512字符内"
               ></a-textarea>
               <div class="abs-count">{{(params.presentIllnessHistory||'').length}}/512</div>
@@ -74,8 +72,7 @@
             <div class="action">
               <a-textarea
                 v-model="params.pastMedicalHistory"
-                :maxLength="200"
-                :autoSize="{minRows: 2,maxRows: 6}"
+                :maxLength="512"
                 placeholder="请输入既往病史,限512字符内"
               ></a-textarea>
               <div class="abs-count">{{(params.pastMedicalHistory||'').length}}/512</div>
@@ -88,8 +85,7 @@
             <div class="action">
               <a-textarea
                 v-model="params.exam"
-                :maxLength="200"
-                :autoSize="{minRows: 2,maxRows: 6}"
+                :maxLength="1024"
                 placeholder="请输入体格检查信息,限1024字符内"
               ></a-textarea>
               <div class="abs-count">{{(params.exam||'').length}}/1024</div>
@@ -101,8 +97,11 @@
             <div class="name">诊断</div>
             <div class="action">
               <a-select
-                v-model="diagnose"
+                v-model="diseases"
+                dropdownClassName="diseases"
                 mode="tags"
+                :maxTagCount="3"
+                :maxTagTextLength="6"
                 :tokenSeparators="[',']"
                 @change="change"
               >
@@ -117,12 +116,18 @@
 </template>
 
 <script>
+  import {
+    genDiagnosis
+  } from "@/api/modular/system/posManage";
+  
   export default {
     data() {
       return {
-        diagnose: [],
+        flag: false,
+        diseases: [],
         params: {
           type: 4,
+          sex: '男性',
           ageUnit: '岁'
         }
       }
@@ -134,67 +139,256 @@
 			}
 		},
     created() {
+      window.addEventListener('message', this.diseasesHandler);
     },
     methods: {
       clear() {
         this.params = {
           type: 4,
+          sex: '男性',
           ageUnit: '岁'
         };
+        this.diseases = [];
       },
-      change(evt) {},
-      handleSubmit() {}
+      change(value) {},
+      diseasesHandler(evt) {
+        if (evt.data){
+          const data = JSON.parse(evt.data);
+          if (data.type === 'parent-diseases-gene'){
+            this.diseases = data.diseases;
+          }
+        }
+			},
+      handleSubmit() {
+        // this.params.ageNum = (this.params.ageNum||'').trim();
+        // this.params.complaint = (this.params.complaint||'').trim();
+        if (this.params.ageNum && !/^[1-9]\d*$/.test(this.params.ageNum)){
+          this.$message.error('请输入正确的年龄');
+          return;
+        }
+        if (!this.params.complaint){
+          this.$message.error('请输入主诉');
+          return;
+        }
+        const params_ = {
+          conversationId: this.conversationId,
+          sex: this.params.sex,
+          exam: this.params.exam,
+          type: this.params.type,
+          complaint: this.params.complaint,
+          pastMedicalHistory: this.params.pastMedicalHistory,
+          presentIllnessHistory: this.params.presentIllnessHistory
+        };
+        if (this.params.ageNum){
+          params_.age = this.params.ageNum + this.params.ageUnit;
+        }
+        if (this.flag){
+          return;
+        }
+        this.flag = true;
+        genDiagnosis(params_).then(res => {
+          if (res.code == 0){
+            this.$message.success('诊断生成中...');
+          }else {
+            this.$message.error(res.message);
+          }
+        }).finally(() => {
+          this.flag = false;
+        });
+      }
     }
   }
 </script>
 
+<style lang="less">
+  .diseases {
+    display: none !important;
+  }
+</style>
 <style lang="less" scoped>
   .tab {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     .top {
-      img {}
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      img {
+        position: relative;
+        left: -2px;
+        margin-bottom: 10px;
+        width: 58px;
+        height: 58px;
+      }
       .welcome {
-        .value {}
+        position: relative;
+        margin-bottom: 20px;
+        padding: 20px 20px;
+        width: 720px;
+        background: #FFFFFF;
+        border-radius: 4px;
+        &::before {
+          position: absolute;
+          top: -2px;
+          left: 50%;
+          content: '';
+          width: 15px;
+          height: 15px;
+          transform: rotate(45deg) translateX(-50%);
+          background: #FFFFFF;
+        }
+        .value {
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 22px;
+          color: #1A1A1A;
+        }
       }
     }
     .bottom {
+      width: 720px;
+      background: #FFFFFF;
+      border-radius: 4px;
       .head {
-        .title {}
-        .btn {}
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 52px;
+        border-bottom: 1px solid #E6E6E6;
+        .title {
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 1.5;
+          color: #1A1A1A;
+        }
+        .btn {
+          position: absolute;
+          top: 50%;
+          right: 42px;
+          transform: translateY(-50%);
+          width: 68px;
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 28px;
+          text-align: center;
+          color: #409EFF;
+          cursor: pointer;
+          border: 1px solid #409EFF;
+          border-radius: 2px;
+        }
       }
       .content {
+        padding: 10px 42px 10px 0;
         .row {
+          margin-bottom: 10px;
           .form {
+            display: flex;
             .name {
-              .red {}
+              width: 72px;
+              font-size: 12px;
+              font-weight: 400;
+              line-height: 22px;
+              text-align: right;
+              color: #1A1A1A;
+              .red {
+                color: #F5222D;
+              }
             }
-            .action {}
+            .action {
+              margin-left: 10px;
+            }
           }
         }
         .row1 {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           .form {
-            .name {}
+            align-items: center;
             .action {
-              .ant-radio-group {}
-              .ant-input {}
-              .ant-select {}
+              display: flex;
+              align-items: center;
+              justify-content: flex-end;
+              .ant-radio-group {
+                /deep/ .ant-radio-wrapper {
+                  font-size: 12px;
+                }
+              }
+              .ant-input {
+                width: 82px;
+              }
+              .ant-select {
+                position: relative;
+                top: 1px;
+                margin-left: 5px;
+                width: 52px;
+              }
             }
           }
         }
         .row2 {
           .form {
-            .name {}
+            align-items: flex-start;
+            .name {
+              position: relative;
+              top: -4px;
+            }
             .action {
-              .ant-input {}
-              .abs-count {}
+              position: relative;
+              flex: 1;
+              .ant-input {
+                width: 100%;
+                height: 62px !important;
+                overflow-y: auto;
+              }
+              .abs-count {
+                position: absolute;
+                right: 5px;
+                bottom: 2px;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 20px;
+                color: #999999;
+              }
             }
           }
         }
         .row3 {
           .form {
-            .name {}
+            align-items: center;
             .action {
-              .ant-select {}
-              .btn {}
+              display: flex;
+              align-items: center;
+              flex: 1;
+              .ant-select {
+                width: 500px;
+                /deep/ .ant-select-selection--multiple {
+                  height: 32px !important;
+                }
+                /deep/ .ant-select-selection__rendered {
+                  height: 32px;
+                  white-space: nowrap;
+                  overflow-x: hidden;
+                }
+              }
+              .btn {
+                margin-left: 10px;
+                width: 86px;
+                font-size: 12px;
+                font-weight: 400;
+                line-height: 32px;
+                text-align: center;
+                color: #FFFFFF;
+                cursor: pointer;
+                background: #409EFF;
+                border-radius: 2px;
+              }
             }
           }
         }

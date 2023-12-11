@@ -2083,6 +2083,18 @@ export function checkget(data) {
 
 /**
  * 
+ * 生成疑似诊断
+ */
+export function genDiagnosis(data) {
+  return axios({
+    url: '/im-api/bot/genDiagnosis',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
  * 聊天记录
  */
 export function queryHistoryIMRecordPage(data) {

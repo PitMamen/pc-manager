@@ -34,9 +34,9 @@
         tab: 1,
         accessToken: '',
         conversationId: '',
-        url: 'http://localhost/pages/ai/index',
+        // url: 'http://localhost/pages/ai/index',
         // url: 'https://manager-ai.mclouds.org.cn/pages/ai/index',
-        // url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
+        url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
       }
     },
     components: {
@@ -60,11 +60,13 @@
         });
       },
       tabHandler(evt) {
-				const data = JSON.parse(evt.data);
-				if (data.type === 'parent-tab-change'){
-					this.tab = data.tab;
-          this.conversationId = data.conversationId;
-				}
+        if (evt.data){
+          const data = JSON.parse(evt.data);
+          if (data.type === 'parent-tab-change'){
+            this.tab = data.tab;
+            this.conversationId = data.conversationId;
+          }
+        }
 			}
     }
   }
