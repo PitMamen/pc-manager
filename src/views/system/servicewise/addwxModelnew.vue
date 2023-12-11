@@ -10,9 +10,12 @@
   >
     <template slot="footer">
       <div style="display: flex; flex-direction: row; align-items: center">
-        <div @click="goAgin()" class="btn-check">
-          <a-checkbox :checked="isAgain" />
-          <div style="width: 120px; text-align: left; margin-left: 10px">
+        <div class="btn-check">
+          <a-checkbox @click="goAgin()" :checked="isAgain" />
+          <div
+            @click="goAgin()"
+            style="width: 120px; text-align: left; padding-left: 10px"
+          >
             智慧管家同步提醒
           </div>
         </div>
@@ -82,6 +85,7 @@
               <a-input
                 v-show="questionContent.name"
                 v-model="questionContent.name"
+                disabled
                 class="span-item-value"
                 style="display: inline-block; margin-right: 20px; width: 200px"
                 allow-clear
@@ -98,6 +102,7 @@
               <a-input
                 v-show="teachContent.title"
                 v-model="teachContent.title"
+                disabled
                 class="span-item-value"
                 style="display: inline-block; margin-right: 20px; width: 200px"
                 readOnly
@@ -192,7 +197,6 @@
               </div>
             </div>
           </div>
-
         </div>
 
         <add-question ref="addQuestion" @ok="handleQuestion" />
@@ -437,7 +441,6 @@ export default {
                   this.thirdLink = res.data.jumpValue;
                 }
               }
-
 
               this.fieldList = JSON.parse(res.data.templateParamJson);
 
@@ -707,6 +710,11 @@ export default {
   },
 };
 </script>
+<style lang="less" scoped>
+/deep/ .ant-input-disabled {
+  color: #1a1a1a !important;
+}
+</style>
 <style lang="less">
 .ant-select-dropdown {
   z-index: 20000;

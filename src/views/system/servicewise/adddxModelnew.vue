@@ -10,9 +10,12 @@
   >
     <template slot="footer">
       <div style="display: flex; flex-direction: row; align-items: center">
-        <div @click="goAgin()" class="btn-check">
+        <div class="btn-check">
           <a-checkbox @click="goAgin()" :checked="isAgain" />
-          <div style="width: 120px; text-align: left; margin-left: 10px">
+          <div
+            @click="goAgin()"
+            style="width: 120px; text-align: left; padding-left: 10px"
+          >
             智慧管家同步提醒
           </div>
         </div>
@@ -74,6 +77,7 @@
               <a-input
                 v-show="questionContent.name"
                 v-model="questionContent.name"
+                disabled
                 class="span-item-value"
                 style="display: inline-block; width: 200px"
                 allow-clear
@@ -91,6 +95,7 @@
               <a-input
                 v-show="teachContent.title"
                 v-model="teachContent.title"
+                disabled
                 class="span-item-value"
                 style="display: inline-block; width: 222px"
                 allow-clear
@@ -120,13 +125,9 @@
                 allow-clear
                 placeholder="请输入模板内容 "
               />
-
             </div>
           </div>
-
-
         </div>
-
 
         <add-question ref="addQuestion" @ok="handleQuestion" />
         <add-teach ref="addTeach" @ok="handleTeach" />
@@ -245,7 +246,6 @@ export default {
           this.wxgzhData = res.data.records;
         }
       });
-
     },
     //修改  详情
     checkModel(id) {
@@ -578,6 +578,11 @@ export default {
   },
 };
 </script>
+<style lang="less" scoped>
+/deep/ .ant-input-disabled {
+  color: #1a1a1a !important;
+}
+</style>
 <style lang="less">
 .ant-select-dropdown {
   z-index: 20000;
