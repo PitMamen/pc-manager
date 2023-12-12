@@ -28,6 +28,7 @@
             <div class="action">
               <a-input
                 v-model="params.ageNum"
+                :maxLength="3"
                 placeholder="请输入年龄"
               />
               <a-select
@@ -98,13 +99,13 @@
             <div class="action">
               <a-select
                 v-model="diseases"
-                dropdownClassName="diseases"
                 mode="tags"
                 :maxTagCount="3"
                 :maxTagTextLength="6"
                 :tokenSeparators="[',']"
                 @change="change"
               >
+                <a-select-option v-for="item in list" :key="item.icd10Code" :value="item.name">{{item.name}}</a-select-option>
               </a-select>
               <div class="btn" @click="handleSubmit()">疑似诊断</div>
             </div>
@@ -117,13 +118,16 @@
 
 <script>
   import {
-    genDiagnosis
+    genDiagnosis,
+    queryDiagnose
   } from "@/api/modular/system/posManage";
   
   export default {
     data() {
       return {
+        imported: true,
         flag: false,
+        list: [],
         diseases: [],
         params: {
           type: 4,
@@ -139,9 +143,21 @@
 			}
 		},
     created() {
+      this.getList();
       window.addEventListener('message', this.diseasesHandler);
     },
     methods: {
+      getList() {
+        queryDiagnose({
+          queryText: ''
+        }).then(res => {
+          if (res.code == 0){
+            this.list = res.data;
+          }else {
+            this.$message.error(res.message);
+          }
+        });
+      },
       clear() {
         this.params = {
           type: 4,
@@ -150,24 +166,36 @@
         };
         this.diseases = [];
       },
-      change(value) {},
+      change(value) {
+        this.diseasesChange(value);
+      },
+      diseasesChange(value) {
+        window.frames.aiChat.postMessage(JSON.stringify({
+          type: 'iframe-diseases-change',
+          diseases: value
+        }), '*');
+      },
       diseasesHandler(evt) {
         if (evt.data){
           const data = JSON.parse(evt.data);
           if (data.type === 'parent-diseases-gene'){
+            this.imported = true;
             this.diseases = data.diseases;
+            this.diseasesChange(data.diseases);
           }
         }
 			},
       handleSubmit() {
-        // this.params.ageNum = (this.params.ageNum||'').trim();
-        // this.params.complaint = (this.params.complaint||'').trim();
         if (this.params.ageNum && !/^[1-9]\d*$/.test(this.params.ageNum)){
           this.$message.error('请输入正确的年龄');
           return;
         }
         if (!this.params.complaint){
           this.$message.error('请输入主诉');
+          return;
+        }
+        if (!this.imported){
+          this.$message.error('诊断正在生成，请稍后');
           return;
         }
         const params_ = {
@@ -188,6 +216,7 @@
         this.flag = true;
         genDiagnosis(params_).then(res => {
           if (res.code == 0){
+            this.imported = false;
             this.$message.success('诊断生成中...');
           }else {
             this.$message.error(res.message);
@@ -200,11 +229,6 @@
   }
 </script>
 
-<style lang="less">
-  .diseases {
-    display: none !important;
-  }
-</style>
 <style lang="less" scoped>
   .tab {
     display: flex;
@@ -348,8 +372,9 @@
                 overflow-y: auto;
               }
               .abs-count {
+                display: none;
                 position: absolute;
-                right: 5px;
+                right: 18px;
                 bottom: 2px;
                 font-size: 12px;
                 font-weight: 400;

@@ -2083,6 +2083,18 @@ export function checkget(data) {
 
 /**
  * 
+ * 查询诊断字典
+ */
+ export function queryDiagnose(data) {
+  return axios({
+    url: '/health-api/prescription/queryDiagnose',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
  * 生成疑似诊断
  */
 export function genDiagnosis(data) {
