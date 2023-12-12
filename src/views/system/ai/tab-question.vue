@@ -5,7 +5,9 @@
         <img src="@/assets/ai/robot.png" />
         <div class="hello">您好，我是您的智能助手小雅</div>
       </div>
-      <div class="desc">作为一个医疗人工智能模型，我已经学习了海量医疗知识，我可以回答您各种场景的问，您可以试着问我：</div>
+      <div class="desc">
+        作为一个医疗人工智能模型，我已经学习了海量医疗知识，我可以回答您各种场景的问，您可以试着问我：
+      </div>
     </div>
     <div class="content">
       <div class="row">
@@ -45,82 +47,83 @@
 </template>
 
 <script>
-  export default {
-    data() {
-      return {
-      }
-    },
-    created() {
-    },
-    methods: {
-      cardClick(msg) {
-        window.frames.aiChat.postMessage(JSON.stringify({
+export default {
+  data() {
+    return {}
+  },
+  created() {},
+  methods: {
+    cardClick(msg) {
+      window.frames.aiChat.postMessage(
+        JSON.stringify({
           type: 'iframe-question-send',
-          msg
-        }), '*');
-      }
-    }
-  }
+          msg,
+        }),
+        '*'
+      )
+    },
+  },
+}
 </script>
 
 <style lang="less" scoped>
-  .tab {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 30px;
-    width: 720px;
-    background: #FFFFFF;
-    border-radius: 4px;
-    .head {
-      .title {
-        display: flex;
-        align-items: center;
-        img {
-          margin-right: 10px;
-          width: 40px;
-          height: 40px;
-        }
-        .hello {
-          font-size: 14px;
-          font-weight: 600;
-          line-height: 1.5;
-          color: #1A1A1A;
-        }
+.tab {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px;
+  width: 720px;
+  background: #ffffff;
+  border-radius: 4px;
+  .head {
+    .title {
+      display: flex;
+      align-items: center;
+      img {
+        margin-right: 10px;
+        width: 40px;
+        height: 40px;
       }
-      .desc {
-        font-size: 12px;
-        font-weight: 400;
-        line-height: 32px;
-        color: #1A1A1A;
+      .hello {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+        color: #1a1a1a;
       }
     }
-    .content {
-      padding: 20px 0 30px 0;
-      .row {
+    .desc {
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 32px;
+      color: #1a1a1a;
+    }
+  }
+  .content {
+    padding: 20px 0 30px 0;
+    .row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 0 30px;
+      .card {
         display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        margin-bottom: 20px;
-        padding: 0 30px;
-        .card {
-          display: flex;
-          align-items: center;
-          padding: 0 10px;
-          width: 278px;
-          height: 48px;
-          cursor: pointer;
-          background: #D5E9FF;
-          border-radius: 4px;
-          .value {
-            font-size: 12px;
-            font-weight: 400;
-            line-height: 22px;
-            color: #1A1A1A;
-          }
+        align-items: center;
+        padding: 0 10px;
+        width: 278px;
+        height: 48px;
+        cursor: pointer;
+        background: #d5e9ff;
+        border-radius: 4px;
+        .value {
+          font-size: 12px;
+          font-weight: 400;
+          line-height: 22px;
+          color: #1a1a1a;
         }
       }
     }
   }
+}
 </style>
