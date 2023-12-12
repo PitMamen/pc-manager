@@ -488,7 +488,7 @@ export default {
     },
 
     onSelectJump(code) {
-      if (code == 7) {
+      if (code == 3) {
         this.myJumpYype = 3;
       }
     },
