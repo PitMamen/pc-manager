@@ -559,9 +559,7 @@ export default {
 
     .content-main {
       margin-top: 10px;
-      // /deep/ .ant-tabs.ant-tabs-top.ant-tabs-line {
-      //   border-bottom: 1px solid #eee !important;
-      // }
+
       .span-tab {
         display: flex;
         align-items: center;

@@ -76,32 +76,16 @@
         <ellipsis :length="10" tooltip>{{text}}</ellipsis>
       </span> -->
 
-      <!-- <span slot="downNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="goDetail(record, '下转人数', 2)">{{ record.downNum }}</a>
-      </span>
-      <span slot="backNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="goDetail(record, '回转人数', 3)">{{ record.backNum }}</a>
-      </span>
-      <span slot="outNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="goDetail(record, '转出人数', 4)">{{ record.outNum }}</a>
-      </span> -->
-
       <!-- 查看档案数量 -->
       <span slot="docNum" style="cursor: pointer" slot-scope="text, record">
         <a @click="showFileDangan(record)">{{ record.docNum }}</a>
       </span>
-
-      <!-- 接入接收
-      <span slot="inNum1" style="cursor: pointer" slot-scope="text, record">
-        <a @click="goDetail(record, '接入接收', 6)">{{ record.inNum }}</a>
-      </span> -->
 
       <!-- 查看合约详情 -->
       <span slot="authorization_id" style="cursor: pointer" slot-scope="text, record">
         <a @click="goDetail(record.authorization_id)">{{ record.authorization_id }}</a>
       </span>
     </s-table>
-    <!-- <info-form ref="infoForm" @ok="handleOk" /> -->
 
     <!-- <a-modal v-model="visibleDes" title="提示" :footer="null" @ok="handleOkDes"> -->
     <a-modal v-model="visibleDes" cancelText="''" title="提示" @ok="handleOkDes">
@@ -126,8 +110,6 @@ import {
   accessHospitals,
   getCommodityClassify,
   getReferralHospitalList,
-  statReferralPatient,
-  exportReferralPatient,
   userCaseSyninfoList,
 } from "@/api/modular/system/posManage";
 import { list } from "@/api/modular/system/rate";
@@ -301,77 +283,15 @@ export default {
     // ];
   },
   mounted() {
-    this.$bus.$on("refreshTransUpListEvent", (record) => {
-      return;
-      console.log("refreshTransUpListEvent", record);
-      // this.$refs.table.refresh(true);
-      this.$refs.table.refresh();
-    });
   },
   methods: {
     goDetail(id) {
       this.$refs.authDetail.detail(id);
-      // if (record.hospitalCode) {
-      //   this.$refs.authDetail.detail(record, name, type);
-      // } else {
-      //   this.$set(record, "hospitalCode", this.queryParam.hospitalCode);
-      //   console.log("GGGl:", record);
-      //   this.$refs.authDetail.detail(record, name, type);
-      // }
     },
 
     goBoard() {
       window.open("https://www.mclouds.org.cn/blockchain/index.html");
     },
-
-    // //导出
-    // exportOut() {
-    //   let params = JSON.parse(JSON.stringify(this.queryParam))
-    //   exportReferralPatient(params)
-    //     .then((res) => {
-    //       this.downloadfile(res)
-    //     })
-    //     .catch((err) => {
-    //       this.$message.error('导出错误：' + err.message)
-    //     })
-    // },
-
-    // downloadfile(res) {
-    //   var blob = new Blob([res.data], { type: 'application/octet-stream; charset=UTF-8' })
-    //   var contentDisposition = res.headers['content-disposition']
-    //   var patt = new RegExp('filename=([^;]+\\.[^\\.;]+);*')
-    //   var result = patt.exec(contentDisposition)
-    //   if (result) {
-    //     var filename = result[1]
-    //     var downloadElement = document.createElement('a')
-    //     var href = window.URL.createObjectURL(blob) // 创建下载的链接
-    //     var reg = /^["](.*)["]$/g
-    //     downloadElement.style.display = 'none'
-    //     downloadElement.href = href
-    //     downloadElement.download = decodeURI(filename.replace(reg, '$1')) // 下载后文件名
-    //     document.body.appendChild(downloadElement)
-    //     downloadElement.click() // 点击下载
-    //     document.body.removeChild(downloadElement) // 下载完成移除元素
-    //     window.URL.revokeObjectURL(href)
-    //   }
-    // },
-    /**
-     * 根据生日计算年龄
-     * @param {*} birthday
-     */
-    // countAge(birthday) {
-    //   // let str = age.substring(0, 4) + '-' + age.substring(4, 6) + '-' + age.substring(6, 8)
-    //   var birthday = new Date(birthday);
-    //   var d = new Date();
-    //   var age =
-    //     d.getFullYear() -
-    //     birthday.getFullYear() -
-    //     (d.getMonth() < birthday.getMonth() ||
-    //     (d.getMonth() == birthday.getMonth() && d.getDate() < birthday.getDate())
-    //       ? 1
-    //       : 0);
-    //   return age;
-    // },
 
     //获取管理的科室 可首拼
     getDepartmentSelectList() {
@@ -389,20 +309,6 @@ export default {
         }
       });
     },
-
-    // //科室搜索
-    // onDepartmentSelectSearch(value) {
-    //   this.originData = [];
-    //   this.getDepartmentSelectList(value);
-    // },
-    // //科室选择变化
-    // onDepartmentSelectChange(value) {
-    //   if (value === undefined) {
-    //     this.originData = [];
-    //     this.getDepartmentSelectList(undefined);
-    //   }
-    //   this.$refs.table.refresh(true);
-    // },
 
     handleOkDes() {
       this.visibleDes = false;
