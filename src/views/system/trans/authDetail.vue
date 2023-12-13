@@ -75,40 +75,11 @@
       </div>
     </div>
 
-    <!-- <div class="display-item">
-      <a-button
-        type="primary"
-        style="margin-left: 20px; margin-left: auto"
-        @click="exportes()"
-        >导出</a-button
-      >
-    </div>
-    <div class="line"></div> -->
-    <!-- <s-table
-      ref="table"
-      size="default"
-      style="
-        margin-left: 2px;
-        height: 450px;
-        margin-top: 20px;
-        margin-bottom: 35px;
-        overflow-y: auto;
-      "
-      :columns="columns"
-      :scroll="{ x: true }"
-      :data="loadData"
-      :alert="true"
-      :rowKey="(record) => record.code"
-    >
-    </s-table> -->
   </a-modal>
 </template>
 
 <script>
 import {
-  // transfer,
-  // statReferralPatientDetail,
-  // exportReferralPatient,
   authorizationDetails,
 } from "@/api/modular/system/posManage";
 import { STable } from "@/components";
@@ -125,12 +96,6 @@ export default {
       titleTop: "授权合约详情",
       rangeValue: 1,
       dataInfo: [],
-      queryParams: {
-        hospitalCode: "",
-        statBegin: "",
-        statEnd: "",
-        statType: 0,
-      },
 
       visible: false,
       confirmLoading: false,
@@ -188,71 +153,5 @@ export default {
 </script>
 
 <style lang="less" scoped>
-/deep/.ant-radio-wrapper {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 14px;
-  // font-variant: tabular-nums;
-  line-height: 1.5;
-  list-style: none;
-  -webkit-font-feature-settings: "tnum";
-  font-feature-settings: "tnum";
-  position: relative;
-  display: inline-block;
-  line-height: 1;
-  white-space: nowrap;
-  vertical-align: sub;
-  outline: none;
-  cursor: pointer;
-  margin-bottom: 3px !important;
-}
 
-/deep/.ant-radio-inner {
-  position: relative;
-  top: 0;
-  left: 0;
-  display: block;
-  width: 16px;
-  height: 16px;
-  background-color: #fff;
-  border-color: #d9d9d9;
-  border-style: solid;
-  border-width: 1px;
-  border-radius: 100px;
-  -webkit-transition: all 0.3s;
-  transition: all 0.3s;
-}
-</style>
-
-<style lang="less">
-.display-item {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  align-items: center;
-  /* // justify-content: center; */
-  /* // margin-top: -20px; */
-}
-
-.ant-radio-wrapper {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  color: rgba(0, 0, 0, 0.65);
-  font-size: 14px;
-  font-variant: tabular-nums;
-  line-height: 1.5;
-  list-style: none;
-  -webkit-font-feature-settings: "tnum";
-  font-feature-settings: "tnum";
-  position: relative;
-  display: inline-block;
-  margin-right: 28px;
-  white-space: nowrap;
-  cursor: pointer;
-  margin-bottom: 3px;
-}
 </style>
