@@ -106,10 +106,12 @@
         </div>
       </div>
     </div>
+    <info-compass ref="infoCompass" />
   </div>
 </template>
 
 <script>
+import infoCompass from './info-compass'
 import { genDiagnosis, queryDiagnose } from '@/api/modular/system/posManage'
 
 export default {
@@ -132,9 +134,13 @@ export default {
       default: '',
     },
   },
+  components: {
+    infoCompass
+  },
   created() {
     this.getList()
     window.addEventListener('message', this.diseasesHandler)
+    window.addEventListener('message', this.infoCompassHandler)
   },
   methods: {
     getList() {
@@ -175,6 +181,14 @@ export default {
           this.imported = true
           this.diseases = data.diseases
           this.diseasesChange(data.diseases)
+        }
+      }
+    },
+    infoCompassHandler(evt) {
+      if (evt.data) {
+        const data = JSON.parse(evt.data)
+        if (data.type === 'parent-compass-info') {
+          this.$refs.infoCompass.open(data.item, data.list)
         }
       }
     },
