@@ -299,7 +299,7 @@ export default {
               } else if (this.checkData.useTo == 2) {
                 this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
               } else {
-                this.checkData.message = "";
+                // this.checkData.message = "";
               }
 
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
