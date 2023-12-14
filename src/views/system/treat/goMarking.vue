@@ -142,7 +142,7 @@ export default {
       this.confirmLoading = true
       var requestData = {
         id: this.record.id,
-        specFlag: this.specFlag,
+        specFlag: this.specFlag?this.specFlag:'',
       }
       updatePatientSpecFlag(requestData)
         .then((res) => {
