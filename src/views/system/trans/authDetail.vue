@@ -15,73 +15,68 @@
     </template>
 
     <div style="display: flex; flex-direction: column; font-size: 12px; color: #1a1a1a">
-      <div style="display: flex; flex-direction: row; align-items: center">
+      <!-- <div style="display: flex; flex-direction: row; align-items: center">
         <div>合约编号：</div>
         <div>{{record.authorizationId}}</div>
-      </div>
-      <div
-        style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
-      >
+      </div> -->
+      <div style="display: flex; flex-direction: row; align-items: center">
         <div>签约状态：</div>
-        <div style="color: #69c07d">{{record.status}}</div>
+        <div style="color: #69c07d">{{ record.status }}</div>
       </div>
       <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>服务编号：</div>
-        <div>{{record.serviceNo}}</div>
+        <div>{{ record.serviceNo }}</div>
       </div>
       <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>签约时间：</div>
-        <div>{{record.createTime}}</div>
+        <div>{{ record.createTime }}</div>
       </div>
       <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>签约时长：</div>
-        <div>{{record.timeLong}}</div>
+        <div>{{ record.timeLong }}</div>
       </div>
-      <div
+      <!-- <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>截止时间：</div>
         <div>{{record.endDate}}</div>
-      </div>
+      </div> -->
       <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>甲方签名：</div>
-        <div style="color: #3894ff">{{record.jiaSign}}</div>
+        <div style="color: #3894ff">{{ record.jiaSign }}</div>
       </div>
       <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>乙方签名：</div>
-        <div style="color: #3894ff">{{record.yiSign}}</div>
+        <div style="color: #3894ff">{{ record.yiSign }}</div>
       </div>
-      <div
+      <!-- <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>流转积分：</div>
         <div>{{record.integral}}</div>
-      </div>
+      </div> -->
       <div
         style="display: flex; flex-direction: row; align-items: center; margin-top: 10px"
       >
         <div>区块高度：</div>
-        <div style="color: #3894ff">{{record.height}}</div>
+        <div style="color: #3894ff">{{ record.height }}</div>
       </div>
     </div>
-
   </a-modal>
 </template>
 
 <script>
-import {
-  authorizationDetails,
-} from "@/api/modular/system/posManage";
+import { authorizationDetails } from "@/api/modular/system/posManage";
 import { STable } from "@/components";
 import Vue from "vue";
 import { TRUE_USER } from "@/store/mutation-types";
@@ -152,6 +147,4 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>
