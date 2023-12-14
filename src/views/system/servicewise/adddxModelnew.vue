@@ -63,7 +63,12 @@
           <div class="div-line-wrap">
             <div class="div-left">
               <span class="span-item-name" style="text-align: right">用途 :</span>
-              <a-select v-model="checkData.useTo" allow-clear placeholder="请选择">
+              <a-select
+                v-model="checkData.useTo"
+                @select="onSelectUse"
+                allow-clear
+                placeholder="请选择"
+              >
                 <a-select-option
                   v-for="(item, index) in useDatas"
                   :key="index"
@@ -117,6 +122,7 @@
                 class="span-item-value"
                 v-model="checkData.message"
                 :maxLength="35"
+                :disabled="checkData.useTo == 1 || checkData.useTo == 2"
                 style="
                   height: 65px !important;
                   width: 695px !important;
@@ -240,6 +246,15 @@ export default {
       this.clearData();
       this.visible = true;
       this.confirmLoading = false;
+
+      if (this.checkData.useTo == 1) {
+        this.checkData.message = "请完成今日下发任务：问卷填写";
+      } else if (this.checkData.useTo == 2) {
+        this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+      } else {
+        this.checkData.message = "";
+      }
+
       //获取短线平台列表
       getSmsConfigureList({ pageNo: 1, pageSize: 10000 }).then((res) => {
         if (res.code == 0) {
@@ -278,6 +293,14 @@ export default {
               this.wxgzhData = thisWXData;
 
               this.isAgain = this.checkData.syncRemind == 1 ? true : false;
+
+              if (this.checkData.useTo == 1) {
+                this.checkData.message = "请完成今日下发任务：问卷填写";
+              } else if (this.checkData.useTo == 2) {
+                this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+              } else {
+                this.checkData.message = "";
+              }
 
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
               //1问卷收集 2健康宣教 3消息提醒
@@ -329,6 +352,22 @@ export default {
       });
     },
     handleChange(code) {},
+
+    // 1问卷收集 2健康宣教 3消息提醒
+    onSelectUse(code) {
+      if (code == 1) {
+        this.checkData.message = "请完成今日下发任务：问卷填写";
+      } else if (code == 2) {
+        this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+      } else {
+        this.checkData.message = "";
+      }
+      console.log("onSelectUse", code);
+      // if (code == 1) {
+
+      //   this.radioTyPe =
+      // }
+    },
 
     //选择公众号
     onWXProgramChange(value) {

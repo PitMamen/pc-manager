@@ -124,6 +124,7 @@
               <a-textarea
                 v-model="checkData.message"
                 :maxLength="200"
+                :disabled="checkData.useTo == 1 || checkData.useTo == 2"
                 class="span-item-value"
                 style="
                   height: 65px !important;
@@ -356,6 +357,14 @@ export default {
       this.visible = true;
       this.confirmLoading = false;
 
+      if (this.checkData.useTo == 1) {
+        this.checkData.message = "请完成今日下发任务：问卷填写";
+      } else if (this.checkData.useTo == 2) {
+        this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+      } else {
+        this.checkData.message = "";
+      }
+
       //获取公众号列表
       getWxConfigureList({}).then((res) => {
         if (res.code == 0) {
@@ -421,6 +430,14 @@ export default {
 
               this.isAgain = this.checkData.syncRemind == 1 ? true : false;
 
+              if (this.checkData.useTo == 1) {
+                this.checkData.message = "请完成今日下发任务：问卷填写";
+              } else if (this.checkData.useTo == 2) {
+                this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+              } else {
+                this.checkData.message = "";
+              }
+
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
               //useTo 1问卷收集 2健康宣教 3消息提醒
               if (this.checkData.useTo == 1) {
@@ -478,8 +495,15 @@ export default {
       Vue.ls.set("cache_wxAppId", wxAppId);
     },
 
-    //     // 1问卷收集 2健康宣教 3消息提醒
+    // 1问卷收集 2健康宣教 3消息提醒
     onSelectUse(code) {
+      if (code == 1) {
+        this.checkData.message = "请完成今日下发任务：问卷填写";
+      } else if (code == 2) {
+        this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+      } else {
+        this.checkData.message = "";
+      }
       console.log("onSelectUse", code);
       // if (code == 1) {
 
