@@ -560,7 +560,7 @@ export default {
       this.selectedRowKeys = selectedRowKeys
 
       if (selectedRowKeys.length == 0) {
-        this.selectedRowKeys=[]
+        this.selectedRowKeys = []
         this.clearSelectData()
         return
       }
@@ -730,28 +730,24 @@ export default {
      */
     reset() {
       this.queryParams = JSON.parse(JSON.stringify(this.queryParamsOrigin))
-      this.orderTimeValue=[]
-      this.queryParamsGroup.startTime =''
+      this.orderTimeValue = []
+      this.queryParamsGroup.startTime = ''
       this.queryParamsGroup.endTime = ''
       this.refresh()
     },
   },
 }
 </script>
+
+
+<style  >
+.ant-select-tree-dropdown {
+  max-height: 60vh !important;
+  top: 190px !important;
+}
+</style>
+
     <style lang="less" scoped>
-.table-wrapper {
-  // max-height: 600px;
-  // overflow-y: auto;
-}
-.sys-card {
-  // height: 100%;
-  // padding-bottom: 52px;
-  // /deep/ .ant-table-pagination {
-  //   position: fixed;
-  //   right: 32px;
-  //   bottom: 20px;
-  // }
-}
 .table-page-search-wrapper {
   padding-bottom: 20px !important;
   border-bottom: 1px solid #e8e8e8;
@@ -879,7 +875,7 @@ export default {
           // color: #000;
           margin-top: 1%;
           font-size: 12px;
-          text-align: left|center;
+          // text-align: left | center;
         }
 
         .div-rate {
@@ -891,49 +887,49 @@ export default {
       }
     }
   }
+}
 
-  .card-right-control {
-    // overflow: hidden;
-    // border-left: #eee solid 1px;
-    // border: #eee solid 1px;
-    float: right;
-    width: 84%;
-    margin-top: 10px;
+.card-right-control {
+  // overflow: hidden;
+  // border-left: #eee solid 1px;
+  // border: #eee solid 1px;
+  float: right;
+  width: 84%;
+  margin-top: 10px;
 
-    /deep/ .ant-card-body {
-      padding: 0px 20px !important;
-    }
+  /deep/ .ant-card-body {
+    padding: 0px 20px !important;
+  }
 
-    .span-red {
-      font-size: 12px;
-      color: #f26161 !important;
-      // background-color: #f26161;
-    }
+  .span-red {
+    font-size: 12px;
+    color: #f26161 !important;
+    // background-color: #f26161;
+  }
 
-    .span-gray {
-      padding: 1% 2%;
-      font-size: 12px;
-      color: #69c07d !important;
-      // background-color: #85888e;
-    }
+  .span-gray {
+    padding: 1% 2%;
+    font-size: 12px;
+    color: #69c07d !important;
+    // background-color: #85888e;
+  }
 
-    .ant-select {
-      width: 90px;
-    }
+  .ant-select {
+    width: 90px;
+  }
 
-    .table-operator {
-      margin-bottom: 18px;
-    }
-    button {
-      margin-right: 8px;
-    }
+  .table-operator {
+    margin-bottom: 18px;
+  }
+  button {
+    margin-right: 8px;
+  }
 
-    .title {
-      background: #fff;
-      font-size: 18px;
-      font-weight: bold;
-      color: #000;
-    }
+  .title {
+    background: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    color: #000;
   }
 }
 
@@ -990,11 +986,6 @@ export default {
 }
 </style>
     
-    <!-- tree-select限制高度 -->
-    <style>
-.ant-select-tree-dropdown {
-  max-height: 60vh !important;
-}
-</style>
+ 
     
     

@@ -109,7 +109,7 @@
             <div class="div-cell-name">病情分级：</div>
             <div class="div-cell-value">{{ dataInfo.diseaseLevel || '' }}</div>
           </div>
-          <div class="div-cell" >
+          <div class="div-cell" style="width: 80%;margin-left: 16px;" >
             <div class="div-cell-name">主要诊断：</div>
             <div class="div-cell-value" style="width: 100%">{{ dataInfo.diagnos || '' }}</div>
           </div>

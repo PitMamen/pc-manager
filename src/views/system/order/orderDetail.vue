@@ -160,10 +160,10 @@
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">产品清单</div>
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5;white-space:nowrap"
         size="small"
         class="a-table-one"
-        :scroll="{ y: true }"
+        :scroll="{ y: true}"
         :columns="goodsItemsDataColumns"
         :data-source="goodsItemsData"
         :alert="true"
@@ -186,7 +186,7 @@
 
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5;white-space:nowrap"
         size="small"
         class="a-table-one"
         :scroll="{ y: true }"
@@ -293,42 +293,53 @@ export default {
         {
           title: '产品名称',
           dataIndex: 'rightsItemName',
+          align:'left',
+          with:250,
+          ellipsis: true,
         },
         {
           title: '规格',
           dataIndex: 'ruleInfo',
+          with:50,
         },
         {
           title: '数量',
           dataIndex: 'equityQuantity',
+          with:50,
         },
         {
           title: '单位',
           dataIndex: 'unit',
+          with:50,
         },
         {
           title: '计费金额',
           dataIndex: 'saleAmount',
-          align:'right'
+          align:'right',
+          with:50,
         },
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
-          align:'center'
+          align:'center',
+          with:150,
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
-          align:'center'
+          align:'center',
+          with:150,
         },
         {
           title: '类型',
           dataIndex: 'projectType',
-          align:'center'
+          align:'center',
+          with:150,
         },
         {
           title: '操作',
           dataIndex: 'action',
+          with:150,
             scopedSlots: { customRender: 'action' },
         },
       ],
@@ -337,6 +348,8 @@ export default {
         {
           title: '服务项目',
           dataIndex: 'rightsItemName',
+          with:250,
+          ellipsis: true,
         },
         {
           title: '服务规格',
@@ -345,10 +358,12 @@ export default {
         {
           title: '数量',
           dataIndex: 'equityQuantity',
+          with:50,
         },
         {
           title: '单位',
           dataIndex: 'unit',
+          with:50,
         },
         {
           title: '计费金额',
@@ -533,10 +548,6 @@ export default {
 }
 
 
-
-
-
-
 /deep/.ant-modal-root {
     /deep/.ant-modal {
     margin-top: 90px;
@@ -557,14 +568,6 @@ export default {
 
 
 
-
-
-
-
-
-
-
-
 </style>
 
   
@@ -575,6 +578,13 @@ export default {
 
 .a-table-one /deep/ .ant-table-body{
   overflow-y: auto !important;
+}
+
+.ant-table-thead > tr > th{
+white-space:nowrap;
+}
+.ant-table-row td{
+white-space:nowrap;
 }
 
 
