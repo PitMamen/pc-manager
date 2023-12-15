@@ -831,6 +831,18 @@ export function getRoleList(data) {
   })
 }
 
+
+/**
+ * 获取角色列表1
+ */
+export function pageByAccountIdRole(data) {
+  return axios({
+    url: '/account-api/pageByAccountId',
+    method: 'post',
+    data: data,
+  })
+}
+
 /**
  * 切换角色
  */

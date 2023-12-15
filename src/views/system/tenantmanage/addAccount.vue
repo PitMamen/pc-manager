@@ -25,13 +25,12 @@
               :disabled="record.accountId"
               :maxLength="40"
               placeholder="请输入账号"
-           
             />
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>对应人员:</span>
             <a-select
-            style=" margin-top: 1px;"
+              style="margin-top: 1px"
               show-search
               v-model="checkData.userId"
               :filter-option="false"
@@ -92,18 +91,18 @@
             </a-select>
           </div>
 
-          <div class="div-content" style="margin-left: 1px;width: 433px;">
-            <a-checkbox  v-model="accountChecked">客服坐席:</a-checkbox>
+          <div class="div-content" style="margin-left: 1px; width: 433px">
+            <a-checkbox v-model="accountChecked">客服坐席:</a-checkbox>
             <a-input
-            v-model="checkData.seatUser"
+              v-model="checkData.seatUser"
               class="span-item-value"
-              style="display: inline-block;"
+              style="display: inline-block"
               :disabled="!accountChecked"
               placeholder="请输入客服坐席ID"
             />
           </div>
-          <div class="div-content" style="margin-left: 1px;width: 433px;">
-            <a-checkbox  v-model="wecomChecked">企微账号:</a-checkbox>
+          <div class="div-content" style="margin-left: 1px; width: 433px">
+            <a-checkbox v-model="wecomChecked">企微账号:</a-checkbox>
             <!-- <a-input
             v-model="checkData.companywxUserId"
               class="span-item-value"
@@ -111,8 +110,15 @@
               :disabled="!wecomChecked"
               placeholder="请输入企业微信账号"
             /> -->
-            <a-select :disabled="!wecomChecked" v-model="checkData.companywxUserId" allow-clear placeholder="请选择企微账号">
-              <a-select-option v-for="(item, index) in wecomUserList" :key="index" :value="item">{{ item }}</a-select-option>
+            <a-select
+              :disabled="!wecomChecked"
+              v-model="checkData.companywxUserId"
+              allow-clear
+              placeholder="请选择企微账号"
+            >
+              <a-select-option v-for="(item, index) in wecomUserList" :key="index" :value="item">{{
+                item
+              }}</a-select-option>
             </a-select>
           </div>
         </div>
@@ -130,11 +136,12 @@ import {
   createDoctorAccount,
   getUnbindAccountDoctorUser,
   updateDoctorAccount,
-  getOwnConnectCustomerFunUserList
+  getOwnConnectCustomerFunUserList,
+  pageByAccountIdRole,
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import {isObjectEmpty,isStringEmpty,isArrayEmpty} from '@/utils/util'
+import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -156,14 +163,14 @@ export default {
         phone: '',
         role: undefined, //分配角色
         seatUser: '', //坐席
-        companywxUserId:'',//企微账号
+        companywxUserId: '', //企微账号
       },
       fetching: false,
       accountChecked: false, //客服坐席
       wecomChecked: false, //企稳账号
 
       roleList: [], //角色列表
-      wecomUserList:[],//企稳用户列表
+      wecomUserList: [], //企稳用户列表
       rylxList: ['医生', '护士', '药剂师', '医技人员', '后勤人员'], //人员类型
       userList: [],
     }
@@ -179,12 +186,12 @@ export default {
         phone: '',
         role: [], //分配角色
         seatUser: '', //坐席
-        companywxUserId:''
+        companywxUserId: '',
       }
-      this.roleList=[]
-      this.userList=[]
+      this.roleList = []
+      this.userList = []
       this.accountChecked = false
-      this.wecomChecked=false
+      this.wecomChecked = false
     },
     //新增
     addModel() {
@@ -193,7 +200,7 @@ export default {
       this.visible = true
       this.confirmLoading = false
       this.getUserList('')
-      this.getRolesOut()
+      this.getRolesOut()   //新增  获取角色接口 用这个
       this.getOwnConnectCustomerFunUserListOut()
     },
     //修改
@@ -204,7 +211,8 @@ export default {
       this.confirmLoading = false
       this.record = record
 
-      this.getRolesOut()
+      // this.getRolesOut()
+      this.pageByAccountIdRoleOut(record.accountId)  //修改  获取角色接口 用这个
       this.getOwnConnectCustomerFunUserListOut()
 
       this.getDoctorAccountDetailOut(record.accountId)
@@ -216,8 +224,8 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           this.checkData = res.data
-          this.accountChecked=res.data.seatUser?true:false
-          this.wecomChecked=res.data.companywxUserId?true:false
+          this.accountChecked = res.data.seatUser ? true : false
+          this.wecomChecked = res.data.companywxUserId ? true : false
           var roles = []
           res.data.roles.forEach((element) => {
             roles.push(element.roleId)
@@ -231,7 +239,6 @@ export default {
             userId: res.data.userId,
             userName: res.data.userName,
           })
-          this.getRolesOut()
         }
       })
     },
@@ -246,7 +253,7 @@ export default {
       }).then((res) => {
         if (res.code == 0) {
           var roleList = []
-          
+
           for (let i = 0; i < res.data.records.length; i++) {
             if (res.data.records[i].state == 1) {
               roleList.push(res.data.records[i])
@@ -256,11 +263,33 @@ export default {
         }
       })
     },
-     //获取配置了客户联系功能的成员列表
-     getOwnConnectCustomerFunUserListOut() {
+
+    pageByAccountIdRoleOut(accountId) {
+      pageByAccountIdRole({
+        belong: undefined,
+        status: 1,
+        topFlag: undefined,
+        keyWords: undefined,
+        accountId:accountId
+      }).then((res) => {
+        if (res.code == 0) {
+          var roleList = []
+
+          for (let i = 0; i < res.data.records.length; i++) {
+            if (res.data.records[i].state == 1) {
+              roleList.push(res.data.records[i])
+            }
+          }
+          this.roleList = roleList
+        }
+      })
+    },
+
+    //获取配置了客户联系功能的成员列表
+    getOwnConnectCustomerFunUserListOut() {
       getOwnConnectCustomerFunUserList().then((res) => {
         if (res.code == 0) {
-          this.wecomUserList=res.data.follow_user
+          this.wecomUserList = res.data.follow_user
         }
       })
     },
@@ -280,21 +309,21 @@ export default {
         }
       })
     },
-         //不能输入非汉字效验  效验不能输入非空字符串
-	  validateNoChinese : ( value, callback) => {
-	    let reg = /^[^\u4e00-\u9fa5]+$/g;
-	    let regEmpty = /^\s*$/g;
-	    if (value && !reg.test(value)) {
-	      callback('书写格式错误');
-	    } else if(value && regEmpty.test(value)) {
-	      callback('不能为空');
-	    } else {
-	      callback();
-	    }
-	  },
-    onRoleSelectChange(value){
+    //不能输入非汉字效验  效验不能输入非空字符串
+    validateNoChinese: (value, callback) => {
+      let reg = /^[^\u4e00-\u9fa5]+$/g
+      let regEmpty = /^\s*$/g
+      if (value && !reg.test(value)) {
+        callback('书写格式错误')
+      } else if (value && regEmpty.test(value)) {
+        callback('不能为空')
+      } else {
+        callback()
+      }
+    },
+    onRoleSelectChange(value) {
       console.log(value)
-      this.checkData.role=value
+      this.checkData.role = value
       this.$forceUpdate()
     },
     onUserSelectChange(value) {
@@ -312,16 +341,15 @@ export default {
     },
     checkAccountName() {
       console.log(this.checkData.loginName)
-      var value=this.checkData.loginName
-      let reg = /^[^\u4e00-\u9fa5]+$/g;
-	    let regEmpty = /^\s*$/g;
-	    if (value && !reg.test(value)) {
-	     
+      var value = this.checkData.loginName
+      let reg = /^[^\u4e00-\u9fa5]+$/g
+      let regEmpty = /^\s*$/g
+      if (value && !reg.test(value)) {
         this.$message.error('账号不能输入中文')
         return false
-	    }else {
+      } else {
         return true
-      } 
+      }
     },
     handleSubmit() {
       console.log(this.checkData)
@@ -330,10 +358,9 @@ export default {
         this.$message.error('请输入登录账号')
         return
       }
-      if(!this.checkAccountName()){
+      if (!this.checkAccountName()) {
         return
       }
-
 
       if (isStringEmpty(this.checkData.userId)) {
         this.$message.error('请选择对应人员')
@@ -353,10 +380,10 @@ export default {
           return
         }
       }
-      if(this.wecomChecked){
-         //如果勾选了企微账号
+      if (this.wecomChecked) {
+        //如果勾选了企微账号
 
-         if (isStringEmpty(this.checkData.companywxUserId)) {
+        if (isStringEmpty(this.checkData.companywxUserId)) {
           this.$message.error('请选择企业微信账号')
           return
         }
@@ -369,13 +396,13 @@ export default {
       }
       if (this.accountChecked) {
         postData.seatUser = this.checkData.seatUser
-      }else{
-        postData.seatUser=''
+      } else {
+        postData.seatUser = ''
       }
       if (this.wecomChecked) {
         postData.companywxUserId = this.checkData.companywxUserId
-      }else{
-        postData.companywxUserId=''
+      } else {
+        postData.companywxUserId = ''
       }
       this.confirmLoading = true
 
@@ -483,7 +510,7 @@ export default {
         margin-top: 1px !important;
       }
     }
- 
+
     .span-item-name {
       display: inline-block;
       color: #4d4d4d;
