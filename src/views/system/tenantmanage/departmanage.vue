@@ -430,7 +430,43 @@ export default {
 };
 </script>
 
+
 <style lang="less" scoped>
+.content::-webkit-scrollbar {
+
+width: 0px;
+
+}
+
+.content::-webkit-scrollbar-track {
+
+background-color: rgba(255, 255, 255, 255);
+
+ border-radius: 2px;
+
+}
+
+.content::-webkit-scrollbar-thumb {
+
+background-color: rgba(255, 255, 255, 255);
+
+border-radius: 10px;
+
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+
+ background-color: rgb(255, 255, 255);
+
+}
+</style>
+
+
+
+<style lang="less" scoped>
+
+
+
 .div-title {
   background-color: #f7f7f7;
   flex-direction: row;
