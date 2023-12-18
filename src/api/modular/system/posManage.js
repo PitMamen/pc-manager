@@ -843,6 +843,18 @@ export function addRole(parameter) {
   })
 }
 
+
+/**
+ * 获取角色列表1
+ */
+export function pageByAccountIdRole(data) {
+  return axios({
+    url: '/account-api/pageByAccountId',
+    method: 'post',
+    data: data,
+  })
+}
+
 /**
  * 获取系统菜单树，用于新增，编辑时选择上级节点
  */
