@@ -1,7 +1,6 @@
 <template>
   <a-spin :spinning="confirmLoading">
     <div class="div-project-add">
-
       <div class="div-pro-up">
         <div class="div-title">
           <div class="div-line-blue"></div>
@@ -119,7 +118,6 @@
             >
             </a-tree-select>
           </div>
-
         </div>
 
         <div class="div-up-content">
@@ -980,7 +978,11 @@ export default {
       this.isAgain = this.projectData.basePlan.updateMatchStatus == 1 ? true : false;
       this.isReExecute =
         this.projectData.basePlan.execOvertimetaskFlag == 1 ? true : false;
-      console.log("哈哈哈：", this.isReExecute,this.projectData.basePlan.execOvertimetaskFlag)
+      console.log(
+        "哈哈哈：",
+        this.isReExecute,
+        this.projectData.basePlan.execOvertimetaskFlag
+      );
       //重复匹配状态：0不重复1可以重   true不重复  false重复   勾上true不重复   不勾false重复
       //repeatMatchStatus为0勾上    updateMatchStatus为1勾上
       console.log(
@@ -1582,7 +1584,11 @@ export default {
             this.$set(item, "value", item.subjectCode);
             this.$set(item, "title", item.subjectClassifyName);
             this.$set(item, "title", item.subjectClassifyName);
-            this.$set(item, "disabled", true);
+            this.$set(
+              item,
+              "disabled",
+              item.children && item.children.length > 0 ? true : false
+            );
 
             item.children.forEach((item1, index1) => {
               // this.$set(item1, 'key', item1.subjectClassifyId)

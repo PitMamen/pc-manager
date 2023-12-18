@@ -382,7 +382,6 @@
               </template>
             </a-auto-complete>
 
-
             <div class="div-type" @click="showDetail(itemTask, indexTask)">
               {{ itemTask.taskTypeName }}
               <!-- <a-select
@@ -1355,7 +1354,11 @@ export default {
             this.$set(item, "value", item.subjectCode);
             this.$set(item, "title", item.subjectClassifyName);
             this.$set(item, "title", item.subjectClassifyName);
-            this.$set(item, "disabled", true);
+            this.$set(
+              item,
+              "disabled",
+              item.children && item.children.length > 0 ? true : false
+            );
 
             item.children.forEach((item1, index1) => {
               // this.$set(item1, 'key', item1.subjectClassifyId)
