@@ -241,7 +241,7 @@
                 :disabled="dataInfo.status.value == 2 || dataInfo.status.value == 3|| dataInfo.status.value == 5"
                 v-model="requestData.rejectReason"
                 placeholder="请输入意见"
-                style="height: 80px; min-height: 100px; width: 80%"
+                style="height: 80px; min-height: 100px;"
                 :maxLength="1000"
               />
             </div>

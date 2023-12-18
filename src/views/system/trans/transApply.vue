@@ -280,7 +280,7 @@
                 :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
                 v-model="requestData.rejectReason"
                 placeholder="可在此处输入审核意见"
-                style="height: 80px; min-height: 100px; width: 80%"
+                style="height: 80px; min-height: 100px;"
                 :maxLength="1000"
               />
             </div>
