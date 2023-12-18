@@ -876,6 +876,7 @@ export function addRole(parameter) {
   })
 }
 
+
 /**
  * 获取系统菜单树，用于新增，编辑时选择上级节点
  */
@@ -6039,6 +6040,15 @@ export function reservationListByPage(data) {
 export function qryReferralCount(data) {
   return axios({
     url: '/referral-api/referral/qryReferralCount',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 转诊分科  分配科室
+export function allocationDept(data) {
+  return axios({
+    url: '/referral-api/referral/allocationDept',
     method: 'post',
     data: data,
   })

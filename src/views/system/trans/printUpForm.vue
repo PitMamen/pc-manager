@@ -82,8 +82,8 @@
         <div class="row">
           <span class="name">转往医疗机构</span>
           <span class="value">{{info.inHospitalName||''}}</span>
-          <span class="name">科室</span>
-          <span class="value">{{info.inDept||''}}</span>
+          <span class="name">学科</span>
+          <span class="value">{{info.inSubjectName||''}}</span>
         </div>
         <div class="box">
           <div class="row">

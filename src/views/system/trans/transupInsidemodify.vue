@@ -648,11 +648,20 @@
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              转入科室：
+              接诊学科：
             </div>
             <div class="div-cell-value">
-              <!-- class="deptselect-single" -->
-              <a-select
+              <a-tree-select
+                v-model="uploadData.inSubjectId"
+                style="width: 100%"
+                :tree-data="treeDataSub"
+                @select="onSelectDept"
+                placeholder="请选择"
+                tree-default-expand-all
+              >
+              </a-tree-select>
+
+              <!-- <a-select
                 show-search
                 style="width: 100%"
                 v-model="uploadData.inDeptCode"
@@ -673,31 +682,23 @@
                   :value="item.department_id"
                   >{{ item.department_name }}</a-select-option
                 >
-              </a-select>
-
-              <!-- <a-select
-                v-model="uploadData.healthInsuranceCategoryId"
-                @select="onSelectYibao"
-                placeholder="请选择"
-                allow-clear
-                style="width: 100%; height: 28px"
-              >
-                <a-select-option
-                  v-for="item in transTypeDatas"
-                  :key="item.id"
-                  :value="item.code"
-                  >{{ item.value }}</a-select-option
-                >
               </a-select> -->
             </div>
           </div>
           <div class="div-cell">
             <div class="div-cell-name">
               <div style="flex: 1"></div>
-              接受医生：
+              接收医生：
             </div>
             <div class="div-cell-value">
-              <a-select
+              <a-input
+                v-model="uploadData.docName"
+                allow-clear
+                placeholder="请输入"
+                style="width: 100%; height: 28px"
+              />
+
+              <!-- <a-select
                 v-model="uploadData.docId"
                 @select="onSelectInDoctor"
                 @focus="onDocFocus"
@@ -711,7 +712,7 @@
                   :value="item.doc_id"
                   >{{ item.doc_name }}</a-select-option
                 >
-              </a-select>
+              </a-select> -->
             </div>
           </div>
 
@@ -811,6 +812,7 @@ import {
   getDocListForHospitalAndDepartment,
   upReferralDetail,
   getRegionByUpAddressId,
+  gettreeMedicalSubjects,
 } from "@/api/modular/system/posManage";
 import { STable, Ellipsis } from "@/components";
 import { formatDecimal, formatDate, getlastMonthToday } from "@/utils/util";
@@ -819,7 +821,7 @@ import Vue from "vue";
 import { getDateNow, getCurrentMonthLast } from "@/utils/util";
 import moment from "moment";
 import printUpForm from "./printUpForm";
-import events from '@/components/MultiTab/events'
+import events from "@/components/MultiTab/events";
 
 import E from "wangeditor";
 export default {
@@ -897,6 +899,8 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
+        inSubjectId: undefined, //接诊学科
+        inSubjectName: undefined, //接诊学科名字
         docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
@@ -962,6 +966,7 @@ export default {
       levelDatas: [],
       diagnoseDatas: [],
       inHospitalDatas: [],
+      treeDataSub: [],
       reasonDatas: [],
       transTypeDatas: [],
       referralTypeDatas: [],
@@ -1209,7 +1214,7 @@ export default {
     });
 
     this.getHospitalDatas();
-    // this.getDepartmentSelectList(undefined);
+
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1237,19 +1242,21 @@ export default {
   methods: {
     cancelApply() {
       this.confirmLoading = true;
-      revokeApply(this.uploadData.tradeIdStr).then(res => {
-        if (res.code == 0) {
-          this.$message.success("撤销成功");
-          this.$bus.$emit('refreshTransUpListEvent');
-          setTimeout(() => {
-            events.$emit('close');
-          }, 1000);
-        } else {
-          this.$message.error(res.message);
-        }
-      }).finally(() => {
-        this.confirmLoading = false;
-      });
+      revokeApply(this.uploadData.tradeIdStr)
+        .then((res) => {
+          if (res.code == 0) {
+            this.$message.success("撤销成功");
+            this.$bus.$emit("refreshTransUpListEvent");
+            setTimeout(() => {
+              events.$emit("close");
+            }, 1000);
+          } else {
+            this.$message.error(res.message);
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false;
+        });
     },
     handleCascaderChange(value) {
       this.isChangedCascader = true;
@@ -1387,8 +1394,8 @@ export default {
           this.originData = [];
           this.originData = [
             {
-              department_name: this.uploadData.inDept,
-              department_id: this.uploadData.inDeptCode,
+              department_name: this.uploadData.inSubjectId,
+              department_id: this.uploadData.inSubjectName,
             },
           ];
           console.log("this.uploadData.docName", this.uploadData.docName);
@@ -1420,7 +1427,6 @@ export default {
 
           getReferralLogList(this.uploadData.tradeId).then((res) => {
             if (res.code == 0) {
-              
               this.referralLogList = res.data;
               let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
                 return !itemTemp.dealUserName;
@@ -1461,6 +1467,7 @@ export default {
         } else {
           this.$message.error(res.message);
         }
+        this.gettreeMedicalSubjectsOut();
         this.confirmLoading = false;
       });
     },
@@ -1541,21 +1548,39 @@ export default {
 
     onHospitalSelect() {
       this.getDepartmentSelectList(undefined);
-      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
-        this.getTreeUsers();
-      }
+      // if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+      //   this.getTreeUsers();
+      // }
     },
 
-    // onSelectDept(){},
-    onSelectDept(department_id) {
-      let getOne = this.originData.find((item) => item.department_id == department_id);
-      this.uploadData.inDept = getOne.department_name;
-      console.log("onSelectDept department_id", department_id);
-      console.log("onSelectDept department_name", getOne.department_name);
-      if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
-        this.getTreeUsers();
-      }
+    onSelectDept(subid, s1) {
+      console.log("onSelectDept", subid);
+      console.log("onSelectDept", s1);
+      this.treeDataSub.forEach((item, index) => {
+        item.children.forEach((item1, index1) => {
+          if (item1.subjectCode == subid) {
+            this.uploadData.inSubjectName = item1.subjectClassifyName;
+            console.log("onSelectDept subjectClassifyName", this.uploadData.inDept);
+          }
+
+          // this.$set(item1, 'key', item1.subjectClassifyId)
+          // this.$set(item1, 'value', item1.subjectClassifyId)
+          // this.$set(item1, "key", item1.subjectCode);
+          // this.$set(item1, "value", item1.subjectCode);
+          // this.$set(item1, "title", item1.subjectClassifyName);
+        });
+      });
     },
+
+    // onSelectDept(department_id) {
+    //   let getOne = this.originData.find((item) => item.department_id == department_id);
+    //   this.uploadData.inDept = getOne.department_name;
+    //   console.log("onSelectDept department_id", department_id);
+    //   console.log("onSelectDept department_name", getOne.department_name);
+    //   if (this.uploadData.inDeptCode && this.uploadData.inHospitalCode) {
+    //     this.getTreeUsers();
+    //   }
+    // },
 
     onDeptGetFocus() {
       if (!this.uploadData.inHospitalCode) {
@@ -1570,18 +1595,18 @@ export default {
         return;
       }
 
-      if (!this.uploadData.inDeptCode) {
-        this.$message.warn("请先选择转入科室");
+      if (!this.uploadData.inSubjectId) {
+        this.$message.warn("请先选择接诊学科");
         return;
       }
     },
 
-    onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
-      this.uploadData.docName = getOne.doc_name;
-      console.log("onSelectInDoctor docId", userId);
-      console.log("onSelectInDoctor docName", getOne.doc_name);
-    },
+    // onSelectInDoctor(userId) {
+    //   let getOne = this.inDocDatas.find((item) => item.doc_id == userId);
+    //   this.uploadData.docName = getOne.doc_name;
+    //   console.log("onSelectInDoctor docId", userId);
+    //   console.log("onSelectInDoctor docName", getOne.doc_name);
+    // },
 
     getTreeUsers() {
       getDocListForHospitalAndDepartment({
@@ -1604,6 +1629,35 @@ export default {
           this.$message.error(res.message);
         }
         this.confirmLoading = false;
+      });
+    },
+
+    //学科列表
+    gettreeMedicalSubjectsOut() {
+      gettreeMedicalSubjects().then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+          res.data.forEach((item, index) => {
+            // this.$set(item, 'key', item.subjectClassifyId)
+            // this.$set(item, 'value', item.subjectClassifyId)
+            this.$set(item, "key", item.subjectCode);
+            this.$set(item, "value", item.subjectCode);
+            this.$set(item, "title", item.subjectClassifyName);
+            this.$set(item, "title", item.subjectClassifyName);
+            this.$set(item, "disabled", true);
+
+            item.children.forEach((item1, index1) => {
+              // this.$set(item1, 'key', item1.subjectClassifyId)
+              // this.$set(item1, 'value', item1.subjectClassifyId)
+              this.$set(item1, "key", item1.subjectCode);
+              this.$set(item1, "value", item1.subjectCode);
+              this.$set(item1, "title", item1.subjectClassifyName);
+            });
+          });
+
+          this.treeDataSub = res.data;
+        } else {
+          this.treeDataSub = res.data;
+        }
       });
     },
 
@@ -1694,6 +1748,8 @@ export default {
         referralWay: undefined, //转运方式
         inDept: undefined, //转入科室名称
         inDeptCode: undefined, //转入科室
+        inSubjectId: undefined, //接诊学科
+        inSubjectName: undefined, //接诊学科名字
         docId: undefined, //接收医生id
         docName: undefined, //接收医生
         reachBeginDate: undefined, //期望到院开始日期
@@ -2053,6 +2109,13 @@ export default {
   },
 };
 </script>
+
+<style>
+.ant-select-tree-dropdown {
+  max-height: 70vh !important;
+  /* top: 148px !important; */
+}
+</style>
 
 <style lang="less" scoped>
 /deep/ .ant-steps-item-subtitle {

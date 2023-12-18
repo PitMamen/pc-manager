@@ -103,8 +103,8 @@
           <div class="row">
             <span class="name">医院</span>
             <span class="value">{{info.inHospitalName||''}}</span>
-            <span class="name">科室</span>
-            <span class="value">{{info.inDept||''}}</span>
+            <span class="name">学科</span>
+            <span class="value">{{info.inSubjectName||''}}</span>
           </div>
           <div class="row">
             <span class="name">科主任</span>

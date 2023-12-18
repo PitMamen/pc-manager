@@ -109,9 +109,11 @@
             <div class="div-cell-name">病情分级：</div>
             <div class="div-cell-value">{{ dataInfo.diseaseLevel || '' }}</div>
           </div>
-          <div class="div-cell">
+          <div class="div-cell" style="align-items: baseline; width: 100%">
             <div class="div-cell-name">主要诊断：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.diagnos || '' }}</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.diagnos || '' }}
+            </div>
           </div>
         </div>
 
@@ -143,17 +145,32 @@
             <div class="div-cell-name"><span style="color: #f90505">*</span>转入机构：</div>
             <div class="div-cell-value">{{ dataInfo.inHospitalName || '' }}</div>
           </div>
-          <div class="div-cell" style="margin-left:3.1%">
+          <div class="div-cell" style="margin-left: 3.1%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转诊类型：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralType.description || '' }}</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.referralType.description || '' }}
+            </div>
           </div>
-          <div class="div-cell" style="margin-left:1.6%">
+          <div class="div-cell" style="margin-left: 1.6%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转诊原因：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralReason || '' }}</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.referralReason || '' }}
+            </div>
           </div>
-          <div class="div-cell" style="margin-left:2.6%">
+          <div class="div-cell" style="margin-left: 2.6%">
             <div class="div-cell-name"><span style="color: #f90505">*</span>转运方式：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.referralWay || '' }}</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.referralWay || '' }}
+            </div>
+          </div>
+        </div>
+
+        <div class="div-line" style="margin-bottom: 10px">
+          <div class="div-cell" style="width: 100%; align-items: baseline; margin-left: 0.3%">
+            <div class="div-cell-name"><span style="color: #f90505">*</span>注意事项：</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.notice || '' }}
+            </div>
           </div>
         </div>
 
@@ -162,143 +179,145 @@
             <div class="div-cell-name">申请人：</div>
             <div class="div-cell-value">{{ dataInfo.reqDocName || '' }}</div>
           </div>
-          <div class="div-cell" style="margin-left:3.1%">
+          <div class="div-cell" style="margin-left: 3.1%">
             <div class="div-cell-name">登记日期：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.regTime || '' }}</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.regTime || '' }}
+            </div>
           </div>
-          <div class="div-cell" style="margin-left:1.6%">
+          <div class="div-cell" style="margin-left: 1.6%">
             <div class="div-cell-name">申请机构：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.outHospitalName || '' }}</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.outHospitalName || '' }}
+            </div>
           </div>
-          <div class="div-cell" style="margin-left:2.6%">
-            <div class="div-cell-name"><span style="color: #f90505">*</span>注意事项：</div>
-            <div class="div-cell-value" style="width: 100%">{{ dataInfo.notice || '' }}</div>
+          <div class="div-cell" style="margin-left: 2.6%">
+            <div class="div-cell-name" style="width: 120px"><span style="color: #f90505">*</span>期望到院时间：</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.reachBeginDate ? dataInfo.reachBeginDate + '-' + dataInfo.reachEndDate : '' }}
+            </div>
           </div>
         </div>
-
-        <div class="div-kuang" style="margin-top: 15px">
-          <div class="div-title">
-            <div class="div-line-blue"></div>
-            <span class="span-title">收治审核</span>
-          </div>
-
-          <div class="div-line" style="margin-bottom: 10px">
-            <div class="div-cell" style="width:24.7%">
-              <div class="div-cell-name">接诊学科：</div>
-              <!-- <div class="div-cell-value"> -->
-              <a-select
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                show-search
-                v-model="requestData.inSubjectName"
-                style="width: 44%"
-                :filter-option="false"
-                :not-found-content="fetching ? undefined : null"
-                allow-clear
-                placeholder="请输入选择科室"
-                @change="onDepartmentSelectChange"
-                @select="onSelectDept"
-                @search="onDepartmentSelectSearch"
-              >
-                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-                <a-select-option
-                  v-for="(item, index) in originData"
-                  :title="item.department_name"
-                  :key="index"
-                  :value="item.department_name"
-                  >{{ item.department_name }}</a-select-option
-                >
-              </a-select>
-              <!-- </div> -->
-            </div>
-            <div class="div-cell" style="width:24.7%">
-              <div class="div-cell-name">接收医生：</div>
-              <!-- <div class="div-cell-value"> -->
-              <a-select
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                v-model="requestData.docName"
-                @select="onSelectInDoctor"
-                @focus="onDocFocus"
-                placeholder="请选择"
-                allow-clear
-                style="width: 44%; height: 28px"
-              >
-                <a-select-option v-for="item in inDocDatas" :key="item.userId" :value="item.userName">{{
-                  item.userName
-                }}</a-select-option>
-              </a-select>
-              <!-- </div> -->
-            </div>
-            <div class="div-cell" style="width:35.7%">
-              <div class="div-cell-name" style="width: 140px">期望到院时间：</div>
-              <div class="div-cell-value" style="width: 100%">
-                <a-range-picker
-                  :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                  style="width: 185px"
-                  :value="createValue"
-                  @change="onChange"
-                />
-              </div>
-            </div>
-          </div>
+      </div>
+      <div v-if="statusType == 1" class="div-kuang" style="margin-top: 15px">
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">分配科室</span>
         </div>
 
         <div class="div-line" style="margin-bottom: 10px">
-          <div class="div-cell">
-            <div class="div-cell-name">收治结论：</div>
-            <div class="div-cell-value" style="width:170px !important">
-              <a-radio-group
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                v-model="requestData.status"
-                name="radioGroup"
-                @change="radioChange"
-                v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
-              >
-                <a-radio :value="4" style="font-size: 12px; color: #4D4D4D; margin-right: 0px !important">
-                  通过
-                </a-radio>
-                <a-radio :value="5" style="font-size: 12px; color: #4D4D4D"> 不通过 </a-radio>
-              </a-radio-group>
+          <div class="div-cell" style="width: 24.7%">
+            <div class="div-cell-name" style="width: 152px">收治学科：</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.inSubjectName || '' }}
             </div>
           </div>
 
-          <div class="div-cell" style="margin-left:-1.5%">
-            <div class="div-cell-name">审核人员：</div>
-            <div class="div-cell-value">{{ dataInfo.inCheck }}</div>
-            <!-- <div class="div-cell-value">{{user.userName}}</div> -->
+          <div class="div-cell" style="width: 24.7%">
+            <div class="div-cell-name"><span v-if="!isAssigned" style="color: #f90505">*</span>收治科室：</div>
+            <!-- 工单状态（1提交申请 2申请审核通过 3申请审核不通过 4收治审核通过 5收治审核不通过 6已预约 7已收治）这个页面status都是2 -->
+            <!-- :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5" -->
+            <a-select
+              :disabled="isAssigned"
+              show-search
+              v-model="requestData.inDeptCode"
+              style="width: 44%"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              placeholder="请输入选择科室"
+              @change="onDepartmentSelectChange"
+              @select="onSelectDept"
+              @search="onDepartmentSelectSearch"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option
+                v-for="(item, index) in originData"
+                :title="item.department_name"
+                :key="index"
+                :value="item.department_id"
+                >{{ item.department_name }}</a-select-option
+              >
+            </a-select>
           </div>
-          <div class="div-cell" style="margin-left:-1.39%">
-            <div class="div-cell-name">审核日期：</div>
-            <div class="div-cell-value">{{ dataInfo.inCheckTime }}</div>
+
+          <div class="div-cell" style="width: 24.7%">
+            <div class="div-cell-name" style="width: 152px">接收医生：</div>
+            <a-input
+              :disabled="isAssigned"
+              v-model="requestData.docName"
+              allow-clear
+              placeholder="请输入"
+              style="width: 100%; height: 28px"
+            />
           </div>
         </div>
+        <div class="div-line" style="margin-bottom: 10px">
+          <div style="flex: 1"></div>
+          <a-button :disabled="isAssigned" type="primary" @click="goAssign">确定分配</a-button>
+        </div>
+      </div>
+      <div v-if="statusType == 2" class="div-kuang" style="margin-top: 15px">
+        <div class="div-title">
+          <div class="div-line-blue"></div>
+          <span class="span-title">收治审核</span>
+        </div>
 
+        <div class="div-line" style="margin-bottom: 10px">
+          <div class="div-cell" style="width: 24.7%">
+            <div class="div-cell-name" style="width: 152px">收治科室：</div>
+            <div class="div-cell-value" style="width: 100%">
+              {{ dataInfo.inDept || '' }}
+            </div>
+          </div>
+
+          <div class="div-cell" style="width: 24.7%">
+            <div class="div-cell-name" style="width: 152px">收治医生：</div>
+            <a-input
+              v-model="shouzhiRequestData.docName"
+              :disabled="isAssigned"
+              allow-clear
+              placeholder="请输入"
+              style="width: 100%; height: 28px"
+            />
+          </div>
+
+          <div class="div-cell" style="width: 24.7%">
+            <div class="div-cell-name" style="width: 152px">收治结论：</div>
+            <span class="div-cell-value" style="width: 100%">
+              <a-radio-group name="radioGroup" :disabled="isAssigned" v-model="shouzhiRequestData.status">
+                <a-radio :value="4">收治 </a-radio>
+                <a-radio :value="5">不予收治 </a-radio>
+              </a-radio-group>
+            </span>
+          </div>
+        </div>
         <div class="div-line" style="margin-bottom: 10px">
           <div class="div-cell" style="width: 100%">
             <div class="div-cell-name" style="margin-top: -82px; margin-left: 5px">收治意见：</div>
             <div class="div-cell-value" style="width: 100%">
               <a-textarea
-                :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-                v-model="requestData.rejectReason"
+                :disabled="isAssigned"
+                v-model="shouzhiRequestData.rejectReason"
                 placeholder="可在此处输入审核意见"
-                style="height: 80px; min-height: 100px;"
+                style="height: 80px; min-height: 100px; width: 80%"
                 :maxLength="1000"
               />
             </div>
           </div>
         </div>
+        
+        <div class="div-pro-btn">
+          <div style="flex: 1"></div>
+          <a-button
+            type="primary"
+            :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
+            @click="submitData()"
+            >保存</a-button
+          >
+          <a-button style="margin-left: 10px" @click="print()">打印</a-button>
+        </div>
       </div>
-
-      <div class="div-pro-btn">
-        <div style="flex: 1"></div>
-        <a-button
-          type="primary"
-          :disabled="dataInfo.status.value == 4 || dataInfo.status.value == 5"
-          @click="submitData()"
-          >保存</a-button
-        >
-        <a-button style="margin-left: 10px" @click="print()">打印</a-button>
-      </div>
-      <!-- <chooseMedic ref="chooseMedic" @choose="handleChoose" /> -->
 
       <a-steps progress-dot :current="linePositon" :status="lineStatus" style="margin-top: 50px">
         <a-step
@@ -311,18 +330,19 @@
         />
       </a-steps>
     </a-card>
-    <printDownForm ref="printDownForm"  />
-    <printUpForm ref="printUpForm"  />
+    <printDownForm ref="printDownForm" />
+    <printUpForm ref="printUpForm" />
   </a-spin>
 </template>
-  
-  <script>
+
+<script>
 import {
   getReferralTradeById,
   getDepartmentListForSelect,
   getTreeUsersByDeptIdsAndRoles,
   referralExamine,
   getReferralLogList,
+  allocationDept,
 } from '@/api/modular/system/posManage'
 import { STable, Ellipsis } from '@/components'
 import { formatDecimal, getDateNow, getCurrentMonthLast } from '@/utils/util'
@@ -354,9 +374,10 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
       patientBaseinfo: {},
-      dataInfo: {},
+      dataInfo: { referralType: {}, status: {} },
       rangeValue: '4',
       fetching: false,
+      isAssigned: false,
       originData: [],
       inDocDatas: [],
       inSelectDepartment: [],
@@ -364,17 +385,29 @@ export default {
       tradeType: 2, //根据此标致 打印 上转 还是下转  2 下转  1 上转
       lineStatus: 'error', //wait process finish error
       linePositon: 1,
-
+      statusType: 0, //根据此标志 显示 1分配科室 2收治审核
+      //分配科室请求参数
       requestData: {
         inDept: '', //准入科室名称
         inDeptCode: undefined, //转入科室编码
-        reachBeginDate: getDateNow(), //期望到院 结束时间
-        reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
-        rejectReason: '', //收治意见
+        tradeId: '',
+        docName: '',
+        // reachBeginDate: getDateNow(), //期望到院 结束时间
+        // reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
+        // rejectReason: "", //收治意见
+        // status: 4, // 4 确认收治  5 拒绝收治
+        // docId: undefined,
+      },
+      //收治审核请求参数
+      shouzhiRequestData: {
+       
+        // reachBeginDate: getDateNow(), //期望到院 结束时间
+        // reachEndDate: getCurrentMonthLast(), //期望到院 开始时间
+        rejectReason:undefined, //收治意见
         status: 4, // 4 确认收治  5 拒绝收治
         tradeId: '',
-        docId: undefined,
-        docName: '',
+       
+        docName: undefined,
       },
     }
   },
@@ -393,6 +426,7 @@ export default {
       this.clearData()
       this.tradeId = this.$route.query.id
       this.requestData.tradeId = this.$route.query.id
+      this.shouzhiRequestData.tradeId = this.$route.query.id
       this.getDetaiData(this.tradeId)
       this.getReferralLogListOut(this.tradeId)
     }
@@ -400,8 +434,8 @@ export default {
   methods: {
     clearData() {
       this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-      this.requestData.reachBeginDate = getDateNow()
-      this.requestData.reachEndDate = getCurrentMonthLast()
+      // this.requestData.reachBeginDate = getDateNow();
+      // this.requestData.reachEndDate = getCurrentMonthLast();
     },
 
     // 打印
@@ -424,21 +458,59 @@ export default {
               this.patientBaseinfo = res.data.patientBaseinfo
               this.dataInfo = res.data
 
+             
+
               this.getDepartmentSelectList(this.dataInfo.inDept)
               this.getTreeUsers(this.dataInfo.inDeptCode)
               this.tradeType = this.dataInfo.tradeType.value
               this.requestData.status = this.dataInfo.status.value
-              this.requestData.docId = this.dataInfo.docId
+              this.shouzhiRequestData.status = this.dataInfo.status.value
+              // this.requestData.docId = this.dataInfo.docId;
+
               this.requestData.docName = this.dataInfo.docName
-              this.requestData.inDeptCode = this.dataInfo.inDeptCode
-              this.requestData.inDept = this.dataInfo.inDept
-              this.requestData.rejectReason = this.dataInfo.inCheckResult
+              this.shouzhiRequestData.docName = this.dataInfo.docName
+              this.shouzhiRequestData.rejectReason = this.dataInfo.inCheckResult || undefined
+
+              if (this.dataInfo.inDeptCode) {
+                //显示收治审核
+                this.statusType = 2  
+                //2未收治  4已收治 5不予收治
+                //只有已收治的情况不能再修改 不予收治可以修改
+                this.isAssigned = this.dataInfo.status.value === 4 
+                
+                this.requestData.inDeptCode = this.dataInfo.inDept //这里有显示问题，用inDept赋值给inDeptCode避免这个问题
+                this.originData = {
+                  department_id: this.dataInfo.inDeptCode,
+                 
+                  department_name: this.dataInfo.inDept,
+                }
+              } else {
+                //显示分配学科
+                this.statusType = 1
+                this.isAssigned = false
+                this.requestData.inDeptCode = undefined
+                this.originData = []
+              }
+
+              console.log('  this.originData ', this.requestData.inDeptCode + '')
+              console.log('  this.originData ', this.originData)
+
+              // this.requestData.inDept = this.dataInfo.inDept;
+              // this.requestData.inDept = this.dataInfo.inDept;
+
+              // this.requestData.rejectReason = this.dataInfo.inCheckResult;
               this.createValue = [
                 moment(this.dataInfo.reachBeginDate, this.dateFormat),
                 moment(this.dataInfo.reachEndDate, this.dateFormat),
               ]
-              this.requestData.reachBeginDate = moment(this.dataInfo.reachBeginDate, this.dateFormat)
-              this.requestData.reachEndDate = moment(this.dataInfo.reachEndDate, this.dateFormat)
+              // this.requestData.reachBeginDate = moment(
+              //   this.dataInfo.reachBeginDate,
+              //   this.dateFormat
+              // );
+              // this.requestData.reachEndDate = moment(
+              //   this.dataInfo.reachEndDate,
+              //   this.dateFormat
+              // );
 
               // console.log("GGG:",this.requestData.reachBeginDate)
             }
@@ -454,8 +526,6 @@ export default {
     getReferralLogListOut(tradeId) {
       getReferralLogList(tradeId).then((res) => {
         if (res.code == 0) {
-   
-
           this.referralLogList = res.data
           let haveIndex = this.referralLogList.findIndex((itemTemp, indexTemp) => {
             return !itemTemp.dealUserName
@@ -482,7 +552,7 @@ export default {
             if (element.deal_result == '成功') {
               this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.createTime || '')
             } else if (element.deal_result == '失败') {
-              this.$set(element, 'dealDetail', element.dealDetail+"(不通过)")
+              this.$set(element, 'dealDetail', element.dealDetail + '(不通过)')
               this.$set(element, 'nameAndTime', element.dealUserName + '\n' + element.dealImages || '')
             }
             // else{
@@ -498,17 +568,38 @@ export default {
       })
     },
 
-    onChange(momentArr, dateArr) {
-      if (dateArr[0] == '' && dateArr[1] == '') {
-        this.requestData.reachBeginDate = ''
-        this.requestData.reachEndDate = ''
+    goAssign() {
+      if (!this.requestData.inDept) {
+        this.$message.error('请选择收治科室')
         return
       }
-
-      this.createValue = momentArr
-      this.requestData.reachBeginDate = dateArr[0]
-      this.requestData.reachEndDate = dateArr[1]
+      // if (!this.requestData.docName) {  非必填
+      //   this.$message.error("请输入接收医生");
+      //   return;
+      // }
+      allocationDept(this.requestData).then((res) => {
+        if (res.code == 0) {
+          this.$message.success('分配成功')
+          this.$bus.$emit('refreshtransAssign', '刷新列表')
+          this.$router.go(-1)
+        } else {
+          this.$message.error(res.message)
+        }
+        this.confirmLoading = false
+      })
     },
+
+    // onChange(momentArr, dateArr) {
+    //   if (dateArr[0] == "" && dateArr[1] == "") {
+    //     this.requestData.reachBeginDate = "";
+    //     this.requestData.reachEndDate = "";
+    //     return;
+    //   }
+
+    //   this.createValue = momentArr;
+    //   this.requestData.reachBeginDate = dateArr[0];
+    //   this.requestData.reachEndDate = dateArr[1];
+    // },
 
     //科室搜索
     onDepartmentSelectSearch(value) {
@@ -535,16 +626,16 @@ export default {
       })
     },
 
-    onSelectInDoctor(userId) {
-      let getOne = this.inDocDatas.find((item) => item.userId == userId)
-      //   this.uploadData.docName = getOne.userName;
-      // console.log('onSelectInDoctor docId', getOne.userId)
-      // console.log('onSelectInDoctor docName', getOne.userName)
-      if (getOne) {
-        this.requestData.docName = getOne.userName
-        this.requestData.docId = getOne.userId
-      }
-    },
+    // onSelectInDoctor(userId) {
+    //   let getOne = this.inDocDatas.find((item) => item.userId == userId);
+    //   //   this.uploadData.docName = getOne.userName;
+    //   // console.log('onSelectInDoctor docId', getOne.userId)
+    //   // console.log('onSelectInDoctor docName', getOne.userName)
+    //   if (getOne) {
+    //     this.requestData.docName = getOne.userName;
+    //     this.requestData.docId = getOne.userId;
+    //   }
+    // },
 
     onDocFocus() {
       if (!this.inSelectDepartment) {
@@ -553,9 +644,19 @@ export default {
       }
     },
 
+    // refreshData(tradeId) {
+    //   console.log("ggggggg", tradeId);
+    //   this.confirmLoading = true;
+    //   // console.log("refreshData transup", JSON.stringify(tradeId))
+    //   this.tradeId = tradeId;
+    //   this.getDetaiData(this.tradeId);
+    //   this.getReferralLogListOut(this.tradeId);
+    // },
+
     onSelectDept(department_id) {
       let getOne = this.originData.find((item) => item.department_id == department_id)
       //   this.uploadData.inDept = getOne.department_name;
+      console.log('onSelectDept getOne', getOne)
       console.log('onSelectDept department_id', department_id)
       console.log('onSelectDept department_name', getOne.department_name)
       if (getOne) {
@@ -576,15 +677,15 @@ export default {
       })
     },
 
-    radioChange(event) {
-      if (event.target.value == 4) {
-        this.rangeValue = 4
-        this.requestData.status = 4
-      } else {
-        this.rangeValue = 5
-        this.requestData.status = 5
-      }
-    },
+    // radioChange(event) {
+    //   if (event.target.value == 4) {
+    //     this.rangeValue = 4;
+    //     this.requestData.status = 4;
+    //   } else {
+    //     this.rangeValue = 5;
+    //     this.requestData.status = 5;
+    //   }
+    // },
 
     formatDate(date) {
       date = new Date(date)
@@ -600,35 +701,36 @@ export default {
       this.$router.go(-1)
     },
     submitData() {
-      if (this.requestData.status == 5) {
-        if (!this.requestData.rejectReason) {
-          this.$message.error('请输入不通过原因!')
-          return
+      if (!this.shouzhiRequestData.docName) {
+          this.$message.error("请输入收治医生!");
+          return;
+        }
+      if (this.shouzhiRequestData.status == 5) {
+        if (!this.shouzhiRequestData.rejectReason) {
+          this.$message.error("请输入不通过原因!");
+          return;
         }
       }
-      this.confirmLoading = true
-      
-      this.requestData.reachBeginDate = this.requestData.reachBeginDate.format('yyyy-MM-DD')
-      this.requestData.reachEndDate = this.requestData.reachEndDate.format('yyyy-MM-DD')
-      // console.log('VVV:', this.requestData)
-      // return
-      referralExamine(this.requestData)
+      this.confirmLoading = true;
+
+     
+      referralExamine(this.shouzhiRequestData)
         .then((res) => {
           if (res.code == 0) {
-            this.$message.success('操作成功')
-            this.$bus.$emit('refreshtransinManage', '刷新转入管理列表')
-            this.$router.go(-1)
+            this.$message.success("操作成功");
+            this.$bus.$emit("refreshtransinManage", "刷新入院收治列表");
+            this.$router.go(-1);
           }
         })
         .finally((error) => {
-          this.confirmLoading = false
-        })
+          this.confirmLoading = false;
+        });
     },
   },
 }
 </script>
-  
-  <style lang="less" scoped>
+
+<style lang="less" scoped>
 /deep/ .ant-steps-item-subtitle {
   white-space: pre-line !important;
 }
@@ -637,7 +739,7 @@ button {
   margin-right: 8px;
 }
 </style>
-  <style lang="less" scoped>
+<style lang="less" scoped>
 .div-kuang {
   // border: 1px solid #E6E6E6;
   display: flex;
@@ -738,7 +840,3 @@ button {
   margin-bottom: 60px;
 }
 </style>
-  
-  
-  
-  
