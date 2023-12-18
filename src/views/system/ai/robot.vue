@@ -33,8 +33,8 @@ export default {
       accessToken: '',
       conversationId: '',
       // url: 'http://localhost/pages/ai/index',
-      // url: 'https://manager-ai.mclouds.org.cn/pages/ai/index',
-      url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
+      url: 'https://manager-ai.mclouds.org.cn/pages/ai/index',
+      // url: 'https://develop-manager-ai.mclouds.org.cn/pages/ai/index',
     }
   },
   components: {
