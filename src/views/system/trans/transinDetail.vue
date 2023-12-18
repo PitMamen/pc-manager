@@ -7,7 +7,7 @@
           <!-- <trans-apply ref="transApply" /> -->
         </a-tab-pane>
 
-        <a-tab-pane key="2" tab="上传病例" force-render>
+        <a-tab-pane key="2" tab="上传病历" force-render>
           <!-- <upload-files ref="uploadFiles" /> -->
         </a-tab-pane>
 

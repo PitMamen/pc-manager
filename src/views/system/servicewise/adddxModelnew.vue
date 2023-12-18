@@ -10,9 +10,12 @@
   >
     <template slot="footer">
       <div style="display: flex; flex-direction: row; align-items: center">
-        <div @click="goAgin()" class="btn-check">
+        <div class="btn-check">
           <a-checkbox @click="goAgin()" :checked="isAgain" />
-          <div style="width: 120px; text-align: left; margin-left: 10px">
+          <div
+            @click="goAgin()"
+            style="width: 120px; text-align: left; padding-left: 10px"
+          >
             智慧管家同步提醒
           </div>
         </div>
@@ -60,7 +63,12 @@
           <div class="div-line-wrap">
             <div class="div-left">
               <span class="span-item-name" style="text-align: right">用途 :</span>
-              <a-select v-model="checkData.useTo" allow-clear placeholder="请选择">
+              <a-select
+                v-model="checkData.useTo"
+                @select="onSelectUse"
+                allow-clear
+                placeholder="请选择"
+              >
                 <a-select-option
                   v-for="(item, index) in useDatas"
                   :key="index"
@@ -74,6 +82,7 @@
               <a-input
                 v-show="questionContent.name"
                 v-model="questionContent.name"
+                disabled
                 class="span-item-value"
                 style="display: inline-block; width: 200px"
                 allow-clear
@@ -91,6 +100,7 @@
               <a-input
                 v-show="teachContent.title"
                 v-model="teachContent.title"
+                disabled
                 class="span-item-value"
                 style="display: inline-block; width: 222px"
                 allow-clear
@@ -112,6 +122,7 @@
                 class="span-item-value"
                 v-model="checkData.message"
                 :maxLength="35"
+                :disabled="checkData.useTo == 1 || checkData.useTo == 2"
                 style="
                   height: 65px !important;
                   width: 695px !important;
@@ -120,149 +131,9 @@
                 allow-clear
                 placeholder="请输入模板内容 "
               />
-              <!-- <a-input
-           v-model="templateContent.smsTemplateContent"
-           class="span-item-value"
-           style="display: inline-block; width: 695px !important;"
-           readOnly
-           allow-clear
-           placeholder="请输入模板内容 "
-         /> -->
             </div>
           </div>
-
-          <!-- <div
-            class="div-line-wrap"
-            v-for="(item, index) in fieldList"
-            :key="index"
-            :value="item"
-          >
-            <div class="div-left" style="width: 205px; margin-left: 65px">
-              <span class="span-item-name" style="width: 100% !important"
-                >模板参数{{ index + 1 }} :[{{ item.name }}]</span
-              >
-            </div>
-            <div class="div-left" style="width: 205px; margin-right: 80px">
-              <span class="span-item-name">匹配字段 :</span>
-              <a-select
-                style="width: 140px !important"
-                v-model="fieldList[index].property"
-                allow-clear
-                placeholder="请选择字段属性"
-                @change="onFiledChange(index)"
-              >
-                <a-select-option
-                  v-for="(item, index) in zdsxData"
-                  :key="index"
-                  :value="item"
-                  >{{ item }}</a-select-option
-                >
-              </a-select>
-            </div>
-            <div class="div-left" style="width: 205px">
-              <a-select
-                v-show="item.property === '档案字段' && item.name.indexOf('date') < 0"
-                v-model="fieldList[index].content"
-                style="width: 100% !important"
-                allow-clear
-                placeholder="请选择参数"
-              >
-                <a-select-option
-                  v-for="(item, index) in dananfieldList"
-                  :key="index"
-                  :value="item.tableField"
-                  >{{ item.fieldComment }}</a-select-option
-                >
-              </a-select>
-              <a-select
-                v-show="item.property === '档案字段' && item.name.indexOf('date') > -1"
-                v-model="fieldList[index].content"
-                style="width: 100% !important"
-                allow-clear
-                placeholder="请选择参数"
-              >
-                <a-select-option
-                  v-for="(item, index) in danandataList"
-                  :key="index"
-                  :value="item.tableField"
-                  >{{ item.fieldComment }}</a-select-option
-                >
-              </a-select>
-              <a-input
-                v-show="item.property === '自定义传参'"
-                v-model="fieldList[index].content"
-                class="span-item-value"
-                style="width: 100%; margin-left: 0; display: inline-block"
-                allow-clear
-                :maxLength="150"
-                placeholder="请输入参数,不超过150字 "
-              />
-            </div>
-          </div> -->
-
-          <!-- <div class="div-line-wrap">
-            <div class="div-total-one">
-              <span class="span-item-name"> 跳转内容 :</span>
-
-              <a-radio-group name="radioGroup" v-model="radioTyPe" @change="radioChange">
-                <a-radio :value="0"> 问卷 </a-radio>
-                <a-radio :value="1" style="margin-left: 24px"> 宣教 </a-radio>
-                <a-radio :value="2" style="margin-left: 24px" v-if="!hasUrlField">
-                  不跳转任何内容
-                </a-radio>
-              </a-radio-group>
-            </div>
-          </div>
-
-          <div class="div-line-wrap" v-show="radioTyPe === 0">
-            <div class="div-total-one">
-              <span class="span-item-name">问卷名称 :</span>
-              <a-input
-                v-show="questionContent.name"
-                v-model="questionContent.name"
-                class="span-item-value"
-                style="display: inline-block; margin-right: 20px; width: 295px"
-                allow-clear
-                readOnly
-                placeholder="请选择问卷 "
-              />
-              <a-button type="primary" @click="selectQestionBtn"> 选择 </a-button>
-            </div>
-          </div>
-          <div class="div-line-wrap" v-show="radioTyPe === 1">
-            <div class="div-total-one">
-              <span class="span-item-name">宣教名称 :</span>
-              <a-input
-                v-show="teachContent.title"
-                v-model="teachContent.title"
-                class="span-item-value"
-                style="display: inline-block; margin-right: 20px; width: 295px"
-                allow-clear
-                readOnly
-                placeholder="请选择宣教文章 "
-              />
-              <a-button type="primary" @click="selectTeachBtn"> 选择 </a-button>
-            </div>
-          </div>
-          <div class="div-line-wrap" v-show="radioTyPe === 3">
-            <div class="div-total-one">
-              <span class="span-item-name">第三方链接 :</span>
-              <a-input
-                v-model="checkData.navigatorContent"
-                class="span-item-value"
-                style="display: inline-block; width: 295px"
-                allow-clear
-                placeholder="请输入第三方链接 "
-              />
-            </div>
-          </div> -->
         </div>
-
-        <!-- <div style="margin-top: 30px">
-     <a-button size="large" type="primary" @click="goConfirm" style="width: 20%; margin-left: 37%">
-       {{ id ? '确认修改' : '确认提交' }}
-     </a-button>
-   </div> -->
 
         <add-question ref="addQuestion" @ok="handleQuestion" />
         <add-teach ref="addTeach" @ok="handleTeach" />
@@ -375,28 +246,21 @@ export default {
       this.clearData();
       this.visible = true;
       this.confirmLoading = false;
+
+      if (this.checkData.useTo == 1) {
+        this.checkData.message = "请完成今日下发任务：问卷填写";
+      } else if (this.checkData.useTo == 2) {
+        this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+      } else {
+        this.checkData.message = "";
+      }
+
       //获取短线平台列表
       getSmsConfigureList({ pageNo: 1, pageSize: 10000 }).then((res) => {
         if (res.code == 0) {
           this.wxgzhData = res.data.records;
         }
       });
-
-      // //获取档案字段列表
-      // qryMetaConfigureDetail({ databaseTableName: "tb_patient_baseinfo" }).then((res) => {
-      //   if (res.code == 0) {
-      //     this.dananfieldList = res.data[0].detail;
-
-      //     //如果是日期类的 需要限制
-      //     var dataList = [];
-      //     this.dananfieldList.forEach((item) => {
-      //       if (item.fieldType.value == 2) {
-      //         dataList.push(item);
-      //       }
-      //     });
-      //     this.danandataList = dataList;
-      //   }
-      // });
     },
     //修改  详情
     checkModel(id) {
@@ -430,6 +294,14 @@ export default {
 
               this.isAgain = this.checkData.syncRemind == 1 ? true : false;
 
+              if (this.checkData.useTo == 1) {
+                this.checkData.message = "请完成今日下发任务：问卷填写";
+              } else if (this.checkData.useTo == 2) {
+                this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+              } else {
+                // this.checkData.message = "";
+              }
+
               // radioType  jumpType 1:问卷2:宣教3:不跳转4:外网地址5小程序病历页6第三方小程序
               //1问卷收集 2健康宣教 3消息提醒
               if (this.checkData.useTo == 1) {
@@ -449,17 +321,6 @@ export default {
                 //   this.thirdLink = res.data.jumpValue;
                 // }
               }
-              // this.radioTyPe = res.data.jumpType - 1;
-              // if (this.radioTyPe == 0) {
-              //   this.questionContent.questUrl = res.data.jumpValue;
-              //   this.questionContent.name = res.data.jumpTitle;
-              //   this.questionContent.id = res.data.jumpId;
-              // } else if (this.radioTyPe == 1) {
-              //   this.teachContent.articleId = res.data.jumpId;
-              //   this.teachContent.title = res.data.jumpTitle;
-              // } else if (this.radioTyPe == 3) {
-              //   this.checkData.navigatorContent = res.data.jumpValue;
-              // }
 
               this.fieldList = JSON.parse(res.data.templateParamJson);
 
@@ -491,6 +352,22 @@ export default {
       });
     },
     handleChange(code) {},
+
+    // 1问卷收集 2健康宣教 3消息提醒
+    onSelectUse(code) {
+      if (code == 1) {
+        this.checkData.message = "请完成今日下发任务：问卷填写";
+      } else if (code == 2) {
+        this.checkData.message = "请完成今日下发任务：健康宣教文章阅读";
+      } else {
+        this.checkData.message = "";
+      }
+      console.log("onSelectUse", code);
+      // if (code == 1) {
+
+      //   this.radioTyPe =
+      // }
+    },
 
     //选择公众号
     onWXProgramChange(value) {
@@ -567,32 +444,6 @@ export default {
       return arr;
     },
 
-    // //字段属性选择
-    // fieldSXChange(value) {
-    //   console.log(value);
-    //   this.fieldList[value];
-    // },
-    // radioChange(e) {
-    //   this.radioTyPe = e.target.value;
-    //   console.log(this.radioTyPe);
-    // },
-    /**
-     *autoComplete回调，本地模拟的数据处理
-     */
-    // handleSearch(inputName) {
-    //   if (inputName) {
-    //     this.ksTypeDataTemp = this.ksTypeData.filter(
-    //       (item) => item.departmentName.indexOf(inputName) != -1
-    //     );
-    //   } else {
-    //     this.ksTypeDataTemp = JSON.parse(JSON.stringify(this.ksTypeData));
-    //   }
-    // },
-    //属性选择
-    // onFiledChange(index) {
-    //   console.log(index);
-    //   this.fieldList[index].content = "";
-    // },
     selectQestionBtn() {
       this.$refs.addQuestion.add(0);
     },
@@ -670,34 +521,6 @@ export default {
       } else if (this.checkData.useTo == 3) {
         this.myJumpYype = 3;
       }
-
-      // if (this.radioTyPe == -1) {
-      //   this.$message.error("请选择跳转类型");
-      //   return;
-      // } else if (this.radioTyPe == 0) {
-      //   if (!this.questionContent.questUrl) {
-      //     this.$message.error("请选择问卷");
-      //     return;
-      //   }
-      //   jumpValue = this.questionContent.questUrl;
-      //   jumpTitle = this.questionContent.name;
-      //   jumpId = this.questionContent.id;
-      // } else if (this.radioTyPe == 1) {
-      //   if (!this.teachContent.articleId) {
-      //     this.$message.error("请选择宣教文章");
-      //     return;
-      //   }
-      //   jumpValue = this.teachContent.articleId;
-      //   jumpTitle = this.teachContent.title;
-      //   jumpId = this.teachContent.articleId;
-      // } else if (this.radioTyPe == 3) {
-      //   if (!this.checkData.navigatorContent) {
-      //     this.$message.error("请输入第三方链接");
-      //     return;
-      //   }
-      //   jumpValue = this.checkData.navigatorContent;
-      //   jumpTitle = this.checkData.navigatorContent;
-      // }
 
       // syncRemind 是否同步提醒 1是 2否
       this.checkData.syncRemind = this.isAgain ? 1 : 2;
@@ -794,6 +617,11 @@ export default {
   },
 };
 </script>
+<style lang="less" scoped>
+/deep/ .ant-input-disabled {
+  color: #1a1a1a !important;
+}
+</style>
 <style lang="less">
 .ant-select-dropdown {
   z-index: 20000;

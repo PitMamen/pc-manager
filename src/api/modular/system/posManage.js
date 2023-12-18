@@ -251,7 +251,7 @@ export function getHospitalHomeQrCode(param) {
   return axios({
     // 192.168.1.122:8126/wx/qrcode/{appid}/getQrCode?ks=1&bq=2
     // url: '/push-api/wx/qrcode/getQrCode',
-    url: '/wx-api/wx/qrcode/'+appId+'/getHospitalHomeQrCode',
+    url: '/wx-api/wx/qrcode/' + appId + '/getHospitalHomeQrCode',
     method: 'get',
     params: param,
 
@@ -2096,6 +2096,30 @@ export function checkget(data) {
 
 /**
  * 
+ * 查询诊断字典
+ */
+export function queryDiagnose(data) {
+  return axios({
+    url: '/health-api/prescription/queryDiagnose',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
+ * 生成疑似诊断
+ */
+export function genDiagnosis(data) {
+  return axios({
+    url: '/im-api/bot/genDiagnosis',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 
  * 聊天记录
  */
 export function queryHistoryIMRecordPage(data) {
@@ -2110,7 +2134,7 @@ export function queryHistoryIMRecordPage(data) {
  * 
  * getAccessToken
  */
- export function getAccessToken(data) {
+export function getAccessToken(data) {
   return axios({
     url: '/account-api/exchangeAccessToken',
     method: 'get',
@@ -2157,6 +2181,17 @@ export function fields(data) {
 export function dateFields(data) {
   return axios({
     url: '/follow-api/follow/dict/dateFields',
+    method: 'get',
+    params: data,
+  })
+}
+
+/**
+ * /follow/dict/dateFields 时间过滤字段列表：科室，患者姓名，出院日期  上面的dateFields 可以不用了
+ */
+export function cfgDateFields(data) {
+  return axios({
+    url: '/follow-api/follow/dict/cfgDateFields',
     method: 'get',
     params: data,
   })
@@ -2919,7 +2954,7 @@ export function getZhuyuanDepartmentList(departmentName, source) {
     url: '/follow-api/departmentManger/getDepartmentListForReq',
     method: 'post',
     data: {
-      departmentType:3,
+      departmentType: 3,
       departmentName: departmentName,//搜索输入
       source: source,//租户下所有科室：undefined  本登录账号管理科室： 'managerDept'      //需要根据页面业务需求传递
       status: 1,//1开启
@@ -5813,6 +5848,24 @@ export function queryTradeId(data) {
   })
 }
 
+// /tfUserCaseSyninfo/userCaseSyninfoList  授权记录列表
+export function userCaseSyninfoList(data) {
+  return axios({
+    url: '/referral-api/tfUserCaseSyninfo/userCaseSyninfoList',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 授权合约详情
+export function authorizationDetails(id) {
+  return axios({
+    url: '/referral-api/tfUserCaseSyninfo/authorizationDetails/' + id,
+    method: 'get',
+    // params: data,
+  })
+}
+
 //组织性质
 export function searchDiagnosis(data) {
   return axios({
@@ -6106,7 +6159,7 @@ export function statReferralPatientDetail(data) {
 // 取消审核
 export function cancelAudit(data) {
   return axios({
-    url: '/referral-api/referralTrade/cancelAudit/'+data,
+    url: '/referral-api/referralTrade/cancelAudit/' + data,
     method: 'get',
     // params: data,
   })
@@ -6152,7 +6205,7 @@ export function cancelBed(data) {
 // 约床短信提醒
 export function bedRemind(data) {
   return axios({
-    url: '/referral-api/referralTrade/remind/'+data,
+    url: '/referral-api/referralTrade/remind/' + data,
     method: 'get',
     // params: data,
   })
@@ -6219,7 +6272,7 @@ export function uploadTradeImg(data) {
 // 获取图片
 export function getTradeImg(data) {
   return axios({
-    url: '/referral-api/tbReferralTradeImg/getTradeImg/'+data,
+    url: '/referral-api/tbReferralTradeImg/getTradeImg/' + data,
     method: 'get',
     // params: data,
   })

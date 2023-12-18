@@ -50,12 +50,21 @@ export default {
 
   methods: {
     showFile(record) {
-      console.log('record fileModalshow',record)
+      console.log("record fileModalshow", record);
       this.record = record;
       this.visible = true;
-      this.$set(this.record.patientBaseinfo, "age", countAgeNew(this.record.patientBaseinfo.birthday));
+      this.$set(
+        this.record.patientBaseinfo,
+        "age",
+        record.age ? record.age : countAgeNew(this.record.patientBaseinfo.birthday)
+      );
       this.title =
-        this.record.name + " | " + this.record.patientBaseinfo.sex + " | " + this.record.patientBaseinfo.age + "岁";
+        this.record.name +
+        " | " +
+        this.record.patientBaseinfo.sex +
+        " | " +
+        this.record.patientBaseinfo.age +
+        "岁";
 
       this.$refs.fileZhuyuan.getTimeLineData();
     },

@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, LoginLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
+import { UserLayout, LoginLayout, HeadLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 export const asyncRouterMap = [
@@ -56,6 +56,20 @@ export const constantRouterMap = [
         path: 'login',
         name: 'login',
         component: () => import(/* webpackChunkName: "user" */ '@/views/userLoginReg/Login')
+      }
+    ]
+  },
+
+  {
+    path: '/ai',
+    component: HeadLayout,
+    redirect: '/ai/robot',
+    hidden: true,
+    children: [
+      {
+        path: 'robot',
+        name: 'robot',
+        component: () => import(/* webpackChunkName: "user" */ '@/views/system/ai/robot')
       }
     ]
   },
