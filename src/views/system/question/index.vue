@@ -1,18 +1,24 @@
 <template>
   <a-card :bordered="false" class="sys-card">
-    <!-- <a-tabs default-active-key="1" @change="callback" style="margin-top: -17px"> -->
-    <!-- <a-tab-pane key="1" tab="问卷列表"> -->
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">机构:</span>
-        <a-tree-select
+        <a-select
           v-model="queryParam.hospitalCode"
-          style="min-width: 120px"
-          :tree-data="treeData"
-          placeholder="请选择"
-          tree-default-expand-all
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
         >
-        </a-tree-select>
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
@@ -21,7 +27,7 @@
           v-model="queryParam.title"
           allow-clear
           placeholder="可输入问卷名称查询"
-          style="width: 180px; height: 28px"
+          style="width: 120px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -123,11 +129,8 @@
 import { STable } from '@/components'
 import moment from 'moment'
 import {
-  getAllQuestions,
-  getAllQuestionsStat,
-  getDepartmentListForSelect,
   getQuestionnaireList,
-  queryHospitalList,
+  queryHospitalList2,
   deleteQuestion,
   updateQuestionStatus,
 } from '@/api/modular/system/posManage'
@@ -158,20 +161,19 @@ export default {
         { code: 3, value: '已结束' },
       ],
       treeData: [],
+      localHospitalCode: undefined,
       fetching: false,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
       queryParam: {
-        endTime:  formatDate(new Date()),
+        endTime: formatDate(new Date()),
         hospitalCode: undefined,
         startTime: formatDate(new Date()),
         status: undefined,
         title: '',
       },
       queryParamStat: { typeName: '' },
-      originData: [],
-      originDataStat: [],
       /** 统计类别数据*/
       labelCol: {
         xs: { span: 24 },
@@ -271,21 +273,18 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    this.queryHospitalListOut()
+    this.localHospitalCode = this.user.hospitalCode
+    console.log('333:', this.localHospitalCode)
     this.createValue = [
       moment(this.formatDate(new Date()), this.dateFormat),
       moment(this.formatDate(new Date()), this.dateFormat),
     ]
-
-    //问卷列表科室
-    this.getDepartmentSelectList(undefined)
-    //问卷统计科室
-    this.getDepartmentSelectList2(undefined)
+    // 机构
+    this.queryHospitalListOut(undefined)
   },
 
-
   activated() {
-    console.log("刷新问卷!!!")
+    console.log('刷新问卷!!!')
     this.handleOk()
   },
 
@@ -293,9 +292,9 @@ export default {
     //跳转配置问卷
     goConfigQuestion(record) {
       var dataTemp = {
-        departmentId:  record.department_id,
+        departmentId: record.department_id,
         hospitalCode: record.hospital_code,
-        title:record.title,
+        title: record.title,
         key: record.key,
         url: record.server_path,
         type: 1,
@@ -303,7 +302,7 @@ export default {
       this.$router.push({
         path: '/question/configQuestion',
         query: {
-          data:JSON.stringify(dataTemp)
+          data: JSON.stringify(dataTemp),
         },
       })
     },
@@ -378,91 +377,47 @@ export default {
       this.queryParam.endTime = dateArr[1]
     },
     //机构列表
-    queryHospitalListOut() {
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParam.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
     toggleAdvanced() {
       this.advanced = !this.advanced
-    },
-    //获取管理的科室 可首拼
-    getDepartmentSelectList(departmentName) {
-      this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, undefined).then((res) => {
-        this.fetching = false
-        if (res.code == 0) {
-          this.originData = res.data.records
-        }
-      })
-    },
-    //科室搜索
-    onDepartmentSelectSearch(value) {
-      this.originData = []
-      this.getDepartmentSelectList(value)
-    },
-    //科室选择变化
-    onDepartmentSelectChange(value) {
-      if (value === undefined || value.length == 0) {
-        this.originData = []
-        this.getDepartmentSelectList(undefined)
-        this.$refs.table.refresh(true)
-      }
-    },
-    //获取管理的科室 可首拼
-    getDepartmentSelectList2(departmentName) {
-      this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
-      getDepartmentListForSelect(departmentName, undefined).then((res) => {
-        this.fetching = false
-        if (res.code == 0) {
-          this.originDataStat = res.data.records
-        }
-      })
-    },
-    //科室搜索
-    onDepartmentSelectSearch2(value) {
-      this.originData = []
-      this.getDepartmentSelectList2(value)
-    },
-    //科室选择变化
-    onDepartmentSelectChange2(value) {
-      console.log('onDepartmentSelectChange2', value)
-      if (value === undefined || value.length == 0) {
-        this.originData = []
-        this.getDepartmentSelectList2(undefined)
-        this.$refs.tableStat.refresh(true)
-      }
     },
     handleStatus(record) {
       record.activeFlag = record.activeFlag == 1 || record.activeFlag == null ? 0 : 1
@@ -534,7 +489,6 @@ button {
   // }
 }
 .table-page-search-wrapper {
- 
   margin-top: -1px !important;
   padding-top: 8px;
   border-bottom: 1px solid #e8e8e8;

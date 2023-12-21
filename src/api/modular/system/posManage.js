@@ -2797,6 +2797,20 @@ export function queryHospitalList(data) {
 
 
 /**
+ * 机构列表(一级结构)
+ */
+export function queryHospitalList2(data) {
+  return axios({
+    url: 'uam-api/hospital/list2',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+
+/**
  * 可访问机构列表
  */
 export function accessHospitals(data) {
@@ -2806,6 +2820,20 @@ export function accessHospitals(data) {
     params: data,
   })
 }
+
+
+/**
+ * 可访问机构列表(一级结构)
+ */
+export function accessHospitals1(data) {
+  return axios({
+    url: '/uam-api/hospital/accessHospitals1',
+    method: 'get',
+    params: data,
+  })
+}
+
+
 
 /**
  * 可访问机构列表 处方流转

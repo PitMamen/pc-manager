@@ -3,14 +3,31 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"
           tree-default-expand-all
         >
-        </a-tree-select>
+        </a-tree-select> -->
+
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
       <div class="search-row">
         <span class="name"> 菜单名称:</span>
@@ -18,7 +35,7 @@
           allow-clear
           v-model="queryParams.menuName"
           placeholder="请输入菜单名称进行搜索"
-          style="width: 120px"
+          style="width: 180px"
           @blur="$refs.table.refresh(true)"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
@@ -27,7 +44,7 @@
 
       <div class="search-row">
         <span class="name">状态:</span>
-        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
+        <a-select v-model="queryParams.status" placeholder="请选择状态" allow-clear style="width: 180px; height: 28px">
           <a-select-option v-for="item in selects" :key="item.id" :value="item.id">{{ item.name }}</a-select-option>
         </a-select>
       </div>
@@ -72,16 +89,9 @@
         </template>
       </span>
 
-
-     <span slot="tubiao" slot-scope="text, record">
-       <img style="width:20px;height:20px" :src="record.icon" />
-
-     </span>
-
-
-
-
-
+      <span slot="tubiao" slot-scope="text, record">
+        <img style="width: 20px; height: 20px" :src="record.icon" />
+      </span>
     </s-table>
 
     <add-menu ref="addMenu" @ok="handleOk" />
@@ -93,13 +103,14 @@
       <script>
 import { STable } from '@/components'
 import {
-  queryHospitalList,
-  modifyDepartmentForReq,
+  queryHospitalList2,
   getListTdShopmallMainpageMenu,
   modifyTdShopmallMainpageMenu,
 } from '@/api/modular/system/posManage'
 import addMenu from './addMenu'
 import modifyMenu from './modifyMenu'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   components: {
     STable,
@@ -115,6 +126,8 @@ export default {
       tenantId: '',
       datas: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       HospitalTypeList: [],
       queryParams: {
         hospitalCode: undefined,
@@ -214,7 +227,7 @@ export default {
             data.rows.forEach((item, index) => {
               this.$set(item, 'enableStatus', item.status == 1)
               this.$set(item, 'tubiao', item.icon)
-              this.$set(item, 'menuTypeShow', item.menuType==1?"置顶菜单":"常规菜单")
+              this.$set(item, 'menuTypeShow', item.menuType == 1 ? '置顶菜单' : '常规菜单')
               this.$set(item, 'jumpTypeShow', this.getType(item.jumpType))
               // this.$set(item, 'jumpType', this.getType(item.jumpType))
               // this.$set(item, 'departmenttype', type)
@@ -228,22 +241,24 @@ export default {
   },
 
   created() {
-    this.queryHospitalListOut()
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.queryHospitalListOut(undefined)
     // this.addTdShopmallMainpageMenuOut()
   },
 
   methods: {
-
-    getType(type){
-      if(type==1){
-        return "小程序内"
-      }else if(type==2){
-        return "第三方小程序"
-      }else if(type==3){
-        return "第三方链接"
+    getType(type) {
+      if (type == 1) {
+        return '小程序内'
+      } else if (type == 2) {
+        return '第三方小程序'
+      } else if (type == 3) {
+        return '第三方链接'
       }
     },
-
 
     /**
      * 重置
@@ -277,40 +292,44 @@ export default {
      *
      * @param {}
      */
-    queryHospitalListOut() {
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.treeData = []
+        this.localHospitalCode = undefined
+        this.queryHospitalListOut(undefined)
+      }
+    },
 
     /**
      * 新增
