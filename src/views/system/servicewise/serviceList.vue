@@ -66,21 +66,15 @@
       :data="loadData"
       :alert="true"
       :rowKey="(record) => record.code"
-      
     >
       <span slot="action" slot-scope="text, record">
         <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a>
-        <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
+        <a-divider type="vertical" />
+        <a @click="goDetail(record)"><a-icon type="container" style="margin-right: 2px;"></a-icon>执行详情</a>
       </span>
       <span slot="executeDept" slot-scope="text, record">
-        <!-- <a @click="editPlan(record)"><a-icon type="edit"></a-icon>修改</a> -->
         <ellipsis :length="30" tooltip>{{ record.executeDepartmentName }}</ellipsis>
-        <!-- <a @click="editPlan(record)" :disabled="record.status.value != 1"><a-icon type="edit"></a-icon>修改</a> -->
       </span>
-
-      <!-- <span slot="execute" slot-scope="text, record">
-        <a @click="goExecute(record)">{{record.planUserInfo}}</a>
-      </span> -->
       <span slot="status" slot-scope="text, record">
         <a-popconfirm
           placement="topRight"
@@ -94,12 +88,13 @@
 
     <!-- <add-Name ref="addName" @ok="handleOk" /> -->
     <plan-Execute ref="planExecute" @ok="handleOk" />
+    <executeDetail ref="executeDetail" @ok="handleOk" />
   </a-card>
 </template>
 
 
 <script>
-import { STable,Ellipsis } from '@/components'
+import { STable, Ellipsis } from '@/components'
 
 import {
   getDepartmentListForSelect,
@@ -109,6 +104,7 @@ import {
   updateFollowPlanStatus,
 } from '@/api/modular/system/posManage'
 import planExecute from './planExecute'
+import executeDetail from './executeDetail'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
@@ -116,6 +112,7 @@ export default {
     STable,
     planExecute,
     Ellipsis,
+    executeDetail,
   },
   data() {
     return {
@@ -147,38 +144,38 @@ export default {
       columns: [
         {
           title: '方案名称',
-         
+
           dataIndex: 'planName',
         },
         {
           title: '制定时间',
-       
+
           dataIndex: 'formulateTime',
         },
         {
           title: '制定人员',
-         
+
           dataIndex: 'formulateUserName',
         },
         {
           title: '执行科室',
-        
+
           // dataIndex: 'executeDept',
           scopedSlots: { customRender: 'executeDept' },
         },
         {
           title: '随访名单',
-         
+
           dataIndex: 'metaConfigureName',
         },
         {
           title: '随访类型',
-        
+
           dataIndex: 'followType',
         },
         // {
         //   title: '方案执行',
-        
+
         //   dataIndex: 'planUserInfo',
         //   align: 'center',
         //   scopedSlots: { customRender: 'execute' },
@@ -186,14 +183,14 @@ export default {
 
         {
           title: '状态',
-         
+
           fixed: 'right',
           scopedSlots: { customRender: 'status' },
         },
         {
           title: '操作',
           fixed: 'right',
-          width: '70px',
+          width: '160px',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
         },
@@ -258,8 +255,16 @@ export default {
       })
     },
 
+    goDetail(record){
+      console.log("111111111111111111")
+      this.$refs.executeDetail.detail(record)
+    },
 
-    goExecute(record){
+
+
+
+
+    goExecute(record) {
       this.$refs.planExecute.execute(record)
     },
 
