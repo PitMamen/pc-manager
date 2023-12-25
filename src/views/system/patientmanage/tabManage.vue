@@ -107,7 +107,7 @@ import Vue from 'vue'
 import {
   getUserTags,
   getUserTagsTypeList,
-  queryHospitalList,
+  queryHospitalList2,
   deleteUserTagsType,
   deleteUserTag,
 } from '@/api/modular/system/posManage'
@@ -229,21 +229,9 @@ export default {
         hospitalName: '',
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
 
             this.treeData = res.data
           } else {

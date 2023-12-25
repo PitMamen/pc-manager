@@ -92,7 +92,6 @@
 import { STable } from '@/components'
 import { list } from '@/api/modular/system/sysapp'
 import {
-  queryHospitalList,
   getDeptsPersonal,
   sysDictDataLsit,
   getDepts,

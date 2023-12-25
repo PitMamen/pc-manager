@@ -186,7 +186,6 @@ import { STable } from '@/components'
 import { getMonthNow } from '@/utils/util'
 import {
   accessHospitals1,
-  getTbBizMerchantPageList,
   getOrderSettlementList,
   getalreadySettlementList,
   getOrderSettlementListGroupBy,

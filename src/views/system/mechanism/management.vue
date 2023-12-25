@@ -44,7 +44,6 @@
       :scroll="{ x: true }"
       ref="table"
       size="default"
-      :pagination="false"
       :columns="columns"
       :data-source="loadData"
       :expandedRowsChange="expandedRowKeys"
@@ -88,7 +87,7 @@
     
     <script>
 import { STable } from '@/components'
-import { tenantInit, queryHospitalList, updateStatus } from '@/api/modular/system/posManage'
+import { tenantInit, queryHospitalList2, updateStatus } from '@/api/modular/system/posManage'
 import addMechanism from './addMechanism'
 import modify from './modify'
 import providerConfig from './providerConfig'
@@ -245,34 +244,71 @@ export default {
      *
      * @param {} queryParams
      */
-    queryHospitalListOut(queryParams) {
+    // queryHospitalListOut(queryParams) {
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryParams)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalId)
+    //           this.$set(item, 'enableStatus', item.status != null ? item.status.value == 1 : 2)
+    //           if (item.hospitals && item.hospitals.length > 0) {
+    //             this.$set(item, 'children', item.hospitals)
+
+    //             item.hospitals.forEach((item1, index1) => {
+    //               this.$set(item1, 'key', item1.hospitalId)
+    //               this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
+    //             })
+    //           }
+    //         })
+
+    //         this.loadData = res.data
+    //       } else {
+    //         this.loadData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+
+
+/**
+     * 所属机构接口
+     */
+     queryHospitalListOut(queryParams) {
+      // let queryData = {
+      //   tenantId: '',
+      //   status: 1,
+      //   hospitalName: name,
+      // }
       this.confirmLoading = true
-      queryHospitalList(queryParams)
+      queryHospitalList2(queryParams)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalId)
-              this.$set(item, 'enableStatus', item.status != null ? item.status.value == 1 : 2)
-              if (item.hospitals && item.hospitals.length > 0) {
-                this.$set(item, 'children', item.hospitals)
-
-                item.hospitals.forEach((item1, index1) => {
-                  this.$set(item1, 'key', item1.hospitalId)
-                  this.$set(item1, 'enableStatus', item1.status != null ? item1.status.value == 1 : 2)
-                })
-              }
-            })
-
-            this.loadData = res.data
-          } else {
+            // res.data.forEach((item) => {
+            //   if (item.hospitalCode == this.localHospitalCode) {
+            //     this.queryParams.hospitalCode = item.hospitalCode
+            //   }
+            // })
             this.loadData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
+
+
+
+
+
+
+
+
+
 
     /**
      * 初始化操作

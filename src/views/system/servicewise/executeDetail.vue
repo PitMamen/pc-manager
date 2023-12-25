@@ -7,61 +7,56 @@
     @ok="handleSubmit"
     @cancel="handleCancel"
     :confirmLoading="false"
+    :footer="null"
   >
+    <!-- <template slot="footer">
+      <div>执行统计:</div>
+    </template> -->
+
     <a-card :bordered="false" class="card-top-pac1">
-      <div class="table-page-wrapper" style="margin-top: -2%">
+      <div class="table-page-wrapper">
         <div class="div-line-wrap">
-          <span class="span-item-name" style="width: 70px !important"
-            ><span style="color: red">*</span> 名单描述 :</span
-          >
+          <span class="span-item-name" style="">患者 :</span>
           <a-input
+            v-model="requesData.userName"
             class="span-item-value"
             :maxLength="30"
             style="width: 120px"
             allow-clear
-            placeholder="请输入内容"
-            @blur="focus(record)"
+            placeholder="请输入患者姓名查询"
+            @blur="focus(name)"
           />
 
-          <span class="span-item-name" style="margin-left: 20px; width: 70px !important"
-            ><span style="color: red">*</span> 数据库表 :</span
-          >
-          <a-input
-            class="span-item-value"
-            disabled
-            :maxLength="30"
-            style="width: 120px"
-            allow-clear
-          />
-
-          <span class="span-item-name" style="margin-left: 20px; width: 70px !important"
-            ><span style="color: red">*</span> 同步病历 :</span
-          >
-
-          <!-- <a-select  placeholder="请选择入组时需要同步的病历" allow-clear>
-            <a-select-option v-for="(item, index) in caseList" :title="item.value" :value="item.code" :key="index">{{
+          <span class="span-item-name" style="margin-left: 20px"> 状态 :</span>
+          <a-select placeholder="请选择状态" v-model="requesData.status" allow-clear>
+            <a-select-option v-for="(item, index) in StausList" :title="item.value" :value="item.code" :key="index">{{
               item.value
             }}</a-select-option>
-          </a-select> -->
+          </a-select>
 
-          <span class="span-item-name" style="margin-left: 20px; width: 100px !important"
-            ><span style="color: red">*</span> 支持分类查询 :</span
-          >
-          <!-- <a-switch :checked="isOpen" @click="Enable" style="margin-left: 1%" /> -->
+          <span class="span-item-name" style="margin-left: 20px"> 匹配时间 :</span>
+          <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+
+          <a-button style="margin-left: 10px" type="primary" icon="search" @click="search()">查询</a-button>
+          <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset()">重置</a-button>
         </div>
       </div>
+
       <a-table
         style="margin-top: 2%; overflow-y: auto; width: 1000px"
         ref="table"
         size="default"
         :scroll="{ y: 400, x: 0 }"
-        :pagination="false"
         :data-source="loadData"
         :columns="columns"
         :alert="true"
         :rowKey="(record) => record.code"
       >
       </a-table>
+      <div style="margin-top: -35px; display: flex; flex-direction: row">
+        执行统计：
+        <div style="color: #409eff">{{ statNum }}</div>
+      </div>
     </a-card>
   </a-modal>
 </template>
@@ -69,27 +64,27 @@
   
   
   <script>
-import { checkDetail, updateMetaConfigure, saveMetaConfigure, getBycode } from '@/api/modular/system/posManage'
+import { qryPlanBindInfo } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
+import moment from 'moment'
 export default {
   components: {
     STable,
   },
   data() {
     return {
-      clickTtime: new Date().getTime(),
+      dateFormat: 'YYYY-MM-DD',
+      createValue: [],
       loadData: [],
-      caseList: [],
-      synCasetype: undefined,
-      id: '', //表名ID
-      isOpen: false,
-      record: {},
-      metaName: '',
-      queryParams: {
-        databaseTableName: '',
-        metaName: '',
-        id: '',
+
+      requesData: {
+        planId: '',
+        status: undefined,
+        userName: '',
+        bindBegin: '',
+        bindEnd: '',
       },
+
       labelCol: {
         xs: { span: 24 },
         sm: { span: 5 },
@@ -99,105 +94,169 @@ export default {
         sm: { span: 15 },
       },
       visible: false,
-      detailList: [],
       confirmLoading: false,
-      form: this.$form.createForm(this),
-      title: '编辑名单',
-      dazdList: [
-        { code: 0, value: '无' },
-        { code: 1, value: '紧急联系人' },
-        { code: 2, value: '紧急电话' },
-        { code: 3, value: '微信OpenID' },
+      // form: this.$form.createForm(this),
+      title: '随访方案',
+
+      StausList: [
+        { code: 1, value: '未执行' },
+        { code: 2, value: '长期任务执行中' },
+        { code: 3, value: '完成' },
+        { code: 4, value: '取消' },
+        { code: 5, value: '终止' },
       ],
 
       // 表头
       columns: [
         {
-          title: '字段编码',
-          dataIndex: 'zdbm',
+          title: '序号',
+          dataIndex: 'xh',
+          width: 60,
+        },
+        {
+          title: '随访患者',
+          dataIndex: 'name',
+          width: 80,
+        },
+        {
+          title: '状态',
+          dataIndex: 'statusShow',
           width: 100,
         },
         {
-          title: '字段描述',
-          // dataIndex: 'fieldComment',
-          scopedSlots: { customRender: 'eleDes' },
-          // width: 250,
+          title: '出院诊断',
+          dataIndex: 'cyzdmc',
+          width: 180,
+          ellipsis: true,
         },
         {
-          title: '字段类型',
-          dataIndex: 'zdlx',
-          width: 100,
-        },
-        {
-          title: '字段大小',
-          dataIndex: 'fieldLength',
-          width: 100,
-        },
-        {
-          title: '默认值',
-          dataIndex: 'fieldDefaultValue',
+          title: '手术名称',
+          dataIndex: 'ssmc',
           width: 90,
         },
         {
-          title: '档案字段',
-          // dataIndex: 'dazd',
-          scopedSlots: { customRender: 'fileDes' },
-          // width: 100,
-        },
-        {
-          title: '显示',
-          dataIndex: 'show',
-          scopedSlots: { customRender: 'show' },
-          width: 90,
-        },
+          title: '住院号',
+          dataIndex: 'zyh',
 
-        {
-          title: '显示序号',
-          scopedSlots: { customRender: 'showIndex' },
           width: 100,
         },
-
         {
-          title: '查询条件',
-          scopedSlots: { customRender: 'queryCriteria' },
-          width: 80,
+          title: '出院时间',
+          dataIndex: 'cysj',
+          width: 120,
+          ellipsis: true,
         },
 
         {
-          title: '唯一索引',
-          dataIndex: 'index',
-          scopedSlots: { customRender: 'index' },
-          width: 80,
+          title: '出院科室',
+          dataIndex: 'cyksmc',
+          width: 100,
+          ellipsis: true,
+        },
+
+        {
+          title: '匹配时间',
+          dataIndex: 'createdTime',
+          width: 120,
+          ellipsis: true,
         },
       ],
     }
   },
   methods: {
     //初始化方法
-    detail(record){
-        console.log("8888888888")
-        this.visible = true
+    detail1(record) {
+      this.visible = true
+      console.log('record:', record)
+      this.title = record.planName
 
+      this.createValue = [
+        moment(this.formatDate(new Date()), this.dateFormat),
+        moment(this.formatDate(new Date()), this.dateFormat),
+      ]
+
+      // this.requesData.planId = record.id
+      this.requesData.planId = '243'
+      this.requesData.bindBegin = this.formatDate(new Date())
+      this.requesData.bindEnd = this.formatDate(new Date())
+
+      this.qryPlanBindInfoOut()
     },
 
+    // 绑定详情
+    qryPlanBindInfoOut() {
+      qryPlanBindInfo(this.requesData).then((res) => {
+        if (res.code == 0) {
+          if (res.data && res.data.rows) {
+            // debugger
+            //设置序号
+            res.data.rows.forEach((item, index) => {
+              this.$set(item, 'xh', (res.data.pageNo - 1) * res.data.pageSize + (index + 1))
+              item.xh = (res.data.pageNo - 1) * res.data.pageSize + (index + 1)
+              this.$set(item, 'statusShow', this.getType(item.status))
+            })
+            this.loadData = res.data.rows
+            this.statNum = res.data.statNum
+          } else {
+            return []
+          }
+        }
+      })
+    },
 
-    handleSubmit(){},
+    search() {
+      this.qryPlanBindInfoOut()
+    },
+    reset() {
+      this.requesData.userName = ''
+      this.requesData.status = undefined
+      this.qryPlanBindInfoOut()
+    },
 
-    handleCancel(){
-        this.visible = false
+    onChange(momentArr, dateArr) {
+      this.createValue = momentArr
+      this.requesData.bindBegin = dateArr[0]
+      this.requesData.bindEnd = dateArr[1]
+    },
+
+    formatDate(date) {
+      date = new Date(date)
+      let myyear = date.getFullYear()
+      let mymonth = date.getMonth() + 1
+      let myweekday = date.getDate()
+      mymonth < 10 ? (mymonth = '0' + mymonth) : mymonth
+      myweekday < 10 ? (myweekday = '0' + myweekday) : myweekday
+      return `${myyear}-${mymonth}-${myweekday}`
+    },
+
+    handleSubmit() {},
+
+    handleCancel() {
+      this.visible = false
+    },
+
+    getType(value) {
+      if (value == 1) {
+        return '未执行'
+      } else if (value == 2) {
+        return '执行中'
+      } else if (value == 3) {
+        return '完成'
+      } else if (value == 4) {
+        return '取消'
+      } else if (value == 5) {
+        return '终止'
+      }
     },
 
     //失去焦点
-    // focus(record) {
-    //   var queryParamData = {
-    //     id: record.id,
-    //     metaName: this.metaName,
-    //   }
-    //   this.updateMetaConfigure(queryParamData)
-    // },
-
-
-
+    focus(name) {
+      // var queryParamData = {
+      //   id: record.id,
+      //   metaName: this.metaName,
+      // }
+      // this.updateMetaConfigure(queryParamData)
+    },
   },
 }
 </script>
@@ -224,7 +283,7 @@ export default {
       display: inline-block;
     }
     .ant-select {
-      width: 205px !important;
+      width: 160px !important;
     }
   }
   .ant-form-inline {

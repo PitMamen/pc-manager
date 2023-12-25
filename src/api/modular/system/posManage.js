@@ -2808,8 +2808,6 @@ export function queryHospitalList2(data) {
 }
 
 
-
-
 /**
  * 可访问机构列表
  */
@@ -2841,6 +2839,18 @@ export function accessHospitals1(data) {
 export function accessHospitalsNew(data) {
   return axios({
     url: '/uam-api/hospital/accessHospitalsNew',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+/**
+ * 可访问机构列表 处方流转(一级结构)
+ */
+export function accessHospitalsNew1(data) {
+  return axios({
+    url: '/uam-api/hospital/accessHospitalsNew1',
     method: 'get',
     params: data,
   })
@@ -6322,5 +6332,15 @@ export function viewAuthDetail(data) {
     url: '/referral-api/patient/viewAuthDetail',
     method: 'get',
     params: data,
+  })
+}
+
+// 查看随访执行详情
+
+export function qryPlanBindInfo(data) {
+  return axios({
+    url: '/follow-api/follow/userplan/qryPlanBindInfo',
+    method: 'post',
+    data: data,
   })
 }

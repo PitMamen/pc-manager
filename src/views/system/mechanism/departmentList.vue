@@ -98,7 +98,6 @@ import { STable } from '@/components'
 import {
   getDepartmentListForReq,
   queryHospitalType,
-  queryHospitalList,
   queryHospitalList2,
   modifyDepartmentForReq,
 } from '@/api/modular/system/posManage'

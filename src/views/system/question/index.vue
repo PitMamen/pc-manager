@@ -274,7 +274,6 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.localHospitalCode = this.user.hospitalCode
-    console.log('333:', this.localHospitalCode)
     this.createValue = [
       moment(this.formatDate(new Date()), this.dateFormat),
       moment(this.formatDate(new Date()), this.dateFormat),
