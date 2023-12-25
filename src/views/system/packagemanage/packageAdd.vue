@@ -197,7 +197,7 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :disabled="isNurse || isTechnician" :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
+            <a-checkbox  :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -208,7 +208,7 @@
             allow-clear
             placeholder="请选择"
             v-model="allocationTypeDoc"
-            :disabled="!isDoctor || broadClassify == 1 || isNurse || isTechnician"
+            :disabled="!isDoctor || broadClassify == 1 "
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -222,7 +222,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson(0)" @focus="onAddPersonFocus(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span    :disabled="isNurse || isTechnician" style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
+            <span     style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
               >医生配置</span
             >
           </div>
@@ -230,7 +230,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :disabled="isDoctor || isTechnician" :checked="isNurse"  @click="goCheck(2)">护士参与</a-checkbox>
+            <a-checkbox  :checked="isNurse"  @click="goCheck(2)">护士参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -241,7 +241,7 @@
             allow-clear
             v-model="allocationTypeNurse"
             placeholder="请选择"
-            :disabled="!isNurse || broadClassify == 1 || isDoctor || isTechnician"
+            :disabled=" !isNurse || broadClassify == 1 "
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -255,7 +255,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(2)" @click="addPerson(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span    :disabled="isDoctor || isTechnician" style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
+            <span     style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
               >护士配置</span
             >
           </div>
@@ -264,7 +264,7 @@
         <!-- 技师参与 -->
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :disabled="isDoctor || isNurse" :checked="isTechnician"  @click="goCheck(4)">技师参与</a-checkbox>
+            <a-checkbox  :checked="isTechnician"  @click="goCheck(4)">技师参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -275,7 +275,7 @@
             allow-clear
             v-model="allocationTypeTechnician"
             placeholder="请选择"
-            :disabled="!isTechnician || broadClassify == 1 || isDoctor || isNurse"
+            :disabled="!isTechnician || broadClassify == 1 "
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -289,7 +289,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(3)" @click="addPerson(2)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span   :disabled="isDoctor || isNurse" style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
+            <span    style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
               >技师配置</span
             >
           </div>
@@ -994,28 +994,28 @@ export default {
       console.log('goCheck:' + type)
       if (type == 1) {
         this.isDoctor = !this.isDoctor
-        if (this.broadClassify == 1 && this.isDoctor) {
-          this.isNurse = false
-          this.isTechnician = false
-          this.nameNurse = ''
-          this.nameTechnician = ''
-        }
+        // if (this.broadClassify == 1 && this.isDoctor) {
+        //   this.isNurse = false
+        //   this.isTechnician = false
+        //   this.nameNurse = ''
+        //   this.nameTechnician = ''
+        // }
       } else if (type == 2) {
         this.isNurse = !this.isNurse
-        if (this.broadClassify == 1 && this.isNurse) {
-          this.isDoctor = false
-          this.isTechnician = false
-          this.nameDoc = ''
-          this.nameTechnician = ''
-        }
+        // if (this.broadClassify == 1 && this.isNurse) {
+        //   this.isDoctor = false
+        //   this.isTechnician = false
+        //   this.nameDoc = ''
+        //   this.nameTechnician = ''
+        // }
       } else if (type == 4) {
         this.isTechnician = !this.isTechnician
-        if (this.broadClassify == 1 && this.isTechnician) {
-          this.isDoctor = false
-          this.isNurse = false
-          this.nameNurse = ''
-          this.nameDoc = ''
-        }
+        // if (this.broadClassify == 1 && this.isTechnician) {
+        //   this.isDoctor = false
+        //   this.isNurse = false
+        //   this.nameNurse = ''
+        //   this.nameDoc = ''
+        // }
       } else {
         if (this.broadClassify == 1) {
           return
@@ -1028,6 +1028,9 @@ export default {
         // this.nameNurse = ''
         // this.nameTeam = ''
       }
+      console.log('this.isDoctor='+this.isDoctor +' '+this.nameDoc)
+      console.log('this.isNurse='+this.isNurse+' '+this.nameNurse)
+      console.log('this.isTechnician='+this.isTechnician+' '+this.nameNurse)
     },
 
     handlePlan() {
@@ -1388,7 +1391,8 @@ export default {
         delete tempData.gatherHealthFlag
       }
 
-      console.log('tempData add', JSON.stringify(tempData))
+      console.log('tempData add', tempData)
+      
 
       this.confirmLoading = true
       saveOrUpdate(tempData)

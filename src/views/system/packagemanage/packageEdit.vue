@@ -236,7 +236,7 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :disabled="isNurse || isTechnician" :checked="isDoctor" @click="goCheck(1)"
+            <a-checkbox  :checked="isDoctor" @click="goCheck(1)"
               >医生参与</a-checkbox
             >
             <!-- <span style="margin-left: 8px">医生参与</span> -->
@@ -250,7 +250,7 @@
             allow-clear
             placeholder="请选择"
             v-model="allocationTypeDoc"
-            :disabled="!isDoctor || broadClassify == 1 || isNurse || isTechnician"
+            :disabled="!isDoctor || broadClassify == 1 "
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -275,7 +275,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :disabled="isDoctor || isTechnician" :checked="isNurse" @click="goCheck(2)"
+            <a-checkbox :checked="isNurse" @click="goCheck(2)"
               >护士参与</a-checkbox
             >
             <!-- <span style="margin-left: 8px">护士参与</span> -->
@@ -289,7 +289,7 @@
             allow-clear
             v-model="allocationTypeNurse"
             placeholder="请选择"
-            :disabled="!isNurse || broadClassify == 1 || isDoctor || isTechnician"
+            :disabled="!isNurse || broadClassify == 1 "
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -304,7 +304,7 @@
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
             <span
-              :disabled="isDoctor || isTechnician"
+              
               style="width: 50px; color: #1890ff; margin-left: 2%"
               :class="{ 'checked-btn': !isNurse }"
               >护士配置</span
@@ -315,7 +315,7 @@
         <!-- 技师参与 -->
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox :disabled="isDoctor || isNurse" :checked="isTechnician" @click="goCheck(4)"
+            <a-checkbox  :checked="isTechnician" @click="goCheck(4)"
               >技师参与</a-checkbox
             >
           </div>
@@ -328,7 +328,7 @@
             allow-clear
             v-model="allocationTypeTechnician"
             placeholder="请选择"
-            :disabled="!isTechnician || broadClassify == 1 || isDoctor || isNurse"
+            :disabled="!isTechnician || broadClassify == 1 "
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -343,7 +343,7 @@
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
             <span
-              :disabled="isDoctor || isNurse"
+              
               style="width: 50px; color: #1890ff; margin-left: 2%"
               :class="{ 'checked-btn': !isTechnician }"
               >技师配置</span
@@ -1341,30 +1341,30 @@ export default {
       // this.broadClassify == 1 &&
       if (type == 1) {
         this.isDoctor = !this.isDoctor
-        if (this.isDoctor) {
-          this.isNurse = false
-          this.isTechnician = false
-          this.nameNurse = ''
-          this.nameTechnician = ''
-        }
+        // if (this.isDoctor) {
+        //   this.isNurse = false
+        //   this.isTechnician = false
+        //   this.nameNurse = ''
+        //   this.nameTechnician = ''
+        // }
       } else if (type == 2) {
         this.isNurse = !this.isNurse
-        if (this.isNurse) {
-          this.isDoctor = false
-          this.isTechnician = false
-          this.nameDoc = ''
-          this.nameTechnician = ''
-        }
+        // if (this.isNurse) {
+        //   this.isDoctor = false
+        //   this.isTechnician = false
+        //   this.nameDoc = ''
+        //   this.nameTechnician = ''
+        // }
 
         console.log('VVV:', this.nameDoc, this.broadClassify)
       } else if (type == 4) {
         this.isTechnician = !this.isTechnician
-        if (this.isTechnician) {
-          this.isDoctor = false
-          this.isNurse = false
-          this.nameDoc = ''
-          this.nameNurse = ''
-        }
+        // if (this.isTechnician) {
+        //   this.isDoctor = false
+        //   this.isNurse = false
+        //   this.nameDoc = ''
+        //   this.nameNurse = ''
+        // }
       } else {
         if (this.broadClassify == 1) {
           return
@@ -1649,6 +1649,7 @@ export default {
       if (this.canConfigTeam) {
         //组装团队
         let commodityNew = []
+        //医生
         if (this.isDoctor) {
           if (tempData.commodityPkgManageReqs[0].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择医生！')
@@ -1663,7 +1664,9 @@ export default {
           tempData.commodityPkgManageReqs[0].teamType = 1
           tempData.commodityPkgManageReqs[0].departmentId = this.docDepartmentId
           commodityNew.push(tempData.commodityPkgManageReqs[0])
-        } else if (this.isNurse) {
+        }  
+        //护士
+        if (this.isNurse) {
           if (tempData.commodityPkgManageReqs[1].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择护士！')
             return
@@ -1680,7 +1683,7 @@ export default {
         }
 
         // 技师
-        else if (this.isTechnician) {
+         if (this.isTechnician) {
           if (tempData.commodityPkgManageReqs[2].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择技师！')
             return
