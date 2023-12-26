@@ -31,7 +31,7 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
-            <a-tree-select
+            <!-- <a-tree-select
               v-model="packageData.hospitalCode"
               style="min-width: 120px"
               @focus="onComFocus"
@@ -40,7 +40,23 @@
               placeholder="请选择"
               tree-default-expand-all
             >
-            </a-tree-select>
+            </a-tree-select> -->
+            <a-select
+              v-model="packageData.hospitalCode"
+              placeholder="请选择机构"
+              show-search
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              style="min-width: 120px"
+              @change="onHospitalSelectChange"
+              @search="onHospitalSelectSearch"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+                item.hospitalName
+              }}</a-select-option>
+            </a-select>
           </div>
         </div>
 
@@ -147,7 +163,9 @@
             style="height: 80px; min-height: 100px; margin-top: -7px; margin-left: 60px; width: 80%"
             :maxLength="1000"
           />
-          <span style="position: absolute; margin-top: 70px; margin-left: -50px">{{ packageData.intro ? packageData.intro.length : 0 }}/1000</span>
+          <span style="position: absolute; margin-top: 70px; margin-left: -50px"
+            >{{ packageData.intro ? packageData.intro.length : 0 }}/1000</span
+          >
         </div>
 
         <!-- 团队擅长 -->
@@ -162,7 +180,9 @@
             style="height: 80px; min-height: 100px; margin-top: -7px; margin-left: 60px; width: 80%"
             :maxLength="300"
           />
-          <span style="position: absolute; margin-top: 70px; margin-left: -50px">{{ packageData.skill ? packageData.skill.length : 0 }}/300</span>
+          <span style="position: absolute; margin-top: 70px; margin-left: -50px"
+            >{{ packageData.skill ? packageData.skill.length : 0 }}/300</span
+          >
         </div>
 
         <!-- 团队荣耀 -->
@@ -177,7 +197,9 @@
             style="height: 80px; min-height: 100px; margin-top: -7px; margin-left: 60px; width: 80%"
             :maxLength="300"
           />
-          <span style="position: absolute; margin-top: 70px; margin-left: -50px">{{ packageData.glory ? packageData.glory.length : 0 }}/300</span>
+          <span style="position: absolute; margin-top: 70px; margin-left: -50px"
+            >{{ packageData.glory ? packageData.glory.length : 0 }}/300</span
+          >
         </div>
       </div>
 
@@ -305,7 +327,7 @@
     <script>
 import {
   getManualCommodityClassify,
-  queryHospitalList,
+  queryHospitalList2,
   accessTenants,
   qryFollowPlanByFollowType,
   getDictData,
@@ -386,6 +408,8 @@ export default {
       canConfigTeam: true,
       broadClassify: '',
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       treeDataSubject: [],
       roleList: [],
       serviceData: [],
@@ -462,7 +486,9 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
     //   this.commodityPkgId = this.$route.query.commodityPkgId
     //   console.log('this.commodityPkgId', this.commodityPkgId)
@@ -486,14 +512,12 @@ export default {
   methods: {
     moment,
     async init() {
-      console.log('调用！！！！！！！！！！！！！！！！！！')
       // this.commodityPkgId = this.$route.query.commodityPkgId
       // console.log(' 555555:', this.commodityPkgId)
       //await 都是获取常量的方法
       await this.getTenantListOut()
       await this.qryServiceItemListOut('', true)
-      //   await this.getDetailData()
-      await this.queryHospitalListOut()
+      await this.queryHospitalListOut(undefined)
       await this.getDictDataOut()
       await this.getDictDataOutTEAMROLE()
       await this.getCommodityClassifyOut()
@@ -576,7 +600,7 @@ export default {
 
       if (code) {
         let findItem = this.serviceTypes.find((item) => item.code == code)
-        console.log("UUU:",findItem)
+        console.log('UUU:', findItem)
         if (findItem) {
           this.typeCode = findItem.value
         }
@@ -667,38 +691,80 @@ export default {
         }
       })
     },
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.packageData.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
     },
 
     /**
@@ -983,7 +1049,7 @@ export default {
       }
 
       this.$refs.configPeople.add(
-        2,  //新增标致 
+        2, //新增标致
         '',
         this.packageData.tenantId,
         this.packageData.hospitalCode,
@@ -1002,11 +1068,11 @@ export default {
      * @param {*} commodityPkgManageItemReqs
      */
     handleAddPeople(index, commodityPkgManageItemReqs, departmentId) {
-    //   console.log('ddd:', commodityPkgManageItemReqs)
-    //   if (this.packageData.pkgManageItemNames == null) {
-    //       this.packageData.pkgManageItemNames = ''
-    //     }
-        this.packageData.pkgManageItemNames = ''
+      //   console.log('ddd:', commodityPkgManageItemReqs)
+      //   if (this.packageData.pkgManageItemNames == null) {
+      //       this.packageData.pkgManageItemNames = ''
+      //     }
+      this.packageData.pkgManageItemNames = ''
       this.packageData.commodityPkgManageItemReqs = commodityPkgManageItemReqs
       commodityPkgManageItemReqs.forEach((item, indexReqs) => {
         if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1150,10 +1216,10 @@ export default {
         return
       }
 
-    //   if (!tempData.glory) {
-    //     this.$message.error('请输入团队荣耀')
-    //     return
-    //   }
+      //   if (!tempData.glory) {
+      //     this.$message.error('请输入团队荣耀')
+      //     return
+      //   }
 
       //组装图片
       if (this.fileList.length == 0) {

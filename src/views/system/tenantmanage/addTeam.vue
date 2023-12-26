@@ -13,15 +13,6 @@
         <div class="div-part-left">
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-tree-select
-              v-model="checkData.hospitalCode"
-              style="min-width: 180px; height: 28px"
-              :tree-data="treeData"
-              placeholder="请选择机构"
-              tree-default-expand-all
-              @select="selectChange"
-            >
-            </a-tree-select>
             <!-- <a-select
                 style="margin-top: 1px"
                 show-search
@@ -34,6 +25,23 @@
                   item.hospitalName
                 }}</a-select-option>
               </a-select> -->
+
+            <a-select
+              v-model="checkData.hospitalCode"
+              placeholder="请选择机构"
+              show-search
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              class="span-item-value"
+              @change="onHospitalSelectChange"
+              @search="onHospitalSelectSearch"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+                item.hospitalName
+              }}</a-select-option>
+            </a-select>
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>团队名称:</span>
@@ -66,10 +74,10 @@
     
     
     <script>
-import { addTdHealthyTeam, queryHospitalList } from '@/api/modular/system/posManage'
+import { addTdHealthyTeam, queryHospitalList2 } from '@/api/modular/system/posManage'
 
-import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
+import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import Vue from 'vue'
 export default {
   components: {},
@@ -84,6 +92,8 @@ export default {
       fileList: [],
       danandataList: [],
       treeData: [],
+      localHospitalCode:undefined,
+      fetching:false,
       checkData: {
         description: '',
         hospitalCode: undefined,
@@ -106,10 +116,14 @@ export default {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
       this.clearData()
       this.visible = true
+      this.user = Vue.ls.get(TRUE_USER)
+      if (this.user) {
+        this.localHospitalCode = this.user.hospitalCode
+      }
       this.confirmLoading = false
       this.record = record
 
-      this.queryHospitalListOut()
+      this.queryHospitalListOut(undefined)
     },
 
     /**
@@ -119,38 +133,81 @@ export default {
      *
      * @param {}
      */
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+
+    /**
+     * 所属机构接口
+     */
+     queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.checkData.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
     },
 
     handleSubmit() {
@@ -168,9 +225,7 @@ export default {
       this.addTeamOut(this.checkData)
     },
 
-    selectChange(value){
-
-},
+    selectChange(value) {},
 
     //修改团队
     addTeamOut(postData) {

@@ -3,7 +3,7 @@
     <a-spin :spinning="confirmLoading">
       <div class="div-service-control">
         <div class="div-service-left-control">
-          <a-tree-select
+          <!-- <a-tree-select
             v-model="queryParam.hospitalCode"
             style="width: 170px; height: 28px;margin-left: 10px;margin-top: 10px;"
             :tree-data="treeData"
@@ -11,10 +11,26 @@
             tree-default-expand-all
             @select="selectChange"
           >
-          </a-tree-select>
+          </a-tree-select> -->
+          <a-select
+            v-model="queryParam.hospitalCode"
+            placeholder="请选择机构"
+            show-search
+            :filter-option="false"
+            :not-found-content="fetching ? undefined : null"
+            allow-clear
+            style="width: 180px; padding-left: 10px; padding-top: 10px"
+            @change="onHospitalSelectChange"
+            @search="onHospitalSelectSearch"
+          >
+            <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+            <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+              item.hospitalName
+            }}</a-select-option>
+          </a-select>
 
-          <div class="left-content" >
-            <div class="typeadd" @click="$refs.addTeam.addTeam()" style=" margin-right: 10px">
+          <div class="left-content">
+            <div class="typeadd" @click="$refs.addTeam.addTeam()" style="margin-right: 10px">
               新增<a-icon type="plus-circle" :style="{ color: '#409EFF' }" style="margin-right: 5px" />
             </div>
             <div class="ksview" v-for="(item, index) in leftListData" :key="index">
@@ -25,7 +41,7 @@
               >
                 {{ item.teamName }}
               </div>
-              <div class="content-right" style=" margin-right: 10px">
+              <div class="content-right" style="margin-right: 10px">
                 <a style="color: #409eff; margin-right: 10px" @click="$refs.modifyTeam.editModel(item)">修改</a>
                 <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="goDelete(item)">
                   <a>删除</a>
@@ -40,9 +56,13 @@
           </div>
         </div>
         <div class="div-service-right-control">
-          <div class="table-page-search-wrapper" style="margin-bottom:-20px">
+          <div class="table-page-search-wrapper" style="margin-bottom: -20px">
             <div class="table-operator" style="overflow: hidden; margin-top: 0px; margin-bottom: 0px">
-              <a-button :disabled="!leftListData || leftListData.length == 0" icon="plus" style="float: right; margin-right: 0" @click="$refs.addTeamUser.addUser(params.id)"
+              <a-button
+                :disabled="!leftListData || leftListData.length == 0"
+                icon="plus"
+                style="float: right; margin-right: 0"
+                @click="$refs.addTeamUser.addUser(params.id)"
                 >新增成员</a-button
               >
             </div>
@@ -62,7 +82,6 @@
                 <a><a-icon style="margin-right: 5px" type="delete"></a-icon>移除</a>
               </a-popconfirm>
             </span>
-
           </s-table>
         </div>
       </div>
@@ -76,14 +95,14 @@
   <script>
 import { STable } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 import modifyTeam from './modifyTeam'
 import addTeam from './addTeam'
 import addTeamUser from './addTeamUser'
-import Vue from 'vue'
 import {
   getTdHealthyTeamUserPageList,
   getTdHealthyTeamPageList,
-  queryHospitalList,
+  queryHospitalList2,
   deleteTdHealthyTeam,
   deleteTdHealthyTeamUser,
 } from '@/api/modular/system/posManage'
@@ -99,6 +118,9 @@ export default {
   data() {
     return {
       // 高级搜索 展开/关闭
+      treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       leftListData: [],
       confirmLoading: false,
       labelCol: {
@@ -188,10 +210,13 @@ export default {
     }
   },
 
-
   created() {
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.queryHospitalListOut(undefined)
     this.getTdHealthyTeamPageListOut()
-    this.queryHospitalListOut()
   },
 
   methods: {
@@ -229,38 +254,82 @@ export default {
      *
      * @param {}
      */
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParam.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.getTdHealthyTeamPageListOut(value)
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+      this.getTdHealthyTeamPageListOut(value)
     },
 
     //健康团队分页列表  （左侧）
@@ -271,12 +340,12 @@ export default {
             res.data.records.forEach((item) => {
               item.checked = false
             })
-           
+
             this.leftListData = res.data.records
             this.params.id = this.leftListData[0].id //默认第一个 id
             this.leftListData[0].checked = true
           } else {
-            this.leftListData=[]
+            this.leftListData = []
             this.params.id = -1 //默认第一个 id
           }
           this.$refs.table.refresh()
@@ -336,16 +405,14 @@ export default {
     },
 
     handleOk() {
-      console.log("77777777777777")
+      console.log('77777777777777')
       this.$refs.table.refresh()
     },
 
- 
-    refreshLeftList(){
-      console.log("88888888888")
+    refreshLeftList() {
+      console.log('88888888888')
       this.getTdHealthyTeamPageListOut() //刷新健康团队列表 (左侧)
     },
-
 
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -382,7 +449,6 @@ export default {
     color: #000;
   }
 }
-
 
 .no-data {
   height: 300px;

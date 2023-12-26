@@ -3,7 +3,7 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
@@ -11,7 +11,23 @@
           allow-clear
           tree-default-expand-all
         >
-        </a-tree-select>
+        </a-tree-select> -->
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
@@ -51,15 +67,8 @@
         <a @click="$refs.addUser.editModel(record,'signing')">{{record.user_name}}</a>
       </span>
 
-
-      
-
-
-
     </s-table>
-
     <add-User ref="addUser" @ok="handleOk" />
-
   </a-card>
 </template>
   
@@ -69,13 +78,11 @@ import { STable } from '@/components'
 import addUser from '../tenantmanage/addUser'
 
 import {
-  queryHospitalList,
   getDeptsPersonal,
   getDepts,
-  searchDoctorUser,
   getCommodityClassify,
   getUserInfoHvyogoPageList,
-  accessHospitals
+  accessHospitals1
 } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
@@ -90,6 +97,8 @@ export default {
       keshiData: [],
       originData: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       idArr: [],
       docList: [],
       queryParams: {
@@ -177,8 +186,6 @@ export default {
                 totalPage: res.data.total / parameter.pageSize,
                 rows: res.data.records,
               }
-
-              
               data.rows.forEach((item, index) => {
                 this.$set(item, 'userId', item.user_id)
               })
@@ -192,7 +199,10 @@ export default {
 
   created() {
     this.user = Vue.ls.get(TRUE_USER)
-    console.log(this.user)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.queryHospitalListOut(undefined)
     //管理员和随访管理员查全量科室，其他身份（医生护士客服，查自己管理科室的随访）只能查自己管理科室的问卷
     if (this.user.roleId == 7 || this.user.roleName == 'admin') {
       getDepts().then((res) => {
@@ -220,8 +230,6 @@ export default {
         }
       })
     }
-    this.queryHospitalListOut()
-
     getCommodityClassify({}).then((res) => {
       if (res.code == 0) {
         this.docList = res.data
@@ -231,10 +239,6 @@ export default {
     })
   },
   methods: {
-
-
-
-
     goExamine(record) {
       let data = JSON.parse(JSON.stringify(record))
       this.$set(data, 'time', this.queryParams.createdTime)
@@ -253,44 +257,91 @@ export default {
     },
     /**
      * 所属机构接口
+      */ 
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   accessHospitals(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+/**
+     * 所属机构接口
      */
-    /**
-     *
-     * @param {}
-     */
-    queryHospitalListOut() {
+     queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      accessHospitals(queryData)
+      accessHospitals1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
+
+
+
+
+
+
+
+
     onDepartmentChange(index) {
       console.log('index=' + index)
       if (index == undefined) {

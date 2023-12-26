@@ -22,7 +22,7 @@
               v-model="checkData.channel"
               placeholder="请选择商户类型"
               allow-clear
-              style=" height: 28px"
+              style="height: 28px"
               class="ant-select-selection--single"
             >
               <a-select-option v-for="item in payeeType" :key="item.code" :value="item.code">{{
@@ -30,12 +30,7 @@
               }}</a-select-option>
             </a-select>
 
-            <a-checkbox
-              @change="checkBill"
-              v-model="isChecked"
-              :checked="isChecked"
-              style="margin-left: 10px"
-            />
+            <a-checkbox @change="checkBill" v-model="isChecked" :checked="isChecked" style="margin-left: 10px" />
             <div style="margin-left: 10px">参与对账</div>
           </div>
 
@@ -78,7 +73,7 @@
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
             <div style="width: 85% !important">
-              <a-tree-select
+              <!-- <a-tree-select
                 :dropdown-style="{ 'margin-top': '215px', height: '140px', overflow: 'auto' }"
                 :tree-data="treeData"
                 placeholder="请选择机构"
@@ -87,7 +82,23 @@
                 v-model="hospitalName"
                 class="ant-select-selection--bb"
               >
-              </a-tree-select>
+              </a-tree-select> -->
+              <a-select
+                v-model="checkData.hospitalCode"
+                placeholder="请选择机构"
+                show-search
+                class="span-item-value"
+                :filter-option="false"
+                :not-found-content="fetching ? undefined : null"
+                allow-clear
+                @change="onHospitalSelectChange"
+                @search="onHospitalSelectSearch"
+              >
+                <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+                <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+                  item.hospitalName
+                }}</a-select-option>
+              </a-select>
             </div>
           </div>
 
@@ -136,7 +147,7 @@
   
   
   <script>
-import { queryHospitalList, modifyTbMerchant, addTbMerchant } from '@/api/modular/system/posManage'
+import { queryHospitalList2, modifyTbMerchant, addTbMerchant } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
 import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
@@ -154,6 +165,7 @@ export default {
       // 高级搜索 展开/关闭
       danandataList: [],
       treeData: [],
+      localHospitalCode: undefined,
       checkData: {
         name: '', //商户名称
         channel: undefined, //商户类型
@@ -247,7 +259,11 @@ export default {
       this.clearData()
       this.visible = true
       this.confirmLoading = false
-      this.queryHospitalListOut()
+      this.user = Vue.ls.get(TRUE_USER)
+      if (this.user) {
+        this.localHospitalCode = this.user.hospitalCode
+      }
+      this.queryHospitalListOut(undefined)
     },
     //修改
     editModel(record) {
@@ -266,7 +282,7 @@ export default {
         this.paramJsonList = keyData
       }
       this.isChecked = record.billFlag == 1 ? true : false
-      this.queryHospitalListOut()
+      this.queryHospitalListOut(undefined)
     },
 
     /**
@@ -276,39 +292,88 @@ export default {
      *
      * @param {}
      */
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalId)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalId)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+
+/**
+     * 所属机构接口
+     */
+     queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalId)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalId)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.checkData.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
+
+
+
+
+
 
     handleSubmit() {
       var object = {}
@@ -352,7 +417,7 @@ export default {
         namePy: this.checkData.namePy,
         merchantId: this.checkData.merchantId,
         status: 1,
-        billFlag: this.isChecked?1:0,
+        billFlag: this.isChecked ? 1 : 0,
       }
       console.log('qqqq:', this.isChecked, postData)
       this.confirmLoading = true

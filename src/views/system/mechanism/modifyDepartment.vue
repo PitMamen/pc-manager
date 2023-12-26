@@ -10,14 +10,30 @@
   >
     <div class="div-service-user">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 上级机构 :</span>
-      <a-tree-select
+      <!-- <a-tree-select
         v-model="queryParams.hospitalCode"
         style="min-width: 248px; margin-left: 5px"
         :tree-data="treeData"
         placeholder="请选择"
         tree-default-expand-all
       >
-      </a-tree-select>
+      </a-tree-select> -->
+      <a-select
+        v-model="queryParams.hospitalCode"
+        placeholder="请选择机构"
+        show-search
+        :filter-option="false"
+        :not-found-content="fetching ? undefined : null"
+        allow-clear
+        style="min-width: 248px; margin-left: 5px"
+        @change="onHospitalSelectChange"
+        @search="onHospitalSelectSearch"
+      >
+        <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+        <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+          item.hospitalName
+        }}</a-select-option>
+      </a-select>
 
       <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
         ><span style="color: red">*</span> 科室名称 :</span
@@ -85,8 +101,6 @@
       />
     </div>
 
-
-
     <div class="div-service-user" style="margin-top: 10px">
       <span class="span-item-name" style="margin-top: 5px; margin-left: 5px"> 监管编码 :</span>
       <a-select
@@ -95,7 +109,7 @@
         allow-clear
         show-search
         :filter-option="false"
-          :not-found-content="fetching ? undefined : null"
+        :not-found-content="fetching ? undefined : null"
         placeholder="请选择科室类型"
         @search="onSelectSearch"
       >
@@ -104,12 +118,6 @@
         }}</a-select-option>
       </a-select>
     </div>
-
-
-
-
-
-
 
     <div class="display-item" style="margin-left: 5px; margin-top: 10px">
       <span style="margin-top: 10px"> 科室属性 :</span>
@@ -154,13 +162,13 @@
     <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
       <span class="span-item-name" style="margin-top: 5px"> 所属学科 :</span>
       <a-tree-select
-              v-model="queryParams.subjectCode"
-              style="min-width: 87%; margin-left: 5px;height: 30px;"
-              :tree-data="treeDataSub"
-              placeholder="请选择"
-              tree-default-expand-all
-            >
-            </a-tree-select>
+        v-model="queryParams.subjectCode"
+        style="min-width: 87%; margin-left: 5px; height: 30px"
+        :tree-data="treeDataSub"
+        placeholder="请选择"
+        tree-default-expand-all
+      >
+      </a-tree-select>
     </div>
 
     <div class="div-service-user" style="margin-top: 10px; margin-left: 10px">
@@ -168,7 +176,7 @@
 
       <a-select
         mode="multiple"
-        style="min-width: 87%; margin-left: 5px;height: 30px;"
+        style="min-width: 87%; margin-left: 5px; height: 30px"
         v-model="idArray"
         allow-clear
         placeholder="请选择病种"
@@ -192,7 +200,7 @@ import {
   queryHospitalLevel,
   queryHospitalType,
   parent,
-  queryHospitalList,
+  queryHospitalList2,
   getDictDataForCodeDepartType,
   getDiseaseTypePageList,
   getTdMedicalSubjectPageListForVer,
@@ -211,7 +219,7 @@ export default {
   },
   data() {
     return {
-      idArray:[],
+      idArray: [],
       bb: '1',
       userId: '',
       timeStr: '',
@@ -227,6 +235,7 @@ export default {
       record: {},
       findItemData: {},
       treeData: [],
+      localHospitalCode: undefined,
       treeDataSub: [],
       diseaseTypeListData: [],
       queryParams: {
@@ -239,10 +248,10 @@ export default {
         isFullDisease: '',
         departmentIntroduce: '',
         departmentId: '',
-        supervisionCode:undefined,
+        supervisionCode: undefined,
         departmentType: undefined,
         managerDiseaseType: undefined,
-        subjectCode:undefined,
+        subjectCode: undefined,
       },
 
       labelCol: {
@@ -273,12 +282,15 @@ export default {
       this.visible = true
       this.reset()
       this.idArray = []
-      if(record.manager_disease_type){
-
-        this.idArray = record.manager_disease_type.split(",")
+      this.user = Vue.ls.get(TRUE_USER)
+      if (this.user) {
+        this.localHospitalCode = this.user.hospitalCode
+      }
+      if (record.manager_disease_type) {
+        this.idArray = record.manager_disease_type.split(',')
         let arr = []
         this.idArray.forEach((item, index) => {
-          if(item!=''){
+          if (item != '') {
             arr.push(parseInt(item))
           }
         })
@@ -302,37 +314,30 @@ export default {
       this.internetType = record.is_internet_hospital == 1
       this.isFullDiseaseType = record.is_full_disease == 1
       // this.getParentList()
-      this.queryHospitalListOut()
+      this.queryHospitalListOut(undefined)
       this.getDictDataForCodeorgDepartTypeOut()
       this.getDiseaseTypePageListOut()
       this.getgetTdMedicalSubjectPageListForVerOut('')
       this.gettreeMedicalSubjectsOut()
     },
 
-
- //编码搜索
- onSelectSearch(value) {
+    //编码搜索
+    onSelectSearch(value) {
       this.treeCodeData = []
       this.getgetTdMedicalSubjectPageListForVerOut(value)
     },
 
-
     getgetTdMedicalSubjectPageListForVerOut(name) {
       this.fetching = true
-      getTdMedicalSubjectPageListForVer({subjectName:name})
-        .then((res) => {
-          this.fetching = false
-          if (res.code == 0 && res.data.length > 0) {
-            this.treeCodeData = res.data
-          } else {
-            this.treeCodeData =[]
-          }
-          
-        })
+      getTdMedicalSubjectPageListForVer({ subjectName: name }).then((res) => {
+        this.fetching = false
+        if (res.code == 0 && res.data.length > 0) {
+          this.treeCodeData = res.data
+        } else {
+          this.treeCodeData = []
+        }
+      })
     },
-
-
-
 
     /**
      * 获取病种列表
@@ -354,27 +359,22 @@ export default {
         })
     },
 
-
-   /**
-    * 病种选择
-    */
-    onChangeDisease(id){
-      // console.log("KKKK:",this.idArray)
-      let premiss = this.idArray.join(",")
-      this.queryParams.managerDiseaseType = premiss
-
-    },
-    
     /**
-    * 病种改变
-    */
-    changeDis(id){
-      this.idArray = id
-      this.queryParams.managerDiseaseType=this.idArray.join(",")
+     * 病种选择
+     */
+    onChangeDisease(id) {
+      // console.log("KKKK:",this.idArray)
+      let premiss = this.idArray.join(',')
+      this.queryParams.managerDiseaseType = premiss
     },
 
-
-
+    /**
+     * 病种改变
+     */
+    changeDis(id) {
+      this.idArray = id
+      this.queryParams.managerDiseaseType = this.idArray.join(',')
+    },
 
     /**
      * 组织类型接口
@@ -448,39 +448,88 @@ export default {
      *
      * @param {}
      */
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+/**
+     * 所属机构接口
+     */
+     queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
+
+
+
+
+
+
 
     /**
      * 增加序号
@@ -540,32 +589,32 @@ export default {
         })
     },
 
-            //学科列表
+    //学科列表
     gettreeMedicalSubjectsOut() {
       gettreeMedicalSubjects().then((res) => {
         if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              // this.$set(item, 'key', item.subjectClassifyId)
-              // this.$set(item, 'value', item.subjectClassifyId)
-              this.$set(item, 'key', item.subjectCode)
-              this.$set(item, 'value', item.subjectCode)
-              this.$set(item, 'title', item.subjectClassifyName)
-              this.$set(item, 'title', item.subjectClassifyName)
-              this.$set(item, 'disabled', true)
+          res.data.forEach((item, index) => {
+            // this.$set(item, 'key', item.subjectClassifyId)
+            // this.$set(item, 'value', item.subjectClassifyId)
+            this.$set(item, 'key', item.subjectCode)
+            this.$set(item, 'value', item.subjectCode)
+            this.$set(item, 'title', item.subjectClassifyName)
+            this.$set(item, 'title', item.subjectClassifyName)
+            this.$set(item, 'disabled', true)
 
-              item.children.forEach((item1, index1) => {
-                // this.$set(item1, 'key', item1.subjectClassifyId)
-                // this.$set(item1, 'value', item1.subjectClassifyId)
-                this.$set(item1, 'key', item1.subjectCode)
-                this.$set(item1, 'value', item1.subjectCode)
-                this.$set(item1, 'title', item1.subjectClassifyName)
-              })
+            item.children.forEach((item1, index1) => {
+              // this.$set(item1, 'key', item1.subjectClassifyId)
+              // this.$set(item1, 'value', item1.subjectClassifyId)
+              this.$set(item1, 'key', item1.subjectCode)
+              this.$set(item1, 'value', item1.subjectCode)
+              this.$set(item1, 'title', item1.subjectClassifyName)
             })
+          })
 
-            this.treeDataSub = res.data
-          } else {
-            this.treeDataSub = res.data
-          }
+          this.treeDataSub = res.data
+        } else {
+          this.treeDataSub = res.data
+        }
       })
     },
 
@@ -601,10 +650,8 @@ export default {
       this.queryParams.isFullDisease = ''
       this.queryParams.departmentIntroduce = ''
       this.queryParams.hisId = ''
-      this.queryParams.supervisionCode=undefined,
-      this.queryParams.departmentType = undefined
+      ;(this.queryParams.supervisionCode = undefined), (this.queryParams.departmentType = undefined)
       this.queryParams.subjectCode = undefined
-     
     },
 
     /**
@@ -671,15 +718,14 @@ export default {
 
 <style lang="less" scoped>
 /deep/.ant-select-selection--multiple {
-    height: 30px !important;
-    min-height: 28px !important;
+  height: 30px !important;
+  min-height: 28px !important;
 }
 </style>
 
 
           
           <style lang="less">
-
 .dddd-r {
   display: flex;
   flex-direction: row;
@@ -689,9 +735,6 @@ export default {
     flex-direction: column;
   }
 }
-
-
-
 
 .div-title {
   margin-top: 10px;
@@ -717,7 +760,6 @@ export default {
   }
 }
 .table-page-wrapper {
-  
   .ant-form-inline {
     .ant-form-item {
       display: flex;

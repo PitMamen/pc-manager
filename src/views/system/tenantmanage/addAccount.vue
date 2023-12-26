@@ -131,7 +131,6 @@
 <script>
 import {
   getRoleList,
-  queryHospitalList,
   getDoctorAccountDetail,
   createDoctorAccount,
   getUnbindAccountDoctorUser,

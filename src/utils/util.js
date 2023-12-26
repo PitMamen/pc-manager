@@ -1,10 +1,10 @@
-// export const currentEnv = "test"    //测试环境
+export const currentEnv = "test"    //测试环境
 // export const currentEnv = "show"    //演示环境
-export const currentEnv = "online"  //线上环境
+// export const currentEnv = "online"  //线上环境
 
-// export const appId = "wx99df16e6be344865"//测试公众号 上面三个湘雅医院的公众号
+export const appId = "wx99df16e6be344865"//测试公众号 上面三个湘雅医院的公众号
 // export const appId = "wx0bc29297eabbca39"//演示环境公众号
-export const appId = "wx2f945858177df980" //线上公众号（更换的） # 健康管家公众号的appid
+// export const appId = "wx2f945858177df980" //线上公众号（更换的） # 健康管家公众号的appid
 
 export function timeFix() {
   const time = new Date()
@@ -225,6 +225,59 @@ export function getlastMonthToday() {
 
 }
 
+
+
+
+/**
+ * 获取6个月前的今天
+ */
+export function gethalfYearToday() {
+
+  var now = new Date();
+  var year = now.getFullYear();//getYear()+1900=getFullYear()
+  var month = (now.getMonth() + 1)-6;//0-11表示1-12月
+  var day = now.getDate();
+  if (parseInt(month) < 10) {
+    month = "0" + month;
+  }
+  if (parseInt(day) < 10) {
+    day = "0" + day;
+  }
+
+  now = year + '-' + month + '-' + day;
+
+  if (parseInt(month) == 1) {//如果是1月份，则取上一年的12月份
+    return (parseInt(year) - 1) + '-12-' + day;
+  }
+
+  var preSize = new Date(year, parseInt(month) - 1, 0).getDate();//上月总天数
+  if (preSize < parseInt(day)) {//上月总天数<本月日期，比如3月的30日，在2月中没有30
+    return year + '-' + month + '-01';
+  }
+
+  if (parseInt(month) <= 10) {
+    return year + '-0' + (parseInt(month) - 1) + '-' + day;
+  } else {
+    return year + '-' + (parseInt(month) - 1) + '-' + day;
+  }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**是否可以打电话 */
 export function canCall() {
   return tccc && tccc.Agent.getStatus() == 'free';
@@ -263,6 +316,32 @@ export function getStartAndEndDateOfMonth(date) {
 
   return { startDate, endDate }
 }
+
+
+
+
+// export function getStartAndEndDateOfMonth(date) {
+//   let year = date.getFullYear() // 2021
+//   const month = date.getMonth() + 1 // 0 1 2 3 4 5 6 7 8 9 10 11
+//   const startDate = new Date(year + '/' + month + '/' + 1)
+//   let nextMonth = month + 1
+//   if (nextMonth === 13) {
+//     year += 1
+//     nextMonth = 1
+//   }
+//   const dateLong = (new Date(year + '/' + nextMonth + '/' + 1)).getTime() - 24 * 60 * 60 * 1000
+//   const endDate = new Date(dateLong)
+
+//   return { startDate, endDate }
+// }
+
+
+
+
+
+
+
+
 
 /**
  * 判断对象是空

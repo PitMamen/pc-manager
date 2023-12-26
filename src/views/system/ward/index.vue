@@ -3,18 +3,34 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">查询条件:</span>
-        <a-input v-model="queryParam.wardName" allow-clear placeholder="请输入病区名称" style="width: 120px" />
+        <a-input v-model="queryParam.wardName" allow-clear placeholder="请输入病区名称" style="width: 180px" />
       </div>
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParam.selectHospitalCode"
           tree-default-expand-all
           :tree-data="treeData"
           placeholder="请选择所属机构"
           style="min-width: 120px"
         >
-        </a-tree-select>
+        </a-tree-select> -->
+        <a-select
+          v-model="queryParam.selectHospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
       <div class="search-row">
         <span class="name">状态:</span>
@@ -83,12 +99,14 @@
 </template>
 
 <script>
-import { queryHospitalList as list2 } from '@/api/modular/system/posManage'
+import { queryHospitalList2 as list2 } from '@/api/modular/system/posManage'
 import { list, update } from '@/api/modular/system/ward'
 import { STable, Ellipsis } from '@/components'
 import addForm from './addForm'
 import editForm from './editForm'
 import editForm2 from './editForm2'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   components: {
     STable,
@@ -102,7 +120,10 @@ export default {
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {status:1},
+      queryParam: {status:1,selectHospitalCode:undefined},
+      fetching: false,
+      treeData: [],
+      localHospitalCode: undefined,
       // 表头
       columns: [
         {
@@ -198,7 +219,11 @@ export default {
    * 初始化判断按钮权限是否拥有，没有则不现实列
    */
   created() {
-    this.getTreeData()
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.getTreeData(undefined)
     this.queryParam = { ...this.queryParam, ...this.$route.query }
   },
   methods: {
@@ -215,35 +240,48 @@ export default {
         }
       })
     },
-    getTreeData() {
+    getTreeData(name) {
       list2({
         status: 1,
         tenantId: '',
-        hospitalName: '',
+        hospitalName: name,
       }).then((res) => {
-        if (res.code === 0) {
-          this.treeData = (res.data || []).map((item) => {
-            const tree = {
-              key: item.hospitalCode,
-              value: item.hospitalCode,
-              title: item.hospitalName,
-            }
-            if (item.hospitals && item.hospitals.length > 0) {
-              tree.children = item.hospitals.map((item_) => {
-                return {
-                  key: item_.hospitalCode,
-                  value: item_.hospitalCode,
-                  title: item_.hospitalName,
-                }
-              })
-            }
-            return tree
-          })
-        } else {
-          this.$message.error(res.message)
-        }
+        this.fetching = false
+          if (res.code == 0 && res.data.length > 0) {
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParam.selectHospitalCode = item.hospitalCode
+              }
+            })
+            this.treeData = res.data
+          }
       })
     },
+
+
+ //机构搜索
+ onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.getTreeData(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.getTreeData(undefined)
+      }
+    },
+
+
+
+
+
+
+
+
+
+
 
     toggleAdvanced() {
       this.advanced = !this.advanced

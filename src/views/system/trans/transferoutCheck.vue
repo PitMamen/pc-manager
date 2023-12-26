@@ -1,13 +1,26 @@
 <template>
   <a-card :bordered="false" class="top-title">
-    <div class="table-page-search-wrapper">
+    <div class="table-page-search-wrapper1">
+      <div class="search-row">
+        <span class="name">接诊学科:</span>
+        <a-tree-select
+          v-model="queryParams.inSubjectId"
+          style="width: 180px"
+          :tree-data="treeDataSub"
+          @select="onSelectDept"
+          placeholder="请选择学科"
+          allow-clear
+          tree-default-expand-all
+        ></a-tree-select>
+      </div>
+
       <div class="search-row">
         <span class="name">关键字查询:</span>
         <a-input
           v-model="queryParams.keyWord"
           allow-clear
-          placeholder="可输入患者姓名或电话号码查询"
-          style="width: 168px; height: 28px"
+          placeholder="请输入患者姓名或电话查询"
+          style="width: 180px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -26,7 +39,7 @@
       </div>
     </div>
 
-    <div class="div-radio">
+    <!-- <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == '' }" @click="onRadioClick('')">
         <span style="margin-left: 3px">全部({{ numberData.TotalNum }})</span>
       </div>
@@ -40,10 +53,9 @@
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.status == 3 }" @click="onRadioClick(3)">
         <span style="margin-left: 3px">审核不通过({{ numberData.ReqUncheckedNum }})</span>
       </div>
-    </div>
+    </div> -->
 
     <s-table
-      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -52,17 +64,13 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
-        <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="hdd"></a-icon>详情</a>
+        <a @click="goDetail(record)"><a-icon style="margin-right: 5px" type="eye"></a-icon>查看</a>
 
         <a @click="goPrint(record)" style="margin-left: 8px"><a-icon style="margin-right: 5px" type="printer" />打印</a>
-
-        <a disabled="true" @click="goComment" style="margin-left: 8px"
-          ><a-icon style="margin-right: 5px" type="message" />评论</a
-        >
       </span>
 
-      <span slot="actionstatus" slot-scope="text, record" :class="getColor(record)">
-        {{ getType(record) }}
+      <span slot="actioncard" slot-scope="text, record" :class="getCardColor(record.szFlagText)">
+        <a :class="getCardColor(record.szFlagText)" >{{ record.szFlagText }}</a>
       </span>
     </s-table>
     <!-- <recordDetail ref="recordDetail" @ok="handleOk" /> -->
@@ -82,8 +90,9 @@ import {
   accessHospitals,
   getOrderStatusGroupByData,
   qryDepartmentByReq,
-  qryReferralListByPage,
+  qryReferralTradeListByPage,
   qryReferralCount,
+  gettreeMedicalSubjects,
 } from '@/api/modular/system/posManage'
 import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
 //   import recordDetail from './recordDetail'
@@ -105,10 +114,10 @@ export default {
     return {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
-      treeData: [],
+      treeDataSub: [],
       departmentList: [],
       confirmLoading: false,
-      currentTab: '',
+    //   currentTab: '',
       numberData: {
         TotalNum: 0, //全部
         ReqOutCheckedNum: 0, //审核通过
@@ -119,8 +128,9 @@ export default {
         keyWord: '',
         regTimeBegin: getDateNow(),
         regTimeEnd: getCurrentMonthLast(),
-        status: '',
+        // status: '',
         flag: 2,
+        inSubjectId:undefined,
       },
 
       queryParamsTemp: {},
@@ -143,18 +153,26 @@ export default {
         },
 
         {
-          title: '类型',
-          dataIndex: 'tradeType',
+          title: '初步诊断',
+          dataIndex: 'diagnos',
+          with: 220,
+          ellipsis: true,
         },
 
         {
           title: '转诊原因',
           dataIndex: 'referralReason',
+          with:250,
+          ellipsis: true,
         },
         {
           title: '申请医生',
           dataIndex: 'reqDocName',
-          align: 'right',
+        },
+
+        {
+          title: '接诊学科',
+          dataIndex: 'inSubjectName',
         },
 
         {
@@ -178,14 +196,9 @@ export default {
         },
 
         {
-          title: '审核结果',
-          dataIndex: 'statusShow',
-          scopedSlots: { customRender: 'actionstatus' },
-        },
-
-        {
           title: '收治情况',
-          dataIndex: 'daishouzhi',
+          dataIndex: 'szFlagText',
+          scopedSlots: { customRender: 'actioncard' },
         },
 
         {
@@ -198,8 +211,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.status = this.currentTab
-        return qryReferralListByPage(Object.assign(parameter, this.queryParams))
+        return qryReferralTradeListByPage(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 && res.data.rows.length > 0) {
               //组装控件需要的数据结构
@@ -220,10 +232,15 @@ export default {
                 this.$set(item, 'statusShow', item.status.value)
                 this.$set(item, 'tradeType', item.tradeType.description)
                 this.$set(item, 'reqDept', item.reqDept == null || item.reqDept == 'null' ? '' : item.reqDept)
-                this.$set(item, 'daishouzhi', item.status.value == 4 ? '收治' : '待收治')
-                // this.$set(item, 'status', 1)
-                // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
-                // item.nameDes = item.name
+                var szFlagText = ''
+                if (item.status.value === 4) {
+                  szFlagText = '已收治'
+                } else if (item.status.value === 5) {
+                  szFlagText = '不予收治'
+                } else {
+                  szFlagText = '未收治'
+                }
+                this.$set(item, 'szFlagText', szFlagText)
               })
             } else {
               data = []
@@ -240,8 +257,6 @@ export default {
 
   activated() {
     this.reset(false)
-    this.queryParams.status = this.currentTab
-    this.queryParamsTemp.status = this.currentTab
   },
 
   created() {
@@ -254,7 +269,7 @@ export default {
       moment(getCurrentMonthLast(), this.dateFormat),
     ]
 
-    this.getOrderStatusGroupByDataOut()
+    this.gettreeMedicalSubjectsOut()
   },
 
   mounted() {
@@ -265,6 +280,46 @@ export default {
   },
 
   methods: {
+    //学科列表
+    gettreeMedicalSubjectsOut() {
+      gettreeMedicalSubjects().then((res) => {
+        if (res.code == 0 && res.data.length > 0) {
+          res.data.forEach((item, index) => {
+            // this.$set(item, 'key', item.subjectClassifyId)
+            // this.$set(item, 'value', item.subjectClassifyId)
+            this.$set(item, 'key', item.subjectCode)
+            this.$set(item, 'value', item.subjectCode)
+            this.$set(item, 'title', item.subjectClassifyName)
+            this.$set(item, 'title', item.subjectClassifyName)
+            this.$set(item, 'disabled', true)
+
+            item.children.forEach((item1, index1) => {
+              // this.$set(item1, 'key', item1.subjectClassifyId)
+              // this.$set(item1, 'value', item1.subjectClassifyId)
+              this.$set(item1, 'key', item1.subjectCode)
+              this.$set(item1, 'value', item1.subjectCode)
+              this.$set(item1, 'title', item1.subjectClassifyName)
+            })
+          })
+
+          this.treeDataSub = res.data
+        } else {
+          this.treeDataSub = res.data
+        }
+      })
+    },
+
+
+    getCardColor(flag) {
+        if (flag == '已收治') {
+          return 'span-blue'
+        } else if (flag == '不予收治') {
+          return 'span-red'
+        } else {
+          return 'span-gray'
+        }
+      },
+
     goDetail(record) {
       this.$router.push({
         name: 'transoutDetail',
@@ -286,8 +341,17 @@ export default {
       // this.$message.success('去打印')
     },
 
-    goComment() {
-      this.$message.success('去评论')
+    onSelectDept(subid, s1) {
+      console.log('onSelectDept', subid)
+      console.log('onSelectDept', s1)
+      this.treeDataSub.forEach((item, index) => {
+        item.children.forEach((item1, index1) => {
+          if (item1.subjectCode == subid) {
+            // this.queryParams.inSubjectName = item1.subjectClassifyName;
+            // console.log('onSelectDept subjectClassifyName', this.uploadData.inDept)
+          }
+        })
+      })
     },
 
     getType(record) {
@@ -312,6 +376,7 @@ export default {
 
     reset(clearTime) {
       this.queryParams.keyWord = ''
+      this.queryParams.inSubjectId = undefined
 
       if (clearTime) {
         this.createValue = []
@@ -320,38 +385,37 @@ export default {
       }
       this.queryParams.regTimeBegin = clearTime ? '' : getDateNow()
       this.queryParams.regTimeEnd = clearTime ? '' : getCurrentMonthLast()
-      this.queryParams.status = ''
       this.handleOk()
     },
 
-    //订单分组
-    getOrderStatusGroupByDataOut() {
-      qryReferralCount(this.queryParams)
-        .then((res) => {
-          if (res.code == 0) {
-            if (res.data) {
-              this.numberData.TotalNum = res.data.TotalNum
-              this.numberData.ReqNum = res.data.ReqNum
-              this.numberData.ReqOutCheckedNum = res.data.ReqOutCheckedNum
-              this.numberData.ReqUncheckedNum = res.data.ReqUncheckedNum
-            }
-          }
-        })
-        .catch((err) => {
-          this.$message.error('请求错误：' + err.message)
-        })
-    },
+    // //订单分组
+    // getOrderStatusGroupByDataOut() {
+    //   qryReferralCount(this.queryParams)
+    //     .then((res) => {
+    //       if (res.code == 0) {
+    //         if (res.data) {
+    //           this.numberData.TotalNum = res.data.TotalNum
+    //           this.numberData.ReqNum = res.data.ReqNum
+    //           this.numberData.ReqOutCheckedNum = res.data.ReqOutCheckedNum
+    //           this.numberData.ReqUncheckedNum = res.data.ReqUncheckedNum
+    //         }
+    //       }
+    //     })
+    //     .catch((err) => {
+    //       this.$message.error('请求错误：' + err.message)
+    //     })
+    // },
 
-    onRadioClick(type) {
-      //如果在加载中  不让点击
-      if (this.confirmLoading) {
-        return
-      }
-      this.currentTab = type
-      this.queryParams.status = type
-      this.queryParamsTemp.status = type
-      this.$refs.table.refresh()
-    },
+    // onRadioClick(type) {
+    //   //如果在加载中  不让点击
+    //   if (this.confirmLoading) {
+    //     return
+    //   }
+    //   this.currentTab = type
+    //   this.queryParams.status = type
+    //   this.queryParamsTemp.status = type
+    //   this.$refs.table.refresh()
+    // },
 
     formatDate(date) {
       date = new Date(date)
@@ -410,8 +474,6 @@ export default {
     },
 
     handleOk() {
-      this.queryParams.status = ''
-      this.getOrderStatusGroupByDataOut()
       this.$refs.table.refresh()
     },
   },
@@ -474,8 +536,9 @@ export default {
   // background-color: #85888e;
 }
 
-.table-page-search-wrapper {
+.table-page-search-wrapper1 {
   padding-bottom: 10px !important;
+  margin-top: -15px;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
     display: inline-block;
@@ -547,10 +610,10 @@ export default {
 }
 </style>
     
-    <style >
+<style lang="less" >
 .ant-select-tree-dropdown {
   max-height: 60vh !important;
-  top: 148px !important;
+  top: 180px !important;
 }
 </style>
        

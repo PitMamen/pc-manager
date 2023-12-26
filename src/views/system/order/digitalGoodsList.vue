@@ -3,14 +3,31 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParams.hospitalCode"
           style="min-width: 186px"
           :tree-data="treeData"
           placeholder="请选择"
           tree-default-expand-all
         >
-        </a-tree-select>
+        </a-tree-select> -->
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+          tree-default-expand-all
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
@@ -117,7 +134,7 @@ import { STable } from '@/components'
 import moment from 'moment'
 import {
   datatreatOrderList,
-  accessHospitals,
+  accessHospitals1,
   getOrderStatusGroupByData,
   getCommodityClassify,
 } from '@/api/modular/system/posManage'
@@ -127,7 +144,8 @@ import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
 import continuationDetail from './continuationDetail'
 import prescriptionDetail from './prescriptionDetail'
-
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 export default {
   components: {
     STable,
@@ -143,6 +161,8 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       gropListData: [],
       packgeList: [],
       confirmLoading: false,
@@ -315,7 +335,11 @@ export default {
   },
 
   created() {
-    this.queryHospitalListOut()
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.queryHospitalListOut(undefined)
     this.createValue = [
       // moment(getlastMonthToday(), this.dateFormat),
       //   moment(formatDate(new Date().getTime()), this.dateFormat),
@@ -409,40 +433,78 @@ export default {
       return this.confirmLoading
     },
 
-    queryHospitalListOut() {
-      //   let queryData = {
-      //     tenantId: '',
-      //     status: 1,
-      //     hospitalName: '',
-      //   }
+    // queryHospitalListOut() {
+    //   //   let queryData = {
+    //   //     tenantId: '',
+    //   //     status: 1,
+    //   //     hospitalName: '',
+    //   //   }
+    //   this.confirmLoading = true
+    //   accessHospitals()
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    queryHospitalListOut(name) {
+      this.fetching = true
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: name,
+      }
       this.confirmLoading = true
-      accessHospitals()
+      accessHospitals1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.treeData = []
+        this.localHospitalCode = undefined
+        this.queryHospitalListOut(undefined)
+      }
+    },
     reset() {
       this.queryParams.combinedCondition = ''
       this.queryParams.commodityName = ''
