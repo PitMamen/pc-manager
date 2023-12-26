@@ -55,10 +55,10 @@ export default {
   methods: {
     cardClick(msg) {
       window.frames.aiChat.postMessage(
-        JSON.stringify({
+        {
           type: 'iframe-question-send',
           msg,
-        }),
+        },
         '*'
       )
     },
