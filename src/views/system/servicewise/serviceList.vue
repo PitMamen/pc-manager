@@ -257,7 +257,7 @@ export default {
 
     goDetail(record){
       console.log("111111111111111111")
-      this.$refs.executeDetail.detail(record)
+      this.$refs.executeDetail.detail1(record)
     },
 
 

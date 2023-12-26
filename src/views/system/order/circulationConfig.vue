@@ -91,7 +91,7 @@
   <script>
 import { STable } from '@/components'
 
-import { accessHospitalsNew, getCflzMerchantPageList ,prescriptionFlowConfig} from '@/api/modular/system/posManage'
+import { accessHospitalsNew1, getCflzMerchantPageList ,prescriptionFlowConfig} from '@/api/modular/system/posManage'
 import collectionfig from './collectionfig'
 
 export default {
@@ -222,21 +222,21 @@ export default {
         orgTypes: '2,3',
       }
       this.confirmLoading = true
-      accessHospitalsNew(queryData)
+      accessHospitalsNew1(queryData)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
+            // res.data.forEach((item, index) => {
+            //   this.$set(item, 'key', item.hospitalCode)
+            //   this.$set(item, 'value', item.hospitalCode)
+            //   this.$set(item, 'title', item.hospitalName)
+            //   this.$set(item, 'children', item.hospitals)
 
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
+            //   item.hospitals.forEach((item1, index1) => {
+            //     this.$set(item1, 'key', item1.hospitalCode)
+            //     this.$set(item1, 'value', item1.hospitalCode)
+            //     this.$set(item1, 'title', item1.hospitalName)
+            //   })
+            // })
 
             this.treeData = res.data
           } else {

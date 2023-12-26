@@ -54,7 +54,7 @@
 
           <div class="div-pro-line">
             <span class="span-item-name"><span style="color: red">*</span> 所属机构 :</span>
-            <a-tree-select
+            <!-- <a-tree-select
               @focus="onComFocus"
               v-model="packageData.hospitalCode"
               style="min-width: 120px"
@@ -63,7 +63,23 @@
               placeholder="请选择"
               tree-default-expand-all
             >
-            </a-tree-select>
+            </a-tree-select> -->
+            <a-select
+              v-model="packageData.hospitalCode"
+              placeholder="请选择机构"
+              show-search
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              style="width: 180px; padding-left: 10px; padding-top: 10px"
+              @change="onHospitalSelectChange"
+              @search="onHospitalSelectSearch"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+                item.hospitalName
+              }}</a-select-option>
+            </a-select>
           </div>
 
           <div class="div-pro-line" style="margin-left: -25px !important">
@@ -197,7 +213,7 @@
         </div>
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox  :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
+            <a-checkbox :checked="isDoctor" @click="goCheck(1)">医生参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -208,7 +224,7 @@
             allow-clear
             placeholder="请选择"
             v-model="allocationTypeDoc"
-            :disabled="!isDoctor || broadClassify == 1 "
+            :disabled="!isDoctor || broadClassify == 1"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -222,7 +238,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @click="addPerson(0)" @focus="onAddPersonFocus(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span     style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isDoctor }"
               >医生配置</span
             >
           </div>
@@ -230,7 +246,7 @@
 
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox  :checked="isNurse"  @click="goCheck(2)">护士参与</a-checkbox>
+            <a-checkbox :checked="isNurse" @click="goCheck(2)">护士参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -241,7 +257,7 @@
             allow-clear
             v-model="allocationTypeNurse"
             placeholder="请选择"
-            :disabled=" !isNurse || broadClassify == 1 "
+            :disabled="!isNurse || broadClassify == 1"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -255,7 +271,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(2)" @click="addPerson(1)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span     style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isNurse }"
               >护士配置</span
             >
           </div>
@@ -264,7 +280,7 @@
         <!-- 技师参与 -->
         <div class="manage-item">
           <div class="item-left">
-            <a-checkbox  :checked="isTechnician"  @click="goCheck(4)">技师参与</a-checkbox>
+            <a-checkbox :checked="isTechnician" @click="goCheck(4)">技师参与</a-checkbox>
           </div>
 
           <span style="margin-left: 1%">分配方式</span>
@@ -275,7 +291,7 @@
             allow-clear
             v-model="allocationTypeTechnician"
             placeholder="请选择"
-            :disabled="!isTechnician || broadClassify == 1 "
+            :disabled="!isTechnician || broadClassify == 1"
           >
             <a-select-option v-for="(item, index) in assignmentTypes" :key="index" :value="item.value">{{
               item.description
@@ -289,7 +305,7 @@
           <div class="end-btn" style="margin-left: 2%; width: 80px" @focus="onAddPersonFocus(3)" @click="addPerson(2)">
             <img style="width: 18px; height: 18px" src="~@/assets/icons/icon_add_people.png" />
 
-            <span    style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
+            <span style="width: 50px; color: #1890ff; margin-left: 2%" :class="{ 'checked-btn': !isTechnician }"
               >技师配置</span
             >
           </div>
@@ -394,7 +410,7 @@
 import {
   getTreeUsersByDeptIdsAndRoles,
   getManualCommodityClassify,
-  queryHospitalList,
+  queryHospitalList2,
   getTenantList,
   qryFollowPlanByFollowType,
   getDictData,
@@ -453,6 +469,8 @@ export default {
       canConfigTeam: true,
       broadClassify: '',
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       treeDataSubject: [],
       roleList: [],
 
@@ -545,15 +563,15 @@ export default {
   },
 
   created() {
-    this.user = Vue.ls.get(TRUE_USER)
-
     this.packageData = JSON.parse(JSON.stringify(this.packageDataOrigin))
-
-    console.log("HHH:",this.packageData)
-
+    console.log('HHH:', this.packageData)
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
     // this.getTenantListOut()
     this.packageData.tenantId = this.user.tenantId
-    this.queryHospitalListOut()
+    this.queryHospitalListOut(undefined)
     this.getDictDataOut()
     this.treeMedicalSubjectsOut()
     this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
@@ -594,42 +612,84 @@ export default {
       this.packageData.tenantId = this.user.tenantId
     },
 
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: this.packageData.tenantId,
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
-        tenantId: this.packageData.tenantId,
+        tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                // this.packageData.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      console.log('2222222222:', this.packageData.hospitalCode, value)
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
     changeData(value) {
-      console.log('tttt:', value.target.checked)
       this.isChecked = value.target.checked
       if (value.target.checked) {
         this.disabledValue = false
@@ -943,7 +1003,7 @@ export default {
       this.packageData.commodityFollowPlanIds = []
 
       if (this.packageData.tenantId) {
-        this.queryHospitalListOut()
+        this.queryHospitalListOut(undefined)
       }
     },
 
@@ -1028,9 +1088,9 @@ export default {
         // this.nameNurse = ''
         // this.nameTeam = ''
       }
-      console.log('this.isDoctor='+this.isDoctor +' '+this.nameDoc)
-      console.log('this.isNurse='+this.isNurse+' '+this.nameNurse)
-      console.log('this.isTechnician='+this.isTechnician+' '+this.nameNurse)
+      console.log('this.isDoctor=' + this.isDoctor + ' ' + this.nameDoc)
+      console.log('this.isNurse=' + this.isNurse + ' ' + this.nameNurse)
+      console.log('this.isTechnician=' + this.isTechnician + ' ' + this.nameNurse)
     },
 
     handlePlan() {
@@ -1101,7 +1161,6 @@ export default {
           this.packageData.commodityPkgManageReqs[0].commodityPkgManageItemReqs,
           this.broadClassify == 1 ? true : false
         )
-
       } else if (index == 1) {
         if (!this.isNurse) {
           return
@@ -1120,7 +1179,7 @@ export default {
           this.packageData.commodityPkgManageReqs[1].commodityPkgManageItemReqs,
           this.broadClassify == 1 ? true : false
         )
-      }else if (index==2) {
+      } else if (index == 2) {
         if (!this.isTechnician) {
           return
         }
@@ -1162,7 +1221,7 @@ export default {
           }
         })
         this.docDepartmentId = departmentId
-      } else if(index==1) {
+      } else if (index == 1) {
         this.nameNurse = ''
         commodityPkgManageItemReqs.forEach((item, indexReqs) => {
           if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1172,7 +1231,7 @@ export default {
           }
         })
         this.nurseDepartmentId = departmentId
-      }else if (index==2) {
+      } else if (index == 2) {
         this.nameTechnician = ''
         commodityPkgManageItemReqs.forEach((item, indexReqs) => {
           if (indexReqs != commodityPkgManageItemReqs.length - 1) {
@@ -1198,7 +1257,7 @@ export default {
         return
       }
 
-      console.log("DDD:",this.packageData.commodityPkgManageReqs)
+      console.log('DDD:', this.packageData.commodityPkgManageReqs)
       this.$refs.addTeam.edit(
         this.packageData.commodityPkgManageReqs[3].commodityPkgManageItemReqs,
         this.packageData.hospitalCode
@@ -1339,8 +1398,6 @@ export default {
           commodityNew.push(tempData.commodityPkgManageReqs[2])
         }
 
-
-
         if (this.isTeam) {
           if (tempData.commodityPkgManageReqs[3].commodityPkgManageItemReqs.length == 0) {
             this.$message.error('请选择团队！')
@@ -1392,7 +1449,6 @@ export default {
       }
 
       console.log('tempData add', tempData)
-      
 
       this.confirmLoading = true
       saveOrUpdate(tempData)

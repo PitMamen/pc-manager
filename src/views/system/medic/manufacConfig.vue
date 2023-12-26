@@ -86,7 +86,7 @@
         
         <script>
 import { STable } from '@/components'
-import { queryHospitalList, qryFactoryList, modifyfactoryStatus } from '@/api/modular/system/posManage'
+import { qryFactoryList, modifyfactoryStatus } from '@/api/modular/system/posManage'
 import addmanufact from './addmanufact'
 export default {
   components: {
@@ -99,7 +99,6 @@ export default {
       titleResetPwd: '',
       tenantId: '',
       datas: [],
-      treeData: [],
       HospitalTypeList: [],
       queryParams: {
         queryText: '',
@@ -229,7 +228,6 @@ export default {
 
   created() {
     // this.getHospitalType()
-    this.queryHospitalListOut()
   },
 
   methods: {
@@ -270,46 +268,6 @@ export default {
     },
 
 
-    /**
-     * 所属机构接口
-     */
-    /**
-     *
-     * @param {}
-     */
-    queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
-        status: 1,
-        hospitalName: '',
-      }
-      this.confirmLoading = true
-      queryHospitalList(queryData)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
-
-            this.treeData = res.data
-          } else {
-            this.treeData = res.data
-          }
-          return []
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
-    },
 
 
     handleOk() {
