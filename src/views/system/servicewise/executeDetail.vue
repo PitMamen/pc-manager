@@ -42,17 +42,17 @@
         </div>
       </div>
 
-      <a-table
+      <s-table
         style="margin-top: 2%; overflow-y: auto; width: 1000px"
         ref="table"
         size="default"
         :scroll="{ y: 400, x: 0 }"
-        :data-source="loadData"
+        :data="loadData"
         :columns="columns"
         :alert="true"
         :rowKey="(record) => record.code"
       >
-      </a-table>
+      </s-table>
       <div style="margin-top: -35px; display: flex; flex-direction: row">
         执行统计：
         <div style="color: #409eff">{{ statNum }}</div>
@@ -67,6 +67,7 @@
 import { qryPlanBindInfo } from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import moment from 'moment'
+import { formatDate, getDateNow, getlastMonthToday, getCurrentMonthLast } from '@/utils/util'
 export default {
   components: {
     STable,
@@ -76,7 +77,7 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
       loadData: [],
-
+      statNum:'',
       requesData: {
         planId: '',
         status: undefined,
@@ -161,6 +162,24 @@ export default {
           ellipsis: true,
         },
       ],
+
+      // 加载数据方法 必须为 Promise 对象
+      loadData: (parameter) => {
+        return qryPlanBindInfo(Object.assign(parameter, this.requesData)).then((res) => {
+          if (res.code == 0) {
+            if (res.data && res.data.rows) {
+              this.statNum = res.data.statNum
+              //设置序号
+              res.data.rows.forEach((item, index) => {
+                this.$set(item, 'xh', (res.data.pageNo - 1) * res.data.pageSize + (index + 1))
+                item.xh = (res.data.pageNo - 1) * res.data.pageSize + (index + 1)
+                this.$set(item, 'statusShow', this.getType(item.status))
+              })
+            }
+          }
+          return res.data
+        })
+      },
     }
   },
   methods: {
@@ -171,46 +190,54 @@ export default {
       this.title = record.planName
 
       this.createValue = [
-        moment(this.formatDate(new Date()), this.dateFormat),
+        moment(moment().startOf('month'), this.dateFormat),
         moment(this.formatDate(new Date()), this.dateFormat),
       ]
 
       this.requesData.planId = record.id
-      // this.requesData.planId = '243'
-      this.requesData.bindBegin = this.formatDate(new Date())
+      this.requesData.bindBegin = this.formatDate(getDateNow())
       this.requesData.bindEnd = this.formatDate(new Date())
 
-      this.qryPlanBindInfoOut()
+      this.$nextTick(() => {
+        this.handleOk()
+    });
+
+
+      // this.qryPlanBindInfoOut()
     },
 
     // 绑定详情
     qryPlanBindInfoOut() {
-      qryPlanBindInfo(this.requesData).then((res) => {
-        if (res.code == 0) {
-          if (res.data && res.data.rows) {
-            // debugger
-            //设置序号
-            res.data.rows.forEach((item, index) => {
-              this.$set(item, 'xh', (res.data.pageNo - 1) * res.data.pageSize + (index + 1))
-              item.xh = (res.data.pageNo - 1) * res.data.pageSize + (index + 1)
-              this.$set(item, 'statusShow', this.getType(item.status))
-            })
-            this.loadData = res.data.rows
-            this.statNum = res.data.statNum
-          } else {
-            return []
-          }
-        }
-      })
+      // qryPlanBindInfo(this.requesData).then((res) => {
+      //   if (res.code == 0) {
+      //     if (res.data && res.data.rows) {
+      //       res.data.rows.forEach((item, index) => {
+      //         this.$set(item, 'xh', (res.data.pageNo - 1) * res.data.pageSize + (index + 1))
+      //         item.xh = (res.data.pageNo - 1) * res.data.pageSize + (index + 1)
+      //         this.$set(item, 'statusShow', this.getType(item.status))
+      //       })
+      //       this.loadData = res.data.rows
+      //       this.statNum = res.data.statNum
+      //     } else {
+      //       return []
+      //     }
+      //   }
+      // })
+    },
+
+    handleOk() {
+      this.$refs.table.refresh()
     },
 
     search() {
-      this.qryPlanBindInfoOut()
+      // this.qryPlanBindInfoOut()
+      this.$refs.table.refresh()
     },
     reset() {
       this.requesData.userName = ''
       this.requesData.status = undefined
-      this.qryPlanBindInfoOut()
+      // this.qryPlanBindInfoOut()
+      this.$refs.table.refresh()
     },
 
     onChange(momentArr, dateArr) {

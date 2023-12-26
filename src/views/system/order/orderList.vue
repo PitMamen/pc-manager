@@ -34,14 +34,14 @@
         <a-input
           v-model="queryParams.combinedCondition"
           allow-clear
-          placeholder="可输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
+          placeholder="可输入用户名/电话/订单号/医生姓名"
+          style="width: 210px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">医生:</span>
         <a-input
           v-model="queryParams.doctorName"
@@ -51,18 +51,18 @@
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
-      </div>
+      </div> -->
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">套餐类型:</span>
         <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
           <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
             item.classifyName
           }}</a-select-option>
         </a-select>
-      </div>
+      </div> -->
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">套餐名称:</span>
         <a-input
           v-model="queryParams.commodityName"
@@ -72,7 +72,7 @@
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
-      </div>
+      </div> -->
 
       <div class="search-row">
         <span class="name">订单分类:</span>
@@ -199,7 +199,7 @@ import {
   getOrderStatusGroupByData,
   getCommodityClassify,
 } from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { formatDate, getDateNow, getCurrentMonthLast,gethalfYearToday} from '@/utils/util'
 // import addForm from './addForm'
 import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
@@ -255,7 +255,7 @@ export default {
         doctorName: '',
         hospitalCode: undefined,
         orderEndTime: getCurrentMonthLast(),
-        orderStartTime: getDateNow(),
+        orderStartTime: gethalfYearToday(),
         classifyId: undefined,
         orderStatus: '',
         orderType: undefined,
@@ -418,7 +418,7 @@ export default {
       // moment(getlastMonthToday(), this.dateFormat),
       //   moment(formatDate(new Date().getTime()), this.dateFormat),
 
-      moment(getDateNow(), this.dateFormat),
+      moment(gethalfYearToday(), this.dateFormat),
       moment(getCurrentMonthLast(), this.dateFormat),
     ]
     this.getOrderStatusGroupByDataOut()

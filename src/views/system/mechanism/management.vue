@@ -288,11 +288,12 @@ export default {
       queryHospitalList2(queryParams)
         .then((res) => {
           if (res.code == 0 && res.data.length > 0) {
-            // res.data.forEach((item) => {
-            //   if (item.hospitalCode == this.localHospitalCode) {
-            //     this.queryParams.hospitalCode = item.hospitalCode
-            //   }
-            // })
+            res.data.forEach((item) => {
+              this.$set(item, 'enableStatus', item.status != null ? item.status.value == 1 : 2)
+              // if (item.hospitalCode == this.localHospitalCode) {
+              //   this.queryParams.hospitalCode = item.hospitalCode
+              // }
+            })
             this.loadData = res.data
           }
         })

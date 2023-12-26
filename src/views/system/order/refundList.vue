@@ -41,14 +41,14 @@
         />
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">套餐类型:</span>
         <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
           <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
             item.classifyName
           }}</a-select-option>
         </a-select>
-      </div>
+      </div> -->
 
       <div class="search-row">
         <span class="name">更新时间:</span>
@@ -64,10 +64,10 @@
         </a-select>
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">下单时间:</span>
         <a-range-picker style="width: 190px" :value="createValue" @change="onChangeOrder" />
-      </div>
+      </div> -->
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -180,8 +180,8 @@ export default {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        createEndTime: getCurrentMonthLast(),
-        createStartTime: getDateNow(),
+        // createEndTime: getCurrentMonthLast(),
+        // createStartTime: getDateNow(),
         orderType: undefined,
         updateEndTime: getCurrentMonthLast(),
         updateStartTime: getDateNow(),
@@ -489,8 +489,8 @@ export default {
 
         this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
       }
-      this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
-      this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
+      // this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      // this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.classifyId = ''
@@ -583,8 +583,8 @@ export default {
       if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
         this.createValue = []
-        this.queryParams.createStartTime = ''
-        this.queryParams.createEndTime = ''
+        // this.queryParams.createStartTime = ''
+        // this.queryParams.createEndTime = ''
         return
       }
       if (dateArr2) {
@@ -598,14 +598,14 @@ export default {
       }
 
       if (dateArr2[0] == '' && dateArr2[1] == '') {
-        this.queryParams.createStartTime = ''
-        this.queryParams.createEndTime = ''
+        // this.queryParams.createStartTime = ''
+        // this.queryParams.createEndTime = ''
         return
       }
 
       this.createValue = momentArr
-      this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
-      this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
+      // this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
+      // this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
     },
 
     handleOk() {

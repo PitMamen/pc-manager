@@ -6110,13 +6110,24 @@ export function statReferralPatient(data) {
 
 
 // 转入列表
-export function qryReferralListByPage(data) {
+export function qryReferralListByPage(data) {  
   return axios({
     url: '/referral-api/referral/qryReferralListByPage',
     method: 'post',
     data: data,
   })
 }
+
+
+export function qryReferralTradeListByPage(data) {  
+  return axios({
+    url: '/referral-api/referral/qryReferralTradeListByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 
 // 统一预约列表
 export function reservationListByPage(data) {
