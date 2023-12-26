@@ -16,7 +16,7 @@
     <a-card :bordered="false" class="card-top-pac1">
       <div class="table-page-wrapper">
         <div class="div-line-wrap">
-          <span class="span-item-name" style="">患者 :</span>
+          <span class="span-item-name1" style="">患者 :</span>
           <a-input
             v-model="requesData.userName"
             class="span-item-value"
@@ -27,14 +27,14 @@
             @blur="focus(name)"
           />
 
-          <span class="span-item-name" style="margin-left: 20px"> 状态 :</span>
+          <span class="span-item-name1" style="margin-left: 20px"> 状态 :</span>
           <a-select placeholder="请选择状态" v-model="requesData.status" allow-clear>
             <a-select-option v-for="(item, index) in StausList" :title="item.value" :value="item.code" :key="index">{{
               item.value
             }}</a-select-option>
           </a-select>
 
-          <span class="span-item-name" style="margin-left: 20px"> 匹配时间 :</span>
+          <span class="span-item-name1" style="margin-left: 20px"> 匹配时间 :</span>
           <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
 
           <a-button style="margin-left: 10px" type="primary" icon="search" @click="search()">查询</a-button>
@@ -268,7 +268,7 @@ export default {
     overflow: hidden;
     margin-bottom: 20px;
 
-    .span-item-name {
+    .span-item-name1 {
       display: inline-block;
       color: #000;
       font-size: 12px;
