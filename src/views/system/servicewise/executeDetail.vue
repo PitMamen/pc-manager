@@ -175,8 +175,8 @@ export default {
         moment(this.formatDate(new Date()), this.dateFormat),
       ]
 
-      // this.requesData.planId = record.id
-      this.requesData.planId = '243'
+      this.requesData.planId = record.id
+      // this.requesData.planId = '243'
       this.requesData.bindBegin = this.formatDate(new Date())
       this.requesData.bindEnd = this.formatDate(new Date())
 
