@@ -46,6 +46,7 @@
             v-model="queryParams.hospitalCode"
             allow-clear
             placeholder="请输入内容"
+            disabled
             style="width: 200px; margin-top: 5px; margin-left: 5px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
