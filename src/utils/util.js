@@ -235,7 +235,7 @@ export function gethalfYearToday() {
 
   var now = new Date();
   var year = now.getFullYear();//getYear()+1900=getFullYear()
-  var month = (now.getMonth() + 1)-6;//0-11表示1-12月
+  var month = (now.getMonth() + 1)-5;//0-11表示1-12月
   var day = now.getDate();
   if (parseInt(month) < 10) {
     month = "0" + month;

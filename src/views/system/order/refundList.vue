@@ -34,8 +34,8 @@
         <a-input
           v-model="queryParams.combinedCondition"
           allow-clear
-          placeholder="输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
+          placeholder="输入用户名/电话/订单号查询"
+          style="width: 210px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -131,7 +131,7 @@
 import { STable } from '@/components'
 import moment from 'moment'
 import { accessHospitals1, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { getDateNow, getCurrentMonthLast,gethalfYearToday } from '@/utils/util'
 import addForm from './addForm'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -184,7 +184,7 @@ export default {
         // createStartTime: getDateNow(),
         orderType: undefined,
         updateEndTime: getCurrentMonthLast(),
-        updateStartTime: getDateNow(),
+        updateStartTime: gethalfYearToday(),
         tabCode: '',
       },
 
@@ -327,7 +327,8 @@ export default {
     this.queryHospitalListOut(undefined)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    
+    this.orderTimeValue = [moment(gethalfYearToday(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
 
@@ -487,11 +488,11 @@ export default {
       } else {
         this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-        this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+        this.orderTimeValue = [moment(gethalfYearToday(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
       }
       // this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       // this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
-      this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      this.queryParams.updateStartTime = clearTime ? '' : gethalfYearToday() + ' 00:00:00'
       this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.classifyId = ''
       this.queryParams.orderType = undefined

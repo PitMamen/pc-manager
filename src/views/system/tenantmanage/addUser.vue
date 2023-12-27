@@ -148,14 +148,30 @@
           </div>
           <div class="div-content">
             <span class="span-item-name"><span style="color: red">*</span>所属机构:</span>
-            <a-tree-select
+            <!-- <a-tree-select
               v-model="checkData.hospitalCode"
               style="min-width: 120px"
               dropdownClassName="abc"
               :tree-data="treeData"
               placeholder="请选择"
             >
-            </a-tree-select>
+            </a-tree-select> -->
+            <a-select
+              v-model="checkData.hospitalCode"
+              placeholder="请选择机构"
+              show-search
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              allow-clear
+              style="width: 120px"
+              @change="onHospitalSelectChange"
+              @search="onHospitalSelectSearch"
+            >
+              <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+              <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+                item.hospitalName
+              }}</a-select-option>
+            </a-select>
           </div>
           <div class="div-title">
             <div class="div-line-blue"></div>
@@ -214,8 +230,13 @@
 
           <div class="div-content">
             <a-checkbox v-model="psycholChecked"></a-checkbox>
-            <span class="span-item-name" style="margin-left: 10px; white-space: nowrap;">心理咨询师:</span>
-            <a-select v-model="checkData.psycholLevel" :disabled="!psycholChecked" allow-clear placeholder="请选择心理咨询师">
+            <span class="span-item-name" style="margin-left: 10px; white-space: nowrap">心理咨询师:</span>
+            <a-select
+              v-model="checkData.psycholLevel"
+              :disabled="!psycholChecked"
+              allow-clear
+              placeholder="请选择心理咨询师"
+            >
               <a-select-option v-for="(item, index) in psycholList" :key="index" :value="item.code">{{
                 item.value
               }}</a-select-option>
@@ -366,7 +387,7 @@
               </div>
 
               <!-- 技师只要一张资格证？？？ -->
-              <div style="right: 120px; top: 10px; margin-left: 10px" >
+              <div style="right: 120px; top: 10px; margin-left: 10px">
                 <a-upload
                   :action="actionUrlCover"
                   :multiple="true"
@@ -679,7 +700,7 @@
 import moment from 'moment'
 import {
   getRoleList,
-  queryHospitalList,
+  queryHospitalList2,
   professionalTitles,
   createDoctorUser,
   getDoctorUserDetail,
@@ -741,6 +762,8 @@ export default {
 
       danandataList: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
 
       photoListCheck: {
         idcardF: '',
@@ -782,9 +805,9 @@ export default {
       ryzcList: [], //人员职称
       psycholChecked: false,
       psycholList: [
-        {value: '心理咨询师', code: 1},
-        {value: '二级心理咨询师', code: 2},
-        {value: '三级心理咨询师', code: 3},
+        { value: '心理咨询师', code: 1 },
+        { value: '二级心理咨询师', code: 2 },
+        { value: '三级心理咨询师', code: 3 },
       ],
 
       // 签约信息
@@ -874,12 +897,16 @@ export default {
     //新增
     addModel() {
       this.headers.Authorization = Vue.ls.get(ACCESS_TOKEN)
+      this.user = Vue.ls.get(TRUE_USER)
       this.clearData()
       this.visible = true
       this.confirmLoading = false
       this.currentTab = 'base'
       this.getRolesOut()
-      this.queryHospitalListOut()
+      if (this.user) {
+        this.localHospitalCode = this.user.hospitalCode
+      }
+      this.queryHospitalListOut(undefined)
       this.getDictDataForCodeUserTypeOut()
       // this.getProfessionalTitles()
     },
@@ -899,7 +926,7 @@ export default {
       this.photoListCheck.userId = record.userId
       this.isDetailTag = true
 
-      this.queryHospitalListOut()
+      this.queryHospitalListOut(undefined)
       this.getDictDataForCodeUserTypeOut()
       // this.getProfessionalTitles()
       this.getDoctorUserDetailOut(record.userId)
@@ -1069,17 +1096,31 @@ export default {
           this.zhiyeZList = []
           this.zhiyeFList = []
 
-
-          if (res.data.initCommodityFlag === 0&& res.data.userType == 'doctor'&&res.data.idcardF&&res.data.idcardZ&&res.data.titleF&&res.data.titleZ&&res.data.practiceZ&&res.data.practiceF) {
+          if (
+            res.data.initCommodityFlag === 0 &&
+            res.data.userType == 'doctor' &&
+            res.data.idcardF &&
+            res.data.idcardZ &&
+            res.data.titleF &&
+            res.data.titleZ &&
+            res.data.practiceZ &&
+            res.data.practiceF
+          ) {
             this.canInitCommodity = true
-          }else if (res.data.initCommodityFlag === 0&& res.data.userType == 'nurse'&&res.data.idcardF&&res.data.idcardZ&&res.data.practiceZ&&res.data.practiceF&&this.checkData.qualificationZ&&this.checkData.qualificationF) {
+          } else if (
+            res.data.initCommodityFlag === 0 &&
+            res.data.userType == 'nurse' &&
+            res.data.idcardF &&
+            res.data.idcardZ &&
+            res.data.practiceZ &&
+            res.data.practiceF &&
+            this.checkData.qualificationZ &&
+            this.checkData.qualificationF
+          ) {
             this.canInitCommodity = true
-          }else{
+          } else {
             this.canInitCommodity = false
-
           }
-
-         
 
           // this.canInitCommodity =
           //   res.data.initCommodityFlag === 0 &&
@@ -1198,13 +1239,12 @@ export default {
 
           if (this.checkData.userType == 'doctor') {
             this.getBycodeOut('DOCTOR_TITLE')
-          } else if ((this.checkData.userType == 'nurse')) {
+          } else if (this.checkData.userType == 'nurse') {
             this.getBycodeOut('NURSE_TITLE')
           }
 
           if (this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse') {
             this.getDoctorQrCodeOut()
-            
           }
         }
       })
@@ -1537,39 +1577,72 @@ export default {
      *
      * @param {}
      */
-    queryHospitalListOut() {
-      let queryData = {
-        tenantId: '',
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    queryHospitalListOut(name) {
+      queryHospitalList2({
         status: 1,
-        hospitalName: '',
-      }
-      this.confirmLoading = true
-      queryHospitalList(queryData)
-        .then((res) => {
-          if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
-            })
-
-            this.treeData = res.data
-          } else {
-            this.treeData = res.data
-          }
-          return []
-        })
-        .finally((res) => {
-          this.confirmLoading = false
-        })
+        tenantId: '',
+        hospitalName: name,
+      }).then((res) => {
+        this.fetching = false
+        if (res.code == 0 && res.data.length > 0) {
+          res.data.forEach((item) => {
+            if (item.hospitalCode == this.localHospitalCode) {
+              this.checkData.hospitalCode = item.hospitalCode
+            }
+          })
+          this.treeData = res.data
+        }
+      })
     },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
     beforeUpload(file) {
       // const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === 'image/jpg'
       // if (!isJpgOrPng) {
@@ -1672,14 +1745,14 @@ export default {
       }
 
       // 人员类型  和 职称匹配校验
-      console.log("LLL:",this.checkData.professionalTitle)
-      if ((this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse')) {
+      console.log('LLL:', this.checkData.professionalTitle)
+      if (this.checkData.userType == 'doctor' || this.checkData.userType == 'nurse') {
         // this.ryzcList
         var findItem = this.ryzcList.find((item) => item.value == this.checkData.professionalTitle)
         if (!findItem) {
           if (this.userTypeTemp == 'doctor') {
             this.getBycodeOut('DOCTOR_TITLE')
-          } else if ((this.userTypeTemp == 'nurse')) {
+          } else if (this.userTypeTemp == 'nurse') {
             this.getBycodeOut('NURSE_TITLE')
           }
           this.$message.error('人员类型与职称不匹配!')
@@ -1782,16 +1855,9 @@ export default {
         this.checkData.practiceF = ''
       }
 
-
       if (this.checkData.userType == 'medTechnician') {
-
         this.checkData.practiceF = ''
       }
-
-
-
-
-
 
       var postData = {
         identificationNo: this.checkData.identificationNo,
@@ -1815,7 +1881,7 @@ export default {
         titleF: this.photoListCheck.titleF,
         titleZ: this.photoListCheck.titleZ,
       }
-      if (this.psycholChecked){
+      if (this.psycholChecked) {
         postData.psycholLevel = this.checkData.psycholLevel
       }
       if (this.accountChecked) {
