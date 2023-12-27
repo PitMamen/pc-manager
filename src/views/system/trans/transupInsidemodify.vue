@@ -1214,7 +1214,6 @@ export default {
     });
 
     this.getHospitalDatas();
-
   },
   mounted() {
     // this.$bus.$on('medicNewEvent', (record) => {
@@ -1381,14 +1380,16 @@ export default {
           }
 
           //转诊类型
-          this.referralTypeDatas = [];
-          this.referralTypeDatas = [
-            {
-              code: this.uploadData.referralType.value,
-              value: this.uploadData.referralType.description,
-            },
-          ];
-          this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
+          if (this.uploadData.referralType) {
+            this.referralTypeDatas = [];
+            this.referralTypeDatas = [
+              {
+                code: this.uploadData.referralType.value,
+                value: this.uploadData.referralType.description,
+              },
+            ];
+            this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
+          }
 
           //转入科室
           this.originData = [];

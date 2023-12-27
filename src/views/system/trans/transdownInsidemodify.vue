@@ -762,7 +762,6 @@
               >
               </a-tree-select>
 
-
               <!-- <a-select
                 show-search
                 style="width: 100%"
@@ -1532,14 +1531,16 @@ export default {
           }
 
           //转诊类型
-          this.referralTypeDatas = [];
-          this.referralTypeDatas = [
-            {
-              code: this.uploadData.referralType.value,
-              value: this.uploadData.referralType.description,
-            },
-          ];
-          this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
+          if (this.uploadData.referralType) {
+            this.referralTypeDatas = [];
+            this.referralTypeDatas = [
+              {
+                code: this.uploadData.referralType.value,
+                value: this.uploadData.referralType.description,
+              },
+            ];
+            this.$set(this.uploadData, "referralType", this.referralTypeDatas[0].code);
+          }
 
           //oldTradeIdStr为字符串，重新赋值保证数据不失真；有oldTradeId说明是回转，不能改变下转类型
           this.$set(this.uploadData, "oldTradeId", this.uploadData.oldTradeIdStr);
@@ -1790,8 +1791,8 @@ export default {
       });
     },
 
-        //学科列表
-        gettreeMedicalSubjectsOut() {
+    //学科列表
+    gettreeMedicalSubjectsOut() {
       gettreeMedicalSubjects().then((res) => {
         if (res.code == 0 && res.data.length > 0) {
           res.data.forEach((item, index) => {
