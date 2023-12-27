@@ -64,39 +64,57 @@
           <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
             <a-button type="primary" icon="search" @click="queryAgain">查询</a-button>
             <a-button icon="undo" style="margin-left: 8px; margin-right: 0" @click="reset">重置</a-button>
-          
           </span>
         </div>
       </div>
       <div class="div-service-control">
         <a-spin :spinning="confirmLoading2">
-        <div class="div-service-left-control">
-          <div class="left-content">
-            <div
-              class="div-part"
-              :class="{ 'checked': item.isChecked }"
-              v-for="(item, index) in articleList"
-              :key="index"
-              :value="item.articleName"
-              @click="handleChange(item.message_original_id,index)"
-            >
-              <div class="ksview" :title="item.articleName">
-                {{ item.articleName }}
-              </div>
-              <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:{{ item.count }} &nbsp;成功:{{ item.readCount }}  
-              <!-- <div style="color: #999999;margin-top: 3px; display: flex; flex-direction: row;font-size: xx-small;">发送:3000 &nbsp;成功:1000   -->
-               <div style="color: #999999; font-size: 8px;margin-left: 10px;">{{ item.rate }}</div>
-              </div>
-
-              <!-- {{ item.count }}/{{ item.readCount }}/{{ item.rate }} -->
+          <div class="div-service-left-control">
+            <div class="top-kuang">
+              <div>文章名称</div>
+              <div>发送数</div>
+              <div>成功数</div>
             </div>
+            <div class="left-content">
+              <div
+                class="div-part"
+                :class="{ checked: item.isChecked }"
+                v-for="(item, index) in articleList"
+                :key="index"
+                :value="item.articleName"
+                @click="handleChange(item.message_original_id, index)"
+              >
+                <div class="span-name" :title="item.articleName">
+                  <div style="width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                    {{ item.articleName }}
+                  </div>
+                  <div style="font-size: 12px">{{ item.count }}</div>
+                  <div style="font-size: 12px; margin-left: auto">{{ item.readCount }}&nbsp;/&nbsp;{{ item.rate }}</div>
+                </div>
+
+                <div class="bottom-line"></div>
+
+                <!-- <div class="ksview" :title="item.articleName">
+                  {{ item.articleName }}
+                </div> -->
+                <!-- <div style="color: #999999; margin-top: 3px; display: flex; flex-direction: row; font-size: xx-small">
+                  发送:{{ item.count }} &nbsp;成功:{{ item.readCount }}
+                  <div style="color: #999999; font-size: 8px; margin-left: 10px">{{ item.rate }}</div>
+                </div> -->
+              </div>
+            </div>
+            <a-pagination
+              v-if="showPagination"
+              simple
+              style="margin-left: auto; margin-right: 5px"
+              :total="totalPage"
+              :defaultCurrent="1"
+              :current="currentPage"
+              :pageSize="15"
+              @change="handleChangePage"
+            />
           </div>
-          <!-- <div> HAHAHHAHAH</div> -->
-          <a-pagination v-if="showPagination" simple  style="margin-left: auto;margin-right: 5px;" :total="totalPage" :defaultCurrent="1" :current="currentPage" :pageSize="15" 
-                      @change="handleChangePage"/>
-        </div>
-      </a-spin>
-        
+        </a-spin>
 
         <div class="div-service-right-control">
           <s-table
@@ -154,10 +172,10 @@ export default {
 
   data() {
     return {
-      currentPage:1,  //默认第一页
-      totalPage:10,
+      currentPage: 1, //默认第一页
+      totalPage: 10,
       fetching: false,
-      showPagination:true,
+      showPagination: true,
       // 高级搜索 展开/关闭
 
       advanced: false,
@@ -275,8 +293,7 @@ export default {
   },
 
   methods: {
-
-    handleChangePage(value){
+    handleChangePage(value) {
       this.currentPage = value
       // console.log("fff:",this.currentPage,value)
       this.getFollowArticleDataOut(false)
@@ -306,13 +323,13 @@ export default {
         departmentId: this.queryParam.departmentId,
         startTime: this.queryParam.startTime,
         endTime: this.queryParam.endTime,
-        pageNo:this.currentPage,
-        pageSize:15,
+        pageNo: this.currentPage,
+        pageSize: 15,
       }
       getFollowArticleData(postData)
         .then((res) => {
           if (res.code == 0 && res.data.records.length > 0) {
-            this.showPagination  =true
+            this.showPagination = true
             if (this.queryParam.articleId) {
               res.data.records.forEach((item) => {
                 item.checked = item.message_original_id == this.queryParam.articleId
@@ -328,15 +345,15 @@ export default {
             this.totalPage = res.data.total
             this.currentPage = res.data.current
             this.$set(this.articleList[0], 'isChecked', true)
-            if(isRefreshAll){
+            if (isRefreshAll) {
               this.$refs.table.refresh()
             }
           } else {
-            this.showPagination  =false
+            this.showPagination = false
             this.queryParam.articleId = undefined
             this.articleList = []
             this.articleListTemp = []
-            if(isRefreshAll){
+            if (isRefreshAll) {
               this.$refs.table.refresh()
             }
           }
@@ -377,7 +394,7 @@ export default {
         this.articleListTemp = this.articleList
       }
     },
-    handleChange(value,indexClick) {
+    handleChange(value, indexClick) {
       console.log(value)
       this.queryParam.articleId = value
       this.articleList.forEach((item) => {
@@ -447,11 +464,27 @@ export default {
   .div-service-left-control {
     display: grid;
     margin-right: 20px;
-    height: calc(100vh - 170px);
+    // height: calc(100vh - 170px);
+    height: 510px;
     min-height: 300px;
     flex-shrink: 0;
     width: 250px;
     overflow: hidden;
+
+    .top-kuang {
+      display: flex;
+      height: 30px;
+      align-items: center;
+      padding: 15px;
+      font-size: 12px;
+      background-color: #f2f2f2;
+      color: #1a1a1a;
+      flex-direction: row !important;
+      width: 95%;
+      justify-content: space-between;
+      border-bottom: #e6e6e6 1px solid;
+      border: 1px solid #dfe3e5;
+    }
 
     // border: 1px solid #e6e6e6;
 
@@ -488,44 +521,69 @@ export default {
     }
 
     .left-content {
-      height: 100%;
+      // height: 100%;
       overflow-y: auto;
       padding: 10px;
 
       .checked {
-        // color: #1890ff !important;
-        border: 1px solid #1890ff !important;
-        box-shadow: 0px 0px 4px 1px #409eff !important;
+        color: #1890ff !important;
+        // border: 1px solid #1890ff !important;
+        // box-shadow: 0px 0px 4px 1px #409eff !important;
       }
 
       .div-part {
-        padding: 8px;
-        background: rgba(0, 1, 3, 0);
-        border: 1px solid #dfe3e5;
-        overflow: hidden;
-        width: 95%;
+        // padding: 8px;
+        // background: rgba(0, 1, 3, 0);
+        // border: 1px solid #dfe3e5;
+        // overflow: hidden;
+        // width: 95%;
+        // display: flex;
+        // flex-direction: column;
+        // margin-bottom: 8px;
+        // // padding-left: 5%;
+        // border-bottom: #e6e6e6 1px solid;
+
         display: flex;
         flex-direction: column;
-        margin-bottom: 8px;
-        // padding-left: 5%;
-        border-bottom: #e6e6e6 1px solid;
+        justify-content: space-between;
+        height: 40px;
+        font-size: 12px;
+        align-items: center;
 
         &:hover {
           cursor: pointer;
         }
 
+        .bottom-line {
+          width: 100%;
+          height: 0.5px;
+          background: #e6e6e6;
+          margin-top: 5px;
+          margin-bottom: 5px;
+          margin-right: 10%;
+        }
+
         .span-name {
-          // margin-top: 3.5%;
-          // display: inline-block;
+          // flex: 1;
+          // height: 85%;
+          // overflow: hidden; //溢出隐藏
+          // text-overflow: ellipsis; //超出省略号显示
+          // white-space: nowrap; //文字不换行
+          // margin-top: 1%;
+          // font-size: 12px;
+          // text-align: left|center;
+
           flex: 1;
           height: 85%;
           overflow: hidden; //溢出隐藏
           text-overflow: ellipsis; //超出省略号显示
           white-space: nowrap; //文字不换行
-
-          // padding-left: 1%;
-          // color: #000;
-          margin-top: 1%;
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          width: 100%;
+          align-items: center;
+          justify-content: space-between;
           font-size: 12px;
           text-align: left|center;
         }

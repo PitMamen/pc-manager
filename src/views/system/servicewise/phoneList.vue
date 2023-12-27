@@ -4,15 +4,19 @@
       <!-- 类型，1: 待抽查 2: 已抽查 -->
       <div class="div-radio">
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 1 }" @click="onRadioClick(1)">
+          <a-icon type="eye"></a-icon>
           <span style="margin-left: 3px">{{ treeData[0].title }}</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 2 }" @click="onRadioClick(2)">
+          <a-icon type="profile"></a-icon>
           <span style="margin-left: 3px">{{ treeData[1].title }}</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 3 }" @click="onRadioClick(3)">
+          <a-icon type="database"></a-icon>
           <span style="margin-left: 3px">{{ treeData[2].title }}</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 4 }" @click="onRadioClick(4)">
+          <a-icon type="diff"></a-icon>
           <span style="margin-left: 3px">{{ treeData[3].title }}</span>
         </div>
       </div>
@@ -20,8 +24,13 @@
       <div class="div-divider-in"></div>
       <div class="div-service-left-phone">
         <div class="left-control">
-          <div class="div-wrap-control" style="height: 510px">
-            <div v-if="quesDataTemp && quesDataTemp.length > 0">
+          <div class="top-kuang">
+              <div>问卷名称</div>
+              <div>{{ follotype }}</div>
+            </div>
+          <div class="div-wrap-control">
+            
+            <div v-if="quesDataTemp && quesDataTemp.length > 0" style="height: 510px">
               <div
                 class="div-part"
                 :class="{ checked: item.isChecked }"
@@ -30,16 +39,12 @@
                 :value="item.departmentName"
                 :key="index"
               >
-                <span class="span-name"  :title="item.title">
-                  {{ item.title }}
-                </span>
-                <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
-                <div style="font-size: 12px">
-                  {{ item.titleFather }}：<span v-if="queryParams.queryStatus == 4" style="color: #409eff">{{
-                    item.count
-                  }}</span
-                  ><span v-else style="color: #f26161">{{ item.count }}</span>
+                <div class="span-name" :title="item.title">
+                  <div style="width: 60%;overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ item.title }}</div>
+                  <div style="font-size: 12px; margin-left: auto; margin-right: 20%">{{ item.count }}</div>
                 </div>
+
+                <div class="bottom-line"></div>
               </div>
             </div>
             <div v-else class="no-data">
@@ -224,6 +229,7 @@ export default {
       isOpen: true,
       childrenDrawer: true,
       isDoubled: false,
+      follotype: '今日待随访',
       datas: [],
       drawerWidth: 300,
       drawerTitle: '选择随访列表',
@@ -814,23 +820,27 @@ export default {
       //改变样式
       if (this.queryParams.queryStatus == 1) {
         this.quesDataTemp = this.treeData[0].children
+        this.follotype = '今日待随访'
         this.columns = JSON.parse(JSON.stringify(this.columnsNeed))
         this.quesDataTemp.forEach((element) => {
           this.$set(element, 'titleFather', this.treeData[0].titleOrigin)
         })
       } else if (this.queryParams.queryStatus == 2) {
+        this.follotype = '全部待随访'
         this.quesDataTemp = this.treeData[1].children
         this.columns = JSON.parse(JSON.stringify(this.columnsAll))
         this.quesDataTemp.forEach((element) => {
           this.$set(element, 'titleFather', this.treeData[1].titleOrigin)
         })
       } else if (this.queryParams.queryStatus == 3) {
+        this.follotype = '逾期随访'
         this.quesDataTemp = this.treeData[2].children
         this.columns = JSON.parse(JSON.stringify(this.columnsOverdue))
         this.quesDataTemp.forEach((element) => {
           this.$set(element, 'titleFather', this.treeData[2].titleOrigin)
         })
       } else if (this.queryParams.queryStatus == 4) {
+        this.follotype = '已随访'
         this.quesDataTemp = this.treeData[3].children
         this.columns = JSON.parse(JSON.stringify(this.columnsAready))
         this.quesDataTemp.forEach((element) => {
@@ -1031,7 +1041,7 @@ export default {
       flex-direction: row;
       &:hover {
         cursor: pointer;
-        color: #1890ff;
+        // color: #1890ff;
         img {
           filter: drop-shadow(#1890ff 600px 0);
           transform: translateX(-600px);
@@ -1040,7 +1050,7 @@ export default {
     }
 
     .checked-btn {
-      background-color: #eff7ff;
+      // background-color: #eff7ff;
       color: #1890ff;
       border-bottom: #1890ff 2px solid;
     }
@@ -1065,8 +1075,34 @@ export default {
     // margin:  20px 20px;
     float: left;
     min-height: 100%;
-    width: 19%;
+    width: 15%;
     overflow: hidden;
+
+    .left-control {
+        display: flex;
+        // padding: 20px 0 20px 20px;
+        // padding: 10px;
+        // border: 1px solid #e6e6e6;
+        flex-direction: column;
+        // width: 100%;
+        // // height: 100%;
+        // min-height: 100%;
+
+        .top-kuang {
+          display: flex;
+          height: 30px;
+          align-items: center;
+          padding: 15px;
+          font-size: 12px;
+          background-color: #f2f2f2;
+          color: #1a1a1a;
+          flex-direction: row !important;
+          width: 95%;
+          justify-content: space-between;
+          border-bottom: #e6e6e6 1px solid;
+          border: 1px solid #dfe3e5;
+        }
+      }
 
     .div-wrap-control {
       // max-height: 420px;
@@ -1085,27 +1121,55 @@ export default {
       }
 
       .checked {
-        // color: #1890ff !important;
-        border: 1px solid #1890ff !important;
-        box-shadow: 0px 0px 4px 1px #409eff !important;
+        color: #1890ff !important;
+        // border: 1px solid #1890ff !important;
+        // box-shadow: 0px 0px 4px 1px #409eff !important;
+      }
+
+      // .top-kuang {
+      //   display: flex;
+      //   height: 30px;
+      //   align-items: center;
+      //   padding: 15px;
+      //   font-size: 12px;
+      //   background-color: #f2f2f2;
+      //   color: #1a1a1a;
+      //   flex-direction: row !important;
+      //   width: 95%;
+      //   justify-content: space-between;
+      //   border-bottom: #e6e6e6 1px solid;
+      //   border: 1px solid #dfe3e5;
+      // }
+
+      .ksview {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        height: 30px;
+        font-size: 12px;
+        align-items: center;
       }
 
       .div-part {
-        padding: 8px;
-        background: rgba(0, 1, 3, 0);
-        border: 1px solid #dfe3e5;
-        overflow: hidden;
-        width: 95%;
         display: flex;
         flex-direction: column;
-        margin-bottom: 8px;
-        // padding-left: 5%;
-        border-bottom: #e6e6e6 1px solid;
+        justify-content: space-between;
+        height: 40px;
+        font-size: 12px;
+        align-items: center;
 
         &:hover {
           cursor: pointer;
         }
 
+        .bottom-line {
+          width: 100%;
+          height: 0.5px;
+          background: #e6e6e6;
+          margin-top: 5px;
+          margin-bottom: 5px;
+          margin-right: 10%;
+        }
         .span-name {
           // margin-top: 3.5%;
           // display: inline-block;
@@ -1114,6 +1178,12 @@ export default {
           overflow: hidden; //溢出隐藏
           text-overflow: ellipsis; //超出省略号显示
           white-space: nowrap; //文字不换行
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          width: 100%;
+          align-items: center;
+          justify-content: space-between;
 
           // padding-left: 1%;
           // color: #000;
@@ -1206,7 +1276,7 @@ export default {
   .card-right-phone {
     overflow: hidden;
     float: right;
-    width: 81%;
+    width: 85%;
 
     /deep/ .ant-card-body {
       padding: 0px 20px !important;
