@@ -164,7 +164,7 @@
               <span style="color: #f90505">*</span>转诊类型：
             </div>
             <div class="div-cell-value" style="width: 100%">
-              {{ dataInfo.referralType.description || "" }}
+              {{ dataInfo.referralType ? dataInfo.referralType.description : '' }}
             </div>
           </div>
           <div class="div-cell" style="margin-left: 1.3%">
