@@ -61,6 +61,7 @@
       :columns="columns"
       :data="loadData"
       :alert="true"
+      :scroll="{ x: true }"
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
@@ -140,16 +141,19 @@ export default {
         {
           title: '患者姓名',
           dataIndex: 'name',
+          with: 80,
           ellipsis: true,
         },
 
         {
           title: '性别',
           dataIndex: 'userSex',
+          with: 80,
         },
         {
           title: '年龄',
           dataIndex: 'userAge',
+          with: 80,
         },
 
         {
@@ -168,17 +172,20 @@ export default {
         {
           title: '申请医生',
           dataIndex: 'reqDocName',
+          with: 80,
         },
 
         {
           title: '接诊学科',
           dataIndex: 'inSubjectName',
+          with: 120,
         },
 
         {
           title: '申请科室',
           dataIndex: 'reqDept',
           align: 'center',
+          with: 150,
         },
 
         {
@@ -188,6 +195,7 @@ export default {
         {
           title: '期望到院时间',
           dataIndex: 'serveTime',
+          with:250,
         },
 
         {
@@ -198,6 +206,7 @@ export default {
         {
           title: '收治情况',
           dataIndex: 'szFlagText',
+          with:130,
           scopedSlots: { customRender: 'actioncard' },
         },
 
