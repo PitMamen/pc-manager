@@ -465,7 +465,7 @@ export default {
     display: grid;
     margin-right: 20px;
     // height: calc(100vh - 170px);
-    height: 510px;
+    // height: 510px;
     min-height: 300px;
     flex-shrink: 0;
     width: 250px;
