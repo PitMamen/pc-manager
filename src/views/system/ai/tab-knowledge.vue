@@ -3,9 +3,7 @@
     <div class="top">
       <img src="@/assets/ai/robot.png" />
       <div class="welcome">
-        <div class="value">
-          作为一个医疗人工智能模型，我已经学习了海量医疗知识，您可以在右侧选择药品、指南、病历进行智能化的查询
-        </div>
+        <div class="value">作为一个医疗人工智能模型，我已经学习了海量医疗知识，您可以在右侧选择药品、指南、病历进行智能化的查询</div>
       </div>
     </div>
     <info-compass ref="infoCompass" />
