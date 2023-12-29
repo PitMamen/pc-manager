@@ -290,6 +290,7 @@ export default {
       this.$message.success('去评论')
     },
 
+    // <!-- 1提交申请2申请审核通过3申请审核不通过4收治审核通过5收治审核不通过6已预约7已收治（7实际没用） -->
     getType(record) {
       if (record.status.value == 1) {
         return '待审核'
@@ -297,6 +298,10 @@ export default {
         return '审核通过'
       } else if (record.status.value == 3) {
         return '审核不通过'
+      } else if (record.status.value == 4) {
+        return '收治通过'
+      } else if (record.status.value == 5) {
+        return '收治不通过'
       }
     },
 
