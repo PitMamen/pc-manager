@@ -68,12 +68,18 @@
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.shipStatus == '' }" @click="onRadioClick('')">
+        <img v-if="queryParamsTemp.shipStatus == ''" src="~@/assets/icons/dingdan_c.png" />
+        <img v-else src="~@/assets/icons/dingdan_n.png" />
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.shipStatus == 1 }" @click="onRadioClick(1)">
+        <img v-if="queryParamsTemp.shipStatus == 1" src="~@/assets/icons/dfh_c.png" />
+        <img v-else src="~@/assets/icons/dfh_n.png" />
         <span style="margin-left: 3px">待发货({{ numberData.daifahuo }}) </span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.shipStatus == 2 }" @click="onRadioClick(2)">
+        <img v-if="queryParamsTemp.shipStatus == 2" src="~@/assets/icons/yfh_c.png" />
+        <img v-else src="~@/assets/icons/yfh_n.png" />
         <span style="margin-left: 3px">已发货({{ numberData.yifahuo }})</span>
       </div>
     </div>
@@ -656,7 +662,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

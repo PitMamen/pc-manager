@@ -4,19 +4,23 @@
       <!-- 类型，1: 待抽查 2: 已抽查 -->
       <div class="div-radio">
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 1 }" @click="onRadioClick(1)">
-          <a-icon type="eye"></a-icon>
+          <img v-if="queryParams.queryStatus == 1 " src="~@/assets/icons/jrdsf_n.png"  />
+          <img v-else src="~@/assets/icons/jrdsf_c.png"  />
           <span style="margin-left: 3px">{{ treeData[0].title }}</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 2 }" @click="onRadioClick(2)">
-          <a-icon type="profile"></a-icon>
+          <img v-if="queryParams.queryStatus == 2 " src="~@/assets/icons/qbdsf_n.png"  />
+          <img v-else src="~@/assets/icons/qbdsf_c.png"  />
           <span style="margin-left: 3px">{{ treeData[1].title }}</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 3 }" @click="onRadioClick(3)">
-          <a-icon type="database"></a-icon>
+          <img v-if="queryParams.queryStatus == 3 " src="~@/assets/icons/yqsf_c.png"  />
+          <img v-else src="~@/assets/icons/yqsf_n.png"  />
           <span style="margin-left: 3px">{{ treeData[2].title }}</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParams.queryStatus == 4 }" @click="onRadioClick(4)">
-          <a-icon type="diff"></a-icon>
+          <img v-if="queryParams.queryStatus == 4 " src="~@/assets/icons/ysf_c.png"  />
+          <img v-else src="~@/assets/icons/ysf_n.png"  />
           <span style="margin-left: 3px">{{ treeData[3].title }}</span>
         </div>
       </div>

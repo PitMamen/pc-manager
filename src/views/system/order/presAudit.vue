@@ -80,16 +80,24 @@
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.checkStatus == 0 }" @click="onRadioClick(0)">
+        <img v-if="queryParamsTemp.checkStatus == 0" src="~@/assets/icons/qbcf_c.png" />
+        <img v-else src="~@/assets/icons/qbcf_n.png" />
         <span style="margin-left: 3px">全部处方({{ numberData.quanbu }})</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.checkStatus == 1 }" @click="onRadioClick(1)">
+        <img v-if="queryParamsTemp.checkStatus == 1" src="~@/assets/icons/dsh_c.png" />
+        <img v-else src="~@/assets/icons/dsh_n.png" />
         <span style="margin-left: 3px">待审核({{ numberData.daishenhe }}) </span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.checkStatus == 2 }" @click="onRadioClick(2)">
+         <img v-if="queryParamsTemp.checkStatus == 2" src="~@/assets/icons/shcg_c.png" />
+        <img v-else src="~@/assets/icons/shcg_n.png" />
         <span style="margin-left: 3px">审核成功({{ numberData.success }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.checkStatus == 3 }" @click="onRadioClick(3)">
+        <img v-if="queryParamsTemp.checkStatus == 3" src="~@/assets/icons/shsb_c.png" />
+        <img v-else src="~@/assets/icons/shsb_n.png" />
         <span style="margin-left: 3px">审核失败({{ numberData.fail }})</span>
       </div>
     </div>
@@ -233,7 +241,7 @@ export default {
           title: '开具时间',
           dataIndex: 'createTime',
           width: 180,
-          ellipsis:true
+          ellipsis: true,
         },
         {
           title: '状态',
@@ -313,15 +321,14 @@ export default {
   methods: {
     //查看/ 审核
     goExamine(record) {
-        console.log("ggg:",record.checkStatus)
-        //查看
-      if(record.checkStatus==2||record.checkStatus==3){
-          this.$refs.processView.lookview(record)
-        }else{
-            //审核
-          this.$refs.processView.process(record)
+      console.log('ggg:', record.checkStatus)
+      //查看
+      if (record.checkStatus == 2 || record.checkStatus == 3) {
+        this.$refs.processView.lookview(record)
+      } else {
+        //审核
+        this.$refs.processView.process(record)
       }
-
     },
 
     showText(value) {
@@ -405,7 +412,6 @@ export default {
     //     })
     // },
 
-
     queryHospitalListOut(name) {
       this.fetching = true
       let queryData = {
@@ -444,14 +450,6 @@ export default {
         this.queryHospitalListOut(undefined)
       }
     },
-
-
-
-
-
-
-
-
 
     reset(clearTime) {
       this.queryParams.hospitalCode = undefined
@@ -784,7 +782,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

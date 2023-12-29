@@ -61,6 +61,7 @@
         :class="{ 'checked-btn': item.isChecked }"
         @click="onRadioClick(index)"
       >
+        <a-icon :type="item.iconType"></a-icon>
         <span style="margin-left: 3px">{{ item.payeeName + '（' + item.total + '）' }}</span>
       </div>
     </div>
@@ -336,8 +337,9 @@ export default {
       refundBillTab(params).then((res) => {
         if (res.code == 0) {
           this.tabDataList = res.data
-          this.tabDataList.forEach((item) => {
+          this.tabDataList.forEach((item,index) => {
             this.$set(item, 'isChecked', false)
+            this.$set(item, 'iconType', this.getIcon(index))
           })
           this.queryParams.payeeId = this.tabDataList[0].payeeId
           this.$set(this.tabDataList[0], 'isChecked', true)
@@ -349,6 +351,23 @@ export default {
         }
       })
     },
+
+    getIcon(index) {
+      if (index == 0) {
+        return 'bank'
+      } else if (index == 1) {
+        return 'global'
+      } else if (index == 1) {
+        return 'home'
+      } else if (index == 1) {
+        return 'robot'
+      } else if (index == 1) {
+        return 'block'
+      } else {
+        return 'safety'
+      }
+    },
+
     getTotalList(needGet) {
       let params = {
         billMonth: this.queryParams.billMonth,
@@ -438,7 +457,7 @@ export default {
     /**
      * 所属机构接口
      */
-     queryHospitalListOut(name) {
+    queryHospitalListOut(name) {
       this.fetching = true
       let queryData = {
         tenantId: '',
@@ -723,7 +742,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

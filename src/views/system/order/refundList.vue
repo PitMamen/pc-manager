@@ -79,6 +79,8 @@
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+        <img v-if="queryParamsTemp.tabCode == 'qb'" src="~@/assets/icons/dingdan_c.png" />
+        <img v-else src="~@/assets/icons/dingdan_n.png" />
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div
@@ -97,8 +99,10 @@
       >
         <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
-
+<!-- chenggong_c -->
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
+        <img v-if="queryParamsTemp.tabCode == 'wc'" src="~@/assets/icons/ywc_c.png" />
+        <img v-else src="~@/assets/icons/ywc_c.png" />
         <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
       </div>
     </div>
@@ -131,7 +135,7 @@
 import { STable } from '@/components'
 import moment from 'moment'
 import { accessHospitals1, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast,gethalfYearToday } from '@/utils/util'
+import { getDateNow, getCurrentMonthLast, gethalfYearToday } from '@/utils/util'
 import addForm from './addForm'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -327,7 +331,6 @@ export default {
     this.queryHospitalListOut(undefined)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-    
     this.orderTimeValue = [moment(gethalfYearToday(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
@@ -340,7 +343,6 @@ export default {
       }
     })
   },
-
 
   mounted() {
     this.$bus.$on('refundRefresh', (record) => {
@@ -389,7 +391,7 @@ export default {
     getColor(value) {
       if (value == 1 || value == 2) {
         return 'span-green'
-      } else if (value == 3 || value == 5||value==7) {
+      } else if (value == 3 || value == 5 || value == 7) {
         return 'span-red'
       } else if (value == 6) {
         return 'span-blue'
@@ -439,7 +441,7 @@ export default {
     /**
      * 所属机构接口
      */
-     queryHospitalListOut(name) {
+    queryHospitalListOut(name) {
       this.fetching = true
       let queryData = {
         tenantId: '',
@@ -478,7 +480,6 @@ export default {
       }
     },
 
-
     reset(clearTime) {
       this.queryParams.combinedCondition = ''
       this.queryParams.hospitalCode = undefined
@@ -488,7 +489,10 @@ export default {
       } else {
         this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-        this.orderTimeValue = [moment(gethalfYearToday(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+        this.orderTimeValue = [
+          moment(gethalfYearToday(), this.dateFormat),
+          moment(getCurrentMonthLast(), this.dateFormat),
+        ]
       }
       // this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
       // this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
@@ -811,7 +815,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

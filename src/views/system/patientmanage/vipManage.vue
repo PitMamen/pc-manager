@@ -1,13 +1,16 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs  :activeKey="0"  v-model="keyindex" @change="chanage" style="margin-top: -20px">
+    <a-tabs :activeKey="0" v-model="keyindex" @change="chanage" style="margin-top: -20px">
       <a-tab-pane
         class="ant-tabs-tab-active"
         v-for="(itemTab, indexTab) in tabDatas"
         :tab="itemTab.metaName"
         :key="itemTab.id"
       >
-        <div style="height: 1px"></div>
+        <span slot="tab">
+          <!-- <img  src="~@/assets/icons/qbdsf_n.png"  /> -->
+          <a-icon type="eye" />
+        </span>
       </a-tab-pane>
     </a-tabs>
     <div class="table-page-search-wrapper">
@@ -169,7 +172,7 @@ export default {
       tableClumns: [],
       chooseArrOrigin: [],
       user: {},
-      tableId:'',
+      tableId: '',
       tabDatas: [],
       originData: [],
       chooseArr: [],
@@ -647,7 +650,7 @@ export default {
 }
 
 /deep/.ant-tabs-tab-active {
-  background: #eff7ff;
+  // background: #eff7ff;
 }
 .table-page-search-wrapper {
   display: flex;

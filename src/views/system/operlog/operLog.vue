@@ -1,14 +1,26 @@
 <template>
   <div class="wrap">
     <a-tabs v-model="keyindex">
-      <a-tab-pane key="1" tab="登录日志">
+      <a-tab-pane key="1" >
+        <span slot="tab">
+          <a-icon type="hdd" />
+          <span>登录日志</span>
+        </span>
         <login-list ref="smsList" />
       </a-tab-pane>
 
-      <a-tab-pane key="2" tab="用户日志" force-render>
+      <a-tab-pane key="2"  force-render>
+        <span slot="tab">
+          <a-icon type="solution" />
+          <span>用户日志</span>
+        </span>
         <user-list ref="wxList" />
       </a-tab-pane>
-      <a-tab-pane key="3" tab="机构日志" force-render>
+      <a-tab-pane key="3"  force-render>
+        <span slot="tab">
+          <a-icon type="reconciliation" />
+          <span>机构日志</span>
+        </span>
         <org-list ref="wxList" />
       </a-tab-pane>
     </a-tabs>

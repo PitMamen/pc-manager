@@ -160,9 +160,9 @@
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">产品清单</div>
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5;white-space:nowrap"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; "
         size="small"
-        :scroll="{ y: true}"
+        :scroll="{ x: true }"
         :columns="goodsItemsDataColumns"
         :data-source="goodsItemsData"
         :alert="true"
@@ -185,10 +185,10 @@
 
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5;white-space:nowrap"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; white-space:nowrap"
         size="small"
         class="a-table-one"
-        :scroll="{ y: true }"
+        :scroll="{ x: true }"
         :columns="rightItemsDataColumns"
         :data-source="rightItemsData"
         :alert="true"
@@ -293,42 +293,42 @@ export default {
           title: '产品名称',
           dataIndex: 'rightsItemName',
           align:'left',
-          with:250,
+          with:280,
           ellipsis: true,
         },
         {
           title: '规格',
           dataIndex: 'ruleInfo',
+          with:100,
           
-          with:'100px',
         },
         {
           title: '数量',
           dataIndex: 'equityQuantity',
-          // with:50,
+          with:50,
         },
         {
           title: '单位',
           dataIndex: 'unit',
-          // with:50,
+          with:50,
         },
         {
           title: '计费金额',
           dataIndex: 'saleAmount',
           align:'right',
-          // with:50,
+          with:180,
         },
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
           align:'center',
-          // with:150,
+          with:180,
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
           align:'center',
-          // with:150,
+          with:180,
         },
         {
           title: '类型',
@@ -348,17 +348,18 @@ export default {
         {
           title: '服务项目',
           dataIndex: 'rightsItemName',
-          with:250,
+          with:280,
           ellipsis: true,
         },
         {
           title: '服务规格',
           dataIndex: 'ruleInfo',
+          with:80,
         },
         {
           title: '数量',
           dataIndex: 'equityQuantity',
-          with:50,
+          with:80,
         },
         {
           title: '单位',
@@ -368,17 +369,21 @@ export default {
         {
           title: '计费金额',
           dataIndex: 'saleAmount',
-          align:'right'
+          align:'right',
+          with:180,
+          
         },
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
-          align:'center'
+          align:'center',
+          with:180,
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
-          align:'center'
+          align:'center',
+          with:180,
         },
         {
           title: '类型',

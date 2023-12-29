@@ -2,12 +2,18 @@
   <a-card :bordered="false" class="sys-card">
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 1 }" @click="onRadioClick(1)">
+        <img v-if="queryParams.settlementStatus == 1" src="~@/assets/icons/djs_c.png" />
+        <img v-else src="~@/assets/icons/djs_n.png" />
         <span style="margin-left: 3px">待结算</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 2 }" @click="onRadioClick(2)">
+        <img v-if="queryParams.settlementStatus == 2" src="~@/assets/icons/yjs_c.png" />
+        <img v-else src="~@/assets/icons/yjs_n.png" />
         <span style="margin-left: 3px">已结算</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParams.settlementStatus == 3 }" @click="onRadioClick(3)">
+        <img v-if="queryParams.settlementStatus == 3" src="~@/assets/icons/byjs_c.png" />
+        <img v-else src="~@/assets/icons/byjs_n.png" />
         <span style="margin-left: 3px">不予结算</span>
       </div>
     </div>
@@ -1025,7 +1031,7 @@ export default {
 
   .checked-btn {
     // background-color: #eff7ff;
-    // color: #1890ff;
+    color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }
 

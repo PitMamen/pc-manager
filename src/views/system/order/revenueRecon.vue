@@ -33,7 +33,7 @@
       <div class="search-row">
         <span class="name">下单时间:</span>
         <a-month-picker
-        placeholder="选择月份"
+          placeholder="选择月份"
           :allow-clear="false"
           :disabled-date="disabledDate"
           :default-value="nowMonth"
@@ -71,6 +71,7 @@
         :class="{ 'checked-btn': item.isChecked }"
         @click="onRadioClick(index)"
       >
+        <a-icon :type="item.iconType "></a-icon>
         <span style="margin-left: 3px">{{ item.payeeName + '（' + item.total + '）' }}</span>
       </div>
     </div>
@@ -355,7 +356,6 @@ export default {
   },
 
   methods: {
-
     disabledDate(current) {
       // Can not select days before today and today
       return current && current > moment().endOf('day')
@@ -370,7 +370,7 @@ export default {
           billDate: record.billDate,
           state: record.stateShow,
           payeeId: this.currentTab,
-          hospitalCode:this.queryParams.hospitalCode
+          hospitalCode: this.queryParams.hospitalCode,
         },
       })
     },
@@ -436,11 +436,11 @@ export default {
     //       this.confirmLoading = false
     //     })
     // },
-    
- /**
+
+    /**
      * 所属机构接口
      */
-     queryHospitalListOut(name) {
+    queryHospitalListOut(name) {
       this.fetching = true
       let queryData = {
         tenantId: '',
@@ -531,8 +531,9 @@ export default {
 
             if (res.code == 0) {
               this.tabDataList = res.data
-              this.tabDataList.forEach((item) => {
+              this.tabDataList.forEach((item, index) => {
                 this.$set(item, 'isChecked', false)
+                this.$set(item, 'iconType', this.getIcon(index))
               })
               this.queryParams.payeeId = this.tabDataList[0].payeeId
               this.$set(this.tabDataList[0], 'isChecked', true)
@@ -556,6 +557,22 @@ export default {
           this.SummaryDataList = res.data
         }
       })
+    },
+
+    getIcon(index) {
+      if (index == 0) {
+        return 'bank'
+      } else if (index == 1) {
+        return 'global'
+      } else if (index == 1) {
+        return 'home'
+      } else if (index == 1) {
+        return 'robot'
+      } else if (index == 1) {
+        return 'block'
+      } else {
+        return 'safety'
+      }
     },
 
     onRadioClick(index) {
@@ -779,7 +796,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }
