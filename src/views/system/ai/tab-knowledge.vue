@@ -34,7 +34,7 @@ export default {
   methods: {
     infoCompassHandler(evt) {
       if (evt.data) {
-        if (evt.data.type === 'parent-compass-info') {
+        if (evt.data.type === 'parent-compass-info-know') {
           this.$refs.infoCompass.open(evt.data.item, evt.data.list)
         }
       }
