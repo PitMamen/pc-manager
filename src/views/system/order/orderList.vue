@@ -323,13 +323,13 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
-          if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.orderStartTime
-            delete this.queryParams.orderEndTime
-            this.$refs.table.refresh()
-            return
-          }
+          // if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
+          //   this.$message.error('请选择开始时间小于结束时间')
+          //   delete this.queryParams.orderStartTime
+          //   delete this.queryParams.orderEndTime
+          //   this.$refs.table.refresh()
+          //   return
+          // }
           if (this.queryParams.orderStartTime) {
             let start = this.formatDate(this.queryParams.orderStartTime)
             this.queryParams.orderStartTime = start + ' 00:00:00'

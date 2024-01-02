@@ -1,16 +1,23 @@
 <template>
-    <div class="wrap">
-      <a-tabs v-model="keyindex" style="margin-left: 20px;">
-        <a-tab-pane key="1" tab="转入登记" >
-            <!-- <a-icon type="import"></a-icon> -->
-          <transfer-Check ref="transferin" />
-        </a-tab-pane>
-        <a-tab-pane key="2" tab="转出登记" force-render>
-            <transferout-Check ref="transferout" />
-        </a-tab-pane>
-      </a-tabs>
-    </div>
-  </template>
+  <div class="wrap">
+    <a-tabs v-model="keyindex" style="margin-left: 20px">
+      <a-tab-pane key="1">
+        <span slot="tab">
+          <a-icon type="import" />
+          <span>转入登记</span>
+        </span>
+        <transfer-Check ref="transferin" />
+      </a-tab-pane>
+      <a-tab-pane key="2" force-render>
+        <span slot="tab">
+          <a-icon type="export" />
+          <span>转出登记</span>
+        </span>
+        <transferout-Check ref="transferout" />
+      </a-tab-pane>
+    </a-tabs>
+  </div>
+</template>
 
 
 <script>
@@ -40,7 +47,7 @@ export default {
 
   methods: {
     addwxtemplate() {
-    //   this.$router.push({ path: './addwxtemplate' })
+      //   this.$router.push({ path: './addwxtemplate' })
     },
 
     callback() {},

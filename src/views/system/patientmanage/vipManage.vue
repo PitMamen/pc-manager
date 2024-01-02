@@ -4,12 +4,11 @@
       <a-tab-pane
         class="ant-tabs-tab-active"
         v-for="(itemTab, indexTab) in tabDatas"
-        :tab="itemTab.metaName"
         :key="itemTab.id"
       >
         <span slot="tab">
-          <!-- <img  src="~@/assets/icons/qbdsf_n.png"  /> -->
-          <a-icon type="eye" />
+          <a-icon :type="getType(indexTab)" />
+          <span>{{itemTab.metaName}}</span>
         </span>
       </a-tab-pane>
     </a-tabs>
@@ -427,6 +426,31 @@ export default {
       el.click()
       document.body.removeChild(el)
     },
+
+
+
+
+    getType(index){
+      if (index==0) {
+        return 'exception'
+      }else if (index==1) {
+        return 'file-search'
+      }else if (index==2) {
+        return 'solution'
+      }else if (index==3) {
+        return 'user'
+      }else if (index==4) {
+        return 'tream'
+      }else{
+        return 'hourglass'
+
+      }
+    },
+
+
+
+
+
 
     //上传
     uploadModal(changeObj) {
