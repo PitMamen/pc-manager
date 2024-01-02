@@ -89,6 +89,8 @@
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }"
         @click="onRadioClick('yy')"
       >
+      <img v-if="queryParamsTemp.tabCode == 'yy'" src="~@/assets/icons/ywc_c.png" />
+        <img v-else src="~@/assets/icons/ywc_n.png" />
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
       <div
@@ -97,12 +99,14 @@
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }"
         @click="onRadioClick('cw')"
       >
+      <img v-if="queryParamsTemp.tabCode == 'cw'" src="~@/assets/icons/byjs_c.png" />
+        <img v-else src="~@/assets/icons/byjs_n.png" />
         <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
 <!-- chenggong_c -->
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
         <img v-if="queryParamsTemp.tabCode == 'wc'" src="~@/assets/icons/ywc_c.png" />
-        <img v-else src="~@/assets/icons/ywc_c.png" />
+        <img v-else src="~@/assets/icons/ywc_n.png" />
         <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
       </div>
     </div>
