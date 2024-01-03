@@ -160,7 +160,7 @@ export default {
         yiyuan: 0,
       },
       queryParams: {
-        hospitalCode: undefined,
+        hospitalCode: '',
         factoryId: undefined,
         statMonth: getMonthNow(),//statMonth
         // pageNo: 0,
@@ -264,8 +264,11 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        console.log("fdfff:",this.queryParams.hospitalCode)
+        // if ( this.queryParams.hospitalCode) {
+          // this.queryParams.hospitalCode = this.queryParams.hospitalCode.split(',')  //机构传数组
+        // }
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        // this.queryParamsTemp.payeeId = this.currentTab
         return statFactoryReport(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0) {
@@ -351,39 +354,6 @@ export default {
       })
     },
 
-    // queryHospitalListOut() {
-    //   let queryData = {
-    //     tenantId: '',
-    //     status: 1,
-    //     hospitalName: '',
-    //   }
-    //   this.confirmLoading = true
-    //   accessHospitals(queryData)
-    //     .then((res) => {
-    //       if (res.code == 0 && res.data.length > 0) {
-    //         res.data.forEach((item, index) => {
-    //           this.$set(item, 'key', item.hospitalCode)
-    //           this.$set(item, 'value', item.hospitalCode)
-    //           this.$set(item, 'title', item.hospitalName)
-    //           this.$set(item, 'children', item.hospitals)
-
-    //           item.hospitals.forEach((item1, index1) => {
-    //             this.$set(item1, 'key', item1.hospitalCode)
-    //             this.$set(item1, 'value', item1.hospitalCode)
-    //             this.$set(item1, 'title', item1.hospitalName)
-    //           })
-    //         })
-
-    //         this.treeData = res.data
-    //       } else {
-    //         this.treeData = res.data
-    //       }
-    //       return []
-    //     })
-    //     .finally((res) => {
-    //       this.confirmLoading = false
-    //     })
-    // },
 
 
  /**
@@ -403,7 +373,9 @@ export default {
           if (res.code == 0 && res.data.length > 0) {
             res.data.forEach((item) => {
               if (item.hospitalCode == this.localHospitalCode) {
-                this.queryParams.hospitalCode = item.hospitalCode
+                var hospitals = []
+                hospitals.push(item.hospitalCode) 
+                this.queryParams.hospitalCode = hospitals // 后台改动 机构由string改成传数组
               }
             })
             this.treeData = res.data
@@ -425,6 +397,11 @@ export default {
         this.localHospitalCode = undefined
         this.treeData = []
         this.queryHospitalListOut(undefined)
+      }else{
+        var hospitals = []
+        hospitals.push(value)
+        this.queryParams.hospitalCode = hospitals
+        console.log("111111:",this.queryParams.hospitalCode)
       }
     },
 
