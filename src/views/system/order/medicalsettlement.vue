@@ -67,7 +67,7 @@
           :disabled-date="disabledDate"
           :default-value="nowMonth"
           :format="monthFormat"
-          v-model="queryParams.createdTime"
+          v-model="monthValue"
         />
       </div>
 
@@ -210,6 +210,7 @@ export default {
     return {
       monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
+      monthValue: {}, //Date类型对象，用于与请求参数的转换
       nowMonth: '',
       fetching: false,
       localHospitalCode: undefined,
@@ -442,6 +443,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         if (this.currentTab == 1) {
+          this.queryParams.createdTime = this.formatDate(this.monthValue).substring(0, 7)
           return getOrderSettlementList(Object.assign(parameter, this.queryParams)).then((res) => {
             let data = {}
             if (res.code == 0 && res.data && res.data.records.length > 0) {
@@ -497,9 +499,9 @@ export default {
       this.localHospitalCode = this.user.hospitalCode
     }
     this.queryHospitalListOut(undefined)
-    this.queryParams.createdTime = moment(getMonthNow(), this.monthFormat)
+    // this.queryParams.createdTime = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
-    this.queryParams.createdTime = this.formatDate(this.queryParams.createdTime).substring(0, 7)
+    this.monthValue = moment(getMonthNow(), this.monthFormat)
     this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
   },
   methods: {

@@ -38,7 +38,7 @@
           :disabled-date="disabledDate"
           :default-value="nowMonth"
           :format="monthFormat"
-          v-model="queryParams.billMonth"
+          v-model="monthValue"
         />
       </div>
 
@@ -197,6 +197,7 @@ export default {
     return {
       monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
+      monthValue: {}, //Date类型对象，用于与请求参数的转换
       nowMonth: '',
       orderTimeValue: [],
       treeData: [],
@@ -291,6 +292,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        this.queryParams.billMonth = this.formatDate(this.monthValue).substring(0, 7)
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         // this.queryParamsTemp.payeeId = this.currentTab
         return tradeBillPage(Object.assign(parameter, this.queryParams))
@@ -338,11 +340,9 @@ export default {
       this.localHospitalCode = this.user.hospitalCode
     }
     this.queryHospitalListOut(undefined)
-    this.queryParams.billMonth = moment(getMonthNow(), this.monthFormat)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
+    this.monthValue = moment(getMonthNow(), this.monthFormat)
 
-    // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-    this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
     this.getTabOut()
     this.gettradeBillSummaryOut()
 
@@ -481,7 +481,7 @@ export default {
 
     //导出
     leadingOut() {
-      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
+      this.queryParams.billMonth = this.formatDate(this.monthValue).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
       tradeBillExport(params)
         .then((res) => {
