@@ -163,6 +163,7 @@ export default {
         {
           title: '收治情况',
           dataIndex: 'szFlagText',
+          align: 'center',
           scopedSlots: { customRender: 'actioncard' },
         },
 

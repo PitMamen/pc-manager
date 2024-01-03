@@ -207,6 +207,7 @@ export default {
           title: '收治情况',
           dataIndex: 'szFlagText',
           with:130,
+          align: 'center',
           scopedSlots: { customRender: 'actioncard' },
         },
 

@@ -106,7 +106,7 @@
             <a-pagination
               v-if="showPagination"
               simple
-              style="margin-left: auto; margin-right: 5px"
+              style="margin-left: 80px;margin-top: 10px;"
               :total="totalPage"
               :defaultCurrent="1"
               :current="currentPage"
@@ -462,7 +462,7 @@ export default {
   }
 
   .div-service-left-control {
-    display: grid;
+    // display: grid;
     margin-right: 20px;
     // height: calc(100vh - 170px);
     // height: 510px;
@@ -524,7 +524,7 @@ export default {
       // height: 100%;
       overflow-y: auto;
       padding: 10px;
-
+      height: 490px;
       .checked {
         color: #1890ff !important;
         // border: 1px solid #1890ff !important;
