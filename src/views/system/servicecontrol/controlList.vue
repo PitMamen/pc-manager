@@ -155,10 +155,10 @@
                   >
                     <div class="span-name" @click="onPartChoose(index)" :title="item.questionnaireName">
                       <div style="width: 35%;overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ item.questionnaireName }}</div>
-                      <span style="text-align: center; margin-left: 5px">
+                      <span >
                         {{ item.checkPercentage }}
                       </span>
-                      <span style="margin-left: 5px; text-align: center;margin-right: 10%;">
+                      <span style="margin-left: 5px;margin-right: 10px;">
                         {{ item.passCheckPercentage }}
                       </span>
                     </div>
@@ -1040,7 +1040,7 @@ export default {
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 14.5%;
+      width: 250px;
       overflow: hidden;
 
       .left-control {
@@ -1096,8 +1096,8 @@ export default {
       .div-wrap-control {
         // max-height: 420px;
         // height: calc(100vh - 260px);
-        height: 510px;
-        margin-bottom: 10px;
+        height: 490px;
+        width: 238px;
         overflow-y: auto !important;
         // .checked {
         //   color: #1890ff !important;

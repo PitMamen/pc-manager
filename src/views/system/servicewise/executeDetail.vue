@@ -122,12 +122,12 @@ export default {
         {
           title: '状态',
           dataIndex: 'statusShow',
-          width: 100,
+          width: 80,
         },
         {
           title: '出院诊断',
           dataIndex: 'cyzdmc',
-          width: 180,
+          width: 100,
           ellipsis: true,
         },
         {

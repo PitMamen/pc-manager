@@ -45,7 +45,7 @@
               >
                 <div class="span-name" :title="item.title">
                   <div style="width: 60%;overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ item.title }}</div>
-                  <div style="font-size: 12px; margin-left: auto; margin-right: 20%">{{ item.count }}</div>
+                  <div style="font-size: 12px; margin-left: auto; margin-right: 20px">{{ item.count }}</div>
                 </div>
 
                 <div class="bottom-line"></div>
@@ -833,6 +833,7 @@ export default {
         this.follotype = '全部待随访'
         this.quesDataTemp = this.treeData[1].children
         this.columns = JSON.parse(JSON.stringify(this.columnsAll))
+
         this.quesDataTemp.forEach((element) => {
           this.$set(element, 'titleFather', this.treeData[1].titleOrigin)
         })
@@ -1101,7 +1102,7 @@ export default {
           background-color: #f2f2f2;
           color: #1a1a1a;
           flex-direction: row !important;
-          width: 95%;
+          width: 100%;
           justify-content: space-between;
           border-bottom: #e6e6e6 1px solid;
           border: 1px solid #dfe3e5;
@@ -1112,6 +1113,7 @@ export default {
       // max-height: 420px;
       margin-bottom: 10px;
       overflow-y: auto !important;
+      width: 238px;
       // .checked {
       //   color: #1890ff !important;
       // }

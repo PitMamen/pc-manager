@@ -47,7 +47,7 @@
                   {{ item.name }}
                 </div>
                 <div style="font-size: 12px;margin-left: 25px;">{{ item.spotAll }}</div>
-                <div style="font-size: 12px; margin-left: auto; margin-right: 10px">{{ item.spotOk }}</div>
+                <div style="font-size: 12px; margin-left: auto;">{{ item.spotOk }}</div>
               </div>
 
               <div class="bottom-line"></div>
@@ -705,14 +705,14 @@ button {
       height: calc(100% - 0px);
       padding: 0px 14px;
       overflow-y: auto;
+      width: 238px;
 
       .bottom-line {
-        width: 100%;
+        width: 210px;
         height: 0.5px;
         background: #e6e6e6;
         margin-top: 5px;
         margin-bottom: 5px;
-        margin-right: 10%;
       }
 
       .item {
