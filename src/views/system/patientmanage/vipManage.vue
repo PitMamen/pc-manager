@@ -110,9 +110,8 @@
         <a-button type="primary" icon="download" ghost @click="downLoadModalOut()">下载模板</a-button>
       </div>
     </div>
-    <!-- :columns="columns" -->
+    <!-- :scroll="{ x: true }" -->
     <s-table
-      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="tableClumns"
@@ -567,7 +566,6 @@ export default {
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
                     if (detailData[index].tableField == 'ssmc') {
-                      console.log('HAHAHHAHAH')
                       this.tableClumns.push({
                         title: detailData[index].fieldComment,
                         dataIndex: detailData[index].tableField,
@@ -577,7 +575,7 @@ export default {
                           return {
                             style: {
                               overflow: 'hidden',
-
+              
                               whiteSpace: 'nowrop',
                               textOverflow: 'ellipsis',
                             },
@@ -586,9 +584,42 @@ export default {
                       })
                       continue
                     }
+
+
+                    if (detailData[index].tableField=='cyzdmc') {
+                      // console.log("!!!!!!!!!!!!!!!!!!")
+                      this.tableClumns.push({
+                        title: detailData[index].fieldComment,
+                        dataIndex: detailData[index].tableField,
+                        width: '180px',
+                        ellipsis: true,
+                        onCell: () => {
+                          return {
+                            style: {
+                              overflow: 'hidden',
+                              width: 180,
+                              textOverflow: 'ellipsis',
+                            },
+                          }
+                        },
+                      })
+                      continue
+                    }
+
                     this.tableClumns.push({
                       title: detailData[index].fieldComment,
                       dataIndex: detailData[index].tableField,
+
+                      onCell: () => {
+                          return {
+                            style: {
+                              overflow: 'hidden',
+                              width: 280,
+                              textOverflow: 'ellipsis',
+                              whiteSpace:'nowwrp'
+                            },
+                          }
+                        },
                     })
                   }
                 }
