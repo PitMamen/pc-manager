@@ -84,8 +84,8 @@
               @change="radioChange"
               v-decorator="['roleId', { rules: [{ required: true, message: '请选择！' }] }]"
             >
-              <a-radio :value="1" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important"> 是 </a-radio>
-              <a-radio :value="0" style="font-size: 8px; color: #1a1a1a"> 否 </a-radio>
+              <a-radio :value="1" style="color: #1a1a1a; margin-right: 0px !important"> 是 </a-radio>
+              <a-radio :value="0" style="color: #1a1a1a"> 否 </a-radio>
             </a-radio-group>
           </div>
 
