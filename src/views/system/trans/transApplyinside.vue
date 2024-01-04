@@ -191,9 +191,10 @@
               {{ dataInfo.outHospitalName || '' }}
             </div>
           </div>
-          <div class="div-cell" style="margin-left: 2.6%">
-            <div class="div-cell-name" style="width: 120px"><span style="color: #f90505">*</span>期望到院时间：</div>
-            <div class="div-cell-value" style="width: 100%">
+          <!-- <div class="div-cell" style="margin-left: 2.6%"> -->
+          <div class="div-cell" >
+            <div class="div-cell-name" style="width: 106px"><span style="color: #f90505">*</span>期望到院时间：</div>
+            <div class="div-cell-value" style="width: 77%">
               {{ dataInfo.reachBeginDate ? dataInfo.reachBeginDate + '-' + dataInfo.reachEndDate : '' }}
             </div>
           </div>
