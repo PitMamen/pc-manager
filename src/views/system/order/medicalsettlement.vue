@@ -241,7 +241,9 @@ export default {
         settlementType: 2,
         startTime: '',
         personName: '',
-        createTime: '',
+        // createTime: '',
+        hospitalCode: undefined,
+        createdTime: getMonthNow(),
       },
 
       selectInfo: {
@@ -761,6 +763,9 @@ export default {
       this.queryParams.settlementStatus = type
       this.queryParamsOrigin.settlementStatus = type
       this.queryParamsGroup.settlementType = type
+      this.queryParamsGroup.hospitalCode = this.queryParams.hospitalCode
+      this.queryParamsGroup.doctorName = this.queryParams.doctorName
+      this.queryParamsGroup.createdTime = this.queryParams.createdTime
       if (type != 1) {
         this.getOrderSettlementListGroupByOut()
       }
@@ -809,6 +814,8 @@ export default {
       this.orderTimeValue = []
       this.queryParamsGroup.startTime = ''
       this.queryParamsGroup.endTime = ''
+      this.queryParamsGroup.doctorName = ''
+      this.queryParamsGroup.hospitalCode = undefined
       this.refresh()
     },
   },
