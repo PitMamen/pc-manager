@@ -1,13 +1,15 @@
 <template>
   <a-card :confirmLoading="confirmLoading" :bordered="false" class="sys-card2">
-    <a-tabs  :activeKey="0"  v-model="keyindex" @change="chanage" style="margin-top: -20px">
+    <a-tabs :activeKey="0" v-model="keyindex" @change="chanage" style="margin-top: -20px">
       <a-tab-pane
         class="ant-tabs-tab-active"
         v-for="(itemTab, indexTab) in tabDatas"
-        :tab="itemTab.metaName"
         :key="itemTab.id"
       >
-        <div style="height: 1px"></div>
+        <span slot="tab">
+          <a-icon :type="getType(indexTab)" />
+          <span>{{itemTab.metaName}}</span>
+        </span>
       </a-tab-pane>
     </a-tabs>
     <div class="table-page-search-wrapper">
@@ -108,9 +110,8 @@
         <a-button type="primary" icon="download" ghost @click="downLoadModalOut()">下载模板</a-button>
       </div>
     </div>
-    <!-- :columns="columns" -->
+    <!-- :scroll="{ x: true }" -->
     <s-table
-      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="tableClumns"
@@ -169,7 +170,7 @@ export default {
       tableClumns: [],
       chooseArrOrigin: [],
       user: {},
-      tableId:'',
+      tableId: '',
       tabDatas: [],
       originData: [],
       chooseArr: [],
@@ -425,6 +426,31 @@ export default {
       document.body.removeChild(el)
     },
 
+
+
+
+    getType(index){
+      if (index==0) {
+        return 'exception'
+      }else if (index==1) {
+        return 'file-search'
+      }else if (index==2) {
+        return 'solution'
+      }else if (index==3) {
+        return 'user'
+      }else if (index==4) {
+        return 'tream'
+      }else{
+        return 'hourglass'
+
+      }
+    },
+
+
+
+
+
+
     //上传
     uploadModal(changeObj) {
       console.log('fff', changeObj)
@@ -540,7 +566,6 @@ export default {
                 if (detailData[index].showStatus) {
                   if (detailData[index].showStatus.value == 1) {
                     if (detailData[index].tableField == 'ssmc') {
-                      console.log('HAHAHHAHAH')
                       this.tableClumns.push({
                         title: detailData[index].fieldComment,
                         dataIndex: detailData[index].tableField,
@@ -550,7 +575,7 @@ export default {
                           return {
                             style: {
                               overflow: 'hidden',
-
+              
                               whiteSpace: 'nowrop',
                               textOverflow: 'ellipsis',
                             },
@@ -559,9 +584,42 @@ export default {
                       })
                       continue
                     }
+
+
+                    if (detailData[index].tableField=='cyzdmc') {
+                      // console.log("!!!!!!!!!!!!!!!!!!")
+                      this.tableClumns.push({
+                        title: detailData[index].fieldComment,
+                        dataIndex: detailData[index].tableField,
+                        width: '180px',
+                        ellipsis: true,
+                        onCell: () => {
+                          return {
+                            style: {
+                              overflow: 'hidden',
+                              width: 180,
+                              textOverflow: 'ellipsis',
+                            },
+                          }
+                        },
+                      })
+                      continue
+                    }
+
                     this.tableClumns.push({
                       title: detailData[index].fieldComment,
                       dataIndex: detailData[index].tableField,
+
+                      onCell: () => {
+                          return {
+                            style: {
+                              overflow: 'hidden',
+                              width: 280,
+                              textOverflow: 'ellipsis',
+                              whiteSpace:'nowwrp'
+                            },
+                          }
+                        },
                     })
                   }
                 }
@@ -647,7 +705,7 @@ export default {
 }
 
 /deep/.ant-tabs-tab-active {
-  background: #eff7ff;
+  // background: #eff7ff;
 }
 .table-page-search-wrapper {
   display: flex;

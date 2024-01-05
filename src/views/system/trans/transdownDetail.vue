@@ -2,11 +2,19 @@
   <div class="wrap">
     <div>
       <a-tabs v-model="keyindex">
-        <a-tab-pane key="1" tab="转诊申请单">
+        <a-tab-pane key="1" >
+          <span slot="tab">
+          <a-icon type="file-sync" />
+          <span>转诊申请单</span>
+        </span>
           <transdown-inside ref="transdownInside" />
         </a-tab-pane>
 
-        <a-tab-pane disabled key="2" tab="上传病历" force-render>
+        <a-tab-pane disabled key="2"  force-render>
+          <span slot="tab">
+          <a-icon type="upload" />
+          <span>上传病历</span>
+        </span>
           <upload-files ref="uploadFiles" />
         </a-tab-pane>
       </a-tabs>

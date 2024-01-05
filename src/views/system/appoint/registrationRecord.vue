@@ -62,16 +62,20 @@
   
       <div class="div-radio">
         <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == '' }" @click="onRadioClick('')">
+          <a-icon type="hdd" />
           <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 1 }" @click="onRadioClick(1)">
+          <a-icon type="clock-circle" />
           <span style="margin-left: 3px">待付款({{ numberData.daifukuan }}) </span>
         </div>
   
         <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 2 }" @click="onRadioClick(2)">
+          <a-icon type="check-circle" />
           <span style="margin-left: 3px">成功({{ numberData.yiwancheng }})</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 5 }" @click="onRadioClick(5)">
+          <a-icon type="close-circle" />
           <span style="margin-left: 3px">已取消({{ numberData.yiquxiao }})</span>
         </div>
       </div>
@@ -588,7 +592,7 @@
     }
   
     .checked-btn {
-      background-color: #eff7ff;
+      // background-color: #eff7ff;
       color: #1890ff;
       border-bottom: #1890ff 2px solid;
     }

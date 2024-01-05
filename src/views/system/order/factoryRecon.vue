@@ -3,29 +3,60 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">生产厂商:</span>
-        <a-select v-model="queryParams.factoryId" placeholder="请选择状态" allow-clear style="width: 120px; height: 28px">
-          <a-select-option v-for="item in factoryListData" :key="item.id" :value="item.id">{{ item.factoryName
+        <a-select
+          v-model="queryParams.factoryId"
+          placeholder="请选择状态"
+          allow-clear
+          style="width: 120px; height: 28px"
+        >
+          <a-select-option v-for="item in factoryListData" :key="item.id" :value="item.id">{{
+            item.factoryName
           }}</a-select-option>
         </a-select>
       </div>
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select v-model="queryParams.hospitalCode" multiple style="min-width: 120px" :tree-data="treeData"
-          placeholder="请选择" allow-clear tree-default-expand-all>
-        </a-tree-select>
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
         <span class="name">对账月份:</span>
-        <a-month-picker placeholder="选择月份" :allow-clear="false" :disabled-date="disabledDate" :default-value="nowMonth"
-          :format="monthFormat" v-model="queryParams.statMonth" />
+        <a-month-picker
+          placeholder="选择月份"
+          :default-value="nowMonth"
+          :allow-clear="false"
+          :disabled-date="disabledDate"
+          :format="monthFormat"
+          v-model="monthValue"
+        />
+
+
+
+
+
       </div>
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="handleOk()">查询</a-button>
-          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0"
-            @click="leadingOut()">导出</a-button>
+          <a-button type="primary" ghost icon="export" style="margin-left: 8px; margin-right: 0" @click="leadingOut()"
+            >导出</a-button
+          >
         </span>
       </div>
     </div>
@@ -52,7 +83,7 @@
       <!-- 退款金额 -->
       <div class="tab-wx">
         <div class="content-dis">
-          <span style="font-size: 12px;  margin-top: 3px">退款金额</span>
+          <span style="font-size: 12px; margin-top: 3px">退款金额</span>
           <div style="float: right">
             <img style="padding-left: 133px; margin-top: -8px" src="@/assets/icons/tc.png" />
           </div>
@@ -70,7 +101,7 @@
       <!-- 结算金额 -->
       <div class="tab-alipay">
         <div class="content-dis">
-          <span style="font-size: 12px;  margin-top: 3px">结算金额</span>
+          <span style="font-size: 12px; margin-top: 3px">结算金额</span>
           <div style="float: right">
             <img style="padding-left: 133px; margin-top: -9px" src="@/assets/icons/tc.png" />
           </div>
@@ -93,12 +124,21 @@
       </div>
     </div> -->
 
-    <s-table bordered :scroll="{ x: true }" ref="table" style="margin-top: 20px;" :pageSize="10000"
-      :showPagination="false" size="default" :columns="columns" :data="loadData" :alert="true"
-      :rowKey="(record) => record.code">
+    <s-table
+      bordered
+      :scroll="{ x: true }"
+      ref="table"
+      style="margin-top: 20px"
+      :pageSize="10000"
+      :showPagination="false"
+      size="default"
+      :columns="columns"
+      :data="loadData"
+      :alert="true"
+      :rowKey="(record) => record.code"
+    >
       <span slot="action" slot-scope="text, record">
-        <a @click="goExamine(record)"><a-icon type="edit" style="margin-left:10px" />详情</a>
-      </span>
+        <a @click="goExamine(record)"><a-icon type="edit" style="margin-left: 10px" />详情</a>
       </span>
     </s-table>
     <orderDetail ref="orderDetail" @ok="handleOk" />
@@ -109,7 +149,7 @@
 import { STable } from '@/components'
 import moment from 'moment'
 import {
-  accessHospitals,
+  accessHospitals1,
   statFactoryReport,
   exportDataTreatReport,
   qryFactoryList,
@@ -117,7 +157,8 @@ import {
 import { getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
-
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
 export default {
   components: {
     STable,
@@ -130,13 +171,19 @@ export default {
     return {
       monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
+      monthValue: {}, //Date类型对象，用于与请求参数的转换
       nowMonth: '',
       orderTimeValue: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       gropListData: [],
       packgeList: [],
       SummaryDataList: [],
-      tabDataList: [{ payeeName: '收款单', code: 1, isChecked: true }, { payeeName: '退款单', code: 2, isChecked: false }],
+      tabDataList: [
+        { payeeName: '收款单', code: 1, isChecked: true },
+        { payeeName: '退款单', code: 2, isChecked: false },
+      ],
       confirmLoading: false,
       currentTab: 0,
       numberData: {
@@ -145,9 +192,9 @@ export default {
         yiyuan: 0,
       },
       queryParams: {
-        hospitalCode: undefined,
+        hospitalCode: '',
         factoryId: undefined,
-        statMonth: getMonthNow(),//statMonth
+        statMonth: getMonthNow(), //statMonth
         // pageNo: 0,
         // pageSize: 10,
         // type: 1,//查询类型 1收入2退费
@@ -204,17 +251,17 @@ export default {
             {
               title: '交易笔数',
               dataIndex: 'inNum',
-              align: 'center'
+              align: 'center',
             },
             {
               title: '平均价格',
               dataIndex: 'avgPrice',
-              align: 'center'
+              align: 'center',
             },
             {
               title: '收款金额',
               dataIndex: 'inMoney',
-              align: 'center'
+              align: 'center',
             },
           ],
         },
@@ -226,17 +273,17 @@ export default {
             {
               title: '交易笔数',
               dataIndex: 'refundNum',
-              align: 'center'
+              align: 'center',
             },
             {
               title: '平均价格',
               dataIndex: 'refundAvgPrice',
-              align: 'center'
+              align: 'center',
             },
             {
               title: '退款金额',
               dataIndex: 'refundMoney',
-              align: 'center'
+              align: 'center',
             },
           ],
         },
@@ -249,12 +296,11 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        this.queryParams.statMonth = this.formatDate(this.monthValue).substring(0, 7)
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        // this.queryParamsTemp.payeeId = this.currentTab
         return statFactoryReport(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0) {
-
               this.resData = res.data
 
               //组装控件需要的数据结构
@@ -288,29 +334,30 @@ export default {
   },
 
   created() {
-    this.queryParams.statMonth = moment(getMonthNow(), this.monthFormat)
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
-    this.queryHospitalListOut()
+    this.monthValue = moment(getMonthNow(), this.monthFormat)
+    this.queryHospitalListOut(undefined)
 
-    this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
     this.qryFactoryListOut()
   },
 
   methods: {
-
     /**
- *
- * 生产厂商信息查询
- */
+     *
+     * 生产厂商信息查询
+     */
     qryFactoryListOut() {
-      qryFactoryList({ factoryType: 4 })
-        .then((res) => {
-          if (res.code == 0 && res.data.rows.length > 0) {
-            this.factoryListData = res.data.rows
-            this.queryParams.factoryId = this.factoryListData[0].id
-            this.handleOk()
-          }
-        })
+      qryFactoryList({ factoryType: 4 }).then((res) => {
+        if (res.code == 0 && res.data.rows.length > 0) {
+          this.factoryListData = res.data.rows
+          this.queryParams.factoryId = this.factoryListData[0].id
+          this.handleOk()
+        }
+      })
     },
 
     disabledDate(current) {
@@ -332,43 +379,58 @@ export default {
       })
     },
 
-    queryHospitalListOut() {
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      accessHospitals(queryData)
+      accessHospitals1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                var hospitals = []
+                hospitals.push(item.hospitalCode)
+                this.queryParams.hospitalCode = hospitals // 后台改动 机构由string改成传数组
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      } else {
+        var hospitals = []
+        hospitals.push(value)
+        this.queryParams.hospitalCode = hospitals
+        console.log('111111:', this.queryParams.hospitalCode)
+      }
+    },
+
     //导出
     leadingOut() {
-      this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
+      this.queryParams.statMonth = this.formatDate(this.monthValue).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
       exportDataTreatReport(params)
         .then((res) => {
@@ -397,10 +459,6 @@ export default {
       window.URL.revokeObjectURL(href)
     },
 
-
-
-
-
     onRadioClick(index) {
       //如果在加载中  不让点击
       if (this.confirmLoading) {
@@ -414,12 +472,10 @@ export default {
       // type: 1,//查询类型 1收入2退费
       this.queryParams.type = index == 0 ? 1 : 2
 
-
       this.tabDataList.forEach((item) => {
         this.$set(item, 'isChecked', false)
       })
       this.$set(this.tabDataList[index], 'isChecked', true)
-      // this.queryParams.statMonth = this.formatDate(this.queryParams.statMonth).substring(0, 7)
       this.$refs.table.refresh()
     },
 

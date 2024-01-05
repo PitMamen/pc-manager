@@ -8,22 +8,22 @@
     :confirmLoading="confirmLoading"
     :maskClosable="false"
   >
-  <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px">
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 问卷名称 :</span>
       <a-input
         class="span-item-value"
         v-model="queryParams.title"
-        style="display: inline-block; width: 248px;margin-left: 5px;"
+        style="display: inline-block; width: 248px; margin-left: 5px"
         allow-clear
         placeholder="请输入问卷名称 "
       />
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px;margin-left: -16px;">
-    <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px; margin-left: -16px">
+      <span class="span-item-name" style="margin-top: 5px; margin-left: 40px"
         ><span style="color: red">*</span> 机构 :</span
       >
-      <a-tree-select
+      <!-- <a-tree-select
         v-model="queryParams.hospitalCode"
         style="min-width: 248px; height: 34px; margin-left: 5px"
         :tree-data="treeData"
@@ -31,10 +31,27 @@
         tree-default-expand-all
         @change="changeSelect"
       >
-      </a-tree-select>
+      </a-tree-select> -->
+
+      <a-select
+        v-model="queryParams.hospitalCode"
+        placeholder="请选择机构"
+        show-search
+        :filter-option="false"
+        :not-found-content="fetching ? undefined : null"
+        allow-clear
+        style="min-width: 248px; height: 34px; margin-left: 5px"
+        @change="onHospitalSelectChange"
+        @search="onHospitalSelectSearch"
+      >
+        <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+        <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+          item.hospitalName
+        }}</a-select-option>
+      </a-select>
     </div>
 
-    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px;margin-left: 24px;">
+    <div class="div-service-user" style="margin-top: 20px; margin-bottom: 20px; margin-left: 24px">
       <span class="span-item-name" style="margin-top: 5px"><span style="color: red">*</span> 科室 :</span>
 
       <a-select
@@ -53,11 +70,7 @@
           item.department_name
         }}</a-select-option>
       </a-select>
-
-     
     </div>
-
-  
   </a-modal>
 </template>
           
@@ -65,7 +78,11 @@
           
           <script>
 import moment from 'moment'
-import {   queryHospitalList,updateDeptAndHospCodeForKey,getDepartmentListForReq } from '@/api/modular/system/posManage'
+import {
+  queryHospitalList2,
+  updateDeptAndHospCodeForKey,
+  getDepartmentListForReq,
+} from '@/api/modular/system/posManage'
 import { STable } from '@/components'
 import { formatDate, formatDateFull } from '@/utils/util'
 import E from 'wangeditor'
@@ -79,7 +96,7 @@ export default {
   },
   data() {
     return {
-      originData:[],
+      originData: [],
       fetching: false,
       userId: '',
       timeStr: '',
@@ -89,8 +106,8 @@ export default {
       queryParams: {
         departmentId: undefined,
         hospitalCode: undefined,
-        title:'',
-        id:'',
+        title: '',
+        id: '',
       },
 
       labelCol: {
@@ -125,45 +142,86 @@ export default {
       this.queryParams.departmentId = Number(record.department_id)
       this.queryParams.hospitalCode = record.hospital_code
       this.queryParams.id = record.id
-      console.log("KKK:",this.queryParams)
+      console.log('KKK:', this.queryParams)
 
-      this.queryHospitalListOut()
+      this.queryHospitalListOut(undefined)
       this.getDepartmentSelectList()
     },
 
     //机构列表
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   queryHospitalList(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      queryHospitalList(queryData)
+      queryHospitalList2(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
     },
 
     //科室选择变化
@@ -180,8 +238,8 @@ export default {
       this.getDepartmentSelectList(value)
     },
 
-     //选择机构时调用 查询科室
-     changeSelect(data) {
+    //选择机构时调用 查询科室
+    changeSelect(data) {
       this.queryParams.hospitalCode = data
       this.getDepartmentSelectList()
     },
@@ -206,9 +264,14 @@ export default {
     /***
      * 修改问卷
      */
-     updateDeptAndHospCodeForKeyOut() {
+    updateDeptAndHospCodeForKeyOut() {
       this.confirmLoading = true
-      updateDeptAndHospCodeForKey({id:this.queryParams.id,departmentId:this.queryParams.departmentId,title:this.queryParams.title,hospitalCode:this.queryParams.hospitalCode})
+      updateDeptAndHospCodeForKey({
+        id: this.queryParams.id,
+        departmentId: this.queryParams.departmentId,
+        title: this.queryParams.title,
+        hospitalCode: this.queryParams.hospitalCode,
+      })
         .then((res) => {
           if (res.code == 0 && res.success) {
             this.visible = false
@@ -234,29 +297,27 @@ export default {
       this.queryParams.id = ''
     },
 
-
     /**
      * 确定
      */
-     handleSubmit(){
+    handleSubmit() {
       //提交接口
-       if(!this.queryParams.title){
+      if (!this.queryParams.title) {
         this.$message.error('请输入问卷标题!')
         return
       }
 
-      if(!this.queryParams.hospitalCode){
+      if (!this.queryParams.hospitalCode) {
         this.$message.error('请选择机构!')
         return
       }
 
-      if(!this.queryParams.departmentId){
+      if (!this.queryParams.departmentId) {
         this.$message.error('请选择科室!')
         return
       }
       this.updateDeptAndHospCodeForKeyOut()
-     },
-
+    },
 
     /**
      * 取消

@@ -6,15 +6,24 @@
         v-model="keyindex"
         :tabBarStyle="{ textAlign: 'left', borderBottom: 'unset' }"
       >
-        <a-tab-pane key="1" tab="转诊申请单">
-          <!-- <transup-insidemodify ref="transupInsidemodify" /> -->
+        <a-tab-pane key="1" >
+          <span slot="tab">
+          <a-icon type="file-sync" />
+          <span>转诊申请单</span>
+        </span>
         </a-tab-pane>
 
-        <a-tab-pane key="2" tab="上传病历" force-render>
-          <!-- <upload-files ref="uploadFiles" /> -->
+        <a-tab-pane key="2" force-render>
+          <span slot="tab">
+          <a-icon type="upload" />
+          <span>上传病历</span>
+        </span>
         </a-tab-pane>
-        <a-tab-pane key="3" tab="健康档案" force-render>
-          <!-- <file-danan :record="record" ref="fileDanan" /> -->
+        <a-tab-pane key="3"  force-render>
+          <span slot="tab">
+          <a-icon type="credit-card" />
+          <span>健康档案</span>
+        </span>
         </a-tab-pane>
         <!-- <a-tab-pane key="4" tab="添加评论" force-render>
         </a-tab-pane> -->

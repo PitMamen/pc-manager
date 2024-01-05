@@ -28,7 +28,12 @@
               </a-select>
            -->
           <a-empty style="margin-top: 150px" :image="simpleImage" v-if="list1Temp.length === 0" />
-          <div class="list" v-else>
+          <div v-if="list1Temp && list1Temp.length > 0" class="top-kuang">
+            <div>问卷名称</div>
+            <div>发送</div>
+            <div>回收</div>
+          </div>
+          <div v-if="list1Temp && list1Temp.length > 0" class="list">
             <div
               style="display: flex; flex-direction: column"
               v-for="item in list1Temp"
@@ -37,31 +42,15 @@
               :class="{ active: item.id === currentPaper.id }"
               @click="paperClick(item)"
             >
-              <span class="name" :title="item.name">{{ item.name }}</span>
-              <div style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"></div>
-
-
-              <!-- <div style="display: flex; flex-direction: row">
-                <span style="color: #999999">发送:</span>
-                <span style="margin-left: 2px; color: #409eff">2455</span>
-                <span style="color: #999999; margin-left: 10px">回收:</span>
-                <span style="margin-left: 5px; color: #409eff">5622</span>
-                <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span>
-              </div> -->
-
-
-              <div style="display: flex; flex-direction: row">
-                <span style="color: #999999">发送:</span>
-                <span style="margin-left: 2px; color: #409eff">{{ item.spotAll }}</span>
-                <span style="color: #999999; margin-left: 10px">回收:</span>
-                <span style="margin-left: 5px; color: #409eff">{{ item.spotOk }}</span>
-                <!-- 优化需求，回收率隐藏，因为显示不下 -->
-                <!-- <span style="margin-left: 5px; color: #409eff">{{ item.co }}</span> -->
+              <div class="name" :title="item.name">
+                <div style="width: 40%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  {{ item.name }}
+                </div>
+                <div style="font-size: 12px;margin-left: 25px;">{{ item.spotAll }}</div>
+                <div style="font-size: 12px; margin-left: auto;">{{ item.spotOk }}</div>
               </div>
 
-
-
-
+              <div class="bottom-line"></div>
             </div>
           </div>
         </a-spin>
@@ -192,7 +181,7 @@
 
 <script>
 import { getDepts, getDeptsPersonal, getDepartmentListForSelect } from '@/api/modular/system/posManage'
-import { list1, list2, overview, pie, bar,exportFillQuestionnaireInfo } from '@/api/modular/system/paper'
+import { list1, list2, overview, pie, bar, exportFillQuestionnaireInfo } from '@/api/modular/system/paper'
 import { Ellipsis, Pies, Bars } from '@/components'
 import { TRUE_USER } from '@/store/mutation-types'
 import { Empty } from 'ant-design-vue'
@@ -471,24 +460,20 @@ export default {
     },
 
     //导出
-    exportOut(){
-
-     
-      var reqdata=this.getQuerys('key')
-      if(!reqdata.executeTimeStart || !reqdata.executeTimeEnd){
+    exportOut() {
+      var reqdata = this.getQuerys('key')
+      if (!reqdata.executeTimeStart || !reqdata.executeTimeEnd) {
         this.$message.info('请选择时间')
         return
       }
 
       exportFillQuestionnaireInfo(reqdata)
         .then((res) => {
-         
-            this.downloadfile(res)
-          
-        }).catch((err) => {
+          this.downloadfile(res)
+        })
+        .catch((err) => {
           this.$message.error('导出错误：' + err.message)
         })
-        
     },
     downloadfile(res) {
       var blob = new Blob([res.data], { type: 'application/octet-stream; charset=UTF-8' })
@@ -700,35 +685,81 @@ button {
     .search {
       padding: 0px 14px;
     }
+
+    .top-kuang {
+      display: flex;
+      height: 30px;
+      align-items: center;
+      padding: 15px;
+      font-size: 12px;
+      background-color: #f2f2f2;
+      color: #1a1a1a;
+      flex-direction: row !important;
+      width: 95%;
+      justify-content: space-between;
+      border-bottom: #e6e6e6 1px solid;
+      border: 1px solid #dfe3e5;
+    }
+
     .list {
       height: calc(100% - 0px);
       padding: 0px 14px;
       overflow-y: auto;
+      width: 238px;
+
+      .bottom-line {
+        width: 210px;
+        height: 0.5px;
+        background: #e6e6e6;
+        margin-top: 5px;
+        margin-bottom: 5px;
+      }
+
       .item {
-        margin-bottom: 8px;
-        padding: 8px;
-        background: rgba(0, 1, 3, 0);
-        border: 1px solid #dfe3e5;
+        // margin-bottom: 8px;
+        // padding: 8px;
+        // background: rgba(0, 1, 3, 0);
+        // border: 1px solid #dfe3e5;
+        // font-size: 12px;
+        // font-weight: 400;
+        // color: #4d4d4d;
+        // cursor: pointer;
+        // overflow: hidden;
+        // border-bottom: 1px solid #e6e6e6;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 40px;
         font-size: 12px;
-        font-weight: 400;
-        color: #4d4d4d;
+        align-items: center;
         cursor: pointer;
-        overflow: hidden;
-        border-bottom: 1px solid #e6e6e6;
         &.active {
-          border: 1px solid #409eff;
-          box-shadow: 0px 0px 4px 1px #409eff !important;
+          color: #409eff;
+          // border: 1px solid #409eff;
+          // box-shadow: 0px 0px 4px 1px #409eff !important;
 
           .icon {
             display: block;
           }
         }
         .name {
-          float: left;
-          max-width: 170px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          // float: left;
+          // max-width: 170px;
+          // white-space: nowrap;
+          // overflow: hidden;
+          // text-overflow: ellipsis;
+          height: 85%;
+          overflow: hidden; //溢出隐藏
+          text-overflow: ellipsis; //超出省略号显示
+          white-space: nowrap; //文字不换行
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          width: 100%;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 12px;
+          text-align: left|center;
         }
         .icon {
           display: none;

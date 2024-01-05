@@ -3,7 +3,7 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
@@ -11,18 +11,34 @@
           allow-clear
           tree-default-expand-all
         >
-        </a-tree-select>
+        </a-tree-select> -->
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
         <span class="name">下单时间:</span>
         <a-month-picker
-        placeholder="选择月份"
+          placeholder="选择月份"
           :allow-clear="false"
           :disabled-date="disabledDate"
           :default-value="nowMonth"
           :format="monthFormat"
-          v-model="queryParams.billMonth"
+          v-model="monthValue"
         />
       </div>
 
@@ -55,6 +71,7 @@
         :class="{ 'checked-btn': item.isChecked }"
         @click="onRadioClick(index)"
       >
+        <a-icon :type="item.iconType "></a-icon>
         <span style="margin-left: 3px">{{ item.payeeName + '（' + item.total + '）' }}</span>
       </div>
     </div>
@@ -159,14 +176,15 @@ import {
   tradeBillPage,
   tradeBillTab,
   getPage,
-  accessHospitals,
+  accessHospitals1,
   tradeBillExport,
 } from '@/api/modular/system/posManage'
 import { getDateNow, getCurrentMonthLast, getMonthNow } from '@/utils/util'
 import addForm from './addForm'
 import orderDetail from './orderDetail'
 import { getState } from 'core-js/modules/web.url-search-params'
-
+import Vue from 'vue'
+import { TRUE_USER } from '@/store/mutation-types'
 export default {
   components: {
     STable,
@@ -179,9 +197,12 @@ export default {
     return {
       monthFormat: 'YYYY-MM',
       dateFormat: 'YYYY-MM-DD',
+      monthValue: {}, //Date类型对象，用于与请求参数的转换
       nowMonth: '',
       orderTimeValue: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       gropListData: [],
       packgeList: [],
       SummaryDataList: [],
@@ -271,6 +292,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        this.queryParams.billMonth = this.formatDate(this.monthValue).substring(0, 7)
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
         // this.queryParamsTemp.payeeId = this.currentTab
         return tradeBillPage(Object.assign(parameter, this.queryParams))
@@ -313,12 +335,14 @@ export default {
   },
 
   created() {
-    this.queryParams.billMonth = moment(getMonthNow(), this.monthFormat)
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.queryHospitalListOut(undefined)
     this.nowMonth = moment(getMonthNow(), this.monthFormat)
-    this.queryHospitalListOut()
+    this.monthValue = moment(getMonthNow(), this.monthFormat)
 
-    // this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
-    this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
     this.getTabOut()
     this.gettradeBillSummaryOut()
 
@@ -332,7 +356,6 @@ export default {
   },
 
   methods: {
-
     disabledDate(current) {
       // Can not select days before today and today
       return current && current > moment().endOf('day')
@@ -347,7 +370,7 @@ export default {
           billDate: record.billDate,
           state: record.stateShow,
           payeeId: this.currentTab,
-          hospitalCode:this.queryParams.hospitalCode
+          hospitalCode: this.queryParams.hospitalCode,
         },
       })
     },
@@ -380,43 +403,85 @@ export default {
       return this.confirmLoading
     },
 
-    queryHospitalListOut() {
+    // queryHospitalListOut() {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: '',
+    //   }
+    //   this.confirmLoading = true
+    //   accessHospitals(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      accessHospitals(queryData)
+      accessHospitals1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
     //导出
     leadingOut() {
-      this.queryParams.billMonth = this.formatDate(this.queryParams.billMonth).substring(0, 7)
+      this.queryParams.billMonth = this.formatDate(this.monthValue).substring(0, 7)
       let params = JSON.parse(JSON.stringify(this.queryParams))
       tradeBillExport(params)
         .then((res) => {
@@ -466,8 +531,9 @@ export default {
 
             if (res.code == 0) {
               this.tabDataList = res.data
-              this.tabDataList.forEach((item) => {
+              this.tabDataList.forEach((item, index) => {
                 this.$set(item, 'isChecked', false)
+                this.$set(item, 'iconType', this.getIcon(index))
               })
               this.queryParams.payeeId = this.tabDataList[0].payeeId
               this.$set(this.tabDataList[0], 'isChecked', true)
@@ -491,6 +557,22 @@ export default {
           this.SummaryDataList = res.data
         }
       })
+    },
+
+    getIcon(index) {
+      if (index == 0) {
+        return 'bank'
+      } else if (index == 1) {
+        return 'global'
+      } else if (index == 1) {
+        return 'home'
+      } else if (index == 1) {
+        return 'robot'
+      } else if (index == 1) {
+        return 'block'
+      } else {
+        return 'safety'
+      }
     },
 
     onRadioClick(index) {
@@ -714,7 +796,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

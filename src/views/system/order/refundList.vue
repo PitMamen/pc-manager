@@ -3,14 +3,30 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"
           tree-default-expand-all
         >
-        </a-tree-select>
+        </a-tree-select> -->
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
@@ -18,21 +34,21 @@
         <a-input
           v-model="queryParams.combinedCondition"
           allow-clear
-          placeholder="输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
+          placeholder="输入用户名/电话/订单号查询"
+          style="width: 210px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">套餐类型:</span>
         <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
           <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
             item.classifyName
           }}</a-select-option>
         </a-select>
-      </div>
+      </div> -->
 
       <div class="search-row">
         <span class="name">更新时间:</span>
@@ -48,10 +64,10 @@
         </a-select>
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">下单时间:</span>
         <a-range-picker style="width: 190px" :value="createValue" @change="onChangeOrder" />
-      </div>
+      </div> -->
 
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -63,6 +79,8 @@
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'qb' }" @click="onRadioClick('qb')">
+        <img v-if="queryParamsTemp.tabCode == 'qb'" src="~@/assets/icons/dingdan_c.png" />
+        <img v-else src="~@/assets/icons/dingdan_n.png" />
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div
@@ -71,6 +89,8 @@
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'yy' }"
         @click="onRadioClick('yy')"
       >
+      <img v-if="queryParamsTemp.tabCode == 'yy'" src="~@/assets/icons/ywc_c.png" />
+        <img v-else src="~@/assets/icons/ywc_n.png" />
         <span style="margin-left: 3px">运营审核({{ numberData.yy }}) </span>
       </div>
       <div
@@ -79,10 +99,14 @@
         :class="{ 'checked-btn': queryParamsTemp.tabCode == 'cw' }"
         @click="onRadioClick('cw')"
       >
+      <img v-if="queryParamsTemp.tabCode == 'cw'" src="~@/assets/icons/byjs_c.png" />
+        <img v-else src="~@/assets/icons/byjs_n.png" />
         <span style="margin-left: 3px">财务退款({{ numberData.cw }})</span>
       </div>
-
+<!-- chenggong_c -->
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.tabCode == 'wc' }" @click="onRadioClick('wc')">
+        <img v-if="queryParamsTemp.tabCode == 'wc'" src="~@/assets/icons/ywc_c.png" />
+        <img v-else src="~@/assets/icons/ywc_n.png" />
         <span style="margin-left: 3px">已完成({{ numberData.wc }})</span>
       </div>
     </div>
@@ -114,8 +138,8 @@
    <script>
 import { STable } from '@/components'
 import moment from 'moment'
-import { accessHospitals, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
-import { getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { accessHospitals1, getCommodityClassify, getTab, getPage } from '@/api/modular/system/posManage'
+import { getDateNow, getCurrentMonthLast, gethalfYearToday } from '@/utils/util'
 import addForm from './addForm'
 import Vue from 'vue'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -143,6 +167,8 @@ export default {
       createValue: [],
       orderTimeValue: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       gropListData: [],
       packgeList: [],
       confirmLoading: false,
@@ -162,11 +188,11 @@ export default {
         classifyId: undefined,
         combinedCondition: undefined,
         hospitalCode: undefined,
-        createEndTime: getCurrentMonthLast(),
-        createStartTime: getDateNow(),
+        // createEndTime: getCurrentMonthLast(),
+        // createStartTime: getDateNow(),
         orderType: undefined,
         updateEndTime: getCurrentMonthLast(),
-        updateStartTime: getDateNow(),
+        updateStartTime: gethalfYearToday(),
         tabCode: '',
       },
 
@@ -301,14 +327,15 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
       //如果不是运营人员 或者 财务人员  不显示顶部按钮
       this.showTabyy = this.user.dataAccessActors.includes('operationManager')
       this.showTabcw = this.user.dataAccessActors.includes('financialManager')
     }
-    this.queryHospitalListOut()
+    this.queryHospitalListOut(undefined)
     this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-    this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+    this.orderTimeValue = [moment(gethalfYearToday(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
     this.getTabOut()
 
@@ -320,7 +347,6 @@ export default {
       }
     })
   },
-
 
   mounted() {
     this.$bus.$on('refundRefresh', (record) => {
@@ -369,7 +395,7 @@ export default {
     getColor(value) {
       if (value == 1 || value == 2) {
         return 'span-green'
-      } else if (value == 3 || value == 5||value==7) {
+      } else if (value == 3 || value == 5 || value == 7) {
         return 'span-red'
       } else if (value == 6) {
         return 'span-blue'
@@ -382,38 +408,80 @@ export default {
       return this.confirmLoading
     },
 
-    queryHospitalListOut() {
-      //   let queryData = {
-      //     tenantId: '',
-      //     status: 1,
-      //     hospitalName: '',
-      //   }
+    // queryHospitalListOut() {
+    //   //   let queryData = {
+    //   //     tenantId: '',
+    //   //     status: 1,
+    //   //     hospitalName: '',
+    //   //   }
+    //   this.confirmLoading = true
+    //   accessHospitals()
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+    /**
+     * 所属机构接口
+     */
+    queryHospitalListOut(name) {
+      this.fetching = true
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: name,
+      }
       this.confirmLoading = true
-      accessHospitals()
+      accessHospitals1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
+    },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
     },
 
     reset(clearTime) {
@@ -425,11 +493,14 @@ export default {
       } else {
         this.createValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
 
-        this.orderTimeValue = [moment(getDateNow(), this.dateFormat), moment(getCurrentMonthLast(), this.dateFormat)]
+        this.orderTimeValue = [
+          moment(gethalfYearToday(), this.dateFormat),
+          moment(getCurrentMonthLast(), this.dateFormat),
+        ]
       }
-      this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
-      this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
-      this.queryParams.updateStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      // this.queryParams.createStartTime = clearTime ? '' : getDateNow() + ' 00:00:00'
+      // this.queryParams.createEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
+      this.queryParams.updateStartTime = clearTime ? '' : gethalfYearToday() + ' 00:00:00'
       this.queryParams.updateEndTime = clearTime ? '' : getCurrentMonthLast() + ' 23:59:59'
       this.queryParams.classifyId = ''
       this.queryParams.orderType = undefined
@@ -521,8 +592,8 @@ export default {
       if (Math.abs(moment(dateArr2[1]).unix() - moment(dateArr2[0]).unix()) > 7776000) {
         this.$message.error('开始时间与结束时间跨度不能超过三个月!')
         this.createValue = []
-        this.queryParams.createStartTime = ''
-        this.queryParams.createEndTime = ''
+        // this.queryParams.createStartTime = ''
+        // this.queryParams.createEndTime = ''
         return
       }
       if (dateArr2) {
@@ -536,14 +607,14 @@ export default {
       }
 
       if (dateArr2[0] == '' && dateArr2[1] == '') {
-        this.queryParams.createStartTime = ''
-        this.queryParams.createEndTime = ''
+        // this.queryParams.createStartTime = ''
+        // this.queryParams.createEndTime = ''
         return
       }
 
       this.createValue = momentArr
-      this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
-      this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
+      // this.queryParams.createStartTime = dateArr2[0] + ' 00:00:00'
+      // this.queryParams.createEndTime = dateArr2[1] + ' 23:59:59'
     },
 
     handleOk() {
@@ -748,7 +819,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

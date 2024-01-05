@@ -59,10 +59,9 @@ export default {
     },
     tabHandler(evt) {
       if (evt.data) {
-        const data = JSON.parse(evt.data)
-        if (data.type === 'parent-tab-change') {
-          this.tab = data.tab
-          this.conversationId = data.conversationId
+        if (evt.data.type === 'parent-tab-change') {
+          this.tab = evt.data.tab
+          this.conversationId = evt.data.conversationId
         }
       }
     },

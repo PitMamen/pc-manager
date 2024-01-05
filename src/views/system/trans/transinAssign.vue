@@ -33,10 +33,12 @@
 
     <div class="div-radio">
       <div
-        class="radio-item"
-        :class="{ 'checked-btn': queryParamsTemp.allocationFlag == '' }"
-        @click="onRadioClick('')"
+      class="radio-item"
+      :class="{ 'checked-btn': queryParamsTemp.allocationFlag == '' }"
+      @click="onRadioClick('')"
       >
+      <img v-if="queryParamsTemp.allocationFlag == ''" src="~@/assets/icons/dingdan_c.png" />
+        <img v-else src="~@/assets/icons/dingdan_n.png" />
         <span style="margin-left: 3px">全部({{ numberData.TotalNum }})</span>
       </div>
       <div
@@ -44,6 +46,8 @@
         :class="{ 'checked-btn': queryParamsTemp.allocationFlag == 2 }"
         @click="onRadioClick(2)"
       >
+      <img v-if="queryParamsTemp.allocationFlag == 2" src="~@/assets/icons/daifenpei_c.png" />
+        <img v-else src="~@/assets/icons/daifenpei_n.png" />
         <span style="margin-left: 3px">待分配({{ numberData.allocationNo }}) </span>
       </div>
 
@@ -52,6 +56,8 @@
         :class="{ 'checked-btn': queryParamsTemp.allocationFlag == 1 }"
         @click="onRadioClick(1)"
       >
+      <img v-if="queryParamsTemp.allocationFlag == 1" src="~@/assets/icons/yifenpei_c.png" />
+        <img v-else src="~@/assets/icons/yifenpei_n.png" />
         <span style="margin-left: 3px">已分配({{ numberData.allocationYes }})</span>
       </div>
     </div>
@@ -146,7 +152,7 @@ export default {
         regTimeBegin: getDateNow(),
         regTimeEnd: getCurrentMonthLast(),
         status: 2,
-        allocationFlag: undefined, // 1已分配 2未分配，全部的时候不传，整型
+        allocationFlag: '', // 1已分配 2未分配，全部的时候不传，整型
         flag: 1,
       },
 
@@ -229,9 +235,9 @@ export default {
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams));
         this.queryParamsTemp.allocationFlag = this.currentTab;
-        if (!this.queryParamsTemp.allocationFlag) {
-          delete this.queryParamsTemp.allocationFlag;
-        }
+        // if (!this.queryParamsTemp.allocationFlag) {
+        //   delete this.queryParamsTemp.allocationFlag;
+        // }
         return qryReferralListByPage(Object.assign(parameter, this.queryParamsTemp))
           .then((res) => {
             if (res.code == 0 && res.data.rows.length > 0) {
@@ -571,7 +577,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

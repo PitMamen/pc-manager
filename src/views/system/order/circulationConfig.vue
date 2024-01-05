@@ -33,7 +33,7 @@
     >
       <span v-if="saveData.hospitalCode == record.hospitalCode " slot="consultorderprescription_hospital_name" slot-scope="text, record">
         <div class="editable-cell-input-wrapper">
-          <a-tree-select
+          <!-- <a-tree-select
             v-model="saveData.consultorderprescriptionHospitalCode"
             style="width: 100%"
             :tree-data="treeData"
@@ -41,7 +41,30 @@
             allow-clear
             tree-default-expand-all
           >
-          </a-tree-select>
+          </a-tree-select> -->
+
+
+          <a-select
+          v-model="saveData.consultorderprescriptionHospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 100%"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
+
+
+
+
+
         </div>
       </span>
       <span v-else slot="consultorderprescription_hospital_name">
@@ -52,16 +75,31 @@
 
       <span v-if="saveData.hospitalCode == record.hospitalCode " slot="apppreprescription_hospital_name" slot-scope="text, record">
         <div class="editable-cell-input-wrapper">
-          <a-tree-select
+          <!-- <a-tree-select
             v-model="saveData.apppreprescriptionHospitalCode"
             style="width: 100%"
             :tree-data="treeData"
             placeholder="请选择"
             allow-clear
             tree-default-expand-all
-            
           >
-          </a-tree-select>
+          </a-tree-select> -->
+          <a-select
+          v-model="saveData.apppreprescriptionHospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 100%"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
         </div>
       </span>
       <span v-else slot="apppreprescription_hospital_name">
@@ -91,7 +129,7 @@
   <script>
 import { STable } from '@/components'
 
-import { accessHospitalsNew, getCflzMerchantPageList ,prescriptionFlowConfig} from '@/api/modular/system/posManage'
+import { accessHospitalsNew1, getCflzMerchantPageList ,prescriptionFlowConfig} from '@/api/modular/system/posManage'
 import collectionfig from './collectionfig'
 
 export default {
@@ -211,43 +249,95 @@ export default {
   watch: {},
 
   created() {
-    this.queryHospitalListOut()
+    this.queryHospitalListOut(undefined)
   },
   methods: {
-    queryHospitalListOut() {
+    // queryHospitalListOut(name) {
+    //   let queryData = {
+    //     tenantId: '',
+    //     status: 1,
+    //     hospitalName: name,
+    //     orgTypes: '2,3',
+    //   }
+    //   this.confirmLoading = true
+    //   accessHospitalsNew1(queryData)
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         // res.data.forEach((item, index) => {
+    //         //   this.$set(item, 'key', item.hospitalCode)
+    //         //   this.$set(item, 'value', item.hospitalCode)
+    //         //   this.$set(item, 'title', item.hospitalName)
+    //         //   this.$set(item, 'children', item.hospitals)
+
+    //         //   item.hospitals.forEach((item1, index1) => {
+    //         //     this.$set(item1, 'key', item1.hospitalCode)
+    //         //     this.$set(item1, 'value', item1.hospitalCode)
+    //         //     this.$set(item1, 'title', item1.hospitalName)
+    //         //   })
+    //         // })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+
+      /**
+     * 所属机构接口
+     */
+     queryHospitalListOut(name) {
+      this.fetching = true
       let queryData = {
         tenantId: '',
         status: 1,
-        hospitalName: '',
-        orgTypes: '2,3',
+        hospitalName: name,
       }
       this.confirmLoading = true
-      accessHospitalsNew(queryData)
+      accessHospitalsNew1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                // this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
+
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+
+
+
+
+
+
+
+
+
     showEdit(record){
       this.initSaveData()
       var configData=record.configData || {}

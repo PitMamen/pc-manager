@@ -30,7 +30,6 @@
         <div class="table-page-search-wrapper">
           <div class="search-row">
             <span class="name">执行科室:</span>
-
             <a-select
               class="deptselect-single"
               show-search
@@ -138,26 +137,35 @@
         <!-- </div> -->
         <div class="div-down">
           <div class="div-service-left-control">
-            <div class="left-control" >
-              <div class="div-wrap-control" >
+            <div class="left-control">
+              <div class="top-kuang">
+                  <div>问卷名称</div>
+                  <div>抽查率</div>
+                  <div>合格率</div>
+                </div>
+              <div class="div-wrap-control">
                 <div v-if="quesDataTemp && quesDataTemp.length > 0">
                   <div
                     class="div-part"
-                    :class="{ 'checked': item.isChecked }"
+                    :class="{ checked: item.isChecked }"
                     v-for="(item, index) in quesDataTemp"
                     @click="onItemClick(item, index)"
                     :value="item.departmentName"
                     :key="index"
                   >
-                    <span class="span-name" @click="onPartChoose(index)" :title="item.questionnaireName">
-                      {{ item.questionnaireName }}
-                    </span>
+                    <div class="span-name" @click="onPartChoose(index)" :title="item.questionnaireName">
+                      <div style="width: 35%;overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{ item.questionnaireName }}</div>
+                      <span >
+                        {{ item.checkPercentage }}
+                      </span>
+                      <span style="margin-left: 5px;margin-right: 10px;">
+                        {{ item.passCheckPercentage }}
+                      </span>
+                    </div>
 
-                    <div
-                      style="width: 100%; height: 0.5px; background: #999999; margin-top: 5px; margin-bottom: 5px"
-                    ></div>
+                    <div class="bottom-line"></div>
 
-                    <div class="div-rate">
+                    <!-- <div class="div-rate">
                       <span style="color: #999999">抽查率:</span>
                       <span style="text-align: center; margin-left: 5px; color: #1890ff">
                         {{ item.checkPercentage }}
@@ -166,7 +174,7 @@
                       <span style="margin-left: 5px; text-align: center; color: #1890ff">
                         {{ item.passCheckPercentage }}
                       </span>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
                 <div v-else class="no-data">
@@ -985,7 +993,7 @@ export default {
     }
 
     .checked-btn {
-      background-color: #eff7ff;
+      // background-color: #eff7ff;
       color: #1890ff;
       border-bottom: #1890ff 2px solid;
     }
@@ -1028,23 +1036,30 @@ export default {
       background-color: white;
       // padding: 20px 0 20px 20px;
       float: left;
-      
+
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 14.5%;
+      width: 250px;
       overflow: hidden;
 
       .left-control {
-        
         display: flex;
-        // padding: 20px 0 20px 20px;
-        // padding: 10px;
-        // border: 1px solid #e6e6e6;
         flex-direction: column;
-        // width: 100%;
-        // // height: 100%;
-        // min-height: 100%;
+        .top-kuang {
+          display: flex;
+          height: 30px;
+          align-items: center;
+          padding: 15px;
+          font-size: 12px;
+          background-color: #f2f2f2;
+          color: #1a1a1a;
+          flex-direction: row !important;
+          width: 95%;
+          justify-content: space-between;
+          border-bottom: #e6e6e6 1px solid;
+          border: 1px solid #dfe3e5;
+        }
       }
 
       .div-divider {
@@ -1080,8 +1095,9 @@ export default {
 
       .div-wrap-control {
         // max-height: 420px;
-        height: calc(100vh - 260px);
-        margin-bottom: 10px;
+        // height: calc(100vh - 260px);
+        height: 490px;
+        width: 238px;
         overflow-y: auto !important;
         // .checked {
         //   color: #1890ff !important;
@@ -1095,38 +1111,64 @@ export default {
           justify-content: center;
         }
 
-
         .checked {
-            // color: #1890ff !important;
-            border: 1px solid #1890ff !important;
-            box-shadow: 0px 0px 4px 1px #409eff !important;
-          }
+          color: #1890ff !important;
+          // border: 1px solid #1890ff !important;
+          // box-shadow: 0px 0px 4px 1px #409eff !important;
+        }
+
+       
 
         .div-part {
-          padding: 8px;
-          background: rgba(0, 1, 3, 0);
-          border: 1px solid #dfe3e5;
-          overflow: hidden;
-          width: 95%;
+          // padding: 8px;
+          // background: rgba(0, 1, 3, 0);
+          // border: 1px solid #dfe3e5;
+          // overflow: hidden;
+          // width: 95%;
+          // display: flex;
+          // flex-direction: column;
+          // margin-bottom: 8px;
+          // border-bottom: #e6e6e6 1px solid;
           display: flex;
           flex-direction: column;
-          margin-bottom: 8px;
-          // padding-left: 5%;
-          border-bottom: #e6e6e6 1px solid;
-
-        
+          justify-content: space-between;
+          height: 40px;
+          font-size: 12px;
+          align-items: center;
           &:hover {
             cursor: pointer;
           }
 
+          .bottom-line {
+            width: 100%;
+            height: 0.5px;
+            background: #e6e6e6;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            margin-right: 10%;
+          }
+
           .span-name {
-            // margin-top: 3.5%;
-            // display: inline-block;
+            // flex: 1;
+            // height: 85%;
+            // overflow: hidden; //溢出隐藏
+            // text-overflow: ellipsis; //超出省略号显示
+            // white-space: nowrap; //文字不换行
+            // margin-top: 1%;
+            // font-size: 12px;
+            // text-align: left|center;
+
             flex: 1;
             height: 85%;
             overflow: hidden; //溢出隐藏
             text-overflow: ellipsis; //超出省略号显示
             white-space: nowrap; //文字不换行
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
 
             // padding-left: 1%;
             // color: #000;

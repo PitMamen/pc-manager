@@ -1,11 +1,20 @@
 <template>
   <div class="wrap">
     <a-tabs v-model="keyindex">
-      <a-tab-pane key="1" tab="短信记录">
+      <a-tab-pane key="1" >
+
+        <span slot="tab">
+          <a-icon type="mail" />
+          <span>短信记录</span>
+        </span>
         <sms-list ref="smsList" />
       </a-tab-pane>
 
-      <a-tab-pane key="2" tab="微信记录" force-render>
+      <a-tab-pane key="2"  force-render>
+        <span slot="tab">
+          <a-icon type="wechat" />
+          <span>微信记录</span>
+        </span>
         <wx-list ref="wxList" />
       </a-tab-pane>
     </a-tabs>

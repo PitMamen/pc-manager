@@ -3,18 +3,34 @@
   <div class="wrap" >
     <div>
       <a-tabs @change="callback" v-model="keyindex">
-        <a-tab-pane key="1" tab="转诊申请单">
+        <a-tab-pane key="1" >
+          <span slot="tab">
+          <a-icon type="file-sync" />
+          <span>转诊申请单</span>
+        </span>
           <!-- <trans-apply ref="transApply" /> -->
         </a-tab-pane>
 
-        <a-tab-pane key="2" tab="上传病历" force-render>
+        <a-tab-pane key="2"  force-render>
+          <span slot="tab">
+          <a-icon type="upload" />
+          <span>上传病历</span>
+        </span>
           <!-- <upload-files ref="uploadFiles" /> -->
         </a-tab-pane>
 
-        <a-tab-pane key="3" :record="record" tab="健康档案" force-render>
+        <a-tab-pane key="3" :record="record"  force-render>
+          <span slot="tab">
+          <a-icon type="credit-card" />
+          <span>健康档案</span>
+        </span>
           <!-- <file-danan :record="record" ref="fileDanan" /> -->
         </a-tab-pane>
-        <a-tab-pane key="4" :record="record" tab="添加评论" force-render>
+        <a-tab-pane key="4" :record="record"  force-render>
+          <span slot="tab">
+          <a-icon type="message" />
+          <span>添加评论</span>
+        </span>
           <!-- <file-danan :record="record" ref="fileDanan" /> -->
         </a-tab-pane>
       </a-tabs>

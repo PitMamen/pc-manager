@@ -54,16 +54,24 @@
   
       <div class="div-radio">
         <div class="radio-item" :class="{ 'checked-btn': currentTab == 0 }" @click="onRadioClick(0)">
+          <img v-if="currentTab == 0 " src="~@/assets/icons/dingdan_c.png" />
+        <img v-else src="~@/assets/icons/dingdan_n.png" />
           <span style="margin-left: 3px">全部({{ numberData.totalNum }})</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': currentTab == 1 }" @click="onRadioClick(1)">
+          <img v-if="currentTab == 1 " src="~@/assets/icons/wsz_c.png" />
+        <img v-else src="~@/assets/icons/wsz_n.png" />
           <span style="margin-left: 3px">未收治({{ numberData.szFlagNo }}) </span>
         </div>
   
         <div class="radio-item" :class="{ 'checked-btn': currentTab == 2 }" @click="onRadioClick(2)">
+          <img v-if="currentTab == 2 " src="~@/assets/icons/wbcyz_c.png" />
+        <img v-else src="~@/assets/icons/wbcyz_n.png" />
           <span style="margin-left: 3px">未办住院证({{ numberData.bzFlagNo }})</span>
         </div>
         <div class="radio-item" :class="{ 'checked-btn': currentTab== 3 }" @click="onRadioClick(3)">
+          <img v-if="currentTab == 3 " src="~@/assets/icons/ybcyz_c.png" />
+        <img v-else src="~@/assets/icons/ybcyz_n.png" />
           <span style="margin-left: 3px">已办住院证({{ numberData.bzFlagYes }})</span>
         </div>
       </div>
@@ -646,7 +654,7 @@
     }
   
     .checked-btn {
-      background-color: #eff7ff;
+      // background-color: #eff7ff;
       color: #1890ff;
       border-bottom: #1890ff 2px solid;
     }

@@ -160,10 +160,9 @@
       <div style="font-weight: bold; margin: 10px; margin-left: 18px !important">产品清单</div>
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5;white-space:nowrap"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; "
         size="small"
-        class="a-table-one"
-        :scroll="{ y: true}"
+        :scroll="{ x: true }"
         :columns="goodsItemsDataColumns"
         :data-source="goodsItemsData"
         :alert="true"
@@ -186,10 +185,10 @@
 
       <div class="line"></div>
       <a-table
-        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; background-color: #f5f5f5;white-space:nowrap"
+        style="margin-left: 15px; margin-right: 15px; margin-top: 10px;margin-bottom: 10px; border: none; white-space:nowrap"
         size="small"
         class="a-table-one"
-        :scroll="{ y: true }"
+        :scroll="{ x: true }"
         :columns="rightItemsDataColumns"
         :data-source="rightItemsData"
         :alert="true"
@@ -294,13 +293,14 @@ export default {
           title: '产品名称',
           dataIndex: 'rightsItemName',
           align:'left',
-          with:250,
+          with:280,
           ellipsis: true,
         },
         {
           title: '规格',
           dataIndex: 'ruleInfo',
-          with:50,
+          with:100,
+          
         },
         {
           title: '数量',
@@ -316,30 +316,30 @@ export default {
           title: '计费金额',
           dataIndex: 'saleAmount',
           align:'right',
-          with:50,
+          with:180,
         },
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
           align:'center',
-          with:150,
+          with:180,
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
           align:'center',
-          with:150,
+          with:180,
         },
         {
           title: '类型',
           dataIndex: 'projectType',
           align:'center',
-          with:150,
+          // with:150,
         },
         {
           title: '操作',
           dataIndex: 'action',
-          with:150,
+          // with:150,
             scopedSlots: { customRender: 'action' },
         },
       ],
@@ -348,17 +348,18 @@ export default {
         {
           title: '服务项目',
           dataIndex: 'rightsItemName',
-          with:250,
+          with:280,
           ellipsis: true,
         },
         {
           title: '服务规格',
           dataIndex: 'ruleInfo',
+          with:80,
         },
         {
           title: '数量',
           dataIndex: 'equityQuantity',
-          with:50,
+          with:80,
         },
         {
           title: '单位',
@@ -368,17 +369,21 @@ export default {
         {
           title: '计费金额',
           dataIndex: 'saleAmount',
-          align:'right'
+          align:'right',
+          with:180,
+          
         },
         {
           title: '开始时间',
           dataIndex: 'effectiveStartTime',
-          align:'center'
+          align:'center',
+          with:180,
         },
         {
           title: '结束时间',
           dataIndex: 'effectiveEndTime',
-          align:'center'
+          align:'center',
+          with:180,
         },
         {
           title: '类型',
@@ -577,7 +582,7 @@ export default {
 //去掉 高亮
 
 .a-table-one /deep/ .ant-table-body{
-  overflow-y: auto !important;
+  // overflow-y: auto !important;
 }
 
 .ant-table-thead > tr > th{
@@ -588,11 +593,31 @@ white-space:nowrap;
 }
 
 
-/deep/.ant-modal-body {
-  margin-left: 41% !important;
-  margin-top: 43px;
-  margin-bottom: 30px;
-}
+// /deep/.ant-modal-body {
+//   margin-left: 41% !important;
+//   margin-top: 43px;
+//   margin-bottom: 30px;
+// }
+
+.ant-table-body {
+    overflow-x: auto; // 让table能横向滚动
+  }
+  .ant-table-tbody {
+    .qid_column {
+      word-break: break-all;
+      width: 280px; // 固定列宽度
+    }
+    .ant-table-fixed-columns-in-body {
+      width: 280px; // 固定左列容器的宽度始终为上述固定列宽度，避免数量多少时出现白色垂直空隙
+    }
+    .lang_column {
+      min-width: 200px;
+      word-break: break-all;
+    }
+  }
+
+
+
 
 .topButton {
   margin: 10px;

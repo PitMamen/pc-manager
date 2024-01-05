@@ -135,7 +135,7 @@ export default {
     },
   },
   components: {
-    infoCompass
+    infoCompass,
   },
   created() {
     this.getList()
@@ -167,28 +167,26 @@ export default {
     },
     diseasesChange(value) {
       window.frames.aiChat.postMessage(
-        JSON.stringify({
+        {
           type: 'iframe-diseases-change',
           diseases: value,
-        }),
+        },
         '*'
       )
     },
     diseasesHandler(evt) {
       if (evt.data) {
-        const data = JSON.parse(evt.data)
-        if (data.type === 'parent-diseases-gene') {
+        if (evt.data.type === 'parent-diseases-gene') {
           this.imported = true
-          this.diseases = data.diseases
-          this.diseasesChange(data.diseases)
+          this.diseases = evt.data.diseases
+          this.diseasesChange(evt.data.diseases)
         }
       }
     },
     infoCompassHandler(evt) {
       if (evt.data) {
-        const data = JSON.parse(evt.data)
-        if (data.type === 'parent-compass-info') {
-          this.$refs.infoCompass.open(data.item, data.list)
+        if (evt.data.type === 'parent-compass-info') {
+          this.$refs.infoCompass.open(evt.data.item, evt.data.list)
         }
       }
     },

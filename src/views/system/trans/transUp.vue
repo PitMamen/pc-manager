@@ -262,6 +262,7 @@ export default {
       ],
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        // console.log("5555555555555555555555", (2300/100).toFixed(1));
         return getUpReferralList(Object.assign(parameter, this.queryParam)).then(
           (res) => {
             // if (res.code === 0) {

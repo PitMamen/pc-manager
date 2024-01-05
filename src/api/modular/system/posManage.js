@@ -2797,6 +2797,18 @@ export function queryHospitalList(data) {
 
 
 /**
+ * 机构列表(一级结构)
+ */
+export function queryHospitalList2(data) {
+  return axios({
+    url: 'uam-api/hospital/list2',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+/**
  * 可访问机构列表
  */
 export function accessHospitals(data) {
@@ -2807,12 +2819,38 @@ export function accessHospitals(data) {
   })
 }
 
+
+/**
+ * 可访问机构列表(一级结构)
+ */
+export function accessHospitals1(data) {
+  return axios({
+    url: '/uam-api/hospital/accessHospitals1',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
 /**
  * 可访问机构列表 处方流转
  */
 export function accessHospitalsNew(data) {
   return axios({
     url: '/uam-api/hospital/accessHospitalsNew',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+/**
+ * 可访问机构列表 处方流转(一级结构)
+ */
+export function accessHospitalsNew1(data) {
+  return axios({
+    url: '/uam-api/hospital/accessHospitalsNew1',
     method: 'get',
     params: data,
   })
@@ -6072,13 +6110,24 @@ export function statReferralPatient(data) {
 
 
 // 转入列表
-export function qryReferralListByPage(data) {
+export function qryReferralListByPage(data) {  
   return axios({
     url: '/referral-api/referral/qryReferralListByPage',
     method: 'post',
     data: data,
   })
 }
+
+
+export function qryReferralTradeListByPage(data) {  
+  return axios({
+    url: '/referral-api/referral/qryReferralTradeListByPage',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 
 // 统一预约列表
 export function reservationListByPage(data) {
@@ -6294,5 +6343,15 @@ export function viewAuthDetail(data) {
     url: '/referral-api/patient/viewAuthDetail',
     method: 'get',
     params: data,
+  })
+}
+
+// 查看随访执行详情
+
+export function qryPlanBindInfo(data) {
+  return axios({
+    url: '/follow-api/follow/userplan/qryPlanBindInfo',
+    method: 'post',
+    data: data,
   })
 }

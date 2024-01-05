@@ -3,14 +3,30 @@
     <div class="table-page-search-wrapper">
       <div class="search-row">
         <span class="name">所属机构:</span>
-        <a-tree-select
+        <!-- <a-tree-select
           v-model="queryParams.hospitalCode"
           style="min-width: 120px"
           :tree-data="treeData"
           placeholder="请选择"
           tree-default-expand-all
         >
-        </a-tree-select>
+        </a-tree-select> -->
+        <a-select
+          v-model="queryParams.hospitalCode"
+          placeholder="请选择机构"
+          show-search
+          :filter-option="false"
+          :not-found-content="fetching ? undefined : null"
+          allow-clear
+          style="width: 180px"
+          @change="onHospitalSelectChange"
+          @search="onHospitalSelectSearch"
+        >
+          <a-spin v-if="fetching" slot="notFoundContent" size="small" />
+          <a-select-option v-for="(item, index) in treeData" :value="item.hospitalCode" :key="index">{{
+            item.hospitalName
+          }}</a-select-option>
+        </a-select>
       </div>
 
       <div class="search-row">
@@ -18,14 +34,14 @@
         <a-input
           v-model="queryParams.combinedCondition"
           allow-clear
-          placeholder="可输入用户名/电话/订单号"
-          style="width: 120px; height: 28px"
+          placeholder="可输入用户名/电话/订单号/医生姓名"
+          style="width: 210px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
       </div>
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">医生:</span>
         <a-input
           v-model="queryParams.doctorName"
@@ -35,18 +51,18 @@
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
-      </div>
+      </div> -->
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">套餐类型:</span>
         <a-select v-model="queryParams.classifyId" placeholder="请选择" allow-clear style="width: 120px">
           <a-select-option v-for="(item, index) in packgeList" :key="index" :value="item.id">{{
             item.classifyName
           }}</a-select-option>
         </a-select>
-      </div>
+      </div> -->
 
-      <div class="search-row">
+      <!-- <div class="search-row">
         <span class="name">套餐名称:</span>
         <a-input
           v-model="queryParams.commodityName"
@@ -56,7 +72,7 @@
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
-      </div>
+      </div> -->
 
       <div class="search-row">
         <span class="name">订单分类:</span>
@@ -82,72 +98,48 @@
 
     <div class="div-radio">
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == '' }" @click="onRadioClick('')">
-        <!-- <img
-          style="width: 13px; height: 13px"
-          :class="{ 'checked-icon': queryParams.orderStatus == '' }"
-          src="~@/assets/icons/icon_wait.svg"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == ''" src="~@/assets/icons/dingdan_c.png" />
+        <img v-else src="~@/assets/icons/dingdan_n.png" />
         <span style="margin-left: 3px">全部订单({{ numberData.quanbu }})</span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 1 }" @click="onRadioClick(1)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 1 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/icon_completed.svg"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 1" src="~@/assets/icons/dfk_c.png" />
+        <img v-else src="~@/assets/icons/dfk_n.png" />
         <span style="margin-left: 3px">待付款({{ numberData.daifukuan }}) </span>
       </div>
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 8 }" @click="onRadioClick(8)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 8 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfsb.png"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 8" src="~@/assets/icons/dfh_c.png" />
+        <img v-else src="~@/assets/icons/dfh_n.png" />
         <span style="margin-left: 3px">待发货({{ numberData.daifahuo }})</span>
       </div>
-
+      
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 4 }" @click="onRadioClick(4)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 4 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 4" src="~@/assets/icons/daishouhuo_c.png" />
+        <img v-else src="~@/assets/icons/daishouhuo_n.png" />
         <span style="margin-left: 3px">待收货({{ numberData.daishouhuo }})</span>
       </div>
 
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 101 }" @click="onRadioClick(101)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 101 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 101" src="~@/assets/icons/syz_c.png" />
+        <img v-else src="~@/assets/icons/syz_n.png" />
         <span style="margin-left: 3px">使用中({{ numberData.shiyongzhong }})</span>
       </div>
-
+      
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 2 }" @click="onRadioClick(2)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 2 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 2" src="~@/assets/icons/chenggong_c.png" />
+        <img v-else src="~@/assets/icons/chenggong_n.png" />
         <span style="margin-left: 3px">已完成({{ numberData.yiwancheng }})</span>
       </div>
-
+      
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 102 }" @click="onRadioClick(102)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 102 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/sfyq.png"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 102" src="~@/assets/icons/tuikuanzhong_c.png" />
+        <img v-else src="~@/assets/icons/tuikuanzhong_n.png" />
         <span style="margin-left: 3px">退款中({{ numberData.tuikuanzhong }})</span>
       </div>
-
+      
       <div class="radio-item" :class="{ 'checked-btn': queryParamsTemp.orderStatus == 5 }" @click="onRadioClick(5)">
-        <!-- <img
-          :class="{ 'checked-icon': queryParams.orderStatus == 5 }"
-          style="width: 13px; height: 13px"
-          src="~@/assets/icons/bcsf.png"
-        /> -->
+        <img v-if="queryParamsTemp.orderStatus == 5" src="~@/assets/icons/yqx_c.png" />
+        <img v-else src="~@/assets/icons/yqx_n.png" />
         <span style="margin-left: 3px">已取消({{ numberData.yiquxiao }})</span>
       </div>
     </div>
@@ -179,16 +171,18 @@ import { STable } from '@/components'
 import moment from 'moment'
 import {
   orderList,
-  accessHospitals,
+  accessHospitals1,
   getOrderStatusGroupByData,
   getCommodityClassify,
 } from '@/api/modular/system/posManage'
-import { formatDate, getDateNow, getCurrentMonthLast } from '@/utils/util'
+import { formatDate, getDateNow, getCurrentMonthLast,gethalfYearToday} from '@/utils/util'
 // import addForm from './addForm'
 import orderDetail from './orderDetail'
 import yzOrderDetail from './yzOrderDetail'
 import continuationDetail from './continuationDetail'
 import prescriptionDetail from './prescriptionDetail'
+import { TRUE_USER } from '@/store/mutation-types'
+import Vue from 'vue'
 
 export default {
   components: {
@@ -205,6 +199,8 @@ export default {
       dateFormat: 'YYYY-MM-DD',
       createValue: [],
       treeData: [],
+      fetching: false,
+      localHospitalCode: undefined,
       gropListData: [],
       packgeList: [],
       confirmLoading: false,
@@ -235,7 +231,7 @@ export default {
         doctorName: '',
         hospitalCode: undefined,
         orderEndTime: getCurrentMonthLast(),
-        orderStartTime: getDateNow(),
+        orderStartTime: gethalfYearToday(),
         classifyId: undefined,
         orderStatus: '',
         orderType: undefined,
@@ -327,13 +323,13 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         if (this.queryParams.orderStartTime && this.queryParams.orderEndTime) {
-          if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
-            this.$message.error('请选择开始时间小于结束时间')
-            delete this.queryParams.orderStartTime
-            delete this.queryParams.orderEndTime
-            this.$refs.table.refresh()
-            return
-          }
+          // if (this.queryParams.orderStartTime > this.queryParams.orderEndTime) {
+          //   this.$message.error('请选择开始时间小于结束时间')
+          //   delete this.queryParams.orderStartTime
+          //   delete this.queryParams.orderEndTime
+          //   this.$refs.table.refresh()
+          //   return
+          // }
           if (this.queryParams.orderStartTime) {
             let start = this.formatDate(this.queryParams.orderStartTime)
             this.queryParams.orderStartTime = start + ' 00:00:00'
@@ -389,12 +385,16 @@ export default {
   },
 
   created() {
-    this.queryHospitalListOut()
+    this.user = Vue.ls.get(TRUE_USER)
+    if (this.user) {
+      this.localHospitalCode = this.user.hospitalCode
+    }
+    this.queryHospitalListOut(undefined)
     this.createValue = [
       // moment(getlastMonthToday(), this.dateFormat),
       //   moment(formatDate(new Date().getTime()), this.dateFormat),
 
-      moment(getDateNow(), this.dateFormat),
+      moment(gethalfYearToday(), this.dateFormat),
       moment(getCurrentMonthLast(), this.dateFormat),
     ]
     this.getOrderStatusGroupByDataOut()
@@ -494,40 +494,82 @@ export default {
       return this.confirmLoading
     },
 
-    queryHospitalListOut() {
-      //   let queryData = {
-      //     tenantId: '',
-      //     status: 1,
-      //     hospitalName: '',
-      //   }
+    // queryHospitalListOut() {
+    //   //   let queryData = {
+    //   //     tenantId: '',
+    //   //     status: 1,
+    //   //     hospitalName: '',
+    //   //   }
+    //   this.confirmLoading = true
+    //   accessHospitals()
+    //     .then((res) => {
+    //       if (res.code == 0 && res.data.length > 0) {
+    //         res.data.forEach((item, index) => {
+    //           this.$set(item, 'key', item.hospitalCode)
+    //           this.$set(item, 'value', item.hospitalCode)
+    //           this.$set(item, 'title', item.hospitalName)
+    //           this.$set(item, 'children', item.hospitals)
+
+    //           item.hospitals.forEach((item1, index1) => {
+    //             this.$set(item1, 'key', item1.hospitalCode)
+    //             this.$set(item1, 'value', item1.hospitalCode)
+    //             this.$set(item1, 'title', item1.hospitalName)
+    //           })
+    //         })
+
+    //         this.treeData = res.data
+    //       } else {
+    //         this.treeData = res.data
+    //       }
+    //       return []
+    //     })
+    //     .finally((res) => {
+    //       this.confirmLoading = false
+    //     })
+    // },
+
+ /**
+     * 所属机构接口
+     */
+     queryHospitalListOut(name) {
+      this.fetching = true
+      let queryData = {
+        tenantId: '',
+        status: 1,
+        hospitalName: name,
+      }
       this.confirmLoading = true
-      accessHospitals()
+      accessHospitals1(queryData)
         .then((res) => {
+          this.fetching = false
           if (res.code == 0 && res.data.length > 0) {
-            res.data.forEach((item, index) => {
-              this.$set(item, 'key', item.hospitalCode)
-              this.$set(item, 'value', item.hospitalCode)
-              this.$set(item, 'title', item.hospitalName)
-              this.$set(item, 'children', item.hospitals)
-
-              item.hospitals.forEach((item1, index1) => {
-                this.$set(item1, 'key', item1.hospitalCode)
-                this.$set(item1, 'value', item1.hospitalCode)
-                this.$set(item1, 'title', item1.hospitalName)
-              })
+            res.data.forEach((item) => {
+              if (item.hospitalCode == this.localHospitalCode) {
+                this.queryParams.hospitalCode = item.hospitalCode
+              }
             })
-
-            this.treeData = res.data
-          } else {
             this.treeData = res.data
           }
-          return []
         })
         .finally((res) => {
           this.confirmLoading = false
         })
     },
 
+    //机构搜索
+    onHospitalSelectSearch(value) {
+      this.treeData = []
+      this.queryHospitalListOut(value)
+    },
+    //机构选择变化
+    onHospitalSelectChange(value) {
+      if (value === undefined) {
+        this.localHospitalCode = undefined
+        this.treeData = []
+        this.queryHospitalListOut(undefined)
+      }
+    },
+    
     reset() {
       this.queryParams.combinedCondition = ''
       this.queryParams.commodityName = ''
@@ -720,7 +762,7 @@ export default {
   }
 
   .checked-btn {
-    background-color: #eff7ff;
+    // background-color: #eff7ff;
     color: #1890ff;
     border-bottom: #1890ff 2px solid;
   }

@@ -1,10 +1,10 @@
-// export const currentEnv = "test"    //测试环境
+export const currentEnv = "test"    //测试环境
 // export const currentEnv = "show"    //演示环境
-export const currentEnv = "online"  //线上环境
+// export const currentEnv = "online"  //线上环境
 
-// export const appId = "wx99df16e6be344865"//测试公众号 上面三个湘雅医院的公众号
+export const appId = "wx99df16e6be344865"//测试公众号 上面三个湘雅医院的公众号
 // export const appId = "wx0bc29297eabbca39"//演示环境公众号
-export const appId = "wx2f945858177df980" //线上公众号（更换的） # 健康管家公众号的appid
+// export const appId = "wx2f945858177df980" //线上公众号（更换的） # 健康管家公众号的appid
 
 export function timeFix() {
   const time = new Date()
@@ -225,13 +225,23 @@ export function getlastMonthToday() {
 
 }
 
+
+
 /**是否可以打电话 */
 export function canCall() {
   return tccc && tccc.Agent.getStatus() == 'free';
 }
 
 
+/**
+ * 获取6个月前的今天
+ */
+export function gethalfYearToday() {
+  var dt = new Date();
+  dt.setMonth(dt.getMonth() - 6);
+  return formatDate(dt)
 
+}
 
 
 /**获取本月最后一天 */
@@ -263,6 +273,32 @@ export function getStartAndEndDateOfMonth(date) {
 
   return { startDate, endDate }
 }
+
+
+
+
+// export function getStartAndEndDateOfMonth(date) {
+//   let year = date.getFullYear() // 2021
+//   const month = date.getMonth() + 1 // 0 1 2 3 4 5 6 7 8 9 10 11
+//   const startDate = new Date(year + '/' + month + '/' + 1)
+//   let nextMonth = month + 1
+//   if (nextMonth === 13) {
+//     year += 1
+//     nextMonth = 1
+//   }
+//   const dateLong = (new Date(year + '/' + nextMonth + '/' + 1)).getTime() - 24 * 60 * 60 * 1000
+//   const endDate = new Date(dateLong)
+
+//   return { startDate, endDate }
+// }
+
+
+
+
+
+
+
+
 
 /**
  * 判断对象是空
@@ -341,18 +377,18 @@ export function getSurgeryLevel(code) {
   let str
   switch (code) {
     case '1':
-      str= '一级手术'
+      str = '一级手术'
       break;
     case '2':
-      str= '二级手术'
+      str = '二级手术'
       break;
     case '3':
-      str= '三级手术'
+      str = '三级手术'
       break;
     case '4':
-      str= '四级手术'
+      str = '四级手术'
       break;
-  
+
     default:
       break;
   }
