@@ -74,9 +74,10 @@ export default {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 20px;
+  // padding: 20px;
   width: 100%;
   height: 100%;
+  overflow-y: hidden;
   background: #f2f2f2;
   .left {
     flex: 1;
