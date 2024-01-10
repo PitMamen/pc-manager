@@ -31,7 +31,6 @@
       :collapsible="true"
       @sideAction="sideAction"
     ></side-menu>
-
     <a-layout :class="['main-content', layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
       <!-- layout header -->
       <global-header
@@ -42,7 +41,6 @@
         :device="device"
         @toggle="toggle"
       />
-
       <!-- layout content -->
       <a-layout-content :style="{ height: '100%', margin: '20px', background: '#FFFFFF', paddingTop: fixedHeader ? '0' : '0' }">
         <multi-tab v-if="multiTab"></multi-tab>
@@ -52,12 +50,10 @@
   		  </div>
         </transition>
       </a-layout-content>
-
       <!-- layout footer -->
       <a-layout-footer>
         <global-footer />
       </a-layout-footer>
-
       <!-- Setting Drawer (show in development mode) -->
       <setting-drawer v-if="!production"></setting-drawer>
     </a-layout>
@@ -69,7 +65,6 @@ import { triggerWindowResizeEvent } from '@/utils/util'
 import { mapState, mapActions } from 'vuex'
 import { mixin, mixinDevice } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
-
 import RouteView from './RouteView'
 import SideMenu from '@/components/Menu/SideMenu'
 import GlobalHeader from '@/components/GlobalHeader'
