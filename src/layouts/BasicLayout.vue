@@ -259,8 +259,12 @@ export default {
       }
     }
     .main-content {
+      height: 100%;
       margin-left: -170px !important;
       > .ant-layout-content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
         margin-left: 170px !important;
         margin-right: 0px !important;
         margin-bottom: 0px !important;
