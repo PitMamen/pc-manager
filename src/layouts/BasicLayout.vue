@@ -20,7 +20,6 @@
         @menuSelect="menuSelect"
       ></side-menu>
     </a-drawer>
-
     <side-menu
       v-else-if="isSideMenu()"
       class="side-menu"
