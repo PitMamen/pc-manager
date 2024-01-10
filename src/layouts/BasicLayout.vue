@@ -47,7 +47,9 @@
       <a-layout-content :style="{ height: '100%', margin: '20px', background: '#FFFFFF', paddingTop: fixedHeader ? '0' : '0' }">
         <multi-tab v-if="multiTab"></multi-tab>
         <transition name="page-transition">
-          <route-view />
+          <div style="flex: 1;overflow-y: auto;">
+            <route-view />
+  		  </div>
         </transition>
       </a-layout-content>
 
