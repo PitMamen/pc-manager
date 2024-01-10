@@ -172,6 +172,7 @@ export default {
 
 <style lang="less">
 .basicLayout {
+  height: 100%;
   .side-menu {
     position: relative;
     margin-top: 42px;
