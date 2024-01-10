@@ -20,7 +20,6 @@
         @menuSelect="menuSelect"
       ></side-menu>
     </a-drawer>
-
     <side-menu
       v-else-if="isSideMenu()"
       class="side-menu"
@@ -31,7 +30,6 @@
       :collapsible="true"
       @sideAction="sideAction"
     ></side-menu>
-
     <a-layout :class="['main-content', layoutMode, `content-width-${contentWidth}`]" :style="{ paddingLeft: contentPaddingLeft, minHeight: '100vh' }">
       <!-- layout header -->
       <global-header
@@ -42,20 +40,19 @@
         :device="device"
         @toggle="toggle"
       />
-
       <!-- layout content -->
       <a-layout-content :style="{ height: '100%', margin: '20px', background: '#FFFFFF', paddingTop: fixedHeader ? '0' : '0' }">
         <multi-tab v-if="multiTab"></multi-tab>
         <transition name="page-transition">
-          <route-view />
+          <div style="flex: 1;overflow-y: auto;">
+            <route-view />
+  		  </div>
         </transition>
       </a-layout-content>
-
       <!-- layout footer -->
       <a-layout-footer>
         <global-footer />
       </a-layout-footer>
-
       <!-- Setting Drawer (show in development mode) -->
       <setting-drawer v-if="!production"></setting-drawer>
     </a-layout>
@@ -67,7 +64,6 @@ import { triggerWindowResizeEvent } from '@/utils/util'
 import { mapState, mapActions } from 'vuex'
 import { mixin, mixinDevice } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
-
 import RouteView from './RouteView'
 import SideMenu from '@/components/Menu/SideMenu'
 import GlobalHeader from '@/components/GlobalHeader'
@@ -172,6 +168,7 @@ export default {
 
 <style lang="less">
 .basicLayout {
+  height: 100% !important;
   .side-menu {
     position: relative;
     margin-top: 42px;
@@ -215,6 +212,7 @@ export default {
     }
   }
   .main-content {
+    height: 100%;
     > .header-animat {
       .sysapp-logo {
         position: relative;
@@ -257,8 +255,12 @@ export default {
       }
     }
     .main-content {
+      height: 100%;
       margin-left: -170px !important;
       > .ant-layout-content {
+        display: flex;
+        flex: 1;
+        flex-direction: column;
         margin-left: 170px !important;
         margin-right: 0px !important;
         margin-bottom: 0px !important;
