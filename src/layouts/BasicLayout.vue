@@ -216,6 +216,7 @@ export default {
     }
   }
   .main-content {
+    height: 100%;
     > .header-animat {
       .sysapp-logo {
         position: relative;
