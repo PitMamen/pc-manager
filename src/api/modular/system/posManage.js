@@ -6308,6 +6308,25 @@ export function getCaseSummary(data) {
 }
 
 
+
+
+// 获取住院医嘱数据
+export function getCaseDradvice(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseDradvice',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
+
+
+
+
+
+
 // 提交记录
 export function uploadTradeImg(data) {
   return axios({

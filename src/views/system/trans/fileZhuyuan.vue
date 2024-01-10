@@ -109,6 +109,26 @@
                     :jbxx="fileSummaryData"
                   />
                 </a-tab-pane>
+
+                <!-- 住院医嘱tab -->
+                <a-tab-pane key="5">
+                  <template #tab>
+                    <span class="span-tab">
+                      <img
+                        style="width: 13px; height: 13px; margin-right: 7px"
+                        :class="{ 'checked-icon': activeKey == '5' }"
+                        src="~@/assets/icons/zyyz.png"
+                      />
+                      住院医嘱
+                    </span>
+                  </template>
+
+                  <basic-medical
+                    style="margin-top: 2px; margin-left: 10px; overflow: hidden"
+                    ref="basicMedical"
+                    @ok="handleOk"
+                  />
+                </a-tab-pane>
               </a-tabs>
             </div>
           </div>
@@ -135,10 +155,12 @@ import {
   getCaseCheck,
   getCaseSummary,
   getBycode,
+  getCaseDradvice,
 } from '@/api/modular/system/posManage'
 import basicInfo from './basicInfo'
 import basicXiaojie from './basicXiaojie'
 import basicTech from './basicTech'
+import basicMedical from './basicMedical'
 // import basicMedic from "./basicMedic";
 // import basicSurgery from "./basicSurgery";
 // import basicFee from "./basicFee";
@@ -148,7 +170,7 @@ import { formatDateFull, formatDate, countAge, getQiekou, getSurgeryLevel } from
 import Vue from 'vue'
 import moment from 'moment'
 export default {
-  components: { basicInfo, basicTech, basicXiaojie },
+  components: { basicInfo, basicTech, basicXiaojie, basicMedical },
   props: {
     record: Object,
   },
@@ -180,6 +202,9 @@ export default {
       recordType: 'zhuyuan',
       jianyanData: {},
       jianChaData: {},
+      zhuyuanYizhu: [], //住院医嘱数据
+      yizhuType: 1, //住院医嘱类型  1 长期医嘱  2 临时医嘱
+      indexData: 0,
       typeList: [], //检查类型
       fileDetailData: {
         // zdxx: {
@@ -209,7 +234,6 @@ export default {
   created() {
     // debugger
     this.user = Vue.ls.get(TRUE_USER)
-
 
     console.log('created', this.record)
 
@@ -252,13 +276,14 @@ export default {
               this.getCaseCheckOut(0)
               this.getCaseExamOut(0)
               this.getSummaryData(0)
+              this.getCaseDradviceOut(0, this.yizhuType)
             }
           } else {
             this.$message.error(res.message)
           }
         })
         .finally(() => {
-          this.confirmLoading = false     //这里不要置为false 数据多加载慢 导致点击其他tab时渲染不出界面 等首页数据加载完了   再置为false
+          this.confirmLoading = false //这里不要置为false 数据多加载慢 导致点击其他tab时渲染不出界面 等首页数据加载完了   再置为false
         })
     },
 
@@ -295,6 +320,18 @@ export default {
                 } else if (item.yzdbz == 1) {
                   this.$set(item, 'yzdbz', '仍疑似')
                 }
+
+                if (item.cyqkbm == 1) {
+                  this.$set(item, 'yzy', '是')
+                } else if (item.cyqkbm == 2) {
+                  this.$set(item, 'hz', '是')
+                } else if (item.cyqkbm == 3) {
+                  this.$set(item, 'wy', '是')
+                } else if (item.cyqkbm == 4) {
+                  this.$set(item, 'sw', '是')
+                } else if (item.cyqkbm == 5) {
+                  this.$set(item, 'qt', '是')
+                }
               })
             }
             if (this.fileMainData.operationInfo.length > 0) {
@@ -305,6 +342,31 @@ export default {
               })
             }
             // console.log("getDetailData", JSON.stringify(this.fileMainData));
+            // 入院情况
+            if (this.fileMainData.ryqk == '1') {
+              this.$set(this.fileMainData, 'ryqk', '危重')
+            } else if (this.fileMainData.ryqk == '2') {
+              this.$set(this.fileMainData, 'ryqk', '急诊')
+            } else if (this.fileMainData.ryqk == '3') {
+              this.$set(this.fileMainData, 'ryqk', '一般')
+            } else {
+              this.$set(this.fileMainData, 'ryqk', '其他')
+            }
+
+            // 门诊诊断
+            if (this.fileMainData.summaryInfo) {
+              this.$set(this.fileMainData, 'mzzd', this.fileMainData.summaryInfo.mzzd)
+            } else {
+              this.$set(this.fileMainData, 'mzzd', '-')
+            }
+
+            // 入院诊断
+            if (this.fileMainData.summaryInfo) {
+              this.$set(this.fileMainData, 'ryzd', this.fileMainData.summaryInfo.ryzd)
+            } else {
+              this.$set(this.fileMainData, 'ryzd', '-')
+            }
+
             this.$set(this.fileMainData, 'nl', countAge(this.fileMainData.csny))
             let str =
               this.fileMainData.csny.substring(0, 4) +
@@ -344,13 +406,13 @@ export default {
               })
             }
             this.$nextTick(() => {
-              this.$refs.basicTech2.refreshData(this.jianChaData,'jiancha');
-            });
+              this.$refs.basicTech2.refreshData(this.jianChaData, 'jiancha')
+            })
           } else {
             this.jianChaData = undefined
             this.$nextTick(() => {
-              this.$refs.basicTech2.refreshData(undefined,'jiancha');
-            });
+              this.$refs.basicTech2.refreshData(undefined, 'jiancha')
+            })
             // this.$message.error(res.message)
           }
         })
@@ -367,13 +429,13 @@ export default {
             this.jianyanData = decodeRecord(res.data.cipher, res.data.data)
             console.log('解密检验：', this.jianyanData)
             this.$nextTick(() => {
-              this.$refs.basicTech1.refreshData(this.jianyanData,'jianyan');
-            });
+              this.$refs.basicTech1.refreshData(this.jianyanData, 'jianyan')
+            })
           } else {
             this.jianyanData = undefined
             this.$nextTick(() => {
-              this.$refs.basicTech1.refreshData(undefined,'jianyan');
-            });
+              this.$refs.basicTech1.refreshData(undefined, 'jianyan')
+            })
             // this.$message.error(res.message)
           }
         })
@@ -428,8 +490,53 @@ export default {
         })
     },
 
+    // 获取医嘱数据
+    getCaseDradviceOut(index, yizhutype) {
+      getCaseDradvice({ caseId: this.historyList[index].id, encodeFlag: 1, type: yizhutype })
+        .then((res) => {
+          if (res.code === 0 && res.data.cipher) {
+            this.zhuyuanYizhu = decodeRecord(res.data.cipher, res.data.data)
+            if (this.zhuyuanYizhu && this.zhuyuanYizhu.length > 0) {
+              this.zhuyuanYizhu.forEach((item) => {
+                // 医嘱执行时间 (长期医嘱 临时医嘱共有)
+                if (item.yzzxsj && item.yzzxsj.length >= 19) {
+                  this.$set(item, 'zxrq', item.yzzxsj.substring(0, 10))
+                  this.$set(item, 'zxsj', item.yzzxsj.substring(10, 19))
+                }
+
+                // 医嘱停止时间
+                if (item.yzzzsj && item.yzzzsj.length >= 19) {
+                  this.$set(item, 'tzrq', item.yzzzsj.substring(0, 10))
+                  this.$set(item, 'tzsj', item.yzzzsj.substring(10, 19))
+                }
+
+                //  临时医嘱的 开始日期和时间
+                if (item.yzjhksr && item.yzjhksr.length >= 19) {
+                  this.$set(item, 'ksrq', item.yzjhksr.substring(0, 10))
+                  this.$set(item, 'kssj', item.yzjhksr.substring(10, 19))
+                }
+              })
+            }
+            // console.log('解密医嘱数据：', this.zhuyuanYizhu)
+            this.$nextTick(() => {
+              this.$refs.basicMedical.refreshData(this.zhuyuanYizhu)
+            })
+          } else {
+            this.zhuyuanYizhu = undefined
+            this.$nextTick(() => {
+              this.$refs.basicMedical.refreshData(undefined)
+            })
+            // this.$message.error(res.message)
+          }
+        })
+        .finally(() => {
+          this.confirmLoading = false
+        })
+    },
+
     onFileItemClick(itemData, indexData) {
       console.log('YYY:', indexData)
+      this.indexData = indexData
       for (let index = 0; index < this.historyList.length; index++) {
         this.$set(this.historyList[index], 'isChecked', false)
         if (indexData == index) {
@@ -442,6 +549,7 @@ export default {
       this.getCaseCheckOut(indexData)
       this.getCaseExamOut(indexData)
       this.getSummaryData(indexData)
+      this.getCaseDradviceOut(indexData, this.yizhuType)
     },
 
     tabChange(key) {
@@ -450,22 +558,22 @@ export default {
         this.$refs.basicInfo.refreshData(this.fileDetailData.zdxx)
       } else if (key == 2) {
         //检验
-        if (this.jianyanData&&this.jianyanData.length > 0) {
+        if (this.jianyanData && this.jianyanData.length > 0) {
           this.$nextTick(() => {
             this.$refs.basicTech1.refreshData(this.jianyanData, 'jianyan')
           })
-        }else{
+        } else {
           this.$nextTick(() => {
             this.$refs.basicTech1.refreshData(undefined, 'jianyan')
           })
         }
       } else if (key == 3) {
         //检查
-        if (this.jianChaData&&this.jianChaData.length > 0) {
+        if (this.jianChaData && this.jianChaData.length > 0) {
           this.$nextTick(() => {
             this.$refs.basicTech2.refreshData(this.jianChaData, 'jiancha')
           })
-        }else{
+        } else {
           this.$nextTick(() => {
             this.$refs.basicTech2.refreshData(undefined, 'jiancha')
           })
@@ -475,12 +583,22 @@ export default {
           // this.$refs.basicXiaojie.refreshData(this.zmrHtml);
           this.$refs.basicXiaojie.refreshData(this.fileSummaryData)
         })
+      } else if (key == 5) {
+        this.$nextTick(() => {
+          this.$refs.basicMedical.refreshData(this.zhuyuanYizhu)
+        })
       }
     },
 
     goCancel() {
       console.log('hdh')
       // this.$emit("handleCancel", "");
+    },
+
+    // 长期医嘱  临时医嘱切换
+    handleOk(type) {
+      this.yizhuType = type
+      this.getCaseDradviceOut(this.indexData, type)
     },
   },
 }
