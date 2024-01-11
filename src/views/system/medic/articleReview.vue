@@ -148,7 +148,7 @@
           {{ record.commodityName }}
         </span> -->
       </s-table>
-      <!-- <process-View ref="processView" @ok="handleOk" /> -->
+      <examine-View ref="examineView" @ok="handleOk" />
     </a-card>
   </template>
        
@@ -160,13 +160,13 @@
 //   import addForm from './addForm'
   import Vue from 'vue'
   import { TRUE_USER } from '@/store/mutation-types'
-//   import processView from './processView'
+  import examineView from './examineView'
   
   export default {
     components: {
       STable,
     //   addForm,
-    //   processView,
+      examineView,
       // editForm,
     },
   
@@ -340,10 +340,10 @@
         console.log('ggg:', record.checkStatus)
         //查看
         if (record.checkStatus == 2 || record.checkStatus == 3) {
-        //   this.$refs.processView.lookview(record)
+          this.$refs.examineView.lookview(record)
         } else {
           //审核
-        //   this.$refs.processView.process(record)
+          this.$refs.examineView.process(record)
         }
       },
   
