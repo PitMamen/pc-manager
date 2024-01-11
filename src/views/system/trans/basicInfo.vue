@@ -575,7 +575,7 @@ export default {
           dataIndex: "cyzdbz",
           width:200,
           ellipse:true,
-
+          align: "center",
 
           render: (value, record, index) => {
           const obj = {
@@ -593,32 +593,8 @@ export default {
           }
           return obj;
         },
-
-
-        
         },
 
-        {
-          title: " ",
-          dataIndex: "zdsm",
-          // customRender: (value, row, index) => {
-          //   // console.log(value, row, index)
-          //   const obj = {
-          //     //   children: this.cancelItemsData.length,
-          //     children: row.zdsm,
-          //     attrs: {},
-          //   }
-          //   if (index === 0) {
-          //     // 第一行数据开始，跨行合并的长度为数据data的长度
-          //     obj.attrs.rowSpan = this.jbxx.length
-          //   }
-          //   if (index >= 1) {
-          //     // 从第一行往后的所有行表格均合并
-          //     obj.attrs.rowSpan = 0
-          //   }
-          //   return obj
-          // },
-        },
 
         
 

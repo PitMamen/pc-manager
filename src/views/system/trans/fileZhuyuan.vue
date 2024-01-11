@@ -310,9 +310,9 @@ export default {
                 this.$set(item, 'zdsj', formatDateFull(item.zdsj))
 
                 if (item.cyzdbz == 1) {
-                  this.$set(item, 'cyzdbz', '主要诊断')
+                  this.$set(item, 'cyzdbz', '主要诊断：'+item.zdsm)
                 } else if (item.cyzdbz == 2) {
-                  this.$set(item, 'cyzdbz', '其他诊断')
+                  this.$set(item, 'cyzdbz', '其他诊断：'+item.zdsm)
                 }
 
                 if (item.yzdbz == 0) {
