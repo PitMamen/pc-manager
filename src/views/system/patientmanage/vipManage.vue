@@ -112,6 +112,7 @@
     </div>
     <!-- :scroll="{ x: true }" -->
     <s-table
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="tableClumns"
