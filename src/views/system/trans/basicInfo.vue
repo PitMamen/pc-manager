@@ -238,11 +238,8 @@
           </div>
 
           <div class="div-item-four">
-            转科：<span style="text-decoration: underline">{{ jbxx.zkksbm1 || "-" }}</span
-            ><span style="margin-left: 10px">转：</span
-            ><span style="text-decoration: underline">{{ jbxx.zkksbm2 || "-" }}</span>
-            <span style="margin-left: 10px">转：</span
-            ><span style="text-decoration: underline">{{ jbxx.zkksbm3 || "-" }}</span>
+            转科：<span style="text-decoration: underline">{{ jbxx.szbq || "-" }}</span>
+           
           </div>
         </div>
 

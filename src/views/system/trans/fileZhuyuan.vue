@@ -376,6 +376,7 @@ export default {
               this.fileMainData.csny.substring(6, 8)
             this.$set(this.fileMainData, 'csny', str)
             this.$set(this.fileMainData, 'rysj', moment(this.fileMainData.rysj).format('YYYY-MM-DD HH:mm:ss'))
+            this.$set(this.fileMainData, 'qzrq', moment(this.fileMainData.qzrq).format('YYYY-MM-DD'))
             this.$set(this.fileMainData, 'cysj', moment(this.fileMainData.cysj).format('YYYY-MM-DD HH:mm:ss'))
             this.$refs.basicInfo.refreshData(this.fileMainData)
           } else {
