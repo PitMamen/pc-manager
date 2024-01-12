@@ -85,11 +85,7 @@
         </span>
       </div>
 
-      <div class="action-row" style="display: flex; flex-direction: row; flex-wrap: wrap; margin-left: auto">
-        <!-- <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
-        <!-- <div class="clearfix"> -->
-        <!-- @preview="handlePreview" -->
-        <!--               list-type="picture-card"  accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -->
+      <div class="action-row" style="display: inline-flex; flex-direction: row;  margin-left: auto">
         <a-upload
           :action="actionUrl"
           :multiple="false"
@@ -100,7 +96,7 @@
           accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           @change="uploadModal"
         >
-          <div style="margin-right: 5px" v-if="fileList.length < 1">
+          <div style="margin-right: 8px;margin-left: 50px;" v-if="fileList.length < 1">
             <a-button type="primary">
               <a-icon type="upload" />
               上传
@@ -710,6 +706,7 @@ export default {
 }
 .table-page-search-wrapper {
   display: flex;
+  display: inline-block;
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
