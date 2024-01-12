@@ -19,7 +19,7 @@
           v-model="name"
           allow-clear
           placeholder="输入姓名"
-          style="width: 160px; height: 28px"
+          style="width: 128px; height: 28px"
           @keyup.enter="$refs.table.refresh(true)"
           @search="$refs.table.refresh(true)"
         />
@@ -39,7 +39,7 @@
           }}</a-select-option>
         </a-select> -->
         <a-select
-          style="min-width: 180px; height: 28px"
+          style="min-width: 128px; height: 28px"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -66,7 +66,7 @@
             v-model="item.tempValue"
             allow-clear
             placeholder="输入内容"
-            style="width: 160px; height: 28px"
+            style="width: 128px; height: 28px"
             @keyup.enter="$refs.table.refresh(true)"
             @search="$refs.table.refresh(true)"
           />
@@ -85,11 +85,7 @@
         </span>
       </div>
 
-      <div class="action-row" style="display: flex; flex-direction: row; flex-wrap: wrap; margin-left: auto">
-        <!-- <a-form-item label="上传" :labelCol="labelCol" :wrapperCol="wrapperCol" has-feedback> -->
-        <!-- <div class="clearfix"> -->
-        <!-- @preview="handlePreview" -->
-        <!--               list-type="picture-card"  accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -->
+      <div class="action-row" style="display: inline-flex; flex-direction: row;  margin-left: auto">
         <a-upload
           :action="actionUrl"
           :multiple="false"
@@ -100,7 +96,7 @@
           accept=".xls,xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
           @change="uploadModal"
         >
-          <div style="margin-right: 5px" v-if="fileList.length < 1">
+          <div style="margin-right: 8px;margin-left: 50px;" v-if="fileList.length < 1">
             <a-button type="primary">
               <a-icon type="upload" />
               上传
@@ -112,7 +108,7 @@
     </div>
     <!-- :scroll="{ x: true }" -->
     <s-table
-      :scroll="{ x: true }"
+    :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="tableClumns"
@@ -454,7 +450,7 @@ export default {
 
     //上传
     uploadModal(changeObj) {
-      console.log('fff', changeObj)
+      // console.log('fff', changeObj)
       if (changeObj.file.status == 'done') {
         changeObj.fileList.pop()
         this.fileList = changeObj.fileList
@@ -499,7 +495,7 @@ export default {
       }
     },
     chanage(id) {
-      console.log('VVVV:', id)
+      // console.log('VVVV:', id)
       const tableName = this.tabDatas.find((item) => id === item.id)
       this.tableId = id
       if (tableName) {
@@ -710,6 +706,7 @@ export default {
 }
 .table-page-search-wrapper {
   display: flex;
+  display: inline-block;
   padding-bottom: 10px !important;
   border-bottom: 1px solid #e8e8e8;
   .action-row {
