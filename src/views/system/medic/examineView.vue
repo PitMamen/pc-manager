@@ -4,16 +4,10 @@
     :width="1000"
     :height="800"
     :visible="visible"
-    :footer="footer"
     @cancel="handleCancel"
     @ok="handleSubmit"
     :confirmLoading="confirmLoading"
   >
-    <template slot="footer">
-      <a-button type="primary" @click="handleSubmit">确定</a-button>
-      <a-button @click="handleCancel">关闭</a-button>
-    </template>
-
     <div style="height: 500px; width: 100%">
       <div class="div-appoint-detail-check">
         <div class="left-content">
@@ -23,21 +17,43 @@
           </div>
 
           <div class="top-kuang">
-            <div class="title">胰岛素如何注射</div>
+            <div class="title">{{ record.title }}</div>
             <div class="line-content"></div>
-            <div class="name">张燕医生 &nbsp;|&nbsp;主任医生 &nbsp;|&nbsp;中南大学湘雅二医院</div>
+            <div class="name">
+              {{ record.author }} &nbsp;|&nbsp;{{ record.professionalTitle }} &nbsp;|&nbsp;{{ record.hospitalName }}
+            </div>
 
             <div class="time">
-              <div>创建时间:2023-10-11</div>
-              <div>提交时间:2023-10-12</div>
-              <div style="margin-right: 30px">文章来源时间:2023-10-13</div>
+              <div>创建时间:{{ record.createTime }}</div>
+              <div>提交时间:{{ record.createdTime }}</div>
+              <div style="margin-right: 30px">文章来源:{{ record.source }}</div>
             </div>
-            <div class="name">转载出处:来自中南大学湘雅二医院,<www class="xy22"></www></div>
+            <div class="name">转载出处:{{ record.reprintSource }}<www class="xy22"></www></div>
 
             <div class="bannarimag">
               <div>封面图片:</div>
-              <img style="margin-left: 20px; height: 50px; width: 50px" src="~@/assets/icons/benci.png" />
+              <!-- src="https://develop.mclouds.org.cn/content-api/file/I20240115140936220MUP5W7EMZIJZJK-t0kTY8mpvdAB2811ca4a580e009943c375ce108509bc.jpg" -->
+              <img
+                alt="example"
+                style="margin-left: 20px; height: 50px; width: 50px"
+                :src="record.previewUrl"
+                @click="previewClick()"
+              />
             </div>
+
+            <a-modal
+              :width="600"
+              :height="600"
+              :visible="previewVisibleBanner"
+              :footer="null"
+              @cancel="handleCancelBanner"
+            >
+              <img
+                alt="example"
+                style="height: 100%; width: 100%"
+                :src="record.previewUrl"
+              />
+            </a-modal>
           </div>
 
           <div class="div-span-content-mid">
@@ -48,7 +64,8 @@
                 详细内容
               </div>
 
-              <div style="margin-left: 10px">从这里开始是文章内容</div>
+              <!-- <div style="margin-left: 10px">从这里开始是文章内容</div> -->
+              <div style="margin-left: 10px" id="myHtml"></div>
             </div>
           </div>
         </div>
@@ -59,19 +76,20 @@
         </div> -->
 
         <!-- 右边视图 -->
-        <div class="right-content" >
+        <div class="right-content">
           <div class="div-title-right">
             <div class="div-line-blue"></div>
             <span class="span-title">审核结果</span>
           </div>
 
-          <div class="radia-content" v-if="record.checkStatus == 1">
-            <div style=" margin-top: 10px; color: #1a1a1a; ">审核结果：</div>
+          <div class="radia-content" v-if="record.status == 1">
+            <div style="margin-top: 10px; color: #1a1a1a">审核结果：</div>
             <a-radio-group
               style="margin-top: 10px"
               name="radioGroup"
               v-model="radioTyPe"
               @change="radioChange"
+              :defaultValue="2"
               v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
             >
               <a-radio :value="2" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important"> 成功 </a-radio>
@@ -79,72 +97,42 @@
             </a-radio-group>
           </div>
 
-          <div style="margin-top: 10px; color: #1a1a1a" v-if="record.checkStatus != 1">
-            审核：{{ preDetailData.medicalInfo.checkStatusDesc }}
+          <div style="margin-top: 10px; color: #1a1a1a" v-if="record.status != 1">
+            审核：{{ getType(record.status) }}
           </div>
-          <div
-            style=" margin-top: 10px; color: #1a1a1a"
-            v-if="record.checkStatus != 1 && preDetailData.medicalInfo.checkStatus == 3"
-          >
-            不通过原因：{{ preDetailData.medicalInfo.refuseReason }}
+          <div style="margin-top: 10px; color: #1a1a1a" v-if="record.status != 1 && record.status == 3">
+            不通过原因：{{ record.rejectReason }}
           </div>
 
-          <div class="reason-content" v-if="record.checkStatus == 1">
+          <div class="reason-content" v-if="record.status == 1">
             <div style="margin-top: 10px; color: #1a1a1a">不通过原因 ：</div>
 
             <div style="display: flex; flex-direction: row; overflow: hidden; position: relative">
               <a-textarea
                 :disabled="radioTyPe == 2"
-                style="height: 100px; min-height: 80px; margin-top: 10px;  width: 100%"
-                v-model="queryParams.refuseReason"
+                style="height: 100px; min-height: 80px; margin-top: 10px; width: 100%"
+                v-model="checkData.rejectReason"
                 :maxLength="200"
                 placeholder="请输入原因"
                 v-decorator="['doctorBrief', { rules: [{ required: false, message: '请输入原因!' }] }]"
               />
-              <span class="m-count">{{ queryParams.refuseReason ? queryParams.refuseReason.length : 0 }}/200</span>
+              <span class="m-count">{{ checkData.rejectReason ? checkData.rejectReason.length : 0 }}/200</span>
             </div>
           </div>
 
           <div style="margin-top: 10px; color: #1a1a1a">审核人 ：</div>
-          <div v-if="record.checkStatus != 1" style=" margin-top: 10px; color: #1a1a1a">
-            审核日期：{{ preDetailData.medicalInfo.checkDate }}
+          <div v-if="record.status != 1" style="margin-top: 10px; color: #1a1a1a">
+            审核日期：{{ record.createTime }}
           </div>
-
         </div>
       </div>
     </div>
-    <a-modal
-      :title="titleSmall"
-      :width="300"
-      :height="600"
-      :visible="previsible"
-      :footer="footer"
-      :confirmLoading="confirmLoading"
-      @cancel="cancelcheckCaPassword"
-      style="margin-top: 10%"
-    >
-      <template slot="footer">
-        <a-button type="primary" @click="handlecheckCaPassword">确定</a-button>
-        <a-button @click="cancelcheckCaPassword">关闭</a-button>
-      </template>
-
-      <div style="display: flex; flex-direction: row">
-        <div style="margin-top: 5px">验证密码：</div>
-        <a-input v-model="inputPassword" allow-clear placeholder="请输入密码" style="width: 180px" />
-      </div>
-    </a-modal>
   </a-modal>
 </template>
   
   
   <script>
-import {
-  getUserExternalInfo,
-  getSavedUserTagsInfo,
-  checkPre,
-  preDetail,
-  checkCaPassword,
-} from '@/api/modular/system/posManage'
+import { getArticleByIdNew, auditArticle } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 
@@ -155,11 +143,12 @@ export default {
       previsible: false,
       user: {},
       record: {},
-      radioTyPe: '2',
+      radioTyPe: '',
       isCheckInfo: false,
       visible: false,
-      title: '处方审核',
-      footer: null,
+      previewVisibleBanner: false,
+      checkData: {},
+      title: '文章审核',
       confirmLoading: false,
       userInfoData: {},
       userTagsInfoData: [],
@@ -179,9 +168,23 @@ export default {
     this.user = Vue.ls.get(TRUE_USER)
   },
   methods: {
+    handleCancelBanner() {
+      this.previewVisibleBanner = false
+    },
+
+    previewClick(url) {
+      this.previewVisibleBanner = true
+    },
+
+    getType(value) {
+      if (value == 2) {
+        return '审核通过'
+      } else if (value == 3) {
+        return '审核不通过'
+      }
+    },
     radioChange(e) {
       this.radioTyPe = e.target.value
-      this.queryParams.checkStatus = e.target.value
       console.log('sss:', this.radioTyPe)
     },
 
@@ -198,84 +201,70 @@ export default {
     //审核
     process(record) {
       // console.log('1111111111')
-      this.title = '处方审核'
+      this.title = '文章审核'
       this.visible = true
       this.record = {}
-      ;(this.radioTyPe = '2'), (this.footer = undefined)
       this.record = record
       this.queryParams.preNo = record.preNo
       this.queryParams.refuseReason = ''
-      this.inputPassword = ''
-      this.getUserInfoOut()
-      this.getSavedUserTagsInfoOut()
-      this.preDetailOut()
+
+      this.getDetail(record.articleId)
     },
 
+    // 查看
     lookview(record) {
       // console.log('22222222')
-      this.title = '处方查看'
-      this.footer = null
+      this.title = '文章详情'
       this.visible = true
       this.record = record
-      ;(this.radioTyPe = '2'), (this.queryParams.preNo = record.preNo)
       this.inputPassword = ''
-      this.getUserInfoOut()
-      this.getSavedUserTagsInfoOut()
-      this.preDetailOut()
+      this.getDetail(record.articleId)
     },
 
-    //查询患者基本信息接口
-    getUserInfoOut() {
-      this.confirmLoading = true
-      getUserExternalInfo(this.record.userId)
-        .then((res) => {
+    getDetail(articleId) {
+      if (articleId) {
+        getArticleByIdNew(articleId).then((res) => {
           if (res.code == 0) {
-            this.confirmLoading = false
-            this.userInfoData = res.data
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false
-        })
-    },
+            this.checkData = res.data
 
-    // 查询患者标签接口
-    getSavedUserTagsInfoOut() {
-      this.confirmLoading = true
-      getSavedUserTagsInfo(this.record.userId)
-        .then((res) => {
-          if (res.code == 0) {
-            this.confirmLoading = false
-            this.userTagsInfoData = res.data
+            //  var h= <meta http-equiv="Access-Control-Allow-Origin" content="*" />
+            document.getElementById('myHtml').innerHTML = res.data.content
+            // this.fileList = []
+            // this.fileList.push({
+            //   uid: '-1',
+            //   name: '封面',
+            //   status: 'done',
+            //   url: this.checkData.previewUrl,
+            // })
+          } else {
+            this.$message.error('获取失败：' + res.message)
           }
-        })
-        .finally(() => {
           this.confirmLoading = false
         })
-    },
-
-    // 查询处方详情接口
-    preDetailOut() {
-      this.confirmLoading = true
-      preDetail({ preNo: this.record.preNo })
-        .then((res) => {
-          if (res.code == 0) {
-            this.confirmLoading = false
-            this.preDetailData = res.data
-          }
-        })
-        .finally(() => {
-          this.confirmLoading = false
-        })
+      }
     },
 
     // 审核
     checkPreOut() {
-      this.confirmLoading = true
-      if (this.radioTyPe == 2) {
-        this.queryParams.refuseReason = ''
+      if (!this.radioTyPe) {
+        this.$message.warn('请选择审核结论！')
+        return
       }
-      checkPre(this.queryParams)
+
+      if (this.radioTyPe == 3) {
+        if (!this.checkData.rejectReason) {
+          this.$message.warn('请填写审核不通过原因')
+          return
+        }
+      }
+      this.confirmLoading = true
+
+      var postData = {
+        id: this.record.articleId,
+        rejectReason: (this.radioTyPe == 2) == 3 ? this.checkData.rejectReason : '',
+        status: this.radioTyPe,
+      }
+      auditArticle(postData)
         .then((res) => {
           if (res.code == 0) {
             this.$message.success('操作成功!')
@@ -295,31 +284,17 @@ export default {
     },
 
     handleSubmit() {
-      this.previsible = true
-      return
-      // this.checkPreOut()
-    },
-
-    cancelcheckCaPassword() {
-      this.previsible = false
-    },
-
-    handlecheckCaPassword() {
-      checkCaPassword({ password: this.inputPassword }).then((res) => {
-        if (res.code == 0) {
-          this.previsible = false
-          this.checkPreOut() //密码正确后 提交审核
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-      // this.previsible = false
+      this.checkPreOut()
     },
   },
 }
 </script>
   
   <style lang="less" scoped>
+#myHtml {
+  word-wrap: break-word;
+  word-break: break-all;
+}
 .midline {
   height: 100%;
   width: 1px;
@@ -627,9 +602,6 @@ export default {
       width: 100%;
       height: 100%;
     }
-  
-
-    
   }
 }
 </style>

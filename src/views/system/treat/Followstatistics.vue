@@ -148,6 +148,19 @@
         </div>
       </div>
 
+      <div class="dh-followup" style="margin-left: 20px" @click="dhsfClick()">
+        <div class="content-dis">
+          <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">电话随访人数</span>
+        </div>
+
+        <div class="content-dis">
+          <span style="font-size: 24px; margin-top: -14px"></span>
+          <span style="font-size: 12px; margin-top: -5px; margin-left: 10px"
+            >{{ tableListData.telSuccessNum || 0 }}人</span
+          >
+        </div>
+      </div>
+
       <div class="sfls-followup" style="margin-left: 20px" @click="sfrsClick()">
         <div class="content-dis">
           <span style="font-size: 12px; margin-left: 10px; margin-top: 3px">失访人数</span>
@@ -186,11 +199,26 @@
       :rowKey="(record) => record.code"
     >
       <span slot="action" slot-scope="text, record">
+        <!-- :disabled="record.successTotalTask == 0" -->
+        <a
+          :disabled="record.successTotalTask != 0 || record.totalTask == 0"
+          style="margin-right: 10px"
+          @click="goPhoneFollow(record)"
+        >
+          <a-icon type="phone"></a-icon> 电话随访</a
+        >
         <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 备注</a>
       </span>
     </s-table>
+    <a-modal :visible="visibleDes" cancelText="''" title="提示" @ok="handleOkDes" @cancel="handleCancel">
+      <div style="text-align: center">确认是否电话随访?</div>
+      <template slot="footer">
+        <a-button type="primary" @click="handleOkDes">是</a-button>
+        <a-button @click="handleCancel">否</a-button>
+      </template>
+    </a-modal>
     <goMarking ref="goMarking" @ok="handleOk" />
-
+    <follow-Model ref="followModel" @ok="handleOk" @cancel="handleCancel" />
     <!-- </a-spin> -->
   </a-card>
 </template>
@@ -204,8 +232,10 @@ import {
   qryFollowStatList,
   getFollowStat,
   exportFollowStatListm,
+  genTelFollow,
 } from '@/api/modular/system/posManage'
 import goMarking from './goMarking'
+import followModel from '../servicewise/followModel'
 import Vue from 'vue'
 import { currentEnv } from '@/utils/util'
 import { TRUE_USER } from '@/store/mutation-types'
@@ -216,16 +246,19 @@ export default {
   components: {
     STable,
     goMarking,
+    followModel,
   },
 
   data() {
     return {
       //此属性用来做重置功能的
       confirmLoading: false,
+      visibleDes: false,
       originData: [],
       createValue: [],
       quesData: [],
       tableListData: [],
+      record: {},
       /** 统计类别数据*/
       labelCol: {
         xs: { span: 24 },
@@ -349,11 +382,10 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadDataStat: (parameter) => {
         this.confirmLoading = true
-        if(this.selectDepartmentId){
+        if (this.selectDepartmentId) {
           // console.log('4444:', this.selectDepartmentId)
           this.queryParamsStatisit.executeDepartmentIds = this.selectDepartmentId.toString().split(',')
           // console.log("33333:",this.queryParamsStatisit.executeDepartmentIds)
-
         }
         var requestData = JSON.parse(JSON.stringify(this.queryParamsStatisit))
         return qryFollowStatList(Object.assign(parameter, requestData))
@@ -395,6 +427,33 @@ export default {
       this.queryParamsStatisit.openidFlag = ''
       this.queryParamsStatisit.specFlag = ''
       this.$refs.tableStat.refresh(true)
+    },
+
+    handleOkDes() {
+      let postData = {
+        id: this.record.id,
+        userId: this.record.userId,
+      }
+      this.genTelFollowOut(postData)
+    },
+
+    handleCancel() {
+      this.visibleDes = false
+    },
+
+    goPhoneFollow(record) {
+      this.visibleDes = true
+      this.record = record
+    },
+
+    // 手动生成随访计划
+    genTelFollowOut(postData) {
+      genTelFollow(postData).then((res) => {
+        if (res.code == 0) {
+          var followData = res.data   //生成的数据 是电话随访里面  需要的数据 直接塞进去
+          this.$refs.followModel.doDeal(followData)
+        }
+      })
     },
 
     // 出院人数卡片点击
@@ -440,6 +499,13 @@ export default {
       this.$refs.tableStat.refresh(true)
     },
 
+    // 电话随访卡片  点击
+    dhsfClick() {
+      this.queryParamsStatisit.successFlag = 2
+      this.queryParamsStatisit.openidFlag = ''
+      this.queryParamsStatisit.specFlag = ''
+      this.$refs.tableStat.refresh(true)
+    },
     // 失访人数卡片点击
     sfrsClick() {
       this.queryParamsStatisit.successFlag = 0
@@ -809,6 +875,32 @@ export default {
     width: 120px;
     height: 68px;
     background: #58cdae;
+    border-radius: 2px;
+    .content-dis {
+      margin-left: 15px;
+      margin-top: 9px;
+      // margin-right: 15px;
+      display: flex;
+      flex-direction: row;
+      color: #ffffff;
+    }
+
+    .line {
+      width: 100%;
+      height: 1px;
+      background: #e6e6e6;
+    }
+  }
+
+  // 电话随访
+  .dh-followup {
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    width: 120px;
+    height: 68px;
+    background: #6c8df1;
     border-radius: 2px;
     .content-dis {
       margin-left: 15px;

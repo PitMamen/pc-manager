@@ -82,8 +82,33 @@ export default {
           title: '医嘱',
           dataIndex: 'yzmxmc',
           ellipsis: true,
+          colSpan:2,
           align: 'center',
           with: 300,
+
+          // customRender: (value, row, index) => {
+          //     const obj = {
+          //       //   children: this.cancelItemsData.length,
+          //       children: row.yzmxmc,
+          //       attrs: {},
+          //     }
+          //     if (index === 0) {
+          //       // 第一行数据开始，跨行合并的长度为数据data的长度
+          //       obj.attrs.rowSpan = this.jbxx.length
+          //     }
+          //     if (index >= 1) {
+          //       // 从第一行往后的所有行表格均合并
+          //       obj.attrs.rowSpan = 0
+          //     }
+          //     return obj
+          //   },
+        },
+
+        {
+          title: '没哟',
+          colSpan:0,
+          dataIndex: 'yzzh',
+          align: 'center',
         },
         {
           title: '医生',
@@ -122,10 +147,12 @@ export default {
           title: '医生',
           dataIndex: 'tzyzzqm',
           ellipsis: true,
+          // colSpan:1,
           align: 'center',
         },
         {
           title: '护士',
+          // colSpan:1,
           dataIndex: 'hdyzhsqm',
           ellipsis: true,
           align: 'center',

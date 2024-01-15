@@ -310,9 +310,9 @@ export default {
                 this.$set(item, 'zdsj', formatDateFull(item.zdsj))
 
                 if (item.cyzdbz == 1) {
-                  this.$set(item, 'cyzdbz', '主要诊断：'+item.zdsm)
+                  this.$set(item, 'cyzdbz', '主要诊断：' + item.zdsm)
                 } else if (item.cyzdbz == 2) {
-                  this.$set(item, 'cyzdbz', '其他诊断：'+item.zdsm)
+                  this.$set(item, 'cyzdbz', '其他诊断：' + item.zdsm)
                 }
 
                 if (item.yzdbz == 0) {
@@ -497,24 +497,62 @@ export default {
         .then((res) => {
           if (res.code === 0 && res.data.cipher) {
             this.zhuyuanYizhu = decodeRecord(res.data.cipher, res.data.data)
+            console.log('医嘱数据：', this.zhuyuanYizhu)
             if (this.zhuyuanYizhu && this.zhuyuanYizhu.length > 0) {
+              // for (let index = 0; index < this.zhuyuanYizhu.length; index++) {
+              //   // console.log("Ss：",this.zhuyuanYizhu[index].yzzxsj)
+              //   if (index + 1 == this.zhuyuanYizhu.length - 1) {
+              //     console.log('最后一个1:', this.zhuyuanYizhu[index + 1].yzzxsj)
+              //     return
+              //   } else {
+              //     if (this.zhuyuanYizhu[index + 1].yzzxsj == this.zhuyuanYizhu[index].yzzxsj) {
+              //       console.log("dddfdffd".this.zhuyuanYizhu[index + 1].yzzxsj)
+              //       this.$set(this.zhuyuanYizhu[index + 1], yzzxsj, '')
+              //     }
+              //   }
+              // }
+
+              // let arr = this.zhuyuanYizhu
+              // let newArr = JSON.parse(JSON.stringify(this.zhuyuanYizhu))
+              // arr.forEach((item, index) => {
+              //   newArr.forEach((itemNew, indexNew) => {
+
+              //     if (item.yzzxsj == itemNew.yzzxsj && index != indexNew) {
+              //       console.log("2222222222222222:",index,indexNew)
+              //       this.$set(item, 'yzzxsj', '')
+              //     }
+              //   })
+              // })
+
+              // console.log("ddddd:",JSON.stringify(arr))
+
               this.zhuyuanYizhu.forEach((item) => {
+                // console.log('RRR:', item.yzzxsj)
                 // 医嘱执行时间 (长期医嘱 临时医嘱共有)
                 if (item.yzzxsj && item.yzzxsj.length >= 19) {
                   this.$set(item, 'zxrq', item.yzzxsj.substring(0, 10))
                   this.$set(item, 'zxsj', item.yzzxsj.substring(10, 19))
+                } else {
+                  this.$set(item, 'zxrq', '')
+                  this.$set(item, 'zxsj', '')
                 }
 
                 // 医嘱停止时间
                 if (item.yzzzsj && item.yzzzsj.length >= 19) {
                   this.$set(item, 'tzrq', item.yzzzsj.substring(0, 10))
                   this.$set(item, 'tzsj', item.yzzzsj.substring(10, 19))
+                } else {
+                  this.$set(item, 'tzrq', '')
+                  this.$set(item, 'tzsj', '')
                 }
 
                 //  临时医嘱的 开始日期和时间
                 if (item.yzjhksr && item.yzjhksr.length >= 19) {
                   this.$set(item, 'ksrq', item.yzjhksr.substring(0, 10))
                   this.$set(item, 'kssj', item.yzjhksr.substring(10, 19))
+                } else {
+                  this.$set(item, 'ksrq', '')
+                  this.$set(item, 'kssj', '')
                 }
               })
             }

@@ -6374,3 +6374,43 @@ export function qryPlanBindInfo(data) {
     data: data,
   })
 }
+
+// 医生文章列表
+export function getDoctorArticleList(data) {
+  return axios({
+    url: '/health-api/articleCategory/getDoctorArticleList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 医生文章列表tab数据
+export function getDoctorArticleListGroupby(data) {
+  return axios({
+    url: '/health-api/articleCategory/getDoctorArticleListGroupby',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 文章审核
+export function auditArticle(data) {
+  return axios({
+    url: '/health-api/articleCategory/auditArticle',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 对统计问卷手动生成电话随访
+export function genTelFollow(data) {
+  return axios({
+    url: '/follow-api/follow/stat/genTelFollow',
+    method: 'post',
+    data: data,
+  })
+}

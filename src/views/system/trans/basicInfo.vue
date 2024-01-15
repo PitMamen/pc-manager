@@ -630,6 +630,7 @@ export default {
           title: "ICD-10编码",
           // innerHeight:20,
           dataIndex: "zdbm",
+          align: "center",
         },
         // {
         //   title: "诊断时间",

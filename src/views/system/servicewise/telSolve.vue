@@ -39,12 +39,12 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 实际随访人 :</span>
-
-          <a-select v-model="followResultContent.actualDoctorUserId"  placeholder="请选择">
+          <a-input :disabled="true" allow-clear :style="radioTyPe==0?'width:157px;':'width:147px;'" v-model="uerName" />
+          <!-- <a-select v-model="followResultContent.actualDoctorUserId"  placeholder="请选择">
             <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
               item.userName
             }}</a-select-option>
-          </a-select>
+          </a-select> -->
         </div>
 
         <div class="div-line-wrap">
@@ -63,9 +63,16 @@
             </a-radio>
           </a-radio-group>
         </div>
-        <div v-show="radioTyPe === 1" class="div-line-wrap">
+        <div v-show="radioTyPe === 0" class="div-line-wrap">
           <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
-          <a-input v-model="handleResult" class="span-item-value" allow-clear placeholder="" />
+          <a-textarea
+            style="height: 100px; min-height: 80px;margin-top: -15px;width: 66%;margin-left: 76px;"
+            v-model="handleResult"
+            :maxLength="200"
+            placeholder="如果线下电话随访，请在此登记患者联系电话"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '如果线下电话随访，请在此登记患者联系电话!' }] }]"
+          />
+          <!-- <a-input v-model="handleResult" class="span-item-value" allow-clear placeholder="" /> -->
         </div>
       </div>
 
@@ -77,7 +84,7 @@
         </div>
         <div class="div-voice-wrap">
           <div class="span-item-name">电话录音 :</div>
-          
+
           <div class="div-voice-content">
             <a
               ref="#"
@@ -89,31 +96,33 @@
               ><img src="~@/assets/icons/ly.png" class="img" />{{ item.recordName }}.mp3</a
             >
           </div>
-          <a ref="#" v-if="patientInfo.tel && callers.length>0">
+          <a ref="#" v-if="patientInfo.tel && callers.length > 0">
+            <img
+              src="~@/assets/icons/dianhua2.png"
+              @click="goCall(patientInfo.tel)"
+              style="width: 34px; height: auto; position: absolute; right: 45px; top: 0"
+            />
+          </a>
           <img
-            
-            src="~@/assets/icons/dianhua2.png"
-            @click="goCall(patientInfo.tel)"
-            style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;"
+            v-else
+            src="~@/assets/icons/dianhua.png"
+            style="width: 34px; height: auto; position: absolute; right: 45px; top: 0"
           />
-        </a>
-          <img v-else src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
-          <a ref="#" v-if="patientInfo.urgentTel && callers.length>0">
-          <img
-            
-            src="~@/assets/icons/jinji2.png"
-            @click="goCall(patientInfo.urgentTel)"
-            style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
-          />
-        </a>
+          <a ref="#" v-if="patientInfo.urgentTel && callers.length > 0">
+            <img
+              src="~@/assets/icons/jinji2.png"
+              @click="goCall(patientInfo.urgentTel)"
+              style="width: 29px; height: auto; position: absolute; right: 0; top: 4px"
+            />
+          </a>
           <img
             v-else
             src="~@/assets/icons/jinji.png"
-            style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;"
+            style="width: 29px; height: auto; position: absolute; right: 0; top: 4px"
           />
         </div>
 
-        <div style="flex: 1; margin-top: 5px; ">
+        <div style="flex: 1; margin-top: 5px">
           <iframe
             id="iframeId"
             defer="true"
@@ -134,14 +143,13 @@
           <span class="span-title">基本信息</span>
         </div>
         <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-          <span class="span-item-name-info" >{{ item.fieldComment }} :</span>
-          <span class="span-item-value-info" >{{ item.fieldValue }} </span>
+          <span class="span-item-name-info">{{ item.fieldComment }} :</span>
+          <span class="span-item-value-info">{{ item.fieldValue }} </span>
         </div>
       </div>
     </div>
-    
+
     <div style="margin-top: 12px; display: flex; flex-direction: row-reverse; align-items: center">
-     
       <a-button
         type="default"
         @click="goCancel"
@@ -149,9 +157,13 @@
       >
         关闭
       </a-button>
-      
-      <a-button type="primary" :loading="isLoading"  @click="goConfirm" style=" margin-right: 30px; width: 90px"> 提交 </a-button>
-      <a-button type="danger" :loading="isLoading"  @click="goZangua" style=" margin-right: 30px; width: 90px; "> 暂挂 </a-button>
+
+      <a-button type="primary" :loading="isLoading" @click="goConfirm" style="margin-right: 30px; width: 90px">
+        提交
+      </a-button>
+      <a-button type="danger" :loading="isLoading" @click="goZangua" style="margin-right: 30px; width: 90px">
+        暂挂
+      </a-button>
     </div>
   </div>
 </template>
@@ -166,11 +178,11 @@ import {
   getUsersByDeptIdAndRole,
   getAccountParam,
   addTencentPhoneTape,
-  hangExecuteRecord
+  hangExecuteRecord,
 } from '@/api/modular/system/posManage'
 //这里单独注册组件，可以考虑全局注册Vue.use(TimeLine)
 import { Timeline } from 'ant-design-vue'
-import { TRUE_USER,CURRENT_FOLLOW_USER } from '@/store/mutation-types'
+import { TRUE_USER, CURRENT_FOLLOW_USER } from '@/store/mutation-types'
 import Vue from 'vue'
 import { parseString } from 'loader-utils'
 let self //最外面全局的
@@ -183,11 +195,11 @@ export default {
   },
   data() {
     return {
-      user:{},
+      user: {},
       activeKey: '1',
       audioSrc: '',
       audioShow: false,
-      isLoading:false,
+      isLoading: false,
       failureList: [
         '电话无人接听',
         '电话号码有误',
@@ -235,12 +247,14 @@ export default {
       handleResult: '',
       questionUrl: '',
       iframe: {},
+      uerName: '',
     }
   },
 
   created() {
-     this.user = Vue.ls.get(TRUE_USER)
-   
+    this.user = Vue.ls.get(TRUE_USER)
+    this.uerName = this.user.userName
+    this.followResultContent.actualDoctorUserId = this.user.userId
     self = this
     console.log('telSolve', this.record.userId)
     this.followPlanPhonePatientInfo(this.record.id)
@@ -297,8 +311,7 @@ export default {
     followPlanPhoneCurrent(id) {
       followPlanPhoneCurrent(id).then((res) => {
         if (res.code == 0) {
-         
-          res.data.actualDoctorUserId =this.followResultContent.actualDoctorUserId
+          res.data.actualDoctorUserId = this.followResultContent.actualDoctorUserId
           if (res.data.taskBizStatus.value == 2 || res.data.taskBizStatus.value == 3) {
             res.data.taskBizStatus.description = '已随访'
           } else {
@@ -312,7 +325,6 @@ export default {
           if (res.data.urgentContacts) {
             this.patientInfo.urgentTel = res.data.urgentContacts
           }
-          
         } else {
           this.$message.error(res.message)
         }
@@ -337,19 +349,18 @@ export default {
       })
     },
     getUsersByDeptIdAndRoleOut(departmentId) {
-      getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5,7,8] }).then((res) => {
+      getUsersByDeptIdAndRole({ departmentId: departmentId, roleId: [3, 5, 7, 8] }).then((res) => {
         if (res.code == 0) {
           //保存的上次选择的实际随访人
-          const actualDoctorUserId= Vue.ls.get(CURRENT_FOLLOW_USER)
+          const actualDoctorUserId = Vue.ls.get(CURRENT_FOLLOW_USER)
           var deptUsers = res.data.deptUsers[0].users
-          deptUsers.forEach(item=>{
-           
-            if(item.userId == actualDoctorUserId+''){
+          deptUsers.forEach((item) => {
+            if (item.userId == actualDoctorUserId + '') {
               console.log('相等')
-              this.followResultContent.actualDoctorUserId=item.userId
+              this.followResultContent.actualDoctorUserId = item.userId
             }
           })
-          this.deptUsers=deptUsers
+          this.deptUsers = deptUsers
           console.log(this.deptUsers)
         }
       })
@@ -358,7 +369,6 @@ export default {
       //电话记录
       getSoundRecordingList(id).then((res) => {
         if (res.code === 0) {
-          
           this.soundRecordingList = res.data
         } else {
           this.$message.error(res.message)
@@ -374,8 +384,8 @@ export default {
         return ''
       }
     },
- //播放音频
- playAudio(soundRecord) {
+    //播放音频
+    playAudio(soundRecord) {
       // this.audioSrc = soundRecord.recordUrL
       // this.audioShow = true
       this.$emit('playAudio', soundRecord.recordUrL)
@@ -408,20 +418,20 @@ export default {
             return
           }
         }
-      
+
         //保存处理信息
         this.dodealsave()
       } else {
         //成功
         //发送消息给iframe 通知其提交问卷  待监听到提交成功的消息后 保存处理信息
-       
+
         this.postMessageToSubmit()
       }
     },
 
     //保存处理信息
     dodealsave() {
-      this.isLoading=true
+      this.isLoading = true
       var postdata = {
         actualDoctorUserId: this.followResultContent.actualDoctorUserId, //实际随访人
         failReason: this.failureRadioTyPe + 1,
@@ -436,27 +446,26 @@ export default {
           Vue.ls.set(CURRENT_FOLLOW_USER, this.followResultContent.actualDoctorUserId)
           this.$emit('ok', '')
         } else {
-          this.isLoading=false
+          this.isLoading = false
           this.$message.error(res.message)
         }
       })
     },
 
     //暂挂
-    goZangua(){
-      this.isLoading=true
-      var postdata={
-        hangStatus:1,
+    goZangua() {
+      this.isLoading = true
+      var postdata = {
+        hangStatus: 1,
         id: this.record.id,
       }
       hangExecuteRecord(postdata).then((res) => {
-        this.isLoading=false
+        this.isLoading = false
         if (res.code === 0) {
           this.$message.success('暂挂成功！')
-         
+
           this.$emit('ok', '')
         } else {
-          
           this.$message.error(res.message)
         }
       })
@@ -525,7 +534,7 @@ export default {
     .span-mid-audio {
       position: absolute;
 
-      left:26%;
+      left: 26%;
 
       top: 35px;
 
@@ -575,7 +584,6 @@ export default {
       width: 65% !important;
     }
     .span-item-name-info {
-      
       display: inline-block;
       color: #000;
       font-size: 12px;
@@ -583,7 +591,6 @@ export default {
       margin-right: 5px;
     }
     .span-item-value-info {
-     
       color: #333;
       text-align: left;
       font-size: 12px;
