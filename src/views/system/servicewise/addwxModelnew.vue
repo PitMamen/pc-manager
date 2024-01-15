@@ -127,7 +127,7 @@
                 :disabled="checkData.useTo == 1 || checkData.useTo == 2"
                 class="span-item-value"
                 style="
-                  height: 65px !important;
+                  height: 92px !important;
                   width: 695px !important;
                   display: inline-block;
                 "
