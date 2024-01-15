@@ -250,15 +250,9 @@
           },
           {
             title: '浏览人次',
-            dataIndex: 'payTotal',
+            dataIndex: 'clickNum',
             align: 'right',
           },
-          {
-            title: '浏览人数',
-            dataIndex: 'preClass',
-            //   align: 'right',
-          },
-         
           {
             title: '状态',
             dataIndex: 'checkStatusDesc',
