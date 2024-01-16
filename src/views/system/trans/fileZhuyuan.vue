@@ -306,13 +306,22 @@ export default {
           if (res.code === 0) {
             this.fileMainData = decodeRecord(res.data.cipher, res.data.data)
             if (this.fileMainData.diagnosisInfo.length > 0) {
-              this.fileMainData.diagnosisInfo.forEach((item) => {
+              this.fileMainData.diagnosisInfo.forEach((item,index) => {
                 this.$set(item, 'zdsj', formatDateFull(item.zdsj))
 
                 if (item.cyzdbz == 1) {
-                  this.$set(item, 'cyzdbz', '主要诊断：' + item.zdsm)
+                  if (index==0) {
+                    this.$set(item, 'cyzdbz', '主要诊断' )
+                  }else{
+                    this.$set(item, 'cyzdbz', '' )
+                  }
+
                 } else if (item.cyzdbz == 2) {
-                  this.$set(item, 'cyzdbz', '其他诊断：' + item.zdsm)
+                  if (index==1) {
+                    this.$set(item, 'cyzdbz', '其他诊断')
+                  }else{
+                    this.$set(item, 'cyzdbz', '')
+                  }
                 }
 
                 if (item.yzdbz == 0) {
@@ -445,7 +454,7 @@ export default {
         })
     },
 
-    //档案首页数据
+    //出院小结数据
     getSummaryData(index) {
       this.confirmLoading = true
       getCaseSummary({ caseId: this.historyList[index].id })
@@ -526,7 +535,7 @@ export default {
 
               // console.log("ddddd:",JSON.stringify(arr))
 
-              this.zhuyuanYizhu.forEach((item) => {
+              this.zhuyuanYizhu.forEach((item,index) => {
                 // console.log('RRR:', item.yzzxsj)
                 // 医嘱执行时间 (长期医嘱 临时医嘱共有)
                 if (item.yzzxsj && item.yzzxsj.length >= 19) {

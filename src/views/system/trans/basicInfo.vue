@@ -573,26 +573,32 @@ export default {
           width:200,
           ellipse:true,
           align: "center",
+          colSpan:2,
 
-          render: (value, record, index) => {
-          const obj = {
-            children: value,
-            props: {},
-          };
-          let arr = this.jbxx.diagnosisInfo.filter((res) => {
-            //这里cyzdbz是我需要判断的字段名（相同就合并）
-            return res.cyzdbz == record.cyzdbz;   //cyzdbz
-          });
-          if (index == 0 || this.jbxx.diagnosisInfot[index - 1].cyzdbz != record.cyzdbz) {
-            obj.props.rowSpan = arr.length;
-          } else {
-            obj.props.rowSpan = 0;
-          }
-          return obj;
+        //   render: (value, record, index) => {
+        //   const obj = {
+        //     children: value,
+        //     props: {},
+        //   };
+        //   let arr = this.jbxx.diagnosisInfo.filter((res) => {
+        //     //这里cyzdbz是我需要判断的字段名（相同就合并）
+        //     return res.cyzdbz == record.cyzdbz;   //cyzdbz
+        //   });
+        //   if (index == 0 || this.jbxx.diagnosisInfot[index - 1].cyzdbz != record.cyzdbz) {
+        //     obj.props.rowSpan = arr.length;
+        //   } else {
+        //     obj.props.rowSpan = 0;
+        //   }
+        //   return obj;
+        // },
         },
+
+        {
+          title: '没哟',
+          colSpan:0,
+          dataIndex: 'zdsm',
+          align: 'center',
         },
-
-
         
 
         {

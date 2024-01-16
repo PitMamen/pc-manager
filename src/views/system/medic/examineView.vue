@@ -120,9 +120,9 @@
             </div>
           </div>
 
-          <div style="margin-top: 10px; color: #1a1a1a">审核人 ：</div>
+          <div style="margin-top: 10px; color: #1a1a1a">审核人 ：{{ record.auditUserName }}</div>
           <div v-if="record.status != 1" style="margin-top: 10px; color: #1a1a1a">
-            审核日期：{{ record.createTime }}
+            审核日期：{{ record.updatedTime }}
           </div>
         </div>
       </div>
