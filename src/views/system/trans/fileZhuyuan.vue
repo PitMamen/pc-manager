@@ -518,6 +518,11 @@ export default {
                   if (this.zhuyuanYizhu[i].yzzzsj == this.zhuyuanYizhu[i + 1].yzzzsj) {
                     this.$set(this.zhuyuanYizhu[i], 'yzzzsj', '')
                   }
+                  // 临时医嘱的 yzjhksr 开始时间
+                  if (this.zhuyuanYizhu[i].yzjhksr == this.zhuyuanYizhu[i + 1].yzjhksr) {
+                    this.$set(this.zhuyuanYizhu[i], 'yzjhksr', '')
+                  }
+                  
                 }
               }
 
