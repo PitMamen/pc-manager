@@ -512,11 +512,11 @@ export default {
                 for (var i = 0; i < this.zhuyuanYizhu.length - 1 - j; i++) {
                   // 医嘱执行时间  如果有相同的 显示第一个
                   if (this.zhuyuanYizhu[i].yzzxsj == this.zhuyuanYizhu[i + 1].yzzxsj) {
-                    this.$set(this.zhuyuanYizhu[i + 1], 'yzzxsj', '')
+                    this.$set(this.zhuyuanYizhu[i ], 'yzzxsj', '')
                   }
                   // 医嘱停止时间  如果有相同的 显示第一个
                   if (this.zhuyuanYizhu[i].yzzzsj == this.zhuyuanYizhu[i + 1].yzzzsj) {
-                    this.$set(this.zhuyuanYizhu[i + 1], 'yzzzsj', '')
+                    this.$set(this.zhuyuanYizhu[i], 'yzzzsj', '')
                   }
                 }
               }
