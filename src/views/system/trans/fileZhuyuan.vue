@@ -306,20 +306,19 @@ export default {
           if (res.code === 0) {
             this.fileMainData = decodeRecord(res.data.cipher, res.data.data)
             if (this.fileMainData.diagnosisInfo.length > 0) {
-              this.fileMainData.diagnosisInfo.forEach((item,index) => {
+              this.fileMainData.diagnosisInfo.forEach((item, index) => {
                 this.$set(item, 'zdsj', formatDateFull(item.zdsj))
 
                 if (item.cyzdbz == 1) {
-                  if (index==0) {
-                    this.$set(item, 'cyzdbz', '主要诊断' )
-                  }else{
-                    this.$set(item, 'cyzdbz', '' )
+                  if (index == 0) {
+                    this.$set(item, 'cyzdbz', '主要诊断')
+                  } else {
+                    this.$set(item, 'cyzdbz', '')
                   }
-
                 } else if (item.cyzdbz == 2) {
-                  if (index==1) {
+                  if (index == 1) {
                     this.$set(item, 'cyzdbz', '其他诊断')
-                  }else{
+                  } else {
                     this.$set(item, 'cyzdbz', '')
                   }
                 }
@@ -504,39 +503,72 @@ export default {
     getCaseDradviceOut(index, yizhutype) {
       getCaseDradvice({ caseId: this.historyList[index].id, encodeFlag: 1, type: yizhutype })
         .then((res) => {
+          // ┐ ┘ │
           if (res.code === 0 && res.data.cipher) {
             this.zhuyuanYizhu = decodeRecord(res.data.cipher, res.data.data)
             console.log('医嘱数据：', this.zhuyuanYizhu)
             if (this.zhuyuanYizhu && this.zhuyuanYizhu.length > 0) {
-              // for (let index = 0; index < this.zhuyuanYizhu.length; index++) {
-              //   // console.log("Ss：",this.zhuyuanYizhu[index].yzzxsj)
-              //   if (index + 1 == this.zhuyuanYizhu.length - 1) {
-              //     console.log('最后一个1:', this.zhuyuanYizhu[index + 1].yzzxsj)
-              //     return
-              //   } else {
-              //     if (this.zhuyuanYizhu[index + 1].yzzxsj == this.zhuyuanYizhu[index].yzzxsj) {
-              //       console.log("dddfdffd".this.zhuyuanYizhu[index + 1].yzzxsj)
-              //       this.$set(this.zhuyuanYizhu[index + 1], yzzxsj, '')
-              //     }
-              //   }
-              // }
+              for (var j = 0; j < this.zhuyuanYizhu.length - 1; j++) {
+                for (var i = 0; i < this.zhuyuanYizhu.length - 1 - j; i++) {
+                  // 医嘱执行时间  如果有相同的 显示第一个
+                  if (this.zhuyuanYizhu[i].yzzxsj == this.zhuyuanYizhu[i + 1].yzzxsj) {
+                    this.$set(this.zhuyuanYizhu[i + 1], 'yzzxsj', '')
+                  }
+                  // 医嘱停止时间  如果有相同的 显示第一个
+                  if (this.zhuyuanYizhu[i].yzzzsj == this.zhuyuanYizhu[i + 1].yzzzsj) {
+                    this.$set(this.zhuyuanYizhu[i + 1], 'yzzzsj', '')
+                  }
+                }
+              }
 
-              // let arr = this.zhuyuanYizhu
-              // let newArr = JSON.parse(JSON.stringify(this.zhuyuanYizhu))
-              // arr.forEach((item, index) => {
-              //   newArr.forEach((itemNew, indexNew) => {
+              // add
+              let newArr = []
+              this.zhuyuanYizhu.forEach((item, index) => {
+                let haveIndex = newArr.findIndex((itemTemp, indexTemp) => {
+                  return itemTemp.yzzh == item.yzzh
+                })
+                if (haveIndex == -1) {
+                  newArr.push({
+                    yzzh: item.yzzh,
+                    datas: [],
+                  })
+                  newArr[newArr.length - 1].datas.push(item)
+                } else {
+                  newArr[haveIndex].datas.push(item)
+                }
+              })
+              console.log("333:",newArr)
+              if (newArr && newArr.length > 0) {
+                for (let index = 0; index < newArr.length; index++) {
+                  if (newArr[index].datas.length == 1) {
+                    this.$set(newArr[index].datas[0], 'yzzh', '')
+                  } else if (newArr[index].datas.length == 2) {
+                    for (let indexIn = 0; indexIn < newArr[index].datas.length; indexIn++) {
+                      this.$set(newArr[index].datas[0], 'yzzh', '┐')
+                      this.$set(newArr[index].datas[1], 'yzzh', '┘')
+                    }
+                  } else if (newArr[index].datas.length >= 3) {
+                    for (let indexIn = 0; indexIn < newArr[index].datas.length; indexIn++) {
+                      if (indexIn == 0) {
+                        this.$set(newArr[index].datas[0], 'yzzh', '┐')
+                      } else if (indexIn == newArr[index].datas.length - 1) {
+                        this.$set(newArr[index].datas[indexIn], 'yzzh', '┘')
+                      } else {
+                        this.$set(newArr[index].datas[indexIn], 'yzzh', '│')
+                      }
+                    }
+                  }
+                }
 
-              //     if (item.yzzxsj == itemNew.yzzxsj && index != indexNew) {
-              //       console.log("2222222222222222:",index,indexNew)
-              //       this.$set(item, 'yzzxsj', '')
-              //     }
-              //   })
-              // })
+                let tempArray = []
+                for (let index = 0; index < newArr.length; index++) {
+                  tempArray = tempArray.concat(newArr[index].datas)
+                }
+                this.zhuyuanYizhu = tempArray
+                console.log("444:",this.zhuyuanYizhu)
+              }
 
-              // console.log("ddddd:",JSON.stringify(arr))
-
-              this.zhuyuanYizhu.forEach((item,index) => {
-                // console.log('RRR:', item.yzzxsj)
+              this.zhuyuanYizhu.forEach((item, index) => {
                 // 医嘱执行时间 (长期医嘱 临时医嘱共有)
                 if (item.yzzxsj && item.yzzxsj.length >= 19) {
                   this.$set(item, 'zxrq', item.yzzxsj.substring(0, 10))

@@ -70,11 +70,13 @@ export default {
               title: '日期',
               dataIndex: 'zxrq',
               align: 'center',
+              width:100,
             },
             {
               title: '时间',
               dataIndex: 'zxsj',
               align: 'center',
+              width:85,
             },
           ],
         },
@@ -105,16 +107,18 @@ export default {
         },
 
         {
-          title: '没哟',
+          title: '',
           colSpan:0,
           dataIndex: 'yzzh',
-          align: 'center',
+          align: 'left',
+          width:120
         },
         {
           title: '医生',
           // innerHeight:20,
           dataIndex: 'xdrxm',
           align: 'center',
+          width:80
         },
         {
           title: '护士',
@@ -133,11 +137,13 @@ export default {
               title: '日期',
               dataIndex: 'tzrq',
               align: 'center',
+              width:100,
             },
             {
               title: '时间',
               dataIndex: 'tzsj',
               align: 'center',
+              width:85,
             },
           ],
         },
