@@ -90,16 +90,13 @@
         <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
-      <!-- <span style="inline-block" slot="tab" slot-scope="text, record">
-        <a @click="goFile(record)"><a-icon type="edit"></a-icon>修改</a>
-      </span> -->
 
       <span slot="tab" slot-scope="text, record" class="span-blue" :title="record.name">
         {{record.name }}
       </span>
 
       <span  slot="action" slot-scope="text, record">
-        <a @click="goFile(record)"><a-icon type="edit"></a-icon>修改</a>
+        <a @click="goEdit(record)"><a-icon type="edit"></a-icon>修改</a>
         <a-divider type="vertical" />
         <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
         <a-divider type="vertical" />
@@ -292,6 +289,13 @@ export default {
       this.$set(record,'userName',record.name)
       this.$set(record,'userSex',record.sex)
       this.$refs.followModel.doFile(record, true)
+    },
+
+    // 修改
+    goEdit(record) {
+      this.$set(record,'userName',record.name)
+      this.$set(record,'userSex',record.sex)
+      this.$refs.followModel.initEdit(record, true)
     },
 
     onDepartmentChange(index) {

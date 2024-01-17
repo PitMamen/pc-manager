@@ -1,5 +1,5 @@
 <template>
-  <div style="height: 500px;width: 100%;">
+  <div style="height: 500px; width: 100%">
     <div class="div-appoint-detail-detail">
       <div class="div-span-content-left">
         <div v-show="showResultInfo">
@@ -61,9 +61,14 @@
               </div>
               <div class="div-line-wrap">
                 <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
-                <span class="span-item-value">{{ detailResult.remark }}</span>
+                <span class="span-item-value1">{{ detailResult.remark }}</span>
               </div>
             </span>
+
+            <div v-show="detailResult.taskBizStatus.value != 3" class="div-line-wrap">
+                  <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
+                  <span class="span-item-value1">{{ detailResult.remark }}</span>
+                </div>
           </span>
 
           <span v-show="detailResult.messageType.value != 1">
@@ -105,9 +110,14 @@
                 </div>
                 <div class="div-line-wrap">
                   <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
-                  <span class="span-item-value">{{ detailResult.remark }}</span>
+                  <span class="span-item-value1">{{ detailResult.remark }}</span>
                 </div>
               </span>
+
+              <div v-show="detailResult.taskBizStatus.value == 3" class="div-line-wrap">
+                <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
+                <span class="span-item-value1">{{ detailResult.remark }}</span>
+              </div>
             </span>
           </span>
         </div>
@@ -134,14 +144,20 @@
             >
           </div>
 
-          <img src="~@/assets/icons/dianhua.png" style="width: 34px; height: auto;position: absolute;right: 45px;top: 0;" />
-          <img src="~@/assets/icons/jinji.png" style="width: 29px; height: auto; position: absolute;right: 0;top: 4px;" />
+          <img
+            src="~@/assets/icons/dianhua.png"
+            style="width: 34px; height: auto; position: absolute; right: 45px; top: 0"
+          />
+          <img
+            src="~@/assets/icons/jinji.png"
+            style="width: 29px; height: auto; position: absolute; right: 0; top: 4px"
+          />
         </div>
 
         <span class="span-item-value" style="width: 100%; margin-top: 20px; color: black">{{
           historyDetail.contentText
         }}</span>
-        <div style="flex: 1; margin-top: 5px; ">
+        <div style="flex: 1; margin-top: 5px">
           <iframe
             defer="true"
             :src="questionUrl"
@@ -161,7 +177,7 @@
           <span class="span-title">基本信息</span>
         </div>
         <div class="div-line-wrap" v-for="(item, index) in fieldList" :key="index" :value="item">
-          <span class="span-item-name-info" >{{ item.fieldComment }} :</span>
+          <span class="span-item-name-info">{{ item.fieldComment }} :</span>
           <span class="span-item-value-info">{{ item.fieldValue }} </span>
         </div>
       </div>
@@ -456,7 +472,7 @@ export default {
     .span-mid-audio {
       position: absolute;
 
-      left:26%;
+      left: 26%;
 
       top: 35px;
 
@@ -487,11 +503,16 @@ export default {
       font-size: 12px;
       display: inline-block;
     }
+    .span-item-value1 {
+      width: 65%;
+      color: #333;
+      text-align: left;
+      font-size: 12px;
+    }
     .ant-select {
       width: 65% !important;
     }
     .span-item-name-info {
-      
       display: inline-block;
       color: #000;
       font-size: 12px;
@@ -499,7 +520,6 @@ export default {
       margin-right: 5px;
     }
     .span-item-value-info {
-     
       color: #333;
       text-align: left;
       font-size: 12px;

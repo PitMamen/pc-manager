@@ -453,6 +453,8 @@ export default {
         if (res.code == 0) {
           var followData = res.data   //生成的数据 是电话随访里面  需要的数据 直接塞进去
           this.$refs.followModel.doDeal(followData)
+        }else{
+          this.$message.warn(res.message)
         }
       })
     },
