@@ -49,6 +49,24 @@
         </a-select>
       </div>
 
+
+      <div class="search-row">
+        <span class="name">标签:</span>
+        <a-input
+          v-model="queryParams.tab"
+          allow-clear
+          placeholder="输入标签查询"
+          style="width: 160px; height: 28px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
+      </div>
+
+
+
+
+
+
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -72,7 +90,17 @@
         <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
-      <span style="inline-block" slot="action" slot-scope="text, record">
+      <!-- <span style="inline-block" slot="tab" slot-scope="text, record">
+        <a @click="goFile(record)"><a-icon type="edit"></a-icon>修改</a>
+      </span> -->
+
+      <span slot="tab" slot-scope="text, record" class="span-blue" :title="record.name">
+        {{record.name }}
+      </span>
+
+      <span  slot="action" slot-scope="text, record">
+        <a @click="goFile(record)"><a-icon type="edit"></a-icon>修改</a>
+        <a-divider type="vertical" />
         <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
         <a-divider type="vertical" />
         <a @click="$refs.visitManage.distribution(record)"><a-icon type="folder"></a-icon>随访管理</a>
@@ -111,6 +139,7 @@ export default {
         depts: [],
         name: '',
         tableName: '',
+        tab:'',
       },
       labelCol: {
         xs: { span: 24 },
@@ -130,58 +159,49 @@ export default {
           title: '序号',
           dataIndex: 'xh',
         
-          size: 12,
         },
         {
           title: '姓名',
           dataIndex: 'name',
          
           ellipsis: true,
-          size: 12,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
          
           ellipsis: true,
-          size: 12,
         },
         {
           title: '年龄',
           dataIndex: 'age',
          
-          size: 12,
         },
         {
           title: '性别',
           dataIndex: 'sex',
          
-          size: 12,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
         
-          size: 12,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
          
           ellipsis: true,
-          size: 12,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
         
-          size: 12,
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
          
-          size:12,
           ellipsis:true,
         },
 
@@ -189,12 +209,17 @@ export default {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
          
-          size: 12,
+        },
+
+        {
+          title: '标签',
+          scopedSlots: { customRender: 'tab' },
+         
         },
         {
           size: 12,
           title: '操作',
-          width: '180px',
+          width: 280,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -312,6 +337,7 @@ export default {
       this.queryParams.depts = []
       this.queryParams.name = ''
       this.queryParams.tableName = ''
+      this.queryParams.tab = ''
       this.$refs.table.refresh(true)
     },
 
@@ -341,6 +367,16 @@ export default {
   min-height: 28px;
   cursor: text;
   zoom: 1;
+}
+
+.span-blue {
+  background-color: #ecf5ff;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #3894ff;
+  border: #3894ff 1px solid;
+  border-radius: 3px;
+  // background-color: #3894ff;
 }
 
 .sitemore {
