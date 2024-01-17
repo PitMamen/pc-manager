@@ -78,15 +78,8 @@
 
 
 
-        <div v-show="radioTyPe != 0" class="div-line-wrap">
+        <div v-show="radioTyPe == 1" class="div-line-wrap">
           <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
-          <!-- <a-textarea
-            style="height: 100px; min-height: 80px;margin-top: -15px;width: 66%;margin-left: 76px;"
-            v-model="handleResult"
-            :maxLength="200"
-            placeholder="如果线下电话随访，请在此登记患者联系电话"
-            v-decorator="['doctorBrief', { rules: [{ required: false, message: '如果线下电话随访，请在此登记患者联系电话!' }] }]"
-          /> -->
           <a-input v-model="handleResult" class="span-item-value" allow-clear placeholder="" />
         </div>
 
