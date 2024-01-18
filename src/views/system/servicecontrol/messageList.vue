@@ -35,7 +35,7 @@
           <!-- v-model="queryParams.isVisible" -->
           <a-select
             placeholder="请选择状态"
-            v-model="queryParam.readStatus"
+            v-model="queryParam.sendStatus"
             allow-clear
             style="width: 120px; height: 28px"
           >
@@ -72,14 +72,14 @@
                 v-for="(item, index) in articleList"
                 :key="index"
                 :value="item.articleName"
-                @click="handleChange(item.template_id, index)"
+                @click="handleChange(item.template_id, item.templateType)"
               >
                 <div class="span-name" :title="item.articleName">
-                  <div style="width: 65%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  <div style="width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                     {{ item.template_title }}
                   </div>
                   <div style="font-size: 12px">{{ item.co }}</div>
-                  <div style="font-size: 12px; margin-left: auto">{{ item.succ }}&nbsp;/&nbsp;{{ item.rate }}</div>
+                  <div style="font-size: 12px; margin-left: auto">{{ item.succ }}/{{ item.rate }}%</div>
                 </div>
 
                 <div class="bottom-line"></div>
@@ -118,11 +118,11 @@
           >
             <span slot="action" slot-scope="text, record">
               <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="send(record)">
-                <a :disabled="record.status == 2">重新发送</a>
+                <a :disabled="record.status == 1">重新发送</a>
               </a-popconfirm>
             </span>
             <span slot="status" slot-scope="text, record">
-              <span v-if="record.status == 2" style="color: green">成功</span>
+              <span v-if="record.status == 1" style="color: green">成功</span>
               <span v-else style="color: red">失败</span>
             </span>
 
@@ -200,7 +200,7 @@ export default {
         followPlanName: undefined,
         sendStartTime: '',
         sendEndTime: '',
-        readStatus: undefined,
+        sendStatus: undefined,
       },
 
       // 表头
@@ -257,12 +257,12 @@ export default {
           name: '全部',
         },
         {
-          id: 1,
-          name: '未读',
+          id: 2,
+          name: '失败',
         },
         {
-          id: 2,
-          name: '已读',
+          id: 1,
+          name: '成功',
         },
       ],
 
@@ -324,7 +324,7 @@ export default {
       this.queryParam.executeDepartmentId = undefined
       this.queryParam.sendStartTime = ''
       this.queryParam.sendEndTime = ''
-      this.queryParam.readStatus = undefined
+      this.queryParam.sendStatus = undefined
       this.queryParam.templateId = undefined
       this.queryParam.templateName = undefined
       this.createValue = []
@@ -416,14 +416,14 @@ export default {
     handleSearch(inputName) {
       this.articleListTemp = this.articleList
     },
-    handleChange(value, indexClick) {
+    handleChange(value, templateType) {
       console.log('handleChange', value)
-      console.log('handleChange', indexClick)
+     
       if (value) {
         this.queryParam.templateId = value
         this.articleList.forEach((item) => {
           this.$set(item, 'isChecked', false)
-          if (item.template_id == this.queryParam.templateId) {
+          if (item.template_id == this.queryParam.templateId && item.templateType == templateType) {
             this.queryParam.templateName = item.template_title
             this.$set(item, 'isChecked', true)
           }
