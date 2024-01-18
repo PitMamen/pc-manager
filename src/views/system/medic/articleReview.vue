@@ -550,6 +550,7 @@ export default {
     },
 
     handleOk() {
+      this.queryParams.status = ''
       this.getTabOut()
       this.$refs.table.refresh()
     },

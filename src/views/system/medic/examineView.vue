@@ -20,18 +20,18 @@
             <div class="title">{{ record.title }}</div>
             <div class="line-content"></div>
             <div class="name">
-              {{ record.author }} &nbsp;|&nbsp;{{ record.professionalTitle }} &nbsp;|&nbsp;{{ record.hospitalName }}
+              {{ record.author }} &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;{{ record.professionalTitle }} &nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;{{ record.hospitalName }}
             </div>
 
             <div class="time">
-              <div>创建时间:{{ record.createTime }}</div>
-              <div>提交时间:{{ record.createdTime }}</div>
-              <div style="margin-right: 30px">文章来源:{{ record.reprint }}</div>
+              <div>创建时间：{{ record.createTime }}</div>
+              <div style="margin-left:50px">提交时间：{{ record.createdTime }}</div>
+              <div style="margin-right: 30px;margin-left:50px">文章来源：{{ record.reprint }}</div>
             </div>
-            <div class="name">转载出处:{{ record.reprintSource }}<www class="xy22"></www></div>
+            <div class="name">转载出处：{{ record.reprintSource }}<www class="xy22"></www></div>
 
             <div class="bannarimag">
-              <div>封面图片:</div>
+              <div>封面图片：</div>
               <!-- src="https://develop.mclouds.org.cn/content-api/file/I20240115140936220MUP5W7EMZIJZJK-t0kTY8mpvdAB2811ca4a580e009943c375ce108509bc.jpg" -->
               <img
                 alt="example"
@@ -261,7 +261,7 @@ export default {
 
       var postData = {
         id: this.record.articleId,
-        rejectReason: (this.radioTyPe == 2) == 3 ? this.checkData.rejectReason : '',
+        rejectReason: this.radioTyPe== 3 ? this.checkData.rejectReason : '',
         status: this.radioTyPe,
       }
       auditArticle(postData)
@@ -394,7 +394,7 @@ export default {
         margin-top: 10px;
         display: flex;
         flex-direction: row;
-        justify-content: space-between;
+        // justify-content: space-between;
         color: #1a1a1a;
       }
 
