@@ -79,7 +79,7 @@
                     {{ item.template_title }}
                   </div>
                   <div style="font-size: 12px">{{ item.co }}</div>
-                  <div style="font-size: 12px; margin-left: auto">{{ item.succ }}/{{ item.rate }}</div>
+                  <div style="font-size: 12px; margin-left: auto">{{ item.succ }}/{{ item.rate }}%</div>
                 </div>
 
                 <div class="bottom-line"></div>
