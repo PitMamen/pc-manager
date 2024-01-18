@@ -229,9 +229,10 @@ export default {
     handleCancel() {},
 
     // 打标签
-
     goMarking(record) {
-      this.$refs.markModel.mark(record, this.dataList)
+      var tepmList = JSON.parse(JSON.stringify(this.tagsList))
+      console.log("BBBB:",tepmList)
+      this.$refs.markModel.mark(record, tepmList)
     },
 
     goSave() {
@@ -262,6 +263,7 @@ export default {
           if (res.success) {
             this.$message.success('操作成功')
             this.$emit('handleCancel') //不关闭弹窗
+            // this.$emit('handleOk') //不关闭弹窗
           } else {
             this.$message.error('操作失败：' + res.message)
           }

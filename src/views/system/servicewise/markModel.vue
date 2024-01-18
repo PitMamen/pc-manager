@@ -23,7 +23,7 @@
       :maxTagCount="4"
       v-model="selectedRowKeys"
     >
-      <a-select-option v-for="item in tagsList" :key="item.id" :value="item.id">
+      <a-select-option v-for="item in tagsList" :key="item.tagsName" :value="item.tagsName">
         {{ item.tagsName }}
       </a-select-option>
     </a-select>
@@ -114,6 +114,7 @@ export default {
       AlreadytagsList: [],
       selectedTaglist: [],
       selectedRowKeys: [],
+      selectedRowKeysIds: [],
       queryParamType: {
         //标签分类参数
         pageNo: 1,
@@ -140,6 +141,7 @@ export default {
       this.visible = true
       this.record = record
       this.selectedRowKeys = []
+      this.selectedRowKeysIds = []
       this.tagsList = []
       this.AlreadytagsList = alreadytagsList
       console.log('dddd:', this.AlreadytagsList)
@@ -154,15 +156,19 @@ export default {
           if (this.lableTypeListData && this.lableTypeListData.length > 0) {
             if (this.AlreadytagsList.length > 0) {
               for (let indexin = 0; indexin < this.AlreadytagsList.length; indexin++) {
-                  if (indexin == 0 && this.AlreadytagsList[indexin].value.length > 0) {
-                  this.selectedTaglist = this.AlreadytagsList[indexin].value
-                  this.$set(this.lableTypeListData[indexin], 'isChecked', true)
-                } else {
-                  this.$set(this.lableTypeListData[indexin], 'isChecked', false)
-                }
+                this.selectedRowKeys.push(this.AlreadytagsList[indexin].tagsName)
+                this.selectedRowKeysIds.push(this.AlreadytagsList[indexin].id)
+                this.$set(this.lableTypeListData[0], 'isChecked', true)
+
+                // if (indexin == 0 && this.AlreadytagsList[indexin].value.length > 0) {
+                //   this.selectedTaglist = this.AlreadytagsList[indexin].value
+                //   this.$set(this.lableTypeListData[indexin], 'isChecked', true)
+                // } else {
+                //   this.$set(this.lableTypeListData[indexin], 'isChecked', false)
+                // }
               }
 
-              console.log("SSSS:",this.selectedRowKeys)
+              console.log('dffff:', this.selectedRowKeys)
             } else {
               this.lableTypeListData.forEach((item, index) => {
                 if (index == 0) {
@@ -175,6 +181,37 @@ export default {
             }
 
             this.getUserTagsOut(this.lableTypeListData[0]) //第一个默认选中
+          }
+        } else {
+          this.$message.error('获取失败：' + res.message)
+        }
+      })
+    },
+
+    // 获取标签列表
+    getUserTagsOut(item) {
+      var postData = {
+        pageNo: 1,
+        pageSize: 999,
+        tagsTypeId: item.id,
+        // tagsTypeId: '',
+      }
+      getUserTags(postData).then((res) => {
+        if (res.code == 0) {
+          this.tagsList = res.data.records
+          if (this.tagsList && this.tagsList.length > 0) {
+            const r = _.intersectionWith(this.tagsList, this.AlreadytagsList, _.isEqual)
+            if (r && r.length > 0) {
+              for (let index = 0; index < this.tagsList.length; index++) {
+                for (let index2 = 0; index2 < r.length; index2++) {
+                  if (this.tagsList[index].id == r[index2].id) {
+                    // console.log("3333333")
+                    this.$set(this.tagsList[index], 'isChecked', true)
+                    this.selectedRowKeysIds.push(this.tagsList[index].id)
+                  }
+                }
+              }
+            }
           }
         } else {
           this.$message.error('获取失败：' + res.message)
@@ -196,49 +233,18 @@ export default {
       var isCheck = item.isChecked
       this.$set(this.tagsList[indexClick], 'isChecked', !isCheck)
       if (item.isChecked) {
-        let getOne = this.selectedRowKeys.find((item1) => item1 == item.id)
+        let getOne = this.selectedRowKeysIds.find((item1) => item1 == item.id)
         if (getOne) {
           this.$message.warning('该标签已被勾选!')
         } else {
-          this.selectedRowKeys.push(item.id)
+          this.selectedRowKeys.push(item.tagsName)
+          this.selectedRowKeysIds.push(item.id)
         }
       } else {
-        this.selectedRowKeys = this.selectedRowKeys.filter((item1) => item1 !== item.id) // 过滤元素
+        this.selectedRowKeys = this.selectedRowKeys.filter((item1) => item1 !== item.tagsName) // 过滤元素
       }
-
-      //   console.log('sss:', this.selectedRowKeys)
     },
 
-    // 获取标签列表
-    getUserTagsOut(item) {
-      var postData = {
-        pageNo: 1,
-        pageSize: 999,
-        tagsTypeId: item.id,
-        // tagsTypeId: '',
-      }
-      getUserTags(postData).then((res) => {
-        if (res.code == 0) {
-          this.tagsList = res.data.records
-          if (this.tagsList && this.tagsList.length > 0) {
-            const r = _.intersectionWith(this.tagsList, this.selectedTaglist, _.isEqual)
-            if (r && r.length > 0) {
-              for (let index = 0; index < this.tagsList.length; index++) {
-                for (let index2 = 0; index2 < r.length; index2++) {
-                  if (this.tagsList[index].id == r[index2].id) {
-                    // console.log("3333333")
-                    this.$set(this.tagsList[index], 'isChecked', true)
-                    this.selectedRowKeys.push(this.tagsList[index].id)
-                  }
-                }
-              }
-            }
-          }
-        } else {
-          this.$message.error('获取失败：' + res.message)
-        }
-      })
-    },
     removeDuplicate(arr) {
       const newArr = []
       arr.forEach((item) => {
@@ -251,8 +257,9 @@ export default {
 
     // 打标签
     addPatientToTagsOut() {
-      this.selectedRowKeys = this.removeDuplicate(this.selectedRowKeys)
-      var tagsString = this.selectedRowKeys.length > 0 ? this.selectedRowKeys.join(',') : ''
+      //   this.selectedRowKeys = this.removeDuplicate(this.selectedRowKeys)
+      this.selectedRowKeysIds = this.removeDuplicate(this.selectedRowKeysIds)
+      var tagsString = this.selectedRowKeysIds.length > 0 ? this.selectedRowKeysIds.join(',') : ''
       var postData = {
         tags: tagsString,
         userId: this.record.userId,
@@ -364,8 +371,8 @@ export default {
 
     .conten-hei {
       height: 400px;
-    //   width: 100%;
-    //   overflow-y: auto;
+      //   width: 100%;
+      //   overflow-y: auto;
       //   overflow-y: auto !important;
     }
 
@@ -430,8 +437,8 @@ export default {
 
     .conten-hei {
       height: 400px;
-    //   width: 100%;
-    //   overflow: auto;
+      //   width: 100%;
+      //   overflow: auto;
     }
 
     .item-name {

@@ -28,8 +28,8 @@
             item.departmentName
           }}</a-select-option>
         </a-select> -->
-        <a-select       
-        style="min-width: 180px; height: 28px;"
+        <a-select
+          style="min-width: 180px; height: 28px"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -43,12 +43,11 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id" >{{
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
             item.department_name
           }}</a-select-option>
         </a-select>
       </div>
-
 
       <div class="search-row">
         <span class="name">标签:</span>
@@ -62,11 +61,6 @@
         />
       </div>
 
-
-
-
-
-
       <div class="action-row">
         <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
           <a-button type="primary" icon="search" @click="$refs.table.refresh(true)">查询</a-button>
@@ -77,7 +71,7 @@
       <!-- <div class="div-divider"></div> -->
     </div>
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -90,12 +84,19 @@
         <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
-
-      <span slot="tab" slot-scope="text, record" class="span-blue" :title="record.name" v-if="record.tagNames">
-        {{record.tagNames||null}}
+      <span
+        :title="record.tagNames"
+        style="display: flex; white-space:nowrap"
+        slot="tab"
+        slot-scope="text, record"
+        v-if="record.tagNames"
+      >
+        <div v-for="(item, index) in record.tabArray" :key="index" :value="item" :title="item">
+          <div class="span-blue">{{ item }}</div>
+        </div>
       </span>
 
-      <span  slot="action" slot-scope="text, record">
+      <span slot="action" slot-scope="text, record">
         <a @click="goEdit(record)"><a-icon type="edit"></a-icon>修改</a>
         <a-divider type="vertical" />
         <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
@@ -113,7 +114,12 @@
 <script>
 import { STable } from '@/components'
 
-import { getDepartmentListForSelect, qryMetaDataByPageNew, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
+import {
+  getDepartmentListForSelect,
+  qryMetaDataByPageNew,
+  getDeptsPersonal,
+  getDepts,
+} from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
 import followModel from '../servicewise/followModel'
@@ -136,7 +142,7 @@ export default {
         depts: [],
         name: '',
         tableName: '',
-        tagName:'',
+        tagName: '',
       },
       labelCol: {
         xs: { span: 24 },
@@ -155,63 +161,58 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-        
         },
         {
           title: '姓名',
           dataIndex: 'name',
-         
+
           ellipsis: true,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
-         
+
           ellipsis: true,
         },
         {
           title: '年龄',
           dataIndex: 'age',
-         
         },
         {
           title: '性别',
           dataIndex: 'sex',
-         
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
-        
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
-         
+
           ellipsis: true,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
-        
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
-         
-          ellipsis:true,
+
+          ellipsis: true,
         },
 
         {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
-         
         },
 
         {
           title: '标签',
           scopedSlots: { customRender: 'tab' },
-         
+          ellipsis: true,
+          
         },
         {
           size: 12,
@@ -236,8 +237,14 @@ export default {
                 totalPage: res.data.total / parameter.pageSize,
                 rows: res.data.records,
               }
+              var tabArray = []
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+                if (item.tagNames) {
+                  tabArray = item.tagNames.split(',')
+                  this.$set(item, 'tabArray', tabArray)
+                }
+                // console.log('999:', item.tab)
               })
             } else {
               data = null
@@ -286,15 +293,15 @@ export default {
      * @param {} record
      */
     goFile(record) {
-      this.$set(record,'userName',record.name)
-      this.$set(record,'userSex',record.sex)
+      this.$set(record, 'userName', record.name)
+      this.$set(record, 'userSex', record.sex)
       this.$refs.followModel.doFile(record, true)
     },
 
     // 修改
     goEdit(record) {
-      this.$set(record,'userName',record.name)
-      this.$set(record,'userSex',record.sex)
+      this.$set(record, 'userName', record.name)
+      this.$set(record, 'userSex', record.sex)
       this.$refs.followModel.initEdit(record, true)
     },
 
@@ -311,11 +318,11 @@ export default {
         // console.log("ssss:",this.queryParams.depts)
       }
     },
-     //获取管理的科室 可首拼
-     getDepartmentSelectList(departmentName) {
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
@@ -356,17 +363,18 @@ export default {
     handleCancel() {
       this.form.resetFields()
       this.visible = false
+      this.$refs.table.refresh()
     },
   },
 }
 </script>
 <style lang="less" scoped>
- /deep/.ant-select-selection__rendered {
-      margin-top: -2px !important;
-    }
-    /deep/.ant-select-selection__placeholder{
-      margin-top: -8px !important;
-    }
+/deep/.ant-select-selection__rendered {
+  margin-top: -2px !important;
+}
+/deep/.ant-select-selection__placeholder {
+  margin-top: -8px !important;
+}
 .ant-select-selection--multiple {
   min-height: 28px;
   cursor: text;
@@ -380,6 +388,7 @@ export default {
   color: #3894ff;
   border: #3894ff 1px solid;
   border-radius: 3px;
+  margin-right: 3px;
   // background-color: #3894ff;
 }
 
@@ -444,12 +453,10 @@ export default {
     vertical-align: middle;
   }
   .search-row {
-   
-
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
-    
+
     .name {
       margin-right: 10px;
     }
