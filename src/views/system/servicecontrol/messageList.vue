@@ -3,22 +3,8 @@
     <a-spin :spinning="confirmLoading">
       <div class="table-page-search-wrapper">
         <div class="search-row">
-          <span class="name">文章名称:</span>
-          <a-select
-            style="width: 180px"
-            show-search
-            v-model="queryParam.articleId"
-            :filter-option="false"
-            :not-found-content="null"
-            allow-clear
-            placeholder="输入文章名称"
-            @search="handleSearch"
-            @change="handleChange"
-          >
-            <a-select-option v-for="(item, index) in articleListTemp" :key="index" :value="item.message_original_id">{{
-              item.articleName
-            }}</a-select-option>
-          </a-select>
+          <span class="name">模板名称:</span>
+          <a-input v-model="queryParam.templateName" allow-clear placeholder="输入模板名称" style="width: 180px" />
         </div>
         <div class="search-row">
           <span class="name">执行科室:</span>
@@ -26,7 +12,7 @@
           <a-select
             style="width: 180px"
             show-search
-            v-model="queryParam.departmentId"
+            v-model="queryParam.executeDepartmentId"
             :filter-option="false"
             :not-found-content="fetching ? undefined : null"
             allow-clear
@@ -45,7 +31,7 @@
           </a-select>
         </div>
         <div class="search-row">
-          <span class="name">阅读状态:</span>
+          <span class="name">发送状态:</span>
           <!-- v-model="queryParams.isVisible" -->
           <a-select
             placeholder="请选择状态"
@@ -58,7 +44,11 @@
         </div>
         <div class="search-row">
           <span class="name">发送时间:</span>
-          <a-range-picker style="width: 185px" :value="createValue" @change="onChange" />
+          <a-range-picker style="width: 185px"  :value="createValue" @change="onChange" />
+        </div>
+        <div class="search-row">
+          <span class="name">随访方案:</span>
+          <a-input v-model="queryParam.followPlanName" allow-clear placeholder="输入方案名称" style="width: 180px" />
         </div>
         <div class="action-row">
           <span class="buttons" :style="{ float: 'right', overflow: 'hidden' }">
@@ -71,8 +61,8 @@
         <a-spin :spinning="confirmLoading2">
           <div class="div-service-left-control">
             <div class="top-kuang">
-              <div>文章名称</div>
-              <div>发送数</div>
+              <div>模板名称</div>
+              <div >发送数</div>
               <div>成功数</div>
             </div>
             <div class="left-content">
@@ -82,14 +72,14 @@
                 v-for="(item, index) in articleList"
                 :key="index"
                 :value="item.articleName"
-                @click="handleChange(item.message_original_id, index)"
+                @click="handleChange(item.template_id, index)"
               >
                 <div class="span-name" :title="item.articleName">
-                  <div style="width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
-                    {{ item.articleName }}
+                  <div style="width: 65%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                    {{ item.template_title }}
                   </div>
-                  <div style="font-size: 12px">{{ item.count }}</div>
-                  <div style="font-size: 12px; margin-left: auto">{{ item.readCount }}&nbsp;/&nbsp;{{ item.rate }}</div>
+                  <div style="font-size: 12px">{{ item.co }}</div>
+                  <div style="font-size: 12px; margin-left: auto">{{ item.succ }}&nbsp;/&nbsp;{{ item.rate }}</div>
                 </div>
 
                 <div class="bottom-line"></div>
@@ -106,7 +96,7 @@
             <a-pagination
               v-if="showPagination"
               simple
-              style="margin-left: 80px;margin-top: 10px;margin-bottom: 50px;"
+              style="margin-left: 80px; margin-top: 10px; margin-bottom: 50px"
               :total="totalPage"
               :defaultCurrent="1"
               :current="currentPage"
@@ -128,12 +118,17 @@
           >
             <span slot="action" slot-scope="text, record">
               <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="send(record)">
-                <a :disabled="record.readStatus.value == 2">重新发送</a>
+                <a :disabled="record.status == 2">重新发送</a>
               </a-popconfirm>
             </span>
             <span slot="status" slot-scope="text, record">
-              <span v-if="record.readStatus.value == 2" style="color: green">{{ record.readStatus.description }}</span>
-              <span v-if="record.readStatus.value == 1" style="color: red">{{ record.readStatus.description }}</span>
+              <span v-if="record.status == 2" style="color: green">成功</span>
+              <span v-else style="color: red">失败</span>
+            </span>
+
+            <span slot="wx" slot-scope="text, record">
+              <span v-if="record.wx_sign > 0">是</span>
+              <span v-else>否</span>
             </span>
           </s-table>
         </div>
@@ -153,12 +148,15 @@ import addCategory from '../teach/addCategory'
 import addModel from '../teach/addModel'
 import checkModel from '../teach/checkModel'
 import Vue from 'vue'
+import { formatDateFull, formatDate } from '@/utils/util'
+import moment from 'moment'
 import {
   getFollowArticleData,
-  modifyArticle,
+  getRecordList,
   getDepartmentListForSelect,
   getFollowArticleUserData,
   deleteArticle,
+  getRecordListGroupBy,
 } from '@/api/modular/system/posManage'
 
 export default {
@@ -177,7 +175,7 @@ export default {
       fetching: false,
       showPagination: true,
       // 高级搜索 展开/关闭
-
+      dateFormat: 'YYYY-MM-DD',
       advanced: false,
       originData: [],
       articleListTemp: [],
@@ -196,46 +194,53 @@ export default {
         sm: { span: 11 },
       },
       queryParam: {
-        articleId: undefined,
-        articleName: undefined,
-        departmentId: undefined,
-        startTime: '',
-        endTime: '',
+        templateId: undefined,
+        templateName: undefined,
+        executeDepartmentId: undefined,
+        followPlanName: undefined,
+        sendStartTime: '',
+        sendEndTime: '',
         readStatus: undefined,
       },
 
       // 表头
       columns: [
         {
-          title: '文章名称',
-          dataIndex: 'articleName',
+          title: '模板名称',
+          dataIndex: 'template_title',
         },
 
         {
           title: '姓名',
-          dataIndex: 'userName',
+          dataIndex: 'user_name',
         },
         {
           title: '执行科室',
-          dataIndex: 'executeDepartmentName',
+          dataIndex: 'department_name',
         },
         {
           title: '随访方案',
-          dataIndex: 'planName',
+          dataIndex: 'plan_name',
         },
         {
           title: '发送方式',
-          dataIndex: 'messageTypeValue',
+          width: 80,
+          dataIndex: 'send_type',
         },
         {
           title: '发送时间',
-          dataIndex: 'actualExecTime',
+          dataIndex: 'created_time',
         },
 
         {
-          title: '阅读状态',
-          // dataIndex: 'status',
+          title: '发送状态',
+          width: 80,
           scopedSlots: { customRender: 'status' },
+        },
+        {
+          title: '微信登记',
+          width: 80,
+          scopedSlots: { customRender: 'wx' },
         },
         {
           title: '操作',
@@ -263,20 +268,20 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        return getFollowArticleUserData(Object.assign(parameter, this.queryParam)).then((res) => {
+        return getRecordList(Object.assign(parameter, this.queryParam)).then((res) => {
           //组装控件需要的数据结构
           var data = {
-            pageNo: parameter.pageNo,
-            pageSize: parameter.pageSize,
+            pageNo: parameter.current,
+            pageSize: parameter.size,
             totalRows: res.data.total,
             totalPage: res.data.pages,
             rows: res.data.records,
           }
 
           //设置序号
-          data.rows.forEach((item, index) => {
-            item.messageTypeValue = item.messageType.description
-          })
+          // data.rows.forEach((item, index) => {
+          //   item.messageTypeValue = item.messageType.description
+          // })
 
           return data
         })
@@ -288,11 +293,19 @@ export default {
   },
 
   created() {
+     
+    
+    this.queryParam.sendStartTime = formatDate(new Date(new Date().getTime()-30*24*60*60*1000))
+    this.queryParam.sendEndTime =formatDate(new Date())
+    this.createValue = [moment(this.queryParam.sendStartTime, 'YYYY-MM-DD'),moment(this.queryParam.sendEndTime, 'YYYY-MM-DD')]
+    
+
     this.getFollowArticleDataOut(true)
     this.getDepartmentSelectList(undefined)
   },
 
   methods: {
+    moment,
     handleChangePage(value) {
       this.currentPage = value
       // console.log("fff:",this.currentPage,value)
@@ -300,57 +313,66 @@ export default {
     },
 
     queryAgain() {
+      this.queryParam.templateId = undefined
+      this.articleList.forEach((item) => {
+        this.$set(item, 'isChecked', false)
+      })
       this.$refs.table.refresh()
+    
     },
     reset() {
-      this.queryParam.departmentId = undefined
-      this.queryParam.startTime = ''
-      this.queryParam.endTime = ''
+      this.queryParam.executeDepartmentId = undefined
+      this.queryParam.sendStartTime = ''
+      this.queryParam.sendEndTime = ''
       this.queryParam.readStatus = undefined
-      this.queryParam.articleId = undefined
-      this.queryParam.articleName = undefined
-
-      this.getFollowArticleDataOut(true)
+      this.queryParam.templateId = undefined
+      this.queryParam.templateName = undefined
+      this.createValue = []
+      ;(this.queryParam.followPlanName = undefined), this.getFollowArticleDataOut(true)
     },
 
     onTabChange(key) {
       console.log(key)
     },
-    //获取文章列表
+    //获取模板列表
     getFollowArticleDataOut(isRefreshAll) {
       this.confirmLoading2 = true
       var postData = {
-        departmentId: this.queryParam.departmentId,
-        startTime: this.queryParam.startTime,
-        endTime: this.queryParam.endTime,
+       
         pageNo: this.currentPage,
         pageSize: 15,
       }
-      getFollowArticleData(postData)
+      getRecordListGroupBy(postData)
         .then((res) => {
           if (res.code == 0 && res.data.records.length > 0) {
             this.showPagination = true
-            if (this.queryParam.articleId) {
+            if (this.queryParam.templateId) {
               res.data.records.forEach((item) => {
-                item.checked = item.message_original_id == this.queryParam.articleId
+                item.checked = item.template_id == this.queryParam.templateId
               })
             } else {
-              res.data.records[0].checked = true
-              this.queryParam.articleId = res.data.records[0].message_original_id
-              this.queryParam.articleName = res.data.records[0].articleName
+              // res.data.records[0].checked = true
+              // this.queryParam.templateId = res.data.records[0].template_id
+              // this.queryParam.templateName = res.data.records[0].template_title
+              this.queryParam.templateId = undefined
+              this.queryParam.templateName = undefined
+              this.articleList.forEach((item) => {
+                this.$set(item, 'isChecked', false)
+              })
             }
 
             this.articleList = res.data.records
             this.articleListTemp = res.data.records
             this.totalPage = res.data.total
             this.currentPage = res.data.current
-            this.$set(this.articleList[0], 'isChecked', true)
+
             if (isRefreshAll) {
               this.$refs.table.refresh()
             }
           } else {
             this.showPagination = false
-            this.queryParam.articleId = undefined
+            this.queryParam.templateId = undefined
+            this.queryParam.templateName = undefined
             this.articleList = []
             this.articleListTemp = []
             if (isRefreshAll) {
@@ -387,41 +409,46 @@ export default {
       }
       // this.$refs.table.refresh(true)
     },
+
+    handlePlanChange() {},
+    handlePlanSearch(inputName) {},
+
     handleSearch(inputName) {
-      if (inputName) {
-        this.articleListTemp = this.articleList.filter((item) => item.articleName.indexOf(inputName) != -1)
-      } else {
-        this.articleListTemp = this.articleList
-      }
+      this.articleListTemp = this.articleList
     },
     handleChange(value, indexClick) {
-      console.log(value)
-      if(value){
-        this.queryParam.articleId = value
-      this.articleList.forEach((item) => {
-        this.$set(item, 'isChecked', false)
-        if (item.message_original_id == this.queryParam.articleId) {
-          this.queryParam.articleName = item.articleName
-          this.$set(item, 'isChecked', true)
-        }
-      })
-      }else{
-        this.queryParam.articleId = undefined
-        this.queryParam.articleName = undefined
+      console.log('handleChange', value)
+      console.log('handleChange', indexClick)
+      if (value) {
+        this.queryParam.templateId = value
         this.articleList.forEach((item) => {
-        this.$set(item, 'isChecked', false)
-        
-      })
+          this.$set(item, 'isChecked', false)
+          if (item.template_id == this.queryParam.templateId) {
+            this.queryParam.templateName = item.template_title
+            this.$set(item, 'isChecked', true)
+          }
+        })
+      } else {
+        this.queryParam.templateId = undefined
+        this.queryParam.templateName = undefined
+        this.articleList.forEach((item) => {
+          this.$set(item, 'isChecked', false)
+        })
       }
 
+      // if (!this.queryParam.templateId) {
+      //   this.queryParam.templateId = this.articleList[0].template_id
+      //   this.queryParam.templateName = this.articleList[0].template_title
+      // }
+      console.log(this.queryParam.templateId + '====' + this.queryParam.templateName)
       this.articleListTemp = this.articleList
       this.$refs.table.refresh()
     },
 
     onChange(momentArr, dateArr) {
       this.createValue = momentArr
-      this.queryParam.startTime = dateArr[0]
-      this.queryParam.endTime = dateArr[1]
+      this.queryParam.sendStartTime = dateArr[0]
+      this.queryParam.sendEndTime = dateArr[1]
     },
 
     //重新发送
