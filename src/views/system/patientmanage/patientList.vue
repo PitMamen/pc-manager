@@ -53,7 +53,7 @@
       <div class="search-row">
         <span class="name">标签:</span>
         <a-input
-          v-model="queryParams.tab"
+          v-model="queryParams.tagName"
           allow-clear
           placeholder="输入标签查询"
           style="width: 160px; height: 28px"
@@ -86,13 +86,13 @@
       :rowKey="(record) => record.code"
     >
       <span style="inline-block" slot="acount" slot-scope="text, record">
-        <img v-if="record.openidFlag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
+        <img v-if="record.openidFlag > 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
         <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
 
-      <span slot="tab" slot-scope="text, record" class="span-blue" :title="record.name">
-        {{record.name }}
+      <span slot="tab" slot-scope="text, record" class="span-blue" :title="record.name" v-if="record.tagNames">
+        {{record.tagNames||null}}
       </span>
 
       <span  slot="action" slot-scope="text, record">
@@ -113,7 +113,7 @@
 <script>
 import { STable } from '@/components'
 
-import { getDepartmentListForSelect, qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
+import { getDepartmentListForSelect, qryMetaDataByPageNew, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
 import followModel from '../servicewise/followModel'
@@ -136,7 +136,7 @@ export default {
         depts: [],
         name: '',
         tableName: '',
-        tab:'',
+        tagName:'',
       },
       labelCol: {
         xs: { span: 24 },
@@ -226,15 +226,15 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         this.confirmLoading = true
-        return qryMetaDataByPage(Object.assign(parameter, this.queryParams))
+        return qryMetaDataByPageNew(Object.assign(parameter, this.queryParams))
           .then((res) => {
-            if (res.code == 0 && res.data.rows.length > 0) {
+            if (res.code == 0 && res.data.records.length > 0) {
               var data = {
                 pageNo: parameter.pageNo,
                 pageSize: parameter.pageSize,
-                totalRows: res.data.totalRows,
-                totalPage: res.data.totalPage / parameter.pageSize,
-                rows: res.data.rows,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
               }
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
@@ -242,7 +242,7 @@ export default {
             } else {
               data = null
             }
-            return res.data
+            return data
           })
           .finally((data) => {
             this.confirmLoading = false
@@ -341,7 +341,7 @@ export default {
       this.queryParams.depts = []
       this.queryParams.name = ''
       this.queryParams.tableName = ''
-      this.queryParams.tab = ''
+      this.queryParams.tagName = ''
       this.$refs.table.refresh(true)
     },
 

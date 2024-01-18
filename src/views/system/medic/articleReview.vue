@@ -182,7 +182,7 @@ export default {
       queryParams: {
         creatorName: '',
         hospitalCode: '',
-        status: 0,
+        status: '',
         title: '',
       },
 
@@ -199,20 +199,24 @@ export default {
           title: '作者',
           dataIndex: 'author',
           ellipsis: true,
+          align: 'center',
         },
         {
           title: '职级',
           dataIndex: 'professionalTitle',
           ellipsis: true,
+          align: 'center',
         },
         {
           title: '所属机构',
           dataIndex: 'hospitalName',
+          align: 'center',
         },
         {
           title: '来源类型',
-          dataIndex: 'source',
-          align: 'right',
+          dataIndex: 'reprint',
+          align: 'center',
+          
         },
 
         {
@@ -220,17 +224,18 @@ export default {
           dataIndex: 'createTime',
           width: 180,
           ellipsis: true,
+          align: 'center',
         },
         {
           title: '提交时间',
           dataIndex: 'createdTime',
-          align: 'right',
+          align: 'center',
         },
-        {
-          title: '浏览人次',
-          dataIndex: 'clickNum',
-          align: 'right',
-        },
+        // {
+        //   title: '浏览人次',
+        //   dataIndex: 'clickNum',
+        //   align: 'right',
+        // },
         // {
         //   title: '浏览人数',
         //   dataIndex: 'preClass',
@@ -253,7 +258,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.checkStatus = this.currentTab
+        this.queryParamsTemp.status = this.currentTab
         return getDoctorArticleList(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 ) {
@@ -263,15 +268,15 @@ export default {
                 pageSize: parameter.pageSize,
                 totalRows: res.data.total,
                 totalPage: res.data.total / parameter.pageSize,
-                rows: res.data,
+                rows: res.data.records,
               }
 
               //设置序号
-              // data.rows.forEach((item, index) => {
-                // this.$set(item, 'checkStatus', 1)
+              data.rows.forEach((item, index) => {
+                this.$set(item, 'reprint', item.reprint=="1"?'转载':'原创')
                 // item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 // item.nameDes = item.name
-              // })
+              })
             } else {
               data = []
             }
@@ -545,6 +550,7 @@ export default {
     },
 
     handleOk() {
+      this.queryParams.status = ''
       this.getTabOut()
       this.$refs.table.refresh()
     },

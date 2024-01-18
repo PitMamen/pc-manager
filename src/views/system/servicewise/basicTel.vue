@@ -70,6 +70,15 @@
             <img v-else src="~@/assets/icons/weixin2.png" style="height: 15px; width: 20px; object-fit: cover" />
           </div>
         </div>
+
+        <div class="div-line">
+          <div class="div-4" style="width: 100%; display: flex; flex-direction: row">
+            <div style="display: inline-block; margin-left: 9px; margin-top: 5px">
+              标&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;签：
+            </div>
+            <div class="span-blue">{{ recordIn.tagNames }}</div>
+          </div>
+        </div>
       </div>
 
       <!--  -->
@@ -93,16 +102,33 @@
             确认修改
           </div>
         </div>
+
+        <div style="float: right">
+          <!-- <a-popconfirm placement="topRight" title="确认删除？" @confirm="goStopPlan">
+            <div class="bo-btn">终止方案</div>
+          </a-popconfirm> -->
+          <div
+            class="bo-btn"
+            @click="goMarking(recordIn)"
+            style="margin-left: 30px; color: #409eff; background-color: white; border: 1px solid #409eff"
+          >
+            打标签
+          </div>
+        </div>
       </div>
     </div>
+    <mark-Model ref="markModel" @ok="handleOk" @cancel="handleCancel" />
   </a-spin>
 </template>
 
 
 <script>
-import { getPatientInfo, updatePatientInfo, getDepts } from '@/api/modular/system/posManage'
+import { getPatientInfo, updatePatientInfo, getDepts, getUserTagsDoctor } from '@/api/modular/system/posManage'
+import markModel from './markModel'
 export default {
-  components: {},
+  components: {
+    markModel,
+  },
   props: {
     record: Object,
   },
@@ -123,11 +149,38 @@ export default {
       if (res.code == 0) {
         this.keshiData = res.data
         this.getPatientInfoOut()
+        this.getUserTagsDoctorOut(this.recordIn)
       }
     })
   },
 
   methods: {
+    // 获取已打的标签
+    getUserTagsDoctorOut(record) {
+      var postData = {
+        // id: 0,
+        pageNo: 1,
+        pageSize: 999,
+        // queryStr: '',
+        // tagsIds: '',
+        // tagsName: '',
+        tagsType: 2,
+        userId: record.userId,
+        // userIdsNot4: '',
+      }
+      getUserTagsDoctor(postData)
+        .then((res) => {
+          if (res.code === 0) {
+
+          } else {
+
+          }
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
+    },
+
     getPatientInfoOut() {
       this.isLoading = true
       getPatientInfo({
@@ -150,6 +203,18 @@ export default {
           this.isLoading = false
         }
       })
+    },
+
+    handleOk() {
+      this.getUserTagsDoctorOut(this.recordIn)
+    },
+
+    handleCancel() {},
+
+    // 打标签
+
+    goMarking(record) {
+      this.$refs.markModel.mark(record)
     },
 
     goSave() {
@@ -204,6 +269,16 @@ export default {
 
   /deep/ .ant-select-selection--multiple {
     height: auto !important;
+  }
+
+  .span-blue {
+    background-color: #ecf5ff;
+    padding: 2px 10px;
+    font-size: 12px;
+    color: #3894ff;
+    border: #3894ff 1px solid;
+    border-radius: 3px;
+    // background-color: #3894ff;
   }
 
   .div-info {
