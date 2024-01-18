@@ -499,7 +499,7 @@
         </div>
         <div class="div-fee-line">
           <span class="fee-des">10.其他类：</span>
-          <span class="name">（31）其他费：</span>
+          <span class="name">（24）其他费：</span>
           <span class="value">{{ jbxx.qtf1 + "" || "" }}</span>
         </div>
       </div>

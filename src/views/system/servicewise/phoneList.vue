@@ -1113,7 +1113,7 @@ export default {
       // max-height: 420px;
       margin-bottom: 10px;
       overflow-y: auto !important;
-      width: 238px;
+      // width: 238px;
       // .checked {
       //   color: #1890ff !important;
       // }

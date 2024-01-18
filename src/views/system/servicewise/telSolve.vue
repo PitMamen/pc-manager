@@ -74,6 +74,20 @@
           />
           <!-- <a-input v-model="handleResult" class="span-item-value" allow-clear placeholder="" /> -->
         </div>
+
+
+
+
+        <div v-show="radioTyPe == 1" class="div-line-wrap">
+          <span class="span-item-name"> 备&#12288;&#12288;注 :</span>
+          <a-input v-model="handleResult" class="span-item-value" allow-clear placeholder="" />
+        </div>
+
+
+
+
+
+
       </div>
 
       <div class="midline"></div>

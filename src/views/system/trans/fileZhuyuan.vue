@@ -509,10 +509,11 @@ export default {
             console.log('医嘱数据：', this.zhuyuanYizhu)
             if (this.zhuyuanYizhu && this.zhuyuanYizhu.length > 0) {
               for (var j = 0; j < this.zhuyuanYizhu.length - 1; j++) {
+
                 for (var i = 0; i < this.zhuyuanYizhu.length - 1 - j; i++) {
                   // 医嘱执行时间  如果有相同的 显示第一个
-                  if (this.zhuyuanYizhu[i].yzzxsj == this.zhuyuanYizhu[i + 1].yzzxsj) {
-                    this.$set(this.zhuyuanYizhu[i ], 'yzzxsj', '')
+                  if (this.zhuyuanYizhu[i+1].yzzxsj == this.zhuyuanYizhu[i].yzzxsj) {
+                    this.$set(this.zhuyuanYizhu[i], 'yzzxsj', '')
                   }
                   // 医嘱停止时间  如果有相同的 显示第一个
                   if (this.zhuyuanYizhu[i].yzzzsj == this.zhuyuanYizhu[i + 1].yzzzsj) {
@@ -522,7 +523,7 @@ export default {
                   if (this.zhuyuanYizhu[i].yzjhksr == this.zhuyuanYizhu[i + 1].yzjhksr) {
                     this.$set(this.zhuyuanYizhu[i], 'yzjhksr', '')
                   }
-                  
+
                 }
               }
 
@@ -542,7 +543,7 @@ export default {
                   newArr[haveIndex].datas.push(item)
                 }
               })
-              console.log("333:",newArr)
+              console.log('333:', newArr)
               if (newArr && newArr.length > 0) {
                 for (let index = 0; index < newArr.length; index++) {
                   if (newArr[index].datas.length == 1) {
@@ -570,7 +571,7 @@ export default {
                   tempArray = tempArray.concat(newArr[index].datas)
                 }
                 this.zhuyuanYizhu = tempArray
-                console.log("444:",this.zhuyuanYizhu)
+                console.log('444:', this.zhuyuanYizhu)
               }
 
               this.zhuyuanYizhu.forEach((item, index) => {
