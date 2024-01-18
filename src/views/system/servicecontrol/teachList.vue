@@ -85,11 +85,11 @@
                 @click="handleChange(item.message_original_id, index)"
               >
                 <div class="span-name" :title="item.articleName">
-                  <div style="width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  <div style="width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                     {{ item.articleName }}
                   </div>
                   <div style="font-size: 12px">{{ item.count }}</div>
-                  <div style="font-size: 12px; margin-left: auto">{{ item.readCount }}&nbsp;/&nbsp;{{ item.rate }}</div>
+                  <div style="font-size: 12px; margin-left: auto">{{ item.readCount }}/{{ item.rate }}</div>
                 </div>
 
                 <div class="bottom-line"></div>
