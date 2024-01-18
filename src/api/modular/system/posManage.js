@@ -1701,6 +1701,15 @@ export function qryMetaDataByPage(data) {
 }
 
 
+export function qryMetaDataByPageNew(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigureDetail/qryPatientPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 
 
 /**
@@ -4739,8 +4748,20 @@ export function addUserTagsType(data) {
     method: 'post',
     data: data,
   })
-
 }
+
+
+//获取用户已打标签
+export function getUserTagsDoctor(data) {
+  return axios({
+    url: '/account-api/tdUserTags/getUserTagsDoctor',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 
 
 
@@ -4789,6 +4810,18 @@ export function getUserTags(data) {
     data: data,
   })
 }
+
+//给患者打标签
+export function addPatientToTags(data) {
+  return axios({
+    url: '/account-api/tdUserTags/addPatientToTags',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 
 
 //删除用户标签

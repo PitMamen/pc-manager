@@ -39,12 +39,12 @@
         </div>
         <div class="div-line-wrap">
           <span class="span-item-name"> 实际随访人 :</span>
-          <a-input :disabled="true" allow-clear :style="radioTyPe==0?'width:157px;':'width:147px;'" v-model="uerName" />
-          <!-- <a-select v-model="followResultContent.actualDoctorUserId"  placeholder="请选择">
+          <!-- <a-input :disabled="true" allow-clear :style="radioTyPe==0?'width:157px;':'width:147px;'" v-model="uerName" /> -->
+          <a-select v-model="followResultContent.actualDoctorUserId"  placeholder="请选择">
             <a-select-option v-for="(item, index) in deptUsers" :key="index" :value="item.userId">{{
               item.userName
             }}</a-select-option>
-          </a-select> -->
+          </a-select>
         </div>
 
         <div class="div-line-wrap">
@@ -268,7 +268,7 @@ export default {
   created() {
     this.user = Vue.ls.get(TRUE_USER)
     this.uerName = this.user.userName
-    this.followResultContent.actualDoctorUserId = this.user.userId
+    // this.followResultContent.actualDoctorUserId = this.user.userId
     self = this
     console.log('telSolve', this.record.userId)
     this.followPlanPhonePatientInfo(this.record.id)
