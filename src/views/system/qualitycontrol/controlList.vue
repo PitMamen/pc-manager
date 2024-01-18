@@ -407,7 +407,12 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
-        this.queryParams.executeDepartmentIds=[this.ids]
+        if (this.ids) {
+          this.queryParams.executeDepartmentIds=[this.ids]
+        }else{
+          this.queryParams.executeDepartmentIds=[]
+
+        }
         return followList(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             var data = {

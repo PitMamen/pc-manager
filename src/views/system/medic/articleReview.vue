@@ -268,7 +268,7 @@ export default {
                 pageSize: parameter.pageSize,
                 totalRows: res.data.total,
                 totalPage: res.data.total / parameter.pageSize,
-                rows: res.data,
+                rows: res.data.records,
               }
 
               //设置序号

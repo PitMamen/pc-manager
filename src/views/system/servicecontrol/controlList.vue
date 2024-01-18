@@ -1031,7 +1031,7 @@ export default {
   }
 
   .div-down {
-    height: calc(100vh - 260px);
+    // height: calc(100vh - 260px);
     .div-service-left-control {
       background-color: white;
       // padding: 20px 0 20px 20px;
@@ -1040,7 +1040,7 @@ export default {
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 250px;
+      width: 235px;
       overflow: hidden;
 
       .left-control {
@@ -1097,7 +1097,7 @@ export default {
         // max-height: 420px;
         // height: calc(100vh - 260px);
         height: 490px;
-        width: 238px;
+        width: 223px;
         overflow-y: auto !important;
         // .checked {
         //   color: #1890ff !important;
