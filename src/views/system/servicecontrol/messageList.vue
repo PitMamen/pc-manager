@@ -118,11 +118,11 @@
           >
             <span slot="action" slot-scope="text, record">
               <a-popconfirm title="确定重新发送吗？" ok-text="确定" cancel-text="取消" @confirm="send(record)">
-                <a :disabled="record.status == 2">重新发送</a>
+                <a :disabled="record.status == 1">重新发送</a>
               </a-popconfirm>
             </span>
             <span slot="status" slot-scope="text, record">
-              <span v-if="record.status == 2" style="color: green">成功</span>
+              <span v-if="record.status == 1" style="color: green">成功</span>
               <span v-else style="color: red">失败</span>
             </span>
 
@@ -257,11 +257,11 @@ export default {
           name: '全部',
         },
         {
-          id: 1,
+          id: 2,
           name: '失败',
         },
         {
-          id: 2,
+          id: 1,
           name: '成功',
         },
       ],
