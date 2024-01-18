@@ -182,7 +182,7 @@ export default {
       queryParams: {
         creatorName: '',
         hospitalCode: '',
-        status: 0,
+        status: '',
         title: '',
       },
 
@@ -258,7 +258,7 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         this.queryParamsTemp = JSON.parse(JSON.stringify(this.queryParams))
-        this.queryParamsTemp.checkStatus = this.currentTab
+        this.queryParamsTemp.status = this.currentTab
         return getDoctorArticleList(Object.assign(parameter, this.queryParams))
           .then((res) => {
             if (res.code == 0 ) {

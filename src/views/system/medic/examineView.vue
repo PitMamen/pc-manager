@@ -26,7 +26,7 @@
             <div class="time">
               <div>创建时间:{{ record.createTime }}</div>
               <div>提交时间:{{ record.createdTime }}</div>
-              <div style="margin-right: 30px">文章来源:{{ record.source }}</div>
+              <div style="margin-right: 30px">文章来源:{{ record.reprint }}</div>
             </div>
             <div class="name">转载出处:{{ record.reprintSource }}<www class="xy22"></www></div>
 
