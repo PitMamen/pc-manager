@@ -4348,6 +4348,29 @@ export function getFollowArticleUserData(data) {
   })
 }
 
+/**
+ * 消息提醒浏览查询
+ */
+
+export function getRecordList(data) {
+  return axios({
+    url: '/follow-api/tlSmsPushRecord/getRecordList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 消息提醒浏览查询-左侧列表
+ */
+
+export function getRecordListGroupBy(data) {
+  return axios({
+    url: '/follow-api/tlSmsPushRecord/getRecordListGroupBy',
+    method: 'post',
+    data: data,
+  })
+}
 
 //医疗学科列表
 export function treeMedicalSubjects(data) {
