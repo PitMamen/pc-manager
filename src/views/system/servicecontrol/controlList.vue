@@ -1032,6 +1032,8 @@ export default {
 
   .div-down {
     // height: calc(100vh - 260px);
+     display: flex;
+     flex-direction: row;
     .div-service-left-control {
       background-color: white;
       // padding: 20px 0 20px 20px;
@@ -1193,7 +1195,7 @@ export default {
       // border-left: #eee solid 1px;
       // border: #eee solid 1px;
       float: right;
-      width: 84%;
+      width:78%;
 
       /deep/ .ant-card-body {
         padding: 0px 20px !important;
