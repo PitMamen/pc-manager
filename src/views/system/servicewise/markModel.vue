@@ -19,6 +19,8 @@
       :token-separators="[',']"
       placeholder="请在表格中勾选标签"
       dropdownClassName="select-tags-hidden"
+      :collapse-tags="true"
+      :maxTagCount="4"
       v-model="selectedRowKeys"
     >
       <a-select-option v-for="item in tagsList" :key="item.id" :value="item.id">
@@ -34,20 +36,22 @@
         </div>
         <a-empty style="margin-top: 150px" :image="simpleImage" v-if="lableTypeListData.length === 0" />
         <div v-if="lableTypeListData.length > 0" class="big-kuang">
-          <div
-            :class="{ checked: item.isChecked }"
-            v-for="(item, index) in lableTypeListData"
-            @click="onItemClick(item, index)"
-            :value="item.tagsTypeName"
-            :key="index"
-            style="cursor: pointer; margin-top: 5px; margin-left: 5px; margin-right: 5px"
-          >
-            <div class="item-name" :title="item.title">
-              <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
-                {{ item.tagsTypeName }}
-              </div>
+          <div class="conten-hei">
+            <div
+              :class="{ checked: item.isChecked }"
+              v-for="(item, index) in lableTypeListData"
+              @click="onItemClick(item, index)"
+              :value="item.tagsTypeName"
+              :key="index"
+              style="cursor: pointer; margin-top: 5px; margin-left: 5px; margin-right: 5px"
+            >
+              <div class="item-name" :title="item.title">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  {{ item.tagsTypeName }}
+                </div>
 
-              <div v-if="item.isChecked" style="margin-left: auto; margin-right: 20px">√</div>
+                <div v-if="item.isChecked" style="margin-left: auto; margin-right: 20px">√</div>
+              </div>
             </div>
           </div>
         </div>
@@ -62,20 +66,22 @@
         <a-empty style="margin-top: 150px" :image="simpleImage" v-if="tagsList.length === 0" />
 
         <div v-if="tagsList.length > 0" class="big-kuang">
-          <div
-            :class="{ checked: item.isChecked }"
-            v-for="(item, index) in tagsList"
-            @click="onrightItemClick(item, index)"
-            :value="item.tagsName"
-            :key="index"
-            style="cursor: pointer; margin-top: 5px; margin-left: 5px; margin-right: 5px"
-          >
-            <div class="item-name" :title="item.title">
-              <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
-                {{ item.tagsName }}
-              </div>
+          <div class="conten-hei">
+            <div
+              :class="{ checked: item.isChecked }"
+              v-for="(item, index) in tagsList"
+              @click="onrightItemClick(item, index)"
+              :value="item.tagsName"
+              :key="index"
+              style="cursor: pointer; margin-top: 5px; margin-left: 5px; margin-right: 5px"
+            >
+              <div class="item-name" :title="item.title">
+                <div style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  {{ item.tagsName }}
+                </div>
 
-              <div v-if="item.isChecked" style="margin-left: auto; margin-right: 20px">√</div>
+                <div v-if="item.isChecked" style="margin-left: auto; margin-right: 20px">√</div>
+              </div>
             </div>
           </div>
         </div>
@@ -104,6 +110,9 @@ export default {
       confirmLoading: false,
       lableTypeListData: [], //标签分类数据
       tagsList: [], //标签列表
+
+      AlreadytagsList: [],
+      selectedTaglist: [],
       selectedRowKeys: [],
       queryParamType: {
         //标签分类参数
@@ -125,15 +134,16 @@ export default {
   created() {},
   methods: {
     //审核
-    mark(record) {
+    mark(record, alreadytagsList) {
       // console.log('1111111111')
       this.user = Vue.ls.get(TRUE_USER)
       this.visible = true
       this.record = record
       this.selectedRowKeys = []
       this.tagsList = []
+      this.AlreadytagsList = alreadytagsList
+      console.log('dddd:', this.AlreadytagsList)
       this.getUserTagsTypeListOut()
-      //   this.getUserTagsOut()
     },
 
     //标签类型
@@ -142,9 +152,29 @@ export default {
         if (res.code == 0) {
           this.lableTypeListData = res.data.records
           if (this.lableTypeListData && this.lableTypeListData.length > 0) {
-            this.lableTypeListData.forEach((item, index) => {
-              this.$set(this.lableTypeListData[index], 'isChecked', false)
-            })
+            if (this.AlreadytagsList.length > 0) {
+              for (let indexin = 0; indexin < this.AlreadytagsList.length; indexin++) {
+                  if (indexin == 0 && this.AlreadytagsList[indexin].value.length > 0) {
+                  this.selectedTaglist = this.AlreadytagsList[indexin].value
+                  this.$set(this.lableTypeListData[indexin], 'isChecked', true)
+                } else {
+                  this.$set(this.lableTypeListData[indexin], 'isChecked', false)
+                }
+              }
+
+              console.log("SSSS:",this.selectedRowKeys)
+            } else {
+              this.lableTypeListData.forEach((item, index) => {
+                if (index == 0) {
+                  this.$set(this.lableTypeListData[0], 'isChecked', true)
+                  this.getUserTagsOut(this.lableTypeListData[0]) //第一个默认选中
+                } else {
+                  this.$set(this.lableTypeListData[index], 'isChecked', false)
+                }
+              })
+            }
+
+            this.getUserTagsOut(this.lableTypeListData[0]) //第一个默认选中
           }
         } else {
           this.$message.error('获取失败：' + res.message)
@@ -153,7 +183,6 @@ export default {
     },
 
     onItemClick(item, indexClick) {
-      console.log('sssssssssssssssssssss:', item)
       for (let index = 0; index < this.lableTypeListData.length; index++) {
         this.$set(this.lableTypeListData[index], 'isChecked', false)
       }
@@ -185,28 +214,47 @@ export default {
       var postData = {
         pageNo: 1,
         pageSize: 999,
-        tagsName: item.tagsTypeName,
         tagsTypeId: item.id,
+        // tagsTypeId: '',
       }
       getUserTags(postData).then((res) => {
         if (res.code == 0) {
           this.tagsList = res.data.records
           if (this.tagsList && this.tagsList.length > 0) {
-            this.tagsList.forEach((item, index) => {
-              this.$set(this.tagsList[index], 'isChecked', false)
-            })
+            const r = _.intersectionWith(this.tagsList, this.selectedTaglist, _.isEqual)
+            if (r && r.length > 0) {
+              for (let index = 0; index < this.tagsList.length; index++) {
+                for (let index2 = 0; index2 < r.length; index2++) {
+                  if (this.tagsList[index].id == r[index2].id) {
+                    // console.log("3333333")
+                    this.$set(this.tagsList[index], 'isChecked', true)
+                    this.selectedRowKeys.push(this.tagsList[index].id)
+                  }
+                }
+              }
+            }
           }
         } else {
           this.$message.error('获取失败：' + res.message)
         }
       })
     },
+    removeDuplicate(arr) {
+      const newArr = []
+      arr.forEach((item) => {
+        if (newArr.indexOf(item.id) === -1) {
+          newArr.push(item)
+        }
+      })
+      return newArr
+    },
 
     // 打标签
     addPatientToTagsOut() {
+      this.selectedRowKeys = this.removeDuplicate(this.selectedRowKeys)
+      var tagsString = this.selectedRowKeys.length > 0 ? this.selectedRowKeys.join(',') : ''
       var postData = {
-        doctorUserId: this.user.userId, //医生id  取此账号登录的userID
-        tagsList: this.selectedRowKeys,
+        tags: tagsString,
         userId: this.record.userId,
       }
       this.confirmLoading = true
@@ -314,6 +362,13 @@ export default {
     border: 1px solid #dfe3e5;
     overflow: hidden;
 
+    .conten-hei {
+      height: 400px;
+    //   width: 100%;
+    //   overflow-y: auto;
+      //   overflow-y: auto !important;
+    }
+
     .item-name {
       width: 100%;
       height: 20px;
@@ -372,6 +427,12 @@ export default {
     // position: relative;
     border: 1px solid #dfe3e5;
     overflow: hidden;
+
+    .conten-hei {
+      height: 400px;
+    //   width: 100%;
+    //   overflow: auto;
+    }
 
     .item-name {
       width: 100%;

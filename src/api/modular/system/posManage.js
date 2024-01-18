@@ -4837,7 +4837,7 @@ export function getUserTags(data) {
 //给患者打标签
 export function addPatientToTags(data) {
   return axios({
-    url: '/account-api/tdUserTags/addPatientToTags',
+    url: '/account-api/modifyUserExternalInfo',
     method: 'post',
     data: data,
   })

@@ -76,7 +76,14 @@
             <div style="display: inline-block; margin-left: 9px; margin-top: 5px">
               标&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;签：
             </div>
-            <div class="span-blue">{{ recordIn.tagNames }}</div>
+            <div
+              style="display: flex; flex-direction: row; flex-wrap: wrap"
+              v-for="(item, index) in tagsList"
+              :key="index"
+              :value="item"
+            >
+              <div class="span-blue">{{ item.tagsName }}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -123,8 +130,9 @@
 
 
 <script>
-import { getPatientInfo, updatePatientInfo, getDepts, getUserTagsDoctor } from '@/api/modular/system/posManage'
+import { getPatientInfo, updatePatientInfo, getDepts, getSavedUserTagsInfo } from '@/api/modular/system/posManage'
 import markModel from './markModel'
+import { Item } from 'ant-design-vue/es/vc-menu'
 export default {
   components: {
     markModel,
@@ -137,14 +145,15 @@ export default {
       recordIn: this.record,
       baseData: {},
       dataList: [],
+
       keshiData: [],
       isLoading: false,
+      tagsList: [],
     }
   },
 
   created() {
     console.log('created basicTel', this.record)
-
     getDepts().then((res) => {
       if (res.code == 0) {
         this.keshiData = res.data
@@ -157,28 +166,36 @@ export default {
   methods: {
     // 获取已打的标签
     getUserTagsDoctorOut(record) {
-      var postData = {
-        // id: 0,
-        pageNo: 1,
-        pageSize: 999,
-        // queryStr: '',
-        // tagsIds: '',
-        // tagsName: '',
-        tagsType: 2,
-        userId: record.userId,
-        // userIdsNot4: '',
-      }
-      getUserTagsDoctor(postData)
+      this.tagsList = [] //先置空
+      getSavedUserTagsInfo(this.record.userId)
         .then((res) => {
           if (res.code === 0) {
-
+            this.dataList = res.data
+            if (this.dataList.length > 0) {
+              for (let index = 0; index < this.dataList.length; index++) {
+                if (this.dataList[index].value.length > 0) {
+                  for (let indexin = 0; indexin < this.dataList[index].value.length; indexin++) {
+                    this.tagsList.push(this.dataList[index].value[indexin])
+                  }
+                }
+              }
+            }
           } else {
-
           }
         })
         .finally(() => {
           this.isLoading = false
         })
+    },
+
+    removeDuplicate(arr) {
+      const newArr = []
+      arr.forEach((item) => {
+        if (newArr.indexOf(item.id) === -1) {
+          newArr.push(item)
+        }
+      })
+      return newArr
     },
 
     getPatientInfoOut() {
@@ -214,7 +231,7 @@ export default {
     // 打标签
 
     goMarking(record) {
-      this.$refs.markModel.mark(record)
+      this.$refs.markModel.mark(record, this.dataList)
     },
 
     goSave() {
@@ -244,7 +261,7 @@ export default {
         .then((res) => {
           if (res.success) {
             this.$message.success('操作成功')
-            // this.$emit('handleCancel')  //不关闭弹窗
+            this.$emit('handleCancel') //不关闭弹窗
           } else {
             this.$message.error('操作失败：' + res.message)
           }
@@ -278,6 +295,7 @@ export default {
     color: #3894ff;
     border: #3894ff 1px solid;
     border-radius: 3px;
+    margin-right: 5px;
     // background-color: #3894ff;
   }
 
