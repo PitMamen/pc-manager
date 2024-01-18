@@ -35,7 +35,7 @@
           <!-- v-model="queryParams.isVisible" -->
           <a-select
             placeholder="请选择状态"
-            v-model="queryParam.readStatus"
+            v-model="queryParam.sendStatus"
             allow-clear
             style="width: 120px; height: 28px"
           >
@@ -200,7 +200,7 @@ export default {
         followPlanName: undefined,
         sendStartTime: '',
         sendEndTime: '',
-        readStatus: undefined,
+        sendStatus: undefined,
       },
 
       // 表头
@@ -258,11 +258,11 @@ export default {
         },
         {
           id: 1,
-          name: '未读',
+          name: '失败',
         },
         {
           id: 2,
-          name: '已读',
+          name: '成功',
         },
       ],
 
@@ -324,7 +324,7 @@ export default {
       this.queryParam.executeDepartmentId = undefined
       this.queryParam.sendStartTime = ''
       this.queryParam.sendEndTime = ''
-      this.queryParam.readStatus = undefined
+      this.queryParam.sendStatus = undefined
       this.queryParam.templateId = undefined
       this.queryParam.templateName = undefined
       this.createValue = []
