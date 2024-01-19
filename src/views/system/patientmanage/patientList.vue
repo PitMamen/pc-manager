@@ -244,12 +244,7 @@ export default {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 if (item.tagNames) {
                   tabArray = item.tagNames.split(',')
-                  if (tabArray && tabArray.length > 3) {
-                    this.$set(item, 'diandian', true)
-                  } else {
-                    this.$set(item, 'diandian', false)
-                  }
-                  // this.$set(item, 'tabArray', tabArray)
+                  this.$set(item, 'diandian', tabArray.length > 3)  //超过三个...显示
                   var tempArray = []
                   tabArray.forEach((itemIn, indexIn) => {
                     if (indexIn <= 2) {

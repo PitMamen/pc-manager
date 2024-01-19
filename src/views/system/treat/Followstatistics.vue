@@ -210,7 +210,7 @@
         <a @click="$refs.goMarking.marking(record)"> <a-icon type="pushpin"></a-icon> 备注</a>
       </span>
     </s-table>
-    <a-modal :visible="visibleDes" cancelText="''" title="提示" @ok="handleOkDes" @cancel="handleCancel" style="width:350px">
+    <a-modal :visible="visibleDes" cancelText="''" title="提示" @ok="handleOkDes" @cancel="handleCancel" :width="300">
       <div style="text-align: center">确认是否电话随访?</div>
       <template slot="footer">
         <a-button type="primary" @click="handleOkDes">是</a-button>
