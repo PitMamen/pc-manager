@@ -22,6 +22,7 @@
       :collapse-tags="true"
       :maxTagCount="4"
       v-model="selectedRowKeys"
+      @change="onChange"
     >
       <a-select-option v-for="item in tagsList" :key="item.tagsName" :value="item.tagsName">
         {{ item.tagsName }}
@@ -278,6 +279,10 @@ export default {
         .finally(() => {
           this.confirmLoading = false
         })
+    },
+
+    onChange(value) {
+      console.log('ssss:', value)
     },
 
     handleCancel() {
