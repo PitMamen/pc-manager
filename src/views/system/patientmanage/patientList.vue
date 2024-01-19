@@ -303,7 +303,7 @@ export default {
     goEdit(record) {
       this.$set(record, 'userName', record.name)
       this.$set(record, 'userSex', record.sex)
-      this.$refs.followModel.initEdit(record, true)
+      this.$refs.followModel.doEdit(record, true)
     },
 
     onDepartmentChange(index) {

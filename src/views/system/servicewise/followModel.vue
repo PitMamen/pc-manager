@@ -30,7 +30,7 @@
           </template>
           <patient-file ref="patientFile " :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
         </a-tab-pane>
-        <a-tab-pane key="2">
+        <a-tab-pane key="2" v-if="isEdit">
           <template #tab>
             <span>
               <img v-show="activeKey != '2'" src="~@/assets/icons/lsjl.png" class="icon" />
@@ -123,6 +123,7 @@ export default {
       recordId: '',
       phone: '',
       isSDKReady: false,
+      isEdit:true,
       // 从档案管理页面进入不需要显示本次随访
       isPatientManage: false,
       // 从随访进去才显示随访方案
@@ -173,6 +174,8 @@ export default {
     //从档案管理界面 修改操作 进来
     doEdit(record, isPatientManage) {
       this.isPatientManage = isPatientManage
+      this.isEdit = false
+      console.log("3333:",this.isEdit)
       this.modelType = 0
       this.initEdit(record)
     },
