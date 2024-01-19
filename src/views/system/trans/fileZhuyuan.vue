@@ -503,31 +503,124 @@ export default {
     getCaseDradviceOut(index, yizhutype) {
       getCaseDradvice({ caseId: this.historyList[index].id, encodeFlag: 1, type: yizhutype })
         .then((res) => {
-          // ┐ ┘ │
           if (res.code === 0 && res.data.cipher) {
             this.zhuyuanYizhu = decodeRecord(res.data.cipher, res.data.data)
             console.log('医嘱数据：', this.zhuyuanYizhu)
             if (this.zhuyuanYizhu && this.zhuyuanYizhu.length > 0) {
-              for (var j = 0; j < this.zhuyuanYizhu.length - 1; j++) {
+              //****** 执行时间 处理 */
+              let newArr2 = []
+              this.zhuyuanYizhu.forEach((item, index) => {
+                let haveIndex = newArr2.findIndex((itemTemp, indexTemp) => {
+                  return itemTemp.yzzxsj == item.yzzxsj
+                })
+                if (haveIndex == -1) {
+                  newArr2.push({
+                    yzzxsj: item.yzzxsj,
+                    datas: [],
+                  })
+                  newArr2[newArr2.length - 1].datas.push(item)
+                } else {
+                  newArr2[haveIndex].datas.push(item)
+                }
+              })
+              console.log('9999999:', newArr2)
+              if (newArr2 && newArr2.length > 0) {
+                for (let index = 0; index < newArr2.length; index++) {
+                  for (let indexIn = 0; indexIn < newArr2[index].datas.length; indexIn++) {
+                    if (indexIn == 0) {
+                      this.$set(newArr2[index].datas[0], 'yzzxsj', newArr2[index].datas[indexIn].yzzxsj)
+                    } else {
+                      this.$set(newArr2[index].datas[indexIn], 'yzzxsj', '')
+                    }
+                  }
+                }
 
-                for (var i = 0; i < this.zhuyuanYizhu.length - 1 - j; i++) {
-                  // 医嘱执行时间  如果有相同的 显示第一个
-                  if (this.zhuyuanYizhu[i+1].yzzxsj == this.zhuyuanYizhu[i].yzzxsj) {
-                    this.$set(this.zhuyuanYizhu[i], 'yzzxsj', '')
-                  }
-                  // 医嘱停止时间  如果有相同的 显示第一个
-                  if (this.zhuyuanYizhu[i].yzzzsj == this.zhuyuanYizhu[i + 1].yzzzsj) {
-                    this.$set(this.zhuyuanYizhu[i], 'yzzzsj', '')
-                  }
-                  // 临时医嘱的 yzjhksr 开始时间
-                  if (this.zhuyuanYizhu[i].yzjhksr == this.zhuyuanYizhu[i + 1].yzjhksr) {
-                    this.$set(this.zhuyuanYizhu[i], 'yzjhksr', '')
-                  }
-
+                let tempArray = []
+                for (let index = 0; index < newArr2.length; index++) {
+                  tempArray = tempArray.concat(newArr2[index].datas)
                 }
               }
+              //****** */
 
-              // add
+              /************************************* 停止时间处理 */
+              //****** 执行时间 处理 */
+              let newArr3 = []
+              this.zhuyuanYizhu.forEach((item, index) => {
+                let haveIndex = newArr3.findIndex((itemTemp, indexTemp) => {
+                  return itemTemp.yzzzsj == item.yzzzsj
+                })
+                if (haveIndex == -1) {
+                  newArr3.push({
+                    yzzzsj: item.yzzzsj,
+                    datas: [],
+                  })
+                  newArr3[newArr3.length - 1].datas.push(item)
+                } else {
+                  newArr3[haveIndex].datas.push(item)
+                }
+              })
+              console.log('8888888:', newArr3)
+              if (newArr3 && newArr3.length > 0) {
+                for (let index = 0; index < newArr3.length; index++) {
+                  for (let indexIn = 0; indexIn < newArr3[index].datas.length; indexIn++) {
+                    if (indexIn == 0) {
+                      this.$set(newArr3[index].datas[0], 'yzzzsj', newArr3[index].datas[indexIn].yzzzsj)
+                    } else {
+                      this.$set(newArr3[index].datas[indexIn], 'yzzzsj', '')
+                    }
+                  }
+                }
+
+                let tempArray = []
+                for (let index = 0; index < newArr3.length; index++) {
+                  tempArray = tempArray.concat(newArr3[index].datas)
+                }
+              }
+              /*********************************/
+
+
+
+
+/**************** 临时医嘱开始时间处理/
+  /************************************* 停止时间处理 */
+              //****** 执行时间 处理 */
+              let newArr4 = []
+              this.zhuyuanYizhu.forEach((item, index) => {
+                let haveIndex = newArr4.findIndex((itemTemp, indexTemp) => {
+                  return itemTemp.yzjhksr == item.yzjhksr
+                })
+                if (haveIndex == -1) {
+                  newArr4.push({
+                    yzjhksr: item.yzjhksr,
+                    datas: [],
+                  })
+                  newArr4[newArr4.length - 1].datas.push(item)
+                } else {
+                  newArr4[haveIndex].datas.push(item)
+                }
+              })
+              console.log('8888888:', newArr4)
+              if (newArr4 && newArr4.length > 0) {
+                for (let index = 0; index < newArr4.length; index++) {
+                  for (let indexIn = 0; indexIn < newArr4[index].datas.length; indexIn++) {
+                    if (indexIn == 0) {
+                      this.$set(newArr4[index].datas[0], 'yzjhksr', newArr4[index].datas[indexIn].yzjhksr)
+                    } else {
+                      this.$set(newArr4[index].datas[indexIn], 'yzjhksr', '')
+                    }
+                  }
+                }
+
+                let tempArray = []
+                for (let index = 0; index < newArr4.length; index++) {
+                  tempArray = tempArray.concat(newArr4[index].datas)
+                }
+              }
+              /*********************************/
+/****************/ 
+
+
+              // add 医嘱组号处理
               let newArr = []
               this.zhuyuanYizhu.forEach((item, index) => {
                 let haveIndex = newArr.findIndex((itemTemp, indexTemp) => {
