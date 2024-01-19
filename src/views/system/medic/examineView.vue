@@ -92,8 +92,8 @@
               :defaultValue="2"
               v-decorator="['roleId', { rules: [{ required: true, message: '请选择审核结论！' }] }]"
             >
-              <a-radio :value="2" style="font-size: 8px; color: #1a1a1a; margin-right: 0px !important"> 成功 </a-radio>
-              <a-radio :value="3" style="font-size: 8px; color: #1a1a1a"> 失败 </a-radio>
+              <a-radio :value="2" style="font-size: 12px; color: #1a1a1a; margin-right: 0px !important"> 成功 </a-radio>
+              <a-radio :value="3" style="font-size: 12px; color: #1a1a1a"> 失败 </a-radio>
             </a-radio-group>
           </div>
 

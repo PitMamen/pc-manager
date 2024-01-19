@@ -69,8 +69,8 @@
             style="height: 100px; min-height: 80px;margin-top: -15px;width: 66%;margin-left: 76px;"
             v-model="handleResult"
             :maxLength="200"
-            placeholder="如果线下电话随访，请在此登记患者联系电话"
-            v-decorator="['doctorBrief', { rules: [{ required: false, message: '如果线下电话随访，请在此登记患者联系电话!' }] }]"
+            placeholder="如果线下电话随访，请在此登记患者联系方式和随访员姓名"
+            v-decorator="['doctorBrief', { rules: [{ required: false, message: '如果线下电话随访，请在此登记患者联系方式和随访员姓名' }] }]"
           />
           <!-- <a-input v-model="handleResult" class="span-item-value" allow-clear placeholder="" /> -->
         </div>

@@ -167,16 +167,7 @@ export default {
                 this.selectedRowKeysIds.push(this.AlreadytagsList[indexin].id)
                 this.$set(this.lableTypeListData[0], 'isChecked', true)
 
-                // if (indexin == 0 && this.AlreadytagsList[indexin].value.length > 0) {
-                //   this.selectedTaglist = this.AlreadytagsList[indexin].value
-                //   this.$set(this.lableTypeListData[indexin], 'isChecked', true)
-                // } else {
-                //   this.$set(this.lableTypeListData[indexin], 'isChecked', false)
-                // }
               }
-
-              console.log('dffff:', this.selectedRowKeys)
-              console.log('dffff:', this.selectedRowKeysIds)
             } else {
               this.lableTypeListData.forEach((item, index) => {
                 if (index == 0) {
@@ -239,19 +230,6 @@ export default {
               })
               
             })
-
-            // const r = _.intersectionWith(this.tagsList, this.AlreadytagsList, _.isEqual)
-            // if (r && r.length > 0) {
-            //   for (let index = 0; index < this.tagsList.length; index++) {
-            //     for (let index2 = 0; index2 < r.length; index2++) {
-            //       if (this.tagsList[index].id == r[index2].id) {
-            //         // console.log("3333333")
-            //         this.$set(this.tagsList[index], 'isChecked', true)
-                   
-            //       }
-            //     }
-            //   }
-            // }
           }
         } else {
           this.$message.error('获取失败：' + res.message)
@@ -271,7 +249,6 @@ export default {
 
     // 标签列表 点击(右边)
     onrightItemClick(item, indexClick) {
-      console.log('vvvv:', item)
       var isCheck = item.isChecked
       this.$set(this.tagsList[indexClick], 'isChecked', !isCheck)
       if (item.isChecked) {
@@ -286,8 +263,6 @@ export default {
         this.selectedRowKeys = this.selectedRowKeys.filter((item1) => item1 !== item.tagsName) // 过滤元素
         this.selectedRowKeysIds = this.selectedRowKeysIds.filter((item1) => item1 !== item.id)
       }
-      console.log('selectedRowKeys',this.selectedRowKeys)
-      console.log('selectedRowKeysIds',this.selectedRowKeysIds)
     },
 
     removeDuplicate(arr) {
@@ -302,7 +277,6 @@ export default {
 
     // 打标签
     addPatientToTagsOut() {
-      //   this.selectedRowKeys = this.removeDuplicate(this.selectedRowKeys)
       this.selectedRowKeysIds = this.removeDuplicate(this.selectedRowKeysIds)
       var tagsString = this.selectedRowKeysIds.length > 0 ? this.selectedRowKeysIds.join(',') : ''
       var postData = {
@@ -326,9 +300,6 @@ export default {
     },
 
     onChange(value) {
-      console.log('ssss:', value)
-      console.log('ssss:', this.selectedRowKeysIds)
-      
       this.tagsList.forEach(item=>{
         item.isChecked=false
         this.selectedRowKeysIds.forEach(item1=>{

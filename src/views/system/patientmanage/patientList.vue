@@ -86,14 +86,16 @@
 
       <span
         :title="record.tagNames"
-        style="display: flex; white-space:nowrap"
+        style="display: flex; white-space: nowrap"
         slot="tab"
         slot-scope="text, record"
         v-if="record.tagNames"
       >
         <div v-for="(item, index) in record.tabArray" :key="index" :value="item" :title="item">
-          <div class="span-blue">{{ item }}</div>
+          <div :title="record.tagNames" class="span-blue">{{ item }}</div>
         </div>
+
+        <div v-if="record.diandian" style="padding-top:5px">....</div>
       </span>
 
       <span slot="action" slot-scope="text, record">
@@ -213,7 +215,6 @@ export default {
           scopedSlots: { customRender: 'tab' },
           ellipsis: true,
           // width:300
-          
         },
         {
           size: 12,
@@ -243,10 +244,23 @@ export default {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
                 if (item.tagNames) {
                   tabArray = item.tagNames.split(',')
-                  this.$set(item, 'tabArray', tabArray)
+                  if (tabArray && tabArray.length > 3) {
+                    this.$set(item, 'diandian', true)
+                  } else {
+                    this.$set(item, 'diandian', false)
+                  }
+                  // this.$set(item, 'tabArray', tabArray)
+                  var tempArray = []
+                  tabArray.forEach((itemIn, indexIn) => {
+                    if (indexIn <= 2) {
+                      //列表标签 只显示3个
+                      tempArray.push(itemIn)
+                      this.$set(item, 'tabArray', tempArray)
+                    }
+                  })
                 }
-                // console.log('999:', item.tab)
               })
+              console.log('999:', data.rows)
             } else {
               data = null
             }

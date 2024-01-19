@@ -94,7 +94,7 @@ export default {
           colSpan:0,
           dataIndex: 'yzzh',
           align: 'left',
-          width:120
+          width:30
         },
         {
           title: '医生',

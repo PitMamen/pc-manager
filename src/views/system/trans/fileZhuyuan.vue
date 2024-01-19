@@ -523,7 +523,7 @@ export default {
                   newArr2[haveIndex].datas.push(item)
                 }
               })
-              console.log('9999999:', newArr2)
+              // console.log('9999999:', newArr2)
               if (newArr2 && newArr2.length > 0) {
                 for (let index = 0; index < newArr2.length; index++) {
                   for (let indexIn = 0; indexIn < newArr2[index].datas.length; indexIn++) {
@@ -559,7 +559,7 @@ export default {
                   newArr3[haveIndex].datas.push(item)
                 }
               })
-              console.log('8888888:', newArr3)
+              // console.log('8888888:', newArr3)
               if (newArr3 && newArr3.length > 0) {
                 for (let index = 0; index < newArr3.length; index++) {
                   for (let indexIn = 0; indexIn < newArr3[index].datas.length; indexIn++) {
@@ -599,7 +599,7 @@ export default {
                   newArr4[haveIndex].datas.push(item)
                 }
               })
-              console.log('8888888:', newArr4)
+              // console.log('8888888:', newArr4)
               if (newArr4 && newArr4.length > 0) {
                 for (let index = 0; index < newArr4.length; index++) {
                   for (let indexIn = 0; indexIn < newArr4[index].datas.length; indexIn++) {
