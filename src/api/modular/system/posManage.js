@@ -5173,7 +5173,7 @@ export function getUserExternalInfo(userId) {
 //用户标签信息
 export function getSavedUserTagsInfo(userId) {
   return axios({
-    url: '/account-api/getSavedUserTagsInfo/' + userId,
+    url: '/account-api/getSavedUserTagsInfoPhone/' + userId,
     method: 'post',
     // data: data,
   })

@@ -212,6 +212,7 @@ export default {
           title: '标签',
           scopedSlots: { customRender: 'tab' },
           ellipsis: true,
+          // width:300
           
         },
         {
