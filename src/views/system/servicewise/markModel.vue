@@ -21,10 +21,10 @@
       dropdownClassName="select-tags-hidden"
       :collapse-tags="true"
       :maxTagCount="4"
-      v-model="selectedRowKeys"
+      v-model="selectedRowKeysIds"
       @change="onChange"
     >
-      <a-select-option v-for="item in tagsList" :key="item.tagsName" :value="item.tagsName">
+      <a-select-option v-for="item in allTagsList" :key="item.id" :value="item.id">
         {{ item.tagsName }}
       </a-select-option>
     </a-select>
@@ -112,6 +112,7 @@ export default {
       lableTypeListData: [], //标签分类数据
       tagsList: [], //标签列表
 
+      allTagsList:[],//所有标签列表
       AlreadytagsList: [],
       selectedTaglist: [],
       selectedRowKeys: [],
@@ -155,6 +156,11 @@ export default {
         if (res.code == 0) {
           this.lableTypeListData = res.data.records
           if (this.lableTypeListData && this.lableTypeListData.length > 0) {
+
+            this.lableTypeListData.forEach(item=>{
+              this.getAllUserTagsOut(item)
+            }) 
+
             if (this.AlreadytagsList.length > 0) {
               for (let indexin = 0; indexin < this.AlreadytagsList.length; indexin++) {
                 this.selectedRowKeys.push(this.AlreadytagsList[indexin].tagsName)
@@ -170,6 +176,7 @@ export default {
               }
 
               console.log('dffff:', this.selectedRowKeys)
+              console.log('dffff:', this.selectedRowKeysIds)
             } else {
               this.lableTypeListData.forEach((item, index) => {
                 if (index == 0) {
@@ -182,7 +189,29 @@ export default {
             }
 
             this.getUserTagsOut(this.lableTypeListData[0]) //第一个默认选中
+
+           
+
           }
+        } else {
+          this.$message.error('获取失败：' + res.message)
+        }
+      })
+    },
+
+        // 获取所有标签列表
+        getAllUserTagsOut(item) {
+      var postData = {
+        pageNo: 1,
+        pageSize: 999,
+        tagsTypeId: item.id,
+        // tagsTypeId: '',
+      }
+      getUserTags(postData).then((res) => {
+        if (res.code == 0) {
+          
+          this.allTagsList=this.allTagsList.concat(res.data.records)
+          console.log(this.allTagsList)
         } else {
           this.$message.error('获取失败：' + res.message)
         }
@@ -201,18 +230,28 @@ export default {
         if (res.code == 0) {
           this.tagsList = res.data.records
           if (this.tagsList && this.tagsList.length > 0) {
-            const r = _.intersectionWith(this.tagsList, this.AlreadytagsList, _.isEqual)
-            if (r && r.length > 0) {
-              for (let index = 0; index < this.tagsList.length; index++) {
-                for (let index2 = 0; index2 < r.length; index2++) {
-                  if (this.tagsList[index].id == r[index2].id) {
-                    // console.log("3333333")
-                    this.$set(this.tagsList[index], 'isChecked', true)
-                    this.selectedRowKeysIds.push(this.tagsList[index].id)
-                  }
+            this.tagsList.forEach(item=>{
+              item.isChecked=false
+              this.selectedRowKeysIds.forEach(idkey=>{
+                if(item.id === idkey){
+                  item.isChecked=true
                 }
-              }
-            }
+              })
+              
+            })
+
+            // const r = _.intersectionWith(this.tagsList, this.AlreadytagsList, _.isEqual)
+            // if (r && r.length > 0) {
+            //   for (let index = 0; index < this.tagsList.length; index++) {
+            //     for (let index2 = 0; index2 < r.length; index2++) {
+            //       if (this.tagsList[index].id == r[index2].id) {
+            //         // console.log("3333333")
+            //         this.$set(this.tagsList[index], 'isChecked', true)
+                   
+            //       }
+            //     }
+            //   }
+            // }
           }
         } else {
           this.$message.error('获取失败：' + res.message)
@@ -245,7 +284,10 @@ export default {
         }
       } else {
         this.selectedRowKeys = this.selectedRowKeys.filter((item1) => item1 !== item.tagsName) // 过滤元素
+        this.selectedRowKeysIds = this.selectedRowKeysIds.filter((item1) => item1 !== item.id)
       }
+      console.log('selectedRowKeys',this.selectedRowKeys)
+      console.log('selectedRowKeysIds',this.selectedRowKeysIds)
     },
 
     removeDuplicate(arr) {
@@ -285,6 +327,18 @@ export default {
 
     onChange(value) {
       console.log('ssss:', value)
+      console.log('ssss:', this.selectedRowKeysIds)
+      
+      this.tagsList.forEach(item=>{
+        item.isChecked=false
+        this.selectedRowKeysIds.forEach(item1=>{
+          if(item1 == item.id){
+            item.isChecked=true
+          }
+        })
+        
+      })
+
     },
 
     handleCancel() {
