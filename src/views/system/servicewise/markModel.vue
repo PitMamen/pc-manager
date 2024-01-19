@@ -220,6 +220,7 @@ export default {
       })
     },
 
+    // 标签分类点击 (左边)
     onItemClick(item, indexClick) {
       for (let index = 0; index < this.lableTypeListData.length; index++) {
         this.$set(this.lableTypeListData[index], 'isChecked', false)
@@ -229,6 +230,7 @@ export default {
       this.getUserTagsOut(item)
     },
 
+    // 标签列表 点击(右边)
     onrightItemClick(item, indexClick) {
       console.log('vvvv:', item)
       var isCheck = item.isChecked
