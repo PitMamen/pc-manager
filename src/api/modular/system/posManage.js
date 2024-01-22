@@ -4657,9 +4657,9 @@ export function refundDetail(data) {
 //获取配置了客户联系功能的成员列表
 export function getOwnConnectCustomerFunUserList(data) {
   return axios({
-    url: '/medical-api/tdCompanywxApplication/getOwnConnectCustomerFunUserList/1',
+    url: '/medical-api/tdCompanywxApplication/getOwnConnectCustomerFunUserList/'+data,
     method: 'get',
-    params: data,
+    // params: data,
   })
 }
 

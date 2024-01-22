@@ -140,7 +140,7 @@ import {
 } from '@/api/modular/system/posManage'
 
 import { TRUE_USER, ACCESS_TOKEN } from '@/store/mutation-types'
-import { isObjectEmpty, isStringEmpty, isArrayEmpty } from '@/utils/util'
+import { isObjectEmpty, isStringEmpty, isArrayEmpty,isTestDevolep } from '@/utils/util'
 import Vue from 'vue'
 export default {
   components: {},
@@ -191,6 +191,7 @@ export default {
       this.userList = []
       this.accountChecked = false
       this.wecomChecked = false
+      
     },
     //新增
     addModel() {
@@ -200,7 +201,8 @@ export default {
       this.confirmLoading = false
       this.getUserList('')
       this.getRolesOut()   //新增  获取角色接口 用这个
-      this.getOwnConnectCustomerFunUserListOut()
+      var data = isTestDevolep()
+      this.getOwnConnectCustomerFunUserListOut(data)
     },
     //修改
     editModel(record) {
@@ -212,7 +214,8 @@ export default {
 
       // this.getRolesOut()
       this.pageByAccountIdRoleOut(record.accountId)  //修改  获取角色接口 用这个
-      this.getOwnConnectCustomerFunUserListOut()
+      var data = isTestDevolep()
+      this.getOwnConnectCustomerFunUserListOut(data)
 
       this.getDoctorAccountDetailOut(record.accountId)
     },
@@ -285,8 +288,8 @@ export default {
     },
 
     //获取配置了客户联系功能的成员列表
-    getOwnConnectCustomerFunUserListOut() {
-      getOwnConnectCustomerFunUserList().then((res) => {
+    getOwnConnectCustomerFunUserListOut(data) {
+      getOwnConnectCustomerFunUserList(data).then((res) => {
         if (res.code == 0) {
           this.wecomUserList = res.data.follow_user
         }

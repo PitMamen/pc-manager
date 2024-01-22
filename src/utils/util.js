@@ -395,6 +395,25 @@ export function getSurgeryLevel(code) {
   return str
 }
 
+
+
+
+/**
+ * 测试环境 还是生产环境
+ * @param {} arr 
+ * @returns 
+ */
+export function isTestDevolep() {
+  var data = ''
+  if (currentEnv=='test') {
+    data = '2'
+  }else{
+    data = '1'
+  }
+  return data 
+}
+
+
 /**
  * 判断数组是空
  * @param {} arr 
