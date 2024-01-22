@@ -404,7 +404,7 @@ export function getSurgeryLevel(code) {
  * @returns 
  */
 export function isTestDevolep() {
-  console.log("TTTT:",currentEnv)
+  // console.log("TTTT:",currentEnv)
   return currentEnv=='test'?"2":"1" 
 }
 
