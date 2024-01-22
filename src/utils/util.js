@@ -407,8 +407,8 @@ export function isTestDevolep() {
   var data = ''
   if (currentEnv=='test') {
     data = '2'
-  }else{
-    data = '1'
+  }else if (currentEnv=='online') {
+      data = '1'
   }
   return data 
 }
