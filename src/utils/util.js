@@ -404,13 +404,13 @@ export function getSurgeryLevel(code) {
  * @returns 
  */
 export function isTestDevolep() {
-  var data = ''
-  if (currentEnv=='test') {
-    data = '2'
-  }else if (currentEnv=='online') {
-      data = '1'
-  }
-  return data 
+  // var data = ''
+  // if (currentEnv=='test') {
+  //   data = '2'
+  // }else if (currentEnv=='online') {
+  //     data = '1'
+  // }
+  return currentEnv=='test'?"2":"1" 
 }
 
 
