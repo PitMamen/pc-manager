@@ -202,6 +202,7 @@ export default {
       this.getUserList('')
       this.getRolesOut()   //新增  获取角色接口 用这个
       var data = isTestDevolep()
+      console.log("RRRR:",data)
       this.getOwnConnectCustomerFunUserListOut(data)
     },
     //修改
@@ -215,6 +216,7 @@ export default {
       // this.getRolesOut()
       this.pageByAccountIdRoleOut(record.accountId)  //修改  获取角色接口 用这个
       var data = isTestDevolep()
+      console.log("11111:",data)
       this.getOwnConnectCustomerFunUserListOut(data)
 
       this.getDoctorAccountDetailOut(record.accountId)
