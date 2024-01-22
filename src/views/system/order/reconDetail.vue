@@ -1,7 +1,7 @@
 <template>
   <a-card :bordered="false" class="top-title">
     <div class="table-page-search-wrapper">
-      <div class="action-row" style="margin-top: -15px !important; margin-left: -18px">
+      <div class="action-row" style=" margin-left: -18px">
         <a-button type="link" icon="left" @click="goBack()">返回</a-button>
         <span style="font-size: 14px; color: #4d4d4d">{{ reconData }}对账单</span>
       </div>
