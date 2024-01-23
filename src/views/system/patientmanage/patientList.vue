@@ -28,8 +28,8 @@
             item.departmentName
           }}</a-select-option>
         </a-select> -->
-        <a-select       
-        style="min-width: 180px; height: 28px;"
+        <a-select
+          style="min-width: 180px; height: 28px"
           :maxTagCount="1"
           :collapse-tags="true"
           show-search
@@ -43,10 +43,22 @@
           @search="onDepartmentSelectSearch"
         >
           <a-spin v-if="fetching" slot="notFoundContent" size="small" />
-          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id" >{{
+          <a-select-option v-for="(item, index) in originData" :key="index" :value="item.department_id">{{
             item.department_name
           }}</a-select-option>
         </a-select>
+      </div>
+
+      <div class="search-row">
+        <span class="name">标签:</span>
+        <a-input
+          v-model="queryParams.tagName"
+          allow-clear
+          placeholder="输入标签查询"
+          style="width: 160px; height: 28px"
+          @keyup.enter="$refs.table.refresh(true)"
+          @search="$refs.table.refresh(true)"
+        />
       </div>
 
       <div class="action-row">
@@ -59,7 +71,7 @@
       <!-- <div class="div-divider"></div> -->
     </div>
     <s-table
-    :scroll="{ x: true }"
+      :scroll="{ x: true }"
       ref="table"
       size="default"
       :columns="columns"
@@ -68,11 +80,27 @@
       :rowKey="(record) => record.code"
     >
       <span style="inline-block" slot="acount" slot-scope="text, record">
-        <img v-if="record.openidFlag == 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
+        <img v-if="record.openidFlag > 1" style="width: 22px; height: 22px" src="~@/assets/icons/weixin.png" />
         <img v-if="record.openidFlag == 0" style="width: 22px; height: 22px" src="~@/assets/icons/weixin2.png" />
       </span>
 
-      <span style="inline-block" slot="action" slot-scope="text, record">
+      <span
+        :title="record.tagNames"
+        style="display: flex; white-space: nowrap"
+        slot="tab"
+        slot-scope="text, record"
+        v-if="record.tagNames"
+      >
+        <div v-for="(item, index) in record.tabArray" :key="index" :value="item" :title="item">
+          <div :title="record.tagNames" class="span-blue">{{ item }}</div>
+        </div>
+
+        <div v-if="record.diandian" style="padding-top:5px">....</div>
+      </span>
+
+      <span slot="action" slot-scope="text, record">
+        <a @click="goEdit(record)"><a-icon type="edit"></a-icon>修改</a>
+        <a-divider type="vertical" />
         <a @click="goFile(record)"><a-icon type="file"></a-icon>健康档案</a>
         <a-divider type="vertical" />
         <a @click="$refs.visitManage.distribution(record)"><a-icon type="folder"></a-icon>随访管理</a>
@@ -88,7 +116,12 @@
 <script>
 import { STable } from '@/components'
 
-import { getDepartmentListForSelect, qryMetaDataByPage, getDeptsPersonal, getDepts } from '@/api/modular/system/posManage'
+import {
+  getDepartmentListForSelect,
+  qryMetaDataByPageNew,
+  getDeptsPersonal,
+  getDepts,
+} from '@/api/modular/system/posManage'
 import { TRUE_USER } from '@/store/mutation-types'
 import visitManage from './visitManage'
 import followModel from '../servicewise/followModel'
@@ -111,6 +144,7 @@ export default {
         depts: [],
         name: '',
         tableName: '',
+        tagName: '',
       },
       labelCol: {
         xs: { span: 24 },
@@ -129,72 +163,63 @@ export default {
         {
           title: '序号',
           dataIndex: 'xh',
-        
-          size: 12,
         },
         {
           title: '姓名',
           dataIndex: 'name',
-         
+
           ellipsis: true,
-          size: 12,
         },
         {
           title: '身份证号',
           dataIndex: 'idCard',
-         
+
           ellipsis: true,
-          size: 12,
         },
         {
           title: '年龄',
           dataIndex: 'age',
-         
-          size: 12,
         },
         {
           title: '性别',
           dataIndex: 'sex',
-         
-          size: 12,
         },
         {
           title: '联系电话',
           dataIndex: 'phone',
-        
-          size: 12,
         },
         {
           title: '紧急联系人',
           dataIndex: 'urgentContacts',
-         
+
           ellipsis: true,
-          size: 12,
         },
         {
           title: '紧急联系人电话',
           dataIndex: 'urgentTel',
-        
-          size: 12,
         },
         {
           title: '管理科室',
           dataIndex: 'cyksmc',
-         
-          size:12,
-          ellipsis:true,
+
+          ellipsis: true,
         },
 
         {
           title: '账号信息',
           scopedSlots: { customRender: 'acount' },
-         
-          size: 12,
+        },
+
+        {
+          title: '标签',
+          scopedSlots: { customRender: 'tab' },
+          ellipsis: true,
+          // width:300
         },
         {
           size: 12,
           title: '操作',
-          width: '180px',
+          width: 280,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -204,23 +229,37 @@ export default {
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
         this.confirmLoading = true
-        return qryMetaDataByPage(Object.assign(parameter, this.queryParams))
+        return qryMetaDataByPageNew(Object.assign(parameter, this.queryParams))
           .then((res) => {
-            if (res.code == 0 && res.data.rows.length > 0) {
+            if (res.code == 0 && res.data.records.length > 0) {
               var data = {
                 pageNo: parameter.pageNo,
                 pageSize: parameter.pageSize,
-                totalRows: res.data.totalRows,
-                totalPage: res.data.totalPage / parameter.pageSize,
-                rows: res.data.rows,
+                totalRows: res.data.total,
+                totalPage: res.data.total / parameter.pageSize,
+                rows: res.data.records,
               }
+              var tabArray = []
               data.rows.forEach((item, index) => {
                 item.xh = (data.pageNo - 1) * data.pageSize + (index + 1)
+                if (item.tagNames) {
+                  tabArray = item.tagNames.split(',')
+                  this.$set(item, 'diandian', tabArray.length > 3)  //超过三个...显示
+                  var tempArray = []
+                  tabArray.forEach((itemIn, indexIn) => {
+                    if (indexIn <= 2) {
+                      //列表标签 只显示3个
+                      tempArray.push(itemIn)
+                      this.$set(item, 'tabArray', tempArray)
+                    }
+                  })
+                }
               })
+              console.log('999:', data.rows)
             } else {
               data = null
             }
-            return res.data
+            return data
           })
           .finally((data) => {
             this.confirmLoading = false
@@ -264,9 +303,16 @@ export default {
      * @param {} record
      */
     goFile(record) {
-      this.$set(record,'userName',record.name)
-      this.$set(record,'userSex',record.sex)
+      this.$set(record, 'userName', record.name)
+      this.$set(record, 'userSex', record.sex)
       this.$refs.followModel.doFile(record, true)
+    },
+
+    // 修改
+    goEdit(record) {
+      this.$set(record, 'userName', record.name)
+      this.$set(record, 'userSex', record.sex)
+      this.$refs.followModel.doEdit(record, true)
     },
 
     onDepartmentChange(index) {
@@ -282,11 +328,11 @@ export default {
         // console.log("ssss:",this.queryParams.depts)
       }
     },
-     //获取管理的科室 可首拼
-     getDepartmentSelectList(departmentName) {
+    //获取管理的科室 可首拼
+    getDepartmentSelectList(departmentName) {
       this.fetching = true
-      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'  
-      getDepartmentListForSelect(departmentName,'managerDept').then((res) => {
+      //更加页面业务需求获取不同科室列表，租户下所有科室： undefined  本登录账号管理科室： 'managerDept'
+      getDepartmentListForSelect(departmentName, 'managerDept').then((res) => {
         this.fetching = false
         if (res.code == 0) {
           this.originData = res.data.records
@@ -312,6 +358,7 @@ export default {
       this.queryParams.depts = []
       this.queryParams.name = ''
       this.queryParams.tableName = ''
+      this.queryParams.tagName = ''
       this.$refs.table.refresh(true)
     },
 
@@ -326,21 +373,33 @@ export default {
     handleCancel() {
       this.form.resetFields()
       this.visible = false
+      this.$refs.table.refresh()
     },
   },
 }
 </script>
 <style lang="less" scoped>
- /deep/.ant-select-selection__rendered {
-      margin-top: -2px !important;
-    }
-    /deep/.ant-select-selection__placeholder{
-      margin-top: -8px !important;
-    }
+/deep/.ant-select-selection__rendered {
+  margin-top: -2px !important;
+}
+/deep/.ant-select-selection__placeholder {
+  margin-top: -8px !important;
+}
 .ant-select-selection--multiple {
   min-height: 28px;
   cursor: text;
   zoom: 1;
+}
+
+.span-blue {
+  background-color: #ecf5ff;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #3894ff;
+  border: #3894ff 1px solid;
+  border-radius: 3px;
+  margin-right: 3px;
+  // background-color: #3894ff;
 }
 
 .sitemore {
@@ -404,12 +463,10 @@ export default {
     vertical-align: middle;
   }
   .search-row {
-   
-
     display: inline-block;
     vertical-align: middle;
     padding-right: 20px;
-    
+
     .name {
       margin-right: 10px;
     }

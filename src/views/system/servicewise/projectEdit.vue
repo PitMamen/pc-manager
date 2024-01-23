@@ -719,6 +719,7 @@ import { parseString } from "loader-utils";
 import addStop from "./addStop";
 import addFilter from "./addFilter";
 import taskDetail from "./taskDetail";
+import events from '@/components/MultiTab/events'
 
 export default {
   components: {
@@ -2079,6 +2080,7 @@ export default {
       return reg.test(value);
     },
     cancel() {
+      events.$emit('close','/servicewise/projectEdit')
       this.$router.go(-1);
     },
   },

@@ -488,7 +488,7 @@ export default {
         },
         {
           title: '操作',
-          width: '120px',
+          width: 180,
           fixed: 'right',
           dataIndex: 'action',
           scopedSlots: { customRender: 'action' },
@@ -1031,7 +1031,9 @@ export default {
   }
 
   .div-down {
-    height: calc(100vh - 260px);
+    // height: calc(100vh - 260px);
+     display: flex;
+     flex-direction: row;
     .div-service-left-control {
       background-color: white;
       // padding: 20px 0 20px 20px;
@@ -1040,7 +1042,7 @@ export default {
       min-height: 300px;
       // border-right: 1px dashed #e6e6e6;
       // border: 1px solid #e6e6e6;
-      width: 250px;
+      width: 235px;
       overflow: hidden;
 
       .left-control {
@@ -1097,7 +1099,7 @@ export default {
         // max-height: 420px;
         // height: calc(100vh - 260px);
         height: 490px;
-        width: 238px;
+        width: 223px;
         overflow-y: auto !important;
         // .checked {
         //   color: #1890ff !important;
@@ -1193,7 +1195,7 @@ export default {
       // border-left: #eee solid 1px;
       // border: #eee solid 1px;
       float: right;
-      width: 84%;
+      width:78%;
 
       /deep/ .ant-card-body {
         padding: 0px 20px !important;

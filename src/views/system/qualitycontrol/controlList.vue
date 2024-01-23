@@ -8,7 +8,7 @@
           style="width: 180px"
           :collapse-tags="true"
           show-search
-          v-model="queryParams.executeDepartmentIds"
+          v-model="ids"
           :filter-option="false"
           :not-found-content="fetching ? undefined : null"
           allow-clear
@@ -407,6 +407,12 @@ export default {
 
       // 加载数据方法 必须为 Promise 对象
       loadData: (parameter) => {
+        if (this.ids) {
+          this.queryParams.executeDepartmentIds=[this.ids]
+        }else{
+          this.queryParams.executeDepartmentIds=[]
+
+        }
         return followList(Object.assign(parameter, this.queryParams)).then((res) => {
           if (res.code == 0) {
             var data = {
@@ -588,6 +594,7 @@ export default {
     onDepartmentSelectChange(value) {
       if (value === undefined || value.length == 0) {
         this.originData = []
+        // this.queryParams.executeDepartmentIds.push(value)
         this.getDepartmentSelectList(undefined)
       }
       this.getUsersByDeptIdsAndRolesOut()

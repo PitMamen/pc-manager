@@ -729,6 +729,7 @@ import addStop from "./addStop";
 import addFilter from "./addFilter";
 import taskDetail from "./taskDetail";
 import { formatDate, formatDateFull } from "@/utils/util";
+import events from '@/components/MultiTab/events'
 
 export default {
   components: {
@@ -1889,6 +1890,7 @@ export default {
       return reg.test(value);
     },
     cancel() {
+      events.$emit('close','/servicewise/projectAdd')
       this.$router.go(-1);
     },
   },

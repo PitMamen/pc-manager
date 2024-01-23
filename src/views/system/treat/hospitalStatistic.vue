@@ -192,6 +192,35 @@ export default {
           // width: 100,
           scopedSlots: { customRender: 'sjsfaction' },
         },
+
+
+        // add
+        {
+          title: '电话随访人数',
+          dataIndex: 'telSuccessNum',
+          align: 'center',
+          // width: 100,
+          // scopedSlots: { customRender: 'sjsfaction' },
+        },
+
+        {
+          title: '抽查率',
+          dataIndex: 'telCheckRate',
+          align: 'center',
+          // width: 100,
+        },
+
+        {
+          title: '合格率',
+          dataIndex: 'telCheckSuccessRate',
+          align: 'center',
+          // width: 100,
+        },
+
+
+
+
+
         {
           title: '失访人数',
           dataIndex: 'lostNum',

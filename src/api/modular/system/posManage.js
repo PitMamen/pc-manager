@@ -1701,6 +1701,15 @@ export function qryMetaDataByPage(data) {
 }
 
 
+export function qryMetaDataByPageNew(data) {
+  return axios({
+    url: '/follow-api/followMetaConfigureDetail/qryPatientPageList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
 
 
 /**
@@ -4348,6 +4357,29 @@ export function getFollowArticleUserData(data) {
   })
 }
 
+/**
+ * 消息提醒浏览查询
+ */
+
+export function getRecordList(data) {
+  return axios({
+    url: '/follow-api/tlSmsPushRecord/getRecordList',
+    method: 'post',
+    data: data,
+  })
+}
+
+/**
+ * 消息提醒浏览查询-左侧列表
+ */
+
+export function getRecordListGroupBy(data) {
+  return axios({
+    url: '/follow-api/tlSmsPushRecord/getRecordListGroupBy',
+    method: 'post',
+    data: data,
+  })
+}
 
 //医疗学科列表
 export function treeMedicalSubjects(data) {
@@ -4625,9 +4657,9 @@ export function refundDetail(data) {
 //获取配置了客户联系功能的成员列表
 export function getOwnConnectCustomerFunUserList(data) {
   return axios({
-    url: '/medical-api/tdCompanywxApplication/getOwnConnectCustomerFunUserList/1',
+    url: '/medical-api/tdCompanywxApplication/getOwnConnectCustomerFunUserList/'+data,
     method: 'get',
-    params: data,
+    // params: data,
   })
 }
 
@@ -4739,8 +4771,20 @@ export function addUserTagsType(data) {
     method: 'post',
     data: data,
   })
-
 }
+
+
+//获取用户已打标签
+export function getUserTagsDoctor(data) {
+  return axios({
+    url: '/account-api/tdUserTags/getUserTagsDoctor',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 
 
 
@@ -4789,6 +4833,18 @@ export function getUserTags(data) {
     data: data,
   })
 }
+
+//给患者打标签
+export function addPatientToTags(data) {
+  return axios({
+    url: '/account-api/modifyUserExternalInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
 
 
 //删除用户标签
@@ -5117,7 +5173,7 @@ export function getUserExternalInfo(userId) {
 //用户标签信息
 export function getSavedUserTagsInfo(userId) {
   return axios({
-    url: '/account-api/getSavedUserTagsInfo/' + userId,
+    url: '/account-api/getSavedUserTagsInfoPhone/' + userId,
     method: 'post',
     // data: data,
   })
@@ -6308,6 +6364,25 @@ export function getCaseSummary(data) {
 }
 
 
+
+
+// 获取住院医嘱数据
+export function getCaseDradvice(data) {
+  return axios({
+    url: '/referral-api/patient/getCaseDradvice',
+    method: 'get',
+    params: data,
+  })
+}
+
+
+
+
+
+
+
+
+
 // 提交记录
 export function uploadTradeImg(data) {
   return axios({
@@ -6351,6 +6426,46 @@ export function viewAuthDetail(data) {
 export function qryPlanBindInfo(data) {
   return axios({
     url: '/follow-api/follow/userplan/qryPlanBindInfo',
+    method: 'post',
+    data: data,
+  })
+}
+
+// 医生文章列表
+export function getDoctorArticleList(data) {
+  return axios({
+    url: '/health-api/articleCategory/getDoctorArticleList',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 医生文章列表tab数据
+export function getDoctorArticleListGroupby(data) {
+  return axios({
+    url: '/health-api/articleCategory/getDoctorArticleListGroupby',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+// 文章审核
+export function auditArticle(data) {
+  return axios({
+    url: '/health-api/articleCategory/auditArticle',
+    method: 'post',
+    data: data,
+  })
+}
+
+
+
+// 对统计问卷手动生成电话随访
+export function genTelFollow(data) {
+  return axios({
+    url: '/follow-api/follow/stat/genTelFollow',
     method: 'post',
     data: data,
   })

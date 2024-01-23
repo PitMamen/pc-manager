@@ -31,10 +31,10 @@
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">体 重:{{ userInfoData.weight }} kg</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">血 型:{{ userInfoData.bloodType }}</div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">
-            婚姻状况:{{ userInfoData.ismarry == 1 ? '已婚' : '未婚' }}
+            婚姻状况:{{ userInfoData.ismarry  }}
           </div>
           <div style="margin-left: 10px; margin-top: 5px; color: #1a1a1a">
-            生育状况:{{ userInfoData.havechild == 1 ? '已育' : '未育' }}
+            生育状况:{{ userInfoData.havechild  }}
           </div>
           <div v-for="(item, index) in userTagsInfoData" :key="index" :value="item.name">
             <div
@@ -331,6 +331,19 @@ export default {
           if (res.code == 0) {
             this.confirmLoading = false
             this.userInfoData = res.data
+            if (this.userInfoData) {
+              if (this.userInfoData.ismarry) {
+                this.$set(this.userInfoData,'ismarry',this.userInfoData.ismarry==1?'已婚':'未婚')
+              }else{
+                this.$set(this.userInfoData,'ismarry','')
+              }
+
+              if (this.userInfoData.havechild) {
+                this.$set(this.userInfoData,'havechild',this.userInfoData.havechild==1?'已育':'未育')
+              }else{
+                this.$set(this.userInfoData,'havechild','')
+              }
+            }
           }
         })
         .finally(() => {

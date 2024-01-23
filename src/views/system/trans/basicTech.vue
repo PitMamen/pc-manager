@@ -245,7 +245,7 @@ export default {
     refreshData(insideJbxx, insideShowType) {
       this.insideShowType = insideShowType
       this.resetData()
-      console.log('showType:', insideJbxx, this.insideShowType)
+      console.log('111111:', insideJbxx, this.insideShowType)
       if (insideShowType == 'jianyan') {
         this.jianyanDataShow = insideJbxx
         if (this.jianyanDataShow && this.jianyanDataShow.length > 0) {

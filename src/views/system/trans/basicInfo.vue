@@ -25,51 +25,107 @@
             出生日期：<span style="text-decoration: underline">{{ jbxx.csny }}</span>
           </div>
           <div class="div-item-four">
-            年龄：<span style="text-decoration: underline">{{ jbxx.nl }}</span>
+            出生地：<span style="text-decoration: underline">{{ jbxx.csd }}</span>
           </div>
         </div>
 
         <div class="div-line-wrap">
           <div class="div-item-four">
-            国籍：<span style="text-decoration: underline">{{ jbxx.gjmc }}</span>
+            籍贯：<span style="text-decoration: underline">{{ jbxx.jg }}</span>
+          </div>
+          <div class="div-item-four">
+            婚姻：<span style="text-decoration: underline">{{ jbxx.hyzkmc }}</span>
           </div>
           <div class="div-item-four">
             民族：<span style="text-decoration: underline">{{ jbxx.mzmc }}</span>
           </div>
           <div class="div-item-four">
+            国籍：<span style="text-decoration: underline">{{ jbxx.gjmc }}</span>
+          </div>
+          <!-- <div class="div-item-four">
             新生儿出生体重：<span style="text-decoration: underline">{{
               jbxx.xsecstz || "-"
             }}</span
             >&nbsp;克
-          </div>
-          <div class="div-item-four">
+          </div> -->
+          <!-- <div class="div-item-four">
             新生儿入院体重：<span style="text-decoration: underline">{{
               jbxx.xserytz || "-"
             }}</span
             >&nbsp;克
-          </div>
+          </div> -->
         </div>
 
+
         <div class="div-line-wrap">
-          <div class="div-item-two">
-            出生地址：<span
-              style="text-decoration: underline; width: 86%; display: inline-block"
-              >{{ jbxx.csd }}</span
-            >
-            <!-- 出生地址：<span style="border-bottom: 1px solid #333; width: 200px; display: inline-block">{{ -->
-            <!-- jbxx.name
-            }}</span> -->
+          <div class="div-item-four">
+            身份证号：<span style="text-decoration: underline">{{ jbxx.sfz }}</span>
+          </div>
+          <!-- <div class="div-item-four">
+            职业：<span style="text-decoration: underline">{{ jbxx.zybm }}</span>
+          </div>
+          <div class="div-item-four">
+            婚姻：<span style="text-decoration: underline">{{ jbxx.hyzkmc }}</span>
+          </div> -->
+        </div>
+
+
+        <div class="div-line-wrap">
+          <div class="div-item-four">
+            职业：<span style="text-decoration: underline">{{ jbxx.zybm }}</span>
+          </div>
+          <div class="div-item-four">
+            现居地址：<span style="text-decoration: underline">{{ jbxx.jzd }}</span>
           </div>
 
           <div class="div-item-four">
-            <span style="text-decoration: underline"></span>
+            电话：<span style="text-decoration: underline">{{ jbxx.lxdh }}</span>
           </div>
+
           <div class="div-item-four">
-            籍贯：<span style="text-decoration: underline">{{ jbxx.jg }}</span>
+            邮编：<span style="text-decoration: underline">{{ jbxx.hkyb }}</span>
           </div>
         </div>
 
+
+
         <div class="div-line-wrap">
+          <div class="div-item-four" style="width: 50%;">
+            工作单位及地址：<span
+              style="text-decoration: underline; width: 200px; display: inline-block"
+              >{{ jbxx.gzdw }}</span>
+          </div>
+          <div class="div-item-four" style="margin-left:-24px">
+            单位电话：<span style="text-decoration: underline">{{ jbxx.gzdwdh }}</span>
+          </div>
+
+          <div class="div-item-four" style="margin-left: 25px;">
+            邮编：<span style="text-decoration: underline">{{ jbxx.hkyb }}</span>
+          </div>
+        </div>
+
+
+        <div class="div-line-wrap">
+          <div class="div-item-four">
+            联系人姓名：<span style="text-decoration: underline">{{ jbxx.lxrxm }}</span>
+          </div>
+          <div class="div-item-four">
+            关系：<span style="text-decoration: underline">{{ jbxx.lxrgxmc }}</span>
+          </div>
+          <div class="div-item-four">
+            地址：<span style="text-decoration: underline">{{ jbxx.lxrdz }}</span>
+          </div>
+          <div class="div-item-four">
+            电话：<span style="text-decoration: underline">{{ jbxx.lxrdh }}</span>
+          </div>
+        </div>
+
+
+
+
+
+
+        <!-- <div class="div-line-wrap">
           <div class="div-item-four">
             身份证号：<span style="text-decoration: underline">{{ jbxx.sfz }}</span>
           </div>
@@ -79,11 +135,31 @@
           <div class="div-item-four">
             婚姻：<span style="text-decoration: underline">{{ jbxx.hyzkmc }}</span>
           </div>
-        </div>
+        </div> -->
+
+
+
+        <!-- <div class="div-line-wrap">
+          <div class="div-item-four">
+            身份证号：<span style="text-decoration: underline">{{ jbxx.sfz }}</span>
+          </div>
+          <div class="div-item-four">
+            职业：<span style="text-decoration: underline">{{ jbxx.zybm }}</span>
+          </div>
+          <div class="div-item-four">
+            婚姻：<span style="text-decoration: underline">{{ jbxx.hyzkmc }}</span>
+          </div>
+        </div> -->
+
+
+
+
+
+
 
         <!-- TODO -->
         <!-- csd  overflow: hidden; text-overflow: ellipsis; white-space: nowrap  限制一行 -->
-        <div class="div-line-wrap">
+        <!-- <div class="div-line-wrap">
           <div class="div-item-two">
             户籍地址：<span
               style="text-decoration: underline; width: 86%; display: inline-block"
@@ -109,8 +185,10 @@
           <div class="div-item-four">
             邮编：<span style="text-decoration: underline">{{ jbxx.xzzyb }}</span>
           </div>
-        </div>
-        <div class="div-line-wrap">
+        </div> -->
+
+
+        <!-- <div class="div-line-wrap">
           <div class="div-item-two">
             工作单位及地址：<span
               style="text-decoration: underline; width: 200px; display: inline-block"
@@ -123,28 +201,19 @@
           <div class="div-item-four">
             邮编：<span style="text-decoration: underline">{{ jbxx.gzdwyb }}</span>
           </div>
-        </div>
+        </div> -->
 
-        <div class="div-line-wrap">
-          <div class="div-item-four">
-            联系人姓名：<span style="text-decoration: underline">{{ jbxx.lxrxm }}</span>
-          </div>
-          <div class="div-item-four">
-            关系：<span style="text-decoration: underline">{{ jbxx.lxrgxmc }}</span>
-          </div>
-          <div class="div-item-four">
-            地址：<span style="text-decoration: underline">{{ jbxx.lxrdz }}</span>
-          </div>
-          <div class="div-item-four">
-            电话：<span style="text-decoration: underline">{{ jbxx.lxrdh }}</span>
-          </div>
-        </div>
+
+
+     
+
+       
 
         <div class="div-line-wrap">
           <div class="div-item-four">
             入院途径：<span style="text-decoration: underline">{{ jbxx.rylxmc }}</span>
           </div>
-          <div class="div-item-four">
+          <!-- <div class="div-item-four">
             入院时间：<span style="text-decoration: underline">{{ jbxx.rysj }}</span>
           </div>
           <div class="div-item-four">
@@ -152,10 +221,97 @@
           </div>
           <div class="div-item-four">
             病区：<span style="text-decoration: underline">{{ jbxx.rybq }}</span>
+          </div> -->
+        </div>
+
+
+
+        <div class="div-line-wrap">
+          <div class="div-item-four">
+            入院日期：<span style="text-decoration: underline">{{ jbxx.rysj }}</span>
+          </div>
+          <div class="div-item-four">
+            入院科别：<span style="text-decoration: underline">{{ jbxx.rybq }}</span>
+          </div>
+          <div class="div-item-four">
+            病区：<span style="text-decoration: underline">{{ jbxx.rybq }}</span>
+          </div>
+
+          <div class="div-item-four">
+            转科：<span style="text-decoration: underline">{{ jbxx.szbq || "-" }}</span>
+           
           </div>
         </div>
 
+
         <div class="div-line-wrap">
+          <div class="div-item-four">
+            出院日期：<span style="text-decoration: underline">{{ jbxx.cysj }}</span>
+          </div>
+          <div class="div-item-four">
+            出院科别：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
+          </div>
+          <div class="div-item-four">
+            科室：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
+          </div>
+          <div class="div-item-four">
+            实际住院：<span style="text-decoration: underline">{{ jbxx.sjzyts }}</span
+            >&nbsp;天
+          </div>
+        </div>
+
+
+
+        <div class="div-line-wrap">
+          <div class="div-item-four" style="width: 46.5%;">
+            门(急)诊诊断：<span style="text-decoration: underline">{{ jbxx.mzzd }}</span>
+          </div>
+          <div class="div-item-four">
+            入院时病情：<span style="text-decoration: underline">{{ jbxx.ryqk }}</span>
+          </div>
+          <!-- <div class="div-item-four">
+            科室：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
+          </div>
+          <div class="div-item-four">
+            实际住院：<span style="text-decoration: underline">{{ jbxx.sjzyts }}</span
+            >&nbsp;天
+          </div> -->
+        </div>
+
+
+
+
+        <div class="div-line-wrap">
+          <div class="div-item-four" style="width: 45.3%;">
+            入院诊断：<span style="text-decoration: underline">{{ jbxx.ryzd }}</span>
+          </div>
+          <div class="div-item-four">
+            入院诊断日期：<span style="text-decoration: underline">{{ jbxx.qzrq }}</span>
+          </div>
+          <!-- <div class="div-item-four">
+            科室：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
+          </div>
+          <div class="div-item-four">
+            实际住院：<span style="text-decoration: underline">{{ jbxx.sjzyts }}</span
+            >&nbsp;天
+          </div> -->
+        </div>
+
+
+        <div class="div-line-wrap">
+          <div class="div-item-four">
+            住院期间是否病危：<span style="text-decoration: underline">{{ jbxx.sfcxwjn }}</span>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+        <!-- <div class="div-line-wrap">
           <div class="div-item-four">
             转科：<span style="text-decoration: underline">{{ jbxx.zkksbm1 || "-" }}</span
             ><span style="margin-left: 10px">转：</span
@@ -166,23 +322,9 @@
           <div class="div-item-four"></div>
           <div class="div-item-four"></div>
           <div class="div-item-four"></div>
-        </div>
+        </div> -->
 
-        <div class="div-line-wrap">
-          <div class="div-item-four">
-            出院时间：<span style="text-decoration: underline">{{ jbxx.cysj }}</span>
-          </div>
-          <div class="div-item-four">
-            出院科别：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
-          </div>
-          <div class="div-item-four">
-            病房：<span style="text-decoration: underline">{{ jbxx.cybq }}</span>
-          </div>
-          <div class="div-item-four">
-            实际住院：<span style="text-decoration: underline">{{ jbxx.sjzyts }}</span
-            >&nbsp;天
-          </div>
-        </div>
+      
       </div>
 
       <div class="div-title" style="margin-top: 10px">
@@ -357,7 +499,7 @@
         </div>
         <div class="div-fee-line">
           <span class="fee-des">10.其他类：</span>
-          <span class="name">（31）其他费：</span>
+          <span class="name">（24）其他费：</span>
           <span class="value">{{ jbxx.qtf1 + "" || "" }}</span>
         </div>
       </div>
@@ -377,40 +519,141 @@ export default {
     // patientInfo: Object,
   },
   data() {
+
+    // var spanArr = []
+    // var position = 0
+    // //列合并
+    // const renderContent = (value, row, index) => {
+    //   const obj = {
+    //     children: value,
+    //     attrs: {},
+    //   }
+    //   const _row = spanArr[index]
+    //   const _col = _row > 0 ? 1 : 0
+    //   obj.attrs = {
+    //     rowSpan: _row,
+    //     colSpan: _col,
+    //   }
+
+    //   return obj
+    // }
+
+
+    //    //计算合并
+    //    const rowspan = (data) => {
+    //   spanArr = []
+    //   position = 0
+    //   data.forEach((item, index) => {
+    //     if (index === 0) {
+    //       spanArr.push(1)
+    //       position = 0
+    //     } else {
+    //       //需要合并的地方判断
+    //       if (data[index].zdmc === data[index - 1].zdmc) {
+    //         spanArr[position] += 1
+    //         spanArr.push(0)
+    //       } else {
+    //         spanArr.push(1)
+    //         position = index
+    //       }
+    //     }
+    //   })
+    // }
+
+
+
     return {
+      
       info: { reqDocName: "" },
       insideZdxx: this.jbxx,
       columns: [
         {
-          title: "医院诊断类别名称",
-          dataIndex: "zdlbmc",
-        },
-        {
-          title: "诊断编码",
-          dataIndex: "zdbm",
-          ellipsis: true,
-        },
-        {
-          title: "医院诊断名称",
-          // innerHeight:20,
-          dataIndex: "zdbmmc",
-        },
-        {
-          title: "诊断时间",
-          dataIndex: "zdsj",
-          ellipsis: true,
-        },
-        {
-          title: "主要诊断标志",
-          // dataIndex: "zyzdbz",
+          title: "出院诊断",
           dataIndex: "cyzdbz",
-          ellipsis: true,
+          width:200,
+          ellipse:true,
+          align: "center",
+          colSpan:2,
+
+        //   render: (value, record, index) => {
+        //   const obj = {
+        //     children: value,
+        //     props: {},
+        //   };
+        //   let arr = this.jbxx.diagnosisInfo.filter((res) => {
+        //     //这里cyzdbz是我需要判断的字段名（相同就合并）
+        //     return res.cyzdbz == record.cyzdbz;   //cyzdbz
+        //   });
+        //   if (index == 0 || this.jbxx.diagnosisInfot[index - 1].cyzdbz != record.cyzdbz) {
+        //     obj.props.rowSpan = arr.length;
+        //   } else {
+        //     obj.props.rowSpan = 0;
+        //   }
+        //   return obj;
+        // },
+        },
+
+        {
+          title: '没哟',
+          colSpan:0,
+          dataIndex: 'zdsm',
+          align: 'center',
+        },
+        
+
+        {
+          title: "出院情况",
+          dataIndex: "cyqkbm",
+          align: "center",
+          children: [
+            {
+              title: "1.治愈",
+              dataIndex: "yzy",
+              align: "center",
+            },
+            {
+              title: "2.好转",
+              dataIndex: "hz",
+              align: "center",
+            },
+            {
+              title: "3.未愈",
+              dataIndex: "wy",
+              align: "center",
+            },
+            {
+              title: "4.死亡",
+              dataIndex: "sw",
+              align: "center",
+            }, {
+              title: "5.其他",
+              dataIndex: "qt",
+              align: "center",
+            },
+          ],
         },
         {
-          title: "疑似诊断标志",
-          dataIndex: "yzdbz",
-          ellipsis: true,
+          title: "ICD-10编码",
+          // innerHeight:20,
+          dataIndex: "zdbm",
+          align: "center",
         },
+        // {
+        //   title: "诊断时间",
+        //   dataIndex: "zdsj",
+        //   ellipsis: true,
+        // },
+        // {
+        //   title: "主要诊断标志",
+        //   // dataIndex: "zyzdbz",
+        //   dataIndex: "cyzdbz",
+        //   ellipsis: true,
+        // },
+        // {
+        //   title: "疑似诊断标志",
+        //   dataIndex: "yzdbz",
+        //   ellipsis: true,
+        // },
       ],
       columnsSurgery: [
         {
@@ -489,6 +732,7 @@ export default {
     },
 
     refreshData(fileMainData) {
+      // rowspan(fileMainData.diagnosisInfo)
       this.jbxx = fileMainData;
     },
   },

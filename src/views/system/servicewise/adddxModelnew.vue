@@ -124,7 +124,7 @@
                 :maxLength="35"
                 :disabled="checkData.useTo == 1 || checkData.useTo == 2"
                 style="
-                  height: 65px !important;
+                  height: 92px !important;
                   width: 695px !important;
                   display: inline-block;
                 "

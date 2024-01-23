@@ -104,7 +104,7 @@ export default {
       payMode: '',
       visible: false,
       specFlag: undefined, //标记
-      rylxList:['已电话随访','拒绝随访','病重出院','死亡']
+      rylxList:['拒绝随访','病重出院','死亡']
     }
   },
 

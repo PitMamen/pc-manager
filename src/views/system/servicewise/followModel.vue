@@ -30,7 +30,7 @@
           </template>
           <patient-file ref="patientFile " :record="record" @handleCancel="handleCancel" @playAudio="playAudio" />
         </a-tab-pane>
-        <a-tab-pane key="2">
+        <a-tab-pane key="2" v-if="isEdit">
           <template #tab>
             <span>
               <img v-show="activeKey != '2'" src="~@/assets/icons/lsjl.png" class="icon" />
@@ -123,6 +123,7 @@ export default {
       recordId: '',
       phone: '',
       isSDKReady: false,
+      isEdit:true,
       // 从档案管理页面进入不需要显示本次随访
       isPatientManage: false,
       // 从随访进去才显示随访方案
@@ -170,6 +171,15 @@ export default {
       this.init(record)
     },
 
+    //从档案管理界面 修改操作 进来
+    doEdit(record, isPatientManage) {
+      this.isPatientManage = isPatientManage
+      this.isEdit = false
+      console.log("3333:",this.isEdit)
+      this.modelType = 0
+      this.initEdit(record)
+    },
+
     getPatientInfoOut() {
       getPatientInfo({
         userId: this.record.userId,
@@ -209,6 +219,29 @@ export default {
       } else {
         this.activeKey = '3'
       }
+      this.visible = true
+      this.record = record
+      this.getPatientInfoOut()
+    },
+
+    // 重新 写一个init  原来的init函数不敢动
+    initEdit(record) {
+      var strSex = ''
+      if (record.sex) {
+        strSex = record.sex.description || record.sex
+      } else if (record.userSex) {
+        strSex = record.userSex
+      }
+      console.log('this.record', record)
+      var age
+      if (record.age == 0 || record.userAge == 0) {
+        age = '0'
+      } else {
+        age = record.age || record.userAge
+      }
+      // this.title = record.userName + ' | ' + record.sex ? record.sex.description : '' + ' | ' + record.age + '岁'
+      this.title = record.userName + ' | ' + strSex + ' | ' + age + '岁'
+      this.activeKey = '0'
       this.visible = true
       this.record = record
       this.getPatientInfoOut()
