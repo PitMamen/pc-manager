@@ -75,7 +75,7 @@
                 @click="handleChange(item.template_id, item.templateType)"
               >
                 <div class="span-name" :title="item.articleName">
-                  <div style="width: 55%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
+                  <div style="width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap">
                     {{ item.template_title }}
                   </div>
                   <div style="font-size: 12px">{{ item.co }}</div>
@@ -499,7 +499,7 @@ export default {
     // height: 510px;
     min-height: 300px;
     flex-shrink: 0;
-    width: 250px;
+    width: 270px;
     overflow: hidden;
 
     .top-kuang {
@@ -556,7 +556,7 @@ export default {
       overflow-y: auto;
       padding: 10px;
       height: 530px;
-      width: 238px;
+      width: 260px;
       .checked {
         color: #1890ff !important;
         // border: 1px solid #1890ff !important;
